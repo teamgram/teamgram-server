@@ -28,7 +28,7 @@ import (
 // messages.getSavedGifs#83bf3d52 hash:int = messages.SavedGifs;
 func (s *MessagesServiceImpl) MessagesGetSavedGifs(ctx context.Context, request *mtproto.TLMessagesGetSavedGifs) (*mtproto.Messages_SavedGifs, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("MessagesGetSavedGifs - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("messages.getSavedGifs#83bf3d52 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	// TODO(@benqi): Impl MessagesGetSavedGifs logic
 	stickers := mtproto.TLMessagesSavedGifs{Data2: &mtproto.Messages_SavedGifs_Data{
@@ -36,6 +36,6 @@ func (s *MessagesServiceImpl) MessagesGetSavedGifs(ctx context.Context, request 
 		Gifs: []*mtproto.Document{},
 	}}
 
-	glog.Infof("MessagesGetSavedGifs - reply: %s\n", logger.JsonDebugData(stickers))
+	glog.Infof("messages.getSavedGifs#83bf3d52 - reply: %s", logger.JsonDebugData(stickers))
 	return stickers.To_Messages_SavedGifs(), nil
 }

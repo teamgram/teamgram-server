@@ -44,9 +44,9 @@ func (dao *MessageDatasDAO) Insert(do *dataobject.MessageDatasDO) int64 {
 		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
 	}
 
-	id, err := r.LastInsertId()
+	id, err := r.RowsAffected()
 	if err != nil {
-		errDesc := fmt.Sprintf("LastInsertId in Insert(%v)_error: %v", do, err)
+		errDesc := fmt.Sprintf("rawAffected in Insert(%v)_error: %v", do, err)
 		glog.Error(errDesc)
 		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
 	}

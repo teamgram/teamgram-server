@@ -30,6 +30,11 @@ func (s *MessagesServiceImpl) MessagesReceivedMessages(ctx context.Context, requ
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("messages.receivedMessages#5a954c0 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
+	receivedM := &mtproto.Vector_ReceivedNotifyMessage{
+		Datas: []*mtproto.ReceivedNotifyMessage{},
+	}
+
+	glog.Infof("messages.receivedMessages#5a954c0 - reply: %s", logger.JsonDebugData(receivedM))
 	// @benai: android client and tdesktop 未使用
-	return &mtproto.Vector_ReceivedNotifyMessage{Datas: []*mtproto.ReceivedNotifyMessage{}}, nil
+	return receivedM, nil
 }

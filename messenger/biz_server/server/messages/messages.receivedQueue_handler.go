@@ -18,7 +18,6 @@
 package messages
 
 import (
-	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
@@ -29,9 +28,13 @@ import (
 // messages.receivedQueue#55a5bb66 max_qts:int = Vector<long>;
 func (s *MessagesServiceImpl) MessagesReceivedQueue(ctx context.Context, request *mtproto.TLMessagesReceivedQueue) (*mtproto.VectorLong, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("MessagesReceivedQueue - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("messages.receivedQueue#55a5bb66 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl MessagesReceivedQueue logic
+	// TODO(@benqi): receivedQueue??
+	receivedQ := &mtproto.VectorLong{
+		Datas: []int64{},
+	}
 
-	return nil, fmt.Errorf("Not impl MessagesReceivedQueue")
+	glog.Infof("messages.receivedQueue#55a5bb66 - reply: %s", logger.JsonDebugData(receivedQ))
+	return receivedQ, nil
 }

@@ -11,51 +11,51 @@ chatengine="$GOPATH/src/github.com/nebula-chat/chatengine"
 
 echo "build document ..."
 cd ${chatengine}/service/document
-go get
 go build
 ./document &
+sleep 1
 
 echo "build auth_session ..."
 cd ${chatengine}/service/auth_session
-go get
 go build
 ./auth_session &
+sleep 1
 
 echo "build sync ..."
 cd ${chatengine}/messenger/sync
-go get
 go build
 ./sync &
+sleep 1
 
 echo "build upload ..."
 cd ${chatengine}/messenger/upload
-go get
 go build
 ./upload &
+sleep 1
 
-echo "build biz_server ..."
-cd ${chatengine}/messenger/biz_server
-go get
-go build
-./biz_server &
-
-echo "build session ..."
-cd ${chatengine}/server/access/session
-go get
-go build
-./session &
-
-echo "build frontend ..."
-cd ${chatengine}/server/access/frontend
-go get
-go build
-./frontend &
 
 echo "build auth_key ..."
 cd ${chatengine}/server/access/auth_key
-go get
 go build
 ./auth_key &
+
+echo "build biz_server ..."
+cd ${chatengine}/messenger/biz_server
+go build
+./biz_server &
+sleep 1
+
+echo "build session ..."
+cd ${chatengine}/server/access/session
+go build
+./session &
+sleep 1
+
+echo "build frontend ..."
+cd ${chatengine}/server/access/frontend
+go build
+./frontend &
+sleep 1
 
 echo "***** wait *****"
 wait

@@ -192,8 +192,8 @@ func (m *MessageModel) MakeMessageData(senderUserId int32, peer *base.PeerUtil, 
 	}
 }
 
-func (m *MessageData) Insert() (lastInsertId int64) {
-	lastInsertId = - 1
+func (m *MessageData) Insert() (rowsAffected int64) {
+	rowsAffected = - 1
 	mtype, mdata := encodeMessage(m.Message)
 	switch m.Peer.PeerType {
 	case base.PEER_USER, base.PEER_CHAT:
@@ -214,21 +214,21 @@ func (m *MessageData) Insert() (lastInsertId int64) {
 		}
 		glog.Info(messageDataDO)
 		// TODO(@benqi): random_id已经存在
-		lastInsertId = m.dao.MessageDatasDAO.Insert(messageDataDO)
-		if lastInsertId == 0 {
+		rowsAffected = m.dao.MessageDatasDAO.Insert(messageDataDO)
+		if rowsAffected == 0 {
 			do := m.dao.MessageDatasDAO.SelectMessageByRandomId(m.SenderUserId, m.RandomId)
 			if do != nil {
 				m.MessageDataId = do.MessageDataId
 				m.DialogMessageId = do.DialogMessageId
 			} else {
-				lastInsertId = -1
+				rowsAffected = -1
 			}
 		}
 	case base.PEER_CHANNEL:
 		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
 	}
 
-	return lastInsertId
+	return
 }
 
 func (m *MessageData) SaveMessageData() bool {

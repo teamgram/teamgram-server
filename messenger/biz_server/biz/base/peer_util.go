@@ -20,6 +20,7 @@ package base
 import (
 	"fmt"
 	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/golang/glog"
 )
 
 const (
@@ -225,7 +226,7 @@ func FromInputNotifyPeer(selfId int32, peer *mtproto.InputNotifyPeer) (p *PeerUt
 	//case mtproto.TLConstructor_CRC32_inputNotifyAll:
 	//	p.PeerType = PEER_ALL
 	default:
-		panic(fmt.Sprintf("FromInputNotifyPeer(%v) error!", p))
+		glog.Error("fromInputNotifyPeer: invalid peer - ", peer)
 	}
 	return
 }
