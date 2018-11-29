@@ -32,10 +32,10 @@ var (
 
 type authKeyConfig struct {
 	ServerId             int32 // 服务器ID
-	// Mysql                []mysql_client.MySQLConfig
 	Server               *zrpc.ZRpcServerConfig
 	AuthSessionRpcClient service_discovery.ServiceDiscoveryClientConfig
-	// RpcServer *grpc_util.RPCServerConfig
+	KeyFile              string
+	KeyFingerprint       string
 }
 
 func init() {

@@ -43,7 +43,7 @@ const (
 var (
 	// TODO(@benqi): 预先计算出fingerprint
 	// 这里直接使用了0xc3b42b026ce86b21
-	fingerprint uint64 = 12240908862933197005
+	// fingerprint uint64 = 12240908862933197005
 
 	// TODO(@benqi): 使用算法生成PQ
 	// 这里直接指定了PQ值: {0x17, 0xED, 0x48, 0x94, 0x1A, 0x08, 0xF9, 0x81}
@@ -111,6 +111,7 @@ var (
 
 type handshake struct {
 	rsa                  *crypto.RSACryptor
+	keyFingerprint       uint64
 	dh2048p              []byte
 	dh2048g              []byte
 	bigIntDH2048G        *big.Int
@@ -118,9 +119,10 @@ type handshake struct {
 	authSessionRpcClient mtproto.RPCSessionClient
 }
 
-func newHandshake(c mtproto.RPCSessionClient) *handshake {
+func newHandshake(c mtproto.RPCSessionClient, keyFile string, keyFingerprint uint64) *handshake {
 	s := &handshake{
-		rsa:                  crypto.NewRSACryptor(),
+		rsa:                  crypto.NewRSACryptor(keyFile),
+		keyFingerprint:       keyFingerprint,
 		dh2048p:              dh2048_p,
 		dh2048g:              dh2048_g,
 		bigIntDH2048P:        new(big.Int).SetBytes(dh2048_p),
@@ -203,7 +205,7 @@ func (s *handshake) onReqPq(cntl *zrpc.ZRpcController, state *mtproto.TLHandshak
 		Nonce:                       request.Nonce,
 		ServerNonce:                 crypto.GenerateNonce(16),
 		Pq:                          pq,
-		ServerPublicKeyFingerprints: []int64{int64(fingerprint)},
+		ServerPublicKeyFingerprints: []int64{int64(s.keyFingerprint)},
 	}}
 
 	// 缓存客户端Nonce
@@ -233,7 +235,7 @@ func (s *handshake) onReqPqMulti(cntl *zrpc.ZRpcController, state *mtproto.TLHan
 		Nonce:                       request.Nonce,
 		ServerNonce:                 crypto.GenerateNonce(16),
 		Pq:                          pq,
-		ServerPublicKeyFingerprints: []int64{int64(fingerprint)},
+		ServerPublicKeyFingerprints: []int64{int64(s.keyFingerprint)},
 	}}
 
 	// 缓存客户端Nonce
@@ -294,7 +296,7 @@ func (s *handshake) onReq_DHParams(cntl *zrpc.ZRpcController, state *mtproto.TLH
 		return nil, err
 	}
 
-	if request.PublicKeyFingerprint != int64(fingerprint) {
+	if request.PublicKeyFingerprint != int64(s.keyFingerprint) {
 		err = fmt.Errorf("onReq_DHParams - Invalid PublicKeyFingerprint value")
 		glog.Error(err)
 		return nil, err

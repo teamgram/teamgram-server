@@ -31,12 +31,12 @@ password = ""
 
 [[mysql]]
 name = "immaster"
-dsn = "root:@/chatengine?charset=utf8mb4"
+dsn = "root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4"
 active = 5
 idle = 2
 
 [[mysql]]
 name = "imslave"
-dsn = "root:@/chatengine?charset=utf8mb4"
+dsn = "root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4"
 active = 5
 idle = 2

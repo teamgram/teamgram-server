@@ -26,6 +26,7 @@ import (
 	"time"
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
+	"strconv"
 )
 
 func init() {
@@ -66,9 +67,14 @@ func (s *AuthKeyServer) Initialize() error {
 }
 
 func (s *AuthKeyServer) RunLoop() {
+	keyFingerprint, err := strconv.ParseUint(Conf.KeyFingerprint, 10, 64)
+	if err != nil {
+		glog.Fatal(err)
+		return
+	}
 	c, _ := grpc_util.NewRPCClient(&Conf.AuthSessionRpcClient)
 	s.authSessionRpcClient = mtproto.NewRPCSessionClient(c.GetClientConn())
-	s.handshake = newHandshake(s.authSessionRpcClient)
+	s.handshake = newHandshake(s.authSessionRpcClient, Conf.KeyFile, keyFingerprint)
 
 	go s.server.Serve()
 }
