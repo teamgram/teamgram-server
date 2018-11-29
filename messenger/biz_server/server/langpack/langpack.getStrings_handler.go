@@ -30,12 +30,12 @@ func (s *LangpackServiceImpl) LangpackGetStrings(ctx context.Context, request *m
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("langpack.getStrings#2e1ee318 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Query from langpack config db
+	langPacks := queryLangPacks(request.GetLangCode())
 	langpackStrings := &mtproto.Vector_LangPackString{}
 	for _, s := range request.Keys {
 		s2 := &mtproto.TLLangPackString{Data2: &mtproto.LangPackString_Data{
 			Key:   s,
-			Value: s, // TODO(@benqi): Query value by key
+			Value: langPacks.Query(s),
 		}}
 		langpackStrings.Datas = append(langpackStrings.Datas, s2.To_LangPackString())
 	}

@@ -23,7 +23,6 @@ import (
     "github.com/nebula-chat/chatengine/pkg/grpc_util"
     "github.com/nebula-chat/chatengine/pkg/logger"
     "github.com/nebula-chat/chatengine/mtproto"
-    "github.com/BurntSushi/toml"
 )
 
 // langpack.getLangPack#9ab5c58e lang_code:string = LangPackDifference;
@@ -31,25 +30,21 @@ func (s *LangpackServiceImpl) LangpackGetLangPackLayer71(ctx context.Context, re
     md := grpc_util.RpcMetadataFromIncoming(ctx)
     glog.Infof("LangpackGetLangPack - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    if _, err := toml.DecodeFile(LANG_PACK_EN_FILE, &langs); err != nil {
-        glog.Errorf("LangpackGetLangPack - decode file %s error: %v", LANG_PACK_EN_FILE, err)
-        return nil, err
-    }
-
+    langPacks := queryLangPacks(request.GetLangCode())
     diff := mtproto.NewTLLangPackDifference()
     diff.SetLangCode(request.LangCode)
-    diff.SetVersion(langs.Version)
+    diff.SetVersion(langPacks.Version)
     diff.SetFromVersion(0)
 
     diffStrings := make([]*mtproto.LangPackString, 0)
-    for _, strings := range langs.Strings {
+    for _, strings := range langPacks.Strings {
         diffStrings = append(diffStrings, &mtproto.LangPackString{
             Constructor: mtproto.TLConstructor_CRC32_langPackString,
             Data2:       strings,
         })
     }
 
-    for _, stringPluralizeds := range langs.StringPluralizeds {
+    for _, stringPluralizeds := range langPacks.StringPluralizeds {
         diffStrings = append(diffStrings, &mtproto.LangPackString{
             Constructor: mtproto.TLConstructor_CRC32_langPackStringPluralized,
             Data2:       stringPluralizeds,

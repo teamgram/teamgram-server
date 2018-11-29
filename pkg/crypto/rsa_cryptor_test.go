@@ -128,7 +128,7 @@ FwIDAQAB
 
 func TestNewRSACryptor(t *testing.T) {
 
-	rsa := NewRSACryptor()
+	rsa := NewRSACryptor("test_pkcs1.key")
 
 	testData := []byte("rsa 2048 key!!!!")
 	fmt.Println(string(testData))

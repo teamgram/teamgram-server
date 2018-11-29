@@ -25,15 +25,21 @@ import (
 
 const (
 	LANG_PACK_EN_FILE = "./lang_pack_en.toml"
+	LANG_PACK_RU_FILE = "./lang_pack_ru.toml"
 )
 
-var langs model2.LangPacks
+var (
+	langPacksEn model2.LangPacks
+	langPacksRu model2.LangPacks
+)
 
 func init() {
-	if _, err := toml.DecodeFile(LANG_PACK_EN_FILE, &langs); err != nil {
+	if _, err := toml.DecodeFile(LANG_PACK_EN_FILE, &langPacksEn); err != nil {
 		panic(err)
 	}
-	// fmt.Print(langs)
+	if _, err := toml.DecodeFile(LANG_PACK_RU_FILE, &langPacksRu); err != nil {
+		panic(err)
+	}
 }
 
 type LangpackServiceImpl struct {
@@ -48,4 +54,21 @@ func NewLangpackServiceImpl(models []core.CoreModel) *LangpackServiceImpl {
 	}
 
 	return impl
+}
+
+var langPackVersion = int32(77)
+
+func queryLangPacks(langCode string) *model2.LangPacks {
+	var langPacks *model2.LangPacks
+
+	switch langCode {
+	case "en":
+		langPacks = &langPacksEn
+	case "ru":
+		langPacks = &langPacksRu
+	default:
+		langPacks = &langPacksEn
+	}
+
+	return langPacks
 }

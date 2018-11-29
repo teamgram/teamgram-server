@@ -23,6 +23,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/logger"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
+	"github.com/nebula-chat/chatengine/service/auth_session/client"
 )
 
 // langpack.getDifference#b2e4d7d from_version:int = LangPackDifference;
@@ -30,13 +31,15 @@ func (s *LangpackServiceImpl) LangpackGetDifference(ctx context.Context, request
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("langpack.getDifference#b2e4d7d - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl LangpackGetDifference logic
-	diff := mtproto.NewTLLangPackDifference()
-	diff.SetLangCode("en")
-	diff.SetVersion(langs.Version)
-	diff.SetFromVersion(request.FromVersion)
+	langCode := auth_session_client.GetLangCode(md.AuthId)
 
-	if request.FromVersion < langs.Version {
+	diff := &mtproto.TLLangPackDifference{Data2: &mtproto.LangPackDifference_Data{
+		LangCode:    langCode,
+		Version:     langPackVersion,
+		FromVersion: request.GetFromVersion(),
+	}}
+
+	if request.FromVersion < langPackVersion {
 		// TODO(@benqi): 找出不同版本的增量更新数据
 	}
 

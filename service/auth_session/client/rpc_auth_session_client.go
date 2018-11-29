@@ -76,3 +76,17 @@ func UnbindAuthKeyUser(authKeyId int64, userId int32) bool {
 	return true
 }
 
+func GetLangCode(authKeyId int64) string {
+	request := &mtproto.TLSessionGetLangCode{
+		AuthKeyId: authKeyId,
+	}
+
+	langCode, err := authSessionInstance.client.SessionGetLangCode(context.Background(), request)
+
+	if err != nil {
+		glog.Error(err)
+		return "en"
+	}
+
+	return langCode.GetData2().GetV()
+}

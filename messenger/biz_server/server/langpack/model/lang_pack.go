@@ -28,3 +28,12 @@ type LangPacks struct {
 	StringPluralizeds []*mtproto.LangPackString_Data
 	StringDeleteds    []*mtproto.LangPackString_Data
 }
+
+func (m *LangPacks) Query(k string) string {
+	for _, lp := range m.Strings {
+		if lp.GetKey() == k {
+			return lp.GetValue()
+		}
+	}
+	return ""
+}

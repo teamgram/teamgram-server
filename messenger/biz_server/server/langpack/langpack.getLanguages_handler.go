@@ -90,17 +90,21 @@ func (s *LangpackServiceImpl) LangpackGetLanguages(ctx context.Context, request 
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("langpack.getLanguages#42c6978f - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): hand lang_pack.
-
 	// TODO(@benqi): Add other language
+	languages := &mtproto.Vector_LangPackLanguage{}
 	language := &mtproto.TLLangPackLanguage{Data2: &mtproto.LangPackLanguage_Data{
 		Name:       "English",
 		NativeName: "English",
 		LangCode:   "en",
 	}}
-
-	languages := &mtproto.Vector_LangPackLanguage{}
 	languages.Datas = append(languages.Datas, language.To_LangPackLanguage())
+
+	languageRu := &mtproto.TLLangPackLanguage{Data2: &mtproto.LangPackLanguage_Data{
+		Name:       "Russian",
+		NativeName: "Русский",
+		LangCode:   "ru",
+	}}
+	languages.Datas = append(languages.Datas, languageRu.To_LangPackLanguage())
 
 	glog.Infof("langpack.getLanguages#42c6978f - reply: %s", logger.JsonDebugData(languages))
 	return languages, nil

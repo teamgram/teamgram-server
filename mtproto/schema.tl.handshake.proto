@@ -30,54 +30,6 @@ import "schema.tl.crc32.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// DestroyAuthKeyRes <--
-//  + TL_destroy_auth_key_ok
-//  + TL_destroy_auth_key_none
-//  + TL_destroy_auth_key_fail
-//
-message DestroyAuthKeyRes_Data {
-}
-
-message DestroyAuthKeyRes {
-    TLConstructor constructor = 1;
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-
-// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_ok {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_none {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_fail {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ResPQ <--
-//  + TL_resPQ
-//
-message ResPQ_Data {
-    bytes nonce = 1;
-    bytes server_nonce = 2;
-    string pq = 3;
-    repeated int64 server_public_key_fingerprints = 4;
-}
-
-message ResPQ {
-    TLConstructor constructor = 1;
-    ResPQ_Data data2 = 2;
-}
-
-// resPQ#05162463 nonce:int128 server_nonce:int128 pq:string server_public_key_fingerprints:Vector<long> = ResPQ;
-message TL_resPQ {
-    ResPQ_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // P_Q_inner_data <--
 //  + TL_p_q_inner_data
 //  + TL_p_q_inner_data_dc
@@ -217,5 +169,53 @@ message TL_dh_gen_retry {
 // dh_gen_fail#a69dae02 nonce:int128 server_nonce:int128 new_nonce_hash3:int128 = Set_client_DH_params_answer;
 message TL_dh_gen_fail {
     Set_client_DH_params_answer_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DestroyAuthKeyRes <--
+//  + TL_destroy_auth_key_ok
+//  + TL_destroy_auth_key_none
+//  + TL_destroy_auth_key_fail
+//
+message DestroyAuthKeyRes_Data {
+}
+
+message DestroyAuthKeyRes {
+    TLConstructor constructor = 1;
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+
+// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_ok {
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_none {
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_fail {
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ResPQ <--
+//  + TL_resPQ
+//
+message ResPQ_Data {
+    bytes nonce = 1;
+    bytes server_nonce = 2;
+    string pq = 3;
+    repeated int64 server_public_key_fingerprints = 4;
+}
+
+message ResPQ {
+    TLConstructor constructor = 1;
+    ResPQ_Data data2 = 2;
+}
+
+// resPQ#05162463 nonce:int128 server_nonce:int128 pq:string server_public_key_fingerprints:Vector<long> = ResPQ;
+message TL_resPQ {
+    ResPQ_Data data2 = 2;
 }
 

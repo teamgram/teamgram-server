@@ -1064,6 +1064,7 @@ enum TLConstructor {
     CRC32_sessionMessageData = -1817881259;
     CRC32_int32 = -1932527041;
     CRC32_long = 1253220205;
+    CRC32_string = 194458693;
     CRC32_authKeyInfo = -793297679;
     CRC32_clientSessionInfo = 167005722;
     CRC32_push_sessionServerConnected = 575607369;
@@ -1071,6 +1072,7 @@ enum TLConstructor {
     CRC32_session_getAuthorizations = 58160113;
     CRC32_session_resetAuthorization = 1051405288;
     CRC32_session_getLayer = -238328911;
+    CRC32_session_getLangCode = -1213481174;
     CRC32_session_getUserId = -798477825;
     CRC32_session_getFutureSalts = -364935027;
     CRC32_session_queryAuthKey = 1798174801;

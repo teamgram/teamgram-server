@@ -106,6 +106,16 @@ func (m *AuthSessionModel) GetApiLayer(authKeyId int64) int32 {
 	return do.Layer
 }
 
+func (m *AuthSessionModel) GetLangCode(authKeyId int64) string {
+	do := m.dao.AuthsDAO.SelectLayer(authKeyId)
+	if do == nil {
+		glog.Errorf("not find lang_code - keyId = %d", authKeyId)
+		return "en"
+	}
+	return do.LangCode
+}
+
+
 func (m *AuthSessionModel) GetAuthKeyUserId(authKeyId int64) int32 {
 	do := m.dao.AuthUsersDAO.Select(authKeyId)
 	if do == nil {
