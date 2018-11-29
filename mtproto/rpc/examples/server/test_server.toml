@@ -1,0 +1,16 @@
+# auth_key.toml
+
+ver = "0.0.1"
+
+[server]
+name = "test_server"
+protoName = "brpc"
+addr = "0.0.0.0:30005"
+
+[discovery]
+serviceName = "test_server"
+nodeID = "node1"
+rPCAddr = "127.0.0.1:30005"
+etcdAddrs = ["http://127.0.0.1:2379"]
+interval = "2s"
+tTL = "10s"

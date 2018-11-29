@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_privacys">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO
+                user_privacys (user_id, key_type, rules)
+            VALUES
+                (:user_id, :key_type, :rules)
+        </sql>
+    </operation>
+
+    <operation name="UpdatePrivacy">
+        <sql>
+            UPDATE user_privacys SET rules = :rules WHERE user_id = :user_id AND :key_type
+        </sql>
+    </operation>
+
+    <operation name="SelectPrivacy">
+        <sql>
+            SELECT id, user_id, key_type, rules FROM user_privacys WHERE user_id = :user_id AND key_type = :key_type
+        </sql>
+    </operation>
+</table>

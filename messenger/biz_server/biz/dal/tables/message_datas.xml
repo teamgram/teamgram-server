@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="message_datas">
+    <operation name="Insert">
+        <sql>
+            INSERT IGNORE INTO message_datas
+                (message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date)
+            VALUES
+                (:message_data_id, :dialog_id, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_type, :message_data, :media_unread, :has_media_unread, :date, :edit_message, :edit_date)
+        </sql>
+    </operation>
+
+    <operation name="SelectMessageListByDataIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date
+            FROM
+                message_datas
+            WHERE
+                message_data_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="SelectMessageByDataId">
+        <sql>
+            SELECT
+                message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date
+            FROM
+                message_datas
+            WHERE
+                message_data_id = :message_data_id
+        </sql>
+    </operation>
+
+    <operation name="SelectMessageList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date
+            FROM
+                message_datas
+            WHERE
+                dialog_id = :dialog_id AND dialog_message_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="SelectMessage">
+        <sql>
+            SELECT
+                message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date
+            FROM
+                message_datas
+            WHERE
+                dialog_id = :dialog_id AND dialog_message_id = :dialog_message_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectMessageByRandomId">
+        <sql>
+            SELECT
+                message_data_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, media_unread, has_media_unread, date, edit_message, edit_date
+            FROM
+                message_datas
+            WHERE
+                sender_user_id = :sender_user_id AND random_id = :random_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="UpdateEditMessage">
+        <sql>
+            UPDATE
+                message_datas
+            SET
+                edit_message = :edit_message, edit_date = :edit_date
+            WHERE
+                dialog_id = :dialog_id AND dialog_message_id = :dialog_message_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateMediaUnread">
+        <sql>
+            UPDATE
+                message_datas
+            SET
+                media_unread = :media_unread
+            WHERE
+                message_data_id = :message_data_id
+        </sql>
+    </operation>
+</table>

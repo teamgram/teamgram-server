@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="photo_datas">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO photo_datas
+                (photo_id, photo_type, dc_id, volume_id, local_id, access_hash, width, height, file_size, file_path, ext)
+            VALUES
+                (:photo_id, :photo_type, :dc_id, :volume_id, :local_id, :access_hash, :width, :height, :file_size, :file_path, :ext)
+        </sql>
+    </operation>
+
+    <operation name="SelectByFileLocation">
+        <sql>
+            SELECT
+                id, photo_id, photo_type, dc_id, volume_id, local_id, access_hash, width, height, file_size, file_path, ext
+            FROM
+                photo_datas
+            WHERE
+                dc_id = 2 AND volume_id = :volume_id AND local_id = :local_id AND access_hash = :access_hash
+        </sql>
+    </operation>
+
+    <operation name="SelectListByPhotoId" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, photo_id, photo_type, dc_id, volume_id, local_id, access_hash, width, height, file_size, file_path, ext
+            FROM
+                photo_datas
+            WHERE
+                photo_id = :photo_id AND local_id <> 0
+            ]]>
+        </sql>
+    </operation>
+
+</table>

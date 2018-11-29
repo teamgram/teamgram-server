@@ -1,0 +1,16 @@
+# status.toml
+
+ver = "0.0.1"
+#logPath = "/tmp/status.log"
+
+
+[server]
+addr = "0.0.0.0:13002"
+
+[discovery]
+serviceName = "status"
+nodeID = "node1"
+rPCAddr = "127.0.0.1:13002"
+etcdAddrs = ["http://127.0.0.1:2379"]
+interval = "2s"
+tTL = "10s"

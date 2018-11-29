@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="channel_message_boxes">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO channel_message_boxes
+                (sender_user_id, channel_id, channel_message_box_id, message_id, date)
+            VALUES
+                (:sender_user_id, :channel_id, :channel_message_box_id, :message_id, :date)
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageIdList" result_set="list">
+       <params>
+           <param name="idList" type="[]int32" />
+       </params>
+       <sql>
+           SELECT
+                sender_user_id, channel_id, channel_message_box_id, message_id, date
+           FROM
+                channel_message_boxes
+           WHERE
+            channel_id = :channel_id AND deleted = 0 AND channel_message_box_id IN (:idList) ORDER BY channel_message_box_id DESC
+       </sql>
+   </operation>
+
+   <operation name="SelectByMessageId">
+       <sql>
+           SELECT
+                sender_user_id, channel_id, channel_message_box_id, message_id, date
+           FROM
+                channel_message_boxes
+           WHERE
+                channel_id = :channel_id AND channel_message_box_id = :channel_message_box_id AND deleted = 0 LIMIT 1
+       </sql>
+   </operation>
+
+   <!-- // Backward -->
+   <operation name="SelectBackwardByOffsetLimit" result_set="list">
+       <params>
+           <param name="limit" type="int32" />
+       </params>
+       <sql>
+           <![CDATA[
+           SELECT
+               sender_user_id, channel_id, channel_message_box_id, message_id, date
+           FROM
+               channel_message_boxes
+           WHERE
+               channel_id = :channel_id AND channel_message_box_id < :channel_message_box_id AND deleted = 0
+           ORDER BY channel_message_box_id DESC LIMIT :limit
+           ]]>
+       </sql>
+   </operation>
+
+   <!-- // Forward -->
+    <operation name="SelectForwardByOffsetLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                sender_user_id, channel_id, channel_message_box_id, message_id, date
+            FROM
+                channel_message_boxes
+            WHERE
+                channel_id = :channel_id AND channel_message_box_id >= :channel_message_box_id AND deleted = 0
+            ORDER BY channel_message_box_id LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+</table>

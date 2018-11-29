@@ -1,0 +1,31 @@
+# auth_session.toml
+
+ver = "0.0.1"
+#logPath = "/tmp/biz_server.log"
+
+[rpcServer]
+addr = "0.0.0.0:10010"
+
+[rpcServer.rpcDiscovery]
+serviceName = "auth_session"
+nodeID = "node1"
+rPCAddr = "127.0.0.1:10010"
+etcdAddrs = ["http://127.0.0.1:2379"]
+interval = "2s"
+tTL = "10s"
+
+[cache]
+adapterName = "redis"
+config = "{\"conn\":\"127.0.0.1:6379\",\"dbNum\":\"0\"}"
+
+[[mysql]]
+name = "immaster"
+dsn = "root:@/chatengine?charset=utf8mb4"
+active = 5
+idle = 2
+
+[[mysql]]
+name = "imslave"
+dsn = "root:@/chatengine?charset=utf8mb4"
+active = 5
+idle = 2

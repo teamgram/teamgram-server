@@ -1,0 +1,42 @@
+# biz_server.toml
+
+ver = "0.0.1"
+#logPath = "/tmp/biz_server.log"
+
+serverId = 1
+dataPath = "/opt/nbfs"
+
+[rpcServer]
+addr = "0.0.0.0:10009"
+
+[rpcServer.rpcDiscovery]
+serviceName = "document"
+nodeID = "node1"
+rPCAddr = "127.0.0.1:10009"
+etcdAddrs = ["http://127.0.0.1:2379"]
+interval = "2s"
+tTL = "10s"
+
+[[redis]]
+name = "cache"
+addr = "127.0.0.1:6379"
+idle = 100
+active = 100
+dialTimeout = "1s"
+readTimeout = "1s"
+writeTimeout = "1s"
+idleTimeout = "10s"
+dbNum = "0"
+password = ""
+
+[[mysql]]
+name = "immaster"
+dsn = "root:@/chatengine?charset=utf8mb4"
+active = 5
+idle = 2
+
+[[mysql]]
+name = "imslave"
+dsn = "root:@/chatengine?charset=utf8mb4"
+active = 5
+idle = 2

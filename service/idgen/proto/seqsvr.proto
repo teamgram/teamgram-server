@@ -1,0 +1,145 @@
+// Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+//  All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Author: Benqi (wubenqi@gmail.com)
+
+syntax = "proto3";
+
+package seqsvr;
+
+option java_package = "com.zchat.engine.zproto";
+option java_outer_classname = "ZProtoSeqsvr";
+option optimize_for = CODE_SIZE;
+
+////////////////////////////////////////////////////////////////////////////////////
+// 路由表
+message IpPort {
+    string host = 1;
+    uint32 port = 2;
+}
+
+message Range {
+    uint32 id = 1;
+    uint32 size = 2;
+}
+
+message AllocSvrEntry {
+    string alloc_name = 1;
+    IpPort addr = 2;
+    repeated Range ranges = 3;
+}
+
+message SetEntry {
+    string set_name = 1;
+    repeated AllocSvrEntry allocs = 2;    // set集合
+    Range range = 3;                 // 号段范围
+}
+
+message Router {
+    uint32 version = 1;
+    // string name = 2;        // 服务名，可能会有多个seqsvr提供服务，为统一管理，提供一个唯一名字
+    repeated SetEntry sets = 2;  // set集合，1个集群分配的set
+}
+
+// 更新路由表
+// UpdateRouteTableReq -> UpdateRouteTableRsp
+message UpdateRouteTableReq {
+    Router router = 1;
+}
+
+message UpdateRouteTableRsp {
+}
+
+// 拉取路由表
+// GetRouteTableReq -> GetRouteTableRsp
+message GetRouteTableReq {
+}
+
+message GetRouteTableRsp {
+    Router router = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// 获取下一个Seq
+// GetNextSequenceReq -> SequenceRsp
+message FetchNextSequenceReq {
+    uint32 id = 1;
+    uint32 version = 2;   // 当前客户端版本号
+}
+
+// 查询当前Seq
+// GetCurrentSequenceReq -> SequenceRsp
+message GetCurrentSequenceReq {
+    uint32 id = 1;
+    uint32 version = 2;   // 当前客户端版本号
+}
+
+// 返回
+message SequenceRsp {
+    // 1. 无法提供服务
+    // 2. id不存在，仅返回路由表
+    // 3. id存在，返回sequence，路由表未更新
+    // 4. id存在，返回sequence，路由表需要更新
+    // int32  result = 1;
+    uint64 sequence = 2;  // 可能未设置
+    Router router = 3;    // 如果版本号
+}
+
+// FetchNextSequenceListReq -> SequenceListRsp
+message FetchNextSequenceListReq {
+    repeated uint32 id_list = 1;
+}
+
+// 查询当前Seq
+// GetCurrentSequenceListReq -> SequenceListRsp
+message GetCurrentSequenceListReq {
+    repeated uint32 id_list = 1;
+}
+
+message IdSeq {
+    uint32 id = 1;
+    uint64 sequence = 2;
+}
+
+// SequenceListRsp
+message SequenceListRsp {
+    repeated IdSeq sequence_list = 1;
+}
+
+// 加载max_seqs数据
+// LoadMaxSeqsDataReq -> LoadMaxSeqsDataRsp
+message LoadMaxSeqsDataReq {
+    // uint32 set_id = 1;
+    // uint32 alloc_id = 2;
+}
+
+// LoadMaxSeqsDataRsp
+message LoadMaxSeqsDataRsp {
+    bytes max_seqs = 1;
+}
+
+// 加载max_seqs数据
+// SaveMaxSeqReq -> SaveMaxSeqRsp
+message SaveMaxSeqReq {
+    // uint32 set_id = 1;
+    // uint32 alloc_id = 2;
+    uint32 section_id = 3;
+    uint64 max_seq = 4;
+}
+
+// SaveMaxSeqRsp
+message SaveMaxSeqRsp {
+    uint64 last_max_seq = 1;
+}

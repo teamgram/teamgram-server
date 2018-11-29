@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_channel_updates_state">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_channel_updates_state
+                (auth_key_id, user_id, channel_id, pts, pts2, date)
+            VALUES
+                (:auth_key_id, :user_id, :channel_id, :pts, :pts2, :date)
+        </sql>
+    </operation>
+
+    <operation name="UpdateChannelPts">
+        <sql>
+            UPDATE
+                auth_channel_updates_state
+            SET
+                pts = :pts, pts2 = :pts
+            WHERE
+                auth_key_id = :auth_key_id AND channel_id = :channel_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateChannelPts2">
+        <sql>
+            UPDATE
+                auth_channel_updates_state
+            SET
+                pts2 = :pts2
+            WHERE
+                auth_key_id = :auth_key_id AND channel_id = :channel_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByAuthId">
+        <sql>
+            SELECT
+                auth_key_id, user_id, channel_id, pts, pts2, date
+            FROM
+                auth_channel_updates_state
+            WHERE
+                auth_key_id = :auth_key_id AND channel_id = :channel_id
+        </sql>
+    </operation>
+</table>

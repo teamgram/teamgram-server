@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="channels">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO channels
+                (creator_user_id, access_hash, random_id, participant_count, title, about, broadcast, megagroup, democracy, signatures, date)
+            VALUES
+                (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :broadcast, :megagroup, :democracy, :signatures, :date)
+        </sql>
+    </operation>
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, random_id, top_message, participant_count, title, about, photo_id, link, broadcast, megagroup, democracy, signatures, admins_enabled, deactivated, version, date
+            FROM
+                channels
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdateTitle">
+        <sql>
+            UPDATE
+                channels
+            SET
+                title=:title, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdateAbout">
+        <sql>
+            UPDATE
+                channels
+            SET
+                about=:about, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdateLink">
+        <sql>
+            UPDATE
+                channels
+            SET
+                link=:link, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="SelectByLink">
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, random_id, top_message, participant_count, title, about, photo_id, link, broadcast, megagroup, democracy, signatures, admins_enabled, deactivated, version, date
+            FROM
+                channels
+            WHERE
+                link=:link
+        </sql>
+    </operation>
+    <operation name="SelectByIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, random_id, top_message, participant_count, title, about, photo_id, link, broadcast, megagroup, democracy, signatures, admins_enabled, deactivated, version, date
+            FROM
+                channels
+            WHERE
+                id IN (:idList)
+        </sql>
+    </operation>
+    <operation name="UpdateParticipantCount">
+        <sql>
+            UPDATE
+                channels
+            SET
+                participant_count = :participant_count, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdatePhotoId">
+        <sql>
+            UPDATE
+                channels
+            SET
+                photo_id=:photo_id, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdateTopMessage">
+        <sql>
+            UPDATE
+                channels
+            SET
+                top_message = :top_message
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    <operation name="UpdateAdminsEnabled">
+        <sql>
+            UPDATE
+                channels
+            SET
+                admins_enabled=:admins_enabled, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateVersion">
+        <sql>
+            UPDATE
+                channels
+            SET
+                date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateDemocracy">
+        <sql>
+            UPDATE
+                channels
+            SET
+                democracy=:democracy, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateSignatures">
+        <sql>
+            UPDATE
+                channels
+            SET
+                signatures=:signatures, date=:date, version=version+1
+            WHERE
+            id=:id
+        </sql>
+    </operation>
+
+</table>

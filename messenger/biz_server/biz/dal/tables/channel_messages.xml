@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="channel_messages">
+    <operation name="Insert">
+        <sql>
+            INSERT IGNORE INTO channel_messages
+                (channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date)
+            VALUES
+                (:channel_id, :channel_message_id, :sender_user_id, :random_id, :message_data_id, :message_type, :message_data, :has_media_unread, :edit_message, :edit_date, :views, :date)
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageIdList" result_set="list">
+       <params>
+           <param name="idList" type="[]int32" />
+       </params>
+       <sql>
+           SELECT
+                channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date
+           FROM
+                channel_messages
+           WHERE
+                channel_id = :channel_id AND deleted = 0 AND channel_message_id IN (:idList) ORDER BY channel_message_id DESC
+       </sql>
+   </operation>
+
+   <operation name="SelectByMessageId">
+       <sql>
+           SELECT
+                channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date
+           FROM
+                channel_messages
+           WHERE
+                channel_id = :channel_id AND channel_message_id = :channel_message_id AND deleted = 0 LIMIT 1
+       </sql>
+   </operation>
+
+    <operation name="SelectMessagesViews" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                channel_message_id, views
+            FROM
+                channel_messages
+            WHERE
+                channel_id = :channel_id AND channel_message_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="UpdateMessagesViews" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            UPDATE
+                channel_messages
+            SET
+                views = views + 1
+            WHERE
+                channel_id = :channel_id AND channel_message_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="SelectByRandomId">
+        <sql>
+            SELECT
+                channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date
+            FROM
+                channel_messages
+            WHERE
+                sender_user_id = :sender_user_id AND random_id = :random_id
+        </sql>
+    </operation>
+
+    <!-- // Backward -->
+   <operation name="SelectBackwardByOffsetLimit" result_set="list">
+       <params>
+           <param name="limit" type="int32" />
+       </params>
+       <sql>
+           <![CDATA[
+           SELECT
+               channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date
+           FROM
+               channel_messages
+           WHERE
+               channel_id = :channel_id AND channel_message_id < :channel_message_id AND deleted = 0
+           ORDER BY channel_message_id DESC LIMIT :limit
+           ]]>
+       </sql>
+   </operation>
+
+   <!-- // Forward -->
+    <operation name="SelectForwardByOffsetLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                channel_id, channel_message_id, sender_user_id, random_id, message_data_id, message_type, message_data, has_media_unread, edit_message, edit_date, views, date
+            FROM
+                channel_messages
+            WHERE
+                channel_id = :channel_id AND channel_message_id >= :channel_message_id AND deleted = 0
+            ORDER BY channel_message_id LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+</table>

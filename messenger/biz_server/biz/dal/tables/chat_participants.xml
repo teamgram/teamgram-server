@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_participants">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_participants
+                (chat_id, user_id, participant_type, inviter_user_id, invited_at)
+            VALUES
+                (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at)
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO chat_participants
+                (chat_id, user_id, participant_type, inviter_user_id, invited_at)
+            VALUES
+                (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at)
+            ON DUPLICATE KEY UPDATE
+                participant_type = VALUES(participant_type),
+                inviter_user_id = VALUES(inviter_user_id),
+                invited_at = VALUES(invited_at),
+                state = 0, kicked_at = 0, left_at = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, chat_id, user_id, participant_type, inviter_user_id, invited_at, state, kicked_at, left_at
+            FROM
+                chat_participants
+            WHERE
+                chat_id=:chat_id AND state = 0
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateKicked">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                state = 2, kicked_at = :kicked_at
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateLeft">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                state = 1, left_at = :kicked_at
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateParticipantType">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                participant_type=:participant_type
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+</table>

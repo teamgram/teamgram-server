@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_updates_state">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_updates_state
+                (auth_key_id, user_id, pts, pts2, qts, qts2, seq, seq2, date)
+            VALUES
+                (:auth_key_id, :user_id, :pts, :pts2, :qts, :qts2, :seq, :seq2, :date)
+        </sql>
+    </operation>
+    <operation name="UpdatePtsAndQts">
+        <sql>
+            UPDATE auth_updates_state SET pts = :pts, pts2 = :pts, qts = :qts, qts2 = :qts WHERE auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+    <operation name="UpdatePts2AndQts2">
+        <sql>
+            UPDATE auth_updates_state SET pts2 = :pts2,  qts2 = :qts2 WHERE auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+    <operation name="SelectByAuthId">
+        <sql>
+            SELECT pts, pts2, qts, qts2, seq, seq2, date FROM auth_updates_state WHERE auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+</table>

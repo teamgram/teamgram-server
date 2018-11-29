@@ -1,0 +1,90 @@
+// Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+//  All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Author: Benqi (wubenqi@gmail.com)
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.nebulaim.zproto";
+option java_outer_classname = "ZProtoPrivacyRulesData";
+option optimize_for = CODE_SIZE;
+
+package account;
+
+/**
+    inputPrivacyKeyStatusTimestamp#4f96cb18 = InputPrivacyKey;
+    inputPrivacyKeyChatInvite#bdfb0426 = InputPrivacyKey;
+    inputPrivacyKeyPhoneCall#fabadc5f = InputPrivacyKey;
+
+    privacyKeyStatusTimestamp#bc2eab30 = PrivacyKey;
+    privacyKeyChatInvite#500e6dfa = PrivacyKey;
+    privacyKeyPhoneCall#3d662b7b = PrivacyKey;
+
+    inputPrivacyValueAllowContacts#d09e07b = InputPrivacyRule;
+    inputPrivacyValueAllowAll#184b35ce = InputPrivacyRule;
+    inputPrivacyValueAllowUsers#131cc67f users:Vector<InputUser> = InputPrivacyRule;
+    inputPrivacyValueDisallowContacts#ba52007 = InputPrivacyRule;
+    inputPrivacyValueDisallowAll#d66b66c9 = InputPrivacyRule;
+    inputPrivacyValueDisallowUsers#90110467 users:Vector<InputUser> = InputPrivacyRule;
+
+    privacyValueAllowContacts#fffe1bac = PrivacyRule;
+    privacyValueAllowAll#65427b82 = PrivacyRule;
+    privacyValueAllowUsers#4d5bbe0c users:Vector<int> = PrivacyRule;
+    privacyValueDisallowContacts#f888fa1a = PrivacyRule;
+    privacyValueDisallowAll#8b73e763 = PrivacyRule;
+    privacyValueDisallowUsers#c7f49b7 users:Vector<int> = PrivacyRule;
+
+    account.privacyRules#554abb6f rules:Vector<PrivacyRule> users:Vector<User> = account.PrivacyRules;
+
+    accountDaysTTL#b8d0afdf days:int = AccountDaysTTL;
+ */
+
+//privacyKeyStatusTimestamp#bc2eab30 = PrivacyKey;
+//privacyKeyChatInvite#500e6dfa = PrivacyKey;
+//privacyKeyPhoneCall#3d662b7b = PrivacyKey;
+enum PrivacyKeyType {
+    KEY_TYPE_INVALID = 0;
+    STATUS_TIMESTAMP = 1;
+    CHAT_INVITE = 2;
+    PHONE_CALL = 3;
+}
+
+//privacyValueAllowContacts#fffe1bac = PrivacyRule;
+//privacyValueAllowAll#65427b82 = PrivacyRule;
+//privacyValueAllowUsers#4d5bbe0c users:Vector<int> = PrivacyRule;
+//privacyValueDisallowContacts#f888fa1a = PrivacyRule;
+//privacyValueDisallowAll#8b73e763 = PrivacyRule;
+//privacyValueDisallowUsers#c7f49b7 users:Vector<int> = PrivacyRule;
+enum PrivacyRuleType {
+    RULE_TYPE_INVALID = 0;
+    ALLOW_CONTACTS = 1;
+    ALLOW_ALL = 2;
+    ALLOW_USERS = 3;
+    DISALLOW_CONTACTS = 4;
+    DISALLOW_ALL = 5;
+    DISALLOW_USERS = 6;
+}
+
+message PrivacyRuleData {
+    PrivacyRuleType type = 1;
+    repeated int32 user_id_list = 2;
+}
+
+message PrivacyRulesData {
+    repeated PrivacyRuleData rules = 1;
+}
+
+

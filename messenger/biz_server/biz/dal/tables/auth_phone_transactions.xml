@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_phone_transactions">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_phone_transactions
+                (auth_key_id, phone_number, code, code_expired, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, 	created_time)
+            VALUES
+                (:auth_key_id, :phone_number, :code, :code_expired, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)
+        </sql>
+    </operation>
+    <operation name="SelectByPhoneCodeHash">
+        <sql>
+            SELECT
+                id, code, code_expired, sent_code_type, flash_call_pattern, next_code_type, attempts, state
+            FROM
+                auth_phone_transactions
+            WHERE
+                auth_key_id = :auth_key_id AND phone_number = :phone_number AND transaction_hash = :transaction_hash
+        </sql>
+    </operation>
+    <operation name="UpdateState">
+        <sql>
+            UPDATE auth_phone_transactions SET state = :state WHERE id = :id
+        </sql>
+    </operation>
+    <operation name="Delete">
+        <sql>
+            UPDATE auth_phone_transactions SET state = :state
+            WHERE
+                auth_key_id = :auth_key_id AND phone_number = :phone_number AND transaction_hash = :transaction_hash
+        </sql>
+    </operation>
+    <operation name="UpdateAttempts">
+        <sql>
+            UPDATE auth_phone_transactions SET attempts = attempts + 1 WHERE id = :id
+        </sql>
+    </operation>
+</table>

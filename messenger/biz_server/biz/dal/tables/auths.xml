@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auths">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auths (auth_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, connection_hash)
+            VALUES (:auth_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :connection_hash)
+        </sql>
+    </operation>
+    <operation name="SelectConnectionHashByAuthId">
+        <sql>
+            SELECT connection_hash FROM auths WHERE auth_id=:auth_id
+        </sql>
+    </operation>
+</table>

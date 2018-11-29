@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="sticker_sets">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO sticker_sets (sticker_set_id, access_hash) VALUES (:sticker_set_id, :access_hash)
+        </sql>
+    </operation>
+
+    <operation name="SelectAll" result_set="list">
+        <sql>
+            SELECT
+                sticker_set_id, access_hash, title, short_name, count, hash
+            FROM
+                sticker_sets
+            WHERE
+                hash > 0
+        </sql>
+    </operation>
+
+    <operation name="SelectByID">
+        <sql>
+            SELECT
+                sticker_set_id, access_hash, title, short_name, count, hash
+            FROM
+                sticker_sets
+            WHERE
+            sticker_set_id = :sticker_set_id AND access_hash = :access_hash
+        </sql>
+    </operation>
+
+    <operation name="SelectByShortName">
+        <sql>
+            SELECT
+                sticker_set_id, access_hash, title, short_name, count, hash
+            FROM
+                sticker_sets
+            WHERE
+                short_name = :short_name
+        </sql>
+    </operation>
+</table>

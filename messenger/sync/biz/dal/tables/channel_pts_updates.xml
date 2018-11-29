@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="channel_pts_updates">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO channel_pts_updates
+                (channel_id, pts, pts_count, update_type, update_data, date2)
+            VALUES
+                (:channel_id, :pts, :pts_count, :update_type, :update_data, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectLastPts">
+        <sql>
+            SELECT pts FROM channel_pts_updates WHERE channel_id = :channel_id ORDER BY pts DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtPts" result_set="list">
+        <sql>
+            SELECT
+                channel_id, pts, pts_count, update_type, update_data
+            FROM
+                channel_pts_updates
+            WHERE
+                channel_id = :channel_id AND pts > :pts ORDER BY pts
+        </sql>
+    </operation>
+</table>

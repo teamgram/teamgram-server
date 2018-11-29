@@ -1,0 +1,81 @@
+/*
+ *  Copyright (c) 2016, https://github.com/nebula-im
+ *  All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.nebulaim.zproto";
+option java_outer_classname = "ZProtoNbfs";
+option optimize_for = CODE_SIZE;
+
+import "schema.tl.sync.proto";
+
+package mtproto;
+
+message UploadPhotoFileRequest {
+    int64 ownerId = 1;
+    InputFile file = 2;
+}
+
+message GetPhotoFileDataRequest {
+    int64 photo_id = 1;
+}
+
+message PhotoDataRsp {
+    int64 photo_id = 1;
+    int64 access_hash = 2;
+    int32 date = 3;
+    repeated PhotoSize size_list =4;
+}
+
+message NbfsUploadedPhotoMedia {
+    int64 ownerId = 1;
+    TL_inputMediaUploadedPhoto media = 2;
+}
+
+
+message NbfsUploadedDocumentMedia {
+    int64 ownerId = 1;
+    TL_inputMediaUploadedDocument media = 2;
+}
+
+message DocumentId {
+    int64 id = 1;
+    int64 access_hash = 2;
+    int32 version = 3;
+}
+
+message DocumentAttributeList {
+    repeated DocumentAttribute attributes = 1;
+}
+
+message DocumentIdList {
+    repeated int64 id_list = 1;
+}
+
+message DocumentList {
+    repeated Document documents = 1;
+}
+
+service RPCNbfs {
+    rpc nbfs_uploadPhotoFile(UploadPhotoFileRequest) returns (PhotoDataRsp);
+    rpc nbfs_getPhotoFileData(GetPhotoFileDataRequest) returns (PhotoDataRsp);
+    rpc nbfs_uploadedPhotoMedia(NbfsUploadedPhotoMedia) returns (TL_messageMediaPhoto);
+    rpc nbfs_uploadedDocumentMedia(NbfsUploadedDocumentMedia) returns (TL_messageMediaDocument);
+    rpc nbfs_getDocument(DocumentId) returns (Document);
+    rpc nbfs_getDocumentList(DocumentIdList) returns (DocumentList);
+}

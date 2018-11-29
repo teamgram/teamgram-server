@@ -1,0 +1,72 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ *  Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+ *  All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto3";
+
+package mtproto;
+
+option java_package = "chat.nebula.chatengine.mtproto";
+option java_outer_classname = "MTProto";
+option optimize_for = CODE_SIZE;
+
+// import "schema.tl.core_types.proto";
+
+
+///////////////////////////////////////////////////////////////////////////////
+// rpc_drop_answer#58e4a740 req_msg_id:long = RpcDropAnswer;
+message TL_rpc_drop_answer {
+    int64 req_msg_id = 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// get_future_salts#b921bd04 num:int = FutureSalts;
+message TL_get_future_salts {
+    int32 num = 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ping#7abe77ec ping_id:long = Pong;
+message TL_ping {
+    int64 ping_id = 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ping_delay_disconnect#f3427b8c ping_id:long disconnect_delay:int = Pong;
+message TL_ping_delay_disconnect {
+    int64 ping_id = 1;
+    int32 disconnect_delay = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// destroy_session#e7512126 session_id:long = DestroySessionRes;
+message TL_destroy_session {
+    int64 session_id = 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// contest.saveDeveloperInfo#9a5f6e95 vk_id:int name:string phone_number:string age:int city:string = Bool;
+message TL_contest_saveDeveloperInfo {
+    int32 vk_id = 1;
+    string name = 2;
+    string phone_number = 3;
+    int32 age = 4;
+    string city = 5;
+}
+
