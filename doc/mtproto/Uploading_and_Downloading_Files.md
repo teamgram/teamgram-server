@@ -1,4 +1,6 @@
 # Uploading and Downloading Files
+> Forwarded from [Uploading and Downloading Files](https://core.telegram.org/api/files)
+
 When working with the API, it is sometimes necessary to send a relatively large file to the server. For example, when sending a message with a photo/video attachment or when setting the current user’s profile picture.
 
 ## Uploading files

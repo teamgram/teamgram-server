@@ -1,4 +1,5 @@
 # Error handling
+> Forwarded from [Error handling](https://core.telegram.org/api/errors)
 
 ## Error handling
 There will be errors when working with the API, and they must be correctly handled on the client.

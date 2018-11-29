@@ -1,4 +1,5 @@
 # Working with Updates
+> Forwarded from [Working with Updates](https://core.telegram.org/api/updates)
 
 When a client is being actively used, events will occur that affect the current user and that he or she must learn about as soon as possible. For example, when someone sends him or her a message. To eliminate the need for the client itself to periodically download these events, there is an update delivery mechanism in which the server sends the user notifications over one of its available connections with the client.
 

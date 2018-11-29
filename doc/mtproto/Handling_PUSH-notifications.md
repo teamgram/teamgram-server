@@ -1,4 +1,6 @@
 # Handling PUSH-notifications
+> Forwarded from [Handling PUSH-notifications](https://core.telegram.org/api/push-updates)
+
 PUSH notifications for various events related to the current user are useful when the client is not running or a server connection has not been established.
 
 ## Configuring the Application

@@ -1,4 +1,6 @@
 # Working with Different Data Centers
+> Forwarded from [Working with Different Data Centers](https://core.telegram.org/api/datacenter)
+
 
 The servers are divided into several data centers (hereinafter “DCs”) in different parts of the world.
 A complete list of proxy access points for these DCs may be obtained using help.getConfig:

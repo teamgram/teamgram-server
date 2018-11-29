@@ -1,5 +1,6 @@
 # Mobile Protocol: Detailed Description
-
+> Forwarded from [Mobile Protocol: Detailed Description](https://core.telegram.org/mtproto/description)
+>
 > As of version 4.6, major Telegram clients are using MTProto 2.0.
 > 
 >MTProto v.1.0 is deprecated and is currently being phased out.

@@ -1,4 +1,6 @@
 # User Authorization
+> Forwarded from [User Authorization](https://core.telegram.org/api/auth)
+
 Authorization is associated with a client’s encryption key identifier: auth_key_id. No additional parameters need to be passed into methods following authorization.
 
 Authorization requires that a text message containing an authorization code first be sent to the user’s phone. This may be done using the auth.sendCode method. If the message takes too long (30 seconds) to arrive at the phone, the auth.sendCall method may be invoked and passed a code identifier and a phone number, in which case the user will receive a phone call, and a synthesized voice will give him or her the code previously sent in the text message.

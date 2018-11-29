@@ -1,4 +1,6 @@
 # Calling API Methods
+> Forwarded from [Calling API Methods](https://core.telegram.org/api/invoking)
+
 ## Layers
 API中的版本控制由所谓的TL layers支持。
 > 所有的api请求

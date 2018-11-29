@@ -1,4 +1,6 @@
 # Creating an Authorization Key (Samples)
+> Forwarded from [Creating an Authorization Key (Samples)](https://core.telegram.org/mtproto/samples-auth_key)
+
 In the examples below, the TCP transport headers are omitted:
 
 > If a payload (packet) needs to be transmitted from server to client or from client to server, it is encapsulated as follows: 4 bytes are added at the front (to include the length, the sequence number, and CRC32; always divisible by 4) and 4 bytes with the packet sequence number for this TCP connection (the first packet sent is numbered 0, the next one 1, etc.), and 4 CRC32 bytes at the end (length, sequence number, and payload together).

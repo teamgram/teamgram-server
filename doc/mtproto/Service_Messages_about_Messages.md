@@ -1,4 +1,5 @@
 # Service Messages about Messages
+> Forwarded from [Service Messages about Messages](https://core.telegram.org/mtproto/service_messages_about_messages)
 
 ## Acknowledgment of Receipt
 Receipt of virtually all messages (with the exception of some purely service ones as well as the plain-text messages used in the protocol for creating an authorization key) must be acknowledged.

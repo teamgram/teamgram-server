@@ -1,4 +1,7 @@
 # Service Messages
+> Forwarded from [Service Messages](https://core.telegram.org/mtproto/service_messages)
+
+
 ## Response to an RPC query
 A response to an RPC query is normally wrapped as follows:
 

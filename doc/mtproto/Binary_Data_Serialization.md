@@ -1,4 +1,6 @@
 # Binary Data Serialization
+> Forwarded from [Binary Data Serialization](https://core.telegram.org/mtproto/serialize)
+
 MTProto operation requires that elementary and composite data types as well as queries to which such data types are passed as arguments or by which they are returned, be transmitted in binary format (i. e. serialized) .
 The TL language is used to describe the data types to be serialized.
 

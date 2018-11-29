@@ -1,5 +1,6 @@
 # MTProto Mobile Protocol
-
+> Forwarded from [MTProto Mobile Protocol](https://core.telegram.org/mtproto)
+>
 > Please feel free to check out our FAQ for the Technically Inclined.
 > 
 > Client developers are required to comply with the Security Guidelines.
