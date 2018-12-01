@@ -22,6 +22,7 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/pkg/redis_client"
 )
 
 type messagesDAO struct {
@@ -39,6 +40,7 @@ type messagesDAO struct {
 
 type MessageModel struct {
 	dao *messagesDAO
+	*redis_client.RedisPool
 	dialogCallback core.DialogCallback
 }
 
@@ -53,6 +55,7 @@ func (m *MessageModel) InstallModel() {
 	m.dao.UnreadMentionsDAO = dao.GetUnreadMentionsDAO(dao.DB_MASTER)
 	m.dao.CommonDAO = dao.GetCommonDAO(dao.DB_MASTER)
 	m.dao.UserDialogsDAO = dao.GetUserDialogsDAO(dao.DB_MASTER)
+	m.RedisPool = redis_client.GetRedisClient("cache")
 }
 
 func (m *MessageModel) RegisterCallback(cb interface{}) {

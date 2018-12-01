@@ -221,6 +221,21 @@ func (s *MessagesServiceImpl) MessagesSendMessage(ctx context.Context, request *
 		peer = base.FromInputPeer(request.GetPeer())
 	}
 
+	// handle duplicateMessage
+	hasDuplicateMessage, err := s.MessageModel.HasDuplicateMessage(md.UserId, request.GetRandomId())
+	if err != nil {
+		glog.Error("checkDuplicateMessage error - ", err)
+		return nil, err
+	} else if hasDuplicateMessage {
+		upd, err := s.MessageModel.GetDuplicateMessage(md.UserId, request.GetRandomId())
+		if err != nil {
+			glog.Error("checkDuplicateMessage error - ", err)
+			return nil, err
+		}
+		return upd, nil
+	}
+
+	// if s.MessageModel
 	// 1. draft
 	if request.GetClearDraft() {
 		s.DoClearDraft(md.UserId, md.AuthId, peer)
@@ -293,6 +308,13 @@ func (s *MessagesServiceImpl) MessagesSendMessage(ctx context.Context, request *
 			pushCB)
 
 		glog.Infof("messages.sendMessage#fa88427a - reply: %s", logger.JsonDebugData(replyUpdates))
+		if replyUpdates != nil {
+			// TODO(@benqi): if err
+			s.MessageModel.PutDuplicateMessage(md.UserId, request.GetRandomId(), replyUpdates)
+		} else {
+			// TODO(@benqi): if err
+		}
+
 		return replyUpdates, err
 	} else {
 		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")

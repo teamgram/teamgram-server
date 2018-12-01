@@ -51,7 +51,7 @@ func GetUUID() (uuid int64) {
 	return
 }
 
-var models = []CoreModel{}
+var models []CoreModel
 
 func RegisterCoreModel(model CoreModel) {
 	models = append(models, model)
