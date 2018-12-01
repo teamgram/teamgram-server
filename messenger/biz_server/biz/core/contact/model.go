@@ -51,6 +51,7 @@ type contactsDAO struct {
 	*mysql_dao.ImportedContactsDAO
 	*mysql_dao.PhoneBooksDAO
 	*mysql_dao.UsernameDAO
+	*mysql_dao.UserBlocksDAO
 }
 
 type ContactModel struct {
@@ -65,6 +66,7 @@ func (m *ContactModel) InstallModel() {
 	m.dao.ImportedContactsDAO = dao.GetImportedContactsDAO(dao.DB_MASTER)
 	m.dao.PhoneBooksDAO = dao.GetPhoneBooksDAO(dao.DB_MASTER)
 	m.dao.UsernameDAO = dao.GetUsernameDAO(dao.DB_MASTER)
+	m.dao.UserBlocksDAO = dao.GetUserBlocksDAO(dao.DB_MASTER)
 }
 
 func (m *ContactModel) RegisterCallback(cb interface{}) {
@@ -105,7 +107,7 @@ func (m *ContactModel) BackupPhoneBooks(authKeyId int64, contacts []*mtproto.Inp
 
 // check A block B
 func (m *ContactModel) CheckBlockUser(selfUserId, id int32) bool {
-	return m.dao.UserContactsDAO.SelectBlocked(selfUserId, id) != nil
+	return m.dao.UserBlocksDAO.Select(selfUserId, id) != nil
 }
 
 func init() {

@@ -121,7 +121,7 @@ func (m *userItem) ToUser() *mtproto.User {
 		user.SetStatus(makeUserStatusOnline())
 	} else {
 		user.SetSelf(false)
-		blocked := m.dao.UserContactsDAO.SelectBlocked(m.UsersDO.Id, m.selfUserId) != nil
+		blocked := m.dao.UserBlocksDAO.Select(m.UsersDO.Id, m.selfUserId) != nil
 
 		if m.UserContactsDO != nil {
 			if m.UserContactsDO.IsDeleted == 0 {

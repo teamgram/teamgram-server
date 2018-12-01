@@ -94,25 +94,30 @@ func (c contactLogic) DeleteContact(deleteId int32, mutual bool) bool {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 func (c contactLogic) BlockUser(blockId int32) bool {
-	c.dao.UserContactsDAO.UpdateBlock(1, c.selfUserId, blockId)
+	do := &dataobject.UserBlocksDO{
+		UserId:  c.selfUserId,
+		BlockId: blockId,
+		Date:    int32(time.Now().Unix()),
+	}
+	c.dao.UserBlocksDAO.InsertOrUpdate(do)
 	return true
 }
 
-func (c contactLogic) UnBlockUser(blockedId int32) bool {
-	c.dao.UserContactsDAO.UpdateBlock(0, c.selfUserId, blockedId)
+func (c contactLogic) UnBlockUser(blockId int32) bool {
+	c.dao.UserBlocksDAO.Delete(c.selfUserId, blockId)
 	return true
 }
 
 func (c contactLogic) GetBlockedList(offset, limit int32) []*mtproto.ContactBlocked {
 	// TODO(@benqi): enable offset
-	doList := c.dao.UserContactsDAO.SelectBlockedList(c.selfUserId, limit)
+	doList := c.dao.UserBlocksDAO.SelectList(c.selfUserId, limit)
 	bockedList := make([]*mtproto.ContactBlocked, 0, len(doList))
 	for _, do := range doList {
 		blocked := &mtproto.ContactBlocked{
 			Constructor: mtproto.TLConstructor_CRC32_contactBlocked,
 			Data2: &mtproto.ContactBlocked_Data{
-				UserId: do.ContactUserId,
-				Date:   do.Date2,
+				UserId: do.UserId,
+				Date:   do.Date,
 			},
 		}
 		bockedList = append(bockedList, blocked)

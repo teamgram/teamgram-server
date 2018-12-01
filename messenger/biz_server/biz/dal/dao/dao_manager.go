@@ -79,6 +79,7 @@ type MysqlDAOList struct {
 	BotCommandsDAO			*mysql_dao.BotCommandsDAO
 
 	UnreadMentionsDAO		*mysql_dao.UnreadMentionsDAO
+	UserBlocksDAO			*mysql_dao.UserBlocksDAO
 }
 
 // TODO(@benqi): 一主多从
@@ -140,6 +141,8 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.BotCommandsDAO = mysql_dao.NewBotCommandsDAO(v)
 
 		daoList.UnreadMentionsDAO = mysql_dao.NewUnreadMentionsDAO(v)
+
+		daoList.UserBlocksDAO = mysql_dao.NewUserBlocksDAO(v)
 
 		mysqlDAOManager.daoListMap[k] = daoList
 		return true
@@ -470,6 +473,15 @@ func GetUnreadMentionsDAO(dbName string) (dao *mysql_dao.UnreadMentionsDAO) {
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.UnreadMentionsDAO
+	}
+	return
+}
+
+func GetUserBlocksDAO(dbName string) (dao *mysql_dao.UserBlocksDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.UserBlocksDAO
 	}
 	return
 }

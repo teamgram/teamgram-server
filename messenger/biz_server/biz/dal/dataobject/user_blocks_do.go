@@ -17,16 +17,12 @@
 
 package dataobject
 
-type UserContactsDO struct {
-	Id               int32  `db:"id"`
-	OwnerUserId      int32  `db:"owner_user_id"`
-	ContactUserId    int32  `db:"contact_user_id"`
-	ContactPhone     string `db:"contact_phone"`
-	ContactFirstName string `db:"contact_first_name"`
-	ContactLastName  string `db:"contact_last_name"`
-	Mutual           int8   `db:"mutual"`
-	IsDeleted        int8   `db:"is_deleted"`
-	Date2            int32  `db:"date2"`
-	CreatedAt        string `db:"created_at"`
-	UpdatedAt        string `db:"updated_at"`
+type UserBlocksDO struct {
+	Id        int32  `db:"id"`
+	UserId    int32  `db:"user_id"`
+	BlockId   int32  `db:"block_id"`
+	Date      int32  `db:"date"`
+	Deleted   int8   `db:"deleted"`
+	CreatedAt string `db:"created_at"`
+	UpdatedAt string `db:"updated_at"`
 }

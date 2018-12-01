@@ -81,29 +81,6 @@
                 owner_user_id=:owner_user_id AND contact_user_id IN (:id_list) AND is_deleted = 0
         </sql>
     </operation>
-    <operation name="SelectBlockedList" result_set="list">
-        <params>
-            <param name="limit" type="int32" />
-        </params>
-        <sql>
-            SELECT
-                contact_user_id
-            FROM
-                user_contacts
-            WHERE
-                owner_user_id=:owner_user_id AND is_blocked = 1 AND is_deleted = 0 ORDER BY id LIMIT :limit
-        </sql>
-    </operation>
-    <operation name="SelectBlocked">
-        <sql>
-            SELECT
-                id
-            FROM
-                user_contacts
-            WHERE
-                owner_user_id=:owner_user_id AND contact_user_id=:contact_user_id AND is_blocked = 1 AND is_deleted = 0
-        </sql>
-    </operation>
     <operation name="UpdateContactNameById">
         <sql>
             UPDATE
@@ -145,18 +122,6 @@
                 user_contacts
             SET
                 mutual = :mutual
-            WHERE
-                contact_user_id <> 0 AND (owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id)
-            ]]>
-        </sql>
-    </operation>
-    <operation name="UpdateBlock">
-        <sql>
-            <![CDATA[
-            UPDATE
-                user_contacts
-            SET
-                is_blocked = :is_blocked
             WHERE
                 contact_user_id <> 0 AND (owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id)
             ]]>

@@ -30,6 +30,7 @@ type usersDAO struct {
 	*mysql_dao.UserContactsDAO
 	*mysql_dao.UserDialogsDAO
 	*mysql_dao.UserPasswordsDAO
+	*mysql_dao.UserBlocksDAO
 	*mysql_dao.BotsDAO
 	*mysql_dao.BotCommandsDAO
 	*mysql_dao.CommonDAO
@@ -51,6 +52,7 @@ func (m *UserModel) InstallModel() {
 	m.dao.UserContactsDAO = dao.GetUserContactsDAO(dao.DB_MASTER)
 	m.dao.UserDialogsDAO = dao.GetUserDialogsDAO(dao.DB_MASTER)
 	m.dao.UserPasswordsDAO = dao.GetUserPasswordsDAO(dao.DB_MASTER)
+	m.dao.UserBlocksDAO = dao.GetUserBlocksDAO(dao.DB_MASTER)
 	m.dao.CommonDAO = dao.GetCommonDAO(dao.DB_MASTER)
 	m.dao.BotsDAO = dao.GetBotsDAO(dao.DB_MASTER)
 	m.dao.BotCommandsDAO = dao.GetBotCommandsDAO(dao.DB_MASTER)

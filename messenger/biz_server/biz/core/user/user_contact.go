@@ -30,7 +30,7 @@ const (
 )
 
 func (m *UserModel) IsBlockedByUser(selfUserId, id int32) bool {
-	return m.dao.UserContactsDAO.SelectBlocked(selfUserId, id) != nil
+	return m.dao.UserBlocksDAO.Select(selfUserId, id) != nil
 }
 
 func (m *UserModel) GetContactUserIDList(userId int32) []int32 {

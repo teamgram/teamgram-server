@@ -279,80 +279,6 @@ func (dao *UserContactsDAO) SelectListByIdList(owner_user_id int32, id_list []in
 	return values
 }
 
-// select contact_user_id from user_contacts where owner_user_id = :owner_user_id and is_blocked = 1 and is_deleted = 0 order by id asc limit :limit
-// TODO(@benqi): sqlmap
-func (dao *UserContactsDAO) SelectBlockedList(owner_user_id int32, limit int32) []dataobject.UserContactsDO {
-	var query = "select contact_user_id from user_contacts where owner_user_id = ? and is_blocked = 1 and is_deleted = 0 order by id asc limit ?"
-	rows, err := dao.db.Queryx(query, owner_user_id, limit)
-
-	if err != nil {
-		errDesc := fmt.Sprintf("Queryx in SelectBlockedList(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): 不使用反射
-		err := rows.StructScan(&v)
-		if err != nil {
-			errDesc := fmt.Sprintf("StructScan in SelectBlockedList(_), error: %v", err)
-			glog.Error(errDesc)
-			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-		}
-		values = append(values, v)
-	}
-
-	err = rows.Err()
-	if err != nil {
-		errDesc := fmt.Sprintf("rows in SelectBlockedList(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	return values
-}
-
-// select id from user_contacts where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id and is_blocked = 1 and is_deleted = 0
-// TODO(@benqi): sqlmap
-func (dao *UserContactsDAO) SelectBlocked(owner_user_id int32, contact_user_id int32) *dataobject.UserContactsDO {
-	var query = "select id from user_contacts where owner_user_id = ? and contact_user_id = ? and is_blocked = 1 and is_deleted = 0"
-	rows, err := dao.db.Queryx(query, owner_user_id, contact_user_id)
-
-	if err != nil {
-		errDesc := fmt.Sprintf("Queryx in SelectBlocked(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserContactsDO{}
-	if rows.Next() {
-		err = rows.StructScan(do)
-		if err != nil {
-			errDesc := fmt.Sprintf("StructScan in SelectBlocked(_), error: %v", err)
-			glog.Error(errDesc)
-			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-		}
-	} else {
-		return nil
-	}
-
-	err = rows.Err()
-	if err != nil {
-		errDesc := fmt.Sprintf("rows in SelectBlocked(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	return do
-}
-
 // update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdateContactNameById(contact_first_name string, contact_last_name string, id int32) int64 {
@@ -434,28 +360,6 @@ func (dao *UserContactsDAO) UpdateMutual(mutual int8, owner_user_id int32, conta
 	rows, err := r.RowsAffected()
 	if err != nil {
 		errDesc := fmt.Sprintf("RowsAffected in UpdateMutual(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	return rows
-}
-
-// update user_contacts set is_blocked = :is_blocked where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
-// TODO(@benqi): sqlmap
-func (dao *UserContactsDAO) UpdateBlock(is_blocked int8, owner_user_id int32, contact_user_id int32) int64 {
-	var query = "update user_contacts set is_blocked = ? where contact_user_id != 0 and (owner_user_id = ? and contact_user_id = ?)"
-	r, err := dao.db.Exec(query, is_blocked, owner_user_id, contact_user_id)
-
-	if err != nil {
-		errDesc := fmt.Sprintf("Exec in UpdateBlock(_), error: %v", err)
-		glog.Error(errDesc)
-		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
-	}
-
-	rows, err := r.RowsAffected()
-	if err != nil {
-		errDesc := fmt.Sprintf("RowsAffected in UpdateBlock(_), error: %v", err)
 		glog.Error(errDesc)
 		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
 	}
