@@ -3,9 +3,9 @@
     <operation name="Insert">
         <sql>
             INSERT IGNORE INTO message_boxes
-                (user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2)
+                (user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2)
             VALUES
-                (:user_id, :user_message_box_id, :dialog_id, :dialog_message_id, :message_data_id, :message_box_type, :reply_to_msg_id, :mentioned, :media_unread, :date2)
+                (:user_id, :user_message_box_id, :dialog_id, :dialog_message_id, :message_data_id, :pts, :message_box_type, :reply_to_msg_id, :mentioned, :media_unread, :date2)
         </sql>
     </operation>
 
@@ -15,7 +15,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -26,7 +26,7 @@
     <operation name="SelectByMessageId">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -40,7 +40,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -51,7 +51,7 @@
     <operation name="SelectByMessageDataId">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -67,7 +67,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -85,7 +85,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -117,7 +117,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -129,7 +129,7 @@
     <operation name="SelectDialogMessageListByMessageId" result_set="list">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -141,7 +141,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -167,7 +167,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE
@@ -204,7 +204,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
+                user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2
             FROM
                 message_boxes
             WHERE

@@ -29,6 +29,10 @@ const (
 	CONTACT 			= 3			// 联系人
 )
 
+func (m *UserModel) IsBlockedByUser(selfUserId, id int32) bool {
+	return m.dao.UserContactsDAO.SelectBlocked(selfUserId, id) != nil
+}
+
 func (m *UserModel) GetContactUserIDList(userId int32) []int32 {
 	contactsDOList := m.dao.UserContactsDAO.SelectUserContacts(userId)
 	idList := make([]int32, 0, len(contactsDOList))

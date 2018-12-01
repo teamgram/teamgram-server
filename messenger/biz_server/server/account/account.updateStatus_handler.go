@@ -32,38 +32,48 @@ func (s *AccountServiceImpl) AccountUpdateStatus(ctx context.Context, request *m
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("account.updateStatus#6628562c - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	var status *mtproto.UserStatus
+	// var status *mtproto.UserStatus
 
 	offline := mtproto.FromBool(request.GetOffline())
 	if offline {
-		// pc端：离开应用程序激活状态（点击其他应用程序）
-		statusOffline := &mtproto.TLUserStatusOffline{Data2: &mtproto.UserStatus_Data{
-			WasOnline: int32(time.Now().Unix()),
-		}}
-		status = statusOffline.To_UserStatus()
-	} else {
+		//	// pc端：离开应用程序激活状态（点击其他应用程序）
+		//	statusOffline := &mtproto.TLUserStatusOffline{Data2: &mtproto.UserStatus_Data{
+		//		WasOnline: int32(time.Now().Unix()),
+		//	}}
+		//	status = statusOffline.To_UserStatus()
+		//} else {
 		// pc端：客户端应用程序激活（点击客户端窗口）
 		now := time.Now().Unix()
-		statusOnline := &mtproto.TLUserStatusOnline{Data2: &mtproto.UserStatus_Data{
-			Expires: int32(now + 5*30),
-		}}
-		status = statusOnline.To_UserStatus()
+		//statusOnline := &mtproto.TLUserStatusOnline{Data2: &mtproto.UserStatus_Data{
+		//	Expires: int32(now + 60),
+		//}}
+		//status = statusOnline.To_UserStatus()
 		s.UserModel.UpdateUserStatus(md.UserId, now)
 	}
-
-	updateUserStatus := &mtproto.TLUpdateUserStatus{Data2: &mtproto.Update_Data{
-		UserId: md.UserId,
-		Status: status,
-	}}
-	updates := &mtproto.TLUpdateShort{Data2: &mtproto.Updates_Data{
-		Update: updateUserStatus.To_Update(),
-		Date:   int32(time.Now().Unix()),
-	}}
 
 	// push to other contacts.
 	contactIDList := s.UserModel.GetContactUserIDList(md.UserId)
 	for _, id := range contactIDList {
-		_ = id
+		blocked := s.UserModel.IsBlockedByUser(md.UserId, id)
+		if blocked {
+			continue
+		}
+
+		//if !s.AccountModel.CheckShowStatus(md.UserId, id,true) {
+		//	continue
+		//}
+
+		// TODO(@benqi): dialog or contact???
+		status := s.UserModel.GetUserStatus2(id, md.UserId, true, false)
+
+		updateUserStatus := &mtproto.TLUpdateUserStatus{Data2: &mtproto.Update_Data{
+			UserId: md.UserId,
+			Status: status,
+		}}
+		updates := &mtproto.TLUpdateShort{Data2: &mtproto.Updates_Data{
+			Update: updateUserStatus.To_Update(),
+			Date:   int32(time.Now().Unix()),
+		}}
 		sync_client.GetSyncClient().PushUpdates(id, updates.To_Updates())
 	}
 

@@ -317,6 +317,42 @@ func (dao *UserContactsDAO) SelectBlockedList(owner_user_id int32, limit int32) 
 	return values
 }
 
+// select id from user_contacts where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id and is_blocked = 1 and is_deleted = 0
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectBlocked(owner_user_id int32, contact_user_id int32) *dataobject.UserContactsDO {
+	var query = "select id from user_contacts where owner_user_id = ? and contact_user_id = ? and is_blocked = 1 and is_deleted = 0"
+	rows, err := dao.db.Queryx(query, owner_user_id, contact_user_id)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Queryx in SelectBlocked(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	defer rows.Close()
+
+	do := &dataobject.UserContactsDO{}
+	if rows.Next() {
+		err = rows.StructScan(do)
+		if err != nil {
+			errDesc := fmt.Sprintf("StructScan in SelectBlocked(_), error: %v", err)
+			glog.Error(errDesc)
+			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+		}
+	} else {
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		errDesc := fmt.Sprintf("rows in SelectBlocked(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return do
+}
+
 // update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdateContactNameById(contact_first_name string, contact_last_name string, id int32) int64 {

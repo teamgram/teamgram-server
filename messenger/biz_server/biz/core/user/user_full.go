@@ -60,7 +60,7 @@ func (m *UserModel) GetUserFull(selfId, userId int32) *mtproto.UserFull {
 		PeerType: base.PEER_USER,
 		PeerId:   userId,
 	}
-	userFull.SetNotifySettings(m.notifySettingCallback.GetNotifySettings(selfId, peer))
+	userFull.SetNotifySettings(m.accountCallback.GetNotifySettings(selfId, peer))
 
 	userFull.SetBotInfo(m.GetBotInfo(userId))
 	userFull.SetCommonChatsCount(0)

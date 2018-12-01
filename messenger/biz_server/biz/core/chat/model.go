@@ -36,7 +36,7 @@ type chatsDAO struct {
 type ChatModel struct {
 	dao           *chatsDAO
 	photoCallback core.PhotoCallback
-	notifySetting core.NotifySettingCallback
+	accountCallback core.AccountCallback
 }
 
 func (m *ChatModel) RegisterCallback(cb interface{}) {
@@ -44,9 +44,9 @@ func (m *ChatModel) RegisterCallback(cb interface{}) {
 	case core.PhotoCallback:
 		glog.Info("chatModel - register core.PhotoCallback")
 		m.photoCallback = cb.(core.PhotoCallback)
-	case core.NotifySettingCallback:
-		glog.Info("chatModel - register core.NotifySettingCallback")
-		m.notifySetting = cb.(core.NotifySettingCallback)
+	case core.AccountCallback:
+		glog.Info("chatModel - register core.AccountCallback")
+		m.accountCallback = cb.(core.AccountCallback)
 	}
 }
 
@@ -122,7 +122,7 @@ func (m *ChatModel) GetChatFullBySelfId(selfUserId int32, chatData *chatLogicDat
 		PeerType: base.PEER_CHAT,
 		PeerId:   chatData.GetChatId(),
 	}
-	notifySettings := m.notifySetting.GetNotifySettings(selfUserId, peer)
+	notifySettings := m.accountCallback.GetNotifySettings(selfUserId, peer)
 
 	chatFull := &mtproto.TLChatFull{Data2: &mtproto.ChatFull_Data{
 		Id:             chatData.GetChatId(),

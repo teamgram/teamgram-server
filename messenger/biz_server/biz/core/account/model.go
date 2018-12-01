@@ -21,6 +21,7 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
+	"github.com/golang/glog"
 )
 
 type accountsDAO struct {
@@ -53,6 +54,22 @@ func (m *AccountModel) InstallModel() {
 }
 
 func (m *AccountModel) RegisterCallback(cb interface{}) {
+}
+
+func (m *AccountModel) CheckShowStatus(selfId, userId int32, isContact bool) bool {
+	logic := m.MakePrivacyLogic(selfId)
+	glog.Info("selfId: ", selfId, ", seenId: ", userId, ", isContact: ", isContact, ", logic: ", logic)
+	return logic.GetPrivacy(PrivacyKeyType_STATUS_TIMESTAMP).IsAllow(userId, isContact)
+}
+
+func (m *AccountModel) CheckAllowChatInvites(selfId, userId int32, isContact bool) bool {
+	logic := m.MakePrivacyLogic(userId)
+	return logic.GetPrivacy(PrivacyKeyType_CHAT_INVITE).IsAllow(userId, isContact)
+}
+
+func (m *AccountModel) CheckAllowCalls(selfId, userId int32, isContact bool) bool {
+	logic := m.MakePrivacyLogic(userId)
+	return logic.GetPrivacy(PrivacyKeyType_PHONE_CALL).IsAllow(userId, isContact)
 }
 
 func init() {

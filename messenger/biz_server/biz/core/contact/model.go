@@ -103,6 +103,11 @@ func (m *ContactModel) BackupPhoneBooks(authKeyId int64, contacts []*mtproto.Inp
 	}
 }
 
+// check A block B
+func (m *ContactModel) CheckBlockUser(selfUserId, id int32) bool {
+	return m.dao.UserContactsDAO.SelectBlocked(selfUserId, id) != nil
+}
+
 func init() {
 	core.RegisterCoreModel(&ContactModel{dao: &contactsDAO{}})
 }

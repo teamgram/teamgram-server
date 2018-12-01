@@ -40,7 +40,7 @@ func (s *ContactsServiceImpl) ContactsGetStatuses(ctx context.Context, request *
 	for _, c := range cList {
 		contactStatus := &mtproto.TLContactStatus{Data2: &mtproto.ContactStatus_Data{
 			UserId: c.ContactUserId,
-			Status: s.UserModel.GetUserStatus(c.ContactUserId),
+			Status: s.UserModel.GetUserStatus2(md.UserId, c.ContactUserId, true, false),
 		}}
 		statusList.Datas = append(statusList.Datas, contactStatus.To_ContactStatus())
 	}

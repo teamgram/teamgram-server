@@ -280,3 +280,78 @@ func (m *PrivacyRulesData) PickAllUserIdList() (idList []int32) {
 	}
 	return
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+func (m *PrivacyRulesData) IsAllow(userId int32, isContact bool) bool {
+	sizeRules := len(m.GetRules())
+
+	if sizeRules == 0 {
+		return true
+	}
+
+	firstRule := m.Rules[0]
+	switch firstRule.GetType() {
+	case PrivacyRuleType_ALLOW_ALL:
+		if sizeRules == 1 {
+			return true
+		}
+		rule := m.Rules[1]
+		switch rule.GetType() {
+		case PrivacyRuleType_DISALLOW_USERS:
+			for _, id := range rule.GetUserIdList() {
+				if userId == id {
+					return false
+				}
+			}
+		default:
+			glog.Error("invalid privacyRule - ", userId)
+		}
+		return true
+	case PrivacyRuleType_ALLOW_CONTACTS:
+		if sizeRules == 1 {
+			return isContact
+		}
+
+		for _, rule := range m.Rules[1:] {
+			switch rule.GetType() {
+			case PrivacyRuleType_ALLOW_USERS:
+				for _, id := range rule.GetUserIdList() {
+					if userId == id {
+						return true
+					}
+				}
+			case PrivacyRuleType_DISALLOW_USERS:
+				for _, id := range rule.GetUserIdList() {
+					if userId == id {
+						return false
+					}
+				}
+			default:
+				glog.Error("invalid privacyRule - ", userId)
+			}
+		}
+		return isContact
+	case PrivacyRuleType_DISALLOW_ALL:
+		if sizeRules == 1 {
+			return false
+		}
+
+		rule := m.Rules[1]
+		switch rule.GetType() {
+		case PrivacyRuleType_ALLOW_USERS:
+			for _, id := range rule.GetUserIdList() {
+				if userId == id {
+					return true
+				}
+			}
+		default:
+			glog.Error("invalid privacyRule - ", userId)
+		}
+		return false
+	default:
+		// TODO(@benqi): db error
+		glog.Error("invalid privacyRule - ", userId)
+		return true
+	}
+	return true
+}

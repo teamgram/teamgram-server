@@ -24,6 +24,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/pkg/crypto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
+	"github.com/golang/glog"
 )
 
 const (
@@ -120,28 +121,40 @@ func (m *userItem) ToUser() *mtproto.User {
 		user.SetStatus(makeUserStatusOnline())
 	} else {
 		user.SetSelf(false)
+		blocked := m.dao.UserContactsDAO.SelectBlocked(m.UsersDO.Id, m.selfUserId) != nil
+
 		if m.UserContactsDO != nil {
 			if m.UserContactsDO.IsDeleted == 0 {
 				user.SetContact(true)
 				user.SetMutualContact(util.Int8ToBool(m.UserContactsDO.Mutual))
 				user.SetFirstName(m.UserContactsDO.ContactFirstName)
 				user.SetLastName(m.UserContactsDO.ContactLastName)
+				user.SetStatus(m.GetUserStatus(m.selfUserId, m.UserPresencesDO, true, blocked))
 			} else {
 				user.SetContact(false)
 				user.SetMutualContact(false)
+				user.SetStatus(m.GetUserStatus(m.selfUserId, m.UserPresencesDO, false, blocked))
 			}
 
 			user.SetPhone(m.UsersDO.Phone)
 		} else {
 			user.SetContact(false)
 			user.SetMutualContact(false)
+
+			glog.Info(m)
+			status := m.GetUserStatus(m.selfUserId, m.UserPresencesDO, false, blocked)
+
+			glog.Info(status)
+			user.SetStatus(status)
+			// user.SetStatus(m.GetUserStatus(m.UserId, m.UserPresencesDO, false, false))
 			// user.SetFirstName(m.UsersDO.FirstName)
 			// user.SetLastName(m.UsersDO.LastName)
 		}
 
-		if m.UserPresencesDO != nil {
-			user.SetStatus(makeUserStatus(m.UserPresencesDO))
-		}
+		// if m.UserPresencesDO != nil {
+		// user.SetStatus(m.GetUserStatus(m.UserId, m.UserPresencesDO, false, false)
+		// makeUserStatus(m.UserPresencesDO))
+		// }
 	}
 
 	user.SetUsername(m.usernameCallback.GetAccountUsername(m.UsersDO.Id))

@@ -66,12 +66,6 @@ type MysqlDAOList struct {
 	StickerSetsDAO  *mysql_dao.StickerSetsDAO
 	StickerPacksDAO *mysql_dao.StickerPacksDAO
 
-	ChannelsDAO            *mysql_dao.ChannelsDAO
-	ChannelParticipantsDAO *mysql_dao.ChannelParticipantsDAO
-	ChannelMessageBoxesDAO *mysql_dao.ChannelMessageBoxesDAO
-	ChannelPtsUpdatesDAO   *mysql_dao.ChannelPtsUpdatesDAO
-	ChannelMediaUnreadDAO  *mysql_dao.ChannelMediaUnreadDAO
-	ChannelMessagesDAO     *mysql_dao.ChannelMessagesDAO
 	MessageDatasDAO        *mysql_dao.MessageDatasDAO
 
 	UnregisteredContactsDAO *mysql_dao.UnregisteredContactsDAO
@@ -132,13 +126,6 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.PhoneCallSessionsDAO = mysql_dao.NewPhoneCallSessionsDAO(v)
 		daoList.StickerSetsDAO = mysql_dao.NewStickerSetsDAO(v)
 		daoList.StickerPacksDAO = mysql_dao.NewStickerPacksDAO(v)
-
-		daoList.ChannelsDAO = mysql_dao.NewChannelsDAO(v)
-		daoList.ChannelParticipantsDAO = mysql_dao.NewChannelParticipantsDAO(v)
-		daoList.ChannelMessageBoxesDAO = mysql_dao.NewChannelMessageBoxesDAO(v)
-		daoList.ChannelPtsUpdatesDAO = mysql_dao.NewChannelPtsUpdatesDAO(v)
-		daoList.ChannelMediaUnreadDAO = mysql_dao.NewChannelMediaUnreadDAO(v)
-		daoList.ChannelMessagesDAO = mysql_dao.NewChannelMessagesDAO(v)
 
 		daoList.MessageDatasDAO = mysql_dao.NewMessageDatasDAO(v)
 
@@ -401,60 +388,6 @@ func GetStickerPacksDAO(dbName string) (dao *mysql_dao.StickerPacksDAO) {
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.StickerPacksDAO
-	}
-	return
-}
-
-func GetChannelsDAO(dbName string) (dao *mysql_dao.ChannelsDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelsDAO
-	}
-	return
-}
-
-func GetChannelParticipantsDAO(dbName string) (dao *mysql_dao.ChannelParticipantsDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelParticipantsDAO
-	}
-	return
-}
-
-func GetChannelPtsUpdatesDAO(dbName string) (dao *mysql_dao.ChannelPtsUpdatesDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelPtsUpdatesDAO
-	}
-	return
-}
-
-func GetChannelMessageBoxesDAO(dbName string) (dao *mysql_dao.ChannelMessageBoxesDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelMessageBoxesDAO
-	}
-	return
-}
-
-func GetChannelMessagesDAO(dbName string) (dao *mysql_dao.ChannelMessagesDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelMessagesDAO
-	}
-	return
-}
-
-func GetChannelMediaUnreadDAO(dbName string) (dao *mysql_dao.ChannelMediaUnreadDAO) {
-	daoList := GetMysqlDAOList(dbName)
-	// err := mysqlDAOManager.daoListMap[dbName]
-	if daoList != nil {
-		dao = daoList.ChannelMediaUnreadDAO
 	}
 	return
 }

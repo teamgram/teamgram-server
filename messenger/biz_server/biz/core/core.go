@@ -79,9 +79,16 @@ func InstallCoreModels(serverId int32, inited func()) []CoreModel {
 	return models
 }
 
-type NotifySettingCallback interface {
+type AccountCallback interface {
+	CheckAllowCalls(selfId, userId int32, isContact bool) bool
+	CheckAllowChatInvites(selfId, userId int32, isContact bool) bool
+	CheckShowStatus(selfId, userId int32, isContact bool) bool
 	GetNotifySettings(selfUserId int32, peer *base.PeerUtil) *mtproto.PeerNotifySettings
 }
+
+//type NotifySettingCallback interface {
+//	GetNotifySettings(selfUserId int32, peer *base.PeerUtil) *mtproto.PeerNotifySettings
+//}
 
 type PhotoCallback interface {
 	GetUserProfilePhoto(photoId int64) *mtproto.UserProfilePhoto

@@ -24,6 +24,7 @@ type MessageBoxesDO struct {
 	DialogId         int64  `db:"dialog_id"`
 	DialogMessageId  int32  `db:"dialog_message_id"`
 	MessageDataId    int64  `db:"message_data_id"`
+	Pts              int32  `db:"pts"`
 	MessageBoxType   int8   `db:"message_box_type"`
 	ReplyToMsgId     int32  `db:"reply_to_msg_id"`
 	Mentioned        int8   `db:"mentioned"`

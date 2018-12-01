@@ -33,6 +33,7 @@ type usersDAO struct {
 	*mysql_dao.BotsDAO
 	*mysql_dao.BotCommandsDAO
 	*mysql_dao.CommonDAO
+	*mysql_dao.UserPrivacysDAO
 }
 
 type UserModel struct {
@@ -40,7 +41,8 @@ type UserModel struct {
 	contactCallback       core.ContactCallback
 	photoCallback         core.PhotoCallback
 	usernameCallback      core.UsernameCallback
-	notifySettingCallback core.NotifySettingCallback
+	// notifySettingCallback core.NotifySettingCallback
+	accountCallback       core.AccountCallback
 }
 
 func (m *UserModel) InstallModel() {
@@ -52,6 +54,7 @@ func (m *UserModel) InstallModel() {
 	m.dao.CommonDAO = dao.GetCommonDAO(dao.DB_MASTER)
 	m.dao.BotsDAO = dao.GetBotsDAO(dao.DB_MASTER)
 	m.dao.BotCommandsDAO = dao.GetBotCommandsDAO(dao.DB_MASTER)
+	m.dao.UserPrivacysDAO = dao.GetUserPrivacysDAO(dao.DB_MASTER)
 }
 
 func (m *UserModel) RegisterCallback(cb interface{}) {
@@ -65,9 +68,12 @@ func (m *UserModel) RegisterCallback(cb interface{}) {
 	case core.UsernameCallback:
 		glog.Info("userModel - register core.UsernameCallback")
 		m.usernameCallback = cb.(core.UsernameCallback)
-	case core.NotifySettingCallback:
-		glog.Info("userModel - register core.NotifySettingCallback")
-		m.notifySettingCallback = cb.(core.NotifySettingCallback)
+	//case core.NotifySettingCallback:
+	//	glog.Info("userModel - register core.NotifySettingCallback")
+	//	m.notifySettingCallback = cb.(core.NotifySettingCallback)
+	case core.AccountCallback:
+		glog.Info("userModel - register core.AccountCallback")
+		m.accountCallback = cb.(core.AccountCallback)
 	}
 }
 
