@@ -24,9 +24,9 @@ import (
 func checkRpcUpdatesType(tl mtproto.TLObject) bool {
 	switch tl.(type) {
 	case *mtproto.TLAccountRegisterDevice,
-		*mtproto.TLAccountUnregisterDevice:
-		// *mtproto.TLAccountRegisterDeviceLayer74,
-		// *mtproto.TLAccountUnregisterDeviceLayer74:
+		*mtproto.TLAccountUnregisterDevice,
+		*mtproto.TLAccountRegisterDeviceLayer71,
+		*mtproto.TLAccountUnregisterDeviceLayer71:
 		// push
 
 		return false

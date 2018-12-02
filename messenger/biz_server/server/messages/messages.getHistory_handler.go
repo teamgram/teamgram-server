@@ -279,6 +279,8 @@ func calcLoadHistoryType(isChannel bool, offsetId, offsetDate, addOffset, limit,
 
 	if addOffset == 0 {
 		return kLoadTypeBackward
+	} else if addOffset == -1 {
+		return kLoadTypeBackward
 	} else if addOffset == -limit+5 {
 		return kLoadTypeFirstAroundDate
 	} else if addOffset == -limit/2 {
@@ -290,7 +292,7 @@ func calcLoadHistoryType(isChannel bool, offsetId, offsetDate, addOffset, limit,
 			return kLoadTypeFirstUnread
 		}
 	}
-	return kLoadTypeBackward
+	return kLoadTypeForward
 }
 
 func (s *MessagesServiceImpl) loadHistoryMessage(loadType int, selfUserId int32, peer *base.PeerUtil, offsetId, offsetDate, addOffset, limit, maxId, minId int32) []*mtproto.Message {
@@ -308,12 +310,13 @@ func (s *MessagesServiceImpl) loadHistoryMessage(loadType int, selfUserId int32,
 		// LOAD_HISTORY_TYPE_FORWARD and LOAD_HISTORY_TYPE_BACKWARD
 		// 按升序排
 		messages1 := s.MessageModel.LoadForwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, -addOffset)
-		for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+		for i, j := 0, len(messages1)-1; i < j; i, j = i+1, j-1 {
 			messages1[i], messages1[j] = messages1[j], messages1[i]
 		}
 		messages = append(messages, messages1...)
 		// 降序
 		messages2 := s.MessageModel.LoadBackwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, limit+addOffset)
+		glog.Info(messages2)
 		messages = append(messages, messages2...)
 	case kLoadTypeForward:
 		messages = s.MessageModel.LoadForwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, -addOffset)
@@ -373,6 +376,7 @@ func (s *MessagesServiceImpl) getHistoryMessages(md *grpc_util.RpcMetadata, requ
 	return
 }
 
+// request: {"peer":{"constructor":2072935910,"data2":{"user_id":2,"access_hash":5166926832673632934}},"offset_id":2834,"limit":50}
 // request: {"peer":{"constructor":2072935910,"data2":{"user_id":5,"access_hash":1006843769775067136}},"offset_id":1,"add_offset":-25,"limit":50}
 // request: {"peer":{"constructor":2072935910,"data2":{"user_id":4,"access_hash":405858233924775823}},"offset_id":2147483647,"offset_date":2147483647,"limit":1,"max_id":2147483647,"min_id":1}
 // request: {"peer":{"constructor":2072935910,"data2":{"user_id":4,"access_hash":405858233924775823}},"offset_id":2147483647,"offset_date":2147483647,"limit":1,"max_id":2147483647,"min_id":1}
