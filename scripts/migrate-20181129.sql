@@ -1,5 +1,5 @@
 ALTER TABLE `message_boxes` ADD `pts` INT NOT NULL DEFAULT '0' AFTER `message_data_id`;
-RENAME TABLE `chatengine`.`blocks` TO `chatengine`.`user_blocks`;
+-- RENAME TABLE `chatengine`.`blocks` TO `chatengine`.`user_blocks`;
 DROP TABLE `channels`, `channel_admin_logs`, `channel_media_unread`, `channel_messages`, `channel_message_boxes`, `channel_participants`, `channel_pts_updates`;
 DROP TABLE `secret_messages`;
 DROP TABLE `auth_channel_updates_state`;
@@ -41,10 +41,6 @@ ALTER TABLE `user_blocks`
 ALTER TABLE `user_blocks`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 -- drop is_blocked
 ALTER TABLE `user_contacts`
