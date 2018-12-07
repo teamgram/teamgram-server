@@ -82,6 +82,10 @@ func (m *MessageModel) GetDuplicateMessage(senderUserId int32, clientRandomId in
 
 	defer conn.Close()
 	if cacheData, err := redis.Bytes(conn.Do("GET", k)); err != nil {
+		if err.Error() == "redigo: nil returned" {
+			return nil, nil
+		}
+
 		glog.Errorf("getDuplicateMessage - GET {%s}, error: %s", k, err)
 		return nil, err
 	} else {
