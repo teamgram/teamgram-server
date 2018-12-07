@@ -90,7 +90,7 @@ func (c *redisStatusClient) SetSessionOnlineTTL(userId int32, authKeyId int64, s
 	defer conn.Close()
 
 	// TODO(@benqi): expired
-	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), authKeyId); err != nil {
+	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("push_%d", authKeyId)); err != nil {
 		glog.Errorf("setOnline - SADD {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
@@ -112,7 +112,7 @@ func (c *redisStatusClient) SetSessionOnline(userId int32, authKeyId int64, serv
 	defer conn.Close()
 
 	// TODO(@benqi): expired
-	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), authKeyId); err != nil {
+	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
 		glog.Errorf("setOnline - SADD {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
@@ -133,7 +133,7 @@ func (c *redisStatusClient) SetSessionOffline(userId int32, serverId int32, auth
 	conn := c.redis.Get()
 	defer conn.Close()
 
-	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), authKeyId); err != nil {
+	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
 		glog.Errorf("setOnline - SREM {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
@@ -151,7 +151,7 @@ func (c *redisStatusClient) SetSessionOfflineTTL(userId int32, serverId int32, a
 	conn := c.redis.Get()
 	defer conn.Close()
 
-	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), authKeyId); err != nil {
+	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("push_%d", authKeyId)); err != nil {
 		glog.Errorf("setOnline - SREM {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
@@ -208,8 +208,8 @@ func (c *redisStatusClient) GetUsersOnlineSessionsList(userIdList []int32) (user
 
 	var sessionKeys = make([]interface{}, 0, 2*len(keys))
 	for i := 0; i < len(keys); i++ {
-		sessionKeys = append(sessionKeys, fmt.Sprintf("%s_push_%s", onlineKeyPrefix, keys[i]))
-		sessionKeys = append(sessionKeys, fmt.Sprintf("%s_update_%s", onlineKeyPrefix, keys[i]))
+		sessionKeys = append(sessionKeys, fmt.Sprintf("%s_%s", onlineKeyPrefix, keys[i]))
+		// sessionKeys = append(sessionKeys, fmt.Sprintf("%s_update_%s", onlineKeyPrefix, keys[i]))
 		// keys[i] = fmt.Sprintf("%s_push_%d", onlineKeyPrefix, authKeyId)
 	}
 
