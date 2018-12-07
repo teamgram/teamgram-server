@@ -231,8 +231,9 @@ func (s *MessagesServiceImpl) MessagesSendMessage(ctx context.Context, request *
 		if err != nil {
 			glog.Error("checkDuplicateMessage error - ", err)
 			return nil, err
+		} else if upd != nil {
+			return upd, nil
 		}
-		return upd, nil
 	}
 
 	// if s.MessageModel

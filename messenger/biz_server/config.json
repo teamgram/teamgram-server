@@ -18,7 +18,7 @@
         "constructor": 414687501,
         "data2": {
           "id": 2,
-          "ip_address": "192.168.2.186",
+          "ip_address": "192.168.1.150",
           "port": 12345
         }
       }

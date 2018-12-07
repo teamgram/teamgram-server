@@ -279,6 +279,8 @@ func (s *MessagesServiceImpl) MessagesSendMedia(ctx context.Context, request *mt
 		if err != nil {
 			glog.Error("checkDuplicateMessage error - ", err)
 			return nil, err
+		} else if upd != nil {
+			return upd, nil
 		}
 		return upd, nil
 	}
