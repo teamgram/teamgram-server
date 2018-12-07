@@ -633,6 +633,14 @@ func (c *clientSessionHandler) onNewSessionCreated(connID ClientConnID, cntl *zr
 	// c.sendToClient(connID, md, 0, true, newSessionCreated)
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, true, newSessionCreated))
 	// TODO(@benqi): if not receive new_session_created confirm, will resend the message.
+
+	if c.sessionType == kSessionGeneric {
+		for _, c2 := range c.manager.sessions {
+			if c2.sessionType == kSessionGeneric && c2.sessionId != c.sessionId {
+				delete(c.manager.sessions, c2.sessionId)
+			}
+		}
+	}
 }
 
 func (c *clientSessionHandler) onCloseSession() {
