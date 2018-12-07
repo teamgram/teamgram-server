@@ -47,6 +47,7 @@ func (s *authSessionServer) Initialize() error {
 
 	// 初始化mysql_client、redis_client
 	// redis_client.InstallRedisClientManager(Conf.Redis)
+	// redis_client.InstallRedisClientManager(Conf.Redis)
 	mysql_client.InstallMysqlClientManager(Conf.Mysql)
 	// cacheName, cacheConfig string
 	s.rpcServer = grpc_util.NewRpcServer(Conf.RpcServer.Addr, &Conf.RpcServer.RpcDiscovery)

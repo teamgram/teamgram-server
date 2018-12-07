@@ -30,6 +30,44 @@ import "schema.tl.crc32.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Error <--
+//  + TL_error
+//
+message Error_Data {
+    int32 code = 1;
+    string text = 2;
+}
+
+message Error {
+    TLConstructor constructor = 1;
+    Error_Data data2 = 2;
+}
+
+// error#c4b9f9bb code:int text:string = Error;
+message TL_error {
+    Error_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Null <--
+//  + TL_null
+//
+message Null_Data {
+}
+
+message Null {
+    TLConstructor constructor = 1;
+    Null_Data data2 = 2;
+}
+
+// null#56730bcc = Null;
+message TL_null {
+    Null_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Bool <--
 //  + TL_boolFalse
 //  + TL_boolTrue
@@ -68,44 +106,6 @@ message True {
 // true#3fedd339 = True;
 message TL_true {
     True_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Error <--
-//  + TL_error
-//
-message Error_Data {
-    int32 code = 1;
-    string text = 2;
-}
-
-message Error {
-    TLConstructor constructor = 1;
-    Error_Data data2 = 2;
-}
-
-// error#c4b9f9bb code:int text:string = Error;
-message TL_error {
-    Error_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Null <--
-//  + TL_null
-//
-message Null_Data {
-}
-
-message Null {
-    TLConstructor constructor = 1;
-    Null_Data data2 = 2;
-}
-
-// null#56730bcc = Null;
-message TL_null {
-    Null_Data data2 = 2;
 }
 
 

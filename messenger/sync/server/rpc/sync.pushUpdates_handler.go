@@ -29,12 +29,12 @@ import (
 func (s *SyncServiceImpl) SyncPushUpdates(ctx context.Context, request *mtproto.TLSyncPushUpdates) (*mtproto.Bool, error) {
     glog.Infof("sync.pushUpdates#5c612649 - request: {%s}", logger.JsonDebugData(request))
 
-    err := s.processUpdatesRequest(request.GetUserId(), request.GetUpdates())
+    isMessage, err := s.processUpdatesRequest(request.GetUserId(), request.GetUpdates())
     if err == nil {
         userId := request.GetUserId()
         cntl := zrpc.NewController()
         pushData := request.GetUpdates().Encode()
-        s.pushUpdatesToSession(syncTypeUser, userId, 0, 0, cntl, pushData, 0)
+        s.pushUpdatesToSession(syncTypeUser, userId, 0, 0, cntl, pushData, 0, isMessage)
     } else {
         glog.Error(err)
         return mtproto.ToBool(false), nil

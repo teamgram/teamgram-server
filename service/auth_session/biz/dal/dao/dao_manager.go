@@ -34,6 +34,7 @@ type MysqlDAOList struct {
 	AuthOpLogsDAO *mysql_dao.AuthOpLogsDAO
 	AuthsDAO      *mysql_dao.AuthsDAO
 	AuthUsersDAO  *mysql_dao.AuthUsersDAO
+	DevicesDAO    *mysql_dao.DevicesDAO
 }
 
 // TODO(@benqi): 一主多从
@@ -54,6 +55,7 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.AuthOpLogsDAO = mysql_dao.NewAuthOpLogsDAO(v)
 		daoList.AuthsDAO = mysql_dao.NewAuthsDAO(v)
 		daoList.AuthUsersDAO = mysql_dao.NewAuthUsersDAO(v)
+		daoList.DevicesDAO = mysql_dao.NewDevicesDAO(v)
 
 		mysqlDAOManager.daoListMap[k] = daoList
 		return true
@@ -104,6 +106,15 @@ func GetAuthUsersDAO(dbName string) (dao *mysql_dao.AuthUsersDAO) {
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.AuthUsersDAO
+	}
+	return
+}
+
+func GetDevicesDAO(dbName string) (dao *mysql_dao.DevicesDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.DevicesDAO
 	}
 	return
 }

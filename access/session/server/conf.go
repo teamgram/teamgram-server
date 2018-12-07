@@ -43,7 +43,7 @@ type sessionConfig struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./session.toml", "config path")
+	flag.StringVar(&confPath, "conf", "/Users/wubenqi/go/src/github.com/nebula-chat/chatengine/access/session/session.toml", "config path")
 }
 
 func InitializeConfig() (err error) {

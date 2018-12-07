@@ -30,10 +30,11 @@ import (
 )
 
 type cacheAuthValue struct {
-	AuthKey  []byte
-	UserId   int32
-	Layer    int32
-	SaltList []*mtproto.TLFutureSalt
+	AuthKey       []byte
+	UserId        int32
+	Layer         int32
+	pushSessionId int64
+	SaltList      []*mtproto.TLFutureSalt
 }
 
 // Impl cache.Value interface
@@ -114,6 +115,33 @@ func (c *cacheAuthManager) GetUserID(authKeyId int64) (int32, bool) {
 	}
 }
 
+func (c *cacheAuthManager) GetPushSessionID(userId int32, authKeyId int64) (int64, bool) {
+	var (
+		cacheK = util.Int64ToString(authKeyId)
+	)
+
+	if v, ok := c.cache.Peek(cacheK); !ok {
+		glog.Error("not found authKeyId, bug???")
+		return 0, false
+	} else {
+		cv, _ := v.(*cacheAuthValue)
+		if cv.pushSessionId == 0 {
+			id, err := c.client.SessionGetPushSessionId(context.Background(), &mtproto.TLSessionGetPushSessionId{
+				UsreId:    userId,
+				AuthKeyId: authKeyId,
+				TokenType: 7,
+			})
+			if err != nil {
+				glog.Error(err)
+				return 0, false
+			}
+			cv.pushSessionId = id.GetData2().GetV()
+		}
+
+		return cv.pushSessionId, true
+	}
+}
+
 func (c *cacheAuthManager) GetApiLayer(authKeyId int64) (int32, bool) {
 	var (
 		cacheK = util.Int64ToString(authKeyId)
@@ -150,6 +178,18 @@ func (c *cacheAuthManager) PutUserID(authKeyId int64, userId int32) {
 
 	if v, ok := c.cache.Peek(cacheK); ok {
 		v.(*cacheAuthValue).UserId = userId
+	} else {
+		glog.Error("not found authKeyId, bug???")
+	}
+}
+
+func (c *cacheAuthManager) PutPushSessionID(authKeyId, sessionId int64) {
+	var (
+		cacheK = util.Int64ToString(authKeyId)
+	)
+
+	if v, ok := c.cache.Peek(cacheK); ok {
+		v.(*cacheAuthValue).pushSessionId = sessionId
 	} else {
 		glog.Error("not found authKeyId, bug???")
 	}
@@ -199,6 +239,22 @@ func (c *cacheAuthManager) GetFutureSaltList(authKeyId int64) ([]*mtproto.TLFutu
 	return nil, false
 }
 
+func getCachePushSessionID(userId int32, authKeyId int64) int64 {
+	if _cacheAuthManager == nil {
+		panic("not init cacheAuthManager.")
+	}
+
+	sessionId, _ := _cacheAuthManager.GetPushSessionID(userId, authKeyId)
+	return sessionId
+}
+
+func putCachePushSessionId(authKeyId, sessionId int64) {
+	if _cacheAuthManager == nil {
+		panic("not init cacheAuthManager.")
+	}
+
+	_cacheAuthManager.PutPushSessionID(authKeyId, sessionId)
+}
 
 func getCacheUserID(authKeyId int64) int32 {
 	if _cacheAuthManager == nil {
@@ -275,7 +331,7 @@ func getOrFetchNewSalt(authKeyId int64) (salt, lastInvalidSalt *mtproto.TLFuture
 		if cacheSalts[0].GetValidUntil() >= int32(time.Now().Unix()) {
 			return cacheSalts[0], nil, nil
 		} else {
-			return cacheSalts[0], cacheSalts[1], nil
+			return cacheSalts[1], cacheSalts[0], nil
 		}
 	}
 }

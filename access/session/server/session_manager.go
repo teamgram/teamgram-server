@@ -111,7 +111,7 @@ func (s *sessionManager) onSyncRpcResultData(authKeyId, clientMsgId int64, cntl 
 	return sessList.OnSyncRpcResultDataArrived(clientMsgId, cntl, rawData)
 }
 
-func (s *sessionManager) onSyncData(authKeyId int64, cntl *zrpc.ZRpcController) error {
+func (s *sessionManager) onSyncData(authKeyId int64, isPush bool, cntl *zrpc.ZRpcController) error {
 	glog.Infof("onSyncData - receive data: {auth_key_id: %d, md: %s}",
 		authKeyId,
 		cntl)
@@ -131,7 +131,7 @@ func (s *sessionManager) onSyncData(authKeyId int64, cntl *zrpc.ZRpcController) 
 		sessList, _ = vv.(*clientSessionManager)
 	}
 
-	return sessList.OnSyncDataArrived(cntl, &messageData{obj: obj})
+	return sessList.OnSyncDataArrived(cntl, isPush, &messageData{obj: obj})
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

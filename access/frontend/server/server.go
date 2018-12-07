@@ -174,7 +174,7 @@ func (s *frontendServer) OnServerMessageDataArrived(conn *net2.TcpConnection, ms
 
 func (s *frontendServer) OnServerConnectionClosed(conn *net2.TcpConnection) {
 	glog.Infof("onServerConnectionClosed - {peer: %s}", conn)
-	// s.sendClientClosed(conn)
+	s.sendClientClosed(conn)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -374,23 +374,48 @@ func (s *frontendServer) onServerEncryptedRawMessage(ctx *connContext, conn *net
 	cntl.SetReceiveTime(time.Now().UnixNano() / 1e6)
 
 	return s.client.SendKetamaMessage("session", util.Int64ToString(mmsg.AuthKeyId()), cntl, zmsg, func(addr string) {
-		// s.checkAndSendClientNew(ctx, conn, addr, mmsg.AuthKeyId(), md)
+		s.checkAndSendClientNew(ctx, conn, addr, mmsg.AuthKeyId(), mtproto.TRANSPORT_TCP)
 	})
 }
 
-func (s *frontendServer) checkAndSendClientNew(ctx *connContext, conn *net2.TcpConnection, kaddr string, authKeyId int64) error {
+func (s *frontendServer) checkAndSendClientNew(ctx *connContext, conn *net2.TcpConnection, kaddr string, authKeyId int64, connType int32) error {
 	var err error
 	if ctx.sessionAddr == "" {
-		//clientNew := &zproto.ZProtoSessionClientNew{
-		//	// MTPMessage: mmsg,
-		//}
-		//err = s.client.SendMessageToAddress("session", kaddr, s.newMetadata(conn), clientNew)
-		//if err == nil {
-		//	ctx.sessionAddr = kaddr
-		//	ctx.authKeyId = authKeyId
-		//} else {
-		//	glog.Error(err)
-		//}
+		clientNew := mtproto.NewTLSessionClientCreated()
+		clientNew.SetAuthKeyId(authKeyId)
+		clientNew.SetConnType(connType)
+		clientNew.SetClientConnId(int64(conn.GetConnID()))
+
+		cntl := zrpc.NewController()
+
+		// cntl.SetAttachment(mmsg.Payload)
+		cntl.SetServiceName("session")
+		cntl.SetMethodName(proto.MessageName(clientNew))
+
+		var id int64
+		id, _ = s.idgen.GetUUID()
+		cntl.SetLogId(id)
+		id, _ = s.idgen.GetUUID()
+		cntl.SetCorrelationId(id)
+		id, _ = s.idgen.GetUUID()
+		cntl.SetTraceId(id)
+		id, _ = s.idgen.GetUUID()
+		cntl.SetSpanId(id)
+
+		cntl.SetAuthKeyId(authKeyId)
+		cntl.SetServerId(Conf.ServerId)
+		cntl.SetClientConnId(int64(conn.GetConnID()))
+		cntl.SetClientAddr(conn.RemoteAddr().String())
+		cntl.SetFrom("frontend")
+		cntl.SetReceiveTime(time.Now().UnixNano() / 1e6)
+
+		err = s.client.SendMessageToAddress("session", kaddr, cntl, clientNew)
+		if err == nil {
+			ctx.sessionAddr = kaddr
+			ctx.authKeyId = authKeyId
+		} else {
+			glog.Error(err)
+		}
 	} else {
 		// TODO(@benqi): check ctx.sessionAddr == kaddr
 	}
@@ -408,5 +433,33 @@ func (s *frontendServer) sendClientClosed(conn *net2.TcpConnection) {
 		return
 	}
 
-	//s.client.SendKetamaMessage("session", utils.Int64ToString(ctx.authKeyId), s.newMetadata(conn), &zproto.ZProtoSessionClientClosed{}, nil)
+	clientClosed := mtproto.NewTLSessionClientClosed()
+	clientClosed.SetAuthKeyId(ctx.authKeyId)
+	// clientClosed.SetConnType(connType)
+	clientClosed.SetClientConnId(int64(conn.GetConnID()))
+
+	cntl := zrpc.NewController()
+
+	// cntl.SetAttachment(mmsg.Payload)
+	cntl.SetServiceName("session")
+	cntl.SetMethodName(proto.MessageName(clientClosed))
+
+	var id int64
+	id, _ = s.idgen.GetUUID()
+	cntl.SetLogId(id)
+	id, _ = s.idgen.GetUUID()
+	cntl.SetCorrelationId(id)
+	id, _ = s.idgen.GetUUID()
+	cntl.SetTraceId(id)
+	id, _ = s.idgen.GetUUID()
+	cntl.SetSpanId(id)
+
+	cntl.SetAuthKeyId(ctx.authKeyId)
+	cntl.SetServerId(Conf.ServerId)
+	cntl.SetClientConnId(int64(conn.GetConnID()))
+	cntl.SetClientAddr(conn.RemoteAddr().String())
+	cntl.SetFrom("frontend")
+	cntl.SetReceiveTime(time.Now().UnixNano() / 1e6)
+
+	s.client.SendKetamaMessage("session", util.Int64ToString(ctx.authKeyId), cntl, clientClosed, nil)
 }

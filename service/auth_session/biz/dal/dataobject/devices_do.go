@@ -15,29 +15,18 @@
 
 // Author: Benqi (wubenqi@gmail.com)
 
-package server
+package dataobject
 
-import (
-	"fmt"
-	"testing"
-	"time"
-)
-
-func TestClientSessionManager(t *testing.T) {
-	s := newClientSessionManager(100000)
-	s.Start()
-
-	fmt.Println("ready.")
-	for i := 0; i < 10; i++ {
-		s.onSessionData(&sessionData{ClientConnID{1, 1, 1, time.Now().Unix()}, nil, []byte{1}})
-	}
-
-	s.Stop()
-}
-
-
-func CheckClassID(classId int32) bool {
-	var registers2 = map[int32]int32{}
-	_, ok := registers2[classId]
-	return ok
+type DevicesDO struct {
+	Id         int64  `db:"id"`
+	AuthKeyId  int64  `db:"auth_key_id"`
+	UserId     int32  `db:"user_id"`
+	TokenType  int8   `db:"token_type"`
+	Token      string `db:"token"`
+	AppSandbox int8   `db:"app_sandbox"`
+	Secret     string `db:"secret"`
+	OtherUids  string `db:"other_uids"`
+	State      int8   `db:"state"`
+	CreatedAt  string `db:"created_at"`
+	UpdatedAt  string `db:"updated_at"`
 }

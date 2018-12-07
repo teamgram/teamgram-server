@@ -33,7 +33,7 @@ func (s *SyncServiceImpl) SyncPushRpcResult(ctx context.Context, request *mtprot
     cntl := zrpc.NewController()
     pushData := request.GetResult()
     serverId := request.GetServerId()
-    s.pushUpdatesToSession(syncTypeRpcResult, 0, authKeyId, clientMsgId, cntl, pushData, serverId)
+    s.pushUpdatesToSession(syncTypeRpcResult, 0, authKeyId, clientMsgId, cntl, pushData, serverId, false)
     glog.Infof("sync.pushRpcResult#1bf9b15e - reply: {true}",)
     return mtproto.ToBool(true), nil
 }

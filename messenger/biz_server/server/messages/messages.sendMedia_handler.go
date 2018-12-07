@@ -269,6 +269,20 @@ func (s *MessagesServiceImpl) MessagesSendMedia(ctx context.Context, request *mt
 		peer = base.FromInputPeer(request.GetPeer())
 	}
 
+	// handle duplicateMessage
+	hasDuplicateMessage, err := s.MessageModel.HasDuplicateMessage(md.UserId, request.GetRandomId())
+	if err != nil {
+		glog.Error("checkDuplicateMessage error - ", err)
+		return nil, err
+	} else if hasDuplicateMessage {
+		upd, err := s.MessageModel.GetDuplicateMessage(md.UserId, request.GetRandomId())
+		if err != nil {
+			glog.Error("checkDuplicateMessage error - ", err)
+			return nil, err
+		}
+		return upd, nil
+	}
+
 	// 1. draft
 	if request.GetClearDraft() {
 		s.DoClearDraft(md.UserId, md.AuthId, peer)
@@ -324,6 +338,13 @@ func (s *MessagesServiceImpl) MessagesSendMedia(ctx context.Context, request *mt
 		resultCB,
 		syncNotMeCB,
 		pushCB)
+
+	if replyUpdates != nil {
+		// TODO(@benqi): if err
+		s.MessageModel.PutDuplicateMessage(md.UserId, request.GetRandomId(), replyUpdates)
+	} else {
+		// TODO(@benqi): if err
+	}
 
 	glog.Infof("messages.sendMedia#c8f16791 - reply: %s", logger.JsonDebugData(replyUpdates))
 	return replyUpdates, err

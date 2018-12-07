@@ -31,7 +31,7 @@ func (s *SyncServiceImpl) SyncSyncChannelUpdates(ctx context.Context, request *m
     md := grpc_util.RpcMetadataFromIncoming(ctx)
     glog.Infof("ync.syncChannelUpdate - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    err := s.processChannelUpdatesRequest(request.GetChannelId(), request.GetUpdates())
+    isMessage, err := s.processChannelUpdatesRequest(request.GetChannelId(), request.GetUpdates())
     if err == nil {
         userId := md.UserId
         authKeyId := request.GetAuthKeyId()
@@ -39,9 +39,9 @@ func (s *SyncServiceImpl) SyncSyncChannelUpdates(ctx context.Context, request *m
         pushData := request.GetUpdates().Encode()
         serverId := request.GetServerId()
         if request.GetServerId() == 0 {
-            s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0)
+            s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0, isMessage)
         } else {
-            s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId)
+            s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId, isMessage)
         }
     } else {
         glog.Error(err)

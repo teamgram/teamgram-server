@@ -20,20 +20,21 @@ package rpc
 import (
     "github.com/golang/glog"
     "golang.org/x/net/context"
-    "github.com/nebula-chat/chatengine/mtproto"
+    "github.com/nebula-chat/chatengine/pkg/grpc_util"
     "github.com/nebula-chat/chatengine/pkg/logger"
-    "github.com/nebula-chat/chatengine/mtproto/rpc"
+    "github.com/nebula-chat/chatengine/mtproto"
 )
 
-// sync.pushChannelUpdates channel_id:int user_id:int updates:Updates = Bool;
-func (s *SyncServiceImpl) SyncPushChannelUpdates(ctx context.Context, request *mtproto.TLSyncPushChannelUpdates) (*mtproto.Bool, error) {
-    glog.Infof("sync.pushChannelUpdates - request: {%s}", logger.JsonDebugData(request))
+// session.getPushSessionId usre_id:int auth_key_id:long token_type:int = Int64;
+func (s *SessionServiceImpl) SessionGetPushSessionId(ctx context.Context, request *mtproto.TLSessionGetPushSessionId) (*mtproto.Int64, error) {
+    md := grpc_util.RpcMetadataFromIncoming(ctx)
+    glog.Infof("session.getPushSessionId - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    userId := request.GetUserId()
-    cntl := zrpc.NewController()
-    pushData := request.GetUpdates().Encode()
-    s.pushUpdatesToSession(syncTypeUser, userId, 0, 0, cntl, pushData, 0, false)
+    sessionId := s.AuthSessionModel.GetPushSessionId(request.GetUsreId(), request.GetAuthKeyId(), request.GetTokenType())
+    reply := &mtproto.TLLong{Data2: &mtproto.Int64_Data{
+        V: sessionId,
+    }}
 
-    glog.Infof("sync.pushChannelUpdates - reply: {true}",)
-    return mtproto.ToBool(true), nil
+    glog.Infof("session.getPushSessionId - reply: {%s}", logger.JsonDebugData(reply))
+    return reply.To_Int64(), nil
 }

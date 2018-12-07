@@ -90,3 +90,20 @@ func GetLangCode(authKeyId int64) string {
 
 	return langCode.GetData2().GetV()
 }
+
+func GetPushSessionId(userId int32, authKeyId int64) int64 {
+	request := &mtproto.TLSessionGetPushSessionId{
+		UsreId:    userId,
+		AuthKeyId: authKeyId,
+		TokenType: 7,
+	}
+
+	sessionId, err := authSessionInstance.client.SessionGetPushSessionId(context.Background(), request)
+
+	if err != nil {
+		glog.Error(err)
+		return 0
+	}
+
+	return sessionId.GetData2().GetV()
+}

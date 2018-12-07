@@ -78,3 +78,16 @@ func getUUID() int64 {
 func setOnline(userId int32, authKeyId int64, serverId, layer int32) {
 	util.GAppInstance.(*SessionServer).status.SetSessionOnline(userId, authKeyId, serverId, layer)
 }
+
+func setOnlineTTL(userId int32, authKeyId int64, serverId, layer, ttl int32) {
+	util.GAppInstance.(*SessionServer).status.SetSessionOnlineTTL(userId, authKeyId, serverId, layer, ttl)
+}
+
+func setOffline(userId int32, authKeyId int64, serverId int32) {
+	util.GAppInstance.(*SessionServer).status.SetSessionOffline(userId, serverId, authKeyId)
+}
+
+func setOfflineTTL(userId int32, authKeyId int64, serverId int32) {
+	util.GAppInstance.(*SessionServer).status.SetSessionOfflineTTL(userId, serverId, authKeyId)
+}
+

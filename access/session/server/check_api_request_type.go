@@ -23,25 +23,17 @@ import (
 
 func checkRpcUpdatesType(tl mtproto.TLObject) bool {
 	switch tl.(type) {
-	case *mtproto.TLAccountRegisterDevice,
-		*mtproto.TLAccountUnregisterDevice,
-		*mtproto.TLAccountRegisterDeviceLayer71,
-		*mtproto.TLAccountUnregisterDeviceLayer71:
-		// push
-
-		return false
-
 	case *mtproto.TLUploadSaveFilePart,
-		*mtproto.TLUploadSaveBigFilePart:
+		 *mtproto.TLUploadSaveBigFilePart:
 
 		// upload connection
 		return false
 
 	case *mtproto.TLUploadGetFile,
-		*mtproto.TLUploadGetWebFile,
-		*mtproto.TLUploadGetCdnFile,
-		*mtproto.TLUploadReuploadCdnFile,
-		*mtproto.TLUploadGetCdnFileHashes:
+		 *mtproto.TLUploadGetWebFile,
+		 *mtproto.TLUploadGetCdnFile,
+		 *mtproto.TLUploadReuploadCdnFile,
+		 *mtproto.TLUploadGetCdnFileHashes:
 
 		// download
 		return false
@@ -54,18 +46,16 @@ func checkRpcUpdatesType(tl mtproto.TLObject) bool {
 	return true
 }
 
-func checkRpcPushType(tl mtproto.TLObject) bool {
-	switch tl.(type) {
-	case *mtproto.TLAccountRegisterDevice,
-		*mtproto.TLAccountUnregisterDevice:
-		// *mtproto.TLAccountRegisterDeviceLayer74,
-		// *mtproto.TLAccountUnregisterDeviceLayer74:
-		// push
-
-		return true
-	}
-	return false
-}
+//func checkRpcPushType(tl mtproto.TLObject) bool {
+//	switch tl.(type) {
+//	case *mtproto.TLAccountRegisterDevice,
+//		 *mtproto.TLAccountUnregisterDevice,
+//		 *mtproto.TLAccountRegisterDeviceLayer71,
+//		 *mtproto.TLAccountUnregisterDeviceLayer71:
+//		return true
+//	}
+//	return false
+//}
 
 // TL_auth_exportedAuthorization
 // TL_auth_exportAuthorization
@@ -162,3 +152,28 @@ func checkRpcDownloadRequest(tl mtproto.TLObject) bool {
 	}
 	return false
 }
+
+func getSessionType(method mtproto.TLObject) int {
+	var sType = kSessionUnknown
+
+	// TODO(@benqi): check sessionType temp and genericMedia
+	switch method.(type) {
+	case *mtproto.TLUploadGetCdnFile,
+		*mtproto.TLUploadGetCdnFileHashes,
+		*mtproto.TLUploadGetFile,
+		*mtproto.TLUploadGetFileHashes,
+		*mtproto.TLUploadGetWebFile:
+		sType = kSessionDownload
+	case *mtproto.TLUploadSaveFilePart,
+		*mtproto.TLUploadSaveBigFilePart,
+		*mtproto.TLUploadReuploadCdnFile:
+		sType = kSessionUpload
+	default:
+		sType = kSessionGeneric
+	}
+
+	return sType
+}
+
+//func getSessionType(method mtproto.TLObject) int {
+//}

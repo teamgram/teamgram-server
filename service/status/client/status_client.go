@@ -24,14 +24,16 @@ import (
 
 const (
 	ONLINE_TIMEOUT       = 60 // 15秒
-	CHECK_ONLINE_TIMEOUT = 70 // 17秒, 15+2秒的误差
+	// CHECK_ONLINE_TIMEOUT = 70 // 17秒, 15+2秒的误差
 	// onlineKeyPrefix = "online"		//
 )
 
 type StatusClient interface {
 	Initialize(config string) error
 	SetSessionOnline(userId int32, authKeyId int64, serverId, layer int32) error
+	SetSessionOnlineTTL(userId int32, authKeyId int64, serverId, layer int32, ttl int32) error
 	SetSessionOffline(userId int32, serverId int32, authKeyId int64) error
+	SetSessionOfflineTTL(userId int32, serverId int32, authKeyId int64) error
 	GetUserOnlineSessions(userId int32) (*status.SessionEntryList, error)
 	GetUsersOnlineSessionsList(userIdList []int32) (*status.UsersSessionEntryList, error)
 }

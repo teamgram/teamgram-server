@@ -121,22 +121,22 @@ func (s *SessionServer) Destroy() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // TcpConnectionCallback
 func (s *SessionServer) OnServerNewConnection(conn *net2.TcpConnection) {
-	glog.Infof("OnNewConnection %v", conn.RemoteAddr())
+	glog.Infof("onNewConnection %v", conn.RemoteAddr())
 }
 
 func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cntl *zrpc.ZRpcController, msg proto.Message) error {
-	glog.Infof("OnServerMessageDataArrived - receive data: {peer: %s, cntl: %s, msg: %s}", conn, cntl.RpcMeta, msg)
+	glog.Infof("onServerMessageDataArrived - receive data: {peer: %s, cntl: %s, msg: %s}", conn, cntl.RpcMeta, msg)
 	switch msg.(type) {
 	case *mtproto.TLSessionClientCreated:
-		// glog.Info("onSessionClientNew - sessionClientNew: ", conn)
-		// return s.sessionManager.onSessionClientNew(conn.GetConnID(), md, msg.(*zproto.ZProtoSessionClientNew))
+		glog.Info("onSessionClientNew - sessionClientNew: ", conn)
+		return s.sessionManager.onSessionClientNew(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientCreated))
 	case *mtproto.TLSessionMessageData:
 		return s.sessionManager.onSessionData(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionMessageData))
 	case *mtproto.TLSessionClientClosed:
-		// glog.Info("onSessionClientClosed - sessionClientClosed: ", conn)
-		// return s.sessionManager.onSessionClientClosed(conn.GetConnID(), md, msg.(*zproto.ZProtoSessionClientClosed))
+		glog.Info("onSessionClientClosed - sessionClientClosed: ", conn)
+		return s.sessionManager.onSessionClientClosed(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientClosed))
 	case *mtproto.TLPushConnectToSessionServer:
-		glog.Infof("onSyncData - request(ConnectToSessionServerReq): {%v}", msg)
+		glog.Infof("onPushConnectToSessionServer - request(ConnectToSessionServerReq): {%v}", msg)
 		pushSessionServerConnected := &mtproto.TLPushSessionServerConnected{Data2: &mtproto.ServerConnected_Data{
 			SessionServerId: getServerID(),
 			ServerName:      "session",
@@ -158,8 +158,9 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 		zrpc.SendMessageByConn(conn, cntl, mBool)
 	case *mtproto.TLPushPushUpdatesData:
 		pushData, _ := msg.(*mtproto.TLPushPushUpdatesData)
-
-		err := s.sessionManager.onSyncData(pushData.GetAuthKeyId(), cntl)
+		glog.Info("pushData - ", pushData)
+		isPush := pushData.GetIsPush() == 1
+		err := s.sessionManager.onSyncData(pushData.GetAuthKeyId(), isPush, cntl)
 		var mBool *mtproto.Bool
 		if err != nil {
 			mBool = mtproto.ToBool(false)

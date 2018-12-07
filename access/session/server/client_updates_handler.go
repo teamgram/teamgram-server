@@ -23,20 +23,26 @@ import (
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"reflect"
+	"time"
 )
 
 const (
 	kConnUnknown = 0
 	kTcpConn     = 1
 	kHttpConn    = 2
+	kPushConn    = 3
 )
 
 type clientUpdatesHandler struct {
 	session         *clientSessionHandler
+	pushSession     *clientSessionHandler
 	syncMessages    []*pendingMessage
 	connState       int
 	connType        int
 	tcpConnID       ClientConnID
+	rpcConnID       ClientConnID
+	pushConnID      ClientConnID
 	httpWaitConnIDs *list.List
 }
 
@@ -50,8 +56,13 @@ func newClientUpdatesHandler() *clientUpdatesHandler {
 }
 
 func (c *clientUpdatesHandler) String() string {
-	return fmt.Sprintf("{sess: %s, conn_state: %d, conn_type: %d, tcp_conn_id: %s}",
-		c.session, c.connState, c.connType, c.tcpConnID)
+	return fmt.Sprintf("{sess: %s, conn_state: %d, conn_type: %d, tcp_conn_id: %s, push_session: %s, push_conn_id: %s}",
+		c.session,
+		c.connState,
+		c.connType,
+		c.tcpConnID,
+		c.pushSession,
+		c.pushConnID)
 }
 
 func (c *clientUpdatesHandler) SubscribeUpdates(sess *clientSessionHandler, connID ClientConnID) error {
@@ -69,6 +80,7 @@ func (c *clientUpdatesHandler) SubscribeUpdates(sess *clientSessionHandler, conn
 			c.session.sendPendingMessagesToClient(connID, cntl, c.syncMessages)
 			c.syncMessages = []*pendingMessage{}
 		}
+		glog.Info("subscribeUpdates - c: ", c)
 	} else if connID.connType == mtproto.TRANSPORT_HTTP {
 		for e := c.httpWaitConnIDs.Front(); e != nil; e = e.Next() {
 			connID2, _ := e.Value.(ClientConnID)
@@ -90,27 +102,71 @@ func (c *clientUpdatesHandler) SubscribeUpdates(sess *clientSessionHandler, conn
 	return nil
 }
 
-func (c *clientUpdatesHandler) getUpdatesConnID() *ClientConnID {
+func (c *clientUpdatesHandler) Subscribe2Updates(sess *clientSessionHandler, connID ClientConnID) error {
+	// TODO(@benqi): clear
+	glog.Infof("subscribe2Updates -- {last_connID: {%s}, last_sess: {%s}, connID: {%s}}, sess: {%s}",
+		c.tcpConnID, c.session, connID, sess)
+
+	// if connID.connType == mtproto.TRANSPORT_TCP {
+		c.pushConnID = connID
+		c.connState = kTcpConn
+		c.pushSession = sess
+
+		//if len(c.syncMessages) > 0 {
+		//	cntl := zrpc.NewController()
+		//	c.pushSession.sendPendingMessagesToClient(connID, cntl, c.syncMessages)
+		//	c.syncMessages = []*pendingMessage{}
+		//}
+	// }
+
+	glog.Info("subscribe2Updates - c: ", c)
+	return nil
+}
+
+func (c *clientUpdatesHandler) getUpdatesConnID() (*ClientConnID, bool) {
 	if c.connState == kTcpConn {
-		return &c.tcpConnID
+		if c.session != nil && c.pushSession != nil {
+			if c.session.statusSyncTime + 60 > time.Now().Unix() {
+				glog.Info("select updates")
+				return &c.tcpConnID, false
+			} else {
+				glog.Info("select push")
+				return &c.pushConnID, true
+			}
+		} else if c.session != nil {
+			glog.Info("select updates")
+			return &c.tcpConnID, false
+		} else if c.pushSession != nil {
+			glog.Info("select push")
+			return &c.pushConnID, true
+		} else {
+		}
 	} else if c.connState == kHttpConn {
 		e := c.httpWaitConnIDs.Front()
 		if e != nil {
 			connID, _ := e.Value.(ClientConnID)
 			c.httpWaitConnIDs.Remove(e)
-			return &connID
-			// return &e.Value.(ClientConnID)
+			return &connID, false
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func (c *clientUpdatesHandler) UnSubscribeUpdates(connID ClientConnID) {
 	// TODO(@benqi): clear
 
 	if connID.connType == mtproto.TRANSPORT_TCP {
-		c.tcpConnID = connID
-		c.connState = kConnUnknown
+		if c.tcpConnID.Equal(connID) {
+			c.session = nil
+			// c.tcpConnID = connID
+		} else if c.pushConnID.Equal(connID) {
+			// frontendConnID == connID.frontendConnID && c.pushConnID.clientConnID == connID.clientConnID {
+			c.pushSession = nil
+			// c.pushConnID
+		}
+		if c.session == nil && c.pushSession == nil {
+			c.connState = kConnUnknown
+		}
 	} else if connID.connType == mtproto.TRANSPORT_HTTP {
 		for e := c.httpWaitConnIDs.Front(); e != nil; e = e.Next() {
 			connID2, _ := e.Value.(ClientConnID)
@@ -127,30 +183,129 @@ func (c *clientUpdatesHandler) UnSubscribeUpdates(connID ClientConnID) {
 func (c *clientUpdatesHandler) onSyncRpcResultData(cntl *zrpc.ZRpcController, data []byte) {
 }
 
-func (c *clientUpdatesHandler) onSyncData(cntl *zrpc.ZRpcController, obj mtproto.TLObject) {
+func (c *clientUpdatesHandler) onSyncData(isPush bool, cntl *zrpc.ZRpcController, obj mtproto.TLObject) {
 	//switch obj.(type) {
 	//case *mtproto.Updates:
-	syncMessage := &pendingMessage{
-		messageId: mtproto.GenerateMessageId(),
-		confirm:   true,
-		tl:        obj,
-	}
-	c.syncMessages = append(c.syncMessages, syncMessage)
 	//default:
 	//	glog.Error("invalid upadtes type, c: ", c, ", obj: ", obj)
 	//	return
 	//	// rpc result message
 	//}
 
-	connID := c.getUpdatesConnID()
+	//if isPush {
+	//	if c.pushSession != nil {
+	//		syncMessage := &pendingMessage{
+	//			messageId: mtproto.GenerateMessageId(),
+	//			confirm:   true,
+	//			tl:        obj,
+	//		}
+	//		c.syncMessages = append(c.syncMessages, syncMessage)
+	//
+	//		glog.Infof("onSyncData - sendPending {c: {%v}, sess: {%v}, connID: {%v}}, pushObj: {%s}", c, c.session, c.pushConnID, reflect.TypeOf(obj))
+	//		c.session.sendPendingMessagesToClient(c.pushConnID, cntl, c.syncMessages)
+	//		c.syncMessages = []*pendingMessage{}
+	//	}
+	//} else {
+	//
+	//}
+	//glog.Info("onSyncData - clientUpdatesHandler: ", c, obj)
+	//connID, isPush := c.getUpdatesConnID()
+	//
+	////if c.session == nil || connID == nil {
+	////	glog.Error("session not inited.")
+	////	return
+	////}
 
-	if c.session == nil || connID == nil {
+	// var pusObj mtproto.TLObject
+	var (
+		session = c.session
+		connID *ClientConnID
+	)
+
+	if isPush {
+		switch obj.(type) {
+		case *mtproto.TLUpdatesTooLong:
+			session = c.pushSession
+			connID = &c.pushConnID
+		//	pusObj = obj
+		//case *mtproto.TLUpdateShortMessage:
+		//	pusObj = mtproto.NewTLUpdatesTooLong().To_Updates()
+		//case *mtproto.TLUpdateShortChatMessage:
+		//	pusObj = mtproto.NewTLUpdatesTooLong().To_Updates()
+		//case *mtproto.TLUpdates:
+		//	upds := obj.(*mtproto.TLUpdates).GetUpdates()
+		//	for _, upd := range upds {
+		//		switch upd.GetConstructor() {
+		//		case mtproto.TLConstructor_CRC32_updateNewMessage:
+		//			pusObj = mtproto.NewTLUpdatesTooLong().To_Updates()
+		//		}
+		//	}
+		//	if pusObj == nil {
+		//		glog.Info("not push to client.")
+		//		return
+		//	}
+		default:
+			glog.Error("invalid push obj: ", obj)
+			return
+		//case *mtproto.Updates:
+		//	switch obj.(*mtproto.Updates).GetConstructor() {
+		//	case mtproto.TLConstructor_CRC32_updatesTooLong:
+		//		pusObj = obj
+		//	case mtproto.TLConstructor_CRC32_updateShortMessage,
+		//		mtproto.TLConstructor_CRC32_updateShortChatMessage:
+		//		pusObj = mtproto.NewTLUpdatesTooLong().To_Updates()
+		//	case mtproto.TLConstructor_CRC32_updates:
+		//		upds := obj.(*mtproto.Updates).GetData2().GetUpdates()
+		//		for _, upd := range upds {
+		//			switch upd.GetConstructor() {
+		//			case mtproto.TLConstructor_CRC32_updateNewMessage:
+		//				pusObj = mtproto.NewTLUpdatesTooLong().To_Updates()
+		//			}
+		//		}
+		//		if pusObj == nil {
+		//			glog.Info("not push to client.")
+		//			return
+		//		}
+		//	default:
+		//		glog.Info("not push to client.")
+		//		return
+		//	}
+		//default:
+		//	return
+		}
+
+		// session = c.pushSession
+	} else {
+		session = c.session
+		connID = &c.tcpConnID
+
+		// pusObj = obj
+		//syncMessage := &pendingMessage{
+		//	messageId: mtproto.GenerateMessageId(),
+		//	confirm:   true,
+		//	tl:        pusObj,
+		//}
+		//c.syncMessages = append(c.syncMessages, syncMessage)
+		//
+		//glog.Infof("onSyncData - sendPending {sess: {%v}, connID: {%v}}", c.session, connID)
+		//c.session.sendPendingMessagesToClient(*connID, cntl, c.syncMessages)
+		//c.syncMessages = []*pendingMessage{}
+	}
+
+	if session == nil || connID == nil {
 		glog.Error("session not inited.")
 		return
 	}
 
-	glog.Infof("onSyncData - sendPending {sess: {%v}, connID: {%v}}", c.session, connID)
+	syncMessage := &pendingMessage{
+		messageId: mtproto.GenerateMessageId(),
+		confirm:   true,
+		tl:        obj,
+	}
+	c.syncMessages = append(c.syncMessages, syncMessage)
 
-	c.session.sendPendingMessagesToClient(*connID, cntl, c.syncMessages)
+	glog.Infof("onSyncData - sendPending {c: {%v}, sess: {%v}, connID: {%v}}, pushObj: {%s}", c, session, connID, reflect.TypeOf(obj))
+	session.sendPendingMessagesToClient(*connID, cntl, c.syncMessages)
 	c.syncMessages = []*pendingMessage{}
+
 }

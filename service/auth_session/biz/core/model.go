@@ -26,6 +26,7 @@ import (
 	"encoding/base64"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"time"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 type authSessionDAO struct {
@@ -33,6 +34,7 @@ type authSessionDAO struct {
 	*mysql_dao.AuthOpLogsDAO
 	*mysql_dao.AuthsDAO
 	*mysql_dao.AuthUsersDAO
+	*mysql_dao.DevicesDAO
 }
 
 type AuthSessionModel struct {
@@ -55,6 +57,7 @@ func NewAuthSessionModel(dbName, cacheName, cacheConfig string) *AuthSessionMode
 		AuthOpLogsDAO: mysql_dao.NewAuthOpLogsDAO(db),
 		AuthsDAO:      mysql_dao.NewAuthsDAO(db),
 		AuthUsersDAO:  mysql_dao.NewAuthUsersDAO(db),
+		DevicesDAO:    mysql_dao.NewDevicesDAO(db),
 	}}
 	return m
 }
@@ -123,6 +126,16 @@ func (m *AuthSessionModel) GetAuthKeyUserId(authKeyId int64) int32 {
 		return 0
 	}
 	return do.UserId
+}
+
+func (m *AuthSessionModel) GetPushSessionId(userId int32, authKeyId int64, tokenType int32) int64 {
+	do := m.dao.DevicesDAO.Select(authKeyId, userId, int8(tokenType))
+	if do == nil {
+		glog.Errorf("not find token - keyId = %d", authKeyId)
+		return 0
+	}
+	sessionId, _ := util.StringToInt64(do.Token)
+	return sessionId
 }
 
 func (m *AuthSessionModel) BindAuthKeyUser(authKeyId int64, userId int32) bool {

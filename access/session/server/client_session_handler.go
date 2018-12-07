@@ -28,6 +28,8 @@ import (
 	"time"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/gogo/protobuf/proto"
+	// "github.com/nebula-chat/chatengine/pkg/util"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 const (
@@ -67,6 +69,17 @@ const (
 	kInvalidContainer = int32(64)
 )
 
+const (
+	kSessionUnknown = 0
+	kSessionGeneric = 1
+	kSessionDownload = 2
+	kSessionUpload = 4
+	kSessionPush = 8
+	kSessionTemp = 16
+	kSessionProxy = 32
+	kSessionGenericMedia = 64
+)
+
 type messageData struct {
 	confirmFlag  bool
 	compressFlag bool
@@ -90,43 +103,49 @@ func makePendingMessage(messageId int64, confirm bool, tl mtproto.TLObject) *pen
 type clientSessionHandler struct {
 	closeDate        int64
 	closeSessionDate int64
-	// salt             int64
 	nextSeqNo        uint32
 	sessionId        int64
 	manager          *clientSessionManager
 	apiMessages      *list.List
 	firstMsgId       int64
-	// uniqueId         int64
 	clientState      int
 	pendingMessages  []*pendingMessage
-	isUpdates        bool
+	// isUpdates        bool
+	// isPush           bool
 	rpcMessages      []*networkApiMessage
 	msgIds           *list.List
+	sessionType      int
+	statusSyncTime   int64
+	connIDs          *list.List
+	syncMessages     []*pendingMessage
 }
 
 func newClientSessionHandler(sessionId int64, m *clientSessionManager) *clientSessionHandler {
 	return &clientSessionHandler{
 		closeDate:        time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
 		closeSessionDate: 0,
-		// salt:             salt,
 		sessionId:        sessionId,
 		manager:          m,
 		apiMessages:      list.New(), // []*networkApiMessage{},
-		// firstMsgId:       firstMsgId,
-		// uniqueId:         rand.Int63(),
 		clientState:      kStateNew,
 		pendingMessages:  []*pendingMessage{},
-		isUpdates:        false,
+		// isUpdates:        false,
+		// isPush:           false,
 		msgIds:           list.New(),
+		sessionType:      kSessionUnknown,
+		connIDs:          list.New(),
 	}
 }
 
 func (c *clientSessionHandler) String() string {
-	return fmt.Sprintf("{sesses: %s, session_id: %d, client_state: %v, is_updates: %d}",
+	return fmt.Sprintf("{sesses: %s, session_id: %d, client_state: %v, last_recv_time: %d, sessType : %d}",
 		c.manager,
 		c.sessionId,
 		c.clientState,
-		c.isUpdates)
+		// c.isUpdates,
+		// c.isPush,
+		c.statusSyncTime,
+		c.sessionType)
 }
 
 func (c *clientSessionHandler) addMsgId(msgId int64) {
@@ -161,6 +180,8 @@ func (c *clientSessionHandler) checkExistMessageId(msgId int64) bool {
 }
 
 func (c *clientSessionHandler) processMessage(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2) {
+	// c.lastReceiveTime = time.Now().Unix()
+
 	// 1. check salt
 	if !c.checkBadServerSalt(id, cntl, salt, msg) {
 		glog.Infof("salt invalid - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
@@ -172,6 +193,17 @@ func (c *clientSessionHandler) processMessage(id ClientConnID, cntl *zrpc.ZRpcCo
 		return
 	}
 
+	b := false
+	for e := c.connIDs.Front(); e != nil; e = e.Next() {
+		connID2, _ := e.Value.(ClientConnID)
+		if connID2.Equal(id) {
+			b = true
+			break
+		}
+	}
+	if !b {
+		c.connIDs.PushBack(id)
+	}
 
 	packUtil := messagePackUtil{}
 	packUtil.unpackServiceMessage(msg.MsgId, msg.Seqno, msg.Object)
@@ -193,6 +225,27 @@ func (c *clientSessionHandler) processMessage(id ClientConnID, cntl *zrpc.ZRpcCo
 	}
 
 	c.onMessageData(id, cntl, packUtil.messages)
+}
+
+// session binded
+func (c *clientSessionHandler) onUserBinded(userId int32) {
+}
+
+// session binded
+func (c *clientSessionHandler) tryClose(connId ClientConnID) {
+	for e := c.connIDs.Front(); e != nil; e = e.Next() {
+		connID2, _ := e.Value.(ClientConnID)
+		if connID2.Equal(connId) {
+			c.connIDs.Remove(e)
+		}
+	}
+
+	if c.connIDs.Len() == 0 {
+		c.clientState = kStateOffline
+		c.setUserOffline()
+	}
+
+	glog.Info("close conn: ", connId, ", len = ", c.connIDs.Len())
 }
 
 //============================================================================================
@@ -572,6 +625,11 @@ func (c *clientSessionHandler) onNewSessionCreated(connID ClientConnID, cntl *zr
 		ServerSalt: c.manager.cacheSalt.GetSalt(),
 	}}
 
+	if c.sessionId == c.manager.pushSessionId {
+		c.sessionType = kSessionPush
+	}
+
+	glog.Info("onNewSessionCreated - reply: {%v}", newSessionCreated)
 	// c.sendToClient(connID, md, 0, true, newSessionCreated)
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, true, newSessionCreated))
 	// TODO(@benqi): if not receive new_session_created confirm, will resend the message.
@@ -660,6 +718,9 @@ func (c *clientSessionHandler) onMessageData(connID ClientConnID, cntl *zrpc.ZRp
 			c.firstMsgId = messages[0].MsgId
 			c.clientState = kStateOnline
 		} else {
+			if c.clientState != kStateOnline {
+				c.clientState = kStateOnline
+			}
 			if c.firstMsgId > message.MsgId {
 				c.onNewSessionCreated(connID, cntl, c.firstMsgId)
 			}
@@ -677,8 +738,8 @@ func (c *clientSessionHandler) onMessageData(connID ClientConnID, cntl *zrpc.ZRp
 			c.onGetFutureSalts(connID, cntl, message.MsgId, message.Seqno, getFutureSalts)
 		case *mtproto.TLHttpWait: // 未知
 			c.onHttpWait(connID, cntl, message.MsgId, message.Seqno, message.Object)
-			hasHttpWait = true
-			c.isUpdates = true
+			// hasHttpWait = true
+			// c.isUpdates = true
 		case *mtproto.TLPing: // android未用
 			ping, _ := message.Object.(*mtproto.TLPing)
 			c.onPing(connID, cntl, message.MsgId, message.Seqno, ping)
@@ -772,19 +833,17 @@ func (c *clientSessionHandler) onMessageData(connID ClientConnID, cntl *zrpc.ZRp
 	//	}
 	//}
 
-	if c.isUpdates {
-		c.manager.setUserOnline(c.sessionId, connID)
-	}
+	//if c.isUpdates {
+	//	c.manager.setUserOnlineTTL(c.sessionId, connID, 60)
+	//}
 	// c.isUpdates = true
 	// subscribe
 	// c.manager.updatesSession.SubscribeUpdates(c, connID)
 
 	if connID.connType == mtproto.TRANSPORT_TCP {
-		if c.isUpdates {
-			c.manager.updatesSession.SubscribeUpdates(c, connID)
-			// c.manager.setUserOnline(c.sessionId, connID)
-			// c.manager.updatesSession.SubscribeUpdates(c, connID)
-		}
+		//if c.isUpdates {
+		//	c.manager.updatesSession.SubscribeUpdates(c, connID)
+		//}
 		c.sendPendingMessagesToClient(connID, cntl, c.pendingMessages)
 		c.pendingMessages = []*pendingMessage{}
 	} else {
@@ -793,7 +852,7 @@ func (c *clientSessionHandler) onMessageData(connID ClientConnID, cntl *zrpc.ZRp
 				c.sendPendingMessagesToClient(connID, cntl, c.pendingMessages)
 				c.pendingMessages = []*pendingMessage{}
 			} else {
-				c.manager.updatesSession.SubscribeUpdates(c, connID)
+				// c.manager.updatesSession.SubscribeUpdates(c, connID)
 				//if !hasHttpWait {
 				//	// TODO(@benqi): close http
 				//} else {
@@ -844,8 +903,10 @@ func (c *clientSessionHandler) onPing(connID ClientConnID, cntl *zrpc.ZRpcContro
 
 	// c.sendToClient(connID, md, 0, false, pong)
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, false, pong))
-
 	c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
+	if c.sessionType == kSessionGeneric {
+		c.setUserOnline(kDefaultPingTimeout)
+	}
 }
 
 func (c *clientSessionHandler) onPingDelayDisconnect(connID ClientConnID, cntl *zrpc.ZRpcController, msgId int64, seqNo int32, pingDelayDisconnect *mtproto.TLPingDelayDisconnect) {
@@ -866,6 +927,25 @@ func (c *clientSessionHandler) onPingDelayDisconnect(connID ClientConnID, cntl *
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, false, pong))
 
 	c.closeDate = time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
+	// c.manager.setUserOnlineTTL(c.sessionId, connID, pingDelayDisconnect.DisconnectDelay + kPingAddTimeout)
+
+	if pingDelayDisconnect.DisconnectDelay > 120 {
+		if c.sessionType == kSessionUnknown {
+			c.sessionType = kSessionPush
+		}
+	}
+
+	if c.sessionType == kSessionGeneric {
+		c.setUserOnline(pingDelayDisconnect.DisconnectDelay)
+	} else if c.sessionType == kSessionPush {
+		c.setUserOnline(pingDelayDisconnect.DisconnectDelay)
+	}
+
+	//// if c.isPush && c.manager.AuthUserId != 0 {
+	//if c.isPush {
+	//	c.manager.updatesSession.Subscribe2Updates(c, connID)
+	//	// setOnline(c.manager.AuthUserId, c.manager.authKeyId, getServerID(), c.manager.Layer)
+	//}
 }
 
 func (c *clientSessionHandler) onMsgsAck(connID ClientConnID, cntl *zrpc.ZRpcController, msgId int64, seqNo int32, request *mtproto.TLMsgsAck) {
@@ -907,7 +987,7 @@ func (c *clientSessionHandler) onHttpWait(connID ClientConnID, cntl *zrpc.ZRpcCo
 		seqNo,
 		logger.JsonDebugData(request))
 
-	c.isUpdates = true
+	// c.isUpdates = true
 	// c.manager.setUserOnline(c.sessionId, connID)
 	// c.manager.updatesSession.SubscribeHttpUpdates(c, connID)
 }
@@ -1339,6 +1419,33 @@ func (c *clientSessionHandler) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpc
 		Object: object,
 	}
 
+	switch object.(type) {
+	case *mtproto.TLAccountRegisterDevice:
+		registerDevice, _ := object.(*mtproto.TLAccountRegisterDevice)
+		if registerDevice.TokenType == 7 {
+			pushSessionId, err := util.StringToInt64(registerDevice.GetToken())
+			if err == nil {
+				if s, ok := c.manager.sessions[pushSessionId]; ok {
+					s.sessionType = kSessionPush
+					c.manager.pushSessionId, _ = util.StringToInt64(registerDevice.Token)
+					putCachePushSessionId(c.manager.authKeyId, c.manager.pushSessionId)
+				}
+			}
+		}
+	case *mtproto.TLAccountRegisterDeviceLayer71:
+		registerDevice, _ := object.(*mtproto.TLAccountRegisterDeviceLayer71)
+		if registerDevice.TokenType == 7 {
+			pushSessionId, err := util.StringToInt64(registerDevice.GetToken())
+			if err == nil {
+				if s, ok := c.manager.sessions[pushSessionId]; ok {
+					s.sessionType = kSessionPush
+					c.manager.pushSessionId, _ = util.StringToInt64(registerDevice.Token)
+					putCachePushSessionId(c.manager.authKeyId, c.manager.pushSessionId)
+				}
+			}
+		}
+	}
+
 	// reqMsgId := msgId
 	for e := c.apiMessages.Front(); e != nil; e = e.Next() {
 		//v, _ := e.Value.(*networkApiMessage)
@@ -1350,10 +1457,15 @@ func (c *clientSessionHandler) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpc
 		//}
 	}
 
+	if c.sessionType == kSessionUnknown {
+		c.sessionType = getSessionType(object)
+		// c.manager.setUserOnline(c.sessionId, connID)
+	}
+
 	if c.manager.AuthUserId == 0 {
 		if !checkRpcWithoutLogin(object) {
-			c.manager.AuthUserId = getCacheUserID(c.manager.authKeyId)
-			if c.manager.AuthUserId == 0 {
+			authUserId := getCacheUserID(c.manager.authKeyId)
+			if authUserId == 0 {
 				glog.Error("not found authUserId by authKeyId: ", c.manager.authKeyId)
 				// 401
 				rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError_Data{
@@ -1363,20 +1475,29 @@ func (c *clientSessionHandler) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpc
 				_ = rpcError
 				// c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, true, &mtproto.TLRpcResult{ReqMsgId: msgId, Result: rpcError}))
 				return false
+			} else {
+				sessionId := getCachePushSessionID(authUserId, c.manager.authKeyId)
+				c.manager.pushSessionId = sessionId
+				c.manager.onBindUser(authUserId)
 			}
 		}
 	}
 
-	// updates
-	if checkRpcUpdatesType(object) {
-		// c.manager.setUserOnline(c.sessionId, connID)
-		glog.Infof("onRpcRequest - isUpdate: {connID: {%v}, rpcMethod: {%T}}", connID, object)
-		c.isUpdates = true
-		// c.manager.updatesSession.SubscribeUpdates(c, connID)
+	//// updates
+	//if checkRpcUpdatesType(object) {
+	//	// c.manager.setUserOnline(c.sessionId, connID)
+	//	glog.Infof("onRpcRequest - isUpdate: {connID: {%v}, rpcMethod: {%T}}", connID, object)
+	//	c.isUpdates = true
+	//	// c.manager.updatesSession.SubscribeUpdates(c, connID)
+	//
+	//	// subscribe
+	//	// c.manager.updatesSession.SubscribeUpdates(c, connID)
+	//}
 
-		// subscribe
-		// c.manager.updatesSession.SubscribeUpdates(c, connID)
-	}
+	//if checkRpcPushType(object) {
+	//	glog.Infof("onRpcRequest - isPush: {connID: {%v}, rpcMethod: {%T}}", connID, object)
+	//	c.isPush = true
+	//}
 
 	apiMessage := &networkApiMessage{
 		date:       time.Now().Unix(),
@@ -1391,6 +1512,28 @@ func (c *clientSessionHandler) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpc
 	// c.manager.rpcQueue.Push(&rpcApiMessage{connID: connID, sessionId: c.sessionId, rpcMessage: apiMessage})
 
 	return true
+}
+
+func (c *clientSessionHandler) setUserOnline(ttl int32) {
+	if c.manager.AuthUserId == 0 {
+		return
+	}
+
+	if c.sessionType == kSessionGeneric {
+		setOnline(c.manager.AuthUserId, c.manager.authKeyId, getServerID(), c.manager.Layer)
+		c.statusSyncTime = time.Now().Unix()
+	} else if c.sessionType == kSessionPush {
+		setOnlineTTL(c.manager.AuthUserId, c.manager.authKeyId, getServerID(), c.manager.Layer, ttl)
+		c.statusSyncTime = time.Now().Unix()
+	}
+}
+
+func (c *clientSessionHandler) setUserOffline() {
+	if c.sessionType == kSessionGeneric {
+		setOffline(c.manager.AuthUserId, c.manager.authKeyId, getServerID())
+	} else if c.sessionType == kSessionPush {
+		setOfflineTTL(c.manager.AuthUserId, c.manager.authKeyId, getServerID())
+	}
 }
 
 // 客户端连接事件
@@ -1427,5 +1570,35 @@ func (c *clientSessionHandler) onCloseSessionClient() {
 		glog.Infof("onCloseSessionClient: ", c)
 		c.clientState = kStateOffline
 		c.closeSessionDate = time.Now().Unix() + 3600
+	}
+}
+
+func (c *clientSessionHandler) onSyncRpcResultData(cntl *zrpc.ZRpcController, data []byte) {
+
+}
+
+func (c *clientSessionHandler) onSyncData(isPush bool, cntl *zrpc.ZRpcController, obj mtproto.TLObject) {
+	glog.Info("onSyncData - ", cntl)
+
+	//if c.isPush {
+	//	if c.connIDs.Len() == 0 {
+	//		return
+	//	}
+	//}
+
+	syncMessage := &pendingMessage{
+		messageId: mtproto.GenerateMessageId(),
+		confirm:   true,
+		tl:        obj,
+	}
+	c.syncMessages = append(c.syncMessages, syncMessage)
+
+	id := c.connIDs.Back()
+	if id != nil {
+		glog.Infof("onSyncData - sendPending {sess: {%v}, connID: {%v}}, pushObj: {%s}, connLen: {%d}", c, id.Value, reflect.TypeOf(obj), c.connIDs.Len())
+		c.sendPendingMessagesToClient(id.Value.(ClientConnID), cntl, c.syncMessages)
+		c.syncMessages = []*pendingMessage{}
+	} else {
+		glog.Info("id is nil")
 	}
 }

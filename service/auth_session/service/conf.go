@@ -33,6 +33,7 @@ var (
 
 type authSessionConfig struct {
 	Cache     cache.CacheConfig
+	// Redis                []redis_client.RedisConfig
 	Mysql     []mysql_client.MySQLConfig
 	RpcServer *grpc_util.RPCServerConfig
 }

@@ -56,8 +56,7 @@ type ClientConnID struct {
 	connType       int
 	clientConnID   uint64 // client -> frontend netlib connID
 	frontendConnID uint64 // frontend -> session netlib connID
-	// receiveCount   int		// httpReq
-	// sendCount      int		// httpRsp
+	createdAt      int64
 }
 
 func makeClientConnID(connType int, clientConnID, frontendConnID uint64) ClientConnID {
@@ -65,8 +64,7 @@ func makeClientConnID(connType int, clientConnID, frontendConnID uint64) ClientC
 		connType:       connType,
 		clientConnID:   clientConnID,
 		frontendConnID: frontendConnID,
-		// receiveCount:   0,
-		// sendCount:      0,
+		createdAt:      time.Now().Unix(),
 	}
 	return connID
 }
@@ -76,7 +74,8 @@ func (c ClientConnID) String() string {
 }
 
 func (c ClientConnID) Equal(id ClientConnID) bool {
-	return c.connType == id.connType && c.clientConnID == id.clientConnID && c.frontendConnID == id.frontendConnID
+	// return c.connType == id.connType && c.clientConnID == id.clientConnID && c.frontendConnID == id.frontendConnID
+	return c.clientConnID == id.clientConnID && c.frontendConnID == id.frontendConnID
 }
 
 type networkApiMessage struct {
@@ -116,8 +115,9 @@ type syncRpcResultData struct {
 
 type syncData struct {
 	// sessionID int64
-	cntl *zrpc.ZRpcController
-	data *messageData
+	isPush bool
+	cntl   *zrpc.ZRpcController
+	data   *messageData
 }
 
 type connData struct {
@@ -138,7 +138,7 @@ type clientSessionManager struct {
 	cacheLastSalt   *mtproto.TLFutureSalt
 	AuthUserId      int32
 	sessions        map[int64]*clientSessionHandler
-	updatesSession  *clientUpdatesHandler
+	// updatesSession  *clientUpdatesHandler
 	bizRPCClient    *grpc_util.RPCClient
 	nbfsRPCClient   *grpc_util.RPCClient
 	syncRpcClient   mtproto.RPCSyncClient
@@ -149,6 +149,8 @@ type clientSessionManager struct {
 	finish          sync.WaitGroup
 	running         sync2.AtomicInt32
 	state           int
+	onlineTTL       int32
+	pushSessionId   int64
 }
 
 func newClientSessionManager(authKeyId int64) *clientSessionManager {
@@ -164,7 +166,7 @@ func newClientSessionManager(authKeyId int64) *clientSessionManager {
 		// cacheSalt:       cacheSalt,
 		// AuthUserId:      userId,
 		sessions:        make(map[int64]*clientSessionHandler),
-		updatesSession:  newClientUpdatesHandler(),
+		// updatesSession:  newClientUpdatesHandler(),
 		bizRPCClient:    bizRPCClient,
 		nbfsRPCClient:   nbfsRPCClient,
 		syncRpcClient:   syncRpcClient,
@@ -215,7 +217,7 @@ func (s *clientSessionManager) runLoop() {
 			case *syncData:
 				s.onSyncData(sessionMsg.(*syncData))
 			case *connData:
-
+				s.onConnData(sessionMsg.(*connData))
 			default:
 				panic("receive invalid type msg")
 			}
@@ -275,17 +277,17 @@ func (s *clientSessionManager) OnSyncRpcResultDataArrived(clientMsgId int64, cnt
 	return nil
 }
 
-func (s *clientSessionManager) OnSyncDataArrived(cntl *zrpc.ZRpcController, data *messageData) error {
+func (s *clientSessionManager) OnSyncDataArrived(cntl *zrpc.ZRpcController, isPush bool, data *messageData) error {
 	select {
-	case s.sessionDataChan <- &syncData{cntl, data}:
+	case s.sessionDataChan <- &syncData{isPush, cntl, data}:
 		return nil
 	}
 	return nil
 }
 
-type messageListWrapper struct {
-	messages []*mtproto.TLMessage2
-}
+//type messageListWrapper struct {
+//	messages []*mtproto.TLMessage2
+//}
 
 func (s *clientSessionManager) onSessionData(sessionMsg *sessionData) {
 	glog.Infof("onSessionData - receive data: {sess: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
@@ -314,33 +316,6 @@ func (s *clientSessionManager) onSessionData(sessionMsg *sessionData) {
 
 	glog.Infof("sessionDataChan: ", message)
 
-	//// check message_id
-	//if message.MessageId % 4 != 0 {
-	//	err = fmt.Errorf("invalid message id %d", message.MessageId)
-	//	glog.Error(err)
-	//	return
-	//}
-	//
-	//if message.MessageId&0xffffffff == 0 {
-	//	err = fmt.Errorf("the lower 32 bits of msg_id passed by the client must not be empty: %d", message.MessageId)
-	//	glog.Error(err)
-	//
-	//	// TODO(@benqi): replay-attack, close client conn.
-	//	return
-	//}
-	//
-
-	// https://core.telegram.org/mtproto/description#server-salt
-
-	// Server Salt
-	//
-	// A (random) 64-bit number periodically (say, every 24 hours) changed
-	// (separately for each session) at the request of the server.
-	// All subsequent messages must contain the new salt
-	// (although, messages with the old salt are still accepted for a further 300 seconds).
-	// Required to protect against replay attacks and certain tricks
-	// associated with adjusting the client clock to a moment in the distant future.
-	//
 	if s.cacheSalt == nil {
 		s.cacheSalt, s.cacheLastSalt, _ = getOrFetchNewSalt(s.authKeyId)
 	} else {
@@ -370,52 +345,6 @@ func (s *clientSessionManager) onSessionData(sessionMsg *sessionData) {
 	}
 
 	sess.processMessage(sessionMsg.connID, sessionMsg.cntl, message.Salt, message2)
-
-/*
-	if !sess.CheckBadServerSalt(sessionMsg.connID, sessionMsg.cntl, message.MessageId, message.SeqNo, message.Salt) {
-		glog.Infof("salt invalid - {sess: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
-		// glog.Error("salt invalid..")
-		return
-	}
-
-	_, isContainer := message.Object.(*mtproto.TLMsgContainer)
-	if !sess.CheckBadMsgNotification(sessionMsg.connID, sessionMsg.cntl, message.MessageId, message.SeqNo, isContainer) {
-		glog.Infof("bad msg invalid - {sess: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
-		// glog.Error("bad msg invalid..")
-		return
-	}
-
-	var messages = &messageListWrapper{[]*mtproto.TLMessage2{}}
-	extractClientMessage(message.MessageId, message.SeqNo, message.Object, messages, func(layer int32) {
-		s.Layer = layer
-		// TODO(@benqi): clear session_manager
-	})
-
-	if !ok {
-		s.sessions[message.SessionId] = sess
-		glog.Info("newClientSession: ", sess)
-		sess.onNewSessionCreated(sessionMsg.connID, sessionMsg.cntl, message.MessageId)
-		// sess.clientConnID = sessionMsg.connID
-		sess.clientState = kStateOnline
-	} else {
-		// New Session Creation Notification
-		//
-		// The server notifies the client that a new session (from the server’s standpoint)
-		// had to be created to handle a client message.
-		// If, after this, the server receives a message with an even smaller msg_id within the same session,
-		// a similar notification will be generated for this msg_id as well.
-		// No such notifications are generated for high msg_id values.
-		//
-		if message.MessageId < sess.firstMsgId {
-			glog.Info("message.MessageId < sess.firstMsgId: ", message.MessageId, ", ", sess.firstMsgId, ", sessionId: ", message.SessionId)
-			sess.firstMsgId = message.MessageId
-			sess.onNewSessionCreated(sessionMsg.connID, sessionMsg.cntl, message.MessageId)
-		}
-	}
-
-	// sess.onClientMessage(message.MessageId, message.SeqNo, message.Object, messages)
-	sess.onMessageData(sessionMsg.connID, sessionMsg.cntl, messages.messages)
- */
 }
 
 func (s *clientSessionManager) onTimer() {
@@ -435,26 +364,56 @@ func (s *clientSessionManager) onTimer() {
 	}
 }
 
+func (s *clientSessionManager) queryUpdateSession(isPush bool) *clientSessionHandler {
+	for _, sess := range s.sessions {
+		if isPush {
+			if sess.clientState == kStateOnline && sess.sessionType == kSessionPush {
+				return sess
+			}
+		} else {
+			if sess.clientState == kStateOnline && sess.sessionType == kSessionGeneric {
+				return sess
+			}
+		}
+	}
+	return nil
+}
 
 func (s *clientSessionManager) onSyncRpcResultData(syncMsg *syncRpcResultData) {
 	glog.Infof("onSyncRpcResultData - receive data: {sess: %s, md: %s}",
 		s, syncMsg.cntl)
 
-	s.updatesSession.onSyncRpcResultData(syncMsg.cntl, syncMsg.data)
+	sess := s.queryUpdateSession(false)
+	if sess != nil {
+		// s.updatesSession.onSyncData(syncMsg.isPush, syncMsg.cntl, syncMsg.data.obj)
+		sess.onSyncRpcResultData(syncMsg.cntl, syncMsg.data)
+	}
 }
 
 func (s *clientSessionManager) onSyncData(syncMsg *syncData) {
 	glog.Infof("onSyncData - receive data: {sess: %s, md: %s, data: {%v}}",
 		s, syncMsg.cntl, syncMsg.data)
 
-	s.updatesSession.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+	for k, v := range s.sessions {
+		glog.Info(k, " ==> ", v)
+	}
+
+	sess := s.queryUpdateSession(syncMsg.isPush)
+	if sess != nil {
+		// s.updatesSession.onSyncData(syncMsg.isPush, syncMsg.cntl, syncMsg.data.obj)
+		sess.onSyncData(syncMsg.isPush, syncMsg.cntl, syncMsg.data.obj)
+	} else {
+		glog.Warning("not found sess - ", syncMsg)
+	}
 }
 
 func (s *clientSessionManager) onConnData(connMsg *connData) {
 	if connMsg.isNew {
-
+		//
 	} else {
-		s.updatesSession.UnSubscribeUpdates(connMsg.connID)
+		for _, sess := range s.sessions {
+			sess.tryClose(connMsg.connID)
+		}
 	}
 }
 
@@ -559,8 +518,21 @@ func (s *clientSessionManager) onRpcRequest(requests *rpcApiMessages) {
 	s.rpcDataChan <- requests
 }
 
+func (s *clientSessionManager) onBindUser(userId int32) {
+	s.AuthUserId = userId
+	for _, c := range s.sessions {
+		c.setUserOnline(kDefaultPingTimeout)
+		c.onUserBinded(userId)
+	}
+}
+
+/*
 // TODO(@benqi): status_client
-func (s *clientSessionManager) setUserOnline(sessionId int64, connID ClientConnID) {
+func (s *clientSessionManager) setUserOnline(sessionId int64, connID ClientConnID) error {
+	if s.AuthUserId == 0 {
+		return fmt.Errorf("not authSign")
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			glog.Error(r)
@@ -568,7 +540,28 @@ func (s *clientSessionManager) setUserOnline(sessionId int64, connID ClientConnI
 	}()
 
 	setOnline(s.AuthUserId, s.authKeyId, getServerID(), s.Layer)
+	return nil
 }
+
+func (s *clientSessionManager) setUserOnlineTTL(sessionId int64, connID ClientConnID, ttl int32) error {
+	if s.AuthUserId == 0 {
+		return fmt.Errorf("not authSign")
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			glog.Error(r)
+		}
+	}()
+
+	if ttl + int32(time.Now().Unix()) >= s.onlineTTL {
+		setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, ttl)
+		s.onlineTTL = ttl + int32(time.Now().Unix())
+	}
+
+	return nil
+}
+*/
 
 //==================================================================================================
 type InitConnectionHandler func(layer int32)

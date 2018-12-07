@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="devices">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO devices
+                (auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids)
+            VALUES
+                (:auth_key_id, :user_id, :token_type, :token, :app_sandbox, :secret, :other_uids)
+            ON DUPLICATE KEY UPDATE
+                token = VALUES(token),
+                secret = VALUES(secret),
+                other_uids=VALUES(other_uids),
+                state = 0
+        </sql>
+    </operation>
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids
+            FROM
+                devices
+            WHERE
+                auth_key_id = :auth_key_id AND user_id = :user_id AND token_type = :token_type AND state = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectListById" result_set="list">
+        <sql>
+            SELECT
+                id, auth_key_id, user_id, token_type, token
+            FROM
+                devices
+            WHERE
+                token_type = :token_type AND token = :token AND state=1
+        </sql>
+    </operation>
+
+    <operation name="UpdateState">
+        <sql>
+            UPDATE
+                devices
+            SET
+                state = :state
+            WHERE
+                auth_key_id = :auth_key_id AND user_id = :user_id AND token_type
+        </sql>
+    </operation>
+
+    <operation name="UpdateStateById">
+        <sql>
+            UPDATE devices SET state = :state WHERE id = :id
+        </sql>
+    </operation>
+
+    <operation name="UpdateStateByToken">
+        <sql>
+            UPDATE devices SET state = :state WHERE  token_type = :token_type AND token = :token
+        </sql>
+    </operation>
+</table>

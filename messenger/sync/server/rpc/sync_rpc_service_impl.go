@@ -45,7 +45,7 @@ import (
             return 3;
         }
     }
-*/
+ */
 
 type SyncType int
 
@@ -64,9 +64,10 @@ type PushData struct {
 	rpcMessage proto.Message
 }
 
-func MakePushUpdatesData(authKeyId int64, cntl *zrpc.ZRpcController, pushRawData []byte) *PushData {
+func MakePushUpdatesData(authKeyId int64, isPush int32, cntl *zrpc.ZRpcController, pushRawData []byte) *PushData {
 	rpcMessage := &mtproto.TLPushPushUpdatesData{
 		AuthKeyId: authKeyId,
+		IsPush:    isPush,
 	}
 
 	cntl.SetServiceName("session")
@@ -100,12 +101,14 @@ type PushDataCallback interface {
 }
 
 type SyncServiceImpl struct {
-	mu        	sync.RWMutex
-	pushCB    	PushDataCallback
-	status     	status_client.StatusClient
-	closeChan 	chan int
-	pushChan 	chan struct {int; *PushData}
+	mu        		sync.RWMutex
+	pushCB    		PushDataCallback
+	status     		status_client.StatusClient
+	closeChan 		chan int
+	pushChan 		chan struct {int; *PushData}
+	updatesTooLong 	[]byte
 	*update.UpdateModel
+
 }
 
 func NewSyncService(pushCB PushDataCallback, status status_client.StatusClient, updateModel *update.UpdateModel) *SyncServiceImpl {
@@ -116,6 +119,9 @@ func NewSyncService(pushCB PushDataCallback, status status_client.StatusClient, 
 		pushChan:    make(chan struct {int; *PushData}, 1024),
 		UpdateModel: updateModel,
 	}
+
+	upd := mtproto.NewTLUpdatesTooLong()
+	s.updatesTooLong = upd.Encode()
 
 	go s.pushUpdatesLoop()
 	return s
@@ -211,14 +217,18 @@ func updateShortChatToUpdateNewMessage(userId int32, shortMessage *mtproto.TLUpd
 	return updateNew.To_Update()
 }
 
-func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updates) error {
+func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updates) (bool, error) {
+	var isMessage bool
+
 	switch ups.GetConstructor() {
 	case mtproto.TLConstructor_CRC32_updateShortMessage:
 		shortMessage := ups.To_UpdateShortMessage()
 		s.UpdateModel.AddToPtsQueue(userId, shortMessage.GetPts(), shortMessage.GetPtsCount(), updateShortToUpdateNewMessage(userId, shortMessage))
+		isMessage = true
 	case mtproto.TLConstructor_CRC32_updateShortChatMessage:
 		shortMessage := ups.To_UpdateShortChatMessage()
 		s.UpdateModel.AddToPtsQueue(userId, shortMessage.GetPts(), shortMessage.GetPtsCount(), updateShortChatToUpdateNewMessage(userId, shortMessage))
+		isMessage = true
 	case mtproto.TLConstructor_CRC32_updateShort:
 		//short := updates.To_UpdateShort()
 		//short.SetDate(date)
@@ -233,6 +243,9 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				mtproto.TLConstructor_CRC32_updateWebPage,
 				mtproto.TLConstructor_CRC32_updateReadMessagesContents,
 				mtproto.TLConstructor_CRC32_updateEditMessage:
+				if update.GetConstructor() == mtproto.TLConstructor_CRC32_updateNewMessage {
+					isMessage = true
+				}
 				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
 			case mtproto.TLConstructor_CRC32_updateDeleteMessages:
 				// deleteMessages := update.To_UpdateDeleteMessages().GetMessages()
@@ -271,7 +284,7 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	default:
 		err := fmt.Errorf("invalid updates data: {%d}", ups.GetConstructor())
 		// glog.Error(err)
-		return err
+		return false, err
 	}
 
 	//state := &mtproto.ClientUpdatesState{
@@ -280,10 +293,11 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	//	Date:     date,
 	//}
 
-	return nil
+	return isMessage, nil
 }
 
-func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtproto.Updates) error {
+func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtproto.Updates) (bool, error) {
+	var isMessage bool
 	switch ups.GetConstructor() {
 	case mtproto.TLConstructor_CRC32_updates:
 		updates2 := ups.To_Updates()
@@ -302,38 +316,76 @@ func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtp
 	default:
 		err := fmt.Errorf("invalid updates data: {%d}", ups.GetConstructor())
 		// glog.Error(err)
-		return err
+		return false, err
 	}
-	return nil
+	return isMessage, nil
 }
 
-func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, authKeyId, clientMsgId int64, cntl *zrpc.ZRpcController, pushData []byte, hasServerId int32) {
+func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, authKeyId, clientMsgId int64, cntl *zrpc.ZRpcController, pushData []byte, hasServerId int32, isMessage bool) {
 	if (syncType == syncTypeUserMe || syncType == syncTypeRpcResult) && hasServerId > 0 {
 		glog.Infof("pushUpdatesToSession - phshData: {server_id: %d, auth_key_id: %d}", hasServerId, authKeyId)
 		if syncType == syncTypeUserMe {
-			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushUpdatesData(authKeyId, cntl, pushData)}
+			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushUpdatesData(authKeyId, 0, cntl, pushData)}
 		} else {
 			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushRpcResultData(authKeyId, clientMsgId, cntl, pushData)}
 		}
 	} else {
 		statusList, _ := s.status.GetUserOnlineSessions(userId)
-		ss := make(map[int32][]*status.SessionEntry)
-		for _, status2 := range statusList.Sessions {
-			if _, ok := ss[status2.ServerId]; !ok {
-				ss[status2.ServerId] = []*status.SessionEntry{}
+
+		sendedAuthKeyIdList := make(map[int64]bool)
+
+		if len(statusList.Sessions) > 0 {
+			glog.Info("statusList - ", statusList)
+
+			ss := make(map[int32][]*status.SessionEntry)
+			for _, status2 := range statusList.Sessions {
+				if _, ok := ss[status2.ServerId]; !ok {
+					ss[status2.ServerId] = []*status.SessionEntry{}
+				}
+				ss[status2.ServerId] = append(ss[status2.ServerId], status2)
 			}
-			ss[status2.ServerId] = append(ss[status2.ServerId], status2)
+
+			glog.Info(ss)
+			for k, ss3 := range ss {
+				glog.Info(ss3)
+				for _, ss4 := range ss3 {
+					sendedAuthKeyIdList[ss4.AuthKeyId] = true
+					if syncType == syncTypeUserNotMe && authKeyId == ss4.AuthKeyId {
+						continue
+					}
+					glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
+					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, 0, cntl, pushData)}
+				}
+			}
 		}
 
-		glog.Info(ss)
-		for k, ss3 := range ss {
-			glog.Info(ss3)
-			for _, ss4 := range ss3 {
-				if syncType == syncTypeUserNotMe && authKeyId == ss4.AuthKeyId {
-					continue
+		if len(statusList.PushSessions) > 0 {
+			if !isMessage {
+				return
+			}
+
+			ss2 := make(map[int32][]*status.SessionEntry)
+			for _, status2 := range statusList.PushSessions {
+				if _, ok := ss2[status2.ServerId]; !ok {
+					ss2[status2.ServerId] = []*status.SessionEntry{}
 				}
-				glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
-				s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, cntl, pushData)}
+				ss2[status2.ServerId] = append(ss2[status2.ServerId], status2)
+			}
+
+			glog.Info(ss2)
+			for k, ss3 := range ss2 {
+				glog.Info(ss3)
+				for _, ss4 := range ss3 {
+					if syncType == syncTypeUserNotMe && authKeyId == ss4.AuthKeyId {
+						continue
+					}
+					if _, ok := sendedAuthKeyIdList[ss4.AuthKeyId]; ok {
+						continue
+					}
+					glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
+
+					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, 1, cntl, s.updatesTooLong)}
+				}
 			}
 		}
 	}

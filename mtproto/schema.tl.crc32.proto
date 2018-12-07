@@ -1074,6 +1074,7 @@ enum TLConstructor {
     CRC32_session_getLayer = -238328911;
     CRC32_session_getLangCode = -1213481174;
     CRC32_session_getUserId = -798477825;
+    CRC32_session_getPushSessionId = -940094000;
     CRC32_session_getFutureSalts = -364935027;
     CRC32_session_queryAuthKey = 1798174801;
     CRC32_session_setAuthKey = -1302981520;
@@ -1088,7 +1089,7 @@ enum TLConstructor {
     CRC32_sync_getDifference = -454658565;
     CRC32_sync_getChannelDifference = 1592188779;
     CRC32_push_connectToSessionServer = -875931832;
-    CRC32_push_pushUpdatesData = 441914848;
+    CRC32_push_pushUpdatesData = -955992451;
     CRC32_push_pushRpcResultData = -242618734;
     CRC32_bot_executeCommand = 1552504460;
 }

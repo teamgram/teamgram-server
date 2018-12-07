@@ -79,7 +79,32 @@ func (c *rpcStatusClient) SetSessionOnline(userId int32, authKeyId int64, server
 	return err
 }
 
+func (c *rpcStatusClient) SetSessionOnlineTTL(userId int32, authKeyId int64, serverId, layer int32, ttl int32) error {
+	cli := status.NewRPCStatusClient(c.conn)
+	session := &status.SessionEntry{
+		UserId:    userId,
+		ServerId:  serverId,
+		AuthKeyId: authKeyId,
+		Expired:   time.Now().Unix() + int64(ttl),
+		Layer:     layer,
+	}
+	_, err := cli.SetSessionOnline(context.Background(), session)
+	return err
+}
+
 func (c *rpcStatusClient) SetSessionOffline(userId int32, serverId int32, authKeyId int64) error {
+	cli := status.NewRPCStatusClient(c.conn)
+	session := &status.SessionEntry{
+		UserId:    userId,
+		ServerId:  serverId,
+		AuthKeyId: authKeyId,
+		Expired:   0,
+	}
+	_, err := cli.SetSessionOffline(context.Background(), session)
+	return err
+}
+
+func (c *rpcStatusClient) SetSessionOfflineTTL(userId int32, serverId int32, authKeyId int64) error {
 	cli := status.NewRPCStatusClient(c.conn)
 	session := &status.SessionEntry{
 		UserId:    userId,
