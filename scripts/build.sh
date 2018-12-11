@@ -35,7 +35,7 @@ sleep 1
 
 
 echo "build auth_key ..."
-cd ${chatengine}/server/access/auth_key
+cd ${chatengine}/access/auth_key
 go build
 ./auth_key &
 
@@ -46,13 +46,13 @@ go build
 sleep 1
 
 echo "build session ..."
-cd ${chatengine}/server/access/session
+cd ${chatengine}/access/session
 go build
 ./session &
 sleep 1
 
 echo "build frontend ..."
-cd ${chatengine}/server/access/frontend
+cd ${chatengine}/access/frontend
 go build
 ./frontend &
 sleep 1
