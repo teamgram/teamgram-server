@@ -389,13 +389,13 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 	msgs := make([]*mtproto.TLMessage2, 0, len(packUtil.messages))
 	for _, m := range packUtil.messages {
 		glog.Info("unpack - ", reflect.TypeOf(m.Object))
-		msgs = append(msgs, m)
-		//if c.checkBadMsgNotification(id, cntl, m) {
-		//	msgs = append(msgs, m)
-		//	c.addMsgId(m.MsgId)
-		//} else {
-		//	// TODO(@benqi): log
-		//}
+		// msgs = append(msgs, m)
+		if c.checkBadMsgNotification(id, cntl, m) {
+			msgs = append(msgs, m)
+			c.addMsgId(m.MsgId)
+		} else {
+			// TODO(@benqi): log
+		}
 	}
 
 	if len(msgs) == 0 {
