@@ -175,5 +175,78 @@ func getSessionType(method mtproto.TLObject) int {
 	return sType
 }
 
-//func getSessionType(method mtproto.TLObject) int {
-//}
+
+func getSessionType2(object mtproto.TLObject, sessionType *int) {
+	switch object.(type) {
+	case *mtproto.TLMsgContainer:
+		msgContainer, _ := object.(*mtproto.TLMsgContainer)
+		for _, m2 := range msgContainer.Messages {
+			getSessionType2(m2.Object, sessionType)
+			if *sessionType != kSessionUnknown {
+				break
+			}
+		}
+	case *mtproto.TLGzipPacked:
+		gzipPacked, _ := object.(*mtproto.TLGzipPacked)
+		if gzipPacked.Obj != nil {
+			return
+		}
+		getSessionType2(gzipPacked.Obj, sessionType)
+
+	case *mtproto.TLMsgCopy:
+		// not use in client
+		// glog.Error("android client not use msg_copy: ", object)
+
+	case *mtproto.TLMsgsAck,
+
+		*mtproto.TLMsgsStateReq,
+		*mtproto.TLMsgsStateInfo,
+		*mtproto.TLMsgsAllInfo,
+
+		*mtproto.TLMsgResendReq,
+		*mtproto.TLMsgDetailedInfo,
+		*mtproto.TLMsgNewDetailedInfo:
+		// unknown
+
+	case *mtproto.TLRpcDropAnswer:
+		// unknown
+		// *sessionType = kSessionGeneric
+
+	case *mtproto.TLPing,
+		*mtproto.TLPingDelayDisconnect:
+		// unknown
+
+	case *mtproto.TLGetFutureSalts:
+		*sessionType = kSessionGeneric
+	case *mtproto.TLDestroySession:
+		*sessionType = kSessionGeneric
+
+	//////////////////////////////////////////////////////////////
+	case *mtproto.TLInvokeAfterMsg,
+		*mtproto.TLInvokeAfterMsgs,
+		*mtproto.TLInvokeWithLayer,
+		*mtproto.TLInvokeWithoutUpdates,
+		*mtproto.TLInvokeWithMessagesRange,
+		*mtproto.TLInvokeWithTakeout:
+
+		*sessionType = kSessionGeneric
+
+	//////////////////////////////////////////////////////////////
+	case *mtproto.TLUploadGetCdnFile,
+		// *mtproto.TLUploadGetCdnFileHashes,
+		*mtproto.TLUploadGetFile,
+		// *mtproto.TLUploadGetFileHashes,
+		*mtproto.TLUploadGetWebFile:
+
+		*sessionType = kSessionDownload
+
+	//////////////////////////////////////////////////////////////
+	case *mtproto.TLUploadSaveFilePart,
+		*mtproto.TLUploadSaveBigFilePart:
+		// *mtproto.TLUploadReuploadCdnFile:
+
+		*sessionType = kSessionUpload
+	default:
+		*sessionType = kSessionGeneric
+	}
+}

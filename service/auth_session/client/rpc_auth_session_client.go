@@ -93,7 +93,7 @@ func GetLangCode(authKeyId int64) string {
 
 func GetPushSessionId(userId int32, authKeyId int64) int64 {
 	request := &mtproto.TLSessionGetPushSessionId{
-		UsreId:    userId,
+		UserId:    userId,
 		AuthKeyId: authKeyId,
 		TokenType: 7,
 	}

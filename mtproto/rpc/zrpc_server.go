@@ -101,7 +101,7 @@ func (s *ZRpcServer) SendMessageByConnID(connID uint64, cntl *ZRpcController, ms
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 func (s *ZRpcServer) OnNewConnection(conn *net2.TcpConnection) {
-	glog.Info("onNewConnection - ", conn)
+	// glog.Info("onNewConnection - ", conn)
 
 	if s.callback != nil {
 		s.callback.OnServerNewConnection(conn)
@@ -109,7 +109,7 @@ func (s *ZRpcServer) OnNewConnection(conn *net2.TcpConnection) {
 }
 
 func (s *ZRpcServer) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface{}) error {
-	glog.Info("onConnectionDataArrived - ", conn)
+	// glog.Info("onConnectionDataArrived - ", conn)
 	bmsg, ok := msg.(*brpc.BaiduRpcMessage)
 	if !ok {
 		return fmt.Errorf("recv invalid msg - {%v}", bmsg)
@@ -141,7 +141,7 @@ func (s *ZRpcServer) OnConnectionDataArrived(conn *net2.TcpConnection, msg inter
 }
 
 func (s *ZRpcServer) OnConnectionClosed(conn *net2.TcpConnection) {
-	glog.Info("onConnectionClosed - ", conn)
+	// glog.Info("onConnectionClosed - ", conn)
 
 	if s.callback != nil {
 		s.callback.OnServerConnectionClosed(conn)

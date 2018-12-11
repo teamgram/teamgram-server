@@ -30,6 +30,7 @@ import (
 	"github.com/nebula-chat/chatengine/service/status/client"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/gogo/protobuf/proto"
+	"sync"
 )
 
 func init() {
@@ -58,7 +59,8 @@ type SessionServer struct {
 	nbfsRpcClient        *grpc_util.RPCClient
 	syncRpcClient        mtproto.RPCSyncClient
 	authSessionRpcClient mtproto.RPCSessionClient
-	sessionManager       *sessionManager
+	sessionManager 		 sync.Map // map[int64]*sessionClientList
+	// sessionManager       *sessionManager
 }
 
 func NewSessionServer() *SessionServer {
@@ -87,7 +89,7 @@ func (s *SessionServer) Initialize() error {
 	// TODO(@benqi): config cap
 	InitCacheAuthManager(1024*1024, &Conf.AuthSessionRpcClient)
 
-	s.sessionManager = newSessionManager()
+	// s.sessionManager = newSessionManager()
 	s.server = zrpc.NewZRpcServer(Conf.Server, s)
 
 	return nil
@@ -129,12 +131,12 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 	switch msg.(type) {
 	case *mtproto.TLSessionClientCreated:
 		glog.Info("onSessionClientNew - sessionClientNew: ", conn)
-		return s.sessionManager.onSessionClientNew(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientCreated))
+		return s.onSessionClientNew(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientCreated))
 	case *mtproto.TLSessionMessageData:
-		return s.sessionManager.onSessionData(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionMessageData))
+		return s.onSessionData(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionMessageData))
 	case *mtproto.TLSessionClientClosed:
 		glog.Info("onSessionClientClosed - sessionClientClosed: ", conn)
-		return s.sessionManager.onSessionClientClosed(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientClosed))
+		return s.onSessionClientClosed(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientClosed))
 	case *mtproto.TLPushConnectToSessionServer:
 		glog.Infof("onPushConnectToSessionServer - request(ConnectToSessionServerReq): {%v}", msg)
 		pushSessionServerConnected := &mtproto.TLPushSessionServerConnected{Data2: &mtproto.ServerConnected_Data{
@@ -147,7 +149,7 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 	case *mtproto.TLPushPushRpcResultData:
 		pushData, _ := msg.(*mtproto.TLPushPushRpcResultData)
 
-		err := s.sessionManager.onSyncRpcResultData(pushData.GetClientReqMsgId(), pushData.GetAuthKeyId(), cntl)
+		err := s.onSyncRpcResultData(pushData.GetClientReqMsgId(), pushData.GetAuthKeyId(), cntl)
 		var mBool *mtproto.Bool
 		if err != nil {
 			mBool = mtproto.ToBool(false)
@@ -159,8 +161,8 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 	case *mtproto.TLPushPushUpdatesData:
 		pushData, _ := msg.(*mtproto.TLPushPushUpdatesData)
 		glog.Info("pushData - ", pushData)
-		isPush := pushData.GetIsPush() == 1
-		err := s.sessionManager.onSyncData(pushData.GetAuthKeyId(), isPush, cntl)
+		// isPush := pushData.GetIsPush() == 1
+		err := s.onSyncData(pushData.GetAuthKeyId(), pushData.Pts, pushData.PtsCount, cntl)
 		var mBool *mtproto.Bool
 		if err != nil {
 			mBool = mtproto.ToBool(false)
@@ -194,3 +196,119 @@ func (s *SessionServer) OnServerConnectionClosed(conn *net2.TcpConnection) {
 //	//}
 //	return nil
 //}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+func (s *SessionServer) onSessionClientNew(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionClientCreated) error {
+	glog.Infof("onSessionClientNew - receive data: {client_conn_id: %s, md: %s, sess_data: %s}", connID, cntl.RpcMeta, sessData)
+
+	authKeyId := sessData.GetAuthKeyId()
+	var sessList *authSessions
+
+	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+		sessList = makeAuthSessions(authKeyId)
+		s.sessionManager.Store(authKeyId, sessList)
+		s.onNewSessionClientManager(sessList)
+	} else {
+		sessList, _ = vv.(*authSessions)
+	}
+
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	return sessList.onSessionClientNew(clientConnID)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+func (s *SessionServer) onSessionData(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionMessageData) error {
+	glog.Infof("onSessionData - receive data: {conn_id: %d, md: %s, sess_data: %s}",
+		connID,
+		cntl.RpcMeta,
+		sessData)
+
+	authKeyId := sessData.GetAuthKeyId()
+	var sessList *authSessions
+	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+		err := fmt.Errorf("onSessionClientNew - not find sessionList by authKeyId: {%d}", sessData.GetAuthKeyId())
+		glog.Warning(err)
+		return err
+	} else {
+		sessList, _ = vv.(*authSessions)
+	}
+
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	return sessList.onSessionDataArrived(clientConnID, cntl, cntl.MoveAttachment())
+}
+
+func (s *SessionServer) onSessionClientClosed(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionClientClosed) error {
+	glog.Infof("onSessionClientClosed - receive data: {client_conn_id: %d, md: %s, sess_data: %s}",
+		connID,
+		cntl,
+		sessData)
+
+	var sessList *authSessions
+
+	if vv, ok := s.sessionManager.Load(sessData.GetAuthKeyId()); !ok {
+		err := fmt.Errorf("onSessionClientClosed - not find sessionList by authKeyId: {%d}", sessData.GetAuthKeyId())
+		glog.Warning(err)
+		return err
+	} else {
+		sessList, _ = vv.(*authSessions)
+	}
+
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	return sessList.onSessionClientClosed(clientConnID)
+}
+
+func (s *SessionServer) onSyncRpcResultData(authKeyId, clientMsgId int64, cntl *zrpc.ZRpcController) error {
+	glog.Infof("onSyncRpcResultData - receive data: {auth_key_id: %d, client_msg_id: %d, md: %s}",
+		authKeyId,
+		clientMsgId,
+		cntl)
+
+	rawData := cntl.MoveAttachment()
+
+	var sessList *authSessions
+	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+		err := fmt.Errorf("pushToSessionData - not find sessionList by authKeyId: {%d}", authKeyId)
+		glog.Warning(err)
+		return err
+	} else {
+		sessList, _ = vv.(*authSessions)
+	}
+
+	return sessList.onSyncRpcResultDataArrived(clientMsgId, cntl, rawData)
+}
+
+func (s *SessionServer) onSyncData(authKeyId int64, pts, ptsCount int32, cntl *zrpc.ZRpcController) error {
+	glog.Infof("onSyncData - receive data: {auth_key_id: %d, md: %s}",
+		authKeyId,
+		cntl)
+
+	dbuf := mtproto.NewDecodeBuf(cntl.MoveAttachment())
+	obj := dbuf.Object()
+	if obj == nil {
+		return dbuf.GetError()
+	}
+
+	var sessList *authSessions
+	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+		err := fmt.Errorf("pushToSessionData - not find sessionList by authKeyId: {%d}", authKeyId)
+		glog.Warning(err)
+		return err
+	} else {
+		sessList, _ = vv.(*authSessions)
+	}
+
+	return sessList.onSyncDataArrived(cntl, pts, ptsCount, &messageData{obj: obj})
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// session event
+func (s *SessionServer) onNewSessionClientManager(sess *authSessions) {
+	sess.Start()
+}
+
+func (s *SessionServer) onCloseSessionClientManager(authKeyId int64) {
+	if vv, ok := s.sessionManager.Load(authKeyId); ok {
+		vv.(*authSessions).Stop()
+		s.sessionManager.Delete(authKeyId)
+	}
+}

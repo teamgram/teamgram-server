@@ -29,7 +29,7 @@ import (
 func (s *SyncServiceImpl) SyncSyncUpdates(ctx context.Context, request *mtproto.TLSyncSyncUpdates) (*mtproto.Bool, error) {
     glog.Infof("sync.syncUpdates#3a077679 - request: {%s}", logger.JsonDebugData(request))
 
-    isMessage, err := s.processUpdatesRequest(request.GetUserId(), request.GetUpdates())
+    pts, ptsCount, err := s.processUpdatesRequest(request.GetUserId(), request.GetUpdates())
     if err == nil {
 		userId := request.GetUserId()
 		authKeyId := request.GetAuthKeyId()
@@ -37,9 +37,9 @@ func (s *SyncServiceImpl) SyncSyncUpdates(ctx context.Context, request *mtproto.
 		pushData := request.GetUpdates().Encode()
 		serverId := request.GetServerId()
 		if serverId == 0 {
-			s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0, isMessage)
+			s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0, pts, ptsCount)
 		} else {
-			s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId, isMessage)
+			s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId, pts, ptsCount)
 		}
     } else {
         glog.Error(err)

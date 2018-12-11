@@ -20,27 +20,10 @@ package server
 import (
 	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/gogo/protobuf/proto"
+	"github.com/golang/glog"
 )
-
-//func sendDataByConnection(conn *net2.TcpConnection, sessionID uint64, md *zproto.ZProtoMetadata, buf []byte) error {
-//	smsg := &zproto.ZProtoSessionData{
-//		SessionId: sessionID,
-//		MtpRawData: buf,
-//	}
-//	//zmsg := &mtproto.ZProtoMessage{
-//	//	SessionId: sessionID,
-//	//	Metadata:  md,
-//	//	SeqNum:    2,
-//	//	Message: &mtproto.ZProtoRawPayload{
-//	//		Payload: smsg.Encode(),
-//	//	},
-//	//}
-//	return zproto.SendMessageByConn(conn, md, smsg)
-//	// conn.Send(zmsg)
-//}
 
 func sendSessionDataByConnID(connID uint64, cntl *zrpc.ZRpcController, msg proto.Message) error {
 	return util.GAppInstance.(*SessionServer).server.SendMessageByConnID(connID, cntl, msg)
@@ -54,16 +37,16 @@ func getNbfsRPCClient() (*grpc_util.RPCClient, error) {
 	return util.GAppInstance.(*SessionServer).nbfsRpcClient, nil
 }
 
-func getSyncRPCClient() (mtproto.RPCSyncClient, error) {
-	return util.GAppInstance.(*SessionServer).syncRpcClient, nil
-}
-
-func getAuthSessionRPCClient() (mtproto.RPCSessionClient, error) {
-	return util.GAppInstance.(*SessionServer).authSessionRpcClient, nil
-}
+//func getSyncRPCClient() (mtproto.RPCSyncClient, error) {
+//	return util.GAppInstance.(*SessionServer).syncRpcClient, nil
+//}
+//
+//func getAuthSessionRPCClient() (mtproto.RPCSessionClient, error) {
+//	return util.GAppInstance.(*SessionServer).authSessionRpcClient, nil
+//}
 
 func deleteClientSessionManager(authKeyID int64) {
-	util.GAppInstance.(*SessionServer).sessionManager.onCloseSessionClientManager(authKeyID)
+	util.GAppInstance.(*SessionServer).onCloseSessionClientManager(authKeyID)
 }
 
 func getServerID() int32 {
@@ -80,6 +63,12 @@ func setOnline(userId int32, authKeyId int64, serverId, layer int32) {
 }
 
 func setOnlineTTL(userId int32, authKeyId int64, serverId, layer, ttl int32) {
+	glog.Infof("setOnlineTTL - {user_id: %d, auth_key_id: %d, server_id: %d, layer: %d, ttl: %d}",
+		userId,
+		authKeyId,
+		serverId,
+		layer,
+		ttl)
 	util.GAppInstance.(*SessionServer).status.SetSessionOnlineTTL(userId, authKeyId, serverId, layer, ttl)
 }
 
@@ -88,6 +77,10 @@ func setOffline(userId int32, authKeyId int64, serverId int32) {
 }
 
 func setOfflineTTL(userId int32, authKeyId int64, serverId int32) {
+	glog.Infof("setOfflineTTL - {user_id: %d, auth_key_id: %d, server_id: %d}",
+		userId,
+		authKeyId,
+		serverId)
 	util.GAppInstance.(*SessionServer).status.SetSessionOfflineTTL(userId, serverId, authKeyId)
 }
 

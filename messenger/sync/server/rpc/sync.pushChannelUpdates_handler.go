@@ -32,7 +32,7 @@ func (s *SyncServiceImpl) SyncPushChannelUpdates(ctx context.Context, request *m
     userId := request.GetUserId()
     cntl := zrpc.NewController()
     pushData := request.GetUpdates().Encode()
-    s.pushUpdatesToSession(syncTypeUser, userId, 0, 0, cntl, pushData, 0, false)
+    s.pushUpdatesToSession(syncTypeUser, userId, 0, 0, cntl, pushData, 0, 0, 0)
 
     glog.Infof("sync.pushChannelUpdates - reply: {true}",)
     return mtproto.ToBool(true), nil

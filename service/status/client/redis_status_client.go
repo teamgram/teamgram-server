@@ -90,17 +90,17 @@ func (c *redisStatusClient) SetSessionOnlineTTL(userId int32, authKeyId int64, s
 	defer conn.Close()
 
 	// TODO(@benqi): expired
-	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("push_%d", authKeyId)); err != nil {
-		glog.Errorf("setOnline - SADD {%d, %d}, error: %s", userId, authKeyId, err)
+	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("%d", authKeyId)); err != nil {
+		glog.Errorf("setSessionOnlineTTL - SADD {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
 
-	id := fmt.Sprintf("%s_push_%d", onlineKeyPrefix, authKeyId)
+	id := fmt.Sprintf("%s_%d", onlineKeyPrefix, authKeyId)
 	v := fmt.Sprintf("%d@%d@%d@%d", userId, serverId, time.Now().Unix() + int64(ttl), layer)
 
-	glog.Info("setOnline: ", id, " -- ", v)
+	glog.Info("setSessionOnlineTTL: ", id, " -- ", v)
 	if _, err = conn.Do("SETEX", id, int64(ttl), v); err != nil {
-		glog.Errorf("setOnline - SETEX {%s, %s, %s}, error: %v", id, v, ttl, err)
+		glog.Errorf("setSessionOnlineTTL - SETEX {%s, %s, %s}, error: %v", id, v, ttl, err)
 		return
 	}
 
@@ -108,41 +108,41 @@ func (c *redisStatusClient) SetSessionOnlineTTL(userId int32, authKeyId int64, s
 }
 
 func (c *redisStatusClient) SetSessionOnline(userId int32, authKeyId int64, serverId, layer int32) (err error) {
-	conn := c.redis.Get()
-	defer conn.Close()
-
-	// TODO(@benqi): expired
-	if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
-		glog.Errorf("setOnline - SADD {%d, %d}, error: %s", userId, authKeyId, err)
-		return
-	}
-
-	id := fmt.Sprintf("%s_update_%d", onlineKeyPrefix, authKeyId)
-	v := fmt.Sprintf("%d@%d@%d@%d", userId, serverId, time.Now().Unix() + int64(ONLINE_TIMEOUT), layer)
-
-	glog.Info("setOnline: ", id, " -- ", v)
-	if _, err = conn.Do("SETEX", id, int64(ONLINE_TIMEOUT), v); err != nil {
-		glog.Errorf("setOnline - SETEX {%s, %s, %s}, error: %v", id, v, ONLINE_TIMEOUT, err)
-		return
-	}
+	//conn := c.redis.Get()
+	//defer conn.Close()
+	//
+	//// TODO(@benqi): expired
+	//if _, err = conn.Do("SADD", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
+	//	glog.Errorf("setOnline - SADD {%d, %d}, error: %s", userId, authKeyId, err)
+	//	return
+	//}
+	//
+	//id := fmt.Sprintf("%s_update_%d", onlineKeyPrefix, authKeyId)
+	//v := fmt.Sprintf("%d@%d@%d@%d", userId, serverId, time.Now().Unix() + int64(ONLINE_TIMEOUT), layer)
+	//
+	//glog.Info("setOnline: ", id, " -- ", v)
+	//if _, err = conn.Do("SETEX", id, int64(ONLINE_TIMEOUT), v); err != nil {
+	//	glog.Errorf("setOnline - SETEX {%s, %s, %s}, error: %v", id, v, ONLINE_TIMEOUT, err)
+	//	return
+	//}
 
 	return
 }
 
 func (c *redisStatusClient) SetSessionOffline(userId int32, serverId int32, authKeyId int64) (err error) {
-	conn := c.redis.Get()
-	defer conn.Close()
-
-	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
-		glog.Errorf("setOnline - SREM {%d, %d}, error: %s", userId, authKeyId, err)
-		return
-	}
-
-	id := fmt.Sprintf("%s_update_%d", onlineKeyPrefix, authKeyId)
-	if _, err = conn.Do("DEL", id); err != nil {
-		glog.Errorf("setOffline - DEL {%s, %s}, error: %s", id, err)
-		return
-	}
+	//conn := c.redis.Get()
+	//defer conn.Close()
+	//
+	//if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("update_%d", authKeyId)); err != nil {
+	//	glog.Errorf("setOnline - SREM {%d, %d}, error: %s", userId, authKeyId, err)
+	//	return
+	//}
+	//
+	//id := fmt.Sprintf("%s_update_%d", onlineKeyPrefix, authKeyId)
+	//if _, err = conn.Do("DEL", id); err != nil {
+	//	glog.Errorf("setOffline - DEL {%s, %s}, error: %s", id, err)
+	//	return
+	//}
 
 	return
 }
@@ -151,14 +151,14 @@ func (c *redisStatusClient) SetSessionOfflineTTL(userId int32, serverId int32, a
 	conn := c.redis.Get()
 	defer conn.Close()
 
-	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("push_%d", authKeyId)); err != nil {
-		glog.Errorf("setOnline - SREM {%d, %d}, error: %s", userId, authKeyId, err)
+	if _, err = conn.Do("SREM", fmt.Sprintf("%s_%d", userKeyIdsPrefix, userId), fmt.Sprintf("%d", authKeyId)); err != nil {
+		glog.Errorf("setSessionOfflineTTL - SREM {%d, %d}, error: %s", userId, authKeyId, err)
 		return
 	}
 
-	id := fmt.Sprintf("%s_push_%d", onlineKeyPrefix, authKeyId)
+	id := fmt.Sprintf("%s_%d", onlineKeyPrefix, authKeyId)
 	if _, err = conn.Do("DEL", id); err != nil {
-		glog.Errorf("setOffline - DEL {%s, %s}, error: %s", id, err)
+		glog.Errorf("setSessionOfflineTTL - DEL {%s, %s}, error: %s", id, err)
 		return
 	}
 
@@ -177,7 +177,7 @@ func (c *redisStatusClient) GetUserOnlineSessions(userId int32) (*status.Session
 	if _, ok := sesses.UsersSessions[userId]; !ok {
 		return &status.SessionEntryList{
 			Sessions:     []*status.SessionEntry{},
-			PushSessions: []*status.SessionEntry{},
+			// PushSessions: []*status.SessionEntry{},
 		}, nil
 	}
 	return sesses.UsersSessions[userId], nil
@@ -240,11 +240,11 @@ func (c *redisStatusClient) GetUsersOnlineSessionsList(userIdList []int32) (user
 		v := onlineSessions[i]
 
 		ks := strings.Split(k, "_")
-		if len(ks) != 3 {
+		if len(ks) != 2 {
 			continue
 		}
-		isPush := ks[1] == "push"
-		authKeyId, _ := util.StringToInt64(ks[2])
+		// isPush := ks[1] == "push"
+		authKeyId, _ := util.StringToInt64(ks[1])
 
 		vs := strings.Split(v, "@")
 		if len(vs) != 4 {
@@ -266,16 +266,18 @@ func (c *redisStatusClient) GetUsersOnlineSessionsList(userIdList []int32) (user
 		if _, ok := usersSessions[userId]; !ok {
 			usersSessions[userId] = &status.SessionEntryList{
 				Sessions:     []*status.SessionEntry{},
-				PushSessions: []*status.SessionEntry{},
+				// PushSessions: []*status.SessionEntry{},
 			}
 		}
 		entryList := usersSessions[userId]
 
-		if isPush {
-			entryList.PushSessions = append(entryList.PushSessions, entry)
-		} else {
-			entryList.Sessions = append(entryList.Sessions, entry)
-		}
+		entryList.Sessions = append(entryList.Sessions, entry)
+
+		//if isPush {
+		//	entryList.PushSessions = append(entryList.PushSessions, entry)
+		//} else {
+		//	entryList.Sessions = append(entryList.Sessions, entry)
+		//}
 	}
  	// */
 	usersSessList.UsersSessions = usersSessions

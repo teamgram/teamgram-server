@@ -242,6 +242,7 @@ func (m *TLMsgCopy) Decode(dbuf *DecodeBuf) error {
 //gzip_packed#3072cfa1 packed_data:string = Object; // parsed manually
 type TLGzipPacked struct {
 	PackedData []byte
+	Obj        TLObject
 }
 
 func (m *TLGzipPacked) String() string {
@@ -275,7 +276,17 @@ func (m *TLGzipPacked) Decode(dbuf *DecodeBuf) error {
 		m.PackedData = append(m.PackedData, b[0:n]...)
 	}
 
-	return dbuf.err
+	// decode
+	if dbuf.err == nil {
+		dbuf2 := NewDecodeBuf(m.PackedData)
+		m.Obj = dbuf2.Object()
+		if m.Obj == nil {
+
+		}
+		return dbuf2.err
+	} else {
+		return dbuf.err
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

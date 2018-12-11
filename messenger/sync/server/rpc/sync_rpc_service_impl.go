@@ -64,10 +64,11 @@ type PushData struct {
 	rpcMessage proto.Message
 }
 
-func MakePushUpdatesData(authKeyId int64, isPush int32, cntl *zrpc.ZRpcController, pushRawData []byte) *PushData {
+func MakePushUpdatesData(authKeyId int64, cntl *zrpc.ZRpcController, pts, ptsCount int32, pushRawData []byte) *PushData {
 	rpcMessage := &mtproto.TLPushPushUpdatesData{
 		AuthKeyId: authKeyId,
-		IsPush:    isPush,
+		Pts:       pts,
+		PtsCount:  ptsCount,
 	}
 
 	cntl.SetServiceName("session")
@@ -217,21 +218,21 @@ func updateShortChatToUpdateNewMessage(userId int32, shortMessage *mtproto.TLUpd
 	return updateNew.To_Update()
 }
 
-func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updates) (bool, error) {
-	var isMessage bool
+func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updates) (int32, int32, error) {
+	var pts, ptsCount int32
 
 	switch ups.GetConstructor() {
 	case mtproto.TLConstructor_CRC32_updateShortMessage:
 		shortMessage := ups.To_UpdateShortMessage()
 		s.UpdateModel.AddToPtsQueue(userId, shortMessage.GetPts(), shortMessage.GetPtsCount(), updateShortToUpdateNewMessage(userId, shortMessage))
-		isMessage = true
+		pts = shortMessage.GetPts()
+		ptsCount = shortMessage.GetPtsCount()
 	case mtproto.TLConstructor_CRC32_updateShortChatMessage:
 		shortMessage := ups.To_UpdateShortChatMessage()
 		s.UpdateModel.AddToPtsQueue(userId, shortMessage.GetPts(), shortMessage.GetPtsCount(), updateShortChatToUpdateNewMessage(userId, shortMessage))
-		isMessage = true
+		pts = shortMessage.GetPts()
+		ptsCount = shortMessage.GetPtsCount()
 	case mtproto.TLConstructor_CRC32_updateShort:
-		//short := updates.To_UpdateShort()
-		//short.SetDate(date)
 	case mtproto.TLConstructor_CRC32_updates:
 		updates2 := ups.To_Updates()
 		// totalPtsCount := int32(0)
@@ -243,10 +244,11 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				mtproto.TLConstructor_CRC32_updateWebPage,
 				mtproto.TLConstructor_CRC32_updateReadMessagesContents,
 				mtproto.TLConstructor_CRC32_updateEditMessage:
-				if update.GetConstructor() == mtproto.TLConstructor_CRC32_updateNewMessage {
-					isMessage = true
-				}
 				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			case mtproto.TLConstructor_CRC32_updateDeleteMessages:
 				// deleteMessages := update.To_UpdateDeleteMessages().GetMessages()
 				//// TODO(@benqi): NextPtsCountId
@@ -260,6 +262,10 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				// update.Data2.Pts = pts
 				// update.Data2.PtsCount = ptsCount
 				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			case mtproto.TLConstructor_CRC32_updateNewChannelMessage:
 				//if request.PushType == mtproto.SyncType_SYNC_TYPE_USER_NOTME {
 				//	channelMessage := update.To_UpdateNewChannelMessage().GetMessage()
@@ -284,7 +290,7 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	default:
 		err := fmt.Errorf("invalid updates data: {%d}", ups.GetConstructor())
 		// glog.Error(err)
-		return false, err
+		return 0, 0, err
 	}
 
 	//state := &mtproto.ClientUpdatesState{
@@ -293,11 +299,11 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	//	Date:     date,
 	//}
 
-	return isMessage, nil
+	return pts, ptsCount, nil
 }
 
-func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtproto.Updates) (bool, error) {
-	var isMessage bool
+func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtproto.Updates) (int32, int32, error) {
+	var pts, ptsCount int32
 	switch ups.GetConstructor() {
 	case mtproto.TLConstructor_CRC32_updates:
 		updates2 := ups.To_Updates()
@@ -305,27 +311,43 @@ func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtp
 			switch update.GetConstructor() {
 			case mtproto.TLConstructor_CRC32_updateNewChannelMessage:
 				s.UpdateModel.AddToChannelPtsQueue(channelId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			case mtproto.TLConstructor_CRC32_updateDeleteChannelMessages:
 				s.UpdateModel.AddToChannelPtsQueue(channelId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			case mtproto.TLConstructor_CRC32_updateEditChannelMessage:
 				s.UpdateModel.AddToChannelPtsQueue(channelId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			case mtproto.TLConstructor_CRC32_updateChannelWebPage:
 				s.UpdateModel.AddToChannelPtsQueue(channelId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if updates2.Data2.Pts > pts {
+					pts = updates2.Data2.Pts
+				}
+				ptsCount += updates2.Data2.PtsCount
 			}
 		}
 	default:
 		err := fmt.Errorf("invalid updates data: {%d}", ups.GetConstructor())
 		// glog.Error(err)
-		return false, err
+		return 0, 0, err
 	}
-	return isMessage, nil
+	return pts, ptsCount, nil
 }
 
-func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, authKeyId, clientMsgId int64, cntl *zrpc.ZRpcController, pushData []byte, hasServerId int32, isMessage bool) {
+func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, authKeyId, clientMsgId int64, cntl *zrpc.ZRpcController, pushData []byte, hasServerId, pts, ptsCount int32) {
 	if (syncType == syncTypeUserMe || syncType == syncTypeRpcResult) && hasServerId > 0 {
-		glog.Infof("pushUpdatesToSession - phshData: {server_id: %d, auth_key_id: %d}", hasServerId, authKeyId)
+		glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", hasServerId, authKeyId)
 		if syncType == syncTypeUserMe {
-			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushUpdatesData(authKeyId, 0, cntl, pushData)}
+			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushUpdatesData(authKeyId, cntl, pts, ptsCount, pushData)}
 		} else {
 			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushRpcResultData(authKeyId, clientMsgId, cntl, pushData)}
 		}
@@ -354,37 +376,7 @@ func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, 
 						continue
 					}
 					glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
-					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, 0, cntl, pushData)}
-				}
-			}
-		}
-
-		if len(statusList.PushSessions) > 0 {
-			if !isMessage {
-				return
-			}
-
-			ss2 := make(map[int32][]*status.SessionEntry)
-			for _, status2 := range statusList.PushSessions {
-				if _, ok := ss2[status2.ServerId]; !ok {
-					ss2[status2.ServerId] = []*status.SessionEntry{}
-				}
-				ss2[status2.ServerId] = append(ss2[status2.ServerId], status2)
-			}
-
-			glog.Info(ss2)
-			for k, ss3 := range ss2 {
-				glog.Info(ss3)
-				for _, ss4 := range ss3 {
-					if syncType == syncTypeUserNotMe && authKeyId == ss4.AuthKeyId {
-						continue
-					}
-					if _, ok := sendedAuthKeyIdList[ss4.AuthKeyId]; ok {
-						continue
-					}
-					glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
-
-					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, 1, cntl, s.updatesTooLong)}
+					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, cntl, pts, ptsCount, pushData)}
 				}
 			}
 		}

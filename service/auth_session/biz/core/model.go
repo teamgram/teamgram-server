@@ -134,8 +134,8 @@ func (m *AuthSessionModel) GetPushSessionId(userId int32, authKeyId int64, token
 		glog.Errorf("not find token - keyId = %d", authKeyId)
 		return 0
 	}
-	sessionId, _ := util.StringToInt64(do.Token)
-	return sessionId
+	sessionId, _ := util.StringToUint64(do.Token)
+	return int64(sessionId)
 }
 
 func (m *AuthSessionModel) BindAuthKeyUser(authKeyId int64, userId int32) bool {

@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/crypto"
+	"reflect"
 )
 
 const (
@@ -162,8 +163,8 @@ func NewEncryptedMessage2(authKeyId int64) *EncryptedMessage2 {
 }
 
 func (m *EncryptedMessage2) String() string {
-	return fmt.Sprintf("{auth_key_id: %d. salt: %d, session_id: %d, message_id: %d, seq_no: %d}",
-		m.authKeyId, m.Salt, m.SessionId, m.MessageId, m.SeqNo)
+	return fmt.Sprintf("{auth_key_id: %d. salt: %d, session_id: %d, message_id: %d, seq_no: %d, object: %v}",
+		m.authKeyId, m.Salt, m.SessionId, m.MessageId, m.SeqNo, reflect.TypeOf(m.Object))
 }
 
 func (m *EncryptedMessage2) MessageType() int {

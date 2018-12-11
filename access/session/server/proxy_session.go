@@ -18,26 +18,20 @@
 package server
 
 import (
-	"fmt"
-	"testing"
-	"time"
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/mtproto"
 )
 
-func TestClientSessionManager(t *testing.T) {
-	s := newClientSessionManager(100000)
-	s.Start()
-
-	fmt.Println("ready.")
-	for i := 0; i < 10; i++ {
-		s.onSessionData(&sessionData{ClientConnID{1, 1, 1, time.Now().Unix()}, nil, []byte{1}})
-	}
-
-	s.Stop()
+type proxySession struct {
+	*session
 }
 
+func (c *proxySession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2) {
+	c.session.processMessageData(id, cntl, salt, msg, func(sessMsg *mtproto.TLMessage2) {
+	})
 
-func CheckClassID(classId int32) bool {
-	var registers2 = map[int32]int32{}
-	_, ok := registers2[classId]
-	return ok
+	if len(c.pendingMessages) > 0 {
+		c.sendPendingMessagesToClient(id, cntl, c.pendingMessages)
+		c.pendingMessages = []*pendingMessage{}
+	}
 }

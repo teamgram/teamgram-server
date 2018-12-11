@@ -154,7 +154,7 @@ func (c *ZRpcClient) SendMessageToAddress(name, addr string, cntl *ZRpcControlle
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 func (c *ZRpcClient) OnNewClient(client *net2.TcpClient) {
-	glog.Info("onNewClient - client: ", client, ", conn: ", client.GetConnection())
+	// glog.Info("onNewClient - client: ", client, ", conn: ", client.GetConnection())
 
 	codec := client.GetConnection().Codec()
 	glog.Info("codec: ", codec)
@@ -198,7 +198,7 @@ func (c *ZRpcClient) OnClientDataArrived(client *net2.TcpClient, msg interface{}
 }
 
 func (c *ZRpcClient) OnClientClosed(client *net2.TcpClient) {
-	glog.Infof("onClientClosed - peer(%s)", client.GetConnection())
+	// glog.Infof("onClientClosed - peer(%s)", client.GetConnection())
 
 	if c.callback != nil {
 		c.callback.OnClientClosed(client)

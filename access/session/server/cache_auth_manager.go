@@ -127,7 +127,7 @@ func (c *cacheAuthManager) GetPushSessionID(userId int32, authKeyId int64) (int6
 		cv, _ := v.(*cacheAuthValue)
 		if cv.pushSessionId == 0 {
 			id, err := c.client.SessionGetPushSessionId(context.Background(), &mtproto.TLSessionGetPushSessionId{
-				UsreId:    userId,
+				UserId:    userId,
 				AuthKeyId: authKeyId,
 				TokenType: 7,
 			})

@@ -51,7 +51,7 @@ message SessionEntry {
 
 message SessionEntryList {
     repeated SessionEntry sessions = 1;
-    repeated SessionEntry push_sessions = 2;
+    // repeated SessionEntry push_sessions = 2;
 }
 
 message UsersSessionEntryList {

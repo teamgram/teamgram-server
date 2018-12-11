@@ -42,12 +42,13 @@ func (pack *messagePackUtil) unpackServiceMessage(msgId int64, seqNo int32, obje
 		glog.Info("processGzipPacked - request data: ", gzipPacked)
 		dbuf := mtproto.NewDecodeBuf(gzipPacked.PackedData)
 		o := dbuf.Object()
-		if o == nil {
-			glog.Errorf("decode query error: %s", hex.EncodeToString(gzipPacked.PackedData))
-			pack.errMsgIDList = append(pack.errMsgIDList, msgId)
-			return
-		}
 		pack.unpackServiceMessage(msgId, seqNo, o)
+		//if gzipPacked.Obj == nil {
+		//	glog.Errorf("decode query error: %s", hex.EncodeToString(gzipPacked.PackedData))
+		//	pack.errMsgIDList = append(pack.errMsgIDList, msgId)
+		//	return
+		//}
+		//pack.unpackServiceMessage(msgId, seqNo, gzipPacked.Obj)
 	case *mtproto.TLMsgCopy:
 		// not use in client
 		glog.Error("android client not use msg_copy: ", object)
@@ -61,6 +62,7 @@ func (pack *messagePackUtil) unpackServiceMessage(msgId int64, seqNo int32, obje
 		}
 
 		pack.messages = append(pack.messages, &mtproto.TLMessage2{MsgId: msgId, Seqno: seqNo, Object: invokeAfterMsgExt})
+
 	case *mtproto.TLInvokeAfterMsgs:
 		invokeAfterMsgs := object.(*mtproto.TLInvokeAfterMsgs)
 		invokeAfterMsgsExt := NewInvokeAfterMsgsExt(invokeAfterMsgs)

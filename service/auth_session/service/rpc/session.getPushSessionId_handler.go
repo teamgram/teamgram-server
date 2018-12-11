@@ -25,12 +25,12 @@ import (
     "github.com/nebula-chat/chatengine/mtproto"
 )
 
-// session.getPushSessionId usre_id:int auth_key_id:long token_type:int = Int64;
+// session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
 func (s *SessionServiceImpl) SessionGetPushSessionId(ctx context.Context, request *mtproto.TLSessionGetPushSessionId) (*mtproto.Int64, error) {
     md := grpc_util.RpcMetadataFromIncoming(ctx)
     glog.Infof("session.getPushSessionId - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    sessionId := s.AuthSessionModel.GetPushSessionId(request.GetUsreId(), request.GetAuthKeyId(), request.GetTokenType())
+    sessionId := s.AuthSessionModel.GetPushSessionId(request.GetUserId(), request.GetAuthKeyId(), request.GetTokenType())
     reply := &mtproto.TLLong{Data2: &mtproto.Int64_Data{
         V: sessionId,
     }}

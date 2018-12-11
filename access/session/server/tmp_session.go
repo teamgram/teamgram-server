@@ -18,24 +18,21 @@
 package server
 
 import (
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/mtproto"
 )
 
-func checkMessageConfirm(tl mtproto.TLObject) bool {
-	// TODO(@benqi):
-	// *mtproto.TLPing,
-	// *mtproto.TLPingDelayDisconnect,
-
-	switch tl.(type) {
-	case *mtproto.TLMsgContainer,
-		*mtproto.TLMsgsAck,
-		*mtproto.TLMsgResendReq,
-		*mtproto.TLDestroySession,
-		*mtproto.TLHttpWait:
-
-		return false
-	default:
-		break
-	}
-	return true
+type tempSession struct {
+	*session
 }
+
+func (c *tempSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2) {
+	c.session.processMessageData(id, cntl, salt, msg, func(sessMsg *mtproto.TLMessage2) {
+	})
+
+	if len(c.pendingMessages) > 0 {
+		c.sendPendingMessagesToClient(id, cntl, c.pendingMessages)
+		c.pendingMessages = []*pendingMessage{}
+	}
+}
+
