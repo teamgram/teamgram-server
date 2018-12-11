@@ -377,10 +377,10 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 		return
 	}
 
-	//if !c.checkBadMsgNotification(id, cntl, msg) {
-	//	glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
-	//	return
-	//}
+	if !c.checkBadMsgNotification(id, cntl, msg) {
+		glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
+		return
+	}
 
 	packUtil := messagePackUtil{}
 	packUtil.unpackServiceMessage(msg.MsgId, msg.Seqno, msg.Object)
@@ -696,7 +696,7 @@ func (c *session) checkContainer(msgId int64, seqno int32, container *mtproto.TL
 	//}
 
 	if len(container.Messages) == 0 {
-		return kInvalidContainer
+		return 0
 	}
 
 	for _, v := range container.Messages {
