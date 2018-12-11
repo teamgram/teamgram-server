@@ -98,7 +98,7 @@ type networkSyncMessage struct {
 
 type rpcApiMessages struct {
 	connID      ClientConnID
-	cntl   *zrpc.ZRpcController
+	cntl        *zrpc.ZRpcController
 	sessionId   int64
 	rpcMessages []*networkApiMessage
 }

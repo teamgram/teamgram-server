@@ -269,19 +269,19 @@ func (c *genericSession) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpcContro
 	case *mtproto.TLAccountRegisterDevice:
 		registerDevice, _ := object.(*mtproto.TLAccountRegisterDevice)
 		if registerDevice.TokenType == 7 {
-			pushSessionId, err := util.StringToInt64(registerDevice.GetToken())
+			pushSessionId, err := util.StringToUint64(registerDevice.GetToken())
 			if err == nil {
-				c.cb.onBindPushSessionId(pushSessionId)
-				putCachePushSessionId(c.cb.getAuthKeyId(), pushSessionId)
+				c.cb.onBindPushSessionId(int64(pushSessionId))
+				putCachePushSessionId(c.cb.getAuthKeyId(), int64(pushSessionId))
 			}
 		}
 	case *mtproto.TLAccountRegisterDeviceLayer71:
 		registerDevice, _ := object.(*mtproto.TLAccountRegisterDeviceLayer71)
 		if registerDevice.TokenType == 7 {
-			pushSessionId, err := util.StringToInt64(registerDevice.GetToken())
+			pushSessionId, err := util.StringToUint64(registerDevice.GetToken())
 			if err == nil {
-				c.cb.onBindPushSessionId(pushSessionId)
-				putCachePushSessionId(c.cb.getAuthKeyId(), pushSessionId)
+				c.cb.onBindPushSessionId(int64(pushSessionId))
+				putCachePushSessionId(c.cb.getAuthKeyId(), int64(pushSessionId))
 			}
 		}
 	}
