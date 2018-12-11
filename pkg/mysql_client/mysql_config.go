@@ -21,6 +21,7 @@ import (
 	_ "github.com/go-sql-driver/mysql" // import your used driver
 	"github.com/golang/glog"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type MySQLConfig struct {
@@ -38,5 +39,9 @@ func NewSqlxDB(c *MySQLConfig) (db *sqlx.DB) {
 
 	db.SetMaxOpenConns(c.Active)
 	db.SetMaxIdleConns(c.Idle)
+
+	// 避免使用服务器断开超时的空闲连接 mysql空闲连接超时时间默认为8小时
+	// thanks @hns_space(space Mars)
+	db.SetConnMaxLifetime(time.Minute * 10)
 	return
 }
