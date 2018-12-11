@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 	etcd3 "github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes"
-	"github.com/golang/glog"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/grpclog"
 	"time"
@@ -78,50 +76,32 @@ func NewRegistry(option Option) (*EtcdReigistry, error) {
 
 func (e *EtcdReigistry) Register() error {
 
-	insertFunc := func() error {
-		// fmt.Println("Grant: ", e)
-		resp, err := e.etcd3Client.Grant(e.ctx, 10) // int64(e.ttl))
-		if err != nil {
-			fmt.Println("Grant error: ", err)
-			return err
-		}
-		_, err = e.etcd3Client.Get(e.ctx, e.key)
-		if err != nil {
-			if err == rpctypes.ErrKeyNotFound {
-				if _, err := e.etcd3Client.Put(e.ctx, e.key, e.value, etcd3.WithLease(resp.ID)); err != nil {
-					grpclog.Printf("grpclb: set key '%s' with ttl to etcd3 failed: %s", e.key, err.Error())
-				}
-			} else {
-				grpclog.Printf("grpclb: key '%s' connect to etcd3 failed: %s", e.key, err.Error())
-			}
-			return err
-		} else {
-			// refresh set to true for not notifying the watcher
-			// fmt.Println("refresh: ", resp)
-			if _, err := e.etcd3Client.Put(e.ctx, e.key, e.value, etcd3.WithLease(resp.ID)); err != nil {
-				grpclog.Printf("grpclb: refresh key '%s' with ttl to etcd3 failed: %s", e.key, err.Error())
-				return err
-			}
-		}
-		return nil
-	}
-
-	err := insertFunc()
+	resp, err := e.etcd3Client.Grant(e.ctx, 10) // int64(e.ttl))
 	if err != nil {
+		fmt.Println("Grant error: ", err)
 		return err
 	}
 
-	ticker := time.NewTicker(e.ttl / 5)
+	if _, err := e.etcd3Client.Put(e.ctx, e.key, e.value, etcd3.WithLease(resp.ID)); err != nil {
+		return err
+	}
+
+	// 自动续约
+	keepAliveChan, err := e.etcd3Client.KeepAlive(e.ctx, resp.ID)
+	if err != nil || keepAliveChan == nil {
+		grpclog.Errorf("grpclb: refresh service '%s' with ttl to etcd3 failed: %s")
+		e.cancel()
+		return err
+	}
+
 	for {
 		select {
-		case <-ticker.C:
-			insertFunc()
+		case <-keepAliveChan:
+			// 消息不重要，消费掉就行，防止溢出
 		case <-e.ctx.Done():
-			ticker.Stop()
 			if _, err := e.etcd3Client.Delete(context.Background(), e.key); err != nil {
-				grpclog.Printf("grpclb: deregister '%s' failed: %s", e.key, err.Error())
+				grpclog.Errorf("grpclb: deregister '%s' failed: %s", e.key, err.Error())
 			}
-			glog.Info("Delete...")
 			return nil
 		}
 	}
