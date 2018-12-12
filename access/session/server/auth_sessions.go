@@ -519,30 +519,31 @@ func (s *authSessions) onSyncData(syncMsg *syncData) {
 	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 
-	glog.Infof("onSyncData - generic session: ", s.sessions[kSessionGeneric])
-	glog.Infof("onSyncData - push session: ", s.sessions[kSessionPush])
-
 	genericSess := s.sessions[kSessionGeneric]
-	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+	pushSess := s.sessions[kSessionPush]
 
-
-	if genericSess.sessionOnline() {
+	if syncMsg.ptsCount > 0 && syncMsg.pts - syncMsg.ptsCount != 0 {
 		glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 			syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
 	} else {
-		if syncMsg.ptsCount > 0 {
-			genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
-
-			glog.Infof("onSyncData - push session: {pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-
-			pushSess := s.sessions[kSessionPush]
-			if pushSess.sessionOnline() {
+		if pushSess.sessionOnline() {
+			if syncMsg.ptsCount > 0 {
+				glog.Infof("onSyncData - push session: {pts: %d, pts_count: %d, updates: %s}",
+					syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 				pushSess.(*pushSession).onSyncData(syncMsg.cntl)
-			} else {
-				glog.Info("push session - offline: ", pushSess)
+
+				if genericSess.sessionOnline() {
+					glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
+						syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+					genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
+				}
+			}
+		} else {
+			if genericSess.sessionOnline() {
+				glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
+					syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+				genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
 			}
 		}
 	}
@@ -568,9 +569,9 @@ func (s *authSessions) onRpcResult(rpcResults *rpcApiMessages) {
 	case s.sessions[kSessionGeneric].SessionId():
 		s.sessions[kSessionGeneric].(*genericSession).onRpcResult(rpcResults)
 	case s.sessions[kSessionUpload].SessionId():
-		s.sessions[kSessionUpload].(*genericSession).onRpcResult(rpcResults)
+		s.sessions[kSessionUpload].(*uploadSession).onRpcResult(rpcResults)
 	case s.sessions[kSessionDownload].SessionId():
-		s.sessions[kSessionDownload].(*genericSession).onRpcResult(rpcResults)
+		s.sessions[kSessionDownload].(*downloadSession).onRpcResult(rpcResults)
 	default:
 		glog.Warning("onRpcResult - not found rpcSession by sessionId: ", rpcResults.sessionId)
 		return

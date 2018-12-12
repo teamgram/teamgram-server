@@ -377,10 +377,10 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 		return
 	}
 
-	if !c.checkBadMsgNotification(id, cntl, msg) {
-		glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
-		return
-	}
+	//if !c.checkBadMsgNotification(id, cntl, msg) {
+	//	glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
+	//	return
+	//}
 
 	packUtil := messagePackUtil{}
 	packUtil.unpackServiceMessage(msg.MsgId, msg.Seqno, msg.Object)
@@ -389,13 +389,13 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 	msgs := make([]*mtproto.TLMessage2, 0, len(packUtil.messages))
 	for _, m := range packUtil.messages {
 		glog.Info("unpack - ", reflect.TypeOf(m.Object))
-		// msgs = append(msgs, m)
-		if c.checkBadMsgNotification(id, cntl, m) {
-			msgs = append(msgs, m)
-			c.addMsgId(m.MsgId)
-		} else {
-			// TODO(@benqi): log
-		}
+		msgs = append(msgs, m)
+		//if c.checkBadMsgNotification(id, cntl, m) {
+		//	msgs = append(msgs, m)
+		//	c.addMsgId(m.MsgId)
+		//} else {
+		//	// TODO(@benqi): log
+		//}
 	}
 
 	if len(msgs) == 0 {
@@ -416,7 +416,8 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 	// check new session created
 	for _, message := range msgs {
 		if c.firstMsgId > message.MsgId {
-			c.onNewSessionCreated(id, cntl, c.firstMsgId)
+			c.onNewSessionCreated(id, cntl, message.MsgId)
+			c.firstMsgId = message.MsgId // msgs[0].MsgId
 		}
 
 		switch message.Object.(type) {

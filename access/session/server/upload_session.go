@@ -37,12 +37,12 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 			c,
 			id,
 			cntl,
-			msg.MsgId,
-			msg.Seqno,
-			reflect.TypeOf(msg.Object))
+			sessMsg.MsgId,
+			sessMsg.Seqno,
+			reflect.TypeOf(sessMsg.Object))
 
 		// TODO(@benqi): sync AuthUserId??
-		requestMessage := msg
+		requestMessage := sessMsg
 
 		// reqMsgId := msgId
 		for e := c.apiMessages.Front(); e != nil; e = e.Next() {
@@ -61,11 +61,8 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 			state:      kNetworkMessageStateReceived,
 		}
 		glog.Info("onRpcRequest - ", apiMessage)
-		// c.apiMessages = append(c.apiMessages, apiMessage)
 		c.apiMessages.PushBack(apiMessage)
-
 		c.rpcMessages = append(c.rpcMessages, apiMessage)
-		// c.manager.rpcQueue.Push(&rpcApiMessage{connID: connID, sessionId: c.sessionId, rpcMessage: apiMessage})
 
 		return
 	})
@@ -75,6 +72,12 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 		c.sendPendingMessagesToClient(id, cntl, c.pendingMessages)
 		c.pendingMessages = []*pendingMessage{}
 	}
+
+	if len(c.rpcMessages) > 0 {
+		c.cb.sendToRpcQueue(&rpcApiMessages{connID: id, cntl: cntl, sessionId: c.sessionId, rpcMessages: c.rpcMessages})
+		c.rpcMessages = []*networkApiMessage{}
+	}
+
 }
 
 func (c *uploadSession) onInvokeRpcRequest(authUserId int32, authKeyId int64, layer int32, requests *rpcApiMessages) []*networkApiMessage {

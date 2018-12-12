@@ -321,22 +321,6 @@ func (c *genericSession) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpcContro
 		}
 	}
 
-	//// updates
-	//if checkRpcUpdatesType(object) {
-	//	// c.manager.setUserOnline(c.sessionId, connID)
-	//	glog.Infof("onRpcRequest - isUpdate: {connID: {%v}, rpcMethod: {%T}}", connID, object)
-	//	c.isUpdates = true
-	//	// c.manager.updatesSession.SubscribeUpdates(c, connID)
-	//
-	//	// subscribe
-	//	// c.manager.updatesSession.SubscribeUpdates(c, connID)
-	//}
-
-	//if checkRpcPushType(object) {
-	//	glog.Infof("onRpcRequest - isPush: {connID: {%v}, rpcMethod: {%T}}", connID, object)
-	//	c.isPush = true
-	//}
-
 	apiMessage := &networkApiMessage{
 		date:       time.Now().Unix(),
 		rpcRequest: requestMessage,
@@ -356,74 +340,6 @@ func (c *genericSession) onInvokeRpcRequest(authUserId int32, authKeyId int64, l
 		c, requests.sessionId, requests.connID, requests.cntl, requests.rpcMessages)
 
 	return invokeRpcRequest(authUserId, authKeyId, layer, requests, func() *grpc_util.RPCClient{ return c.RPCClient })
-	//rpcMessageList := make([]*networkApiMessage, 0, len(requests.rpcMessages))
-	//
-	//for i := 0; i < len(requests.rpcMessages); i++ {
-	//	var (
-	//		err         error
-	//		rpcResult   mtproto.TLObject
-	//	)
-	//
-	//	// 初始化metadata
-	//	rpcMetadata := &grpc_util.RpcMetadata{
-	//		ServerId:        getServerID(),
-	//		NetlibSessionId: int64(requests.connID.clientConnID),
-	//		AuthId:          authKeyId,
-	//		SessionId:       requests.sessionId,
-	//		TraceId:         requests.cntl.RpcMeta.GetRequest().GetTraceId(),
-	//		SpanId:          getUUID(),
-	//		ReceiveTime:     time.Now().Unix(),
-	//		UserId:          authUserId,
-	//		ClientMsgId:     requests.rpcMessages[i].rpcRequest.MsgId,
-	//		Layer:           layer,
-	//	}
-	//
-	//	//if s.Layer == 0 {
-	//	//	s.Layer = getCacheApiLayer(s.authKeyId)
-	//	//}
-	//	// rpcMetadata.Layer = s.Layer
-	//
-	//	// TODO(@benqi): change state.
-	//	requests.rpcMessages[i].state = kNetworkMessageStateRunning
-	//
-	//	// TODO(@benqi): rpc proxy
-	//	if checkRpcUploadRequest(requests.rpcMessages[i].rpcRequest.Object) {
-	//		rpcResult, err = s.nbfsRPCClient.Invoke(rpcMetadata, requests.rpcMessages[i].rpcRequest.Object)
-	//	} else if checkRpcDownloadRequest(requests.rpcMessages[i].rpcRequest.Object) {
-	//		rpcResult, err = s.nbfsRPCClient.Invoke(rpcMetadata, requests.rpcMessages[i].rpcRequest.Object)
-	//	} else {
-	//		rpcResult, err = s.bizRPCClient.Invoke(rpcMetadata, requests.rpcMessages[i].rpcRequest.Object)
-	//	}
-	//
-	//	reply := &mtproto.TLRpcResult{
-	//		ReqMsgId: requests.rpcMessages[i].rpcRequest.MsgId,
-	//	}
-	//
-	//	if err != nil {
-	//		glog.Error(err)
-	//		rpcErr, _ := err.(*mtproto.TLRpcError)
-	//		if rpcErr.GetErrorCode() == int32(mtproto.TLRpcErrorCodes_NOTRETURN_CLIENT) {
-	//			continue
-	//		}
-	//		reply.Result = rpcErr
-	//	} else {
-	//		// glog.Infof("OnMessage - rpc_result: {%v}\n", rpcResult)
-	//		reply.Result = rpcResult
-	//	}
-	//
-	//	requests.rpcMessages[i].state = kNetworkMessageStateInvoked
-	//	requests.rpcMessages[i].rpcResult = reply
-	//
-	//	rpcMessageList = append(rpcMessageList, requests.rpcMessages[i])
-	//
-	//	if _, ok := requests.rpcMessages[i].rpcRequest.Object.(*mtproto.TLAuthLogOut); ok {
-	//		glog.Info("authLogOut - ", rpcMetadata)
-	//		putCacheUserId(authKeyId, 0)
-	//		break
-	//	}
-	//}
-	//
-	//return rpcMessageList
 }
 
 func (c *genericSession) onRpcResult(rpcResults *rpcApiMessages) {
