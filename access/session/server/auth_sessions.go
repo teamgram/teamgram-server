@@ -164,7 +164,7 @@ type authSessions struct {
 	state           int
 	onlineExpired   int64
 	updates         *updatesManager
-	// pushSessionId   int64
+	pushSessionId   int64
 	// cacheSalt       *mtproto.TLFutureSalt
 	// cacheLastSalt   *mtproto.TLFutureSalt
 }
@@ -237,15 +237,23 @@ func (s *authSessions) onBindAuthKey(authKey []byte) {
 	}
 }
 
+func (s *authSessions) getPushSessionId() int64 {
+	if s.pushSessionId == 0 && s.AuthUserId != 0 {
+		s.pushSessionId = getCachePushSessionID(s.AuthUserId, s.authKeyId)
+	}
+	return s.pushSessionId
+}
+
 func (s *authSessions) onBindUser(userId int32) {
 	// TODO(@benqi):
 	s.state = userIdLoaded
 	s.AuthUserId = userId
 
-	pushSessionId := getCachePushSessionID(userId, s.authKeyId)
-	if pushSessionId != 0 {
-		s.onBindPushSessionId(pushSessionId)
-	}
+	s.getPushSessionId()
+	//pushSessionId := s.getPushSessionId()
+	//if pushSessionId != 0 {
+	//	s.onBindPushSessionId(pushSessionId)
+	//}
 
 	if s.Layer == 0 {
 		layer := getCacheApiLayer(s.authKeyId)
@@ -254,16 +262,22 @@ func (s *authSessions) onBindUser(userId int32) {
 }
 
 func (s *authSessions) onBindPushSessionId(sessionId int64) {
-	sess, _ := s.sessions[sessionId]
-	if sess == nil {
-		sess = newSession(sessionId, kSessionPush, s)
-	} else {
-		sess2 := newSession(sessionId, kSessionPush, s)
-		sess2.MergeSession(sess)
-		sess = sess2
+	if s.pushSessionId == 0 {
+		s.pushSessionId = sessionId
 	}
-	s.sessions[sessionId] = sess
-	s.updates.onPushSessionNew(sess)
+
+	//sess, _ := s.sessions[sessionId]
+	//if sess == nil {
+	//	sess = newSession(sessionId, kSessionPush, s)
+	//} else {
+	//	sess2 := newSession(sessionId, kSessionPush, s)
+	//	sess2.MergeSession(sess)
+	//	sess = sess2
+	//}
+	//s.sessions[sessionId] = sess
+	//s.updates.onPushSessionNew(sess)
+
+	//glog.Info("bind push session: %s", sess)
 }
 
 func (s *authSessions) onBindLayer(layer int32) {
@@ -283,14 +297,12 @@ func (s *authSessions) setOnline() {
 
 func (s *authSessions) trySetOffline() {
 	for _, sess := range s.sessions {
-		if sess.SessionType() == kSessionGeneric && sess.sessionOnline() {
-			return
-		}
-
-		if sess.SessionType() == kSessionPush && sess.sessionOnline() {
+		if (sess.SessionType() == kSessionGeneric || sess.SessionType() == kSessionPush) && sess.sessionOnline() {
 			return
 		}
 	}
+
+	glog.Infof("authSessions]]>> offline: %s", s)
 
 	setOfflineTTL(s.AuthUserId, s.authKeyId, getServerID())
 	s.onlineExpired = 0
@@ -469,13 +481,13 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 	}
 
 	sess := s.getOrCreateSession(sessionMsg.connID, message.SessionId, message.Object)
-	if sess.SessionType() == kSessionUnknown && !sess.sessionOnline() {
-		pushSessionId := getCachePushSessionID(s.AuthUserId, s.authKeyId)
-		if pushSessionId != 0 && message.SessionId == pushSessionId {
-			s.onBindPushSessionId(pushSessionId)
-			sess = s.sessions[message.SessionId]
-		}
-	}
+	//if sess.SessionType() == kSessionUnknown && !sess.sessionOnline() {
+	//	pushSessionId := s.getPushSessionId() // getCachePushSessionID(s.AuthUserId, s.authKeyId)
+	//	if pushSessionId != 0 && message.SessionId == pushSessionId {
+	//		s.onBindPushSessionId(pushSessionId)
+	//		sess = s.sessions[message.SessionId]
+	//	}
+	//}
 
 	message2 := &mtproto.TLMessage2{
 		MsgId:  message.MessageId,
@@ -571,30 +583,87 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 	}
 
 	getSessionType2(request, &sessType)
-	if sessType != kSessionUnknown {
-		sess2 := newSession(sessionId, sessType, s)
-
-		if sess != nil {
-			sess2.MergeSession(sess)
-		}
-
-		if sess2.SessionType() == kSessionGeneric {
-			s.updates.onGenericSessionNew(sess2)
-		} else if sess2.SessionType() == kSessionPush {
-			s.updates.onPushSessionNew(sess2)
-		}
-
-		s.sessions[sessionId] = sess2
-		sess = sess2
-	} else {
-		if sess == nil {
-			sess = newSession(sessionId, kSessionUnknown, s)
-			// sess.onNewSession(connId, sessionId)
-			s.sessions[sessionId] = sess
+	if sess == nil {
+		if sessType == kSessionUnknown {
+			pushSessionId := s.getPushSessionId()
+			if pushSessionId == sessionId {
+				sess = newSession(sessionId, kSessionPush, s)
+				s.updates.onPushSessionNew(sess)
+				glog.Infof("pushSession]]>> sess: %s", sess)
+			} else {
+				sess = newSession(sessionId, kSessionUnknown, s)
+			}
 		} else {
-			// nothing do
+			sess = newSession(sessionId, sessType, s)
+			if sessType == kSessionGeneric {
+				s.updates.onGenericSessionNew(sess)
+			} else if sessType == kSessionPush {
+				s.updates.onPushSessionNew(sess)
+				glog.Infof("pushSession]]>> sess: %s", sess)
+			}
+			sess = newSession(sessionId, kSessionUnknown, s)
+		}
+		s.sessions[sessionId] = sess
+	} else {
+		if sessType == kSessionUnknown {
+			pushSessionId := s.getPushSessionId()
+			if pushSessionId == sessionId {
+				sess2 := newSession(sessionId, kSessionPush, s)
+				sess2.MergeSession(sess)
+				s.updates.onPushSessionNew(sess2)
+				s.sessions[sessionId] = sess2
+				sess = sess2
+				glog.Infof("pushSession]]>> sess: %s", sess)
+			}
+		} else {
+			sess2 := newSession(sessionId, sessType, s)
+			sess2.MergeSession(sess)
+
+			if sessType == kSessionGeneric {
+				s.updates.onGenericSessionNew(sess2)
+			} else if sessType == kSessionPush {
+				s.updates.onPushSessionNew(sess2)
+			}
+
+			s.sessions[sessionId] = sess2
+			sess = sess2
 		}
 	}
+
+	//if sessType != kSessionUnknown {
+	//	sess2 := newSession(sessionId, sessType, s)
+	//
+	//	if sess != nil {
+	//		sess2.MergeSession(sess)
+	//	}
+	//
+	//	if sess2.SessionType() == kSessionGeneric {
+	//		s.updates.onGenericSessionNew(sess2)
+	//	} else if sess2.SessionType() == kSessionPush {
+	//		s.updates.onPushSessionNew(sess2)
+	//	}
+	//
+	//	s.sessions[sessionId] = sess2
+	//	sess = sess2
+	//} else {
+	//	pushSessionId := s.getPushSessionId()
+	//
+	//	if sess == nil {
+	//		if pushSessionId == sessionId {
+	//			sess = newSession(sessionId, kSessionPush, s)
+	//			s.updates.onPushSessionNew(sess)
+	//		} else {
+	//			sess = newSession(sessionId, kSessionUnknown, s)
+	//		}
+	//		// sess.onNewSession(connId, sessionId)
+	//		s.sessions[sessionId] = sess
+	//	} else {
+	//		if pushSessionId == sessionId {
+	//
+	//		}
+	//		// nothing do
+	//	}
+	//}
 
 	return sess
 }

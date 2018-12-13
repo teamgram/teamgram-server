@@ -50,23 +50,37 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 	genericSess := m.genericSession
 	pushSess := m.pushSession
 
+	if genericSess != nil && genericSess.sessionOnline() {
+		glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+			genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+		genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+	} else {
+		if pushSess != nil && pushSess.sessionOnline() && syncMsg.ptsCount > 0 {
+			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			pushSess.onSyncData(syncMsg.cntl)
+		}
+	}
+
+/*
 	if pushSess != nil {
-		glog.Infof("updatesManager]]>> - push session: {pts: %d, pts_count: %d, updates: %s}",
-			syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+		glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+			pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		pushSess.onSyncData(syncMsg.cntl)
 
 		if genericSess != nil {
-			glog.Infof("updatesManager]>> - generic session: {pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			m.genericSession.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+			glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
 		}
 	} else {
 		if genericSess != nil {
-			glog.Infof("updatesManager]]>> - generic session: {pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			m.genericSession.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+			glog.Infof("updatesManager]]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
 		}
 	}
+ */
 
 	//if m.pushSession.sessionOnline() {
 	//	if syncMsg.ptsCount > 0 {

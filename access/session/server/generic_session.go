@@ -326,7 +326,7 @@ func (c *genericSession) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpcContro
 		rpcRequest: requestMessage,
 		state:      kNetworkMessageStateReceived,
 	}
-	glog.Info("onRpcRequest - ", apiMessage)
+	glog.Info("genericSession]]>> - ", apiMessage)
 
 	c.apiMessages.PushBack(apiMessage)
 	c.rpcMessages = append(c.rpcMessages, apiMessage)
@@ -364,7 +364,7 @@ func (c *genericSession) onRpcResult(rpcResults *rpcApiMessages) {
 }
 
 func (c *genericSession) onSyncData(cntl *zrpc.ZRpcController, obj mtproto.TLObject) {
-	glog.Info("onSyncData - ", cntl)
+	glog.Info("genericSession]]>> - ", cntl)
 
 	if c.sessionOnline() {
 		syncMessage := &pendingMessage{
@@ -374,7 +374,7 @@ func (c *genericSession) onSyncData(cntl *zrpc.ZRpcController, obj mtproto.TLObj
 		}
 		c.syncMessages = append(c.syncMessages, syncMessage)
 
-		glog.Infof("onSyncData - sendPending {sess: {%s}, pushObj: {%s}", c, reflect.TypeOf(obj))
+		glog.Infof("genericSession]]>> - sendPending {sess: {%s}, pushObj: {%s}", c, reflect.TypeOf(obj))
 		c.sendPendingMessagesToClient(c.connId, cntl, c.syncMessages)
 		c.syncMessages = []*pendingMessage{}
 	}
@@ -382,5 +382,5 @@ func (c *genericSession) onSyncData(cntl *zrpc.ZRpcController, obj mtproto.TLObj
 
 func (c *genericSession) onSyncRpcResultData(cntl *zrpc.ZRpcController, data []byte) {
 	// TODO(@benqi):
-	glog.Info("onSyncRpcResultData - ", cntl)
+	glog.Info("genericSession]]>> - ", cntl)
 }

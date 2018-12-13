@@ -31,12 +31,27 @@ type pushSession struct {
 var tooLong = mtproto.NewTLUpdatesTooLong()
 
 func (c *pushSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2) {
-	glog.Infof("onMessageData - pushSession: {id: %s, cntl: %s, obj: %s}",
+	glog.Infof("pushSession]]>> - pushSession: {id: %s, cntl: %s, obj: %s}",
 		id,
 		cntl,
 		reflect.TypeOf(msg.Object))
 
 	c.session.processMessageData(id, cntl, salt, msg, func(sessMsg *mtproto.TLMessage2) {
+		switch sessMsg.Object.(type) {
+		case *mtproto.TLPing:
+			glog.Infof("pushSession]]>> - pushSession: {id: %s, cntl: %s, ping: %v}",
+				id,
+				cntl,
+				sessMsg)
+			// ignore
+		case *mtproto.TLPingDelayDisconnect:
+			glog.Infof("pushSession]]>> - pushSession: {id: %s, cntl: %s, ping_delay_disconnected: %v}",
+				id,
+				cntl,
+				sessMsg)
+			// ignore
+		default:
+		}
 	})
 
 	if len(c.pendingMessages) > 0 {
@@ -46,7 +61,7 @@ func (c *pushSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, 
 }
 
 func (c *pushSession) onSyncData(cntl *zrpc.ZRpcController) {
-	glog.Infof("onSyncData - sendPending {sess: {%s}, pushObj: {updatesTooLong}}", c)
+	glog.Infof("pushSession]]>> - sendPending {sess: {%s}, pushObj: {updatesTooLong}}", c)
 
 	if c.sessionOnline() {
 		syncMessage := &pendingMessage{
