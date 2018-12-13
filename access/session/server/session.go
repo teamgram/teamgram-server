@@ -40,7 +40,7 @@ const (
 	kSessionTemp = 5
 	kSessionProxy = 6
 	kSessionGenericMedia = 7
-	kSessionMaxSize = 8
+	// kSessionMaxSize = 8
 )
 
 const (
@@ -120,18 +120,19 @@ type sessionBase interface {
 	sessionOnline() bool
 	sessionClosed() bool
 
-	onNewSession(id ClientConnID, sessionId int64)
+	onNewSessionConn(id ClientConnID)
 	onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2)
-	onSessionClose(id ClientConnID)
+	onSessionConnClose(id ClientConnID)
 
 	onTimer() bool
 }
 
-func newSession(sessType int, cb sessionCallback) sessionBase {
+func newSession(sessionId int64, sessType int, cb sessionCallback) sessionBase {
 	var sess sessionBase
 	sb := &session{
+		sessionId:        sessionId,
 		sessionType:      sessType,
-		connIds:          list.New(),
+		connId:           ClientConnID{},
 		apiMessages:      list.New(),
 		pendingMessages:  []*pendingMessage{},
 		msgIds:           list.New(),
@@ -201,7 +202,7 @@ type session struct {
 	sessionType      int
 	sessionId        int64
 	sessionState     int
-	connIds          *list.List
+	connId           ClientConnID
 	nextSeqNo        uint32
 	apiMessages      *list.List
 	firstMsgId       int64
@@ -217,8 +218,8 @@ type session struct {
 }
 
 func (c *session) String() string {
-	return fmt.Sprintf("{session_type: %d, session_id: %d, state: %d, conn_state: %d}",
-		c.sessionType, c.sessionId, c.sessionState, c.connState)
+	return fmt.Sprintf("{session_type: %d, session_id: %d, state: %d, conn_state: %d, conn_id: %s}",
+		c.sessionType, c.sessionId, c.sessionState, c.connState, c.connId)
 }
 
 func (c *session) SessionId() int64 {
@@ -234,13 +235,10 @@ func (c *session) SessionType() int {
 }
 
 func (c *session) checkConnIdExist(connId ClientConnID) bool {
-	for e := c.connIds.Front(); e != nil; e = e.Next() {
-		connID2, _ := e.Value.(ClientConnID)
-		if connID2.Equal(connId) {
-			return true
-		}
+	if c.connState != kStateOnline {
+		return false
 	}
-	return false
+	return connId.Equal(c.connId)
 }
 
 func (c *session) MergeSession(from sessionBase) {
@@ -251,72 +249,28 @@ func (c *session) MergeSession(from sessionBase) {
 	c.sessionType = sessionType
 }
 
-func (c *session) onNewSession(id ClientConnID, sessionId int64) {
-	glog.Info("onNewSession - id: {", id, "}, sessionId: ", sessionId)
-
-	// c.connState = kStateOnline
-	//if c.sessionId == 0 {
-	//	c.connIds.PushBack(id)
+func (c *session) onNewSessionConn(id ClientConnID) {
+	glog.Info("onNewSession - id: {", id)
+	//if sessionId != 0 {
+	//	c.sessionState = kSessionStateNew
+	//	c.sessionId = sessionId
 	//}
-
-	if sessionId != 0 && sessionId != c.sessionId{
-		c.sessionState = kSessionStateNew
-		c.sessionId = sessionId
-	}
-
-	if len(c.syncMessages) > 0 {
-		c.sendPendingMessagesToClient(id, nil, c.syncMessages)
-		c.syncMessages = []*pendingMessage{}
-	}
-
-	// c.connIds.PushBack(id)
-}
-
-func (c *session) addConnId(id ClientConnID) bool {
-	b := false
-	for e := c.connIds.Front(); e != nil; e = e.Next() {
-		connID2, _ := e.Value.(ClientConnID)
-		if connID2.Equal(id) {
-			b = true
-			break
-		}
-	}
-	if !b {
-		c.connIds.PushBack(id)
-	}
-	return !b
-}
-
-func (c *session) removeConnId(id ClientConnID) bool {
-	b := false
-	for e := c.connIds.Front(); e != nil; e = e.Next() {
-		connID2, _ := e.Value.(ClientConnID)
-		if connID2.Equal(id) {
-			c.connIds.Remove(e)
-			b = true
-		}
-	}
-	return b
+	//
+	//if len(c.syncMessages) > 0 {
+	//	c.sendPendingMessagesToClient(id, nil, c.syncMessages)
+	//	c.syncMessages = []*pendingMessage{}
+	//}
 }
 
 func (c *session) getConnId() *ClientConnID {
-	e := c.connIds.Back()
-	if e != nil {
-		id, _ := e.Value.(ClientConnID)
-		return &id
+	if c.connState == kStateOnline {
+		return &c.connId
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func (c *session) changeConnState(state int) {
-	//if state == kStateOffline {
-	//	if c.connState == kStateOnline {
-	//		c.connState = kStateOffline
-	//	}
-	//} else {
-	//	c.connState = state
-	//}
-
 	c.connState = state
 
 	if c.sessionType == kSessionGeneric || c.sessionType == kSessionPush {
@@ -331,45 +285,15 @@ func (c *session) changeConnState(state int) {
 			c.cb.trySetOffline()
 		}
 	}
-	//switch state {
-	//case kStateNew:
-	//	// not done
-	//case kStateOnline:
-	//	if c.connState == kStateNew {
-	//
-	//	} else if c.connState == kStateOffline {
-	//
-	//	} else if c.connState == kStateClose {
-	//
-	//	} else {
-	//
-	//	}
-	//case kStateOffline:
-	//	if c.connState == kStateOnline {
-	//
-	//	} else if c.connState == kStateOffline {
-	//
-	//	}
-	//case kStateClose:
-	//	if c.connState == kStateOffline {
-	//
-	//	}
-	//default:
-	//	glog.Error("invalid state.")
-	//}
-	//
-	//// c.lastTime = time.Now().Unix()
-	////if c.connState != kStateOnline {
-	////	c.connState = kStateOnline
-	////}
 }
 
 func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2, cb2 func(msg *mtproto.TLMessage2)) {
 	// c.lastTime = time.Now().Unix()
 	// sessionStateNew := c.connState != kStateOnline
 	c.changeConnState(kStateOnline)
+	c.connId = id
+
 	glog.Info("online - sess: ", c, ", auth_key_id: ", c.cb.getAuthKeyId(), ", user_id: ", c.cb.getUserId())
-	c.addConnId(id)
 
 	// 1. check salt
 	if !c.checkBadServerSalt(id, cntl, salt, msg) {
@@ -415,11 +339,11 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 
 	// check new session created
 	for _, message := range msgs {
-		if c.firstMsgId > message.MsgId {
-			c.onNewSessionCreated(id, cntl, message.MsgId)
-			c.firstMsgId = message.MsgId // msgs[0].MsgId
-			// c.sessionState = kSessionStateCreated
-		}
+		//if c.firstMsgId > message.MsgId {
+		//	c.onNewSessionCreated(id, cntl, message.MsgId)
+		//	c.firstMsgId = message.MsgId // msgs[0].MsgId
+		//	// c.sessionState = kSessionStateCreated
+		//}
 
 		switch message.Object.(type) {
 		case *mtproto.TLDestroyAuthKey: // 所有链接都有可能
@@ -472,11 +396,8 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 	}
 }
 
-func (c *session) onSessionClose(id ClientConnID) {
-	c.removeConnId(id)
-	if c.connIds.Len() == 0 {
-		c.changeConnState(kStateOffline)
-	}
+func (c *session) onSessionConnClose(id ClientConnID) {
+	c.changeConnState(kStateOffline)
 }
 
 func (c *session) sessionOnline() bool {
@@ -1350,7 +1271,7 @@ func invokeRpcRequest(authUserId int32, authKeyId int64, layer int32, requests *
 			}
 			reply.Result = rpcErr
 		} else {
-			// glog.Infof("OnMessage - rpc_result: {%v}\n", rpcResult)
+			glog.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
 			reply.Result = rpcResult
 		}
 

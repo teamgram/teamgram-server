@@ -26,8 +26,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/queue2"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"container/list"
-	"reflect"
+	// "reflect"
 )
 
 // import "container/list"
@@ -155,8 +154,7 @@ type authSessions struct {
 	AuthUserId      int32
 	cacheSalt       *mtproto.TLFutureSalt
 	cacheLastSalt   *mtproto.TLFutureSalt
-	sessions        []sessionBase
-	unknownSessions *list.List
+	sessions        map[int64]sessionBase
 	closeChan       chan struct{}
 	sessionDataChan chan interface{} // receive from client
 	rpcDataChan     chan interface{} // rpc reply
@@ -165,6 +163,7 @@ type authSessions struct {
 	running         sync2.AtomicInt32
 	state           int
 	onlineExpired   int64
+	updates         *updatesManager
 	// pushSessionId   int64
 	// cacheSalt       *mtproto.TLFutureSalt
 	// cacheLastSalt   *mtproto.TLFutureSalt
@@ -173,18 +172,14 @@ type authSessions struct {
 func makeAuthSessions(authKeyId int64) *authSessions {
 	ss := &authSessions{
 		authKeyId:       authKeyId,
-		sessions:        make([]sessionBase, kSessionMaxSize),
-		unknownSessions: list.New(),
+		sessions:        map[int64]sessionBase{},
 		closeChan:       make(chan struct{}),
 		sessionDataChan: make(chan interface{}, 1024),
 		rpcDataChan:     make(chan interface{}, 1024),
 		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		state:           keyIdNew,
-	}
-
-	for i := 0; i < kSessionMaxSize; i++ {
-		ss.sessions[i] = newSession(i, ss)
+		updates:         &updatesManager{},
 	}
 
 	return ss
@@ -256,36 +251,19 @@ func (s *authSessions) onBindUser(userId int32) {
 		layer := getCacheApiLayer(s.authKeyId)
 		s.onBindLayer(layer)
 	}
-
-	//setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 180)
-	//s.onlineExpired = int64(time.Now().Unix() + 180)
 }
 
 func (s *authSessions) onBindPushSessionId(sessionId int64) {
-	var (
-		unknownSess sessionBase
-		unknownE *list.Element
-	)
-
-	// found unknown
-	for e := s.unknownSessions.Front(); e != nil; e = e.Next() {
-		v, _ := e.Value.(sessionBase)
-		if v.SessionId() == sessionId {
-			unknownE = e
-			unknownSess = v
-			break
-		}
-	}
-
-	pushSess := s.sessions[kSessionPush]
-	if unknownSess == nil {
-		if pushSess.SessionId() != sessionId {
-			pushSess.SetSessionId(sessionId)
-		}
+	sess, _ := s.sessions[sessionId]
+	if sess == nil {
+		sess = newSession(sessionId, kSessionPush, s)
 	} else {
-		pushSess.MergeSession(unknownSess)
-		s.unknownSessions.Remove(unknownE)
+		sess2 := newSession(sessionId, kSessionPush, s)
+		sess2.MergeSession(sess)
+		sess = sess2
 	}
+	s.sessions[sessionId] = sess
+	s.updates.onPushSessionNew(sess)
 }
 
 func (s *authSessions) onBindLayer(layer int32) {
@@ -304,13 +282,18 @@ func (s *authSessions) setOnline() {
 }
 
 func (s *authSessions) trySetOffline() {
-	if !s.sessions[kSessionGeneric].sessionOnline() && !s.sessions[kSessionPush].sessionOnline() && s.AuthUserId != 0 {
-		// glog.Info("DEBUG] setOffline - set offline ", s.onlineExpired)
-		setOfflineTTL(s.AuthUserId, s.authKeyId, getServerID())
-		s.onlineExpired = 0
-	} else {
-		// glog.Info("DEBUG] setOffline - not set offline ", s.onlineExpired)
+	for _, sess := range s.sessions {
+		if sess.SessionType() == kSessionGeneric && sess.sessionOnline() {
+			return
+		}
+
+		if sess.SessionType() == kSessionPush && sess.sessionOnline() {
+			return
+		}
 	}
+
+	setOfflineTTL(s.AuthUserId, s.authKeyId, getServerID())
+	s.onlineExpired = 0
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,7 +311,6 @@ func (s *authSessions) Start() {
 func (s *authSessions) Stop() {
 	s.running.Set(0)
 	s.rpcQueue.Close()
-	// close(s.closeChan)
 }
 
 func (s *authSessions) runLoop() {
@@ -373,9 +355,6 @@ func (s *authSessions) rpcRunLoop() {
 		apiRequests := s.rpcQueue.Pop()
 		if apiRequests == nil {
 			glog.Info("quit rpcRunLoop...")
-			//if s.AuthUserId != 0 {
-			//	setOfflineTTL(s.AuthUserId, s.authKeyId, getServerID())
-			//}
 			return
 		} else {
 			requests, _ := apiRequests.(*rpcApiMessages)
@@ -385,22 +364,22 @@ func (s *authSessions) rpcRunLoop() {
 }
 
 func (s *authSessions) onTimer() {
-	if s.sessions[kSessionPush].sessionOnline() || s.sessions[kSessionGeneric].sessionOnline() {
-		// glog.Info("DEBUG] onTimer - set online")
-		s.setOnline()
+	for _, sess := range s.sessions {
+		if (sess.SessionType() == kSessionGeneric && sess.sessionOnline()) ||
+			sess.SessionType() == kSessionPush && sess.sessionOnline() {
+			s.setOnline()
+		}
+
+		sess.onTimer()
 	}
 
-	for _, v := range s.sessions {
-		v.onTimer()
+	for _, sess := range s.sessions {
+		if !sess.sessionClosed() {
+			return
+		}
 	}
 
-	for e := s.unknownSessions.Front(); e != nil; e = e.Next() {
-		e.Value.(sessionBase).onTimer()
-	}
-
-	if s.sessions[kSessionPush].sessionClosed() && s.sessions[kSessionGeneric].sessionClosed() {
-		deleteClientSessionManager(s.authKeyId)
-	}
+	deleteClientSessionManager(s.authKeyId)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -494,7 +473,7 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 		pushSessionId := getCachePushSessionID(s.AuthUserId, s.authKeyId)
 		if pushSessionId != 0 && message.SessionId == pushSessionId {
 			s.onBindPushSessionId(pushSessionId)
-			sess = s.sessions[kSessionPush]
+			sess = s.sessions[message.SessionId]
 		}
 	}
 
@@ -510,83 +489,61 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 func (s *authSessions) onSyncRpcResultData(syncMsg *syncRpcResultData) {
 	glog.Infof("onSyncRpcResultData - receive data: {sess: %s, md: %s}",
 		s, syncMsg.cntl)
-
-	genericSess := s.sessions[kSessionGeneric]
-	genericSess.(*genericSession).onSyncRpcResultData(syncMsg.cntl, syncMsg.data)
+	s.updates.onUpdatesSyncRpcResultData(syncMsg)
 }
 
 func (s *authSessions) onSyncData(syncMsg *syncData) {
-	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-
-	genericSess := s.sessions[kSessionGeneric].(*genericSession)
-	pushSess := s.sessions[kSessionPush].(*pushSession)
-
-	if pushSess.sessionOnline() {
-		if syncMsg.ptsCount > 0 {
-			glog.Infof("onSyncData - push session: {pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			pushSess.onSyncData(syncMsg.cntl)
-
-			if genericSess.sessionOnline() {
-				glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-					syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-				genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
-			}
-		}
-	} else {
-		if genericSess.sessionOnline() {
-			glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
-		}
-	}
+	s.updates.onUpdatesSyncData(syncMsg)
 }
 
 func (s *authSessions) onConnData(connMsg *connData) {
-	sess := s.getSessionByConnId(connMsg.connID)
-	if sess != nil {
-		if connMsg.isNew {
-			glog.Warning("session conn created: ", connMsg)
-			sess.onNewSession(connMsg.connID, 0)
-		} else {
-			glog.Warning("session conn closed: ", connMsg)
-			sess.onSessionClose(connMsg.connID)
-		}
+	if connMsg.isNew {
+		glog.Warning("session conn created: ", connMsg)
 	} else {
-		glog.Warning("session not new: ", connMsg)
+		sess := s.getSessionByConnId(connMsg.connID)
+		if sess != nil {
+			sess.onSessionConnClose(connMsg.connID)
+			glog.Warning("session conn closed -  conn: ", connMsg, ", sess: ", sess)
+		}
 	}
 }
 
 func (s *authSessions) onRpcResult(rpcResults *rpcApiMessages) {
-	switch rpcResults.sessionId {
-	case s.sessions[kSessionGeneric].SessionId():
-		s.sessions[kSessionGeneric].(*genericSession).onRpcResult(rpcResults)
-	case s.sessions[kSessionUpload].SessionId():
-		s.sessions[kSessionUpload].(*uploadSession).onRpcResult(rpcResults)
-	case s.sessions[kSessionDownload].SessionId():
-		s.sessions[kSessionDownload].(*downloadSession).onRpcResult(rpcResults)
-	default:
+	glog.Warning("onRpcResult - sessionId: ", rpcResults.sessionId, ", r: ", len(rpcResults.rpcMessages))
+	if sess, ok := s.sessions[rpcResults.sessionId]; ok {
+		switch sess.(type) {
+		case *genericSession:
+			sess.(*genericSession).onRpcResult(rpcResults)
+		case *uploadSession:
+			sess.(*uploadSession).onRpcResult(rpcResults)
+		case *downloadSession:
+			sess.(*downloadSession).onRpcResult(rpcResults)
+		default:
+			glog.Warning("onRpcResult - sessionId: ", rpcResults.sessionId, ", invalid rpcSession type: ", sess)
+		}
+	} else {
 		glog.Warning("onRpcResult - not found rpcSession by sessionId: ", rpcResults.sessionId)
-		return
 	}
 }
 
 func (s *authSessions) onRpcRequest(requests *rpcApiMessages) {
 	var rpcMessageList []*networkApiMessage
-
-	switch requests.sessionId {
-	case s.sessions[kSessionGeneric].SessionId():
-		rpcMessageList = s.sessions[kSessionGeneric].(*genericSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer, requests)
-	case s.sessions[kSessionUpload].SessionId():
-		rpcMessageList = s.sessions[kSessionUpload].(*uploadSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer,requests)
-	case s.sessions[kSessionDownload].SessionId():
-		rpcMessageList = s.sessions[kSessionDownload].(*downloadSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer,requests)
-	default:
-		glog.Warning("onRpcRequest - not found rpcSession by sessionId: ", requests.sessionId)
+	if sess, ok := s.sessions[requests.sessionId]; ok {
+		switch sess.(type) {
+		case *genericSession:
+			rpcMessageList = sess.(*genericSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer, requests)
+		case *uploadSession:
+			rpcMessageList = sess.(*uploadSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer, requests)
+		case *downloadSession:
+			rpcMessageList = sess.(*downloadSession).onInvokeRpcRequest(s.AuthUserId, s.authKeyId, s.Layer, requests)
+		default:
+			glog.Warning("onRpcResult - sessionId: ", requests.sessionId, ", invalid rpcSession type: ", sess)
+			return
+		}
+	} else {
+		glog.Warning("onRpcResult - not found rpcSession by sessionId: ", requests.sessionId)
 		return
 	}
-
 	// TODO(@benqi): rseult metadata
 	requests.rpcMessages = rpcMessageList
 	s.rpcDataChan <- requests
@@ -602,66 +559,42 @@ func (s *authSessions) getSessionByConnId(connId ClientConnID) sessionBase {
 	return nil
 }
 
-func (s *authSessions) getRpcSession(sessionId int64) sessionBase {
-	var sess sessionBase
-	switch sessionId {
-	case s.sessions[kSessionGeneric].SessionId():
-		sess = s.sessions[kSessionGeneric]
-	case s.sessions[kSessionUpload].SessionId():
-		sess = s.sessions[kSessionUpload]
-	case s.sessions[kSessionDownload].SessionId():
-		sess = s.sessions[kSessionDownload]
-	}
-	return sess
-}
-
 func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, request mtproto.TLObject) sessionBase {
 	var (
 		sess sessionBase
-		unknownE *list.Element
+		sessType = kSessionUnknown
 	)
 
-	for _, sess2 := range s.sessions {
-		if sess2 != nil && sess2.SessionId() == sessionId {
-			sess = sess2
-			break
-		}
-	}
-
-	if sess == nil {
-		// found unknown
-		for e := s.unknownSessions.Front(); e != nil; e = e.Next() {
-			v, _ := e.Value.(sessionBase)
-			if v.SessionId() == sessionId {
-				unknownE = e
-				sess = v
-				break
-			}
-		}
-	}
-
+	sess = s.sessions[sessionId]
 	if sess != nil && sess.SessionType() != kSessionUnknown {
 		return sess
 	}
 
-	sessType := kSessionUnknown
 	getSessionType2(request, &sessType)
-
 	if sessType != kSessionUnknown {
-		// rpc or ...
-		if sess == nil {
-			sess = s.sessions[sessType]
-			sess.onNewSession(connId, sessionId)
-		} else {
-			s.sessions[sessType].MergeSession(sess)
-			s.unknownSessions.Remove(unknownE)
+		sess2 := newSession(sessionId, sessType, s)
+
+		if sess != nil {
+			sess2.MergeSession(sess)
 		}
+
+		if sess2.SessionType() == kSessionGeneric {
+			s.updates.onGenericSessionNew(sess2)
+		} else if sess2.SessionType() == kSessionPush {
+			s.updates.onPushSessionNew(sess2)
+		}
+
+		s.sessions[sessionId] = sess2
+		sess = sess2
 	} else {
 		if sess == nil {
-			sess = newSession(kSessionUnknown, s)
-			s.unknownSessions.PushBack(sess)
-			sess.onNewSession(connId, sessionId)
+			sess = newSession(sessionId, kSessionUnknown, s)
+			// sess.onNewSession(connId, sessionId)
+			s.sessions[sessionId] = sess
+		} else {
+			// nothing do
 		}
 	}
+
 	return sess
 }

@@ -46,21 +46,16 @@ func (c *pushSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, 
 }
 
 func (c *pushSession) onSyncData(cntl *zrpc.ZRpcController) {
-	glog.Info("onSyncData - pushSession: ", cntl)
+	glog.Infof("onSyncData - sendPending {sess: {%s}, pushObj: {updatesTooLong}}", c)
 
-	id := c.connIds.Back()
-	if id != nil {
-		glog.Infof("onSyncData - sendPending {sess: {%v}, connID: {%v}}, pushObj: {updatesTooLong}, connLen: {%d}", c, id.Value, c.connIds.Len())
-
+	if c.sessionOnline() {
 		syncMessage := &pendingMessage{
 			messageId: mtproto.GenerateMessageId(),
 			confirm:   true,
 			tl:        tooLong,
 		}
 		c.syncMessages = append(c.syncMessages, syncMessage)
-		c.sendPendingMessagesToClient(id.Value.(ClientConnID), cntl, c.syncMessages)
+		c.sendPendingMessagesToClient(c.connId, cntl, c.syncMessages)
 		c.syncMessages = []*pendingMessage{}
-	} else {
-		glog.Info("id is nil")
 	}
 }

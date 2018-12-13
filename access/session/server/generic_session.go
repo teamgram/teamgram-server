@@ -336,7 +336,7 @@ func (c *genericSession) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpcContro
 }
 
 func (c *genericSession) onInvokeRpcRequest(authUserId int32, authKeyId int64, layer int32, requests *rpcApiMessages) []*networkApiMessage {
-	glog.Infof("onRpcRequest - receive data: {sess: %s, session_id: %d, conn_id: %d, md: %s, data: {%v}}",
+	glog.Infof("genericSession]]>> - receive data: {sess: %s, session_id: %d, conn_id: %d, md: %s, data: {%v}}",
 		c, requests.sessionId, requests.connID, requests.cntl, requests.rpcMessages)
 
 	return invokeRpcRequest(authUserId, authKeyId, layer, requests, func() *grpc_util.RPCClient{ return c.RPCClient })
@@ -347,6 +347,7 @@ func (c *genericSession) onRpcResult(rpcResults *rpcApiMessages) {
 	msgList := c.pendingMessages
 	c.pendingMessages = []*pendingMessage{}
 	for _, m := range rpcResults.rpcMessages {
+		glog.Infof("genericSession]]>> - sess: %s, reply: %s", c, m.rpcRequest.Object)
 		msgList = append(msgList, &pendingMessage{mtproto.GenerateMessageId(), true, m.rpcResult})
 		if _, ok := m.rpcRequest.Object.(*mtproto.TLAuthLogOut); ok {
 			hasAuthLogout = true
@@ -366,21 +367,16 @@ func (c *genericSession) onSyncData(cntl *zrpc.ZRpcController, obj mtproto.TLObj
 	glog.Info("onSyncData - ", cntl)
 
 	if c.sessionOnline() {
-		id := c.connIds.Back()
-		if id != nil {
-			syncMessage := &pendingMessage{
-				messageId: mtproto.GenerateMessageId(),
-				confirm:   true,
-				tl:        obj,
-			}
-			c.syncMessages = append(c.syncMessages, syncMessage)
-
-			glog.Infof("onSyncData - sendPending {sess: {%v}, connID: {%v}}, pushObj: {%s}, connLen: {%d}", c, id.Value, reflect.TypeOf(obj), c.connIds.Len())
-			c.sendPendingMessagesToClient(id.Value.(ClientConnID), cntl, c.syncMessages)
-			c.syncMessages = []*pendingMessage{}
-		} else {
-			// glog.Info("id is nil")
+		syncMessage := &pendingMessage{
+			messageId: mtproto.GenerateMessageId(),
+			confirm:   true,
+			tl:        obj,
 		}
+		c.syncMessages = append(c.syncMessages, syncMessage)
+
+		glog.Infof("onSyncData - sendPending {sess: {%s}, pushObj: {%s}", c, reflect.TypeOf(obj))
+		c.sendPendingMessagesToClient(c.connId, cntl, c.syncMessages)
+		c.syncMessages = []*pendingMessage{}
 	}
 }
 

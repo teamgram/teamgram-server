@@ -33,7 +33,7 @@ type uploadSession struct {
 
 func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2) {
 	c.session.processMessageData(id, cntl, salt, msg, func(sessMsg *mtproto.TLMessage2) {
-		glog.Infof("onRpcRequest - request data: {sess: %s, conn_id: %s, md: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+		glog.Infof("uploadSession]]>> onRpcRequest - request data: {sess: %s, conn_id: %s, md: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 			c,
 			id,
 			cntl,
@@ -60,7 +60,7 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 			rpcRequest: requestMessage,
 			state:      kNetworkMessageStateReceived,
 		}
-		glog.Info("onRpcRequest - ", apiMessage)
+		glog.Info("uploadSession]]>> onRpcRequest - ", apiMessage)
 		c.apiMessages.PushBack(apiMessage)
 		c.rpcMessages = append(c.rpcMessages, apiMessage)
 
@@ -81,7 +81,7 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 }
 
 func (c *uploadSession) onInvokeRpcRequest(authUserId int32, authKeyId int64, layer int32, requests *rpcApiMessages) []*networkApiMessage {
-	glog.Infof("onRpcRequest - receive data: {sess: %s, session_id: %d, conn_id: %d, md: %s, data: {%v}}",
+	glog.Infof("uploadSession]]>> onInvokeRpcRequest - receive data: {sess: %s, session_id: %d, conn_id: %d, md: %s, data: {%v}}",
 		c, requests.sessionId, requests.connID, requests.cntl, requests.rpcMessages)
 
 	return invokeRpcRequest(authUserId, authKeyId, layer, requests, func() *grpc_util.RPCClient{ return c.RPCClient })
@@ -91,6 +91,8 @@ func (c *uploadSession) onRpcResult(rpcResults *rpcApiMessages) {
 	msgList := c.pendingMessages
 	c.pendingMessages = []*pendingMessage{}
 	for _, m := range rpcResults.rpcMessages {
+		glog.Infof("uploadSession]]>> onRpcResult - rpcResults: {sess: %s, result: {%s}}",
+			c, reflect.TypeOf(m.rpcRequest))
 		msgList = append(msgList, &pendingMessage{mtproto.GenerateMessageId(), true, m.rpcResult})
 	}
 	if len(msgList) > 0 {
