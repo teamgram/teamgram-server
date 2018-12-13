@@ -60,7 +60,7 @@ func (f *DocumentFile) Write(b []byte) (int, error) {
 }
 
 func (f *DocumentFile) Sync() {
-	if f.File == nil {
+	if f.File != nil {
 		f.File.Sync()
 	}
 }
