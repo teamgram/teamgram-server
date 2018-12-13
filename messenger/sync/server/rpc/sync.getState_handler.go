@@ -30,8 +30,13 @@ func (s *SyncServiceImpl) SyncGetState(ctx context.Context, request *mtproto.TLS
     glog.Infof("sync.getState - request: {%s}", logger.JsonDebugData(request))
 
     // state := s.UpdateModel.GetServerUpdatesState(request.GetAuthKeyId(), request.GetUserId())
+    pts := int32(s.CurrentPtsId(request.UserId))
+    if pts == 0 {
+        pts = int32(s.NextPtsId(request.UserId))
+    }
+
     state := &mtproto.TLUpdatesState{Data2: &mtproto.Updates_State_Data{
-        Pts:         int32(s.CurrentPtsId(request.UserId)),
+        Pts:         pts,
         Qts:         0,
         Seq:         -1,
         Date:        int32(time.Now().Unix()), // TODO(@benqi): do.Date2???

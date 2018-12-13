@@ -245,10 +245,10 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				mtproto.TLConstructor_CRC32_updateReadMessagesContents,
 				mtproto.TLConstructor_CRC32_updateEditMessage:
 				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
-				if updates2.Data2.Pts > pts {
-					pts = updates2.Data2.Pts
+				if update.Data2.Pts > pts {
+					pts = update.Data2.Pts
 				}
-				ptsCount += updates2.Data2.PtsCount
+				ptsCount += update.Data2.Pts
 			case mtproto.TLConstructor_CRC32_updateDeleteMessages:
 				// deleteMessages := update.To_UpdateDeleteMessages().GetMessages()
 				//// TODO(@benqi): NextPtsCountId
@@ -265,7 +265,10 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				if updates2.Data2.Pts > pts {
 					pts = updates2.Data2.Pts
 				}
-				ptsCount += updates2.Data2.PtsCount
+				if update.Data2.Pts > pts {
+					pts = update.Data2.Pts
+				}
+				ptsCount += update.Data2.Pts
 			case mtproto.TLConstructor_CRC32_updateNewChannelMessage:
 				//if request.PushType == mtproto.SyncType_SYNC_TYPE_USER_NOTME {
 				//	channelMessage := update.To_UpdateNewChannelMessage().GetMessage()

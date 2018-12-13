@@ -519,32 +519,26 @@ func (s *authSessions) onSyncData(syncMsg *syncData) {
 	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 
-	genericSess := s.sessions[kSessionGeneric]
-	pushSess := s.sessions[kSessionPush]
+	genericSess := s.sessions[kSessionGeneric].(*genericSession)
+	pushSess := s.sessions[kSessionPush].(*pushSession)
 
-	if syncMsg.ptsCount > 0 && syncMsg.pts - syncMsg.ptsCount != 0 {
-		glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-			syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-		genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
-	} else {
-		if pushSess.sessionOnline() {
-			if syncMsg.ptsCount > 0 {
-				glog.Infof("onSyncData - push session: {pts: %d, pts_count: %d, updates: %s}",
-					syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-				pushSess.(*pushSession).onSyncData(syncMsg.cntl)
+	if pushSess.sessionOnline() {
+		if syncMsg.ptsCount > 0 {
+			glog.Infof("onSyncData - push session: {pts: %d, pts_count: %d, updates: %s}",
+				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			pushSess.onSyncData(syncMsg.cntl)
 
-				if genericSess.sessionOnline() {
-					glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
-						syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-					genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
-				}
-			}
-		} else {
 			if genericSess.sessionOnline() {
 				glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 					syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-				genericSess.(*genericSession).onSyncData(syncMsg.cntl, syncMsg.data.obj)
+				genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
 			}
+		}
+	} else {
+		if genericSess.sessionOnline() {
+			glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
+				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
 		}
 	}
 }
