@@ -18,7 +18,6 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
@@ -29,9 +28,14 @@ import (
 // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 func (s *AuthServiceImpl) AuthExportAuthorization(ctx context.Context, request *mtproto.TLAuthExportAuthorization) (*mtproto.Auth_ExportedAuthorization, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("AuthExportAuthorization - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("auth.exportAuthorization#e5bfffcd - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	// TODO(@benqi): Impl AuthExportAuthorization logic
+	exported := &mtproto.TLAuthExportedAuthorization{Data2: &mtproto.Auth_ExportedAuthorization_Data{
+		Id: request.GetDcId(),
+		Bytes: []byte{1,2,3,4},
+	}}
 
-	return nil, fmt.Errorf("Not impl AuthExportAuthorization")
+	glog.Infof("auth.exportAuthorization#e5bfffcd - reply: %s", logger.JsonDebugData(exported))
+	return exported.To_Auth_ExportedAuthorization(), nil
 }

@@ -18,7 +18,6 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
@@ -29,9 +28,14 @@ import (
 // auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;
 func (s *AuthServiceImpl) AuthImportAuthorization(ctx context.Context, request *mtproto.TLAuthImportAuthorization) (*mtproto.Auth_Authorization, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("AuthImportAuthorization - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("auth.importAuthorization#e3ef9613 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl AuthImportAuthorization logic
+	// TODO(@benqi): Impl AuthExportAuthorization logic
+	authorization := &mtproto.TLAuthAuthorization{Data2: &mtproto.Auth_Authorization_Data{
+		TmpSessions: request.GetId(),
+		User:        mtproto.NewTLUserEmpty().To_User(),
+	}}
 
-	return nil, fmt.Errorf("Not impl AuthImportAuthorization")
+	glog.Infof("auth.importAuthorization#e3ef9613- reply: %s", logger.JsonDebugData(authorization))
+	return authorization.To_Auth_Authorization(), nil
 }
