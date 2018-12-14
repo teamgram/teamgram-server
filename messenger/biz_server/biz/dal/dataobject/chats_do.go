@@ -24,8 +24,10 @@ type ChatsDO struct {
 	RandomId         int64  `db:"random_id"`
 	ParticipantCount int32  `db:"participant_count"`
 	Title            string `db:"title"`
+	Link             string `db:"link"`
 	PhotoId          int64  `db:"photo_id"`
 	AdminsEnabled    int8   `db:"admins_enabled"`
+	MigratedTo       int32  `db:"migrated_to"`
 	Deactivated      int8   `db:"deactivated"`
 	Version          int32  `db:"version"`
 	Date             int32  `db:"date"`

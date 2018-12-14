@@ -11,7 +11,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, date
+                id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, date
             FROM
                 chats
             WHERE
@@ -22,7 +22,7 @@
     <operation name="SelectLastCreator">
         <sql>
             SELECT
-                id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, date
+                id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, date
             FROM
                 chats
             WHERE
@@ -106,5 +106,26 @@
         </sql>
     </operation>
 
+    <operation name="SelectByLink">
+        <sql>
+            SELECT
+                id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, date
+            FROM
+                chats
+            WHERE
+                link = :link
+        </sql>
+    </operation>
+
+    <operation name="UpdateLink">
+        <sql>
+            UPDATE
+                chats
+            SET
+                link=:link, date=:date, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
 
 </table>

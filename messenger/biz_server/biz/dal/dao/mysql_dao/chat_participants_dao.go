@@ -73,10 +73,10 @@ func (dao *ChatParticipantsDAO) InsertOrUpdate(do *dataobject.ChatParticipantsDO
 	return id
 }
 
-// select id, chat_id, user_id, participant_type, inviter_user_id, invited_at, state, kicked_at, left_at from chat_participants where chat_id = :chat_id and state = 0
+// select id, chat_id, user_id, participant_type, inviter_user_id, invited_at, state, kicked_at, left_at from chat_participants where chat_id = :chat_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectList(chat_id int32) []dataobject.ChatParticipantsDO {
-	var query = "select id, chat_id, user_id, participant_type, inviter_user_id, invited_at, state, kicked_at, left_at from chat_participants where chat_id = ? and state = 0"
+	var query = "select id, chat_id, user_id, participant_type, inviter_user_id, invited_at, state, kicked_at, left_at from chat_participants where chat_id = ?"
 	rows, err := dao.db.Queryx(query, chat_id)
 
 	if err != nil {

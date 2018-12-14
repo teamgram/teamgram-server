@@ -18,15 +18,15 @@
 package chat
 
 import (
-	"fmt"
 	base2 "github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/pkg/random2"
 	"math/rand"
 	"time"
-	"github.com/golang/glog"
 )
 
 const (
@@ -36,9 +36,13 @@ const (
 )
 
 const (
-	// kChatParticipantState = 0			//
-	kChatParticipantStateLeft = 1		//
-	kChatParticipantStateKicked = 2		//
+	kChatParticipantStateNormal 	= 0		// normal
+	kChatParticipantStateLeft 		= 1		// left
+	kChatParticipantStateKicked 	= 2		// kicked
+)
+
+const (
+	kCreateChatFlood = 10  // 10s
 )
 
 type chatLogicData struct {
@@ -85,13 +89,27 @@ func (m *ChatModel) NewChatLogicById(chatId int32) (chatData *chatLogicData, err
 	return
 }
 
-const (
-	kCreateChatFlood = 10  // 10s
-)
+func (m *ChatModel) NewChatLogicByLink(link string) (chatData *chatLogicData, err error) {
+	if link == "" {
+		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_INVITE_HASH_INVALID)
+	}
+
+	chatDO := m.dao.ChatsDAO.SelectByLink(link)
+	if chatDO == nil {
+		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_INVITE_HASH_INVALID)
+	} else {
+		chatData = &chatLogicData{
+			chat: chatDO,
+			dao:  m.dao,
+			cb:   m.photoCallback,
+		}
+	}
+	return
+}
 
 func (m *ChatModel) CreateChat(creatorId int32, userIdList []int32, title string) (chatData *chatLogicData, err error) {
 	date := int32(time.Now().Unix())
-	// Check FLOOD_WAIT_
+	//  TODO(@benqi): Check FLOOD_WAIT_
 	chatDO := m.dao.ChatsDAO.SelectLastCreator(creatorId)
 	if chatDO != nil {
 		if date - chatDO.Date < kCreateChatFlood {
@@ -149,6 +167,14 @@ func (this *chatLogicData) GetVersion() int32 {
 	return this.chat.Version
 }
 
+func (this *chatLogicData) GetLink() string {
+	return this.chat.Link
+}
+
+func (this *chatLogicData) GetCreator() int32 {
+	return this.chat.CreatorUserId
+}
+
 func (this *chatLogicData) checkOrLoadChatParticipantList() {
 	if len(this.participants) == 0 {
 		this.participants = this.dao.ChatParticipantsDAO.SelectList(this.chat.Id)
@@ -185,6 +211,14 @@ func (this *chatLogicData) MakeAddUserMessage(inviterId, chatUserId int32) *mtpr
 	action := &mtproto.TLMessageActionChatAddUser{Data2: &mtproto.MessageAction_Data{
 		Title: this.chat.Title,
 		Users: []int32{chatUserId},
+	}}
+
+	return this.MakeMessageService(inviterId, action.To_MessageAction())
+}
+
+func (this *chatLogicData) MakeJoinedByLinkMessage(inviterId int32) *mtproto.Message {
+	action := &mtproto.TLMessageActionChatJoinedByLink{Data2: &mtproto.MessageAction_Data{
+		InviterId: inviterId,
 	}}
 
 	return this.MakeMessageService(inviterId, action.To_MessageAction())
@@ -250,10 +284,13 @@ func (this *chatLogicData) AddChatUser(inviterId, userId int32) error {
 	var founded = -1
 	for i := 0; i < len(this.participants); i++ {
 		if userId == this.participants[i].UserId {
-			if this.participants[i].State == 1 {
+			if this.participants[i].State != kChatParticipantStateNormal {
 				founded = i
 			} else {
-				return fmt.Errorf("userId exisits")
+				err := mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_EXISTED)
+				glog.Errorf("participant existed: {chat_id: %d, invited by: %d, user_id: %d}, error: ",
+					this.chat.Id, inviterId, userId, err)
+				return err
 			}
 		}
 	}
@@ -400,7 +437,7 @@ func (this *chatLogicData) EditChatTitle(editUserId int32, title string) error {
 
 	_, participant := this.findChatParticipant(editUserId)
 
-	if participant == nil || participant.State == 1 {
+	if participant == nil || participant.State != kChatParticipantStateNormal {
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_NOT_EXISTS)
 	}
 
@@ -426,7 +463,7 @@ func (this *chatLogicData) EditChatPhoto(editUserId int32, photoId int64) error 
 
 	_, participant := this.findChatParticipant(editUserId)
 
-	if participant == nil || participant.State == 1 {
+	if participant == nil || participant.State != kChatParticipantStateNormal {
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_NOT_EXISTS)
 	}
 
@@ -462,7 +499,7 @@ func (this *chatLogicData) EditChatAdmin(operatorId, editChatAdminId int32, isAd
 
 	// check exists
 	_, participant := this.findChatParticipant(editChatAdminId)
-	if participant == nil || participant.State == 1 {
+	if participant == nil || participant.State != kChatParticipantStateNormal {
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_NOT_EXISTS)
 	}
 
@@ -507,4 +544,66 @@ func (this *chatLogicData) ToggleChatAdmins(userId int32, adminsEnabled bool) er
 	this.dao.ChatsDAO.UpdateAdminsEnabled(this.chat.AdminsEnabled, this.chat.Id)
 
 	return nil
+}
+
+func (this *chatLogicData) ExportChatInvite(inviteUserId int32) (string, error) {
+	// check is creator
+	if inviteUserId != this.chat.CreatorUserId {
+		return "", mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_NO_EDIT_CHAT_PERMISSION)
+	}
+
+	if inviteUserId != this.chat.CreatorUserId {
+		//
+	}
+
+	// TODO(@benqi): 检查唯一性
+	this.chat.Link = random2.RandomAlphanumeric(22)
+	/// m.Link = "https://nebula.im/joinchat/" + base64.StdEncoding.EncodeToString(crypto.GenerateNonce(16))
+	this.dao.ChatsDAO.UpdateLink(this.chat.Link, int32(time.Now().Unix()), this.chat.Id)
+	this.chat.Version += 1
+
+	return this.chat.Link, nil
+}
+
+func (this *chatLogicData) ToChatInvite(userId int32, cb func([]int32) []*mtproto.User) *mtproto.ChatInvite {
+	var chatInvite *mtproto.ChatInvite
+
+	this.checkOrLoadChatParticipantList()
+	_, invitedParticipant := this.findChatParticipant(userId)
+	if invitedParticipant == nil {
+		_chatInviteAlready := &mtproto.TLChatInviteAlready{Data2: &mtproto.ChatInvite_Data{
+			Chat: this.ToChat(userId),
+		}}
+		chatInvite = _chatInviteAlready.To_ChatInvite()
+	} else {
+		_chatInvite := &mtproto.TLChatInvite{Data2: &mtproto.ChatInvite_Data{
+			Channel:           false,
+			Broadcast:         false,
+			Public:            false,
+			Megagroup:         false,
+			Title:             this.chat.Title,
+			ParticipantsCount: this.chat.ParticipantCount,
+		}}
+
+		if this.chat.PhotoId == 0 {
+			_chatInvite.SetPhoto(mtproto.NewTLChatPhotoEmpty().To_ChatPhoto())
+		} else {
+			_chatInvite.SetPhoto(this.cb.GetChatPhoto(this.chat.PhotoId))
+		}
+
+		if cb != nil {
+			idList := []int32{this.chat.CreatorUserId}
+			for _, p := range this.participants {
+				if p.UserId != this.chat.CreatorUserId {
+					idList = append(idList, p.UserId)
+				}
+			}
+			_chatInvite.SetParticipants(cb(idList))
+		} else {
+			_chatInvite.SetParticipants(make([]*mtproto.User, 0))
+		}
+
+		chatInvite = _chatInvite.To_ChatInvite()
+	}
+	return chatInvite
 }

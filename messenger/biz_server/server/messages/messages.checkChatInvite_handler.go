@@ -18,7 +18,6 @@
 package messages
 
 import (
-    "fmt"
     "github.com/golang/glog"
     "golang.org/x/net/context"
     "github.com/nebula-chat/chatengine/pkg/grpc_util"
@@ -29,10 +28,20 @@ import (
 // messages.checkChatInvite#3eadb1bb hash:string = ChatInvite;
 func (s *MessagesServiceImpl) MessagesCheckChatInvite(ctx context.Context, request *mtproto.TLMessagesCheckChatInvite) (*mtproto.ChatInvite, error) {
     md := grpc_util.RpcMetadataFromIncoming(ctx)
-    glog.Infof("messages.checkChatInvite - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+    glog.Infof("messages.checkChatInvite#3eadb1bb - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    // Sorry: not impl MessagesCheckChatInvite logic
-    glog.Warning("messages.checkChatInvite blocked, License key from https://nebula.chat required to unlock enterprise features.")
+    var (
+        chatInvite *mtproto.ChatInvite
+    )
 
-    return nil, fmt.Errorf("not imp MessagesCheckChatInvite")
+    chatLogic, err := s.ChatModel.NewChatLogicByLink(request.GetHash())
+    if err != nil {
+        glog.Error("messages.checkChatInvite#3eadb1bb - makeChatByLink error: ", err)
+    }
+
+    chatInvite = chatLogic.ToChatInvite(md.UserId, func(idList []int32) []*mtproto.User {
+        return s.UserModel.GetUserListByIdList(md.UserId, idList)
+    })
+    glog.Infof("messages.checkChatInvite#3eadb1bb - reply: {%s}", logger.JsonDebugData(chatInvite))
+    return chatInvite, nil
 }

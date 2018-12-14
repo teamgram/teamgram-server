@@ -124,12 +124,28 @@ func (m *ChatModel) GetChatFullBySelfId(selfUserId int32, chatData *chatLogicDat
 	}
 	notifySettings := m.accountCallback.GetNotifySettings(selfUserId, peer)
 
+	var exportedInvite *mtproto.ExportedChatInvite
+	if selfUserId == chatData.GetCreator() {
+		chatLink := chatData.GetLink()
+		if chatLink == ""{
+			exportedInvite = mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite()
+		} else {
+			inviteExported := &mtproto.TLChatInviteExported{Data2: &mtproto.ExportedChatInvite_Data{
+				Link: "https://t.me/joinchat/" + chatLink,
+			}}
+			exportedInvite = inviteExported.To_ExportedChatInvite()
+		}
+	} else {
+		exportedInvite = mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite()
+	}
+
+	// ExportedInvite: mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite(), // TODO(@benqi):
 	chatFull := &mtproto.TLChatFull{Data2: &mtproto.ChatFull_Data{
 		Id:             chatData.GetChatId(),
 		Participants:   chatData.GetChatParticipants().To_ChatParticipants(),
 		ChatPhoto:      photo,
 		NotifySettings: notifySettings,
-		ExportedInvite: mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite(), // TODO(@benqi):
+		ExportedInvite: exportedInvite,
 		BotInfo:        []*mtproto.BotInfo{},
 	}}
 

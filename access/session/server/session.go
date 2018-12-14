@@ -218,8 +218,14 @@ type session struct {
 }
 
 func (c *session) String() string {
-	return fmt.Sprintf("{session_type: %d, session_id: %d, state: %d, conn_state: %d, conn_id: %s}",
-		c.sessionType, c.sessionId, c.sessionState, c.connState, c.connId)
+	return fmt.Sprintf("{user_id: %d, auth_key_id: %d, session_type: %d, session_id: %d, state: %d, conn_state: %d, conn_id: %s}",
+		c.cb.getUserId(),
+		c.cb.getAuthKeyId(),
+		c.sessionType,
+		c.sessionId,
+		c.sessionState,
+		c.connState,
+		c.connId)
 }
 
 func (c *session) SessionId() int64 {
@@ -289,7 +295,8 @@ func (c *session) changeConnState(state int) {
 
 func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2, cb2 func(msg *mtproto.TLMessage2)) {
 	// c.lastTime = time.Now().Unix()
-	// sessionStateNew := c.connState != kStateOnline
+	sessionStateNew := c.connState != kStateOnline
+
 	c.changeConnState(kStateOnline)
 	c.connId = id
 
@@ -314,6 +321,7 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 	for _, m := range packUtil.messages {
 		glog.Info("unpack - ", reflect.TypeOf(m.Object))
 		msgs = append(msgs, m)
+		c.addMsgId(m.MsgId)
 		//if c.checkBadMsgNotification(id, cntl, m) {
 		//	msgs = append(msgs, m)
 		//	c.addMsgId(m.MsgId)
@@ -331,19 +339,20 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 		c.addMsgId(msg.MsgId)
 	}
 
-	if c.sessionState == kSessionStateNew {
+	if sessionStateNew {
+	// if c.sessionState == kSessionStateNew {
 		c.onNewSessionCreated(id, cntl, msgs[0].MsgId)
 		c.firstMsgId = msgs[0].MsgId
-		c.sessionState = kSessionStateCreated
+		// c.sessionState = kSessionStateCreated
 	}
 
 	// check new session created
 	for _, message := range msgs {
-		//if c.firstMsgId > message.MsgId {
-		//	c.onNewSessionCreated(id, cntl, message.MsgId)
-		//	c.firstMsgId = message.MsgId // msgs[0].MsgId
-		//	// c.sessionState = kSessionStateCreated
-		//}
+		if c.firstMsgId > message.MsgId {
+			c.onNewSessionCreated(id, cntl, message.MsgId)
+			c.firstMsgId = message.MsgId // msgs[0].MsgId
+			// c.sessionState = kSessionStateCreated
+		}
 
 		switch message.Object.(type) {
 		case *mtproto.TLDestroyAuthKey: // 所有链接都有可能

@@ -30,7 +30,7 @@
             FROM
                 chat_participants
             WHERE
-                chat_id=:chat_id AND state = 0
+                chat_id=:chat_id
         </sql>
     </operation>
 

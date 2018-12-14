@@ -53,10 +53,10 @@ func (dao *ChatsDAO) Insert(do *dataobject.ChatsDO) int64 {
 	return id
 }
 
-// select id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, `date` from chats where id = :id
+// select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) Select(id int32) *dataobject.ChatsDO {
-	var query = "select id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, `date` from chats where id = ?"
+	var query = "select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where id = ?"
 	rows, err := dao.db.Queryx(query, id)
 
 	if err != nil {
@@ -89,10 +89,10 @@ func (dao *ChatsDAO) Select(id int32) *dataobject.ChatsDO {
 	return do
 }
 
-// select id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
+// select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectLastCreator(creator_user_id int32) *dataobject.ChatsDO {
-	var query = "select id, creator_user_id, access_hash, participant_count, title, photo_id, admins_enabled, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+	var query = "select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
 	rows, err := dao.db.Queryx(query, creator_user_id)
 
 	if err != nil {
@@ -289,6 +289,64 @@ func (dao *ChatsDAO) UpdateDeactivated(deactivated int8, id int32) int64 {
 	rows, err := r.RowsAffected()
 	if err != nil {
 		errDesc := fmt.Sprintf("RowsAffected in UpdateDeactivated(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return rows
+}
+
+// select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where link = :link
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) SelectByLink(link string) *dataobject.ChatsDO {
+	var query = "select id, creator_user_id, access_hash, participant_count, title, photo_id, link, admins_enabled, deactivated, version, `date` from chats where link = ?"
+	rows, err := dao.db.Queryx(query, link)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Queryx in SelectByLink(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	defer rows.Close()
+
+	do := &dataobject.ChatsDO{}
+	if rows.Next() {
+		err = rows.StructScan(do)
+		if err != nil {
+			errDesc := fmt.Sprintf("StructScan in SelectByLink(_), error: %v", err)
+			glog.Error(errDesc)
+			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+		}
+	} else {
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		errDesc := fmt.Sprintf("rows in SelectByLink(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return do
+}
+
+// update chats set link = :link, `date` = :date, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) UpdateLink(link string, date int32, id int32) int64 {
+	var query = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
+	r, err := dao.db.Exec(query, link, date, id)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Exec in UpdateLink(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	rows, err := r.RowsAffected()
+	if err != nil {
+		errDesc := fmt.Sprintf("RowsAffected in UpdateLink(_), error: %v", err)
 		glog.Error(errDesc)
 		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
 	}

@@ -18,7 +18,6 @@
 package messages
 
 import (
-	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
@@ -31,15 +30,22 @@ func (s *MessagesServiceImpl) MessagesExportChatInvite(ctx context.Context, requ
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("messages.exportChatInvite#7d885289 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl MessagesExportChatInvite logic
-	//chatLogic, err := s.ChatModel.NewChatLogicById(request.GetChatId())
-	//if err != nil {
-	//}
+	chatLogic, err := s.ChatModel.NewChatLogicById(request.GetChatId())
+	if err != nil {
+		glog.Error("messages.exportChatInvite#7d885289 - not found chat, error: ", err)
+		return nil, err
+	}
 
-	//exportedChatInvite := &mtproto.TLChatInviteExported{Data2: &mtproto.ExportedChatInvite_Data{
-	//	// Link: chatLogic.ExportedChatInvite(),
-	//}}
+	link, err := chatLogic.ExportChatInvite(md.UserId)
+	if err != nil {
+		glog.Error("messages.exportChatInvite#7d885289 - exportChatInvite error: ", err)
+		return nil, err
+	}
 
-	// glog.Infof("messages.exportChatInvite#7d885289 - reply: %s", logger.JsonDebugData(syncUpdates))
-	return nil, fmt.Errorf("not impl MessagesExportChatInvite")
+	exportedChatInvite := &mtproto.TLChatInviteExported{Data2: &mtproto.ExportedChatInvite_Data{
+		Link: "https://t.me/joinchat/" + link,
+	}}
+
+	glog.Infof("messages.exportChatInvite#7d885289 - reply: %s", logger.JsonDebugData(exportedChatInvite))
+	return exportedChatInvite.To_ExportedChatInvite(), nil
 }
