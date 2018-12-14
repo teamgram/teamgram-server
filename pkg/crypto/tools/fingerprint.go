@@ -27,10 +27,12 @@ import (
 	"crypto/rsa"
 	"encoding/hex"
 	"math/big"
+	"os"
+	// "strconv"
+	"io/ioutil"
 )
 
-// rsa = crypto.NewRSACryptor()
-
+/*
 var pkcs1PemPrivateKey = []byte(`
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAvKLEOWTzt9Hn3/9Kdp/RdHcEhzmd8xXeLSpHIIzaXTLJDw8B
@@ -92,22 +94,6 @@ KWhw9m0DccyESBrn/R8c0ew3
 -----END PRIVATE KEY-----
 `)
 
-func computeFingerprint(key *rsa.PrivateKey) uint64 {
-	// testPrivateKey
-	ebuf := mtproto.NewEncodeBuf(500)
-	n := key.N.Bytes()
-	e := new(big.Int).SetInt64(int64(key.E)).Bytes()
-
-	fmt.Printf("N: %d, E: %d\n", len(n), len(e))
-	ebuf.StringBytes(n)
-	ebuf.StringBytes(e)
-
-	fmt.Println(hex.EncodeToString(ebuf.GetBuf()))
-
-	hash := sha1.Sum(ebuf.GetBuf())
-	return binary.LittleEndian.Uint64(hash[12:20])
-}
-
 // fe000100bca2c43964f3b7d1e7dfff4a769fd174770487399df315de2d2a47208cda5d32c90f0f01849cb58d1fe2a9e1bc25ee72aed55a6ea312900ea5b48a60ca51fffff1688ccb17d411eee043d8397420074a8e8ba92bd3c8976481fdfe238f40e583b0bf8bb7c8031b4c41cbeb0f7bfd991ddcca3235fa3bd078b0eb318c5ae4e6a0e8583ae2a09a2b009ede1407cfa4e05fdb0ef7a215ee752ac913495b43ca4258da4c63c701f62f2bf96062b5cbe8b8b0c0be6b674d7eda921a03ce62a0a49058962018e2a03bdefeeee5421ea44f10815d2308e8712423ee6cff1d83efcf94b2d52b2c54e4276242d663d84332e2cf7194d2b35fc5decc4d0c1c46ba6d0a671703010001
 // FE000100BCA2C43964F3B7D1E7DFFF4A769FD174770487399DF315DE2D2A47208CDA5D32C90F0F01849CB58D1FE2A9E1BC25EE72AED55A6EA312900EA5B48A60CA51FFFFF1688CCB17D411EEE043D8397420074A8E8BA92BD3C8976481FDFE238F40E583B0BF8BB7C8031B4C41CBEB0F7BFD991DDCCA3235FA3BD078B0EB318C5AE4E6A0E8583AE2A09A2B009EDE1407CFA4E05FDB0EF7A215EE752AC913495B43CA4258DA4C63C701F62F2BF96062B5CBE8B8B0C0BE6B674D7EDA921A03CE62A0A49058962018E2A03BDEFEEEE5421EA44F10815D2308E8712423EE6CFF1D83EFCF94B2D52B2C54E4276242D663D84332E2CF7194D2B35FC5DECC4D0C1C46BA6D0A671703010001
 func calc1() {
@@ -141,7 +127,51 @@ func calc2() {
 	// rsa := crypto.NewRSACryptor()
 	fmt.Println(int64(computeFingerprint(key.(*rsa.PrivateKey))))
 }
+*/
+
+func computeFingerprint(key *rsa.PrivateKey) uint64 {
+	// testPrivateKey
+	ebuf := mtproto.NewEncodeBuf(500)
+	n := key.N.Bytes()
+	e := new(big.Int).SetInt64(int64(key.E)).Bytes()
+
+	// fmt.Printf("N: %d, E: %d\n", len(n), len(e))
+	fmt.Println("N: ", hex.EncodeToString(n))
+	fmt.Println("E: ", hex.EncodeToString(e))
+	// fmt.Println(hex.EncodeToString(ebuf.GetBuf()))
+	ebuf.StringBytes(n)
+	ebuf.StringBytes(e)
+
+
+	hash := sha1.Sum(ebuf.GetBuf())
+	return binary.LittleEndian.Uint64(hash[12:20])
+}
 
 func main()  {
-	calc2()
+	if len(os.Args) != 2 {
+		fmt.Println(" ./fingerprint rsakey")
+		os.Exit(0)
+	}
+
+	keyFile := os.Args[1]
+	pkcs1PemPrivateKey, err := ioutil.ReadFile(keyFile)
+	if err != nil {
+		fmt.Println("invalid pemsKeyFile: " + keyFile)
+		os.Exit(0)
+	}
+
+	block, _ := pem.Decode(pkcs1PemPrivateKey)
+	if block == nil {
+		panic("invalid pemsKeyData: " + string(pkcs1PemPrivateKey))
+		os.Exit(0)
+	}
+
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		panic("Failed to parse private key: " + err.Error())
+	}
+
+	// fingerprint uint64 = 12240908862933197005
+	v := computeFingerprint(key)
+	fmt.Printf("fingerprint, decimal: %d, hexadecimal： %x\n", v, v)
 }
