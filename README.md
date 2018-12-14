@@ -103,7 +103,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 - payments
 
 ### 技术交流群
-Bug反馈，意见和建议欢迎加入[Telegramd中文技术交流群](https://t.me/joinchat/D8b0DQ-CrvZXZv2dWn310g)讨论。
+Bug反馈，意见和建议欢迎加入[Telegramd中文技术交流群](https://t.me/cntelegramd)讨论。
 
 ## English
 
@@ -118,5 +118,5 @@ open source mtproto server implement by golang, which compatible telegram client
 [prerequisite](scripts/prerequisite.sh)
 
 ## Feedback
-Please report bugs, concerns, suggestions by issues, or join telegram group [Telegramd](https://t.me/joinchat/D8b0DRJiuH8EcIHNZQmCxQ) to discuss problems around source code.
+Please report bugs, concerns, suggestions by issues, or join telegram group [Telegramd](https://t.me/entelegramd) to discuss problems around source code.
 
