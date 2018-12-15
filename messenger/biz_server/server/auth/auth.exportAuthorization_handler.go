@@ -25,12 +25,31 @@ import (
 	"golang.org/x/net/context"
 )
 
+
+/*
+	## Authorization Transfer
+	The following methods can be used to eliminate the need for users to enter the code from a text message every time:
+
+	```
+	auth.exportedAuthorization#df969c2d id:int bytes:bytes = auth.ExportedAuthorization;
+	auth.authorization#f6b673a4 expires:int user:User = auth.Authorization;
+	---functions---
+	auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;
+	auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
+	```
+
+	auth.exportAuthorization must be executed in the current DC (the DC with which a connection has already been established),
+	passing in dc_id as the value for the new DC.
+	The method should return the user identifier and a long string of random data.
+	An import operation can be performed at the new DC by sending it what was received.
+	Queries requiring authorization can then be successfully executed in the new DC.
+ */
+
 // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
 func (s *AuthServiceImpl) AuthExportAuthorization(ctx context.Context, request *mtproto.TLAuthExportAuthorization) (*mtproto.Auth_ExportedAuthorization, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("auth.exportAuthorization#e5bfffcd - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl AuthExportAuthorization logic
 	exported := &mtproto.TLAuthExportedAuthorization{Data2: &mtproto.Auth_ExportedAuthorization_Data{
 		Id: request.GetDcId(),
 		Bytes: []byte{1,2,3,4},

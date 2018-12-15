@@ -30,7 +30,6 @@ func (s *AuthServiceImpl) AuthImportAuthorization(ctx context.Context, request *
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("auth.importAuthorization#e3ef9613 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	// TODO(@benqi): Impl AuthExportAuthorization logic
 	authorization := &mtproto.TLAuthAuthorization{Data2: &mtproto.Auth_Authorization_Data{
 		TmpSessions: request.GetId(),
 		User:        mtproto.NewTLUserEmpty().To_User(),

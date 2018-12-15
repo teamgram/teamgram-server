@@ -1,0 +1,72 @@
+# biz_server.toml
+
+ver = "0.0.1"
+#logPath = "/tmp/biz_server.log"
+
+serverId = 1
+relayIp = "127.0.0.1"
+
+[rpcServer]
+addr = "0.0.0.0:10001"
+
+[rpcServer.rpcDiscovery]
+serviceName = "biz"
+nodeID = "node1"
+rPCAddr = "127.0.0.1:10001"
+etcdAddrs = ["http://127.0.0.1:2379"]
+interval = "2s"
+tTL = "10s"
+
+
+#[rpcClient]
+#serviceName = "sync"
+#addr = "localhost:10002"
+
+[nbfsRpcClient]
+serviceName = "document"
+etcdAddrs = ["http://127.0.0.1:2379"]
+balancer = "round_robin"
+
+[syncRpcClient1]
+serviceName = "sync"
+etcdAddrs = ["http://127.0.0.1:2379"]
+balancer = "round_robin"
+
+[syncRpcClient2]
+serviceName = "sync2"
+etcdAddrs = ["http://127.0.0.1:2379"]
+balancer = "round_robin"
+
+[authSessionRpcClient]
+serviceName = "auth_session"
+etcdAddrs = ["http://127.0.0.1:2379"]
+balancer = "round_robin"
+
+[botsRpcClient]
+serviceName = "bots"
+etcdAddrs = ["http://127.0.0.1:2379"]
+balancer = "round_robin"
+
+[[redis]]
+name = "cache"
+addr = "127.0.0.1:6379"
+idle = 100
+active = 100
+dialTimeout = "1s"
+readTimeout = "1s"
+writeTimeout = "1s"
+idleTimeout = "10s"
+dbNum = "0"
+password = ""
+
+[[mysql]]
+name = "immaster"
+dsn = "root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4"
+active = 5
+idle = 2
+
+[[mysql]]
+name = "imslave"
+dsn = "root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4"
+active = 5
+idle = 2
