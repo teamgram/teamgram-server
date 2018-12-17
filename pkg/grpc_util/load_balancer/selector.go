@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Author: Benqi (wubenqi@gmail.com)
+// Copy from https://github.com/liyue201/grpc-lb
+//
 
 package load_balancer
 
@@ -36,7 +37,7 @@ type Selector interface {
 
 var AddrListEmptyErr = errors.New("addr list is emtpy")
 var AddrExistErr = errors.New("addr exist")
-var AddrDoseNotExistErr = errors.New("addr does not exist")
+var AddrDoesNotExistErr = errors.New("addr does not exist")
 var NoAvailableAddressErr = errors.New("no available address")
 
 type baseSelector struct {
@@ -89,13 +90,13 @@ func (b *baseSelector) Delete(addr grpc.Address) error {
 			}
 		}
 	}
-	if firstIdx > 0 && lastIdx > 0 {
+	if firstIdx >= 0 && lastIdx >= 0 {
 		copy(b.addrs[firstIdx:], b.addrs[lastIdx+1:])
 		b.addrs = b.addrs[:len(b.addrs)-(lastIdx-firstIdx+1)]
 		delete(b.addrMap, addr.Addr)
 		return nil
 	}
-	return AddrDoseNotExistErr
+	return AddrDoesNotExistErr
 }
 
 func (b *baseSelector) Up(addr grpc.Address) (cnt int, connected bool) {

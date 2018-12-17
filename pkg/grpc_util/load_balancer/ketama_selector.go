@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Author: Benqi (wubenqi@gmail.com)
+// Copy from https://github.com/liyue201/grpc-lb
+//
 
 package load_balancer
 
@@ -51,7 +52,7 @@ func (s *KetamaSelector) wrapAddr(addr string, idx int) string {
 	return fmt.Sprintf("%s-%d", addr, idx)
 }
 
-func (s *KetamaSelector) upWrapAddr(addr string) string {
+func (s *KetamaSelector) unWrapAddr(addr string) string {
 	ss := strings.Split(addr, "-")
 	return ss[0]
 }
@@ -69,9 +70,9 @@ func (s *KetamaSelector) Add(addr grpc.Address) error {
 }
 
 func (s *KetamaSelector) Delete(addr grpc.Address) error {
+	a, ok := s.addrMap[addr.Addr]
 	err := s.baseSelector.Delete(addr)
 	if err == nil {
-		a, ok := s.addrMap[addr.Addr]
 		if ok {
 			for i := 0; i < a.weight; i++ {
 				s.hash.Remove(s.wrapAddr(addr.Addr, i))
@@ -90,7 +91,7 @@ func (s *KetamaSelector) Get(ctx context.Context) (addr grpc.Address, err error)
 	if ok {
 		targetAddr, ok := s.hash.Get(key)
 		if ok {
-			targetAddr = s.upWrapAddr(targetAddr)
+			targetAddr = s.unWrapAddr(targetAddr)
 			for _, v := range s.addrs {
 				if v == targetAddr {
 					if addrInfo, ok := s.addrMap[v]; ok {
@@ -102,7 +103,7 @@ func (s *KetamaSelector) Get(ctx context.Context) (addr grpc.Address, err error)
 				}
 			}
 		} else {
-			err = AddrDoseNotExistErr
+			err = AddrDoesNotExistErr
 		}
 	} else {
 		err = KetamaKeyEmptyErr
