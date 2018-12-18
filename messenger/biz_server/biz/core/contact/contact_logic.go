@@ -143,7 +143,6 @@ func (c contactLogic) SearchContacts(q string, limit int32) ([]int32, []int32) {
 	// 构造模糊查询字符串
 	q = q + "%"
 	doList := c.dao.UsernameDAO.SearchByQueryNotIdList(2, q, idList, limit)
-	founds := make([]int32, 0, len(doList))
 	for i := 0; i < len(doList); i++ {
 		switch doList[i].PeerType {
 		case base.PEER_USER:
@@ -151,7 +150,6 @@ func (c contactLogic) SearchContacts(q string, limit int32) ([]int32, []int32) {
 		case base.PEER_CHANNEL:
 			channelIdList = append(channelIdList, doList[i].PeerId)
 		}
-		founds = append(founds, doList[i].PeerId)
 	}
 	return userIdList, channelIdList
 }
