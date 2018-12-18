@@ -51,59 +51,30 @@ The protocol is subdivided into three virtually independent components:
 
 ## Brief Component Summary
 ### High-Level Component (RPC Query Language/API)
-- session
-- 连接
-- 客户端设备(更确切地说是客户端设备)
-- auth_key_id
-
 
 From the standpoint of the high-level component, the client and the server exchange messages inside a session. The session is attached to the client device (the application, to be more exact) rather than a specific http/https/tcp connection. In addition, each session is attached to a user key ID by which authorization is actually accomplished.
 
 Several connections to a server may be open; messages may be sent in either direction through any of the connections (a response to a query is not necessarily returned through the same connection that carried the original query, although most often, that is the case; however, in no case can a message be returned through a connection belonging to a different session). When the UDP protocol is used, a response might be returned by a different IP address than the one to which the query had been sent.
 
-与服务器的多个连接可能是打开的; 消息可以通过任何连接在任一方向发送（对查询的响应不一定通过承载原始查询的同一连接返回，尽管大多数情况下是这种情况;但是，在任何情况下，消息都不能是通过属于不同会话的连接返回）。使用UDP协议时，响应可能由与发送查询的IP地址不同的IP地址返回。
-
-
 There are several types of messages:
-
-有几种类型的消息：
 
 - RPC calls (client to server): calls to API methods
 
-	RPC调用（客户端到服务器）：调用API方法
-
 - RPC responses (server to client): results of RPC calls
-
-	RPC响应（服务器到客户端）：RPC调用的结果
 
 - Message received acknowledgment (or rather, notification of status of a set of messages)
 
-	消息已收到确认（或者更确切地说，是一组消息的状态通知）
-
 - Message status query
-
-	消息状态查询
 
 - Multipart message or container (a container that holds several messages; needed to send several RPC calls at once over an HTTP connection, for example; also, a container may support gzip).
 
-	多部分消息或容器（容纳多个消息的容器;例如，需要通过HTTP连接一次发送多个RPC调用;同样，容器可能支持gzip）。
-
-
 From the standpoint of lower level protocols, a message is a binary data stream aligned along a 4 or 16-byte boundary. The first several fields in the message are fixed and are used by the cryptographic/authorization system.
-
-从较低级协议的角度来看，消息是沿4或16字节边界对齐的二进制数据流。消息中的前几个字段是固定的，并由加密/授权系统使用。
 
 Each message, either individual or inside a container, consists of a message identifier (64 bits, see below), a message sequence number within a session (32 bits), the length (of the message body in bytes; 32 bits), and a body (any size which is a multiple of 4 bytes). In addition, when a container or a single message is sent, an internal header is added at the top (see below), then the entire message is encrypted, and an external header is placed at the top of the message (a 64-bit key identifier and a 128-bit message key).
 
-每个消息（单个或在容器内）由消息标识符（64位，见下文），会话内的消息序列号（32位），消息体的长度（以字节为单位; 32位）组成，以及一个主体（任何大小是4个字节的倍数）。此外，当发送容器或单个消息时，在顶部添加内部标头（见下文），然后整个消息被加密，并且外部标头位于消息的顶部（64位）密钥标识符和128位消息密钥）。
-
 A message body normally consists of a 32-bit message type followed by type-dependent parameters. In particular, each RPC function has a corresponding message type. For more detail, see Binary Data Serialization, Mobile Protocol: Service Messages.
 
-甲消息主体通常由一个32位的消息类型，随后类型相关的参数。特别是，每个RPC函数都有相应的消息类型。有关更多详细信息，请参阅二进制数据序列化，移动协议：服务消息。
-
 All numbers are written as little endian. However, very large numbers (2048-bit) used in RSA and DH are written in the big endian format because that is what the OpenSSL library does.
-
-所有数字都写成小端。但是，RSA和DH中使用的非常大的数字（2048位）是以大端格式编写的，因为这是OpenSSL库的功能。
 
 ### Authorization and Encryption
 Prior to a message (or a multipart message) being transmitted over a network using a transport protocol, it is encrypted in a certain way, and an external header is added at the top of the message which is: a 64-bit key identifier (that uniquely identifies an authorization key for the server as well as the user) and a 128-bit message key. A user key together with the message key defines an actual 256-bit key which is what encrypts the message using AES-256 encryption. Note that the initial part of the message to be encrypted contains variable data (session, message ID, sequence number, server salt) that obviously influences the message key (and thus the AES key and iv). The message key is defined as the 128 middle bits of the SHA256 of the message body (including session, message ID, etc.), including the padding bytes, prepended by 32 bytes taken from the authorization key. Multipart messages are encrypted as a single message.

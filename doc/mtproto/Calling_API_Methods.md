@@ -2,9 +2,7 @@
 > Forwarded from [Calling API Methods](https://core.telegram.org/api/invoking)
 
 ## Layers
-API中的版本控制由所谓的TL layers支持。
-> 所有的api请求
-> 
+Versioning in the API is supported by so-called TL layers.
 
 The need to add a new object constructor or to add/remove a field in a constructor creates a backwards compatibility problem for previous versions of API clients. After all, simply changing a constructor in a schema also changes its number. To address this problem, each schema update is separated into a layer.
 A layer is a collection of updated methods or constructors in a TL schema. Each layer is numbered with sequentially increasing numbers starting with 2. The first layer is the base layer — the TL schema without any changes.
