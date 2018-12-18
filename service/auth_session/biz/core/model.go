@@ -96,7 +96,12 @@ func (m *AuthSessionModel) InsertAuthKey(authKeyId int64, authKey []byte, salt *
 
 	do.Id = int32(m.dao.AuthKeysDAO.Insert(do))
 
-	// TODO(@benqi): cache salt
+	// cache salt
+	err2 := PutSaltCacche(authKeyId, salt)
+	if err2 != nil {
+		// only log.
+		glog.Error("put cache error: ", err2)
+	}
 	return nil
 }
 

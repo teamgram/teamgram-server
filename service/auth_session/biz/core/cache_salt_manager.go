@@ -226,3 +226,8 @@ func GetOrNotInsertSaltList(keyId int64, size int32) ([]*mtproto.TLFutureSalt, e
 	}
 	return salts2, nil
 }
+
+func PutSaltCacche(keyId int64, salt *mtproto.TLFutureSalt) error {
+	cacheKey := genCacheSaltKey(keyId)
+	return cacheSalts.cache.Put(cacheKey, []*mtproto.TLFutureSalt{salt}, kSaltTimeout*time.Second)
+}
