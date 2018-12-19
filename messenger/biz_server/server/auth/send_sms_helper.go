@@ -21,6 +21,12 @@ package auth
 
 type SendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) (error)
 
+func sendSms(phoneNumber, code, codeHash string, sentCodeType int) error {
+	// TODO(@benqi): impl sendSms
+	return nil
+}
+
 func getSendSmsFunc() SendSmsF {
+	// return sendSms
 	return nil
 }
