@@ -30,6 +30,30 @@ import "schema.tl.crc32.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Bool <--
+//  + TL_boolFalse
+//  + TL_boolTrue
+//
+message Bool_Data {
+}
+
+message Bool {
+    TLConstructor constructor = 1;
+    Bool_Data data2 = 2;
+}
+
+// boolFalse#bc799737 = Bool;
+message TL_boolFalse {
+    Bool_Data data2 = 2;
+}
+
+// boolTrue#997275b5 = Bool;
+message TL_boolTrue {
+    Bool_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // True <--
 //  + TL_true
 //
@@ -82,30 +106,6 @@ message Null {
 // null#56730bcc = Null;
 message TL_null {
     Null_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Bool <--
-//  + TL_boolFalse
-//  + TL_boolTrue
-//
-message Bool_Data {
-}
-
-message Bool {
-    TLConstructor constructor = 1;
-    Bool_Data data2 = 2;
-}
-
-// boolFalse#bc799737 = Bool;
-message TL_boolFalse {
-    Bool_Data data2 = 2;
-}
-
-// boolTrue#997275b5 = Bool;
-message TL_boolTrue {
-    Bool_Data data2 = 2;
 }
 
 

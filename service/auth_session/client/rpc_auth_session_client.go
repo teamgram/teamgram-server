@@ -107,3 +107,34 @@ func GetPushSessionId(userId int32, authKeyId int64) int64 {
 
 	return sessionId.GetData2().GetV()
 }
+
+func GetAuthorizations(userId int32, excludeAuthKeyId int64) (*mtproto.Account_Authorizations, error) {
+	request := &mtproto.TLSessionGetAuthorizations{
+		UserId:           userId,
+		ExcludeAuthKeyId: excludeAuthKeyId,
+	}
+
+	authorizations, err := authSessionInstance.client.SessionGetAuthorizations(context.Background(), request)
+
+	if err != nil {
+		glog.Error(err)
+	}
+
+	return authorizations, nil
+}
+
+func ResetAuthorization(userId int32, hash int64) int64 {
+	request := &mtproto.TLSessionResetAuthorization{
+		UserId: userId,
+		Hash:   hash,
+	}
+
+	keyId, err := authSessionInstance.client.SessionResetAuthorization(context.Background(), request)
+	if err != nil {
+		glog.Error(err)
+		return 0
+	}
+
+	return keyId.GetData2().GetV()
+}
+

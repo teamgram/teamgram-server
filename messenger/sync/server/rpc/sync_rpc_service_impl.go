@@ -107,9 +107,7 @@ type SyncServiceImpl struct {
 	status     		status_client.StatusClient
 	closeChan 		chan int
 	pushChan 		chan struct {int; *PushData}
-	updatesTooLong 	[]byte
 	*update.UpdateModel
-
 }
 
 func NewSyncService(pushCB PushDataCallback, status status_client.StatusClient, updateModel *update.UpdateModel) *SyncServiceImpl {
@@ -120,9 +118,6 @@ func NewSyncService(pushCB PushDataCallback, status status_client.StatusClient, 
 		pushChan:    make(chan struct {int; *PushData}, 1024),
 		UpdateModel: updateModel,
 	}
-
-	upd := mtproto.NewTLUpdatesTooLong()
-	s.updatesTooLong = upd.Encode()
 
 	go s.pushUpdatesLoop()
 	return s
@@ -222,6 +217,7 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	var pts, ptsCount int32
 
 	switch ups.GetConstructor() {
+	case mtproto.TLConstructor_CRC32_updateAccountResetAuthorization:
 	case mtproto.TLConstructor_CRC32_updateShortMessage:
 		shortMessage := ups.To_UpdateShortMessage()
 		s.UpdateModel.AddToPtsQueue(userId, shortMessage.GetPts(), shortMessage.GetPtsCount(), updateShortToUpdateNewMessage(userId, shortMessage))

@@ -116,6 +116,7 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 	case *mtproto.TLLangpackGetLanguages,
 		*mtproto.TLLangpackGetDifference,
 		*mtproto.TLLangpackGetLangPack,
+		*mtproto.TLLangpackGetLanguagesLayer70,
 		*mtproto.TLLangpackGetLangPackLayer71,
 		*mtproto.TLLangpackGetStrings:
 

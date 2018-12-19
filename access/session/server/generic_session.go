@@ -312,8 +312,8 @@ func (c *genericSession) onRpcRequest(connID ClientConnID, cntl *zrpc.ZRpcContro
 					ErrorCode: 401,
 					ErrorMessage: "AUTH_KEY_INVALID",
 				}}
-				_ = rpcError
-				// c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, true, &mtproto.TLRpcResult{ReqMsgId: msgId, Result: rpcError}))
+				// _ = rpcError
+				c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, true, &mtproto.TLRpcResult{ReqMsgId: msgId, Result: rpcError}))
 				return false
 			} else {
 				c.cb.setUserId(authUserId)

@@ -53,27 +53,48 @@ message TL_rsa_public_key {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// HandshakeContext <--
-//  + TL_handshakeContext
+// SessionClientEvent <--
+//  + TL_sessionClientCreated
+//  + TL_sessionClientClosed
 //
-message HandshakeContext_Data {
-    bytes nonce = 1;
-    bytes server_nonce = 2;
-    bytes new_nonce = 3;
-    bytes a = 4;
-    bytes p = 5;
-    int64 auth_key_id = 6;
-    bytes auth_key = 7;
+message SessionClientEvent_Data {
+    int64 auth_key_id = 1;
+    int64 client_conn_id = 2;
+    int32 conn_type = 3;
 }
 
-message HandshakeContext {
+message SessionClientEvent {
     TLConstructor constructor = 1;
-    HandshakeContext_Data data2 = 2;
+    SessionClientEvent_Data data2 = 2;
 }
 
-// handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
-message TL_handshakeContext {
-    HandshakeContext_Data data2 = 2;
+// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientCreated {
+    SessionClientEvent_Data data2 = 2;
+}
+
+// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientClosed {
+    SessionClientEvent_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Int32 <--
+//  + TL_int32
+//
+message Int32_Data {
+    int32 v = 1;
+}
+
+message Int32 {
+    TLConstructor constructor = 1;
+    Int32_Data data2 = 2;
+}
+
+// int32 v:int = Int32;
+message TL_int32 {
+    Int32_Data data2 = 2;
 }
 
 
@@ -119,29 +140,27 @@ message TL_push_sessionServerConnected {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// SessionClientEvent <--
-//  + TL_sessionClientCreated
-//  + TL_sessionClientClosed
+// HandshakeContext <--
+//  + TL_handshakeContext
 //
-message SessionClientEvent_Data {
-    int64 auth_key_id = 1;
-    int64 client_conn_id = 2;
-    int32 conn_type = 3;
+message HandshakeContext_Data {
+    bytes nonce = 1;
+    bytes server_nonce = 2;
+    bytes new_nonce = 3;
+    bytes a = 4;
+    bytes p = 5;
+    int64 auth_key_id = 6;
+    bytes auth_key = 7;
 }
 
-message SessionClientEvent {
+message HandshakeContext {
     TLConstructor constructor = 1;
-    SessionClientEvent_Data data2 = 2;
+    HandshakeContext_Data data2 = 2;
 }
 
-// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientCreated {
-    SessionClientEvent_Data data2 = 2;
-}
-
-// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientClosed {
-    SessionClientEvent_Data data2 = 2;
+// handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
+message TL_handshakeContext {
+    HandshakeContext_Data data2 = 2;
 }
 
 
@@ -173,25 +192,6 @@ message TL_handshakeData {
 // sessionMessageData auth_key_id:long quick_ack:int client_conn_id:long conn_type:int = RawMessageData;
 message TL_sessionMessageData {
     RawMessageData_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
-//
-message Int32_Data {
-    int32 v = 1;
-}
-
-message Int32 {
-    TLConstructor constructor = 1;
-    Int32_Data data2 = 2;
-}
-
-// int32 v:int = Int32;
-message TL_int32 {
-    Int32_Data data2 = 2;
 }
 
 
@@ -270,13 +270,14 @@ message TL_session_setClientSessionInfo {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// session.getAuthorizations user_id:int = account.Authorizations;
+// session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
 message TL_session_getAuthorizations {
     int32 user_id = 1;
+    int64 exclude_auth_keyId = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// session.resetAuthorization user_id:int hash:long = Bool;
+// session.resetAuthorization user_id:int hash:long = Int64;
 message TL_session_resetAuthorization {
     int32 user_id = 1;
     int64 hash = 2;
@@ -452,27 +453,13 @@ message TL_bot_executeCommand {
 ///////////////////////////////////////////////////////////////////////////////
 // rpc
 
-service RPCPush {
-    // push.connectToSessionServer sync_server_id:int = ServerConnected;
-    rpc push_connectToSessionServer(TL_push_connectToSessionServer) returns (ServerConnected) {}
-    // push.pushUpdatesData auth_key_id:long pts:int pts_count:int = Bool;
-    rpc push_pushUpdatesData(TL_push_pushUpdatesData) returns (Bool) {}
-    // push.pushRpcResultData auth_key_id:long client_req_msg_id:long = Bool;
-    rpc push_pushRpcResultData(TL_push_pushRpcResultData) returns (Bool) {}
-}
-
-service RPCBot {
-    // bot.executeCommand bot_id:int peer_type:int peer_id:int command_line:string = Message;
-    rpc bot_executeCommand(TL_bot_executeCommand) returns (Message) {}
-}
-
 service RPCSession {
     // session.setClientSessionInfo session:ClientSession = Bool;
     rpc session_setClientSessionInfo(TL_session_setClientSessionInfo) returns (Bool) {}
-    // session.getAuthorizations user_id:int = account.Authorizations;
+    // session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
     rpc session_getAuthorizations(TL_session_getAuthorizations) returns (account_Authorizations) {}
-    // session.resetAuthorization user_id:int hash:long = Bool;
-    rpc session_resetAuthorization(TL_session_resetAuthorization) returns (Bool) {}
+    // session.resetAuthorization user_id:int hash:long = Int64;
+    rpc session_resetAuthorization(TL_session_resetAuthorization) returns (Int64) {}
     // session.getLayer auth_key_id:long = Int32;
     rpc session_getLayer(TL_session_getLayer) returns (Int32) {}
     // session.getLangCode auth_key_id:long = String;
@@ -510,5 +497,19 @@ service RPCSync {
     rpc sync_getDifference(TL_sync_getDifference) returns (updates_Difference) {}
     // sync.getChannelDifference flags:# auth_key_id:long user_id:int force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
     rpc sync_getChannelDifference(TL_sync_getChannelDifference) returns (updates_ChannelDifference) {}
+}
+
+service RPCPush {
+    // push.connectToSessionServer sync_server_id:int = ServerConnected;
+    rpc push_connectToSessionServer(TL_push_connectToSessionServer) returns (ServerConnected) {}
+    // push.pushUpdatesData auth_key_id:long pts:int pts_count:int = Bool;
+    rpc push_pushUpdatesData(TL_push_pushUpdatesData) returns (Bool) {}
+    // push.pushRpcResultData auth_key_id:long client_req_msg_id:long = Bool;
+    rpc push_pushRpcResultData(TL_push_pushRpcResultData) returns (Bool) {}
+}
+
+service RPCBot {
+    // bot.executeCommand bot_id:int peer_type:int peer_id:int command_line:string = Message;
+    rpc bot_executeCommand(TL_bot_executeCommand) returns (Message) {}
 }
 

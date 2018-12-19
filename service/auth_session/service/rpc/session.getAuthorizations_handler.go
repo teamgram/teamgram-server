@@ -30,7 +30,7 @@ func (s *SessionServiceImpl) SessionGetAuthorizations(ctx context.Context, reque
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("session.getAuthorizations - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	authorizationList := s.AuthSessionModel.GetAuthorizations(request.GetUserId())
+	authorizationList := s.AuthSessionModel.GetAuthorizations(request.GetUserId(), request.GetExcludeAuthKeyId())
     reply := &mtproto.TLAccountAuthorizations{Data2: &mtproto.Account_Authorizations_Data{
         Authorizations: authorizationList,
     }}

@@ -27,6 +27,7 @@ import (
 	"github.com/nebula-chat/chatengine/mtproto"
 	"time"
 	"github.com/nebula-chat/chatengine/pkg/util"
+	"math/rand"
 )
 
 type authSessionDAO struct {
@@ -148,6 +149,7 @@ func (m *AuthSessionModel) BindAuthKeyUser(authKeyId int64, userId int32) bool {
 	authUsersDO := &dataobject.AuthUsersDO{
 		AuthKeyId:   authKeyId,
 		UserId:      userId,
+		Hash:        rand.Int63(),
 		DateCreated: now,
 		DateActived: now,
 	}

@@ -26,7 +26,6 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/queue2"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/mtproto"
-	// "reflect"
 )
 
 // import "container/list"
@@ -505,6 +504,18 @@ func (s *authSessions) onSyncRpcResultData(syncMsg *syncRpcResultData) {
 }
 
 func (s *authSessions) onSyncData(syncMsg *syncData) {
+	// glog.Info("authSessions - ", reflect.TypeOf(syncMsg.data.obj))
+	if upds, ok := syncMsg.data.obj.(*mtproto.TLUpdateAccountResetAuthorization); ok {
+		if s.AuthUserId != upds.GetUserId() {
+ 			glog.Error("upds -- ", upds)
+		}
+		s.AuthUserId = 0
+		putCacheUserId(s.authKeyId, 0)
+
+		deleteClientSessionManager(s.authKeyId)
+		return
+	}
+
 	s.updates.onUpdatesSyncData(syncMsg)
 }
 

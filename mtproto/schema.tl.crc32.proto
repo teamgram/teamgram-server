@@ -84,6 +84,7 @@ enum TLConstructor {
     CRC32_ping_delay_disconnect = -213746804;
     CRC32_destroy_session = -414113498;
     CRC32_contest_saveDeveloperInfo = -1705021803;
+    CRC32_updateAccountResetAuthorization = 618817830;
     CRC32_schemeNotModified = 641506392;
     CRC32_scheme = 1315894878;
     CRC32_schemeParam = 565550063;
@@ -1069,8 +1070,8 @@ enum TLConstructor {
     CRC32_clientSessionInfo = 167005722;
     CRC32_push_sessionServerConnected = 575607369;
     CRC32_session_setClientSessionInfo = -1513913311;
-    CRC32_session_getAuthorizations = 58160113;
-    CRC32_session_resetAuthorization = 1051405288;
+    CRC32_session_getAuthorizations = 848027106;
+    CRC32_session_resetAuthorization = -1038977694;
     CRC32_session_getLayer = -238328911;
     CRC32_session_getLangCode = -1213481174;
     CRC32_session_getUserId = -798477825;

@@ -30,9 +30,9 @@ func getAppNameByAppId(appId int32) string {
 	return "tdesktop"
 }
 
-func (m *AuthSessionModel) GetAuthorizations(userId int32) (authorizations []*mtproto.Authorization) {
+func (m *AuthSessionModel) GetAuthorizations(userId int32, excludeAuthKeyId int64) (authorizations []*mtproto.Authorization) {
 	var (
-		selfAuthKeyId int64
+		// selfAuthKeyId int64
 		hash  int64
 		flags int32
 	)
@@ -42,9 +42,9 @@ func (m *AuthSessionModel) GetAuthorizations(userId int32) (authorizations []*mt
 	idList := make([]int64, 0, len(authUsersDOList))
 
 	for i := 0; i < len(authUsersDOList); i++ {
-		if userId == authUsersDOList[i].UserId {
-			selfAuthKeyId = authUsersDOList[i].AuthKeyId
-		}
+		//if userId == authUsersDOList[i].UserId {
+		//	selfAuthKeyId = authUsersDOList[i].AuthKeyId
+		//}
 		idList = append(idList, authUsersDOList[i].AuthKeyId)
 	}
 	if len(idList) == 0 {
@@ -63,16 +63,17 @@ func (m *AuthSessionModel) GetAuthorizations(userId int32) (authorizations []*mt
 
 	authsDOList := m.dao.AuthsDAO.SelectSessions(idList)
 	for i := 0; i < len(authsDOList); i++ {
-		if selfAuthKeyId == authsDOList[i].AuthKeyId {
+		authUsersDO := getAuthUsersDO(authsDOList[i].AuthKeyId)
+		if excludeAuthKeyId == authsDOList[i].AuthKeyId {
 			hash = 0
 			flags = 1
 		} else {
 			// TODO(@benqi): hash
-			hash = authsDOList[i].AuthKeyId
+			hash = authUsersDO.Hash
+			// authsDOList[i].AuthKeyId
 			flags = 0
 		}
 
-		authUsersDO := getAuthUsersDO(authsDOList[i].AuthKeyId)
 		country, region := getCountryAndRegionByIp(authsDOList[i].ClientIp)
 		// TODO(@benqi): fill plat_form, app_name, (country, region)
 		authorization := &mtproto.TLAuthorization{Data2: &mtproto.Authorization_Data{

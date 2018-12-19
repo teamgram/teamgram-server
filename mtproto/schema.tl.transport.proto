@@ -30,22 +30,189 @@ import "schema.tl.crc32.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// MsgsAllInfo <--
-//  + TL_msgs_all_info
+// MsgsStateInfo <--
+//  + TL_msgs_state_info
 //
-message MsgsAllInfo_Data {
-    repeated int64 msg_ids = 1;
+message MsgsStateInfo_Data {
+    int64 req_msg_id = 1;
     string info = 2;
 }
 
-message MsgsAllInfo {
+message MsgsStateInfo {
     TLConstructor constructor = 1;
-    MsgsAllInfo_Data data2 = 2;
+    MsgsStateInfo_Data data2 = 2;
 }
 
-// msgs_all_info#8cc0d131 msg_ids:Vector<long> info:string = MsgsAllInfo;
-message TL_msgs_all_info {
-    MsgsAllInfo_Data data2 = 2;
+// msgs_state_info#04deb57d req_msg_id:long info:string = MsgsStateInfo;
+message TL_msgs_state_info {
+    MsgsStateInfo_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// BadMsgNotification <--
+//  + TL_bad_msg_notification
+//  + TL_bad_server_salt
+//
+message BadMsgNotification_Data {
+    int64 bad_msg_id = 1;
+    int32 bad_msg_seqno = 2;
+    int32 error_code = 3;
+    int64 new_server_salt = 4;
+}
+
+message BadMsgNotification {
+    TLConstructor constructor = 1;
+    BadMsgNotification_Data data2 = 2;
+}
+
+// bad_msg_notification#a7eff811 bad_msg_id:long bad_msg_seqno:int error_code:int = BadMsgNotification;
+message TL_bad_msg_notification {
+    BadMsgNotification_Data data2 = 2;
+}
+// bad_server_salt#edab447b bad_msg_id:long bad_msg_seqno:int error_code:int new_server_salt:long = BadMsgNotification;
+message TL_bad_server_salt {
+    BadMsgNotification_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RpcError <--
+//  + TL_rpc_error
+//
+message RpcError_Data {
+    int32 error_code = 1;
+    string error_message = 2;
+}
+
+message RpcError {
+    TLConstructor constructor = 1;
+    RpcError_Data data2 = 2;
+}
+
+// rpc_error#2144ca19 error_code:int error_message:string = RpcError;
+message TL_rpc_error {
+    RpcError_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FutureSalt <--
+//  + TL_future_salt
+//
+message FutureSalt_Data {
+    int32 valid_since = 1;
+    int32 valid_until = 2;
+    int64 salt = 3;
+}
+
+message FutureSalt {
+    TLConstructor constructor = 1;
+    FutureSalt_Data data2 = 2;
+}
+
+// future_salt#0949d9dc valid_since:int valid_until:int salt:long = FutureSalt;
+message TL_future_salt {
+    FutureSalt_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FutureSalts <--
+//  + TL_future_salts
+//
+message FutureSalts_Data {
+    int64 req_msg_id = 1;
+    int32 now = 2;
+    repeated TL_future_salt salts = 3;
+}
+
+message FutureSalts {
+    TLConstructor constructor = 1;
+    FutureSalts_Data data2 = 2;
+}
+
+// future_salts#ae500895 req_msg_id:long now:int salts:vector<future_salt> = FutureSalts;
+message TL_future_salts {
+    FutureSalts_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// AccessPointRule <--
+//  + TL_accessPointRule
+//
+message AccessPointRule_Data {
+    string phone_prefix_rules = 1;
+    int32 dc_id = 2;
+    repeated IpPort ips = 3;
+}
+
+message AccessPointRule {
+    TLConstructor constructor = 1;
+    AccessPointRule_Data data2 = 2;
+}
+
+// accessPointRule#4679b65f phone_prefix_rules:string dc_id:int ips:vector<IpPort> = AccessPointRule;
+message TL_accessPointRule {
+    AccessPointRule_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MsgsAck <--
+//  + TL_msgs_ack
+//
+message MsgsAck_Data {
+    repeated int64 msg_ids = 1;
+}
+
+message MsgsAck {
+    TLConstructor constructor = 1;
+    MsgsAck_Data data2 = 2;
+}
+
+// msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
+message TL_msgs_ack {
+    MsgsAck_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MsgsStateReq <--
+//  + TL_msgs_state_req
+//
+message MsgsStateReq_Data {
+    repeated int64 msg_ids = 1;
+}
+
+message MsgsStateReq {
+    TLConstructor constructor = 1;
+    MsgsStateReq_Data data2 = 2;
+}
+
+// msgs_state_req#da69fb52 msg_ids:Vector<long> = MsgsStateReq;
+message TL_msgs_state_req {
+    MsgsStateReq_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MsgDetailedInfo <--
+//  + TL_msg_detailed_info
+//  + TL_msg_new_detailed_info
+//
+message MsgDetailedInfo_Data {
+    int64 msg_id = 1;
+    int64 answer_msg_id = 2;
+    int32 bytes = 3;
+    int32 status = 4;
+}
+
+message MsgDetailedInfo {
+    TLConstructor constructor = 1;
+    MsgDetailedInfo_Data data2 = 2;
+}
+
+// msg_detailed_info#276d3ec6 msg_id:long answer_msg_id:long bytes:int status:int = MsgDetailedInfo;
+message TL_msg_detailed_info {
+    MsgDetailedInfo_Data data2 = 2;
+}
+// msg_new_detailed_info#809db6df answer_msg_id:long bytes:int status:int = MsgDetailedInfo;
+message TL_msg_new_detailed_info {
+    MsgDetailedInfo_Data data2 = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,22 +239,105 @@ message TL_destroy_session_none {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// RpcError <--
-//  + TL_rpc_error
+// NewSession <--
+//  + TL_new_session_created
 //
-message RpcError_Data {
-    int32 error_code = 1;
-    string error_message = 2;
+message NewSession_Data {
+    int64 first_msg_id = 1;
+    int64 unique_id = 2;
+    int64 server_salt = 3;
 }
 
-message RpcError {
+message NewSession {
     TLConstructor constructor = 1;
-    RpcError_Data data2 = 2;
+    NewSession_Data data2 = 2;
 }
 
-// rpc_error#2144ca19 error_code:int error_message:string = RpcError;
-message TL_rpc_error {
-    RpcError_Data data2 = 2;
+// new_session_created#9ec20908 first_msg_id:long unique_id:long server_salt:long = NewSession;
+message TL_new_session_created {
+    NewSession_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// HttpWait <--
+//  + TL_http_wait
+//
+message HttpWait_Data {
+    int32 max_delay = 1;
+    int32 wait_after = 2;
+    int32 max_wait = 3;
+}
+
+message HttpWait {
+    TLConstructor constructor = 1;
+    HttpWait_Data data2 = 2;
+}
+
+// http_wait#9299359f max_delay:int wait_after:int max_wait:int = HttpWait;
+message TL_http_wait {
+    HttpWait_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// IpPort <--
+//  + TL_ipPort
+//  + TL_ipPortSecret
+//
+message IpPort_Data {
+    int32 ipv4 = 1;
+    int32 port = 2;
+    bytes secret = 3;
+}
+
+message IpPort {
+    TLConstructor constructor = 1;
+    IpPort_Data data2 = 2;
+}
+
+// ipPort#d433ad73 ipv4:int port:int = IpPort;
+message TL_ipPort {
+    IpPort_Data data2 = 2;
+}
+// ipPortSecret#37982646 ipv4:int port:int secret:bytes = IpPort;
+message TL_ipPortSecret {
+    IpPort_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MsgsAllInfo <--
+//  + TL_msgs_all_info
+//
+message MsgsAllInfo_Data {
+    repeated int64 msg_ids = 1;
+    string info = 2;
+}
+
+message MsgsAllInfo {
+    TLConstructor constructor = 1;
+    MsgsAllInfo_Data data2 = 2;
+}
+
+// msgs_all_info#8cc0d131 msg_ids:Vector<long> info:string = MsgsAllInfo;
+message TL_msgs_all_info {
+    MsgsAllInfo_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MsgResendReq <--
+//  + TL_msg_resend_req
+//
+message MsgResendReq_Data {
+    repeated int64 msg_ids = 1;
+}
+
+message MsgResendReq {
+    TLConstructor constructor = 1;
+    MsgResendReq_Data data2 = 2;
+}
+
+// msg_resend_req#7d861a08 msg_ids:Vector<long> = MsgResendReq;
+message TL_msg_resend_req {
+    MsgResendReq_Data data2 = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,121 +371,6 @@ message TL_rpc_answer_dropped {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// IpPort <--
-//  + TL_ipPort
-//  + TL_ipPortSecret
-//
-message IpPort_Data {
-    int32 ipv4 = 1;
-    int32 port = 2;
-    bytes secret = 3;
-}
-
-message IpPort {
-    TLConstructor constructor = 1;
-    IpPort_Data data2 = 2;
-}
-
-// ipPort#d433ad73 ipv4:int port:int = IpPort;
-message TL_ipPort {
-    IpPort_Data data2 = 2;
-}
-// ipPortSecret#37982646 ipv4:int port:int secret:bytes = IpPort;
-message TL_ipPortSecret {
-    IpPort_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// AccessPointRule <--
-//  + TL_accessPointRule
-//
-message AccessPointRule_Data {
-    string phone_prefix_rules = 1;
-    int32 dc_id = 2;
-    repeated IpPort ips = 3;
-}
-
-message AccessPointRule {
-    TLConstructor constructor = 1;
-    AccessPointRule_Data data2 = 2;
-}
-
-// accessPointRule#4679b65f phone_prefix_rules:string dc_id:int ips:vector<IpPort> = AccessPointRule;
-message TL_accessPointRule {
-    AccessPointRule_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// BadMsgNotification <--
-//  + TL_bad_msg_notification
-//  + TL_bad_server_salt
-//
-message BadMsgNotification_Data {
-    int64 bad_msg_id = 1;
-    int32 bad_msg_seqno = 2;
-    int32 error_code = 3;
-    int64 new_server_salt = 4;
-}
-
-message BadMsgNotification {
-    TLConstructor constructor = 1;
-    BadMsgNotification_Data data2 = 2;
-}
-
-// bad_msg_notification#a7eff811 bad_msg_id:long bad_msg_seqno:int error_code:int = BadMsgNotification;
-message TL_bad_msg_notification {
-    BadMsgNotification_Data data2 = 2;
-}
-// bad_server_salt#edab447b bad_msg_id:long bad_msg_seqno:int error_code:int new_server_salt:long = BadMsgNotification;
-message TL_bad_server_salt {
-    BadMsgNotification_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MsgDetailedInfo <--
-//  + TL_msg_detailed_info
-//  + TL_msg_new_detailed_info
-//
-message MsgDetailedInfo_Data {
-    int64 msg_id = 1;
-    int64 answer_msg_id = 2;
-    int32 bytes = 3;
-    int32 status = 4;
-}
-
-message MsgDetailedInfo {
-    TLConstructor constructor = 1;
-    MsgDetailedInfo_Data data2 = 2;
-}
-
-// msg_detailed_info#276d3ec6 msg_id:long answer_msg_id:long bytes:int status:int = MsgDetailedInfo;
-message TL_msg_detailed_info {
-    MsgDetailedInfo_Data data2 = 2;
-}
-// msg_new_detailed_info#809db6df answer_msg_id:long bytes:int status:int = MsgDetailedInfo;
-message TL_msg_new_detailed_info {
-    MsgDetailedInfo_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MsgResendReq <--
-//  + TL_msg_resend_req
-//
-message MsgResendReq_Data {
-    repeated int64 msg_ids = 1;
-}
-
-message MsgResendReq {
-    TLConstructor constructor = 1;
-    MsgResendReq_Data data2 = 2;
-}
-
-// msg_resend_req#7d861a08 msg_ids:Vector<long> = MsgResendReq;
-message TL_msg_resend_req {
-    MsgResendReq_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // Pong <--
 //  + TL_pong
 //
@@ -252,83 +387,6 @@ message Pong {
 // pong#347773c5 msg_id:long ping_id:long = Pong;
 message TL_pong {
     Pong_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// NewSession <--
-//  + TL_new_session_created
-//
-message NewSession_Data {
-    int64 first_msg_id = 1;
-    int64 unique_id = 2;
-    int64 server_salt = 3;
-}
-
-message NewSession {
-    TLConstructor constructor = 1;
-    NewSession_Data data2 = 2;
-}
-
-// new_session_created#9ec20908 first_msg_id:long unique_id:long server_salt:long = NewSession;
-message TL_new_session_created {
-    NewSession_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MsgsAck <--
-//  + TL_msgs_ack
-//
-message MsgsAck_Data {
-    repeated int64 msg_ids = 1;
-}
-
-message MsgsAck {
-    TLConstructor constructor = 1;
-    MsgsAck_Data data2 = 2;
-}
-
-// msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
-message TL_msgs_ack {
-    MsgsAck_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MsgsStateInfo <--
-//  + TL_msgs_state_info
-//
-message MsgsStateInfo_Data {
-    int64 req_msg_id = 1;
-    string info = 2;
-}
-
-message MsgsStateInfo {
-    TLConstructor constructor = 1;
-    MsgsStateInfo_Data data2 = 2;
-}
-
-// msgs_state_info#04deb57d req_msg_id:long info:string = MsgsStateInfo;
-message TL_msgs_state_info {
-    MsgsStateInfo_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// FutureSalts <--
-//  + TL_future_salts
-//
-message FutureSalts_Data {
-    int64 req_msg_id = 1;
-    int32 now = 2;
-    repeated TL_future_salt salts = 3;
-}
-
-message FutureSalts {
-    TLConstructor constructor = 1;
-    FutureSalts_Data data2 = 2;
-}
-
-// future_salts#ae500895 req_msg_id:long now:int salts:vector<future_salt> = FutureSalts;
-message TL_future_salts {
-    FutureSalts_Data data2 = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -349,63 +407,5 @@ message help_ConfigSimple {
 // help.configSimple#5a592a6c date:int expires:int rules:vector<AccessPointRule> = help.ConfigSimple;
 message TL_help_configSimple {
     help_ConfigSimple_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MsgsStateReq <--
-//  + TL_msgs_state_req
-//
-message MsgsStateReq_Data {
-    repeated int64 msg_ids = 1;
-}
-
-message MsgsStateReq {
-    TLConstructor constructor = 1;
-    MsgsStateReq_Data data2 = 2;
-}
-
-// msgs_state_req#da69fb52 msg_ids:Vector<long> = MsgsStateReq;
-message TL_msgs_state_req {
-    MsgsStateReq_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// FutureSalt <--
-//  + TL_future_salt
-//
-message FutureSalt_Data {
-    int32 valid_since = 1;
-    int32 valid_until = 2;
-    int64 salt = 3;
-}
-
-message FutureSalt {
-    TLConstructor constructor = 1;
-    FutureSalt_Data data2 = 2;
-}
-
-// future_salt#0949d9dc valid_since:int valid_until:int salt:long = FutureSalt;
-message TL_future_salt {
-    FutureSalt_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// HttpWait <--
-//  + TL_http_wait
-//
-message HttpWait_Data {
-    int32 max_delay = 1;
-    int32 wait_after = 2;
-    int32 max_wait = 3;
-}
-
-message HttpWait {
-    TLConstructor constructor = 1;
-    HttpWait_Data data2 = 2;
-}
-
-// http_wait#9299359f max_delay:int wait_after:int max_wait:int = HttpWait;
-message TL_http_wait {
-    HttpWait_Data data2 = 2;
 }
 

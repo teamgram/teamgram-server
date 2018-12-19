@@ -23,6 +23,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/logger"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
+	"github.com/nebula-chat/chatengine/service/auth_session/client"
 )
 
 /*
@@ -35,11 +36,12 @@ func (s *AccountServiceImpl) AccountGetAuthorizations(ctx context.Context, reque
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("account.getAuthorizations#e320c158 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	sessionList := s.AccountModel.GetAuthorizationList(md.AuthId, md.UserId)
-	authorizations := &mtproto.TLAccountAuthorizations{Data2: &mtproto.Account_Authorizations_Data{
-		Authorizations: sessionList,
-	}}
+	authorizations, err := auth_session_client.GetAuthorizations(md.UserId, md.AuthId)
+	if err == nil {
+		glog.Infof("account.getAuthorizations#e320c158 - reply: {%s}", logger.JsonDebugData(authorizations))
+	} else {
+		glog.Error("account.getAuthorizations#e320c158 - error: ", err)
+	}
 
-	glog.Infof("account.getAuthorizations#e320c158 - reply: {%s}", logger.JsonDebugData(authorizations))
-	return authorizations.To_Account_Authorizations(), nil
+	return authorizations, err
 }

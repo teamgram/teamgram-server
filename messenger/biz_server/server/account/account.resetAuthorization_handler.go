@@ -23,6 +23,8 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/logger"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
+	"github.com/nebula-chat/chatengine/service/auth_session/client"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 )
 
 // account.resetAuthorization#df77f3bc hash:long = Bool;
@@ -30,16 +32,15 @@ func (s *AccountServiceImpl) AccountResetAuthorization(ctx context.Context, requ
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("account.resetAuthorization#df77f3bc - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	authKeyId := s.AccountModel.GetAuthKeyIdByHash(md.UserId, request.GetHash())
-	if authKeyId == 0 {
-		err := mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_BAD_REQUEST)
-		glog.Error("account.resetAuthorization#df77f3bc - not found hash ", err)
-		return nil, err
-	}
+	keyId := auth_session_client.ResetAuthorization(md.UserId, request.GetHash())
 
-	// TODO(@benqi): found session, kick off.
-	s.AccountModel.DeleteAuthorization(authKeyId)
+	// notify kill session
+	upds := &mtproto.TLUpdateAccountResetAuthorization{Data2: &mtproto.Updates_Data{
+		UserId:    md.UserId,
+		AuthKeyId: keyId,
+	}}
+	sync_client.GetSyncClient().SyncUpdatesMe(md.UserId, keyId, 0, upds.To_Updates())
 
-	glog.Infof("account.checkUsername#2714d86c - reply: {true}")
-	return mtproto.ToBool(true), nil
+	glog.Infof("account.resetAuthorization#df77f3bc - reply: {%d}", keyId)
+	return mtproto.ToBool(keyId != 0), nil
 }

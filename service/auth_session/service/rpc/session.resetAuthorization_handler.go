@@ -21,17 +21,20 @@ import (
     "github.com/golang/glog"
     "github.com/nebula-chat/chatengine/mtproto"
     "golang.org/x/net/context"
-    "fmt"
     "github.com/nebula-chat/chatengine/pkg/grpc_util"
     "github.com/nebula-chat/chatengine/pkg/logger"
 )
 
-// session.resetAuthorization user_id:int hash:long = Bool;
-func (s *SessionServiceImpl) SessionResetAuthorization(ctx context.Context, request *mtproto.TLSessionResetAuthorization) (*mtproto.Bool, error) {
+// session.resetAuthorization user_id:int hash:long = Int64;
+func (s *SessionServiceImpl) SessionResetAuthorization(ctx context.Context, request *mtproto.TLSessionResetAuthorization) (*mtproto.Int64, error) {
     md := grpc_util.RpcMetadataFromIncoming(ctx)
     glog.Infof("session.resetAuthorization - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    // TODO(@benqi): Impl SessionResetAuthorization logic
+    keyId := s.AuthSessionModel.ResetAuthorization(request.GetHash())
+    reply := &mtproto.TLLong{Data2: &mtproto.Int64_Data{
+        V: keyId,
+    }}
 
-    return nil, fmt.Errorf("Not impl SessionResetAuthorization")
+    glog.Infof("session.resetAuthorization - reply: {%s}", logger.JsonDebugData(reply))
+    return reply.To_Int64(), nil
 }
