@@ -35,11 +35,15 @@ type sessionConfig struct {
 	ServerId             int32 // 服务器ID
 	Redis                []redis_client.RedisConfig
 	SaltCache            redis_client.RedisConfig
+
 	BizRpcClient         service_discovery.ServiceDiscoveryClientConfig
 	NbfsRpcClient        service_discovery.ServiceDiscoveryClientConfig
-	SyncRpcClient        service_discovery.ServiceDiscoveryClientConfig
+	// SyncRpcClient        service_discovery.ServiceDiscoveryClientConfig
 	AuthSessionRpcClient service_discovery.ServiceDiscoveryClientConfig
 	Server               *zrpc.ZRpcServerConfig
+
+	RpcClients           []service_discovery.ServiceDiscoveryClientConfig
+	RouterTables         []RouterTable
 }
 
 func init() {
