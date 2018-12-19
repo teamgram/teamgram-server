@@ -19,12 +19,15 @@ package etcd3
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	etcd3 "github.com/coreos/etcd/clientv3"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/grpclog"
 	"time"
 )
+
+const ETCD_PANIC = "etcd is panic"
 
 type EtcdReigistry struct {
 	etcd3Client *etcd3.Client
@@ -74,8 +77,11 @@ func NewRegistry(option Option) (*EtcdReigistry, error) {
 	return registry, nil
 }
 
-func (e *EtcdReigistry) Register() error {
+func(e *EtcdReigistry) NewContext() {
+	e.ctx, e.cancel = context.WithCancel(context.Background())
+}
 
+func (e *EtcdReigistry) Register() error {
 	resp, err := e.etcd3Client.Grant(e.ctx, 10) // int64(e.ttl))
 	if err != nil {
 		fmt.Println("Grant error: ", err)
@@ -96,16 +102,19 @@ func (e *EtcdReigistry) Register() error {
 
 	for {
 		select {
-		case <-keepAliveChan:
+		case keepAlive := <-keepAliveChan:
 			// 消息不重要，消费掉就行，防止溢出
+			if keepAlive == nil {
+				e.cancel()
+				return errors.New(ETCD_PANIC)
+			}
 		case <-e.ctx.Done():
-			if _, err := e.etcd3Client.Delete(context.Background(), e.key); err != nil {
+			if _, err := e.etcd3Client.Revoke(context.Background(), resp.ID); err != nil {
 				grpclog.Errorf("grpclb: deregister '%s' failed: %s", e.key, err.Error())
 			}
 			return nil
 		}
 	}
-
 	return nil
 }
 
