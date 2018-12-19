@@ -55,16 +55,20 @@ type SessionServer struct {
 	idgen                idgen.UUIDGen
 	status               status_client.StatusClient
 	server               *zrpc.ZRpcServer
+	rpcClients			 map[string]*grpc_util.RPCClient
+
 	bizRpcClient         *grpc_util.RPCClient
 	nbfsRpcClient        *grpc_util.RPCClient
-	syncRpcClient        mtproto.RPCSyncClient
+	// syncRpcClient        mtproto.RPCSyncClient
 	authSessionRpcClient mtproto.RPCSessionClient
 	sessionManager 		 sync.Map // map[int64]*sessionClientList
 	// sessionManager       *sessionManager
 }
 
 func NewSessionServer() *SessionServer {
-	return &SessionServer{}
+	return &SessionServer{
+		rpcClients: map[string]*grpc_util.RPCClient{},
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,12 +106,17 @@ func (s *SessionServer) RunLoop() {
 	s.bizRpcClient, _ = grpc_util.NewRPCClient(&Conf.BizRpcClient)
 	s.nbfsRpcClient, _ = grpc_util.NewRPCClient(&Conf.NbfsRpcClient)
 
+	for i := 0; i < len(Conf.RpcClients); i++ {
+		s.rpcClients[Conf.RpcClients[i].ServiceName], _ = grpc_util.NewRPCClient(&Conf.RpcClients[i])
+	}
+
+	InstallRouter(s.rpcClients, Conf.RouterTables)
 	// sync
-	c, _ := grpc_util.NewRPCClient(&Conf.SyncRpcClient)
-	s.syncRpcClient = mtproto.NewRPCSyncClient(c.GetClientConn())
+	// c, _ := grpc_util.NewRPCClient(&Conf.SyncRpcClient)
+	// s.syncRpcClient = mtproto.NewRPCSyncClient(c.GetClientConn())
 
 	// auth_session
-	c, _ = grpc_util.NewRPCClient(&Conf.AuthSessionRpcClient)
+	c, _ := grpc_util.NewRPCClient(&Conf.AuthSessionRpcClient)
 	s.authSessionRpcClient = mtproto.NewRPCSessionClient(c.GetClientConn())
 
 	s.server.Serve()

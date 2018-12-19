@@ -16,3 +16,50 @@
 // Author: Benqi (wubenqi@gmail.com)
 
 package server
+
+import (
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"reflect"
+	"github.com/golang/glog"
+)
+
+var routerTable = map[string]*grpc_util.RPCClient{}
+var defaultClient *grpc_util.RPCClient
+// var routerTable = map[string]string{}
+
+type RouterTable struct {
+	Method string
+	Module string
+}
+
+func InstallRouter(rpcClients map[string]*grpc_util.RPCClient, tbl []RouterTable) {
+	for k, v := range rpcClients {
+		if k == "biz" {
+			defaultClient = v
+		}
+	}
+
+	//if defaultClient == nil {
+	//	panic("not biz in rpcClients")
+	//}
+
+	for _, v := range tbl {
+		if c, ok := rpcClients[v.Module]; ok {
+			routerTable[v.Method] = c
+		} else {
+			glog.Error("duplicate method: ", v)
+		}
+	}
+}
+
+func getRpcClientByRequest(t interface{}) *grpc_util.RPCClient {
+	rt := reflect.TypeOf(t)
+	if rt.Kind() == reflect.Ptr {
+		rt = rt.Elem()
+	}
+
+	if c, ok := routerTable[rt.Name()]; ok {
+		return c
+	}
+	return defaultClient
+}

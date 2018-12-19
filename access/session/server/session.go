@@ -1264,9 +1264,11 @@ func invokeRpcRequest(authUserId int32, authKeyId int64, layer int32, requests *
 		// TODO(@benqi): change state.
 		requests.rpcMessages[i].state = kNetworkMessageStateRunning
 
-		if invoke != nil && invoke() != nil {
-			rpcResult, err = invoke().Invoke(rpcMetadata, requests.rpcMessages[i].rpcRequest.Object)
+		rpcClient := getRpcClientByRequest(requests.rpcMessages[i].rpcRequest.Object)
+		if rpcClient == nil {
+			rpcClient = invoke()
 		}
+		rpcResult, err = rpcClient.Invoke(rpcMetadata, requests.rpcMessages[i].rpcRequest.Object)
 
 		reply := &mtproto.TLRpcResult{
 			ReqMsgId: requests.rpcMessages[i].rpcRequest.MsgId,
