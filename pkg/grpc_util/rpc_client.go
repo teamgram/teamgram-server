@@ -72,7 +72,8 @@ func NewRPCClientByServiceDiscovery(discovery *service_discovery.ServiceDiscover
 		b = load_balancer.NewBalancer(r, load_balancer.NewRoundRobinSelector())
 	}
 
-	c, err = grpc.Dial("", grpc.WithInsecure(), grpc.WithBalancer(b), grpc.WithTimeout(time.Second*5))
+	// Fixed @LionPuChiPuChi, 2018-12-19
+	c, err = grpc.Dial("", grpc.WithInsecure(), grpc.WithBalancer(b), grpc.WithTimeout(time.Second*5), grpc.WithBlock())
 	if err != nil {
 		glog.Error(err)
 		panic(err)
@@ -116,9 +117,10 @@ func (c *RPCClient) Invoke(rpcMetaData *RpcMetadata, object mtproto.TLObject) (m
 
 	var header, trailer metadata.MD
 
-	// ctx := context.Background()
-	// glog.Infof("Invoke - NewReplyFunc: {%v}\n", r)
-	ctx, _ := RpcMetadataToOutgoing(context.Background(), rpcMetaData)
+	// Fixed @LionPuChiPuChi, 2018-12-19
+	ctxWithTimeout, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, _ := RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
+
 	glog.Infof("Invoke - NewReplyFunc: {%v}\n", r)
 	err := c.conn.Invoke(ctx, t.Method, object, r, grpc.Header(&header), grpc.Trailer(&trailer))
 
