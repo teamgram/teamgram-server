@@ -106,6 +106,8 @@ func (s *MessagesServiceImpl) MessagesGetDialogs(ctx context.Context, request *m
 
 	// messageIdList, userIdList, chatIdList, channelIdList
 	dialogItems := s.DialogModel.PickAllIDListByDialogs(dialogs)
+	dialogItems.UserIdList = append(dialogItems.UserIdList, md.UserId)
+
 	glog.Info(dialogItems)
 	messages := s.MessageModel.GetUserMessagesByMessageIdList(md.UserId, dialogItems.MessageIdList)
 

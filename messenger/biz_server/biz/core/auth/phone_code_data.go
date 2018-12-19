@@ -24,6 +24,7 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"time"
+	"github.com/nebula-chat/chatengine/pkg/random2"
 )
 
 // TODO(@benqi): 当前测试环境code统一为"12345"
@@ -68,9 +69,9 @@ const (
 	kCodeStateTimeout = -2
 )
 
-type sendCodeCallback interface {
-	SendCode(string, string, int) error
-}
+//type sendCodeCallback interface {
+//	SendCode(string, string, int) error
+//}
 
 // TODO(@benqi): Add phone region
 type phoneCodeData struct {
@@ -85,7 +86,7 @@ type phoneCodeData struct {
 	state            int
 	dataType         int // dataType: kDBTypeCreate, kDBTypeLoad
 	tableId          int64
-	codeCallback     sendCodeCallback
+	// codeCallback     sendCodeCallback
 	dao              *authsDAO
 }
 
@@ -199,35 +200,49 @@ func (code *phoneCodeData) checkDataType(validType int) {
 //	return nil
 //}
 
-func (code *phoneCodeData) doSendCodeCallback() error {
-	if code.codeCallback != nil {
-		return code.codeCallback.SendCode(code.code, code.codeHash, code.sentCodeType)
-	}
-
-	// TODO(@benqi): 测试环境默认发送成功
-	return nil
-}
+//func (code *phoneCodeData) doSendCodeCallback() error {
+//	if code.codeCallback != nil {
+//		return code.codeCallback.SendCode(code.code, code.codeHash, code.sentCodeType)
+//	}
+//
+//	// TODO(@benqi): 测试环境默认发送成功
+//	return nil
+//}
 
 // auth.sendCode
-func (code *phoneCodeData) DoSendCode(phoneRegistered, allowFlashCall, currentNumber bool, apiId int32, apiHash string) error {
+func (code *phoneCodeData) DoSendCode(
+	phoneRegistered,
+	allowFlashCall,
+	currentNumber bool,
+	apiId int32,
+	apiHash string,
+	sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) error) error {
+
 	code.checkDataType(kDBTypeCreate)
 
 	// 使用最简单的办法，每次新建
 	sentCodeType, nextCodeType := makeCodeType(phoneRegistered, allowFlashCall, currentNumber)
 	// TODO(@benqi): gen rand number
-	code.code = "12345"
+
+	if sendSmsF == nil {
+		code.code = "12345"
+	} else {
+		code.code = random2.RandomNumeric(5)
+	}
+
 	// code.codeHash = fmt.Sprintf("%20d", helper.NextSnowflakeId())
 	code.codeHash = crypto.GenerateStringNonce(16)
 	code.codeExpired = int32(time.Now().Unix() + 15*60)
 	code.sentCodeType = sentCodeType
 	code.nextCodeType = nextCodeType
 
-	err := code.doSendCodeCallback()
-	if err != nil {
-		glog.Error(err)
-		return err
-	}
+	//err := code.doSendCodeCallback()
+	//if err != nil {
+	//	glog.Error(err)
+	//	return err
+	//}
 
+	// sendSmsF
 	// save
 	do := &dataobject.AuthPhoneTransactionsDO{
 		AuthKeyId:        code.authKeyId,
@@ -252,11 +267,15 @@ func (code *phoneCodeData) DoSendCode(phoneRegistered, allowFlashCall, currentNu
 	//	// TODO(@benqi): FLOOD_WAIT_X, too many attempts, please try later.
 	//}
 
+	if sendSmsF != nil {
+		return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+	}
+
 	return nil
 }
 
 // auth.resendCode
-func (code *phoneCodeData) DoReSendCode() error {
+func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) error) error {
 	code.checkDataType(kDBTypeLoad)
 
 	do := code.dao.AuthPhoneTransactionsDAO.SelectByPhoneCodeHash(code.authKeyId, code.phoneNumber, code.codeHash)
@@ -306,12 +325,11 @@ func (code *phoneCodeData) DoReSendCode() error {
 	code.state = int(do.State)
 	code.tableId = do.Id
 
-	err := code.doSendCodeCallback()
-	if err != nil {
-		glog.Error(err)
+	if sendSmsF != nil {
+		return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
 	}
 
-	return err
+	return nil
 }
 
 // auth.cancelCode

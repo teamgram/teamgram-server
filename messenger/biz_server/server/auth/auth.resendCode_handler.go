@@ -79,7 +79,7 @@ func (s *AuthServiceImpl) AuthResendCode(ctx context.Context, request *mtproto.T
 	}
 
 	code := s.AuthModel.MakeCodeDataByHash(md.AuthId, phoneNumber, request.GetPhoneCodeHash())
-	err = code.DoReSendCode()
+	err = code.DoReSendCode(getSendSmsFunc())
 	if err != nil {
 		glog.Error(err)
 		return nil, err
