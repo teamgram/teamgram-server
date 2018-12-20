@@ -19,18 +19,18 @@ package server
 
 import (
 	"fmt"
-	"time"
+	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/util"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/net2"
 	"github.com/nebula-chat/chatengine/pkg/redis_client"
-	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/service/idgen/client"
 	"github.com/nebula-chat/chatengine/service/status/client"
-	"github.com/nebula-chat/chatengine/mtproto/rpc"
-	"github.com/gogo/protobuf/proto"
 	"sync"
+	"time"
 )
 
 func init() {
@@ -52,16 +52,16 @@ func init() {
 }
 
 type SessionServer struct {
-	idgen                idgen.UUIDGen
-	status               status_client.StatusClient
-	server               *zrpc.ZRpcServer
-	rpcClients			 map[string]*grpc_util.RPCClient
+	idgen      idgen.UUIDGen
+	status     status_client.StatusClient
+	server     *zrpc.ZRpcServer
+	rpcClients map[string]*grpc_util.RPCClient
 
-	bizRpcClient         *grpc_util.RPCClient
-	nbfsRpcClient        *grpc_util.RPCClient
+	bizRpcClient  *grpc_util.RPCClient
+	nbfsRpcClient *grpc_util.RPCClient
 	// syncRpcClient        mtproto.RPCSyncClient
 	authSessionRpcClient mtproto.RPCSessionClient
-	sessionManager 		 sync.Map // map[int64]*sessionClientList
+	sessionManager       sync.Map // map[int64]*sessionClientList
 	// sessionManager       *sessionManager
 }
 
@@ -210,19 +210,20 @@ func (s *SessionServer) OnServerConnectionClosed(conn *net2.TcpConnection) {
 func (s *SessionServer) onSessionClientNew(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionClientCreated) error {
 	glog.Infof("onSessionClientNew - receive data: {client_conn_id: %s, md: %s, sess_data: %s}", connID, cntl.RpcMeta, sessData)
 
-	authKeyId := sessData.GetAuthKeyId()
-	var sessList *authSessions
-
-	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
-		sessList = makeAuthSessions(authKeyId)
-		s.sessionManager.Store(authKeyId, sessList)
-		s.onNewSessionClientManager(sessList)
-	} else {
-		sessList, _ = vv.(*authSessions)
-	}
-
-	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
-	return sessList.onSessionClientNew(clientConnID)
+	//authKeyId := sessData.GetAuthKeyId()
+	//var sessList *authSessions
+	//
+	//if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+	//	sessList = makeAuthSessions(authKeyId)
+	//	s.sessionManager.Store(authKeyId, sessList)
+	//	s.onNewSessionClientManager(sessList)
+	//} else {
+	//	sessList, _ = vv.(*authSessions)
+	//}
+	//
+	//clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	//return sessList.onSessionClientNew(clientConnID)
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -235,9 +236,9 @@ func (s *SessionServer) onSessionData(connID uint64, cntl *zrpc.ZRpcController, 
 	authKeyId := sessData.GetAuthKeyId()
 	var sessList *authSessions
 	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
-		err := fmt.Errorf("onSessionClientNew - not find sessionList by authKeyId: {%d}", sessData.GetAuthKeyId())
-		glog.Warning(err)
-		return err
+		sessList = makeAuthSessions(authKeyId)
+		s.sessionManager.Store(authKeyId, sessList)
+		s.onNewSessionClientManager(sessList)
 	} else {
 		sessList, _ = vv.(*authSessions)
 	}

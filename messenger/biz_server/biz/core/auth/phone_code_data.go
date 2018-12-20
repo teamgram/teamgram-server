@@ -20,11 +20,11 @@ package auth
 import (
 	"fmt"
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/crypto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"time"
+	"github.com/nebula-chat/chatengine/pkg/crypto"
 	"github.com/nebula-chat/chatengine/pkg/random2"
+	"time"
 )
 
 // TODO(@benqi): 当前测试环境code统一为"12345"
@@ -40,7 +40,7 @@ import (
   auth.sentCodeTypeSms#c000bba2 length:int = auth.SentCodeType;
   auth.sentCodeTypeCall#5353e5a7 length:int = auth.SentCodeType;
   auth.sentCodeTypeFlashCall#ab03c6d9 pattern:string = auth.SentCodeType;
- */
+*/
 
 const (
 	kCodeType_None      = 0
@@ -87,7 +87,7 @@ type phoneCodeData struct {
 	dataType         int // dataType: kDBTypeCreate, kDBTypeLoad
 	tableId          int64
 	// codeCallback     sendCodeCallback
-	dao              *authsDAO
+	dao *authsDAO
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +366,7 @@ func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool) erro
 	// TODO(@benqi): 重复请求处理...
 	// check state invalid.
 	if do.State != kCodeStateSent && do.State != kCodeStateSignIn {
+		glog.Info("error - state ", do.State)
 		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_INTERNAL_SERVER_ERROR), "code state error")
 		glog.Error(err)
 		return err
@@ -436,7 +437,7 @@ func (code *phoneCodeData) DoSignUp(phoneCode string) error {
 	// TODO(@benqi): 重复请求处理...
 	// check state invalid.
 	// TODO(@benqi): remote client error, state is Ok
-	if do.State != kCodeStateSignIn && do.State != kCodeStateDeleted  && do.State != kCodeStateSignUp {
+	if do.State != kCodeStateSignIn && do.State != kCodeStateDeleted && do.State != kCodeStateSignUp {
 		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_INTERNAL_SERVER_ERROR), "code state error")
 		glog.Error(err)
 		return err
