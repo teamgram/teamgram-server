@@ -47,7 +47,7 @@ func (m *AuthModel) RegisterCallback(cb interface{}) {
 
 func (m *AuthModel) CheckBannedByPhoneNumber(phoneNumber string) bool {
 	do := m.dao.BannedDAO.CheckBannedByPhone(phoneNumber)
-	return do == nil
+	return do != nil
 }
 
 func (m *AuthModel) CheckPhoneNumberExist(phoneNumber string) bool {
