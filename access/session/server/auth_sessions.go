@@ -19,13 +19,14 @@ package server
 
 import (
 	"fmt"
+	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/queue2"
+	"github.com/nebula-chat/chatengine/pkg/sync2"
+	"reflect"
 	"sync"
 	"time"
-	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/sync2"
-	"github.com/nebula-chat/chatengine/pkg/queue2"
-	"github.com/nebula-chat/chatengine/mtproto/rpc"
-	"github.com/nebula-chat/chatengine/mtproto"
 )
 
 // import "container/list"
@@ -138,12 +139,12 @@ type connData struct {
 
 ///////////////////////////////////////////////////////////////////////////////////
 const (
-	keyIdNew = 0
-	keyLoaded = 1
+	keyIdNew     = 0
+	keyLoaded    = 1
 	unauthorized = 2
 	userIdLoaded = 3
-	offline = 4
-	closed = 5
+	offline      = 4
+	closed       = 5
 )
 
 type authSessions struct {
@@ -285,7 +286,7 @@ func (s *authSessions) onBindLayer(layer int32) {
 
 func (s *authSessions) setOnline() {
 	date := time.Now().Unix()
-	if (s.onlineExpired == 0 || date > s.onlineExpired - kPingAddTimeout) && s.AuthUserId != 0 {
+	if (s.onlineExpired == 0 || date > s.onlineExpired-kPingAddTimeout) && s.AuthUserId != 0 {
 		// glog.Info("DEBUG] setOnline - set online ", s.onlineExpired)
 		setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
 		s.onlineExpired = int64(time.Now().Unix() + 60)
@@ -422,7 +423,7 @@ func (s *authSessions) onSessionClientClosed(connID ClientConnID) error {
 // push
 func (s *authSessions) onSyncRpcResultDataArrived(clientMsgId int64, cntl *zrpc.ZRpcController, data []byte) error {
 	select {
-	case s.sessionDataChan <- &syncRpcResultData{clientMsgId,cntl, data}:
+	case s.sessionDataChan <- &syncRpcResultData{clientMsgId, cntl, data}:
 		return nil
 	}
 	return nil
@@ -507,7 +508,7 @@ func (s *authSessions) onSyncData(syncMsg *syncData) {
 	// glog.Info("authSessions - ", reflect.TypeOf(syncMsg.data.obj))
 	if upds, ok := syncMsg.data.obj.(*mtproto.TLUpdateAccountResetAuthorization); ok {
 		if s.AuthUserId != upds.GetUserId() {
- 			glog.Error("upds -- ", upds)
+			glog.Error("upds -- ", upds)
 		}
 		s.AuthUserId = 0
 		putCacheUserId(s.authKeyId, 0)
@@ -584,7 +585,7 @@ func (s *authSessions) getSessionByConnId(connId ClientConnID) sessionBase {
 
 func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, request mtproto.TLObject) sessionBase {
 	var (
-		sess sessionBase
+		sess     sessionBase
 		sessType = kSessionUnknown
 	)
 
@@ -594,6 +595,7 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 	}
 
 	getSessionType2(request, &sessType)
+	// glog.Info("getSessionType2 - ", reflect.TypeOf(request), ", sessType: ", sessType, ", sess: ", sess)
 	if sess == nil {
 		if sessType == kSessionUnknown {
 			pushSessionId := s.getPushSessionId()
@@ -612,7 +614,7 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 				s.updates.onPushSessionNew(sess)
 				glog.Infof("pushSession]]>> sess: %s", sess)
 			}
-			sess = newSession(sessionId, kSessionUnknown, s)
+			// s.sessions[sessionId] = sess
 		}
 		s.sessions[sessionId] = sess
 	} else {
@@ -675,6 +677,7 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 	//		// nothing do
 	//	}
 	//}
+	// glog.Info("getSessionType2 - ", reflect.TypeOf(request), ", sessType: ", sessType, ", sess: ", sess)
 
 	return sess
 }

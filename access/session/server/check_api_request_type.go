@@ -18,22 +18,24 @@
 package server
 
 import (
+	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/mtproto"
+	"reflect"
 )
 
 func checkRpcUpdatesType(tl mtproto.TLObject) bool {
 	switch tl.(type) {
 	case *mtproto.TLUploadSaveFilePart,
-		 *mtproto.TLUploadSaveBigFilePart:
+		*mtproto.TLUploadSaveBigFilePart:
 
 		// upload connection
 		return false
 
 	case *mtproto.TLUploadGetFile,
-		 *mtproto.TLUploadGetWebFile,
-		 *mtproto.TLUploadGetCdnFile,
-		 *mtproto.TLUploadReuploadCdnFile,
-		 *mtproto.TLUploadGetCdnFileHashes:
+		*mtproto.TLUploadGetWebFile,
+		*mtproto.TLUploadGetCdnFile,
+		*mtproto.TLUploadReuploadCdnFile,
+		*mtproto.TLUploadGetCdnFileHashes:
 
 		// download
 		return false
@@ -176,8 +178,12 @@ func getSessionType(method mtproto.TLObject) int {
 	return sType
 }
 
-
 func getSessionType2(object mtproto.TLObject, sessionType *int) {
+	glog.Info("getSessionType2 - ", reflect.TypeOf(object))
+	if *sessionType != 0 {
+		return
+	}
+
 	switch object.(type) {
 	case *mtproto.TLMsgContainer:
 		msgContainer, _ := object.(*mtproto.TLMsgContainer)
@@ -189,7 +195,7 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 		}
 	case *mtproto.TLGzipPacked:
 		gzipPacked, _ := object.(*mtproto.TLGzipPacked)
-		if gzipPacked.Obj != nil {
+		if gzipPacked.Obj == nil {
 			return
 		}
 		getSessionType2(gzipPacked.Obj, sessionType)
