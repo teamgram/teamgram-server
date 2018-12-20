@@ -46,20 +46,15 @@ func (m *AuthModel) RegisterCallback(cb interface{}) {
 }
 
 func (m *AuthModel) CheckBannedByPhoneNumber(phoneNumber string) bool {
-	params := map[string]interface{}{
-		"phone": phoneNumber,
-		"state": 1,
-	}
-	return m.dao.CommonDAO.CheckExists("banned", params)
+	do := m.dao.BannedDAO.CheckBannedByPhone(phoneNumber)
+	return do == nil
 }
 
 func (m *AuthModel) CheckPhoneNumberExist(phoneNumber string) bool {
-	//params := map[string]interface{}{
-	//	"phone": phoneNumber,
-	//}
-	//return m.dao.CommonDAO.CheckExists("users", params)
-	do := m.dao.BannedDAO.CheckBannedByPhone(phoneNumber)
-	return do == nil
+	params := map[string]interface{}{
+		"phone": phoneNumber,
+	}
+	return m.dao.CommonDAO.CheckExists("users", params)
 }
 
 func (m *AuthModel) BindAuthKeyAndUser(authKeyId int64, userId int32) {
