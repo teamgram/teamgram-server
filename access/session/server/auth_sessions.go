@@ -24,7 +24,6 @@ import (
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/pkg/queue2"
 	"github.com/nebula-chat/chatengine/pkg/sync2"
-	"reflect"
 	"sync"
 	"time"
 )
