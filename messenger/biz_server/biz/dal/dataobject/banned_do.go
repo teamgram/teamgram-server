@@ -25,6 +25,6 @@ type BannedDO struct {
 	BannedReason string `db:"banned_reason"`
 	Log          string `db:"log"`
 	State        int8   `db:"state"`
-	CreatedAt    int32  `db:"created_at"`
-	UpdatedAt    int32  `db:"updated_at"`
+	CreatedAt    string `db:"created_at"`
+	UpdatedAt    string `db:"updated_at"`
 }

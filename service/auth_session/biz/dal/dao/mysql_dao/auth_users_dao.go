@@ -206,3 +206,25 @@ func (dao *AuthUsersDAO) Delete(auth_key_id int64, user_id int32) int64 {
 
 	return rows
 }
+
+// update auth_users set deleted = 1, date_actived = 0 where user_id = :user_id
+// TODO(@benqi): sqlmap
+func (dao *AuthUsersDAO) DeleteUser(user_id int32) int64 {
+	var query = "update auth_users set deleted = 1, date_actived = 0 where user_id = ?"
+	r, err := dao.db.Exec(query, user_id)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Exec in DeleteUser(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	rows, err := r.RowsAffected()
+	if err != nil {
+		errDesc := fmt.Sprintf("RowsAffected in DeleteUser(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return rows
+}

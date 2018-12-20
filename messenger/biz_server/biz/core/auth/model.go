@@ -28,6 +28,7 @@ type authsDAO struct {
 	*mysql_dao.CommonDAO
 	*mysql_dao.AuthUsersDAO
 	*mysql_dao.AuthPhoneTransactionsDAO
+	*mysql_dao.BannedDAO
 }
 
 type AuthModel struct {
@@ -38,6 +39,7 @@ func (m *AuthModel) InstallModel() {
 	m.dao.CommonDAO = dao.GetCommonDAO(dao.DB_MASTER)
 	m.dao.AuthUsersDAO = dao.GetAuthUsersDAO(dao.DB_MASTER)
 	m.dao.AuthPhoneTransactionsDAO = dao.GetAuthPhoneTransactionsDAO(dao.DB_MASTER)
+	m.dao.BannedDAO = dao.GetBannedDAO(dao.DB_MASTER)
 }
 
 func (m *AuthModel) RegisterCallback(cb interface{}) {
@@ -46,15 +48,18 @@ func (m *AuthModel) RegisterCallback(cb interface{}) {
 func (m *AuthModel) CheckBannedByPhoneNumber(phoneNumber string) bool {
 	params := map[string]interface{}{
 		"phone": phoneNumber,
+		"state": 1,
 	}
 	return m.dao.CommonDAO.CheckExists("banned", params)
 }
 
 func (m *AuthModel) CheckPhoneNumberExist(phoneNumber string) bool {
-	params := map[string]interface{}{
-		"phone": phoneNumber,
-	}
-	return m.dao.CommonDAO.CheckExists("users", params)
+	//params := map[string]interface{}{
+	//	"phone": phoneNumber,
+	//}
+	//return m.dao.CommonDAO.CheckExists("users", params)
+	do := m.dao.BannedDAO.CheckBannedByPhone(phoneNumber)
+	return do == nil
 }
 
 func (m *AuthModel) BindAuthKeyAndUser(authKeyId int64, userId int32) {

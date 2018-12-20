@@ -1,8 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table sqlname="banned">
-    <operation name="CheckBannedByPhone">
+    <operation name="InsertOrUpdate">
         <sql>
-            SELECT id FROM banned WHERE phone = :phone
+            INSERT INTO
+                banned (phone, banned_time, expires, banned_reason, log, state)
+            VALUES
+                (:phone, :banned_time, :expires, :banned_reason, :log, :state)
+            ON DUPLICATE KEY UPDATE
+                banned_time = VALUES(banned_time),
+                expires = VALUES(expires),
+                banned_reason = VALUES(banned_reason),
+                log = VALUES(log),
+                state = VALUES(state)
         </sql>
     </operation>
+
+    <operation name="CheckBannedByPhone">
+        <sql>
+            SELECT
+                id
+            FROM
+                banned
+            WHERE
+                phone = :phone AND state > 0
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <sql>
+            UPDATE
+                banned
+            SET
+                expires = :expires, state = 0, log = :log, state = :state
+            WHERE
+                phone = :phone
+        </sql>
+    </operation>
+
 </table>

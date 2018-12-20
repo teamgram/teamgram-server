@@ -68,4 +68,15 @@
         </sql>
     </operation>
 
+    <operation name="DeleteUser">
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                deleted = 1, date_actived = 0
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+
 </table>

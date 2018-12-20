@@ -20,9 +20,9 @@ package dao
 import (
 	"github.com/golang/glog"
 	"github.com/jmoiron/sqlx"
-	"github.com/nebula-chat/chatengine/pkg/redis_client"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/redis_dao"
+	"github.com/nebula-chat/chatengine/pkg/redis_client"
 	"sync"
 )
 
@@ -66,20 +66,22 @@ type MysqlDAOList struct {
 	StickerSetsDAO  *mysql_dao.StickerSetsDAO
 	StickerPacksDAO *mysql_dao.StickerPacksDAO
 
-	MessageDatasDAO        *mysql_dao.MessageDatasDAO
+	MessageDatasDAO *mysql_dao.MessageDatasDAO
 
 	UnregisteredContactsDAO *mysql_dao.UnregisteredContactsDAO
 	PopularContactsDAO      *mysql_dao.PopularContactsDAO
-	ImportedContactsDAO 	*mysql_dao.ImportedContactsDAO
-	PhoneBooksDAO			*mysql_dao.PhoneBooksDAO
+	ImportedContactsDAO     *mysql_dao.ImportedContactsDAO
+	PhoneBooksDAO           *mysql_dao.PhoneBooksDAO
 
 	UsernameDAO *mysql_dao.UsernameDAO
 
-	BotsDAO					*mysql_dao.BotsDAO
-	BotCommandsDAO			*mysql_dao.BotCommandsDAO
+	BotsDAO        *mysql_dao.BotsDAO
+	BotCommandsDAO *mysql_dao.BotCommandsDAO
 
-	UnreadMentionsDAO		*mysql_dao.UnreadMentionsDAO
-	UserBlocksDAO			*mysql_dao.UserBlocksDAO
+	UnreadMentionsDAO *mysql_dao.UnreadMentionsDAO
+	UserBlocksDAO     *mysql_dao.UserBlocksDAO
+
+	BannedDAO *mysql_dao.BannedDAO
 }
 
 // TODO(@benqi): 一主多从
@@ -137,12 +139,14 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 
 		daoList.UsernameDAO = mysql_dao.NewUsernameDAO(v)
 
-		daoList.BotsDAO	= mysql_dao.NewBotsDAO(v)
+		daoList.BotsDAO = mysql_dao.NewBotsDAO(v)
 		daoList.BotCommandsDAO = mysql_dao.NewBotCommandsDAO(v)
 
 		daoList.UnreadMentionsDAO = mysql_dao.NewUnreadMentionsDAO(v)
 
 		daoList.UserBlocksDAO = mysql_dao.NewUserBlocksDAO(v)
+
+		daoList.BannedDAO = mysql_dao.NewBannedDAO(v)
 
 		mysqlDAOManager.daoListMap[k] = daoList
 		return true
@@ -413,7 +417,6 @@ func GetUnregisteredContactsDAO(dbName string) (dao *mysql_dao.UnregisteredConta
 	return
 }
 
-
 func GetPopularContactsDAO(dbName string) (dao *mysql_dao.PopularContactsDAO) {
 	daoList := GetMysqlDAOList(dbName)
 	// err := mysqlDAOManager.daoListMap[dbName]
@@ -482,6 +485,15 @@ func GetUserBlocksDAO(dbName string) (dao *mysql_dao.UserBlocksDAO) {
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.UserBlocksDAO
+	}
+	return
+}
+
+func GetBannedDAO(dbName string) (dao *mysql_dao.BannedDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.BannedDAO
 	}
 	return
 }
