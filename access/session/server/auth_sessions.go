@@ -18,6 +18,7 @@
 package server
 
 import (
+	"container/list"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -178,7 +179,7 @@ func makeAuthSessions(authKeyId int64) *authSessions {
 		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		state:           keyIdNew,
-		updates:         &updatesManager{},
+		updates:         &updatesManager{genericSessions: list.New()},
 	}
 
 	return ss
