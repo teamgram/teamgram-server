@@ -19,21 +19,21 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/glog"
 	"github.com/golang/protobuf/proto"
-	"github.com/nebula-chat/chatengine/pkg/crypto"
-	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/pkg/net2"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/crypto"
+	"github.com/nebula-chat/chatengine/pkg/hack"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"github.com/nebula-chat/chatengine/pkg/net2"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	"math/big"
 	"time"
-	"context"
-	"github.com/nebula-chat/chatengine/pkg/util"
-	"github.com/nebula-chat/chatengine/pkg/hack"
-	"github.com/golang/glog"
 )
 
 const (
@@ -134,8 +134,8 @@ func newHandshake(c mtproto.RPCSessionClient, keyFile string, keyFingerprint uin
 
 func (s *handshake) onHandshake(conn *net2.TcpConnection, cntl *zrpc.ZRpcController, state *mtproto.TLHandshakeData) (*mtproto.RawMessageData, error) {
 	var (
-		err   error
-		res   mtproto.TLObject
+		err error
+		res mtproto.TLObject
 	)
 
 	mtpMessage := &mtproto.UnencryptedMessage{}
@@ -595,8 +595,8 @@ func (s *handshake) onSetClient_DHParams(cntl *zrpc.ZRpcController, state *mtpro
 	} else {
 		// TODO(@benqi): dhGenFail
 		dhGenRetry := &mtproto.TLDhGenRetry{Data2: &mtproto.SetClient_DHParamsAnswer_Data{
-			Nonce:         ctx.Nonce,
-			ServerNonce:   ctx.ServerNonce,
+			Nonce:       ctx.Nonce,
+			ServerNonce: ctx.ServerNonce,
 			// NewNonceHash1: authKeyAuxHash[len(authKeyAuxHash)-16 : len(authKeyAuxHash)],
 			NewNonceHash2: calcNewNonceHash(ctx.NewNonce, authKey, 0x02),
 		}}
@@ -626,16 +626,15 @@ func (s *handshake) onMsgsAck(cntl *zrpc.ZRpcController, state *mtproto.TLHandsh
 
 func (s *handshake) saveAuthKeyInfo(ctx *mtproto.HandshakeContext_Data) bool {
 	var (
-		salt = int64(0)
+		salt       = int64(0)
 		serverSalt *mtproto.TLFutureSalt
-		now = int32(time.Now().Unix())
+		now        = int32(time.Now().Unix())
 	)
 
 	for a := 7; a >= 0; a-- {
 		salt <<= 8
 		salt |= int64(ctx.NewNonce[a] ^ ctx.ServerNonce[a])
 	}
-
 
 	serverSalt = &mtproto.TLFutureSalt{Data2: &mtproto.FutureSalt_Data{
 		ValidSince: now,
@@ -652,14 +651,13 @@ func (s *handshake) saveAuthKeyInfo(ctx *mtproto.HandshakeContext_Data) bool {
 	request := &mtproto.TLSessionSetAuthKey{
 		AuthKey: authKeyInfo.To_AuthKeyInfo(),
 	}
+
+	// Fix by @wuyun9527, 2018-12-21
 	r, err := s.authSessionRpcClient.SessionSetAuthKey(context.Background(), request)
 
-	if err != nil {
-		glog.Error(err)
-	}
-
-	if !mtproto.FromBool(r) {
-		glog.Error("saveAuthKeyInfo not successful - ", ctx.AuthKeyId)
+	if err != nil || !mtproto.FromBool(r) {
+		glog.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", ctx.AuthKeyId, err)
+		return false
 	}
 
 	return true
