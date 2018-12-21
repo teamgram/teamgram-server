@@ -50,7 +50,7 @@ func (s *PhotosServiceImpl) PhotosUploadProfilePhoto(ctx context.Context, reques
 	// TODO(@benqi): sync update userProfilePhoto
 
 	// fileData := mediaData.GetFile().GetData2()
-	photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+	photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 		Id:          result.PhotoId,
 		HasStickers: false,
 		AccessHash:  result.AccessHash, //photo2.GetFileAccessHash(file.GetData2().GetId(), file.GetData2().GetParts()),

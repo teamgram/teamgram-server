@@ -125,7 +125,7 @@ func (s *DocumentServiceImpl) NbfsUploadedPhotoMedia(ctx context.Context, reques
 		return nil, err
 	}
 
-	photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+	photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 		Id:          photoId,
 		HasStickers: false,
 		AccessHash:  accessHash,
