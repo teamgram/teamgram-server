@@ -113,7 +113,7 @@ func (m *PhotoModel) GetPhotoSizeList(photoId int64) (sizes []*mtproto.PhotoSize
 			H:    doList[i].Height,
 			Size: doList[i].FileSize,
 			Location: &mtproto.FileLocation{
-				Constructor: mtproto.TLConstructor_CRC32_fileLocation,
+				Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
 				Data2: &mtproto.FileLocation_Data{
 					VolumeId: doList[i].VolumeId,
 					LocalId:  int32(doList[i].LocalId),
@@ -180,7 +180,7 @@ func (m *PhotoModel) UploadPhotoFile2(fileMDList []*nbfs.PhotoFileMetadata) (pho
 			// Size: int32(len(photoDatasDO.Bytes)),
 			Size: photoDatasDO.FileSize,
 			Location: &mtproto.FileLocation{
-				Constructor: mtproto.TLConstructor_CRC32_fileLocation,
+				Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
 				Data2: &mtproto.FileLocation_Data{
 					VolumeId: photoDatasDO.VolumeId,
 					LocalId:  fileMD.LocalId,

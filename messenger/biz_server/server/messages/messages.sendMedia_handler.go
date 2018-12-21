@@ -61,7 +61,7 @@ func (s *MessagesServiceImpl) makeMediaByInputMedia(authKeyId int64, media *mtpr
 		}
 
 		// fileData := mediaData.GetFile().GetData2()
-		photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+		photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 			Id:          result.PhotoId,
 			HasStickers: len(uploadedPhoto.GetStickers()) > 0,
 			AccessHash:  result.AccessHash, // photo2.GetFileAccessHash(file.GetData2().GetId(), file.GetData2().GetParts()),
@@ -83,7 +83,7 @@ func (s *MessagesServiceImpl) makeMediaByInputMedia(authKeyId int64, media *mtpr
 		mediaPhoto := media.To_InputMediaPhoto()
 		sizeList, _ := document_client.GetPhotoSizeList(mediaPhoto.GetId().GetData2().GetId())
 
-		photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+		photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 			Id:          mediaPhoto.GetId().GetData2().GetId(),
 			HasStickers: false,
 			AccessHash:  mediaPhoto.GetId().GetData2().GetAccessHash(),

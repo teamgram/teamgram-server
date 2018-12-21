@@ -69,7 +69,7 @@ func (s *PhotosServiceImpl) PhotosGetUserPhotos(ctx context.Context, request *mt
 	for _, photoId := range photoIdList {
 		sizes, _ := document_client.GetPhotoSizeList(photoId)
 		// photo2 := photo2.MakeUserProfilePhoto(photoId, sizes)
-		photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+		photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 			Id:          photoId,
 			HasStickers: false,
 			AccessHash:  photoId, // photo2.GetFileAccessHash(file.GetData2().GetId(), file.GetData2().GetParts()),

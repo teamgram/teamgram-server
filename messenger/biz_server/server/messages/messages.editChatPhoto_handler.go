@@ -83,7 +83,7 @@ func (s *MessagesServiceImpl) MessagesEditChatPhoto(ctx context.Context, request
 		photoId = result.PhotoId
 		// user.SetUserPhotoID(md.UserId, uuid)
 		// fileData := mediaData.GetFile().GetData2()
-		photo := &mtproto.TLPhoto{Data2: &mtproto.Photo_Data{
+		photo := &mtproto.TLPhotoLayer86{Data2: &mtproto.Photo_Data{
 			Id:          photoId,
 			HasStickers: false,
 			AccessHash:  result.AccessHash, // photo2.GetFileAccessHash(file.GetData2().GetId(), file.GetData2().GetParts()),
