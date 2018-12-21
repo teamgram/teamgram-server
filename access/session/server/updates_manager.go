@@ -30,12 +30,16 @@ type updatesManager struct {
 }
 
 func (m *updatesManager) getOnlineGenericSession() *genericSession {
-	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
-		if e.Value.(*genericSession).sessionOnline() {
-			return e.Value.(*genericSession)
+	var lastReceiveTime int64 = 0
+	var lastRecentSess *genericSession
+	for e := m.genericSessions.Back(); e != nil; e = e.Next() {
+		sess := e.Value.(*genericSession)
+		if sess.sessionOnline() && sess.lastReceiveTime > lastReceiveTime {
+			lastRecentSess = sess
+			lastReceiveTime = sess.lastReceiveTime
 		}
 	}
-	return nil
+	return lastRecentSess
 }
 
 func (m *updatesManager) onGenericSessionNew(s sessionBase) {
