@@ -307,9 +307,11 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 
 	// 1. check salt
 	if !c.checkBadServerSalt(id, cntl, salt, msg) {
-		glog.Infof("salt invalid - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
+		// glog.Infof("salt invalid - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
 		return
 	}
+
+	c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
 
 	//if !c.checkBadMsgNotification(id, cntl, msg) {
 	//	glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
@@ -931,7 +933,7 @@ func (c *session) onPing(connID ClientConnID, cntl *zrpc.ZRpcController, msgId i
 	}}
 
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, false, pong))
-	c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
+	// c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
 }
 
 func (c *session) onPingDelayDisconnect(connID ClientConnID, cntl *zrpc.ZRpcController, msgId int64, seqNo int32, pingDelayDisconnect *mtproto.TLPingDelayDisconnect) {

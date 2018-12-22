@@ -785,6 +785,7 @@ enum TLConstructor {
     CRC32_account_unregisterDeviceLayer71 = 1707432768;
     CRC32_messages_getMessagesLayer71 = 1109588596;
     CRC32_langpack_getLangPackLayer71 = -1699363442;
+    CRC32_messages_getRecentLocationsLayer72 = 613691874;
     CRC32_invokeAfterMsg = -878758099;
     CRC32_invokeAfterMsgs = 1036301552;
     CRC32_initConnection = 2018609336;

@@ -55,8 +55,14 @@ func (m *updatesManager) onGenericSessionNew(s sessionBase) {
 	m.genericSessions.PushBack(ss)
 }
 
-func (m *updatesManager) onGenericSessionClose() {
-	// m.genericSession = nil
+func (m *updatesManager) onGenericSessionClose(s sessionBase) {
+	ss := s.(*genericSession)
+	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
+		if ss.SessionId() == e.Value.(*genericSession).sessionId {
+			m.genericSessions.Remove(e)
+			break
+		}
+	}
 }
 
 func (m *updatesManager) onPushSessionNew(s sessionBase) {

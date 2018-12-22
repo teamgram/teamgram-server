@@ -19,16 +19,16 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 )
 
-// messages.getRecentLocations#249431e2 peer:InputPeer limit:int = messages.Messages;
+// messages.getRecentLocations#bbc45b09 peer:InputPeer limit:int hash:int = messages.Messages;
 func (s *MessagesServiceImpl) MessagesGetRecentLocations(ctx context.Context, request *mtproto.TLMessagesGetRecentLocations) (*mtproto.Messages_Messages, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("messages.getRecentLocations#249431e2 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("messages.getRecentLocations#bbc45b09 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	// TODO(@benqi): Impl MessagesSearchGlobal logic
 	messages := &mtproto.TLMessagesMessages{Data2: &mtproto.Messages_Messages_Data{
@@ -37,6 +37,6 @@ func (s *MessagesServiceImpl) MessagesGetRecentLocations(ctx context.Context, re
 		Users:    []*mtproto.User{},
 	}}
 
-	glog.Infof("messages.getRecentLocations#249431e2 - reply: %s", logger.JsonDebugData(messages))
+	glog.Infof("messages.getRecentLocations#bbc45b09 - reply: %s", logger.JsonDebugData(messages))
 	return messages.To_Messages_Messages(), nil
 }

@@ -30,6 +30,76 @@ import "schema.tl.crc32.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Server_DH_Params <--
+//  + TL_server_DH_params_fail
+//  + TL_server_DH_params_ok
+//
+message Server_DH_Params_Data {
+    bytes nonce = 1;
+    bytes server_nonce = 2;
+    bytes new_nonce_hash = 3;
+    string encrypted_answer = 4;
+}
+
+message Server_DH_Params {
+    TLConstructor constructor = 1;
+    Server_DH_Params_Data data2 = 2;
+}
+
+// server_DH_params_fail#79cb045d nonce:int128 server_nonce:int128 new_nonce_hash:int128 = Server_DH_Params;
+message TL_server_DH_params_fail {
+    Server_DH_Params_Data data2 = 2;
+}
+// server_DH_params_ok#d0e8075c nonce:int128 server_nonce:int128 encrypted_answer:string = Server_DH_Params;
+message TL_server_DH_params_ok {
+    Server_DH_Params_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Server_DH_inner_data <--
+//  + TL_server_DH_inner_data
+//
+message Server_DH_inner_data_Data {
+    bytes nonce = 1;
+    bytes server_nonce = 2;
+    int32 g = 3;
+    string dh_prime = 4;
+    string g_a = 5;
+    int32 server_time = 6;
+}
+
+message Server_DH_inner_data {
+    TLConstructor constructor = 1;
+    Server_DH_inner_data_Data data2 = 2;
+}
+
+// server_DH_inner_data#b5890dba nonce:int128 server_nonce:int128 g:int dh_prime:string g_a:string server_time:int = Server_DH_inner_data;
+message TL_server_DH_inner_data {
+    Server_DH_inner_data_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Client_DH_Inner_Data <--
+//  + TL_client_DH_inner_data
+//
+message Client_DH_Inner_Data_Data {
+    bytes nonce = 1;
+    bytes server_nonce = 2;
+    int64 retry_id = 3;
+    string g_b = 4;
+}
+
+message Client_DH_Inner_Data {
+    TLConstructor constructor = 1;
+    Client_DH_Inner_Data_Data data2 = 2;
+}
+
+// client_DH_inner_data#6643b654 nonce:int128 server_nonce:int128 retry_id:long g_b:string = Client_DH_Inner_Data;
+message TL_client_DH_inner_data {
+    Client_DH_Inner_Data_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Set_client_DH_params_answer <--
 //  + TL_dh_gen_ok
 //  + TL_dh_gen_retry
@@ -147,75 +217,5 @@ message TL_p_q_inner_data_temp {
 // p_q_inner_data_temp_dc#56fddf88 pq:string p:string q:string nonce:int128 server_nonce:int128 new_nonce:int256 dc:int expires_in:int = P_Q_inner_data;
 message TL_p_q_inner_data_temp_dc {
     P_Q_inner_data_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Server_DH_Params <--
-//  + TL_server_DH_params_fail
-//  + TL_server_DH_params_ok
-//
-message Server_DH_Params_Data {
-    bytes nonce = 1;
-    bytes server_nonce = 2;
-    bytes new_nonce_hash = 3;
-    string encrypted_answer = 4;
-}
-
-message Server_DH_Params {
-    TLConstructor constructor = 1;
-    Server_DH_Params_Data data2 = 2;
-}
-
-// server_DH_params_fail#79cb045d nonce:int128 server_nonce:int128 new_nonce_hash:int128 = Server_DH_Params;
-message TL_server_DH_params_fail {
-    Server_DH_Params_Data data2 = 2;
-}
-// server_DH_params_ok#d0e8075c nonce:int128 server_nonce:int128 encrypted_answer:string = Server_DH_Params;
-message TL_server_DH_params_ok {
-    Server_DH_Params_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Server_DH_inner_data <--
-//  + TL_server_DH_inner_data
-//
-message Server_DH_inner_data_Data {
-    bytes nonce = 1;
-    bytes server_nonce = 2;
-    int32 g = 3;
-    string dh_prime = 4;
-    string g_a = 5;
-    int32 server_time = 6;
-}
-
-message Server_DH_inner_data {
-    TLConstructor constructor = 1;
-    Server_DH_inner_data_Data data2 = 2;
-}
-
-// server_DH_inner_data#b5890dba nonce:int128 server_nonce:int128 g:int dh_prime:string g_a:string server_time:int = Server_DH_inner_data;
-message TL_server_DH_inner_data {
-    Server_DH_inner_data_Data data2 = 2;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Client_DH_Inner_Data <--
-//  + TL_client_DH_inner_data
-//
-message Client_DH_Inner_Data_Data {
-    bytes nonce = 1;
-    bytes server_nonce = 2;
-    int64 retry_id = 3;
-    string g_b = 4;
-}
-
-message Client_DH_Inner_Data {
-    TLConstructor constructor = 1;
-    Client_DH_Inner_Data_Data data2 = 2;
-}
-
-// client_DH_inner_data#6643b654 nonce:int128 server_nonce:int128 retry_id:long g_b:string = Client_DH_Inner_Data;
-message TL_client_DH_inner_data {
-    Client_DH_Inner_Data_Data data2 = 2;
 }
 

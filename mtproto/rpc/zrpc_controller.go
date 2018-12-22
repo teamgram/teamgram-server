@@ -18,10 +18,10 @@
 package zrpc
 
 import (
+	"fmt"
 	"github.com/gogo/protobuf/proto"
 	"github.com/nebula-chat/chatengine/mtproto/rpc/brpc"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
-	"fmt"
 )
 
 type ZRpcController struct {
@@ -32,6 +32,14 @@ type ZRpcController struct {
 func NewController() *ZRpcController {
 	return &ZRpcController{
 		RpcMeta: new(brpc.RpcMeta),
+	}
+}
+
+func (c *ZRpcController) Clone() *ZRpcController {
+	md := proto.Clone(c.RpcMeta)
+	return &ZRpcController{
+		RpcMeta:    md.(*brpc.RpcMeta),
+		Attachment: c.Attachment,
 	}
 }
 
@@ -256,12 +264,8 @@ func (c *ZRpcController) GetAttachment() []byte {
 
 func (c *ZRpcController) MoveAttachment() []byte {
 	var move = c.Attachment
-
-	if len(move) > 0 {
-		c.setAttachmentSize(0)
-		c.Attachment = nil
-	}
-
+	c.setAttachmentSize(0)
+	c.Attachment = nil
 	return move
 }
 
