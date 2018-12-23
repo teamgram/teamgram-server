@@ -53,5 +53,5 @@ cd ${chatengine}/access/frontend
 nohup ./frontend >> ${PWD2}/frontend.log 2>&1 &
 sleep 1
 
-cd $PWD
+cd $PWD2
 
