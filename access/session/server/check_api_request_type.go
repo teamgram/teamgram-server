@@ -180,7 +180,7 @@ func getSessionType(method mtproto.TLObject) int {
 
 func getSessionType2(object mtproto.TLObject, sessionType *int) {
 	glog.Info("getSessionType2 - ", reflect.TypeOf(object))
-	if *sessionType != 0 {
+	if *sessionType != kSessionUnknown {
 		return
 	}
 
@@ -232,7 +232,7 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 	case *mtproto.TLInvokeAfterMsg,
 		*mtproto.TLInvokeAfterMsgs,
 		*mtproto.TLInvokeWithLayer,
-		*mtproto.TLInvokeWithoutUpdates,
+		// *mtproto.TLInvokeWithoutUpdates,
 		*mtproto.TLInvokeWithMessagesRange,
 		*mtproto.TLInvokeWithTakeout:
 
