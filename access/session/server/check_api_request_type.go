@@ -238,6 +238,9 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 
 		*sessionType = kSessionGeneric
 
+	case *mtproto.TLInvokeWithoutUpdates:
+		// ignore
+
 	//////////////////////////////////////////////////////////////
 	case *mtproto.TLUploadGetCdnFile,
 		// *mtproto.TLUploadGetCdnFileHashes,
