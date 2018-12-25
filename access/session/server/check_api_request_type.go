@@ -239,7 +239,10 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 		*sessionType = kSessionGeneric
 
 	case *mtproto.TLInvokeWithoutUpdates:
-		// ignore
+		// TODO(@benqi): move TLInvokeWithoutUpdates etc to parsed_manually_types.
+		dbuf := mtproto.NewDecodeBuf(object.(*mtproto.TLInvokeWithoutUpdates).Query)
+		q := dbuf.Object()
+		getSessionType2(q, sessionType)
 
 	//////////////////////////////////////////////////////////////
 	case *mtproto.TLUploadGetCdnFile,
