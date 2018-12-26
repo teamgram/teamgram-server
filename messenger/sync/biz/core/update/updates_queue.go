@@ -20,8 +20,8 @@ package update
 import (
 	"encoding/json"
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/sync/biz/dal/dataobject"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"time"
 )
 
@@ -59,9 +59,9 @@ const (
 
 	// channel pts
 	PTS_UPDATE_NEW_CHANNEL_MESSAGE     = 9
-	PTS_UPDATE_DELETE_CHANNEL_MESSAGES = 9
-	PTS_UPDATE_EDIT_CHANNEL_MESSAGE    = 10
-	PTS_UPDATE_EDIT_CHANNEL_WEBPAGE    = 11
+	PTS_UPDATE_DELETE_CHANNEL_MESSAGES = 10
+	PTS_UPDATE_EDIT_CHANNEL_MESSAGE    = 11
+	PTS_UPDATE_EDIT_CHANNEL_WEBPAGE    = 12
 )
 
 func (m *UpdateModel) GetUpdatesState(authKeyId int64, userId int32) *mtproto.TLUpdatesState {
