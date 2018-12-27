@@ -18,7 +18,12 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 
 ### Build and Install
 #### Build
+- Depends
+    - redis
+    - mysql
+    - etcd
 
+- Get source code　
 ```
 mkdir $GOPATH/src/github.com/nebula-chat/
 cd $GOPATH/src/github.com/nebula-chat/
