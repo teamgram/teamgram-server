@@ -17,11 +17,12 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 [Encrypted CDNs for Speed and Security](doc/cdn.md) [@steedfly](https://github.com/steedfly)翻译
 
 ### Build and Install
+#### Depends
+- redis
+- mysql
+- etcd
+
 #### Build
-- Depends
-    - redis
-    - mysql
-    - etcd
 
 - Get source code　
 ```
@@ -102,6 +103,8 @@ git clone https://github.com/nebula-chat/chatengine.git
 
 
 ### Compatible clients
+**Importents**: default signIn and signOut verify code is **12345**
+
 [Android client for NebulaChat](Telegram-Android)
 
 [FOSS client for NebulaChat](Telegram-FOSS)
