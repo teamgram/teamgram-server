@@ -19,11 +19,11 @@ package messages
 
 import (
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util"
-	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	message2 "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
 	"github.com/nebula-chat/chatengine/service/document/client"
 	"golang.org/x/net/context"
 	"time"
@@ -227,6 +227,10 @@ func (s *MessagesServiceImpl) makeOutboxMessageBySendMedia(authKeyId int64, from
 
 func (s *MessagesServiceImpl) makeUpdatesByUpdateNewMessage(selfUserId int32, updateNew *mtproto.TLUpdateNewMessage) *mtproto.TLUpdates {
 	userIdList, _, _ := message2.PickAllIDListByMessages([]*mtproto.Message{updateNew.GetMessage()})
+	if updateNew.Data2.Message_1.Data2.Media.Data2.UserId != 0 {
+		userIdList = append(userIdList, updateNew.Data2.Message_1.Data2.Media.Data2.UserId)
+	}
+
 	userList := s.UserModel.GetUserListByIdList(selfUserId, userIdList)
 	return &mtproto.TLUpdates{Data2: &mtproto.Updates_Data{
 		Updates: []*mtproto.Update{updateNew.To_Update()},
@@ -300,7 +304,7 @@ func (s *MessagesServiceImpl) MessagesSendMedia(ctx context.Context, request *mt
 			Pts:       pts,
 			PtsCount:  ptsCount,
 		}}
-		syncUpdates := 	s.makeUpdatesByUpdateNewMessage(md.UserId, updateNewMessage)
+		syncUpdates := s.makeUpdatesByUpdateNewMessage(md.UserId, updateNewMessage)
 
 		updateMessageID := &mtproto.TLUpdateMessageID{Data2: &mtproto.Update_Data{
 			Id_4:     outBox.MessageId,
@@ -318,7 +322,7 @@ func (s *MessagesServiceImpl) MessagesSendMedia(ctx context.Context, request *mt
 			Pts:       pts,
 			PtsCount:  ptsCount,
 		}}
-		syncUpdates := 	s.makeUpdatesByUpdateNewMessage(md.UserId, updateNewMessage)
+		syncUpdates := s.makeUpdatesByUpdateNewMessage(md.UserId, updateNewMessage)
 		return md.AuthId, syncUpdates.To_Updates(), nil
 	}
 

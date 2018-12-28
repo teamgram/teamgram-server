@@ -30,7 +30,7 @@ type documentData struct {
 	*dataobject.DocumentsDO
 }
 
-func (m *DocumentModel) DoUploadedDocumentFile2(fileMD *nbfs.DocumentFileMetadata, thumbId int64) (*documentData, error) {
+func (m *DocumentModel) DoUploadedDocumentFile2(fileMD *nbfs.DocumentFileMetadata, thumbId int64, attributes []byte) (*documentData, error) {
 	data := &dataobject.DocumentsDO{
 		DocumentId:       fileMD.DocumentId,
 		AccessHash:       fileMD.AccessHash,
@@ -41,6 +41,7 @@ func (m *DocumentModel) DoUploadedDocumentFile2(fileMD *nbfs.DocumentFileMetadat
 		Ext:              fileMD.Ext,
 		MimeType:         fileMD.MimeType,
 		ThumbId:          thumbId,
+		Attributes:       string(attributes),
 		Version:          0,
 	}
 	data.Id = m.dao.DocumentsDAO.Insert(data)
@@ -66,16 +67,16 @@ func (m *DocumentModel) makeDocumentByDO(do *dataobject.DocumentsDO) *mtproto.Do
 			thumb = mtproto.NewTLPhotoSizeEmpty().To_PhotoSize()
 		}
 
-		attributes := &mtproto.DocumentAttributeList{}
-		err := json.Unmarshal([]byte(do.Attributes), attributes)
+		var attributes []*mtproto.DocumentAttribute
+		err := json.Unmarshal([]byte(do.Attributes), &attributes)
 		if err != nil {
 			glog.Error(err)
-			attributes.Attributes = []*mtproto.DocumentAttribute{}
+			attributes = []*mtproto.DocumentAttribute{}
 		}
 
 		// if do.Attributes
 		document = &mtproto.Document{
-			Constructor: mtproto.TLConstructor_CRC32_document,
+			Constructor: mtproto.TLConstructor_CRC32_documentLayer86,
 			Data2: &mtproto.Document_Data{
 				Id:         do.DocumentId,
 				AccessHash: do.AccessHash,
@@ -85,7 +86,7 @@ func (m *DocumentModel) makeDocumentByDO(do *dataobject.DocumentsDO) *mtproto.Do
 				Thumb:      thumb,
 				DcId:       2,
 				// Version:    do.Version,
-				Attributes: attributes.Attributes,
+				Attributes: attributes,
 			},
 		}
 	}

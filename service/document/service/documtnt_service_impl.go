@@ -19,11 +19,12 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/util"
-	"github.com/nebula-chat/chatengine/pkg/logger"
 	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	document2 "github.com/nebula-chat/chatengine/service/document/biz/core/document"
 	photo2 "github.com/nebula-chat/chatengine/service/document/biz/core/photo"
 	"github.com/nebula-chat/chatengine/service/nbfs/cachefs"
@@ -135,7 +136,7 @@ func (s *DocumentServiceImpl) NbfsUploadedPhotoMedia(ctx context.Context, reques
 
 	// photo:flags.0?Photo caption:flags.1?string ttl_seconds:flags.2?int
 	var reply = &mtproto.TLMessageMediaPhoto{Data2: &mtproto.MessageMedia_Data{
-		Photo_1:    photo.To_Photo(),
+		Photo_1: photo.To_Photo(),
 		// Caption:    request.GetMedia().GetCaption(),
 		TtlSeconds: request.GetMedia().GetTtlSeconds(),
 	}}
@@ -193,13 +194,14 @@ func (s *DocumentServiceImpl) NbfsUploadedDocumentMedia(ctx context.Context, req
 	}
 
 	fileMD.MimeType = request.GetMedia().GetMimeType()
-	data, err := s.DocumentModel.DoUploadedDocumentFile2(fileMD, thumbId)
+	mediaAttributes, _ := json.Marshal(media.GetAttributes())
+	data, err := s.DocumentModel.DoUploadedDocumentFile2(fileMD, thumbId, mediaAttributes)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
 	}
 
-	document := &mtproto.TLDocument{Data2: &mtproto.Document_Data{
+	document := &mtproto.TLDocumentLayer86{Data2: &mtproto.Document_Data{
 		Id:         data.DocumentId,
 		AccessHash: data.AccessHash,
 		Date:       int32(time.Now().Unix()),
@@ -213,7 +215,7 @@ func (s *DocumentServiceImpl) NbfsUploadedDocumentMedia(ctx context.Context, req
 
 	// messageMediaDocument#7c4414d3 flags:# document:flags.0?Document caption:flags.1?string ttl_seconds:flags.2?int = MessageMedia;
 	var reply = &mtproto.TLMessageMediaDocument{Data2: &mtproto.MessageMedia_Data{
-		Document:   document.To_Document(),
+		Document: document.To_Document(),
 		// Caption:    request.GetMedia().GetCaption(),
 		TtlSeconds: request.GetMedia().GetTtlSeconds(),
 	}}
