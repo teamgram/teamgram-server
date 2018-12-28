@@ -62,6 +62,16 @@ func (s *MessagesServiceImpl) MessagesToggleDialogPin(ctx context.Context, reque
 		Date:    int32(time.Now().Unix()),
 	}}
 
+	switch peer.PeerType {
+	case base.PEER_USER:
+		updates.Data2.Users = []*mtproto.User{s.UserModel.GetUserById(md.UserId, peer.PeerId)}
+	case base.PEER_CHAT:
+		updates.Data2.Chats = []*mtproto.Chat{s.ChatModel.GetChatBySelfID(md.UserId, peer.PeerId)}
+	case base.PEER_CHANNEL:
+	default:
+		// TODO(@benqi): log
+	}
+
 	sync_client.GetSyncClient().SyncUpdatesNotMe(md.UserId, md.AuthId, updates.To_Updates())
 
 	glog.Info("messages.toggleDialogPin#a731e257 - reply {true}")
