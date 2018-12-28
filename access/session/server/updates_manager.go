@@ -18,21 +18,51 @@
 package server
 
 import (
+	"container/list"
 	"github.com/golang/glog"
 	"reflect"
 )
 
 type updatesManager struct {
-	*genericSession
+	genericSessions *list.List
+	// *genericSession
 	*pushSession
 }
 
-func (m *updatesManager) onGenericSessionNew(s sessionBase) {
-	m.genericSession = s.(*genericSession)
+func (m *updatesManager) getOnlineGenericSession() *genericSession {
+	var lastReceiveTime int64 = 0
+	var lastRecentSess *genericSession
+	for e := m.genericSessions.Back(); e != nil; e = e.Next() {
+		sess := e.Value.(*genericSession)
+		if sess.sessionOnline() && sess.lastReceiveTime > lastReceiveTime {
+			lastRecentSess = sess
+			lastReceiveTime = sess.lastReceiveTime
+		}
+	}
+	return lastRecentSess
 }
 
-func (m *updatesManager) onGenericSessionClose() {
-	m.genericSession = nil
+func (m *updatesManager) onGenericSessionNew(s sessionBase) {
+	ss := s.(*genericSession)
+
+	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
+		if ss.SessionId() == e.Value.(*genericSession).sessionId {
+			*e.Value.(*genericSession) = *ss
+			return
+		}
+	}
+
+	m.genericSessions.PushBack(ss)
+}
+
+func (m *updatesManager) onGenericSessionClose(s sessionBase) {
+	ss := s.(*genericSession)
+	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
+		if ss.SessionId() == e.Value.(*genericSession).sessionId {
+			m.genericSessions.Remove(e)
+			break
+		}
+	}
 }
 
 func (m *updatesManager) onPushSessionNew(s sessionBase) {
@@ -47,10 +77,10 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 
-	genericSess := m.genericSession
+	genericSess := m.getOnlineGenericSession()
 	pushSess := m.pushSession
 
-	if genericSess != nil && genericSess.sessionOnline() {
+	if genericSess != nil {
 		glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 			genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
@@ -59,28 +89,31 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 			pushSess.onSyncData(syncMsg.cntl)
+		} else {
+			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		}
 	}
 
-/*
-	if pushSess != nil {
-		glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
-			pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-		pushSess.onSyncData(syncMsg.cntl)
+	/*
+		if pushSess != nil {
+			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			pushSess.onSyncData(syncMsg.cntl)
 
-		if genericSess != nil {
-			glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
-				genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+			if genericSess != nil {
+				glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+					genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+				genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+			}
+		} else {
+			if genericSess != nil {
+				glog.Infof("updatesManager]]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+					genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+				genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+			}
 		}
-	} else {
-		if genericSess != nil {
-			glog.Infof("updatesManager]]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
-				genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
-		}
-	}
- */
+	*/
 
 	//if m.pushSession.sessionOnline() {
 	//	if syncMsg.ptsCount > 0 {
@@ -104,8 +137,7 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 }
 
 func (m *updatesManager) onUpdatesSyncRpcResultData(syncMsg *syncRpcResultData) {
-	if m.genericSession != nil {
-		m.genericSession.onSyncRpcResultData(syncMsg.cntl, syncMsg.data)
-	}
+	//if m.genericSession != nil {
+	//	m.genericSession.onSyncRpcResultData(syncMsg.cntl, syncMsg.data)
+	//}
 }
-

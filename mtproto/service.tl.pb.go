@@ -39,7 +39,7 @@ func (m *RSAPublicKey_Data) Reset()         { *m = RSAPublicKey_Data{} }
 func (m *RSAPublicKey_Data) String() string { return proto.CompactTextString(m) }
 func (*RSAPublicKey_Data) ProtoMessage()    {}
 func (*RSAPublicKey_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{0}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{0}
 }
 func (m *RSAPublicKey_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RSAPublicKey_Data.Unmarshal(m, b)
@@ -85,7 +85,7 @@ func (m *RSAPublicKey) Reset()         { *m = RSAPublicKey{} }
 func (m *RSAPublicKey) String() string { return proto.CompactTextString(m) }
 func (*RSAPublicKey) ProtoMessage()    {}
 func (*RSAPublicKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{1}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{1}
 }
 func (m *RSAPublicKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RSAPublicKey.Unmarshal(m, b)
@@ -131,7 +131,7 @@ func (m *TLRsaPublicKey) Reset()         { *m = TLRsaPublicKey{} }
 func (m *TLRsaPublicKey) String() string { return proto.CompactTextString(m) }
 func (*TLRsaPublicKey) ProtoMessage()    {}
 func (*TLRsaPublicKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{2}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{2}
 }
 func (m *TLRsaPublicKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLRsaPublicKey.Unmarshal(m, b)
@@ -176,7 +176,7 @@ func (m *SessionClientEvent_Data) Reset()         { *m = SessionClientEvent_Data
 func (m *SessionClientEvent_Data) String() string { return proto.CompactTextString(m) }
 func (*SessionClientEvent_Data) ProtoMessage()    {}
 func (*SessionClientEvent_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{3}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{3}
 }
 func (m *SessionClientEvent_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SessionClientEvent_Data.Unmarshal(m, b)
@@ -229,7 +229,7 @@ func (m *SessionClientEvent) Reset()         { *m = SessionClientEvent{} }
 func (m *SessionClientEvent) String() string { return proto.CompactTextString(m) }
 func (*SessionClientEvent) ProtoMessage()    {}
 func (*SessionClientEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{4}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{4}
 }
 func (m *SessionClientEvent) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SessionClientEvent.Unmarshal(m, b)
@@ -275,7 +275,7 @@ func (m *TLSessionClientCreated) Reset()         { *m = TLSessionClientCreated{}
 func (m *TLSessionClientCreated) String() string { return proto.CompactTextString(m) }
 func (*TLSessionClientCreated) ProtoMessage()    {}
 func (*TLSessionClientCreated) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{5}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{5}
 }
 func (m *TLSessionClientCreated) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionClientCreated.Unmarshal(m, b)
@@ -314,7 +314,7 @@ func (m *TLSessionClientClosed) Reset()         { *m = TLSessionClientClosed{} }
 func (m *TLSessionClientClosed) String() string { return proto.CompactTextString(m) }
 func (*TLSessionClientClosed) ProtoMessage()    {}
 func (*TLSessionClientClosed) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{6}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{6}
 }
 func (m *TLSessionClientClosed) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionClientClosed.Unmarshal(m, b)
@@ -335,586 +335,6 @@ func (m *TLSessionClientClosed) XXX_DiscardUnknown() {
 var xxx_messageInfo_TLSessionClientClosed proto.InternalMessageInfo
 
 func (m *TLSessionClientClosed) GetData2() *SessionClientEvent_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
-//
-type Int32_Data struct {
-	V                    int32    `protobuf:"varint,1,opt,name=v,proto3" json:"v,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Int32_Data) Reset()         { *m = Int32_Data{} }
-func (m *Int32_Data) String() string { return proto.CompactTextString(m) }
-func (*Int32_Data) ProtoMessage()    {}
-func (*Int32_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{7}
-}
-func (m *Int32_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Int32_Data.Unmarshal(m, b)
-}
-func (m *Int32_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Int32_Data.Marshal(b, m, deterministic)
-}
-func (dst *Int32_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int32_Data.Merge(dst, src)
-}
-func (m *Int32_Data) XXX_Size() int {
-	return xxx_messageInfo_Int32_Data.Size(m)
-}
-func (m *Int32_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Int32_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Int32_Data proto.InternalMessageInfo
-
-func (m *Int32_Data) GetV() int32 {
-	if m != nil {
-		return m.V
-	}
-	return 0
-}
-
-type Int32 struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *Int32_Data   `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *Int32) Reset()         { *m = Int32{} }
-func (m *Int32) String() string { return proto.CompactTextString(m) }
-func (*Int32) ProtoMessage()    {}
-func (*Int32) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{8}
-}
-func (m *Int32) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Int32.Unmarshal(m, b)
-}
-func (m *Int32) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Int32.Marshal(b, m, deterministic)
-}
-func (dst *Int32) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int32.Merge(dst, src)
-}
-func (m *Int32) XXX_Size() int {
-	return xxx_messageInfo_Int32.Size(m)
-}
-func (m *Int32) XXX_DiscardUnknown() {
-	xxx_messageInfo_Int32.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Int32 proto.InternalMessageInfo
-
-func (m *Int32) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *Int32) GetData2() *Int32_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// int32 v:int = Int32;
-type TLInt32 struct {
-	Data2                *Int32_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *TLInt32) Reset()         { *m = TLInt32{} }
-func (m *TLInt32) String() string { return proto.CompactTextString(m) }
-func (*TLInt32) ProtoMessage()    {}
-func (*TLInt32) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{9}
-}
-func (m *TLInt32) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLInt32.Unmarshal(m, b)
-}
-func (m *TLInt32) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLInt32.Marshal(b, m, deterministic)
-}
-func (dst *TLInt32) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInt32.Merge(dst, src)
-}
-func (m *TLInt32) XXX_Size() int {
-	return xxx_messageInfo_TLInt32.Size(m)
-}
-func (m *TLInt32) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInt32.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInt32 proto.InternalMessageInfo
-
-func (m *TLInt32) GetData2() *Int32_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// AuthKeyInfo <--
-//  + TL_authKeyInfo
-//
-type AuthKeyInfo_Data struct {
-	AuthKeyId            int64       `protobuf:"varint,1,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
-	AuthKey              []byte      `protobuf:"bytes,2,opt,name=auth_key,json=authKey,proto3" json:"auth_key,omitempty"`
-	FutureSalt           *FutureSalt `protobuf:"bytes,3,opt,name=future_salt,json=futureSalt,proto3" json:"future_salt,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *AuthKeyInfo_Data) Reset()         { *m = AuthKeyInfo_Data{} }
-func (m *AuthKeyInfo_Data) String() string { return proto.CompactTextString(m) }
-func (*AuthKeyInfo_Data) ProtoMessage()    {}
-func (*AuthKeyInfo_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{10}
-}
-func (m *AuthKeyInfo_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AuthKeyInfo_Data.Unmarshal(m, b)
-}
-func (m *AuthKeyInfo_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AuthKeyInfo_Data.Marshal(b, m, deterministic)
-}
-func (dst *AuthKeyInfo_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AuthKeyInfo_Data.Merge(dst, src)
-}
-func (m *AuthKeyInfo_Data) XXX_Size() int {
-	return xxx_messageInfo_AuthKeyInfo_Data.Size(m)
-}
-func (m *AuthKeyInfo_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_AuthKeyInfo_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AuthKeyInfo_Data proto.InternalMessageInfo
-
-func (m *AuthKeyInfo_Data) GetAuthKeyId() int64 {
-	if m != nil {
-		return m.AuthKeyId
-	}
-	return 0
-}
-
-func (m *AuthKeyInfo_Data) GetAuthKey() []byte {
-	if m != nil {
-		return m.AuthKey
-	}
-	return nil
-}
-
-func (m *AuthKeyInfo_Data) GetFutureSalt() *FutureSalt {
-	if m != nil {
-		return m.FutureSalt
-	}
-	return nil
-}
-
-type AuthKeyInfo struct {
-	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *AuthKeyInfo_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
-}
-
-func (m *AuthKeyInfo) Reset()         { *m = AuthKeyInfo{} }
-func (m *AuthKeyInfo) String() string { return proto.CompactTextString(m) }
-func (*AuthKeyInfo) ProtoMessage()    {}
-func (*AuthKeyInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{11}
-}
-func (m *AuthKeyInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AuthKeyInfo.Unmarshal(m, b)
-}
-func (m *AuthKeyInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AuthKeyInfo.Marshal(b, m, deterministic)
-}
-func (dst *AuthKeyInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AuthKeyInfo.Merge(dst, src)
-}
-func (m *AuthKeyInfo) XXX_Size() int {
-	return xxx_messageInfo_AuthKeyInfo.Size(m)
-}
-func (m *AuthKeyInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_AuthKeyInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AuthKeyInfo proto.InternalMessageInfo
-
-func (m *AuthKeyInfo) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *AuthKeyInfo) GetData2() *AuthKeyInfo_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
-type TLAuthKeyInfo struct {
-	Data2                *AuthKeyInfo_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
-}
-
-func (m *TLAuthKeyInfo) Reset()         { *m = TLAuthKeyInfo{} }
-func (m *TLAuthKeyInfo) String() string { return proto.CompactTextString(m) }
-func (*TLAuthKeyInfo) ProtoMessage()    {}
-func (*TLAuthKeyInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{12}
-}
-func (m *TLAuthKeyInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLAuthKeyInfo.Unmarshal(m, b)
-}
-func (m *TLAuthKeyInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLAuthKeyInfo.Marshal(b, m, deterministic)
-}
-func (dst *TLAuthKeyInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLAuthKeyInfo.Merge(dst, src)
-}
-func (m *TLAuthKeyInfo) XXX_Size() int {
-	return xxx_messageInfo_TLAuthKeyInfo.Size(m)
-}
-func (m *TLAuthKeyInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLAuthKeyInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLAuthKeyInfo proto.InternalMessageInfo
-
-func (m *TLAuthKeyInfo) GetData2() *AuthKeyInfo_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// ServerConnected <--
-//  + TL_push_sessionServerConnected
-//
-type ServerConnected_Data struct {
-	SessionServerId      int32    `protobuf:"varint,1,opt,name=session_server_id,json=sessionServerId,proto3" json:"session_server_id,omitempty"`
-	ServerName           string   `protobuf:"bytes,2,opt,name=server_name,json=serverName,proto3" json:"server_name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ServerConnected_Data) Reset()         { *m = ServerConnected_Data{} }
-func (m *ServerConnected_Data) String() string { return proto.CompactTextString(m) }
-func (*ServerConnected_Data) ProtoMessage()    {}
-func (*ServerConnected_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{13}
-}
-func (m *ServerConnected_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ServerConnected_Data.Unmarshal(m, b)
-}
-func (m *ServerConnected_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ServerConnected_Data.Marshal(b, m, deterministic)
-}
-func (dst *ServerConnected_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServerConnected_Data.Merge(dst, src)
-}
-func (m *ServerConnected_Data) XXX_Size() int {
-	return xxx_messageInfo_ServerConnected_Data.Size(m)
-}
-func (m *ServerConnected_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_ServerConnected_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ServerConnected_Data proto.InternalMessageInfo
-
-func (m *ServerConnected_Data) GetSessionServerId() int32 {
-	if m != nil {
-		return m.SessionServerId
-	}
-	return 0
-}
-
-func (m *ServerConnected_Data) GetServerName() string {
-	if m != nil {
-		return m.ServerName
-	}
-	return ""
-}
-
-type ServerConnected struct {
-	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *ServerConnected_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *ServerConnected) Reset()         { *m = ServerConnected{} }
-func (m *ServerConnected) String() string { return proto.CompactTextString(m) }
-func (*ServerConnected) ProtoMessage()    {}
-func (*ServerConnected) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{14}
-}
-func (m *ServerConnected) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ServerConnected.Unmarshal(m, b)
-}
-func (m *ServerConnected) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ServerConnected.Marshal(b, m, deterministic)
-}
-func (dst *ServerConnected) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServerConnected.Merge(dst, src)
-}
-func (m *ServerConnected) XXX_Size() int {
-	return xxx_messageInfo_ServerConnected.Size(m)
-}
-func (m *ServerConnected) XXX_DiscardUnknown() {
-	xxx_messageInfo_ServerConnected.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ServerConnected proto.InternalMessageInfo
-
-func (m *ServerConnected) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *ServerConnected) GetData2() *ServerConnected_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
-type TLPushSessionServerConnected struct {
-	Data2                *ServerConnected_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *TLPushSessionServerConnected) Reset()         { *m = TLPushSessionServerConnected{} }
-func (m *TLPushSessionServerConnected) String() string { return proto.CompactTextString(m) }
-func (*TLPushSessionServerConnected) ProtoMessage()    {}
-func (*TLPushSessionServerConnected) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{15}
-}
-func (m *TLPushSessionServerConnected) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLPushSessionServerConnected.Unmarshal(m, b)
-}
-func (m *TLPushSessionServerConnected) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLPushSessionServerConnected.Marshal(b, m, deterministic)
-}
-func (dst *TLPushSessionServerConnected) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLPushSessionServerConnected.Merge(dst, src)
-}
-func (m *TLPushSessionServerConnected) XXX_Size() int {
-	return xxx_messageInfo_TLPushSessionServerConnected.Size(m)
-}
-func (m *TLPushSessionServerConnected) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLPushSessionServerConnected.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLPushSessionServerConnected proto.InternalMessageInfo
-
-func (m *TLPushSessionServerConnected) GetData2() *ServerConnected_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// HandshakeContext <--
-//  + TL_handshakeContext
-//
-type HandshakeContext_Data struct {
-	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
-	NewNonce             []byte   `protobuf:"bytes,3,opt,name=new_nonce,json=newNonce,proto3" json:"new_nonce,omitempty"`
-	A                    []byte   `protobuf:"bytes,4,opt,name=a,proto3" json:"a,omitempty"`
-	P                    []byte   `protobuf:"bytes,5,opt,name=p,proto3" json:"p,omitempty"`
-	AuthKeyId            int64    `protobuf:"varint,6,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
-	AuthKey              []byte   `protobuf:"bytes,7,opt,name=auth_key,json=authKey,proto3" json:"auth_key,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *HandshakeContext_Data) Reset()         { *m = HandshakeContext_Data{} }
-func (m *HandshakeContext_Data) String() string { return proto.CompactTextString(m) }
-func (*HandshakeContext_Data) ProtoMessage()    {}
-func (*HandshakeContext_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{16}
-}
-func (m *HandshakeContext_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_HandshakeContext_Data.Unmarshal(m, b)
-}
-func (m *HandshakeContext_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_HandshakeContext_Data.Marshal(b, m, deterministic)
-}
-func (dst *HandshakeContext_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HandshakeContext_Data.Merge(dst, src)
-}
-func (m *HandshakeContext_Data) XXX_Size() int {
-	return xxx_messageInfo_HandshakeContext_Data.Size(m)
-}
-func (m *HandshakeContext_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_HandshakeContext_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_HandshakeContext_Data proto.InternalMessageInfo
-
-func (m *HandshakeContext_Data) GetNonce() []byte {
-	if m != nil {
-		return m.Nonce
-	}
-	return nil
-}
-
-func (m *HandshakeContext_Data) GetServerNonce() []byte {
-	if m != nil {
-		return m.ServerNonce
-	}
-	return nil
-}
-
-func (m *HandshakeContext_Data) GetNewNonce() []byte {
-	if m != nil {
-		return m.NewNonce
-	}
-	return nil
-}
-
-func (m *HandshakeContext_Data) GetA() []byte {
-	if m != nil {
-		return m.A
-	}
-	return nil
-}
-
-func (m *HandshakeContext_Data) GetP() []byte {
-	if m != nil {
-		return m.P
-	}
-	return nil
-}
-
-func (m *HandshakeContext_Data) GetAuthKeyId() int64 {
-	if m != nil {
-		return m.AuthKeyId
-	}
-	return 0
-}
-
-func (m *HandshakeContext_Data) GetAuthKey() []byte {
-	if m != nil {
-		return m.AuthKey
-	}
-	return nil
-}
-
-type HandshakeContext struct {
-	Constructor          TLConstructor          `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *HandshakeContext_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *HandshakeContext) Reset()         { *m = HandshakeContext{} }
-func (m *HandshakeContext) String() string { return proto.CompactTextString(m) }
-func (*HandshakeContext) ProtoMessage()    {}
-func (*HandshakeContext) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{17}
-}
-func (m *HandshakeContext) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_HandshakeContext.Unmarshal(m, b)
-}
-func (m *HandshakeContext) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_HandshakeContext.Marshal(b, m, deterministic)
-}
-func (dst *HandshakeContext) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HandshakeContext.Merge(dst, src)
-}
-func (m *HandshakeContext) XXX_Size() int {
-	return xxx_messageInfo_HandshakeContext.Size(m)
-}
-func (m *HandshakeContext) XXX_DiscardUnknown() {
-	xxx_messageInfo_HandshakeContext.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_HandshakeContext proto.InternalMessageInfo
-
-func (m *HandshakeContext) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *HandshakeContext) GetData2() *HandshakeContext_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
-type TLHandshakeContext struct {
-	Data2                *HandshakeContext_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *TLHandshakeContext) Reset()         { *m = TLHandshakeContext{} }
-func (m *TLHandshakeContext) String() string { return proto.CompactTextString(m) }
-func (*TLHandshakeContext) ProtoMessage()    {}
-func (*TLHandshakeContext) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{18}
-}
-func (m *TLHandshakeContext) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLHandshakeContext.Unmarshal(m, b)
-}
-func (m *TLHandshakeContext) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLHandshakeContext.Marshal(b, m, deterministic)
-}
-func (dst *TLHandshakeContext) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLHandshakeContext.Merge(dst, src)
-}
-func (m *TLHandshakeContext) XXX_Size() int {
-	return xxx_messageInfo_TLHandshakeContext.Size(m)
-}
-func (m *TLHandshakeContext) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLHandshakeContext.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLHandshakeContext proto.InternalMessageInfo
-
-func (m *TLHandshakeContext) GetData2() *HandshakeContext_Data {
 	if m != nil {
 		return m.Data2
 	}
@@ -943,7 +363,7 @@ func (m *RawMessageData_Data) Reset()         { *m = RawMessageData_Data{} }
 func (m *RawMessageData_Data) String() string { return proto.CompactTextString(m) }
 func (*RawMessageData_Data) ProtoMessage()    {}
 func (*RawMessageData_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{19}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{7}
 }
 func (m *RawMessageData_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RawMessageData_Data.Unmarshal(m, b)
@@ -1024,7 +444,7 @@ func (m *RawMessageData) Reset()         { *m = RawMessageData{} }
 func (m *RawMessageData) String() string { return proto.CompactTextString(m) }
 func (*RawMessageData) ProtoMessage()    {}
 func (*RawMessageData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{20}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{8}
 }
 func (m *RawMessageData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RawMessageData.Unmarshal(m, b)
@@ -1070,7 +490,7 @@ func (m *TLHandshakeData) Reset()         { *m = TLHandshakeData{} }
 func (m *TLHandshakeData) String() string { return proto.CompactTextString(m) }
 func (*TLHandshakeData) ProtoMessage()    {}
 func (*TLHandshakeData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{21}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{9}
 }
 func (m *TLHandshakeData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLHandshakeData.Unmarshal(m, b)
@@ -1109,7 +529,7 @@ func (m *TLSessionMessageData) Reset()         { *m = TLSessionMessageData{} }
 func (m *TLSessionMessageData) String() string { return proto.CompactTextString(m) }
 func (*TLSessionMessageData) ProtoMessage()    {}
 func (*TLSessionMessageData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{22}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{10}
 }
 func (m *TLSessionMessageData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionMessageData.Unmarshal(m, b)
@@ -1130,260 +550,6 @@ func (m *TLSessionMessageData) XXX_DiscardUnknown() {
 var xxx_messageInfo_TLSessionMessageData proto.InternalMessageInfo
 
 func (m *TLSessionMessageData) GetData2() *RawMessageData_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// Int64 <--
-//  + TL_long
-//
-type Int64_Data struct {
-	V                    int64    `protobuf:"varint,1,opt,name=v,proto3" json:"v,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Int64_Data) Reset()         { *m = Int64_Data{} }
-func (m *Int64_Data) String() string { return proto.CompactTextString(m) }
-func (*Int64_Data) ProtoMessage()    {}
-func (*Int64_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{23}
-}
-func (m *Int64_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Int64_Data.Unmarshal(m, b)
-}
-func (m *Int64_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Int64_Data.Marshal(b, m, deterministic)
-}
-func (dst *Int64_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int64_Data.Merge(dst, src)
-}
-func (m *Int64_Data) XXX_Size() int {
-	return xxx_messageInfo_Int64_Data.Size(m)
-}
-func (m *Int64_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Int64_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Int64_Data proto.InternalMessageInfo
-
-func (m *Int64_Data) GetV() int64 {
-	if m != nil {
-		return m.V
-	}
-	return 0
-}
-
-type Int64 struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *Int64_Data   `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *Int64) Reset()         { *m = Int64{} }
-func (m *Int64) String() string { return proto.CompactTextString(m) }
-func (*Int64) ProtoMessage()    {}
-func (*Int64) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{24}
-}
-func (m *Int64) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Int64.Unmarshal(m, b)
-}
-func (m *Int64) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Int64.Marshal(b, m, deterministic)
-}
-func (dst *Int64) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int64.Merge(dst, src)
-}
-func (m *Int64) XXX_Size() int {
-	return xxx_messageInfo_Int64.Size(m)
-}
-func (m *Int64) XXX_DiscardUnknown() {
-	xxx_messageInfo_Int64.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Int64 proto.InternalMessageInfo
-
-func (m *Int64) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *Int64) GetData2() *Int64_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// long v:long = Int64;
-type TLLong struct {
-	Data2                *Int64_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *TLLong) Reset()         { *m = TLLong{} }
-func (m *TLLong) String() string { return proto.CompactTextString(m) }
-func (*TLLong) ProtoMessage()    {}
-func (*TLLong) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{25}
-}
-func (m *TLLong) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLLong.Unmarshal(m, b)
-}
-func (m *TLLong) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLLong.Marshal(b, m, deterministic)
-}
-func (dst *TLLong) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLLong.Merge(dst, src)
-}
-func (m *TLLong) XXX_Size() int {
-	return xxx_messageInfo_TLLong.Size(m)
-}
-func (m *TLLong) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLLong.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLLong proto.InternalMessageInfo
-
-func (m *TLLong) GetData2() *Int64_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// String <--
-//  + TL_string
-//
-type String_Data struct {
-	V                    string   `protobuf:"bytes,1,opt,name=v,proto3" json:"v,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *String_Data) Reset()         { *m = String_Data{} }
-func (m *String_Data) String() string { return proto.CompactTextString(m) }
-func (*String_Data) ProtoMessage()    {}
-func (*String_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{26}
-}
-func (m *String_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_String_Data.Unmarshal(m, b)
-}
-func (m *String_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_String_Data.Marshal(b, m, deterministic)
-}
-func (dst *String_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_String_Data.Merge(dst, src)
-}
-func (m *String_Data) XXX_Size() int {
-	return xxx_messageInfo_String_Data.Size(m)
-}
-func (m *String_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_String_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_String_Data proto.InternalMessageInfo
-
-func (m *String_Data) GetV() string {
-	if m != nil {
-		return m.V
-	}
-	return ""
-}
-
-type String struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *String_Data  `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *String) Reset()         { *m = String{} }
-func (m *String) String() string { return proto.CompactTextString(m) }
-func (*String) ProtoMessage()    {}
-func (*String) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{27}
-}
-func (m *String) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_String.Unmarshal(m, b)
-}
-func (m *String) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_String.Marshal(b, m, deterministic)
-}
-func (dst *String) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_String.Merge(dst, src)
-}
-func (m *String) XXX_Size() int {
-	return xxx_messageInfo_String.Size(m)
-}
-func (m *String) XXX_DiscardUnknown() {
-	xxx_messageInfo_String.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_String proto.InternalMessageInfo
-
-func (m *String) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *String) GetData2() *String_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// string v:string = String;
-type TLString struct {
-	Data2                *String_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
-}
-
-func (m *TLString) Reset()         { *m = TLString{} }
-func (m *TLString) String() string { return proto.CompactTextString(m) }
-func (*TLString) ProtoMessage()    {}
-func (*TLString) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{28}
-}
-func (m *TLString) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLString.Unmarshal(m, b)
-}
-func (m *TLString) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLString.Marshal(b, m, deterministic)
-}
-func (dst *TLString) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLString.Merge(dst, src)
-}
-func (m *TLString) XXX_Size() int {
-	return xxx_messageInfo_TLString.Size(m)
-}
-func (m *TLString) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLString.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLString proto.InternalMessageInfo
-
-func (m *TLString) GetData2() *String_Data {
 	if m != nil {
 		return m.Data2
 	}
@@ -1414,7 +580,7 @@ func (m *ClientSession_Data) Reset()         { *m = ClientSession_Data{} }
 func (m *ClientSession_Data) String() string { return proto.CompactTextString(m) }
 func (*ClientSession_Data) ProtoMessage()    {}
 func (*ClientSession_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{29}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{11}
 }
 func (m *ClientSession_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ClientSession_Data.Unmarshal(m, b)
@@ -1516,7 +682,7 @@ func (m *ClientSession) Reset()         { *m = ClientSession{} }
 func (m *ClientSession) String() string { return proto.CompactTextString(m) }
 func (*ClientSession) ProtoMessage()    {}
 func (*ClientSession) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{30}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{12}
 }
 func (m *ClientSession) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ClientSession.Unmarshal(m, b)
@@ -1562,7 +728,7 @@ func (m *TLClientSessionInfo) Reset()         { *m = TLClientSessionInfo{} }
 func (m *TLClientSessionInfo) String() string { return proto.CompactTextString(m) }
 func (*TLClientSessionInfo) ProtoMessage()    {}
 func (*TLClientSessionInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{31}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{13}
 }
 func (m *TLClientSessionInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLClientSessionInfo.Unmarshal(m, b)
@@ -1590,6 +756,840 @@ func (m *TLClientSessionInfo) GetData2() *ClientSession_Data {
 }
 
 // /////////////////////////////////////////////////////////////////////////////
+// HandshakeContext <--
+//  + TL_handshakeContext
+//
+type HandshakeContext_Data struct {
+	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
+	NewNonce             []byte   `protobuf:"bytes,3,opt,name=new_nonce,json=newNonce,proto3" json:"new_nonce,omitempty"`
+	A                    []byte   `protobuf:"bytes,4,opt,name=a,proto3" json:"a,omitempty"`
+	P                    []byte   `protobuf:"bytes,5,opt,name=p,proto3" json:"p,omitempty"`
+	AuthKeyId            int64    `protobuf:"varint,6,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
+	AuthKey              []byte   `protobuf:"bytes,7,opt,name=auth_key,json=authKey,proto3" json:"auth_key,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *HandshakeContext_Data) Reset()         { *m = HandshakeContext_Data{} }
+func (m *HandshakeContext_Data) String() string { return proto.CompactTextString(m) }
+func (*HandshakeContext_Data) ProtoMessage()    {}
+func (*HandshakeContext_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{14}
+}
+func (m *HandshakeContext_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HandshakeContext_Data.Unmarshal(m, b)
+}
+func (m *HandshakeContext_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HandshakeContext_Data.Marshal(b, m, deterministic)
+}
+func (dst *HandshakeContext_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HandshakeContext_Data.Merge(dst, src)
+}
+func (m *HandshakeContext_Data) XXX_Size() int {
+	return xxx_messageInfo_HandshakeContext_Data.Size(m)
+}
+func (m *HandshakeContext_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_HandshakeContext_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HandshakeContext_Data proto.InternalMessageInfo
+
+func (m *HandshakeContext_Data) GetNonce() []byte {
+	if m != nil {
+		return m.Nonce
+	}
+	return nil
+}
+
+func (m *HandshakeContext_Data) GetServerNonce() []byte {
+	if m != nil {
+		return m.ServerNonce
+	}
+	return nil
+}
+
+func (m *HandshakeContext_Data) GetNewNonce() []byte {
+	if m != nil {
+		return m.NewNonce
+	}
+	return nil
+}
+
+func (m *HandshakeContext_Data) GetA() []byte {
+	if m != nil {
+		return m.A
+	}
+	return nil
+}
+
+func (m *HandshakeContext_Data) GetP() []byte {
+	if m != nil {
+		return m.P
+	}
+	return nil
+}
+
+func (m *HandshakeContext_Data) GetAuthKeyId() int64 {
+	if m != nil {
+		return m.AuthKeyId
+	}
+	return 0
+}
+
+func (m *HandshakeContext_Data) GetAuthKey() []byte {
+	if m != nil {
+		return m.AuthKey
+	}
+	return nil
+}
+
+type HandshakeContext struct {
+	Constructor          TLConstructor          `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *HandshakeContext_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *HandshakeContext) Reset()         { *m = HandshakeContext{} }
+func (m *HandshakeContext) String() string { return proto.CompactTextString(m) }
+func (*HandshakeContext) ProtoMessage()    {}
+func (*HandshakeContext) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{15}
+}
+func (m *HandshakeContext) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HandshakeContext.Unmarshal(m, b)
+}
+func (m *HandshakeContext) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HandshakeContext.Marshal(b, m, deterministic)
+}
+func (dst *HandshakeContext) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HandshakeContext.Merge(dst, src)
+}
+func (m *HandshakeContext) XXX_Size() int {
+	return xxx_messageInfo_HandshakeContext.Size(m)
+}
+func (m *HandshakeContext) XXX_DiscardUnknown() {
+	xxx_messageInfo_HandshakeContext.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HandshakeContext proto.InternalMessageInfo
+
+func (m *HandshakeContext) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *HandshakeContext) GetData2() *HandshakeContext_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
+type TLHandshakeContext struct {
+	Data2                *HandshakeContext_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *TLHandshakeContext) Reset()         { *m = TLHandshakeContext{} }
+func (m *TLHandshakeContext) String() string { return proto.CompactTextString(m) }
+func (*TLHandshakeContext) ProtoMessage()    {}
+func (*TLHandshakeContext) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{16}
+}
+func (m *TLHandshakeContext) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLHandshakeContext.Unmarshal(m, b)
+}
+func (m *TLHandshakeContext) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLHandshakeContext.Marshal(b, m, deterministic)
+}
+func (dst *TLHandshakeContext) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLHandshakeContext.Merge(dst, src)
+}
+func (m *TLHandshakeContext) XXX_Size() int {
+	return xxx_messageInfo_TLHandshakeContext.Size(m)
+}
+func (m *TLHandshakeContext) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLHandshakeContext.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLHandshakeContext proto.InternalMessageInfo
+
+func (m *TLHandshakeContext) GetData2() *HandshakeContext_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Int32 <--
+//  + TL_int32
+//
+type Int32_Data struct {
+	V                    int32    `protobuf:"varint,1,opt,name=v,proto3" json:"v,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Int32_Data) Reset()         { *m = Int32_Data{} }
+func (m *Int32_Data) String() string { return proto.CompactTextString(m) }
+func (*Int32_Data) ProtoMessage()    {}
+func (*Int32_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{17}
+}
+func (m *Int32_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Int32_Data.Unmarshal(m, b)
+}
+func (m *Int32_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Int32_Data.Marshal(b, m, deterministic)
+}
+func (dst *Int32_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int32_Data.Merge(dst, src)
+}
+func (m *Int32_Data) XXX_Size() int {
+	return xxx_messageInfo_Int32_Data.Size(m)
+}
+func (m *Int32_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Int32_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Int32_Data proto.InternalMessageInfo
+
+func (m *Int32_Data) GetV() int32 {
+	if m != nil {
+		return m.V
+	}
+	return 0
+}
+
+type Int32 struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *Int32_Data   `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Int32) Reset()         { *m = Int32{} }
+func (m *Int32) String() string { return proto.CompactTextString(m) }
+func (*Int32) ProtoMessage()    {}
+func (*Int32) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{18}
+}
+func (m *Int32) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Int32.Unmarshal(m, b)
+}
+func (m *Int32) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Int32.Marshal(b, m, deterministic)
+}
+func (dst *Int32) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int32.Merge(dst, src)
+}
+func (m *Int32) XXX_Size() int {
+	return xxx_messageInfo_Int32.Size(m)
+}
+func (m *Int32) XXX_DiscardUnknown() {
+	xxx_messageInfo_Int32.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Int32 proto.InternalMessageInfo
+
+func (m *Int32) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *Int32) GetData2() *Int32_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// int32 v:int = Int32;
+type TLInt32 struct {
+	Data2                *Int32_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *TLInt32) Reset()         { *m = TLInt32{} }
+func (m *TLInt32) String() string { return proto.CompactTextString(m) }
+func (*TLInt32) ProtoMessage()    {}
+func (*TLInt32) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{19}
+}
+func (m *TLInt32) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLInt32.Unmarshal(m, b)
+}
+func (m *TLInt32) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLInt32.Marshal(b, m, deterministic)
+}
+func (dst *TLInt32) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLInt32.Merge(dst, src)
+}
+func (m *TLInt32) XXX_Size() int {
+	return xxx_messageInfo_TLInt32.Size(m)
+}
+func (m *TLInt32) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLInt32.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLInt32 proto.InternalMessageInfo
+
+func (m *TLInt32) GetData2() *Int32_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Int64 <--
+//  + TL_long
+//
+type Int64_Data struct {
+	V                    int64    `protobuf:"varint,1,opt,name=v,proto3" json:"v,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Int64_Data) Reset()         { *m = Int64_Data{} }
+func (m *Int64_Data) String() string { return proto.CompactTextString(m) }
+func (*Int64_Data) ProtoMessage()    {}
+func (*Int64_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{20}
+}
+func (m *Int64_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Int64_Data.Unmarshal(m, b)
+}
+func (m *Int64_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Int64_Data.Marshal(b, m, deterministic)
+}
+func (dst *Int64_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int64_Data.Merge(dst, src)
+}
+func (m *Int64_Data) XXX_Size() int {
+	return xxx_messageInfo_Int64_Data.Size(m)
+}
+func (m *Int64_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Int64_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Int64_Data proto.InternalMessageInfo
+
+func (m *Int64_Data) GetV() int64 {
+	if m != nil {
+		return m.V
+	}
+	return 0
+}
+
+type Int64 struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *Int64_Data   `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *Int64) Reset()         { *m = Int64{} }
+func (m *Int64) String() string { return proto.CompactTextString(m) }
+func (*Int64) ProtoMessage()    {}
+func (*Int64) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{21}
+}
+func (m *Int64) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Int64.Unmarshal(m, b)
+}
+func (m *Int64) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Int64.Marshal(b, m, deterministic)
+}
+func (dst *Int64) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int64.Merge(dst, src)
+}
+func (m *Int64) XXX_Size() int {
+	return xxx_messageInfo_Int64.Size(m)
+}
+func (m *Int64) XXX_DiscardUnknown() {
+	xxx_messageInfo_Int64.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Int64 proto.InternalMessageInfo
+
+func (m *Int64) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *Int64) GetData2() *Int64_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// long v:long = Int64;
+type TLLong struct {
+	Data2                *Int64_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *TLLong) Reset()         { *m = TLLong{} }
+func (m *TLLong) String() string { return proto.CompactTextString(m) }
+func (*TLLong) ProtoMessage()    {}
+func (*TLLong) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{22}
+}
+func (m *TLLong) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLLong.Unmarshal(m, b)
+}
+func (m *TLLong) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLLong.Marshal(b, m, deterministic)
+}
+func (dst *TLLong) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLLong.Merge(dst, src)
+}
+func (m *TLLong) XXX_Size() int {
+	return xxx_messageInfo_TLLong.Size(m)
+}
+func (m *TLLong) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLLong.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLLong proto.InternalMessageInfo
+
+func (m *TLLong) GetData2() *Int64_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// String <--
+//  + TL_string
+//
+type String_Data struct {
+	V                    string   `protobuf:"bytes,1,opt,name=v,proto3" json:"v,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *String_Data) Reset()         { *m = String_Data{} }
+func (m *String_Data) String() string { return proto.CompactTextString(m) }
+func (*String_Data) ProtoMessage()    {}
+func (*String_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{23}
+}
+func (m *String_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_String_Data.Unmarshal(m, b)
+}
+func (m *String_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_String_Data.Marshal(b, m, deterministic)
+}
+func (dst *String_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_String_Data.Merge(dst, src)
+}
+func (m *String_Data) XXX_Size() int {
+	return xxx_messageInfo_String_Data.Size(m)
+}
+func (m *String_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_String_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_String_Data proto.InternalMessageInfo
+
+func (m *String_Data) GetV() string {
+	if m != nil {
+		return m.V
+	}
+	return ""
+}
+
+type String struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *String_Data  `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *String) Reset()         { *m = String{} }
+func (m *String) String() string { return proto.CompactTextString(m) }
+func (*String) ProtoMessage()    {}
+func (*String) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{24}
+}
+func (m *String) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_String.Unmarshal(m, b)
+}
+func (m *String) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_String.Marshal(b, m, deterministic)
+}
+func (dst *String) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_String.Merge(dst, src)
+}
+func (m *String) XXX_Size() int {
+	return xxx_messageInfo_String.Size(m)
+}
+func (m *String) XXX_DiscardUnknown() {
+	xxx_messageInfo_String.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_String proto.InternalMessageInfo
+
+func (m *String) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *String) GetData2() *String_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// string v:string = String;
+type TLString struct {
+	Data2                *String_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *TLString) Reset()         { *m = TLString{} }
+func (m *TLString) String() string { return proto.CompactTextString(m) }
+func (*TLString) ProtoMessage()    {}
+func (*TLString) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{25}
+}
+func (m *TLString) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLString.Unmarshal(m, b)
+}
+func (m *TLString) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLString.Marshal(b, m, deterministic)
+}
+func (dst *TLString) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLString.Merge(dst, src)
+}
+func (m *TLString) XXX_Size() int {
+	return xxx_messageInfo_TLString.Size(m)
+}
+func (m *TLString) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLString.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLString proto.InternalMessageInfo
+
+func (m *TLString) GetData2() *String_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// AuthKeyInfo <--
+//  + TL_authKeyInfo
+//
+type AuthKeyInfo_Data struct {
+	AuthKeyId            int64       `protobuf:"varint,1,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
+	AuthKey              []byte      `protobuf:"bytes,2,opt,name=auth_key,json=authKey,proto3" json:"auth_key,omitempty"`
+	FutureSalt           *FutureSalt `protobuf:"bytes,3,opt,name=future_salt,json=futureSalt,proto3" json:"future_salt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *AuthKeyInfo_Data) Reset()         { *m = AuthKeyInfo_Data{} }
+func (m *AuthKeyInfo_Data) String() string { return proto.CompactTextString(m) }
+func (*AuthKeyInfo_Data) ProtoMessage()    {}
+func (*AuthKeyInfo_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{26}
+}
+func (m *AuthKeyInfo_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AuthKeyInfo_Data.Unmarshal(m, b)
+}
+func (m *AuthKeyInfo_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AuthKeyInfo_Data.Marshal(b, m, deterministic)
+}
+func (dst *AuthKeyInfo_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AuthKeyInfo_Data.Merge(dst, src)
+}
+func (m *AuthKeyInfo_Data) XXX_Size() int {
+	return xxx_messageInfo_AuthKeyInfo_Data.Size(m)
+}
+func (m *AuthKeyInfo_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_AuthKeyInfo_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AuthKeyInfo_Data proto.InternalMessageInfo
+
+func (m *AuthKeyInfo_Data) GetAuthKeyId() int64 {
+	if m != nil {
+		return m.AuthKeyId
+	}
+	return 0
+}
+
+func (m *AuthKeyInfo_Data) GetAuthKey() []byte {
+	if m != nil {
+		return m.AuthKey
+	}
+	return nil
+}
+
+func (m *AuthKeyInfo_Data) GetFutureSalt() *FutureSalt {
+	if m != nil {
+		return m.FutureSalt
+	}
+	return nil
+}
+
+type AuthKeyInfo struct {
+	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *AuthKeyInfo_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *AuthKeyInfo) Reset()         { *m = AuthKeyInfo{} }
+func (m *AuthKeyInfo) String() string { return proto.CompactTextString(m) }
+func (*AuthKeyInfo) ProtoMessage()    {}
+func (*AuthKeyInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{27}
+}
+func (m *AuthKeyInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AuthKeyInfo.Unmarshal(m, b)
+}
+func (m *AuthKeyInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AuthKeyInfo.Marshal(b, m, deterministic)
+}
+func (dst *AuthKeyInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AuthKeyInfo.Merge(dst, src)
+}
+func (m *AuthKeyInfo) XXX_Size() int {
+	return xxx_messageInfo_AuthKeyInfo.Size(m)
+}
+func (m *AuthKeyInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_AuthKeyInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AuthKeyInfo proto.InternalMessageInfo
+
+func (m *AuthKeyInfo) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *AuthKeyInfo) GetData2() *AuthKeyInfo_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
+type TLAuthKeyInfo struct {
+	Data2                *AuthKeyInfo_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *TLAuthKeyInfo) Reset()         { *m = TLAuthKeyInfo{} }
+func (m *TLAuthKeyInfo) String() string { return proto.CompactTextString(m) }
+func (*TLAuthKeyInfo) ProtoMessage()    {}
+func (*TLAuthKeyInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{28}
+}
+func (m *TLAuthKeyInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLAuthKeyInfo.Unmarshal(m, b)
+}
+func (m *TLAuthKeyInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLAuthKeyInfo.Marshal(b, m, deterministic)
+}
+func (dst *TLAuthKeyInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLAuthKeyInfo.Merge(dst, src)
+}
+func (m *TLAuthKeyInfo) XXX_Size() int {
+	return xxx_messageInfo_TLAuthKeyInfo.Size(m)
+}
+func (m *TLAuthKeyInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLAuthKeyInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLAuthKeyInfo proto.InternalMessageInfo
+
+func (m *TLAuthKeyInfo) GetData2() *AuthKeyInfo_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// ServerConnected <--
+//  + TL_push_sessionServerConnected
+//
+type ServerConnected_Data struct {
+	SessionServerId      int32    `protobuf:"varint,1,opt,name=session_server_id,json=sessionServerId,proto3" json:"session_server_id,omitempty"`
+	ServerName           string   `protobuf:"bytes,2,opt,name=server_name,json=serverName,proto3" json:"server_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ServerConnected_Data) Reset()         { *m = ServerConnected_Data{} }
+func (m *ServerConnected_Data) String() string { return proto.CompactTextString(m) }
+func (*ServerConnected_Data) ProtoMessage()    {}
+func (*ServerConnected_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{29}
+}
+func (m *ServerConnected_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ServerConnected_Data.Unmarshal(m, b)
+}
+func (m *ServerConnected_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ServerConnected_Data.Marshal(b, m, deterministic)
+}
+func (dst *ServerConnected_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServerConnected_Data.Merge(dst, src)
+}
+func (m *ServerConnected_Data) XXX_Size() int {
+	return xxx_messageInfo_ServerConnected_Data.Size(m)
+}
+func (m *ServerConnected_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_ServerConnected_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ServerConnected_Data proto.InternalMessageInfo
+
+func (m *ServerConnected_Data) GetSessionServerId() int32 {
+	if m != nil {
+		return m.SessionServerId
+	}
+	return 0
+}
+
+func (m *ServerConnected_Data) GetServerName() string {
+	if m != nil {
+		return m.ServerName
+	}
+	return ""
+}
+
+type ServerConnected struct {
+	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *ServerConnected_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ServerConnected) Reset()         { *m = ServerConnected{} }
+func (m *ServerConnected) String() string { return proto.CompactTextString(m) }
+func (*ServerConnected) ProtoMessage()    {}
+func (*ServerConnected) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{30}
+}
+func (m *ServerConnected) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ServerConnected.Unmarshal(m, b)
+}
+func (m *ServerConnected) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ServerConnected.Marshal(b, m, deterministic)
+}
+func (dst *ServerConnected) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServerConnected.Merge(dst, src)
+}
+func (m *ServerConnected) XXX_Size() int {
+	return xxx_messageInfo_ServerConnected.Size(m)
+}
+func (m *ServerConnected) XXX_DiscardUnknown() {
+	xxx_messageInfo_ServerConnected.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ServerConnected proto.InternalMessageInfo
+
+func (m *ServerConnected) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *ServerConnected) GetData2() *ServerConnected_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
+type TLPushSessionServerConnected struct {
+	Data2                *ServerConnected_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *TLPushSessionServerConnected) Reset()         { *m = TLPushSessionServerConnected{} }
+func (m *TLPushSessionServerConnected) String() string { return proto.CompactTextString(m) }
+func (*TLPushSessionServerConnected) ProtoMessage()    {}
+func (*TLPushSessionServerConnected) Descriptor() ([]byte, []int) {
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{31}
+}
+func (m *TLPushSessionServerConnected) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLPushSessionServerConnected.Unmarshal(m, b)
+}
+func (m *TLPushSessionServerConnected) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLPushSessionServerConnected.Marshal(b, m, deterministic)
+}
+func (dst *TLPushSessionServerConnected) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLPushSessionServerConnected.Merge(dst, src)
+}
+func (m *TLPushSessionServerConnected) XXX_Size() int {
+	return xxx_messageInfo_TLPushSessionServerConnected.Size(m)
+}
+func (m *TLPushSessionServerConnected) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLPushSessionServerConnected.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLPushSessionServerConnected proto.InternalMessageInfo
+
+func (m *TLPushSessionServerConnected) GetData2() *ServerConnected_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
 // session.setClientSessionInfo session:ClientSession = Bool;
 type TLSessionSetClientSessionInfo struct {
 	Session              *ClientSession `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
@@ -1602,7 +1602,7 @@ func (m *TLSessionSetClientSessionInfo) Reset()         { *m = TLSessionSetClien
 func (m *TLSessionSetClientSessionInfo) String() string { return proto.CompactTextString(m) }
 func (*TLSessionSetClientSessionInfo) ProtoMessage()    {}
 func (*TLSessionSetClientSessionInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{32}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{32}
 }
 func (m *TLSessionSetClientSessionInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionSetClientSessionInfo.Unmarshal(m, b)
@@ -1643,7 +1643,7 @@ func (m *TLSessionGetAuthorizations) Reset()         { *m = TLSessionGetAuthoriz
 func (m *TLSessionGetAuthorizations) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetAuthorizations) ProtoMessage()    {}
 func (*TLSessionGetAuthorizations) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{33}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{33}
 }
 func (m *TLSessionGetAuthorizations) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetAuthorizations.Unmarshal(m, b)
@@ -1691,7 +1691,7 @@ func (m *TLSessionResetAuthorization) Reset()         { *m = TLSessionResetAutho
 func (m *TLSessionResetAuthorization) String() string { return proto.CompactTextString(m) }
 func (*TLSessionResetAuthorization) ProtoMessage()    {}
 func (*TLSessionResetAuthorization) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{34}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{34}
 }
 func (m *TLSessionResetAuthorization) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionResetAuthorization.Unmarshal(m, b)
@@ -1738,7 +1738,7 @@ func (m *TLSessionGetLayer) Reset()         { *m = TLSessionGetLayer{} }
 func (m *TLSessionGetLayer) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetLayer) ProtoMessage()    {}
 func (*TLSessionGetLayer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{35}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{35}
 }
 func (m *TLSessionGetLayer) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetLayer.Unmarshal(m, b)
@@ -1778,7 +1778,7 @@ func (m *TLSessionGetLangCode) Reset()         { *m = TLSessionGetLangCode{} }
 func (m *TLSessionGetLangCode) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetLangCode) ProtoMessage()    {}
 func (*TLSessionGetLangCode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{36}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{36}
 }
 func (m *TLSessionGetLangCode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetLangCode.Unmarshal(m, b)
@@ -1818,7 +1818,7 @@ func (m *TLSessionGetUserId) Reset()         { *m = TLSessionGetUserId{} }
 func (m *TLSessionGetUserId) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetUserId) ProtoMessage()    {}
 func (*TLSessionGetUserId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{37}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{37}
 }
 func (m *TLSessionGetUserId) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetUserId.Unmarshal(m, b)
@@ -1860,7 +1860,7 @@ func (m *TLSessionGetPushSessionId) Reset()         { *m = TLSessionGetPushSessi
 func (m *TLSessionGetPushSessionId) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetPushSessionId) ProtoMessage()    {}
 func (*TLSessionGetPushSessionId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{38}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{38}
 }
 func (m *TLSessionGetPushSessionId) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetPushSessionId.Unmarshal(m, b)
@@ -1915,7 +1915,7 @@ func (m *TLSessionGetFutureSalts) Reset()         { *m = TLSessionGetFutureSalts
 func (m *TLSessionGetFutureSalts) String() string { return proto.CompactTextString(m) }
 func (*TLSessionGetFutureSalts) ProtoMessage()    {}
 func (*TLSessionGetFutureSalts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{39}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{39}
 }
 func (m *TLSessionGetFutureSalts) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionGetFutureSalts.Unmarshal(m, b)
@@ -1962,7 +1962,7 @@ func (m *TLSessionQueryAuthKey) Reset()         { *m = TLSessionQueryAuthKey{} }
 func (m *TLSessionQueryAuthKey) String() string { return proto.CompactTextString(m) }
 func (*TLSessionQueryAuthKey) ProtoMessage()    {}
 func (*TLSessionQueryAuthKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{40}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{40}
 }
 func (m *TLSessionQueryAuthKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionQueryAuthKey.Unmarshal(m, b)
@@ -2002,7 +2002,7 @@ func (m *TLSessionSetAuthKey) Reset()         { *m = TLSessionSetAuthKey{} }
 func (m *TLSessionSetAuthKey) String() string { return proto.CompactTextString(m) }
 func (*TLSessionSetAuthKey) ProtoMessage()    {}
 func (*TLSessionSetAuthKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{41}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{41}
 }
 func (m *TLSessionSetAuthKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionSetAuthKey.Unmarshal(m, b)
@@ -2043,7 +2043,7 @@ func (m *TLSessionBindAuthKeyUser) Reset()         { *m = TLSessionBindAuthKeyUs
 func (m *TLSessionBindAuthKeyUser) String() string { return proto.CompactTextString(m) }
 func (*TLSessionBindAuthKeyUser) ProtoMessage()    {}
 func (*TLSessionBindAuthKeyUser) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{42}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{42}
 }
 func (m *TLSessionBindAuthKeyUser) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionBindAuthKeyUser.Unmarshal(m, b)
@@ -2091,7 +2091,7 @@ func (m *TLSessionUnbindAuthKeyUser) Reset()         { *m = TLSessionUnbindAuthK
 func (m *TLSessionUnbindAuthKeyUser) String() string { return proto.CompactTextString(m) }
 func (*TLSessionUnbindAuthKeyUser) ProtoMessage()    {}
 func (*TLSessionUnbindAuthKeyUser) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{43}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{43}
 }
 func (m *TLSessionUnbindAuthKeyUser) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSessionUnbindAuthKeyUser.Unmarshal(m, b)
@@ -2141,7 +2141,7 @@ func (m *TLSyncSyncUpdates) Reset()         { *m = TLSyncSyncUpdates{} }
 func (m *TLSyncSyncUpdates) String() string { return proto.CompactTextString(m) }
 func (*TLSyncSyncUpdates) ProtoMessage()    {}
 func (*TLSyncSyncUpdates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{44}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{44}
 }
 func (m *TLSyncSyncUpdates) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncSyncUpdates.Unmarshal(m, b)
@@ -2203,7 +2203,7 @@ func (m *TLSyncPushUpdates) Reset()         { *m = TLSyncPushUpdates{} }
 func (m *TLSyncPushUpdates) String() string { return proto.CompactTextString(m) }
 func (*TLSyncPushUpdates) ProtoMessage()    {}
 func (*TLSyncPushUpdates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{45}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{45}
 }
 func (m *TLSyncPushUpdates) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncPushUpdates.Unmarshal(m, b)
@@ -2254,7 +2254,7 @@ func (m *TLSyncSyncChannelUpdates) Reset()         { *m = TLSyncSyncChannelUpdat
 func (m *TLSyncSyncChannelUpdates) String() string { return proto.CompactTextString(m) }
 func (*TLSyncSyncChannelUpdates) ProtoMessage()    {}
 func (*TLSyncSyncChannelUpdates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{46}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{46}
 }
 func (m *TLSyncSyncChannelUpdates) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncSyncChannelUpdates.Unmarshal(m, b)
@@ -2324,7 +2324,7 @@ func (m *TLSyncPushChannelUpdates) Reset()         { *m = TLSyncPushChannelUpdat
 func (m *TLSyncPushChannelUpdates) String() string { return proto.CompactTextString(m) }
 func (*TLSyncPushChannelUpdates) ProtoMessage()    {}
 func (*TLSyncPushChannelUpdates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{47}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{47}
 }
 func (m *TLSyncPushChannelUpdates) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncPushChannelUpdates.Unmarshal(m, b)
@@ -2381,7 +2381,7 @@ func (m *TLSyncPushRpcResult) Reset()         { *m = TLSyncPushRpcResult{} }
 func (m *TLSyncPushRpcResult) String() string { return proto.CompactTextString(m) }
 func (*TLSyncPushRpcResult) ProtoMessage()    {}
 func (*TLSyncPushRpcResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{48}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{48}
 }
 func (m *TLSyncPushRpcResult) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncPushRpcResult.Unmarshal(m, b)
@@ -2443,7 +2443,7 @@ func (m *TLSyncGetState) Reset()         { *m = TLSyncGetState{} }
 func (m *TLSyncGetState) String() string { return proto.CompactTextString(m) }
 func (*TLSyncGetState) ProtoMessage()    {}
 func (*TLSyncGetState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{49}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{49}
 }
 func (m *TLSyncGetState) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncGetState.Unmarshal(m, b)
@@ -2495,7 +2495,7 @@ func (m *TLSyncGetDifference) Reset()         { *m = TLSyncGetDifference{} }
 func (m *TLSyncGetDifference) String() string { return proto.CompactTextString(m) }
 func (*TLSyncGetDifference) ProtoMessage()    {}
 func (*TLSyncGetDifference) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{50}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{50}
 }
 func (m *TLSyncGetDifference) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncGetDifference.Unmarshal(m, b)
@@ -2576,7 +2576,7 @@ func (m *TLSyncGetChannelDifference) Reset()         { *m = TLSyncGetChannelDiff
 func (m *TLSyncGetChannelDifference) String() string { return proto.CompactTextString(m) }
 func (*TLSyncGetChannelDifference) ProtoMessage()    {}
 func (*TLSyncGetChannelDifference) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{51}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{51}
 }
 func (m *TLSyncGetChannelDifference) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSyncGetChannelDifference.Unmarshal(m, b)
@@ -2658,7 +2658,7 @@ func (m *TLPushConnectToSessionServer) Reset()         { *m = TLPushConnectToSes
 func (m *TLPushConnectToSessionServer) String() string { return proto.CompactTextString(m) }
 func (*TLPushConnectToSessionServer) ProtoMessage()    {}
 func (*TLPushConnectToSessionServer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{52}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{52}
 }
 func (m *TLPushConnectToSessionServer) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPushConnectToSessionServer.Unmarshal(m, b)
@@ -2700,7 +2700,7 @@ func (m *TLPushPushUpdatesData) Reset()         { *m = TLPushPushUpdatesData{} }
 func (m *TLPushPushUpdatesData) String() string { return proto.CompactTextString(m) }
 func (*TLPushPushUpdatesData) ProtoMessage()    {}
 func (*TLPushPushUpdatesData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{53}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{53}
 }
 func (m *TLPushPushUpdatesData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPushPushUpdatesData.Unmarshal(m, b)
@@ -2755,7 +2755,7 @@ func (m *TLPushPushRpcResultData) Reset()         { *m = TLPushPushRpcResultData
 func (m *TLPushPushRpcResultData) String() string { return proto.CompactTextString(m) }
 func (*TLPushPushRpcResultData) ProtoMessage()    {}
 func (*TLPushPushRpcResultData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{54}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{54}
 }
 func (m *TLPushPushRpcResultData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPushPushRpcResultData.Unmarshal(m, b)
@@ -2805,7 +2805,7 @@ func (m *TLBotExecuteCommand) Reset()         { *m = TLBotExecuteCommand{} }
 func (m *TLBotExecuteCommand) String() string { return proto.CompactTextString(m) }
 func (*TLBotExecuteCommand) ProtoMessage()    {}
 func (*TLBotExecuteCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_tl_a58e6fd4cab568d2, []int{55}
+	return fileDescriptor_service_tl_2d383e5ceaf09e3e, []int{55}
 }
 func (m *TLBotExecuteCommand) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLBotExecuteCommand.Unmarshal(m, b)
@@ -2861,31 +2861,31 @@ func init() {
 	proto.RegisterType((*SessionClientEvent)(nil), "mtproto.SessionClientEvent")
 	proto.RegisterType((*TLSessionClientCreated)(nil), "mtproto.TL_sessionClientCreated")
 	proto.RegisterType((*TLSessionClientClosed)(nil), "mtproto.TL_sessionClientClosed")
-	proto.RegisterType((*Int32_Data)(nil), "mtproto.Int32_Data")
-	proto.RegisterType((*Int32)(nil), "mtproto.Int32")
-	proto.RegisterType((*TLInt32)(nil), "mtproto.TL_int32")
-	proto.RegisterType((*AuthKeyInfo_Data)(nil), "mtproto.AuthKeyInfo_Data")
-	proto.RegisterType((*AuthKeyInfo)(nil), "mtproto.AuthKeyInfo")
-	proto.RegisterType((*TLAuthKeyInfo)(nil), "mtproto.TL_authKeyInfo")
-	proto.RegisterType((*ServerConnected_Data)(nil), "mtproto.ServerConnected_Data")
-	proto.RegisterType((*ServerConnected)(nil), "mtproto.ServerConnected")
-	proto.RegisterType((*TLPushSessionServerConnected)(nil), "mtproto.TL_push_sessionServerConnected")
-	proto.RegisterType((*HandshakeContext_Data)(nil), "mtproto.HandshakeContext_Data")
-	proto.RegisterType((*HandshakeContext)(nil), "mtproto.HandshakeContext")
-	proto.RegisterType((*TLHandshakeContext)(nil), "mtproto.TL_handshakeContext")
 	proto.RegisterType((*RawMessageData_Data)(nil), "mtproto.RawMessageData_Data")
 	proto.RegisterType((*RawMessageData)(nil), "mtproto.RawMessageData")
 	proto.RegisterType((*TLHandshakeData)(nil), "mtproto.TL_handshakeData")
 	proto.RegisterType((*TLSessionMessageData)(nil), "mtproto.TL_sessionMessageData")
+	proto.RegisterType((*ClientSession_Data)(nil), "mtproto.ClientSession_Data")
+	proto.RegisterType((*ClientSession)(nil), "mtproto.ClientSession")
+	proto.RegisterType((*TLClientSessionInfo)(nil), "mtproto.TL_clientSessionInfo")
+	proto.RegisterType((*HandshakeContext_Data)(nil), "mtproto.HandshakeContext_Data")
+	proto.RegisterType((*HandshakeContext)(nil), "mtproto.HandshakeContext")
+	proto.RegisterType((*TLHandshakeContext)(nil), "mtproto.TL_handshakeContext")
+	proto.RegisterType((*Int32_Data)(nil), "mtproto.Int32_Data")
+	proto.RegisterType((*Int32)(nil), "mtproto.Int32")
+	proto.RegisterType((*TLInt32)(nil), "mtproto.TL_int32")
 	proto.RegisterType((*Int64_Data)(nil), "mtproto.Int64_Data")
 	proto.RegisterType((*Int64)(nil), "mtproto.Int64")
 	proto.RegisterType((*TLLong)(nil), "mtproto.TL_long")
 	proto.RegisterType((*String_Data)(nil), "mtproto.String_Data")
 	proto.RegisterType((*String)(nil), "mtproto.String")
 	proto.RegisterType((*TLString)(nil), "mtproto.TL_string")
-	proto.RegisterType((*ClientSession_Data)(nil), "mtproto.ClientSession_Data")
-	proto.RegisterType((*ClientSession)(nil), "mtproto.ClientSession")
-	proto.RegisterType((*TLClientSessionInfo)(nil), "mtproto.TL_clientSessionInfo")
+	proto.RegisterType((*AuthKeyInfo_Data)(nil), "mtproto.AuthKeyInfo_Data")
+	proto.RegisterType((*AuthKeyInfo)(nil), "mtproto.AuthKeyInfo")
+	proto.RegisterType((*TLAuthKeyInfo)(nil), "mtproto.TL_authKeyInfo")
+	proto.RegisterType((*ServerConnected_Data)(nil), "mtproto.ServerConnected_Data")
+	proto.RegisterType((*ServerConnected)(nil), "mtproto.ServerConnected")
+	proto.RegisterType((*TLPushSessionServerConnected)(nil), "mtproto.TL_push_sessionServerConnected")
 	proto.RegisterType((*TLSessionSetClientSessionInfo)(nil), "mtproto.TL_session_setClientSessionInfo")
 	proto.RegisterType((*TLSessionGetAuthorizations)(nil), "mtproto.TL_session_getAuthorizations")
 	proto.RegisterType((*TLSessionResetAuthorization)(nil), "mtproto.TL_session_resetAuthorization")
@@ -2919,457 +2919,6 @@ var _ grpc.ClientConn
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
-
-// RPCSessionClient is the client API for RPCSession service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type RPCSessionClient interface {
-	// session.setClientSessionInfo session:ClientSession = Bool;
-	SessionSetClientSessionInfo(ctx context.Context, in *TLSessionSetClientSessionInfo, opts ...grpc.CallOption) (*Bool, error)
-	// session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
-	SessionGetAuthorizations(ctx context.Context, in *TLSessionGetAuthorizations, opts ...grpc.CallOption) (*Account_Authorizations, error)
-	// session.resetAuthorization user_id:int hash:long = Int64;
-	SessionResetAuthorization(ctx context.Context, in *TLSessionResetAuthorization, opts ...grpc.CallOption) (*Int64, error)
-	// session.getLayer auth_key_id:long = Int32;
-	SessionGetLayer(ctx context.Context, in *TLSessionGetLayer, opts ...grpc.CallOption) (*Int32, error)
-	// session.getLangCode auth_key_id:long = String;
-	SessionGetLangCode(ctx context.Context, in *TLSessionGetLangCode, opts ...grpc.CallOption) (*String, error)
-	// session.getUserId auth_key_id:long = Int32;
-	SessionGetUserId(ctx context.Context, in *TLSessionGetUserId, opts ...grpc.CallOption) (*Int32, error)
-	// session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
-	SessionGetPushSessionId(ctx context.Context, in *TLSessionGetPushSessionId, opts ...grpc.CallOption) (*Int64, error)
-	// session.getFutureSalts auth_key_id:long num:int = FutureSalts;
-	SessionGetFutureSalts(ctx context.Context, in *TLSessionGetFutureSalts, opts ...grpc.CallOption) (*FutureSalts, error)
-	// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
-	SessionQueryAuthKey(ctx context.Context, in *TLSessionQueryAuthKey, opts ...grpc.CallOption) (*AuthKeyInfo, error)
-	// session.setAuthKey auth_key:AuthKeyInfo = Bool;
-	SessionSetAuthKey(ctx context.Context, in *TLSessionSetAuthKey, opts ...grpc.CallOption) (*Bool, error)
-	// session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
-	SessionBindAuthKeyUser(ctx context.Context, in *TLSessionBindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error)
-	// session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
-	SessionUnbindAuthKeyUser(ctx context.Context, in *TLSessionUnbindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error)
-}
-
-type rPCSessionClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewRPCSessionClient(cc *grpc.ClientConn) RPCSessionClient {
-	return &rPCSessionClient{cc}
-}
-
-func (c *rPCSessionClient) SessionSetClientSessionInfo(ctx context.Context, in *TLSessionSetClientSessionInfo, opts ...grpc.CallOption) (*Bool, error) {
-	out := new(Bool)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_setClientSessionInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetAuthorizations(ctx context.Context, in *TLSessionGetAuthorizations, opts ...grpc.CallOption) (*Account_Authorizations, error) {
-	out := new(Account_Authorizations)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getAuthorizations", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionResetAuthorization(ctx context.Context, in *TLSessionResetAuthorization, opts ...grpc.CallOption) (*Int64, error) {
-	out := new(Int64)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_resetAuthorization", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetLayer(ctx context.Context, in *TLSessionGetLayer, opts ...grpc.CallOption) (*Int32, error) {
-	out := new(Int32)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getLayer", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetLangCode(ctx context.Context, in *TLSessionGetLangCode, opts ...grpc.CallOption) (*String, error) {
-	out := new(String)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getLangCode", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetUserId(ctx context.Context, in *TLSessionGetUserId, opts ...grpc.CallOption) (*Int32, error) {
-	out := new(Int32)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getUserId", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetPushSessionId(ctx context.Context, in *TLSessionGetPushSessionId, opts ...grpc.CallOption) (*Int64, error) {
-	out := new(Int64)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getPushSessionId", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionGetFutureSalts(ctx context.Context, in *TLSessionGetFutureSalts, opts ...grpc.CallOption) (*FutureSalts, error) {
-	out := new(FutureSalts)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getFutureSalts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionQueryAuthKey(ctx context.Context, in *TLSessionQueryAuthKey, opts ...grpc.CallOption) (*AuthKeyInfo, error) {
-	out := new(AuthKeyInfo)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_queryAuthKey", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionSetAuthKey(ctx context.Context, in *TLSessionSetAuthKey, opts ...grpc.CallOption) (*Bool, error) {
-	out := new(Bool)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_setAuthKey", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionBindAuthKeyUser(ctx context.Context, in *TLSessionBindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error) {
-	out := new(Bool)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_bindAuthKeyUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCSessionClient) SessionUnbindAuthKeyUser(ctx context.Context, in *TLSessionUnbindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error) {
-	out := new(Bool)
-	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_unbindAuthKeyUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// RPCSessionServer is the server API for RPCSession service.
-type RPCSessionServer interface {
-	// session.setClientSessionInfo session:ClientSession = Bool;
-	SessionSetClientSessionInfo(context.Context, *TLSessionSetClientSessionInfo) (*Bool, error)
-	// session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
-	SessionGetAuthorizations(context.Context, *TLSessionGetAuthorizations) (*Account_Authorizations, error)
-	// session.resetAuthorization user_id:int hash:long = Int64;
-	SessionResetAuthorization(context.Context, *TLSessionResetAuthorization) (*Int64, error)
-	// session.getLayer auth_key_id:long = Int32;
-	SessionGetLayer(context.Context, *TLSessionGetLayer) (*Int32, error)
-	// session.getLangCode auth_key_id:long = String;
-	SessionGetLangCode(context.Context, *TLSessionGetLangCode) (*String, error)
-	// session.getUserId auth_key_id:long = Int32;
-	SessionGetUserId(context.Context, *TLSessionGetUserId) (*Int32, error)
-	// session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
-	SessionGetPushSessionId(context.Context, *TLSessionGetPushSessionId) (*Int64, error)
-	// session.getFutureSalts auth_key_id:long num:int = FutureSalts;
-	SessionGetFutureSalts(context.Context, *TLSessionGetFutureSalts) (*FutureSalts, error)
-	// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
-	SessionQueryAuthKey(context.Context, *TLSessionQueryAuthKey) (*AuthKeyInfo, error)
-	// session.setAuthKey auth_key:AuthKeyInfo = Bool;
-	SessionSetAuthKey(context.Context, *TLSessionSetAuthKey) (*Bool, error)
-	// session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
-	SessionBindAuthKeyUser(context.Context, *TLSessionBindAuthKeyUser) (*Bool, error)
-	// session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
-	SessionUnbindAuthKeyUser(context.Context, *TLSessionUnbindAuthKeyUser) (*Bool, error)
-}
-
-func RegisterRPCSessionServer(s *grpc.Server, srv RPCSessionServer) {
-	s.RegisterService(&_RPCSession_serviceDesc, srv)
-}
-
-func _RPCSession_SessionSetClientSessionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionSetClientSessionInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionSetClientSessionInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionSetClientSessionInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionSetClientSessionInfo(ctx, req.(*TLSessionSetClientSessionInfo))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetAuthorizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetAuthorizations)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetAuthorizations(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetAuthorizations",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetAuthorizations(ctx, req.(*TLSessionGetAuthorizations))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionResetAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionResetAuthorization)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionResetAuthorization(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionResetAuthorization",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionResetAuthorization(ctx, req.(*TLSessionResetAuthorization))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetLayer)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetLayer(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetLayer",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetLayer(ctx, req.(*TLSessionGetLayer))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetLangCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetLangCode)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetLangCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetLangCode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetLangCode(ctx, req.(*TLSessionGetLangCode))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetUserId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetUserId(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetUserId",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetUserId(ctx, req.(*TLSessionGetUserId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetPushSessionId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetPushSessionId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetPushSessionId(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetPushSessionId",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetPushSessionId(ctx, req.(*TLSessionGetPushSessionId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionGetFutureSalts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionGetFutureSalts)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionGetFutureSalts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionGetFutureSalts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionGetFutureSalts(ctx, req.(*TLSessionGetFutureSalts))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionQueryAuthKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionQueryAuthKey)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionQueryAuthKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionQueryAuthKey",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionQueryAuthKey(ctx, req.(*TLSessionQueryAuthKey))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionSetAuthKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionSetAuthKey)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionSetAuthKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionSetAuthKey",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionSetAuthKey(ctx, req.(*TLSessionSetAuthKey))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionBindAuthKeyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionBindAuthKeyUser)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionBindAuthKeyUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionBindAuthKeyUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionBindAuthKeyUser(ctx, req.(*TLSessionBindAuthKeyUser))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCSession_SessionUnbindAuthKeyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLSessionUnbindAuthKeyUser)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCSessionServer).SessionUnbindAuthKeyUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mtproto.RPCSession/SessionUnbindAuthKeyUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCSessionServer).SessionUnbindAuthKeyUser(ctx, req.(*TLSessionUnbindAuthKeyUser))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _RPCSession_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "mtproto.RPCSession",
-	HandlerType: (*RPCSessionServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "session_setClientSessionInfo",
-			Handler:    _RPCSession_SessionSetClientSessionInfo_Handler,
-		},
-		{
-			MethodName: "session_getAuthorizations",
-			Handler:    _RPCSession_SessionGetAuthorizations_Handler,
-		},
-		{
-			MethodName: "session_resetAuthorization",
-			Handler:    _RPCSession_SessionResetAuthorization_Handler,
-		},
-		{
-			MethodName: "session_getLayer",
-			Handler:    _RPCSession_SessionGetLayer_Handler,
-		},
-		{
-			MethodName: "session_getLangCode",
-			Handler:    _RPCSession_SessionGetLangCode_Handler,
-		},
-		{
-			MethodName: "session_getUserId",
-			Handler:    _RPCSession_SessionGetUserId_Handler,
-		},
-		{
-			MethodName: "session_getPushSessionId",
-			Handler:    _RPCSession_SessionGetPushSessionId_Handler,
-		},
-		{
-			MethodName: "session_getFutureSalts",
-			Handler:    _RPCSession_SessionGetFutureSalts_Handler,
-		},
-		{
-			MethodName: "session_queryAuthKey",
-			Handler:    _RPCSession_SessionQueryAuthKey_Handler,
-		},
-		{
-			MethodName: "session_setAuthKey",
-			Handler:    _RPCSession_SessionSetAuthKey_Handler,
-		},
-		{
-			MethodName: "session_bindAuthKeyUser",
-			Handler:    _RPCSession_SessionBindAuthKeyUser_Handler,
-		},
-		{
-			MethodName: "session_unbindAuthKeyUser",
-			Handler:    _RPCSession_SessionUnbindAuthKeyUser_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "service.tl.proto",
-}
 
 // RPCSyncClient is the client API for RPCSync service.
 //
@@ -3884,147 +3433,598 @@ var _RPCBot_serviceDesc = grpc.ServiceDesc{
 	Metadata: "service.tl.proto",
 }
 
-func init() { proto.RegisterFile("service.tl.proto", fileDescriptor_service_tl_a58e6fd4cab568d2) }
+// RPCSessionClient is the client API for RPCSession service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type RPCSessionClient interface {
+	// session.setClientSessionInfo session:ClientSession = Bool;
+	SessionSetClientSessionInfo(ctx context.Context, in *TLSessionSetClientSessionInfo, opts ...grpc.CallOption) (*Bool, error)
+	// session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
+	SessionGetAuthorizations(ctx context.Context, in *TLSessionGetAuthorizations, opts ...grpc.CallOption) (*Account_Authorizations, error)
+	// session.resetAuthorization user_id:int hash:long = Int64;
+	SessionResetAuthorization(ctx context.Context, in *TLSessionResetAuthorization, opts ...grpc.CallOption) (*Int64, error)
+	// session.getLayer auth_key_id:long = Int32;
+	SessionGetLayer(ctx context.Context, in *TLSessionGetLayer, opts ...grpc.CallOption) (*Int32, error)
+	// session.getLangCode auth_key_id:long = String;
+	SessionGetLangCode(ctx context.Context, in *TLSessionGetLangCode, opts ...grpc.CallOption) (*String, error)
+	// session.getUserId auth_key_id:long = Int32;
+	SessionGetUserId(ctx context.Context, in *TLSessionGetUserId, opts ...grpc.CallOption) (*Int32, error)
+	// session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
+	SessionGetPushSessionId(ctx context.Context, in *TLSessionGetPushSessionId, opts ...grpc.CallOption) (*Int64, error)
+	// session.getFutureSalts auth_key_id:long num:int = FutureSalts;
+	SessionGetFutureSalts(ctx context.Context, in *TLSessionGetFutureSalts, opts ...grpc.CallOption) (*FutureSalts, error)
+	// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
+	SessionQueryAuthKey(ctx context.Context, in *TLSessionQueryAuthKey, opts ...grpc.CallOption) (*AuthKeyInfo, error)
+	// session.setAuthKey auth_key:AuthKeyInfo = Bool;
+	SessionSetAuthKey(ctx context.Context, in *TLSessionSetAuthKey, opts ...grpc.CallOption) (*Bool, error)
+	// session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
+	SessionBindAuthKeyUser(ctx context.Context, in *TLSessionBindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error)
+	// session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
+	SessionUnbindAuthKeyUser(ctx context.Context, in *TLSessionUnbindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error)
+}
 
-var fileDescriptor_service_tl_a58e6fd4cab568d2 = []byte{
-	// 2212 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x59, 0xdd, 0x6e, 0xdb, 0xc8,
-	0x15, 0x36, 0xa5, 0xc8, 0x92, 0x8e, 0x1c, 0x47, 0x61, 0x9c, 0xc4, 0x96, 0x13, 0x27, 0x65, 0x36,
-	0xdb, 0x6c, 0xb6, 0x70, 0xb6, 0x8a, 0xd7, 0xdd, 0x5e, 0xda, 0x4a, 0x82, 0x08, 0x96, 0xb7, 0x2e,
-	0xad, 0x6c, 0xd1, 0xde, 0x10, 0x34, 0x39, 0x96, 0x08, 0x53, 0x43, 0x9a, 0x33, 0x74, 0xac, 0xc5,
-	0xa2, 0x58, 0xb4, 0x40, 0x17, 0xe8, 0x0b, 0xf4, 0x35, 0xfa, 0x02, 0x05, 0x7a, 0xd1, 0x47, 0xe9,
-	0x2b, 0xf4, 0xb2, 0x45, 0x31, 0x3f, 0x14, 0xff, 0xa5, 0xc4, 0xde, 0xbd, 0x31, 0x38, 0xe7, 0x9c,
-	0xf9, 0xe6, 0xfc, 0xcd, 0xcc, 0x37, 0x32, 0xb4, 0x09, 0x0a, 0x2e, 0x1c, 0x0b, 0x6d, 0x53, 0x77,
-	0xdb, 0x0f, 0x3c, 0xea, 0xa9, 0xf5, 0x09, 0xe5, 0x1f, 0x9d, 0xbb, 0xc4, 0x1a, 0xa3, 0x89, 0xc9,
-	0x34, 0x56, 0x60, 0xbd, 0xec, 0x0a, 0x7d, 0xa7, 0x93, 0x10, 0x7b, 0x01, 0x32, 0xe8, 0xd4, 0x47,
-	0x44, 0xea, 0x36, 0x62, 0x1d, 0x0d, 0x4c, 0x4c, 0x7c, 0x2f, 0xa0, 0x52, 0xb5, 0x16, 0xab, 0xc8,
-	0x14, 0x5b, 0x42, 0xaa, 0xbd, 0x80, 0xdb, 0xfa, 0xf1, 0xde, 0x51, 0x78, 0xe2, 0x3a, 0xd6, 0x01,
-	0x9a, 0x1a, 0xaf, 0x4c, 0x6a, 0xaa, 0x2b, 0xa0, 0xe0, 0x75, 0xe5, 0xb1, 0xf2, 0xac, 0xa9, 0x2b,
-	0x98, 0x8d, 0xd0, 0x7a, 0x45, 0x8c, 0x90, 0xf6, 0x2d, 0xac, 0x24, 0x27, 0xa8, 0x5f, 0x41, 0xcb,
-	0xf2, 0x30, 0xa1, 0x41, 0x68, 0x51, 0x2f, 0xe0, 0xb3, 0x56, 0xbb, 0xf7, 0xb6, 0x65, 0x0c, 0xdb,
-	0xc3, 0x41, 0x2f, 0xd6, 0xea, 0x49, 0x53, 0xf5, 0x0b, 0xa8, 0xd9, 0x26, 0x35, 0xbb, 0x1c, 0xbb,
-	0xd5, 0xed, 0xcc, 0xe6, 0xe4, 0x1c, 0xd2, 0x85, 0xa1, 0xf6, 0x1a, 0x6e, 0x0f, 0x07, 0x46, 0x40,
-	0x4c, 0xc3, 0xe7, 0x7a, 0xe3, 0x0c, 0x4d, 0xaf, 0x00, 0xf3, 0x1d, 0xdc, 0x3f, 0x46, 0x84, 0x38,
-	0x1e, 0xee, 0xb9, 0x0e, 0xc2, 0xf4, 0xf5, 0x05, 0xc2, 0x54, 0x44, 0xbe, 0x05, 0x2d, 0x33, 0xa4,
-	0x63, 0x06, 0x6c, 0x38, 0x36, 0x8f, 0xa6, 0xaa, 0x37, 0x99, 0xe8, 0x00, 0x4d, 0xfb, 0xb6, 0xfa,
-	0x09, 0xac, 0x5a, 0x7c, 0x8e, 0x61, 0x79, 0x18, 0x33, 0x93, 0x0a, 0x37, 0x59, 0x11, 0xd2, 0x9e,
-	0x87, 0x71, 0xdf, 0x56, 0x37, 0xa1, 0xc9, 0xd5, 0xac, 0x32, 0xeb, 0xd5, 0xc7, 0xca, 0xb3, 0x9a,
-	0xde, 0x60, 0x82, 0xe1, 0xd4, 0x47, 0xda, 0x5f, 0x14, 0x50, 0xf3, 0xcb, 0x5f, 0x23, 0x8f, 0xbb,
-	0xe9, 0x04, 0x3c, 0x9e, 0xcd, 0x29, 0x09, 0x32, 0x4a, 0xc3, 0x6f, 0xe1, 0xfe, 0x70, 0x60, 0x90,
-	0xa4, 0x51, 0x2f, 0x40, 0x26, 0x45, 0xf6, 0x95, 0x21, 0x8f, 0xe0, 0x5e, 0x0e, 0xd2, 0xf5, 0xc8,
-	0x35, 0x10, 0x3b, 0x00, 0x7d, 0x4c, 0x5f, 0x76, 0x67, 0x8d, 0x79, 0xc1, 0x53, 0x53, 0xd3, 0x95,
-	0x0b, 0xcd, 0x85, 0x1a, 0xd7, 0x5d, 0x23, 0x77, 0x9f, 0xa5, 0xdd, 0xba, 0x33, 0x9b, 0x13, 0x2f,
-	0x1a, 0x79, 0xf2, 0x25, 0x34, 0x86, 0x03, 0xc3, 0xe1, 0x0b, 0x7e, 0xc4, 0xb4, 0x3f, 0x2b, 0xd0,
-	0xde, 0x93, 0xfd, 0x83, 0x4f, 0xbd, 0x0f, 0x6b, 0xb3, 0x0d, 0x68, 0x44, 0x7a, 0xbe, 0xc4, 0x8a,
-	0x5e, 0x97, 0x4a, 0x75, 0x07, 0x5a, 0xa7, 0x21, 0x0d, 0x03, 0x64, 0x10, 0xd3, 0xa5, 0xbc, 0xbb,
-	0x92, 0x0e, 0xbc, 0xe1, 0xba, 0x63, 0xd3, 0xa5, 0x3a, 0x9c, 0xce, 0xbe, 0xb5, 0x4b, 0x68, 0x25,
-	0x9c, 0xb8, 0x46, 0xc2, 0x5e, 0xa4, 0x23, 0xdf, 0x98, 0xcd, 0xc9, 0xc6, 0x18, 0xc5, 0xbf, 0x07,
-	0xab, 0xc3, 0x81, 0x61, 0x26, 0x16, 0xff, 0x68, 0x08, 0x0b, 0xd6, 0x8e, 0x51, 0x70, 0x81, 0x02,
-	0xb6, 0xbd, 0x90, 0x45, 0x91, 0x2d, 0xb2, 0xf8, 0x1c, 0x6e, 0xcb, 0x56, 0x33, 0x08, 0xd7, 0x47,
-	0xb9, 0xac, 0xe9, 0xb7, 0xa4, 0x42, 0xcc, 0xeb, 0xdb, 0xea, 0x23, 0x68, 0x49, 0x1b, 0x6c, 0x4e,
-	0xa2, 0xe3, 0x0c, 0x84, 0xe8, 0x6b, 0x73, 0x82, 0xb4, 0xef, 0x15, 0xb8, 0x95, 0x59, 0xe5, 0x1a,
-	0x69, 0x7a, 0x99, 0x8e, 0xf1, 0x61, 0xa2, 0xdd, 0xf3, 0x81, 0x44, 0x71, 0xbe, 0x83, 0xad, 0xe1,
-	0xc0, 0xf0, 0x43, 0x32, 0x36, 0x52, 0xee, 0xc7, 0x0e, 0x5d, 0x09, 0xf6, 0x5f, 0x0a, 0xdc, 0x7d,
-	0x6b, 0x62, 0x9b, 0x8c, 0xcd, 0x33, 0xd4, 0xf3, 0x30, 0x45, 0x97, 0xf2, 0xb4, 0x5b, 0x83, 0x1a,
-	0xf6, 0xb0, 0x85, 0x78, 0x64, 0x2b, 0xba, 0x18, 0xa8, 0x3f, 0x83, 0x95, 0x28, 0x55, 0x5c, 0x29,
-	0x1a, 0x50, 0xa6, 0xef, 0x6b, 0x6e, 0xb2, 0x09, 0x4d, 0x8c, 0xde, 0x4b, 0x7d, 0x95, 0xeb, 0x1b,
-	0x18, 0xbd, 0x17, 0xca, 0x15, 0x50, 0xcc, 0xf5, 0x1b, 0x5c, 0xa8, 0xf0, 0x2d, 0xeb, 0xaf, 0xd7,
-	0xc4, 0xc8, 0xcf, 0x36, 0xfe, 0xf2, 0xbc, 0xc6, 0xaf, 0xa7, 0x1a, 0x5f, 0xfb, 0x93, 0x02, 0xed,
-	0x6c, 0x18, 0xd7, 0xa8, 0xd0, 0x4e, 0x3a, 0x95, 0x5b, 0xb3, 0x39, 0x85, 0xa9, 0x8a, 0x72, 0x79,
-	0x00, 0x77, 0x86, 0x03, 0x63, 0x9c, 0x75, 0xe3, 0x6a, 0x60, 0xff, 0x51, 0xe0, 0x8e, 0x6e, 0xbe,
-	0x3f, 0x44, 0x84, 0x98, 0x23, 0xc4, 0x34, 0xb3, 0xb2, 0x10, 0x6a, 0x52, 0x24, 0x7b, 0x59, 0x0c,
-	0x58, 0xce, 0x03, 0x44, 0x0c, 0xa1, 0xa9, 0x88, 0x4b, 0x25, 0x40, 0xe4, 0x98, 0x2b, 0xf3, 0xf7,
-	0x52, 0xb5, 0xe0, 0x5e, 0xfa, 0x1c, 0xaa, 0x16, 0xbd, 0xe4, 0xb5, 0x49, 0xee, 0xbb, 0xac, 0x93,
-	0x3a, 0xb3, 0xca, 0x96, 0xaa, 0x96, 0x2d, 0xd5, 0x26, 0x34, 0xcf, 0x43, 0xc7, 0x3a, 0x33, 0x4c,
-	0xeb, 0x8c, 0x17, 0xb2, 0xa6, 0x37, 0xb8, 0x60, 0xcf, 0x3a, 0x4b, 0xdf, 0x80, 0xf5, 0xcc, 0x0d,
-	0xf8, 0x47, 0x58, 0x4d, 0x87, 0x7d, 0x8d, 0x32, 0x76, 0xd3, 0x99, 0x7f, 0x10, 0xdf, 0xfe, 0xf9,
-	0xc4, 0x46, 0x79, 0x7f, 0x03, 0xed, 0x64, 0x11, 0xb9, 0x07, 0x57, 0xc1, 0x39, 0x80, 0xbb, 0xf1,
-	0x6d, 0x97, 0x0c, 0xe7, 0x2a, 0x60, 0xe2, 0xa2, 0xdb, 0xdd, 0xc9, 0x5c, 0x74, 0xd5, 0xf8, 0xa2,
-	0xdb, 0xdd, 0xf9, 0x89, 0x2e, 0x3a, 0xb9, 0x68, 0xe4, 0xc9, 0x0e, 0xd4, 0x87, 0x03, 0xc3, 0xf5,
-	0xf0, 0xe8, 0x63, 0x66, 0x6d, 0x42, 0xeb, 0x98, 0x06, 0x0e, 0x1e, 0x65, 0x02, 0x68, 0xb2, 0x00,
-	0x30, 0x2c, 0x0b, 0xe5, 0x35, 0x22, 0x78, 0x9e, 0xf6, 0x65, 0x2d, 0x3e, 0xfb, 0xe2, 0x65, 0x23,
-	0x67, 0x7e, 0x05, 0x4d, 0x56, 0x19, 0xb1, 0xe4, 0xc7, 0x4c, 0xfc, 0x67, 0x05, 0x54, 0x41, 0x45,
-	0x24, 0x2f, 0xf9, 0xb0, 0xfb, 0x7a, 0x15, 0x2a, 0x8e, 0x2f, 0x2f, 0x95, 0x8a, 0xe3, 0xb3, 0x1d,
-	0xec, 0x9a, 0x53, 0x14, 0x48, 0xf2, 0x27, 0x06, 0xea, 0x5d, 0x58, 0x36, 0x7d, 0x87, 0x01, 0xdc,
-	0x10, 0x62, 0xd3, 0x77, 0xfa, 0x36, 0x3b, 0x6f, 0x6d, 0xc4, 0x9e, 0x00, 0xc6, 0xc4, 0xb3, 0x91,
-	0xcb, 0x77, 0x5a, 0x53, 0x6f, 0x09, 0xd9, 0x21, 0x13, 0xa9, 0x4f, 0x61, 0x95, 0x4c, 0x09, 0x45,
-	0x13, 0xe3, 0x02, 0x05, 0xcc, 0x2d, 0xbe, 0xe1, 0x9a, 0xfa, 0x4d, 0x21, 0xfd, 0x46, 0x08, 0xd9,
-	0x25, 0x67, 0xfa, 0xfe, 0xcc, 0xa6, 0x2e, 0x2e, 0x39, 0xd3, 0xf7, 0x23, 0x83, 0x67, 0xd0, 0x96,
-	0x38, 0xae, 0x89, 0x47, 0x86, 0xe5, 0xd9, 0x68, 0xbd, 0xc1, 0xad, 0x24, 0xfe, 0xc0, 0xc4, 0xa3,
-	0x9e, 0x67, 0xf3, 0xd3, 0x86, 0x9b, 0xf8, 0x6c, 0x77, 0x37, 0xb9, 0x49, 0x83, 0x09, 0x8e, 0x4c,
-	0xb1, 0xbb, 0xe3, 0xf9, 0x10, 0x2b, 0xd9, 0x4c, 0xed, 0x3b, 0xb8, 0x99, 0xca, 0xe0, 0x35, 0x4a,
-	0xfe, 0xcb, 0x74, 0xe5, 0x36, 0x67, 0x73, 0xf2, 0x25, 0x8a, 0x0a, 0xd8, 0x87, 0xb5, 0xe1, 0xc0,
-	0xb0, 0x92, 0x7a, 0x4e, 0x3a, 0xae, 0x00, 0x75, 0x0c, 0x8f, 0xe2, 0xed, 0x6d, 0x10, 0x44, 0x7b,
-	0x39, 0xd4, 0x2f, 0xa0, 0x2e, 0xf5, 0x3c, 0xac, 0x56, 0x22, 0xac, 0x94, 0xb1, 0x1e, 0x99, 0x69,
-	0x08, 0x1e, 0x24, 0x40, 0x47, 0x88, 0x32, 0xd2, 0xe3, 0x05, 0xce, 0xb7, 0x26, 0x75, 0x3c, 0x4c,
-	0xd4, 0xfb, 0x50, 0x0f, 0x49, 0x92, 0xc9, 0x2c, 0xb3, 0x61, 0xdf, 0x56, 0x7f, 0x01, 0x2a, 0xba,
-	0xb4, 0xdc, 0xd0, 0x46, 0x46, 0xd4, 0x8a, 0xfd, 0xe8, 0xf5, 0xd1, 0x96, 0x9a, 0x88, 0x40, 0xd9,
-	0xda, 0x00, 0x1e, 0x26, 0x96, 0x09, 0x10, 0xc9, 0x2c, 0x54, 0xbe, 0x8e, 0x0a, 0x37, 0xc6, 0x26,
-	0x19, 0x4b, 0x64, 0xfe, 0xad, 0x7d, 0xc9, 0x6f, 0xbd, 0x84, 0xd3, 0x03, 0xde, 0xcf, 0x0b, 0x76,
-	0x85, 0xf6, 0x55, 0xf2, 0x35, 0x20, 0xa6, 0xc9, 0xee, 0x5a, 0x34, 0x73, 0x97, 0x57, 0x31, 0x31,
-	0xf3, 0x9d, 0x70, 0x6e, 0xd1, 0xbc, 0x10, 0x36, 0xd3, 0xf3, 0x8e, 0x42, 0x32, 0x8e, 0x0a, 0x66,
-	0x97, 0x07, 0x9d, 0xc1, 0xad, 0x64, 0xf7, 0xf7, 0x43, 0x00, 0xea, 0x9d, 0xa1, 0xd4, 0x8b, 0xae,
-	0xc9, 0x25, 0xfc, 0x42, 0x3b, 0x84, 0x8d, 0xf4, 0xb2, 0x31, 0x0b, 0x27, 0x0b, 0xcf, 0x8e, 0x36,
-	0x54, 0x71, 0x38, 0x91, 0x37, 0x3a, 0xfb, 0xd4, 0x7e, 0x9d, 0x7c, 0x98, 0x19, 0xe7, 0x21, 0x0a,
-	0xa6, 0xb2, 0xb2, 0x0b, 0x13, 0xf0, 0x36, 0x79, 0x25, 0x19, 0xb2, 0xea, 0x6c, 0xe2, 0x8b, 0x04,
-	0xb1, 0x52, 0x32, 0xe7, 0x60, 0x82, 0x77, 0xc7, 0x74, 0xeb, 0x1d, 0x74, 0x12, 0x48, 0x27, 0x0e,
-	0xb6, 0xa5, 0x19, 0x2b, 0xc5, 0xc2, 0xa0, 0x12, 0x99, 0xae, 0x24, 0x33, 0xad, 0xfd, 0x2e, 0xd5,
-	0xff, 0x21, 0xfe, 0xd1, 0x80, 0xff, 0xa6, 0x88, 0x26, 0x9d, 0x62, 0x8b, 0xff, 0x79, 0xe7, 0xdb,
-	0x26, 0x45, 0xa4, 0x74, 0x42, 0x76, 0xa5, 0x6a, 0x01, 0xbf, 0x89, 0x5f, 0x15, 0xe2, 0xc0, 0x6e,
-	0x90, 0xe8, 0x39, 0xf1, 0x1c, 0xea, 0xa1, 0x58, 0x80, 0x1f, 0xd7, 0xad, 0x6e, 0x7b, 0x96, 0x4d,
-	0xb9, 0xb0, 0x1e, 0x19, 0x68, 0x7f, 0x88, 0x1d, 0x63, 0xdc, 0xbe, 0xc0, 0xb1, 0x74, 0x33, 0x26,
-	0xb0, 0x2b, 0x8b, 0xb0, 0xff, 0xa1, 0x88, 0x32, 0x45, 0x51, 0xf7, 0xc6, 0x26, 0xc6, 0xc8, 0x8d,
-	0xd6, 0x78, 0x08, 0x60, 0x09, 0x49, 0x1c, 0x7f, 0x53, 0x4a, 0xd2, 0xc9, 0xac, 0xce, 0xcb, 0xcd,
-	0x8d, 0xb9, 0xb9, 0xa9, 0x95, 0xe7, 0x66, 0x79, 0x91, 0xff, 0xdf, 0x27, 0xfc, 0x67, 0xc9, 0x99,
-	0xeb, 0xbf, 0x32, 0xc7, 0xff, 0x4a, 0x59, 0x0a, 0xab, 0x8b, 0x5c, 0xf8, 0xab, 0x22, 0xf6, 0x4c,
-	0xe4, 0x82, 0xee, 0x5b, 0x3a, 0x22, 0xa1, 0x4b, 0xd3, 0x51, 0x2a, 0x99, 0x28, 0x17, 0x1d, 0x19,
-	0x0f, 0x00, 0x02, 0x74, 0x6e, 0x4c, 0xc8, 0x28, 0xee, 0xae, 0x46, 0x80, 0xce, 0x0f, 0xc9, 0xa8,
-	0x6f, 0xab, 0xf7, 0x60, 0x39, 0xe0, 0x8b, 0xc8, 0x87, 0x92, 0x1c, 0x69, 0x07, 0x9c, 0x9a, 0x72,
-	0x5f, 0x46, 0x88, 0x0a, 0x6e, 0x7f, 0xe5, 0x2d, 0xf1, 0xf7, 0x44, 0x64, 0x23, 0x44, 0x5f, 0x39,
-	0xa7, 0xa7, 0x28, 0x40, 0xec, 0x89, 0xb6, 0xc8, 0xf9, 0xd2, 0xc6, 0x68, 0x43, 0xd5, 0xa7, 0x44,
-	0x6e, 0x07, 0xf6, 0xa9, 0x7e, 0x0a, 0xb7, 0x7c, 0x4a, 0x0c, 0xea, 0x51, 0xd3, 0x35, 0x5c, 0x67,
-	0xe2, 0x50, 0xd9, 0x10, 0x37, 0x7d, 0x4a, 0x86, 0x4c, 0x3a, 0x60, 0x42, 0x76, 0xaf, 0xb0, 0x7c,
-	0xcb, 0x97, 0x02, 0xff, 0x66, 0x68, 0xe7, 0x94, 0xc8, 0xf7, 0x01, 0xfb, 0xd4, 0xfe, 0xa7, 0x88,
-	0xf3, 0x41, 0xba, 0x2c, 0xdb, 0xe1, 0xc7, 0xf0, 0x7c, 0x0d, 0x6a, 0xa7, 0x5e, 0x60, 0x21, 0xee,
-	0x7b, 0x43, 0x17, 0x03, 0xf5, 0x05, 0xd4, 0x65, 0x3b, 0xc9, 0x7d, 0x7c, 0x37, 0x41, 0x71, 0xfd,
-	0x30, 0x72, 0x40, 0x8f, 0xac, 0xd4, 0x5d, 0x58, 0x3e, 0x75, 0x5c, 0x8a, 0x02, 0xd9, 0xdb, 0xf1,
-	0x53, 0x4f, 0x9a, 0x4a, 0x7e, 0x4f, 0xde, 0x70, 0x2b, 0x5d, 0x5a, 0x47, 0x89, 0xab, 0xc7, 0x89,
-	0x63, 0x1c, 0x91, 0xa7, 0xab, 0x21, 0x39, 0x22, 0x1b, 0x68, 0x6f, 0xe2, 0xdf, 0x00, 0x2c, 0xf1,
-	0x9a, 0x1f, 0x7a, 0xc7, 0xc9, 0x1f, 0x03, 0xd8, 0x53, 0x4f, 0x6c, 0xf7, 0x4c, 0x6b, 0xae, 0x30,
-	0x69, 0xf4, 0x7b, 0x87, 0x36, 0xe6, 0x77, 0x08, 0xc7, 0x49, 0x1c, 0x3a, 0x1f, 0x44, 0x66, 0xa5,
-	0xab, 0x95, 0xd8, 0xd5, 0x4d, 0x68, 0xb2, 0x1a, 0x5b, 0x5e, 0x88, 0x69, 0xf4, 0x7b, 0xa6, 0x4f,
-	0x49, 0x8f, 0x8d, 0xb5, 0x53, 0x7e, 0xf9, 0xcd, 0x56, 0x9a, 0x6d, 0x9f, 0x0f, 0x5a, 0xeb, 0x33,
-	0xb8, 0x2d, 0xdf, 0xad, 0x89, 0xcd, 0x22, 0x8a, 0x2a, 0x1f, 0xb4, 0xba, 0xdc, 0x32, 0xda, 0x0f,
-	0xa2, 0x9b, 0x4f, 0x3c, 0x6a, 0xa0, 0x4b, 0x64, 0x85, 0x14, 0xf5, 0xbc, 0xc9, 0xc4, 0xc4, 0x36,
-	0xe3, 0xd5, 0x4c, 0x3a, 0xcb, 0x44, 0xed, 0xc4, 0xa3, 0xe2, 0x90, 0xf2, 0x11, 0x0a, 0xc4, 0x9d,
-	0x2d, 0x1f, 0xcc, 0x4c, 0xc0, 0xae, 0x6c, 0xd6, 0x27, 0x5c, 0x19, 0xf7, 0x09, 0x1b, 0x0a, 0x36,
-	0x6e, 0x09, 0x5c, 0xc3, 0x75, 0xb0, 0x68, 0x97, 0x26, 0xa3, 0xa5, 0x5c, 0x36, 0x70, 0x30, 0xea,
-	0xfe, 0xbb, 0x0e, 0xa0, 0x1f, 0xf5, 0x22, 0x7e, 0xfb, 0x7b, 0x78, 0x30, 0x97, 0x24, 0x3e, 0x4b,
-	0x50, 0xdd, 0xb9, 0x74, 0xb2, 0x73, 0x73, 0x66, 0xb9, 0xef, 0x79, 0xae, 0xb6, 0xa4, 0x22, 0xd8,
-	0x28, 0xa7, 0x8a, 0x4f, 0x8b, 0x70, 0x73, 0x66, 0x9d, 0x47, 0x33, 0x33, 0xd3, 0xe2, 0x15, 0x34,
-	0xd2, 0x06, 0xda, 0x92, 0xfa, 0x0d, 0x74, 0xe6, 0x50, 0xc5, 0x4f, 0x8b, 0xd6, 0xc9, 0xdb, 0x75,
-	0x56, 0xd3, 0xaf, 0x43, 0x6d, 0x49, 0xdd, 0x87, 0x76, 0x8e, 0x34, 0x3e, 0x28, 0xf1, 0x9a, 0x6b,
-	0xd3, 0x18, 0x2f, 0xbb, 0xda, 0x92, 0xda, 0x87, 0x3b, 0x45, 0x0c, 0xf2, 0x51, 0x29, 0x8c, 0x30,
-	0xe8, 0xdc, 0xca, 0x3c, 0xf3, 0xb4, 0x25, 0xf5, 0x55, 0xfc, 0x7b, 0x61, 0x4c, 0x29, 0x1f, 0x96,
-	0x00, 0x09, 0x75, 0x81, 0x43, 0x3a, 0xac, 0x97, 0x12, 0xcc, 0x4f, 0x4a, 0xc0, 0x52, 0x56, 0x05,
-	0x89, 0x1a, 0xc2, 0xbd, 0x12, 0xf6, 0xa8, 0x95, 0x20, 0x26, 0x6c, 0x3a, 0x6b, 0x05, 0xbf, 0xfe,
-	0xb2, 0xb2, 0x1e, 0xc1, 0x5a, 0x21, 0x89, 0x7c, 0x5c, 0x84, 0x99, 0xb4, 0xe8, 0x14, 0x72, 0x43,
-	0x6d, 0x49, 0x7d, 0x0d, 0x6a, 0x01, 0xb7, 0xdc, 0x2a, 0x69, 0xf0, 0x08, 0x2d, 0xd7, 0xd6, 0xbf,
-	0x81, 0xfb, 0x65, 0xc4, 0xf2, 0x49, 0x11, 0x56, 0xc6, 0x28, 0x0f, 0x78, 0x1c, 0xef, 0x93, 0x3c,
-	0xa5, 0x2c, 0xdc, 0x27, 0x39, 0xb3, 0x1c, 0x68, 0xf7, 0xbf, 0x37, 0xa0, 0xce, 0xb6, 0xf9, 0x14,
-	0x5b, 0xea, 0x1e, 0x7b, 0x38, 0x67, 0x98, 0x65, 0xba, 0x93, 0x33, 0xda, 0xbc, 0x8f, 0x11, 0x44,
-	0x92, 0x03, 0xe6, 0x21, 0x12, 0xda, 0xe2, 0xbc, 0x95, 0x30, 0xbd, 0x27, 0x85, 0xce, 0xa4, 0x8d,
-	0xca, 0x01, 0x0b, 0xa8, 0xd7, 0x93, 0x42, 0xd7, 0x16, 0x01, 0xb2, 0x06, 0xc9, 0x13, 0xa9, 0xad,
-	0x42, 0xac, 0x99, 0x3e, 0x0f, 0xf3, 0x0a, 0x6e, 0xa6, 0x39, 0xd0, 0x46, 0x0e, 0x21, 0x52, 0x75,
-	0xe2, 0x27, 0xb7, 0x64, 0x74, 0x06, 0x97, 0xf3, 0xae, 0x50, 0x8b, 0xb8, 0x4f, 0x11, 0x54, 0xac,
-	0xef, 0x6c, 0xe6, 0xf0, 0x62, 0xa5, 0xb6, 0xa4, 0x8e, 0x61, 0xa3, 0x9c, 0x9d, 0x3c, 0x2d, 0xc2,
-	0xce, 0x99, 0x75, 0xb4, 0xdc, 0x12, 0x39, 0x1b, 0x6d, 0xa9, 0xfb, 0x43, 0x85, 0xf7, 0x1f, 0x3b,
-	0x3b, 0xd4, 0x13, 0xd8, 0x9c, 0xc7, 0x09, 0x7e, 0x9e, 0x5c, 0x77, 0x8e, 0x61, 0x67, 0xbd, 0xec,
-	0x3f, 0x06, 0xfc, 0xa4, 0x5d, 0x2b, 0xe4, 0x0b, 0x8f, 0x73, 0xe0, 0x19, 0x8b, 0x7c, 0xfd, 0x0e,
-	0xe1, 0x5e, 0x09, 0x21, 0xd0, 0x0a, 0xc1, 0x52, 0x36, 0xf9, 0x9d, 0xa8, 0xc3, 0xb2, 0x7e, 0xd4,
-	0xdb, 0xf7, 0xa8, 0xfa, 0x16, 0xd4, 0x02, 0x02, 0x90, 0x2a, 0x69, 0x5e, 0xdf, 0x89, 0xd9, 0xbf,
-	0x64, 0x67, 0xda, 0xd2, 0xfe, 0xe7, 0xb0, 0x65, 0x8d, 0x4d, 0xba, 0x8d, 0xd1, 0x49, 0xe8, 0x9a,
-	0xdb, 0xec, 0x1b, 0xe1, 0x91, 0x83, 0x51, 0x64, 0xbb, 0x5f, 0x3f, 0x1c, 0x1e, 0xb1, 0x8f, 0xb7,
-	0x95, 0x93, 0x65, 0x2e, 0x79, 0xf9, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf6, 0x03, 0xd2, 0xfd,
-	0xad, 0x1f, 0x00, 0x00,
+type rPCSessionClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewRPCSessionClient(cc *grpc.ClientConn) RPCSessionClient {
+	return &rPCSessionClient{cc}
+}
+
+func (c *rPCSessionClient) SessionSetClientSessionInfo(ctx context.Context, in *TLSessionSetClientSessionInfo, opts ...grpc.CallOption) (*Bool, error) {
+	out := new(Bool)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_setClientSessionInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetAuthorizations(ctx context.Context, in *TLSessionGetAuthorizations, opts ...grpc.CallOption) (*Account_Authorizations, error) {
+	out := new(Account_Authorizations)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getAuthorizations", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionResetAuthorization(ctx context.Context, in *TLSessionResetAuthorization, opts ...grpc.CallOption) (*Int64, error) {
+	out := new(Int64)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_resetAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetLayer(ctx context.Context, in *TLSessionGetLayer, opts ...grpc.CallOption) (*Int32, error) {
+	out := new(Int32)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getLayer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetLangCode(ctx context.Context, in *TLSessionGetLangCode, opts ...grpc.CallOption) (*String, error) {
+	out := new(String)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getLangCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetUserId(ctx context.Context, in *TLSessionGetUserId, opts ...grpc.CallOption) (*Int32, error) {
+	out := new(Int32)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetPushSessionId(ctx context.Context, in *TLSessionGetPushSessionId, opts ...grpc.CallOption) (*Int64, error) {
+	out := new(Int64)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getPushSessionId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionGetFutureSalts(ctx context.Context, in *TLSessionGetFutureSalts, opts ...grpc.CallOption) (*FutureSalts, error) {
+	out := new(FutureSalts)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_getFutureSalts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionQueryAuthKey(ctx context.Context, in *TLSessionQueryAuthKey, opts ...grpc.CallOption) (*AuthKeyInfo, error) {
+	out := new(AuthKeyInfo)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_queryAuthKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionSetAuthKey(ctx context.Context, in *TLSessionSetAuthKey, opts ...grpc.CallOption) (*Bool, error) {
+	out := new(Bool)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_setAuthKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionBindAuthKeyUser(ctx context.Context, in *TLSessionBindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error) {
+	out := new(Bool)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_bindAuthKeyUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCSessionClient) SessionUnbindAuthKeyUser(ctx context.Context, in *TLSessionUnbindAuthKeyUser, opts ...grpc.CallOption) (*Bool, error) {
+	out := new(Bool)
+	err := c.cc.Invoke(ctx, "/mtproto.RPCSession/session_unbindAuthKeyUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RPCSessionServer is the server API for RPCSession service.
+type RPCSessionServer interface {
+	// session.setClientSessionInfo session:ClientSession = Bool;
+	SessionSetClientSessionInfo(context.Context, *TLSessionSetClientSessionInfo) (*Bool, error)
+	// session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
+	SessionGetAuthorizations(context.Context, *TLSessionGetAuthorizations) (*Account_Authorizations, error)
+	// session.resetAuthorization user_id:int hash:long = Int64;
+	SessionResetAuthorization(context.Context, *TLSessionResetAuthorization) (*Int64, error)
+	// session.getLayer auth_key_id:long = Int32;
+	SessionGetLayer(context.Context, *TLSessionGetLayer) (*Int32, error)
+	// session.getLangCode auth_key_id:long = String;
+	SessionGetLangCode(context.Context, *TLSessionGetLangCode) (*String, error)
+	// session.getUserId auth_key_id:long = Int32;
+	SessionGetUserId(context.Context, *TLSessionGetUserId) (*Int32, error)
+	// session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
+	SessionGetPushSessionId(context.Context, *TLSessionGetPushSessionId) (*Int64, error)
+	// session.getFutureSalts auth_key_id:long num:int = FutureSalts;
+	SessionGetFutureSalts(context.Context, *TLSessionGetFutureSalts) (*FutureSalts, error)
+	// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
+	SessionQueryAuthKey(context.Context, *TLSessionQueryAuthKey) (*AuthKeyInfo, error)
+	// session.setAuthKey auth_key:AuthKeyInfo = Bool;
+	SessionSetAuthKey(context.Context, *TLSessionSetAuthKey) (*Bool, error)
+	// session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
+	SessionBindAuthKeyUser(context.Context, *TLSessionBindAuthKeyUser) (*Bool, error)
+	// session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
+	SessionUnbindAuthKeyUser(context.Context, *TLSessionUnbindAuthKeyUser) (*Bool, error)
+}
+
+func RegisterRPCSessionServer(s *grpc.Server, srv RPCSessionServer) {
+	s.RegisterService(&_RPCSession_serviceDesc, srv)
+}
+
+func _RPCSession_SessionSetClientSessionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionSetClientSessionInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionSetClientSessionInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionSetClientSessionInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionSetClientSessionInfo(ctx, req.(*TLSessionSetClientSessionInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetAuthorizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetAuthorizations)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetAuthorizations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetAuthorizations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetAuthorizations(ctx, req.(*TLSessionGetAuthorizations))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionResetAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionResetAuthorization)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionResetAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionResetAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionResetAuthorization(ctx, req.(*TLSessionResetAuthorization))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetLayer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetLayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetLayer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetLayer(ctx, req.(*TLSessionGetLayer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetLangCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetLangCode)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetLangCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetLangCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetLangCode(ctx, req.(*TLSessionGetLangCode))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetUserId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetUserId(ctx, req.(*TLSessionGetUserId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetPushSessionId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetPushSessionId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetPushSessionId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetPushSessionId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetPushSessionId(ctx, req.(*TLSessionGetPushSessionId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionGetFutureSalts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionGetFutureSalts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionGetFutureSalts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionGetFutureSalts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionGetFutureSalts(ctx, req.(*TLSessionGetFutureSalts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionQueryAuthKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionQueryAuthKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionQueryAuthKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionQueryAuthKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionQueryAuthKey(ctx, req.(*TLSessionQueryAuthKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionSetAuthKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionSetAuthKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionSetAuthKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionSetAuthKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionSetAuthKey(ctx, req.(*TLSessionSetAuthKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionBindAuthKeyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionBindAuthKeyUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionBindAuthKeyUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionBindAuthKeyUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionBindAuthKeyUser(ctx, req.(*TLSessionBindAuthKeyUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCSession_SessionUnbindAuthKeyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLSessionUnbindAuthKeyUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCSessionServer).SessionUnbindAuthKeyUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mtproto.RPCSession/SessionUnbindAuthKeyUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCSessionServer).SessionUnbindAuthKeyUser(ctx, req.(*TLSessionUnbindAuthKeyUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _RPCSession_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "mtproto.RPCSession",
+	HandlerType: (*RPCSessionServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "session_setClientSessionInfo",
+			Handler:    _RPCSession_SessionSetClientSessionInfo_Handler,
+		},
+		{
+			MethodName: "session_getAuthorizations",
+			Handler:    _RPCSession_SessionGetAuthorizations_Handler,
+		},
+		{
+			MethodName: "session_resetAuthorization",
+			Handler:    _RPCSession_SessionResetAuthorization_Handler,
+		},
+		{
+			MethodName: "session_getLayer",
+			Handler:    _RPCSession_SessionGetLayer_Handler,
+		},
+		{
+			MethodName: "session_getLangCode",
+			Handler:    _RPCSession_SessionGetLangCode_Handler,
+		},
+		{
+			MethodName: "session_getUserId",
+			Handler:    _RPCSession_SessionGetUserId_Handler,
+		},
+		{
+			MethodName: "session_getPushSessionId",
+			Handler:    _RPCSession_SessionGetPushSessionId_Handler,
+		},
+		{
+			MethodName: "session_getFutureSalts",
+			Handler:    _RPCSession_SessionGetFutureSalts_Handler,
+		},
+		{
+			MethodName: "session_queryAuthKey",
+			Handler:    _RPCSession_SessionQueryAuthKey_Handler,
+		},
+		{
+			MethodName: "session_setAuthKey",
+			Handler:    _RPCSession_SessionSetAuthKey_Handler,
+		},
+		{
+			MethodName: "session_bindAuthKeyUser",
+			Handler:    _RPCSession_SessionBindAuthKeyUser_Handler,
+		},
+		{
+			MethodName: "session_unbindAuthKeyUser",
+			Handler:    _RPCSession_SessionUnbindAuthKeyUser_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "service.tl.proto",
+}
+
+func init() { proto.RegisterFile("service.tl.proto", fileDescriptor_service_tl_2d383e5ceaf09e3e) }
+
+var fileDescriptor_service_tl_2d383e5ceaf09e3e = []byte{
+	// 2217 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x58, 0xdd, 0x6e, 0xdb, 0xc8,
+	0x15, 0x36, 0xa5, 0xe8, 0xef, 0x48, 0x71, 0x14, 0x46, 0x4e, 0x6c, 0xd9, 0x71, 0x52, 0x26, 0xd9,
+	0x66, 0xb3, 0x85, 0xb3, 0x95, 0xbd, 0xee, 0xf6, 0xd2, 0x56, 0x12, 0x44, 0x88, 0xdc, 0xba, 0x94,
+	0xb2, 0x45, 0x7b, 0x43, 0xd0, 0xe4, 0x58, 0x22, 0x4c, 0x0d, 0x69, 0x72, 0xe8, 0x58, 0x8b, 0x45,
+	0xb1, 0x68, 0x81, 0x2e, 0xd0, 0x17, 0xe8, 0x6b, 0xf4, 0x05, 0x0a, 0xf4, 0xa2, 0x8f, 0xd2, 0x57,
+	0xe8, 0x65, 0x8b, 0x62, 0x7e, 0x28, 0xfe, 0x5b, 0x89, 0xbd, 0xbd, 0x11, 0xc4, 0x73, 0xce, 0x7c,
+	0x73, 0xfe, 0xe6, 0xcc, 0x39, 0x03, 0x6d, 0x1f, 0x79, 0x17, 0x96, 0x81, 0x76, 0x88, 0xbd, 0xe3,
+	0x7a, 0x0e, 0x71, 0xe4, 0xda, 0x8c, 0xb0, 0x3f, 0xdd, 0x35, 0xdf, 0x98, 0xa2, 0x99, 0x4e, 0x39,
+	0x86, 0x67, 0xec, 0xf6, 0x38, 0xbf, 0xdb, 0x8d, 0x91, 0x1d, 0x0f, 0x69, 0x64, 0xee, 0x22, 0x5f,
+	0xf0, 0x36, 0x22, 0x1e, 0xf1, 0x74, 0xec, 0xbb, 0x8e, 0x47, 0x04, 0xab, 0x13, 0xb1, 0xfc, 0x39,
+	0x36, 0x38, 0x55, 0x79, 0x09, 0x77, 0xd5, 0xd1, 0xc1, 0x71, 0x70, 0x62, 0x5b, 0xc6, 0x3b, 0x34,
+	0xd7, 0x5e, 0xe9, 0x44, 0x97, 0x5b, 0x20, 0xe1, 0x75, 0xe9, 0xb1, 0xf4, 0xbc, 0xa1, 0x4a, 0x98,
+	0x7e, 0xa1, 0xf5, 0x12, 0xff, 0x42, 0xca, 0xb7, 0xd0, 0x8a, 0x2f, 0x90, 0xbf, 0x86, 0xa6, 0xe1,
+	0x60, 0x9f, 0x78, 0x81, 0x41, 0x1c, 0x8f, 0xad, 0x5a, 0xed, 0xdd, 0xdf, 0x11, 0x36, 0xec, 0x8c,
+	0x87, 0xfd, 0x88, 0xab, 0xc6, 0x45, 0xe5, 0x2f, 0xa1, 0x62, 0xea, 0x44, 0xef, 0x31, 0xec, 0x66,
+	0xaf, 0xbb, 0x58, 0x93, 0x51, 0x48, 0xe5, 0x82, 0xca, 0x6b, 0xb8, 0x3b, 0x1e, 0x6a, 0x9e, 0xaf,
+	0x6b, 0x2e, 0xe3, 0x6b, 0x67, 0x68, 0x7e, 0x0d, 0x98, 0xef, 0xe0, 0xc1, 0x08, 0xf9, 0xbe, 0xe5,
+	0xe0, 0xbe, 0x6d, 0x21, 0x4c, 0x5e, 0x5f, 0x20, 0x4c, 0xb8, 0xe5, 0xdb, 0xd0, 0xd4, 0x03, 0x32,
+	0xa5, 0xc0, 0x9a, 0x65, 0x32, 0x6b, 0xca, 0x6a, 0x83, 0x92, 0xde, 0xa1, 0xf9, 0xc0, 0x94, 0x9f,
+	0xc2, 0xaa, 0xc1, 0xd6, 0x68, 0x86, 0x83, 0x31, 0x15, 0x29, 0x31, 0x91, 0x16, 0xa7, 0xf6, 0x1d,
+	0x8c, 0x07, 0xa6, 0xbc, 0x09, 0x0d, 0xc6, 0xa6, 0x91, 0x59, 0x2f, 0x3f, 0x96, 0x9e, 0x57, 0xd4,
+	0x3a, 0x25, 0x8c, 0xe7, 0x2e, 0x52, 0xfe, 0x2c, 0x81, 0x9c, 0xdd, 0xfe, 0x06, 0x7e, 0xdc, 0x4f,
+	0x3a, 0xe0, 0xf1, 0x62, 0x4d, 0x81, 0x91, 0xa1, 0x1b, 0x7e, 0x03, 0x0f, 0xc6, 0x43, 0xcd, 0x8f,
+	0x0b, 0xf5, 0x3d, 0xa4, 0x13, 0x64, 0x5e, 0x1b, 0xf2, 0x18, 0xee, 0x67, 0x20, 0x6d, 0xc7, 0xbf,
+	0x01, 0xe2, 0xbf, 0x25, 0xb8, 0xa7, 0xea, 0x1f, 0x8e, 0x90, 0xef, 0xeb, 0x13, 0x44, 0x39, 0x3c,
+	0x50, 0x1d, 0xa8, 0xf8, 0x44, 0x27, 0x88, 0x39, 0xaa, 0xa2, 0xf2, 0x0f, 0xea, 0x78, 0x0f, 0xf9,
+	0x1a, 0xe7, 0x94, 0xb8, 0xe3, 0x3d, 0xe4, 0x8f, 0x18, 0x33, 0x1b, 0xbb, 0x72, 0x4e, 0xec, 0xbe,
+	0x80, 0xb2, 0x41, 0x2e, 0xd7, 0x6f, 0x31, 0x35, 0x37, 0x16, 0x6a, 0xbe, 0xd5, 0xb1, 0xe9, 0x4f,
+	0xf5, 0x33, 0xd4, 0x77, 0x30, 0x41, 0x97, 0x44, 0xa5, 0x52, 0xe9, 0x74, 0xa9, 0xa4, 0xd3, 0x65,
+	0x13, 0x1a, 0xe7, 0x81, 0x65, 0x9c, 0x69, 0xba, 0x71, 0xb6, 0x5e, 0xe5, 0xfa, 0x30, 0xc2, 0x81,
+	0x71, 0x96, 0xcc, 0x92, 0x5a, 0x2a, 0x4b, 0xfe, 0x00, 0xab, 0x49, 0xb3, 0x6f, 0x90, 0x20, 0xbd,
+	0xa4, 0xef, 0xb7, 0xa2, 0x13, 0x92, 0x75, 0x6c, 0xe8, 0xf7, 0x37, 0xd0, 0x1e, 0x0f, 0xb5, 0x69,
+	0x68, 0x35, 0xd3, 0xe0, 0x3a, 0x38, 0xef, 0x60, 0x2d, 0xca, 0x88, 0xb8, 0x39, 0xd7, 0x01, 0xfb,
+	0x47, 0x09, 0x64, 0x9e, 0x28, 0x22, 0x6b, 0x3e, 0xee, 0xd0, 0xae, 0x42, 0xc9, 0x72, 0x45, 0x05,
+	0x2b, 0x59, 0x2e, 0xcd, 0x1d, 0x5b, 0x9f, 0x23, 0x4f, 0x1c, 0x4d, 0xfe, 0x21, 0xaf, 0x41, 0x55,
+	0x77, 0x2d, 0x0a, 0x70, 0x8b, 0x93, 0x75, 0xd7, 0x1a, 0x98, 0xf2, 0x4f, 0xa0, 0x65, 0x22, 0x5a,
+	0xa0, 0xb5, 0x99, 0x63, 0x22, 0x9b, 0xc5, 0xb8, 0xa1, 0x36, 0x39, 0xed, 0x88, 0x92, 0xe4, 0x67,
+	0xb0, 0xea, 0xcf, 0x7d, 0x82, 0x66, 0xda, 0x05, 0xf2, 0xa8, 0x5a, 0x2c, 0xd4, 0x0d, 0xf5, 0x36,
+	0xa7, 0x7e, 0xc3, 0x89, 0xf2, 0x23, 0x68, 0xea, 0xae, 0xbb, 0x90, 0xa9, 0x31, 0x19, 0xd0, 0x5d,
+	0x37, 0x14, 0x78, 0x0e, 0x6d, 0x81, 0x63, 0xeb, 0x78, 0xa2, 0x19, 0x8e, 0x89, 0xd6, 0xeb, 0x4c,
+	0x4a, 0xe0, 0x0f, 0x75, 0x3c, 0xe9, 0x3b, 0x26, 0xcb, 0x73, 0x26, 0xe2, 0xd2, 0xbc, 0x6a, 0x30,
+	0x91, 0x3a, 0x25, 0x1c, 0xeb, 0x3c, 0xaf, 0xa2, 0xf5, 0x10, 0x31, 0xe9, 0x4a, 0xe5, 0x3b, 0xb8,
+	0x9d, 0xf0, 0xe0, 0x0d, 0xd2, 0xea, 0xe7, 0xc9, 0x08, 0x6e, 0x2e, 0xd6, 0x64, 0x43, 0x14, 0x06,
+	0x70, 0x00, 0x9d, 0xf1, 0x50, 0x33, 0xe2, 0xfc, 0x01, 0x3e, 0x75, 0xae, 0x03, 0xf5, 0x4f, 0x09,
+	0xd6, 0xd2, 0x87, 0x72, 0x51, 0x1a, 0xb0, 0x83, 0x0d, 0x5e, 0x1a, 0x5a, 0x2a, 0xff, 0xa0, 0x71,
+	0xa4, 0x37, 0x2d, 0xf2, 0x34, 0xce, 0x2c, 0x31, 0x66, 0x93, 0xd3, 0x7e, 0xc5, 0x44, 0x36, 0xa1,
+	0x81, 0xd1, 0x07, 0xc1, 0x2f, 0x33, 0x7e, 0x1d, 0xa3, 0x0f, 0x9c, 0xd9, 0x02, 0x49, 0x67, 0x99,
+	0xd1, 0x52, 0x25, 0x76, 0x43, 0xba, 0x2c, 0x15, 0x5a, 0xaa, 0xe4, 0xa6, 0x13, 0xb0, 0x9a, 0x4e,
+	0xc0, 0x0d, 0xa8, 0x87, 0x7c, 0x16, 0xf6, 0x96, 0x5a, 0x13, 0x4c, 0xe5, 0x8f, 0x12, 0xb4, 0xd3,
+	0x66, 0xdc, 0x20, 0x26, 0x7b, 0x49, 0x47, 0x6e, 0x17, 0xd6, 0xaf, 0xd4, 0x21, 0xbd, 0x17, 0x3f,
+	0xec, 0xa1, 0x1a, 0xd7, 0x03, 0xeb, 0x02, 0x0c, 0x30, 0xd9, 0xed, 0x2d, 0x5a, 0x89, 0x0b, 0x51,
+	0xa3, 0xa5, 0x0b, 0xc5, 0x86, 0x0a, 0xe3, 0xdd, 0xc0, 0xc2, 0xcf, 0x93, 0x4a, 0xdd, 0x5b, 0xac,
+	0x89, 0x36, 0x0d, 0x35, 0xf9, 0x0a, 0xea, 0xe3, 0xa1, 0x66, 0xb1, 0x0d, 0x3f, 0x61, 0x19, 0x37,
+	0x60, 0x7f, 0x2f, 0x65, 0x40, 0x39, 0x32, 0x60, 0x7f, 0xef, 0xff, 0x64, 0x80, 0xd8, 0x34, 0xd4,
+	0x64, 0x0f, 0x6a, 0xe3, 0xa1, 0x66, 0x3b, 0x78, 0xf2, 0x29, 0xab, 0x36, 0xa1, 0x39, 0x22, 0x9e,
+	0x85, 0x27, 0x29, 0x03, 0x1a, 0xd4, 0x00, 0x0c, 0x55, 0xce, 0xbc, 0x81, 0x05, 0x2f, 0x92, 0xba,
+	0x74, 0xa2, 0xbb, 0x3c, 0xda, 0x36, 0x54, 0xe6, 0x17, 0xd0, 0xa0, 0xf5, 0x9f, 0x6f, 0xf9, 0x29,
+	0x0b, 0xff, 0x24, 0x41, 0xfb, 0x40, 0x9c, 0x20, 0x7c, 0xea, 0x7c, 0x5c, 0xa5, 0x8f, 0x1f, 0xb4,
+	0x52, 0xe2, 0xa0, 0xc9, 0x7b, 0xd0, 0x3c, 0x0d, 0x48, 0xe0, 0x21, 0xcd, 0xd7, 0x6d, 0xc2, 0x8e,
+	0x77, 0xdc, 0x8d, 0x6f, 0x18, 0x6f, 0xa4, 0xdb, 0x44, 0x85, 0xd3, 0xc5, 0x7f, 0xe5, 0x12, 0x9a,
+	0x31, 0x25, 0x6e, 0xe0, 0xb3, 0x97, 0x49, 0xd3, 0xa3, 0xc6, 0x22, 0x6d, 0x63, 0x68, 0xff, 0x01,
+	0xac, 0x8e, 0x87, 0x9a, 0x1e, 0xdb, 0xfc, 0x93, 0x21, 0x0c, 0xe8, 0x8c, 0x58, 0x79, 0xa3, 0xad,
+	0x0d, 0x32, 0x08, 0x32, 0xb9, 0x17, 0x5f, 0xc0, 0x5d, 0x71, 0x21, 0x6b, 0xa2, 0x24, 0x0a, 0x5f,
+	0x56, 0xd4, 0x3b, 0x82, 0xc1, 0xd7, 0x0d, 0x4c, 0x7a, 0x69, 0x85, 0x65, 0x53, 0x9f, 0x85, 0x63,
+	0x00, 0x88, 0xaa, 0xa9, 0xcf, 0x90, 0xf2, 0xbd, 0x04, 0x77, 0x52, 0xbb, 0xdc, 0xc0, 0x4d, 0xbb,
+	0x49, 0x1b, 0x1f, 0xc6, 0xda, 0xc4, 0xac, 0x21, 0xa1, 0x9d, 0xef, 0x61, 0x7b, 0x3c, 0xd4, 0xdc,
+	0xc0, 0x9f, 0x6a, 0x09, 0xf5, 0x23, 0x85, 0xae, 0x05, 0x3b, 0x82, 0x47, 0x51, 0xeb, 0xa2, 0xf9,
+	0x88, 0xf4, 0x33, 0xf7, 0xd6, 0x97, 0x50, 0x13, 0x7c, 0x66, 0x64, 0x33, 0x66, 0x64, 0x42, 0x58,
+	0x0d, 0xc5, 0x14, 0x04, 0x5b, 0x31, 0xd0, 0x09, 0x22, 0x34, 0x78, 0x8e, 0x67, 0x7d, 0xab, 0x13,
+	0xcb, 0xc1, 0xbe, 0xfc, 0x00, 0x6a, 0x81, 0x1f, 0x8f, 0x48, 0x95, 0x7e, 0x0e, 0x4c, 0xf9, 0x67,
+	0x20, 0xa3, 0x4b, 0xc3, 0x0e, 0x4c, 0xa4, 0x85, 0x29, 0x3e, 0x08, 0xa7, 0x8f, 0xb6, 0xe0, 0x84,
+	0x89, 0x60, 0x2a, 0x43, 0x78, 0x18, 0xdb, 0xc6, 0x43, 0x7e, 0x6a, 0xa3, 0xe2, 0x7d, 0x64, 0xb8,
+	0x35, 0xd5, 0xfd, 0xa9, 0x40, 0x66, 0xff, 0x95, 0xaf, 0xd8, 0xfd, 0x10, 0x53, 0x7a, 0xc8, 0x3a,
+	0xa6, 0x25, 0xa7, 0x51, 0xf9, 0x3a, 0x3e, 0x0d, 0xf0, 0x65, 0xa2, 0x7f, 0x59, 0xb6, 0x72, 0x9f,
+	0xf5, 0x09, 0xb1, 0x95, 0xef, 0xb9, 0x72, 0xcb, 0xd6, 0x05, 0xb0, 0x99, 0x5c, 0x77, 0x1c, 0xf8,
+	0xd3, 0x30, 0x60, 0x66, 0xb1, 0xd1, 0x29, 0xdc, 0x52, 0xba, 0xae, 0x3c, 0x04, 0x20, 0xce, 0x19,
+	0x4a, 0x4c, 0x74, 0x0d, 0x46, 0x61, 0xcd, 0xfa, 0x11, 0x6c, 0x24, 0xb7, 0x8d, 0xaa, 0x89, 0xbf,
+	0xb4, 0x66, 0xb5, 0xa1, 0x8c, 0x83, 0x99, 0x98, 0x56, 0xe8, 0x5f, 0xe5, 0x97, 0xf1, 0xc1, 0x4c,
+	0x3b, 0x0f, 0x90, 0x37, 0x17, 0x91, 0x5d, 0xea, 0x80, 0xb7, 0xf1, 0x76, 0x5b, 0x13, 0x51, 0xa7,
+	0x0b, 0x5f, 0xc6, 0x2a, 0xa3, 0x94, 0xaa, 0xbe, 0xb1, 0xfa, 0x11, 0x35, 0x26, 0xef, 0xa1, 0x1b,
+	0x43, 0x3a, 0xb1, 0xb0, 0x29, 0xc4, 0x68, 0x28, 0x96, 0x1a, 0x15, 0xf3, 0x74, 0x29, 0xee, 0x69,
+	0xe5, 0xb7, 0x89, 0xfc, 0x0f, 0xf0, 0x8f, 0x06, 0xfc, 0x57, 0x89, 0x27, 0xe9, 0x1c, 0x1b, 0xec,
+	0xe7, 0xbd, 0x6b, 0xea, 0x04, 0xf9, 0x85, 0x0b, 0xd2, 0x3b, 0x95, 0x73, 0x66, 0xb7, 0xa8, 0x3a,
+	0xf2, 0x91, 0xa0, 0xee, 0x87, 0x65, 0xf1, 0x05, 0xd4, 0x02, 0xbe, 0x01, 0xeb, 0x02, 0x9b, 0xbd,
+	0xf6, 0xc2, 0x9b, 0x62, 0x63, 0x35, 0x14, 0x50, 0x7e, 0x1f, 0x29, 0x46, 0x6b, 0x54, 0x8e, 0x62,
+	0xc9, 0x64, 0x8c, 0x61, 0x97, 0x96, 0x61, 0xff, 0x5d, 0xe2, 0x61, 0x0a, 0xad, 0xee, 0x4f, 0x75,
+	0x8c, 0x91, 0x1d, 0xee, 0xf1, 0x10, 0xc0, 0xe0, 0x94, 0xc8, 0xfe, 0x86, 0xa0, 0x24, 0x9d, 0x59,
+	0xbe, 0xca, 0x37, 0xb7, 0xae, 0xf4, 0x4d, 0xa5, 0xd8, 0x37, 0xd5, 0x65, 0xfa, 0x7f, 0x1f, 0xd3,
+	0x9f, 0x3a, 0xe7, 0x4a, 0xfd, 0xa5, 0x2b, 0xf4, 0x2f, 0x15, 0xb9, 0xb0, 0xbc, 0x4c, 0x85, 0xbf,
+	0x48, 0xfc, 0xcc, 0x84, 0x2a, 0xa8, 0xae, 0xa1, 0x22, 0x3f, 0xb0, 0x49, 0xd2, 0x4a, 0x29, 0x65,
+	0xe5, 0xb2, 0x92, 0xb1, 0x05, 0xe0, 0xa1, 0x73, 0x6d, 0xe6, 0x4f, 0xa2, 0xec, 0xaa, 0x7b, 0xe8,
+	0xfc, 0xc8, 0x9f, 0x0c, 0x4c, 0xf9, 0x3e, 0x54, 0x3d, 0xb6, 0x89, 0x18, 0x29, 0xc4, 0x97, 0xf2,
+	0x8e, 0x8d, 0xdd, 0x4c, 0x97, 0x09, 0x22, 0xfc, 0xdd, 0xe2, 0xda, 0x47, 0xe2, 0x6f, 0x31, 0xcb,
+	0x26, 0x88, 0xbc, 0xb2, 0x4e, 0x4f, 0x91, 0x87, 0xe8, 0x30, 0xb3, 0x4c, 0xf9, 0xc2, 0xc4, 0x68,
+	0x43, 0xd9, 0x25, 0xbe, 0x38, 0x0e, 0xf4, 0xaf, 0xfc, 0x19, 0xdc, 0x71, 0x89, 0xaf, 0x11, 0x87,
+	0xe8, 0xb6, 0x66, 0x5b, 0x33, 0x8b, 0x88, 0x84, 0xb8, 0xed, 0x12, 0x7f, 0x4c, 0xa9, 0x43, 0x4a,
+	0xa4, 0xf7, 0x0a, 0xf5, 0xb7, 0x78, 0x05, 0x61, 0xff, 0x29, 0xda, 0x39, 0xf1, 0xc5, 0xdb, 0x07,
+	0xfd, 0xab, 0xfc, 0x57, 0xe2, 0xf5, 0x41, 0xa8, 0x2c, 0xd2, 0xe1, 0xc7, 0xd0, 0xbc, 0x03, 0x95,
+	0x53, 0xc7, 0x33, 0x10, 0xd3, 0xbd, 0xae, 0xf2, 0x0f, 0xf9, 0x25, 0xd4, 0x44, 0x3a, 0x89, 0x73,
+	0xbc, 0x16, 0x6b, 0xac, 0xdd, 0x20, 0x54, 0x40, 0x0d, 0xa5, 0xe4, 0x7d, 0xa8, 0x9e, 0x5a, 0x36,
+	0x41, 0x9e, 0xc8, 0xed, 0x68, 0x28, 0x12, 0xa2, 0xe2, 0xed, 0xc2, 0x7f, 0xc3, 0xa4, 0x54, 0x21,
+	0x1d, 0x3a, 0xae, 0x16, 0x39, 0xae, 0x03, 0x15, 0xee, 0xae, 0xba, 0x78, 0x85, 0xa0, 0x1f, 0xca,
+	0x9b, 0xa8, 0x97, 0x31, 0x78, 0x57, 0x32, 0x76, 0x46, 0xf1, 0xa6, 0x46, 0x7e, 0x0a, 0xab, 0xfc,
+	0xb8, 0xa7, 0x52, 0xb3, 0x45, 0xa9, 0x61, 0xdf, 0xa6, 0x4c, 0xd9, 0x1d, 0xc2, 0x70, 0x62, 0x45,
+	0xe7, 0xa3, 0x9a, 0x68, 0xa1, 0x6a, 0x29, 0x52, 0x75, 0x13, 0x1a, 0x34, 0xc6, 0x86, 0x13, 0x60,
+	0x12, 0xbe, 0x67, 0xba, 0xc4, 0xef, 0xd3, 0x6f, 0xe5, 0x94, 0x5d, 0x7e, 0x8b, 0x9d, 0x16, 0xc7,
+	0xe7, 0xa3, 0xf6, 0xfa, 0x1c, 0xee, 0x8a, 0x37, 0xb9, 0xd8, 0x61, 0xe1, 0x41, 0x15, 0x8f, 0x75,
+	0xaa, 0x38, 0x32, 0xca, 0x0f, 0x3c, 0x9b, 0x4f, 0x1c, 0xa2, 0xa1, 0x4b, 0x64, 0x04, 0x04, 0xf5,
+	0x9d, 0xd9, 0x4c, 0xc7, 0xa6, 0xbc, 0x06, 0x55, 0x4a, 0x5d, 0x78, 0xa2, 0x72, 0xe2, 0x10, 0x5e,
+	0xa4, 0x5c, 0x84, 0x3c, 0x7e, 0x67, 0x8b, 0xc7, 0x40, 0x4a, 0xa0, 0x57, 0x36, 0xcd, 0x13, 0xc6,
+	0x8c, 0xf2, 0x84, 0x7e, 0xf2, 0xf7, 0x1e, 0x83, 0xe3, 0x6a, 0xb6, 0x85, 0x79, 0xba, 0x34, 0x68,
+	0x93, 0xca, 0x68, 0x43, 0x0b, 0xa3, 0xde, 0x7f, 0x6e, 0x41, 0x4d, 0x3d, 0xee, 0x8f, 0xe6, 0xd8,
+	0x90, 0x0f, 0xa0, 0x9d, 0xb9, 0x72, 0xb6, 0x62, 0x9d, 0x6e, 0xe6, 0x42, 0xea, 0xde, 0x5e, 0x70,
+	0x0f, 0x1d, 0xc7, 0x56, 0x56, 0x16, 0x10, 0xf1, 0xcb, 0x21, 0x0b, 0x11, 0xe3, 0x66, 0x21, 0x7e,
+	0x0d, 0x0f, 0x8a, 0xae, 0x80, 0x27, 0xb9, 0xca, 0x24, 0x85, 0x8a, 0x01, 0x73, 0x6a, 0xf2, 0x93,
+	0x5c, 0xd5, 0x96, 0x01, 0xbe, 0x06, 0x39, 0xa7, 0xc2, 0x6e, 0xe7, 0x62, 0x2d, 0xf8, 0x59, 0x98,
+	0x57, 0x70, 0x3b, 0x59, 0x1c, 0x37, 0x32, 0x08, 0x21, 0xab, 0x1b, 0xf5, 0xe2, 0xa2, 0xd4, 0x6b,
+	0x8c, 0xae, 0xac, 0xc8, 0x23, 0xa1, 0x4c, 0xaa, 0x28, 0xe6, 0x41, 0x45, 0xfc, 0xee, 0x66, 0x06,
+	0x2f, 0x62, 0x2a, 0x2b, 0xf2, 0x14, 0x36, 0x8a, 0xcb, 0xd6, 0xb3, 0x3c, 0xec, 0x8c, 0x58, 0x57,
+	0xc9, 0x6c, 0x91, 0x91, 0x51, 0x56, 0x7a, 0x3f, 0x94, 0x58, 0xfe, 0xd1, 0xde, 0x56, 0x3e, 0x81,
+	0xcd, 0xab, 0x8a, 0xc5, 0x4f, 0xe3, 0xfb, 0x5e, 0x21, 0xd8, 0x5d, 0x2f, 0x1a, 0x89, 0x94, 0x15,
+	0x79, 0x00, 0x9d, 0xdc, 0x42, 0xf2, 0x38, 0x03, 0x9e, 0x92, 0xc8, 0xc6, 0xef, 0x08, 0xee, 0x17,
+	0x54, 0x0a, 0x25, 0x17, 0x2c, 0x21, 0x93, 0x81, 0xeb, 0xa9, 0x50, 0x55, 0x8f, 0xfb, 0x87, 0x0e,
+	0x91, 0xdf, 0x82, 0x9c, 0x53, 0x19, 0x12, 0x21, 0xcd, 0xf2, 0xbb, 0x51, 0x5b, 0x20, 0xca, 0xb6,
+	0xb2, 0xd2, 0xfb, 0x57, 0x0d, 0x80, 0x9e, 0x6e, 0xf1, 0x3e, 0xfa, 0x3b, 0xd8, 0xba, 0x72, 0x04,
+	0x7c, 0x9e, 0x88, 0xec, 0x15, 0x92, 0x59, 0x67, 0x20, 0xd8, 0x28, 0x1e, 0x04, 0x9f, 0xe5, 0xe1,
+	0x66, 0xc4, 0xba, 0x8f, 0x16, 0x62, 0xba, 0xc1, 0xea, 0xb3, 0x96, 0x14, 0x50, 0x56, 0xe4, 0x6f,
+	0xa0, 0x7b, 0xc5, 0x20, 0xf8, 0x59, 0xde, 0x3e, 0x59, 0xb9, 0xee, 0x6a, 0xf2, 0xc5, 0x49, 0x59,
+	0x91, 0x0f, 0xa1, 0x9d, 0x19, 0x09, 0xb7, 0x0a, 0xb4, 0x66, 0xdc, 0x24, 0xc6, 0x6e, 0x8f, 0xa5,
+	0xd6, 0xbd, 0xbc, 0xf9, 0xf0, 0x51, 0x21, 0x0c, 0x17, 0xe8, 0xde, 0x49, 0x3d, 0x1d, 0xb1, 0xd2,
+	0x70, 0x37, 0x3b, 0x30, 0x3e, 0x2c, 0x00, 0xe2, 0xec, 0x1c, 0x85, 0x54, 0x58, 0x2f, 0x1c, 0x1f,
+	0x9f, 0x16, 0x80, 0x25, 0xa4, 0x72, 0x1c, 0x35, 0x86, 0xfb, 0x05, 0xb3, 0xa1, 0x52, 0x80, 0x18,
+	0x93, 0xe9, 0x76, 0x72, 0xde, 0xa8, 0x68, 0x58, 0x8f, 0xa1, 0x93, 0x3b, 0x22, 0x3e, 0xce, 0xc3,
+	0x8c, 0x4b, 0x74, 0x73, 0x27, 0x3f, 0x51, 0xa3, 0xb3, 0x93, 0xe3, 0x76, 0x41, 0x82, 0x87, 0x68,
+	0xb9, 0x77, 0x47, 0xc1, 0xd8, 0xf8, 0x24, 0x0f, 0x2b, 0x25, 0x94, 0x05, 0x1c, 0x45, 0xe7, 0x24,
+	0x3b, 0x30, 0xe6, 0x9e, 0x93, 0x8c, 0x58, 0x06, 0xf4, 0xf0, 0x0b, 0xd8, 0x36, 0xa6, 0x3a, 0xd9,
+	0xc1, 0xe8, 0x24, 0xb0, 0xf5, 0x1d, 0xfa, 0x1f, 0xe1, 0x89, 0x85, 0x51, 0x28, 0x78, 0x58, 0x3b,
+	0x1a, 0x1f, 0xd3, 0x3f, 0x6f, 0x4b, 0x27, 0x55, 0x46, 0xd9, 0xfd, 0x5f, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x90, 0xa8, 0xe8, 0xa8, 0xad, 0x1f, 0x00, 0x00,
 }

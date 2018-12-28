@@ -80,62 +80,61 @@ message TL_sessionClientClosed {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
+// RawMessageData <--
+//  + TL_handshakeData
+//  + TL_sessionMessageData
 //
-message Int32_Data {
-    int32 v = 1;
+message RawMessageData_Data {
+    int32 state = 1;
+    int32 res_state = 2;
+    int64 client_conn_id = 3;
+    HandshakeContext ctx = 4;
+    int64 auth_key_id = 5;
+    int32 quick_ack = 6;
+    int32 conn_type = 7;
 }
 
-message Int32 {
+message RawMessageData {
     TLConstructor constructor = 1;
-    Int32_Data data2 = 2;
+    RawMessageData_Data data2 = 2;
 }
 
-// int32 v:int = Int32;
-message TL_int32 {
-    Int32_Data data2 = 2;
+// handshakeData state:int res_state:int client_conn_id:long ctx:HandshakeContext = RawMessageData;
+message TL_handshakeData {
+    RawMessageData_Data data2 = 2;
+}
+
+// sessionMessageData auth_key_id:long quick_ack:int client_conn_id:long conn_type:int = RawMessageData;
+message TL_sessionMessageData {
+    RawMessageData_Data data2 = 2;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// AuthKeyInfo <--
-//  + TL_authKeyInfo
+// ClientSession <--
+//  + TL_clientSessionInfo
 //
-message AuthKeyInfo_Data {
+message ClientSession_Data {
     int64 auth_key_id = 1;
-    bytes auth_key = 2;
-    FutureSalt future_salt = 3;
+    string ip = 2;
+    int32 layer = 3;
+    int32 api_id = 4;
+    string device_model = 5;
+    string system_version = 6;
+    string app_version = 7;
+    string system_lang_code = 8;
+    string lang_pack = 9;
+    string lang_code = 10;
 }
 
-message AuthKeyInfo {
+message ClientSession {
     TLConstructor constructor = 1;
-    AuthKeyInfo_Data data2 = 2;
+    ClientSession_Data data2 = 2;
 }
 
-// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
-message TL_authKeyInfo {
-    AuthKeyInfo_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// ServerConnected <--
-//  + TL_push_sessionServerConnected
-//
-message ServerConnected_Data {
-    int32 session_server_id = 1;
-    string server_name = 2;
-}
-
-message ServerConnected {
-    TLConstructor constructor = 1;
-    ServerConnected_Data data2 = 2;
-}
-
-// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
-message TL_push_sessionServerConnected {
-    ServerConnected_Data data2 = 2;
+// clientSessionInfo auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string = ClientSession;
+message TL_clientSessionInfo {
+    ClientSession_Data data2 = 2;
 }
 
 
@@ -165,33 +164,21 @@ message TL_handshakeContext {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// RawMessageData <--
-//  + TL_handshakeData
-//  + TL_sessionMessageData
+// Int32 <--
+//  + TL_int32
 //
-message RawMessageData_Data {
-    int32 state = 1;
-    int32 res_state = 2;
-    int64 client_conn_id = 3;
-    HandshakeContext ctx = 4;
-    int64 auth_key_id = 5;
-    int32 quick_ack = 6;
-    int32 conn_type = 7;
+message Int32_Data {
+    int32 v = 1;
 }
 
-message RawMessageData {
+message Int32 {
     TLConstructor constructor = 1;
-    RawMessageData_Data data2 = 2;
+    Int32_Data data2 = 2;
 }
 
-// handshakeData state:int res_state:int client_conn_id:long ctx:HandshakeContext = RawMessageData;
-message TL_handshakeData {
-    RawMessageData_Data data2 = 2;
-}
-
-// sessionMessageData auth_key_id:long quick_ack:int client_conn_id:long conn_type:int = RawMessageData;
-message TL_sessionMessageData {
-    RawMessageData_Data data2 = 2;
+// int32 v:int = Int32;
+message TL_int32 {
+    Int32_Data data2 = 2;
 }
 
 
@@ -234,30 +221,43 @@ message TL_string {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// ClientSession <--
-//  + TL_clientSessionInfo
+// AuthKeyInfo <--
+//  + TL_authKeyInfo
 //
-message ClientSession_Data {
+message AuthKeyInfo_Data {
     int64 auth_key_id = 1;
-    string ip = 2;
-    int32 layer = 3;
-    int32 api_id = 4;
-    string device_model = 5;
-    string system_version = 6;
-    string app_version = 7;
-    string system_lang_code = 8;
-    string lang_pack = 9;
-    string lang_code = 10;
+    bytes auth_key = 2;
+    FutureSalt future_salt = 3;
 }
 
-message ClientSession {
+message AuthKeyInfo {
     TLConstructor constructor = 1;
-    ClientSession_Data data2 = 2;
+    AuthKeyInfo_Data data2 = 2;
 }
 
-// clientSessionInfo auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string = ClientSession;
-message TL_clientSessionInfo {
-    ClientSession_Data data2 = 2;
+// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
+message TL_authKeyInfo {
+    AuthKeyInfo_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ServerConnected <--
+//  + TL_push_sessionServerConnected
+//
+message ServerConnected_Data {
+    int32 session_server_id = 1;
+    string server_name = 2;
+}
+
+message ServerConnected {
+    TLConstructor constructor = 1;
+    ServerConnected_Data data2 = 2;
+}
+
+// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
+message TL_push_sessionServerConnected {
+    ServerConnected_Data data2 = 2;
 }
 
 
@@ -453,33 +453,6 @@ message TL_bot_executeCommand {
 ///////////////////////////////////////////////////////////////////////////////
 // rpc
 
-service RPCSession {
-    // session.setClientSessionInfo session:ClientSession = Bool;
-    rpc session_setClientSessionInfo(TL_session_setClientSessionInfo) returns (Bool) {}
-    // session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
-    rpc session_getAuthorizations(TL_session_getAuthorizations) returns (account_Authorizations) {}
-    // session.resetAuthorization user_id:int hash:long = Int64;
-    rpc session_resetAuthorization(TL_session_resetAuthorization) returns (Int64) {}
-    // session.getLayer auth_key_id:long = Int32;
-    rpc session_getLayer(TL_session_getLayer) returns (Int32) {}
-    // session.getLangCode auth_key_id:long = String;
-    rpc session_getLangCode(TL_session_getLangCode) returns (String) {}
-    // session.getUserId auth_key_id:long = Int32;
-    rpc session_getUserId(TL_session_getUserId) returns (Int32) {}
-    // session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
-    rpc session_getPushSessionId(TL_session_getPushSessionId) returns (Int64) {}
-    // session.getFutureSalts auth_key_id:long num:int = FutureSalts;
-    rpc session_getFutureSalts(TL_session_getFutureSalts) returns (FutureSalts) {}
-    // session.queryAuthKey auth_key_id:long = AuthKeyInfo;
-    rpc session_queryAuthKey(TL_session_queryAuthKey) returns (AuthKeyInfo) {}
-    // session.setAuthKey auth_key:AuthKeyInfo = Bool;
-    rpc session_setAuthKey(TL_session_setAuthKey) returns (Bool) {}
-    // session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
-    rpc session_bindAuthKeyUser(TL_session_bindAuthKeyUser) returns (Bool) {}
-    // session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
-    rpc session_unbindAuthKeyUser(TL_session_unbindAuthKeyUser) returns (Bool) {}
-}
-
 service RPCSync {
     // sync.syncUpdates flags:# user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
     rpc sync_syncUpdates(TL_sync_syncUpdates) returns (Bool) {}
@@ -511,5 +484,32 @@ service RPCPush {
 service RPCBot {
     // bot.executeCommand bot_id:int peer_type:int peer_id:int command_line:string = Message;
     rpc bot_executeCommand(TL_bot_executeCommand) returns (Message) {}
+}
+
+service RPCSession {
+    // session.setClientSessionInfo session:ClientSession = Bool;
+    rpc session_setClientSessionInfo(TL_session_setClientSessionInfo) returns (Bool) {}
+    // session.getAuthorizations user_id:int exclude_auth_keyId:long = account.Authorizations;
+    rpc session_getAuthorizations(TL_session_getAuthorizations) returns (account_Authorizations) {}
+    // session.resetAuthorization user_id:int hash:long = Int64;
+    rpc session_resetAuthorization(TL_session_resetAuthorization) returns (Int64) {}
+    // session.getLayer auth_key_id:long = Int32;
+    rpc session_getLayer(TL_session_getLayer) returns (Int32) {}
+    // session.getLangCode auth_key_id:long = String;
+    rpc session_getLangCode(TL_session_getLangCode) returns (String) {}
+    // session.getUserId auth_key_id:long = Int32;
+    rpc session_getUserId(TL_session_getUserId) returns (Int32) {}
+    // session.getPushSessionId user_id:int auth_key_id:long token_type:int = Int64;
+    rpc session_getPushSessionId(TL_session_getPushSessionId) returns (Int64) {}
+    // session.getFutureSalts auth_key_id:long num:int = FutureSalts;
+    rpc session_getFutureSalts(TL_session_getFutureSalts) returns (FutureSalts) {}
+    // session.queryAuthKey auth_key_id:long = AuthKeyInfo;
+    rpc session_queryAuthKey(TL_session_queryAuthKey) returns (AuthKeyInfo) {}
+    // session.setAuthKey auth_key:AuthKeyInfo = Bool;
+    rpc session_setAuthKey(TL_session_setAuthKey) returns (Bool) {}
+    // session.bindAuthKeyUser auth_key_id:long user_id:int = Bool;
+    rpc session_bindAuthKeyUser(TL_session_bindAuthKeyUser) returns (Bool) {}
+    // session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
+    rpc session_unbindAuthKeyUser(TL_session_unbindAuthKeyUser) returns (Bool) {}
 }
 

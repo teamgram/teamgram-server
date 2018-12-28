@@ -18,10 +18,10 @@
 package server
 
 import (
-	"github.com/nebula-chat/chatengine/mtproto/rpc"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"reflect"
 	"time"
 )
@@ -42,7 +42,19 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 			reflect.TypeOf(sessMsg.Object))
 
 		// TODO(@benqi): sync AuthUserId??
-		requestMessage := sessMsg
+		var requestMessage *mtproto.TLMessage2
+
+		switch sessMsg.Object.(type) {
+		case *TLInvokeWithoutUpdatesExt:
+			invokeWithoutUpdatesExt, _ := sessMsg.Object.(*TLInvokeWithoutUpdatesExt)
+			requestMessage = &mtproto.TLMessage2{
+				MsgId:  sessMsg.MsgId,
+				Seqno:  sessMsg.Seqno,
+				Object: invokeWithoutUpdatesExt.Query,
+			}
+		default:
+			requestMessage = sessMsg
+		}
 
 		// reqMsgId := msgId
 		for e := c.apiMessages.Front(); e != nil; e = e.Next() {
@@ -67,7 +79,6 @@ func (c *uploadSession) onMessageData(id ClientConnID, cntl *zrpc.ZRpcController
 		return
 	})
 
-
 	if len(c.pendingMessages) > 0 {
 		c.sendPendingMessagesToClient(id, cntl, c.pendingMessages)
 		c.pendingMessages = []*pendingMessage{}
@@ -84,7 +95,7 @@ func (c *uploadSession) onInvokeRpcRequest(authUserId int32, authKeyId int64, la
 	glog.Infof("uploadSession]]>> onInvokeRpcRequest - receive data: {sess: %s, session_id: %d, conn_id: %d, md: %s, data: {%v}}",
 		c, requests.sessionId, requests.connID, requests.cntl, requests.rpcMessages)
 
-	return invokeRpcRequest(authUserId, authKeyId, layer, requests, func() *grpc_util.RPCClient{ return c.RPCClient })
+	return invokeRpcRequest(authUserId, authKeyId, layer, requests, func() *grpc_util.RPCClient { return c.RPCClient })
 }
 
 func (c *uploadSession) onRpcResult(rpcResults *rpcApiMessages) {

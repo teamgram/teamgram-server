@@ -18,6 +18,7 @@
 package server
 
 import (
+	"container/list"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -71,7 +72,7 @@ func makeClientConnID(connType int, clientConnID, frontendConnID uint64) ClientC
 }
 
 func (c ClientConnID) String() string {
-	return fmt.Sprintf("{conn_type: %d, client_conn_id: %d, frontend_conn_id: %d}", c.connType, c.clientConnID, c.frontendConnID)
+	return fmt.Sprintf("%d@%d.%d", c.connType, c.clientConnID, c.frontendConnID)
 }
 
 func (c ClientConnID) Equal(id ClientConnID) bool {
@@ -178,7 +179,7 @@ func makeAuthSessions(authKeyId int64) *authSessions {
 		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		state:           keyIdNew,
-		updates:         &updatesManager{},
+		updates:         &updatesManager{genericSessions: list.New()},
 	}
 
 	return ss
@@ -215,6 +216,12 @@ func (s *authSessions) setLayer(layer int32) {
 
 func (s *authSessions) destroySession(sessionId int64) bool {
 	// TODO(@benqi):
+	if sess, ok := s.sessions[sessionId]; ok {
+		s.updates.onGenericSessionClose(sess)
+		delete(s.sessions, sessionId)
+	} else {
+		//
+	}
 	return true
 }
 
@@ -447,7 +454,7 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 		authKey := getCacheAuthKey(s.authKeyId)
 		if authKey == nil {
 			// err := fmt.Errorf("onSessionData - not found authKeyId")
-			glog.Errorf("onSessionData - error: {not found authKeyId}, data: {sess: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
+			glog.Errorf("onSessionData - error: {not found authKeyId}, data: {sessions: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
 			return
 		} else {
 			s.onBindAuthKey(authKey)
@@ -458,13 +465,11 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 	err = message.Decode(s.authKeyId, s.authKey, sessionMsg.buf[8:])
 	if err != nil {
 		// TODO(@benqi): close frontend conn??
-		glog.Error(err)
-		glog.Errorf("onSessionData - error: {%v}, data: {sess: %s, conn_id: %s, md: %s}", err, s, sessionMsg.connID, sessionMsg.cntl)
+		// glog.Error(err)
+		glog.Errorf("onSessionData - error: {%s}, data: {sessions: %s, conn_id: %s, md: %s}", err, s, sessionMsg.connID, sessionMsg.cntl)
 
 		return
 	}
-
-	glog.Infof("onSessionData - message: {%s}, data: {sess: %s, conn_id: %s, md: %s}", message, s, sessionMsg.connID, sessionMsg.cntl)
 
 	if s.cacheSalt == nil {
 		s.cacheSalt, s.cacheLastSalt, _ = getOrFetchNewSalt(s.authKeyId)
@@ -475,18 +480,12 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 	}
 
 	if s.cacheSalt == nil {
-		glog.Errorf("onSessionData - getOrFetchNewSalt nil error, data: {sess: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
+		glog.Errorf("onSessionData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s, md: %s}", s, sessionMsg.connID, sessionMsg.cntl)
 		return
 	}
 
 	sess := s.getOrCreateSession(sessionMsg.connID, message.SessionId, message.Object)
-	//if sess.SessionType() == kSessionUnknown && !sess.sessionOnline() {
-	//	pushSessionId := s.getPushSessionId() // getCachePushSessionID(s.AuthUserId, s.authKeyId)
-	//	if pushSessionId != 0 && message.SessionId == pushSessionId {
-	//		s.onBindPushSessionId(pushSessionId)
-	//		sess = s.sessions[message.SessionId]
-	//	}
-	//}
+	glog.Infof("onSessionData - message: {%s}, data: {sess: %s, sessions: %s, conn_id: %s, md: %s}", message, s, sess, sessionMsg.connID, sessionMsg.cntl)
 
 	message2 := &mtproto.TLMessage2{
 		MsgId:  message.MessageId,
@@ -641,42 +640,6 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 			sess = sess2
 		}
 	}
-
-	//if sessType != kSessionUnknown {
-	//	sess2 := newSession(sessionId, sessType, s)
-	//
-	//	if sess != nil {
-	//		sess2.MergeSession(sess)
-	//	}
-	//
-	//	if sess2.SessionType() == kSessionGeneric {
-	//		s.updates.onGenericSessionNew(sess2)
-	//	} else if sess2.SessionType() == kSessionPush {
-	//		s.updates.onPushSessionNew(sess2)
-	//	}
-	//
-	//	s.sessions[sessionId] = sess2
-	//	sess = sess2
-	//} else {
-	//	pushSessionId := s.getPushSessionId()
-	//
-	//	if sess == nil {
-	//		if pushSessionId == sessionId {
-	//			sess = newSession(sessionId, kSessionPush, s)
-	//			s.updates.onPushSessionNew(sess)
-	//		} else {
-	//			sess = newSession(sessionId, kSessionUnknown, s)
-	//		}
-	//		// sess.onNewSession(connId, sessionId)
-	//		s.sessions[sessionId] = sess
-	//	} else {
-	//		if pushSessionId == sessionId {
-	//
-	//		}
-	//		// nothing do
-	//	}
-	//}
-	// glog.Info("getSessionType2 - ", reflect.TypeOf(request), ", sessType: ", sessType, ", sess: ", sess)
 
 	return sess
 }

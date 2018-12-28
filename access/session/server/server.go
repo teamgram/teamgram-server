@@ -136,25 +136,28 @@ func (s *SessionServer) OnServerNewConnection(conn *net2.TcpConnection) {
 }
 
 func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cntl *zrpc.ZRpcController, msg proto.Message) error {
-	glog.Infof("onServerMessageDataArrived - receive data: {peer: %s, cntl: %s, msg: %s}", conn, cntl.RpcMeta, msg)
+	// glog.Infof("onServerMessageDataArrived - receive data: {peer: %s, cntl: %s, msg: %s}", conn, cntl.RpcMeta, msg)
 	switch msg.(type) {
 	case *mtproto.TLSessionClientCreated:
-		glog.Info("onSessionClientNew - sessionClientNew: ", conn)
+		// glog.Info("onSessionClientNew - sessionClientNew: ", conn)
 		return s.onSessionClientNew(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientCreated))
 	case *mtproto.TLSessionMessageData:
 		return s.onSessionData(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionMessageData))
 	case *mtproto.TLSessionClientClosed:
-		glog.Info("onSessionClientClosed - sessionClientClosed: ", conn)
+		// glog.Info("onSessionClientClosed - sessionClientClosed: ", conn)
 		return s.onSessionClientClosed(conn.GetConnID(), cntl, msg.(*mtproto.TLSessionClientClosed))
 	case *mtproto.TLPushConnectToSessionServer:
-		glog.Infof("onPushConnectToSessionServer - request(ConnectToSessionServerReq): {%v}", msg)
+		// glog.Infof("onPushConnectToSessionServer - request(ConnectToSessionServerReq): {%v}", msg)
 		pushSessionServerConnected := &mtproto.TLPushSessionServerConnected{Data2: &mtproto.ServerConnected_Data{
 			SessionServerId: getServerID(),
 			ServerName:      "session",
 		}}
 		serverConnected := pushSessionServerConnected.To_ServerConnected()
-		cntl.SetMethodName(proto.MessageName(serverConnected))
-		zrpc.SendMessageByConn(conn, cntl, serverConnected)
+
+		cntl2 := cntl.Clone()
+		cntl2.MoveAttachment()
+		cntl2.SetMethodName(proto.MessageName(serverConnected))
+		zrpc.SendMessageByConn(conn, cntl2, serverConnected)
 	case *mtproto.TLPushPushRpcResultData:
 		pushData, _ := msg.(*mtproto.TLPushPushRpcResultData)
 
@@ -165,11 +168,14 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 		} else {
 			mBool = mtproto.ToBool(true)
 		}
-		cntl.SetMethodName(proto.MessageName(mBool))
-		zrpc.SendMessageByConn(conn, cntl, mBool)
+
+		cntl2 := cntl.Clone()
+		cntl2.MoveAttachment()
+		cntl2.SetMethodName(proto.MessageName(mBool))
+		zrpc.SendMessageByConn(conn, cntl2, mBool)
 	case *mtproto.TLPushPushUpdatesData:
 		pushData, _ := msg.(*mtproto.TLPushPushUpdatesData)
-		glog.Info("pushData - ", pushData)
+		// glog.Info("pushData - ", pushData)
 		// isPush := pushData.GetIsPush() == 1
 		err := s.onSyncData(pushData.GetAuthKeyId(), pushData.Pts, pushData.PtsCount, cntl)
 		var mBool *mtproto.Bool
@@ -178,8 +184,11 @@ func (s *SessionServer) OnServerMessageDataArrived(conn *net2.TcpConnection, cnt
 		} else {
 			mBool = mtproto.ToBool(true)
 		}
-		cntl.SetMethodName(proto.MessageName(mBool))
-		zrpc.SendMessageByConn(conn, cntl, mBool)
+
+		cntl2 := cntl.Clone()
+		cntl2.MoveAttachment()
+		cntl2.SetMethodName(proto.MessageName(mBool))
+		zrpc.SendMessageByConn(conn, cntl2, mBool)
 	default:
 		err := fmt.Errorf("invalid payload type: %v", msg)
 		glog.Error(err)
@@ -208,7 +217,7 @@ func (s *SessionServer) OnServerConnectionClosed(conn *net2.TcpConnection) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 func (s *SessionServer) onSessionClientNew(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionClientCreated) error {
-	glog.Infof("onSessionClientNew - receive data: {client_conn_id: %s, md: %s, sess_data: %s}", connID, cntl.RpcMeta, sessData)
+	// glog.Infof("onSessionClientNew - receive data: {client_conn_id: %s, md: %s, sess_data: %s}", connID, cntl.RpcMeta, sessData)
 
 	//authKeyId := sessData.GetAuthKeyId()
 	//var sessList *authSessions
@@ -221,21 +230,25 @@ func (s *SessionServer) onSessionClientNew(connID uint64, cntl *zrpc.ZRpcControl
 	//	sessList, _ = vv.(*authSessions)
 	//}
 	//
-	//clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	glog.Infof("onSessionClientNew - ID: {conn_id: %s, auth_key_id: %d}", clientConnID, sessData.GetAuthKeyId())
 	//return sessList.onSessionClientNew(clientConnID)
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 func (s *SessionServer) onSessionData(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionMessageData) error {
-	glog.Infof("onSessionData - receive data: {conn_id: %d, md: %s, sess_data: %s}",
-		connID,
-		cntl.RpcMeta,
-		sessData)
+	//glog.Infof("onSessionData - receive data: {conn_id: %d, md: %s, sess_data: %s}",
+	//	connID,
+	//	cntl.RpcMeta,
+	//	sessData)
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
 
 	authKeyId := sessData.GetAuthKeyId()
 	var sessList *authSessions
 	if vv, ok := s.sessionManager.Load(authKeyId); !ok {
+		glog.Infof("onSessionDataNew - ID: {conn_id: %s, auth_key_id: %d}", clientConnID, sessData.GetAuthKeyId())
+
 		sessList = makeAuthSessions(authKeyId)
 		s.sessionManager.Store(authKeyId, sessList)
 		s.onNewSessionClientManager(sessList)
@@ -243,27 +256,23 @@ func (s *SessionServer) onSessionData(connID uint64, cntl *zrpc.ZRpcController, 
 		sessList, _ = vv.(*authSessions)
 	}
 
-	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
 	return sessList.onSessionDataArrived(clientConnID, cntl, cntl.MoveAttachment())
 }
 
 func (s *SessionServer) onSessionClientClosed(connID uint64, cntl *zrpc.ZRpcController, sessData *mtproto.TLSessionClientClosed) error {
-	glog.Infof("onSessionClientClosed - receive data: {client_conn_id: %d, md: %s, sess_data: %s}",
-		connID,
-		cntl,
-		sessData)
+	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
+	glog.Infof("onSessionClientClosed - ID: {conn_id: %s, auth_key_id: %d}", clientConnID, sessData.GetAuthKeyId())
 
 	var sessList *authSessions
 
 	if vv, ok := s.sessionManager.Load(sessData.GetAuthKeyId()); !ok {
-		err := fmt.Errorf("onSessionClientClosed - not find sessionList by authKeyId: {%d}", sessData.GetAuthKeyId())
+		err := fmt.Errorf("onSessionClientClosed - not find sessionList by ID: {conn_id: %s, auth_key_id: %d}", clientConnID, sessData.GetAuthKeyId())
 		glog.Warning(err)
 		return err
 	} else {
 		sessList, _ = vv.(*authSessions)
 	}
 
-	clientConnID := makeClientConnID(int(sessData.GetConnType()), connID, uint64(sessData.GetClientConnId()))
 	return sessList.onSessionClientClosed(clientConnID)
 }
 

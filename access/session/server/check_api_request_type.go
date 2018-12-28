@@ -180,7 +180,7 @@ func getSessionType(method mtproto.TLObject) int {
 
 func getSessionType2(object mtproto.TLObject, sessionType *int) {
 	glog.Info("getSessionType2 - ", reflect.TypeOf(object))
-	if *sessionType != 0 {
+	if *sessionType != kSessionUnknown {
 		return
 	}
 
@@ -232,11 +232,17 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 	case *mtproto.TLInvokeAfterMsg,
 		*mtproto.TLInvokeAfterMsgs,
 		*mtproto.TLInvokeWithLayer,
-		*mtproto.TLInvokeWithoutUpdates,
+		// *mtproto.TLInvokeWithoutUpdates,
 		*mtproto.TLInvokeWithMessagesRange,
 		*mtproto.TLInvokeWithTakeout:
 
 		*sessionType = kSessionGeneric
+
+	case *mtproto.TLInvokeWithoutUpdates:
+		// TODO(@benqi): move TLInvokeWithoutUpdates etc to parsed_manually_types.
+		dbuf := mtproto.NewDecodeBuf(object.(*mtproto.TLInvokeWithoutUpdates).Query)
+		q := dbuf.Object()
+		getSessionType2(q, sessionType)
 
 	//////////////////////////////////////////////////////////////
 	case *mtproto.TLUploadGetCdnFile,

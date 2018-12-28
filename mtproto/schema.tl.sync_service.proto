@@ -165,6 +165,13 @@ message TL_langpack_getLangPackLayer71 {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// messages.getRecentLocations#249431e2 peer:InputPeer limit:int = messages.Messages;
+message TL_messages_getRecentLocationsLayer72 {
+    InputPeer peer = 1;
+    int32 limit = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // invokeAfterMsg#cb9f372d {X:Type} msg_id:long query:!X = X;
 message TL_invokeAfterMsg {
     int64 msg_id = 1;
@@ -2177,148 +2184,6 @@ message Vector_LangPackString {
 ///////////////////////////////////////////////////////////////////////////////
 // rpc
 
-service RPCHelp {
-    // help.getScheme#dbb69a9e version:int = Scheme;
-    rpc help_getScheme(TL_help_getScheme) returns (Scheme) {}
-    // help.getInviteText#a4a95186 lang_code:string = help.InviteText;
-    rpc help_getInviteTextLayer46(TL_help_getInviteTextLayer46) returns (help_InviteText) {}
-    // help.getAppUpdate#c812ac7e device_model:string system_version:string app_version:string lang_code:string = help.AppUpdate;
-    rpc help_getAppUpdateLayer46(TL_help_getAppUpdateLayer46) returns (help_AppUpdate) {}
-    // help.getAppUpdate#ae2de196 = help.AppUpdate;
-    rpc help_getAppUpdateLayer62(TL_help_getAppUpdateLayer62) returns (help_AppUpdate) {}
-    // help.getConfig#c4f9186b = Config;
-    rpc help_getConfig(TL_help_getConfig) returns (Config) {}
-    // help.getNearestDc#1fb33026 = NearestDc;
-    rpc help_getNearestDc(TL_help_getNearestDc) returns (NearestDc) {}
-    // help.getAppUpdate#522d5a7d source:string = help.AppUpdate;
-    rpc help_getAppUpdate(TL_help_getAppUpdate) returns (help_AppUpdate) {}
-    // help.saveAppLog#6f02f748 events:Vector<InputAppEvent> = Bool;
-    rpc help_saveAppLog(TL_help_saveAppLog) returns (Bool) {}
-    // help.getInviteText#4d392343 = help.InviteText;
-    rpc help_getInviteText(TL_help_getInviteText) returns (help_InviteText) {}
-    // help.getSupport#9cdf08cd = help.Support;
-    rpc help_getSupport(TL_help_getSupport) returns (help_Support) {}
-    // help.getAppChangelog#9010ef6f prev_app_version:string = Updates;
-    rpc help_getAppChangelog(TL_help_getAppChangelog) returns (Updates) {}
-    // help.setBotUpdatesStatus#ec22cfcd pending_updates_count:int message:string = Bool;
-    rpc help_setBotUpdatesStatus(TL_help_setBotUpdatesStatus) returns (Bool) {}
-    // help.getCdnConfig#52029342 = CdnConfig;
-    rpc help_getCdnConfig(TL_help_getCdnConfig) returns (CdnConfig) {}
-    // help.getRecentMeUrls#3dc0f114 referer:string = help.RecentMeUrls;
-    rpc help_getRecentMeUrls(TL_help_getRecentMeUrls) returns (help_RecentMeUrls) {}
-    // help.getProxyData#3d7758e1 = help.ProxyData;
-    rpc help_getProxyData(TL_help_getProxyData) returns (help_ProxyData) {}
-    // help.getTermsOfServiceUpdate#2ca51fd1 = help.TermsOfServiceUpdate;
-    rpc help_getTermsOfServiceUpdate(TL_help_getTermsOfServiceUpdate) returns (help_TermsOfServiceUpdate) {}
-    // help.acceptTermsOfService#ee72f79a id:DataJSON = Bool;
-    rpc help_acceptTermsOfService(TL_help_acceptTermsOfService) returns (Bool) {}
-    // help.getDeepLinkInfo#3fedc75f path:string = help.DeepLinkInfo;
-    rpc help_getDeepLinkInfo(TL_help_getDeepLinkInfo) returns (help_DeepLinkInfo) {}
-    // help.getPassportConfig#c661ad08 hash:int = help.PassportConfig;
-    rpc help_getPassportConfig(TL_help_getPassportConfig) returns (help_PassportConfig) {}
-    // help.test#c0e202f7 = Bool;
-    rpc help_test(TL_help_test) returns (Bool) {}
-}
-
-service RPCUpdates {
-    // updates.getChannelDifference#bb32d7c0 channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
-    rpc updates_getChannelDifferenceLayer46(TL_updates_getChannelDifferenceLayer46) returns (updates_ChannelDifference) {}
-    // updates.getState#edd4882a = updates.State;
-    rpc updates_getState(TL_updates_getState) returns (updates_State) {}
-    // updates.getDifference#25939651 flags:# pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
-    rpc updates_getDifference(TL_updates_getDifference) returns (updates_Difference) {}
-    // updates.getChannelDifference#3173d78 flags:# force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
-    rpc updates_getChannelDifference(TL_updates_getChannelDifference) returns (updates_ChannelDifference) {}
-}
-
-service RPCChannels {
-    // channels.readHistory#cc104937 channel:InputChannel max_id:int = Bool;
-    rpc channels_readHistory(TL_channels_readHistory) returns (Bool) {}
-    // channels.deleteMessages#84c1fd4e channel:InputChannel id:Vector<int> = messages.AffectedMessages;
-    rpc channels_deleteMessages(TL_channels_deleteMessages) returns (messages_AffectedMessages) {}
-    // channels.deleteUserHistory#d10dd71b channel:InputChannel user_id:InputUser = messages.AffectedHistory;
-    rpc channels_deleteUserHistory(TL_channels_deleteUserHistory) returns (messages_AffectedHistory) {}
-    // channels.reportSpam#fe087810 channel:InputChannel user_id:InputUser id:Vector<int> = Bool;
-    rpc channels_reportSpam(TL_channels_reportSpam) returns (Bool) {}
-    // channels.getMessages#ad8c9a23 channel:InputChannel id:Vector<InputMessage> = messages.Messages;
-    rpc channels_getMessages(TL_channels_getMessages) returns (messages_Messages) {}
-    // channels.getParticipants#123e05e9 channel:InputChannel filter:ChannelParticipantsFilter offset:int limit:int hash:int = channels.ChannelParticipants;
-    rpc channels_getParticipants(TL_channels_getParticipants) returns (channels_ChannelParticipants) {}
-    // channels.getParticipant#546dd7a6 channel:InputChannel user_id:InputUser = channels.ChannelParticipant;
-    rpc channels_getParticipant(TL_channels_getParticipant) returns (channels_ChannelParticipant) {}
-    // channels.getChannels#a7f6bbb id:Vector<InputChannel> = messages.Chats;
-    rpc channels_getChannels(TL_channels_getChannels) returns (messages_Chats) {}
-    // channels.getFullChannel#8736a09 channel:InputChannel = messages.ChatFull;
-    rpc channels_getFullChannel(TL_channels_getFullChannel) returns (messages_ChatFull) {}
-    // channels.createChannel#f4893d7f flags:# broadcast:flags.0?true megagroup:flags.1?true title:string about:string = Updates;
-    rpc channels_createChannel(TL_channels_createChannel) returns (Updates) {}
-    // channels.editAbout#13e27f1e channel:InputChannel about:string = Bool;
-    rpc channels_editAbout(TL_channels_editAbout) returns (Bool) {}
-    // channels.editAdmin#20b88214 channel:InputChannel user_id:InputUser admin_rights:ChannelAdminRights = Updates;
-    rpc channels_editAdmin(TL_channels_editAdmin) returns (Updates) {}
-    // channels.editTitle#566decd0 channel:InputChannel title:string = Updates;
-    rpc channels_editTitle(TL_channels_editTitle) returns (Updates) {}
-    // channels.editPhoto#f12e57c9 channel:InputChannel photo:InputChatPhoto = Updates;
-    rpc channels_editPhoto(TL_channels_editPhoto) returns (Updates) {}
-    // channels.checkUsername#10e6bd2c channel:InputChannel username:string = Bool;
-    rpc channels_checkUsername(TL_channels_checkUsername) returns (Bool) {}
-    // channels.updateUsername#3514b3de channel:InputChannel username:string = Bool;
-    rpc channels_updateUsername(TL_channels_updateUsername) returns (Bool) {}
-    // channels.joinChannel#24b524c5 channel:InputChannel = Updates;
-    rpc channels_joinChannel(TL_channels_joinChannel) returns (Updates) {}
-    // channels.leaveChannel#f836aa95 channel:InputChannel = Updates;
-    rpc channels_leaveChannel(TL_channels_leaveChannel) returns (Updates) {}
-    // channels.inviteToChannel#199f3a6c channel:InputChannel users:Vector<InputUser> = Updates;
-    rpc channels_inviteToChannel(TL_channels_inviteToChannel) returns (Updates) {}
-    // channels.exportInvite#c7560885 channel:InputChannel = ExportedChatInvite;
-    rpc channels_exportInvite(TL_channels_exportInvite) returns (ExportedChatInvite) {}
-    // channels.deleteChannel#c0111fe3 channel:InputChannel = Updates;
-    rpc channels_deleteChannel(TL_channels_deleteChannel) returns (Updates) {}
-    // channels.toggleInvites#49609307 channel:InputChannel enabled:Bool = Updates;
-    rpc channels_toggleInvites(TL_channels_toggleInvites) returns (Updates) {}
-    // channels.exportMessageLink#ceb77163 channel:InputChannel id:int grouped:Bool = ExportedMessageLink;
-    rpc channels_exportMessageLink(TL_channels_exportMessageLink) returns (ExportedMessageLink) {}
-    // channels.toggleSignatures#1f69b606 channel:InputChannel enabled:Bool = Updates;
-    rpc channels_toggleSignatures(TL_channels_toggleSignatures) returns (Updates) {}
-    // channels.updatePinnedMessage#a72ded52 flags:# silent:flags.0?true channel:InputChannel id:int = Updates;
-    rpc channels_updatePinnedMessage(TL_channels_updatePinnedMessage) returns (Updates) {}
-    // channels.getAdminedPublicChannels#8d8d82d7 = messages.Chats;
-    rpc channels_getAdminedPublicChannels(TL_channels_getAdminedPublicChannels) returns (messages_Chats) {}
-    // channels.editBanned#bfd915cd channel:InputChannel user_id:InputUser banned_rights:ChannelBannedRights = Updates;
-    rpc channels_editBanned(TL_channels_editBanned) returns (Updates) {}
-    // channels.getAdminLog#33ddf480 flags:# channel:InputChannel q:string events_filter:flags.0?ChannelAdminLogEventsFilter admins:flags.1?Vector<InputUser> max_id:long min_id:long limit:int = channels.AdminLogResults;
-    rpc channels_getAdminLog(TL_channels_getAdminLog) returns (channels_AdminLogResults) {}
-    // channels.setStickers#ea8ca4f9 channel:InputChannel stickerset:InputStickerSet = Bool;
-    rpc channels_setStickers(TL_channels_setStickers) returns (Bool) {}
-    // channels.readMessageContents#eab5dc38 channel:InputChannel id:Vector<int> = Bool;
-    rpc channels_readMessageContents(TL_channels_readMessageContents) returns (Bool) {}
-    // channels.deleteHistory#af369d42 channel:InputChannel max_id:int = Bool;
-    rpc channels_deleteHistory(TL_channels_deleteHistory) returns (Bool) {}
-    // channels.togglePreHistoryHidden#eabbb94c channel:InputChannel enabled:Bool = Updates;
-    rpc channels_togglePreHistoryHidden(TL_channels_togglePreHistoryHidden) returns (Updates) {}
-    // channels.getLeftChannels#8341ecc0 offset:int = messages.Chats;
-    rpc channels_getLeftChannels(TL_channels_getLeftChannels) returns (messages_Chats) {}
-}
-
-service RPCPhone {
-    // phone.getCallConfig#55451fa9 = DataJSON;
-    rpc phone_getCallConfig(TL_phone_getCallConfig) returns (DataJSON) {}
-    // phone.requestCall#5b95b3d4 user_id:InputUser random_id:int g_a_hash:bytes protocol:PhoneCallProtocol = phone.PhoneCall;
-    rpc phone_requestCall(TL_phone_requestCall) returns (phone_PhoneCall) {}
-    // phone.acceptCall#3bd2b4a0 peer:InputPhoneCall g_b:bytes protocol:PhoneCallProtocol = phone.PhoneCall;
-    rpc phone_acceptCall(TL_phone_acceptCall) returns (phone_PhoneCall) {}
-    // phone.confirmCall#2efe1722 peer:InputPhoneCall g_a:bytes key_fingerprint:long protocol:PhoneCallProtocol = phone.PhoneCall;
-    rpc phone_confirmCall(TL_phone_confirmCall) returns (phone_PhoneCall) {}
-    // phone.receivedCall#17d54f61 peer:InputPhoneCall = Bool;
-    rpc phone_receivedCall(TL_phone_receivedCall) returns (Bool) {}
-    // phone.discardCall#78d413a6 peer:InputPhoneCall duration:int reason:PhoneCallDiscardReason connection_id:long = Updates;
-    rpc phone_discardCall(TL_phone_discardCall) returns (Updates) {}
-    // phone.setCallRating#1c536a34 peer:InputPhoneCall rating:int comment:string = Updates;
-    rpc phone_setCallRating(TL_phone_setCallRating) returns (Updates) {}
-    // phone.saveCallDebug#277add7e peer:InputPhoneCall debug:DataJSON = Bool;
-    rpc phone_saveCallDebug(TL_phone_saveCallDebug) returns (Bool) {}
-}
-
 service RPCPhotos {
     // photos.updateProfilePhoto#f0bb5152 id:InputPhoto = UserProfilePhoto;
     rpc photos_updateProfilePhoto(TL_photos_updateProfilePhoto) returns (UserProfilePhoto) {}
@@ -2330,121 +2195,15 @@ service RPCPhotos {
     rpc photos_getUserPhotos(TL_photos_getUserPhotos) returns (photos_Photos) {}
 }
 
-service RPCUpload {
-    // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
-    rpc upload_saveFilePart(TL_upload_saveFilePart) returns (Bool) {}
-    // upload.getFile#e3a6cfb5 location:InputFileLocation offset:int limit:int = upload.File;
-    rpc upload_getFile(TL_upload_getFile) returns (upload_File) {}
-    // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
-    rpc upload_saveBigFilePart(TL_upload_saveBigFilePart) returns (Bool) {}
-    // upload.getWebFile#24e6818d location:InputWebFileLocation offset:int limit:int = upload.WebFile;
-    rpc upload_getWebFile(TL_upload_getWebFile) returns (upload_WebFile) {}
-    // upload.getCdnFile#2000bcc3 file_token:bytes offset:int limit:int = upload.CdnFile;
-    rpc upload_getCdnFile(TL_upload_getCdnFile) returns (upload_CdnFile) {}
-    // upload.reuploadCdnFile#9b2754a8 file_token:bytes request_token:bytes = Vector<FileHash>;
-    rpc upload_reuploadCdnFile(TL_upload_reuploadCdnFile) returns (Vector_FileHash) {}
-    // upload.getCdnFileHashes#4da54231 file_token:bytes offset:int = Vector<FileHash>;
-    rpc upload_getCdnFileHashes(TL_upload_getCdnFileHashes) returns (Vector_FileHash) {}
-    // upload.getFileHashes#c7025931 location:InputFileLocation offset:int = Vector<FileHash>;
-    rpc upload_getFileHashes(TL_upload_getFileHashes) returns (Vector_FileHash) {}
-}
-
-service RPCStickers {
-    // stickers.createStickerSet#9bd86e6a flags:# masks:flags.0?true user_id:InputUser title:string short_name:string stickers:Vector<InputStickerSetItem> = messages.StickerSet;
-    rpc stickers_createStickerSet(TL_stickers_createStickerSet) returns (messages_StickerSet) {}
-    // stickers.removeStickerFromSet#f7760f51 sticker:InputDocument = messages.StickerSet;
-    rpc stickers_removeStickerFromSet(TL_stickers_removeStickerFromSet) returns (messages_StickerSet) {}
-    // stickers.changeStickerPosition#ffb6d4ca sticker:InputDocument position:int = messages.StickerSet;
-    rpc stickers_changeStickerPosition(TL_stickers_changeStickerPosition) returns (messages_StickerSet) {}
-    // stickers.addStickerToSet#8653febe stickerset:InputStickerSet sticker:InputStickerSetItem = messages.StickerSet;
-    rpc stickers_addStickerToSet(TL_stickers_addStickerToSet) returns (messages_StickerSet) {}
-}
-
-service RPCContacts {
-    // contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
-    rpc contacts_getStatuses(TL_contacts_getStatuses) returns (Vector_ContactStatus) {}
-    // contacts.getContacts#c023849f hash:int = contacts.Contacts;
-    rpc contacts_getContacts(TL_contacts_getContacts) returns (contacts_Contacts) {}
-    // contacts.importContacts#2c800be5 contacts:Vector<InputContact> = contacts.ImportedContacts;
-    rpc contacts_importContacts(TL_contacts_importContacts) returns (contacts_ImportedContacts) {}
-    // contacts.deleteContact#8e953744 id:InputUser = contacts.Link;
-    rpc contacts_deleteContact(TL_contacts_deleteContact) returns (contacts_Link) {}
-    // contacts.deleteContacts#59ab389e id:Vector<InputUser> = Bool;
-    rpc contacts_deleteContacts(TL_contacts_deleteContacts) returns (Bool) {}
-    // contacts.block#332b49fc id:InputUser = Bool;
-    rpc contacts_block(TL_contacts_block) returns (Bool) {}
-    // contacts.unblock#e54100bd id:InputUser = Bool;
-    rpc contacts_unblock(TL_contacts_unblock) returns (Bool) {}
-    // contacts.getBlocked#f57c350f offset:int limit:int = contacts.Blocked;
-    rpc contacts_getBlocked(TL_contacts_getBlocked) returns (contacts_Blocked) {}
-    // contacts.exportCard#84e53737 = Vector<int>;
-    rpc contacts_exportCard(TL_contacts_exportCard) returns (Vector_int) {}
-    // contacts.importCard#4fe196fe export_card:Vector<int> = User;
-    rpc contacts_importCard(TL_contacts_importCard) returns (User) {}
-    // contacts.search#11f812d8 q:string limit:int = contacts.Found;
-    rpc contacts_search(TL_contacts_search) returns (contacts_Found) {}
-    // contacts.resolveUsername#f93ccba3 username:string = contacts.ResolvedPeer;
-    rpc contacts_resolveUsername(TL_contacts_resolveUsername) returns (contacts_ResolvedPeer) {}
-    // contacts.getTopPeers#d4982db5 flags:# correspondents:flags.0?true bots_pm:flags.1?true bots_inline:flags.2?true phone_calls:flags.3?true groups:flags.10?true channels:flags.15?true offset:int limit:int hash:int = contacts.TopPeers;
-    rpc contacts_getTopPeers(TL_contacts_getTopPeers) returns (contacts_TopPeers) {}
-    // contacts.resetTopPeerRating#1ae373ac category:TopPeerCategory peer:InputPeer = Bool;
-    rpc contacts_resetTopPeerRating(TL_contacts_resetTopPeerRating) returns (Bool) {}
-    // contacts.resetSaved#879537f1 = Bool;
-    rpc contacts_resetSaved(TL_contacts_resetSaved) returns (Bool) {}
-    // contacts.getSaved#82f1e39f = Vector<SavedContact>;
-    rpc contacts_getSaved(TL_contacts_getSaved) returns (Vector_SavedContact) {}
-    // contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
-    rpc contacts_toggleTopPeers(TL_contacts_toggleTopPeers) returns (Bool) {}
-}
-
-service RPCLangpack {
-    // langpack.getLanguages#800fd57d = Vector<LangPackLanguage>;
-    rpc langpack_getLanguagesLayer70(TL_langpack_getLanguagesLayer70) returns (Vector_LangPackLanguage) {}
-    // langpack.getLangPack#9ab5c58e lang_code:string = LangPackDifference;
-    rpc langpack_getLangPackLayer71(TL_langpack_getLangPackLayer71) returns (LangPackDifference) {}
-    // langpack.getLangPack#f2f2330a lang_pack:string lang_code:string = LangPackDifference;
-    rpc langpack_getLangPack(TL_langpack_getLangPack) returns (LangPackDifference) {}
-    // langpack.getStrings#efea3803 lang_pack:string lang_code:string keys:Vector<string> = Vector<LangPackString>;
-    rpc langpack_getStrings(TL_langpack_getStrings) returns (Vector_LangPackString) {}
-    // langpack.getDifference#b2e4d7d from_version:int = LangPackDifference;
-    rpc langpack_getDifference(TL_langpack_getDifference) returns (LangPackDifference) {}
-    // langpack.getLanguages#42c6978f lang_pack:string = Vector<LangPackLanguage>;
-    rpc langpack_getLanguages(TL_langpack_getLanguages) returns (Vector_LangPackLanguage) {}
-}
-
-service RPCAuth {
-    // auth.sendCode#ccfd70cf flags:# allow_flashcall:flags.0?true phone_number:string current_number:flags.0?Bool api_id:int api_hash:string lang_code:string = auth.SentCode;
-    rpc auth_sendCodeLayer51(TL_auth_sendCodeLayer51) returns (auth_SentCode) {}
-    // auth.sendCode#86aef0ec flags:# allow_flashcall:flags.0?true phone_number:string current_number:flags.0?Bool api_id:int api_hash:string = auth.SentCode;
-    rpc auth_sendCode(TL_auth_sendCode) returns (auth_SentCode) {}
-    // auth.signUp#1b067634 phone_number:string phone_code_hash:string phone_code:string first_name:string last_name:string = auth.Authorization;
-    rpc auth_signUp(TL_auth_signUp) returns (auth_Authorization) {}
-    // auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
-    rpc auth_signIn(TL_auth_signIn) returns (auth_Authorization) {}
-    // auth.logOut#5717da40 = Bool;
-    rpc auth_logOut(TL_auth_logOut) returns (Bool) {}
-    // auth.resetAuthorizations#9fab0d1a = Bool;
-    rpc auth_resetAuthorizations(TL_auth_resetAuthorizations) returns (Bool) {}
-    // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
-    rpc auth_exportAuthorization(TL_auth_exportAuthorization) returns (auth_ExportedAuthorization) {}
-    // auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;
-    rpc auth_importAuthorization(TL_auth_importAuthorization) returns (auth_Authorization) {}
-    // auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
-    rpc auth_bindTempAuthKey(TL_auth_bindTempAuthKey) returns (Bool) {}
-    // auth.importBotAuthorization#67a3ff2c flags:int api_id:int api_hash:string bot_auth_token:string = auth.Authorization;
-    rpc auth_importBotAuthorization(TL_auth_importBotAuthorization) returns (auth_Authorization) {}
-    // auth.checkPassword#d18b4d16 password:InputCheckPasswordSRP = auth.Authorization;
-    rpc auth_checkPassword(TL_auth_checkPassword) returns (auth_Authorization) {}
-    // auth.requestPasswordRecovery#d897bc66 = auth.PasswordRecovery;
-    rpc auth_requestPasswordRecovery(TL_auth_requestPasswordRecovery) returns (auth_PasswordRecovery) {}
-    // auth.recoverPassword#4ea56e92 code:string = auth.Authorization;
-    rpc auth_recoverPassword(TL_auth_recoverPassword) returns (auth_Authorization) {}
-    // auth.resendCode#3ef1a9bf phone_number:string phone_code_hash:string = auth.SentCode;
-    rpc auth_resendCode(TL_auth_resendCode) returns (auth_SentCode) {}
-    // auth.cancelCode#1f040578 phone_number:string phone_code_hash:string = Bool;
-    rpc auth_cancelCode(TL_auth_cancelCode) returns (Bool) {}
-    // auth.dropTempAuthKeys#8e48a188 except_auth_keys:Vector<long> = Bool;
-    rpc auth_dropTempAuthKeys(TL_auth_dropTempAuthKeys) returns (Bool) {}
+service RPCUpdates {
+    // updates.getChannelDifference#bb32d7c0 channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
+    rpc updates_getChannelDifferenceLayer46(TL_updates_getChannelDifferenceLayer46) returns (updates_ChannelDifference) {}
+    // updates.getState#edd4882a = updates.State;
+    rpc updates_getState(TL_updates_getState) returns (updates_State) {}
+    // updates.getDifference#25939651 flags:# pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
+    rpc updates_getDifference(TL_updates_getDifference) returns (updates_Difference) {}
+    // updates.getChannelDifference#3173d78 flags:# force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
+    rpc updates_getChannelDifference(TL_updates_getChannelDifference) returns (updates_ChannelDifference) {}
 }
 
 service RPCAccount {
@@ -2538,6 +2297,25 @@ service RPCAccount {
     rpc account_finishTakeoutSession(TL_account_finishTakeoutSession) returns (Bool) {}
 }
 
+service RPCPhone {
+    // phone.getCallConfig#55451fa9 = DataJSON;
+    rpc phone_getCallConfig(TL_phone_getCallConfig) returns (DataJSON) {}
+    // phone.requestCall#5b95b3d4 user_id:InputUser random_id:int g_a_hash:bytes protocol:PhoneCallProtocol = phone.PhoneCall;
+    rpc phone_requestCall(TL_phone_requestCall) returns (phone_PhoneCall) {}
+    // phone.acceptCall#3bd2b4a0 peer:InputPhoneCall g_b:bytes protocol:PhoneCallProtocol = phone.PhoneCall;
+    rpc phone_acceptCall(TL_phone_acceptCall) returns (phone_PhoneCall) {}
+    // phone.confirmCall#2efe1722 peer:InputPhoneCall g_a:bytes key_fingerprint:long protocol:PhoneCallProtocol = phone.PhoneCall;
+    rpc phone_confirmCall(TL_phone_confirmCall) returns (phone_PhoneCall) {}
+    // phone.receivedCall#17d54f61 peer:InputPhoneCall = Bool;
+    rpc phone_receivedCall(TL_phone_receivedCall) returns (Bool) {}
+    // phone.discardCall#78d413a6 peer:InputPhoneCall duration:int reason:PhoneCallDiscardReason connection_id:long = Updates;
+    rpc phone_discardCall(TL_phone_discardCall) returns (Updates) {}
+    // phone.setCallRating#1c536a34 peer:InputPhoneCall rating:int comment:string = Updates;
+    rpc phone_setCallRating(TL_phone_setCallRating) returns (Updates) {}
+    // phone.saveCallDebug#277add7e peer:InputPhoneCall debug:DataJSON = Bool;
+    rpc phone_saveCallDebug(TL_phone_saveCallDebug) returns (Bool) {}
+}
+
 service RPCUsers {
     // users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
     rpc users_getUsers(TL_users_getUsers) returns (Vector_User) {}
@@ -2547,11 +2325,73 @@ service RPCUsers {
     rpc users_setSecureValueErrors(TL_users_setSecureValueErrors) returns (Bool) {}
 }
 
-service RPCBots {
-    // bots.sendCustomRequest#aa2769ed custom_method:string params:DataJSON = DataJSON;
-    rpc bots_sendCustomRequest(TL_bots_sendCustomRequest) returns (DataJSON) {}
-    // bots.answerWebhookJSONQuery#e6213f4d query_id:long data:DataJSON = Bool;
-    rpc bots_answerWebhookJSONQuery(TL_bots_answerWebhookJSONQuery) returns (Bool) {}
+service RPCChannels {
+    // channels.readHistory#cc104937 channel:InputChannel max_id:int = Bool;
+    rpc channels_readHistory(TL_channels_readHistory) returns (Bool) {}
+    // channels.deleteMessages#84c1fd4e channel:InputChannel id:Vector<int> = messages.AffectedMessages;
+    rpc channels_deleteMessages(TL_channels_deleteMessages) returns (messages_AffectedMessages) {}
+    // channels.deleteUserHistory#d10dd71b channel:InputChannel user_id:InputUser = messages.AffectedHistory;
+    rpc channels_deleteUserHistory(TL_channels_deleteUserHistory) returns (messages_AffectedHistory) {}
+    // channels.reportSpam#fe087810 channel:InputChannel user_id:InputUser id:Vector<int> = Bool;
+    rpc channels_reportSpam(TL_channels_reportSpam) returns (Bool) {}
+    // channels.getMessages#ad8c9a23 channel:InputChannel id:Vector<InputMessage> = messages.Messages;
+    rpc channels_getMessages(TL_channels_getMessages) returns (messages_Messages) {}
+    // channels.getParticipants#123e05e9 channel:InputChannel filter:ChannelParticipantsFilter offset:int limit:int hash:int = channels.ChannelParticipants;
+    rpc channels_getParticipants(TL_channels_getParticipants) returns (channels_ChannelParticipants) {}
+    // channels.getParticipant#546dd7a6 channel:InputChannel user_id:InputUser = channels.ChannelParticipant;
+    rpc channels_getParticipant(TL_channels_getParticipant) returns (channels_ChannelParticipant) {}
+    // channels.getChannels#a7f6bbb id:Vector<InputChannel> = messages.Chats;
+    rpc channels_getChannels(TL_channels_getChannels) returns (messages_Chats) {}
+    // channels.getFullChannel#8736a09 channel:InputChannel = messages.ChatFull;
+    rpc channels_getFullChannel(TL_channels_getFullChannel) returns (messages_ChatFull) {}
+    // channels.createChannel#f4893d7f flags:# broadcast:flags.0?true megagroup:flags.1?true title:string about:string = Updates;
+    rpc channels_createChannel(TL_channels_createChannel) returns (Updates) {}
+    // channels.editAbout#13e27f1e channel:InputChannel about:string = Bool;
+    rpc channels_editAbout(TL_channels_editAbout) returns (Bool) {}
+    // channels.editAdmin#20b88214 channel:InputChannel user_id:InputUser admin_rights:ChannelAdminRights = Updates;
+    rpc channels_editAdmin(TL_channels_editAdmin) returns (Updates) {}
+    // channels.editTitle#566decd0 channel:InputChannel title:string = Updates;
+    rpc channels_editTitle(TL_channels_editTitle) returns (Updates) {}
+    // channels.editPhoto#f12e57c9 channel:InputChannel photo:InputChatPhoto = Updates;
+    rpc channels_editPhoto(TL_channels_editPhoto) returns (Updates) {}
+    // channels.checkUsername#10e6bd2c channel:InputChannel username:string = Bool;
+    rpc channels_checkUsername(TL_channels_checkUsername) returns (Bool) {}
+    // channels.updateUsername#3514b3de channel:InputChannel username:string = Bool;
+    rpc channels_updateUsername(TL_channels_updateUsername) returns (Bool) {}
+    // channels.joinChannel#24b524c5 channel:InputChannel = Updates;
+    rpc channels_joinChannel(TL_channels_joinChannel) returns (Updates) {}
+    // channels.leaveChannel#f836aa95 channel:InputChannel = Updates;
+    rpc channels_leaveChannel(TL_channels_leaveChannel) returns (Updates) {}
+    // channels.inviteToChannel#199f3a6c channel:InputChannel users:Vector<InputUser> = Updates;
+    rpc channels_inviteToChannel(TL_channels_inviteToChannel) returns (Updates) {}
+    // channels.exportInvite#c7560885 channel:InputChannel = ExportedChatInvite;
+    rpc channels_exportInvite(TL_channels_exportInvite) returns (ExportedChatInvite) {}
+    // channels.deleteChannel#c0111fe3 channel:InputChannel = Updates;
+    rpc channels_deleteChannel(TL_channels_deleteChannel) returns (Updates) {}
+    // channels.toggleInvites#49609307 channel:InputChannel enabled:Bool = Updates;
+    rpc channels_toggleInvites(TL_channels_toggleInvites) returns (Updates) {}
+    // channels.exportMessageLink#ceb77163 channel:InputChannel id:int grouped:Bool = ExportedMessageLink;
+    rpc channels_exportMessageLink(TL_channels_exportMessageLink) returns (ExportedMessageLink) {}
+    // channels.toggleSignatures#1f69b606 channel:InputChannel enabled:Bool = Updates;
+    rpc channels_toggleSignatures(TL_channels_toggleSignatures) returns (Updates) {}
+    // channels.updatePinnedMessage#a72ded52 flags:# silent:flags.0?true channel:InputChannel id:int = Updates;
+    rpc channels_updatePinnedMessage(TL_channels_updatePinnedMessage) returns (Updates) {}
+    // channels.getAdminedPublicChannels#8d8d82d7 = messages.Chats;
+    rpc channels_getAdminedPublicChannels(TL_channels_getAdminedPublicChannels) returns (messages_Chats) {}
+    // channels.editBanned#bfd915cd channel:InputChannel user_id:InputUser banned_rights:ChannelBannedRights = Updates;
+    rpc channels_editBanned(TL_channels_editBanned) returns (Updates) {}
+    // channels.getAdminLog#33ddf480 flags:# channel:InputChannel q:string events_filter:flags.0?ChannelAdminLogEventsFilter admins:flags.1?Vector<InputUser> max_id:long min_id:long limit:int = channels.AdminLogResults;
+    rpc channels_getAdminLog(TL_channels_getAdminLog) returns (channels_AdminLogResults) {}
+    // channels.setStickers#ea8ca4f9 channel:InputChannel stickerset:InputStickerSet = Bool;
+    rpc channels_setStickers(TL_channels_setStickers) returns (Bool) {}
+    // channels.readMessageContents#eab5dc38 channel:InputChannel id:Vector<int> = Bool;
+    rpc channels_readMessageContents(TL_channels_readMessageContents) returns (Bool) {}
+    // channels.deleteHistory#af369d42 channel:InputChannel max_id:int = Bool;
+    rpc channels_deleteHistory(TL_channels_deleteHistory) returns (Bool) {}
+    // channels.togglePreHistoryHidden#eabbb94c channel:InputChannel enabled:Bool = Updates;
+    rpc channels_togglePreHistoryHidden(TL_channels_togglePreHistoryHidden) returns (Updates) {}
+    // channels.getLeftChannels#8341ecc0 offset:int = messages.Chats;
+    rpc channels_getLeftChannels(TL_channels_getLeftChannels) returns (messages_Chats) {}
 }
 
 service RPCMessages {
@@ -2565,6 +2405,8 @@ service RPCMessages {
     rpc messages_searchLayer68(TL_messages_searchLayer68) returns (messages_Messages) {}
     // messages.getMessages#4222fa74 id:Vector<int> = messages.Messages;
     rpc messages_getMessagesLayer71(TL_messages_getMessagesLayer71) returns (messages_Messages) {}
+    // messages.getRecentLocations#249431e2 peer:InputPeer limit:int = messages.Messages;
+    rpc messages_getRecentLocationsLayer72(TL_messages_getRecentLocationsLayer72) returns (messages_Messages) {}
     // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
     rpc messages_getMessages(TL_messages_getMessages) returns (messages_Messages) {}
     // messages.getDialogs#b098aee6 flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:int = messages.Dialogs;
@@ -2767,6 +2609,58 @@ service RPCMessages {
     rpc messages_clearAllDrafts(TL_messages_clearAllDrafts) returns (Bool) {}
 }
 
+service RPCBots {
+    // bots.sendCustomRequest#aa2769ed custom_method:string params:DataJSON = DataJSON;
+    rpc bots_sendCustomRequest(TL_bots_sendCustomRequest) returns (DataJSON) {}
+    // bots.answerWebhookJSONQuery#e6213f4d query_id:long data:DataJSON = Bool;
+    rpc bots_answerWebhookJSONQuery(TL_bots_answerWebhookJSONQuery) returns (Bool) {}
+}
+
+service RPCStickers {
+    // stickers.createStickerSet#9bd86e6a flags:# masks:flags.0?true user_id:InputUser title:string short_name:string stickers:Vector<InputStickerSetItem> = messages.StickerSet;
+    rpc stickers_createStickerSet(TL_stickers_createStickerSet) returns (messages_StickerSet) {}
+    // stickers.removeStickerFromSet#f7760f51 sticker:InputDocument = messages.StickerSet;
+    rpc stickers_removeStickerFromSet(TL_stickers_removeStickerFromSet) returns (messages_StickerSet) {}
+    // stickers.changeStickerPosition#ffb6d4ca sticker:InputDocument position:int = messages.StickerSet;
+    rpc stickers_changeStickerPosition(TL_stickers_changeStickerPosition) returns (messages_StickerSet) {}
+    // stickers.addStickerToSet#8653febe stickerset:InputStickerSet sticker:InputStickerSetItem = messages.StickerSet;
+    rpc stickers_addStickerToSet(TL_stickers_addStickerToSet) returns (messages_StickerSet) {}
+}
+
+service RPCLangpack {
+    // langpack.getLanguages#800fd57d = Vector<LangPackLanguage>;
+    rpc langpack_getLanguagesLayer70(TL_langpack_getLanguagesLayer70) returns (Vector_LangPackLanguage) {}
+    // langpack.getLangPack#9ab5c58e lang_code:string = LangPackDifference;
+    rpc langpack_getLangPackLayer71(TL_langpack_getLangPackLayer71) returns (LangPackDifference) {}
+    // langpack.getLangPack#f2f2330a lang_pack:string lang_code:string = LangPackDifference;
+    rpc langpack_getLangPack(TL_langpack_getLangPack) returns (LangPackDifference) {}
+    // langpack.getStrings#efea3803 lang_pack:string lang_code:string keys:Vector<string> = Vector<LangPackString>;
+    rpc langpack_getStrings(TL_langpack_getStrings) returns (Vector_LangPackString) {}
+    // langpack.getDifference#b2e4d7d from_version:int = LangPackDifference;
+    rpc langpack_getDifference(TL_langpack_getDifference) returns (LangPackDifference) {}
+    // langpack.getLanguages#42c6978f lang_pack:string = Vector<LangPackLanguage>;
+    rpc langpack_getLanguages(TL_langpack_getLanguages) returns (Vector_LangPackLanguage) {}
+}
+
+service RPCUpload {
+    // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
+    rpc upload_saveFilePart(TL_upload_saveFilePart) returns (Bool) {}
+    // upload.getFile#e3a6cfb5 location:InputFileLocation offset:int limit:int = upload.File;
+    rpc upload_getFile(TL_upload_getFile) returns (upload_File) {}
+    // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
+    rpc upload_saveBigFilePart(TL_upload_saveBigFilePart) returns (Bool) {}
+    // upload.getWebFile#24e6818d location:InputWebFileLocation offset:int limit:int = upload.WebFile;
+    rpc upload_getWebFile(TL_upload_getWebFile) returns (upload_WebFile) {}
+    // upload.getCdnFile#2000bcc3 file_token:bytes offset:int limit:int = upload.CdnFile;
+    rpc upload_getCdnFile(TL_upload_getCdnFile) returns (upload_CdnFile) {}
+    // upload.reuploadCdnFile#9b2754a8 file_token:bytes request_token:bytes = Vector<FileHash>;
+    rpc upload_reuploadCdnFile(TL_upload_reuploadCdnFile) returns (Vector_FileHash) {}
+    // upload.getCdnFileHashes#4da54231 file_token:bytes offset:int = Vector<FileHash>;
+    rpc upload_getCdnFileHashes(TL_upload_getCdnFileHashes) returns (Vector_FileHash) {}
+    // upload.getFileHashes#c7025931 location:InputFileLocation offset:int = Vector<FileHash>;
+    rpc upload_getFileHashes(TL_upload_getFileHashes) returns (Vector_FileHash) {}
+}
+
 service RPCPayments {
     // payments.getPaymentForm#99f09745 msg_id:int = payments.PaymentForm;
     rpc payments_getPaymentForm(TL_payments_getPaymentForm) returns (payments_PaymentForm) {}
@@ -2780,5 +2674,120 @@ service RPCPayments {
     rpc payments_getSavedInfo(TL_payments_getSavedInfo) returns (payments_SavedInfo) {}
     // payments.clearSavedInfo#d83d70c1 flags:# credentials:flags.0?true info:flags.1?true = Bool;
     rpc payments_clearSavedInfo(TL_payments_clearSavedInfo) returns (Bool) {}
+}
+
+service RPCHelp {
+    // help.getScheme#dbb69a9e version:int = Scheme;
+    rpc help_getScheme(TL_help_getScheme) returns (Scheme) {}
+    // help.getInviteText#a4a95186 lang_code:string = help.InviteText;
+    rpc help_getInviteTextLayer46(TL_help_getInviteTextLayer46) returns (help_InviteText) {}
+    // help.getAppUpdate#c812ac7e device_model:string system_version:string app_version:string lang_code:string = help.AppUpdate;
+    rpc help_getAppUpdateLayer46(TL_help_getAppUpdateLayer46) returns (help_AppUpdate) {}
+    // help.getAppUpdate#ae2de196 = help.AppUpdate;
+    rpc help_getAppUpdateLayer62(TL_help_getAppUpdateLayer62) returns (help_AppUpdate) {}
+    // help.getConfig#c4f9186b = Config;
+    rpc help_getConfig(TL_help_getConfig) returns (Config) {}
+    // help.getNearestDc#1fb33026 = NearestDc;
+    rpc help_getNearestDc(TL_help_getNearestDc) returns (NearestDc) {}
+    // help.getAppUpdate#522d5a7d source:string = help.AppUpdate;
+    rpc help_getAppUpdate(TL_help_getAppUpdate) returns (help_AppUpdate) {}
+    // help.saveAppLog#6f02f748 events:Vector<InputAppEvent> = Bool;
+    rpc help_saveAppLog(TL_help_saveAppLog) returns (Bool) {}
+    // help.getInviteText#4d392343 = help.InviteText;
+    rpc help_getInviteText(TL_help_getInviteText) returns (help_InviteText) {}
+    // help.getSupport#9cdf08cd = help.Support;
+    rpc help_getSupport(TL_help_getSupport) returns (help_Support) {}
+    // help.getAppChangelog#9010ef6f prev_app_version:string = Updates;
+    rpc help_getAppChangelog(TL_help_getAppChangelog) returns (Updates) {}
+    // help.setBotUpdatesStatus#ec22cfcd pending_updates_count:int message:string = Bool;
+    rpc help_setBotUpdatesStatus(TL_help_setBotUpdatesStatus) returns (Bool) {}
+    // help.getCdnConfig#52029342 = CdnConfig;
+    rpc help_getCdnConfig(TL_help_getCdnConfig) returns (CdnConfig) {}
+    // help.getRecentMeUrls#3dc0f114 referer:string = help.RecentMeUrls;
+    rpc help_getRecentMeUrls(TL_help_getRecentMeUrls) returns (help_RecentMeUrls) {}
+    // help.getProxyData#3d7758e1 = help.ProxyData;
+    rpc help_getProxyData(TL_help_getProxyData) returns (help_ProxyData) {}
+    // help.getTermsOfServiceUpdate#2ca51fd1 = help.TermsOfServiceUpdate;
+    rpc help_getTermsOfServiceUpdate(TL_help_getTermsOfServiceUpdate) returns (help_TermsOfServiceUpdate) {}
+    // help.acceptTermsOfService#ee72f79a id:DataJSON = Bool;
+    rpc help_acceptTermsOfService(TL_help_acceptTermsOfService) returns (Bool) {}
+    // help.getDeepLinkInfo#3fedc75f path:string = help.DeepLinkInfo;
+    rpc help_getDeepLinkInfo(TL_help_getDeepLinkInfo) returns (help_DeepLinkInfo) {}
+    // help.getPassportConfig#c661ad08 hash:int = help.PassportConfig;
+    rpc help_getPassportConfig(TL_help_getPassportConfig) returns (help_PassportConfig) {}
+    // help.test#c0e202f7 = Bool;
+    rpc help_test(TL_help_test) returns (Bool) {}
+}
+
+service RPCAuth {
+    // auth.sendCode#ccfd70cf flags:# allow_flashcall:flags.0?true phone_number:string current_number:flags.0?Bool api_id:int api_hash:string lang_code:string = auth.SentCode;
+    rpc auth_sendCodeLayer51(TL_auth_sendCodeLayer51) returns (auth_SentCode) {}
+    // auth.sendCode#86aef0ec flags:# allow_flashcall:flags.0?true phone_number:string current_number:flags.0?Bool api_id:int api_hash:string = auth.SentCode;
+    rpc auth_sendCode(TL_auth_sendCode) returns (auth_SentCode) {}
+    // auth.signUp#1b067634 phone_number:string phone_code_hash:string phone_code:string first_name:string last_name:string = auth.Authorization;
+    rpc auth_signUp(TL_auth_signUp) returns (auth_Authorization) {}
+    // auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
+    rpc auth_signIn(TL_auth_signIn) returns (auth_Authorization) {}
+    // auth.logOut#5717da40 = Bool;
+    rpc auth_logOut(TL_auth_logOut) returns (Bool) {}
+    // auth.resetAuthorizations#9fab0d1a = Bool;
+    rpc auth_resetAuthorizations(TL_auth_resetAuthorizations) returns (Bool) {}
+    // auth.exportAuthorization#e5bfffcd dc_id:int = auth.ExportedAuthorization;
+    rpc auth_exportAuthorization(TL_auth_exportAuthorization) returns (auth_ExportedAuthorization) {}
+    // auth.importAuthorization#e3ef9613 id:int bytes:bytes = auth.Authorization;
+    rpc auth_importAuthorization(TL_auth_importAuthorization) returns (auth_Authorization) {}
+    // auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
+    rpc auth_bindTempAuthKey(TL_auth_bindTempAuthKey) returns (Bool) {}
+    // auth.importBotAuthorization#67a3ff2c flags:int api_id:int api_hash:string bot_auth_token:string = auth.Authorization;
+    rpc auth_importBotAuthorization(TL_auth_importBotAuthorization) returns (auth_Authorization) {}
+    // auth.checkPassword#d18b4d16 password:InputCheckPasswordSRP = auth.Authorization;
+    rpc auth_checkPassword(TL_auth_checkPassword) returns (auth_Authorization) {}
+    // auth.requestPasswordRecovery#d897bc66 = auth.PasswordRecovery;
+    rpc auth_requestPasswordRecovery(TL_auth_requestPasswordRecovery) returns (auth_PasswordRecovery) {}
+    // auth.recoverPassword#4ea56e92 code:string = auth.Authorization;
+    rpc auth_recoverPassword(TL_auth_recoverPassword) returns (auth_Authorization) {}
+    // auth.resendCode#3ef1a9bf phone_number:string phone_code_hash:string = auth.SentCode;
+    rpc auth_resendCode(TL_auth_resendCode) returns (auth_SentCode) {}
+    // auth.cancelCode#1f040578 phone_number:string phone_code_hash:string = Bool;
+    rpc auth_cancelCode(TL_auth_cancelCode) returns (Bool) {}
+    // auth.dropTempAuthKeys#8e48a188 except_auth_keys:Vector<long> = Bool;
+    rpc auth_dropTempAuthKeys(TL_auth_dropTempAuthKeys) returns (Bool) {}
+}
+
+service RPCContacts {
+    // contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
+    rpc contacts_getStatuses(TL_contacts_getStatuses) returns (Vector_ContactStatus) {}
+    // contacts.getContacts#c023849f hash:int = contacts.Contacts;
+    rpc contacts_getContacts(TL_contacts_getContacts) returns (contacts_Contacts) {}
+    // contacts.importContacts#2c800be5 contacts:Vector<InputContact> = contacts.ImportedContacts;
+    rpc contacts_importContacts(TL_contacts_importContacts) returns (contacts_ImportedContacts) {}
+    // contacts.deleteContact#8e953744 id:InputUser = contacts.Link;
+    rpc contacts_deleteContact(TL_contacts_deleteContact) returns (contacts_Link) {}
+    // contacts.deleteContacts#59ab389e id:Vector<InputUser> = Bool;
+    rpc contacts_deleteContacts(TL_contacts_deleteContacts) returns (Bool) {}
+    // contacts.block#332b49fc id:InputUser = Bool;
+    rpc contacts_block(TL_contacts_block) returns (Bool) {}
+    // contacts.unblock#e54100bd id:InputUser = Bool;
+    rpc contacts_unblock(TL_contacts_unblock) returns (Bool) {}
+    // contacts.getBlocked#f57c350f offset:int limit:int = contacts.Blocked;
+    rpc contacts_getBlocked(TL_contacts_getBlocked) returns (contacts_Blocked) {}
+    // contacts.exportCard#84e53737 = Vector<int>;
+    rpc contacts_exportCard(TL_contacts_exportCard) returns (Vector_int) {}
+    // contacts.importCard#4fe196fe export_card:Vector<int> = User;
+    rpc contacts_importCard(TL_contacts_importCard) returns (User) {}
+    // contacts.search#11f812d8 q:string limit:int = contacts.Found;
+    rpc contacts_search(TL_contacts_search) returns (contacts_Found) {}
+    // contacts.resolveUsername#f93ccba3 username:string = contacts.ResolvedPeer;
+    rpc contacts_resolveUsername(TL_contacts_resolveUsername) returns (contacts_ResolvedPeer) {}
+    // contacts.getTopPeers#d4982db5 flags:# correspondents:flags.0?true bots_pm:flags.1?true bots_inline:flags.2?true phone_calls:flags.3?true groups:flags.10?true channels:flags.15?true offset:int limit:int hash:int = contacts.TopPeers;
+    rpc contacts_getTopPeers(TL_contacts_getTopPeers) returns (contacts_TopPeers) {}
+    // contacts.resetTopPeerRating#1ae373ac category:TopPeerCategory peer:InputPeer = Bool;
+    rpc contacts_resetTopPeerRating(TL_contacts_resetTopPeerRating) returns (Bool) {}
+    // contacts.resetSaved#879537f1 = Bool;
+    rpc contacts_resetSaved(TL_contacts_resetSaved) returns (Bool) {}
+    // contacts.getSaved#82f1e39f = Vector<SavedContact>;
+    rpc contacts_getSaved(TL_contacts_getSaved) returns (Vector_SavedContact) {}
+    // contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
+    rpc contacts_toggleTopPeers(TL_contacts_toggleTopPeers) returns (Bool) {}
 }
 
