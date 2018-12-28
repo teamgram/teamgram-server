@@ -19,13 +19,13 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"golang.org/x/net/context"
 	"time"
-	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 )
 
 // messages.toggleDialogPin#a731e257 flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
@@ -44,10 +44,15 @@ func (s *MessagesServiceImpl) MessagesToggleDialogPin(ctx context.Context, reque
 	dialogLogic := s.DialogModel.MakeDialogLogic(md.UserId, peer.PeerType, peer.PeerId)
 	dialogLogic.ToggleDialogPin(request.GetPinned())
 
+	// peer:DialogPeer
+
+	dialogPeer := &mtproto.TLDialogPeer{Data2: &mtproto.DialogPeer_Data{
+		Peer: peer.ToPeer(),
+	}}
 	// sync other sessions
 	updateDialogPinned := &mtproto.TLUpdateDialogPinned{Data2: &mtproto.Update_Data{
 		Pinned:  request.GetPinned(),
-		Peer_39: peer.ToPeer(),
+		Peer_61: dialogPeer.To_DialogPeer(),
 	}}
 	updates := &mtproto.TLUpdates{Data2: &mtproto.Updates_Data{
 		Updates: []*mtproto.Update{updateDialogPinned.To_Update()},
