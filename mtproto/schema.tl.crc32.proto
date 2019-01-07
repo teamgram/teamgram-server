@@ -781,6 +781,7 @@ enum TLConstructor {
     CRC32_messages_getDialogsLayer62 = 421243333;
     CRC32_initConnectionLayer68 = -951575130;
     CRC32_messages_searchLayer68 = -225926539;
+    CRC32_langpack_getStringsLayer68 = 773776152;
     CRC32_account_registerDeviceLayer71 = 1669245048;
     CRC32_account_unregisterDeviceLayer71 = 1707432768;
     CRC32_messages_getMessagesLayer71 = 1109588596;
@@ -1064,6 +1065,7 @@ enum TLConstructor {
     CRC32_handshakeContext = -1368942052;
     CRC32_handshakeData = 296397831;
     CRC32_sessionMessageData = -1817881259;
+    CRC32_chatData = 308598610;
     CRC32_int32 = -1932527041;
     CRC32_long = 1253220205;
     CRC32_string = 194458693;

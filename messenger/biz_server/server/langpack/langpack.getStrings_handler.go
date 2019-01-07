@@ -19,16 +19,16 @@ package langpack
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 )
 
-// langpack.getStrings#2e1ee318 lang_code:string keys:Vector<string> = Vector<LangPackString>;
+// langpack.getStrings#efea3803 lang_pack:string lang_code:string keys:Vector<string> = Vector<LangPackString>;
 func (s *LangpackServiceImpl) LangpackGetStrings(ctx context.Context, request *mtproto.TLLangpackGetStrings) (*mtproto.Vector_LangPackString, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("langpack.getStrings#2e1ee318 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("langpack.getStrings#efea3803 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	langPacks := queryLangPacks(request.GetLangCode())
 	langpackStrings := &mtproto.Vector_LangPackString{}
@@ -40,6 +40,6 @@ func (s *LangpackServiceImpl) LangpackGetStrings(ctx context.Context, request *m
 		langpackStrings.Datas = append(langpackStrings.Datas, s2.To_LangPackString())
 	}
 
-	glog.Infof("langpack.getStrings#2e1ee318 - reply: %s", logger.JsonDebugData(langpackStrings))
+	glog.Infof("langpack.getStrings#efea3803 - reply: %s", logger.JsonDebugData(langpackStrings))
 	return langpackStrings, nil
 }

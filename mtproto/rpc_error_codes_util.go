@@ -204,6 +204,13 @@ func NewRpcError2(code TLRpcErrorCodes) (err *TLRpcError) {
 }
 
 // Impl error interface
+func (e *TLRpcError) IsOK() bool {
+	if e == nil {
+		return true
+	}
+	return e.GetErrorCode() == int32(TLRpcErrorCodes_ERROR_CODE_OK)
+}
+
 func (e *TLRpcError) Error() string {
 	return fmt.Sprintf("rpc error: code = %d desc = %s", e.GetErrorCode(), e.GetErrorMessage())
 }

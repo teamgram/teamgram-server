@@ -19,10 +19,10 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/crypto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 )
 
@@ -74,15 +74,15 @@ var (
 // messages.getDhConfig#26cf8950 version:int random_length:int = messages.DhConfig;
 func (s *MessagesServiceImpl) MessagesGetDhConfig(ctx context.Context, request *mtproto.TLMessagesGetDhConfig) (*mtproto.Messages_DhConfig, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("MessagesGetDhConfig - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("messages.getDhConfig#26cf8950 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	// TODO(@benqi): 直接设定P和G
 	dhConfig := mtproto.NewTLMessagesDhConfig()
-	dhConfig.SetG(2)
+	dhConfig.SetG(3)
 	dhConfig.SetP(dh2048_p)
 	dhConfig.SetVersion(3)
 	dhConfig.SetRandom(crypto.GenerateNonce(int(request.GetRandomLength())))
 
-	glog.Infof("RpcMetadataFromIncoming - reply {%v}", dhConfig)
+	glog.Infof("messages.getDhConfig#26cf8950 - reply {%v}", dhConfig)
 	return dhConfig.To_Messages_DhConfig(), nil
 }

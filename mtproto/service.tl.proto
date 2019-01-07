@@ -33,26 +33,6 @@ import "schema.tl.sync.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// RSAPublicKey <--
-//  + TL_rsa_public_key
-//
-message RSAPublicKey_Data {
-    string n = 1;
-    string e = 2;
-}
-
-message RSAPublicKey {
-    TLConstructor constructor = 1;
-    RSAPublicKey_Data data2 = 2;
-}
-
-// rsa_public_key n:string e:string = RSAPublicKey;
-message TL_rsa_public_key {
-    RSAPublicKey_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 // SessionClientEvent <--
 //  + TL_sessionClientCreated
 //  + TL_sessionClientClosed
@@ -111,6 +91,45 @@ message TL_sessionMessageData {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// ChatData <--
+//  + TL_chatData
+//
+message ChatData_Data {
+    Chat chat = 1;
+    ChatParticipants participants = 2;
+}
+
+message ChatData {
+    TLConstructor constructor = 1;
+    ChatData_Data data2 = 2;
+}
+
+// chatData chat:Chat participants:ChatParticipants = ChatData;
+message TL_chatData {
+    ChatData_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Int32 <--
+//  + TL_int32
+//
+message Int32_Data {
+    int32 v = 1;
+}
+
+message Int32 {
+    TLConstructor constructor = 1;
+    Int32_Data data2 = 2;
+}
+
+// int32 v:int = Int32;
+message TL_int32 {
+    Int32_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // ClientSession <--
 //  + TL_clientSessionInfo
 //
@@ -139,6 +158,46 @@ message TL_clientSessionInfo {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// ServerConnected <--
+//  + TL_push_sessionServerConnected
+//
+message ServerConnected_Data {
+    int32 session_server_id = 1;
+    string server_name = 2;
+}
+
+message ServerConnected {
+    TLConstructor constructor = 1;
+    ServerConnected_Data data2 = 2;
+}
+
+// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
+message TL_push_sessionServerConnected {
+    ServerConnected_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// RSAPublicKey <--
+//  + TL_rsa_public_key
+//
+message RSAPublicKey_Data {
+    string n = 1;
+    string e = 2;
+}
+
+message RSAPublicKey {
+    TLConstructor constructor = 1;
+    RSAPublicKey_Data data2 = 2;
+}
+
+// rsa_public_key n:string e:string = RSAPublicKey;
+message TL_rsa_public_key {
+    RSAPublicKey_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // HandshakeContext <--
 //  + TL_handshakeContext
 //
@@ -160,25 +219,6 @@ message HandshakeContext {
 // handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
 message TL_handshakeContext {
     HandshakeContext_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
-//
-message Int32_Data {
-    int32 v = 1;
-}
-
-message Int32 {
-    TLConstructor constructor = 1;
-    Int32_Data data2 = 2;
-}
-
-// int32 v:int = Int32;
-message TL_int32 {
-    Int32_Data data2 = 2;
 }
 
 
@@ -238,26 +278,6 @@ message AuthKeyInfo {
 // authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
 message TL_authKeyInfo {
     AuthKeyInfo_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// ServerConnected <--
-//  + TL_push_sessionServerConnected
-//
-message ServerConnected_Data {
-    int32 session_server_id = 1;
-    string server_name = 2;
-}
-
-message ServerConnected {
-    TLConstructor constructor = 1;
-    ServerConnected_Data data2 = 2;
-}
-
-// push.sessionServerConnected session_server_id:int server_name:string = ServerConnected;
-message TL_push_sessionServerConnected {
-    ServerConnected_Data data2 = 2;
 }
 
 
