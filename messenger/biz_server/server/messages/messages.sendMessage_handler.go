@@ -17,19 +17,19 @@
 package messages
 
 import (
+	"fmt"
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
-	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
-	"time"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
-	"fmt"
-	"net/url"
 	"github.com/nebula-chat/chatengine/pkg/mention"
+	"golang.org/x/net/context"
+	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -97,8 +97,6 @@ func (s *MessagesServiceImpl) makeMessageBySendMessage(fromId, peerType, peerId 
 		message.Data2.Entities = append(message.Data2.Entities, entityUrl.To_MessageEntity())
 	}
 
-	entities := request.GetEntities()
-
 	for _, entity := range request.Entities {
 		switch entity.GetConstructor() {
 		case mtproto.TLConstructor_CRC32_inputMessageEntityMentionName:
@@ -112,11 +110,13 @@ func (s *MessagesServiceImpl) makeMessageBySendMessage(fromId, peerType, peerId 
 				}}
 				message.Data2.Entities = append(message.Data2.Entities, entityMentionName.To_MessageEntity())
 			}
+
 		default:
 			message.Data2.Entities = append(message.Data2.Entities, entity)
 		}
 	}
 
+	var entities []*mtproto.MessageEntity // request.GetEntities()
 	tags := mention.GetTags('@', request.GetMessage())
 	if len(tags) > 0 {
 		var nameList = make([]string, 0, len(tags))
@@ -128,7 +128,7 @@ func (s *MessagesServiceImpl) makeMessageBySendMessage(fromId, peerType, peerId 
 		for _, tag := range tags {
 			mentiton2 := &mtproto.TLMessageEntityMention{Data2: &mtproto.MessageEntity_Data{
 				Offset: int32(tag.Index),
-				Length: int32(len(tag.Tag)+1),
+				Length: int32(len(tag.Tag) + 1),
 			}}
 
 			// stole field UserId_5
@@ -145,7 +145,7 @@ func (s *MessagesServiceImpl) makeMessageBySendMessage(fromId, peerType, peerId 
 	for _, tag := range tags {
 		hashtag := &mtproto.TLMessageEntityHashtag{Data2: &mtproto.MessageEntity_Data{
 			Offset: int32(tag.Index),
-			Length: int32(len(tag.Tag)+1),
+			Length: int32(len(tag.Tag) + 1),
 		}}
 		entities = append(entities, hashtag.To_MessageEntity())
 	}
@@ -162,7 +162,8 @@ func (s *MessagesServiceImpl) makeMessageBySendMessage(fromId, peerType, peerId 
 	}
 
 	if len(entities) > 0 {
-		message.SetEntities(entities)
+		// message.SetEntities(entities)
+		message.Data2.Entities = append(message.Data2.Entities, entities...)
 	}
 
 	return
@@ -201,8 +202,8 @@ func (s *MessagesServiceImpl) MessagesSendMessage(ctx context.Context, request *
 
 	// peer
 	var (
-		peer               *base.PeerUtil
-		err                error
+		peer *base.PeerUtil
+		err  error
 	)
 
 	if request.GetPeer().GetConstructor() == mtproto.TLConstructor_CRC32_inputPeerEmpty {
@@ -276,7 +277,7 @@ func (s *MessagesServiceImpl) MessagesSendMessage(ctx context.Context, request *
 		pushCB := func(pts, ptsCount int32, inBox *message.MessageBox2) (*mtproto.Updates, error) {
 			var (
 				updates *mtproto.Updates
-				err error
+				err     error
 			)
 
 			glog.Info(inBox)

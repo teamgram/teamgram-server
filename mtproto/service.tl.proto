@@ -33,33 +33,6 @@ import "schema.tl.sync.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// SessionClientEvent <--
-//  + TL_sessionClientCreated
-//  + TL_sessionClientClosed
-//
-message SessionClientEvent_Data {
-    int64 auth_key_id = 1;
-    int64 client_conn_id = 2;
-    int32 conn_type = 3;
-}
-
-message SessionClientEvent {
-    TLConstructor constructor = 1;
-    SessionClientEvent_Data data2 = 2;
-}
-
-// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientCreated {
-    SessionClientEvent_Data data2 = 2;
-}
-
-// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientClosed {
-    SessionClientEvent_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 // RawMessageData <--
 //  + TL_handshakeData
 //  + TL_sessionMessageData
@@ -107,25 +80,6 @@ message ChatData {
 // chatData chat:Chat participants:ChatParticipants = ChatData;
 message TL_chatData {
     ChatData_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
-//
-message Int32_Data {
-    int32 v = 1;
-}
-
-message Int32 {
-    TLConstructor constructor = 1;
-    Int32_Data data2 = 2;
-}
-
-// int32 v:int = Int32;
-message TL_int32 {
-    Int32_Data data2 = 2;
 }
 
 
@@ -198,6 +152,33 @@ message TL_rsa_public_key {
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// SessionClientEvent <--
+//  + TL_sessionClientCreated
+//  + TL_sessionClientClosed
+//
+message SessionClientEvent_Data {
+    int64 auth_key_id = 1;
+    int64 client_conn_id = 2;
+    int32 conn_type = 3;
+}
+
+message SessionClientEvent {
+    TLConstructor constructor = 1;
+    SessionClientEvent_Data data2 = 2;
+}
+
+// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientCreated {
+    SessionClientEvent_Data data2 = 2;
+}
+
+// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientClosed {
+    SessionClientEvent_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // HandshakeContext <--
 //  + TL_handshakeContext
 //
@@ -219,6 +200,25 @@ message HandshakeContext {
 // handshakeContext nonce:int128 server_nonce:int128 new_nonce:int256 a:bytes p:bytes auth_key_id:long auth_key:bytes = HandshakeContext;
 message TL_handshakeContext {
     HandshakeContext_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Int32 <--
+//  + TL_int32
+//
+message Int32_Data {
+    int32 v = 1;
+}
+
+message Int32 {
+    TLConstructor constructor = 1;
+    Int32_Data data2 = 2;
+}
+
+// int32 v:int = Int32;
+message TL_int32 {
+    Int32_Data data2 = 2;
 }
 
 
@@ -473,25 +473,6 @@ message TL_bot_executeCommand {
 ///////////////////////////////////////////////////////////////////////////////
 // rpc
 
-service RPCSync {
-    // sync.syncUpdates flags:# user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
-    rpc sync_syncUpdates(TL_sync_syncUpdates) returns (Bool) {}
-    // sync.pushUpdates user_id:int updates:Updates = Bool;
-    rpc sync_pushUpdates(TL_sync_pushUpdates) returns (Bool) {}
-    // sync.syncChannelUpdates flags:# channel_id:int user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
-    rpc sync_syncChannelUpdates(TL_sync_syncChannelUpdates) returns (Bool) {}
-    // sync.pushChannelUpdates channel_id:int user_id:int updates:Updates = Bool;
-    rpc sync_pushChannelUpdates(TL_sync_pushChannelUpdates) returns (Bool) {}
-    // sync.pushRpcResult server_id:int auth_key_id:long req_msg_id:long result:bytes = Bool;
-    rpc sync_pushRpcResult(TL_sync_pushRpcResult) returns (Bool) {}
-    // sync.getState auth_key_id:long user_id:int = updates.State;
-    rpc sync_getState(TL_sync_getState) returns (updates_State) {}
-    // sync.getDifference flags:# auth_key_id:long user_id:int pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
-    rpc sync_getDifference(TL_sync_getDifference) returns (updates_Difference) {}
-    // sync.getChannelDifference flags:# auth_key_id:long user_id:int force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
-    rpc sync_getChannelDifference(TL_sync_getChannelDifference) returns (updates_ChannelDifference) {}
-}
-
 service RPCPush {
     // push.connectToSessionServer sync_server_id:int = ServerConnected;
     rpc push_connectToSessionServer(TL_push_connectToSessionServer) returns (ServerConnected) {}
@@ -531,5 +512,24 @@ service RPCSession {
     rpc session_bindAuthKeyUser(TL_session_bindAuthKeyUser) returns (Bool) {}
     // session.unbindAuthKeyUser auth_key_id:long user_id:int = Bool;
     rpc session_unbindAuthKeyUser(TL_session_unbindAuthKeyUser) returns (Bool) {}
+}
+
+service RPCSync {
+    // sync.syncUpdates flags:# user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
+    rpc sync_syncUpdates(TL_sync_syncUpdates) returns (Bool) {}
+    // sync.pushUpdates user_id:int updates:Updates = Bool;
+    rpc sync_pushUpdates(TL_sync_pushUpdates) returns (Bool) {}
+    // sync.syncChannelUpdates flags:# channel_id:int user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
+    rpc sync_syncChannelUpdates(TL_sync_syncChannelUpdates) returns (Bool) {}
+    // sync.pushChannelUpdates channel_id:int user_id:int updates:Updates = Bool;
+    rpc sync_pushChannelUpdates(TL_sync_pushChannelUpdates) returns (Bool) {}
+    // sync.pushRpcResult server_id:int auth_key_id:long req_msg_id:long result:bytes = Bool;
+    rpc sync_pushRpcResult(TL_sync_pushRpcResult) returns (Bool) {}
+    // sync.getState auth_key_id:long user_id:int = updates.State;
+    rpc sync_getState(TL_sync_getState) returns (updates_State) {}
+    // sync.getDifference flags:# auth_key_id:long user_id:int pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
+    rpc sync_getDifference(TL_sync_getDifference) returns (updates_Difference) {}
+    // sync.getChannelDifference flags:# auth_key_id:long user_id:int force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
+    rpc sync_getChannelDifference(TL_sync_getChannelDifference) returns (updates_ChannelDifference) {}
 }
 
