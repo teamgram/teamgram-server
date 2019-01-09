@@ -21,8 +21,8 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
+	"github.com/nebula-chat/chatengine/mtproto"
 )
 
 type ImportedContactData struct {
@@ -99,8 +99,8 @@ func (m *ContactModel) BackupPhoneBooks(authKeyId int64, contacts []*mtproto.Inp
 
 		do.ClientId = c.GetClientId()
 		do.Phone = c.GetPhone()
-		c.FirstName = c.GetFirstName()
-		c.LastName = c.GetLastName()
+		do.FirstName = c.GetFirstName()
+		do.LastName = c.GetLastName()
 		m.dao.PhoneBooksDAO.InsertOrUpdate(do)
 	}
 }

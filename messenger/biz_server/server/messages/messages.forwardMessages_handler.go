@@ -19,12 +19,12 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
 	"time"
 )
 
@@ -57,6 +57,11 @@ func (s *MessagesServiceImpl) makeForwardMessagesData(selfId int32, idList []int
 		m.Data2.FromId = selfId
 		m.Data2.FwdFrom = fwdFrom.To_MessageFwdHeader()
 		m.Data2.Date = int32(time.Now().Unix())
+	}
+
+	// reverse messages
+	for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+		messages[i], messages[j] = messages[j], messages[i]
 	}
 
 	return messages, randomIdList
