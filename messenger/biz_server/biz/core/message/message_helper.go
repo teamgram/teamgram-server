@@ -21,13 +21,13 @@ import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
-	base2 "github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"time"
 	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
+	base2 "github.com/nebula-chat/chatengine/pkg/util"
+	"time"
 )
 
 type OnBoxCallback func(int32, *MessageBox2)
@@ -188,12 +188,12 @@ func (m *MessageModel) MakeMessageData(senderUserId int32, peer *base.PeerUtil, 
 		Message:         message,
 		HasMediaUnread:  hasMediaUnread,
 		// Views:           message.GetData2().GetViews(),
-		dao:             m.dao,
+		dao: m.dao,
 	}
 }
 
 func (m *MessageData) Insert() (rowsAffected int64) {
-	rowsAffected = - 1
+	rowsAffected = -1
 	mtype, mdata := encodeMessage(m.Message)
 	switch m.Peer.PeerType {
 	case base.PEER_USER, base.PEER_CHAT:
@@ -354,7 +354,7 @@ func (m *MessageModel) makeMessageBoxByDO(boxDO *dataobject.MessageBoxesDO, data
 		EditMessage:     dataDO.EditMessage,
 		EditDate:        dataDO.EditDate,
 		// Views:           dataDO.Views,
-		dao:             m.dao,
+		dao: m.dao,
 	}
 
 	mData.Message, _ = decodeMessage(int(dataDO.MessageType), []byte(dataDO.MessageData))
@@ -362,7 +362,6 @@ func (m *MessageModel) makeMessageBoxByDO(boxDO *dataobject.MessageBoxesDO, data
 
 	return mBox
 }
-
 
 func (m *MessageModel) GetMessageBox2(peerType, ownerId, messageId int32) (*MessageBox2, error) {
 	var (
@@ -518,11 +517,11 @@ func (m *MessageModel) SendMultiMessage(sendUserId int32,
 				var (
 					inBoxList []*MessageBox2
 				)
-				if _, ok := boxListMap[ownerId]; ok {
-					inBoxList = boxListMap[ownerId]
+				if _, ok := boxListMap[box2.OwnerId]; ok {
+					inBoxList = boxListMap[box2.OwnerId]
 				}
 				inBoxList = append(inBoxList, box2)
-				boxListMap[ownerId] = inBoxList
+				boxListMap[box2.OwnerId] = inBoxList
 
 				// 1. update user_dialog
 				if box2.Peer.PeerType == base.PEER_USER {
@@ -588,6 +587,7 @@ func (m *MessageModel) SendMultiMessage(sendUserId int32,
 				glog.Error(err)
 				return nil, err
 			}
+			// glog.Info("push - ", inBoxUserId, ", ", pushUpdates)
 			sync_client.GetSyncClient().PushUpdates(inBoxUserId, pushUpdates)
 		case base.PEER_CHANNEL:
 		default:
