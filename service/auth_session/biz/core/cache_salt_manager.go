@@ -101,10 +101,11 @@ import (
 	"math/rand"
 	"time"
 
+	"encoding/json"
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/cache"
 	_ "github.com/nebula-chat/chatengine/pkg/cache/redis"
-	"github.com/nebula-chat/chatengine/mtproto"
 )
 
 const (
@@ -125,6 +126,11 @@ func init() {
 type cacheSaltManager struct {
 	cache   cache.Cache
 	timeout time.Duration // salt timeout
+}
+
+type cacheSaltsData struct {
+	// LastSalt *mtproto.FutureSalt_Data   `json:"last_salt"`
+	Salts []*mtproto.FutureSalt_Data `json:"salts"`
 }
 
 func initCacheSaltsManager(name, config string) error {
@@ -150,37 +156,45 @@ func GetOrNotInsertSaltList(keyId int64, size int32) ([]*mtproto.TLFutureSalt, e
 		lastValidUntil = date
 		// ok = false
 		saltsData []*mtproto.FutureSalt_Data
-		cacheKey = genCacheSaltKey(keyId)
-		lastSalt *mtproto.FutureSalt_Data
+		cacheKey  = genCacheSaltKey(keyId)
+		lastSalt  *mtproto.FutureSalt_Data
 	)
 
 	v := cacheSalts.cache.Get(cacheKey)
 	if v != nil {
-		if saltList, ok := v.([]*mtproto.FutureSalt_Data); ok {
-			hasLastSalt := false
-			for idx, salt := range saltList {
-				if salt.ValidUntil >= date {
-					if !hasLastSalt {
-						if idx > 0 {
-							lastSalt = saltList[idx-1]
-							// saltsData = append(saltsData, saltList[idx-1])
+		if cacheData, ok := v.([]byte); ok {
+			caches := &cacheSaltsData{}
+			err := json.Unmarshal(cacheData, caches)
+			if err != nil {
+				glog.Error("unmarshal error - ", err)
+			} else {
+				hasLastSalt := false
+				for idx, salt := range caches.Salts {
+					if salt.ValidUntil >= date {
+						if !hasLastSalt {
+							if idx > 0 {
+								lastSalt = caches.Salts[idx-1]
+								// saltsData = append(saltsData, saltList[idx-1])
+							}
+							hasLastSalt = true
 						}
-						hasLastSalt = true
-					}
-					saltsData = append(saltsData, salt)
-					if lastValidUntil < salt.ValidUntil {
-						lastValidUntil = salt.ValidUntil
+						saltsData = append(saltsData, salt)
+						if lastValidUntil < salt.ValidUntil {
+							lastValidUntil = salt.ValidUntil
+						}
 					}
 				}
-			}
-			if !hasLastSalt {
-				lastSalt = saltList[len(saltList)-1]
-			}
+				if !hasLastSalt {
+					lastSalt = caches.Salts[len(caches.Salts)-1]
+				}
 
-			// check ValidUntil
-			if lastSalt != nil && lastSalt.ValidUntil + 300 < date {
-				lastSalt = nil
+				// check ValidUntil
+				if lastSalt != nil && lastSalt.ValidUntil+300 < date {
+					lastSalt = nil
+				}
 			}
+		} else {
+			glog.Error("invalid cache - ", cacheKey)
 		}
 	}
 
@@ -205,7 +219,7 @@ func GetOrNotInsertSaltList(keyId int64, size int32) ([]*mtproto.TLFutureSalt, e
 	}
 
 	var (
-		salts2 []*mtproto.TLFutureSalt
+		salts2     []*mtproto.TLFutureSalt
 		saltsData2 []*mtproto.FutureSalt_Data
 	)
 
@@ -218,7 +232,11 @@ func GetOrNotInsertSaltList(keyId int64, size int32) ([]*mtproto.TLFutureSalt, e
 	saltsData2 = append(saltsData2, saltsData...)
 
 	if left > 0 {
-		err := cacheSalts.cache.Put(cacheKey, saltsData2, time.Duration(len(saltsData))*kSaltTimeout*time.Second)
+		caches := &cacheSaltsData{
+			Salts: saltsData2,
+		}
+		cacheData, _ := json.Marshal(caches)
+		err := cacheSalts.cache.Put(cacheKey, cacheData, time.Duration(len(saltsData))*kSaltTimeout*time.Second)
 		if err != nil {
 			// glog.Error(err)
 			return nil, err
@@ -229,5 +247,9 @@ func GetOrNotInsertSaltList(keyId int64, size int32) ([]*mtproto.TLFutureSalt, e
 
 func PutSaltCacche(keyId int64, salt *mtproto.TLFutureSalt) error {
 	cacheKey := genCacheSaltKey(keyId)
-	return cacheSalts.cache.Put(cacheKey, []*mtproto.TLFutureSalt{salt}, kSaltTimeout*time.Second)
+	caches := &cacheSaltsData{
+		Salts: []*mtproto.FutureSalt_Data{salt.Data2},
+	}
+	cacheData, _ := json.Marshal(caches)
+	return cacheSalts.cache.Put(cacheKey, cacheData, kSaltTimeout*time.Second)
 }
