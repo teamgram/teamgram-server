@@ -30,7 +30,6 @@ import (
 	"github.com/nebula-chat/chatengine/service/idgen/client"
 	"github.com/nebula-chat/chatengine/service/status/client"
 	"sync"
-	"time"
 )
 
 func init() {
