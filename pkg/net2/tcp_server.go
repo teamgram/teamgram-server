@@ -94,7 +94,6 @@ func (s *TcpServer) Serve() {
 			return
 		}
 
-		conn.(*net.TCPConn).SetReadDeadline(time.Now().Add(time.Minute * 4))
 		tcpConn := NewTcpConnection(s.serverName, conn, s.sendChanSize, codec, s)
 
 		go s.establishTcpConnection(tcpConn)
@@ -126,7 +125,6 @@ func (s *TcpServer) Serve2() {
 			return
 		}
 
-		conn.(*net.TCPConn).SetReadDeadline(time.Now().Add(time.Minute * 4))
 		tcpConn := NewTcpConnection(s.serverName, conn2, s.sendChanSize, codec, s)
 		go s.establishTcpConnection(tcpConn)
 	}
@@ -188,6 +186,7 @@ func (s *TcpServer) establishTcpConnection(conn *TcpConnection) {
 	s.onNewConnection(conn)
 
 	for {
+		conn.conn.SetReadDeadline(time.Now().Add(time.Minute * 6))
 		msg, err := conn.Receive()
 		if err != nil {
 			glog.Errorf("conn {%v} recv error: %v", conn, err)
