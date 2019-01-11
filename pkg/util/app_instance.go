@@ -44,6 +44,8 @@ type AppInstance interface {
 var ch = make(chan os.Signal, 1)
 
 func DoMainAppInstance(instance AppInstance) {
+	defer glog.Flush()
+
 	rand.Seed(time.Now().UnixNano())
 
 	if instance == nil {
