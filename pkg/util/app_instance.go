@@ -81,6 +81,7 @@ func DoMainAppInstance(instance AppInstance) {
 
 	instance.Destroy()
 	glog.Info("instance quited!")
+	time.Sleep(1 * time.Second)
 }
 
 func QuitAppInstance() {

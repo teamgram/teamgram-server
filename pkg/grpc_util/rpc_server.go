@@ -19,15 +19,15 @@ package grpc_util
 
 import (
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
 	"github.com/nebula-chat/chatengine/pkg/etcd_util"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/middleware/recovery2"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery/etcd3"
 	"google.golang.org/grpc"
 	"net"
-	"os"
-	"os/signal"
-	"syscall"
+	//"os"
+	//"os/signal"
+	//"syscall"
 )
 
 type RPCServer struct {
@@ -59,7 +59,7 @@ func (s *RPCServer) Serve(regFunc RegisterRPCServerFunc) {
 	listener, err := net.Listen("tcp", s.addr)
 
 	if err != nil {
-		glog.Error("failed to listen: %v", err)
+		glog.Errorf("failed to listen: %v", err)
 		return
 	}
 	glog.Infof("rpc listening on:%s", s.addr)
@@ -68,26 +68,28 @@ func (s *RPCServer) Serve(regFunc RegisterRPCServerFunc) {
 		regFunc(s.s)
 	}
 
-	defer s.s.GracefulStop()
+	//defer s.s.GracefulStop()
 	go s.registry.Register()
 
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
-	go func() {
-		s2 := <-ch
-		glog.Infof("exit...")
-		s.registry.Deregister()
-		if i, ok := s2.(syscall.Signal); ok {
-			os.Exit(int(i))
-		} else {
-			os.Exit(0)
-		}
-
-	}()
+	//ch := make(chan os.Signal, 1)
+	//signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+	//go func() {
+	//	s2 := <-ch
+	//	glog.Infof("exit...")
+	//	s.registry.Deregister()
+	//	if i, ok := s2.(syscall.Signal); ok {
+	//		os.Exit(int(i))
+	//	} else {
+	//		os.Exit(0)
+	//	}
+	//
+	//}()
 
 	if err := s.s.Serve(listener); err != nil {
 		glog.Fatalf("failed to serve: %s", err)
 	}
+	glog.Infof("rpcServer exit...")
+	s.registry.Deregister()
 }
 
 func (s *RPCServer) Stop() {

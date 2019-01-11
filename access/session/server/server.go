@@ -125,7 +125,6 @@ func (s *SessionServer) RunLoop() {
 func (s *SessionServer) Destroy() {
 	glog.Infof("sessionServer - destroy...")
 	s.server.Stop()
-	time.Sleep(1 * time.Second)
 	// s.client.Stop()
 }
 
