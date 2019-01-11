@@ -507,13 +507,14 @@ func (m *MessageModel) SendMultiMessage(sendUserId int32,
 
 	for i, outboxMessage := range outboxMessages {
 		err := m.SendInternalMessage(sendUserId, peer, randomIdList[i], false, outboxMessage, func(ownerId int32, box2 *MessageBox2) {
-			// glog.Info("SendInternalMessage - ", box2)
 			switch box2.MessageBoxType {
 			case MESSAGE_BOX_TYPE_OUTGOING:
+				glog.Info("SendMultiMessage - ", box2)
 				// 1. update user_dialog
 				outBoxList = append(outBoxList, box2)
 				m.dialogCallback.InsertOrUpdateDialog(box2.OwnerId, box2.Peer.PeerType, box2.Peer.PeerId, box2.MessageId, false, false)
 			case MESSAGE_BOX_TYPE_INCOMING:
+				glog.Info("SendMultiMessage - ", box2)
 				var (
 					inBoxList []*MessageBox2
 				)
@@ -541,13 +542,13 @@ func (m *MessageModel) SendMultiMessage(sendUserId int32,
 			glog.Error(err)
 			return nil, err
 		}
-
-		if len(boxListMap) == 0 {
-			err = fmt.Errorf("boxListMap empty")
-			glog.Error(err)
-			return nil, err
-		}
 	}
+
+	//if len(boxListMap) == 0 {
+	//	err := fmt.Errorf("boxListMap empty")
+	//	glog.Error(err)
+	//	return nil, err
+	//}
 
 	//// 3. 发件箱
 	var (

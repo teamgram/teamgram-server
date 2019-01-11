@@ -72,12 +72,27 @@ func (s *MessagesServiceImpl) MessagesForwardMessages(ctx context.Context, reque
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
 	glog.Infof("messages.forwardMessages#708e0195 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-	//// peer
+	// peer
 	var (
-		// fromPeer = helper.FromInputPeer2(md.UserId, request.GetFromPeer())
-		peer = base.FromInputPeer2(md.UserId, request.GetToPeer())
-		// messageOutboxList message2.MessageBoxList
+		peer *base.PeerUtil
+		err  error
 	)
+
+	if request.GetToPeer().GetConstructor() == mtproto.TLConstructor_CRC32_inputPeerEmpty {
+		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_BAD_REQUEST)
+		glog.Error("messages.sendMessage#fa88427a - invalid peer", err)
+		return nil, err
+	}
+
+	// TODO(@benqi): check user or channels's access_hash
+	if request.GetToPeer().GetConstructor() == mtproto.TLConstructor_CRC32_inputPeerSelf {
+		peer = &base.PeerUtil{
+			PeerType: base.PEER_USER,
+			PeerId:   md.UserId,
+		}
+	} else {
+		peer = base.FromInputPeer(request.GetToPeer())
+	}
 
 	outboxMessages, randomIdList := s.makeForwardMessagesData(md.UserId, request.GetId(), peer, request.GetRandomId())
 
