@@ -39,8 +39,6 @@ type statusConfig struct {
 }
 
 func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
 	flag.StringVar(&confPath, "conf", "./status.toml", "config path")
 }
 

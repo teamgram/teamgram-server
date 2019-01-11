@@ -22,13 +22,6 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/golang/glog"
-	"google.golang.org/grpc"
-	"github.com/nebula-chat/chatengine/pkg/util"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
-	"github.com/nebula-chat/chatengine/pkg/mysql_client"
-	"github.com/nebula-chat/chatengine/pkg/redis_client"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/server/account"
@@ -46,8 +39,15 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/server/updates"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/server/users"
 	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
-	"github.com/nebula-chat/chatengine/service/document/client"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
+	"github.com/nebula-chat/chatengine/pkg/mysql_client"
+	"github.com/nebula-chat/chatengine/pkg/redis_client"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/service/auth_session/client"
+	"github.com/nebula-chat/chatengine/service/document/client"
+	"google.golang.org/grpc"
 	// "github.com/nebula-chat/chatengine/service/bots/client"
 )
 
@@ -72,8 +72,6 @@ type messengerConfig struct {
 }
 
 func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
 	flag.StringVar(&confPath, "conf", "./biz_server.toml", "config path")
 }
 

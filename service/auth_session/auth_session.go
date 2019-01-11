@@ -19,15 +19,10 @@ package main
 
 import (
 	"flag"
-	"github.com/nebula-chat/chatengine/pkg/util"
 	_ "github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/service/auth_session/service"
 )
-
-func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
-}
 
 func main() {
 	flag.Parse()

@@ -19,8 +19,8 @@ package main
 
 import (
 	"flag"
-	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/access/session/server"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 /*
@@ -50,11 +50,6 @@ import (
       log.error(cause, "Error in upstream")
   }
 */
-
-func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
-}
 
 func main() {
 	flag.Parse()

@@ -21,8 +21,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -48,8 +48,6 @@ type idgenConfig struct {
 }
 
 func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
 	flag.StringVar(&confPath, "conf", "./idgen.toml", "config path")
 }
 

@@ -248,8 +248,3 @@ func TestClientServer(t *testing.T) {
 }
 
 // todo(yumcoder): timer test
-
-//func init() {
-//	flag.Set("alsologtostderr", "true")
-//	flag.Set("log_dir", "false")
-//}

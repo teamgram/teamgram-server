@@ -19,14 +19,9 @@ package main
 
 import (
 	"flag"
-	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/access/auth_key/server"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
-
-func init() {
-	flag.Set("alsologtostderr", "true")
-	flag.Set("log_dir", "false")
-}
 
 func main() {
 	flag.Parse()
