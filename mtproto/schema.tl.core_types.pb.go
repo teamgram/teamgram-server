@@ -33,7 +33,7 @@ func (m *Bool_Data) Reset()         { *m = Bool_Data{} }
 func (m *Bool_Data) String() string { return proto.CompactTextString(m) }
 func (*Bool_Data) ProtoMessage()    {}
 func (*Bool_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{0}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{0}
 }
 func (m *Bool_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Bool_Data.Unmarshal(m, b)
@@ -65,7 +65,7 @@ func (m *Bool) Reset()         { *m = Bool{} }
 func (m *Bool) String() string { return proto.CompactTextString(m) }
 func (*Bool) ProtoMessage()    {}
 func (*Bool) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{1}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{1}
 }
 func (m *Bool) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Bool.Unmarshal(m, b)
@@ -111,7 +111,7 @@ func (m *TLBoolFalse) Reset()         { *m = TLBoolFalse{} }
 func (m *TLBoolFalse) String() string { return proto.CompactTextString(m) }
 func (*TLBoolFalse) ProtoMessage()    {}
 func (*TLBoolFalse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{2}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{2}
 }
 func (m *TLBoolFalse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLBoolFalse.Unmarshal(m, b)
@@ -150,7 +150,7 @@ func (m *TLBoolTrue) Reset()         { *m = TLBoolTrue{} }
 func (m *TLBoolTrue) String() string { return proto.CompactTextString(m) }
 func (*TLBoolTrue) ProtoMessage()    {}
 func (*TLBoolTrue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{3}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{3}
 }
 func (m *TLBoolTrue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLBoolTrue.Unmarshal(m, b)
@@ -191,7 +191,7 @@ func (m *True_Data) Reset()         { *m = True_Data{} }
 func (m *True_Data) String() string { return proto.CompactTextString(m) }
 func (*True_Data) ProtoMessage()    {}
 func (*True_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{4}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{4}
 }
 func (m *True_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_True_Data.Unmarshal(m, b)
@@ -223,7 +223,7 @@ func (m *True) Reset()         { *m = True{} }
 func (m *True) String() string { return proto.CompactTextString(m) }
 func (*True) ProtoMessage()    {}
 func (*True) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{5}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{5}
 }
 func (m *True) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_True.Unmarshal(m, b)
@@ -269,7 +269,7 @@ func (m *TLTrue) Reset()         { *m = TLTrue{} }
 func (m *TLTrue) String() string { return proto.CompactTextString(m) }
 func (*TLTrue) ProtoMessage()    {}
 func (*TLTrue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{6}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{6}
 }
 func (m *TLTrue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLTrue.Unmarshal(m, b)
@@ -312,7 +312,7 @@ func (m *Error_Data) Reset()         { *m = Error_Data{} }
 func (m *Error_Data) String() string { return proto.CompactTextString(m) }
 func (*Error_Data) ProtoMessage()    {}
 func (*Error_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{7}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{7}
 }
 func (m *Error_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Error_Data.Unmarshal(m, b)
@@ -358,7 +358,7 @@ func (m *Error) Reset()         { *m = Error{} }
 func (m *Error) String() string { return proto.CompactTextString(m) }
 func (*Error) ProtoMessage()    {}
 func (*Error) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{8}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{8}
 }
 func (m *Error) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Error.Unmarshal(m, b)
@@ -404,7 +404,7 @@ func (m *TLError) Reset()         { *m = TLError{} }
 func (m *TLError) String() string { return proto.CompactTextString(m) }
 func (*TLError) ProtoMessage()    {}
 func (*TLError) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{9}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{9}
 }
 func (m *TLError) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLError.Unmarshal(m, b)
@@ -445,7 +445,7 @@ func (m *Null_Data) Reset()         { *m = Null_Data{} }
 func (m *Null_Data) String() string { return proto.CompactTextString(m) }
 func (*Null_Data) ProtoMessage()    {}
 func (*Null_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{10}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{10}
 }
 func (m *Null_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Null_Data.Unmarshal(m, b)
@@ -477,7 +477,7 @@ func (m *Null) Reset()         { *m = Null{} }
 func (m *Null) String() string { return proto.CompactTextString(m) }
 func (*Null) ProtoMessage()    {}
 func (*Null) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{11}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{11}
 }
 func (m *Null) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Null.Unmarshal(m, b)
@@ -523,7 +523,7 @@ func (m *TLNull) Reset()         { *m = TLNull{} }
 func (m *TLNull) String() string { return proto.CompactTextString(m) }
 func (*TLNull) ProtoMessage()    {}
 func (*TLNull) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b, []int{12}
+	return fileDescriptor_schema_tl_core_types_3fbe56126998b15b, []int{12}
 }
 func (m *TLNull) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLNull.Unmarshal(m, b)
@@ -567,10 +567,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("schema.tl.core_types.proto", fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b)
+	proto.RegisterFile("schema.tl.core_types.proto", fileDescriptor_schema_tl_core_types_3fbe56126998b15b)
 }
 
-var fileDescriptor_schema_tl_core_types_4a4c3633505dcc6b = []byte{
+var fileDescriptor_schema_tl_core_types_3fbe56126998b15b = []byte{
 	// 318 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x92, 0xcf, 0x4b, 0x3b, 0x31,
 	0x10, 0xc5, 0x69, 0x69, 0xbf, 0xfd, 0xee, 0x44, 0x3c, 0x44, 0x94, 0xd2, 0x83, 0x94, 0x3d, 0x55,

@@ -36,7 +36,7 @@ func (m *TLReqPq) Reset()         { *m = TLReqPq{} }
 func (m *TLReqPq) String() string { return proto.CompactTextString(m) }
 func (*TLReqPq) ProtoMessage()    {}
 func (*TLReqPq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb, []int{0}
+	return fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64, []int{0}
 }
 func (m *TLReqPq) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLReqPq.Unmarshal(m, b)
@@ -76,7 +76,7 @@ func (m *TLReqPqMulti) Reset()         { *m = TLReqPqMulti{} }
 func (m *TLReqPqMulti) String() string { return proto.CompactTextString(m) }
 func (*TLReqPqMulti) ProtoMessage()    {}
 func (*TLReqPqMulti) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb, []int{1}
+	return fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64, []int{1}
 }
 func (m *TLReqPqMulti) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLReqPqMulti.Unmarshal(m, b)
@@ -121,7 +121,7 @@ func (m *TLReq_DHParams) Reset()         { *m = TLReq_DHParams{} }
 func (m *TLReq_DHParams) String() string { return proto.CompactTextString(m) }
 func (*TLReq_DHParams) ProtoMessage()    {}
 func (*TLReq_DHParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb, []int{2}
+	return fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64, []int{2}
 }
 func (m *TLReq_DHParams) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLReq_DHParams.Unmarshal(m, b)
@@ -198,7 +198,7 @@ func (m *TLSetClient_DHParams) Reset()         { *m = TLSetClient_DHParams{} }
 func (m *TLSetClient_DHParams) String() string { return proto.CompactTextString(m) }
 func (*TLSetClient_DHParams) ProtoMessage()    {}
 func (*TLSetClient_DHParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb, []int{3}
+	return fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64, []int{3}
 }
 func (m *TLSetClient_DHParams) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLSetClient_DHParams.Unmarshal(m, b)
@@ -251,7 +251,7 @@ func (m *TLDestroyAuthKey) Reset()         { *m = TLDestroyAuthKey{} }
 func (m *TLDestroyAuthKey) String() string { return proto.CompactTextString(m) }
 func (*TLDestroyAuthKey) ProtoMessage()    {}
 func (*TLDestroyAuthKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb, []int{4}
+	return fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64, []int{4}
 }
 func (m *TLDestroyAuthKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLDestroyAuthKey.Unmarshal(m, b)
@@ -494,10 +494,10 @@ var _RPCAuthKey_serviceDesc = grpc.ServiceDesc{
 }
 
 func init() {
-	proto.RegisterFile("schema.tl.handshake_service.proto", fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb)
+	proto.RegisterFile("schema.tl.handshake_service.proto", fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64)
 }
 
-var fileDescriptor_schema_tl_handshake_service_c40b1b5a86392ebb = []byte{
+var fileDescriptor_schema_tl_handshake_service_0b44bfdcd3979f64 = []byte{
 	// 432 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x91, 0xcf, 0x6e, 0xd3, 0x40,
 	0x10, 0xc6, 0xe3, 0x84, 0xa6, 0xea, 0x90, 0x96, 0x6a, 0x09, 0xe0, 0x5a, 0x08, 0x25, 0x16, 0x88,

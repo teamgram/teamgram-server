@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- *  Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+ *  Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ package mtproto;
 option java_package = "chat.nebula.chatengine.mtproto";
 option java_outer_classname = "MTProto";
 option optimize_for = CODE_SIZE;
+// option go_package = "github.com/nebula-chat/chatengine/mtproto";
 
 import "schema.tl.crc32.proto";
 import "schema.tl.core_types.proto";
@@ -33,53 +34,48 @@ import "schema.tl.sync.proto";
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// RawMessageData <--
-//  + TL_handshakeData
-//  + TL_sessionMessageData
+// SessionClientEvent <--
+//  + TL_sessionClientCreated
+//  + TL_sessionClientClosed
 //
-message RawMessageData_Data {
-    int32 state = 1;
-    int32 res_state = 2;
-    int64 client_conn_id = 3;
-    HandshakeContext ctx = 4;
-    int64 auth_key_id = 5;
-    int32 quick_ack = 6;
-    int32 conn_type = 7;
+message SessionClientEvent_Data {
+    int64 auth_key_id = 1;
+    int64 client_conn_id = 2;
+    int32 conn_type = 3;
 }
 
-message RawMessageData {
+message SessionClientEvent {
     TLConstructor constructor = 1;
-    RawMessageData_Data data2 = 2;
+    SessionClientEvent_Data data2 = 2;
 }
 
-// handshakeData state:int res_state:int client_conn_id:long ctx:HandshakeContext = RawMessageData;
-message TL_handshakeData {
-    RawMessageData_Data data2 = 2;
+// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientCreated {
+    SessionClientEvent_Data data2 = 2;
 }
 
-// sessionMessageData auth_key_id:long quick_ack:int client_conn_id:long conn_type:int = RawMessageData;
-message TL_sessionMessageData {
-    RawMessageData_Data data2 = 2;
+// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
+message TL_sessionClientClosed {
+    SessionClientEvent_Data data2 = 2;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// ChatData <--
-//  + TL_chatData
+// String <--
+//  + TL_string
 //
-message ChatData_Data {
-    Chat chat = 1;
-    ChatParticipants participants = 2;
+message String_Data {
+    string v = 1;
 }
 
-message ChatData {
+message String {
     TLConstructor constructor = 1;
-    ChatData_Data data2 = 2;
+    String_Data data2 = 2;
 }
 
-// chatData chat:Chat participants:ChatParticipants = ChatData;
-message TL_chatData {
-    ChatData_Data data2 = 2;
+// string v:string = String;
+message TL_string {
+    String_Data data2 = 2;
 }
 
 
@@ -108,6 +104,85 @@ message ClientSession {
 // clientSessionInfo auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string = ClientSession;
 message TL_clientSessionInfo {
     ClientSession_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ChatData <--
+//  + TL_chatData
+//
+message ChatData_Data {
+    Chat chat = 1;
+    ChatParticipants participants = 2;
+}
+
+message ChatData {
+    TLConstructor constructor = 1;
+    ChatData_Data data2 = 2;
+}
+
+// chatData chat:Chat participants:ChatParticipants = ChatData;
+message TL_chatData {
+    ChatData_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Int32 <--
+//  + TL_int32
+//
+message Int32_Data {
+    int32 v = 1;
+}
+
+message Int32 {
+    TLConstructor constructor = 1;
+    Int32_Data data2 = 2;
+}
+
+// int32 v:int = Int32;
+message TL_int32 {
+    Int32_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Int64 <--
+//  + TL_long
+//
+message Int64_Data {
+    int64 v = 1;
+}
+
+message Int64 {
+    TLConstructor constructor = 1;
+    Int64_Data data2 = 2;
+}
+
+// long v:long = Int64;
+message TL_long {
+    Int64_Data data2 = 2;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// AuthKeyInfo <--
+//  + TL_authKeyInfo
+//
+message AuthKeyInfo_Data {
+    int64 auth_key_id = 1;
+    bytes auth_key = 2;
+    FutureSalt future_salt = 3;
+}
+
+message AuthKeyInfo {
+    TLConstructor constructor = 1;
+    AuthKeyInfo_Data data2 = 2;
+}
+
+// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
+message TL_authKeyInfo {
+    AuthKeyInfo_Data data2 = 2;
 }
 
 
@@ -152,33 +227,6 @@ message TL_rsa_public_key {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// SessionClientEvent <--
-//  + TL_sessionClientCreated
-//  + TL_sessionClientClosed
-//
-message SessionClientEvent_Data {
-    int64 auth_key_id = 1;
-    int64 client_conn_id = 2;
-    int32 conn_type = 3;
-}
-
-message SessionClientEvent {
-    TLConstructor constructor = 1;
-    SessionClientEvent_Data data2 = 2;
-}
-
-// sessionClientCreated auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientCreated {
-    SessionClientEvent_Data data2 = 2;
-}
-
-// sessionClientClosed auth_key_id:long client_conn_id:long conn_type:int = SessionClientEvent;
-message TL_sessionClientClosed {
-    SessionClientEvent_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 // HandshakeContext <--
 //  + TL_handshakeContext
 //
@@ -204,80 +252,33 @@ message TL_handshakeContext {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Int32 <--
-//  + TL_int32
+// RawMessageData <--
+//  + TL_handshakeData
+//  + TL_sessionMessageData
 //
-message Int32_Data {
-    int32 v = 1;
+message RawMessageData_Data {
+    int32 state = 1;
+    int32 res_state = 2;
+    int64 client_conn_id = 3;
+    HandshakeContext ctx = 4;
+    int64 auth_key_id = 5;
+    int32 quick_ack = 6;
+    int32 conn_type = 7;
 }
 
-message Int32 {
+message RawMessageData {
     TLConstructor constructor = 1;
-    Int32_Data data2 = 2;
+    RawMessageData_Data data2 = 2;
 }
 
-// int32 v:int = Int32;
-message TL_int32 {
-    Int32_Data data2 = 2;
+// handshakeData state:int res_state:int client_conn_id:long ctx:HandshakeContext = RawMessageData;
+message TL_handshakeData {
+    RawMessageData_Data data2 = 2;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-// Int64 <--
-//  + TL_long
-//
-message Int64_Data {
-    int64 v = 1;
-}
-
-message Int64 {
-    TLConstructor constructor = 1;
-    Int64_Data data2 = 2;
-}
-
-// long v:long = Int64;
-message TL_long {
-    Int64_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// String <--
-//  + TL_string
-//
-message String_Data {
-    string v = 1;
-}
-
-message String {
-    TLConstructor constructor = 1;
-    String_Data data2 = 2;
-}
-
-// string v:string = String;
-message TL_string {
-    String_Data data2 = 2;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// AuthKeyInfo <--
-//  + TL_authKeyInfo
-//
-message AuthKeyInfo_Data {
-    int64 auth_key_id = 1;
-    bytes auth_key = 2;
-    FutureSalt future_salt = 3;
-}
-
-message AuthKeyInfo {
-    TLConstructor constructor = 1;
-    AuthKeyInfo_Data data2 = 2;
-}
-
-// authKeyInfo flags:# auth_key_id:long auth_key:bytes future_salt:flags.0?FutureSalt= AuthKeyInfo;
-message TL_authKeyInfo {
-    AuthKeyInfo_Data data2 = 2;
+// sessionMessageData auth_key_id:long quick_ack:int client_conn_id:long conn_type:int = RawMessageData;
+message TL_sessionMessageData {
+    RawMessageData_Data data2 = 2;
 }
 
 
@@ -473,15 +474,6 @@ message TL_bot_executeCommand {
 ///////////////////////////////////////////////////////////////////////////////
 // rpc
 
-service RPCPush {
-    // push.connectToSessionServer sync_server_id:int = ServerConnected;
-    rpc push_connectToSessionServer(TL_push_connectToSessionServer) returns (ServerConnected) {}
-    // push.pushUpdatesData auth_key_id:long pts:int pts_count:int = Bool;
-    rpc push_pushUpdatesData(TL_push_pushUpdatesData) returns (Bool) {}
-    // push.pushRpcResultData auth_key_id:long client_req_msg_id:long = Bool;
-    rpc push_pushRpcResultData(TL_push_pushRpcResultData) returns (Bool) {}
-}
-
 service RPCBot {
     // bot.executeCommand bot_id:int peer_type:int peer_id:int command_line:string = Message;
     rpc bot_executeCommand(TL_bot_executeCommand) returns (Message) {}
@@ -531,5 +523,14 @@ service RPCSync {
     rpc sync_getDifference(TL_sync_getDifference) returns (updates_Difference) {}
     // sync.getChannelDifference flags:# auth_key_id:long user_id:int force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
     rpc sync_getChannelDifference(TL_sync_getChannelDifference) returns (updates_ChannelDifference) {}
+}
+
+service RPCPush {
+    // push.connectToSessionServer sync_server_id:int = ServerConnected;
+    rpc push_connectToSessionServer(TL_push_connectToSessionServer) returns (ServerConnected) {}
+    // push.pushUpdatesData auth_key_id:long pts:int pts_count:int = Bool;
+    rpc push_pushUpdatesData(TL_push_pushUpdatesData) returns (Bool) {}
+    // push.pushRpcResultData auth_key_id:long client_req_msg_id:long = Bool;
+    rpc push_pushRpcResultData(TL_push_pushRpcResultData) returns (Bool) {}
 }
 

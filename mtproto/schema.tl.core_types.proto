@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- *  Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+ *  Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ package mtproto;
 option java_package = "chat.nebula.chatengine.mtproto";
 option java_outer_classname = "MTProto";
 option optimize_for = CODE_SIZE;
+// option go_package = "github.com/nebula-chat/chatengine/mtproto";
 
 import "schema.tl.crc32.proto";
 

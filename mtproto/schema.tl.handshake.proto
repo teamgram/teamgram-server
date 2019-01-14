@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- *  Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
+ *  Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,36 +25,10 @@ package mtproto;
 option java_package = "chat.nebula.chatengine.mtproto";
 option java_outer_classname = "MTProto";
 option optimize_for = CODE_SIZE;
+// option go_package = "github.com/nebula-chat/chatengine/mtproto";
 
 import "schema.tl.crc32.proto";
 
-
-///////////////////////////////////////////////////////////////////////////////
-// DestroyAuthKeyRes <--
-//  + TL_destroy_auth_key_ok
-//  + TL_destroy_auth_key_none
-//  + TL_destroy_auth_key_fail
-//
-message DestroyAuthKeyRes_Data {
-}
-
-message DestroyAuthKeyRes {
-    TLConstructor constructor = 1;
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-
-// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_ok {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_none {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
-// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
-message TL_destroy_auth_key_fail {
-    DestroyAuthKeyRes_Data data2 = 2;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ResPQ <--
@@ -217,5 +191,32 @@ message TL_dh_gen_retry {
 // dh_gen_fail#a69dae02 nonce:int128 server_nonce:int128 new_nonce_hash3:int128 = Set_client_DH_params_answer;
 message TL_dh_gen_fail {
     Set_client_DH_params_answer_Data data2 = 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DestroyAuthKeyRes <--
+//  + TL_destroy_auth_key_ok
+//  + TL_destroy_auth_key_none
+//  + TL_destroy_auth_key_fail
+//
+message DestroyAuthKeyRes_Data {
+}
+
+message DestroyAuthKeyRes {
+    TLConstructor constructor = 1;
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+
+// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_ok {
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_none {
+    DestroyAuthKeyRes_Data data2 = 2;
+}
+// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
+message TL_destroy_auth_key_fail {
+    DestroyAuthKeyRes_Data data2 = 2;
 }
 

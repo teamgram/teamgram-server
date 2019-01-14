@@ -19,953 +19,6 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // /////////////////////////////////////////////////////////////////////////////
-// Server_DH_Params <--
-//  + TL_server_DH_params_fail
-//  + TL_server_DH_params_ok
-//
-type Server_DH_Params_Data struct {
-	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
-	NewNonceHash         []byte   `protobuf:"bytes,3,opt,name=new_nonce_hash,json=newNonceHash,proto3" json:"new_nonce_hash,omitempty"`
-	EncryptedAnswer      string   `protobuf:"bytes,4,opt,name=encrypted_answer,json=encryptedAnswer,proto3" json:"encrypted_answer,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Server_DH_Params_Data) Reset()         { *m = Server_DH_Params_Data{} }
-func (m *Server_DH_Params_Data) String() string { return proto.CompactTextString(m) }
-func (*Server_DH_Params_Data) ProtoMessage()    {}
-func (*Server_DH_Params_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{0}
-}
-func (m *Server_DH_Params_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Server_DH_Params_Data.Unmarshal(m, b)
-}
-func (m *Server_DH_Params_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Server_DH_Params_Data.Marshal(b, m, deterministic)
-}
-func (dst *Server_DH_Params_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Server_DH_Params_Data.Merge(dst, src)
-}
-func (m *Server_DH_Params_Data) XXX_Size() int {
-	return xxx_messageInfo_Server_DH_Params_Data.Size(m)
-}
-func (m *Server_DH_Params_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Server_DH_Params_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Server_DH_Params_Data proto.InternalMessageInfo
-
-func (m *Server_DH_Params_Data) GetNonce() []byte {
-	if m != nil {
-		return m.Nonce
-	}
-	return nil
-}
-
-func (m *Server_DH_Params_Data) GetServerNonce() []byte {
-	if m != nil {
-		return m.ServerNonce
-	}
-	return nil
-}
-
-func (m *Server_DH_Params_Data) GetNewNonceHash() []byte {
-	if m != nil {
-		return m.NewNonceHash
-	}
-	return nil
-}
-
-func (m *Server_DH_Params_Data) GetEncryptedAnswer() string {
-	if m != nil {
-		return m.EncryptedAnswer
-	}
-	return ""
-}
-
-type Server_DH_Params struct {
-	Constructor          TLConstructor          `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *Server_DH_Params) Reset()         { *m = Server_DH_Params{} }
-func (m *Server_DH_Params) String() string { return proto.CompactTextString(m) }
-func (*Server_DH_Params) ProtoMessage()    {}
-func (*Server_DH_Params) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{1}
-}
-func (m *Server_DH_Params) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Server_DH_Params.Unmarshal(m, b)
-}
-func (m *Server_DH_Params) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Server_DH_Params.Marshal(b, m, deterministic)
-}
-func (dst *Server_DH_Params) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Server_DH_Params.Merge(dst, src)
-}
-func (m *Server_DH_Params) XXX_Size() int {
-	return xxx_messageInfo_Server_DH_Params.Size(m)
-}
-func (m *Server_DH_Params) XXX_DiscardUnknown() {
-	xxx_messageInfo_Server_DH_Params.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Server_DH_Params proto.InternalMessageInfo
-
-func (m *Server_DH_Params) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *Server_DH_Params) GetData2() *Server_DH_Params_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// server_DH_params_fail#79cb045d nonce:int128 server_nonce:int128 new_nonce_hash:int128 = Server_DH_Params;
-type TLServer_DHParamsFail struct {
-	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *TLServer_DHParamsFail) Reset()         { *m = TLServer_DHParamsFail{} }
-func (m *TLServer_DHParamsFail) String() string { return proto.CompactTextString(m) }
-func (*TLServer_DHParamsFail) ProtoMessage()    {}
-func (*TLServer_DHParamsFail) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{2}
-}
-func (m *TLServer_DHParamsFail) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLServer_DHParamsFail.Unmarshal(m, b)
-}
-func (m *TLServer_DHParamsFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLServer_DHParamsFail.Marshal(b, m, deterministic)
-}
-func (dst *TLServer_DHParamsFail) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLServer_DHParamsFail.Merge(dst, src)
-}
-func (m *TLServer_DHParamsFail) XXX_Size() int {
-	return xxx_messageInfo_TLServer_DHParamsFail.Size(m)
-}
-func (m *TLServer_DHParamsFail) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLServer_DHParamsFail.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLServer_DHParamsFail proto.InternalMessageInfo
-
-func (m *TLServer_DHParamsFail) GetData2() *Server_DH_Params_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// server_DH_params_ok#d0e8075c nonce:int128 server_nonce:int128 encrypted_answer:string = Server_DH_Params;
-type TLServer_DHParamsOk struct {
-	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *TLServer_DHParamsOk) Reset()         { *m = TLServer_DHParamsOk{} }
-func (m *TLServer_DHParamsOk) String() string { return proto.CompactTextString(m) }
-func (*TLServer_DHParamsOk) ProtoMessage()    {}
-func (*TLServer_DHParamsOk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{3}
-}
-func (m *TLServer_DHParamsOk) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLServer_DHParamsOk.Unmarshal(m, b)
-}
-func (m *TLServer_DHParamsOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLServer_DHParamsOk.Marshal(b, m, deterministic)
-}
-func (dst *TLServer_DHParamsOk) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLServer_DHParamsOk.Merge(dst, src)
-}
-func (m *TLServer_DHParamsOk) XXX_Size() int {
-	return xxx_messageInfo_TLServer_DHParamsOk.Size(m)
-}
-func (m *TLServer_DHParamsOk) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLServer_DHParamsOk.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLServer_DHParamsOk proto.InternalMessageInfo
-
-func (m *TLServer_DHParamsOk) GetData2() *Server_DH_Params_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// Server_DH_inner_data <--
-//  + TL_server_DH_inner_data
-//
-type Server_DHInnerData_Data struct {
-	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
-	G                    int32    `protobuf:"varint,3,opt,name=g,proto3" json:"g,omitempty"`
-	DhPrime              string   `protobuf:"bytes,4,opt,name=dh_prime,json=dhPrime,proto3" json:"dh_prime,omitempty"`
-	GA                   string   `protobuf:"bytes,5,opt,name=g_a,json=gA,proto3" json:"g_a,omitempty"`
-	ServerTime           int32    `protobuf:"varint,6,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Server_DHInnerData_Data) Reset()         { *m = Server_DHInnerData_Data{} }
-func (m *Server_DHInnerData_Data) String() string { return proto.CompactTextString(m) }
-func (*Server_DHInnerData_Data) ProtoMessage()    {}
-func (*Server_DHInnerData_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{4}
-}
-func (m *Server_DHInnerData_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Server_DHInnerData_Data.Unmarshal(m, b)
-}
-func (m *Server_DHInnerData_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Server_DHInnerData_Data.Marshal(b, m, deterministic)
-}
-func (dst *Server_DHInnerData_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Server_DHInnerData_Data.Merge(dst, src)
-}
-func (m *Server_DHInnerData_Data) XXX_Size() int {
-	return xxx_messageInfo_Server_DHInnerData_Data.Size(m)
-}
-func (m *Server_DHInnerData_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Server_DHInnerData_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Server_DHInnerData_Data proto.InternalMessageInfo
-
-func (m *Server_DHInnerData_Data) GetNonce() []byte {
-	if m != nil {
-		return m.Nonce
-	}
-	return nil
-}
-
-func (m *Server_DHInnerData_Data) GetServerNonce() []byte {
-	if m != nil {
-		return m.ServerNonce
-	}
-	return nil
-}
-
-func (m *Server_DHInnerData_Data) GetG() int32 {
-	if m != nil {
-		return m.G
-	}
-	return 0
-}
-
-func (m *Server_DHInnerData_Data) GetDhPrime() string {
-	if m != nil {
-		return m.DhPrime
-	}
-	return ""
-}
-
-func (m *Server_DHInnerData_Data) GetGA() string {
-	if m != nil {
-		return m.GA
-	}
-	return ""
-}
-
-func (m *Server_DHInnerData_Data) GetServerTime() int32 {
-	if m != nil {
-		return m.ServerTime
-	}
-	return 0
-}
-
-type Server_DHInnerData struct {
-	Constructor          TLConstructor            `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *Server_DHInnerData_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
-}
-
-func (m *Server_DHInnerData) Reset()         { *m = Server_DHInnerData{} }
-func (m *Server_DHInnerData) String() string { return proto.CompactTextString(m) }
-func (*Server_DHInnerData) ProtoMessage()    {}
-func (*Server_DHInnerData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{5}
-}
-func (m *Server_DHInnerData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Server_DHInnerData.Unmarshal(m, b)
-}
-func (m *Server_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Server_DHInnerData.Marshal(b, m, deterministic)
-}
-func (dst *Server_DHInnerData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Server_DHInnerData.Merge(dst, src)
-}
-func (m *Server_DHInnerData) XXX_Size() int {
-	return xxx_messageInfo_Server_DHInnerData.Size(m)
-}
-func (m *Server_DHInnerData) XXX_DiscardUnknown() {
-	xxx_messageInfo_Server_DHInnerData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Server_DHInnerData proto.InternalMessageInfo
-
-func (m *Server_DHInnerData) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *Server_DHInnerData) GetData2() *Server_DHInnerData_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// server_DH_inner_data#b5890dba nonce:int128 server_nonce:int128 g:int dh_prime:string g_a:string server_time:int = Server_DH_inner_data;
-type TLServer_DHInnerData struct {
-	Data2                *Server_DHInnerData_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
-}
-
-func (m *TLServer_DHInnerData) Reset()         { *m = TLServer_DHInnerData{} }
-func (m *TLServer_DHInnerData) String() string { return proto.CompactTextString(m) }
-func (*TLServer_DHInnerData) ProtoMessage()    {}
-func (*TLServer_DHInnerData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{6}
-}
-func (m *TLServer_DHInnerData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLServer_DHInnerData.Unmarshal(m, b)
-}
-func (m *TLServer_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLServer_DHInnerData.Marshal(b, m, deterministic)
-}
-func (dst *TLServer_DHInnerData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLServer_DHInnerData.Merge(dst, src)
-}
-func (m *TLServer_DHInnerData) XXX_Size() int {
-	return xxx_messageInfo_TLServer_DHInnerData.Size(m)
-}
-func (m *TLServer_DHInnerData) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLServer_DHInnerData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLServer_DHInnerData proto.InternalMessageInfo
-
-func (m *TLServer_DHInnerData) GetData2() *Server_DHInnerData_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// Client_DH_Inner_Data <--
-//  + TL_client_DH_inner_data
-//
-type Client_DH_Inner_Data_Data struct {
-	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
-	RetryId              int64    `protobuf:"varint,3,opt,name=retry_id,json=retryId,proto3" json:"retry_id,omitempty"`
-	GB                   string   `protobuf:"bytes,4,opt,name=g_b,json=gB,proto3" json:"g_b,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Client_DH_Inner_Data_Data) Reset()         { *m = Client_DH_Inner_Data_Data{} }
-func (m *Client_DH_Inner_Data_Data) String() string { return proto.CompactTextString(m) }
-func (*Client_DH_Inner_Data_Data) ProtoMessage()    {}
-func (*Client_DH_Inner_Data_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{7}
-}
-func (m *Client_DH_Inner_Data_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Client_DH_Inner_Data_Data.Unmarshal(m, b)
-}
-func (m *Client_DH_Inner_Data_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Client_DH_Inner_Data_Data.Marshal(b, m, deterministic)
-}
-func (dst *Client_DH_Inner_Data_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Client_DH_Inner_Data_Data.Merge(dst, src)
-}
-func (m *Client_DH_Inner_Data_Data) XXX_Size() int {
-	return xxx_messageInfo_Client_DH_Inner_Data_Data.Size(m)
-}
-func (m *Client_DH_Inner_Data_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Client_DH_Inner_Data_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Client_DH_Inner_Data_Data proto.InternalMessageInfo
-
-func (m *Client_DH_Inner_Data_Data) GetNonce() []byte {
-	if m != nil {
-		return m.Nonce
-	}
-	return nil
-}
-
-func (m *Client_DH_Inner_Data_Data) GetServerNonce() []byte {
-	if m != nil {
-		return m.ServerNonce
-	}
-	return nil
-}
-
-func (m *Client_DH_Inner_Data_Data) GetRetryId() int64 {
-	if m != nil {
-		return m.RetryId
-	}
-	return 0
-}
-
-func (m *Client_DH_Inner_Data_Data) GetGB() string {
-	if m != nil {
-		return m.GB
-	}
-	return ""
-}
-
-type Client_DH_Inner_Data struct {
-	Constructor          TLConstructor              `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *Client_DH_Inner_Data_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
-	XXX_unrecognized     []byte                     `json:"-"`
-	XXX_sizecache        int32                      `json:"-"`
-}
-
-func (m *Client_DH_Inner_Data) Reset()         { *m = Client_DH_Inner_Data{} }
-func (m *Client_DH_Inner_Data) String() string { return proto.CompactTextString(m) }
-func (*Client_DH_Inner_Data) ProtoMessage()    {}
-func (*Client_DH_Inner_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{8}
-}
-func (m *Client_DH_Inner_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Client_DH_Inner_Data.Unmarshal(m, b)
-}
-func (m *Client_DH_Inner_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Client_DH_Inner_Data.Marshal(b, m, deterministic)
-}
-func (dst *Client_DH_Inner_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Client_DH_Inner_Data.Merge(dst, src)
-}
-func (m *Client_DH_Inner_Data) XXX_Size() int {
-	return xxx_messageInfo_Client_DH_Inner_Data.Size(m)
-}
-func (m *Client_DH_Inner_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_Client_DH_Inner_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Client_DH_Inner_Data proto.InternalMessageInfo
-
-func (m *Client_DH_Inner_Data) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *Client_DH_Inner_Data) GetData2() *Client_DH_Inner_Data_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// client_DH_inner_data#6643b654 nonce:int128 server_nonce:int128 retry_id:long g_b:string = Client_DH_Inner_Data;
-type TLClient_DHInnerData struct {
-	Data2                *Client_DH_Inner_Data_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
-	XXX_unrecognized     []byte                     `json:"-"`
-	XXX_sizecache        int32                      `json:"-"`
-}
-
-func (m *TLClient_DHInnerData) Reset()         { *m = TLClient_DHInnerData{} }
-func (m *TLClient_DHInnerData) String() string { return proto.CompactTextString(m) }
-func (*TLClient_DHInnerData) ProtoMessage()    {}
-func (*TLClient_DHInnerData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{9}
-}
-func (m *TLClient_DHInnerData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLClient_DHInnerData.Unmarshal(m, b)
-}
-func (m *TLClient_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLClient_DHInnerData.Marshal(b, m, deterministic)
-}
-func (dst *TLClient_DHInnerData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLClient_DHInnerData.Merge(dst, src)
-}
-func (m *TLClient_DHInnerData) XXX_Size() int {
-	return xxx_messageInfo_TLClient_DHInnerData.Size(m)
-}
-func (m *TLClient_DHInnerData) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLClient_DHInnerData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLClient_DHInnerData proto.InternalMessageInfo
-
-func (m *TLClient_DHInnerData) GetData2() *Client_DH_Inner_Data_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// Set_client_DH_params_answer <--
-//  + TL_dh_gen_ok
-//  + TL_dh_gen_retry
-//  + TL_dh_gen_fail
-//
-type SetClient_DHParamsAnswer_Data struct {
-	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
-	NewNonceHash1        []byte   `protobuf:"bytes,3,opt,name=new_nonce_hash1,json=newNonceHash1,proto3" json:"new_nonce_hash1,omitempty"`
-	NewNonceHash2        []byte   `protobuf:"bytes,4,opt,name=new_nonce_hash2,json=newNonceHash2,proto3" json:"new_nonce_hash2,omitempty"`
-	NewNonceHash3        []byte   `protobuf:"bytes,5,opt,name=new_nonce_hash3,json=newNonceHash3,proto3" json:"new_nonce_hash3,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SetClient_DHParamsAnswer_Data) Reset()         { *m = SetClient_DHParamsAnswer_Data{} }
-func (m *SetClient_DHParamsAnswer_Data) String() string { return proto.CompactTextString(m) }
-func (*SetClient_DHParamsAnswer_Data) ProtoMessage()    {}
-func (*SetClient_DHParamsAnswer_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{10}
-}
-func (m *SetClient_DHParamsAnswer_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Unmarshal(m, b)
-}
-func (m *SetClient_DHParamsAnswer_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Marshal(b, m, deterministic)
-}
-func (dst *SetClient_DHParamsAnswer_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetClient_DHParamsAnswer_Data.Merge(dst, src)
-}
-func (m *SetClient_DHParamsAnswer_Data) XXX_Size() int {
-	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Size(m)
-}
-func (m *SetClient_DHParamsAnswer_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_SetClient_DHParamsAnswer_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SetClient_DHParamsAnswer_Data proto.InternalMessageInfo
-
-func (m *SetClient_DHParamsAnswer_Data) GetNonce() []byte {
-	if m != nil {
-		return m.Nonce
-	}
-	return nil
-}
-
-func (m *SetClient_DHParamsAnswer_Data) GetServerNonce() []byte {
-	if m != nil {
-		return m.ServerNonce
-	}
-	return nil
-}
-
-func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash1() []byte {
-	if m != nil {
-		return m.NewNonceHash1
-	}
-	return nil
-}
-
-func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash2() []byte {
-	if m != nil {
-		return m.NewNonceHash2
-	}
-	return nil
-}
-
-func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash3() []byte {
-	if m != nil {
-		return m.NewNonceHash3
-	}
-	return nil
-}
-
-type SetClient_DHParamsAnswer struct {
-	Constructor          TLConstructor                  `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
-}
-
-func (m *SetClient_DHParamsAnswer) Reset()         { *m = SetClient_DHParamsAnswer{} }
-func (m *SetClient_DHParamsAnswer) String() string { return proto.CompactTextString(m) }
-func (*SetClient_DHParamsAnswer) ProtoMessage()    {}
-func (*SetClient_DHParamsAnswer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{11}
-}
-func (m *SetClient_DHParamsAnswer) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SetClient_DHParamsAnswer.Unmarshal(m, b)
-}
-func (m *SetClient_DHParamsAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SetClient_DHParamsAnswer.Marshal(b, m, deterministic)
-}
-func (dst *SetClient_DHParamsAnswer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetClient_DHParamsAnswer.Merge(dst, src)
-}
-func (m *SetClient_DHParamsAnswer) XXX_Size() int {
-	return xxx_messageInfo_SetClient_DHParamsAnswer.Size(m)
-}
-func (m *SetClient_DHParamsAnswer) XXX_DiscardUnknown() {
-	xxx_messageInfo_SetClient_DHParamsAnswer.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SetClient_DHParamsAnswer proto.InternalMessageInfo
-
-func (m *SetClient_DHParamsAnswer) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *SetClient_DHParamsAnswer) GetData2() *SetClient_DHParamsAnswer_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// dh_gen_ok#3bcbf734 nonce:int128 server_nonce:int128 new_nonce_hash1:int128 = Set_client_DH_params_answer;
-type TLDhGenOk struct {
-	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
-}
-
-func (m *TLDhGenOk) Reset()         { *m = TLDhGenOk{} }
-func (m *TLDhGenOk) String() string { return proto.CompactTextString(m) }
-func (*TLDhGenOk) ProtoMessage()    {}
-func (*TLDhGenOk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{12}
-}
-func (m *TLDhGenOk) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDhGenOk.Unmarshal(m, b)
-}
-func (m *TLDhGenOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDhGenOk.Marshal(b, m, deterministic)
-}
-func (dst *TLDhGenOk) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDhGenOk.Merge(dst, src)
-}
-func (m *TLDhGenOk) XXX_Size() int {
-	return xxx_messageInfo_TLDhGenOk.Size(m)
-}
-func (m *TLDhGenOk) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDhGenOk.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDhGenOk proto.InternalMessageInfo
-
-func (m *TLDhGenOk) GetData2() *SetClient_DHParamsAnswer_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// dh_gen_retry#46dc1fb9 nonce:int128 server_nonce:int128 new_nonce_hash2:int128 = Set_client_DH_params_answer;
-type TLDhGenRetry struct {
-	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
-}
-
-func (m *TLDhGenRetry) Reset()         { *m = TLDhGenRetry{} }
-func (m *TLDhGenRetry) String() string { return proto.CompactTextString(m) }
-func (*TLDhGenRetry) ProtoMessage()    {}
-func (*TLDhGenRetry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{13}
-}
-func (m *TLDhGenRetry) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDhGenRetry.Unmarshal(m, b)
-}
-func (m *TLDhGenRetry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDhGenRetry.Marshal(b, m, deterministic)
-}
-func (dst *TLDhGenRetry) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDhGenRetry.Merge(dst, src)
-}
-func (m *TLDhGenRetry) XXX_Size() int {
-	return xxx_messageInfo_TLDhGenRetry.Size(m)
-}
-func (m *TLDhGenRetry) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDhGenRetry.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDhGenRetry proto.InternalMessageInfo
-
-func (m *TLDhGenRetry) GetData2() *SetClient_DHParamsAnswer_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// dh_gen_fail#a69dae02 nonce:int128 server_nonce:int128 new_nonce_hash3:int128 = Set_client_DH_params_answer;
-type TLDhGenFail struct {
-	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
-}
-
-func (m *TLDhGenFail) Reset()         { *m = TLDhGenFail{} }
-func (m *TLDhGenFail) String() string { return proto.CompactTextString(m) }
-func (*TLDhGenFail) ProtoMessage()    {}
-func (*TLDhGenFail) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{14}
-}
-func (m *TLDhGenFail) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDhGenFail.Unmarshal(m, b)
-}
-func (m *TLDhGenFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDhGenFail.Marshal(b, m, deterministic)
-}
-func (dst *TLDhGenFail) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDhGenFail.Merge(dst, src)
-}
-func (m *TLDhGenFail) XXX_Size() int {
-	return xxx_messageInfo_TLDhGenFail.Size(m)
-}
-func (m *TLDhGenFail) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDhGenFail.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDhGenFail proto.InternalMessageInfo
-
-func (m *TLDhGenFail) GetData2() *SetClient_DHParamsAnswer_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-// DestroyAuthKeyRes <--
-//  + TL_destroy_auth_key_ok
-//  + TL_destroy_auth_key_none
-//  + TL_destroy_auth_key_fail
-//
-type DestroyAuthKeyRes_Data struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DestroyAuthKeyRes_Data) Reset()         { *m = DestroyAuthKeyRes_Data{} }
-func (m *DestroyAuthKeyRes_Data) String() string { return proto.CompactTextString(m) }
-func (*DestroyAuthKeyRes_Data) ProtoMessage()    {}
-func (*DestroyAuthKeyRes_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{15}
-}
-func (m *DestroyAuthKeyRes_Data) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DestroyAuthKeyRes_Data.Unmarshal(m, b)
-}
-func (m *DestroyAuthKeyRes_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DestroyAuthKeyRes_Data.Marshal(b, m, deterministic)
-}
-func (dst *DestroyAuthKeyRes_Data) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DestroyAuthKeyRes_Data.Merge(dst, src)
-}
-func (m *DestroyAuthKeyRes_Data) XXX_Size() int {
-	return xxx_messageInfo_DestroyAuthKeyRes_Data.Size(m)
-}
-func (m *DestroyAuthKeyRes_Data) XXX_DiscardUnknown() {
-	xxx_messageInfo_DestroyAuthKeyRes_Data.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DestroyAuthKeyRes_Data proto.InternalMessageInfo
-
-type DestroyAuthKeyRes struct {
-	Constructor          TLConstructor           `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
-	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
-}
-
-func (m *DestroyAuthKeyRes) Reset()         { *m = DestroyAuthKeyRes{} }
-func (m *DestroyAuthKeyRes) String() string { return proto.CompactTextString(m) }
-func (*DestroyAuthKeyRes) ProtoMessage()    {}
-func (*DestroyAuthKeyRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{16}
-}
-func (m *DestroyAuthKeyRes) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DestroyAuthKeyRes.Unmarshal(m, b)
-}
-func (m *DestroyAuthKeyRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DestroyAuthKeyRes.Marshal(b, m, deterministic)
-}
-func (dst *DestroyAuthKeyRes) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DestroyAuthKeyRes.Merge(dst, src)
-}
-func (m *DestroyAuthKeyRes) XXX_Size() int {
-	return xxx_messageInfo_DestroyAuthKeyRes.Size(m)
-}
-func (m *DestroyAuthKeyRes) XXX_DiscardUnknown() {
-	xxx_messageInfo_DestroyAuthKeyRes.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DestroyAuthKeyRes proto.InternalMessageInfo
-
-func (m *DestroyAuthKeyRes) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return TLConstructor_CRC32_UNKNOWN
-}
-
-func (m *DestroyAuthKeyRes) GetData2() *DestroyAuthKeyRes_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
-type TLDestroyAuthKeyOk struct {
-	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
-}
-
-func (m *TLDestroyAuthKeyOk) Reset()         { *m = TLDestroyAuthKeyOk{} }
-func (m *TLDestroyAuthKeyOk) String() string { return proto.CompactTextString(m) }
-func (*TLDestroyAuthKeyOk) ProtoMessage()    {}
-func (*TLDestroyAuthKeyOk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{17}
-}
-func (m *TLDestroyAuthKeyOk) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDestroyAuthKeyOk.Unmarshal(m, b)
-}
-func (m *TLDestroyAuthKeyOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDestroyAuthKeyOk.Marshal(b, m, deterministic)
-}
-func (dst *TLDestroyAuthKeyOk) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDestroyAuthKeyOk.Merge(dst, src)
-}
-func (m *TLDestroyAuthKeyOk) XXX_Size() int {
-	return xxx_messageInfo_TLDestroyAuthKeyOk.Size(m)
-}
-func (m *TLDestroyAuthKeyOk) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDestroyAuthKeyOk.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDestroyAuthKeyOk proto.InternalMessageInfo
-
-func (m *TLDestroyAuthKeyOk) GetData2() *DestroyAuthKeyRes_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
-type TLDestroyAuthKeyNone struct {
-	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
-}
-
-func (m *TLDestroyAuthKeyNone) Reset()         { *m = TLDestroyAuthKeyNone{} }
-func (m *TLDestroyAuthKeyNone) String() string { return proto.CompactTextString(m) }
-func (*TLDestroyAuthKeyNone) ProtoMessage()    {}
-func (*TLDestroyAuthKeyNone) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{18}
-}
-func (m *TLDestroyAuthKeyNone) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDestroyAuthKeyNone.Unmarshal(m, b)
-}
-func (m *TLDestroyAuthKeyNone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDestroyAuthKeyNone.Marshal(b, m, deterministic)
-}
-func (dst *TLDestroyAuthKeyNone) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDestroyAuthKeyNone.Merge(dst, src)
-}
-func (m *TLDestroyAuthKeyNone) XXX_Size() int {
-	return xxx_messageInfo_TLDestroyAuthKeyNone.Size(m)
-}
-func (m *TLDestroyAuthKeyNone) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDestroyAuthKeyNone.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDestroyAuthKeyNone proto.InternalMessageInfo
-
-func (m *TLDestroyAuthKeyNone) GetData2() *DestroyAuthKeyRes_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
-type TLDestroyAuthKeyFail struct {
-	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
-}
-
-func (m *TLDestroyAuthKeyFail) Reset()         { *m = TLDestroyAuthKeyFail{} }
-func (m *TLDestroyAuthKeyFail) String() string { return proto.CompactTextString(m) }
-func (*TLDestroyAuthKeyFail) ProtoMessage()    {}
-func (*TLDestroyAuthKeyFail) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{19}
-}
-func (m *TLDestroyAuthKeyFail) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TLDestroyAuthKeyFail.Unmarshal(m, b)
-}
-func (m *TLDestroyAuthKeyFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TLDestroyAuthKeyFail.Marshal(b, m, deterministic)
-}
-func (dst *TLDestroyAuthKeyFail) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDestroyAuthKeyFail.Merge(dst, src)
-}
-func (m *TLDestroyAuthKeyFail) XXX_Size() int {
-	return xxx_messageInfo_TLDestroyAuthKeyFail.Size(m)
-}
-func (m *TLDestroyAuthKeyFail) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDestroyAuthKeyFail.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLDestroyAuthKeyFail proto.InternalMessageInfo
-
-func (m *TLDestroyAuthKeyFail) GetData2() *DestroyAuthKeyRes_Data {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// /////////////////////////////////////////////////////////////////////////////
 // ResPQ <--
 //  + TL_resPQ
 //
@@ -983,7 +36,7 @@ func (m *ResPQ_Data) Reset()         { *m = ResPQ_Data{} }
 func (m *ResPQ_Data) String() string { return proto.CompactTextString(m) }
 func (*ResPQ_Data) ProtoMessage()    {}
 func (*ResPQ_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{20}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{0}
 }
 func (m *ResPQ_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ResPQ_Data.Unmarshal(m, b)
@@ -1043,7 +96,7 @@ func (m *ResPQ) Reset()         { *m = ResPQ{} }
 func (m *ResPQ) String() string { return proto.CompactTextString(m) }
 func (*ResPQ) ProtoMessage()    {}
 func (*ResPQ) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{21}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{1}
 }
 func (m *ResPQ) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ResPQ.Unmarshal(m, b)
@@ -1089,7 +142,7 @@ func (m *TLResPQ) Reset()         { *m = TLResPQ{} }
 func (m *TLResPQ) String() string { return proto.CompactTextString(m) }
 func (*TLResPQ) ProtoMessage()    {}
 func (*TLResPQ) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{22}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{2}
 }
 func (m *TLResPQ) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLResPQ.Unmarshal(m, b)
@@ -1141,7 +194,7 @@ func (m *P_QInnerData_Data) Reset()         { *m = P_QInnerData_Data{} }
 func (m *P_QInnerData_Data) String() string { return proto.CompactTextString(m) }
 func (*P_QInnerData_Data) ProtoMessage()    {}
 func (*P_QInnerData_Data) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{23}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{3}
 }
 func (m *P_QInnerData_Data) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_P_QInnerData_Data.Unmarshal(m, b)
@@ -1229,7 +282,7 @@ func (m *P_QInnerData) Reset()         { *m = P_QInnerData{} }
 func (m *P_QInnerData) String() string { return proto.CompactTextString(m) }
 func (*P_QInnerData) ProtoMessage()    {}
 func (*P_QInnerData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{24}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{4}
 }
 func (m *P_QInnerData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_P_QInnerData.Unmarshal(m, b)
@@ -1275,7 +328,7 @@ func (m *TLPQInnerData) Reset()         { *m = TLPQInnerData{} }
 func (m *TLPQInnerData) String() string { return proto.CompactTextString(m) }
 func (*TLPQInnerData) ProtoMessage()    {}
 func (*TLPQInnerData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{25}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{5}
 }
 func (m *TLPQInnerData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPQInnerData.Unmarshal(m, b)
@@ -1314,7 +367,7 @@ func (m *TLPQInnerDataDc) Reset()         { *m = TLPQInnerDataDc{} }
 func (m *TLPQInnerDataDc) String() string { return proto.CompactTextString(m) }
 func (*TLPQInnerDataDc) ProtoMessage()    {}
 func (*TLPQInnerDataDc) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{26}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{6}
 }
 func (m *TLPQInnerDataDc) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPQInnerDataDc.Unmarshal(m, b)
@@ -1353,7 +406,7 @@ func (m *TLPQInnerDataTemp) Reset()         { *m = TLPQInnerDataTemp{} }
 func (m *TLPQInnerDataTemp) String() string { return proto.CompactTextString(m) }
 func (*TLPQInnerDataTemp) ProtoMessage()    {}
 func (*TLPQInnerDataTemp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{27}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{7}
 }
 func (m *TLPQInnerDataTemp) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPQInnerDataTemp.Unmarshal(m, b)
@@ -1392,7 +445,7 @@ func (m *TLPQInnerDataTempDc) Reset()         { *m = TLPQInnerDataTempDc{} }
 func (m *TLPQInnerDataTempDc) String() string { return proto.CompactTextString(m) }
 func (*TLPQInnerDataTempDc) ProtoMessage()    {}
 func (*TLPQInnerDataTempDc) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_handshake_f899f8df4ce962cd, []int{28}
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{8}
 }
 func (m *TLPQInnerDataTempDc) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPQInnerDataTempDc.Unmarshal(m, b)
@@ -1419,7 +472,963 @@ func (m *TLPQInnerDataTempDc) GetData2() *P_QInnerData_Data {
 	return nil
 }
 
+// /////////////////////////////////////////////////////////////////////////////
+// Server_DH_Params <--
+//  + TL_server_DH_params_fail
+//  + TL_server_DH_params_ok
+//
+type Server_DH_Params_Data struct {
+	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
+	NewNonceHash         []byte   `protobuf:"bytes,3,opt,name=new_nonce_hash,json=newNonceHash,proto3" json:"new_nonce_hash,omitempty"`
+	EncryptedAnswer      string   `protobuf:"bytes,4,opt,name=encrypted_answer,json=encryptedAnswer,proto3" json:"encrypted_answer,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Server_DH_Params_Data) Reset()         { *m = Server_DH_Params_Data{} }
+func (m *Server_DH_Params_Data) String() string { return proto.CompactTextString(m) }
+func (*Server_DH_Params_Data) ProtoMessage()    {}
+func (*Server_DH_Params_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{9}
+}
+func (m *Server_DH_Params_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Server_DH_Params_Data.Unmarshal(m, b)
+}
+func (m *Server_DH_Params_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Server_DH_Params_Data.Marshal(b, m, deterministic)
+}
+func (dst *Server_DH_Params_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Server_DH_Params_Data.Merge(dst, src)
+}
+func (m *Server_DH_Params_Data) XXX_Size() int {
+	return xxx_messageInfo_Server_DH_Params_Data.Size(m)
+}
+func (m *Server_DH_Params_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Server_DH_Params_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Server_DH_Params_Data proto.InternalMessageInfo
+
+func (m *Server_DH_Params_Data) GetNonce() []byte {
+	if m != nil {
+		return m.Nonce
+	}
+	return nil
+}
+
+func (m *Server_DH_Params_Data) GetServerNonce() []byte {
+	if m != nil {
+		return m.ServerNonce
+	}
+	return nil
+}
+
+func (m *Server_DH_Params_Data) GetNewNonceHash() []byte {
+	if m != nil {
+		return m.NewNonceHash
+	}
+	return nil
+}
+
+func (m *Server_DH_Params_Data) GetEncryptedAnswer() string {
+	if m != nil {
+		return m.EncryptedAnswer
+	}
+	return ""
+}
+
+type Server_DH_Params struct {
+	Constructor          TLConstructor          `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *Server_DH_Params) Reset()         { *m = Server_DH_Params{} }
+func (m *Server_DH_Params) String() string { return proto.CompactTextString(m) }
+func (*Server_DH_Params) ProtoMessage()    {}
+func (*Server_DH_Params) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{10}
+}
+func (m *Server_DH_Params) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Server_DH_Params.Unmarshal(m, b)
+}
+func (m *Server_DH_Params) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Server_DH_Params.Marshal(b, m, deterministic)
+}
+func (dst *Server_DH_Params) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Server_DH_Params.Merge(dst, src)
+}
+func (m *Server_DH_Params) XXX_Size() int {
+	return xxx_messageInfo_Server_DH_Params.Size(m)
+}
+func (m *Server_DH_Params) XXX_DiscardUnknown() {
+	xxx_messageInfo_Server_DH_Params.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Server_DH_Params proto.InternalMessageInfo
+
+func (m *Server_DH_Params) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *Server_DH_Params) GetData2() *Server_DH_Params_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// server_DH_params_fail#79cb045d nonce:int128 server_nonce:int128 new_nonce_hash:int128 = Server_DH_Params;
+type TLServer_DHParamsFail struct {
+	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *TLServer_DHParamsFail) Reset()         { *m = TLServer_DHParamsFail{} }
+func (m *TLServer_DHParamsFail) String() string { return proto.CompactTextString(m) }
+func (*TLServer_DHParamsFail) ProtoMessage()    {}
+func (*TLServer_DHParamsFail) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{11}
+}
+func (m *TLServer_DHParamsFail) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLServer_DHParamsFail.Unmarshal(m, b)
+}
+func (m *TLServer_DHParamsFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLServer_DHParamsFail.Marshal(b, m, deterministic)
+}
+func (dst *TLServer_DHParamsFail) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLServer_DHParamsFail.Merge(dst, src)
+}
+func (m *TLServer_DHParamsFail) XXX_Size() int {
+	return xxx_messageInfo_TLServer_DHParamsFail.Size(m)
+}
+func (m *TLServer_DHParamsFail) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLServer_DHParamsFail.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLServer_DHParamsFail proto.InternalMessageInfo
+
+func (m *TLServer_DHParamsFail) GetData2() *Server_DH_Params_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// server_DH_params_ok#d0e8075c nonce:int128 server_nonce:int128 encrypted_answer:string = Server_DH_Params;
+type TLServer_DHParamsOk struct {
+	Data2                *Server_DH_Params_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *TLServer_DHParamsOk) Reset()         { *m = TLServer_DHParamsOk{} }
+func (m *TLServer_DHParamsOk) String() string { return proto.CompactTextString(m) }
+func (*TLServer_DHParamsOk) ProtoMessage()    {}
+func (*TLServer_DHParamsOk) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{12}
+}
+func (m *TLServer_DHParamsOk) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLServer_DHParamsOk.Unmarshal(m, b)
+}
+func (m *TLServer_DHParamsOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLServer_DHParamsOk.Marshal(b, m, deterministic)
+}
+func (dst *TLServer_DHParamsOk) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLServer_DHParamsOk.Merge(dst, src)
+}
+func (m *TLServer_DHParamsOk) XXX_Size() int {
+	return xxx_messageInfo_TLServer_DHParamsOk.Size(m)
+}
+func (m *TLServer_DHParamsOk) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLServer_DHParamsOk.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLServer_DHParamsOk proto.InternalMessageInfo
+
+func (m *TLServer_DHParamsOk) GetData2() *Server_DH_Params_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Server_DH_inner_data <--
+//  + TL_server_DH_inner_data
+//
+type Server_DHInnerData_Data struct {
+	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
+	G                    int32    `protobuf:"varint,3,opt,name=g,proto3" json:"g,omitempty"`
+	DhPrime              string   `protobuf:"bytes,4,opt,name=dh_prime,json=dhPrime,proto3" json:"dh_prime,omitempty"`
+	GA                   string   `protobuf:"bytes,5,opt,name=g_a,json=gA,proto3" json:"g_a,omitempty"`
+	ServerTime           int32    `protobuf:"varint,6,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Server_DHInnerData_Data) Reset()         { *m = Server_DHInnerData_Data{} }
+func (m *Server_DHInnerData_Data) String() string { return proto.CompactTextString(m) }
+func (*Server_DHInnerData_Data) ProtoMessage()    {}
+func (*Server_DHInnerData_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{13}
+}
+func (m *Server_DHInnerData_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Server_DHInnerData_Data.Unmarshal(m, b)
+}
+func (m *Server_DHInnerData_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Server_DHInnerData_Data.Marshal(b, m, deterministic)
+}
+func (dst *Server_DHInnerData_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Server_DHInnerData_Data.Merge(dst, src)
+}
+func (m *Server_DHInnerData_Data) XXX_Size() int {
+	return xxx_messageInfo_Server_DHInnerData_Data.Size(m)
+}
+func (m *Server_DHInnerData_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Server_DHInnerData_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Server_DHInnerData_Data proto.InternalMessageInfo
+
+func (m *Server_DHInnerData_Data) GetNonce() []byte {
+	if m != nil {
+		return m.Nonce
+	}
+	return nil
+}
+
+func (m *Server_DHInnerData_Data) GetServerNonce() []byte {
+	if m != nil {
+		return m.ServerNonce
+	}
+	return nil
+}
+
+func (m *Server_DHInnerData_Data) GetG() int32 {
+	if m != nil {
+		return m.G
+	}
+	return 0
+}
+
+func (m *Server_DHInnerData_Data) GetDhPrime() string {
+	if m != nil {
+		return m.DhPrime
+	}
+	return ""
+}
+
+func (m *Server_DHInnerData_Data) GetGA() string {
+	if m != nil {
+		return m.GA
+	}
+	return ""
+}
+
+func (m *Server_DHInnerData_Data) GetServerTime() int32 {
+	if m != nil {
+		return m.ServerTime
+	}
+	return 0
+}
+
+type Server_DHInnerData struct {
+	Constructor          TLConstructor            `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *Server_DHInnerData_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *Server_DHInnerData) Reset()         { *m = Server_DHInnerData{} }
+func (m *Server_DHInnerData) String() string { return proto.CompactTextString(m) }
+func (*Server_DHInnerData) ProtoMessage()    {}
+func (*Server_DHInnerData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{14}
+}
+func (m *Server_DHInnerData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Server_DHInnerData.Unmarshal(m, b)
+}
+func (m *Server_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Server_DHInnerData.Marshal(b, m, deterministic)
+}
+func (dst *Server_DHInnerData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Server_DHInnerData.Merge(dst, src)
+}
+func (m *Server_DHInnerData) XXX_Size() int {
+	return xxx_messageInfo_Server_DHInnerData.Size(m)
+}
+func (m *Server_DHInnerData) XXX_DiscardUnknown() {
+	xxx_messageInfo_Server_DHInnerData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Server_DHInnerData proto.InternalMessageInfo
+
+func (m *Server_DHInnerData) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *Server_DHInnerData) GetData2() *Server_DHInnerData_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// server_DH_inner_data#b5890dba nonce:int128 server_nonce:int128 g:int dh_prime:string g_a:string server_time:int = Server_DH_inner_data;
+type TLServer_DHInnerData struct {
+	Data2                *Server_DHInnerData_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *TLServer_DHInnerData) Reset()         { *m = TLServer_DHInnerData{} }
+func (m *TLServer_DHInnerData) String() string { return proto.CompactTextString(m) }
+func (*TLServer_DHInnerData) ProtoMessage()    {}
+func (*TLServer_DHInnerData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{15}
+}
+func (m *TLServer_DHInnerData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLServer_DHInnerData.Unmarshal(m, b)
+}
+func (m *TLServer_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLServer_DHInnerData.Marshal(b, m, deterministic)
+}
+func (dst *TLServer_DHInnerData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLServer_DHInnerData.Merge(dst, src)
+}
+func (m *TLServer_DHInnerData) XXX_Size() int {
+	return xxx_messageInfo_TLServer_DHInnerData.Size(m)
+}
+func (m *TLServer_DHInnerData) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLServer_DHInnerData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLServer_DHInnerData proto.InternalMessageInfo
+
+func (m *TLServer_DHInnerData) GetData2() *Server_DHInnerData_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Client_DH_Inner_Data <--
+//  + TL_client_DH_inner_data
+//
+type Client_DH_Inner_Data_Data struct {
+	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
+	RetryId              int64    `protobuf:"varint,3,opt,name=retry_id,json=retryId,proto3" json:"retry_id,omitempty"`
+	GB                   string   `protobuf:"bytes,4,opt,name=g_b,json=gB,proto3" json:"g_b,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Client_DH_Inner_Data_Data) Reset()         { *m = Client_DH_Inner_Data_Data{} }
+func (m *Client_DH_Inner_Data_Data) String() string { return proto.CompactTextString(m) }
+func (*Client_DH_Inner_Data_Data) ProtoMessage()    {}
+func (*Client_DH_Inner_Data_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{16}
+}
+func (m *Client_DH_Inner_Data_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Client_DH_Inner_Data_Data.Unmarshal(m, b)
+}
+func (m *Client_DH_Inner_Data_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Client_DH_Inner_Data_Data.Marshal(b, m, deterministic)
+}
+func (dst *Client_DH_Inner_Data_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Client_DH_Inner_Data_Data.Merge(dst, src)
+}
+func (m *Client_DH_Inner_Data_Data) XXX_Size() int {
+	return xxx_messageInfo_Client_DH_Inner_Data_Data.Size(m)
+}
+func (m *Client_DH_Inner_Data_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Client_DH_Inner_Data_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Client_DH_Inner_Data_Data proto.InternalMessageInfo
+
+func (m *Client_DH_Inner_Data_Data) GetNonce() []byte {
+	if m != nil {
+		return m.Nonce
+	}
+	return nil
+}
+
+func (m *Client_DH_Inner_Data_Data) GetServerNonce() []byte {
+	if m != nil {
+		return m.ServerNonce
+	}
+	return nil
+}
+
+func (m *Client_DH_Inner_Data_Data) GetRetryId() int64 {
+	if m != nil {
+		return m.RetryId
+	}
+	return 0
+}
+
+func (m *Client_DH_Inner_Data_Data) GetGB() string {
+	if m != nil {
+		return m.GB
+	}
+	return ""
+}
+
+type Client_DH_Inner_Data struct {
+	Constructor          TLConstructor              `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *Client_DH_Inner_Data_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
+	XXX_unrecognized     []byte                     `json:"-"`
+	XXX_sizecache        int32                      `json:"-"`
+}
+
+func (m *Client_DH_Inner_Data) Reset()         { *m = Client_DH_Inner_Data{} }
+func (m *Client_DH_Inner_Data) String() string { return proto.CompactTextString(m) }
+func (*Client_DH_Inner_Data) ProtoMessage()    {}
+func (*Client_DH_Inner_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{17}
+}
+func (m *Client_DH_Inner_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Client_DH_Inner_Data.Unmarshal(m, b)
+}
+func (m *Client_DH_Inner_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Client_DH_Inner_Data.Marshal(b, m, deterministic)
+}
+func (dst *Client_DH_Inner_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Client_DH_Inner_Data.Merge(dst, src)
+}
+func (m *Client_DH_Inner_Data) XXX_Size() int {
+	return xxx_messageInfo_Client_DH_Inner_Data.Size(m)
+}
+func (m *Client_DH_Inner_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_Client_DH_Inner_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Client_DH_Inner_Data proto.InternalMessageInfo
+
+func (m *Client_DH_Inner_Data) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *Client_DH_Inner_Data) GetData2() *Client_DH_Inner_Data_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// client_DH_inner_data#6643b654 nonce:int128 server_nonce:int128 retry_id:long g_b:string = Client_DH_Inner_Data;
+type TLClient_DHInnerData struct {
+	Data2                *Client_DH_Inner_Data_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
+	XXX_unrecognized     []byte                     `json:"-"`
+	XXX_sizecache        int32                      `json:"-"`
+}
+
+func (m *TLClient_DHInnerData) Reset()         { *m = TLClient_DHInnerData{} }
+func (m *TLClient_DHInnerData) String() string { return proto.CompactTextString(m) }
+func (*TLClient_DHInnerData) ProtoMessage()    {}
+func (*TLClient_DHInnerData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{18}
+}
+func (m *TLClient_DHInnerData) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLClient_DHInnerData.Unmarshal(m, b)
+}
+func (m *TLClient_DHInnerData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLClient_DHInnerData.Marshal(b, m, deterministic)
+}
+func (dst *TLClient_DHInnerData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLClient_DHInnerData.Merge(dst, src)
+}
+func (m *TLClient_DHInnerData) XXX_Size() int {
+	return xxx_messageInfo_TLClient_DHInnerData.Size(m)
+}
+func (m *TLClient_DHInnerData) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLClient_DHInnerData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLClient_DHInnerData proto.InternalMessageInfo
+
+func (m *TLClient_DHInnerData) GetData2() *Client_DH_Inner_Data_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// Set_client_DH_params_answer <--
+//  + TL_dh_gen_ok
+//  + TL_dh_gen_retry
+//  + TL_dh_gen_fail
+//
+type SetClient_DHParamsAnswer_Data struct {
+	Nonce                []byte   `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	ServerNonce          []byte   `protobuf:"bytes,2,opt,name=server_nonce,json=serverNonce,proto3" json:"server_nonce,omitempty"`
+	NewNonceHash1        []byte   `protobuf:"bytes,3,opt,name=new_nonce_hash1,json=newNonceHash1,proto3" json:"new_nonce_hash1,omitempty"`
+	NewNonceHash2        []byte   `protobuf:"bytes,4,opt,name=new_nonce_hash2,json=newNonceHash2,proto3" json:"new_nonce_hash2,omitempty"`
+	NewNonceHash3        []byte   `protobuf:"bytes,5,opt,name=new_nonce_hash3,json=newNonceHash3,proto3" json:"new_nonce_hash3,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetClient_DHParamsAnswer_Data) Reset()         { *m = SetClient_DHParamsAnswer_Data{} }
+func (m *SetClient_DHParamsAnswer_Data) String() string { return proto.CompactTextString(m) }
+func (*SetClient_DHParamsAnswer_Data) ProtoMessage()    {}
+func (*SetClient_DHParamsAnswer_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{19}
+}
+func (m *SetClient_DHParamsAnswer_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Unmarshal(m, b)
+}
+func (m *SetClient_DHParamsAnswer_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Marshal(b, m, deterministic)
+}
+func (dst *SetClient_DHParamsAnswer_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetClient_DHParamsAnswer_Data.Merge(dst, src)
+}
+func (m *SetClient_DHParamsAnswer_Data) XXX_Size() int {
+	return xxx_messageInfo_SetClient_DHParamsAnswer_Data.Size(m)
+}
+func (m *SetClient_DHParamsAnswer_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetClient_DHParamsAnswer_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetClient_DHParamsAnswer_Data proto.InternalMessageInfo
+
+func (m *SetClient_DHParamsAnswer_Data) GetNonce() []byte {
+	if m != nil {
+		return m.Nonce
+	}
+	return nil
+}
+
+func (m *SetClient_DHParamsAnswer_Data) GetServerNonce() []byte {
+	if m != nil {
+		return m.ServerNonce
+	}
+	return nil
+}
+
+func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash1() []byte {
+	if m != nil {
+		return m.NewNonceHash1
+	}
+	return nil
+}
+
+func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash2() []byte {
+	if m != nil {
+		return m.NewNonceHash2
+	}
+	return nil
+}
+
+func (m *SetClient_DHParamsAnswer_Data) GetNewNonceHash3() []byte {
+	if m != nil {
+		return m.NewNonceHash3
+	}
+	return nil
+}
+
+type SetClient_DHParamsAnswer struct {
+	Constructor          TLConstructor                  `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
+	XXX_unrecognized     []byte                         `json:"-"`
+	XXX_sizecache        int32                          `json:"-"`
+}
+
+func (m *SetClient_DHParamsAnswer) Reset()         { *m = SetClient_DHParamsAnswer{} }
+func (m *SetClient_DHParamsAnswer) String() string { return proto.CompactTextString(m) }
+func (*SetClient_DHParamsAnswer) ProtoMessage()    {}
+func (*SetClient_DHParamsAnswer) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{20}
+}
+func (m *SetClient_DHParamsAnswer) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetClient_DHParamsAnswer.Unmarshal(m, b)
+}
+func (m *SetClient_DHParamsAnswer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetClient_DHParamsAnswer.Marshal(b, m, deterministic)
+}
+func (dst *SetClient_DHParamsAnswer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetClient_DHParamsAnswer.Merge(dst, src)
+}
+func (m *SetClient_DHParamsAnswer) XXX_Size() int {
+	return xxx_messageInfo_SetClient_DHParamsAnswer.Size(m)
+}
+func (m *SetClient_DHParamsAnswer) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetClient_DHParamsAnswer.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetClient_DHParamsAnswer proto.InternalMessageInfo
+
+func (m *SetClient_DHParamsAnswer) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *SetClient_DHParamsAnswer) GetData2() *SetClient_DHParamsAnswer_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// dh_gen_ok#3bcbf734 nonce:int128 server_nonce:int128 new_nonce_hash1:int128 = Set_client_DH_params_answer;
+type TLDhGenOk struct {
+	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
+	XXX_unrecognized     []byte                         `json:"-"`
+	XXX_sizecache        int32                          `json:"-"`
+}
+
+func (m *TLDhGenOk) Reset()         { *m = TLDhGenOk{} }
+func (m *TLDhGenOk) String() string { return proto.CompactTextString(m) }
+func (*TLDhGenOk) ProtoMessage()    {}
+func (*TLDhGenOk) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{21}
+}
+func (m *TLDhGenOk) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDhGenOk.Unmarshal(m, b)
+}
+func (m *TLDhGenOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDhGenOk.Marshal(b, m, deterministic)
+}
+func (dst *TLDhGenOk) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDhGenOk.Merge(dst, src)
+}
+func (m *TLDhGenOk) XXX_Size() int {
+	return xxx_messageInfo_TLDhGenOk.Size(m)
+}
+func (m *TLDhGenOk) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDhGenOk.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDhGenOk proto.InternalMessageInfo
+
+func (m *TLDhGenOk) GetData2() *SetClient_DHParamsAnswer_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// dh_gen_retry#46dc1fb9 nonce:int128 server_nonce:int128 new_nonce_hash2:int128 = Set_client_DH_params_answer;
+type TLDhGenRetry struct {
+	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
+	XXX_unrecognized     []byte                         `json:"-"`
+	XXX_sizecache        int32                          `json:"-"`
+}
+
+func (m *TLDhGenRetry) Reset()         { *m = TLDhGenRetry{} }
+func (m *TLDhGenRetry) String() string { return proto.CompactTextString(m) }
+func (*TLDhGenRetry) ProtoMessage()    {}
+func (*TLDhGenRetry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{22}
+}
+func (m *TLDhGenRetry) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDhGenRetry.Unmarshal(m, b)
+}
+func (m *TLDhGenRetry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDhGenRetry.Marshal(b, m, deterministic)
+}
+func (dst *TLDhGenRetry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDhGenRetry.Merge(dst, src)
+}
+func (m *TLDhGenRetry) XXX_Size() int {
+	return xxx_messageInfo_TLDhGenRetry.Size(m)
+}
+func (m *TLDhGenRetry) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDhGenRetry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDhGenRetry proto.InternalMessageInfo
+
+func (m *TLDhGenRetry) GetData2() *SetClient_DHParamsAnswer_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// dh_gen_fail#a69dae02 nonce:int128 server_nonce:int128 new_nonce_hash3:int128 = Set_client_DH_params_answer;
+type TLDhGenFail struct {
+	Data2                *SetClient_DHParamsAnswer_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
+	XXX_unrecognized     []byte                         `json:"-"`
+	XXX_sizecache        int32                          `json:"-"`
+}
+
+func (m *TLDhGenFail) Reset()         { *m = TLDhGenFail{} }
+func (m *TLDhGenFail) String() string { return proto.CompactTextString(m) }
+func (*TLDhGenFail) ProtoMessage()    {}
+func (*TLDhGenFail) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{23}
+}
+func (m *TLDhGenFail) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDhGenFail.Unmarshal(m, b)
+}
+func (m *TLDhGenFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDhGenFail.Marshal(b, m, deterministic)
+}
+func (dst *TLDhGenFail) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDhGenFail.Merge(dst, src)
+}
+func (m *TLDhGenFail) XXX_Size() int {
+	return xxx_messageInfo_TLDhGenFail.Size(m)
+}
+func (m *TLDhGenFail) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDhGenFail.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDhGenFail proto.InternalMessageInfo
+
+func (m *TLDhGenFail) GetData2() *SetClient_DHParamsAnswer_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+// DestroyAuthKeyRes <--
+//  + TL_destroy_auth_key_ok
+//  + TL_destroy_auth_key_none
+//  + TL_destroy_auth_key_fail
+//
+type DestroyAuthKeyRes_Data struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DestroyAuthKeyRes_Data) Reset()         { *m = DestroyAuthKeyRes_Data{} }
+func (m *DestroyAuthKeyRes_Data) String() string { return proto.CompactTextString(m) }
+func (*DestroyAuthKeyRes_Data) ProtoMessage()    {}
+func (*DestroyAuthKeyRes_Data) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{24}
+}
+func (m *DestroyAuthKeyRes_Data) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DestroyAuthKeyRes_Data.Unmarshal(m, b)
+}
+func (m *DestroyAuthKeyRes_Data) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DestroyAuthKeyRes_Data.Marshal(b, m, deterministic)
+}
+func (dst *DestroyAuthKeyRes_Data) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DestroyAuthKeyRes_Data.Merge(dst, src)
+}
+func (m *DestroyAuthKeyRes_Data) XXX_Size() int {
+	return xxx_messageInfo_DestroyAuthKeyRes_Data.Size(m)
+}
+func (m *DestroyAuthKeyRes_Data) XXX_DiscardUnknown() {
+	xxx_messageInfo_DestroyAuthKeyRes_Data.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DestroyAuthKeyRes_Data proto.InternalMessageInfo
+
+type DestroyAuthKeyRes struct {
+	Constructor          TLConstructor           `protobuf:"varint,1,opt,name=constructor,proto3,enum=mtproto.TLConstructor" json:"constructor,omitempty"`
+	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *DestroyAuthKeyRes) Reset()         { *m = DestroyAuthKeyRes{} }
+func (m *DestroyAuthKeyRes) String() string { return proto.CompactTextString(m) }
+func (*DestroyAuthKeyRes) ProtoMessage()    {}
+func (*DestroyAuthKeyRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{25}
+}
+func (m *DestroyAuthKeyRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DestroyAuthKeyRes.Unmarshal(m, b)
+}
+func (m *DestroyAuthKeyRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DestroyAuthKeyRes.Marshal(b, m, deterministic)
+}
+func (dst *DestroyAuthKeyRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DestroyAuthKeyRes.Merge(dst, src)
+}
+func (m *DestroyAuthKeyRes) XXX_Size() int {
+	return xxx_messageInfo_DestroyAuthKeyRes.Size(m)
+}
+func (m *DestroyAuthKeyRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_DestroyAuthKeyRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DestroyAuthKeyRes proto.InternalMessageInfo
+
+func (m *DestroyAuthKeyRes) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return TLConstructor_CRC32_UNKNOWN
+}
+
+func (m *DestroyAuthKeyRes) GetData2() *DestroyAuthKeyRes_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
+type TLDestroyAuthKeyOk struct {
+	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *TLDestroyAuthKeyOk) Reset()         { *m = TLDestroyAuthKeyOk{} }
+func (m *TLDestroyAuthKeyOk) String() string { return proto.CompactTextString(m) }
+func (*TLDestroyAuthKeyOk) ProtoMessage()    {}
+func (*TLDestroyAuthKeyOk) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{26}
+}
+func (m *TLDestroyAuthKeyOk) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDestroyAuthKeyOk.Unmarshal(m, b)
+}
+func (m *TLDestroyAuthKeyOk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDestroyAuthKeyOk.Marshal(b, m, deterministic)
+}
+func (dst *TLDestroyAuthKeyOk) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDestroyAuthKeyOk.Merge(dst, src)
+}
+func (m *TLDestroyAuthKeyOk) XXX_Size() int {
+	return xxx_messageInfo_TLDestroyAuthKeyOk.Size(m)
+}
+func (m *TLDestroyAuthKeyOk) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDestroyAuthKeyOk.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDestroyAuthKeyOk proto.InternalMessageInfo
+
+func (m *TLDestroyAuthKeyOk) GetData2() *DestroyAuthKeyRes_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
+type TLDestroyAuthKeyNone struct {
+	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *TLDestroyAuthKeyNone) Reset()         { *m = TLDestroyAuthKeyNone{} }
+func (m *TLDestroyAuthKeyNone) String() string { return proto.CompactTextString(m) }
+func (*TLDestroyAuthKeyNone) ProtoMessage()    {}
+func (*TLDestroyAuthKeyNone) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{27}
+}
+func (m *TLDestroyAuthKeyNone) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDestroyAuthKeyNone.Unmarshal(m, b)
+}
+func (m *TLDestroyAuthKeyNone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDestroyAuthKeyNone.Marshal(b, m, deterministic)
+}
+func (dst *TLDestroyAuthKeyNone) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDestroyAuthKeyNone.Merge(dst, src)
+}
+func (m *TLDestroyAuthKeyNone) XXX_Size() int {
+	return xxx_messageInfo_TLDestroyAuthKeyNone.Size(m)
+}
+func (m *TLDestroyAuthKeyNone) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDestroyAuthKeyNone.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDestroyAuthKeyNone proto.InternalMessageInfo
+
+func (m *TLDestroyAuthKeyNone) GetData2() *DestroyAuthKeyRes_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
+type TLDestroyAuthKeyFail struct {
+	Data2                *DestroyAuthKeyRes_Data `protobuf:"bytes,2,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *TLDestroyAuthKeyFail) Reset()         { *m = TLDestroyAuthKeyFail{} }
+func (m *TLDestroyAuthKeyFail) String() string { return proto.CompactTextString(m) }
+func (*TLDestroyAuthKeyFail) ProtoMessage()    {}
+func (*TLDestroyAuthKeyFail) Descriptor() ([]byte, []int) {
+	return fileDescriptor_schema_tl_handshake_16540f2ff400f9f3, []int{28}
+}
+func (m *TLDestroyAuthKeyFail) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TLDestroyAuthKeyFail.Unmarshal(m, b)
+}
+func (m *TLDestroyAuthKeyFail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TLDestroyAuthKeyFail.Marshal(b, m, deterministic)
+}
+func (dst *TLDestroyAuthKeyFail) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDestroyAuthKeyFail.Merge(dst, src)
+}
+func (m *TLDestroyAuthKeyFail) XXX_Size() int {
+	return xxx_messageInfo_TLDestroyAuthKeyFail.Size(m)
+}
+func (m *TLDestroyAuthKeyFail) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDestroyAuthKeyFail.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDestroyAuthKeyFail proto.InternalMessageInfo
+
+func (m *TLDestroyAuthKeyFail) GetData2() *DestroyAuthKeyRes_Data {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
 func init() {
+	proto.RegisterType((*ResPQ_Data)(nil), "mtproto.ResPQ_Data")
+	proto.RegisterType((*ResPQ)(nil), "mtproto.ResPQ")
+	proto.RegisterType((*TLResPQ)(nil), "mtproto.TL_resPQ")
+	proto.RegisterType((*P_QInnerData_Data)(nil), "mtproto.P_Q_inner_data_Data")
+	proto.RegisterType((*P_QInnerData)(nil), "mtproto.P_Q_inner_data")
+	proto.RegisterType((*TLPQInnerData)(nil), "mtproto.TL_p_q_inner_data")
+	proto.RegisterType((*TLPQInnerDataDc)(nil), "mtproto.TL_p_q_inner_data_dc")
+	proto.RegisterType((*TLPQInnerDataTemp)(nil), "mtproto.TL_p_q_inner_data_temp")
+	proto.RegisterType((*TLPQInnerDataTempDc)(nil), "mtproto.TL_p_q_inner_data_temp_dc")
 	proto.RegisterType((*Server_DH_Params_Data)(nil), "mtproto.Server_DH_Params_Data")
 	proto.RegisterType((*Server_DH_Params)(nil), "mtproto.Server_DH_Params")
 	proto.RegisterType((*TLServer_DHParamsFail)(nil), "mtproto.TL_server_DH_params_fail")
@@ -1440,76 +1449,67 @@ func init() {
 	proto.RegisterType((*TLDestroyAuthKeyOk)(nil), "mtproto.TL_destroy_auth_key_ok")
 	proto.RegisterType((*TLDestroyAuthKeyNone)(nil), "mtproto.TL_destroy_auth_key_none")
 	proto.RegisterType((*TLDestroyAuthKeyFail)(nil), "mtproto.TL_destroy_auth_key_fail")
-	proto.RegisterType((*ResPQ_Data)(nil), "mtproto.ResPQ_Data")
-	proto.RegisterType((*ResPQ)(nil), "mtproto.ResPQ")
-	proto.RegisterType((*TLResPQ)(nil), "mtproto.TL_resPQ")
-	proto.RegisterType((*P_QInnerData_Data)(nil), "mtproto.P_Q_inner_data_Data")
-	proto.RegisterType((*P_QInnerData)(nil), "mtproto.P_Q_inner_data")
-	proto.RegisterType((*TLPQInnerData)(nil), "mtproto.TL_p_q_inner_data")
-	proto.RegisterType((*TLPQInnerDataDc)(nil), "mtproto.TL_p_q_inner_data_dc")
-	proto.RegisterType((*TLPQInnerDataTemp)(nil), "mtproto.TL_p_q_inner_data_temp")
-	proto.RegisterType((*TLPQInnerDataTempDc)(nil), "mtproto.TL_p_q_inner_data_temp_dc")
 }
 
 func init() {
-	proto.RegisterFile("schema.tl.handshake.proto", fileDescriptor_schema_tl_handshake_f899f8df4ce962cd)
+	proto.RegisterFile("schema.tl.handshake.proto", fileDescriptor_schema_tl_handshake_16540f2ff400f9f3)
 }
 
-var fileDescriptor_schema_tl_handshake_f899f8df4ce962cd = []byte{
-	// 867 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_schema_tl_handshake_16540f2ff400f9f3 = []byte{
+	// 869 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0xd1, 0x6e, 0xe3, 0x44,
-	0x14, 0xd5, 0x24, 0xcd, 0x26, 0xb9, 0x0d, 0xe9, 0xae, 0xb7, 0x5b, 0x1c, 0x0a, 0xdd, 0x62, 0x21,
-	0xd4, 0x0a, 0x29, 0xd2, 0x26, 0xac, 0xb4, 0x6f, 0xa8, 0x6d, 0x04, 0x2d, 0x1b, 0x76, 0x13, 0x37,
-	0xef, 0xa3, 0x89, 0x3d, 0xd8, 0x56, 0x93, 0xb1, 0x33, 0x9e, 0x50, 0xf2, 0x82, 0x10, 0xe2, 0x89,
-	0x2f, 0x40, 0xbc, 0xf1, 0x05, 0xfc, 0x05, 0x3f, 0xc0, 0x0f, 0x21, 0xcf, 0x38, 0x76, 0x9c, 0x98,
-	0x02, 0x36, 0xbc, 0x79, 0xee, 0x3d, 0xf7, 0xf8, 0xce, 0x39, 0x9e, 0xeb, 0x81, 0x4e, 0x68, 0xb9,
-	0x74, 0x4e, 0xba, 0x62, 0xd6, 0x75, 0x09, 0xb3, 0x43, 0x97, 0xdc, 0xd1, 0x6e, 0xc0, 0x7d, 0xe1,
-	0x6b, 0xf5, 0xb9, 0x90, 0x0f, 0xef, 0x3d, 0x4b, 0x31, 0x16, 0xb7, 0xfa, 0x3d, 0x95, 0x37, 0x7e,
-	0x45, 0xf0, 0xec, 0x96, 0xf2, 0x6f, 0x28, 0xc7, 0x83, 0x6b, 0x3c, 0x22, 0x9c, 0xcc, 0x43, 0x3c,
-	0x20, 0x82, 0x68, 0x87, 0x50, 0x63, 0x3e, 0xb3, 0xa8, 0x8e, 0x4e, 0xd1, 0x59, 0xcb, 0x54, 0x0b,
-	0xed, 0x43, 0x68, 0x85, 0x0a, 0xae, 0x92, 0x15, 0x99, 0xdc, 0x57, 0xb1, 0x37, 0x12, 0xf2, 0x11,
-	0xb4, 0x19, 0xbd, 0x57, 0x79, 0xec, 0x92, 0xd0, 0xd5, 0xab, 0x12, 0xd4, 0x62, 0xf4, 0x5e, 0x22,
-	0xae, 0x49, 0xe8, 0x6a, 0xe7, 0xf0, 0x98, 0x32, 0x8b, 0xaf, 0x02, 0x41, 0x6d, 0x4c, 0x58, 0x78,
-	0x4f, 0xb9, 0xbe, 0x77, 0x8a, 0xce, 0x9a, 0xe6, 0x41, 0x12, 0xbf, 0x90, 0x61, 0xe3, 0x07, 0x04,
-	0x8f, 0xb7, 0x7b, 0xd4, 0x5e, 0xc1, 0xbe, 0xe5, 0xb3, 0x50, 0xf0, 0xa5, 0x25, 0x7c, 0x2e, 0x9b,
-	0x6c, 0xf7, 0x8e, 0xba, 0xf1, 0x76, 0xbb, 0x93, 0xe1, 0x55, 0x9a, 0x35, 0x37, 0xa1, 0xda, 0xa7,
-	0x50, 0xb3, 0x89, 0x20, 0x3d, 0xd9, 0xfb, 0x7e, 0xef, 0x24, 0xa9, 0xc9, 0xd5, 0xc1, 0x54, 0x60,
-	0x63, 0x04, 0xfa, 0x64, 0x88, 0xc3, 0x04, 0x12, 0x28, 0xc8, 0xd7, 0xc4, 0x9b, 0x15, 0x64, 0x7c,
-	0x03, 0x47, 0x79, 0x8c, 0xfe, 0x5d, 0x41, 0xbe, 0xdf, 0x10, 0x74, 0x52, 0x80, 0xc7, 0x18, 0xe5,
-	0x38, 0xca, 0x94, 0xb4, 0xb3, 0x05, 0xc8, 0x91, 0x0e, 0xd6, 0x4c, 0xe4, 0x68, 0x1d, 0x68, 0xd8,
-	0x2e, 0x0e, 0xb8, 0x37, 0xa7, 0xb1, 0x5d, 0x75, 0xdb, 0x1d, 0x45, 0x4b, 0xed, 0x00, 0xaa, 0x0e,
-	0x26, 0x7a, 0x4d, 0x46, 0x2b, 0xce, 0x85, 0xf6, 0x1c, 0x62, 0x22, 0x2c, 0x22, 0xf8, 0x23, 0xc9,
-	0x01, 0x2a, 0x34, 0xf1, 0xe6, 0xd4, 0xf8, 0x09, 0xc1, 0x61, 0x5e, 0xc7, 0x25, 0xcc, 0x7d, 0x95,
-	0x95, 0xce, 0xc8, 0x91, 0x6e, 0x4b, 0x99, 0xb5, 0x7c, 0xb7, 0xf0, 0x6e, 0xc6, 0x8e, 0x4c, 0x3b,
-	0x45, 0x49, 0xbf, 0x47, 0xd0, 0xb9, 0x9a, 0x79, 0x94, 0x89, 0x08, 0x74, 0x23, 0x41, 0x83, 0xf2,
-	0x9e, 0x74, 0xa0, 0xc1, 0xa9, 0xe0, 0x2b, 0xec, 0xd9, 0xd2, 0x9a, 0xaa, 0x59, 0x97, 0xeb, 0x1b,
-	0x5b, 0xb9, 0x30, 0x8d, 0xbd, 0xa9, 0x38, 0x97, 0x52, 0xe4, 0xbc, 0x16, 0xfe, 0x0f, 0x91, 0xff,
-	0x72, 0xab, 0x59, 0x91, 0xad, 0x04, 0xf6, 0x4f, 0x44, 0xfe, 0x5b, 0xd2, 0x3f, 0x10, 0x9c, 0xde,
-	0x52, 0xb1, 0x41, 0x1b, 0x1f, 0x25, 0x35, 0x56, 0x4a, 0x6a, 0xfd, 0x31, 0x1c, 0x64, 0xc7, 0xd9,
-	0x8b, 0x78, 0x9e, 0xbd, 0xb3, 0x39, 0xcf, 0x5e, 0xec, 0xe2, 0x7a, 0xd2, 0x84, 0x2d, 0x5c, 0x6f,
-	0x17, 0xd7, 0x97, 0x47, 0x66, 0x0b, 0xd7, 0x37, 0x7e, 0x46, 0x70, 0xfc, 0xc0, 0xae, 0x4a, 0xd8,
-	0xf7, 0x59, 0x56, 0xe9, 0xf3, 0x8d, 0xcf, 0xf9, 0x61, 0x11, 0xd7, 0x82, 0xbf, 0x85, 0xd6, 0x64,
-	0x88, 0x6d, 0x17, 0x3b, 0x94, 0x45, 0xf3, 0xaa, 0x34, 0xa1, 0x09, 0x07, 0x29, 0xa1, 0xfc, 0x92,
-	0xcb, 0x73, 0x8e, 0xa1, 0x9d, 0x72, 0xca, 0x31, 0x5d, 0x9a, 0x52, 0x87, 0xa3, 0x01, 0x0d, 0x05,
-	0xf7, 0x57, 0x17, 0x4b, 0xe1, 0xbe, 0xa6, 0x2b, 0x93, 0xaa, 0x11, 0x6c, 0xfc, 0x88, 0xe0, 0xc9,
-	0x4e, 0xaa, 0x84, 0x45, 0x2f, 0xb3, 0xad, 0x3e, 0x4f, 0x6a, 0xf2, 0xdf, 0x9f, 0x1a, 0x13, 0xfd,
-	0x52, 0x6c, 0x85, 0xc1, 0x64, 0x29, 0x5c, 0x7c, 0x47, 0x57, 0x91, 0x45, 0x05, 0x09, 0xc7, 0xf2,
-	0xaf, 0xb7, 0x43, 0xc8, 0x7c, 0x46, 0xff, 0x63, 0x4a, 0xe9, 0x50, 0x41, 0xca, 0x5f, 0x10, 0x80,
-	0x49, 0xc3, 0xd1, 0xb8, 0xe4, 0x51, 0x6f, 0x43, 0x25, 0x58, 0xc8, 0xd3, 0xdd, 0x34, 0x2b, 0xc1,
-	0x42, 0xbb, 0x82, 0x93, 0xb8, 0x24, 0x58, 0x4e, 0x67, 0x9e, 0xa5, 0x1a, 0xf5, 0x98, 0x43, 0x79,
-	0xc0, 0x3d, 0x26, 0x42, 0x7d, 0xef, 0xb4, 0x7a, 0x56, 0x35, 0x8f, 0x15, 0x6a, 0x24, 0x41, 0xaf,
-	0xe9, 0xea, 0xf3, 0x0d, 0x88, 0x31, 0x83, 0x9a, 0xec, 0xad, 0xc4, 0xd7, 0x70, 0x9e, 0x95, 0xe5,
-	0x69, 0x52, 0x93, 0x6e, 0x7a, 0x2d, 0xc5, 0x4b, 0x68, 0x4c, 0x86, 0x98, 0xcb, 0x17, 0xfe, 0x8b,
-	0xb2, 0xdf, 0x11, 0x3c, 0x1d, 0xe1, 0xf1, 0xce, 0xad, 0x41, 0x29, 0x82, 0x12, 0x45, 0x5a, 0x80,
-	0x02, 0x49, 0xd7, 0x34, 0x51, 0x10, 0xad, 0xd6, 0x72, 0xa1, 0x45, 0x2a, 0xfb, 0xde, 0x43, 0xb2,
-	0xd7, 0x76, 0x65, 0x3f, 0x86, 0x66, 0x32, 0x11, 0xe5, 0x2d, 0xa1, 0x65, 0x36, 0xd6, 0xb3, 0x30,
-	0xea, 0xc0, 0xb6, 0xf4, 0xba, 0xbc, 0x3b, 0x54, 0x6c, 0x4b, 0xfb, 0x00, 0x80, 0x7e, 0x1b, 0x78,
-	0x9c, 0x86, 0xd8, 0x63, 0x7a, 0x43, 0xc6, 0x9b, 0x71, 0xe4, 0x86, 0x19, 0xdf, 0x41, 0x3b, 0xbb,
-	0x8f, 0x12, 0xb2, 0xf7, 0xb2, 0xfa, 0xbd, 0x9f, 0xd4, 0xe4, 0x28, 0xb5, 0x16, 0xf2, 0x0b, 0x78,
-	0x32, 0x19, 0xe2, 0x00, 0x2f, 0x36, 0x5b, 0x28, 0x42, 0xf4, 0x25, 0x1c, 0xee, 0x10, 0x61, 0xdb,
-	0x2a, 0xc4, 0x35, 0x94, 0x63, 0x61, 0x8b, 0x4b, 0xd0, 0x79, 0x50, 0x88, 0xed, 0x2d, 0x74, 0xf2,
-	0xd9, 0x0a, 0xb6, 0x77, 0xf9, 0x09, 0x9c, 0x58, 0x2e, 0x11, 0x5d, 0x46, 0xa7, 0xcb, 0x19, 0xe9,
-	0x46, 0xcf, 0x94, 0x39, 0x1e, 0xa3, 0xeb, 0xe2, 0xcb, 0xfa, 0x57, 0x93, 0x51, 0xf4, 0x70, 0x5d,
-	0x99, 0x3e, 0x92, 0x91, 0xfe, 0x9f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x0c, 0xd0, 0x5e, 0x21, 0xf4,
-	0x0c, 0x00, 0x00,
+	0x14, 0xd5, 0x24, 0x9b, 0x26, 0xb9, 0x0d, 0xc9, 0xae, 0xb7, 0x5b, 0x12, 0x0a, 0xdd, 0x60, 0x21,
+	0x94, 0x0a, 0x29, 0xd2, 0x26, 0xac, 0xd4, 0x37, 0xd4, 0x36, 0x82, 0x96, 0x86, 0x92, 0xb8, 0x79,
+	0x1f, 0x4d, 0xec, 0xa9, 0x6d, 0x25, 0x19, 0x3b, 0xe3, 0x09, 0x25, 0x2f, 0x08, 0x21, 0x9e, 0xf8,
+	0x02, 0xc4, 0x1b, 0x5f, 0xc0, 0x5f, 0xf0, 0x03, 0xfc, 0x10, 0xf2, 0xd8, 0xb1, 0xe3, 0x3a, 0x2d,
+	0x60, 0xb3, 0x6f, 0xf6, 0xbd, 0xe7, 0x9e, 0xdc, 0x39, 0xe7, 0xfa, 0x4e, 0xa0, 0xe5, 0xe9, 0x16,
+	0x5d, 0x90, 0xae, 0x98, 0x77, 0x2d, 0xc2, 0x0c, 0xcf, 0x22, 0x33, 0xda, 0x75, 0xb9, 0x23, 0x1c,
+	0xa5, 0xbc, 0x10, 0xf2, 0xe1, 0x83, 0x57, 0x31, 0x46, 0xe7, 0x7a, 0xbf, 0x17, 0xe4, 0xd5, 0xdf,
+	0x10, 0x80, 0x46, 0xbd, 0xd1, 0x18, 0x0f, 0x88, 0x20, 0xca, 0x01, 0x94, 0x98, 0xc3, 0x74, 0xda,
+	0x44, 0x6d, 0xd4, 0xa9, 0x69, 0xc1, 0x8b, 0xf2, 0x31, 0xd4, 0x3c, 0xca, 0xbf, 0xa3, 0x1c, 0x07,
+	0xc9, 0x82, 0x4c, 0xee, 0x07, 0xb1, 0x1b, 0x09, 0xa9, 0x43, 0xc1, 0x5d, 0x36, 0x8b, 0x6d, 0xd4,
+	0xa9, 0x6a, 0x05, 0x77, 0xa9, 0x5c, 0xc0, 0x71, 0x58, 0xe2, 0xae, 0xa6, 0x73, 0x5b, 0xc7, 0x33,
+	0xba, 0xc6, 0x77, 0x36, 0x33, 0x29, 0x77, 0xb9, 0xcd, 0x84, 0xd7, 0x7c, 0xd6, 0x2e, 0x76, 0x8a,
+	0xda, 0x51, 0x80, 0x1a, 0x49, 0xd0, 0x35, 0x5d, 0x7f, 0xb9, 0x05, 0x51, 0xe7, 0x50, 0x92, 0xbd,
+	0x29, 0xa7, 0xb0, 0xaf, 0x3b, 0xcc, 0x13, 0x7c, 0xa5, 0x0b, 0x87, 0xcb, 0xe6, 0xea, 0xbd, 0xc3,
+	0x6e, 0x78, 0xb6, 0xee, 0x64, 0x78, 0x11, 0x67, 0xb5, 0x6d, 0xa8, 0x72, 0x02, 0x25, 0x83, 0x08,
+	0xd2, 0x93, 0x3d, 0xef, 0xf7, 0x5e, 0x46, 0x35, 0xf1, 0xa1, 0xb5, 0x00, 0xa1, 0xbe, 0x85, 0xca,
+	0x64, 0x88, 0xb9, 0xfc, 0xc1, 0xff, 0x50, 0xf6, 0x27, 0x82, 0x97, 0x23, 0x3c, 0xc6, 0x36, 0x63,
+	0x94, 0x63, 0x3f, 0x16, 0x48, 0x19, 0x28, 0x82, 0x22, 0x45, 0x6a, 0x80, 0x5c, 0x49, 0x57, 0xd5,
+	0x90, 0xeb, 0xbf, 0x6d, 0xe4, 0x42, 0xcb, 0x58, 0xf6, 0x67, 0x4f, 0xc9, 0x5e, 0x4a, 0xcb, 0x7e,
+	0x04, 0x55, 0x46, 0xef, 0xc3, 0xfc, 0x9e, 0xcc, 0x57, 0x18, 0xbd, 0x8f, 0x3c, 0x31, 0xf4, 0x66,
+	0xb9, 0x8d, 0x3a, 0x25, 0xad, 0x60, 0xe8, 0xca, 0x47, 0x00, 0xf4, 0x7b, 0xd7, 0xe6, 0xd4, 0xc3,
+	0x36, 0x6b, 0x56, 0x64, 0xbc, 0x1a, 0x46, 0xae, 0x98, 0xfa, 0x03, 0xd4, 0x93, 0xe7, 0xc8, 0x21,
+	0x7b, 0x2f, 0xa9, 0xdf, 0x87, 0x51, 0xcd, 0x0e, 0xa5, 0x36, 0x42, 0x7e, 0x05, 0x2f, 0x26, 0x43,
+	0xec, 0xe2, 0xe5, 0x76, 0x0b, 0x59, 0x88, 0xbe, 0x86, 0x83, 0x14, 0x11, 0x36, 0xf4, 0x4c, 0x5c,
+	0x43, 0x38, 0x4c, 0x73, 0x09, 0xba, 0x70, 0x33, 0xb1, 0x7d, 0x0b, 0xad, 0xdd, 0x6c, 0x59, 0xdb,
+	0xfb, 0x1d, 0xc1, 0xab, 0xdb, 0x60, 0x46, 0x06, 0x97, 0x78, 0x44, 0x38, 0x59, 0x78, 0x39, 0xbf,
+	0xe4, 0x4f, 0xa0, 0x1e, 0x8d, 0x14, 0xb6, 0x88, 0x67, 0xc9, 0x31, 0xad, 0x69, 0xb5, 0xcd, 0x5c,
+	0x5d, 0x12, 0xcf, 0x52, 0x4e, 0xe0, 0x39, 0x65, 0x3a, 0x5f, 0xbb, 0x82, 0x1a, 0x98, 0x30, 0xef,
+	0x9e, 0x72, 0x39, 0xbc, 0x55, 0xad, 0x11, 0xc5, 0xcf, 0x64, 0x58, 0xfd, 0x09, 0xc1, 0xf3, 0x87,
+	0x3d, 0xe6, 0x18, 0xad, 0xcf, 0x93, 0x32, 0x1d, 0x47, 0x35, 0x3b, 0x75, 0xd8, 0x08, 0x35, 0x82,
+	0xe6, 0x64, 0x88, 0xbd, 0x08, 0xe2, 0x06, 0x90, 0x3b, 0x62, 0xcf, 0x33, 0x32, 0xde, 0xc8, 0xc9,
+	0x48, 0x31, 0x3a, 0xb3, 0x8c, 0x7c, 0x7f, 0x20, 0x68, 0xc5, 0x80, 0x87, 0xdb, 0x24, 0xb3, 0x9d,
+	0x35, 0x40, 0xa6, 0x74, 0xb0, 0xa4, 0x21, 0x53, 0x69, 0x41, 0xc5, 0xb0, 0xb0, 0xcb, 0xed, 0x05,
+	0x0d, 0xed, 0x2a, 0x1b, 0xd6, 0xc8, 0x7f, 0x55, 0x1a, 0x50, 0x34, 0x31, 0x91, 0x4b, 0xa6, 0xaa,
+	0x15, 0xcc, 0x33, 0xe5, 0x35, 0x84, 0x44, 0x58, 0xf8, 0xf0, 0x3d, 0xc9, 0x01, 0x41, 0x68, 0x62,
+	0x2f, 0xa8, 0xfa, 0x0b, 0x82, 0x83, 0x5d, 0x1d, 0xe7, 0x30, 0xf7, 0x34, 0x29, 0x9d, 0xba, 0x43,
+	0xba, 0x47, 0xbe, 0x84, 0x5b, 0x78, 0x3f, 0x61, 0x47, 0xa2, 0x9d, 0xac, 0xa4, 0x3f, 0x22, 0x68,
+	0x5d, 0xcc, 0x6d, 0xca, 0x84, 0x0f, 0xba, 0x92, 0xa0, 0x41, 0x7e, 0x4f, 0x5a, 0x50, 0xe1, 0x54,
+	0xf0, 0x35, 0xb6, 0x0d, 0x69, 0x4d, 0x51, 0x2b, 0xcb, 0xf7, 0x2b, 0x23, 0x70, 0x61, 0x1a, 0x7a,
+	0x53, 0x30, 0xcf, 0xa5, 0xc8, 0xbb, 0x5a, 0x78, 0x17, 0x22, 0x3f, 0x7a, 0xd4, 0xa4, 0xc8, 0x7a,
+	0x04, 0xfb, 0x37, 0x22, 0xff, 0x23, 0xe9, 0x5f, 0x08, 0xda, 0xb7, 0x54, 0x6c, 0xd1, 0x86, 0x9f,
+	0x52, 0xb0, 0x56, 0x72, 0x6a, 0xfd, 0x29, 0x34, 0x92, 0xeb, 0xec, 0x4d, 0xb8, 0xcf, 0xde, 0xdb,
+	0xde, 0x67, 0x6f, 0xd2, 0xb8, 0x5e, 0x78, 0x19, 0x27, 0x70, 0xbd, 0x34, 0xae, 0x1f, 0xde, 0xcb,
+	0x09, 0x5c, 0x5f, 0xfd, 0x15, 0xc1, 0xd1, 0x13, 0xa7, 0xca, 0x61, 0xdf, 0x17, 0x49, 0xa5, 0x4f,
+	0xb6, 0xc6, 0xf9, 0x69, 0x11, 0xe3, 0x5b, 0xa8, 0x36, 0x19, 0x62, 0xc3, 0xc2, 0x26, 0x65, 0xfe,
+	0xbe, 0xca, 0x4d, 0xa8, 0x41, 0x23, 0x26, 0x94, 0x93, 0x9c, 0x9f, 0x73, 0x0c, 0xf5, 0x98, 0x53,
+	0xae, 0xe9, 0xdc, 0x94, 0x4d, 0x38, 0x1c, 0x50, 0x4f, 0x70, 0x67, 0x7d, 0xb6, 0x12, 0xd6, 0x35,
+	0x5d, 0x6b, 0x34, 0x58, 0xc1, 0xea, 0xcf, 0x08, 0x5e, 0xa4, 0x52, 0x39, 0x2c, 0x7a, 0x9b, 0x6c,
+	0xf5, 0x75, 0x54, 0xb3, 0xfb, 0xf7, 0x63, 0x63, 0xfc, 0x2b, 0xc5, 0x08, 0x30, 0x98, 0xac, 0x84,
+	0x25, 0xff, 0x36, 0x3b, 0xb3, 0xac, 0x84, 0x63, 0x79, 0xeb, 0xa5, 0x08, 0x99, 0xc3, 0xe8, 0xff,
+	0x4c, 0x29, 0x1d, 0xca, 0x46, 0x79, 0xfe, 0x19, 0x1c, 0xeb, 0x16, 0x11, 0x5d, 0x46, 0xa7, 0xab,
+	0x39, 0xe9, 0xfa, 0xcf, 0x94, 0x99, 0x36, 0xa3, 0x9b, 0xfa, 0xf3, 0xf2, 0x37, 0x93, 0x91, 0xff,
+	0x70, 0x59, 0x98, 0xee, 0xc9, 0x48, 0xff, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xea, 0x24, 0x8e,
+	0xd1, 0xf4, 0x0c, 0x00, 0x00,
 }

@@ -31,7 +31,7 @@ func (m *TLRpcDropAnswer) Reset()         { *m = TLRpcDropAnswer{} }
 func (m *TLRpcDropAnswer) String() string { return proto.CompactTextString(m) }
 func (*TLRpcDropAnswer) ProtoMessage()    {}
 func (*TLRpcDropAnswer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{0}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{0}
 }
 func (m *TLRpcDropAnswer) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLRpcDropAnswer.Unmarshal(m, b)
@@ -71,7 +71,7 @@ func (m *TLGetFutureSalts) Reset()         { *m = TLGetFutureSalts{} }
 func (m *TLGetFutureSalts) String() string { return proto.CompactTextString(m) }
 func (*TLGetFutureSalts) ProtoMessage()    {}
 func (*TLGetFutureSalts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{1}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{1}
 }
 func (m *TLGetFutureSalts) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLGetFutureSalts.Unmarshal(m, b)
@@ -111,7 +111,7 @@ func (m *TLPing) Reset()         { *m = TLPing{} }
 func (m *TLPing) String() string { return proto.CompactTextString(m) }
 func (*TLPing) ProtoMessage()    {}
 func (*TLPing) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{2}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{2}
 }
 func (m *TLPing) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPing.Unmarshal(m, b)
@@ -152,7 +152,7 @@ func (m *TLPingDelayDisconnect) Reset()         { *m = TLPingDelayDisconnect{} }
 func (m *TLPingDelayDisconnect) String() string { return proto.CompactTextString(m) }
 func (*TLPingDelayDisconnect) ProtoMessage()    {}
 func (*TLPingDelayDisconnect) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{3}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{3}
 }
 func (m *TLPingDelayDisconnect) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLPingDelayDisconnect.Unmarshal(m, b)
@@ -199,7 +199,7 @@ func (m *TLDestroySession) Reset()         { *m = TLDestroySession{} }
 func (m *TLDestroySession) String() string { return proto.CompactTextString(m) }
 func (*TLDestroySession) ProtoMessage()    {}
 func (*TLDestroySession) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{4}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{4}
 }
 func (m *TLDestroySession) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLDestroySession.Unmarshal(m, b)
@@ -243,7 +243,7 @@ func (m *TLContestSaveDeveloperInfo) Reset()         { *m = TLContestSaveDevelop
 func (m *TLContestSaveDeveloperInfo) String() string { return proto.CompactTextString(m) }
 func (*TLContestSaveDeveloperInfo) ProtoMessage()    {}
 func (*TLContestSaveDeveloperInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_schema_tl_transport_service_5da853521ec920cf, []int{5}
+	return fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd, []int{5}
 }
 func (m *TLContestSaveDeveloperInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TLContestSaveDeveloperInfo.Unmarshal(m, b)
@@ -308,10 +308,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("schema.tl.transport_service.proto", fileDescriptor_schema_tl_transport_service_5da853521ec920cf)
+	proto.RegisterFile("schema.tl.transport_service.proto", fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd)
 }
 
-var fileDescriptor_schema_tl_transport_service_5da853521ec920cf = []byte{
+var fileDescriptor_schema_tl_transport_service_99c1ca7bad01b6dd = []byte{
 	// 359 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xc1, 0x8e, 0xd3, 0x30,
 	0x10, 0x86, 0xd5, 0x6d, 0xb3, 0x61, 0x07, 0x24, 0x56, 0xde, 0x03, 0x39, 0x14, 0x44, 0x73, 0x01,

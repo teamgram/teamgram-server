@@ -1,22 +1,22 @@
 /*
-* WARNING! All changes made in this file will be lost!
-* Created from 'scheme.tl' by 'mtprotoc'
-*
-*  Copyright (c) 2018-present,  NebulaChat Studio (https://nebula.chat).
-*  All rights reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ *  Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
+ *  All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 syntax = "proto3";
 
@@ -25,6 +25,7 @@ package mtproto;
 option java_package = "chat.nebula.chatengine.mtproto";
 option java_outer_classname = "MTProto";
 option optimize_for = CODE_SIZE;
+// option go_package = "github.com/nebula-chat/chatengine/mtproto";
 
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
@@ -92,6 +93,8 @@ enum TLConstructor {
     CRC32_schemeType = -1461589623;
     CRC32_inputDocumentFileLocationLayer11 = 1313188841;
     CRC32_inputMediaPhotoLayer46 = -373312269;
+    CRC32_inputPhotoCropAutoLayer46 = -1377390588;
+    CRC32_inputPhotoCropLayer46 = -644787419;
     CRC32_boolFalse = -1132882121;
     CRC32_boolTrue = -1720552011;
     CRC32_true = 1072550713;
@@ -775,6 +778,7 @@ enum TLConstructor {
     CRC32_help_getInviteTextLayer46 = -1532407418;
     CRC32_help_getAppUpdateLayer46 = -938300290;
     CRC32_updates_getChannelDifferenceLayer46 = -1154295872;
+    CRC32_photos_uploadProfilePhotoLayer46 = -720397176;
     CRC32_auth_sendCodeLayer51 = -855805745;
     CRC32_messages_getHistoryLayer51 = -1347868602;
     CRC32_help_getAppUpdateLayer62 = -1372724842;
