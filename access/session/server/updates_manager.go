@@ -56,11 +56,12 @@ func (m *updatesManager) onGenericSessionNew(s sessionBase) {
 }
 
 func (m *updatesManager) onGenericSessionClose(s sessionBase) {
-	ss := s.(*genericSession)
-	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
-		if ss.SessionId() == e.Value.(*genericSession).sessionId {
-			m.genericSessions.Remove(e)
-			break
+	if ss, ok := s.(*genericSession); ok {
+		for e := m.genericSessions.Front(); e != nil; e = e.Next() {
+			if ss.SessionId() == e.Value.(*genericSession).sessionId {
+				m.genericSessions.Remove(e)
+				break
+			}
 		}
 	}
 }
