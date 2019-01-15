@@ -18,11 +18,11 @@
 package dialog
 
 import (
+	"encoding/json"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	base2 "github.com/nebula-chat/chatengine/pkg/util"
-	"encoding/json"
 	// "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 )
 
@@ -151,4 +151,8 @@ func (m *DialogModel) GetPeersDialogIdList(userId, peerType int32, peerIdList []
 		idList = append(idList, dialogDOList[i].PeerId)
 	}
 	return idList
+}
+
+func (m *DialogModel) DeleteDialog(userId, peerType, peerId int32) {
+	m.dao.UserDialogsDAO.Delete(userId, int8(peerType), peerId)
 }

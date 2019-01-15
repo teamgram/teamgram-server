@@ -19,16 +19,15 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"time"
-	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 )
-
 
 /*
  ## just_clear:
@@ -37,7 +36,7 @@ import (
 	- updateDeleteMessages + updateEditMessage(messageActionHistoryClear)
 
  ##
- */
+*/
 // messages.deleteHistory#1c015b09 flags:# just_clear:flags.0?true peer:InputPeer max_id:int = messages.AffectedHistory;
 func (s *MessagesServiceImpl) MessagesDeleteHistory(ctx context.Context, request *mtproto.TLMessagesDeleteHistory) (*mtproto.Messages_AffectedHistory, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
@@ -45,9 +44,9 @@ func (s *MessagesServiceImpl) MessagesDeleteHistory(ctx context.Context, request
 
 	// peer
 	var (
-		peer               *base.PeerUtil
-		err                error
-		pts, ptsCount      int32
+		peer          *base.PeerUtil
+		err           error
+		pts, ptsCount int32
 	)
 
 	if request.GetPeer().GetConstructor() == mtproto.TLConstructor_CRC32_inputPeerEmpty {
@@ -136,6 +135,8 @@ func (s *MessagesServiceImpl) MessagesDeleteHistory(ctx context.Context, request
 		s.MessageModel.DeleteByMessageIdList(md.UserId, deleteIds)
 		s.DialogModel.InsertOrUpdateDialog(md.UserId, peer.PeerType, peer.PeerId, 0, false, false)
 		sync_client.GetSyncClient().SyncUpdatesNotMe(md.UserId, md.AuthId, syncUpdats.To_Updates())
+
+		s.DialogModel.DeleteDialog(md.UserId, peer.PeerType, peer.PeerId)
 	}
 
 	affectedHistory := &mtproto.TLMessagesAffectedHistory{Data2: &mtproto.Messages_AffectedHistory_Data{

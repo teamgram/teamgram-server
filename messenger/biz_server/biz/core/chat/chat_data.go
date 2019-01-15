@@ -350,20 +350,20 @@ func (this *chatLogicData) ToChat(selfUserId int32) *mtproto.Chat {
 			participant = &this.participants[i]
 		}
 
-		if this.participants[i].UserId == selfUserId && this.participants[i].State == kChatParticipantStateKicked {
+		if this.participants[i].UserId == selfUserId && this.participants[i].State != kChatParticipantStateNormal {
 			forbidden = true
 			// break
 		}
 	}
 
-	if participant == nil {
-		chat := &mtproto.TLChatEmpty{Data2: &mtproto.Chat_Data{
-			Id: this.chat.Id,
-		}}
-		return chat.To_Chat()
-	}
+	//if participant == nil || participant.State == kChatParticipantStateLeft {
+	//	chat := &mtproto.TLChatEmpty{Data2: &mtproto.Chat_Data{
+	//		Id: this.chat.Id,
+	//	}}
+	//	return chat.To_Chat()
+	//}
 
-	if forbidden {
+	if participant == nil || forbidden {
 		chat := &mtproto.TLChatForbidden{Data2: &mtproto.Chat_Data{
 			Id:    this.chat.Id,
 			Title: this.chat.Title,
