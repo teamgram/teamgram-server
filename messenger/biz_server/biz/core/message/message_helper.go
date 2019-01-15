@@ -306,7 +306,7 @@ func (m *MessageModel) SendInternalMessage(senderUserId int32,
 			doList := m.dao.ChatParticipantsDAO.SelectList(peer.PeerId)
 			for i := 0; i < len(doList); i++ {
 				glog.Info("chatParticipants - ", doList[i], "; senderUserId = ", senderUserId)
-				if senderUserId == doList[i].UserId {
+				if senderUserId == doList[i].UserId || doList[i].State != 0 {
 					continue
 				}
 				inBoxReplyToMsgId := m.GetPeerMessageId(outBox.OwnerId, outBoxReplyToMsgId, doList[i].UserId)
