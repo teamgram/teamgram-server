@@ -73,7 +73,7 @@ func (m *MessageModel) LoadBackwardHistoryMessages(userId int32, peerType, peerI
 
 		for i := 0; i < len(boxDOList); i++ {
 			for j := 0; j < len(mDataDOList); j++ {
-				if boxDOList[i].DialogMessageId == mDataDOList[j].DialogMessageId {
+				if boxDOList[i].MessageDataId == mDataDOList[j].MessageDataId {
 					box := m.makeMessageBoxByDO(&boxDOList[i], &mDataDOList[j])
 					messages = append(messages, box.ToMessage(userId))
 					break
@@ -114,7 +114,7 @@ func (m *MessageModel) LoadForwardHistoryMessages(userId int32, peerType, peerId
 
 		for i := 0; i < len(boxDOList); i++ {
 			for j := 0; j < len(mDataDOList); j++ {
-				if boxDOList[i].DialogMessageId == mDataDOList[j].DialogMessageId {
+				if boxDOList[i].MessageDataId == mDataDOList[j].MessageDataId {
 					box := m.makeMessageBoxByDO(&boxDOList[i], &mDataDOList[j])
 					messages = append(messages, box.ToMessage(userId))
 					break
@@ -155,7 +155,7 @@ func (m *MessageModel) GetUserMessagesByMessageIdList(userId int32, idList []int
 
 		for i := 0; i < len(boxDOList); i++ {
 			for j := 0; j < len(mDataDOList); j++ {
-				if boxDOList[i].DialogMessageId == mDataDOList[j].DialogMessageId {
+				if boxDOList[i].MessageDataId == mDataDOList[j].MessageDataId {
 					box := m.makeMessageBoxByDO(&boxDOList[i], &mDataDOList[j])
 					messages = append(messages, box.ToMessage(userId))
 					break
