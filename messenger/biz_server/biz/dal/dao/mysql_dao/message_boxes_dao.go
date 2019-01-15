@@ -315,10 +315,10 @@ func (dao *MessageBoxesDAO) SelectPeerMessageId(peerId int32, user_id int32, use
 	return do
 }
 
-// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != :user_id and dialog_message_id in (select dialog_message_id from message_boxes where user_id = :user_id and user_message_box_id in (:idList)) and deleted = 0
+// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != :user_id and message_data_id in (select message_data_id from message_boxes where user_id = :user_id and user_message_box_id in (:idList)) and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *MessageBoxesDAO) SelectPeerDialogMessageIdList(user_id int32, idList []int32) []dataobject.MessageBoxesDO {
-	var q = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != ? and dialog_message_id in (select dialog_message_id from message_boxes where user_id = ? and user_message_box_id in (?)) and deleted = 0"
+	var q = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != ? and message_data_id in (select message_data_id from message_boxes where user_id = ? and user_message_box_id in (?)) and deleted = 0"
 	query, a, err := sqlx.In(q, user_id, user_id, idList)
 	rows, err := dao.db.Queryx(query, a...)
 
@@ -354,10 +354,10 @@ func (dao *MessageBoxesDAO) SelectPeerDialogMessageIdList(user_id int32, idList 
 	return values
 }
 
-// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where dialog_message_id = (select dialog_message_id from message_boxes where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
+// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where message_data_id = (select message_data_id from message_boxes where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *MessageBoxesDAO) SelectDialogMessageListByMessageId(user_id int32, user_message_box_id int32) []dataobject.MessageBoxesDO {
-	var query = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where dialog_message_id = (select dialog_message_id from message_boxes where user_id = ? and user_message_box_id = ?) and deleted = 0"
+	var query = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where message_data_id = (select message_data_id from message_boxes where user_id = ? and user_message_box_id = ?) and deleted = 0"
 	rows, err := dao.db.Queryx(query, user_id, user_message_box_id)
 
 	if err != nil {
@@ -392,10 +392,10 @@ func (dao *MessageBoxesDAO) SelectDialogMessageListByMessageId(user_id int32, us
 	return values
 }
 
-// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != :user_id and dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
+// select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != :user_id and message_data_id = (select message_data_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *MessageBoxesDAO) SelectPeerDialogMessageListByMessageId(user_id int32, user_message_box_id int32) []dataobject.MessageBoxesDO {
-	var query = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != ? and dialog_message_id = (select dialog_message_id from messages where user_id = ? and user_message_box_id = ?) and deleted = 0"
+	var query = "select user_id, user_message_box_id, dialog_id, dialog_message_id, message_data_id, pts, message_box_type, reply_to_msg_id, mentioned, media_unread, date2 from message_boxes where user_id != ? and message_data_id = (select message_data_id from messages where user_id = ? and user_message_box_id = ?) and deleted = 0"
 	rows, err := dao.db.Queryx(query, user_id, user_id, user_message_box_id)
 
 	if err != nil {
@@ -602,6 +602,42 @@ func (dao *MessageBoxesDAO) SelectPeerMessageList(user_id int32, message_data_id
 	}
 
 	return values
+}
+
+// select user_message_box_id from message_boxes where user_id = :user_id and dialog_id = :dialog_id and deleted = 0 order by user_message_box_id desc limit 1
+// TODO(@benqi): sqlmap
+func (dao *MessageBoxesDAO) SelectLastPeerDialogMessageId(user_id int32, dialog_id int64) *dataobject.MessageBoxesDO {
+	var query = "select user_message_box_id from message_boxes where user_id = ? and dialog_id = ? and deleted = 0 order by user_message_box_id desc limit 1"
+	rows, err := dao.db.Queryx(query, user_id, dialog_id)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Queryx in SelectLastPeerDialogMessageId(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	defer rows.Close()
+
+	do := &dataobject.MessageBoxesDO{}
+	if rows.Next() {
+		err = rows.StructScan(do)
+		if err != nil {
+			errDesc := fmt.Sprintf("StructScan in SelectLastPeerDialogMessageId(_), error: %v", err)
+			glog.Error(errDesc)
+			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+		}
+	} else {
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		errDesc := fmt.Sprintf("rows in SelectLastPeerDialogMessageId(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return do
 }
 
 // update message_boxes set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id

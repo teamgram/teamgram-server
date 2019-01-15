@@ -121,7 +121,7 @@
             FROM
                 message_boxes
             WHERE
-                user_id <> :user_id AND dialog_message_id in (SELECT dialog_message_id FROM message_boxes WHERE user_id = :user_id AND user_message_box_id in (:idList)) AND deleted = 0
+                user_id <> :user_id AND message_data_id in (SELECT message_data_id FROM message_boxes WHERE user_id = :user_id AND user_message_box_id in (:idList)) AND deleted = 0
             ]]>
         </sql>
     </operation>
@@ -133,7 +133,7 @@
             FROM
                 message_boxes
             WHERE
-                dialog_message_id = (SELECT dialog_message_id FROM message_boxes WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
+                message_data_id = (SELECT message_data_id FROM message_boxes WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
         </sql>
     </operation>
 
@@ -145,7 +145,7 @@
             FROM
                 message_boxes
             WHERE
-                user_id <> :user_id AND dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
+                user_id <> :user_id AND message_data_id = (SELECT message_data_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
             ]]>
         </sql>
     </operation>
@@ -210,6 +210,17 @@
             WHERE
                 user_id != :user_id AND message_data_id = :message_data_id AND deleted = 0
             ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectLastPeerDialogMessageId">
+        <sql>
+            SELECT
+                user_message_box_id
+            FROM
+                message_boxes
+            WHERE
+                user_id = :user_id  AND dialog_id = :dialog_id AND deleted = 0 ORDER BY user_message_box_id DESC LIMIT 1
         </sql>
     </operation>
 

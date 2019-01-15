@@ -18,10 +18,10 @@
 package message
 
 import (
-	base2 "github.com/nebula-chat/chatengine/pkg/util"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/mtproto"
+	base2 "github.com/nebula-chat/chatengine/pkg/util"
 )
 
 const (
@@ -191,21 +191,60 @@ func (m *MessageModel) GetPeerMessageId(userId, messageId, peerId int32) int32 {
 	}
 }
 
+func (m *MessageModel) GetLastPeerMessageId(userId int32, did int64) int32 {
+	// did := makeDialogId(userId, peerType, peerId)
+	do := m.dao.MessageBoxesDAO.SelectLastPeerDialogMessageId(userId, did)
+	if do != nil {
+		return do.UserMessageBoxId
+	} else {
+		return 0
+	}
+}
+
 func (m *MessageModel) DeleteByMessageIdList(userId int32, idList []int32) {
 	if len(idList) > 0 {
 		m.dao.MessageBoxesDAO.DeleteMessagesByMessageIdList(userId, idList)
 	}
 }
 
-func (m *MessageModel) GetPeerDialogMessageIdList(userId int32, idList []int32) map[int32][]int32 {
+func (m *MessageModel) GetDialogListMessageIdList(userId int32, idList []int32) map[int64][]int32 {
+	var dialogIdList = make(map[int64][]int32, len(idList))
+	doList := m.dao.MessageBoxesDAO.SelectByMessageIdList(userId, idList)
+	glog.Info(doList)
+
+	for i := 0; i < len(doList); i++ {
+		if idList, ok := dialogIdList[doList[i].DialogId]; !ok {
+			dialogIdList[doList[i].DialogId] = []int32{doList[i].UserMessageBoxId}
+		} else {
+			idList = append(idList, doList[i].UserMessageBoxId)
+			dialogIdList[doList[i].DialogId] = idList
+		}
+	}
+	glog.Info(dialogIdList)
+	return dialogIdList
+}
+
+func (m *MessageModel) GetPeerDialogMessageIdList(userId int32, idList []int32) map[int32][]struct {
+	A int32
+	B int64
+} {
 	doList := m.dao.MessageBoxesDAO.SelectPeerDialogMessageIdList(userId, idList)
-	peerMessageIdListMap := make(map[int32][]int32)
+	peerMessageIdListMap := make(map[int32][]struct {
+		A int32
+		B int64
+	})
 
 	for _, do := range doList {
 		if messageIdList, ok := peerMessageIdListMap[do.UserId]; !ok {
-			peerMessageIdListMap[do.UserId] = []int32{do.UserMessageBoxId}
+			peerMessageIdListMap[do.UserId] = []struct {
+				A int32
+				B int64
+			}{{A: do.UserMessageBoxId, B: do.DialogId}}
 		} else {
-			peerMessageIdListMap[do.UserId] = append(messageIdList, do.UserMessageBoxId)
+			peerMessageIdListMap[do.UserId] = append(messageIdList, struct {
+				A int32
+				B int64
+			}{A: do.UserMessageBoxId, B: do.DialogId})
 		}
 	}
 
@@ -229,7 +268,7 @@ func (m *MessageModel) GetClearHistoryMessages(userId int32, peer *base.PeerUtil
 	for i := 0; i < len(doList); i++ {
 		if i == 0 {
 			var err error
-			lastMessageBox, err  = m.GetMessageBox2(int32(base.PEER_USER), userId, doList[0].UserMessageBoxId)
+			lastMessageBox, err = m.GetMessageBox2(int32(base.PEER_USER), userId, doList[0].UserMessageBoxId)
 			if err != nil {
 				return
 			}
@@ -239,4 +278,3 @@ func (m *MessageModel) GetClearHistoryMessages(userId int32, peer *base.PeerUtil
 	}
 	return
 }
-
