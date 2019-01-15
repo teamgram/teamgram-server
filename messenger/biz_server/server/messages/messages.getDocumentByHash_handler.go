@@ -18,20 +18,21 @@
 package messages
 
 import (
-	"fmt"
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 )
 
 // messages.getDocumentByHash#338e2464 sha256:bytes size:int mime_type:string = Document;
 func (s *MessagesServiceImpl) MessagesGetDocumentByHash(ctx context.Context, request *mtproto.TLMessagesGetDocumentByHash) (*mtproto.Document, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
-	glog.Infof("MessagesGetDocumentByHash - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	glog.Infof("messages.getDocumentByHash#338e2464 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	// TODO(@benqi): Impl MessagesGetDocumentByHash logic
+	document := mtproto.NewTLDocumentEmpty().To_Document()
 
-	return nil, fmt.Errorf("Not impl MessagesGetDocumentByHash")
+	glog.Infof("messages.getDocumentByHash#338e2464 - reply: %s", logger.JsonDebugData(document))
+	return document, nil
 }
