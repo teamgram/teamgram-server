@@ -19,14 +19,14 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 )
 
 // messages.deleteChatUser#e0611f16 chat_id:int user_id:InputUser = Updates;
@@ -63,6 +63,7 @@ func (s *MessagesServiceImpl) MessagesDeleteChatUser(ctx context.Context, reques
 	err = chatLogic.CheckDeleteChatUser(md.UserId, deleteChatUserId)
 	if err != nil {
 		glog.Error("messages.deleteChatUser#e0611f16 - invalid peer", err)
+		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
 		return nil, err
 	}
 

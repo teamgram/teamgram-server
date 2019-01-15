@@ -18,13 +18,13 @@
 package chat
 
 import (
-	base2 "github.com/nebula-chat/chatengine/pkg/util"
+	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/random2"
+	base2 "github.com/nebula-chat/chatengine/pkg/util"
 	"math/rand"
 	"time"
 )
@@ -36,13 +36,13 @@ const (
 )
 
 const (
-	kChatParticipantStateNormal 	= 0		// normal
-	kChatParticipantStateLeft 		= 1		// left
-	kChatParticipantStateKicked 	= 2		// kicked
+	kChatParticipantStateNormal = 0 // normal
+	kChatParticipantStateLeft   = 1 // left
+	kChatParticipantStateKicked = 2 // kicked
 )
 
 const (
-	kCreateChatFlood = 10  // 10s
+	kCreateChatFlood = 10 // 10s
 )
 
 type chatLogicData struct {
@@ -54,7 +54,7 @@ type chatLogicData struct {
 
 func makeChatParticipantByDO(do *dataobject.ChatParticipantsDO) (participant *mtproto.ChatParticipant) {
 	participant = &mtproto.ChatParticipant{Data2: &mtproto.ChatParticipant_Data{
-		UserId:    do.UserId,
+		UserId: do.UserId,
 		// InviterId: do.InviterUserId,
 		// Date:      do.InvitedAt,
 	}}
@@ -112,7 +112,7 @@ func (m *ChatModel) CreateChat(creatorId int32, userIdList []int32, title string
 	//  TODO(@benqi): Check FLOOD_WAIT_
 	chatDO := m.dao.ChatsDAO.SelectLastCreator(creatorId)
 	if chatDO != nil {
-		if date - chatDO.Date < kCreateChatFlood {
+		if date-chatDO.Date < kCreateChatFlood {
 			err = mtproto.NewFloodWaitX2(int(date - chatDO.Date))
 			glog.Error("create error: ", err, ". lastCreate = ", chatDO.Date)
 			return nil, err
@@ -267,7 +267,7 @@ func (this *chatLogicData) GetChatParticipantIdList() []int32 {
 	return idList
 }
 
-func (this *chatLogicData) 	GetChatParticipants() *mtproto.TLChatParticipants {
+func (this *chatLogicData) GetChatParticipants() *mtproto.TLChatParticipants {
 	this.checkOrLoadChatParticipantList()
 
 	return &mtproto.TLChatParticipants{Data2: &mtproto.ChatParticipants_Data{
@@ -336,7 +336,7 @@ func (this *chatLogicData) ToChat(selfUserId int32) *mtproto.Chat {
 
 	var forbidden = false
 	for i := 0; i < len(this.participants); i++ {
-		if this.participants[i].UserId == selfUserId && this.participants[i].State == 1 {
+		if this.participants[i].UserId == selfUserId && this.participants[i].State != 0 {
 			forbidden = true
 			break
 		}
@@ -350,11 +350,10 @@ func (this *chatLogicData) ToChat(selfUserId int32) *mtproto.Chat {
 		return chat.To_Chat()
 	} else {
 		chat := &mtproto.TLChat{Data2: &mtproto.Chat_Data{
-			Creator:       this.chat.CreatorUserId == selfUserId,
-			Id:            this.chat.Id,
-			Title:         this.chat.Title,
-			AdminsEnabled: this.chat.AdminsEnabled == 1,
-			// Photo:             mtproto.NewTLChatPhotoEmpty().To_ChatPhoto(),
+			Creator:           this.chat.CreatorUserId == selfUserId,
+			Id:                this.chat.Id,
+			Title:             this.chat.Title,
+			AdminsEnabled:     this.chat.AdminsEnabled == 1,
 			ParticipantsCount: this.chat.ParticipantCount,
 			Date:              this.chat.Date,
 			Version:           this.chat.Version,
@@ -418,8 +417,13 @@ func (this *chatLogicData) DeleteChatUser(operatorId, deleteUserId int32) error 
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_NOT_EXISTS)
 	}
 
-	this.participants[found].State = 1
-	this.dao.ChatParticipantsDAO.UpdateKicked(now, this.participants[found].Id)
+	if operatorId == deleteUserId {
+		this.participants[found].State = kChatParticipantStateLeft
+		this.dao.ChatParticipantsDAO.UpdateLeft(now, this.participants[found].Id)
+	} else {
+		this.participants[found].State = kChatParticipantStateKicked
+		this.dao.ChatParticipantsDAO.UpdateKicked(now, this.participants[found].Id)
+	}
 
 	// delete found.
 	// this.participants = append(this.participants[:found], this.participants[found+1:]...)
