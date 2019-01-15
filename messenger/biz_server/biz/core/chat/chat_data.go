@@ -85,6 +85,7 @@ func (m *ChatModel) NewChatLogicById(chatId int32) (chatData *chatLogicData, err
 			dao:  m.dao,
 			cb:   m.photoCallback,
 		}
+		chatData.checkOrLoadChatParticipantList()
 	}
 	return
 }
@@ -334,12 +335,32 @@ func (this *chatLogicData) findChatParticipant(selfUserId int32) (int, *dataobje
 func (this *chatLogicData) ToChat(selfUserId int32) *mtproto.Chat {
 	// TODO(@benqi): kicked:flags.1?true left:flags.2?true admins_enabled:flags.3?true admin:flags.4?true deactivated:flags.5?true
 
-	var forbidden = false
+	var (
+		forbidden        = false
+		participant      *dataobject.ChatParticipantsDO
+		participantCount int32
+	)
+
 	for i := 0; i < len(this.participants); i++ {
-		if this.participants[i].UserId == selfUserId && this.participants[i].State != 0 {
-			forbidden = true
-			break
+		if this.participants[i].State == kChatParticipantStateNormal {
+			participantCount++
 		}
+
+		if selfUserId == this.participants[i].UserId {
+			participant = &this.participants[i]
+		}
+
+		if this.participants[i].UserId == selfUserId && this.participants[i].State == kChatParticipantStateKicked {
+			forbidden = true
+			// break
+		}
+	}
+
+	if participant == nil {
+		chat := &mtproto.TLChatEmpty{Data2: &mtproto.Chat_Data{
+			Id: this.chat.Id,
+		}}
+		return chat.To_Chat()
 	}
 
 	if forbidden {
@@ -351,13 +372,22 @@ func (this *chatLogicData) ToChat(selfUserId int32) *mtproto.Chat {
 	} else {
 		chat := &mtproto.TLChat{Data2: &mtproto.Chat_Data{
 			Creator:           this.chat.CreatorUserId == selfUserId,
+			Kicked:            participant.State == kChatParticipantStateKicked,
+			Left:              participant.State == kChatParticipantStateLeft,
+			AdminsEnabled:     this.chat.AdminsEnabled == 1,
+			Deactivated:       this.chat.Deactivated == 1,
+			ParticipantsCount: participantCount,
 			Id:                this.chat.Id,
 			Title:             this.chat.Title,
-			AdminsEnabled:     this.chat.AdminsEnabled == 1,
-			ParticipantsCount: this.chat.ParticipantCount,
 			Date:              this.chat.Date,
 			Version:           this.chat.Version,
 		}}
+
+		if participant.State == kChatParticipantStateNormal {
+			if participant.ParticipantType == kChatParticipantAdmin {
+				chat.SetAdmin(true)
+			}
+		}
 
 		if this.chat.PhotoId == 0 {
 			chat.SetPhoto(mtproto.NewTLChatPhotoEmpty().To_ChatPhoto())
@@ -394,6 +424,19 @@ func (this *chatLogicData) CheckDeleteChatUser(operatorId, deleteUserId int32) e
 	return nil
 }
 
+func (this *chatLogicData) getParticipantCount() int32 {
+	var participantCount int32
+	this.checkOrLoadChatParticipantList()
+
+	for i := 0; i < len(this.participants); i++ {
+		if this.participants[i].State == 0 {
+			participantCount++
+		}
+	}
+
+	return participantCount
+}
+
 func (this *chatLogicData) DeleteChatUser(operatorId, deleteUserId int32) error {
 	// operatorId is creatorUserId，allow delete all user_id
 	// other delete me
@@ -401,34 +444,37 @@ func (this *chatLogicData) DeleteChatUser(operatorId, deleteUserId int32) error 
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_NO_EDIT_CHAT_PERMISSION)
 	}
 
-	this.checkOrLoadChatParticipantList()
-	var found = -1
-	for i := 0; i < len(this.participants); i++ {
-		if deleteUserId == this.participants[i].UserId {
-			if this.participants[i].State == 0 {
-				found = i
-			}
-			break
-		}
+	_, oP := this.findChatParticipant(operatorId)
+	_, dP := this.findChatParticipant(deleteUserId)
+
+	if oP == nil || dP == nil {
+		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
 	}
 
-	var now = int32(time.Now().Unix())
-	if found == -1 {
+	if operatorId != deleteUserId && oP.State != kChatParticipantStateNormal {
 		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PARTICIPANT_NOT_EXISTS)
 	}
 
-	if operatorId == deleteUserId {
-		this.participants[found].State = kChatParticipantStateLeft
-		this.dao.ChatParticipantsDAO.UpdateLeft(now, this.participants[found].Id)
-	} else {
-		this.participants[found].State = kChatParticipantStateKicked
-		this.dao.ChatParticipantsDAO.UpdateKicked(now, this.participants[found].Id)
+	if dP.State == kChatParticipantStateLeft {
+		return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
 	}
 
-	// delete found.
-	// this.participants = append(this.participants[:found], this.participants[found+1:]...)
+	var now = int32(time.Now().Unix())
+	if operatorId == deleteUserId {
+		if dP.State == kChatParticipantStateKicked {
+			dP.State = kChatParticipantStateLeft
+			this.dao.ChatParticipantsDAO.UpdateLeft(now, dP.Id)
+			return mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
+		} else {
+			dP.State = kChatParticipantStateLeft
+			this.dao.ChatParticipantsDAO.UpdateLeft(now, dP.Id)
+		}
+	} else {
+		dP.State = kChatParticipantStateKicked
+		this.dao.ChatParticipantsDAO.UpdateKicked(now, dP.Id)
+	}
 
-	this.chat.ParticipantCount = int32(len(this.participants) - 1)
+	this.chat.ParticipantCount = this.getParticipantCount()
 	this.chat.Version += 1
 	this.chat.Date = now
 	this.dao.ChatsDAO.UpdateParticipantCount(this.chat.ParticipantCount, this.chat.Id)

@@ -60,9 +60,16 @@ func (s *MessagesServiceImpl) MessagesDeleteChatUser(ctx context.Context, reques
 		PeerId:   chatLogic.GetChatId(),
 	}
 
-	err = chatLogic.CheckDeleteChatUser(md.UserId, deleteChatUserId)
+	//err = chatLogic.CheckDeleteChatUser(md.UserId, deleteChatUserId)
+	//if err != nil {
+	//	glog.Error("messages.deleteChatUser#e0611f16 - invalid peer", err)
+	//	err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
+	//	return nil, err
+	//}
+
+	err = chatLogic.DeleteChatUser(md.UserId, deleteChatUserId)
 	if err != nil {
-		glog.Error("messages.deleteChatUser#e0611f16 - invalid peer", err)
+		// glog.Error("messages.deleteChatUser#e0611f16 - invalid peer", err)
 		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PEER_ID_INVALID)
 		return nil, err
 	}
@@ -73,9 +80,6 @@ func (s *MessagesServiceImpl) MessagesDeleteChatUser(ctx context.Context, reques
 
 	resultCB := func(pts, ptsCount int32, outBox *message.MessageBox2) (*mtproto.Updates, error) {
 		syncUpdates := updates.NewUpdatesLogic(md.UserId)
-
-		_ = chatLogic.DeleteChatUser(md.UserId, deleteChatUserId)
-
 		updateChatParticipants := &mtproto.TLUpdateChatParticipants{Data2: &mtproto.Update_Data{
 			Participants: chatLogic.GetChatParticipants().To_ChatParticipants(),
 		}}
