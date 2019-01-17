@@ -298,7 +298,11 @@ func (c *session) changeConnState(state int) {
 func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController, salt int64, msg *mtproto.TLMessage2, cb2 func(msg *mtproto.TLMessage2)) {
 	// c.lastTime = time.Now().Unix()
 	c.lastReceiveTime = time.Now().UnixNano()
-	sessionStateNew := c.connState != kStateOnline
+	sessionStateNew := false
+
+	if c.connState != kStateOnline || !c.connId.Equal(id) {
+		sessionStateNew = true
+	}
 
 	c.changeConnState(kStateOnline)
 	c.connId = id
