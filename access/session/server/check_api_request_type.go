@@ -259,6 +259,11 @@ func getSessionType2(object mtproto.TLObject, sessionType *int) {
 		// *mtproto.TLUploadReuploadCdnFile:
 
 		*sessionType = kSessionUpload
+
+	case *mtproto.TLMessagesGetHistory,
+		*mtproto.TLMessagesGetHistoryLayer51:
+		// fix iOS push message bug.
+
 	default:
 		*sessionType = kSessionGeneric
 	}
