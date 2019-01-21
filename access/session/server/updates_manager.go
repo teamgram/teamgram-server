@@ -47,12 +47,18 @@ func (m *updatesManager) onGenericSessionNew(s sessionBase) {
 
 	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
 		if ss.SessionId() == e.Value.(*genericSession).sessionId {
-			*e.Value.(*genericSession) = *ss
+			e.Value = ss
 			return
 		}
 	}
 
 	m.genericSessions.PushBack(ss)
+}
+
+func (m *updatesManager) debugGenericSessions() {
+	for e := m.genericSessions.Front(); e != nil; e = e.Next() {
+		glog.Infof("updatesManager]]> - debug generic session: {%s}", e.Value.(*genericSession))
+	}
 }
 
 func (m *updatesManager) onGenericSessionClose(s sessionBase) {
@@ -93,6 +99,7 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 		} else {
 			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+			m.debugGenericSessions()
 		}
 	}
 
