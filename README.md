@@ -115,12 +115,6 @@ git clone https://github.com/nebula-chat/chatengine.git
 
 
 ### TODO
-- stickers
-- phone call
-- channel
-- megagroup
-- secret chats
-- bots
 
 ## Feedback
 Please report bugs, concerns, suggestions by issues, or join telegram group [Telegramd中文技术交流群](https://t.me/cntelegramd) Or [Telegramd](https://t.me/entelegramd) to discuss problems around source code.
