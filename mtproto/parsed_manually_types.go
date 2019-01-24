@@ -24,6 +24,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/golang/glog"
+	"io"
 )
 
 //const (
@@ -261,32 +262,36 @@ func (m *TLGzipPacked) EncodeToLayer(int) []byte {
 }
 
 func (m *TLGzipPacked) Decode(dbuf *DecodeBuf) error {
-	m.PackedData = make([]byte, 0, 4096)
-
-	var buf bytes.Buffer
-	_, _ = buf.Write(dbuf.StringBytes())
-	gz, _ := gzip.NewReader(&buf)
-
-	b := make([]byte, 4096)
-	for true {
-		n, _ := gz.Read(b)
-		if n <= 0 {
-			break
-		}
-		m.PackedData = append(m.PackedData, b[0:n]...)
-	}
-
-	// decode
-	if dbuf.err == nil {
-		dbuf2 := NewDecodeBuf(m.PackedData)
-		m.Obj = dbuf2.Object()
-		if m.Obj == nil {
-
-		}
-		return dbuf2.err
-	} else {
+	data := dbuf.StringBytes()
+	if dbuf.err != nil {
 		return dbuf.err
 	}
+	gz, err := gzip.NewReader(bytes.NewBuffer(data))
+	if err != nil {
+		dbuf.err = err
+		return fmt.Errorf("gzip read: %v", err)
+	}
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, gz)
+	clErr := gz.Close()
+
+	if err != nil {
+		dbuf.err = err
+		return fmt.Errorf("gzip read: %v", err)
+	}
+	if clErr != nil {
+		dbuf.err = clErr
+		return clErr
+	}
+
+	m.PackedData = buf.Bytes()
+
+	dbuf2 := NewDecodeBuf(m.PackedData)
+	m.Obj = dbuf2.Object()
+	dbuf.err = dbuf2.err
+
+	return dbuf.err
 }
 
 ///////////////////////////////////////////////////////////////////////////////
