@@ -25,10 +25,10 @@ import (
 )
 
 const (
-	DB_OK				=  0
-	DB_DUPLICATE 		= -1
-	DB_IN_VALUES_EMPTY 	= -2
-	DB_ERROR            = -3
+	DB_OK              = 0
+	DB_DUPLICATE       = -1
+	DB_IN_VALUES_EMPTY = -2
+	DB_ERROR           = -3
 )
 
 type CommonDAO struct {
@@ -88,39 +88,4 @@ func (dao *CommonDAO) CalcSize(table string, params map[string]interface{}) int 
 		return -1
 	}
 	return count
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//func (dao *CommonDAO) InsertOrUpdate(table string, params map[string]interface{}) bool {
-//	return true
-//}
-//
-//func (dao *CommonDAO) GetOrInsert(table string, params map[string]interface{}) bool {
-//	return true
-//}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-func InsertIgonre() int {
-	return 0
-}
-
-func InsertIgonreReturnLastInsertId() int64 {
-	return 0
-}
-
-func InsertOrUpdate() int {
-	return 0
-}
-
-func InsertOrUpdateReturnLastInsertId() int64 {
-	return 0
-}
-
-func Insert() int {
-	return 0
-}
-
-func InsertReturnLastInertId() int64 {
-	return 0
 }

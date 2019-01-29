@@ -18,7 +18,6 @@
 package server
 
 import (
-	"container/list"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -179,10 +178,42 @@ func makeAuthSessions(authKeyId int64) *authSessions {
 		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		state:           keyIdNew,
-		updates:         &updatesManager{genericSessions: list.New()},
+		// updates:         &updatesManager{genericSessions: list.New()},
+	}
+	ss.updates = &updatesManager{sessions: ss}
+	return ss
+}
+
+func (s *authSessions) getOnlineGenericSession() sessionBase {
+	var (
+		lastReceiveTime int64 = 0
+		lastSession     sessionBase
+	)
+
+	for _, gSession := range s.sessions {
+		if gSession.SessionType() == kSessionGeneric && gSession.sessionOnline() && gSession.(*genericSession).lastReceiveTime > lastReceiveTime {
+			lastSession = gSession
+			lastReceiveTime = gSession.(*genericSession).lastReceiveTime
+		}
 	}
 
-	return ss
+	return lastSession
+}
+
+func (s *authSessions) getOnlinePushSession() sessionBase {
+	var (
+		lastReceiveTime int64 = 0
+		lastSession     sessionBase
+	)
+
+	for _, pSession := range s.sessions {
+		if pSession.SessionType() == kSessionPush && pSession.sessionOnline() && pSession.(*pushSession).lastReceiveTime > lastReceiveTime {
+			lastSession = pSession
+			lastReceiveTime = pSession.(*pushSession).lastReceiveTime
+		}
+	}
+
+	return lastSession
 }
 
 func (s *authSessions) getAuthKeyId() int64 {
@@ -216,8 +247,8 @@ func (s *authSessions) setLayer(layer int32) {
 
 func (s *authSessions) destroySession(sessionId int64) bool {
 	// TODO(@benqi):
-	if sess, ok := s.sessions[sessionId]; ok {
-		s.updates.onGenericSessionClose(sess)
+	if _, ok := s.sessions[sessionId]; ok {
+		// s.updates.onGenericSessionClose(sess)
 		delete(s.sessions, sessionId)
 	} else {
 		//
@@ -599,7 +630,7 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 			pushSessionId := s.getPushSessionId()
 			if pushSessionId == sessionId {
 				sess = newSession(sessionId, kSessionPush, s)
-				s.updates.onPushSessionNew(sess)
+				// s.updates.onPushSessionNew(sess)
 				glog.Infof("pushSession]]>> sess: %s", sess)
 			} else {
 				sess = newSession(sessionId, kSessionUnknown, s)
@@ -607,9 +638,9 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 		} else {
 			sess = newSession(sessionId, sessType, s)
 			if sessType == kSessionGeneric {
-				s.updates.onGenericSessionNew(sess)
+				// s.updates.onGenericSessionNew(sess)
 			} else if sessType == kSessionPush {
-				s.updates.onPushSessionNew(sess)
+				// s.updates.onPushSessionNew(sess)
 				glog.Infof("pushSession]]>> sess: %s", sess)
 			}
 			// s.sessions[sessionId] = sess
@@ -621,7 +652,7 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 			if pushSessionId == sessionId {
 				sess2 := newSession(sessionId, kSessionPush, s)
 				sess2.MergeSession(sess)
-				s.updates.onPushSessionNew(sess2)
+				// s.updates.onPushSessionNew(sess2)
 				s.sessions[sessionId] = sess2
 				sess = sess2
 				glog.Infof("pushSession]]>> sess: %s", sess)
@@ -630,11 +661,11 @@ func (s *authSessions) getOrCreateSession(connId ClientConnID, sessionId int64, 
 			sess2 := newSession(sessionId, sessType, s)
 			sess2.MergeSession(sess)
 
-			if sessType == kSessionGeneric {
-				s.updates.onGenericSessionNew(sess2)
-			} else if sessType == kSessionPush {
-				s.updates.onPushSessionNew(sess2)
-			}
+			//if sessType == kSessionGeneric {
+			//	s.updates.onGenericSessionNew(sess2)
+			//} else if sessType == kSessionPush {
+			//	s.updates.onPushSessionNew(sess2)
+			//}
 
 			s.sessions[sessionId] = sess2
 			sess = sess2

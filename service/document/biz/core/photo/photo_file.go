@@ -113,12 +113,14 @@ func (m *PhotoModel) GetPhotoSizeList(photoId int64) (sizes []*mtproto.PhotoSize
 			H:    doList[i].Height,
 			Size: doList[i].FileSize,
 			Location: &mtproto.FileLocation{
-				Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
+				// Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
+				Constructor: mtproto.TLConstructor_CRC32_fileLocation,
 				Data2: &mtproto.FileLocation_Data{
-					VolumeId: doList[i].VolumeId,
-					LocalId:  int32(doList[i].LocalId),
-					Secret:   doList[i].AccessHash,
-					DcId:     doList[i].DcId,
+					VolumeId:      doList[i].VolumeId,
+					LocalId:       int32(doList[i].LocalId),
+					Secret:        doList[i].AccessHash,
+					DcId:          doList[i].DcId,
+					FileReference: []byte("@benqi-not-impl-file-reference"),
 				},
 			},
 		}
@@ -180,12 +182,14 @@ func (m *PhotoModel) UploadPhotoFile2(fileMDList []*nbfs.PhotoFileMetadata) (pho
 			// Size: int32(len(photoDatasDO.Bytes)),
 			Size: photoDatasDO.FileSize,
 			Location: &mtproto.FileLocation{
-				Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
+				// Constructor: mtproto.TLConstructor_CRC32_fileLocationLayer86,
+				Constructor: mtproto.TLConstructor_CRC32_fileLocation,
 				Data2: &mtproto.FileLocation_Data{
-					VolumeId: photoDatasDO.VolumeId,
-					LocalId:  fileMD.LocalId,
-					Secret:   photoDatasDO.AccessHash,
-					DcId:     photoDatasDO.DcId,
+					VolumeId:      photoDatasDO.VolumeId,
+					LocalId:       fileMD.LocalId,
+					Secret:        photoDatasDO.AccessHash,
+					DcId:          photoDatasDO.DcId,
+					FileReference: []byte("@benqi-not-impl-file-reference"),
 				},
 			},
 		}
