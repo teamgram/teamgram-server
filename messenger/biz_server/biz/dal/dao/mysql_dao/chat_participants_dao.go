@@ -198,3 +198,25 @@ func (dao *ChatParticipantsDAO) UpdateParticipantType(participant_type int8, id 
 
 	return rows
 }
+
+// update chat_participants set participant_type = :participant_type where user_id = :user_id
+// TODO(@benqi): sqlmap
+func (dao *ChatParticipantsDAO) UpdateParticipantTypeByUserId(participant_type int8, user_id int32) int64 {
+	var query = "update chat_participants set participant_type = ? where user_id = ?"
+	r, err := dao.db.Exec(query, participant_type, user_id)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Exec in UpdateParticipantType(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	rows, err := r.RowsAffected()
+	if err != nil {
+		errDesc := fmt.Sprintf("RowsAffected in UpdateParticipantType(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return rows
+}

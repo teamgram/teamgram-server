@@ -19,13 +19,15 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	update2 "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	update2 "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
 	"golang.org/x/net/context"
 )
 
+// Ps：enable = true 的时候开关为关；enable = false 的时候标识为开；
 // messages.toggleChatAdmins#ec8bd9e1 chat_id:int enabled:Bool = Updates;
 func (s *MessagesServiceImpl) MessagesToggleChatAdmins(ctx context.Context, request *mtproto.TLMessagesToggleChatAdmins) (*mtproto.Updates, error) {
 	md := grpc_util.RpcMetadataFromIncoming(ctx)
@@ -44,14 +46,14 @@ func (s *MessagesServiceImpl) MessagesToggleChatAdmins(ctx context.Context, requ
 	}
 
 	syncUpdates := update2.NewUpdatesLogic(md.UserId)
-	//updateChatParticipants := &mtproto.TLUpdateChatParticipants{Data2: &mtproto.Update_Data{
-	//	Participants: chatLogic.GetChatParticipants().To_ChatParticipants(),
-	//}}
-	//syncUpdates.AddUpdate(updateChatParticipants.To_Update())
+	updateChatParticipants := &mtproto.TLUpdateChatParticipants{Data2: &mtproto.Update_Data{
+		Participants: chatLogic.GetChatParticipants().To_ChatParticipants(),
+	}}
+	syncUpdates.AddUpdate(updateChatParticipants.To_Update())
 	syncUpdates.AddChat(chatLogic.ToChat(md.UserId))
 
 	replyUpdates := syncUpdates.ToUpdates()
-
+	sync_client.GetSyncClient().SyncUpdatesMe(ctx, md.UserId, md.SessionId, 0, syncUpdates.ToUpdates())
 	//updateChatAdmins := &mtproto.TLUpdateChatAdmins{Data2: &mtproto.Update_Data{
 	//	ChatId:  chatLogic.GetChatId(),
 	//	Enabled: request.GetEnabled(),
@@ -65,6 +67,6 @@ func (s *MessagesServiceImpl) MessagesToggleChatAdmins(ctx context.Context, requ
 	//	// sync_client.GetSyncClient().PushToUserUpdateShortData(id, updateChatAdmins.To_Update())
 	//}
 
-	glog.Infof("messages.toggleChatAdmins#ec8bd9e1 - reply: {%v}", replyUpdates)
+	glog.Infof("messages.toggleChatAdmins#ec8bd9e1 - reply: %s", logger.JsonDebugData(replyUpdates))
 	return replyUpdates, nil
 }

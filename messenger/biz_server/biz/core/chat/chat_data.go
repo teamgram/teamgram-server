@@ -593,17 +593,41 @@ func (this *chatLogicData) ToggleChatAdmins(userId int32, adminsEnabled bool) er
 
 	this.dao.ChatsDAO.UpdateAdminsEnabled(this.chat.AdminsEnabled, this.chat.Id)
 
+	var participantType int8
+	if !adminsEnabled {
+		participantType = kChatParticipantAdmin
+	} else {
+		participantType = kChatParticipant
+	}
+
+	idList := this.GetChatParticipantIdList()
+	for _, id := range idList {
+		if id == userId {
+			// 群主不处理
+			continue
+		}
+		this.dao.ChatParticipantsDAO.UpdateParticipantTypeByUserId(participantType, id)
+	}
+	this.participants = this.dao.ChatParticipantsDAO.SelectList(this.chat.Id)
 	return nil
 }
 
 func (this *chatLogicData) ExportChatInvite(inviteUserId int32) (string, error) {
+	var validate bool
 	// check is creator
-	if inviteUserId != this.chat.CreatorUserId {
-		return "", mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_NO_EDIT_CHAT_PERMISSION)
+	if inviteUserId == this.chat.CreatorUserId {
+		validate = true
+	} else {
+		for _, v := range this.participants {
+			if v.ParticipantType == kChatParticipantAdmin && v.UserId == inviteUserId {
+				validate = true
+				break
+			}
+		}
 	}
 
-	if inviteUserId != this.chat.CreatorUserId {
-		//
+	if !validate {
+		return "", mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_NO_EDIT_CHAT_PERMISSION)
 	}
 
 	// TODO(@benqi): 检查唯一性
