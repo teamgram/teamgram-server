@@ -53,7 +53,7 @@ func (s *MessagesServiceImpl) MessagesToggleChatAdmins(ctx context.Context, requ
 	syncUpdates.AddChat(chatLogic.ToChat(md.UserId))
 
 	replyUpdates := syncUpdates.ToUpdates()
-	sync_client.GetSyncClient().SyncUpdatesMe(ctx, md.UserId, md.SessionId, 0, syncUpdates.ToUpdates())
+	sync_client.GetSyncClient().SyncUpdatesMe(md.UserId, md.SessionId, 0, syncUpdates.ToUpdates())
 	//updateChatAdmins := &mtproto.TLUpdateChatAdmins{Data2: &mtproto.Update_Data{
 	//	ChatId:  chatLogic.GetChatId(),
 	//	Enabled: request.GetEnabled(),
