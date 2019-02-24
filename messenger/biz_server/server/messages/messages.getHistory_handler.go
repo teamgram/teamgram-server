@@ -19,11 +19,11 @@ package messages
 
 import (
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/pkg/grpc_util"
-	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
 	"golang.org/x/net/context"
 	"math"
 )
@@ -338,6 +338,9 @@ func (s *MessagesServiceImpl) getHistoryMessages(md *grpc_util.RpcMetadata, requ
 	}
 
 	offsetId := request.GetOffsetId()
+	if offsetId == 0 {
+		offsetId = math.MaxInt32
+	}
 	addOffset := request.GetAddOffset()
 	limit := request.GetLimit()
 
