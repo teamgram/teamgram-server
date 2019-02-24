@@ -304,6 +304,9 @@ func (s *MessagesServiceImpl) loadHistoryMessage(loadType int, selfUserId int32,
 		offsetId = math.MaxInt32
 		messages = s.MessageModel.LoadBackwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, limit)
 	case kLoadTypeBackward:
+		if addOffset == 0 || addOffset == -1 && offsetId == 0 {
+			offsetId = math.MaxInt32
+		}
 		messages = s.MessageModel.LoadBackwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, addOffset+limit)
 	case kLoadTypeFirstAroundDate:
 	case kLoadTypeFirstAroundMessage:
@@ -338,9 +341,6 @@ func (s *MessagesServiceImpl) getHistoryMessages(md *grpc_util.RpcMetadata, requ
 	}
 
 	offsetId := request.GetOffsetId()
-	if offsetId == 0 {
-		offsetId = math.MaxInt32
-	}
 	addOffset := request.GetAddOffset()
 	limit := request.GetLimit()
 
