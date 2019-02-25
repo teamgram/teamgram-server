@@ -304,7 +304,7 @@ func (s *MessagesServiceImpl) loadHistoryMessage(loadType int, selfUserId int32,
 		offsetId = math.MaxInt32
 		messages = s.MessageModel.LoadBackwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, limit)
 	case kLoadTypeBackward:
-		if addOffset == 0 || addOffset == -1 && offsetId == 0 {
+		if (addOffset == 0 && offsetId == 0) || (addOffset == -1 && offsetId == 0) {
 			offsetId = math.MaxInt32
 		}
 		messages = s.MessageModel.LoadBackwardHistoryMessages(selfUserId, peer.PeerType, peer.PeerId, offsetId, addOffset+limit)
