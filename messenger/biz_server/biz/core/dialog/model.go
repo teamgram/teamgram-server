@@ -28,6 +28,7 @@ import (
 
 type dialogsDAO struct {
 	*mysql_dao.UserDialogsDAO
+	*mysql_dao.CommonDAO
 }
 
 type DialogModel struct {
@@ -45,6 +46,7 @@ func (m *DialogModel) RegisterCallback(cb interface{}) {
 
 func (m *DialogModel) InstallModel() {
 	m.dao.UserDialogsDAO = dao.GetUserDialogsDAO(dao.DB_MASTER)
+	m.dao.CommonDAO = dao.GetCommonDAO(dao.DB_MASTER)
 }
 
 func (m *DialogModel) UpdateUnreadByPeer(userId int32, peerType int8, peerId int32, readInboxMaxId int32) {

@@ -19,9 +19,9 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 	"math"
 )
@@ -101,6 +101,8 @@ func (s *MessagesServiceImpl) MessagesGetDialogs(ctx context.Context, request *m
 		offsetId = math.MaxInt32
 	}
 
+	count := s.DialogModel.GetDialogsCount(md.UserId, false)
+
 	dialogs := s.DialogModel.GetDialogsByOffsetId(md.UserId, false, offsetId, request.GetLimit())
 	// glog.Infof("dialogs - {%v}", dialogs)
 
@@ -123,11 +125,12 @@ func (s *MessagesServiceImpl) MessagesGetDialogs(ctx context.Context, request *m
 	chats := s.ChatModel.GetChatListBySelfAndIDList(md.UserId, dialogItems.ChatIdList)
 	// chats = append(chats, s.ChannelModel.GetChannelListBySelfAndIDList(md.UserId, dialogItems.ChannelIdList)...)
 
-	messageDialogs := mtproto.TLMessagesDialogs{Data2: &mtproto.Messages_Dialogs_Data{
-		Dialogs: dialogs,
+	messageDialogs := mtproto.TLMessagesDialogsSlice{Data2: &mtproto.Messages_Dialogs_Data{
+		Dialogs:  dialogs,
 		Messages: messages,
-		Users: users,
-		Chats: chats,
+		Users:    users,
+		Chats:    chats,
+		Count:    int32(count),
 	}}
 
 	glog.Infof("messages.getDialogs#b098aee6 - reply: %s", logger.JsonDebugData(messageDialogs))

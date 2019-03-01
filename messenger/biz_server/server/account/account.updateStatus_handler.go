@@ -19,12 +19,12 @@ package account
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
 	"time"
-	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 )
 
 // account.updateStatus#6628562c offline:Bool = Bool;
@@ -54,6 +54,11 @@ func (s *AccountServiceImpl) AccountUpdateStatus(ctx context.Context, request *m
 	// push to other contacts.
 	contactIDList := s.UserModel.GetContactUserIDList(md.UserId)
 	for _, id := range contactIDList {
+		if md.UserId == id {
+			// why??
+			continue
+		}
+
 		blocked := s.UserModel.IsBlockedByUser(md.UserId, id)
 		if blocked {
 			continue
@@ -74,6 +79,8 @@ func (s *AccountServiceImpl) AccountUpdateStatus(ctx context.Context, request *m
 			Update: updateUserStatus.To_Update(),
 			Date:   int32(time.Now().Unix()),
 		}}
+
+		// log.Debugf("updateStatus - toId:{%d}", id)
 		sync_client.GetSyncClient().PushUpdates(id, updates.To_Updates())
 	}
 

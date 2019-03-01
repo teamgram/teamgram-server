@@ -110,6 +110,13 @@ func (m *DialogModel) GetDialogsByOffsetId(userId int32, isPinned bool, offsetId
 	return
 }
 
+func (m *DialogModel) GetDialogsCount(userId int32, isPinned bool) int {
+	return m.dao.CommonDAO.CalcSize("user_dialogs", map[string]interface{}{
+		"user_id":   userId,
+		"is_pinned": 0,
+	})
+}
+
 func (m *DialogModel) GetPeersDialogs(selfId int32, peers []*base.PeerUtil) (dialogs []*mtproto.Dialog) {
 	//channelIdList := make([]int32, 0, len(peers))
 

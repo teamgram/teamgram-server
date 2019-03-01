@@ -19,34 +19,40 @@ package mtproto
 
 import (
 	"github.com/nebula-chat/chatengine/pkg/crypto"
+	"github.com/nebula-chat/chatengine/pkg/sync2"
 	"time"
 )
 
+var msgIdSeq = sync2.NewAtomicInt64(0)
+
 func GenerateMessageId() int64 {
-	const nano = 1000 * 1000 * 1000
 	unixnano := time.Now().UnixNano()
-
-	messageId := ((unixnano / nano) << 32) | ((unixnano % nano) & -4)
-	for {
-		//rpc_response
-		if (messageId % 4) != 1 {
-			messageId += 1
-		} else {
-			break
-		}
-
-		/****************************
-		 * // rpc_request
-		 * if (messageId % 4) != 3 {
-		 * 	messageId += 1
-		 * } else {
-		 * 	break
-		 * }
-		 */
-	}
-
-	return messageId
+	ts := unixnano / 1e9
+	ms := (unixnano % 1e9) / 1e6
+	sid := msgIdSeq.Add(1) & 0x1ffff
+	msgIdSeq.CompareAndSwap(0x1ffff, 0)
+	last := 1
+	//if !isRpc {
+	//	last = 3
+	//}
+	msgId := int64(ts<<32) | int64(ms)<<21 | int64(sid)<<3 | int64(last)
+	return msgId
 }
+
+//func nextMessageId(isRpc bool) int64 {
+//	unixnano := time.Now().UnixNano()
+//	ts := unixnano / 1e9
+//	ms := (unixnano % 1e9) / 1e6
+//	sid := msgIdSeq.Add(1) & 0x1ffff
+//	msgIdSeq.CompareAndSwap(0x1ffff, 0)
+//	last := 1
+//	if !isRpc {
+//		last = 3
+//	}
+//	msgId := int64(ts<<32) | int64(ms)<<21 | int64(sid)<<3 | int64(last)
+//	return msgId
+//}
+//
 
 /*
 	uint32_t x = incoming ? 8 : 0;
