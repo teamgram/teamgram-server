@@ -65,21 +65,23 @@ func (dao *CommonDAO) CheckExists(table string, params map[string]interface{}) b
 func (dao *CommonDAO) CalcSize(table string, params map[string]interface{}) int {
 	if len(params) == 0 {
 		glog.Errorf("calcSize - [%s] error: params empty!", table)
-		return -1
+		return 0
 	}
 
+	aValues := make([]interface{}, 0, len(params))
 	names := make([]string, 0, len(params))
-	for k, _ := range params {
-		names = append(names, k+" = :"+k)
-		// glog.Info("k: ", k, ", v: ", v)
+	for k, v := range params {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+		// log.Info("k: ", k, ", v: ", v)
 	}
 	sql := fmt.Sprintf("SELECT count(id) FROM %s WHERE %s", table, strings.Join(names, " AND "))
 
 	var count int
-	err := dao.db.Get(&count, sql, params)
+	err := dao.db.Get(&count, sql, aValues...)
 	if err != nil {
 		glog.Errorf("calcSize - [%s] error: %s", sql, err)
-		return -1
+		return 0
 	}
 	return count
 }
