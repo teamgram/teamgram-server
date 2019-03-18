@@ -315,7 +315,10 @@ func (c *session) processMessageData(id ClientConnID, cntl *zrpc.ZRpcController,
 		return
 	}
 
-	c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
+	willCloseDate := time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
+	if willCloseDate > c.closeDate {
+		c.closeDate = willCloseDate
+	}
 
 	//if !c.checkBadMsgNotification(id, cntl, msg) {
 	//	glog.Infof("badMsgNotification - {sess: %s, conn_id: %s, md: %s}", c, id, cntl)
@@ -955,7 +958,12 @@ func (c *session) onPingDelayDisconnect(connID ClientConnID, cntl *zrpc.ZRpcCont
 	}}
 
 	c.pendingMessages = append(c.pendingMessages, makePendingMessage(0, false, pong))
-	c.closeDate = time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
+
+	willCloseDate := time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
+	if willCloseDate > c.closeDate {
+		c.closeDate = willCloseDate
+	}
+
 }
 
 func (c *session) onMsgsAck(connID ClientConnID, cntl *zrpc.ZRpcController, msgId int64, seqNo int32, request *mtproto.TLMsgsAck) {
