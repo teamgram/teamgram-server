@@ -49,25 +49,27 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 	glog.Infof("onSyncData - generic session: {pts: %d, pts_count: %d, updates: %s}",
 		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 
-	genericSess := m.getOnlineGenericSession()
 	// pushSess := m.pushSession
 
+	pushSess := m.getOnlinePushSession()
+	if pushSess != nil {
+		glog.Infof("onSyncData]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+			pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+		if syncMsg.ptsCount > 0 {
+			pushSess.onSyncData(syncMsg.cntl)
+			// return
+		}
+	}
+
+	//else {
+	//	glog.Infof("updatesManager]]>> - push session: {sess: nil, pts: %d, pts_count: %d, updates: %s}",
+	//		syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
+	//}
+	genericSess := m.getOnlineGenericSession()
 	if genericSess != nil {
-		glog.Infof("updatesManager]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+		glog.Infof("onSyncData]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 			genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
-	} else {
-		pushSess := m.getOnlinePushSession()
-		if pushSess != nil {
-			glog.Infof("updatesManager]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
-				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			if syncMsg.ptsCount > 0 {
-				pushSess.onSyncData(syncMsg.cntl)
-			}
-		} else {
-			glog.Infof("updatesManager]]>> - push session: {sess: nil, pts: %d, pts_count: %d, updates: %s}",
-				syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-		}
 	}
 }
 

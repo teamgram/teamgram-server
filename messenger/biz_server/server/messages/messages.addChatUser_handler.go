@@ -19,14 +19,13 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
 )
 
 // messages.addChatUser#f9a0aa09 chat_id:int user_id:InputUser fwd_limit:int = Updates;
@@ -35,7 +34,7 @@ func (s *MessagesServiceImpl) MessagesAddChatUser(ctx context.Context, request *
 	glog.Infof("messages.addChatUser#f9a0aa09 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
 	var (
-		err error
+		err           error
 		addChatUserId int32
 	)
 
@@ -55,15 +54,33 @@ func (s *MessagesServiceImpl) MessagesAddChatUser(ctx context.Context, request *
 	}
 
 	chatLogic, _ := s.ChatModel.NewChatLogicById(request.GetChatId())
-	chatLogic.AddChatUser(md.UserId, addChatUserId)
+	err = chatLogic.AddChatUser(md.UserId, addChatUserId)
+	if err != nil {
+		glog.Infof("addChatUser error - %v", err)
+		return nil, err
+	}
 
 	peer := &base.PeerUtil{
 		PeerType: base.PEER_CHAT,
 		PeerId:   chatLogic.GetChatId(),
 	}
 
+	// randomId := core.GetUUID()
+	// handle duplicateMessage
+	hasDuplicateMessage, err := s.MessageModel.HasDuplicateMessage(md.UserId, md.ClientMsgId)
+	if err != nil {
+		glog.Error("checkDuplicateMessage error - ", err)
+		return nil, err
+	} else if hasDuplicateMessage {
+		upd, err := s.MessageModel.GetDuplicateMessage(md.UserId, md.ClientMsgId)
+		if err != nil {
+			glog.Error("checkDuplicateMessage error - ", err)
+			return nil, err
+		} else if upd != nil {
+			return upd, nil
+		}
+	}
 	addUserMessage := chatLogic.MakeAddUserMessage(md.UserId, addChatUserId)
-	randomId := core.GetUUID()
 
 	resultCB := func(pts, ptsCount int32, outBox *message.MessageBox2) (*mtproto.Updates, error) {
 		syncUpdates := updates.NewUpdatesLogic(md.UserId)
@@ -112,11 +129,16 @@ func (s *MessagesServiceImpl) MessagesAddChatUser(ctx context.Context, request *
 	replyUpdates, _ := s.MessageModel.SendMessage(
 		md.UserId,
 		peer,
-		randomId,
+		md.ClientMsgId,
 		addUserMessage,
 		resultCB,
 		syncNotMeCB,
 		pushCB)
+
+	if replyUpdates != nil {
+		// TODO(@benqi): if err
+		s.MessageModel.PutDuplicateMessage(md.UserId, md.ClientMsgId, replyUpdates)
+	}
 
 	glog.Infof("messages.addChatUser#f9a0aa09 - reply: {%v}", replyUpdates)
 	return replyUpdates, nil

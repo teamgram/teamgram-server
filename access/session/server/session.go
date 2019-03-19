@@ -284,11 +284,11 @@ func (c *session) changeConnState(state int) {
 	if c.sessionType == kSessionGeneric || c.sessionType == kSessionPush {
 		if state == kStateOnline {
 			c.cb.setOnline()
-			if c.sessionType == kSessionGeneric {
-				c.closeDate = time.Now().Unix() + 60
-			} else {
-				c.closeDate = time.Now().Unix() + 5*60
-			}
+			//if c.sessionType == kSessionGeneric {
+			//	c.closeDate = time.Now().Unix() + 60
+			//} else {
+			//	c.closeDate = time.Now().Unix() + 5*60
+			//}
 		} else if state == kStateOffline {
 			c.cb.trySetOffline()
 		}

@@ -191,7 +191,7 @@ func (s *authSessions) getOnlineGenericSession() sessionBase {
 	)
 
 	for _, gSession := range s.sessions {
-		if gSession.SessionType() == kSessionGeneric && gSession.sessionOnline() && gSession.(*genericSession).lastReceiveTime > lastReceiveTime {
+		if gSession.SessionType() == kSessionGeneric && gSession.sessionOnline() && gSession.(*genericSession).lastReceiveTime >= lastReceiveTime {
 			lastSession = gSession
 			lastReceiveTime = gSession.(*genericSession).lastReceiveTime
 		}
@@ -207,7 +207,7 @@ func (s *authSessions) getOnlinePushSession() sessionBase {
 	)
 
 	for _, pSession := range s.sessions {
-		if pSession.SessionType() == kSessionPush && pSession.sessionOnline() && pSession.(*pushSession).lastReceiveTime > lastReceiveTime {
+		if pSession.SessionType() == kSessionPush && pSession.sessionOnline() && pSession.(*pushSession).lastReceiveTime >= lastReceiveTime {
 			lastSession = pSession
 			lastReceiveTime = pSession.(*pushSession).lastReceiveTime
 		}

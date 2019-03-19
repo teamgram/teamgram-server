@@ -20,7 +20,6 @@ package messages
 import (
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -74,9 +73,25 @@ func (s *MessagesServiceImpl) MessagesDeleteChatUser(ctx context.Context, reques
 		return nil, err
 	}
 
+	// randomId := core.GetUUID()
+	// handle duplicateMessage
+	hasDuplicateMessage, err := s.MessageModel.HasDuplicateMessage(md.UserId, md.ClientMsgId)
+	if err != nil {
+		glog.Error("checkDuplicateMessage error - ", err)
+		return nil, err
+	} else if hasDuplicateMessage {
+		upd, err := s.MessageModel.GetDuplicateMessage(md.UserId, md.ClientMsgId)
+		if err != nil {
+			glog.Error("checkDuplicateMessage error - ", err)
+			return nil, err
+		} else if upd != nil {
+			return upd, nil
+		}
+	}
+
 	// make delete user message
 	deleteUserMessage := chatLogic.MakeDeleteUserMessage(md.UserId, deleteChatUserId)
-	randomId := core.GetUUID()
+	// randomId := core.GetUUID()
 
 	resultCB := func(pts, ptsCount int32, outBox *message.MessageBox2) (*mtproto.Updates, error) {
 		syncUpdates := updates.NewUpdatesLogic(md.UserId)
@@ -124,11 +139,16 @@ func (s *MessagesServiceImpl) MessagesDeleteChatUser(ctx context.Context, reques
 	replyUpdates, _ := s.MessageModel.SendMessage(
 		md.UserId,
 		peer,
-		randomId,
+		md.ClientMsgId,
 		deleteUserMessage,
 		resultCB,
 		syncNotMeCB,
 		pushCB)
+
+	if replyUpdates != nil {
+		// TODO(@benqi): if err
+		s.MessageModel.PutDuplicateMessage(md.UserId, md.ClientMsgId, replyUpdates)
+	}
 
 	glog.Infof("messages.deleteChatUser#e0611f16 - reply: {%v}", replyUpdates)
 	return replyUpdates, nil
