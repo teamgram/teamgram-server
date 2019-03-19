@@ -53,9 +53,9 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 
 	pushSess := m.getOnlinePushSession()
 	if pushSess != nil {
-		glog.Infof("onSyncData]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
-			pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 		if syncMsg.ptsCount > 0 {
+			glog.Infof("onSyncData]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
+				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
 			pushSess.onSyncData(syncMsg.cntl)
 			// return
 		}
