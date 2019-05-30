@@ -13,7 +13,7 @@ addr = "0.0.0.0:8800"
 [server80.discovery]
 serviceName = "frontend80"
 nodeID = "node1"
-rPCAddr = "127.0.0.1:10000"
+rPCAddr = "127.0.0.1:8800"
 etcdAddrs = ["http://127.0.0.1:2379"]
 interval = "2s"
 tTL = "10s"
@@ -27,7 +27,7 @@ addr = "0.0.0.0:12345"
 [server443.discovery]
 serviceName = "frontend443"
 nodeID = "node1"
-rPCAddr = "127.0.0.1:10000"
+rPCAddr = "127.0.0.1:12345"
 etcdAddrs = ["http://127.0.0.1:2379"]
 interval = "2s"
 tTL = "10s"
@@ -41,7 +41,7 @@ addr = "0.0.0.0:5222"
 [server5222.discovery]
 serviceName = "frontend5222"
 nodeID = "node1"
-rPCAddr = "127.0.0.1:10000"
+rPCAddr = "127.0.0.1:5222"
 etcdAddrs = ["http://127.0.0.1:2379"]
 interval = "2s"
 tTL = "10s"
