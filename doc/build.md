@@ -179,7 +179,7 @@ replace ipAddress by your IP
 $ cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
 $ ./auth_session
 
-$ cd $GOPATH/src/github.comnebula-chat/chatengine/service/document
+$ cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
 $ ./document
 
 $ cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/sync
