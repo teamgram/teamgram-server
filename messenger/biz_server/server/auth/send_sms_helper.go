@@ -19,14 +19,23 @@ package auth
 
 // TODO(@benqi): impl sendSms
 
-type SendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) (error)
+// type SendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) (error)
+
+type SendSmsVerifyCodeF func(phoneNumber, code, codeHash string, sentCodeType int) (string, error)
+type VerifySmsCodeF func(codeHash, extraData, code string) (error)
 
 func sendSms(phoneNumber, code, codeHash string, sentCodeType int) error {
 	// TODO(@benqi): impl sendSms
 	return nil
 }
 
-func getSendSmsFunc() SendSmsF {
+func getSendSmsVerifyCodeF() SendSmsVerifyCodeF {
 	// return sendSms
 	return nil
 }
+
+func getVerifySmsCodeF() VerifySmsCodeF {
+	// return sendSms
+	return nil
+}
+

@@ -3,15 +3,15 @@
     <operation name="Insert">
         <sql>
             INSERT INTO auth_phone_transactions
-                (auth_key_id, phone_number, code, code_expired, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, 	created_time)
+                (auth_key_id, phone_number, code, code_expired, code_msg_id, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, 	created_time)
             VALUES
-                (:auth_key_id, :phone_number, :code, :code_expired, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)
+                (:auth_key_id, :phone_number, :code, :code_expired, :code_msg_id, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)
         </sql>
     </operation>
     <operation name="SelectByPhoneCodeHash">
         <sql>
             SELECT
-                id, code, code_expired, sent_code_type, flash_call_pattern, next_code_type, attempts, state
+                id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state
             FROM
                 auth_phone_transactions
             WHERE
@@ -35,4 +35,11 @@
             UPDATE auth_phone_transactions SET attempts = attempts + 1 WHERE id = :id
         </sql>
     </operation>
+
+    <operation name="UpdateCode">
+        <sql>
+            UPDATE auth_phone_transactions SET code = :code, code_msg_id = :code_msg_id WHERE id = :id
+        </sql>
+    </operation>
+
 </table>

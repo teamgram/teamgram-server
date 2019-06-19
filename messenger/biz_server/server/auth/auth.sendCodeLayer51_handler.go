@@ -156,7 +156,7 @@ func (s *AuthServiceImpl) AuthSendCodeLayer51(ctx context.Context, request *mtpr
 	// PhoneNumberFlood
 	// FLOOD_WAIT
 	phoneRegistered := s.AuthModel.CheckPhoneNumberExist(phoneNumber)
-	err = code.DoSendCode(phoneRegistered, request.AllowFlashcall, currentNumber, request.ApiId, request.ApiHash, getSendSmsFunc())
+	err = code.DoSendCode(phoneRegistered, request.AllowFlashcall, currentNumber, request.ApiId, request.ApiHash, getSendSmsVerifyCodeF())
 	if err != nil {
 		glog.Error(err)
 		return nil, err

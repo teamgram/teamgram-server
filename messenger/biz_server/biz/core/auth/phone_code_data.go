@@ -80,6 +80,7 @@ type phoneCodeData struct {
 	code             string
 	codeHash         string
 	codeExpired      int32
+	codeMsgId        string
 	sentCodeType     int
 	flashCallPattern string
 	nextCodeType     int
@@ -216,8 +217,9 @@ func (code *phoneCodeData) DoSendCode(
 	currentNumber bool,
 	apiId int32,
 	apiHash string,
-	sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) error) error {
+	sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) (string, error)) error {
 
+	var err error
 	code.checkDataType(kDBTypeCreate)
 
 	// 使用最简单的办法，每次新建
@@ -228,7 +230,16 @@ func (code *phoneCodeData) DoSendCode(
 		code.code = "12345"
 	} else {
 		code.code = random2.RandomNumeric(5)
+		code.codeMsgId, err = sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+		if err != nil {
+			glog.Errorf("sendSmsVerifyCode error - %v", err)
+			return err
+		}
 	}
+	//if sendSmsF != nil {
+	//	return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+	//}
+
 
 	// code.codeHash = fmt.Sprintf("%20d", helper.NextSnowflakeId())
 	code.codeHash = crypto.GenerateStringNonce(16)
@@ -249,6 +260,7 @@ func (code *phoneCodeData) DoSendCode(
 		PhoneNumber:      code.phoneNumber,
 		Code:             code.code,
 		CodeExpired:      code.codeExpired,
+		CodeMsgId:        code.codeMsgId,
 		TransactionHash:  code.codeHash,
 		SentCodeType:     int8(code.sentCodeType),
 		FlashCallPattern: code.flashCallPattern,
@@ -266,21 +278,17 @@ func (code *phoneCodeData) DoSendCode(
 	//} else {
 	//	// TODO(@benqi): FLOOD_WAIT_X, too many attempts, please try later.
 	//}
-
-	if sendSmsF != nil {
-		return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
-	}
-
 	return nil
 }
 
 // auth.resendCode
-func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) error) error {
+func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHash string, sentCodeType int) (string, error)) error {
+	var err error
 	code.checkDataType(kDBTypeLoad)
 
 	do := code.dao.AuthPhoneTransactionsDAO.SelectByPhoneCodeHash(code.authKeyId, code.phoneNumber, code.codeHash)
 	if do == nil {
-		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_NUMBER_INVALID), "invalid phone number")
+		err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_NUMBER_INVALID), "invalid phone number")
 		glog.Error(err)
 		return err
 	}
@@ -301,7 +309,7 @@ func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHas
 
 	// check state invalid.
 	if do.State != kCodeStateSent {
-		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_INTERNAL_SERVER_ERROR), "code state error")
+		err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_INTERNAL_SERVER_ERROR), "code state error")
 		glog.Error(err)
 		return err
 	}
@@ -311,12 +319,25 @@ func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHas
 		// TODO(@benqi): update timeout state?
 		// code.dao.AuthPhoneTransactionsDAO.UpdateState(kCodeStateTimeout, do.Id)
 
-		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_EXPIRED), "code expired")
+		err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_EXPIRED), "code expired")
 		glog.Error(err)
 		return err
 	}
 
-	code.code = do.Code
+	if sendSmsF == nil {
+		code.code = "12345"
+	} else {
+		code.code = random2.RandomNumeric(5)
+		code.codeMsgId, err = sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+		if err != nil {
+			glog.Errorf("sendSmsVerifyCode error - %v", err)
+			return err
+		}
+
+		code.dao.UpdateCode(code.code, code.codeMsgId, do.Id)
+	}
+
+	// code.code = do.Code
 	// TODO(@benqi): load from db
 	code.codeExpired = do.CodeExpired
 	code.sentCodeType = int(do.SentCodeType)
@@ -325,9 +346,9 @@ func (code *phoneCodeData) DoReSendCode(sendSmsF func(phoneNumber, code, codeHas
 	code.state = int(do.State)
 	code.tableId = do.Id
 
-	if sendSmsF != nil {
-		return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
-	}
+	//if sendSmsF != nil {
+	//	return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+	//}
 
 	return nil
 }
@@ -338,7 +359,7 @@ func (code *phoneCodeData) DoCancelCode() bool {
 	return true
 }
 
-func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool) error {
+func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool, verifySmsCodeF func(codeHash, code, extraData string) (error)) error {
 	defer func() {
 		if code.tableId != 0 {
 			// Update attempts
@@ -382,11 +403,20 @@ func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool) erro
 		return err
 	}
 
-	// TODO(@benqi): check phone code valid, only number etc.
-	if do.Code != phoneCode {
-		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
-		glog.Error(err)
-		return err
+	if verifySmsCodeF != nil {
+		err := verifySmsCodeF(code.codeHash, code.code, code.codeMsgId)
+		if err != nil {
+			err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
+			glog.Error(err)
+			return err
+		}
+	} else {
+		// TODO(@benqi): check phone code valid, only number etc.
+		if do.Code != phoneCode {
+			err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
+			glog.Error(err)
+			return err
+		}
 	}
 
 	// code.code = do.Code
@@ -409,7 +439,7 @@ func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool) erro
 }
 
 // TODO(@benqi): 合并DoSignUp和DoSignIn部分代码
-func (code *phoneCodeData) DoSignUp(phoneCode string) error {
+func (code *phoneCodeData) DoSignUp(phoneCode string, verifySmsCodeF func(codeHash, code, extraData string) (error)) error {
 	defer func() {
 		if code.tableId != 0 {
 			// Update attempts
@@ -453,11 +483,20 @@ func (code *phoneCodeData) DoSignUp(phoneCode string) error {
 		return err
 	}
 
-	// TODO(@benqi): check phone code valid, only number etc.
-	if do.Code != phoneCode {
-		err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
-		glog.Error(err)
-		return err
+	if verifySmsCodeF != nil {
+		err := verifySmsCodeF(code.codeHash, code.code, code.codeMsgId)
+		if err != nil {
+			err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
+			glog.Error(err)
+			return err
+		}
+	} else {
+		// TODO(@benqi): check phone code valid, only number etc.
+		if do.Code != phoneCode {
+			err := mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_CODE_INVALID), "code invalid")
+			glog.Error(err)
+			return err
+		}
 	}
 
 	code.state = kCodeStateOk

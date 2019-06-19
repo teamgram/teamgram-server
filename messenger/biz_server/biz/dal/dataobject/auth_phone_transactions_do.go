@@ -23,6 +23,7 @@ type AuthPhoneTransactionsDO struct {
 	PhoneNumber      string `db:"phone_number"`
 	Code             string `db:"code"`
 	CodeExpired      int32  `db:"code_expired"`
+	CodeMsgId        string `db:"code_msg_id"`
 	TransactionHash  string `db:"transaction_hash"`
 	SentCodeType     int8   `db:"sent_code_type"`
 	FlashCallPattern string `db:"flash_call_pattern"`

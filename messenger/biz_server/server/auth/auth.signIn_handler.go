@@ -69,7 +69,9 @@ func (s *AuthServiceImpl) AuthSignIn(ctx context.Context, request *mtproto.TLAut
 
 	code := s.AuthModel.MakeCodeDataByHash(md.AuthId, phoneNumber, request.PhoneCodeHash)
 	phoneRegistered := s.AuthModel.CheckPhoneNumberExist(phoneNumber)
-	err = code.DoSignIn(request.PhoneCode, phoneRegistered)
+
+	// , verifyCodeF func(codeHash, code, extraData string) (error)
+	err = code.DoSignIn(request.PhoneCode, phoneRegistered, getVerifySmsCodeF())
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -77,7 +79,7 @@ func (s *AuthServiceImpl) AuthSignIn(ctx context.Context, request *mtproto.TLAut
 
 	// signIn sucess, check phoneRegistered.
 	if !phoneRegistered {
-		//  not register, next step: auth.singIn
+		//  not register, next step: auth.singUp
 		err = mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_PHONE_NUMBER_UNOCCUPIED)
 		glog.Info("auth.signIn#bcd51581 - not registered, next step auth.signIn, ", err)
 		return nil, err

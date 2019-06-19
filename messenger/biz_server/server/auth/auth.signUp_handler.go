@@ -101,7 +101,7 @@ func (s *AuthServiceImpl) AuthSignUp(ctx context.Context, request *mtproto.TLAut
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	code := s.AuthModel.MakeCodeDataByHash(md.AuthId, phoneNumber, request.PhoneCodeHash)
 	// phoneRegistered := auth.CheckPhoneNumberExist(phoneNumber)
-	err = code.DoSignUp(request.PhoneCode)
+	err = code.DoSignUp(request.PhoneCode, getVerifySmsCodeF())
 	if err != nil {
 		glog.Error(err)
 		return nil, err
