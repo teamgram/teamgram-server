@@ -36,7 +36,7 @@ func NewAuthPhoneTransactionsDAO(db *sqlx.DB) *AuthPhoneTransactionsDAO {
 // insert into auth_phone_transactions(auth_key_id, phone_number, code, code_expired, code_msg_id, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, created_time) values (:auth_key_id, :phone_number, :code, :code_expired, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)
 // TODO(@benqi): sqlmap
 func (dao *AuthPhoneTransactionsDAO) Insert(do *dataobject.AuthPhoneTransactionsDO) int64 {
-	var query = "insert into auth_phone_transactions(auth_key_id, phone_number, code, code_expired, code_msg_id, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, created_time) values (:auth_key_id, :phone_number, :code, :code_expired, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)"
+	var query = "insert into auth_phone_transactions(auth_key_id, phone_number, code, code_expired, code_msg_id, transaction_hash, sent_code_type, flash_call_pattern, next_code_type, state, api_id, api_hash, created_time) values (:auth_key_id, :phone_number, :code, :code_expired, ：code_msg_id, :transaction_hash, :sent_code_type, :flash_call_pattern, :next_code_type, :state, :api_id, :api_hash, :created_time)"
 	r, err := dao.db.NamedExec(query, do)
 	if err != nil {
 		errDesc := fmt.Sprintf("NamedExec in Insert(%v), error: %v", do, err)
