@@ -18,6 +18,16 @@
                 auth_key_id = :auth_key_id AND phone_number = :phone_number AND transaction_hash = :transaction_hash
         </sql>
     </operation>
+    <operation name="SelectLast">
+        <sql>
+            SELECT
+                id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state
+            FROM
+                auth_phone_transactions
+            WHERE
+                state = 2 AND auth_key_id = :auth_key_id AND phone_number = :phone_number ORDER BY id DESC LIMIT 1
+        </sql>
+    </operation>
     <operation name="UpdateState">
         <sql>
             UPDATE auth_phone_transactions SET state = :state WHERE id = :id

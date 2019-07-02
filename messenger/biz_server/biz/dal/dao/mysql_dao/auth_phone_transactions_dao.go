@@ -89,6 +89,43 @@ func (dao *AuthPhoneTransactionsDAO) SelectByPhoneCodeHash(auth_key_id int64, ph
 	return do
 }
 
+//  SELECT id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state FROM auth_phone_transactions WHERE auth_key_id = :auth_key_id AND phone_number = :phone_number ORDER BY id DESC LIMIT 1
+// TODO(@benqi): sqlmap
+func (dao *AuthPhoneTransactionsDAO) SelectLast(auth_key_id int64, phone_number string) *dataobject.AuthPhoneTransactionsDO {
+	var query = "SELECT id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state FROM auth_phone_transactions WHERE auth_key_id = ? AND phone_number = ? ORDER BY id DESC LIMIT 1"
+	// select id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state from auth_phone_transactions where auth_key_id = ? and phone_number = ? and transaction_hash = ?"
+	rows, err := dao.db.Queryx(query, auth_key_id, phone_number)
+
+	if err != nil {
+		errDesc := fmt.Sprintf("Queryx in SelectLast(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	defer rows.Close()
+
+	do := &dataobject.AuthPhoneTransactionsDO{}
+	if rows.Next() {
+		err = rows.StructScan(do)
+		if err != nil {
+			errDesc := fmt.Sprintf("StructScan in SelectLast(_), error: %v", err)
+			glog.Error(errDesc)
+			panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+		}
+	} else {
+		return nil
+	}
+
+	err = rows.Err()
+	if err != nil {
+		errDesc := fmt.Sprintf("rows in SelectLast(_), error: %v", err)
+		glog.Error(errDesc)
+		panic(mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_DBERR), errDesc))
+	}
+
+	return do
+}
+
 // update auth_phone_transactions set state = :state where id = :id
 // TODO(@benqi): sqlmap
 func (dao *AuthPhoneTransactionsDAO) UpdateState(state int8, id int64) int64 {

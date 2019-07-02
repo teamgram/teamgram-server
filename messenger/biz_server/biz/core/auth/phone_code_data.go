@@ -222,55 +222,70 @@ func (code *phoneCodeData) DoSendCode(
 	var err error
 	code.checkDataType(kDBTypeCreate)
 
-	// 使用最简单的办法，每次新建
-	sentCodeType, nextCodeType := makeCodeType(phoneRegistered, allowFlashCall, currentNumber)
-	// TODO(@benqi): gen rand number
+	do := code.dao.AuthPhoneTransactionsDAO.SelectLast(code.authKeyId, code.phoneNumber)
+	if do != nil && int32(time.Now().Unix()) < do.CodeExpired {
+		// 使用最简单的办法，每次新建
+		sentCodeType, nextCodeType := makeCodeType(phoneRegistered, allowFlashCall, currentNumber)
 
-	if sendSmsF == nil {
-		code.code = "12345"
+		// err = mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_PHONE_NUMBER_INVALID), "invalid phone number")
+		// glog.Error(err)
+		// return err
+		code.code = do.Code
+		code.codeHash = do.TransactionHash
+		code.sentCodeType = sentCodeType
+		code.nextCodeType = nextCodeType
+
+		code.tableId = do.Id
 	} else {
-		code.code = random2.RandomNumeric(5)
-		code.codeMsgId, err = sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
-		if err != nil {
-			glog.Errorf("sendSmsVerifyCode error - %v", err)
-			return err
+		// 使用最简单的办法，每次新建
+		sentCodeType, nextCodeType := makeCodeType(phoneRegistered, allowFlashCall, currentNumber)
+		// TODO(@benqi): gen rand number
+
+		if sendSmsF == nil {
+			code.code = "12345"
+		} else {
+			code.code = random2.RandomNumeric(5)
+			code.codeMsgId, err = sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+			if err != nil {
+				glog.Errorf("sendSmsVerifyCode error - %v", err)
+				return err
+			}
 		}
+		//if sendSmsF != nil {
+		//	return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
+		//}
+
+		// code.codeHash = fmt.Sprintf("%20d", helper.NextSnowflakeId())
+		code.codeHash = crypto.GenerateStringNonce(16)
+		code.codeExpired = int32(time.Now().Unix() + 15*60)
+		code.sentCodeType = sentCodeType
+		code.nextCodeType = nextCodeType
+		//err := code.doSendCodeCallback()
+		//if err != nil {
+		//	glog.Error(err)
+		//	return err
+		//}
+
+		// sendSmsF
+		// save
+		do = &dataobject.AuthPhoneTransactionsDO{
+			AuthKeyId:        code.authKeyId,
+			PhoneNumber:      code.phoneNumber,
+			Code:             code.code,
+			CodeExpired:      code.codeExpired,
+			CodeMsgId:        code.codeMsgId,
+			TransactionHash:  code.codeHash,
+			SentCodeType:     int8(code.sentCodeType),
+			FlashCallPattern: code.flashCallPattern,
+			NextCodeType:     int8(code.nextCodeType),
+			State:            kCodeStateSent,
+			ApiId:            apiId,
+			ApiHash:          apiHash,
+			CreatedTime:      time.Now().Unix(),
+		}
+		code.tableId = code.dao.AuthPhoneTransactionsDAO.Insert(do)
 	}
-	//if sendSmsF != nil {
-	//	return sendSmsF(code.phoneNumber, code.code, code.codeHash, code.sentCodeType)
-	//}
 
-
-	// code.codeHash = fmt.Sprintf("%20d", helper.NextSnowflakeId())
-	code.codeHash = crypto.GenerateStringNonce(16)
-	code.codeExpired = int32(time.Now().Unix() + 15*60)
-	code.sentCodeType = sentCodeType
-	code.nextCodeType = nextCodeType
-
-	//err := code.doSendCodeCallback()
-	//if err != nil {
-	//	glog.Error(err)
-	//	return err
-	//}
-
-	// sendSmsF
-	// save
-	do := &dataobject.AuthPhoneTransactionsDO{
-		AuthKeyId:        code.authKeyId,
-		PhoneNumber:      code.phoneNumber,
-		Code:             code.code,
-		CodeExpired:      code.codeExpired,
-		CodeMsgId:        code.codeMsgId,
-		TransactionHash:  code.codeHash,
-		SentCodeType:     int8(code.sentCodeType),
-		FlashCallPattern: code.flashCallPattern,
-		NextCodeType:     int8(code.nextCodeType),
-		State:            kCodeStateSent,
-		ApiId:            apiId,
-		ApiHash:          apiHash,
-		CreatedTime:      time.Now().Unix(),
-	}
-	code.tableId = code.dao.AuthPhoneTransactionsDAO.Insert(do)
 	//// TODO(@benqi):
 	//lastCreatedAt := time.Unix(time.Now().Unix()-15*60, 0).Format("2006-01-02 15:04:05")
 	//do := code.dao.AuthPhoneTransactionsDAO.SelectByPhoneAndApiIdAndHash(code.phoneNumber, apiId, apiHash, lastCreatedAt)
@@ -359,7 +374,7 @@ func (code *phoneCodeData) DoCancelCode() bool {
 	return true
 }
 
-func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool, verifySmsCodeF func(codeHash, code, extraData string) (error)) error {
+func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool, verifySmsCodeF func(codeHash, code, extraData string) error) error {
 	defer func() {
 		if code.tableId != 0 {
 			// Update attempts
@@ -439,7 +454,7 @@ func (code *phoneCodeData) DoSignIn(phoneCode string, phoneRegistered bool, veri
 }
 
 // TODO(@benqi): 合并DoSignUp和DoSignIn部分代码
-func (code *phoneCodeData) DoSignUp(phoneCode string, verifySmsCodeF func(codeHash, code, extraData string) (error)) error {
+func (code *phoneCodeData) DoSignUp(phoneCode string, verifySmsCodeF func(codeHash, code, extraData string) error) error {
 	defer func() {
 		if code.tableId != 0 {
 			// Update attempts
