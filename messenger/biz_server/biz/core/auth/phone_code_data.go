@@ -223,7 +223,7 @@ func (code *phoneCodeData) DoSendCode(
 	code.checkDataType(kDBTypeCreate)
 
 	do := code.dao.AuthPhoneTransactionsDAO.SelectLast(code.authKeyId, code.phoneNumber)
-	if do != nil && int32(time.Now().Unix()) < do.CodeExpired {
+	if do != nil && time.Now().Unix() < do.CreatedTime+60 {
 		// 使用最简单的办法，每次新建
 		sentCodeType, nextCodeType := makeCodeType(phoneRegistered, allowFlashCall, currentNumber)
 
