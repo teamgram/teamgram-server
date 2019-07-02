@@ -21,7 +21,7 @@
     <operation name="SelectLast">
         <sql>
             SELECT
-                id, code, code_expired, code_msg_id, sent_code_type, flash_call_pattern, next_code_type, attempts, state
+                id, code, code_expired, code_msg_id, transaction_hash，sent_code_type, flash_call_pattern, next_code_type, attempts, state
             FROM
                 auth_phone_transactions
             WHERE
