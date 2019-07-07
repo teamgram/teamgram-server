@@ -1,0 +1,57 @@
+<html>
+  <head>
+	<title>PhoneServer</title>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+	<link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+	<link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+	<style>
+	#results div {
+		padding: 10px;
+		color: white;
+		background-color: #9b4dca;
+	}
+	#results div.error {
+		background-color: #c21807;
+	}
+	pre {
+		margin-top: 0px;
+	}
+	pre.error {
+		border-left: .3rem solid #c21807;
+	}
+	body {
+		padding: 15px;
+	}
+	</style>
+  </head>
+  <body>
+	<form>
+	  <fieldset>
+	    <label for="phone">Phone Number</label>
+		<input id="phone" type="text" name="phone" value="12067799192" />
+		<label for="country">Country Code</label>
+	    <input id="country" type="text" name="country" value="US" />
+		<input type="submit" value="Parse" class="button"/>
+	  </fieldset>
+	</form>
+	<div id="results">
+	</div>
+  </body>
+  <script>
+    $("form").submit(function(e){
+		event.preventDefault();
+		$.ajax({
+			"url": "/.netlify/functions/phoneserver?" + $("form").serialize(), 
+			"success": function(data, status, xhr){
+				$("#results").prepend("<pre>" + JSON.stringify(data, null, 4) + "</pre>");
+				$("#results").prepend("<div>" + $("#phone").val() + " " + $("#country").val() + "</div>");
+			},
+			"error": function(request, status, error){
+				$("#results").prepend("<pre class='error'>" + JSON.stringify(JSON.parse(request.responseText), null, 4) + "</pre>");
+				$("#results").prepend("<div class='error'>" + $("#phone").val() + " " + $("#country").val() + "</div>");
+			}
+		});
+	})
+  </script>
+</html>

@@ -5,7 +5,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package builder
+package phonenumbers
 
 // Simple byte buffer for marshaling data.
 
@@ -397,11 +397,7 @@ func (b *Builder) ReadString(delim byte) (line string, err error) {
 //
 // In most cases, new(Buffer) (or just declaring a Buffer variable) is
 // sufficient to initialize a Buffer.
-func NewBuilder(buf []byte) *Builder {
-	newbuf := make([]byte, len(buf))
-	copy(newbuf, buf)
-	return &Builder{buf: newbuf}
-}
+func NewBuilder(buf []byte) *Builder { return &Builder{buf: buf} }
 
 // NewBuilderString creates and initializes a new Buffer using string s as its
 // initial contents. It is intended to prepare a buffer to read an existing

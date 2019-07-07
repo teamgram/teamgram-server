@@ -1,4 +1,4 @@
-package libphonenumber
+package phonenumbers
 
 import (
 	"reflect"
@@ -48,12 +48,27 @@ func TestParse(t *testing.T) {
 		}, {
 			input:       "+1 1951178619",
 			err:         nil,
-			expectedNum: 951178619,
+			expectedNum: 1951178619,
 			region:      "US",
 		}, {
 			input:       "+33 07856952",
 			err:         nil,
 			expectedNum: 7856952,
+			region:      "",
+		}, {
+			input:       "190022+22222",
+			err:         ErrNotANumber,
+			expectedNum: 0,
+			region:      "US",
+		}, {
+			input:       "967717105526",
+			err:         nil,
+			expectedNum: 717105526,
+			region:      "YE",
+		}, {
+			input:       "+68672098006",
+			err:         nil,
+			expectedNum: 72098006,
 			region:      "",
 		},
 	}
@@ -86,7 +101,7 @@ func TestConvertAlphaCharactersInNumber(t *testing.T) {
 	}
 }
 
-func Test_normalizeDigits(t *testing.T) {
+func TestNormalizeDigits(t *testing.T) {
 	var tests = []struct {
 		input         string
 		expected      []byte
@@ -107,7 +122,7 @@ func Test_normalizeDigits(t *testing.T) {
 	}
 }
 
-func Test_extractPossibleNumber(t *testing.T) {
+func TestExtractPossibleNumber(t *testing.T) {
 	var (
 		input    = "(530) 583-6985 x302/x2303"
 		expected = "530) 583-6985 x302" // yes, the leading '(' is missing
@@ -119,7 +134,7 @@ func Test_extractPossibleNumber(t *testing.T) {
 	}
 }
 
-func Test_isViablePhoneNumer(t *testing.T) {
+func TestIsViablePhoneNumer(t *testing.T) {
 	var tests = []struct {
 		input    string
 		isViable bool
@@ -150,7 +165,7 @@ func Test_isViablePhoneNumer(t *testing.T) {
 	}
 }
 
-func Test_normalize(t *testing.T) {
+func TestNormalize(t *testing.T) {
 	var tests = []struct {
 		in  string
 		exp string
@@ -179,7 +194,7 @@ func Test_normalize(t *testing.T) {
 	}
 }
 
-func Test_IsValidNumber(t *testing.T) {
+func TestIsValidNumber(t *testing.T) {
 	var tests = []struct {
 		input   string
 		err     error
@@ -226,6 +241,11 @@ func Test_IsValidNumber(t *testing.T) {
 			err:     nil,
 			isValid: true,
 			region:  "BS",
+		}, {
+			input:   "6041234567",
+			err:     nil,
+			isValid: false,
+			region:  "US",
 		},
 	}
 
@@ -244,7 +264,7 @@ func Test_IsValidNumber(t *testing.T) {
 	}
 }
 
-func Test_IsValidNumberForRegion(t *testing.T) {
+func TestIsValidNumberForRegion(t *testing.T) {
 	var tests = []struct {
 		input            string
 		err              error
@@ -306,6 +326,12 @@ func Test_IsValidNumberForRegion(t *testing.T) {
 			err:              nil,
 			isValid:          true,
 			validationRegion: "GB",
+		}, {
+			input:            "6041234567",
+			region:           "US",
+			err:              nil,
+			isValid:          false,
+			validationRegion: "US",
 		},
 	}
 
@@ -324,7 +350,81 @@ func Test_IsValidNumberForRegion(t *testing.T) {
 	}
 }
 
+func TestIsPossibleNumberWithReason(t *testing.T) {
+	var tests = []struct {
+		input  string
+		region string
+		err    error
+		valid  ValidationResult
+	}{
+		{
+			input:  "16502530000",
+			region: "US",
+			err:    nil,
+			valid:  IS_POSSIBLE,
+		}, {
+			input:  "2530000",
+			region: "US",
+			err:    nil,
+			valid:  IS_POSSIBLE_LOCAL_ONLY,
+		}, {
+			input:  "65025300001",
+			region: "US",
+			err:    nil,
+			valid:  TOO_LONG,
+		}, {
+			input:  "2530000",
+			region: "",
+			err:    ErrInvalidCountryCode,
+			valid:  IS_POSSIBLE_LOCAL_ONLY,
+		}, {
+			input:  "253000",
+			region: "US",
+			err:    nil,
+			valid:  TOO_SHORT,
+		}, {
+			input:  "1234567890",
+			region: "SG",
+			err:    nil,
+			valid:  IS_POSSIBLE,
+		}, {
+			input:  "800123456789",
+			region: "US",
+			err:    nil,
+			valid:  TOO_LONG,
+		}, {
+			input:  "+1456723456",
+			region: "US",
+			err:    nil,
+			valid:  TOO_SHORT,
+		}, {
+			input:  "6041234567",
+			region: "US",
+			err:    nil,
+			valid:  IS_POSSIBLE,
+		},
+	}
+
+	for i, test := range tests {
+		num, err := Parse(test.input, test.region)
+		if err != nil {
+			if test.err == err {
+				continue
+			}
+			t.Errorf("[test %d:err] failed: %v\n", i, err)
+		}
+
+		valid := IsPossibleNumberWithReason(num)
+		if valid != test.valid {
+			t.Errorf("[test %d:possible] %s failed: %v != %v\n", i, test.input, valid, test.valid)
+		}
+	}
+}
+
 func TestFormat(t *testing.T) {
+	// useful link for validating against official lib:
+	// http://libphonenumber.appspot.com/phonenumberparser?number=019+3286+9755&country=GB
+
 	var tests = []struct {
 		in     string
 		exp    string
@@ -365,7 +465,7 @@ func TestFormat(t *testing.T) {
 		{
 			in:     "+1 100-083-0033",
 			region: "US",
-			exp:    "+1 000830033",
+			exp:    "+1 1000830033",
 			frmt:   INTERNATIONAL,
 		},
 	}
@@ -382,7 +482,78 @@ func TestFormat(t *testing.T) {
 	}
 }
 
-func Test_setItalianLeadinZerosForPhoneNumber(t *testing.T) {
+func TestFormatForMobileDialing(t *testing.T) {
+	var tests = []struct {
+		in     string
+		exp    string
+		region string
+		frmt   PhoneNumberFormat
+	}{
+		{
+			in:     "950123456",
+			region: "UZ",
+			exp:    "+998950123456",
+		},
+	}
+
+	for i, test := range tests {
+		num, err := Parse(test.in, test.region)
+		if err != nil {
+			t.Errorf("[test %d] failed: should be able to parse, err:%v\n", i, err)
+		}
+		got := FormatNumberForMobileDialing(num, test.region, false)
+		if got != test.exp {
+			t.Errorf("[test %d:fmt] failed %s != %s\n", i, got, test.exp)
+		}
+	}
+}
+
+func TestFormatByPattern(t *testing.T) {
+	var tcs = []struct {
+		in          string
+		region      string
+		format      PhoneNumberFormat
+		userFormats []*NumberFormat
+		exp         string
+	}{
+		{
+			in:     "+33122334455",
+			region: "FR",
+			format: E164,
+			userFormats: []*NumberFormat{
+				&NumberFormat{
+					Pattern: s(`(\d+)`),
+					Format:  s(`$1`),
+				},
+			},
+			exp: "+33122334455",
+		}, {
+			in:     "+442070313000",
+			region: "UK",
+			format: NATIONAL,
+			userFormats: []*NumberFormat{
+				&NumberFormat{
+					Pattern: s(`(20)(\d{4})(\d{4})`),
+					Format:  s(`$1 $2 $3`),
+				},
+			},
+			exp: "20 7031 3000",
+		},
+	}
+
+	for i, tc := range tcs {
+		num, err := Parse(tc.in, tc.region)
+		if err != nil {
+			t.Errorf("[test %d] failed: should be able to parse, err:%v\n", i, err)
+		}
+		got := FormatByPattern(num, tc.format, tc.userFormats)
+		if got != tc.exp {
+			t.Errorf("[test %d:fmt] failed %s != %s\n", i, got, tc.exp)
+		}
+	}
+}
+
+func TestSetItalianLeadinZerosForPhoneNumber(t *testing.T) {
 	var tests = []struct {
 		num          string
 		numLeadZeros int32
@@ -425,48 +596,6 @@ func Test_setItalianLeadinZerosForPhoneNumber(t *testing.T) {
 	}
 }
 
-func Test_testNumberLengthAgainstPattern(t *testing.T) {
-	var tests = []struct {
-		pattern  string
-		num      string
-		expected ValidationResult
-	}{
-		{
-			"\\d{7}(?:\\d{3})?",
-			"1234567",
-			IS_POSSIBLE,
-		},
-		{
-			"\\d{7}(?:\\d{3})?",
-			"1234567890",
-			IS_POSSIBLE,
-		},
-		{
-			"\\d{7}(?:\\d{3})?",
-			"12345678",
-			TOO_LONG,
-		},
-		{
-			"\\d{7}(?:\\d{3})?",
-			"123456",
-			TOO_SHORT,
-		},
-		{
-			"\\d{7}(?:\\d{3})?",
-			"abc1234567",
-			TOO_SHORT,
-		},
-	}
-
-	for i, test := range tests {
-		pat := regexp.MustCompile(test.pattern)
-		res := testNumberLengthAgainstPattern(pat, test.num)
-		if res != test.expected {
-			t.Errorf("[test %d] failed: should be %v, got %v", i, test.expected, res)
-		}
-	}
-}
-
 ////////// Copied from java-libphonenumber
 /**
  * Unit tests for PhoneNumberUtil.java
@@ -484,7 +613,7 @@ var testPhoneNumbers = map[string]*PhoneNumber{
 	"ALPHA_NUMERIC_NUMBER": newPhoneNumber(1, 80074935247),
 	"AE_UAN":               newPhoneNumber(971, 600123456),
 	"AR_MOBILE":            newPhoneNumber(54, 91187654321),
-	"AR_NUMBER":            newPhoneNumber(54, 1187654321),
+	"AR_NUMBER":            newPhoneNumber(54, 1157774533),
 	"AU_NUMBER":            newPhoneNumber(61, 236618300),
 	"BS_MOBILE":            newPhoneNumber(1, 2423570000),
 	"BS_NUMBER":            newPhoneNumber(1, 2423651234),
@@ -544,13 +673,13 @@ func getTestNumber(alias string) *PhoneNumber {
 	return val
 }
 
-func Test_GetSupportedRegions(t *testing.T) {
+func TestGetSupportedRegions(t *testing.T) {
 	if len(GetSupportedRegions()) == 0 {
 		t.Error("there should be supported regions, found none")
 	}
 }
 
-func Test_getMetadata(t *testing.T) {
+func TestGetMetadata(t *testing.T) {
 	var tests = []struct {
 		name       string
 		id         string
@@ -605,22 +734,7 @@ func Test_getMetadata(t *testing.T) {
 	}
 }
 
-func Test_isLeadingZeroPossible(t *testing.T) {
-	if !isLeadingZeroPossible(39) {
-		t.Error("Leading 0 should be possible in Italy")
-	}
-	if isLeadingZeroPossible(1) {
-		t.Error("Leading 0 should not be possible in the USA")
-	}
-	if !isLeadingZeroPossible(800) {
-		t.Error("Leading 0 should be possible for International toll free")
-	}
-	if isLeadingZeroPossible(889) {
-		t.Error("Leading 0 should not be possible in non-existent region")
-	}
-}
-
-func Test_isNumberGeographical(t *testing.T) {
+func TestIsNumberGeographical(t *testing.T) {
 	if !isNumberGeographical(getTestNumber("AU_NUMBER")) {
 		t.Error("Australia should be a geographical number")
 	}
@@ -648,16 +762,16 @@ func TestGetLengthOfGeographicalAreaCode(t *testing.T) {
 	for i, test := range tests {
 		l := GetLengthOfGeographicalAreaCode(getTestNumber(test.numName))
 		if l != test.length {
-			t.Errorf("[test %d:length] %d != %d\n", i, l, test.length)
+			t.Errorf("[test %d:length] %d != %d for %s\n", i, l, test.length, test.numName)
 		}
 	}
 }
 
 func TestGetCountryMobileToken(t *testing.T) {
-	if "1" != GetCountryMobileToken(GetCountryCodeForRegion("MX")) {
+	if GetCountryMobileToken(GetCountryCodeForRegion("MX")) != "1" {
 		t.Error("Mexico should have a mobile token == \"1\"")
 	}
-	if "" != GetCountryMobileToken(GetCountryCodeForRegion("SE")) {
+	if GetCountryMobileToken(GetCountryCodeForRegion("SE")) != "" {
 		t.Error("Sweden should have a mobile token")
 	}
 }
@@ -677,7 +791,7 @@ func TestGetNationalSignificantNumber(t *testing.T) {
 	}
 }
 
-func Test_GetExampleNumberForType(t *testing.T) {
+func TestGetExampleNumberForType(t *testing.T) {
 	if !reflect.DeepEqual(getTestNumber("DE_NUMBER"), GetExampleNumber("DE")) {
 		t.Error("the example number for Germany should have been the " +
 			"same as the test number we're using")
@@ -724,22 +838,24 @@ func TestGetExampleNumberForNonGeoEntity(t *testing.T) {
 }
 
 func TestNormalizeDigitsOnly(t *testing.T) {
-	if "03456234" != NormalizeDigitsOnly("034-56&+a#234") {
+	if NormalizeDigitsOnly("034-56&+a#234") != "03456234" {
 		t.Errorf("didn't fully normalize digits only")
 	}
 }
 
-func Test_normalizeDiallableCharsOnly(t *testing.T) {
-	if "03*456+234" != normalizeDiallableCharsOnly("03*4-56&+a#234") {
+func TestNormalizeDiallableCharsOnly(t *testing.T) {
+	if normalizeDiallableCharsOnly("03*4-56&+a#234") != "03*456+234" {
 		t.Error("did not correctly remove non-diallable characters")
 	}
 }
 
 type testCase struct {
-	num          string
-	region       string
-	expectedE164 string
-	valid        bool
+	num           string
+	parseRegion   string
+	expectedE164  string
+	validRegion   string
+	isValid       bool
+	isValidRegion bool
 }
 
 type timeZonesTestCases struct {
@@ -747,15 +863,25 @@ type timeZonesTestCases struct {
 	expectedTimeZone string
 }
 
+type prefixMapTestCases struct {
+	num      string
+	lang     string
+	expected string
+}
+
 func runTestBatch(t *testing.T, tests []testCase) {
 	for _, test := range tests {
-		n, err := Parse(test.num, test.region)
+		n, err := Parse(test.num, test.parseRegion)
 		if err != nil {
 			t.Errorf("Failed to parse number %s: %s", test.num, err)
 		}
 
-		if IsValidNumberForRegion(n, test.region) != test.valid {
-			t.Errorf("Number %s: validity mismatch: expected %t got %t.", test.num, test.valid, !test.valid)
+		if IsValidNumber(n) != test.isValid {
+			t.Errorf("Number %s: validity mismatch: expected %t got %t.", test.num, test.isValid, !test.isValid)
+		}
+
+		if IsValidNumberForRegion(n, test.validRegion) != test.isValidRegion {
+			t.Errorf("Number %s: region validity mismatch: expected %t got %t.", test.num, test.isValidRegion, !test.isValidRegion)
 		}
 
 		s := Format(n, E164)
@@ -769,22 +895,28 @@ func TestItalianLeadingZeroes(t *testing.T) {
 
 	tests := []testCase{
 		{
-			num:          "0491 570 156",
-			region:       "AU",
-			expectedE164: "+61491570156",
-			valid:        true,
+			num:           "0491 570 156",
+			parseRegion:   "AU",
+			expectedE164:  "+61491570156",
+			validRegion:   "AU",
+			isValid:       true,
+			isValidRegion: true,
 		},
 		{
-			num:          "02 5550 1234",
-			region:       "AU",
-			expectedE164: "+61255501234",
-			valid:        true,
+			num:           "02 5550 1234",
+			parseRegion:   "AU",
+			expectedE164:  "+61255501234",
+			validRegion:   "AU",
+			isValid:       true,
+			isValidRegion: true,
 		},
 		{
-			num:          "+39.0399123456",
-			region:       "IT",
-			expectedE164: "+390399123456",
-			valid:        true,
+			num:           "+39.0399123456",
+			parseRegion:   "IT",
+			expectedE164:  "+390399123456",
+			validRegion:   "IT",
+			isValid:       true,
+			isValidRegion: true,
 		},
 	}
 
@@ -794,16 +926,20 @@ func TestItalianLeadingZeroes(t *testing.T) {
 func TestARNumberTransformRule(t *testing.T) {
 	tests := []testCase{
 		{
-			num:          "+541151123456",
-			region:       "AR",
-			expectedE164: "+541151123456",
-			valid:        true,
+			num:           "+541151123456",
+			parseRegion:   "AR",
+			expectedE164:  "+541151123456",
+			validRegion:   "AR",
+			isValid:       true,
+			isValidRegion: true,
 		},
 		{
-			num:          "+540111561234567",
-			region:       "AR",
-			expectedE164: "+5491161234567",
-			valid:        true,
+			num:           "+540111561234567",
+			parseRegion:   "AR",
+			expectedE164:  "+5491161234567",
+			validRegion:   "AR",
+			isValid:       true,
+			isValidRegion: true,
 		},
 	}
 
@@ -813,10 +949,12 @@ func TestARNumberTransformRule(t *testing.T) {
 func TestLeadingOne(t *testing.T) {
 	tests := []testCase{
 		{
-			num:          "15167706076",
-			region:       "US",
-			expectedE164: "+15167706076",
-			valid:        true,
+			num:           "15167706076",
+			parseRegion:   "US",
+			expectedE164:  "+15167706076",
+			validRegion:   "US",
+			isValid:       true,
+			isValidRegion: true,
 		},
 	}
 
@@ -826,17 +964,63 @@ func TestLeadingOne(t *testing.T) {
 func TestNewIndianPhones(t *testing.T) {
 	tests := []testCase{
 		{
-			num:          "7999999543",
-			region:       "IN",
-			expectedE164: "+917999999543",
-			valid:        true,
+			num:           "7999999543",
+			parseRegion:   "IN",
+			expectedE164:  "+917999999543",
+			validRegion:   "IN",
+			isValid:       true,
+			isValidRegion: true,
 		},
 	}
 
 	runTestBatch(t, tests)
 }
 
-func TestGetTimeZonesForRegion(t *testing.T) {
+func TestBurkinaFaso(t *testing.T) {
+	tests := []testCase{
+		{
+			num:           "+22658125926",
+			parseRegion:   "",
+			expectedE164:  "+22658125926",
+			validRegion:   "BF",
+			isValid:       true,
+			isValidRegion: true,
+		},
+	}
+
+	runTestBatch(t, tests)
+}
+
+func TestParsing(t *testing.T) {
+	tests := []struct {
+		number   string
+		country  string
+		expected string
+	}{
+		{"0788383383", "RW", "+250788383383"},
+		{"+250788383383 ", "KE", "+250788383383"},
+		{"+250788383383", "", "+250788383383"},
+		{"(917)992-5253", "US", "+19179925253"},
+		{"+62877747666", "", "+62877747666"},
+		{"0877747666", "ID", "+62877747666"},
+		{"07531669965", "GB", "+447531669965"},
+		{"+22658125926", "", "+22658125926"},
+	}
+
+	for _, tc := range tests {
+		num, err := Parse(tc.number, tc.country)
+		if err != nil {
+			t.Errorf("Error parsing number: %s: %s", tc.number, err)
+		} else {
+			formatted := Format(num, E164)
+			if formatted != tc.expected {
+				t.Errorf("Error parsing number '%s:%s', got %s when expecting %s", tc.number, tc.country, formatted, tc.expected)
+			}
+		}
+	}
+}
+
+func TestGetTimeZonesForPrefix(t *testing.T) {
 	tests := []timeZonesTestCases{
 		{
 			num:              "+442073238299",
@@ -844,7 +1028,7 @@ func TestGetTimeZonesForRegion(t *testing.T) {
 		},
 		{
 			num:              "+61491570156",
-			expectedTimeZone: "Australia/Sydney",
+			expectedTimeZone: "Australia/Adelaide",
 		},
 		{
 			num:              "+61255501234",
@@ -903,7 +1087,7 @@ func TestGetTimeZonesForRegion(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		timeZones, err := GetTimeZonesForRegion(test.num)
+		timeZones, err := GetTimezonesForPrefix(test.num)
 		if err != nil {
 			t.Errorf("Failed to getTimezone for the number %s: %s", test.num, err)
 		}
@@ -913,7 +1097,249 @@ func TestGetTimeZonesForRegion(t *testing.T) {
 		}
 
 		if timeZones[0] != test.expectedTimeZone {
-			t.Errorf("Expected '%s', got '%s'", test.expectedTimeZone, timeZones[0])
+			t.Errorf("Expected '%s', got '%s' for '%s'", test.expectedTimeZone, timeZones[0], test.num)
+		}
+
+		num, err := Parse(test.num, "")
+		if err != nil {
+			continue
+		}
+
+		timeZones, err = GetTimezonesForNumber(num)
+		if err != nil {
+			t.Errorf("Failed to getTimezone for the number %s: %s", num, err)
+		}
+
+		if len(timeZones) == 0 {
+			t.Errorf("Expected at least 1 timezone.")
+		}
+
+		if timeZones[0] != test.expectedTimeZone {
+			t.Errorf("Expected '%s', got '%s' for '%s'", test.expectedTimeZone, timeZones[0], num)
 		}
 	}
+}
+
+func TestGetCarrierForNumber(t *testing.T) {
+	tests := []prefixMapTestCases{
+		{num: "+8613702032331", lang: "en", expected: "China Mobile"},
+		{num: "+8613702032331", lang: "zh", expected: "中国移动"},
+		{num: "+6281377468527", lang: "en", expected: "Telkomsel"},
+		{num: "+8613323241342", lang: "en", expected: "China Telecom"},
+		{num: "+61491570156", lang: "en", expected: "Telstra"},
+		{num: "+917999999543", lang: "en", expected: "Reliance Jio"},
+		{num: "+593992218722", lang: "en", expected: "Claro"},
+	}
+	for _, test := range tests {
+		number, err := Parse(test.num, "ZZ")
+		if err != nil {
+			t.Errorf("Failed to parse number %s: %s", test.num, err)
+		}
+		carrier, err := GetCarrierForNumber(number, test.lang)
+		if err != nil {
+			t.Errorf("Failed to getCarrier for the number %s: %s", test.num, err)
+		}
+		if test.expected != carrier {
+			t.Errorf("Expected '%s', got '%s' for '%s'", test.expected, carrier, test.num)
+		}
+	}
+}
+
+func TestGetGeocodingForNumber(t *testing.T) {
+	tests := []prefixMapTestCases{
+		{num: "+8613702032331", lang: "en", expected: "Tianjin"},
+		{num: "+8613702032331", lang: "zh", expected: "天津市"},
+		{num: "+863197785050", lang: "zh", expected: "河北省邢台市"},
+		{num: "+8613323241342", lang: "en", expected: "Baoding, Hebei"},
+		{num: "+917999999543", lang: "en", expected: "Ahmedabad Local, Gujarat"},
+		{num: "+17047181840", lang: "en", expected: "North Carolina"},
+		{num: "+12542462158", lang: "en", expected: "Texas"},
+		{num: "+16193165996", lang: "en", expected: "California"},
+		{num: "+12067799191", lang: "en", expected: "Washington State"},
+	}
+	for _, test := range tests {
+		number, err := Parse(test.num, "ZZ")
+		if err != nil {
+			t.Errorf("Failed to parse number %s: %s", test.num, err)
+		}
+		geocoding, err := GetGeocodingForNumber(number, test.lang)
+		if err != nil {
+			t.Errorf("Failed to getGeocoding for the number %s: %s", test.num, err)
+		}
+		if test.expected != geocoding {
+			t.Errorf("Expected '%s', got '%s' for '%s'", test.expected, geocoding, test.num)
+		}
+	}
+}
+func TestMaybeStripExtension(t *testing.T) {
+	var tests = []struct {
+		input     string
+		number    uint64
+		extension string
+		region    string
+	}{
+		{
+			input:     "1234576 ext. 1234",
+			number:    1234576,
+			extension: "1234",
+			region:    "US",
+		}, {
+			input:     "1234-576",
+			number:    1234576,
+			extension: "",
+			region:    "US",
+		}, {
+			input:     "1234576-123#",
+			number:    1234576,
+			extension: "123",
+			region:    "US",
+		}, {
+			input:     "1234576 ext.123#",
+			number:    1234576,
+			extension: "123",
+			region:    "US",
+		},
+	}
+
+	for i, test := range tests {
+		num, _ := Parse(test.input, test.region)
+		if num.GetNationalNumber() != test.number {
+			t.Errorf("[test %d:num] failed: %v != %v\n", i, num.GetNationalNumber(), test.number)
+		}
+
+		if num.GetExtension() != test.extension {
+			t.Errorf("[test %d:num] failed: %v != %v\n", i, num.GetExtension(), test.extension)
+		}
+	}
+}
+
+func TestGetSupportedCallingCodes(t *testing.T) {
+	var tests = []struct {
+		code    int
+		present bool
+	}{
+		{
+			1,
+			true,
+		}, {
+			800,
+			true,
+		}, {
+			593,
+			true,
+		}, {
+			44,
+			true,
+		}, {
+			999,
+			false,
+		},
+	}
+
+	supported := GetSupportedCallingCodes()
+	for i, tc := range tests {
+		if supported[tc.code] != tc.present {
+			t.Errorf("[test %d:num] failed for code %d: %v != %v\n", i, tc.code, tc.present, supported[tc.code])
+		}
+	}
+}
+
+func TestMergeLengths(t *testing.T) {
+	var tests = []struct {
+		l1     []int32
+		l2     []int32
+		merged []int32
+	}{
+		{
+			[]int32{1, 5},
+			[]int32{2, 3, 4},
+			[]int32{1, 2, 3, 4, 5},
+		},
+		{
+			[]int32{1},
+			[]int32{3, 4},
+			[]int32{1, 3, 4},
+		},
+		{
+			[]int32{1, 2, 5},
+			[]int32{4},
+			[]int32{1, 2, 4, 5},
+		},
+	}
+
+	for i, tc := range tests {
+		merged := mergeLengths(tc.l1, tc.l2)
+		if !reflect.DeepEqual(merged, tc.merged) {
+			t.Errorf("[test %d:num] failed for l1: %v and l2: %v: %v != %v\n", i, tc.l1, tc.l2, tc.merged, merged)
+		}
+	}
+}
+
+func TestRegexCacheWrite(t *testing.T) {
+	pattern1 := "TestRegexCacheWrite"
+	if _, found1 := readFromRegexCache(pattern1); found1 {
+		t.Errorf("pattern |%v| is in the cache", pattern1)
+	}
+	regex1 := regexFor(pattern1)
+	cachedRegex1, found1 := readFromRegexCache(pattern1)
+	if !found1 {
+		t.Errorf("pattern |%v| is not in the cache", pattern1)
+	}
+	if regex1 != cachedRegex1 {
+		t.Error("expected the same instance, but got a different one")
+	}
+	pattern2 := pattern1 + "."
+	if _, found2 := readFromRegexCache(pattern2); found2 {
+		t.Errorf("pattern |%v| is in the cache", pattern2)
+	}
+}
+
+func TestRegexCacheRead(t *testing.T) {
+	pattern1 := "TestRegexCacheRead"
+	if _, found1 := readFromRegexCache(pattern1); found1 {
+		t.Errorf("pattern |%v| is in the cache", pattern1)
+	}
+	regex1 := regexp.MustCompile(pattern1)
+	writeToRegexCache(pattern1, regex1)
+	if cachedRegex1 := regexFor(pattern1); cachedRegex1 != regex1 {
+		t.Error("expected the same instance, but got a different one")
+	}
+	cachedRegex1, found1 := readFromRegexCache(pattern1)
+	if !found1 {
+		t.Errorf("pattern |%v| is not in the cache", pattern1)
+	}
+	if cachedRegex1 != regex1 {
+		t.Error("expected the same instance, but got a different one")
+	}
+	pattern2 := pattern1 + "."
+	if _, found2 := readFromRegexCache(pattern2); found2 {
+		t.Errorf("pattern |%v| is in the cache", pattern2)
+	}
+}
+
+func TestRegexCacheStrict(t *testing.T) {
+	const expectedResult = "(41) 3020-3445"
+	phoneToTest := &PhoneNumber{
+		CountryCode:    proto.Int32(55),
+		NationalNumber: proto.Uint64(4130203445),
+	}
+	firstRunResult := Format(phoneToTest, NATIONAL)
+	if expectedResult != firstRunResult {
+		t.Errorf("phone number formatting not as expected")
+	}
+	// This adds value to the regex cache that would break the following lookup if the regex-s
+	// in cache were not strict.
+	Format(&PhoneNumber{
+		CountryCode:    proto.Int32(973),
+		NationalNumber: proto.Uint64(17112724),
+	}, NATIONAL)
+	secondRunResult := Format(phoneToTest, NATIONAL)
+
+	if expectedResult != secondRunResult {
+		t.Errorf("phone number formatting not as expected")
+	}
+}
+
+func s(str string) *string {
+	return &str
 }

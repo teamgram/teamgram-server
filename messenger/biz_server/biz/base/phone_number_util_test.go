@@ -19,8 +19,6 @@ package base
 
 import (
 	"testing"
-	// "github.com/ttacon/libphonenumber"
-	// "fmt"
 )
 
 func TestCheckPhoneNumber(t *testing.T) {

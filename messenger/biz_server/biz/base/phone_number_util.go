@@ -20,7 +20,7 @@ package base
 import (
 	"fmt"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/ttacon/libphonenumber"
+	libphonenumber "github.com/nyaruka/phonenumbers"
 )
 
 type phoneNumberUtil struct {
