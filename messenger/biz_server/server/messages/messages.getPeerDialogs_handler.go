@@ -19,12 +19,12 @@ package messages
 
 import (
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/logger"
-	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"golang.org/x/net/context"
-	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 )
 
 // messages.getPeerDialogs#e470bcfd peers:Vector<InputDialogPeer> = messages.PeerDialogs;
@@ -34,7 +34,7 @@ func (s *MessagesServiceImpl) MessagesGetPeerDialogs(ctx context.Context, reques
 
 	peers := make([]*base.PeerUtil, 0, len(request.GetPeers()))
 	for _, p := range request.GetPeers() {
-		peer := base.FromInputPeer(p.To_InputDialogPeer().GetPeer())
+		peer := base.FromInputPeer2(md.UserId, p.To_InputDialogPeer().GetPeer())
 		peers = append(peers, peer)
 	}
 	dialogs := s.DialogModel.GetPeersDialogs(md.UserId, peers)
@@ -55,9 +55,8 @@ func (s *MessagesServiceImpl) MessagesGetPeerDialogs(ctx context.Context, reques
 	// chats = append(chats, s.ChannelModel.GetChannelListBySelfAndIDList(md.UserId, dialogItems.ChannelIdList)...)
 	state, _ := sync_client.GetSyncClient().SyncGetState(md.AuthId, md.UserId)
 
-
 	if len(dialogs) == 0 {
-		notifySettings := &mtproto.TLPeerNotifySettings{Data2:&mtproto.PeerNotifySettings_Data{
+		notifySettings := &mtproto.TLPeerNotifySettings{Data2: &mtproto.PeerNotifySettings_Data{
 			ShowPreviews: mtproto.ToBool(true),
 			Silent:       mtproto.ToBool(false),
 			MuteUntil:    1,
