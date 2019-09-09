@@ -69,7 +69,10 @@ pong#347773c5 msg_id:long ping_id:long = Pong;
 These messages do not require acknowledgments. A pong is transmitted only in response to a ping while a ping can be initiated by either side.
 
 ## Deferred Connection Closure + PING
+```
 ping_delay_disconnect#f3427b8c ping_id:long disconnect_delay:int = Pong;
+```
+
 Works like ping. In addition, after this is received, the server starts a timer which will close the current connection disconnect_delay seconds later unless it receives a new message of the same type which automatically resets all previous timers. If the client sends these pings once every 60 seconds, for example, it may set disconnect_delay equal to 75 seconds.
 
 ## Request to Destroy Session
