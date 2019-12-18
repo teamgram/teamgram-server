@@ -23,6 +23,7 @@ import (
 	"encoding/pem"
 	"math/big"
 	"io/ioutil"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 type RSACryptor struct {
@@ -30,9 +31,11 @@ type RSACryptor struct {
 }
 
 func NewRSACryptor(keyFile string) *RSACryptor {
-	pkcs1PemPrivateKey, err := ioutil.ReadFile(keyFile)
+	keyFilePath := util.GetWorkingDirectory() + "/" + keyFile
+	pkcs1PemPrivateKey, err := ioutil.ReadFile(keyFilePath)
+
 	if err != nil {
-		panic("Invalid pemsKeyFile: " + keyFile)
+		panic("Invalid pemsKeyFile: " + keyFilePath)
 	}
 	block, _ := pem.Decode(pkcs1PemPrivateKey)
 	if block == nil {

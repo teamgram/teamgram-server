@@ -21,11 +21,12 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"encoding/json"
 	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/util"
 	"io/ioutil"
 )
 
 const (
-	CONFIG_FILE = "./config.json"
+	CONFIG_FILE = "/config.json"
 
 	// date = 1509066502,    2017/10/27 09:08:22
 	// expires = 1509070295, 2017/10/27 10:11:35
@@ -38,7 +39,8 @@ const (
 var config mtproto.TLConfig
 
 func init() {
-	configData, err := ioutil.ReadFile(CONFIG_FILE)
+	configFilePath := util.GetWorkingDirectory() + "/" + CONFIG_FILE
+	configData, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		panic(err)
 		return

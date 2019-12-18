@@ -25,6 +25,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/mysql_client"
 	"github.com/nebula-chat/chatengine/pkg/redis_client"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -50,7 +51,8 @@ func (c *syncConfig) String() string {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./sync.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "./sync.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {

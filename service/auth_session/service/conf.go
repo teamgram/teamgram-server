@@ -24,6 +24,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/mysql_client"
 	"github.com/nebula-chat/chatengine/pkg/cache"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -46,7 +47,8 @@ func (c *authSessionConfig) String() string {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./auth_session.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/auth_session.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {

@@ -61,6 +61,10 @@ func NewClientWatcher(registryDir, serviceName string, cfg clientv3.Config, clie
 }
 
 func (m *ClientWatcher) WatchClients(cb func(etype, addr string)) {
+	if m == nil {
+		return
+	}
+
 	rootPath := fmt.Sprintf("%s/%s", m.registryDir, m.serviceName)
 
 	resp, err := m.etcCli.Get(context.Background(), rootPath, clientv3.WithPrefix())

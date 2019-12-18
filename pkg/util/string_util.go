@@ -17,7 +17,12 @@
 
 package util
 
-import "strconv"
+import (
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+)
 
 func JoinInt32List(s []int32, sep string) string {
 	l := len(s)
@@ -116,4 +121,17 @@ func IsAlNumString(s string) bool {
 		prevtmp = r
 	}
 	return len(s) == c
+}
+
+// GetWorkingDirectory returns the directory that the executable file is in with slash converted to "/"
+// eg:
+// executable is in : "c:\dir\a.exe"
+// this will return : "c:/dir"
+func GetWorkingDirectory() string {
+	exe, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+
+	return strings.Replace(filepath.Dir(exe), "\\", "/", -1)
 }

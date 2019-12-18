@@ -23,6 +23,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -56,5 +57,6 @@ func InitializeConfig() (err error) {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./frontend.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/frontend.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }

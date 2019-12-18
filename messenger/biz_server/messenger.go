@@ -72,7 +72,8 @@ type messengerConfig struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./biz_server.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/biz_server.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {
