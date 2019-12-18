@@ -23,6 +23,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -39,7 +40,8 @@ type authKeyConfig struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./auth_key.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/auth_key.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {

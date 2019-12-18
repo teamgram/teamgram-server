@@ -24,6 +24,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
 	"github.com/nebula-chat/chatengine/pkg/mysql_client"
 	"github.com/nebula-chat/chatengine/pkg/redis_client"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -48,7 +49,8 @@ func (c *documentConfig) String() string {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./document.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/document.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {
