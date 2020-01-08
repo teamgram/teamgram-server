@@ -26,7 +26,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 
 - Get source code　
 ```
-mkdir $GOPATH/src/github.com/nebula-chat/
+mkdir -p $GOPATH/src/github.com/nebula-chat/
 cd $GOPATH/src/github.com/nebula-chat/
 git clone https://github.com/nebula-chat/chatengine.git
 
@@ -69,7 +69,7 @@ git clone https://github.com/nebula-chat/chatengine.git
 
 - Run
     ```
-    cd $GOPATH/src/github.comnebula-chat/chatengine/service/auth_session
+    cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
     ./auth_session
     
     cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
@@ -103,7 +103,7 @@ git clone https://github.com/nebula-chat/chatengine.git
 
 
 ### Compatible clients
-**Importents**: default signIn and signOut verify code is **12345**
+**Important**: default signIn and signOut verify code is **12345**
 
 [Android client for NebulaChat](https://github.com/nebula-chat/clients/tree/master/Telegram-Android)
 
