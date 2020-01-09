@@ -56,7 +56,7 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 		if syncMsg.ptsCount > 0 {
 			glog.Infof("onSyncData]]>> - push session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 				pushSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-			pushSess.onSyncData(syncMsg.cntl)
+			pushSess.onSyncData(syncMsg.cntl.Clone())
 			// return
 		}
 	}
@@ -69,7 +69,7 @@ func (m *updatesManager) onUpdatesSyncData(syncMsg *syncData) {
 	if genericSess != nil {
 		glog.Infof("onSyncData]>> - generic session: {sess: %s, pts: %d, pts_count: %d, updates: %s}",
 			genericSess, syncMsg.pts, syncMsg.ptsCount, reflect.TypeOf(syncMsg.data.obj))
-		genericSess.onSyncData(syncMsg.cntl, syncMsg.data.obj)
+		genericSess.onSyncData(syncMsg.cntl.Clone(), syncMsg.data.obj)
 	}
 }
 
