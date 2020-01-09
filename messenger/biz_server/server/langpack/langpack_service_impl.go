@@ -21,11 +21,12 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	model2 "github.com/nebula-chat/chatengine/messenger/biz_server/server/langpack/model"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 const (
-	LANG_PACK_EN_FILE = "./lang_pack_en.toml"
-	LANG_PACK_RU_FILE = "./lang_pack_ru.toml"
+	LANG_PACK_EN_FILE = "/lang_pack_en.toml"
+	LANG_PACK_RU_FILE = "/lang_pack_ru.toml"
 )
 
 var (
@@ -34,10 +35,10 @@ var (
 )
 
 func init() {
-	if _, err := toml.DecodeFile(LANG_PACK_EN_FILE, &langPacksEn); err != nil {
+	if _, err := toml.DecodeFile(util.GetWorkingDirectory() + "/" + LANG_PACK_EN_FILE, &langPacksEn); err != nil {
 		panic(err)
 	}
-	if _, err := toml.DecodeFile(LANG_PACK_RU_FILE, &langPacksRu); err != nil {
+	if _, err := toml.DecodeFile(util.GetWorkingDirectory() + "/" + LANG_PACK_RU_FILE, &langPacksRu); err != nil {
 		panic(err)
 	}
 }

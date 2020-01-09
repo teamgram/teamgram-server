@@ -24,6 +24,7 @@ import (
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery"
 	"github.com/nebula-chat/chatengine/pkg/redis_client"
 	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -47,7 +48,8 @@ type sessionConfig struct {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./session.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/session.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {

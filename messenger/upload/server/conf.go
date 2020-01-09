@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/util"
 )
 
 var (
@@ -40,7 +41,8 @@ func (c *uploadConfig) String() string {
 }
 
 func init() {
-	flag.StringVar(&confPath, "conf", "./upload.toml", "config path")
+	tomlPath := util.GetWorkingDirectory() + "/upload.toml"
+	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
 func InitializeConfig() (err error) {
