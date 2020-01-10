@@ -51,7 +51,7 @@ func (c *syncConfig) String() string {
 }
 
 func init() {
-	tomlPath := util.GetWorkingDirectory() + "./sync.toml"
+	tomlPath := util.GetWorkingDirectory() + "/sync.toml"
 	flag.StringVar(&confPath, "conf", tomlPath, "config path")
 }
 
