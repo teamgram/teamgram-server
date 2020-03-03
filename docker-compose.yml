@@ -24,8 +24,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=chatengine
       - MYSQL_DATABASE=chatengine
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
   redis:
     image: redis:5.0.0-alpine3.8
     restart: always
