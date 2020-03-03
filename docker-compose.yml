@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  etcd:
+    image: appcelerator/etcd:3.3.3
+    restart: always
+    logging:
+      options:
+        max-size: "50M"
+        max-file: "5"
+    volumes:
+      - ${PWD}/docker/etcd/data:/data
+  mysql:
+    image: mysql:5.7.17
+    restart: always
+    logging:
+      options:
+        max-size: "50M"
+        max-file: "5"
+    volumes:
+      - ${PWD}/docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ${PWD}/docker/mysql/init-sql:/docker-entrypoint-initdb.d
+      - ${PWD}/docker/mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=chatengine
+      - MYSQL_DATABASE=chatengine
+    ports:
+      - 3306:3306
+  redis:
+    image: redis:5.0.0-alpine3.8
+    restart: always
+    logging:
+      options:
+        max-size: "50M"
+        max-file: "5"
+    volumes:
+      - ${PWD}/docker/redis/redis.conf:/etc/redis/redis.conf
+      - ${PWD}/docker/redis/data:/data
+    entrypoint: redis-server /etc/redis/redis.conf
+  chatengine:
+    image: chatengine/server:latest
+    restart: always
+    logging:
+      options:
+        max-size: "50M"
+        max-file: "5"
+    environment:
+      - TZ=Asia/Shanghai
+      # IMPORTANT: replace to your own host IP.
+      - CHATENGINE_HOST=127.0.0.1
+      # options to reset etcd,redis,mysql
+      # - ETCD_URL=http://etcd:2379
+      # - REDIS_HOST=redis:6379
+      # - MYSQL_URI=root:chatengine@tcp(mysql:3306)/chatengine?charset=utf8mb4
+    volumes:
+      - ${PWD}/docker/nbfs:/opt/nbfs
+    ports:
+      - 12345:12345
+    depends_on:
+      - mysql
+      - etcd
+      - redis

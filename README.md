@@ -16,7 +16,25 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 
 [Encrypted CDNs for Speed and Security](doc/cdn.md) [@steedfly](https://github.com/steedfly)翻译
 
-### Build and Install
+### Quick start with Docker
+
+1. Install `docker` and `docker-compose`
+2. Edit `docker-compose.yml`: replace `CHATENGINE_HOST` to your own host IP
+3. Run `make` command in your shell.
+4. Now, `Chatengine` is running on your host port `12345`.
+
+#### Docker run demo
+
+```shell
+git clone https://github.com/nebula-chat/chatengine
+cd chatengine
+# replace 192.168.1.100 to you own host IP.
+sed -i "" 's/CHATENGINE_HOST=127.0.0.1/CHATENGINE_HOST=192.168.1.100/g' docker-compose.yml # macOS
+# sed -i 's/CHATENGINE_HOST=127.0.0.1/CHATENGINE_HOST=192.168.1.100/g' docker-compose.yml # linux
+make
+```
+
+### Manual Build and Install
 #### Depends
 - redis
 - mysql

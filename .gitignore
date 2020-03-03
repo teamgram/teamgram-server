@@ -44,3 +44,8 @@ messenger/sync/biz/dal/dalgen/nebula-dal-generator
 messenger/sync/biz/dal/dalgen/nebula-dal-generator
 messenger/biz_server/biz/dal/dalgen/nebula-dal-generator
 pkg/crypto/tools/fingerprint
+
+docker/nbfs/
+docker/mysql/data/
+docker/etcd/data/
+docker/redis/data/
