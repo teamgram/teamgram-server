@@ -33,7 +33,7 @@ RUN apk add --no-cache ca-certificates tzdata && ln -sf /usr/share/zoneinfo/Asia
 ENV TARGET_DIR /go/src/github.com/nebula-chat/chatengine
 WORKDIR /app/
 
-COPY ./docker/entrypont.sh /app/
+COPY ./entrypont.sh /app/
 
 RUN mkdir -p /app/config-templates
 
