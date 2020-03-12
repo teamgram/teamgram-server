@@ -1,5 +1,5 @@
 # NebulaChat - Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
-> open source mtproto server implement by golang, which compatible telegram client.
+> open source mtproto server implemented in golang with compatible telegram client.
 
 ### Introduce
 Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
