@@ -27,8 +27,7 @@ RUN cd ${TARGET_DIR}/access/frontend && go build -ldflags='-s -w'
 
 
 
-FROM alpine:3.10.3
-RUN apk add --no-cache ca-certificates tzdata && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+FROM ineva/alpine:3.10.3
 
 ENV TARGET_DIR /go/src/github.com/nebula-chat/chatengine
 WORKDIR /app/
