@@ -58,15 +58,17 @@ type ZRpcClient struct {
 	callback ZPpcClientCallBack
 }
 
+// 所有的调用都使用"brpc"
 func NewZRpcClient(protoName string, conf *ZRpcClientConfig, cb ZPpcClientCallBack) *ZRpcClient {
 	clients := map[string][]string{}
-
+ 
 	c := &ZRpcClient{
 		callback: cb,
 	}
-
+ 
+	// 这里传进去一个空值，应该后面在watcher中addclient中添加到cgm中
 	c.clients = net2.NewTcpClientGroupManager(protoName, clients, c)
-
+ 
 	// Check name
 	for i := 0; i < len(conf.Clients); i++ {
 		// service discovery
@@ -76,13 +78,29 @@ func NewZRpcClient(protoName string, conf *ZRpcClientConfig, cb ZPpcClientCallBa
 		watcher := &Watcher{
 			name: conf.Clients[i].Name,
 		}
+		// 这里的意思是本地的变量watcher里的 *watcher2.ClientWatcher类型watcher，
 		watcher.watcher, _ = watcher2.NewClientWatcher("/nebulaim", conf.Clients[i].Name, etcdConfg, c.clients)
+		// 之前这里的值在后面用的时候发现是空值
+		k := 0
+		for ; k <= 10 && watcher.watcher == nil;  {
+			fmt.Printf("出现了问题，连接etcd错误, 重试第 %d 次 \n", k+2)
+			time.Sleep(1 * time.Second)
+			watcher.watcher, _ = watcher2.NewClientWatcher("/nebulaim", conf.Clients[i].Name, etcdConfg, c.clients)
+			k = k + 1
+		}
+		if k >= 10 {
+			fmt.Println("NewClientWatcher中etcd错误，试了10次还不行，重启一次试试")
+		}
+ 
+ 
 		if conf.Clients[i].Balancer == "ketama" {
 			watcher.ketama = load_balancer.NewKetama(10, nil)
+		} else {
+			watcher.ketama = nil
 		}
 		c.watchers = append(c.watchers, watcher)
 	}
-
+ 
 	return c
 }
 
