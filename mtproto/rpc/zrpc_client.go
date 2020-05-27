@@ -20,7 +20,9 @@ package zrpc
 import (
 	"fmt"
 	"math/rand"
-	"github.com/coreos/etcd/clientv3"
+	"time"
+
+	"go.etcd.io/etcd/clientv3"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/load_balancer"
 	"github.com/nebula-chat/chatengine/pkg/net2"

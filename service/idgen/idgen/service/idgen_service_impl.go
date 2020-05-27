@@ -21,7 +21,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/coreos/etcd/clientv3"
+	"go.etcd.io/etcd/clientv3"
 	"github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/logger"

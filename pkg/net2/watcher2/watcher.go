@@ -18,11 +18,11 @@
 package watcher2
 
 import (
-	"github.com/coreos/etcd/clientv3"
+	"go.etcd.io/etcd/clientv3"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/coreos/etcd/mvcc/mvccpb"
+	"go.etcd.io/etcd/mvcc/mvccpb"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/pkg/net2"
 )

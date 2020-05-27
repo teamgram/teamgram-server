@@ -20,7 +20,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/coreos/etcd/clientv3"
+	"go.etcd.io/etcd/clientv3"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery/etcd3"
 	"github.com/nebula-chat/chatengine/pkg/grpc_util/service_discovery/examples/proto"
 	"golang.org/x/net/context"

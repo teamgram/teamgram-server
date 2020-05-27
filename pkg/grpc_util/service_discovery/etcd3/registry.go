@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	etcd3 "github.com/coreos/etcd/clientv3"
+	etcd3 "go.etcd.io/etcd/clientv3"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/grpclog"
 	"time"
