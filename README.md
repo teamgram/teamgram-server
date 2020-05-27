@@ -122,6 +122,9 @@ git clone https://github.com/nebula-chat/chatengine.git
 [Prerequisite script](scripts/prerequisite.sh)
 
 
+#### **Note**
+> **`import all scripts/*.sql`**
+
 ### Compatible clients
 **Important**: default signIn and signOut verify code is **12345**
 

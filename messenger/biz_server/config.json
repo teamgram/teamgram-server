@@ -13,16 +13,7 @@
       "data2": {}
     },
     "this_dc": 2,
-    "dc_options": [
-      {
-        "constructor": 414687501,
-        "data2": {
-          "id": 2,
-          "ip_address": "192.168.2.104",
-          "port": 12345
-        }
-      }
-    ],
+    "dc_options": [],
     "dc_txt_domain_name": "apv2.stel.com",
     "chat_size_max": 200,
     "megagroup_size_max": 100000,
