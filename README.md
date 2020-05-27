@@ -14,7 +14,9 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 
 [Mobile Protocol: Detailed Description (v.1.0, DEPRECATED)](doc/Mobile_Protocol-Detailed_Description_v.1.0_DEPRECATED.md)
 
-[Encrypted CDNs for Speed and Security](doc/cdn.md) [@steedfly](https://github.com/steedfly)翻译
+[Encrypted CDNs for Speed and Security](doc/cdn.md) Translate By [@steedfly](https://github.com/steedfly)
+
+[Windows-Build](doc/windows-build.md) By [@robinfoxnan](https://github.com/robinfoxnan)
 
 ### Quick start with Docker
 
