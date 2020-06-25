@@ -142,3 +142,8 @@ git clone https://github.com/nebula-chat/chatengine.git
 ## Feedback
 Please report bugs, concerns, suggestions by issues, or join telegram group [Telegramd中文技术交流群](https://t.me/cntelegramd) Or [Telegramd](https://t.me/entelegramd) to discuss problems around source code.
 
+## Notes
+Chatengine is not a commercial project, only supports mtproto API layer 86, and only supports private chats and small groups. 
+
+If need enterprise edition, please PM the [author](https://t.me/benqi) or download clients from [nebula.chat](https://nebula.chat) .
+
