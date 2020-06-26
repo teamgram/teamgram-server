@@ -140,7 +140,7 @@ git clone https://github.com/nebula-chat/chatengine.git
 ### TODO
 
 ## Feedback
-Please report bugs, concerns, suggestions by issues, or join telegram group [Telegramd中文技术交流群](https://t.me/cntelegramd) Or [Telegramd](https://t.me/entelegramd) to discuss problems around source code.
+Please report bugs, concerns, suggestions by issues.
 
 ## Notes
 Chatengine is not a commercial project, only supports mtproto API layer 86, and only supports private chats and small groups. 
