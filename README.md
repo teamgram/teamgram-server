@@ -54,40 +54,39 @@ git clone https://github.com/nebula-chat/chatengine.git
 ```
 
 - Build
+    ```
+    # build frontend
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/access/frontend
+        go build
+    
+    # build auth_key
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/access/auth_key
+        go build
 
-```
-# build frontend
-cd $GOPATH/src/github.com/nebula-chat/chatengine/access/frontend
-go build
+    # build auth_session
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
+        go build
+        
+    # build sync
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/sync
+        go build
+    
+    # build upload
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/upload
+        go build
+    
+    # build document
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
+        go build
 
-# build auth_key
-cd $GOPATH/src/github.com/nebula-chat/chatengine/access/auth_key
-go build
-
-# build auth_session
-cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
-go build
-
-# build sync
-cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/sync
-go build
-
-# build upload
-cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/upload
-go build
-
-# build document
-cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
-go build
-
-# build biz_server
-cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/biz_server
-go build
-
-# build session
-cd $GOPATH/src/github.com/nebula-chat/chatengine/access/session
-go build
-```
+    # build biz_server
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/biz_server
+        go build
+        
+    # build session
+        cd $GOPATH/src/github.com/nebula-chat/chatengine/access/session
+        go build
+    ```
 
 - Run
 
