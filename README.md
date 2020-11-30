@@ -44,7 +44,8 @@ make
 
 #### Build
 
-- Get source code　
+- Get source code
+
 ```
 mkdir -p $GOPATH/src/github.com/nebula-chat/
 cd $GOPATH/src/github.com/nebula-chat/
@@ -88,31 +89,32 @@ git clone https://github.com/nebula-chat/chatengine.git
     ```
 
 - Run
-    ```
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
-    ./auth_session
-    
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
-    ./document
 
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/sync
-    ./sync
-    
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/upload
-    ./upload
+```
+cd $GOPATH/src/github.com/nebula-chat/chatengine/service/auth_session
+./auth_session
 
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/biz_server
-    ./biz_server
+cd $GOPATH/src/github.com/nebula-chat/chatengine/service/document
+./document
 
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/access/auth_key
-    ./auth_key
+cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/sync
+./sync
 
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/access/session
-    ./session
-    
-    cd $GOPATH/src/github.com/nebula-chat/chatengine/access/frontend
-    ./frontend
-    ```
+cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/upload
+./upload
+
+cd $GOPATH/src/github.com/nebula-chat/chatengine/messenger/biz_server
+./biz_server
+
+cd $GOPATH/src/github.com/nebula-chat/chatengine/access/auth_key
+./auth_key
+
+cd $GOPATH/src/github.com/nebula-chat/chatengine/access/session
+./session
+
+cd $GOPATH/src/github.com/nebula-chat/chatengine/access/frontend
+./frontend
+```
 
 #### More
 [Build document](doc/build.md)
