@@ -18,6 +18,9 @@
 package chat
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
@@ -25,8 +28,6 @@ import (
 	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/pkg/random2"
 	base2 "github.com/nebula-chat/chatengine/pkg/util"
-	"math/rand"
-	"time"
 )
 
 const (
