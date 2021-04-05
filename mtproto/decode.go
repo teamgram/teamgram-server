@@ -309,7 +309,7 @@ func (m *DecodeBuf) Object() (r TLObject) {
 	if m.err != nil {
 		return nil
 	}
-
+	glog.Infof("newTLObjectByClassID, classID: 0x%x", uint32(classID))
 	r = NewTLObjectByClassID(classID)
 	if r == nil {
 		m.err = fmt.Errorf("can't find registed classId: 0x%x", uint32(classID))

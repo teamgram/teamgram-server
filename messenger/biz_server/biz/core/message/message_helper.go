@@ -367,24 +367,57 @@ func (m *MessageModel) GetMessageBox2(peerType, ownerId, messageId int32) (*Mess
 	var (
 		mBox *MessageBox2
 	)
-
+	glog.Infoln(ownerId)
+	glog.Infoln(messageId)
 	switch peerType {
 	case base.PEER_USER, base.PEER_CHAT:
 		boxDO := m.dao.MessageBoxesDAO.SelectByMessageId(ownerId, messageId)
 		if boxDO == nil {
-			return nil, fmt.Errorf("")
+			return nil, fmt.Errorf("2222222")
+			fmt.Errorf( string(ownerId), string(messageId))
+			glog.Infoln(ownerId, messageId)
 		}
 
 		dataDO := m.dao.MessageDatasDAO.SelectMessage(boxDO.DialogId, boxDO.DialogMessageId)
 		if dataDO == nil {
-			return nil, fmt.Errorf("")
+			return nil, fmt.Errorf("33333333")
 		}
 
 		mBox = m.makeMessageBoxByDO(boxDO, dataDO)
 	case base.PEER_CHANNEL:
 		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
 	default:
-		return nil, fmt.Errorf("")
+		return nil, fmt.Errorf("11111111")
+	}
+
+	return mBox, nil
+}
+
+func (m *MessageModel) GetMessageBox3(peerType int32, messageId int64) (*MessageBox2, error) {
+	var (
+		mBox *MessageBox2
+	)
+
+	glog.Infoln(messageId)
+	switch peerType {
+	case base.PEER_USER, base.PEER_CHAT:
+		boxDO := m.dao.MessageBoxesDAO.SelectByMessageDataId(messageId)
+		if boxDO == nil {
+			return nil, fmt.Errorf("2222222")
+			fmt.Errorf(string(messageId))
+			glog.Infoln(messageId)
+		}
+
+		dataDO := m.dao.MessageDatasDAO.SelectMessage(boxDO.DialogId, boxDO.DialogMessageId)
+		if dataDO == nil {
+			return nil, fmt.Errorf("33333333")
+		}
+
+		mBox = m.makeMessageBoxByDO(boxDO, dataDO)
+	case base.PEER_CHANNEL:
+		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+	default:
+		return nil, fmt.Errorf("11111111")
 	}
 
 	return mBox, nil

@@ -117,7 +117,14 @@ message TL_inputPaymentCredentialsApplePay {
 message TL_inputPaymentCredentialsAndroidPay {
     InputPaymentCredentials_Data data2 = 2;
 }
-
+//message MessageSendReact {
+//    int64 id = 1;
+//    InputPeer peer =2;
+//    int32 react_id = 3;
+//}
+//message TL_messagesSendReact{
+//    MessageSendReact data2=2;
+//}
 
 ///////////////////////////////////////////////////////////////////////////////
 // FileHash <--
@@ -6344,6 +6351,9 @@ message Update_Data {
     LangPackDifference difference = 72;
     int32 available_min_id = 73;
     bool unread = 74;
+    int64 react_id = 75;
+    int32 react_data_id = 76;
+    int64 message_data_id = 77;
 }
 
 message Update {
@@ -6352,6 +6362,10 @@ message Update {
 }
 
 // updateNewMessage#1f2b0afd message:Message pts:int pts_count:int = Update;
+message TL_updateNewReact {
+    Update_Data data2 = 2;
+}
+
 message TL_updateNewMessage {
     Update_Data data2 = 2;
 }

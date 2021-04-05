@@ -19,14 +19,14 @@ package rpc
 
 import (
 	"fmt"
+	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/sync/biz/core/update"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/service/status/client"
 	"github.com/nebula-chat/chatengine/service/status/proto"
 	"sync"
-	"github.com/gogo/protobuf/proto"
-	"github.com/nebula-chat/chatengine/service/status/client"
-	"github.com/nebula-chat/chatengine/mtproto/rpc"
 )
 
 /*
@@ -45,7 +45,7 @@ import (
             return 3;
         }
     }
- */
+*/
 
 type SyncType int
 
@@ -102,20 +102,26 @@ type PushDataCallback interface {
 }
 
 type SyncServiceImpl struct {
-	mu        		sync.RWMutex
-	pushCB    		PushDataCallback
-	status     		status_client.StatusClient
-	closeChan 		chan int
-	pushChan 		chan struct {int; *PushData}
+	mu        sync.RWMutex
+	pushCB    PushDataCallback
+	status    status_client.StatusClient
+	closeChan chan int
+	pushChan  chan struct {
+		int
+		*PushData
+	}
 	*update.UpdateModel
 }
 
 func NewSyncService(pushCB PushDataCallback, status status_client.StatusClient, updateModel *update.UpdateModel) *SyncServiceImpl {
 	s := &SyncServiceImpl{
-		pushCB:      pushCB,
-		status:      status,
-		closeChan:   make(chan int),
-		pushChan:    make(chan struct {int; *PushData}, 1024),
+		pushCB:    pushCB,
+		status:    status,
+		closeChan: make(chan int),
+		pushChan: make(chan struct {
+			int
+			*PushData
+		}, 1024),
 		UpdateModel: updateModel,
 	}
 
@@ -239,7 +245,8 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				mtproto.TLConstructor_CRC32_updateReadHistoryInbox,
 				mtproto.TLConstructor_CRC32_updateWebPage,
 				mtproto.TLConstructor_CRC32_updateReadMessagesContents,
-				mtproto.TLConstructor_CRC32_updateEditMessage:
+				mtproto.TLConstructor_CRC32_updateEditMessage,
+				mtproto.TLConstructor_CRC32_updateNewReact:
 				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
 				if update.Data2.Pts > pts {
 					pts = update.Data2.Pts
@@ -346,9 +353,15 @@ func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, 
 	if (syncType == syncTypeUserMe || syncType == syncTypeRpcResult) && hasServerId > 0 {
 		glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", hasServerId, authKeyId)
 		if syncType == syncTypeUserMe {
-			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushUpdatesData(authKeyId, cntl, pts, ptsCount, pushData)}
+			s.pushChan <- struct {
+				int
+				*PushData
+			}{int(hasServerId), MakePushUpdatesData(authKeyId, cntl, pts, ptsCount, pushData)}
 		} else {
-			s.pushChan <- struct {int; *PushData}{int(hasServerId), MakePushRpcResultData(authKeyId, clientMsgId, cntl, pushData)}
+			s.pushChan <- struct {
+				int
+				*PushData
+			}{int(hasServerId), MakePushRpcResultData(authKeyId, clientMsgId, cntl, pushData)}
 		}
 	} else {
 		statusList, _ := s.status.GetUserOnlineSessions(userId)
@@ -375,7 +388,10 @@ func (s *SyncServiceImpl) pushUpdatesToSession(syncType SyncType, userId int32, 
 						continue
 					}
 					glog.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", k, ss4.AuthKeyId)
-					s.pushChan <- struct {int; *PushData}{int(k), MakePushUpdatesData(ss4.AuthKeyId, cntl, pts, ptsCount, pushData)}
+					s.pushChan <- struct {
+						int
+						*PushData
+					}{int(k), MakePushUpdatesData(ss4.AuthKeyId, cntl, pts, ptsCount, pushData)}
 				}
 			}
 		}

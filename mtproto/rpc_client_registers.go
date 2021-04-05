@@ -347,6 +347,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLPushPushUpdatesData":                RPCContextTuple{"/mtproto.RPCPush/push_pushUpdatesData", func() interface{} { return new(Bool) }},
 	"TLPushPushRpcResultData":              RPCContextTuple{"/mtproto.RPCPush/push_pushRpcResultData", func() interface{} { return new(Bool) }},
 	"TLBotExecuteCommand":                  RPCContextTuple{"/mtproto.RPCBot/bot_executeCommand", func() interface{} { return new(Message) }},
+	"TLMessagesSendReact":                  RPCContextTuple{"/mtproto.RPCMessages/messages_sendReact", func() interface{} { return new(Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

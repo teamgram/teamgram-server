@@ -1,0 +1,378 @@
+[TAILING] Tailing last 15 lines for [all] processes (change the value with --lines option)
+/home/anhttn/.pm2/pm2.log last 15 lines:
+PM2        | 2021-02-28T08:32:19: PM2 log: pid=11949 msg=process killed
+PM2        | 2021-02-28T08:32:19: PM2 log: App [frontend:7] starting in -fork mode-
+PM2        | 2021-02-28T08:32:19: PM2 log: App [frontend:7] online
+PM2        | 2021-02-28T08:32:33: PM2 log: App [session:6] exited with code [2] via signal [SIGINT]
+PM2        | 2021-02-28T08:32:33: PM2 log: App [session:6] starting in -fork mode-
+PM2        | 2021-02-28T08:32:33: PM2 log: App [session:6] online
+PM2        | 2021-02-28T08:35:14: PM2 log: App [session:6] exited with code [2] via signal [SIGINT]
+PM2        | 2021-02-28T08:35:14: PM2 log: App [session:6] starting in -fork mode-
+PM2        | 2021-02-28T08:35:14: PM2 log: App [session:6] online
+PM2        | 2021-02-28T09:00:41: PM2 log: App [session:6] exited with code [2] via signal [SIGINT]
+PM2        | 2021-02-28T09:00:41: PM2 log: App [session:6] starting in -fork mode-
+PM2        | 2021-02-28T09:00:41: PM2 log: App [session:6] online
+PM2        | 2021-02-28T09:01:02: PM2 log: App [session:6] exited with code [2] via signal [SIGINT]
+PM2        | 2021-02-28T09:01:02: PM2 log: App [session:6] starting in -fork mode-
+PM2        | 2021-02-28T09:01:02: PM2 log: App [session:6] online
+
+/home/anhttn/.pm2/logs/document-out.log last 15 lines:
+1|document | &{0xc0001ce1a0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00026e940 0x581fe0}
+1|document | &{0xc00024c340 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000145400 0x581fe0}
+1|document | &{0xc000242680 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d340 0x581fe0}
+1|document | &{0xc0001c2340 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00009d380 0x581fe0}
+1|document | &{0xc0002344e0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d340 0x581fe0}
+1|document | &{0xc0002324e0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000138380 0x581fe0}
+1|document | &{0xc0002424e0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d340 0x581fe0}
+1|document | &{0xc00021e1a0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d380 0x581fe0}
+1|document | &{0xc000232000 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d300 0x581fe0}
+1|document | &{0xc000264340 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000810380 0x581fe0}
+1|document | &{0xc000242340 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000172500 0x581fe0}
+1|document | &{0xc0002444e0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc00013d380 0x581fe0}
+1|document | &{0xc0002661a0 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000144e00 0x581fe0}
+1|document | &{0xc00024c340 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000144dc0 0x581fe0}
+1|document | &{0xc0000b6000 /nebulaim/document/node1 {"Addr":"127.0.0.1:10009","Metadata":{}} 10000000000 0xc000136380 0x581fe0}
+
+/home/anhttn/.pm2/logs/document-error.log last 15 lines:
+1|document | I0228 08:29:44.168566   11861 document_server.go:57] documentServer - runLoop...
+1|document | I0228 08:29:44.169108   11861 rpc_server.go:65] rpc listening on:0.0.0.0:10009
+1|document | I0228 08:29:44.169137   11861 local_nbfs_facade.go:108] localNbfsFacade - Initialize config: 1
+1|document | I0228 08:32:14.299532   11861 app_instance.go:77] instance recv os.Exit(2) signal...
+1|document | I0228 08:32:14.299564   11861 document_server.go:67] documentServer - destroy...
+1|document | I0228 08:32:14.299913   11861 app_instance.go:83] instance quited!
+1|document | I0228 08:32:14.299961   11861 rpc_server.go:91] rpcServer exit...
+1|document | I0228 08:32:15.366593   12143 app_instance.go:60] instance initialize...
+1|document | I0228 08:32:15.366924   12143 document_server.go:39] documentServer - initialize...
+1|document | I0228 08:32:15.367196   12143 document_server.go:46] documentServer - load conf: {server_id: 1, redis: [{cache 127.0.0.1:6379 100 100 1000000000 1000000000 1000000000 10000000000 0 }]. mysql: [{immaster root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4 5 2} {imslave root:@tcp(127.0.0.1:3306)/chatengine?charset=utf8mb4 5 2}], server: &{0.0.0.0:10009 {document node1 127.0.0.1:10009 [http://127.0.0.1:2379] 2000000000 10000000000}}}
+1|document | I0228 08:32:15.409421   12143 app_instance.go:69] instance run_loop...
+1|document | I0228 08:32:15.409620   12143 app_instance.go:73] wait quit...
+1|document | I0228 08:32:15.409625   12143 document_server.go:57] documentServer - runLoop...
+1|document | I0228 08:32:15.409745   12143 rpc_server.go:65] rpc listening on:0.0.0.0:10009
+1|document | I0228 08:32:15.409767   12143 local_nbfs_facade.go:108] localNbfsFacade - Initialize config: 1
+
+/home/anhttn/.pm2/logs/auth-session-out.log last 15 lines:
+0|auth_ses | &{0xc000264b60 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc000358640 0x57e400}
+0|auth_ses | &{0xc000116000 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00020a3c0 0x57e400}
+0|auth_ses | &{0xc000116000 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00027a380 0x57e400}
+0|auth_ses | &{0xc0002649c0 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0007c2600 0x57e400}
+0|auth_ses | &{0xc000116000 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0000c4380 0x57e400}
+0|auth_ses | &{0xc0001c49c0 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc000738600 0x57e400}
+0|auth_ses | &{0xc000232000 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0008623c0 0x57e400}
+0|auth_ses | &{0xc0002529c0 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0004bdb80 0x57e400}
+0|auth_ses | &{0xc00025c820 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00007c600 0x57e400}
+0|auth_ses | &{0xc000228b60 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00012e3c0 0x57e400}
+0|auth_ses | &{0xc0001cc340 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0004a6800 0x57e400}
+0|auth_ses | &{0xc0002509c0 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0004ca640 0x57e400}
+0|auth_ses | &{0xc0002329c0 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00075c600 0x57e400}
+0|auth_ses | &{0xc000116000 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc0001a23c0 0x57e400}
+0|auth_ses | &{0xc00024e820 /nebulaim/auth_session/node1 {"Addr":"127.0.0.1:10010","Metadata":{}} 10000000000 0xc00007cdc0 0x57e400}
+
+/home/anhttn/.pm2/logs/upload-out.log last 15 lines:
+3|upload   | &{0xc0001ca340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009d240 0x51f7a0}
+3|upload   | &{0xc000250340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009d240 0x51f7a0}
+3|upload   | &{0xc0001c44e0 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc0000a5180 0x51f7a0}
+3|upload   | &{0xc00023a680 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013d180 0x51f7a0}
+3|upload   | &{0xc0001ce340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009d200 0x51f7a0}
+3|upload   | &{0xc000242340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009c800 0x51f7a0}
+3|upload   | &{0xc000250340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013d1c0 0x51f7a0}
+3|upload   | &{0xc0001c44e0 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009d180 0x51f7a0}
+3|upload   | &{0xc0002424e0 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013e880 0x51f7a0}
+3|upload   | &{0xc0002501a0 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013d200 0x51f7a0}
+3|upload   | &{0xc00024c340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009c780 0x51f7a0}
+3|upload   | &{0xc000244340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013d200 0x51f7a0}
+3|upload   | &{0xc00024e340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013d200 0x51f7a0}
+3|upload   | &{0xc0002424e0 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00009d200 0x51f7a0}
+3|upload   | &{0xc00024e340 /nebulaim/upload/node1 {"Addr":"127.0.0.1:10004","Metadata":{}} 10000000000 0xc00013a340 0x51f7a0}
+
+/home/anhttn/.pm2/logs/upload-error.log last 15 lines:
+3|upload   | I0228 08:29:45.302619   11887 upload_server.go:55] uploadServer - runLoop...
+3|upload   | I0228 08:29:45.302751   11887 rpc_server.go:65] rpc listening on:0.0.0.0:10004
+3|upload   | I0228 08:29:45.302780   11887 local_nbfs_facade.go:108] localNbfsFacade - Initialize config: 1
+3|upload   | I0228 08:32:15.446441   11887 app_instance.go:77] instance recv os.Exit(2) signal...
+3|upload   | I0228 08:32:15.446474   11887 upload_server.go:65] uploadServer - destroy...
+3|upload   | I0228 08:32:15.446759   11887 app_instance.go:83] instance quited!
+3|upload   | I0228 08:32:15.446787   11887 rpc_server.go:91] rpcServer exit...
+3|upload   | I0228 08:32:16.522996   12168 app_instance.go:60] instance initialize...
+3|upload   | I0228 08:32:16.523949   12168 upload_server.go:37] uploadServer - initialize...
+3|upload   | I0228 08:32:16.524065   12168 upload_server.go:44] uploadServer - load conf: {server_id: 1, server: &{0.0.0.0:10004 {upload node1 127.0.0.1:10004 [http://127.0.0.1:2379] 2000000000 10000000000}}}
+3|upload   | I0228 08:32:16.543049   12168 app_instance.go:69] instance run_loop...
+3|upload   | I0228 08:32:16.543072   12168 app_instance.go:73] wait quit...
+3|upload   | I0228 08:32:16.543077   12168 upload_server.go:55] uploadServer - runLoop...
+3|upload   | I0228 08:32:16.543267   12168 rpc_server.go:65] rpc listening on:0.0.0.0:10004
+3|upload   | I0228 08:32:16.543291   12168 local_nbfs_facade.go:108] localNbfsFacade - Initialize config: 1
+
+/home/anhttn/.pm2/logs/sync-out.log last 15 lines:
+2|sync     | &{0xc0001ca340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc000026380 0x51e6e0}
+2|sync     | &{0xc0001ca340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00009d780 0x51e6e0}
+2|sync     | &{0xc000250340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00013f700 0x51e6e0}
+2|sync     | &{0xc0001d01a0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc0004f8c80 0x51e6e0}
+2|sync     | &{0xc000244340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00009d6c0 0x51e6e0}
+2|sync     | &{0xc00024e1a0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00013ce00 0x51e6e0}
+2|sync     | &{0xc0002501a0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00009c400 0x51e6e0}
+2|sync     | &{0xc0001bc680 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc0008d03c0 0x51e6e0}
+2|sync     | &{0xc000242340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00013f700 0x51e6e0}
+2|sync     | &{0xc000116340 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00009ce00 0x51e6e0}
+2|sync     | &{0xc00023c4e0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00009d200 0x51e6e0}
+2|sync     | &{0xc00024e4e0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc000894380 0x51e6e0}
+2|sync     | &{0xc000242680 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc000147740 0x51e6e0}
+2|sync     | &{0xc0002424e0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00013d740 0x51e6e0}
+2|sync     | &{0xc0002501a0 /nebulaim/sync2/node1 {"Addr":"127.0.0.1:10002","Metadata":{}} 10000000000 0xc00013d200 0x51e6e0}
+
+/home/anhttn/.pm2/logs/biz-server-out.log last 15 lines:
+4|biz_serv | &{0xc0000be340 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc0003a70c0 0x529700}
+4|biz_serv | &{0xc000245040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000fdef40 0x529700}
+4|biz_serv | &{0xc000244820 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc00013d8c0 0x529700}
+4|biz_serv | &{0xc000116340 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000e79680 0x529700}
+4|biz_serv | &{0xc000244680 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc00011c880 0x529700}
+4|biz_serv | &{0xc000265040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000945cc0 0x529700}
+4|biz_serv | &{0xc00025d040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000b38800 0x529700}
+4|biz_serv | &{0xc000244820 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc00007dd40 0x529700}
+4|biz_serv | &{0xc000242820 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000890600 0x529700}
+4|biz_serv | &{0xc000235040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000f99180 0x529700}
+4|biz_serv | &{0xc00024d040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc00042e840 0x529700}
+4|biz_serv | &{0xc0000b6340 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000b7d780 0x529700}
+4|biz_serv | &{0xc000243040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc0005aeb80 0x529700}
+4|biz_serv | &{0xc0000b61a0 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc00019db00 0x529700}
+4|biz_serv | &{0xc000265040 /nebulaim/biz/node1 {"Addr":"127.0.0.1:10001","Metadata":{}} 10000000000 0xc000f7e400 0x529700}
+
+/home/anhttn/.pm2/logs/auth-key-out.log last 15 lines:
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | 0x43524333325f696e766f6b65576974684c61796572
+5|auth_key | &{0xc000242340 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc000862600 0x581f00}
+5|auth_key | &{0xc0002429c0 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc0004fc740 0x581f00}
+5|auth_key | &{0xc0002429c0 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc000726180 0x581f00}
+5|auth_key | &{0xc000242b60 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc0007c8740 0x581f00}
+5|auth_key | &{0xc000242b60 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc0007d8740 0x581f00}
+5|auth_key | &{0xc000244340 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc0001a6740 0x581f00}
+5|auth_key | &{0xc00023e9c0 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc000160740 0x581f00}
+5|auth_key | &{0xc00023ab60 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc0000ce300 0x581f00}
+5|auth_key | &{0xc0002449c0 /nebulaim/handshake/node1 {"Addr":"127.0.0.1:10005","Metadata":{}} 10000000000 0xc00025a740 0x581f00}
+
+/home/anhttn/.pm2/logs/frontend-out.log last 15 lines:
+7|frontend | &{0xc00024a4e0 /nebulaim/frontend80/node1 {"Addr":"127.0.0.1:8800","Metadata":{}} 10000000000 0xc000147c00 0x591b40}
+7|frontend | &{0xc00024a680 /nebulaim/frontend443/node1 {"Addr":"127.0.0.1:12345","Metadata":{}} 10000000000 0xc000147fc0 0x591b40}
+7|frontend | &{0xc00024a820 /nebulaim/frontend5222/node1 {"Addr":"127.0.0.1:5222","Metadata":{}} 10000000000 0xc0000bc380 0x591b40}
+7|frontend | &{0xc0002344e0 /nebulaim/frontend80/node1 {"Addr":"127.0.0.1:8800","Metadata":{}} 10000000000 0xc00009dc00 0x591b40}
+7|frontend | &{0xc000234000 /nebulaim/frontend443/node1 {"Addr":"127.0.0.1:12345","Metadata":{}} 10000000000 0xc00009dfc0 0x591b40}
+7|frontend | &{0xc000234680 /nebulaim/frontend5222/node1 {"Addr":"127.0.0.1:5222","Metadata":{}} 10000000000 0xc000120380 0x591b40}
+7|frontend | &{0xc0002641a0 /nebulaim/frontend80/node1 {"Addr":"127.0.0.1:8800","Metadata":{}} 10000000000 0xc000147c40 0x591b40}
+7|frontend | &{0xc000264340 /nebulaim/frontend443/node1 {"Addr":"127.0.0.1:12345","Metadata":{}} 10000000000 0xc000856000 0x591b40}
+7|frontend | &{0xc0002644e0 /nebulaim/frontend5222/node1 {"Addr":"127.0.0.1:5222","Metadata":{}} 10000000000 0xc0008563c0 0x591b40}
+7|frontend | &{0xc000234000 /nebulaim/frontend80/node1 {"Addr":"127.0.0.1:8800","Metadata":{}} 10000000000 0xc00009db80 0x591b40}
+7|frontend | &{0xc0002344e0 /nebulaim/frontend443/node1 {"Addr":"127.0.0.1:12345","Metadata":{}} 10000000000 0xc00009df40 0x591b40}
+7|frontend | &{0xc000234680 /nebulaim/frontend5222/node1 {"Addr":"127.0.0.1:5222","Metadata":{}} 10000000000 0xc000160640 0x591b40}
+7|frontend | &{0xc000244340 /nebulaim/frontend80/node1 {"Addr":"127.0.0.1:8800","Metadata":{}} 10000000000 0xc00013fc00 0x591b40}
+7|frontend | &{0xc0002444e0 /nebulaim/frontend443/node1 {"Addr":"127.0.0.1:12345","Metadata":{}} 10000000000 0xc00013ffc0 0x591b40}
+7|frontend | &{0xc000244680 /nebulaim/frontend5222/node1 {"Addr":"127.0.0.1:5222","Metadata":{}} 10000000000 0xc000856380 0x591b40}
+
+/home/anhttn/.pm2/logs/auth-key-error.log last 15 lines:
+5|auth_key | 247\214>\342\320c\250N C\247,\343o\254\013\373\027\236\272\325\374\310j]\237l\016m<\t\316\202\006\344+\243\301\236[\256\376c\340\246\206\001\340-4\246Ki\220\3165\314\016%;\352\320\214J\273\257\214\2744\274\004\025S\376Ti\257\264V*\370`\321\253\372p\324?\233\031\245s\272\310^\2403\243\326\255\274Z\257" > 
+5|auth_key | I0228 09:36:51.763345   12206 handshake.go:593] onSetClient_DHParams - ctx: {nonce:"I\2208\353\324TA\352u\306\251geU\016\312" server_nonce:"g\016\224\277\330\016\261\264C\022}\334\332\263\214\202" new_nonce:"\337\036\211\332\3316\001\005\001\312\rG\3008G\2215\310pt\300h\372\264t!\r\272\343\n\311\037" a:"\"\340\273\010\377\177E\237!)\346\302\273\2553\354\004^\177\231\212&\000%\205\025\261\222\250Uv\010\203\303\035\210#\255,!'\025\312v\310/e\215\032\364\236\277\240\221\273\351&\300\020dT S\303\237S\245\361\256~\0278\365\277\320\257\351fK\375\213\205\224Fx\377-\r\203u\251x\023\006\"\265\313\361\371\261V\337\2419\001w\204\201T\245\362\002\270\357Z|c\222\362U\373e~9\376\274W(]%\034\"&\273K\177\177\343\r\201gw)\2729\263{\004\025=\320g\341\345W4\347-/\222\276\264\003\350\316\214\201b$\231W-\3424\231B\000\2224\2068^\346\324\334f\305\336\305\261\301 \013\265eh\\\244\357\311\265\217\243[4\353>\214\376\354?\257\211m\001\334\377\316\21664z\333\325\340\027\025\304\335\271\212uGT\230u\374\247\355h+\312\342\022\25737\310\365\225\3334\024d\242U" p:"\307\034\256\271\306\261\311\004\216lR/p\361?s\230\r@#\216>!\301I4\3207V=\223\017H\031\212\n\247\301@X\"\224\223\322%0\364\333\3723on\n\311%\023\225C\256\324L\316|7 \375Q\366\224XpZ\306\214\324\376kk\023\253\334\227FQ)i2\204T\361\217\257\214Y_d$w\376\226\273*\224\035[\315\035J\310\314I\210\007\010\372\2337\216<O:\220`\276\346|\371\244\244\246\225\201\020Q\220~\026'S\265k\017kA\r\272t\330\250K*\024\263\024N\016\361(GT\375\027\355\225\rYe\264\271\335FX-\261\027\215\026\234k\304e\260\326\377\234\243\222\217\357[\232\344\344\030\374\025\350>\276\240\370\177\251\377^\355p\005\r\355(I\364{\371Y\331V\205\014\351)\205\037\r\201\025\3665\261\005\356.N\025\320K$T\277oO\255\3604\261\004\003\021\234\330\343\271/\314[" auth_key_id:-4221154755522397125 auth_key:"5\344-\332\216B\306\257\301A\335\323\265\307\313\236\370;\030\027)\266\377p\t\207>v\323*,uitk\037\366(\311\373W\357\000\251\031\236*\372\017\360\260K\375\242\021G\2351\006\264\333\351\020,\240.\014\302\330\262Qd\257\004T\372\270^\373Q\0336\3348\200S\221T\0360\336JM\030\253'\365Bb*\246X\n\234\025\227\224\321(\243+\226\307\217\013\200\263X\014F\363\313\031\322^i\217\004\253wg\n\233\3351\265\371O\212P\331<\310\\[9\271\3260$\275X\017jR\236I\271\033\006&v-\332``w\263\374\204\001\035\232\351\276R\267\306\365\323\217\343\357V\254\026\212\206\025\370*\371O\233+\020\214\2127T\336\006\261\263J\336Nb\227|\337 B\327\035\240\260\372\374\371`\374\253\236\211w\020\347\202\253\352\220\004@\350\036\345\222\241\216j-{\210R\361\016\347:E~8\272\370bh" }, reply: {"data2":{"nonce":"SZA469RUQep1xqlnZVUOyg==","server_nonce":"Zw6Uv9gOsbRDEn3c2rOMgg==","new_nonce_hash1":"a2ToTY/88Aj15kd58b+zPQ=="}}
+
+/home/anhttn/.pm2/logs/auth-session-error.log last 15 lines:
+0|auth_ses | "auth_key_id":826762815523551444}
+0|auth_ses | I0228 09:42:15.655329   12154 session.getFutureSalts_handler.go:47] session.getFutureSalts - reply: {{"data2":{"salts":[{"data2":{"valid_since":1614532437,"valid_until":1614534237,"salt":5579091453545625650}},{"data2":{"valid_since":1614534237,"valid_until":1614536037,"salt":7237989730610680419}},{"data2":{"valid_since":1614536037,"valid_until":1614537837,"salt":1937994007390671284}},{"data2":{"valid_since":1614537837,"valid_until":1614539637,"salt":4126966113142303648}},{"data2":{"valid_since":1614539637,"valid_until":1614541437,"salt":6090122888553043170}},{"data2":{"valid_since":1614541437,"valid_until":1614543237,"salt":3417487169855114944}},{"data2":{"valid_since":1614543237,"valid_until":1614545037,"salt":5672773052951906859}},{"data2":{"valid_since":1614545037,"valid_until":1614546837,"salt":3023181457258264709}},{"data2":{"valid_since":1614546837,"valid_until":1614548637,"salt":4128566738436267294}},{"data2":{"valid_since":1614548637,"valid_until":1614550437,"salt":75901924319069749}},{"data2":{"valid_since":1614550437,"valid_until":1614552237,"salt":8522831444772358207}},{"data2":{"valid_since":1614552237,"valid_until":1614554037,"salt":6340935678728675212}},{"data2":{"valid_since":1614554037,"valid_until":1614555837,"salt":8797200050888067996}},{"data2":{"valid_since":1614555837,"valid_until":1614557637,"salt":1488254932394920403}},{"data2":{"valid_since":1614557637,"valid_until":1614559437,"salt":501401200442153373}},{"data2":{"valid_since":1614559437,"valid_until":1614561237,"salt":4804152071528650260}},{"data2":{"valid_since":1614561237,"valid_until":1614563037,"salt":4442880437733821766}},{"data2":{"valid_since":1614563037,"valid_until":1614564837,"salt":4907819204004888750}},{"data2":{"valid_since":1614564837,"valid_until":1614566637,"salt":8047150470224675701}},{"data2":{"valid_since":1614566637,"valid_until":1614568437,"salt":637584871252278540}},{"data2":{"valid_since":1614568437,"valid_until":1614570237,"salt":188269703630311167}},{"data2":{"valid_since":1614570237,"valid_until":1614572037,"salt":2642549446034164942}},{"data2":{"valid_since":1614572037,"valid_until":1614573837,"salt":113670379211811057}},{"data2":{"valid_since":1614573837,"valid_until":1614575637,"salt":6712327197923579699}},{"data2":{"valid_since":1614575637,"valid_until":1614577437,"salt":1654400175720766931}},{"data2":{"valid_since":1614577437,"valid_until":1614579237,"salt":3351470674312439815}},{"data2":{"valid_since":1614579237,"valid_until":1614581037,"salt":1400788995197884904}},{"data2":{"valid_since":1614581037,"valid_until":1614582837,"salt":8233483123626982695}},{"data2":{"valid_since":1614582837,"valid_until":1614584637,"salt":6059114539599346308}},{"data2":{"valid_since":1614584637,"valid_until":1614586437,"salt":4282401764864426236}},{"data2":{"valid_since":1614586437,"valid_until":1614588237,"salt":1708860852528976092}},{"data2":{"valid_since":1614588237,"valid_until":1614590037,"salt":4814183907090853674}}]}}}
+
+/home/anhttn/.pm2/logs/biz-server-error.log last 15 lines:
+4|biz_serv | angpack.getLanguagesLayer70_handler.go:31] langpack.getLanguages#800fd57d - metadata: {"server_id":1,"netlib_session_id":1,"auth_id":826762815523551444,"session_id":-4507018425172296881,"trace_id":1366081845128597506,"span_id":1366081845128597504,"receive_time":1614534267,"client_msg_id":6934371874959023104}, request: {}
+4|biz_serv | I0228 09:44:27.110034   12193 langpack.getLanguagesLayer70_handler.go:50] langpack.getLanguages#800fd57d - reply: {"datas":[{"constructor":292985073,"data2":{"name":"English","native_name":"English","lang_code":"en"}},{"constructor":292985073,"data2":{"name":"Russian","native_name":"Русский","lang_code":"ru"}}]}
+4|biz_serv | I0228 09:44:44.639841   12193 help.getConfig_handler.go:33] help.getConfig#c4f9186b - metadata: {"server_id":1,"netlib_session_id":1,"auth_id":826762815523551444,"session_id":8535668283152369055,"trace_id":1366081918650552322,"span_id":1366081918654746624,"receive_time":1614534284,"client_msg_id":6934371950249799680}, request: {}
+4|biz_serv | I0228 09:44:44.639902   12193 help.getConfig_handler.go:42] help.getConfig#c4f9186b - reply: {"constructor":840162234,"data2":{"phonecalls_enabled":true,"default_p2p_contacts":true,"date":1614534284,"expires":1614537884,"test_mode":{"constructor":-1132882121,"data2":{}},"this_dc":2,"dc_options":[{"constructor":414687501,"data2":{"id":2,"ip_address":"192.168.1.47","port":12345}}],"dc_txt_domain_name":"apv2.stel.com","chat_size_max":200,"megagroup_size_max":100000,"forwarded_count_max":100,"online_update_period_ms":120000,"offline_blur_timeout_ms":5000,"offline_idle_timeout_ms":30000,"online_cloud_timeout_ms":300000,"notify_cloud_delay_ms":30000,"notify_default_delay_ms":1500,"push_chat_period_ms":60000,"push_chat_limit":2,"saved_gifs_limit":200,"edit_time_limit":172800,"revoke_time_limit":172800,"revoke_pm_time_limit":172800,"rating_e_decay":2419200,"stickers_recent_limit":200,"stickers_faved_limit":5,"channels_read_media_period":604800,"pinned_dialogs_count_max":5,"call_receive_timeout_ms":20000,"call_ring_timeout_ms":90000,"call_connect_timeout_ms":30000,"call_packet_timeout_ms":10000,"me_url_prefix":"https://t.me/","gif_search_username":"gif","venue_search_username":"foursquare","img_search_username":"bing","caption_length_max":200,"message_length_max":4096,"webfile_dc_id":4,"suggested_lang_code":"en","lang_pack_version":77}}
+4|biz_serv | I0228 09:44:45.275842   12193 langpack.getLanguagesLayer70_handler.go:31] langpack.getLanguages#800fd57d - metadata: {"server_id":1,"netlib_session_id":1,"auth_id":826762815523551444,"session_id":8535668283152369055,"trace_id":1366081921322323970,"span_id":1366081921322323968,"receive_time":1614534285,"client_msg_id":6934371952981398528}, request: {}
+4|biz_serv | I0228 09:44:45.275866   12193 langpack.getLanguagesLayer70_handler.go:50] langpack.getLanguages#800fd57d - reply: {"datas":[{"constructor":292985073,"data2":{"name":"English","native_name":"English","lang_code":"en"}},{"constructor":292985073,"data2":{"name":"Russian","native_name":"Русский","lang_code":"ru"}}]}
+
+/home/anhttn/.pm2/logs/session-out.log last 15 lines:
+6|session  | 183 153 26 79 128 251 131]
+6|session  | [60 131 36 197 74 53 110 132 246 49 217 77 245 119 65 155 200 235 178 240 57 68 161 151 187 215 219 139 14 242 171 31]
+6|session  | Msgkey : [192 154 168 11 20 207 16 221 244 82 121 137 127 211 220 136]
+6|session  | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session  | [186 237 177 4 17 46 4 241 172 24 157 152 155 174 33 199 84 199 59 216 45 56 75 193 103 63 159 98 0 36 9 112 180 159 42 173 136 199 215 52 49 4 117 51 9 230 119 249]
+6|session  | [199 167 182 76 83 112 223 119 214 55 129 236 216 0 38 106 255 92 151 148 38 192 153 43 118 154 249 104 245 164 26 113]
+6|session  | [240 57 145 67 188 161 123 138 228 229 143 182 150 120 244 215 67 146 245 214 102 85 16 254 166 35 40 48 79 96 132 238]
+6|session  | Msgkey : [76 62 97 126 26 147 133 7 158 197 210 114 186 50 32 144]
+6|session  | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session  | [111 153 136 36 35 104 231 190 130 199 32 86 31 2 181 148 246 16 139 56 165 130 56 223 198 87 66 59 185 253 71 65 19 21 220 98 14 218 227 24 135 190 36 39 60 83 172 55 163 95 224 205 96 32 193 221 182 143 36 201 32 232 76 110]
+6|session  | [171 166 146 64 242 191 157 205 151 107 142 197 238 33 157 143 18 98 106 47 8 131 186 125 106 83 51 17 136 39 170 211]
+6|session  | [254 207 127 175 41 65 163 47 244 3 29 117 224 111 155 175 28 79 121 106 77 32 176 2 166 60 147 125 107 155 88 221]
+
+/home/anhttn/.pm2/logs/session-error.log last 15 lines:
+6|session  | ] encodeMessage - authKeyId: 826762815523551444, layer: 0, : *mtproto.TLRpcResult
+6|session  | I0228 09:44:45.276029   12852 session.go:515] sendSessionDataByConnID - {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: 8535668283152369055, state: 0, conn_state: 1, conn_id: 1@1.50}, connID: 1@1.50, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081921322323968 trace_id:1366081921322323970 span_id:1366081921322323971 > correlation_id:1366081921322323969 attachment_size:152 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:50 client_addr:"192.168.1.45:60896" from:"frontend" receive_time:1614534285275 > , sessData: data2:<client_conn_id:50 auth_key_id:826762815523551444 > }
+6|session  | I0228 09:44:45.280043   12852 decode.go:312] newTLObjectByClassID, classID: 1658238041
+6|session  | I0228 09:44:45.280052   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session  | I0228 09:44:45.280057   12852 decode.go:321] newTLObjectByClassID, classID: 0x62d6b459
+6|session  | I0228 09:44:45.280059   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session  | I0228 09:44:45.280066   12852 auth_sessions.go:519] onSessionData - message: {{auth_key_id: 826762815523551444. salt: 7237989730610680419, session_id: 8535668283152369055, message_id: 6934371952998578176, seq_no: 4, object: *mtproto.TLMsgsAck}}, data: {sess: {auth_key_id: 826762815523551444, user_id: 0}, sessions: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: 8535668283152369055, state: 0, conn_state: 1, conn_id: 1@1.50}, conn_id: 1@1.50, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081921339101184 trace_id:1366081921339101186 span_id:1366081921339101187 > correlation_id:1366081921339101185 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:50 client_addr:"192.168.1.45:60896" from:"frontend" receive_time:1614534285279 > }
+6|session  | I0228 09:44:45.280120   12852 session.go:310] online - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: 8535668283152369055, state: 0, conn_state: 1, conn_id: 1@1.50}, auth_key_id: 826762815523551444, user_id: 0
+6|session  | I0228 09:44:45.280128   12852 session.go:334] unpack - *mtproto.TLMsgsAck
+6|session  | I0228 09:44:45.280138   12852 session.go:970] onMsgsAck - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: 8535668283152369055, state: 0, conn_state: 1, conn_id: 1@1.50}, conn_id: 1@1.50, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081921339101184 trace_id:1366081921339101186 span_id:1366081921339101187 > correlation_id:1366081921339101185 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:50 client_addr:"192.168.1.45:60896" from:"frontend" receive_time:1614534285279 > , msg_id: 6934371952998578176, seq_no: 4, request: {{"data2":{"msg_ids":[6934371952924558345]}}}}
+
+/home/anhttn/.pm2/logs/sync-error.log last 15 lines:
+2|sync     | I0228 09:44:19.550687   12175 zrpc_client.go:249] sendPing: ping_id:3064314326429807220 
+2|sync     | I0228 09:44:19.550740   12175 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 244 228 244 215 207 180 168 195 42] []}
+2|sync     | I0228 09:44:19.550983   12175 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:3064314326429807220 > 
+2|sync     | I0228 09:44:37.817334   12175 zrpc_client.go:249] sendPing: ping_id:6395693810997395672 
+2|sync     | I0228 09:44:37.817380   12175 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 216 129 168 133 170 180 132 225 88] []}
+2|sync     | I0228 09:44:37.817585   12175 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:6395693810997395672 > 
+2|sync     | I0228 09:44:38.395343   12175 zrpc_client.go:249] sendPing: ping_id:5523275827211467380 
+2|sync     | I0228 09:44:38.395384   12175 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 244 244 195 235 158 195 167 211 76] []}
+2|sync     | I0228 09:44:38.396425   12175 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:5523275827211467380 > 
+2|sync     | I0228 09:44:46.312142   12175 zrpc_client.go:249] sendPing: ping_id:3741734061242775152 
+2|sync     | I0228 09:44:46.312198   12175 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 240 236 235 226 221 233 211 246 51] []}
+2|sync     | I0228 09:44:46.313070   12175 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:3741734061242775152 > 
+2|sync     | I0228 09:44:49.552797   12175 zrpc_client.go:249] sendPing: ping_id:3118558046987217147 
+2|sync     | I0228 09:44:49.552837   12175 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 251 209 239 208 213 128 214 163 43] []}
+2|sync     | I0228 09:44:49.553627   12175 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:3118558046987217147 > 
+
+/home/anhttn/.pm2/logs/frontend-error.log last 15 lines:
+7|frontend | I0228 09:44:46.348107   12230 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 214 195 144 241 211 177 220 182 59] []}
+7|frontend | I0228 09:44:46.348146   12230 server.go:218] onClientTimer
+7|frontend | I0228 09:44:46.348558   12230 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:4282203672146092502 > 
+7|frontend | I0228 09:44:49.543376   12230 zrpc_client.go:249] sendPing: ping_id:3163858855931567055 
+7|frontend | I0228 09:44:49.543417   12230 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 207 183 153 218 221 155 146 244 43] []}
+7|frontend | I0228 09:44:49.543457   12230 server.go:218] onClientTimer
+7|frontend | I0228 09:44:49.544340   12230 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:3163858855931567055 > 
+7|frontend | I0228 09:44:49.580269   12230 zrpc_client.go:249] sendPing: ping_id:2591867920860077919 
+7|frontend | I0228 09:44:49.580312   12230 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 223 190 225 188 196 196 138 252 35] []}
+7|frontend | I0228 09:44:49.580349   12230 server.go:218] onClientTimer
+7|frontend | I0228 09:44:49.580768   12230 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:2591867920860077919 > 
+7|frontend | I0228 09:44:49.584215   12230 zrpc_client.go:249] sendPing: ping_id:7117354601918429826 
+7|frontend | I0228 09:44:49.584244   12230 zrpc_client.go:256] &{request:<service_name:"zrpc" method_name:"mtproto.TLPing" >  [8 130 245 219 158 209 137 251 226 98] []}
+7|frontend | I0228 09:44:49.584276   12230 server.go:218] onClientTimer
+7|frontend | I0228 09:44:49.584526   12230 zrpc_client.go:208] recv pong: constructor:CRC32_pong data2:<ping_id:7117354601918429826 > 
+
+7|frontend  | I0228 09:44:57.900849   12230 mtproto_server.go:119] onConnectionClosed - 192.168.1.45:60896
+7|frontend  | I0228 09:44:57.900886   12230 server.go:176] onServerConnectionClosed - {peer: {connID: 50@frontend443-(192.168.1.48:12345->192.168.1.45:60896)}}
+7|frontend  | E0228 09:44:57.901016   12230 tcp_server.go:192] conn {{connID: 50@frontend443-(192.168.1.48:12345->192.168.1.45:60896)}} recv error: EOF
+6|session   | I0228 09:44:57.902160   12852 server.go:262] onSessionClientClosed - ID: {conn_id: 0@1.50, auth_key_id: 826762815523551444}
+6|session   | I0228 09:44:57.902206   12852 auth_sessions.go:342] authSessions]]>> offline: {auth_key_id: 826762815523551444, user_id: 0}
+6|session   | I0228 09:44:57.902214   12852 session_util.go:80] setOfflineTTL - {user_id: 0, auth_key_id: 826762815523551444, server_id: 1}
+6|session   | W0228 09:44:57.903192   12852 auth_sessions.go:559] session conn closed -  conn: &{false {0 1 50 1614534297}}, sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: 8535668283152369055, state: 0, conn_state: 2, conn_id: 1@1.50}
+7|frontend  | I0228 09:44:59.602403   12230 mtproto_server.go:94] onNewConnection 192.168.1.45:60906
+7|frontend  | I0228 09:44:59.602436   12230 server.go:140] onServerNewConnection - {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, ctx: {&{{0 0} 256 0xc0000152f0  0}}}
+7|frontend  | I0228 09:44:59.603248   12230 mtproto_proxy_codec.go:236] first_bytes_64: 9bc08609ae39468570e2873bbe3c9272daf3f6040c2b64b444706390ada78f06de4a50f1ebd329f0b412f55c2dd4adfe132088e5526dc505efefefef901fce81
+7|frontend  | I0228 09:44:59.603260   12230 mtproto_app_codec.go:63] size1: 136
+7|frontend  | I0228 09:44:59.603266   12230 mtproto_server.go:102] onConnectionDataArrived 192.168.1.45:60906
+7|frontend  | I0228 09:44:59.603272   12230 server.go:145] onServerMessageDataArrived - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, md: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 136}, msg: %!s(MISSING)}
+7|frontend  | I0228 09:44:59.603283   12230 server.go:345] onServerEncryptedRawMessage - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, ctx: &{{%!s(int32=0) %!s(uint32=0)} %!s(int=256) %!s(*mtproto.TLHandshakeData=&{0xc000ac4eb0 {} [] 0})  %!s(int64=0)}, msg: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 136}}
+6|session   | I0228 09:44:59.603488   12852 server.go:232] onSessionClientNew - ID: {conn_id: 1@1.51, auth_key_id: 826762815523551444}
+6|session   | I0228 09:44:59.603567   12852 decode.go:312] newTLObjectByClassID, classID: 1945237724
+6|session   | I0228 09:44:59.603570   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603574   12852 decode.go:321] newTLObjectByClassID, classID: 0x73f1f8dc
+6|session   | I0228 09:44:59.603576   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603580   12852 parsed_manually_types.go:197] msg_container: messages size: 2
+6|session   | I0228 09:44:59.603582   12852 parsed_manually_types.go:199] msg_container: decode messages[0]: 
+6|session   | I0228 09:44:59.603585   12852 decode.go:312] newTLObjectByClassID, classID: -414113498
+6|session   | I0228 09:44:59.603587   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603590   12852 decode.go:321] newTLObjectByClassID, classID: 0xe7512126
+6|session   | I0228 09:44:59.603592   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603595   12852 parsed_manually_types.go:199] msg_container: decode messages[1]: 
+6|session   | I0228 09:44:59.603597   12852 decode.go:312] newTLObjectByClassID, classID: -990308245
+6|session   | I0228 09:44:59.603599   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603602   12852 decode.go:321] newTLObjectByClassID, classID: 0xc4f9186b
+6|session   | I0228 09:44:59.603604   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session   | I0228 09:44:59.603609   12852 check_api_request_type.go:182] getSessionType2 - *mtproto.TLMsgContainer
+6|session   | Msgkey : [223 95 24 241 89 39 73 229 93 104 216 140 211 207 184 48]
+6|session   | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session   | [39 103 255 61 47 54 58 59 244 176 60 59 46 251 166 219 210 78 234 252 244 139 129 66 77 199 87 18 249 122 171 154 233 195 139 98 27 244 137 143 92 231 157 230 4 70 221 50 18 183 227 253 8 133 127 71 7 159 98 48 140 210 133 115 194 175 45 113 60 113 156 37 129 8 195 220 122 63 118 142 235 179 217 132 193 105 120 2 238 177 210 75 97 154 217 38 13 23 54 70 107 19 10 39 249 166 179 60 233 161 217 68]
+6|session   | [76 194 172 254 165 191 78 141 213 61 82 152 73 180 94 239 101 183 53 28 8 62 155 25 255 129 75 159 158 123 190 232]
+6|session   | [37 28 3 109 36 52 193 238 92 22 14 203 75 36 51 155 148 174 190 226 131 104 220 183 113 60 227 202 254 30 238 130]
+6|session   | I0228 09:44:59.603613   12852 check_api_request_type.go:182] getSessionType2 - *mtproto.TLDestroySession
+6|session   | I0228 09:44:59.603619   12852 auth_sessions.go:519] onSessionData - message: {{auth_key_id: 826762815523551444. salt: 7237989730610680419, session_id: -7694884144081192729, message_id: 6934372014519690248, seq_no: 2, object: *mtproto.TLMsgContainer}}, data: {sess: {auth_key_id: 826762815523551444, user_id: 0}, sessions: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 0, conn_id: 0@0.0}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > }
+6|session   | I0228 09:44:59.603660   12852 session.go:310] online - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, auth_key_id: 826762815523551444, user_id: 0
+6|session   | I0228 09:44:59.603669   12852 session.go:334] unpack - *mtproto.TLDestroySession
+6|session   | I0228 09:44:59.603672   12852 session.go:334] unpack - *mtproto.TLHelpGetConfig
+6|session   | I0228 09:44:59.603676   12852 session.go:890] onNewSessionCreated - request data: 6934372014519690240
+6|session   | I0228 09:44:59.603680   12852 session.go:901] onNewSessionCreated - reply: {%v}data2:<first_msg_id:6934372014519690240 unique_id:1564043775899911539 server_salt:7237989730610680419 > 
+6|session   | I0228 09:44:59.603692   12852 session.go:1122] onDestroySession - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , msg_id: 6934372014519690240, seq_no: 0, request: {session_id:8535668283152369055 }}
+6|session   | I0228 09:44:59.603711   12852 generic_session.go:253] onRpcRequest - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , msg_id: 6934372014519690244, seq_no: 1, request: {*mtproto.TLHelpGetConfig}}
+6|session   | I0228 09:44:59.603727   12852 generic_session.go:329] genericSession]]>> - &{1614534299 0 0xc0004fb020 1 0 <nil>}
+6|session   | I0228 09:44:59.603736   12852 session.go:487] encodeMessage - authKeyId: 826762815523551444, layer: 0, : *mtproto.TLMsgContainer
+6|session   | I0228 09:44:59.603751   12852 session.go:515] sendSessionDataByConnID - {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, connID: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:152 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+6|session   | I0228 09:44:59.603784   12852 generic_session.go:339] genericSession]]>> - receive data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, session_id: -7694884144081192729, conn_id: {1 1 51 1614534299}, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:152 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , data: {[0xc000cdb700]}}
+6|session   | I0228 09:44:59.603799   12852 session.go:1251] invokeRpcRequest - receive data: {session_id: -7694884144081192729, conn_id: {1 1 51 1614534299}, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:152 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , data: {[0xc000cdb700]}}
+6|session   | I0228 09:44:59.603815   12852 rpc_client.go:114] Invoke - method: {/mtproto.RPCHelp/help_getConfig}
+6|session   | I0228 09:44:59.603818   12852 rpc_client.go:116] Invoke - NewReplyFunc: {}, t: {*mtproto.Config}
+6|session   | I0228 09:44:59.603834   12852 rpc_client.go:124] Invoke - NewReplyFunc: {}
+7|frontend  | I0228 09:44:59.604090   12230 server.go:262] onClientSessionData - sendToClient to: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+7|frontend  | I0228 09:44:59.606488   12230 server.go:262] onClientSessionData - sendToClient to: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+4|biz_server  | I0228 09:44:59.604149   12193 help.getConfig_handler.go:33] help.getConfig#c4f9186b - metadata: {"server_id":1,"netlib_session_id":1,"auth_id":826762815523551444,"session_id":-7694884144081192729,"trace_id":1366081981418311682,"span_id":1366081981418311680,"receive_time":1614534299,"client_msg_id":6934372014519690244}, request: {}
+4|biz_server  | I0228 09:44:59.604215   12193 help.getConfig_handler.go:42] help.getConfig#c4f9186b - reply: {"constructor":840162234,"data2":{"phonecalls_enabled":true,"default_p2p_contacts":true,"date":1614534299,"expires":1614537899,"test_mode":{"constructor":-1132882121,"data2":{}},"this_dc":2,"dc_options":[{"constructor":414687501,"data2":{"id":2,"ip_address":"192.168.1.47","port":12345}}],"dc_txt_domain_name":"apv2.stel.com","chat_size_max":200,"megagroup_size_max":100000,"forwarded_count_max":100,"online_update_period_ms":120000,"offline_blur_timeout_ms":5000,"offline_idle_timeout_ms":30000,"online_cloud_timeout_ms":300000,"notify_cloud_delay_ms":30000,"notify_default_delay_ms":1500,"push_chat_period_ms":60000,"push_chat_limit":2,"saved_gifs_limit":200,"edit_time_limit":172800,"revoke_time_limit":172800,"revoke_pm_time_limit":172800,"rating_e_decay":2419200,"stickers_recent_limit":200,"stickers_faved_limit":5,"channels_read_media_period":604800,"pinned_dialogs_count_max":5,"call_receive_timeout_ms":20000,"call_ring_timeout_ms":90000,"call_connect_timeout_ms":30000,"call_packet_timeout_ms":10000,"me_url_prefix":"https://t.me/","gif_search_username":"gif","venue_search_username":"foursquare","img_search_username":"bing","caption_length_max":200,"message_length_max":4096,"webfile_dc_id":4,"suggested_lang_code":"en","lang_pack_version":77}}
+6|session     | I0228 09:44:59.604384   12852 rpc_client.go:127] header: {map[content-type:[application/grpc]]}, trailer: {map[]}
+6|session     | I0228 09:44:59.604399   12852 rpc_client.go:148] Invoke /mtproto.RPCHelp/help_getConfig time: 0
+6|session     | I0228 09:44:59.604403   12852 session.go:1302] invokeRpcRequest - rpc_result: {*mtproto.Config}
+6|session     | W0228 09:44:59.604409   12852 auth_sessions.go:565] onRpcResult - sessionId: -7694884144081192729, r: 1
+6|session     | I0228 09:44:59.604413   12852 generic_session.go:350] genericSession]]>> - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, reply: 
+6|session     | I0228 09:44:59.604425   12852 session.go:487] encodeMessage - authKeyId: 826762815523551444, layer: 0, : *mtproto.TLRpcResult
+6|session     | I0228 09:44:59.604443   12852 session.go:515] sendSessionDataByConnID - {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, connID: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081981418311680 trace_id:1366081981418311682 span_id:1366081981418311683 > correlation_id:1366081981418311681 attachment_size:328 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299603 > , sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+7|frontend    | I0228 09:44:59.627626   12230 mtproto_app_codec.go:63] size1: 104
+7|frontend    | I0228 09:44:59.627657   12230 mtproto_server.go:102] onConnectionDataArrived 192.168.1.45:60906
+7|frontend    | I0228 09:44:59.627667   12230 server.go:145] onServerMessageDataArrived - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, md: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 104}, msg: %!s(MISSING)}
+7|frontend    | I0228 09:44:59.627681   12230 server.go:345] onServerEncryptedRawMessage - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, ctx: &{{%!s(int32=0) %!s(uint32=0)} %!s(int=256) %!s(*mtproto.TLHandshakeData=&{0xc000ac4eb0 {} [] 0}) 127.0.0.1:10000 %!s(int64=826762815523551444)}, msg: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 104}}
+6|session     | Msgkey : [101 163 66 113 21 42 250 222 172 171 18 252 13 61 3 8]
+6|session     | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session     | [51 174 220 0 5 190 79 94 220 143 237 85 54 229 214 52 228 148 215 43 83 194 202 176 29 183 94 251 68 141 39 130 89 95 42 163 191 222 139 90 220 122 126 250 82 75 80 237 61 169 128 121 120 52 147 17 69 94 166 169 6 185 75 25 44 18 136 206 170 46 49 234 80 24 78 254 165 60 188 171]
+6|session     | [69 247 8 187 11 148 246 57 22 192 180 248 40 223 206 50 159 217 51 85 33 242 179 74 10 131 17 14 65 151 112 231]
+6|session     | [231 115 90 69 237 81 40 167 145 250 225 141 252 144 74 152 34 166 170 71 84 118 94 195 138 137 93 133 79 220 232 233]
+6|session     | I0228 09:44:59.627959   12852 decode.go:312] newTLObjectByClassID, classID: 1658238041
+6|session     | I0228 09:44:59.627967   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:44:59.627972   12852 decode.go:321] newTLObjectByClassID, classID: 0x62d6b459
+6|session     | I0228 09:44:59.627975   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:44:59.627981   12852 auth_sessions.go:519] onSessionData - message: {{auth_key_id: 826762815523551444. salt: 7237989730610680419, session_id: -7694884144081192729, message_id: 6934372014627063808, seq_no: 2, object: *mtproto.TLMsgsAck}}, data: {sess: {auth_key_id: 826762815523551444, user_id: 0}, sessions: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081981518974976 trace_id:1366081981518974978 span_id:1366081981518974979 > correlation_id:1366081981518974977 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299627 > }
+6|session     | I0228 09:44:59.628024   12852 session.go:310] online - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, auth_key_id: 826762815523551444, user_id: 0
+6|session     | I0228 09:44:59.628031   12852 session.go:334] unpack - *mtproto.TLMsgsAck
+6|session     | I0228 09:44:59.628040   12852 session.go:970] onMsgsAck - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081981518974976 trace_id:1366081981518974978 span_id:1366081981518974979 > correlation_id:1366081981518974977 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534299627 > , msg_id: 6934372014627063808, seq_no: 2, request: {{"data2":{"msg_ids":[6934372013739869201,6934372013741966385]}}}}
+7|frontend    | I0228 09:45:00.203734   12230 mtproto_app_codec.go:63] size1: 72
+7|frontend    | I0228 09:45:00.203758   12230 mtproto_server.go:102] onConnectionDataArrived 192.168.1.45:60906
+7|frontend    | I0228 09:45:00.203767   12230 server.go:145] onServerMessageDataArrived - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, md: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 72}, msg: %!s(MISSING)}
+7|frontend    | I0228 09:45:00.203780   12230 server.go:345] onServerEncryptedRawMessage - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, ctx: &{{%!s(int32=0) %!s(uint32=0)} %!s(int=256) %!s(*mtproto.TLHandshakeData=&{0xc000ac4eb0 {} [] 0}) 127.0.0.1:10000 %!s(int64=826762815523551444)}, msg: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 72}}
+6|session     | Msgkey : [18 95 140 98 97 189 131 231 207 214 90 207 122 56 150 220]
+6|session     | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session     | [92 72 182 72 171 149 75 141 97 160 190 168 221 120 16 184 135 121 48 106 54 239 91 183 86 90 140 145 82 67 79 184 76 161 173 194 110 123 141 89 177 115 214 65 177 208 0 49]
+6|session     | [68 42 187 20 28 31 177 46 87 74 236 50 6 31 142 94 126 121 172 201 155 127 68 77 143 148 120 220 44 160 14 41]
+6|session     | [61 188 71 137 100 236 43 113 28 175 181 184 71 88 235 171 244 154 143 184 117 161 191 235 149 28 208 154 13 1 76 138]
+6|session     | I0228 09:45:00.204219   12852 decode.go:312] newTLObjectByClassID, classID: -2146445955
+6|session     | I0228 09:45:00.204227   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:45:00.204231   12852 decode.go:321] newTLObjectByClassID, classID: 0x800fd57d
+6|session     | I0228 09:45:00.204234   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:45:00.204240   12852 auth_sessions.go:519] onSessionData - message: {{auth_key_id: 826762815523551444. salt: 7237989730610680419, session_id: -7694884144081192729, message_id: 6934372017100964864, seq_no: 3, object: *mtproto.TLLangpackGetLanguagesLayer70}}, data: {sess: {auth_key_id: 826762815523551444, user_id: 0}, sessions: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983934894080 trace_id:1366081983934894082 span_id:1366081983934894083 > correlation_id:1366081983934894081 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300203 > }
+6|session     | I0228 09:45:00.204284   12852 session.go:310] online - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, auth_key_id: 826762815523551444, user_id: 0
+6|session     | I0228 09:45:00.204291   12852 session.go:334] unpack - *mtproto.TLLangpackGetLanguagesLayer70
+6|session     | I0228 09:45:00.204296   12852 generic_session.go:253] onRpcRequest - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983934894080 trace_id:1366081983934894082 span_id:1366081983934894083 > correlation_id:1366081983934894081 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300203 > , msg_id: 6934372017100964864, seq_no: 3, request: {*mtproto.TLLangpackGetLanguagesLayer70}}
+6|session     | I0228 09:45:00.204311   12852 generic_session.go:329] genericSession]]>> - &{1614534300 0 0xc0004fb220 1 0 <nil>}
+6|session     | I0228 09:45:00.204337   12852 generic_session.go:339] genericSession]]>> - receive data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, session_id: -7694884144081192729, conn_id: {1 1 51 1614534300}, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983934894080 trace_id:1366081983934894082 span_id:1366081983934894083 > correlation_id:1366081983934894081 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300203 > , data: {[0xc000cdbac0]}}
+6|session     | I0228 09:45:00.204360   12852 session.go:1251] invokeRpcRequest - receive data: {session_id: -7694884144081192729, conn_id: {1 1 51 1614534300}, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983934894080 trace_id:1366081983934894082 span_id:1366081983934894083 > correlation_id:1366081983934894081 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300203 > , data: {[0xc000cdbac0]}}
+6|session     | I0228 09:45:00.204376   12852 rpc_client.go:114] Invoke - method: {/mtproto.RPCLangpack/langpack_getLanguagesLayer70}
+6|session     | I0228 09:45:00.204380   12852 rpc_client.go:116] Invoke - NewReplyFunc: {}, t: {*mtproto.Vector_LangPackLanguage}
+6|session     | I0228 09:45:00.204398   12852 rpc_client.go:124] Invoke - NewReplyFunc: {}
+6|session     | I0228 09:45:00.204886   12852 rpc_client.go:127] header: {map[content-type:[application/grpc]]}, trailer: {map[]}
+6|session     | I0228 09:45:00.204900   12852 rpc_client.go:148] Invoke /mtproto.RPCLangpack/langpack_getLanguagesLayer70 time: 0
+6|session     | I0228 09:45:00.204912   12852 session.go:1302] invokeRpcRequest - rpc_result: {*mtproto.Vector_LangPackLanguage}
+6|session     | W0228 09:45:00.204921   12852 auth_sessions.go:565] onRpcResult - sessionId: -7694884144081192729, r: 1
+6|session     | I0228 09:45:00.204926   12852 generic_session.go:350] genericSession]]>> - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, reply: 
+6|session     | I0228 09:45:00.204937   12852 session.go:487] encodeMessage - authKeyId: 826762815523551444, layer: 0, : *mtproto.TLRpcResult
+6|session     | I0228 09:45:00.204958   12852 session.go:515] sendSessionDataByConnID - {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, connID: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.RawMessageData" log_id:1366081983934894080 trace_id:1366081983934894082 span_id:1366081983934894083 > correlation_id:1366081983934894081 attachment_size:152 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300203 > , sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+4|biz_server  | I0228 09:45:00.204693   12193 langpack.getLanguagesLayer70_handler.go:31] langpack.getLanguages#800fd57d - metadata: {"server_id":1,"netlib_session_id":1,"auth_id":826762815523551444,"session_id":-7694884144081192729,"trace_id":1366081983934894082,"span_id":1366081983939088384,"receive_time":1614534300,"client_msg_id":6934372017100964864}, request: {}
+4|biz_server  | I0228 09:45:00.204719   12193 langpack.getLanguagesLayer70_handler.go:50] langpack.getLanguages#800fd57d - reply: {"datas":[{"constructor":292985073,"data2":{"name":"English","native_name":"English","lang_code":"en"}},{"constructor":292985073,"data2":{"name":"Russian","native_name":"Русский","lang_code":"ru"}}]}
+7|frontend    | I0228 09:45:00.205107   12230 server.go:262] onClientSessionData - sendToClient to: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, sessData: data2:<client_conn_id:51 auth_key_id:826762815523551444 > }
+7|frontend    | I0228 09:45:00.207640   12230 mtproto_app_codec.go:63] size1: 88
+7|frontend    | I0228 09:45:00.207655   12230 mtproto_server.go:102] onConnectionDataArrived 192.168.1.45:60906
+7|frontend    | I0228 09:45:00.207663   12230 server.go:145] onServerMessageDataArrived - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, md: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 88}, msg: %!s(MISSING)}
+7|frontend    | I0228 09:45:00.207674   12230 server.go:345] onServerEncryptedRawMessage - receive data: {peer: {connID: 51@frontend443-(192.168.1.48:12345->192.168.1.45:60906)}, ctx: &{{%!s(int32=0) %!s(uint32=0)} %!s(int=256) %!s(*mtproto.TLHandshakeData=&{0xc000ac4eb0 {} [] 0}) 127.0.0.1:10000 %!s(int64=826762815523551444)}, msg: {conn_type: 1, auth_key_id: 826762815523551444, quick_ack_id: 0, payload_len: 88}}
+6|session     | Msgkey : [112 209 35 237 221 61 219 54 64 155 54 55 164 117 240 15]
+6|session     | m.authKey : [21 119 204 101 64 237 187 59 10 197 171 191 70 91 145 251 55 217 65 199 100 207 69 96 161 66 222 2 220 199 145 117 216 44 170 80 237 136 63 80 11 19 206 35 2 71 165 231 39 31 238 135 83 243 11 141 52 245 189 185 91 51 51 72 85 74 13 94 16 195 226 196 135 254 28 32 159 37 118 246 60 227 222 245 52 28 185 101 66 105 161 41 32 197 112 144 160 24 59 65 20 103 34 56 95 212 233 223 117 242 91 219 69 18 248 204 150 174 120 180 20 44 80 218 230 130 218 207 254 140 202 208 193 104 252 239 83 231 236 62 184 120 233 41 185 161 108 54 56 0 102 196 199 28 95 188 90 149 77 124 12 67 121 206 190 62 83 40 2 157 186 188 28 123 148 109 193 16 226 140 196 119 184 99 16 123 82 211 186 98 203 202 94 139 125 234 190 195 198 226 119 183 148 212 9 61 93 243 38 62 170 237 42 18 60 215 27 27 190 157 73 120 115 63 202 40 76 15 92 134 151 30 225 17 194 167 45 231 48 210 6 158 22 180 61 150 146 43 244 76 239 252 182 71 237 6]
+6|session     | [7 39 161 6 191 38 16 175 132 121 185 242 105 131 118 62 26 130 244 17 59 41 152 125 58 7 21 38 130 178 133 58 221 234 227 66 178 227 7 14 149 42 127 132 218 57 203 49 47 229 118 93 49 4 148 152 182 136 175 194 144 188 121 27]
+6|session     | [181 210 235 23 24 191 107 29 203 175 167 61 26 166 85 104 187 181 87 20 198 197 78 155 73 218 33 207 204 225 158 8]
+6|session     | [125 252 232 243 132 5 179 207 17 24 78 126 78 151 145 17 215 76 138 224 5 11 60 3 175 251 195 166 183 3 2 189]
+6|session     | I0228 09:45:00.207871   12852 decode.go:312] newTLObjectByClassID, classID: 1658238041
+6|session     | I0228 09:45:00.207876   12852 decode.go:313] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:45:00.207881   12852 decode.go:321] newTLObjectByClassID, classID: 0x62d6b459
+6|session     | I0228 09:45:00.207884   12852 decode.go:322] TLConstructor_CRC32_invokeWithLayer, classID: -627372787
+6|session     | I0228 09:45:00.207890   12852 auth_sessions.go:519] onSessionData - message: {{auth_key_id: 826762815523551444. salt: 7237989730610680419, session_id: -7694884144081192729, message_id: 6934372017118145536, seq_no: 4, object: *mtproto.TLMsgsAck}}, data: {sess: {auth_key_id: 826762815523551444, user_id: 0}, sessions: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983951671296 trace_id:1366081983951671298 span_id:1366081983951671299 > correlation_id:1366081983951671297 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300207 > }
+6|session     | I0228 09:45:00.207933   12852 session.go:310] online - sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, auth_key_id: 826762815523551444, user_id: 0
+6|session     | I0228 09:45:00.207952   12852 session.go:334] unpack - *mtproto.TLMsgsAck
+6|session     | I0228 09:45:00.207962   12852 session.go:970] onMsgsAck - request data: {sess: {user_id: 0, auth_key_id: 826762815523551444, session_type: 1, session_id: -7694884144081192729, state: 0, conn_state: 1, conn_id: 1@1.51}, conn_id: 1@1.51, md: request:<service_name:"session" method_name:"mtproto.TLSessionMessageData" log_id:1366081983951671296 trace_id:1366081983951671298 span_id:1366081983951671299 > correlation_id:1366081983951671297 attachment_size:0 mtproto_meta:<auth_key_id:826762815523551444 server_id:1 client_conn_id:51 client_addr:"192.168.1.45:60906" from:"frontend" receive_time:1614534300207 > , msg_id: 6934372017118145536, seq_no: 4, request: {{"data2":{"msg_ids":[6934372017198072897]}}}}

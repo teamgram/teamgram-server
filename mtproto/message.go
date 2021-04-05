@@ -261,6 +261,7 @@ func (m *EncryptedMessage2) Decode(authKeyId int64, authKey, b []byte) error {
 }
 
 func (m *EncryptedMessage2) decode(authKey []byte, b []byte) error {
+
 	msgKey := b[:16]
 	// aesKey, aesIV := generateMessageKey(msgKey, authKey, false)
 	// x, err := doAES256IGEdecrypt(b[16:], aesKey, aesIV)
@@ -286,7 +287,6 @@ func (m *EncryptedMessage2) decode(authKey []byte, b []byte) error {
 	if int(messageLen) > dbuf.size-32 {
 		// 	return fmt.Errorf("Message len: %d (need less than %d)", messagxeLen, dbuf.size-32)
 	}
-
 	m.Object = dbuf.Object()
 	if m.Object == nil {
 		glog.Errorf("salt: %d, sessionId: %d, messageId: %d, seqNo: %d, messageLen: %d", m.Salt, m.SessionId, m.MessageId, m.SeqNo, messageLen)

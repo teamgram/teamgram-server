@@ -62,9 +62,10 @@ type MysqlDAOList struct {
 	UserPasswordsDAO         *mysql_dao.UserPasswordsDAO
 	WallPapersDAO            *mysql_dao.WallPapersDAO
 	PhoneCallSessionsDAO     *mysql_dao.PhoneCallSessionsDAO
-
-	StickerSetsDAO  *mysql_dao.StickerSetsDAO
-	StickerPacksDAO *mysql_dao.StickerPacksDAO
+	MessageReactDAO          *mysql_dao.MessageReactDAO
+	MessageReactDataDAO      *mysql_dao.MessageReactDataDAO
+	StickerSetsDAO           *mysql_dao.StickerSetsDAO
+	StickerPacksDAO          *mysql_dao.StickerPacksDAO
 
 	MessageDatasDAO *mysql_dao.MessageDatasDAO
 
@@ -129,7 +130,8 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.PhoneCallSessionsDAO = mysql_dao.NewPhoneCallSessionsDAO(v)
 		daoList.StickerSetsDAO = mysql_dao.NewStickerSetsDAO(v)
 		daoList.StickerPacksDAO = mysql_dao.NewStickerPacksDAO(v)
-
+		daoList.MessageReactDAO = mysql_dao.NewMessageReactDAO(v)
+		daoList.MessageReactDataDAO = mysql_dao.NewMessageReactDataDAO(v)
 		daoList.MessageDatasDAO = mysql_dao.NewMessageDatasDAO(v)
 
 		daoList.UnregisteredContactsDAO = mysql_dao.NewUnregisteredContactsDAO(v)
@@ -173,7 +175,22 @@ func GetCommonDAO(dbName string) (dao *mysql_dao.CommonDAO) {
 	}
 	return
 }
-
+func GetMessageReactDataDAO(dbName string) (dao *mysql_dao.MessageReactDataDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.MessageReactDataDAO
+	}
+	return
+}
+func GetMessageReactDAO(dbName string) (dao *mysql_dao.MessageReactDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.MessageReactDAO
+	}
+	return
+}
 func GetAuthKeysDAO(dbName string) (dao *mysql_dao.AuthKeysDAO) {
 	daoList := GetMysqlDAOList(dbName)
 	// err := mysqlDAOManager.daoListMap[dbName]
