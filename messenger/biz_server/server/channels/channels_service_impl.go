@@ -19,9 +19,19 @@ package channels
 
 import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/channel"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/dialog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/user"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/username"
 )
 
 type ChannelsServiceImpl struct {
+	*channel.ChannelModel
+	*user.UserModel
+	*message.MessageModel
+	*dialog.DialogModel
+	*username.UsernameModel
 }
 
 func NewChannelsServiceImpl(models []core.CoreModel) *ChannelsServiceImpl {
@@ -29,6 +39,16 @@ func NewChannelsServiceImpl(models []core.CoreModel) *ChannelsServiceImpl {
 
 	for _, m := range models {
 		switch m.(type) {
+		case *channel.ChannelModel:
+			impl.ChannelModel = m.(*channel.ChannelModel)
+		case *user.UserModel:
+			impl.UserModel = m.(*user.UserModel)
+		case *message.MessageModel:
+			impl.MessageModel = m.(*message.MessageModel)
+		case *dialog.DialogModel:
+			impl.DialogModel = m.(*dialog.DialogModel)
+		case *username.UsernameModel:
+			impl.UsernameModel = m.(*username.UsernameModel)
 		}
 	}
 

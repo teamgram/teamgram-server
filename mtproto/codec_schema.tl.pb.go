@@ -942,6 +942,7 @@ var registers2 = map[int32]TLObjectHelper{
 	int32(TLConstructor_CRC32_messages_sendInlineBotResult):                     TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesSendInlineBotResult() }, layer: 85, classIdList: []int32{}},
 	int32(TLConstructor_CRC32_messages_getMessageEditData):                      TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesGetMessageEditData() }, layer: 85, classIdList: []int32{}},
 	int32(TLConstructor_CRC32_messages_editMessage):                             TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesEditMessage() }, layer: 85, classIdList: []int32{}},
+	int32(TLConstructor_CRC32_messages_sendReact):                               TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesSendReact() }, layer: 85, classIdList: []int32{}},
 	int32(TLConstructor_CRC32_messages_editInlineBotMessage):                    TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesEditInlineBotMessage() }, layer: 85, classIdList: []int32{}},
 	int32(TLConstructor_CRC32_messages_getBotCallbackAnswer):                    TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesGetBotCallbackAnswer() }, layer: 85, classIdList: []int32{}},
 	int32(TLConstructor_CRC32_messages_setBotCallbackAnswer):                    TLObjectHelper{newTLObjectFunc: func() TLObject { return NewTLMessagesSetBotCallbackAnswer() }, layer: 85, classIdList: []int32{}},
@@ -2049,7 +2050,9 @@ func (m *TLResPQ) SetPq(v string) { m.Data2.Pq = v }
 func (m *TLResPQ) GetPq() string  { return m.Data2.Pq }
 
 func (m *TLResPQ) SetServerPublicKeyFingerprints(v []int64) { m.Data2.ServerPublicKeyFingerprints = v }
-func (m *TLResPQ) GetServerPublicKeyFingerprints() []int64  { return m.Data2.ServerPublicKeyFingerprints }
+func (m *TLResPQ) GetServerPublicKeyFingerprints() []int64 {
+	return m.Data2.ServerPublicKeyFingerprints
+}
 
 func NewTLResPQ() *TLResPQ {
 	return &TLResPQ{Data2: &ResPQ_Data{}}
@@ -8016,7 +8019,9 @@ func (m *TLMessagesStickerSetInstallResultArchive) To_Messages_StickerSetInstall
 }
 
 func (m *TLMessagesStickerSetInstallResultArchive) SetSets(v []*StickerSetCovered) { m.Data2.Sets = v }
-func (m *TLMessagesStickerSetInstallResultArchive) GetSets() []*StickerSetCovered  { return m.Data2.Sets }
+func (m *TLMessagesStickerSetInstallResultArchive) GetSets() []*StickerSetCovered {
+	return m.Data2.Sets
+}
 
 func NewTLMessagesStickerSetInstallResultArchive() *TLMessagesStickerSetInstallResultArchive {
 	return &TLMessagesStickerSetInstallResultArchive{Data2: &Messages_StickerSetInstallResult_Data{}}
@@ -15102,7 +15107,9 @@ func (m *TLChannelParticipantBanned) GetKickedBy() int32  { return m.Data2.Kicke
 func (m *TLChannelParticipantBanned) SetDate(v int32) { m.Data2.Date = v }
 func (m *TLChannelParticipantBanned) GetDate() int32  { return m.Data2.Date }
 
-func (m *TLChannelParticipantBanned) SetBannedRights(v *ChannelBannedRights) { m.Data2.BannedRights = v }
+func (m *TLChannelParticipantBanned) SetBannedRights(v *ChannelBannedRights) {
+	m.Data2.BannedRights = v
+}
 func (m *TLChannelParticipantBanned) GetBannedRights() *ChannelBannedRights {
 	return m.Data2.BannedRights
 }
@@ -23087,6 +23094,9 @@ func (m *Update) Encode() []byte {
 	case TLConstructor_CRC32_updateDialogUnreadMark:
 		t := m.To_UpdateDialogUnreadMark()
 		return t.Encode()
+	case TLConstructor_CRC32_updateNewReact:
+		t := m.To_UpdateNewReact()
+		return t.Encode()
 
 	default:
 		glog.Error("Constructor error: ", m.GetConstructor())
@@ -23297,6 +23307,9 @@ func (m *Update) EncodeToLayer(layer int) []byte {
 		return t.EncodeToLayer(layer)
 	case TLConstructor_CRC32_updateDialogUnreadMark:
 		t := m.To_UpdateDialogUnreadMark()
+		return t.EncodeToLayer(layer)
+	case TLConstructor_CRC32_updateNewReact:
+		t := m.To_UpdateNewReact()
 		return t.EncodeToLayer(layer)
 
 	default:
@@ -23576,7 +23589,10 @@ func (m *Update) Decode(dbuf *DecodeBuf) error {
 		m2 := &TLUpdateDialogUnreadMark{Data2: &Update_Data{}}
 		m2.Decode(dbuf)
 		m.Data2 = m2.Data2
-
+	case TLConstructor_CRC32_updateNewReact:
+		m2 := &TLUpdateNewReact{Data2: &Update_Data{}}
+		m2.Decode(dbuf)
+		m.Data2 = m.Data2
 	default:
 		return fmt.Errorf("Invalid constructorId: %d", int32(m.Constructor))
 	}
@@ -23593,6 +23609,12 @@ func (m *Update) To_UpdateNewMessage() *TLUpdateNewMessage {
 // updateMessageID#4e90bfd6 id:int random_id:long = Update;
 func (m *Update) To_UpdateMessageID() *TLUpdateMessageID {
 	return &TLUpdateMessageID{
+		Data2: m.Data2,
+	}
+}
+
+func(m *Update) To_UpdateNewReact() *TLUpdateNewReact{
+	return &TLUpdateNewReact{
 		Data2: m.Data2,
 	}
 }
@@ -24250,6 +24272,68 @@ func (m *TLUpdateUserTyping) Decode(dbuf *DecodeBuf) error {
 	return dbuf.err
 }
 
+// UpdateNewReact#5c486927 user_id:int action:SendMessageAction = Update;
+func (m *TLUpdateNewReact) To_Update() *Update {
+	return &Update{
+		Constructor: TLConstructor_CRC32_updateNewReact,
+		Data2:       m.Data2,
+	}
+}
+
+func (m *TLUpdateNewReact) SetUserId(v int32) { m.Data2.UserId = v }
+func (m *TLUpdateNewReact) GetUserId() int32  { return m.Data2.UserId }
+
+func (m *TLUpdateNewReact) SetReactId(v int64) { m.Data2.ReactId = v }
+func (m *TLUpdateNewReact) GetReactId() int64  { return m.Data2.ReactId }
+
+func (m *TLUpdateNewReact) SetMessageDataId(v int32) { m.Data2.ReactDataId = v }
+func (m *TLUpdateNewReact) GetMessageDataId() int32  { return m.Data2.ReactDataId }
+
+func (m *TLUpdateNewReact) SetPts(v int32) { m.Data2.Pts = v }
+func (m *TLUpdateNewReact) GetPts() int32  { return m.Data2.Pts }
+
+func (m *TLUpdateNewReact) SetPtsCount(v int32) { m.Data2.PtsCount = v }
+func (m *TLUpdateNewReact) GetPtsCount() int32  { return m.Data2.PtsCount }
+
+func NewTLUpdateNewReact() *TLUpdateNewReact {
+	return &TLUpdateNewReact{Data2: &Update_Data{}}
+}
+
+func (m *TLUpdateNewReact) Encode() []byte {
+	x := NewEncodeBuf(512)
+	x.Int(int32(TLConstructor_CRC32_updateNewReact))
+
+	x.Int(m.GetUserId())
+	x.Long(m.GetReactId())
+	x.Int(m.GetMessageDataId())
+	x.Int(m.GetPts())
+	x.Int(m.GetPtsCount())
+
+	return x.buf
+}
+
+func (m *TLUpdateNewReact) EncodeToLayer(layer int) []byte {
+	x := NewEncodeBuf(512)
+	x.Int(int32(TLConstructor_CRC32_updateNewReact))
+
+	x.Int(m.GetUserId())
+	x.Long(m.GetReactId())
+	x.Int(m.GetMessageDataId())
+	x.Int(m.GetPts())
+	x.Int(m.GetPtsCount())
+
+	return x.buf
+}
+
+func (m *TLUpdateNewReact) Decode(dbuf *DecodeBuf) error {
+	m.SetUserId(dbuf.Int())
+	m.SetReactId(dbuf.Long())
+	m.SetMessageDataId(dbuf.Int())
+	m.SetPts(dbuf.Int())
+	m.SetPtsCount(dbuf.Int())
+
+	return dbuf.err
+}
 // updateChatUserTyping#9a65ea1f chat_id:int user_id:int action:SendMessageAction = Update;
 func (m *TLUpdateChatUserTyping) To_Update() *Update {
 	return &Update{
@@ -28737,7 +28821,9 @@ func (m *TLInputPaymentCredentialsAndroidPay) To_InputPaymentCredentials() *Inpu
 }
 
 func (m *TLInputPaymentCredentialsAndroidPay) SetPaymentToken(v *DataJSON) { m.Data2.PaymentToken = v }
-func (m *TLInputPaymentCredentialsAndroidPay) GetPaymentToken() *DataJSON  { return m.Data2.PaymentToken }
+func (m *TLInputPaymentCredentialsAndroidPay) GetPaymentToken() *DataJSON {
+	return m.Data2.PaymentToken
+}
 
 func (m *TLInputPaymentCredentialsAndroidPay) SetGoogleTransactionId(v string) {
 	m.Data2.GoogleTransactionId = v
@@ -42078,7 +42164,9 @@ func (m *TLUpdatesChannelDifferenceTooLong) SetReadInboxMaxId(v int32) { m.Data2
 func (m *TLUpdatesChannelDifferenceTooLong) GetReadInboxMaxId() int32  { return m.Data2.ReadInboxMaxId }
 
 func (m *TLUpdatesChannelDifferenceTooLong) SetReadOutboxMaxId(v int32) { m.Data2.ReadOutboxMaxId = v }
-func (m *TLUpdatesChannelDifferenceTooLong) GetReadOutboxMaxId() int32  { return m.Data2.ReadOutboxMaxId }
+func (m *TLUpdatesChannelDifferenceTooLong) GetReadOutboxMaxId() int32 {
+	return m.Data2.ReadOutboxMaxId
+}
 
 func (m *TLUpdatesChannelDifferenceTooLong) SetUnreadCount(v int32) { m.Data2.UnreadCount = v }
 func (m *TLUpdatesChannelDifferenceTooLong) GetUnreadCount() int32  { return m.Data2.UnreadCount }
@@ -52621,7 +52709,9 @@ func (m *TLInputMediaUploadedDocument) SetMimeType(v string) { m.Data2.MimeType 
 func (m *TLInputMediaUploadedDocument) GetMimeType() string  { return m.Data2.MimeType }
 
 func (m *TLInputMediaUploadedDocument) SetAttributes(v []*DocumentAttribute) { m.Data2.Attributes = v }
-func (m *TLInputMediaUploadedDocument) GetAttributes() []*DocumentAttribute  { return m.Data2.Attributes }
+func (m *TLInputMediaUploadedDocument) GetAttributes() []*DocumentAttribute {
+	return m.Data2.Attributes
+}
 
 func (m *TLInputMediaUploadedDocument) SetStickers(v []*InputDocument) { m.Data2.Stickers = v }
 func (m *TLInputMediaUploadedDocument) GetStickers() []*InputDocument  { return m.Data2.Stickers }
@@ -55185,15 +55275,9 @@ func (m *TLDialog) Encode() []byte {
 	if m.GetPinned() == true {
 		flags |= 1 << 2
 	}
-	if m.GetUnreadMark() == true {
-		flags |= 1 << 3
-	}
-	if m.GetPts() != 0 {
-		flags |= 1 << 0
-	}
-	if m.GetDraft() != nil {
-		flags |= 1 << 1
-	}
+
+
+
 	x.UInt(flags)
 
 	x.Bytes(m.GetPeer().Encode())
@@ -55222,15 +55306,7 @@ func (m *TLDialog) EncodeToLayer(layer int) []byte {
 	if m.GetPinned() == true {
 		flags |= 1 << 2
 	}
-	if m.GetUnreadMark() == true {
-		flags |= 1 << 3
-	}
-	if m.GetPts() != 0 {
-		flags |= 1 << 0
-	}
-	if m.GetDraft() != nil {
-		flags |= 1 << 1
-	}
+
 	x.UInt(flags)
 
 	x.Bytes(m.GetPeer().EncodeToLayer(layer))
@@ -57838,7 +57914,9 @@ func (m *TLInputBotInlineResultGame) GetId() string  { return m.Data2.Id }
 func (m *TLInputBotInlineResultGame) SetShortName(v string) { m.Data2.ShortName = v }
 func (m *TLInputBotInlineResultGame) GetShortName() string  { return m.Data2.ShortName }
 
-func (m *TLInputBotInlineResultGame) SetSendMessage(v *InputBotInlineMessage) { m.Data2.SendMessage = v }
+func (m *TLInputBotInlineResultGame) SetSendMessage(v *InputBotInlineMessage) {
+	m.Data2.SendMessage = v
+}
 func (m *TLInputBotInlineResultGame) GetSendMessage() *InputBotInlineMessage {
 	return m.Data2.SendMessage
 }
@@ -75135,6 +75213,43 @@ func (m *TLMessagesEditMessage) Decode(dbuf *DecodeBuf) error {
 		m10.Decode(dbuf)
 		m.GeoPoint = m10
 	}
+
+	return dbuf.err
+}
+
+func NewTLMessagesSendReact() *TLMessagesSendReact {
+	return &TLMessagesSendReact{}
+}
+
+func (m *TLMessagesSendReact) Encode() []byte {
+	x := NewEncodeBuf(512)
+	x.Int(int32(TLConstructor_CRC32_messages_sendReact))
+
+	x.Long(m.Id)
+	x.Bytes(m.Peer.Encode())
+	x.Int(m.ReactId)
+
+	return x.buf
+}
+
+func (m *TLMessagesSendReact) EncodeToLayer(layer int) []byte {
+	x := NewEncodeBuf(512)
+	x.Int(int32(TLConstructor_CRC32_messages_sendReact))
+
+	x.Long(m.Id)
+	x.Bytes(m.Peer.EncodeToLayer(layer))
+	x.Int(m.ReactId)
+
+	return x.buf
+}
+
+func (m *TLMessagesSendReact) Decode(dbuf *DecodeBuf) error {
+
+	m.Id = dbuf.Long()
+	m4 := &InputPeer{}
+	m4.Decode(dbuf)
+	m.Peer = m4
+	m.ReactId = dbuf.Int()
 
 	return dbuf.err
 }

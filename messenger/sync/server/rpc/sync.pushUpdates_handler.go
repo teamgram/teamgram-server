@@ -29,6 +29,7 @@ import (
 func (s *SyncServiceImpl) SyncPushUpdates(ctx context.Context, request *mtproto.TLSyncPushUpdates) (*mtproto.Bool, error) {
     glog.Infof("sync.pushUpdates#5c612649 - request: {%s}", logger.JsonDebugData(request))
 
+    glog.Infoln(request.GetUserId())
     pts, ptsCount, err := s.processUpdatesRequest(request.GetUserId(), request.GetUpdates())
     if err == nil {
         userId := request.GetUserId()
