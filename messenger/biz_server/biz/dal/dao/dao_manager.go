@@ -18,12 +18,13 @@
 package dao
 
 import (
+	"sync"
+
 	"github.com/golang/glog"
 	"github.com/jmoiron/sqlx"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/redis_dao"
 	"github.com/nebula-chat/chatengine/pkg/redis_client"
-	"sync"
 )
 
 const (
@@ -52,6 +53,8 @@ type MysqlDAOList struct {
 	ReportsDAO               *mysql_dao.ReportsDAO
 	UserPrivacysDAO          *mysql_dao.UserPrivacysDAO
 	TmpPasswordsDAO          *mysql_dao.TmpPasswordsDAO
+	ChannelsDAO              *mysql_dao.ChannelsDAO
+	ChannelParticipantsDAO   *mysql_dao.ChannelParticipantsDAO
 	ChatsDAO                 *mysql_dao.ChatsDAO
 	ChatParticipantsDAO      *mysql_dao.ChatParticipantsDAO
 	UserPtsUpdatesDAO        *mysql_dao.UserPtsUpdatesDAO
@@ -119,6 +122,7 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.ReportsDAO = mysql_dao.NewReportsDAO(v)
 		daoList.UserPrivacysDAO = mysql_dao.NewUserPrivacysDAO(v)
 		daoList.TmpPasswordsDAO = mysql_dao.NewTmpPasswordsDAO(v)
+		daoList.ChannelsDAO = mysql_dao.NewChannelsDAO(v)
 		daoList.ChatsDAO = mysql_dao.NewChatsDAO(v)
 		daoList.ChatParticipantsDAO = mysql_dao.NewChatParticipantsDAO(v)
 		daoList.UserPtsUpdatesDAO = mysql_dao.NewUserPtsUpdatesDAO(v)
@@ -313,6 +317,24 @@ func GetTmpPasswordsDAO(dbName string) (dao *mysql_dao.TmpPasswordsDAO) {
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.TmpPasswordsDAO
+	}
+	return
+}
+
+func GetChannelsDAO(dbName string) (dao *mysql_dao.ChannelsDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.ChannelsDAO
+	}
+	return
+}
+
+func GetChannelParticipantsDAO(dbName string) (dao *mysql_dao.ChannelParticipantsDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.ChannelParticipantsDAO
 	}
 	return
 }
