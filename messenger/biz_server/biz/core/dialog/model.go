@@ -18,12 +18,13 @@
 package dialog
 
 import (
+	"time"
+
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
-	"time"
 )
 
 type dialogsDAO struct {
@@ -90,12 +91,12 @@ func (m *DialogModel) InsertOrUpdateDialog(userId, peerType, peerId, topMessage 
 	m.dao.UserDialogsDAO.InsertOrUpdate(dialogDO)
 }
 
-func (m *DialogModel) InsertOrChannelUpdateDialog(userId, peerType, peerId int32) {
+func (m *DialogModel) InsertOrChannelUpdateDialog(userId, peerType, peerId, top_message int32) {
 	dialogDO := &dataobject.UserDialogsDO{
 		UserId:              userId,
 		PeerType:            int8(peerType),
 		PeerId:              peerId,
-		TopMessage:          0,
+		TopMessage:          top_message,
 		Date2:               int32(time.Now().Unix()),
 		UnreadCount:         0,
 		UnreadMentionsCount: 0,

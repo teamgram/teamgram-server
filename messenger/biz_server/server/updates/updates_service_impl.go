@@ -19,9 +19,10 @@ package updates
 
 import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/channel"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/chat"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/user"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/user"
 	// "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/channel"
 )
 
@@ -29,7 +30,7 @@ type UpdatesServiceImpl struct {
 	*user.UserModel
 	*chat.ChatModel
 	*message.MessageModel
-	// *channel.ChannelModel
+	*channel.ChannelModel
 }
 
 func NewUpdatesServiceImpl(models []core.CoreModel) *UpdatesServiceImpl {
@@ -43,8 +44,8 @@ func NewUpdatesServiceImpl(models []core.CoreModel) *UpdatesServiceImpl {
 			impl.ChatModel = m.(*chat.ChatModel)
 		case *message.MessageModel:
 			impl.MessageModel = m.(*message.MessageModel)
-		// case *channel.ChannelModel:
-		// 	impl.ChannelModel = m.(*channel.ChannelModel)
+		case *channel.ChannelModel:
+			impl.ChannelModel = m.(*channel.ChannelModel)
 		}
 	}
 

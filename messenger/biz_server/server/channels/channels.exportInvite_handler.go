@@ -18,21 +18,34 @@
 package channels
 
 import (
-    "fmt"
-    "github.com/golang/glog"
-    "golang.org/x/net/context"
-    "github.com/nebula-chat/chatengine/pkg/grpc_util"
-    "github.com/nebula-chat/chatengine/pkg/logger"
-    "github.com/nebula-chat/chatengine/mtproto"
+	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"golang.org/x/net/context"
 )
 
 // channels.exportInvite#c7560885 channel:InputChannel = ExportedChatInvite;
 func (s *ChannelsServiceImpl) ChannelsExportInvite(ctx context.Context, request *mtproto.TLChannelsExportInvite) (*mtproto.ExportedChatInvite, error) {
-    md := grpc_util.RpcMetadataFromIncoming(ctx)
-    glog.Infof("channels.exportInvite - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	md := grpc_util.RpcMetadataFromIncoming(ctx)
+	glog.Infof("channels.exportInvite#c7560885 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    // Sorry: not impl ChannelsExportInvite logic
-    glog.Warning("channels.exportInvite blocked, License key from https://nebula.chat required to unlock enterprise features.")
+	if request.Channel.Constructor == mtproto.TLConstructor_CRC32_inputChannelEmpty {
+		// TODO(@benqi): chatUser不能是inputUser和inputUserSelf
+		err := mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_BAD_REQUEST)
+		glog.Error("channels.exportInvite#c7560885 - error: ", err, "; InputPeer invalid")
+		return nil, err
+	}
 
-    return nil, fmt.Errorf("not imp ChannelsExportInvite")
+	channelLogic, err := s.ChannelModel.NewChannelLogicById(request.GetChannel().GetData2().GetChannelId())
+	if err != nil {
+
+	}
+
+	exportedChatInvite := &mtproto.TLChatInviteExported{Data2: &mtproto.ExportedChatInvite_Data{
+		Link: channelLogic.ExportedChatInvite(),
+	}}
+
+	glog.Infof("channels.exportInvite#c7560885 - reply: {%v}", exportedChatInvite)
+	return exportedChatInvite.To_ExportedChatInvite(), nil
 }

@@ -49,8 +49,8 @@ func (s *ChannelsServiceImpl) ChannelsCreateChannel(ctx context.Context, request
 	var boxList []*message.MessageBox2
 	s.MessageModel.SendInternalMessage(md.UserId, peer, randomId, false, createChannelMessage, func(i int32, box2 *message.MessageBox2) {
 		// TopMessage
-		s.DialogModel.InsertOrChannelUpdateDialog(md.UserId, base.PEER_CHANNEL, channel.GetChannelId())
 		channel.SetTopMessage(box2.MessageId)
+		s.DialogModel.InsertOrChannelUpdateDialog(md.UserId, base.PEER_CHANNEL, channel.GetChannelId(), box2.MessageId)
 		boxList = append(boxList, box2)
 	})
 

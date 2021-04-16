@@ -82,7 +82,11 @@ func (m *MessageModel) LoadBackwardHistoryMessages(userId int32, peerType, peerI
 		}
 
 	case base.PEER_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		boxDOList := m.dao.ChannelMessagesDAO.SelectBackwardByOffsetLimit(peerId, offset, limit)
+		for i := 0; i < len(boxDOList); i++ {
+			box := m.makeChannelMessageBoxByDO(&boxDOList[i])
+			messages = append(messages, box.ToMessage(userId))
+		}
 	default:
 		// TODO(@benqi): log
 	}
@@ -123,7 +127,11 @@ func (m *MessageModel) LoadForwardHistoryMessages(userId int32, peerType, peerId
 		}
 
 	case base.PEER_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		boxDOList := m.dao.ChannelMessagesDAO.SelectForwardByOffsetLimit(peerId, offset, limit)
+		for i := 0; i < len(boxDOList); i++ {
+			box := m.makeChannelMessageBoxByDO(&boxDOList[i])
+			messages = append(messages, box.ToMessage(userId))
+		}
 	default:
 		// TODO(@benqi): log
 	}
@@ -259,6 +267,32 @@ func (m *MessageModel) GetMessageIdListByDialog(userId int32, peer *base.PeerUti
 		idList = append(idList, doList[i].UserMessageBoxId)
 	}
 	return idList
+}
+
+func (m *MessageModel) GetChannelMessagesViews(channelId int32, idList []int32, increment bool) []int32 {
+	viewsDOList := m.dao.ChannelMessagesDAO.SelectMessagesViews(channelId, idList)
+	viewsList := make([]int32, 0, len(idList))
+
+	for _, id := range idList {
+		views := int32(1)
+		for i := 0; i < len(viewsDOList); i++ {
+			if viewsDOList[i].ChannelMessageId == id {
+				if increment {
+					views = viewsDOList[i].Views + 1
+				} else {
+					views = viewsDOList[i].Views
+				}
+				break
+			}
+		}
+		viewsList = append(viewsList, views)
+	}
+
+	return viewsList
+}
+
+func (m *MessageModel) IncrementChannelMessagesViews(channelId int32, idList []int32) {
+	m.dao.ChannelMessagesDAO.UpdateMessagesViews(channelId, idList)
 }
 
 func (m *MessageModel) GetClearHistoryMessages(userId int32, peer *base.PeerUtil) (lastMessageBox *MessageBox2, idList []int32) {

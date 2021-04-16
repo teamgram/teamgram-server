@@ -18,10 +18,10 @@
 package core
 
 import (
-	base2 "github.com/nebula-chat/chatengine/pkg/util"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/service/idgen/client"
+	base2 "github.com/nebula-chat/chatengine/pkg/util"
+	idgen "github.com/nebula-chat/chatengine/service/idgen/client"
 )
 
 const (
@@ -86,9 +86,9 @@ type AccountCallback interface {
 	GetNotifySettings(selfUserId int32, peer *base.PeerUtil) *mtproto.PeerNotifySettings
 }
 
-//type NotifySettingCallback interface {
-//	GetNotifySettings(selfUserId int32, peer *base.PeerUtil) *mtproto.PeerNotifySettings
-//}
+type NotifySettingCallback interface {
+	GetNotifySettings(selfUserId int32, peer *base.PeerUtil) *mtproto.PeerNotifySettings
+}
 
 type PhotoCallback interface {
 	GetUserProfilePhoto(photoId int64) *mtproto.UserProfilePhoto

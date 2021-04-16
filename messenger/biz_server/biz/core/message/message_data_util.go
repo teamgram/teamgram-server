@@ -20,6 +20,7 @@ package message
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -89,7 +90,7 @@ func makeDialogId(fromId, peerType, peerId int32) (did int64) {
 	case base.PEER_CHAT:
 		did = int64(-peerId)
 	case base.PEER_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		did = int64(-peerId)
 	}
 	return
 }

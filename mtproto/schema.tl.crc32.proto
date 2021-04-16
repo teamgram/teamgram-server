@@ -565,7 +565,9 @@ enum TLConstructor {
   CRC32_contacts_topPeersNotModified = -567906571;
   CRC32_contacts_topPeers = 1891070632;
   CRC32_contacts_topPeersDisabled = -1255369827;
-  CRC32_draftMessageEmpty = 453805082;
+  // CRC32_draftMessageEmpty = 453805082;
+  CRC32_draftMessageEmpty = -1169445179;
+
   CRC32_draftMessage = -40996577;
   CRC32_messages_featuredStickersNotModified = 82699215;
   CRC32_messages_featuredStickers = -123893531;

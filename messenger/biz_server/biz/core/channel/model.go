@@ -36,11 +36,11 @@ type channelsDAO struct {
 }
 
 type ChannelModel struct {
-	dao           *channelsDAO
-	photoCallback core.PhotoCallback
-	// notifySettingCallback core.NotifySettingCallback
-	dialogCallback   core.DialogCallback
-	usernameCallback core.UsernameCallback
+	dao                   *channelsDAO
+	photoCallback         core.PhotoCallback
+	notifySettingCallback core.NotifySettingCallback
+	dialogCallback        core.DialogCallback
+	usernameCallback      core.UsernameCallback
 }
 
 func (m *ChannelModel) InstallModel() {
@@ -56,9 +56,9 @@ func (m *ChannelModel) RegisterCallback(cb interface{}) {
 	case core.PhotoCallback:
 		glog.Info("channelModel - register core.PhotoCallback")
 		m.photoCallback = cb.(core.PhotoCallback)
-	// case core.NotifySettingCallback:
-	// 	glog.Info("channelModel - register core.NotifySettingCallback")
-	// 	m.notifySettingCallback = cb.(core.NotifySettingCallback)
+	case core.NotifySettingCallback:
+		glog.Info("channelModel - register core.NotifySettingCallback")
+		m.notifySettingCallback = cb.(core.NotifySettingCallback)
 	case core.DialogCallback:
 		glog.Info("channelModel - register core.DialogCallback")
 		m.dialogCallback = cb.(core.DialogCallback)

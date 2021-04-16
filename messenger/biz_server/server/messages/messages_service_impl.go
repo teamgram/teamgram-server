@@ -20,20 +20,21 @@ package messages
 import (
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	// "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/channel"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/bot"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/channel"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/chat"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/dialog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/message"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/sticker"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/user"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/username"
-	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/bot"
 )
 
 type MessagesServiceImpl struct {
 	*user.UserModel
 	*message.MessageModel
 	*chat.ChatModel
-	// *channel.ChannelModel
+	*channel.ChannelModel
 	*sticker.StickerModel
 	*dialog.DialogModel
 	*username.UsernameModel
@@ -51,8 +52,8 @@ func NewMessagesServiceImpl(models []core.CoreModel) *MessagesServiceImpl {
 			impl.MessageModel = m.(*message.MessageModel)
 		case *chat.ChatModel:
 			impl.ChatModel = m.(*chat.ChatModel)
-		// case *channel.ChannelModel:
-		// 	impl.ChannelModel = m.(*channel.ChannelModel)
+		case *channel.ChannelModel:
+			impl.ChannelModel = m.(*channel.ChannelModel)
 		case *sticker.StickerModel:
 			impl.StickerModel = m.(*sticker.StickerModel)
 		case *dialog.DialogModel:

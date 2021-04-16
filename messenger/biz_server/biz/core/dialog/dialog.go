@@ -19,7 +19,9 @@ package dialog
 
 import (
 	"encoding/json"
+
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
 	base2 "github.com/nebula-chat/chatengine/pkg/util"
@@ -78,26 +80,26 @@ func dialogDOToDialog(dialogDO *dataobject.UserDialogsDO) *mtproto.TLDialog {
 }
 
 func (m *DialogModel) dialogDOListToDialogList(dialogDOList []dataobject.UserDialogsDO) (dialogs []*mtproto.Dialog) {
-	//channelIdList := make([]int32, 0, len(dialogDOList))
+	channelIdList := make([]int32, 0, len(dialogDOList))
 	for i := 0; i < len(dialogDOList); i++ {
-		//if dialogDO.DraftId > 0 {
-		//	draftIdList = append(draftIdList, dialogDO.DraftId)
-		//}
+		// if dialogDO.DraftId > 0 {
+		// 	draftIdList = append(draftIdList, dialogDO.DraftId)
+		// }
 		dialogDO := &dialogDOList[i]
 		dialog := dialogDOToDialog(dialogDO)
-		//if dialogDO.PeerType == base.PEER_CHANNEL {
-		//	channelIdList = append(channelIdList, dialogDO.PeerId)
-		//}
+		if dialogDO.PeerType == base.PEER_CHANNEL {
+			channelIdList = append(channelIdList, dialogDO.PeerId)
+		}
 		dialogs = append(dialogs, dialog.To_Dialog())
 	}
 
-	////topMessageMap := m.channelCallback.GetTopMessageListByIdList(channelIdList)
-	//for _, dialog := range dialogs {
-	//	if dialog.Data2.Peer.GetConstructor() == mtproto.TLConstructor_CRC32_peerChannel {
-	//		dialog.Data2.TopMessage = topMessageMap[dialog.Data2.Peer.Data2.ChannelId]
-	//		dialog.Data2.Pts = int32(core.NextChannelPtsId(dialog.Data2.Peer.Data2.ChannelId))
-	//	}
-	//}
+	topMessageMap := m.channelCallback.GetTopMessageListByIdList(channelIdList)
+	for _, dialog := range dialogs {
+		if dialog.Data2.Peer.GetConstructor() == mtproto.TLConstructor_CRC32_peerChannel {
+			dialog.Data2.TopMessage = topMessageMap[dialog.Data2.Peer.Data2.ChannelId]
+			dialog.Data2.Pts = int32(core.CurrentChannelPtsId(dialog.Data2.Peer.Data2.ChannelId))
+		}
+	}
 
 	// TODO(@benqi): fetch draft message list
 	return

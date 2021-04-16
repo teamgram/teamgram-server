@@ -27,11 +27,11 @@ import (
 
 type messagesDAO struct {
 	*mysql_dao.MessageDatasDAO
-	// *mysql_dao.ChannelMessageBoxesDAO
+	*mysql_dao.ChannelMessageBoxesDAO
 	*mysql_dao.ChatParticipantsDAO
 	*mysql_dao.MessageBoxesDAO
-	// *mysql_dao.ChannelMediaUnreadDAO
-	// *mysql_dao.ChannelMessagesDAO
+	*mysql_dao.ChannelMediaUnreadDAO
+	*mysql_dao.ChannelMessagesDAO
 	*mysql_dao.UsernameDAO
 	*mysql_dao.UnreadMentionsDAO
 	*mysql_dao.CommonDAO
@@ -48,11 +48,11 @@ type MessageModel struct {
 
 func (m *MessageModel) InstallModel() {
 	m.dao.MessageDatasDAO = dao.GetMessageDatasDAO(dao.DB_MASTER)
-	// m.dao.ChannelMessageBoxesDAO = dao.GetChannelMessageBoxesDAO(dao.DB_MASTER)
+	m.dao.ChannelMessageBoxesDAO = dao.GetChannelMessageBoxesDAO(dao.DB_MASTER)
 	m.dao.ChatParticipantsDAO = dao.GetChatParticipantsDAO(dao.DB_MASTER)
 	m.dao.MessageBoxesDAO = dao.GetMessageBoxesDAO(dao.DB_MASTER)
-	// m.dao.ChannelMediaUnreadDAO = dao.GetChannelMediaUnreadDAO(dao.DB_MASTER)
-	// m.dao.ChannelMessagesDAO = dao.GetChannelMessagesDAO(dao.DB_MASTER)
+	m.dao.ChannelMediaUnreadDAO = dao.GetChannelMediaUnreadDAO(dao.DB_MASTER)
+	m.dao.ChannelMessagesDAO = dao.GetChannelMessagesDAO(dao.DB_MASTER)
 	m.dao.UsernameDAO = dao.GetUsernameDAO(dao.DB_MASTER)
 	m.dao.MessageReactDataDAO = dao.GetMessageReactDataDAO(dao.DB_MASTER)
 

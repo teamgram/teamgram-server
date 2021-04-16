@@ -17,7 +17,10 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/nyaruka/phonenumbers v1.0.55
+	github.com/stretchr/testify v1.4.0
 	go.etcd.io/etcd v0.0.0-20190917205325-a14579fbfb1a
+	go.uber.org/atomic v1.4.0
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
 	google.golang.org/grpc v1.26.0
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 )
