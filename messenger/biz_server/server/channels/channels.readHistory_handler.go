@@ -18,21 +18,39 @@
 package channels
 
 import (
-    "fmt"
-    "github.com/golang/glog"
-    "golang.org/x/net/context"
-    "github.com/nebula-chat/chatengine/pkg/grpc_util"
-    "github.com/nebula-chat/chatengine/pkg/logger"
-    "github.com/nebula-chat/chatengine/mtproto"
+	"github.com/golang/glog"
+	updates "github.com/nebula-chat/chatengine/messenger/biz_server/biz/core/update"
+	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"golang.org/x/net/context"
 )
 
 // channels.readHistory#cc104937 channel:InputChannel max_id:int = Bool;
 func (s *ChannelsServiceImpl) ChannelsReadHistory(ctx context.Context, request *mtproto.TLChannelsReadHistory) (*mtproto.Bool, error) {
-    md := grpc_util.RpcMetadataFromIncoming(ctx)
-    glog.Infof("channels.readHistory - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	md := grpc_util.RpcMetadataFromIncoming(ctx)
+	glog.Infof("channels.readHistory#cc104937 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    // Sorry: not impl ChannelsReadHistory logic
-    glog.Warning("channels.readHistory blocked, License key from https://nebula.chat required to unlock enterprise features.")
+	if request.GetChannel().GetConstructor() == mtproto.TLConstructor_CRC32_inputChannelEmpty {
+		glog.Infof("channels.readHistory#cc104937 - reply: {false}")
+		return mtproto.ToBool(false), nil
+	}
 
-    return nil, fmt.Errorf("not imp ChannelsReadHistory")
+	// TODO(@benqi): check access_hash
+	channelId := request.GetChannel().GetData2().GetChannelId()
+
+	channelLogic, _ := s.ChannelModel.NewChannelLogicById(channelId)
+	channelLogic.ReadOutboxHistory(md.UserId, request.GetMaxId())
+
+	syncUpdates := updates.NewUpdatesLogic(md.UserId)
+	updateReadChannelInbox := &mtproto.TLUpdateReadChannelInbox{Data2: &mtproto.Update_Data{
+		ChannelId: channelId,
+		MaxId:     request.GetMaxId(),
+	}}
+	syncUpdates.AddUpdate(updateReadChannelInbox.To_Update())
+	sync_client.GetSyncClient().SyncChannelUpdatesNotMe(channelId, md.UserId, md.AuthId, syncUpdates.ToUpdates())
+
+	glog.Infof("channels.readHistory#cc104937 - reply: {true}")
+	return mtproto.ToBool(true), nil
 }

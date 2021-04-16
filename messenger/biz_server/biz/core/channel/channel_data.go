@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dataobject"
 	"github.com/nebula-chat/chatengine/mtproto"
@@ -49,8 +50,8 @@ type channelLogicData struct {
 	cacheParticipantsData []channelParticipantData
 	dao                   *channelsDAO
 	cb                    core.PhotoCallback
-	// cb2                   core.NotifySettingCallback
-	cb3 core.UsernameCallback
+	cb2                   core.NotifySettingCallback
+	cb3                   core.UsernameCallback
 }
 
 //func (m *ChannelModel) MakeChannelLogic(channelId int32) (channelData *channelLogicData) {
@@ -76,8 +77,8 @@ func (m *ChannelModel) NewChannelLogicById(channelId int32) (channelData2 *chann
 			cacheParticipantsData: make([]channelParticipantData, 0, 2),
 			dao:                   m.dao,
 			cb:                    m.photoCallback,
-			// cb2:                   m.notifySettingCallback,
-			cb3: m.usernameCallback,
+			cb2:                   m.notifySettingCallback,
+			cb3:                   m.usernameCallback,
 		}
 	}
 	return
@@ -103,8 +104,8 @@ func (m *ChannelModel) NewChannelLogicByLink(link string) (channelData2 *channel
 			cacheParticipantsData: make([]channelParticipantData, 0, 2),
 			dao:                   m.dao,
 			cb:                    m.photoCallback,
-			// cb2:                   m.notifySettingCallback,
-			cb3: m.usernameCallback,
+			cb2:                   m.notifySettingCallback,
+			cb3:                   m.usernameCallback,
 		}
 	}
 	return
@@ -167,8 +168,8 @@ func (m *ChannelModel) NewChannelLogicByCreateChannel(creatorId int32, broadcast
 		cacheParticipantsData: []channelParticipantData{channelParticipantData2},
 		dao:                   m.dao,
 		cb:                    m.photoCallback,
-		// cb2:                   m.notifySettingCallback,
-		cb3: m.usernameCallback,
+		cb2:                   m.notifySettingCallback,
+		cb3:                   m.usernameCallback,
 	}
 
 	return channelData, nil
@@ -1054,27 +1055,27 @@ func (m *channelLogicData) ToChannelForbidden() *mtproto.Chat {
 }
 
 func (m *channelLogicData) ToChannelFull(selfUserId int32) *mtproto.ChatFull {
-	// peer := &base.PeerUtil{
-	// 	PeerType: base.PEER_CHANNEL,
-	// 	PeerId:   m.Id,
-	// }
+	peer := &base.PeerUtil{
+		PeerType: base.PEER_CHANNEL,
+		PeerId:   m.Id,
+	}
 
-	// var notifySettings *mtproto.PeerNotifySettings
+	var notifySettings *mtproto.PeerNotifySettings
 
 	// TODO(@benqi): chat notifySetting...
-	//if notifySettingFunc == nil {
-	//	notifySettings = &mtproto.PeerNotifySettings{
-	//		Constructor: mtproto.TLConstructor_CRC32_peerNotifySettings,
-	//		Data2: &mtproto.PeerNotifySettings_Data{
-	//			ShowPreviews: true,
-	//			Silent:       false,
-	//			MuteUntil:    0,
-	//			Sound:        "default",
-	//		},
-	//	}
-	//} else {
-	// notifySettings := m.cb2.GetNotifySettings(selfUserId, peer)
-	//}
+	if m.cb2 == nil {
+		notifySettings = &mtproto.PeerNotifySettings{
+			Constructor: mtproto.TLConstructor_CRC32_peerNotifySettings,
+			Data2: &mtproto.PeerNotifySettings_Data{
+				ShowPreviews: mtproto.ToBool(true),
+				Silent:       mtproto.ToBool(false),
+				MuteUntil:    0,
+				Sound:        "default",
+			},
+		}
+	} else {
+		notifySettings = m.cb2.GetNotifySettings(selfUserId, peer)
+	}
 
 	channelFull := &mtproto.TLChannelFull{Data2: &mtproto.ChatFull_Data{
 		// CanViewParticipants:
@@ -1083,9 +1084,9 @@ func (m *channelLogicData) ToChannelFull(selfUserId int32) *mtproto.ChatFull {
 		ParticipantsCount: m.ParticipantCount,
 		AdminsCount:       1, // TODO(@benqi): calc adminscount
 		ChatPhoto:         m.getPhoto(),
-		// NotifySettings:    notifySettings,
-		// ExportedInvite:    mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite(), // TODO(@benqi):
-		BotInfo: []*mtproto.BotInfo{},
+		NotifySettings:    notifySettings,
+		ExportedInvite:    mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite(), // TODO(@benqi):
+		BotInfo:           []*mtproto.BotInfo{},
 	}}
 
 	selfParticipant := m.checkOrLoadChannelParticipant(selfUserId)

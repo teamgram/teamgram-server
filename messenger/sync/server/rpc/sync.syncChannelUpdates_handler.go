@@ -18,36 +18,36 @@
 package rpc
 
 import (
-    "github.com/golang/glog"
-    "golang.org/x/net/context"
-    "github.com/nebula-chat/chatengine/pkg/grpc_util"
-    "github.com/nebula-chat/chatengine/mtproto"
-    "github.com/nebula-chat/chatengine/pkg/logger"
-    "github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
+	zrpc "github.com/nebula-chat/chatengine/mtproto/rpc"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"golang.org/x/net/context"
 )
 
 // sync.syncChannelUpdates flags:# channel_id:int user_id:int auth_key_id:long server_id:flags.0?int updates:Updates = Bool;
 func (s *SyncServiceImpl) SyncSyncChannelUpdates(ctx context.Context, request *mtproto.TLSyncSyncChannelUpdates) (*mtproto.Bool, error) {
-    md := grpc_util.RpcMetadataFromIncoming(ctx)
-    glog.Infof("ync.syncChannelUpdate - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	md := grpc_util.RpcMetadataFromIncoming(ctx)
+	glog.Infof("ync.syncChannelUpdate - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    pts, ptsCount, err := s.processChannelUpdatesRequest(request.GetChannelId(), request.GetUpdates())
-    if err == nil {
-        userId := md.UserId
-        authKeyId := request.GetAuthKeyId()
-        cntl := zrpc.NewController()
-        pushData := request.GetUpdates().Encode()
-        serverId := request.GetServerId()
-        if request.GetServerId() == 0 {
-            s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0, pts, ptsCount)
-        } else {
-            s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId, pts, ptsCount)
-        }
-    } else {
-        glog.Error(err)
-        return mtproto.ToBool(false), nil
-    }
+	pts, ptsCount, err := s.processChannelUpdatesRequest(request.GetUserId(), request.GetChannelId(), request.GetUpdates())
+	if err == nil {
+		userId := request.UserId
+		authKeyId := request.GetAuthKeyId()
+		cntl := zrpc.NewController()
+		pushData := request.GetUpdates().Encode()
+		serverId := request.GetServerId()
+		if request.GetServerId() == 0 {
+			s.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, cntl, pushData, 0, pts, ptsCount)
+		} else {
+			s.pushUpdatesToSession(syncTypeUserMe, userId, authKeyId, 0, cntl, pushData, serverId, pts, ptsCount)
+		}
+	} else {
+		glog.Error(err)
+		return mtproto.ToBool(false), nil
+	}
 
-    glog.Infof("sync.syncChannelUpdates - reply: {true}",)
-    return mtproto.ToBool(true), nil
+	glog.Infof("sync.syncChannelUpdates - reply: {true}")
+	return mtproto.ToBool(true), nil
 }

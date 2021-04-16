@@ -19,11 +19,11 @@ package chat
 
 import (
 	"github.com/golang/glog"
-	"github.com/nebula-chat/chatengine/mtproto"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/core"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/dal/dao/mysql_dao"
+	"github.com/nebula-chat/chatengine/mtproto"
 )
 
 type chatsDAO struct {
@@ -34,8 +34,8 @@ type chatsDAO struct {
 }
 
 type ChatModel struct {
-	dao           *chatsDAO
-	photoCallback core.PhotoCallback
+	dao             *chatsDAO
+	photoCallback   core.PhotoCallback
 	accountCallback core.AccountCallback
 }
 
@@ -127,7 +127,7 @@ func (m *ChatModel) GetChatFullBySelfId(selfUserId int32, chatData *chatLogicDat
 	var exportedInvite *mtproto.ExportedChatInvite
 	if selfUserId == chatData.GetCreator() {
 		chatLink := chatData.GetLink()
-		if chatLink == ""{
+		if chatLink == "" {
 			exportedInvite = mtproto.NewTLChatInviteEmpty().To_ExportedChatInvite()
 		} else {
 			inviteExported := &mtproto.TLChatInviteExported{Data2: &mtproto.ExportedChatInvite_Data{

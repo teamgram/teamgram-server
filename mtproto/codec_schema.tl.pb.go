@@ -25,6 +25,7 @@ package mtproto
 
 import (
 	"fmt"
+
 	"github.com/golang/glog"
 )
 
@@ -18283,7 +18284,9 @@ func (m *TLInputPeerChannel) EncodeToLayer(layer int) []byte {
 func (m *TLInputPeerChannel) Decode(dbuf *DecodeBuf) error {
 	m.SetChannelId(dbuf.Int())
 	m.SetAccessHash(dbuf.Long())
-
+	dbuf.Int()    // type
+	dbuf.String() // board
+	dbuf.Int()    // tab
 	return dbuf.err
 }
 
@@ -23613,7 +23616,7 @@ func (m *Update) To_UpdateMessageID() *TLUpdateMessageID {
 	}
 }
 
-func(m *Update) To_UpdateNewReact() *TLUpdateNewReact{
+func (m *Update) To_UpdateNewReact() *TLUpdateNewReact {
 	return &TLUpdateNewReact{
 		Data2: m.Data2,
 	}
@@ -24334,6 +24337,7 @@ func (m *TLUpdateNewReact) Decode(dbuf *DecodeBuf) error {
 
 	return dbuf.err
 }
+
 // updateChatUserTyping#9a65ea1f chat_id:int user_id:int action:SendMessageAction = Update;
 func (m *TLUpdateChatUserTyping) To_Update() *Update {
 	return &Update{
@@ -36121,7 +36125,9 @@ func (m *TLPeerChannel) Encode() []byte {
 	x.Int(int32(TLConstructor_CRC32_peerChannel))
 
 	x.Int(m.GetChannelId())
-
+	x.Int(0)
+	x.String("")
+	x.Int(0)
 	return x.buf
 }
 
@@ -36130,13 +36136,18 @@ func (m *TLPeerChannel) EncodeToLayer(layer int) []byte {
 	x.Int(int32(TLConstructor_CRC32_peerChannel))
 
 	x.Int(m.GetChannelId())
+	x.Int(0)
+	x.String("")
+	x.Int(0)
 
 	return x.buf
 }
 
 func (m *TLPeerChannel) Decode(dbuf *DecodeBuf) error {
 	m.SetChannelId(dbuf.Int())
-
+	dbuf.Int()
+	dbuf.String()
+	dbuf.Int()
 	return dbuf.err
 }
 
@@ -40796,6 +40807,7 @@ func (m *TLMessage) EncodeToLayer(layer int) []byte {
 		flags |= 1 << 17
 	}
 	x.UInt(flags)
+	glog.Infof("flag: %d", flags)
 
 	x.Int(m.GetId())
 	if m.GetFromId() != 0 {
@@ -55275,8 +55287,12 @@ func (m *TLDialog) Encode() []byte {
 	if m.GetPinned() == true {
 		flags |= 1 << 2
 	}
-
-
+	if m.GetPts() != 0 {
+		flags |= 1 << 0
+	}
+	if m.GetDraft() != nil {
+		flags |= 1 << 1
+	}
 
 	x.UInt(flags)
 
@@ -55306,6 +55322,12 @@ func (m *TLDialog) EncodeToLayer(layer int) []byte {
 	if m.GetPinned() == true {
 		flags |= 1 << 2
 	}
+	if m.GetPts() != 0 {
+		flags |= 1 << 0
+	}
+	if m.GetDraft() != nil {
+		flags |= 1 << 1
+	}
 
 	x.UInt(flags)
 
@@ -55332,9 +55354,10 @@ func (m *TLDialog) Decode(dbuf *DecodeBuf) error {
 	if (flags & (1 << 2)) != 0 {
 		m.SetPinned(true)
 	}
-	if (flags & (1 << 3)) != 0 {
-		m.SetUnreadMark(true)
-	}
+	//if (flags & (1 << 3)) != 0 {
+	//	m.SetUnreadMark(true)
+	//}
+
 	m4 := &Peer{}
 	m4.Decode(dbuf)
 	m.SetPeer(m4)
@@ -57206,7 +57229,7 @@ func (m *TLChannel) Encode() []byte {
 	if m.GetParticipantsCount() != 0 {
 		x.Int(m.GetParticipantsCount())
 	}
-
+	x.Int(0)
 	return x.buf
 }
 
@@ -57289,7 +57312,7 @@ func (m *TLChannel) EncodeToLayer(layer int) []byte {
 	if m.GetParticipantsCount() != 0 {
 		x.Int(m.GetParticipantsCount())
 	}
-
+	x.Int(0)
 	return x.buf
 }
 
@@ -57355,7 +57378,7 @@ func (m *TLChannel) Decode(dbuf *DecodeBuf) error {
 	if (flags & (1 << 17)) != 0 {
 		m.SetParticipantsCount(dbuf.Int())
 	}
-
+	dbuf.Int()
 	return dbuf.err
 }
 
@@ -58046,15 +58069,15 @@ func (m *TLDraftMessageEmpty) Encode() []byte {
 	x.Int(int32(TLConstructor_CRC32_draftMessageEmpty))
 
 	// flags
-	var flags uint32 = 0
-	if m.GetDate() != 0 {
-		flags |= 1 << 0
-	}
-	x.UInt(flags)
-
-	if m.GetDate() != 0 {
-		x.Int(m.GetDate())
-	}
+	//var flags uint32 = 0
+	//if m.GetDate() != 0 {
+	//	flags |= 1 << 0
+	//}
+	//x.UInt(flags)
+	//
+	//if m.GetDate() != 0 {
+	//	x.Int(m.GetDate())
+	//}
 
 	return x.buf
 }
@@ -58064,25 +58087,25 @@ func (m *TLDraftMessageEmpty) EncodeToLayer(layer int) []byte {
 	x.Int(int32(TLConstructor_CRC32_draftMessageEmpty))
 
 	// flags
-	var flags uint32 = 0
-	if m.GetDate() != 0 {
-		flags |= 1 << 0
-	}
-	x.UInt(flags)
-
-	if m.GetDate() != 0 {
-		x.Int(m.GetDate())
-	}
+	//var flags uint32 = 0
+	//if m.GetDate() != 0 {
+	//	flags |= 1 << 0
+	//}
+	//x.UInt(flags)
+	//
+	//if m.GetDate() != 0 {
+	//	x.Int(m.GetDate())
+	//}
 
 	return x.buf
 }
 
 func (m *TLDraftMessageEmpty) Decode(dbuf *DecodeBuf) error {
-	flags := dbuf.UInt()
-	_ = flags
-	if (flags & (1 << 0)) != 0 {
-		m.SetDate(dbuf.Int())
-	}
+	//flags := dbuf.UInt()
+	//_ = flags
+	//if (flags & (1 << 0)) != 0 {
+	//	m.SetDate(dbuf.Int())
+	//}
 
 	return dbuf.err
 }
@@ -61682,12 +61705,12 @@ func (m *TLPeerNotifySettings) Encode() []byte {
 	}
 	x.UInt(flags)
 
-	if m.GetShowPreviews() != nil {
-		x.Bytes(m.GetShowPreviews().Encode())
-	}
-	if m.GetSilent() != nil {
-		x.Bytes(m.GetSilent().Encode())
-	}
+	// if m.GetShowPreviews() != nil {
+	// 	x.Bytes(m.GetShowPreviews().Encode())
+	// }
+	// if m.GetSilent() != nil {
+	// 	x.Bytes(m.GetSilent().Encode())
+	// }
 	if m.GetMuteUntil() != 0 {
 		x.Int(m.GetMuteUntil())
 	}
@@ -61718,12 +61741,12 @@ func (m *TLPeerNotifySettings) EncodeToLayer(layer int) []byte {
 	}
 	x.UInt(flags)
 
-	if m.GetShowPreviews() != nil {
-		x.Bytes(m.GetShowPreviews().EncodeToLayer(layer))
-	}
-	if m.GetSilent() != nil {
-		x.Bytes(m.GetSilent().EncodeToLayer(layer))
-	}
+	// if m.GetShowPreviews() != nil {
+	// 	x.Bytes(m.GetShowPreviews().EncodeToLayer(layer))
+	// }
+	// if m.GetSilent() != nil {
+	// 	x.Bytes(m.GetSilent().EncodeToLayer(layer))
+	// }
 	if m.GetMuteUntil() != 0 {
 		x.Int(m.GetMuteUntil())
 	}
@@ -66426,7 +66449,8 @@ func (m *TLInputChannel) EncodeToLayer(layer int) []byte {
 func (m *TLInputChannel) Decode(dbuf *DecodeBuf) error {
 	m.SetChannelId(dbuf.Int())
 	m.SetAccessHash(dbuf.Long())
-
+	dbuf.Int()
+	dbuf.String()
 	return dbuf.err
 }
 

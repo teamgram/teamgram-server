@@ -38,12 +38,12 @@ type usersDAO struct {
 }
 
 type UserModel struct {
-	dao                   *usersDAO
-	contactCallback       core.ContactCallback
-	photoCallback         core.PhotoCallback
-	usernameCallback      core.UsernameCallback
+	dao              *usersDAO
+	contactCallback  core.ContactCallback
+	photoCallback    core.PhotoCallback
+	usernameCallback core.UsernameCallback
 	// notifySettingCallback core.NotifySettingCallback
-	accountCallback       core.AccountCallback
+	accountCallback core.AccountCallback
 }
 
 func (m *UserModel) InstallModel() {
@@ -60,6 +60,7 @@ func (m *UserModel) InstallModel() {
 }
 
 func (m *UserModel) RegisterCallback(cb interface{}) {
+
 	switch cb.(type) {
 	case core.ContactCallback:
 		glog.Info("userModel - register core.ContactCallback")
@@ -70,13 +71,14 @@ func (m *UserModel) RegisterCallback(cb interface{}) {
 	case core.UsernameCallback:
 		glog.Info("userModel - register core.UsernameCallback")
 		m.usernameCallback = cb.(core.UsernameCallback)
-	//case core.NotifySettingCallback:
-	//	glog.Info("userModel - register core.NotifySettingCallback")
-	//	m.notifySettingCallback = cb.(core.NotifySettingCallback)
+	// case core.NotifySettingCallback:
+	// 	glog.Info("userModel - register core.NotifySettingCallback")
+	// 	m.notifySettingCallback = cb.(core.NotifySettingCallback)
 	case core.AccountCallback:
 		glog.Info("userModel - register core.AccountCallback")
 		m.accountCallback = cb.(core.AccountCallback)
 	}
+
 }
 
 func init() {

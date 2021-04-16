@@ -19,14 +19,15 @@ package rpc
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/sync/biz/core/update"
 	"github.com/nebula-chat/chatengine/mtproto"
-	"github.com/nebula-chat/chatengine/mtproto/rpc"
-	"github.com/nebula-chat/chatengine/service/status/client"
-	"github.com/nebula-chat/chatengine/service/status/proto"
-	"sync"
+	zrpc "github.com/nebula-chat/chatengine/mtproto/rpc"
+	status_client "github.com/nebula-chat/chatengine/service/status/client"
+	status "github.com/nebula-chat/chatengine/service/status/proto"
 )
 
 /*
@@ -273,19 +274,11 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 				}
 				ptsCount += update.Data2.Pts
 			case mtproto.TLConstructor_CRC32_updateNewChannelMessage:
-				//if request.PushType == mtproto.SyncType_SYNC_TYPE_USER_NOTME {
-				//	channelMessage := update.To_UpdateNewChannelMessage().GetMessage()
-				//
-				//	// TODO(@benqi): Check toId() invalid.
-				//	pts = int32(s.UpdateModel.NextChannelPtsId(channelMessage.GetData2().GetToId().GetData2().GetChannelId()))
-				//	ptsCount = 1
-				//	totalPtsCount += 1
-				//
-				//	// @benqi: 以上都有Pts和PtsCount
-				//	update.Data2.Pts = pts
-				//	update.Data2.PtsCount = ptsCount
-				//	s.UpdateModel.AddToChannelPtsQueue(channelMessage.GetData2().GetToId().GetData2().GetChannelId(), pts, ptsCount, update)
-				//}
+				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
+				if update.Data2.Pts > pts {
+					pts = update.Data2.Pts
+				}
+				ptsCount += update.Data2.Pts
 			}
 		}
 
@@ -308,7 +301,7 @@ func (s *SyncServiceImpl) processUpdatesRequest(userId int32, ups *mtproto.Updat
 	return pts, ptsCount, nil
 }
 
-func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtproto.Updates) (int32, int32, error) {
+func (s *SyncServiceImpl) processChannelUpdatesRequest(userId, channelId int32, ups *mtproto.Updates) (int32, int32, error) {
 	var pts, ptsCount int32
 	switch ups.GetConstructor() {
 	case mtproto.TLConstructor_CRC32_updates:
@@ -317,6 +310,7 @@ func (s *SyncServiceImpl) processChannelUpdatesRequest(channelId int32, ups *mtp
 			switch update.GetConstructor() {
 			case mtproto.TLConstructor_CRC32_updateNewChannelMessage:
 				s.UpdateModel.AddToChannelPtsQueue(channelId, update.Data2.Pts, update.Data2.PtsCount, update)
+				s.UpdateModel.AddToPtsQueue(userId, update.Data2.Pts, update.Data2.PtsCount, update)
 				if updates2.Data2.Pts > pts {
 					pts = updates2.Data2.Pts
 				}

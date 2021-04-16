@@ -53,22 +53,27 @@ type MysqlDAOList struct {
 	ReportsDAO               *mysql_dao.ReportsDAO
 	UserPrivacysDAO          *mysql_dao.UserPrivacysDAO
 	TmpPasswordsDAO          *mysql_dao.TmpPasswordsDAO
-	ChannelsDAO              *mysql_dao.ChannelsDAO
-	ChannelParticipantsDAO   *mysql_dao.ChannelParticipantsDAO
-	ChatsDAO                 *mysql_dao.ChatsDAO
-	ChatParticipantsDAO      *mysql_dao.ChatParticipantsDAO
-	UserPtsUpdatesDAO        *mysql_dao.UserPtsUpdatesDAO
-	UserQtsUpdatesDAO        *mysql_dao.UserQtsUpdatesDAO
-	AuthSeqUpdatesDAO        *mysql_dao.AuthSeqUpdatesDAO
-	AuthUpdatesStateDAO      *mysql_dao.AuthUpdatesStateDAO
-	UserPresencesDAO         *mysql_dao.UserPresencesDAO
-	UserPasswordsDAO         *mysql_dao.UserPasswordsDAO
-	WallPapersDAO            *mysql_dao.WallPapersDAO
-	PhoneCallSessionsDAO     *mysql_dao.PhoneCallSessionsDAO
-	MessageReactDAO          *mysql_dao.MessageReactDAO
-	MessageReactDataDAO      *mysql_dao.MessageReactDataDAO
-	StickerSetsDAO           *mysql_dao.StickerSetsDAO
-	StickerPacksDAO          *mysql_dao.StickerPacksDAO
+
+	ChannelsDAO            *mysql_dao.ChannelsDAO
+	ChannelParticipantsDAO *mysql_dao.ChannelParticipantsDAO
+	ChannelMessagesDAO     *mysql_dao.ChannelMessagesDAO
+	ChannelMessageBoxesDAO *mysql_dao.ChannelMessageBoxesDAO
+	ChannelMediaUnreadDAO  *mysql_dao.ChannelMediaUnreadDAO
+
+	ChatsDAO             *mysql_dao.ChatsDAO
+	ChatParticipantsDAO  *mysql_dao.ChatParticipantsDAO
+	UserPtsUpdatesDAO    *mysql_dao.UserPtsUpdatesDAO
+	UserQtsUpdatesDAO    *mysql_dao.UserQtsUpdatesDAO
+	AuthSeqUpdatesDAO    *mysql_dao.AuthSeqUpdatesDAO
+	AuthUpdatesStateDAO  *mysql_dao.AuthUpdatesStateDAO
+	UserPresencesDAO     *mysql_dao.UserPresencesDAO
+	UserPasswordsDAO     *mysql_dao.UserPasswordsDAO
+	WallPapersDAO        *mysql_dao.WallPapersDAO
+	PhoneCallSessionsDAO *mysql_dao.PhoneCallSessionsDAO
+	MessageReactDAO      *mysql_dao.MessageReactDAO
+	MessageReactDataDAO  *mysql_dao.MessageReactDataDAO
+	StickerSetsDAO       *mysql_dao.StickerSetsDAO
+	StickerPacksDAO      *mysql_dao.StickerPacksDAO
 
 	MessageDatasDAO *mysql_dao.MessageDatasDAO
 
@@ -122,7 +127,13 @@ func InstallMysqlDAOManager(clients sync.Map /*map[string]*sqlx.DB*/) {
 		daoList.ReportsDAO = mysql_dao.NewReportsDAO(v)
 		daoList.UserPrivacysDAO = mysql_dao.NewUserPrivacysDAO(v)
 		daoList.TmpPasswordsDAO = mysql_dao.NewTmpPasswordsDAO(v)
+
 		daoList.ChannelsDAO = mysql_dao.NewChannelsDAO(v)
+		daoList.ChannelParticipantsDAO = mysql_dao.NewChannelParticipantsDAO(v)
+		daoList.ChannelMessagesDAO = mysql_dao.NewChannelMessagesDAO(v)
+		daoList.ChannelMessageBoxesDAO = mysql_dao.NewChannelMessageBoxesDAO(v)
+		daoList.ChannelMediaUnreadDAO = mysql_dao.NewChannelMediaUnreadDAO(v)
+
 		daoList.ChatsDAO = mysql_dao.NewChatsDAO(v)
 		daoList.ChatParticipantsDAO = mysql_dao.NewChatParticipantsDAO(v)
 		daoList.UserPtsUpdatesDAO = mysql_dao.NewUserPtsUpdatesDAO(v)
@@ -335,6 +346,33 @@ func GetChannelParticipantsDAO(dbName string) (dao *mysql_dao.ChannelParticipant
 	// err := mysqlDAOManager.daoListMap[dbName]
 	if daoList != nil {
 		dao = daoList.ChannelParticipantsDAO
+	}
+	return
+}
+
+func GetChannelMessageBoxesDAO(dbName string) (dao *mysql_dao.ChannelMessageBoxesDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.ChannelMessageBoxesDAO
+	}
+	return
+}
+
+func GetChannelMessagesDAO(dbName string) (dao *mysql_dao.ChannelMessagesDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.ChannelMessagesDAO
+	}
+	return
+}
+
+func GetChannelMediaUnreadDAO(dbName string) (dao *mysql_dao.ChannelMediaUnreadDAO) {
+	daoList := GetMysqlDAOList(dbName)
+	// err := mysqlDAOManager.daoListMap[dbName]
+	if daoList != nil {
+		dao = daoList.ChannelMediaUnreadDAO
 	}
 	return
 }

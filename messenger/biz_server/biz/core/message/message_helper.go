@@ -19,6 +19,8 @@ package message
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/glog"
 	"github.com/nebula-chat/chatengine/messenger/biz_server/biz/base"
@@ -27,7 +29,6 @@ import (
 	"github.com/nebula-chat/chatengine/messenger/sync/sync_client"
 	"github.com/nebula-chat/chatengine/mtproto"
 	base2 "github.com/nebula-chat/chatengine/pkg/util"
-	"time"
 )
 
 type OnBoxCallback func(int32, *MessageBox2)
@@ -70,7 +71,41 @@ func MakeMessageOutBox(userId int32, mediaUnread bool, replyToMsgId int32, messa
 		MessageData:    messageData,
 	}
 }
+func (m *MessageModel) makeChannelMessageBoxByDO(boxDO *dataobject.ChannelMessagesDO) *MessageBox2 {
+	// TODO(@benqi): check boxDO and dataDO
+	mBox := &MessageBox2{
+		OwnerId:        boxDO.ChannelId,
+		MessageId:      boxDO.ChannelMessageId,
+		MessageBoxType: MESSAGE_BOX_TYPE_CHANNEL,
+		// MediaUnread:    base2.Int8ToBool(boxDO.HasMediaUnread),
+	}
 
+	mData := &MessageData{
+		DialogId:        int64(-boxDO.ChannelId),
+		DialogMessageId: boxDO.ChannelMessageId,
+		SenderUserId:    boxDO.SenderUserId,
+		Peer:            &base.PeerUtil{PeerType: base.PEER_CHANNEL, PeerId: boxDO.ChannelId},
+		RandomId:        boxDO.RandomId,
+		EditMessage:     boxDO.EditMessage,
+		EditDate:        boxDO.EditDate,
+		Views:           boxDO.Views,
+		dao:             m.dao,
+	}
+
+	mData.Message, _ = decodeMessage(int(boxDO.MessageType), []byte(boxDO.MessageData))
+	mBox.MessageData = mData
+	return mBox
+}
+
+func MakeChannelMessageBox(channelId int32, messageData *MessageData) *MessageBox2 {
+	return &MessageBox2{
+		OwnerId:        channelId,
+		MessageId:      int32(messageData.DialogMessageId),
+		MessageBoxType: MESSAGE_BOX_TYPE_CHANNEL,
+		MediaUnread:    false,
+		MessageData:    messageData,
+	}
+}
 func MakeMessageInBox(userId int32, mediaUnread bool, replyToMsgId int32, messageData *MessageData) *MessageBox2 {
 	mentioned := hasMention(messageData.Message.Data2.Entities, userId)
 	return &MessageBox2{
@@ -142,7 +177,21 @@ func (m *MessageBox2) ToMessage(toUserId int32) *mtproto.Message {
 		message.Data2.ReplyToMsgId = m.ReplyToMsgId
 		message.Data2.MediaUnread = m.MediaUnread
 	case MESSAGE_BOX_TYPE_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		if m.SenderUserId == toUserId {
+			message.Data2.Out = true
+			// Outbox media_unread is false
+			message.Data2.MediaUnread = false
+		} else {
+			message.Data2.Out = false
+			if m.HasMediaUnread {
+				mediaUnreadDO := m.dao.ChannelMediaUnreadDAO.SelectMediaUnread(toUserId, int32(-m.DialogId), m.DialogMessageId)
+				if mediaUnreadDO == nil {
+					message.Data2.MediaUnread = m.HasMediaUnread
+				} else {
+					message.Data2.MediaUnread = false
+				}
+			}
+		}
 	default:
 		// TODO(@benqi): unknown error.
 	}
@@ -225,7 +274,30 @@ func (m *MessageData) Insert() (rowsAffected int64) {
 			}
 		}
 	case base.PEER_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		channelMessageDataDO := &dataobject.ChannelMessagesDO{
+			ChannelId:        int32(-m.DialogId),
+			ChannelMessageId: m.DialogMessageId,
+			SenderUserId:     m.SenderUserId,
+			RandomId:         m.RandomId,
+			MessageDataId:    m.MessageDataId,
+			MessageType:      int8(mtype),
+			MessageData:      string(mdata),
+			HasMediaUnread:   base2.BoolToInt8(m.HasMediaUnread),
+			Views:            m.Views,
+			Date:             int32(time.Now().Unix()),
+			Deleted:          0,
+		}
+		// TODO(@benqi): random_id已经存在
+		rowsAffected = m.dao.ChannelMessagesDAO.Insert(channelMessageDataDO)
+		if rowsAffected == 0 {
+			do := m.dao.ChannelMessagesDAO.SelectByRandomId(m.SenderUserId, m.RandomId)
+			if do != nil {
+				m.MessageDataId = do.MessageDataId
+				m.DialogMessageId = do.ChannelMessageId
+			} else {
+				rowsAffected = -1
+			}
+		}
 	}
 
 	return
@@ -325,7 +397,12 @@ func (m *MessageModel) SendInternalMessage(senderUserId int32,
 			// GetParatiants.
 		}
 	case base.PEER_CHANNEL:
-		glog.Warning("blocked, License key from https://nebula.chat required to unlock enterprise features.")
+		// 发给Channel
+		channelBox := MakeChannelMessageBox(peer.PeerId, messageData)
+		channelBox.Insert()
+		if cb != nil {
+			cb(senderUserId, channelBox)
+		}
 	default:
 	}
 
@@ -374,7 +451,7 @@ func (m *MessageModel) GetMessageBox2(peerType, ownerId, messageId int32) (*Mess
 		boxDO := m.dao.MessageBoxesDAO.SelectByMessageId(ownerId, messageId)
 		if boxDO == nil {
 			return nil, fmt.Errorf("2222222")
-			fmt.Errorf( string(ownerId), string(messageId))
+			fmt.Errorf(string(ownerId), string(messageId))
 			glog.Infoln(ownerId, messageId)
 		}
 
@@ -421,6 +498,43 @@ func (m *MessageModel) GetMessageBox3(peerType int32, messageId int64) (*Message
 	}
 
 	return mBox, nil
+}
+
+func (m *MessageModel) SendChannelMessage(sendUserId int32,
+	peer *base.PeerUtil,
+	randomId int64,
+	outboxMessage *mtproto.Message,
+	resultCB func(pts, ptsCount int32, channelBox *MessageBox2) *mtproto.Updates,
+	syncNotMeCB func(pts, ptsCount int32, channelBox *MessageBox2) ([]int32, int64, *mtproto.Updates, error),
+	pushCB func(userId, pts, ptsCount int32, channelBox *MessageBox2) (*mtproto.Updates, error)) (*mtproto.Updates, error) {
+
+	// TODO(@benqi): rollback
+	defer func() {
+
+	}()
+
+	var channelBox *MessageBox2
+	err := m.SendInternalMessage(sendUserId, peer, randomId, false, outboxMessage, func(ownerId int32, box2 *MessageBox2) {
+		channelBox = box2
+	})
+
+	if err != nil {
+		glog.Error(err)
+		return nil, err
+	}
+
+	pts := int32(core.NextChannelPtsId(channelBox.OwnerId))
+	ptsCount := int32(1)
+
+	idList, authKeyId, syncUpdates, err := syncNotMeCB(pts, ptsCount, channelBox)
+	sync_client.GetSyncClient().SyncChannelUpdatesNotMe(channelBox.OwnerId, sendUserId, authKeyId, syncUpdates)
+
+	for _, id := range idList {
+		pushUpdates, _ := pushCB(id, pts, ptsCount, channelBox)
+		sync_client.GetSyncClient().PushChannelUpdates(channelBox.OwnerId, id, pushUpdates)
+	}
+
+	return resultCB(pts, ptsCount, channelBox), nil
 }
 
 func (m *MessageModel) SendMessage(sendUserId int32,

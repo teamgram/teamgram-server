@@ -18,21 +18,40 @@
 package channels
 
 import (
-    "fmt"
-    "github.com/golang/glog"
-    "golang.org/x/net/context"
-    "github.com/nebula-chat/chatengine/pkg/grpc_util"
-    "github.com/nebula-chat/chatengine/pkg/logger"
-    "github.com/nebula-chat/chatengine/mtproto"
+	"github.com/golang/glog"
+	"github.com/nebula-chat/chatengine/mtproto"
+	"github.com/nebula-chat/chatengine/pkg/grpc_util"
+	"github.com/nebula-chat/chatengine/pkg/logger"
+	"golang.org/x/net/context"
 )
 
 // channels.getFullChannel#8736a09 channel:InputChannel = messages.ChatFull;
 func (s *ChannelsServiceImpl) ChannelsGetFullChannel(ctx context.Context, request *mtproto.TLChannelsGetFullChannel) (*mtproto.Messages_ChatFull, error) {
-    md := grpc_util.RpcMetadataFromIncoming(ctx)
-    glog.Infof("channels.getFullChannel - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
+	md := grpc_util.RpcMetadataFromIncoming(ctx)
+	glog.Infof("channels.getFullChannel#8736a09 - metadata: %s, request: %s", logger.JsonDebugData(md), logger.JsonDebugData(request))
 
-    // Sorry: not impl ChannelsGetFullChannel logic
-    glog.Warning("channels.getFullChannel blocked, License key from https://nebula.chat required to unlock enterprise features.")
+	if request.Channel.Constructor == mtproto.TLConstructor_CRC32_inputChannelEmpty {
+		// TODO(@benqi): chatUser不能是inputUser和inputUserSelf
+		err := mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_BAD_REQUEST)
+		glog.Error("channels.exportInvite#c7560885 - error: ", err, "; InputPeer invalid")
+		return nil, err
+	}
 
-    return nil, fmt.Errorf("not imp ChannelsGetFullChannel")
+	inputChannel := request.GetChannel().To_InputChannel()
+
+	channelLogic, err := s.ChannelModel.NewChannelLogicById(inputChannel.GetChannelId())
+	if err != nil {
+		glog.Error("channels.getFullChannel#8736a09 - error: ", err)
+		return nil, err
+	}
+
+	// idList := channelLogic.GetChannelParticipantIdList()
+	messagesChatFull := &mtproto.TLMessagesChatFull{Data2: &mtproto.Messages_ChatFull_Data{
+		FullChat: channelLogic.ToChannelFull(md.UserId),
+		Chats:    []*mtproto.Chat{channelLogic.ToChannel(md.UserId)},
+		Users:    []*mtproto.User{},
+	}}
+
+	glog.Infof("channels.getFullChannel#8736a09 - reply: %s", logger.JsonDebugData(messagesChatFull))
+	return messagesChatFull.To_Messages_ChatFull(), nil
 }
