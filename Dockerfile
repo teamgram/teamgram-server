@@ -1,4 +1,4 @@
-FROM golang:1.12.12 AS builder
+FROM golang:1.13 AS builder
 
 ENV CGO_ENABLED 0
 ENV TARGET_DIR $GOPATH/src/github.com/nebula-chat/chatengine
