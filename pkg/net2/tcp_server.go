@@ -231,7 +231,7 @@ func (s *TcpServer) onConnectionClosed(conn *TcpConnection) {
 func (s *TcpServer) SendByConnID(connID uint64, msg interface{}) error {
 	conn := s.connectionManager.GetConnection(connID)
 	if conn == nil {
-		return fmt.Errorf("can not get session!")
+		return fmt.Errorf("can not get session")
 	}
 	return conn.Send(msg)
 }
