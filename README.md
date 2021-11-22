@@ -146,4 +146,3 @@ Please report bugs, concerns, suggestions by issues.
 Chatengine is not a commercial project, only supports mtproto API layer 86, and only supports private chats and small groups. 
 
 If need enterprise edition, please PM the [author](https://t.me/benqi) or download clients from [nebula.chat](https://nebula.chat) (default verify code is: 12345).
-
