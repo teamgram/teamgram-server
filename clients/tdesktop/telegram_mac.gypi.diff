@@ -1,0 +1,13 @@
+diff --git a/Telegram/gyp/telegram_mac.gypi b/Telegram/gyp/telegram_mac.gypi
+index 68591c439..5bb351b88 100644
+--- a/Telegram/gyp/telegram_mac.gypi
++++ b/Telegram/gyp/telegram_mac.gypi
+@@ -197,7 +197,7 @@
+       ],
+     },
+     'defines': [
+-      'TDESKTOP_DISABLE_AUTOUPDATE',
++      # 'TDESKTOP_DISABLE_AUTOUPDATE',
+       'OS_MAC_STORE',
+     ],
+     'postbuilds': [{

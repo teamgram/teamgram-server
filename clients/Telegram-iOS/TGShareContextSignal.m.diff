@@ -1,0 +1,59 @@
+diff --git a/LegacyDatabase/TGShareContextSignal.m b/LegacyDatabase/TGShareContextSignal.m
+index 3aed7354..424c31ae 100644
+--- a/LegacyDatabase/TGShareContextSignal.m
++++ b/LegacyDatabase/TGShareContextSignal.m
+@@ -210,15 +210,25 @@ static void TGShareLoggingFunction(NSString *format, va_list args)
+                         {
+                             if (isTestingEnvironment)
+                             {
++#ifndef PATCH_BY_NEBULACHAT
+                                 [mtContext updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
+                                                                                                                                                  [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.10" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
+                                                                                                                                                  ]] forceUpdateSchemes:true];
+                                 [mtContext updateAddressSetForDatacenterWithId:2 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
+                                                                                                                                                  [[MTDatacenterAddress alloc] initWithIp:@"149.154.167.40" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
+                                                                                                                                                  ]] forceUpdateSchemes:true];
++#else
++                                [mtContext updateAddressSetForDatacenterWithId:1 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                                                                                                                                  [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                                                                                                                                  ]] forceUpdateSchemes:true];
++                                [mtContext updateAddressSetForDatacenterWithId:2 addressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                                                                                                                                  [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                                                                                                                                  ]] forceUpdateSchemes:true];
++#endif
+                             }
+                             else
+                             {
++#ifndef PATCH_BY_NEBULACHAT
+                                 [mtContext setSeedAddressSetForDatacenterWithId:1 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
+                                                                                                                                                        [[MTDatacenterAddress alloc] initWithIp:@"149.154.175.50" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
+                                 ]]];
+@@ -238,6 +248,28 @@ static void TGShareLoggingFunction(NSString *format, va_list args)
+                                 [mtContext setSeedAddressSetForDatacenterWithId:5 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
+                                     [[MTDatacenterAddress alloc] initWithIp:@"149.154.171.5" port:443 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
+                                 ]]];
++#else
++                                [mtContext setSeedAddressSetForDatacenterWithId:1 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                    [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                    ]]];
++                                
++                                [mtContext setSeedAddressSetForDatacenterWithId:2 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                    [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                    ]]];
++                                
++                                [mtContext setSeedAddressSetForDatacenterWithId:3 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                    [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                    ]]];
++                                
++                                [mtContext setSeedAddressSetForDatacenterWithId:4 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                    [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                    ]]];
++                                
++                                [mtContext setSeedAddressSetForDatacenterWithId:5 seedAddressSet:[[MTDatacenterAddressSet alloc] initWithAddressList:@[
++                                    [[MTDatacenterAddress alloc] initWithIp:@"47.103.102.219" port:12345 preferForMedia:false restrictToTcp:false cdn:false preferForProxy:false secret:nil]
++                                    ]]];
++
++#endif
+                             }
+                         }];
+                         

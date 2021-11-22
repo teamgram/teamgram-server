@@ -1,0 +1,17 @@
+diff --git a/TMessagesProj/jni/tgnet/Datacenter.h b/TMessagesProj/jni/tgnet/Datacenter.h
+index d59f74f3..ad872e22 100644
+--- a/TMessagesProj/jni/tgnet/Datacenter.h
++++ b/TMessagesProj/jni/tgnet/Datacenter.h
+@@ -78,8 +78,11 @@ private:
+     TLObject *getCurrentHandshakeRequest(bool media);
+     ByteArray *getAuthKey(ConnectionType connectionType, bool perm, int64_t *authKeyId, int32_t allowPendingKey);
+ 
++#ifdef PATCH_BY_NEBULACHAT
++    const int32_t *defaultPorts = new int32_t[4] {-1, 12345, 12345, -1};
++#else
+     const int32_t *defaultPorts = new int32_t[4] {-1, 443, 5222, -1};
+-
++#endif
+     int32_t instanceNum;
+     uint32_t datacenterId;
+     Connection *genericConnection = nullptr;

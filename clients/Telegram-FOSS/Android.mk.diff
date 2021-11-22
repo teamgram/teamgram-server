@@ -1,0 +1,14 @@
+diff --git a/TMessagesProj/jni/Android.mk b/TMessagesProj/jni/Android.mk
+index e0b05364..726af541 100755
+--- a/TMessagesProj/jni/Android.mk
++++ b/TMessagesProj/jni/Android.mk
+@@ -240,7 +240,8 @@ include $(BUILD_STATIC_LIBRARY)
+ 
+ include $(CLEAR_VARS)
+ 
+-LOCAL_CPPFLAGS := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD -finline-functions -ffast-math -O0
++#LOCAL_CPPFLAGS := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD -finline-functions -ffast-math -O0
++LOCAL_CPPFLAGS := -Wall -std=c++11 -DANDROID -frtti -DHAVE_PTHREAD -finline-functions -ffast-math -O0 -DPATCH_BY_NEBULACHAT
+ LOCAL_C_INCLUDES += $(LOCAL_PATH)/boringssl/include/
+ LOCAL_ARM_MODE := arm
+ LOCAL_MODULE := tgnet

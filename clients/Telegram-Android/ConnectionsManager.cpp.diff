@@ -1,0 +1,87 @@
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+index 6b45ebef..a848e986 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+@@ -1508,6 +1508,74 @@ bool ConnectionsManager::isIpv6Enabled() {
+ 
+ void ConnectionsManager::initDatacenters() {
+     Datacenter *datacenter;
++#ifdef PATCH_BY_NEBULACHAT
++    std::string _nebulaChatServer("47.103.102.219");
++    // std::string _nebulaChatServer("192.168.1.150");
++    // std::string _nebulaChatServer("192.168.0.113");
++    // std::string _nebulaChatServer("192.168.2.112");
++    // std::string _nebulaChatServer("182.16.84.106");
++
++    uint32_t _nebulaChatPort = 12345;
++
++    if (!testBackend) {
++        if (datacenters.find(1) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 1);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:b28:f23d:f001:0000:0000:0000:000a", 443, 1, "");
++            datacenters[1] = datacenter;
++        }
++        if (datacenters.find(2) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 2);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:67c:4e8:f002:0000:0000:0000:000a", 443, 1, "");
++            datacenters[2] = datacenter;
++        }
++
++        if (datacenters.find(3) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 3);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:b28:f23d:f003:0000:0000:0000:000a", 443, 1, "");
++            datacenters[3] = datacenter;
++        }
++
++        if (datacenters.find(4) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 4);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:67c:4e8:f004:0000:0000:0000:000a", 443, 1, "");
++            datacenters[4] = datacenter;
++        }
++
++        if (datacenters.find(5) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 5);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:b28:f23f:f005:0000:0000:0000:000a", 443, 1, "");
++            datacenters[5] = datacenter;
++        }
++    } else {
++        if (datacenters.find(1) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 1);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:b28:f23d:f001:0000:0000:0000:000e", 443, 1, "");
++            datacenters[1] = datacenter;
++        }
++
++/*
++        if (datacenters.find(2) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 2);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:67c:4e8:f002:0000:0000:0000:000e", 443, 1, "");
++            datacenters[2] = datacenter;
++        }
++
++        if (datacenters.find(3) == datacenters.end()) {
++            datacenter = new Datacenter(instanceNum, 3);
++            datacenter->addAddressAndPort(_nebulaChatServer, _nebulaChatPort, 0, "");
++            // datacenter->addAddressAndPort("2001:b28:f23d:f003:0000:0000:0000:000e", 443, 1, "");
++            datacenters[3] = datacenter;
++        }
++ */
++    }
++#else
+     if (!testBackend) {
+         if (datacenters.find(1) == datacenters.end()) {
+             datacenter = new Datacenter(instanceNum, 1);
+@@ -1565,6 +1633,7 @@ void ConnectionsManager::initDatacenters() {
+             datacenters[3] = datacenter;
+         }
+     }
++#endif
+ }
+ 
+ void ConnectionsManager::attachConnection(ConnectionSocket *connection) {

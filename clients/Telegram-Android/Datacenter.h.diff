@@ -1,0 +1,13 @@
+diff --git a/TMessagesProj/jni/tgnet/Datacenter.h b/TMessagesProj/jni/tgnet/Datacenter.h
+index d59f74f3..efdf4f28 100644
+--- a/TMessagesProj/jni/tgnet/Datacenter.h
++++ b/TMessagesProj/jni/tgnet/Datacenter.h
+@@ -78,7 +78,7 @@ private:
+     TLObject *getCurrentHandshakeRequest(bool media);
+     ByteArray *getAuthKey(ConnectionType connectionType, bool perm, int64_t *authKeyId, int32_t allowPendingKey);
+ 
+-    const int32_t *defaultPorts = new int32_t[4] {-1, 443, 5222, -1};
++    const int32_t *defaultPorts; // = new int32_t[4] {-1, 12345, 5222, -1};
+ 
+     int32_t instanceNum;
+     uint32_t datacenterId;

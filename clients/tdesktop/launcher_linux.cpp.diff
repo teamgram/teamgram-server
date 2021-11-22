@@ -1,0 +1,14 @@
+diff --git a/Telegram/SourceFiles/platform/linux/launcher_linux.cpp b/Telegram/SourceFiles/platform/linux/launcher_linux.cpp
+index fae2332ca..b33c2eda1 100644
+--- a/Telegram/SourceFiles/platform/linux/launcher_linux.cpp
++++ b/Telegram/SourceFiles/platform/linux/launcher_linux.cpp
+@@ -84,6 +84,9 @@ bool Launcher::launchUpdater(UpdaterLaunch action) {
+ 	if (cTestMode()) {
+ 		argumentsList.push("-testmode");
+ 	}
++#ifndef TDESKTOP_DISABLE_AUTOUPDATE
++#define TDESKTOP_DISABLE_AUTOUPDATE
++#endif
+ #ifndef TDESKTOP_DISABLE_AUTOUPDATE
+ 	if (Core::UpdaterDisabled()) {
+ 		argumentsList.push("-externalupdater");

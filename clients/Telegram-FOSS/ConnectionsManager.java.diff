@@ -1,0 +1,21 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 98766b5a..4ff6b90c 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -494,6 +494,8 @@ public class ConnectionsManager {
+     }
+ 
+     public static void onRequestNewServerIpAndPort(final int second, final int currentAccount) {
++        // @beqi, patch by nebula-chat
++        /*
+         Utilities.stageQueue.postRunnable(new Runnable() {
+             @Override
+             public void run() {
+@@ -528,6 +530,7 @@ public class ConnectionsManager {
+                 }
+             }
+         });
++        */
+     }
+ 
+     public static void onProxyError() {

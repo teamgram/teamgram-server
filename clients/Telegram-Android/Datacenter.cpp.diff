@@ -1,0 +1,30 @@
+diff --git a/TMessagesProj/jni/tgnet/Datacenter.cpp b/TMessagesProj/jni/tgnet/Datacenter.cpp
+index c3fe9928..d975de38 100644
+--- a/TMessagesProj/jni/tgnet/Datacenter.cpp
++++ b/TMessagesProj/jni/tgnet/Datacenter.cpp
+@@ -30,6 +30,8 @@
+ thread_local static SHA256_CTX sha256Ctx;
+ 
+ Datacenter::Datacenter(int32_t instance, uint32_t id) {
++    defaultPorts = new int32_t[4] {-1, 12345, 5222, -1};
++
+     instanceNum = instance;
+     datacenterId = id;
+     for (uint32_t a = 0; a < UPLOAD_CONNECTIONS_COUNT; a++) {
+@@ -55,6 +57,7 @@ inline char char2int(char input) {
+ }
+ 
+ Datacenter::Datacenter(int32_t instance, NativeByteBuffer *data) {
++    defaultPorts = new int32_t[4] {-1, 12345, 5222, -1};
+     instanceNum = instance;
+     for (uint32_t a = 0; a < UPLOAD_CONNECTIONS_COUNT; a++) {
+         uploadConnection[a] = nullptr;
+@@ -621,6 +624,8 @@ int64_t Datacenter::getServerSalt() {
+         DEBUG_D("dc%u valid salt not found", datacenterId);
+     }
+ 
++    DEBUG_E("patchByNebula: dc%u getServerSalt: %lli", datacenterId, result);
++
+     return result;
+ }
+ 

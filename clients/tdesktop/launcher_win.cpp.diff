@@ -1,0 +1,14 @@
+diff --git a/Telegram/SourceFiles/platform/win/launcher_win.cpp b/Telegram/SourceFiles/platform/win/launcher_win.cpp
+index 8d0309701..604044995 100644
+--- a/Telegram/SourceFiles/platform/win/launcher_win.cpp
++++ b/Telegram/SourceFiles/platform/win/launcher_win.cpp
+@@ -90,6 +90,9 @@ bool Launcher::launchUpdater(UpdaterLaunch action) {
+ 	if (cTestMode()) {
+ 		pushArgument(qsl("-testmode"));
+ 	}
++#ifndef TDESKTOP_DISABLE_AUTOUPDATE
++#define TDESKTOP_DISABLE_AUTOUPDATE
++#endif
+ #ifndef TDESKTOP_DISABLE_AUTOUPDATE
+ 	if (Core::UpdaterDisabled()) {
+ 		pushArgument(qsl("-externalupdater"));
