@@ -136,6 +136,9 @@ git clone https://github.com/nebula-chat/chatengine.git
 
 [tdesktop for NebulaChat](https://github.com/nebula-chat/chatengine/tree/master/clients/tdesktop)
 
+### tdesktop-builder
+
+[tdesktop-builder](https://github.com/iineva/tdesktop-builder)
 
 ### TODO
 
