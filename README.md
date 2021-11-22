@@ -128,13 +128,13 @@ git clone https://github.com/nebula-chat/chatengine.git
 ### Compatible clients
 **Important**: default signIn and signOut verify code is **12345**
 
-[Android client for NebulaChat](https://github.com/nebula-chat/clients/tree/master/Telegram-Android)
+[Android client for NebulaChat](https://github.com/nebula-chat/chatengine/tree/master/clients/Telegram-Android)
 
-[FOSS client for NebulaChat](https://github.com/nebula-chat/clients/tree/master/Telegram-FOSS)
+[FOSS client for NebulaChat](https://github.com/nebula-chat/chatengine/tree/master/clients/Telegram-FOSS)
 
-[iOS client for NebulaChat](https://github.com/nebula-chat/clients/tree/master/Telegram-iOS)
+[iOS client for NebulaChat](https://github.com/nebula-chat/chatengine/tree/master/clients/Telegram-iOS)
 
-[tdesktop for NebulaChat](https://github.com/nebula-chat/clients/tree/master/tdesktop)
+[tdesktop for NebulaChat](https://github.com/nebula-chat/chatengine/tree/master/clients/tdesktop)
 
 
 ### TODO
