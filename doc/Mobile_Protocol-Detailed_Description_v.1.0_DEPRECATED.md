@@ -98,7 +98,7 @@ x 为字节偏移量, 消息的方向不同, x 的值不同.
 
 加密数据结构: 
 
-| `auth_key_id` | `session_id` | `message_id ` | `seq_no` |`message_data_length` |`message_data` | `padding 0..15` |
+| `salt` | `session_id` | `message_id ` | `seq_no` |`message_data_length` |`message_data` | `padding 0..15` |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | int64 | int64 | int64 | int32 | int32 | bytes | bytes |
 
