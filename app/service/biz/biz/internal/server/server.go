@@ -22,45 +22,27 @@ import (
 	"flag"
 	auth_helper "github.com/teamgram/teamgram-server/app/service/biz/auth"
 	"github.com/teamgram/teamgram-server/app/service/biz/auth/auth"
-	banned_helper "github.com/teamgram/teamgram-server/app/service/biz/banned"
-	"github.com/teamgram/teamgram-server/app/service/biz/banned/banned"
 	"github.com/teamgram/teamgram-server/app/service/biz/biz/internal/config"
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/zrpc"
-	"google.golang.org/grpc"
-	// channel_helper "github.com/teamgram/teamgram-server/app/service/biz/channel"
-	// "github.com/teamgram/teamgram-server/app/service/biz/channel/channel"
 	chat_helper "github.com/teamgram/teamgram-server/app/service/biz/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	code_helper "github.com/teamgram/teamgram-server/app/service/biz/code"
 	"github.com/teamgram/teamgram-server/app/service/biz/code/code"
 	dialog_helper "github.com/teamgram/teamgram-server/app/service/biz/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
-	gif_helper "github.com/teamgram/teamgram-server/app/service/biz/gif"
-	"github.com/teamgram/teamgram-server/app/service/biz/gif/gif"
 	message_helper "github.com/teamgram/teamgram-server/app/service/biz/message"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
-	report_helper "github.com/teamgram/teamgram-server/app/service/biz/report"
-	"github.com/teamgram/teamgram-server/app/service/biz/report/report"
-	// secretchat_helper "github.com/teamgram/teamgram-server/app/service/biz/secretchat"
-	// "github.com/teamgram/teamgram-server/app/service/biz/secretchat/secretchat"
-	// sticker_helper "github.com/teamgram/teamgram-server/app/service/biz/sticker"
-	// "github.com/teamgram/teamgram-server/app/service/biz/sticker/sticker"
-	// theme_helper "github.com/teamgram/teamgram-server/app/service/biz/theme"
-	// "github.com/teamgram/teamgram-server/app/service/biz/theme/theme"
 	updates_helper "github.com/teamgram/teamgram-server/app/service/biz/updates"
 	"github.com/teamgram/teamgram-server/app/service/biz/updates/updates"
 	user_helper "github.com/teamgram/teamgram-server/app/service/biz/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	username_helper "github.com/teamgram/teamgram-server/app/service/biz/username"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
-	// wallpaper_helper "github.com/teamgram/teamgram-server/app/service/biz/wallpaper"
-	// "github.com/teamgram/teamgram-server/app/service/biz/wallpaper/wallpaper"
 	webpage_helper "github.com/teamgram/teamgram-server/app/service/biz/webpage"
 	"github.com/teamgram/teamgram-server/app/service/biz/webpage/webpage"
-	// poll_helper "github.com/teamgram/teamgram-server/app/service/poll"
-	// "github.com/teamgram/teamgram-server/app/service/poll/poll"
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc"
 )
 
 var configFile = flag.String("f", "etc/biz.yaml", "the config file")
@@ -91,25 +73,6 @@ func (s *Server) Initialize() error {
 				Cache:         c.Cache,
 			}))
 
-		// auth_helper
-		banned.RegisterRPCBannedServer(
-			grpcServer,
-			banned_helper.New(banned_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-			}))
-
-		//// channel_helper
-		//channel.RegisterRPCChannelServer(
-		//	grpcServer,
-		//	channel_helper.New(channel_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		Cache:         c.Cache,
-		//		MediaClient:   c.MediaClient,
-		//	}))
-
 		// chat_helper
 		chat.RegisterRPCChatServer(
 			grpcServer,
@@ -139,15 +102,6 @@ func (s *Server) Initialize() error {
 				Cache:         c.Cache,
 			}))
 
-		// gif_helper
-		gif.RegisterRPCGifServer(
-			grpcServer,
-			gif_helper.New(gif_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-			}))
-
 		// message_helper
 		message.RegisterRPCMessageServer(
 			grpcServer,
@@ -157,53 +111,6 @@ func (s *Server) Initialize() error {
 				Cache:         c.Cache,
 				PollClient:    c.PollClient,
 			}))
-
-		//// poll_helper
-		//poll.RegisterRPCPollServer(
-		//	grpcServer,
-		//	poll_helper.New(poll_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		Cache:         c.Cache,
-		//	}))
-
-		// report_helper
-		report.RegisterRPCReportServer(
-			grpcServer,
-			report_helper.New(report_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-			}))
-
-		// TODO:
-		//// search_helper
-		//search.RegisterRPCSearchServer(
-		//	grpcServer,
-		//	search_helper.New(search_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//	}))
-
-		//// sticker_helper
-		//sticker.RegisterRPCStickerServer(
-		//	grpcServer,
-		//	sticker_helper.New(sticker_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		Cache:         c.Cache,
-		//		MediaClient:   c.MediaClient,
-		//		IdgenClient:   c.IdgenClient,
-		//	}))
-
-		//// theme_helper
-		//theme.RegisterRPCThemeServer(
-		//	grpcServer,
-		//	theme_helper.New(theme_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		Cache:         c.Cache,
-		//		Media:         c.MediaClient,
-		//	}))
 
 		// updates_helper
 		updates.RegisterRPCUpdatesServer(
@@ -235,16 +142,6 @@ func (s *Server) Initialize() error {
 				Cache:         c.Cache,
 			}))
 
-		//// wallpaper_helper
-		//wallpaper.RegisterRPCWallpaperServer(
-		//	grpcServer,
-		//	wallpaper_helper.New(wallpaper_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		Cache:         c.Cache,
-		//		Media:         c.MediaClient,
-		//	}))
-
 		// webpage_helper
 		webpage.RegisterRPCWebpageServer(
 			grpcServer,
@@ -252,16 +149,6 @@ func (s *Server) Initialize() error {
 				RpcServerConf: c.RpcServerConf,
 				Mysql:         c.Mysql,
 			}))
-
-		//secretchat.RegisterRPCSecretchatServer(
-		//	grpcServer,
-		//	secretchat_helper.New(secretchat_helper.Config{
-		//		RpcServerConf: c.RpcServerConf,
-		//		Mysql:         c.Mysql,
-		//		KV:            c.KV,
-		//		IdgenClient:   c.IdgenClient,
-		//		MediaClient:   c.MediaClient,
-		//	}))
 	})
 
 	// logx.Must(err)
