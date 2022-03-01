@@ -23,14 +23,6 @@ echo "build authsession ..."
 cd ${teamgram}/service/authsession/cmd/authsession
 go build -o ${INSTALL}/bin/authsession
 
-#echo "build poll ..."
-#cd ${teamgram}/service/poll/cmd/poll
-#go build -o ${INSTALL}/bin/poll
-
-#echo "build twofa ..."
-#cd ${teamgram}/service/twofa/cmd/twofa
-#go build -o ${INSTALL}/bin/twofa
-
 echo "build biz ..."
 cd ${teamgram}/service/biz/biz/cmd/biz
 go build -o ${INSTALL}/bin/biz
@@ -43,14 +35,6 @@ echo "build sync ..."
 cd ${teamgram}/messenger/sync/cmd/sync
 go build -o ${INSTALL}/bin/sync
 
-#echo "build push ..."
-#cd ${teamgram}/messenger/push/cmd/push
-#go build -o ${INSTALL}/bin/push
-
-#echo "build scheduled ..."
-#cd ${teamgram}/job/scheduled/cmd/scheduled
-#go build -o ${INSTALL}/bin/scheduled
-
 echo "build bff ..."
 cd ${teamgram}/bff/bff/cmd/bff
 go build -o ${INSTALL}/bin/bff
@@ -62,11 +46,3 @@ go build -o ${INSTALL}/bin/session
 echo "build gateway ..."
 cd ${teamgram}/interface/gateway/cmd/gateway
 go build -o ${INSTALL}/bin/gateway
-
-#echo "build api_wallpaper ..."
-#cd ${teamgram}/admin/wallpaper2/cmd/wallpaper2
-#go build -o ${INSTALL}/bin/wallpaper2
-
-#echo "build wsserver ..."
-#cd ${teamgram}/interface/wsserver/cmd/wsserver
-#go build -o ${INSTALL}/bin/wsserver
