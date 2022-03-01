@@ -1,0 +1,74 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2022-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teagramio (teagram.io@gmail.com)
+ */
+
+package chat
+
+import (
+	"reflect"
+
+	"github.com/teamgram/proto/mtproto"
+)
+
+var _ *mtproto.Bool
+
+type newRPCReplyFunc func() interface{}
+
+type RPCContextTuple struct {
+	Method       string
+	NewReplyFunc newRPCReplyFunc
+}
+
+var rpcContextRegisters = map[string]RPCContextTuple{
+	"TLChatGetMutableChat":                   RPCContextTuple{"/mtproto.RPCChat/chat_getMutableChat", func() interface{} { return new(MutableChat) }},
+	"TLChatGetChatListByIdList":              RPCContextTuple{"/mtproto.RPCChat/chat_getChatListByIdList", func() interface{} { return new(Vector_MutableChat) }},
+	"TLChatGetChatBySelfId":                  RPCContextTuple{"/mtproto.RPCChat/chat_getChatBySelfId", func() interface{} { return new(MutableChat) }},
+	"TLChatCreateChat2":                      RPCContextTuple{"/mtproto.RPCChat/chat_createChat2", func() interface{} { return new(MutableChat) }},
+	"TLChatDeleteChat":                       RPCContextTuple{"/mtproto.RPCChat/chat_deleteChat", func() interface{} { return new(MutableChat) }},
+	"TLChatDeleteChatUser":                   RPCContextTuple{"/mtproto.RPCChat/chat_deleteChatUser", func() interface{} { return new(MutableChat) }},
+	"TLChatEditChatTitle":                    RPCContextTuple{"/mtproto.RPCChat/chat_editChatTitle", func() interface{} { return new(MutableChat) }},
+	"TLChatEditChatAbout":                    RPCContextTuple{"/mtproto.RPCChat/chat_editChatAbout", func() interface{} { return new(MutableChat) }},
+	"TLChatEditChatPhoto":                    RPCContextTuple{"/mtproto.RPCChat/chat_editChatPhoto", func() interface{} { return new(MutableChat) }},
+	"TLChatEditChatAdmin":                    RPCContextTuple{"/mtproto.RPCChat/chat_editChatAdmin", func() interface{} { return new(MutableChat) }},
+	"TLChatEditChatDefaultBannedRights":      RPCContextTuple{"/mtproto.RPCChat/chat_editChatDefaultBannedRights", func() interface{} { return new(MutableChat) }},
+	"TLChatAddChatUser":                      RPCContextTuple{"/mtproto.RPCChat/chat_addChatUser", func() interface{} { return new(MutableChat) }},
+	"TLChatGetMutableChatByLink":             RPCContextTuple{"/mtproto.RPCChat/chat_getMutableChatByLink", func() interface{} { return new(MutableChat) }},
+	"TLChatMigratedToChannel":                RPCContextTuple{"/mtproto.RPCChat/chat_migratedToChannel", func() interface{} { return new(mtproto.Bool) }},
+	"TLChatGetChatParticipantIdList":         RPCContextTuple{"/mtproto.RPCChat/chat_getChatParticipantIdList", func() interface{} { return new(Vector_Long) }},
+	"TLChatGetUsersChatIdList":               RPCContextTuple{"/mtproto.RPCChat/chat_getUsersChatIdList", func() interface{} { return new(Vector_UserChatIdList) }},
+	"TLChatGetMyChatList":                    RPCContextTuple{"/mtproto.RPCChat/chat_getMyChatList", func() interface{} { return new(Vector_MutableChat) }},
+	"TLChatExportChatInvite":                 RPCContextTuple{"/mtproto.RPCChat/chat_exportChatInvite", func() interface{} { return new(mtproto.ExportedChatInvite) }},
+	"TLChatGetAdminsWithInvites":             RPCContextTuple{"/mtproto.RPCChat/chat_getAdminsWithInvites", func() interface{} { return new(Vector_ChatAdminWithInvites) }},
+	"TLChatGetExportedChatInvite":            RPCContextTuple{"/mtproto.RPCChat/chat_getExportedChatInvite", func() interface{} { return new(mtproto.ExportedChatInvite) }},
+	"TLChatGetExportedChatInvites":           RPCContextTuple{"/mtproto.RPCChat/chat_getExportedChatInvites", func() interface{} { return new(Vector_ExportedChatInvite) }},
+	"TLChatCheckChatInvite":                  RPCContextTuple{"/mtproto.RPCChat/chat_checkChatInvite", func() interface{} { return new(ChatInviteExt) }},
+	"TLChatImportChatInvite":                 RPCContextTuple{"/mtproto.RPCChat/chat_importChatInvite", func() interface{} { return new(MutableChat) }},
+	"TLChatGetChatInviteImporters":           RPCContextTuple{"/mtproto.RPCChat/chat_getChatInviteImporters", func() interface{} { return new(Vector_ChatInviteImporter) }},
+	"TLChatDeleteExportedChatInvite":         RPCContextTuple{"/mtproto.RPCChat/chat_deleteExportedChatInvite", func() interface{} { return new(mtproto.Bool) }},
+	"TLChatDeleteRevokedExportedChatInvites": RPCContextTuple{"/mtproto.RPCChat/chat_deleteRevokedExportedChatInvites", func() interface{} { return new(mtproto.Bool) }},
+	"TLChatEditExportedChatInvite":           RPCContextTuple{"/mtproto.RPCChat/chat_editExportedChatInvite", func() interface{} { return new(Vector_ExportedChatInvite) }},
+}
+
+func FindRPCContextTuple(t interface{}) *RPCContextTuple {
+	rt := reflect.TypeOf(t)
+	if rt.Kind() == reflect.Ptr {
+		rt = rt.Elem()
+	}
+
+	m, ok := rpcContextRegisters[rt.Name()]
+	if !ok {
+		// log.Errorf("Can't find name: %s", rt.Name())
+		return nil
+	}
+	return &m
+}
+
+func GetRPCContextRegisters() map[string]RPCContextTuple {
+	return rpcContextRegisters
+}

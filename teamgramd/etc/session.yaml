@@ -1,0 +1,36 @@
+Name: interface.session
+ListenOn: 127.0.0.1:20120
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.session
+Log:
+  Mode: file
+  Path: ../logs/session
+Cache:
+  - Host: 127.0.0.1:6379
+AuthSession:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+BFFClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: bff.bff
+MessagesBotClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.biz_server.messages.bot
+StatusClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.status
+GatewayClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.gateway

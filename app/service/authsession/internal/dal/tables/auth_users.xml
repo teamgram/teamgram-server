@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_users">
+    <operation name="InsertOrUpdates">
+        <sql>
+            INSERT INTO auth_users
+                (auth_key_id, user_id, hash, date_created, date_actived)
+            VALUES
+                (:auth_key_id, :user_id, :hash, :date_created, :date_actived)
+            ON DUPLICATE KEY UPDATE
+                hash = VALUES(hash),
+                date_actived = VALUES(date_actived),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, auth_key_id, user_id, hash, date_created, date_actived
+            FROM
+                auth_users
+            WHERE
+                auth_key_id = :auth_key_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectAuthKeyIds" result_set="list">
+        <sql>
+            SELECT
+                id, auth_key_id, user_id, hash
+            FROM
+                auth_users
+            WHERE
+                user_id = :user_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="DeleteByHashList">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                deleted = 1, date_created = 0, date_actived = 0
+            WHERE
+                id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="SelectListByUserId" result_set="list">
+        <sql>
+            SELECT
+                id, auth_key_id, user_id, hash
+            FROM
+                auth_users
+            WHERE
+                user_id = :user_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                deleted = 1, date_actived = 0
+            WHERE
+                auth_key_id = :auth_key_id AND user_id = :user_id
+        </sql>
+    </operation>
+
+    <operation name="DeleteUser">
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                deleted = 1, date_actived = 0
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+
+</table>

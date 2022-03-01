@@ -1,0 +1,13 @@
+
+redisExpire = "3h"
+
+[redis]
+	name = "dfs"
+	proto = "tcp"
+	addr = "127.0.0.1:8888"
+	idle = 10
+	active = 10
+	dialTimeout = "1s"
+	readTimeout = "1s"
+	writeTimeout = "1s"
+	idleTimeout = "10s"

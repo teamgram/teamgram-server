@@ -1,0 +1,5 @@
+Username:
+  Etcd:
+    Hosts:
+      - localhost:2379
+    Key: service.biz_service.username

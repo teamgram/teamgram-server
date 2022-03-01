@@ -1,0 +1,43 @@
+Name: messenger.msg
+ListenOn: 127.0.0.1:20380
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.msg
+Mysql:
+  Addr: 127.0.0.1:3306
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+  QueryTimeout: 5s
+  ExecTimeout: 5s
+  TranTimeout: 5s
+KV:
+  - Host: 127.0.0.1:6379
+
+IdgenClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen
+UserClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service
+ChatClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service
+
+InboxClient:
+  Topic:   "Inbox-T"
+  Brokers:
+    - 127.0.0.1:9092
+
+SyncClient:
+  Topic:   "Sync-T"
+  Brokers:
+    - 127.0.0.1:9092

@@ -1,0 +1,12 @@
+Name: service.status
+ListenOn: 127.0.0.1:20670
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.status
+Log:
+  Mode: file
+  Path: ../logs/status
+Status:
+  - Host: 127.0.0.1:6379
+StatusExpire: 90

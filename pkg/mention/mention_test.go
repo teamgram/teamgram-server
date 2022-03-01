@@ -21,89 +21,89 @@ func (s *MentionSuite) TestGetTags(c *C) {
 		{
 			"@gernest",
 			[]Tag{
-				{'@', "gernest", 0},
+				{'@', "gernest", []uint16{}, 0},
 			},
 		},
 		{
 			"@gernest ",
 			[]Tag{
-				{'@', "gernest", 0},
+				{'@', "gernest", []uint16{}, 0},
 			},
 		},
 		{
 			"@gernest@mwanza hello",
 			[]Tag{
-				{'@', "gernest@mwanza", 0},
+				{'@', "gernest@mwanza", []uint16{}, 0},
 			},
 		},
 		{
 			"please email support@example.com to contact @martin",
 			[]Tag{
-				{'@', "martin", 44},
+				{'@', "martin", []uint16{}, 44},
 			},
 		},
 		{
 			"please email العَرَبِيَّة@example.com to contact @martin",
 			[]Tag{
-				{'@', "martin", 61},
+				{'@', "martin", []uint16{}, 61},
 			},
 		},
 		{
 			"@gernest @mwanza @mwanza",
 			[]Tag{
-				{'@', "gernest", 0},
-				{'@', "mwanza", 9},
-				{'@', "mwanza", 17},
+				{'@', "gernest", []uint16{}, 0},
+				{'@', "mwanza", []uint16{}, 9},
+				{'@', "mwanza", []uint16{}, 17},
 			},
 		},
 		{
 			"Hello to @gernest. Maybe we can do it together @mwanza",
 			[]Tag{
-				{'@', "gernest", 9},
-				{'@', "mwanza", 47},
+				{'@', "gernest", []uint16{}, 9},
+				{'@', "mwanza", []uint16{}, 47},
 			},
 		},
 		{
 			" @gernest @mwanza",
 			[]Tag{
-				{'@', "gernest", 1},
-				{'@', "mwanza", 10},
+				{'@', "gernest", []uint16{}, 1},
+				{'@', "mwanza", []uint16{}, 10},
 			},
 		},
 		{
 			" @gernest @mwanza ",
 			[]Tag{
-				{'@', "gernest", 1},
-				{'@', "mwanza", 10},
+				{'@', "gernest", []uint16{}, 1},
+				{'@', "mwanza", []uint16{}, 10},
 			},
 		},
 		{
 			" @gernest @mwanza @tanzania",
 			[]Tag{
-				{'@', "gernest", 1},
-				{'@', "mwanza", 10},
-				{'@', "tanzania", 18},
+				{'@', "gernest", []uint16{}, 1},
+				{'@', "mwanza", []uint16{}, 10},
+				{'@', "tanzania", []uint16{}, 18},
 			},
 		},
 		{
 			" @gernest,@mwanza/Tanzania ",
 			[]Tag{
-				{'@', "gernest", 1},
-				{'@', "mwanza", 10},
+				{'@', "gernest", []uint16{}, 1},
+				{'@', "mwanza", []uint16{}, 10},
 			},
 		},
 		{
 			"how does it feel to be rejected? @ it is @loner tt ggg sjdsj dj @linker ",
 			[]Tag{
-				{'@', "loner", 41},
-				{'@', "linker", 64},
+				{'@', "loner", []uint16{}, 41},
+				{'@', "linker", []uint16{}, 64},
 			},
 		},
 		{
 			"This @gernest is @@@@ @@@ @@ @ @,, @, @mwanza,",
 			[]Tag{
-				{'@', "gernest", 5},
-				{'@', "mwanza", 38},
+				{'@', "gernest", []uint16{}, 5},
+				{'@', "mwanza", []uint16{}, 38},
 			},
 		},
 		{
@@ -112,23 +112,23 @@ func (s *MentionSuite) TestGetTags(c *C) {
 		},
 		{
 			"@hello\u2000world", // en space
-			[]Tag{{'@', "hello", 0}},
+			[]Tag{{'@', "hello", []uint16{}, 0}},
 		},
 		{
 			"@hello\u200dworld", // zero width joiner (unprintable)
-			[]Tag{{'@', "hello", 0}},
+			[]Tag{{'@', "hello", []uint16{}, 0}},
 		},
 		{
 			"@hello\x1eworld", // control character
-			[]Tag{{'@', "hello", 0}},
+			[]Tag{{'@', "hello", []uint16{}, 0}},
 		},
 		{
 			"Hello @العَرَبِيَّة there",
-			[]Tag{{'@', "العَرَبِيَّة", 6}},
+			[]Tag{{'@', "العَرَبِيَّة", []uint16{}, 6}},
 		},
 		{
 			"ﺎﻠﻋﺮﺒﻳﺓ @العَرَبِيَّة there",
-			[]Tag{{'@', "العَرَبِيَّة", 22}},
+			[]Tag{{'@', "العَرَبِيَّة", []uint16{}, 22}},
 		},
 	}
 	terms := []rune(",/.")
@@ -138,7 +138,7 @@ func (s *MentionSuite) TestGetTags(c *C) {
 	}
 
 	// use default terminators
-	c.Assert(GetTags('@', "hello @test"), DeepEquals, []Tag{{'@', "test", 6}})
+	c.Assert(GetTags('@', "hello @test"), DeepEquals, []Tag{{'@', "test", []uint16{}, 6}})
 }
 
 func BenchmarkGetTags(b *testing.B) {

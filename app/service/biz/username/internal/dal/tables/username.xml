@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="username">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO username
+                (peer_type, peer_id, username, deleted)
+            VALUES
+                (:peer_type, :peer_id, :username, 0)
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <params>
+            <param name="nameList" type="[]string" />
+        </params>
+        <sql>
+            SELECT
+                username, peer_type, peer_id
+            FROM
+                username
+            WHERE
+                username IN (:nameList)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUsername">
+        <sql>
+            SELECT
+                username, peer_type, peer_id, deleted
+            FROM
+                username
+            WHERE
+                username = :username
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE username SET cMap = :cMap WHERE username = :username
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM username WHERE username = :username
+        </sql>
+    </operation>
+
+    <operation name="Delete2">
+        <sql>
+            DELETE FROM username WHERE peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByPeer">
+        <sql>
+            SELECT
+                peer_type, peer_id, username
+            FROM
+                username
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+    <operation name="SelectByUserId">
+        <sql>
+            SELECT
+                peer_type, peer_id, username
+            FROM
+                username
+            WHERE
+                peer_type = 2 AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByChannelId">
+        <sql>
+            SELECT
+                peer_type, peer_id, username
+            FROM
+                username
+            WHERE
+                peer_type = 4 AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateUsername">
+        <sql>
+            UPDATE
+                username
+            SET
+                username = :username
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="SearchByQueryNotIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+            <param name="limit" type="int32" />
+            <param name="q2" type="string" />
+        </params>
+        <sql>
+            SELECT
+                username, peer_type, peer_id
+            FROM
+                username
+            WHERE
+                username LIKE :q2 AND peer_id NOT IN(:id_list) LIMIT :limit
+        </sql>
+    </operation>
+</table>

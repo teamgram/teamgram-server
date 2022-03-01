@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="encrypted_files">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO encrypted_files
+                (encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path)
+            VALUES
+                (:encrypted_file_id, :access_hash, :dc_id, :file_size, :key_fingerprint, :md5_checksum, :file_path)
+        </sql>
+    </operation>
+
+    <operation name="SelectByFileLocation">
+        <sql>
+            SELECT
+                id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path
+            FROM
+                encrypted_files
+            WHERE
+                dc_id = 2 AND encrypted_file_id = :encrypted_file_id AND access_hash = :access_hash
+        </sql>
+    </operation>
+
+    <operation name="SelectByIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path
+            FROM
+                encrypted_files
+            WHERE
+                encrypted_file_id IN (:idList)
+        </sql>
+    </operation>
+</table>

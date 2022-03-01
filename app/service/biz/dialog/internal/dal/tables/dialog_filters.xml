@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_filters">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO dialog_filters
+                (user_id, dialog_filter_id, dialog_filter, order_value)
+            VALUES
+                (:user_id, :dialog_filter_id, :dialog_filter, :order_value)
+            ON DUPLICATE KEY UPDATE
+                dialog_filter = VALUES(dialog_filter),
+                order_value = VALUES(order_value),
+                deleted = 0
+        </sql>
+    </operation>
+
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                user_id, dialog_filter_id, dialog_filter
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND deleted=0
+            ORDER BY order_value DESC
+        </sql>
+    </operation>
+
+    <operation name="UpdateOrder">
+        <sql>
+            UPDATE
+                dialog_filters
+            SET
+                order_value = :order_value
+            WHERE
+                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+        </sql>
+    </operation>
+
+    <operation name="Clear">
+        <sql>
+            UPDATE
+                dialog_filters
+            SET
+                deleted = 1, dialog_filter = 'null', order_value = 0
+            WHERE
+                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+        </sql>
+    </operation>
+</table>

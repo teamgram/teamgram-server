@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialogs">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO dialogs
+                (user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_message_data, date2)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :read_inbox_max_id, :read_outbox_max_id, :unread_count, :unread_mark, :draft_message_data, :date2)
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO dialogs
+                (user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, unread_count, draft_message_data, date2)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :unread_count, :draft_message_data, :date2)
+            ON DUPLICATE KEY UPDATE
+                top_message = VALUES(top_message),
+                unread_count = unread_count + VALUES(unread_count),
+                date2 = VALUES(date2)
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdateDialog">
+        <sql>
+            INSERT INTO dialogs
+                (user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, peer_dialog_id, read_inbox_max_id, draft_message_data, date2)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :peer_dialog_id, :read_inbox_max_id, :draft_message_data, :date2)
+            ON DUPLICATE KEY UPDATE
+                top_message = VALUES(top_message),
+                read_inbox_max_id = VALUES(read_inbox_max_id),
+                draft_message_data = VALUES(draft_message_data),
+                date2 = VALUES(date2),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="UpdateOutboxDialog">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null'
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateInboxDialog">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                unread_count = unread_count + 1, deleted = 0, cMap = :cMap
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectPinnedDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND folder_id = 0 AND pinned > 0 AND deleted = 0
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectFolderPinnedDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND folder_id = 1 AND folder_pinned > 0 AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerDialogList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND peer_dialog_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialog">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND folder_id = :folder_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectExcludePinnedDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND folder_id = 0 AND pinned = 0 AND deleted = 0
+        </sql>
+    </operation>
+
+    <!-- GetPinnedDialogs -->
+    <operation name="SelectExcludeFolderPinnedDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND folder_id = 1 AND folder_pinned = 0 AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="UpdateReadInboxMaxId">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id
+            WHERE
+                user_id=:user_id AND peer_dialog_id = :peer_dialog_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateReadOutboxMaxId">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                read_outbox_max_id = :read_outbox_max_id
+            WHERE
+                user_id=:user_id AND peer_dialog_id = :peer_dialog_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateTopMessage">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                top_message = :top_message
+            WHERE
+                user_id=:user_id AND peer_dialog_id = :peer_dialog_id
+        </sql>
+    </operation>
+
+    <operation name="UpdatePinnedMsgId">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                pinned_msg_id = :pinned_msg_id
+            WHERE
+                user_id=:user_id AND peer_dialog_id = :peer_dialog_id
+        </sql>
+    </operation>
+
+    <!--    &lt;!&ndash; GetPinnedDialogs &ndash;&gt;-->
+<!--    <operation name="SelectByOffsetId" result_set="list">-->
+<!--        <params>-->
+<!--            <param name="limit" type="int32" />-->
+<!--        </params>-->
+<!--        <sql>-->
+<!--            <![CDATA[-->
+<!--            SELECT-->
+<!--                id, user_id, peer_type, peer_id, is_pinned, order_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, folder_order_pinned, date2-->
+<!--            FROM-->
+<!--                dialogs-->
+<!--            WHERE-->
+<!--                user_id = :user_id AND deleted = 0 AND top_message > 0 AND top_message < :top_message-->
+<!--            ORDER BY-->
+<!--                top_message DESC LIMIT :limit-->
+<!--            ]]>-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="SelectExcludePinnedByOffsetId" result_set="list">-->
+<!--        <params>-->
+<!--            <param name="limit" type="int32" />-->
+<!--        </params>-->
+<!--        <sql>-->
+<!--            <![CDATA[-->
+<!--            SELECT-->
+<!--                id, user_id, peer_type, peer_id, is_pinned, order_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, folder_order_pinned, date2-->
+<!--            FROM-->
+<!--                dialogs-->
+<!--            WHERE-->
+<!--                user_id = :user_id AND is_pinned = 0 AND deleted = 0 AND top_message > 0 AND top_message < :top_message-->
+<!--            ORDER BY-->
+<!--                top_message DESC LIMIT :limit-->
+<!--            ]]>-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="SelectListByPeerList" result_set="list">-->
+<!--        <params>-->
+<!--            <param name="idList" type="[]int32" />-->
+<!--        </params>-->
+<!--        <sql>-->
+<!--            SELECT-->
+<!--                id, user_id, peer_type, peer_id, is_pinned, order_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, folder_order_pinned, date2-->
+<!--            FROM-->
+<!--                dialogs-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_id IN (:idList) AND deleted = 0-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdateUnreadByPeer">-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdateReadOutboxMaxIdByPeer">-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                read_outbox_max_id = :read_outbox_max_id-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdatePinned">-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                is_pinned = :is_pinned-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdateDialog">-->
+<!--        <params>-->
+<!--            <param name="unreadCount" type="int32" />-->
+<!--            <param name="unreadMentionCount" type="int32" />-->
+<!--        </params>-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                top_message = :top_message, unread_count = unread_count + :unreadCount, unread_mentions_count = unread_mentions_count + :unreadMentionCount-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdateUnreadMentionCount">-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                unread_mentions_count = unread_mentions_count - 1-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM
+                dialogs
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+<!--    <operation name="UpdateOutboxDialog">-->
+<!--        <params>-->
+<!--            <param name="cMap" type="map" />-->
+<!--        </params>-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                unread_count = 0, deleted = 0, cMap = :cMap-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="UpdateMarkDialogUnread">-->
+<!--        <sql>-->
+<!--            UPDATE-->
+<!--                dialogs-->
+<!--            SET-->
+<!--                unread_mark = :unread_mark, unread_count = 0-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+<!--    <operation name="SelectMarkDialogUnreadList" result_set="single_list">-->
+<!--        <sql>-->
+<!--            SELECT-->
+<!--                peer_id-->
+<!--            FROM-->
+<!--                dialogs-->
+<!--            WHERE-->
+<!--                user_id=:user_id AND peer_type = :peer_type AND unread_mark = 1-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+    <operation name="SelectDialogsByGTReadInboxMaxId" result_set="single_list">
+        <sql>
+            SELECT
+                user_id
+            FROM
+                dialogs
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id AND read_inbox_max_id >= :read_inbox_max_id AND user_id != :user_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateCustomMap">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                cMap = :cMap
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <!--// draft ////////////////////////////////////////////////-->
+    <operation name="SaveDraft">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                draft_type = :draft_type, draft_message_data = :draft_message_data
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="SelectAllDrafts" result_set="list">
+        <sql>
+            SELECT
+                user_id, peer_id, draft_message_data
+            FROM
+                dialogs
+            WHERE
+                user_id=:user_id AND draft_type > 0
+        </sql>
+    </operation>
+
+    <operation name="ClearAllDrafts">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                draft_type = 0, draft_message_data = 'null'
+            WHERE
+                user_id=:user_id AND draft_type = 2
+        </sql>
+    </operation>
+
+    <operation name="UpdatePeerFolderId">
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                folder_id = :folder_id
+            WHERE
+                user_id=:user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="UpdatePeerDialogListFolderId">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                folder_id = :folder_id
+            WHERE
+                user_id=:user_id AND peer_dialog_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="UpdatePeerDialogListPinned">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                pinned = :pinned
+            WHERE
+                user_id=:user_id AND folder_id = 0 AND peer_dialog_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="UpdateFolderPeerDialogListPinned">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                folder_pinned = :folder_pinned
+            WHERE
+                user_id=:user_id AND folder_id = 1 AND peer_dialog_id IN (:idList)
+        </sql>
+    </operation>
+
+</table>

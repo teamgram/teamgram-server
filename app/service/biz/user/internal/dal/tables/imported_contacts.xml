@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="imported_contacts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO imported_contacts
+                (user_id, imported_user_id)
+            VALUES
+                (:user_id, :imported_user_id)
+            ON DUPLICATE KEY UPDATE
+                deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, imported_user_id
+            FROM
+                imported_contacts
+            WHERE
+                user_id=:user_id AND deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectListByImportedList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, imported_user_id
+            FROM
+                imported_contacts
+            WHERE
+                user_id=:user_id AND deleted = 0 AND imported_user_id IN (:idList)
+        </sql>
+    </operation>
+    <operation name="SelectAllList" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, imported_user_id
+            FROM
+                imported_contacts
+            WHERE
+                user_id=:user_id
+        </sql>
+    </operation>
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                imported_contacts
+            SET
+                deleted = 1
+            WHERE
+                user_id = :user_id AND imported_user_id = :imported_user_id
+        </sql>
+    </operation>
+</table>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_contacts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO
+                user_contacts (owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, date2)
+            VALUES
+                (:owner_user_id, :contact_user_id, :contact_phone, :contact_first_name, :contact_last_name, :mutual, :date2)
+            ON DUPLICATE KEY UPDATE
+                contact_phone = VALUES(contact_phone),
+                contact_first_name = VALUES(contact_first_name),
+                contact_last_name = VALUES(contact_last_name),
+                mutual = VALUES(mutual),
+                date2 = VALUES(date2),
+                is_deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectContact">
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                is_deleted = 0 AND owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id
+        </sql>
+    </operation>
+    <operation name="SelectByContactId">
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id
+        </sql>
+    </operation>
+    <operation name="SelectListByPhoneList" result_set="list">
+        <params>
+            <param name="phoneList" type="[]string" />
+        </params>
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                is_deleted = 0 AND owner_user_id = :owner_user_id AND contact_phone IN (:phoneList)
+        </sql>
+    </operation>
+    <operation name="SelectAllUserContacts" result_set="list">
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id=:owner_user_id
+        </sql>
+    </operation>
+    <operation name="SelectUserContacts" result_set="list">
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id=:owner_user_id AND is_deleted = 0 ORDER BY contact_user_id
+        </sql>
+    </operation>
+    <operation name="SelectListByIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id=:owner_user_id AND contact_user_id IN (:id_list) AND is_deleted = 0
+        </sql>
+    </operation>
+    <operation name="SelectListByOwnerListAndContactList" result_set="list">
+        <params>
+            <param name="idList1" type="[]int64" />
+            <param name="idList2" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id IN (:idList1) AND contact_user_id IN (:idList2) AND is_deleted = 0
+        </sql>
+    </operation>
+    <operation name="UpdateContactNameById">
+        <sql>
+            UPDATE
+                user_contacts
+            SET
+                contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0
+            WHERE
+                id = :id
+        </sql>
+    </operation>
+    <operation name="UpdateContactName">
+        <sql>
+            <![CDATA[
+            UPDATE
+                user_contacts
+            SET
+                contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0
+            WHERE
+                contact_user_id <> 0 AND (owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id)
+            ]]>
+        </sql>
+    </operation>
+    <operation name="UpdateMutual">
+        <sql>
+            <![CDATA[
+            UPDATE
+                user_contacts
+            SET
+                mutual = :mutual
+            WHERE
+                contact_user_id <> 0 AND (owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id)
+            ]]>
+        </sql>
+    </operation>
+    <operation name="DeleteContacts">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            <![CDATA[
+            UPDATE
+                user_contacts
+            SET
+                is_deleted = 1, mutual = 0
+            WHERE
+                contact_user_id <> 0 AND (owner_user_id = :owner_user_id AND contact_user_id in (:id_list))
+            ]]>
+        </sql>
+    </operation>
+    <operation name="UpdatePhoneByContactId">
+        <sql>
+            UPDATE
+                user_contacts
+            SET
+                contact_phone = :contact_phone
+            WHERE
+                contact_user_id = :contact_user_id
+        </sql>
+    </operation>
+</table>

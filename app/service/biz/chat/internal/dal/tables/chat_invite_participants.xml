@@ -1,0 +1,23 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_invite_participants">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_invite_participants
+                (link, user_id, date2)
+            VALUES
+                (:link, :user_id, :date2)
+        </sql>
+    </operation>
+    <operation name="SelectListByLink" result_set="list">
+        <sql>
+            SELECT
+                id, link, user_id, date2
+            FROM
+                chat_invite_participants
+            WHERE
+                link = :link
+        </sql>
+    </operation>
+</table>
+

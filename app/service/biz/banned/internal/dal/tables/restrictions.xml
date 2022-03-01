@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="restrictions">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO restrictions
+                (platform, reason, text)
+            VALUES
+                (:platform, :reason, :text)
+        </sql>
+    </operation>
+
+    <operation name="SelectList">
+        <sql>
+            SELECT
+                platform, reason, text
+            FROM
+                restrictions
+        </sql>
+    </operation>
+</table>

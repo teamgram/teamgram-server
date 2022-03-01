@@ -1,0 +1,28 @@
+Name: interface.session
+ListenOn: 127.0.0.1:20120
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.session
+Cache:
+  - Host: 127.0.0.1:6379
+AuthSession:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.authsession
+BizClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: bff.bff
+StatusClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.status
+GatewayClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.gateway

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="messages">
+    <operation name="InsertOrReturnId">
+        <sql>
+            INSERT INTO messages
+                (user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2)
+            VALUES
+                (:user_id, :user_message_box_id, :dialog_id1, :dialog_id2, :dialog_message_id, :sender_user_id, :peer_type, :peer_id, :random_id, :message_filter_type, :message_data, :message, :mentioned, :media_unread, :pinned, :date2)
+            ON DUPLICATE KEY UPDATE
+                id = LAST_INSERT_ID(id)
+        </sql>
+    </operation>
+
+    <operation name="SelectByRandomId">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                sender_user_id = :sender_user_id AND random_id = :random_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND deleted = 0 AND user_message_box_id IN (:idList) ORDER BY user_message_box_id DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageId">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageDataIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                deleted = 0 AND dialog_message_id IN (:idList) ORDER BY user_message_box_id DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectByMessageDataId">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+<!--    <operation name="SelectByDialogAndDialogMessageId">-->
+<!--        <sql>-->
+<!--            SELECT-->
+<!--                user_id, user_message_box_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, message_data_id, message_data_type, message, message_box_type, reply_to_msg_id, mentioned, media_unread, has_media_unread, pinned, date2-->
+<!--            FROM-->
+<!--                messages-->
+<!--            WHERE-->
+<!--                user_id = :user_id AND dialog_id = :dialog_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1-->
+<!--        </sql>-->
+<!--    </operation>-->
+
+    <!-- // Backward -->
+    <operation name="SelectBackwardByOffsetIdLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND user_message_box_id < :user_message_box_id AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <!-- // Forward -->
+    <operation name="SelectForwardByOffsetIdLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND user_message_box_id >= :user_message_box_id AND deleted = 0
+            ORDER BY user_message_box_id LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <!-- // Backward -->
+    <operation name="SelectBackwardByOffsetDateLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND date2 < :date2 AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <!-- // Forward -->
+    <operation name="SelectForwardByOffsetDateLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND date2 >= :date2 AND deleted = 0
+            ORDER BY user_message_box_id LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerUserMessageId">
+        <params>
+            <param name="peerId" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_message_box_id, message_box_type
+            FROM
+                messages
+            WHERE
+                user_id = :peerId AND deleted = 0 AND
+                dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id AND deleted = 0 LIMIT 1)
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerUserMessage">
+        <params>
+            <param name="peerId" type="int64" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :peerId AND deleted = 0 AND
+                dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id AND deleted = 0 LIMIT 1)
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerDialogMessageIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id <> :user_id AND dialog_message_id in (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id in (:idList)) AND deleted = 0
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogMessageListByMessageId" result_set="list">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogLastMessageId" result_set="single">
+        <sql>
+            SELECT
+                user_message_box_id
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2 AND deleted = 0 ORDER BY user_message_box_id DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogsByMessageIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND user_message_box_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogLastMessageList" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id  AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND deleted = 0 ORDER BY user_message_box_id DESC LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="DeleteMessagesByMessageIdList">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            UPDATE
+                messages
+            SET
+                deleted=1
+            WHERE
+                user_id = :user_id AND user_message_box_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogMessageIdList" result_set="list">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND deleted = 0 ORDER BY user_message_box_id DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerMessageList" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id != :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="UpdateMediaUnread">
+        <sql>
+            UPDATE
+                messages
+            SET
+                media_unread = 0
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id
+        </sql>
+    </operation>
+
+
+    <operation name="UpdateMentionedAndMediaUnread">
+        <sql>
+            UPDATE
+                messages
+            SET
+                mentioned = 0, media_unread = 0
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByMediaType" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND message_filter_type = :message_filter_type AND user_message_box_id < :user_message_box_id AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectPhoneCallList" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND message_filter_type = :message_filter_type AND user_message_box_id < :user_message_box_id AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="Search" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="q2" type="string" />
+        </params>
+        <sql>
+            <![CDATA[
+           SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND user_message_box_id < :user_message_box_id AND deleted = 0 AND message <> '' AND message LIKE :q2
+            ORDER BY user_message_box_id DESC LIMIT :limit
+             ]]>
+        </sql>
+    </operation>
+
+    <operation name="SearchGlobal" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="q2" type="string" />
+        </params>
+        <sql>
+            <![CDATA[
+           SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND user_message_box_id < :user_message_box_id AND deleted = 0 AND message <> '' AND message LIKE :q2
+            ORDER BY user_message_box_id DESC LIMIT :limit
+             ]]>
+        </sql>
+    </operation>
+
+    <!-- // Backward -->
+    <operation name="SelectBackwardUnreadMentionsByOffsetIdLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND user_message_box_id < :user_message_box_id AND mentioned = 1 AND media_unread = 1 AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <!-- // Forward -->
+    <operation name="SelectForwardUnreadMentionsByOffsetIdLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND user_message_box_id >= :user_message_box_id AND mentioned = 1 AND media_unread = 1 AND deleted = 0
+            ORDER BY user_message_box_id LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectPinnedList" result_set="list">
+        <sql>
+            <![CDATA[
+           SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND pinned = 1 AND deleted = 0
+            ORDER BY user_message_box_id DESC
+             ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectLastTwoPinnedList" result_set="single_list">
+        <sql>
+           SELECT
+                user_message_box_id
+           FROM
+                messages
+           WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND pinned = 1 AND deleted = 0
+           ORDER BY user_message_box_id DESC LIMIT 2
+        </sql>
+    </operation>
+
+    <operation name="UpdatePinned">
+        <sql>
+            UPDATE
+                messages
+            SET
+                pinned = :pinned
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id
+        </sql>
+    </operation>
+
+    <operation name="SelectPinnedMessageIdList" result_set="single_list">
+        <sql>
+            SELECT
+                user_message_box_id
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND pinned = 1 AND deleted = 0
+            ORDER BY user_message_box_id DESC
+        </sql>
+    </operation>
+
+    <operation name="UpdateUnPinnedByIdList">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            UPDATE
+                messages
+            SET
+                pinned = 0
+            WHERE
+                user_id = :user_id AND user_message_box_id IN (:idList)
+        </sql>
+    </operation>
+
+
+    <operation name="UpdateEditMessage">
+        <sql>
+            UPDATE
+                messages
+            SET
+                message_data = :message_data, message = :message
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id
+        </sql>
+    </operation>
+
+</table>
+

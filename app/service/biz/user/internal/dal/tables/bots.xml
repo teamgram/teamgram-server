@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="bots">
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder
+            FROM
+                bots
+            WHERE
+                bot_id = :bot_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByToken" result_set="single">
+        <sql>
+            SELECT
+                bot_id
+            FROM
+                bots
+            WHERE
+                token = :token
+        </sql>
+    </operation>
+
+    <operation name="SelectByIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder
+            FROM
+                bots
+            WHERE
+                bot_id IN (:id_list)
+        </sql>
+    </operation>
+</table>

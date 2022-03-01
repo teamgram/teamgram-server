@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="channel_pts_updates">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO channel_pts_updates
+                (channel_id, pts, pts_count, update_type, new_message_id, update_data, date2)
+            VALUES
+                (:channel_id, :pts, :pts_count, :update_type, :new_message_id, :update_data, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectLastPts">
+        <sql>
+            SELECT
+                pts
+            FROM
+                channel_pts_updates
+            WHERE
+                channel_id = :channel_id ORDER BY pts DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtPts" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                channel_id, pts, pts_count, update_type, new_message_id, update_data, date2
+            FROM
+                channel_pts_updates
+            WHERE
+                channel_id = :channel_id AND pts > :pts ORDER BY pts LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtDate2" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                channel_id, pts, pts_count, update_type, new_message_id, update_data, date2
+            FROM
+                channel_pts_updates
+            WHERE
+                channel_id IN (:idList) AND date2 > :date2 ORDER BY date2
+        </sql>
+    </operation>
+
+</table>

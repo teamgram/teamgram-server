@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="video_sizes">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO video_sizes
+                (video_size_id, size_type, volume_id, local_id, secret, width, height, file_size, video_start_ts, file_path)
+            VALUES
+                (:video_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :video_start_ts, :file_path)
+        </sql>
+    </operation>
+
+    <operation name="SelectByFileLocation">
+        <sql>
+            SELECT
+                id, video_size_id, size_type, volume_id, local_id, secret, width, height, file_size, video_start_ts, file_path
+            FROM
+                video_sizes
+            WHERE
+                volume_id = :volume_id AND local_id = :local_id
+        </sql>
+    </operation>
+
+    <operation name="SelectSecret" result_set="single">
+        <sql>
+            SELECT
+                secret
+            FROM
+                video_sizes
+            WHERE
+                volume_id = :volume_id AND local_id = :local_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectListByVideoSizeId" result_set="list">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, video_size_id, size_type, volume_id, local_id, secret, width, height, file_size, video_start_ts, file_path
+            FROM
+                video_sizes
+            WHERE
+                video_size_id = :video_size_id ORDER BY local_id
+            ]]>
+        </sql>
+    </operation>
+
+</table>

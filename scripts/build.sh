@@ -1,60 +1,72 @@
 #!/usr/bin/env bash
 
-# todo(yumcoder) change dc ip
-# sed -i '/ipAddress = /c\ipAddress = 127.0.0.1' a.txt
-# todo(yumcoder) change folder path for nbfs
+teamgram="$GOPATH/src/github.com/teamgram/teamgram-server/app"
+INSTALL="$GOPATH/src/github.com/teamgram/teamgram-server/teamgramd"
 
-# docker start mysql-docker redis-docker etcd-docker
+echo "build idgen ..."
+cd ${teamgram}/service/idgen/cmd/idgen
+go build -o ${INSTALL}/bin/idgen
 
-chatengine="$GOPATH/src/github.com/nebula-chat/chatengine"
+echo "build status ..."
+cd ${teamgram}/service/status/cmd/status
+go build -o ${INSTALL}/bin/status
 
-echo "build document ..."
-cd ${chatengine}/service/document
-go build
-#./document &
-sleep 1
+echo "build dfs ..."
+cd ${teamgram}/service/dfs/cmd/dfs
+go build -o ${INSTALL}/bin/dfs
 
-echo "build auth_session ..."
-cd ${chatengine}/service/auth_session
-go build
-#./auth_session &
-sleep 1
+echo "build media ..."
+cd ${teamgram}/service/media/cmd/media
+go build -o ${INSTALL}/bin/media
+
+echo "build authsession ..."
+cd ${teamgram}/service/authsession/cmd/authsession
+go build -o ${INSTALL}/bin/authsession
+
+#echo "build poll ..."
+#cd ${teamgram}/service/poll/cmd/poll
+#go build -o ${INSTALL}/bin/poll
+
+#echo "build twofa ..."
+#cd ${teamgram}/service/twofa/cmd/twofa
+#go build -o ${INSTALL}/bin/twofa
+
+echo "build biz ..."
+cd ${teamgram}/service/biz/biz/cmd/biz
+go build -o ${INSTALL}/bin/biz
+
+echo "build msg ..."
+cd ${teamgram}/messenger/msg/cmd/msg
+go build -o ${INSTALL}/bin/msg
 
 echo "build sync ..."
-cd ${chatengine}/messenger/sync
-go build
-#./sync &
-sleep 1
+cd ${teamgram}/messenger/sync/cmd/sync
+go build -o ${INSTALL}/bin/sync
 
-echo "build upload ..."
-cd ${chatengine}/messenger/upload
-go build
-#./upload &
-sleep 1
+#echo "build push ..."
+#cd ${teamgram}/messenger/push/cmd/push
+#go build -o ${INSTALL}/bin/push
 
+#echo "build scheduled ..."
+#cd ${teamgram}/job/scheduled/cmd/scheduled
+#go build -o ${INSTALL}/bin/scheduled
 
-echo "build auth_key ..."
-cd ${chatengine}/access/auth_key
-go build
-#./auth_key &
-
-echo "build biz_server ..."
-cd ${chatengine}/messenger/biz_server
-go build
-#./biz_server &
-sleep 1
+echo "build bff ..."
+cd ${teamgram}/bff/bff/cmd/bff
+go build -o ${INSTALL}/bin/bff
 
 echo "build session ..."
-cd ${chatengine}/access/session
-go build
-#./session &
-sleep 1
+cd ${teamgram}/interface/session/cmd/session
+go build -o ${INSTALL}/bin/session
 
-echo "build frontend ..."
-cd ${chatengine}/access/frontend
-go build
-#./frontend &
-sleep 1
+echo "build gateway ..."
+cd ${teamgram}/interface/gateway/cmd/gateway
+go build -o ${INSTALL}/bin/gateway
 
-echo "***** wait *****"
-wait
+#echo "build api_wallpaper ..."
+#cd ${teamgram}/admin/wallpaper2/cmd/wallpaper2
+#go build -o ${INSTALL}/bin/wallpaper2
+
+#echo "build wsserver ..."
+#cd ${teamgram}/interface/wsserver/cmd/wsserver
+#go build -o ${INSTALL}/bin/wsserver

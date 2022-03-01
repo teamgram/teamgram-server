@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="hash_tags">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO hash_tags
+                (user_id, peer_type, peer_id, hash_tag, hash_tag_message_id)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id)
+            ON DUPLICATE KEY UPDATE
+                deleted=0
+        </sql>
+    </operation>
+
+    <operation name="SelectPeerHashTagList" result_set="single_list">
+        <sql>
+            SELECT
+                hash_tag_message_id
+            FROM
+                hash_tags
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND hash_tag = :hash_tag AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="DeleteHashTagMessageId">
+        <sql>
+            UPDATE
+                hash_tags
+            SET
+                deleted = 1
+            WHERE
+                user_id = :user_id AND hash_tag_message_id = :hash_tag_message_id
+        </sql>
+    </operation>
+</table>

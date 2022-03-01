@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_pts_updates">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO user_pts_updates
+                (user_id, pts, pts_count, update_type, update_data, date2)
+            VALUES
+                (:user_id, :pts, :pts_count, :update_type, :update_data, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectLastPts">
+        <sql>
+            SELECT pts FROM user_pts_updates WHERE user_id = :user_id ORDER BY pts DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtPts" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, pts, pts_count, update_type, update_data
+            FROM
+                user_pts_updates
+            WHERE
+                user_id = :user_id AND pts > :pts ORDER BY pts LIMIT :limit
+        </sql>
+    </operation>
+</table>

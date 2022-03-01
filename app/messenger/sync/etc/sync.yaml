@@ -1,0 +1,68 @@
+Name: messenger.sync
+ListenOn: 127.0.0.1:20420
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.sync
+
+SyncConsumer:
+  Topics:
+    - "Sync-T"
+  Brokers:
+    - 127.0.0.1:9092
+  Group: "Sync-MainCommunity-S"
+
+Routine:
+  Chan: 16
+  Size: 100
+
+Mysql:
+  Addr: 127.0.0.1:3306
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+  QueryTimeout: 5s
+  ExecTimeout: 5s
+  TranTimeout: 5s
+Cache:
+  - Host: 127.0.0.1:6379
+KV:
+  - Host: 127.0.0.1:6379
+
+IdgenClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen
+StatusClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.status
+SessionClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.session
+
+ChannelClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service
+ChatClient:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service
+
+PushClient:
+  Topic:   "Push-T"
+  Brokers:
+    - 127.0.0.1:9092
+BotsClient:
+  Topic:   "BotFather-T"
+  Brokers:
+    - 127.0.0.1:9092
+

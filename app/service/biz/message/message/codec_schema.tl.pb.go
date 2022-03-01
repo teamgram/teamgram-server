@@ -1,0 +1,1979 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2022-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teagramio (teagram.io@gmail.com)
+ */
+
+// ConstructorList
+// RequestList
+
+package message
+
+import (
+	"fmt"
+
+	"github.com/teamgram/proto/mtproto"
+
+	"github.com/gogo/protobuf/jsonpb"
+	"github.com/gogo/protobuf/types"
+)
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+var _ *types.Int32Value
+var _ *mtproto.Bool
+var _ fmt.GoStringer
+
+var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
+	// Constructor
+	1988948676: func() mtproto.TLObject { // 0x768cf2c4
+		o := MakeTLPeerMessageId(nil)
+		o.Data2.Constructor = 1988948676
+		return o
+	},
+
+	// Method
+	2060235208: func() mtproto.TLObject { // 0x7accb1c8
+		return &TLMessageGetUserMessage{
+			Constructor: 2060235208,
+		}
+	},
+	-749200346: func() mtproto.TLObject { // 0xd3581c26
+		return &TLMessageGetUserMessageList{
+			Constructor: -749200346,
+		}
+	},
+	290824571: func() mtproto.TLObject { // 0x1155a17b
+		return &TLMessageGetUserMessageListByDataIdList{
+			Constructor: 290824571,
+		}
+	},
+	1555880424: func() mtproto.TLObject { // 0x5cbcd9e8
+		return &TLMessageGetScheduledMessageListByIdList{
+			Constructor: 1555880424,
+		}
+	},
+	1794405176: func() mtproto.TLObject { // 0x6af47338
+		return &TLMessageDeleteScheduledMessageList{
+			Constructor: 1794405176,
+		}
+	},
+	372084720: func() mtproto.TLObject { // 0x162d8ff0
+		return &TLMessageDeleteSentScheduledMessageList{
+			Constructor: 372084720,
+		}
+	},
+	624854666: func() mtproto.TLObject { // 0x253e868a
+		return &TLMessageGetScheduledMessageHistory{
+			Constructor: 624854666,
+		}
+	},
+	-1887291094: func() mtproto.TLObject { // 0x8f82392a
+		return &TLMessageGetScheduledTimeoutMessageList{
+			Constructor: -1887291094,
+		}
+	},
+	50897728: func() mtproto.TLObject { // 0x308a340
+		return &TLMessageGetHistoryMessages{
+			Constructor: 50897728,
+		}
+	},
+	256933395: func() mtproto.TLObject { // 0xf507e13
+		return &TLMessageGetHistoryMessagesCount{
+			Constructor: 256933395,
+		}
+	},
+	112252165: func() mtproto.TLObject { // 0x6b0d505
+		return &TLMessageGetChannelMessage{
+			Constructor: 112252165,
+		}
+	},
+	-1579297828: func() mtproto.TLObject { // 0xa1ddd3dc
+		return &TLMessageGetChannelMessageList{
+			Constructor: -1579297828,
+		}
+	},
+	21070604: func() mtproto.TLObject { // 0x141830c
+		return &TLMessageGetChannelMessageListByDataIdList{
+			Constructor: 21070604,
+		}
+	},
+	1940829983: func() mtproto.TLObject { // 0x73aeb71f
+		return &TLMessageGetPeerUserMessageId{
+			Constructor: 1940829983,
+		}
+	},
+	1662161426: func() mtproto.TLObject { // 0x63129212
+		return &TLMessageGetPeerUserMessage{
+			Constructor: 1662161426,
+		}
+	},
+	-917982612: func() mtproto.TLObject { // 0xc948b26c
+		return &TLMessageGetPeerChatMessageIdList{
+			Constructor: -917982612,
+		}
+	},
+	-1442816248: func() mtproto.TLObject { // 0xaa005f08
+		return &TLMessageGetPeerChatMessageList{
+			Constructor: -1442816248,
+		}
+	},
+	287058243: func() mtproto.TLObject { // 0x111c2943
+		return &TLMessageSearchByMediaType{
+			Constructor: 287058243,
+		}
+	},
+	1748348963: func() mtproto.TLObject { // 0x6835b023
+		return &TLMessageSearch{
+			Constructor: 1748348963,
+		}
+	},
+	-1281860155: func() mtproto.TLObject { // 0xb3985dc5
+		return &TLMessageSearchGlobal{
+			Constructor: -1281860155,
+		}
+	},
+	1853053781: func() mtproto.TLObject { // 0x6e735b55
+		return &TLMessageSearchByPinned{
+			Constructor: 1853053781,
+		}
+	},
+	-489963706: func() mtproto.TLObject { // 0xe2cbbf46
+		return &TLMessageGetSearchCounter{
+			Constructor: -489963706,
+		}
+	},
+	-1348859861: func() mtproto.TLObject { // 0xaf9a082b
+		return &TLMessageGetLastTwoPinnedMessageId{
+			Constructor: -1348859861,
+		}
+	},
+	-182391344: func() mtproto.TLObject { // 0xf520edd0
+		return &TLMessageUpdatePinnedMessageId{
+			Constructor: -182391344,
+		}
+	},
+	-637415203: func() mtproto.TLObject { // 0xda01d0dd
+		return &TLMessageGetPinnedMessageIdList{
+			Constructor: -637415203,
+		}
+	},
+	-368432525: func() mtproto.TLObject { // 0xea0a2a73
+		return &TLMessageUnPinAllMessages{
+			Constructor: -368432525,
+		}
+	},
+	1877050548: func() mtproto.TLObject { // 0x6fe184b4
+		return &TLMessageGetUnreadMentions{
+			Constructor: 1877050548,
+		}
+	},
+	-1254023095: func() mtproto.TLObject { // 0xb5412049
+		return &TLMessageGetUnreadMentionsCount{
+			Constructor: -1254023095,
+		}
+	},
+}
+
+func NewTLObjectByClassID(classId int32) mtproto.TLObject {
+	f, ok := clazzIdRegisters2[classId]
+	if !ok {
+		return nil
+	}
+	return f()
+}
+
+func CheckClassID(classId int32) (ok bool) {
+	_, ok = clazzIdRegisters2[classId]
+	return
+}
+
+//----------------------------------------------------------------------------------------------------------------
+
+///////////////////////////////////////////////////////////////////////////////
+// PeerMessageId <--
+//  + TL_PeerMessageId
+//
+
+func (m *PeerMessageId) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_peerMessageId:
+		t := m.To_PeerMessageId()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *PeerMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *PeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x768cf2c4:
+		m2 := MakeTLPeerMessageId(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *PeerMessageId) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_peerMessageId:
+		t := m.To_PeerMessageId()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_PeerMessageId
+// peerMessageId user_id:long msg_id:int = PeerMessageId;
+func (m *PeerMessageId) To_PeerMessageId() *TLPeerMessageId {
+	m.PredicateName = Predicate_peerMessageId
+	return &TLPeerMessageId{
+		Data2: m,
+	}
+}
+
+// MakeTLPeerMessageId
+// peerMessageId user_id:long msg_id:int = PeerMessageId;
+func MakeTLPeerMessageId(data2 *PeerMessageId) *TLPeerMessageId {
+	if data2 == nil {
+		return &TLPeerMessageId{Data2: &PeerMessageId{
+			PredicateName: Predicate_peerMessageId,
+		}}
+	} else {
+		data2.PredicateName = Predicate_peerMessageId
+		return &TLPeerMessageId{Data2: data2}
+	}
+}
+
+func (m *TLPeerMessageId) To_PeerMessageId() *PeerMessageId {
+	m.Data2.PredicateName = Predicate_peerMessageId
+	return m.Data2
+}
+
+func (m *TLPeerMessageId) SetUserId(v int64) { m.Data2.UserId = v }
+func (m *TLPeerMessageId) GetUserId() int64  { return m.Data2.UserId }
+
+func (m *TLPeerMessageId) SetMsgId(v int32) { m.Data2.MsgId = v }
+func (m *TLPeerMessageId) GetMsgId() int32  { return m.Data2.MsgId }
+
+func (m *TLPeerMessageId) GetPredicateName() string {
+	return Predicate_peerMessageId
+}
+
+func (m *TLPeerMessageId) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x768cf2c4: func() []byte {
+			// peerMessageId user_id:long msg_id:int = PeerMessageId;
+			x.UInt(0x768cf2c4)
+
+			x.Long(m.GetUserId())
+			x.Int(m.GetMsgId())
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_peerMessageId, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_peerMessageId, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLPeerMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLPeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x768cf2c4: func() error {
+			// peerMessageId user_id:long msg_id:int = PeerMessageId;
+			m.SetUserId(dBuf.Long())
+			m.SetMsgId(dBuf.Int())
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLPeerMessageId) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+//----------------------------------------------------------------------------------------------------------------
+// TLMessageGetUserMessage
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUserMessage) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUserMessage))
+
+	switch uint32(m.Constructor) {
+	case 0x7accb1c8:
+		// message.getUserMessage user_id:long id:int = MessageBox;
+		x.UInt(0x7accb1c8)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUserMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7accb1c8:
+		// message.getUserMessage user_id:long id:int = MessageBox;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Id = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUserMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetUserMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUserMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUserMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0xd3581c26:
+		// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
+		x.UInt(0xd3581c26)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.VectorInt(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUserMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUserMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xd3581c26:
+		// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m.IdList = dBuf.VectorInt()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUserMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetUserMessageListByDataIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUserMessageListByDataIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUserMessageListByDataIdList))
+
+	switch uint32(m.Constructor) {
+	case 0x1155a17b:
+		// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
+		x.UInt(0x1155a17b)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.VectorLong(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUserMessageListByDataIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUserMessageListByDataIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x1155a17b:
+		// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m.IdList = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUserMessageListByDataIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetScheduledMessageListByIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetScheduledMessageListByIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getScheduledMessageListByIdList))
+
+	switch uint32(m.Constructor) {
+	case 0x5cbcd9e8:
+		// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
+		x.UInt(0x5cbcd9e8)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+		x.VectorInt(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetScheduledMessageListByIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetScheduledMessageListByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x5cbcd9e8:
+		// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+
+		m.IdList = dBuf.VectorInt()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetScheduledMessageListByIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageDeleteScheduledMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageDeleteScheduledMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_deleteScheduledMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0x6af47338:
+		// message.deleteScheduledMessageList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Bool;
+		x.UInt(0x6af47338)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+		x.VectorInt(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageDeleteScheduledMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageDeleteScheduledMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6af47338:
+		// message.deleteScheduledMessageList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Bool;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+
+		m.IdList = dBuf.VectorInt()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageDeleteScheduledMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageDeleteSentScheduledMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageDeleteSentScheduledMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_deleteSentScheduledMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0x162d8ff0:
+		// message.deleteSentScheduledMessageList id_list:Vector<long> = Bool;
+		x.UInt(0x162d8ff0)
+
+		// no flags
+
+		x.VectorLong(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageDeleteSentScheduledMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageDeleteSentScheduledMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x162d8ff0:
+		// message.deleteSentScheduledMessageList id_list:Vector<long> = Bool;
+
+		// not has flags
+
+		m.IdList = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageDeleteSentScheduledMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetScheduledMessageHistory
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetScheduledMessageHistory) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getScheduledMessageHistory))
+
+	switch uint32(m.Constructor) {
+	case 0x253e868a:
+		// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
+		x.UInt(0x253e868a)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetScheduledMessageHistory) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetScheduledMessageHistory) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x253e868a:
+		// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetScheduledMessageHistory) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetScheduledTimeoutMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetScheduledTimeoutMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getScheduledTimeoutMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0x8f82392a:
+		// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
+		x.UInt(0x8f82392a)
+
+		// no flags
+
+		x.Long(m.GetDate())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetScheduledTimeoutMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetScheduledTimeoutMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x8f82392a:
+		// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
+
+		// not has flags
+
+		m.Date = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetScheduledTimeoutMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetHistoryMessages
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetHistoryMessages) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getHistoryMessages))
+
+	switch uint32(m.Constructor) {
+	case 0x308a340:
+		// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
+		x.UInt(0x308a340)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetOffsetId())
+		x.Int(m.GetOffsetDate())
+		x.Int(m.GetAddOffset())
+		x.Int(m.GetLimit())
+		x.Int(m.GetMaxId())
+		x.Int(m.GetMinId())
+		x.Long(m.GetHash())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetHistoryMessages) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetHistoryMessages) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x308a340:
+		// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.OffsetId = dBuf.Int()
+		m.OffsetDate = dBuf.Int()
+		m.AddOffset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		m.MaxId = dBuf.Int()
+		m.MinId = dBuf.Int()
+		m.Hash = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetHistoryMessages) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetHistoryMessagesCount
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetHistoryMessagesCount) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getHistoryMessagesCount))
+
+	switch uint32(m.Constructor) {
+	case 0xf507e13:
+		// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
+		x.UInt(0xf507e13)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetHistoryMessagesCount) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetHistoryMessagesCount) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xf507e13:
+		// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetHistoryMessagesCount) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetChannelMessage
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetChannelMessage) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getChannelMessage))
+
+	switch uint32(m.Constructor) {
+	case 0x6b0d505:
+		// message.getChannelMessage user_id:long channel_id:long id:int = MessageBox;
+		x.UInt(0x6b0d505)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetChannelId())
+		x.Int(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetChannelMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetChannelMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6b0d505:
+		// message.getChannelMessage user_id:long channel_id:long id:int = MessageBox;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.ChannelId = dBuf.Long()
+		m.Id = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetChannelMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetChannelMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetChannelMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getChannelMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0xa1ddd3dc:
+		// message.getChannelMessageList user_id:long channel_id:long id_list:Vector<int> = Vector<MessageBox>;
+		x.UInt(0xa1ddd3dc)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetChannelId())
+
+		x.VectorInt(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetChannelMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetChannelMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xa1ddd3dc:
+		// message.getChannelMessageList user_id:long channel_id:long id_list:Vector<int> = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.ChannelId = dBuf.Long()
+
+		m.IdList = dBuf.VectorInt()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetChannelMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetChannelMessageListByDataIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetChannelMessageListByDataIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getChannelMessageListByDataIdList))
+
+	switch uint32(m.Constructor) {
+	case 0x141830c:
+		// message.getChannelMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
+		x.UInt(0x141830c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.VectorLong(m.GetIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetChannelMessageListByDataIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetChannelMessageListByDataIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x141830c:
+		// message.getChannelMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m.IdList = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetChannelMessageListByDataIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetPeerUserMessageId
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetPeerUserMessageId) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getPeerUserMessageId))
+
+	switch uint32(m.Constructor) {
+	case 0x73aeb71f:
+		// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
+		x.UInt(0x73aeb71f)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetPeerUserId())
+		x.Int(m.GetMsgId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetPeerUserMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetPeerUserMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x73aeb71f:
+		// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerUserId = dBuf.Long()
+		m.MsgId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetPeerUserMessageId) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetPeerUserMessage
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetPeerUserMessage) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getPeerUserMessage))
+
+	switch uint32(m.Constructor) {
+	case 0x63129212:
+		// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
+		x.UInt(0x63129212)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetPeerUserId())
+		x.Int(m.GetMsgId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetPeerUserMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetPeerUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x63129212:
+		// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerUserId = dBuf.Long()
+		m.MsgId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetPeerUserMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetPeerChatMessageIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetPeerChatMessageIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getPeerChatMessageIdList))
+
+	switch uint32(m.Constructor) {
+	case 0xc948b26c:
+		// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
+		x.UInt(0xc948b26c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetPeerChatId())
+		x.Int(m.GetMsgId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetPeerChatMessageIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetPeerChatMessageIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xc948b26c:
+		// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerChatId = dBuf.Long()
+		m.MsgId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetPeerChatMessageIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetPeerChatMessageList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetPeerChatMessageList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getPeerChatMessageList))
+
+	switch uint32(m.Constructor) {
+	case 0xaa005f08:
+		// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
+		x.UInt(0xaa005f08)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetPeerChatId())
+		x.Int(m.GetMsgId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetPeerChatMessageList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetPeerChatMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xaa005f08:
+		// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerChatId = dBuf.Long()
+		m.MsgId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetPeerChatMessageList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageSearchByMediaType
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageSearchByMediaType) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_searchByMediaType))
+
+	switch uint32(m.Constructor) {
+	case 0x111c2943:
+		// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
+		x.UInt(0x111c2943)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetMediaType())
+		x.Int(m.GetOffset())
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageSearchByMediaType) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageSearchByMediaType) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x111c2943:
+		// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MediaType = dBuf.Int()
+		m.Offset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageSearchByMediaType) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageSearch
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageSearch) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_search))
+
+	switch uint32(m.Constructor) {
+	case 0x6835b023:
+		// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
+		x.UInt(0x6835b023)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.String(m.GetQ())
+		x.Int(m.GetOffset())
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageSearch) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageSearch) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6835b023:
+		// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.Q = dBuf.String()
+		m.Offset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageSearch) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageSearchGlobal
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageSearchGlobal) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_searchGlobal))
+
+	switch uint32(m.Constructor) {
+	case 0xb3985dc5:
+		// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
+		x.UInt(0xb3985dc5)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.String(m.GetQ())
+		x.Int(m.GetOffset())
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageSearchGlobal) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageSearchGlobal) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xb3985dc5:
+		// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Q = dBuf.String()
+		m.Offset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageSearchGlobal) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageSearchByPinned
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageSearchByPinned) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_searchByPinned))
+
+	switch uint32(m.Constructor) {
+	case 0x6e735b55:
+		// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
+		x.UInt(0x6e735b55)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageSearchByPinned) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageSearchByPinned) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6e735b55:
+		// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageSearchByPinned) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetSearchCounter
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetSearchCounter) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getSearchCounter))
+
+	switch uint32(m.Constructor) {
+	case 0xe2cbbf46:
+		// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
+		x.UInt(0xe2cbbf46)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetMediaType())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetSearchCounter) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetSearchCounter) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xe2cbbf46:
+		// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MediaType = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetSearchCounter) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetLastTwoPinnedMessageId
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetLastTwoPinnedMessageId) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getLastTwoPinnedMessageId))
+
+	switch uint32(m.Constructor) {
+	case 0xaf9a082b:
+		// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
+		x.UInt(0xaf9a082b)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetLastTwoPinnedMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetLastTwoPinnedMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xaf9a082b:
+		// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetLastTwoPinnedMessageId) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageUpdatePinnedMessageId
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageUpdatePinnedMessageId) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_updatePinnedMessageId))
+
+	switch uint32(m.Constructor) {
+	case 0xf520edd0:
+		// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
+		x.UInt(0xf520edd0)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetId())
+		x.Bytes(m.GetPinned().Encode(layer))
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageUpdatePinnedMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageUpdatePinnedMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xf520edd0:
+		// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.Id = dBuf.Int()
+
+		m5 := &mtproto.Bool{}
+		m5.Decode(dBuf)
+		m.Pinned = m5
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageUpdatePinnedMessageId) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetPinnedMessageIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetPinnedMessageIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getPinnedMessageIdList))
+
+	switch uint32(m.Constructor) {
+	case 0xda01d0dd:
+		// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
+		x.UInt(0xda01d0dd)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetPinnedMessageIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetPinnedMessageIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xda01d0dd:
+		// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetPinnedMessageIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageUnPinAllMessages
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageUnPinAllMessages) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_unPinAllMessages))
+
+	switch uint32(m.Constructor) {
+	case 0xea0a2a73:
+		// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
+		x.UInt(0xea0a2a73)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageUnPinAllMessages) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageUnPinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xea0a2a73:
+		// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageUnPinAllMessages) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetUnreadMentions
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUnreadMentions) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUnreadMentions))
+
+	switch uint32(m.Constructor) {
+	case 0x6fe184b4:
+		// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
+		x.UInt(0x6fe184b4)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetOffsetId())
+		x.Int(m.GetAddOffset())
+		x.Int(m.GetLimit())
+		x.Int(m.GetMinId())
+		x.Int(m.GetMaxInt())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUnreadMentions) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUnreadMentions) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6fe184b4:
+		// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.OffsetId = dBuf.Int()
+		m.AddOffset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		m.MinId = dBuf.Int()
+		m.MaxInt = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUnreadMentions) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetUnreadMentionsCount
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUnreadMentionsCount) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUnreadMentionsCount))
+
+	switch uint32(m.Constructor) {
+	case 0xb5412049:
+		// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
+		x.UInt(0xb5412049)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUnreadMentionsCount) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUnreadMentionsCount) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xb5412049:
+		// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUnreadMentionsCount) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+//----------------------------------------------------------------------------------------------------------------
+// Vector_MessageBox
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_MessageBox) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		x.Bytes((*v).Encode(layer))
+	}
+
+	return x.GetBuf()
+}
+
+func (m *Vector_MessageBox) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*mtproto.MessageBox, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(mtproto.MessageBox)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_MessageBox) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_MessageBox) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_PeerMessageId
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_PeerMessageId) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		x.Bytes((*v).Encode(layer))
+	}
+
+	return x.GetBuf()
+}
+
+func (m *Vector_PeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*PeerMessageId, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(PeerMessageId)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_PeerMessageId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_PeerMessageId) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_Int
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_Int) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.VectorInt(m.Datas)
+
+	return x.GetBuf()
+}
+
+func (m *Vector_Int) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Datas = dBuf.VectorInt()
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_Int) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_Int) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}

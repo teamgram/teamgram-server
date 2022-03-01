@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_seq_updates">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_seq_updates
+                (auth_id, user_id, seq, update_type, update_data, date2)
+            VALUES
+                (:auth_id, :user_id, :seq, :update_type, :update_data, :date2)
+        </sql>
+    </operation>
+
+    <operation name="SelectLastSeq">
+        <sql>
+            SELECT seq FROM auth_seq_updates WHERE auth_id = :auth_id AND user_id = :user_id ORDER BY seq DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtSeq" result_set="list">
+        <sql>
+            SELECT
+                auth_id, user_id, seq, update_type, update_data, date2
+            FROM
+                auth_seq_updates
+            WHERE
+                auth_id = :auth_id AND user_id = :user_id AND seq > :seq ORDER BY seq
+        </sql>
+    </operation>
+
+    <operation name="SelectByGtDate" result_set="list">
+        <sql>
+            SELECT
+                auth_id, user_id, seq, update_type, update_data, date2
+            FROM
+                auth_seq_updates
+            WHERE
+                auth_id = :auth_id AND user_id = :user_id AND date2 > :date2 ORDER BY seq
+        </sql>
+    </operation>
+
+</table>

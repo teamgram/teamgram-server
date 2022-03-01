@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="photos">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO photos
+                (photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext)
+            VALUES
+                (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
+        </sql>
+    </operation>
+
+    <operation name="SelectByPhotoId">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext
+            FROM
+                photos
+            WHERE
+                photo_id = :photo_id LIMIT 1
+            ]]>
+        </sql>
+    </operation>
+
+</table>
