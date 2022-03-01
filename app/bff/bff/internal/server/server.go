@@ -313,7 +313,6 @@ func (s *Server) Initialize() error {
 				MessageClient:  c.BizServiceClient,
 				MediaClient:    c.MediaClient,
 				UsernameClient: c.BizServiceClient,
-				WebpageClient:  c.BizServiceClient,
 				SyncClient:     c.SyncClient,
 			}))
 

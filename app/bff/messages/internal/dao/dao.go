@@ -29,7 +29,6 @@ import (
 	message_client "github.com/teamgram/teamgram-server/app/service/biz/message/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
 	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
-	webpage_client "github.com/teamgram/teamgram-server/app/service/biz/webpage/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	media_client "github.com/teamgram/teamgram-server/app/service/media/client"
 )
@@ -39,7 +38,6 @@ type Dao struct {
 	user_client.UserClient
 	chat_client.ChatClient
 	media_client.MediaClient
-	webpage_client.WebpageClient
 	username_client.UsernameClient
 	message_client.MessageClient
 	idgen_client.IDGenClient2
@@ -53,7 +51,6 @@ func New(c config.Config) *Dao {
 		UserClient:     user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
 		ChatClient:     chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
 		MediaClient:    media_client.NewMediaClient(rpcx.GetCachedRpcClient(c.MediaClient)),
-		WebpageClient:  webpage_client.NewWebpageClient(rpcx.GetCachedRpcClient(c.WebpageClient)),
 		DialogClient:   dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 		IDGenClient2:   idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
 		MessageClient:  message_client.NewMessageClient(rpcx.GetCachedRpcClient(c.MessageClient)),

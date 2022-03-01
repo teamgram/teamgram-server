@@ -28,20 +28,16 @@ import (
 type Mysql struct {
 	*sqlx.DB
 	*mysql_dao.AuthSeqUpdatesDAO
-	*mysql_dao.ChannelPtsUpdatesDAO
 	*mysql_dao.UserPtsUpdatesDAO
-	*mysql_dao.UserQtsUpdatesDAO
 	*sqlx.CommonDAO
 }
 
 func newMysqlDao(db *sqlx.DB) *Mysql {
 	return &Mysql{
-		DB:                   db,
-		AuthSeqUpdatesDAO:    mysql_dao.NewAuthSeqUpdatesDAO(db),
-		ChannelPtsUpdatesDAO: mysql_dao.NewChannelPtsUpdatesDAO(db),
-		UserPtsUpdatesDAO:    mysql_dao.NewUserPtsUpdatesDAO(db),
-		UserQtsUpdatesDAO:    mysql_dao.NewUserQtsUpdatesDAO(db),
-		CommonDAO:            sqlx.NewCommonDAO(db),
+		DB:                db,
+		AuthSeqUpdatesDAO: mysql_dao.NewAuthSeqUpdatesDAO(db),
+		UserPtsUpdatesDAO: mysql_dao.NewUserPtsUpdatesDAO(db),
+		CommonDAO:         sqlx.NewCommonDAO(db),
 	}
 }
 

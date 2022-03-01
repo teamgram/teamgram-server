@@ -17,7 +17,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
-	webpagepb "github.com/teamgram/teamgram-server/app/service/biz/webpage/webpage"
 	mediapb "github.com/teamgram/teamgram-server/app/service/media/media"
 	"github.com/teamgram/teamgram-server/pkg/mention"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
@@ -388,16 +387,16 @@ func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, 
 		}
 
 		if canEmbedLink {
-			// TODO(@benqi): disable
-			if webpage, err := c.svcCtx.Dao.WebpageClient.WebpageGetWebPagePreview(c.ctx, &webpagepb.TLWebpageGetWebPagePreview{
-				Message: firstUrl,
-			}); err != nil {
-				// nil
-			} else {
-				message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
-					Webpage: webpage,
-				}).To_MessageMedia()
-			}
+			//// TODO(@benqi): disable
+			//if webpage, err := c.svcCtx.Dao.WebpageClient.WebpageGetWebPagePreview(c.ctx, &webpagepb.TLWebpageGetWebPagePreview{
+			//	Message: firstUrl,
+			//}); err != nil {
+			//	// nil
+			//} else {
+			//	message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
+			//		Webpage: webpage,
+			//	}).To_MessageMedia()
+			//}
 		}
 	}
 

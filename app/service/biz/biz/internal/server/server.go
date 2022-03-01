@@ -37,8 +37,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	username_helper "github.com/teamgram/teamgram-server/app/service/biz/username"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
-	webpage_helper "github.com/teamgram/teamgram-server/app/service/biz/webpage"
-	"github.com/teamgram/teamgram-server/app/service/biz/webpage/webpage"
+
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -140,14 +139,6 @@ func (s *Server) Initialize() error {
 				RpcServerConf: c.RpcServerConf,
 				Mysql:         c.Mysql,
 				Cache:         c.Cache,
-			}))
-
-		// webpage_helper
-		webpage.RegisterRPCWebpageServer(
-			grpcServer,
-			webpage_helper.New(webpage_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
 			}))
 	})
 
