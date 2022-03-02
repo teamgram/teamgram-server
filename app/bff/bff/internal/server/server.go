@@ -33,7 +33,6 @@ import (
 	emoji_helper "github.com/teamgram/teamgram-server/app/bff/emoji"
 	files_helper "github.com/teamgram/teamgram-server/app/bff/files"
 	folders_helper "github.com/teamgram/teamgram-server/app/bff/folders"
-	gdpr_helper "github.com/teamgram/teamgram-server/app/bff/gdpr"
 	gifs_helper "github.com/teamgram/teamgram-server/app/bff/gifs"
 	langpack_helper "github.com/teamgram/teamgram-server/app/bff/langpack"
 	messages_helper "github.com/teamgram/teamgram-server/app/bff/messages"
@@ -47,7 +46,6 @@ import (
 	reports_helper "github.com/teamgram/teamgram-server/app/bff/reports"
 	secretchats_helper "github.com/teamgram/teamgram-server/app/bff/secretchats"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
-	statistics_helper "github.com/teamgram/teamgram-server/app/bff/statistics"
 	stickers_helper "github.com/teamgram/teamgram-server/app/bff/stickers"
 	themes_helper "github.com/teamgram/teamgram-server/app/bff/themes"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
@@ -136,13 +134,6 @@ func (s *Server) Initialize() error {
 				StatusClient:      c.StatusClient,
 				SyncClient:        c.SyncClient,
 				MsgClient:         c.MsgClient,
-			}))
-
-		// gdpr_helper
-		mtproto.RegisterRPCGdprServer(
-			grpcServer,
-			gdpr_helper.New(gdpr_helper.Config{
-				RpcServerConf: c.RpcServerConf,
 			}))
 
 		// gifs_helper
@@ -347,13 +338,6 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCSponsoredMessagesServer(
 			grpcServer,
 			sponsoredmessages_helper.New(sponsoredmessages_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// statistics_helper
-		mtproto.RegisterRPCStatisticsServer(
-			grpcServer,
-			statistics_helper.New(statistics_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 
