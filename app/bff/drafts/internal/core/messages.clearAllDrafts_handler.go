@@ -64,9 +64,13 @@ func (c *DraftsCore) MessagesClearAllDrafts(in *mtproto.TLMessagesClearAllDrafts
 
 			syncUpdates.AddSafeChat(chat.ToUnsafeChat(c.MD.UserId))
 		case mtproto.PEER_CHANNEL:
-			c.Logger.Errorf("messages.clearAllDrafts blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-			return nil, mtproto.ErrEnterpriseIsBlocked
+			if c.svcCtx.Plugin != nil {
+				chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, peer.PeerId)
+				syncUpdates.PushChat(chats...)
+			} else {
+				c.Logger.Errorf("messages.clearAllDrafts blocked, License key from https://teamgram.net required to unlock enterprise features.")
+				return nil, mtproto.ErrEnterpriseIsBlocked
+			}
 		}
 
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{

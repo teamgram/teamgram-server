@@ -14,12 +14,13 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/usernames/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/usernames/internal/svc"
+	"github.com/teamgram/teamgram-server/app/bff/usernames/plugin"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+func New(c Config, plugin plugin.UsernamesPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin))
 }

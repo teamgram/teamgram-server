@@ -34,18 +34,8 @@ func (c *AuthorizationCore) AuthLogOut3E72BA19(in *mtproto.TLAuthLogOut3E72BA19)
 	if err != nil {
 		c.Logger.Errorf("auth.logOut - error: %v", err)
 	} else {
-		k, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionQueryAuthKey(c.ctx, &authsession.TLAuthsessionQueryAuthKey{
-			AuthKeyId: c.MD.AuthId,
-		})
-		if err != nil {
-			c.Logger.Errorf("auth.logOut - error: %v", err)
-		} else {
-			_ = k
-			// TODO: dispatch enterprise server
-			// c.svcCtx.Dao.PushClient.PushDeleteDevice(c.ctx, &push.TLPushDeleteDevice{
-			//	UserId:     c.MD.UserId,
-			//	AuthKeyIds: []int64{k.PermAuthKeyId, k.TempAuthKeyId, k.MediaTempAuthKeyId},
-			// })
+		if c.svcCtx.Plugin != nil {
+			c.svcCtx.Plugin.OnAuthLogout(c.ctx, c.MD.UserId, c.MD.AuthId)
 		}
 	}
 

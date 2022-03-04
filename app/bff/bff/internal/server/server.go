@@ -20,6 +20,8 @@ package server
 
 import (
 	"flag"
+	scheduledmessages_helper "github.com/teamgram/teamgram-server/app/bff/scheduledmessages"
+
 	"github.com/teamgram/proto/mtproto"
 	account_helper "github.com/teamgram/teamgram-server/app/bff/account"
 	authorization_helper "github.com/teamgram/teamgram-server/app/bff/authorization"
@@ -57,6 +59,7 @@ import (
 	users_helper "github.com/teamgram/teamgram-server/app/bff/users"
 	wallpapers_helper "github.com/teamgram/teamgram-server/app/bff/wallpapers"
 	webpage_helper "github.com/teamgram/teamgram-server/app/bff/webpage"
+
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -134,7 +137,7 @@ func (s *Server) Initialize() error {
 				StatusClient:      c.StatusClient,
 				SyncClient:        c.SyncClient,
 				MsgClient:         c.MsgClient,
-			}))
+			}, nil))
 
 		// gifs_helper
 		mtproto.RegisterRPCGifsServer(
@@ -188,7 +191,7 @@ func (s *Server) Initialize() error {
 				DfsClient:     c.DfsClient,
 				UserClient:    c.BizServiceClient,
 				MediaClient:   c.MediaClient,
-			}))
+			}, nil))
 
 		// webpage_helper
 		mtproto.RegisterRPCWebPageServer(
@@ -254,7 +257,7 @@ func (s *Server) Initialize() error {
 				UserClient:    c.BizServiceClient,
 				SyncClient:    c.SyncClient,
 				ChatClient:    c.BizServiceClient,
-			}))
+			}, nil))
 
 		// emoji_helper
 		mtproto.RegisterRPCEmojiServer(
@@ -326,6 +329,13 @@ func (s *Server) Initialize() error {
 				ChatClient:    c.BizServiceClient,
 			}))
 
+		// scheduledmessages_helper
+		mtproto.RegisterRPCScheduledMessagesServer(
+			grpcServer,
+			scheduledmessages_helper.New(scheduledmessages_helper.Config{
+				RpcServerConf: c.RpcServerConf,
+			}))
+
 		// nsfw_helper
 		mtproto.RegisterRPCNsfwServer(
 			grpcServer,
@@ -378,7 +388,7 @@ func (s *Server) Initialize() error {
 				UsernameClient: c.BizServiceClient,
 				ChatClient:     c.BizServiceClient,
 				SyncClient:     c.SyncClient,
-			}))
+			}, nil))
 
 		// usernames_helper
 		mtproto.RegisterRPCWallpapersServer(

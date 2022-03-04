@@ -118,8 +118,15 @@ func (c *AuthorizationCore) AuthSendCode(in *mtproto.TLAuthSendCode) (*mtproto.A
 		return nil, err
 	}
 
-	// log
-	// logic.DoLogAuthAction(c.svcCtx.Dao, c.MD, in.PhoneNumber, logic.GetActionType(in), "auth.sendCode#86aef0ec")
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.AuthId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			logic.GetActionType(in),
+			"auth.sendCode")
+	}
 
 	return rValue, nil
 }
@@ -192,15 +199,15 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 	// TODO(@benqi):
 	// 	400	INPUT_REQUEST_TOO_LONG	The request is too big
 
-	//// 5. banned phone number
-	//banned, _ := c.svcCtx.Dao.BannedClient.BannedCheckPhoneNumberBanned(c.ctx, &banned.TLBannedCheckPhoneNumberBanned{
-	//	Phone: phoneNumber,
-	//})
-	//if mtproto.FromBool(banned) {
-	//	c.Logger.Errorf("{phone_number: %s} banned: %v", phoneNumber, err)
-	//	err = mtproto.ErrPhoneNumberBanned
-	//	return
-	//}
+	// 5. banned phone number
+	if c.svcCtx.Plugin != nil {
+		banned, _ := c.svcCtx.Plugin.CheckPhoneNumberBanned(c.ctx, phoneNumber)
+		if banned {
+			c.Logger.Errorf("{phone_number: %s} banned: %v", phoneNumber, err)
+			err = mtproto.ErrPhoneNumberBanned
+			return
+		}
+	}
 
 	// 400	PHONE_NUMBER_FLOOD	You asked for the code too many times.
 	// phone number flood

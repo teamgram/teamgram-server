@@ -22,19 +22,22 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/dao"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
+	"github.com/teamgram/teamgram-server/app/bff/authorization/plugin"
 )
 
 type ServiceContext struct {
 	Config config.Config
 	*dao.Dao
 	*logic.AuthLogic
+	Plugin plugin.AuthorizationPlugin
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, plugin plugin.AuthorizationPlugin) *ServiceContext {
 	d := dao.New(c)
 	return &ServiceContext{
 		Config:    c,
 		Dao:       d,
 		AuthLogic: logic.NewAuthSignLogic(d, c.Code),
+		Plugin:    plugin,
 	}
 }

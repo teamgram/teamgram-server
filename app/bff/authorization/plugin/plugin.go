@@ -16,17 +16,13 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package core
+package plugin
 
-import (
-	"github.com/teamgram/proto/mtproto"
-)
+import "context"
 
-// AuthBindTempAuthKey
-// auth.bindTempAuthKey#cdd42a05 perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
-func (c *AuthorizationCore) AuthBindTempAuthKey(in *mtproto.TLAuthBindTempAuthKey) (*mtproto.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.bindTempAuthKey blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return mtproto.BoolTrue, nil
+type AuthorizationPlugin interface {
+	OnAuthLogout(ctx context.Context, userId int64, keys ...int64) error
+	OnAuthAction(ctx context.Context, authKeyId, msgId int64, clientIp string, phoneNumber string, actionType int, log string)
+	CheckPhoneNumberBanned(ctx context.Context, phoneNumber string) (bool, error)
+	CheckSessionPasswordNeeded(ctx context.Context, userId int64) bool
 }

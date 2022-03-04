@@ -97,16 +97,15 @@ func (c *AuthorizationCore) AuthResendCode(in *mtproto.TLAuthResendCode) (*mtpro
 	// TODO(@benqi):
 	// 	400	INPUT_REQUEST_TOO_LONG	The request is too big
 
-	//// 5. banned phone number
-	//// 5. banned phone number
-	//banned, _ := c.svcCtx.Dao.BannedClient.BannedCheckPhoneNumberBanned(c.ctx, &banned.TLBannedCheckPhoneNumberBanned{
-	//	Phone: phoneNumber,
-	//})
-	//if mtproto.FromBool(banned) {
-	//	c.Logger.Errorf("{phone_number: %s} banned: %v", phoneNumber, err)
-	//	err = mtproto.ErrPhoneNumberBanned
-	//	return nil, err
-	//}
+	// 5. banned phone number
+	if c.svcCtx.Plugin != nil {
+		banned, _ := c.svcCtx.Plugin.CheckPhoneNumberBanned(c.ctx, phoneNumber)
+		if banned {
+			c.Logger.Errorf("{phone_number: %s} banned: %v", phoneNumber, err)
+			err = mtproto.ErrPhoneNumberBanned
+			return nil, err
+		}
+	}
 
 	// 400	PHONE_NUMBER_FLOOD	You asked for the code too many times.
 	// phone number flood
@@ -162,8 +161,15 @@ func (c *AuthorizationCore) AuthResendCode(in *mtproto.TLAuthResendCode) (*mtpro
 		return nil, err
 	}
 
-	// log
-	// logic.DoLogAuthAction(c.svcCtx.Dao, c.MD, in.PhoneNumber, logic.GetActionType(in), "auth.resendCode#3ef1a9bf")
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.AuthId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			logic.GetActionType(in),
+			"auth.resendCode")
+	}
 
 	return codeData.ToAuthSentCode(), nil
 }

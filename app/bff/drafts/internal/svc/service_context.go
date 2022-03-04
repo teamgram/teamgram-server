@@ -21,16 +21,19 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/app/bff/drafts/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/drafts/internal/dao"
+	"github.com/teamgram/teamgram-server/app/bff/drafts/plugin"
 )
 
 type ServiceContext struct {
 	Config config.Config
 	*dao.Dao
+	Plugin plugin.DraftsPlugin
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, plugin plugin.DraftsPlugin) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 		Dao:    dao.New(c),
+		Plugin: plugin,
 	}
 }

@@ -46,7 +46,7 @@ func (c *UsernamesCore) ContactsResolveUsername(in *mtproto.TLContactsResolveUse
 			Username: in.GetUsername(),
 		})
 		if err != nil {
-			c.Logger.Errorf("contacts.resolveUsername#f93ccba3 - reply: {%v}", err)
+			c.Logger.Errorf("contacts.resolveUsername - reply: {%v}", err)
 			return nil, err
 		}
 
@@ -77,15 +77,11 @@ func (c *UsernamesCore) ContactsResolveUsername(in *mtproto.TLContactsResolveUse
 			resolvedPeer.Chats = []*mtproto.Chat{chat.ToUnsafeChat(c.MD.UserId)}
 		}
 	case mtproto.PEER_CHANNEL:
-		//chat, _ := c.svcCtx.Dao.ChannelClient.ChannelGetMutableChannel(
-		//	c.ctx,
-		//	&channelpb.TLChannelGetMutableChannel{
-		//		ChannelId: peer.PeerId,
-		//		Id:        []int64{c.MD.UserId},
-		//	})
-		//if chat != nil {
-		//	resolvedPeer.Chats = []*mtproto.Chat{chat.ToUnsafeChat(c.MD.UserId)}
-		//}
+		if c.svcCtx.Plugin != nil {
+			resolvedPeer.Chats = c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, peer.PeerId)
+		} else {
+			c.Logger.Errorf("contacts.resolveUsername blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		}
 	}
 
 	return resolvedPeer, nil

@@ -25,9 +25,7 @@ import (
 // ChannelsGetSponsoredMessages
 // channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
 func (c *SponsoredMessagesCore) ChannelsGetSponsoredMessages(in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
-	// TODO: not impl
-	c.Logger.Errorf("channels.getSponsoredMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
+	// disable SponsoredMessages
 	return mtproto.MakeTLMessagesSponsoredMessages(&mtproto.Messages_SponsoredMessages{
 		Messages: []*mtproto.SponsoredMessage{},
 		Chats:    []*mtproto.Chat{},

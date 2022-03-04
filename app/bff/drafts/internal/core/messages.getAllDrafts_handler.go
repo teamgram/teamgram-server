@@ -68,7 +68,12 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *mtproto.TLMessagesGetAllDrafts) (*
 			rUpdates.PushChat(chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
 		},
 		func(channelIdList []int64) {
-			// TODO
+			if c.svcCtx.Plugin != nil {
+				chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, channelIdList...)
+				rUpdates.PushChat(chats...)
+			} else {
+				c.Logger.Errorf("messages.getAllDrafts blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		})
 
 	return rUpdates, nil

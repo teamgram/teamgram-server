@@ -124,8 +124,15 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 		return nil, err
 	}
 
-	//// log
-	//logic.DoLogAuthAction(c.svcCtx.Dao, c.MD, in.PhoneNumber, logic.GetActionType(in), "auth.signIn#bcd51581")
+	if c.svcCtx.Plugin != nil {
+		c.svcCtx.Plugin.OnAuthAction(c.ctx,
+			c.MD.AuthId,
+			c.MD.ClientMsgId,
+			c.MD.ClientAddr,
+			in.PhoneNumber,
+			logic.GetActionType(in),
+			"auth.signIn")
+	}
 
 	// signIn successful, check phoneRegistered.
 	if !codeData.PhoneNumberRegistered {
@@ -208,14 +215,14 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 		UserId:    user.User.Id,
 	})
 
-	//// Check SESSION_PASSWORD_NEEDED
-	//if sessionPasswordNeeded, _ := c.svcCtx.Dao.TwofaClient.TwofaCheckSessionPasswordNeeded(c.ctx, &twofa.TLTwofaCheckSessionPasswordNeeded{
-	//	UserId: user.User.Id,
-	//}); mtproto.FromBool(sessionPasswordNeeded) {
-	//	err = mtproto.ErrSessionPasswordNeeded
-	//	c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
-	//	return nil, err
-	//}
+	// Check SESSION_PASSWORD_NEEDED
+	if c.svcCtx.Plugin != nil {
+		if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, c.MD.UserId) {
+			err = mtproto.ErrSessionPasswordNeeded
+			c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
+			return nil, err
+		}
+	}
 
 	selfUser := user.ToSelfUser()
 
