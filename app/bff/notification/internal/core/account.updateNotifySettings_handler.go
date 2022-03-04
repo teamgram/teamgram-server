@@ -94,25 +94,23 @@ func (c *NotificationCore) AccountUpdateNotifySettings(in *mtproto.TLAccountUpda
 
 		peerChat = peerChat2.ToUnsafeChat(c.MD.UserId)
 	case mtproto.PEER_CHANNEL:
-		//channel, err2 := c.svcCtx.Dao.ChannelClient.ChannelGetMutableChannel(c.ctx, &channelpb.TLChannelGetMutableChannel{
-		//	ChannelId: peer.PeerId,
-		//	Id:        []int64{c.MD.UserId},
-		//})
-		//if err2 != nil {
-		//	c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
-		//	err = mtproto.ErrPeerIdInvalid
-		//	return nil, err
-		//}
-		//me := channel.GetImmutableChannelParticipant(c.MD.UserId)
-		//if me == nil || me.IsKicked() {
-		//	err = mtproto.ErrChannelPrivate
-		//	c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
-		//	return nil, err
-		//}
-		//peerChannel = channel.ToUnsafeChat(c.MD.UserId)
-		//_ = peerChannel
+		if c.svcCtx.Plugin != nil {
+			peerChannel, err = c.svcCtx.Plugin.GetChannelById(c.ctx, c.MD.UserId, peer.PeerId)
+			if err != nil {
+				c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
+				return nil, err
+			} else if peerChannel.GetPredicateName() == mtproto.Predicate_channelForbidden {
+				err = mtproto.ErrChannelPrivate
+				c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
+				return nil, err
+			}
+		} else {
+			c.Logger.Errorf("account.updateNotifySettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
+
+			return nil, mtproto.ErrEnterpriseIsBlocked
+		}
 	default:
-		err := mtproto.ErrPeerIdInvalid
+		err = mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("account.updateNotifySettings - error: %v", err)
 		return nil, err
 	}

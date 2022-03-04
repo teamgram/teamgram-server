@@ -16,24 +16,14 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
+package plugin
 
 import (
-	"github.com/teamgram/teamgram-server/app/bff/notification/internal/config"
-	"github.com/teamgram/teamgram-server/app/bff/notification/internal/dao"
-	"github.com/teamgram/teamgram-server/app/bff/notification/plugin"
+	"context"
+	"github.com/teamgram/proto/mtproto"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-	Plugin plugin.NotificationPlugin
-}
-
-func NewServiceContext(c config.Config, plugin plugin.NotificationPlugin) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
-		Plugin: plugin,
-	}
+type NotificationPlugin interface {
+	GetChannelListByIdList(ctx context.Context, selfId int64, id ...int64) []*mtproto.Chat
+	GetChannelById(ctx context.Context, selfId int64, id int64) (*mtproto.Chat, error)
 }

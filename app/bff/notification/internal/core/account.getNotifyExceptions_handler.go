@@ -65,11 +65,16 @@ func (c *NotificationCore) AccountGetNotifyExceptions(in *mtproto.TLAccountGetNo
 				&chatpb.TLChatGetChatListByIdList{
 					IdList: chatIdList,
 				})
-			rUpdates.Chats = chats.GetChatListByIdList(c.MD.UserId, chatIdList...)
+			rUpdates.PushChat(chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
 		},
 
 		func(channelIdList []int64) {
-			// TODO
+			if c.svcCtx.Plugin != nil {
+				chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, channelIdList...)
+				rUpdates.PushChat(chats...)
+			} else {
+				c.Logger.Errorf("account.registerDevice blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		})
 
 	return rUpdates, nil
