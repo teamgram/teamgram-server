@@ -14,12 +14,13 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/svc"
+	"github.com/teamgram/teamgram-server/app/bff/notification/plugin"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+func New(c Config, plugin plugin.NotificationPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin))
 }

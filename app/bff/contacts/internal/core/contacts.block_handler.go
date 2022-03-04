@@ -80,9 +80,7 @@ func (c *ContactsCore) ContactsBlock(in *mtproto.TLContactsBlock) (*mtproto.Bool
 		})
 		idHelper.AppendChats(blockId.PeerId)
 	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("contacts.block blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
+		// TODO
 	default:
 		err := mtproto.ErrInputRequestInvalid
 		c.Logger.Errorf("contacts.block - error: %v", err)

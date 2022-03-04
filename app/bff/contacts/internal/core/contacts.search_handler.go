@@ -117,18 +117,21 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 		func(chatIdList []int64) {
 		},
 		func(channelIdList []int64) {
-			// TODO
-			//	channelList := s.ChannelFacade.GetChannelListByIdList(ctx, md.UserId, channelIdList...)
-			//	for _, c := range channelList {
-			//		if c.PredicateName == mtproto.Predicate_chatEmpty {
-			//			continue
-			//		}
-			//		found.Chats = append(found.Chats, c)
-			//		peer := mtproto.MakeTLPeerChannel(&mtproto.Peer{
-			//			ChannelId: c.GetId(),
-			//		})
-			//		found.Results = append(found.Results, peer.To_Peer())
-			//	}
+			if c.svcCtx.Plugin != nil {
+				chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, channelIdList...)
+				for _, c := range chats {
+					if c.PredicateName == mtproto.Predicate_chatEmpty {
+						continue
+					}
+					found.Chats = append(found.Chats, c)
+					peer := mtproto.MakeTLPeerChannel(&mtproto.Peer{
+						ChannelId: c.GetId(),
+					})
+					found.Results = append(found.Results, peer.To_Peer())
+				}
+			} else {
+				c.Logger.Errorf("contacts.search blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		})
 
 	return found, nil
