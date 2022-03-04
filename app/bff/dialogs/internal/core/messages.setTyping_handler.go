@@ -74,9 +74,7 @@ func (c *DialogsCore) MessagesSetTyping(in *mtproto.TLMessagesSetTyping) (*mtpro
 			return nil
 		})
 	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.setTyping blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
+		// Tips: disable updates
 	}
 
 	return mtproto.BoolTrue, nil

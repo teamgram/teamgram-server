@@ -82,9 +82,6 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *mtproto.TLMessagesGetPeerDialog
 			case mtproto.PEER_USER:
 			case mtproto.PEER_CHAT:
 			case mtproto.PEER_CHANNEL:
-				c.Logger.Errorf("messages.getPeerDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-				return nil, mtproto.ErrEnterpriseIsBlocked
 			default:
 				err := mtproto.ErrPeerIdInvalid
 				c.Logger.Errorf("messages.getPeerDialogs - getPeerDialogs error: %v", err)

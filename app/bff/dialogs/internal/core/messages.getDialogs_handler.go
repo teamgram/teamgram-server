@@ -65,21 +65,20 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 		peer2 := dialogEx.GetDialog().GetPeer()
 
 		if peer2.GetPredicateName() == mtproto.Predicate_peerChannel {
-			//c.Logger.Errorf("dialogEx: %v", dialogEx)
-			//channel2, _ := c.svcCtx.Dao.ChannelClient.ChannelGetMutableChannel(c.ctx, &channel.TLChannelGetMutableChannel{
-			//	ChannelId: peer2.ChannelId,
-			//	Id:        []int64{c.MD.UserId},
-			//})
-			//if channel2 != nil {
-			//	dialogEx.Dialog.TopMessage = channel2.TopMessage()
-			//	dialogEx.Dialog.Pts = mtproto.MakeFlagsInt32(channel2.Pts())
-			//	// dialogEx.Dialog.ReadOutboxMaxId = channel2.Megagroup.ReadInboxMaxId
-			//	dialogEx.Date = int64(channel2.Channel.Date)
-			//	dialogEx.Order = int64(channel2.Channel.Date)
-			//	// TODO:
-			//	// dialogEx.AvailableMinId = megagroup2.GetParticipants()[0].AvailableMinId
-			//}
-			//c.Logger.Errorf("dialogEx: %v", dialogEx)
+			if c.svcCtx.Plugin != nil {
+				dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.ChannelId)
+				if dialog != nil {
+					dialogEx.Dialog.TopMessage = dialog.Dialog.TopMessage
+					dialogEx.Dialog.Pts = dialog.Dialog.Pts
+					// dialogEx.Dialog.ReadOutboxMaxId = channel2.Megagroup.ReadInboxMaxId
+					dialogEx.Date = dialog.Date
+					dialogEx.Order = dialog.Order
+					// TODO:
+					// dialogEx.AvailableMinId = megagroup2.GetParticipants()[0].AvailableMinId
+				}
+			} else {
+				c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		}
 	}
 
@@ -143,9 +142,14 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 				}
 			}
 		case mtproto.PEER_CHANNEL:
-			c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-			return nil, mtproto.ErrEnterpriseIsBlocked
+			for i, dialog := range dialogExtList {
+				if dialog.Dialog.TopMessage == in.OffsetId &&
+					int32(dialog.Order) == in.OffsetDate &&
+					dialog.Dialog.Peer.ChannelId == peer.PeerId {
+					idx = i
+					break
+				}
+			}
 		}
 		if idx > 0 {
 			if idx+int(limit) > len(dialogExtList)-2 {

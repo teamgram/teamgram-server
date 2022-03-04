@@ -41,12 +41,9 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorder
 			switch p.PeerType {
 			case mtproto.PEER_SELF,
 				mtproto.PEER_USER,
-				mtproto.PEER_CHAT:
+				mtproto.PEER_CHAT,
+				mtproto.PEER_CHANNEL:
 				peerDialogIdList = append(peerDialogIdList, p.PeerId)
-			case mtproto.PEER_CHANNEL:
-				c.Logger.Errorf("messages.reorderPinnedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-				return nil, mtproto.ErrEnterpriseIsBlocked
 			default:
 				err := mtproto.ErrPeerIdInvalid
 				c.Logger.Errorf("messages.reorderPinnedDialogs - error: %v", err)

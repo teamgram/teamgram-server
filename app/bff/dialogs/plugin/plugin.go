@@ -16,17 +16,17 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package core
+package plugin
 
 import (
+	"context"
+
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
-// MessagesSetHistoryTTL
-// messages.setHistoryTTL#b80e5fe4 peer:InputPeer period:int = Updates;
-func (c *DialogsCore) MessagesSetHistoryTTL(in *mtproto.TLMessagesSetHistoryTTL) (*mtproto.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.setHistoryTTL - error: method MessagesSetHistoryTTL not impl")
-
-	return nil, mtproto.ErrMethodNotImpl
+type DialogsPlugin interface {
+	GetChannelListByIdList(ctx context.Context, selfId int64, id ...int64) []*mtproto.Chat
+	GetChannelDialogById(ctx context.Context, selfId int64, id int64) (*dialog.DialogExt, error)
+	GetChannelMessage(ctx context.Context, selfId, channelId int64, id int32) (*mtproto.MessageBox, error)
 }
