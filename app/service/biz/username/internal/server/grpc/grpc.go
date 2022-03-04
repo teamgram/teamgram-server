@@ -24,7 +24,6 @@ func New(ctx *svc.ServiceContext, c zrpc.RpcServerConf) *zrpc.RpcServer {
 	s, err := zrpc.NewServer(c, func(grpcServer *grpc.Server) {
 		// TODO: pb.RegisterXXXXXXServer(grpcServer, service.New(ctx))
 		username.RegisterRPCUsernameServer(grpcServer, service.New(ctx))
-		_ = service.New(ctx)
 	})
 	logx.Must(err)
 	return s
