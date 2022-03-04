@@ -233,7 +233,7 @@ func (s *Server) Initialize() error {
 				ChatClient:     c.BizServiceClient,
 				UsernameClient: c.BizServiceClient,
 				SyncClient:     c.SyncClient,
-			}))
+			}, nil))
 
 		// dialogs_helper
 		mtproto.RegisterRPCDialogsServer(
@@ -318,7 +318,7 @@ func (s *Server) Initialize() error {
 				UserClient:    c.BizServiceClient,
 				ChatClient:    c.BizServiceClient,
 				SyncClient:    c.SyncClient,
-			}))
+			}, nil))
 
 		// users_helper
 		mtproto.RegisterRPCUsersServer(
