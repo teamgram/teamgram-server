@@ -246,7 +246,7 @@ func (s *Server) Initialize() error {
 				DialogClient:  c.BizServiceClient,
 				SyncClient:    c.SyncClient,
 				MessageClient: c.BizServiceClient,
-			}))
+			}, nil))
 
 		// drafts_helper
 		mtproto.RegisterRPCDraftsServer(
