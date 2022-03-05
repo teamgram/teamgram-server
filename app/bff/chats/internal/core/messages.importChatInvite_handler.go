@@ -24,7 +24,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/model"
 )
 
 // MessagesImportChatInvite
@@ -46,7 +45,7 @@ func (c *ChatsCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportChatInv
 		return nil, err
 	}
 
-	peerType := model.GetChatTypeByInviteHash(in.Hash)
+	peerType := chatpb.GetChatTypeByInviteHash(in.Hash)
 	switch peerType {
 	case mtproto.PEER_CHAT:
 		mChat, err := c.svcCtx.Dao.ChatClient.ChatImportChatInvite(c.ctx, &chatpb.TLChatImportChatInvite{

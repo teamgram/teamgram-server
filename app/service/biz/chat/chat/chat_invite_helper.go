@@ -7,8 +7,56 @@
 package chat
 
 import (
+	"github.com/teamgram/marmota/pkg/random2"
+	"github.com/teamgram/marmota/pkg/utils"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/pkg/env2"
+	"strings"
 )
+
+func GetChatTypeByInviteHash(hash string) int {
+	if len(hash) != 20 {
+		return mtproto.PEER_UNKNOWN
+	}
+
+	if utils.IsLetter(hash[0]) {
+		return mtproto.PEER_CHANNEL
+	} else if utils.IsNumber(hash[0]) {
+		return mtproto.PEER_CHAT
+	} else {
+		return mtproto.PEER_UNKNOWN
+	}
+}
+
+func IsChatInviteHash(hash string) bool {
+	if len(hash) != 20 {
+		return false
+	}
+
+	return utils.IsNumber(hash[0])
+}
+
+func IsChannelInviteHash(hash string) bool {
+	if len(hash) != 20 {
+		return false
+	}
+	return utils.IsLetter(hash[0])
+}
+
+func GenChatInviteHash() string {
+	return random2.RandomNumeric(1) + random2.RandomAlphanumeric(19)
+}
+
+func GenChannelInviteHash() string {
+	return random2.RandomAlphabetic(1) + random2.RandomAlphanumeric(19)
+}
+
+func GetInviteHashByLink(link string) string {
+	if strings.HasPrefix(link, "https://"+env2.TDotMe+"/+") {
+		link = link[len("https://"+env2.TDotMe+"/+"):]
+	}
+	return link
+}
 
 func (m *ChatInviteExt) ToChatInvite(selfId int64, cb func(idList []int64) []*mtproto.User) *mtproto.ChatInvite {
 	switch m.GetPredicateName() {

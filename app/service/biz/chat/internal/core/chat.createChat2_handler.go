@@ -10,7 +10,6 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/model"
 	"math/rand"
 	"time"
 
@@ -66,7 +65,7 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 			participantDOList[i] = &dataobject.ChatParticipantsDO{
 				UserId:          creatorId,
 				ParticipantType: mtproto.ChatMemberCreator,
-				Link:            model.GenChatInviteHash(),
+				Link:            chat.GenChatInviteHash(),
 				InviterUserId:   0,
 				InvitedAt:       date,
 				Date2:           date,

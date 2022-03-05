@@ -13,7 +13,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/model"
 	"time"
 )
 
@@ -23,7 +22,7 @@ func (c *ChatCore) ChatExportChatInvite(in *chat.TLChatExportChatInvite) (*mtpro
 	chatInviteDO := &dataobject.ChatInvitesDO{
 		ChatId:        in.ChatId,
 		AdminId:       in.AdminId,
-		Link:          model.GenChatInviteHash(),
+		Link:          chat.GenChatInviteHash(),
 		Permanent:     false,
 		Revoked:       false,
 		RequestNeeded: in.RequestNeeded,

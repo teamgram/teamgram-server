@@ -22,7 +22,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/model"
 )
 
 // MessagesCheckChatInvite
@@ -51,7 +50,7 @@ func (c *ChatsCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckChatInvit
 		return users.GetUserListByIdList(c.MD.UserId, idList...)
 	}
 
-	peerType := model.GetChatTypeByInviteHash(in.Hash)
+	peerType := chatpb.GetChatTypeByInviteHash(in.Hash)
 	switch peerType {
 	case mtproto.PEER_CHAT:
 		chatInviteExt, err := c.svcCtx.Dao.ChatClient.ChatCheckChatInvite(c.ctx, &chatpb.TLChatCheckChatInvite{

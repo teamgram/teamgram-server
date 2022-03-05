@@ -13,7 +13,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/model"
 	"time"
 )
 
@@ -21,7 +20,7 @@ import (
 // chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = ExportedChatInvite;
 func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInvite) (*chat.Vector_ExportedChatInvite, error) {
 	var (
-		hash        = model.GetInviteHashByLink(in.Link)
+		hash        = chat.GetInviteHashByLink(in.Link)
 		chatInvites = make([]*mtproto.ExportedChatInvite, 0, 2)
 	)
 
@@ -51,7 +50,7 @@ func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInv
 			chatInviteDO = &dataobject.ChatInvitesDO{
 				ChatId:        in.ChatId,
 				AdminId:       chatInviteDO.AdminId,
-				Link:          model.GenChatInviteHash(),
+				Link:          chat.GenChatInviteHash(),
 				Permanent:     chatInviteDO.Permanent,
 				Revoked:       false,
 				RequestNeeded: false,
