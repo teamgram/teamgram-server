@@ -16,24 +16,4 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
-
-import (
-	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/config"
-	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/dao"
-	"github.com/teamgram/teamgram-server/app/bff/contacts/plugin"
-)
-
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-	Plugin plugin.ContactsPlugin
-}
-
-func NewServiceContext(c config.Config, plugin plugin.ContactsPlugin) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
-		Plugin: plugin,
-	}
-}
+package plugin
