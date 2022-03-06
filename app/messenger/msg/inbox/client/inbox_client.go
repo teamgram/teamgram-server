@@ -24,20 +24,15 @@ var _ *mtproto.Bool
 type InboxClient interface {
 	InboxSendUserMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error)
 	InboxSendChatMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error)
-	InboxSendChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMessageToInbox) (*mtproto.Void, error)
 	InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error)
 	InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error)
-	InboxSendChannelMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChatMessageToInbox) (*mtproto.Void, error)
-	InboxEditChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChannelMessageToInbox) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error)
-	InboxDeleteChannelMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error)
 	InboxDeleteUserHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteUserHistoryToInbox) (*mtproto.Void, error)
 	InboxDeleteChatHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteChatHistoryToInbox) (*mtproto.Void, error)
 	InboxReadUserMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error)
 	InboxReadChatMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error)
-	InboxReadChannelMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error)
 	InboxUpdateHistoryReaded(ctx context.Context, in *inbox.TLInboxUpdateHistoryReaded) (*mtproto.Void, error)
 	InboxUpdatePinnedMessage(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessage) (*mtproto.Void, error)
 	InboxUnpinAllMessages(ctx context.Context, in *inbox.TLInboxUnpinAllMessages) (*mtproto.Void, error)
@@ -67,13 +62,6 @@ func (m *defaultInboxClient) InboxSendChatMessageToInbox(ctx context.Context, in
 	return client.InboxSendChatMessageToInbox(ctx, in)
 }
 
-// InboxSendChannelMessageToInbox
-// inbox.sendChannelMessageToInbox from_id:long peer_channel_id:long message:MessageBox = Void;
-func (m *defaultInboxClient) InboxSendChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendChannelMessageToInbox(ctx, in)
-}
-
 // InboxSendUserMultiMessageToInbox
 // inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
 func (m *defaultInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
@@ -86,13 +74,6 @@ func (m *defaultInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Contex
 func (m *defaultInboxClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
 	client := inbox.NewRPCInboxClient(m.cli.Conn())
 	return client.InboxSendChatMultiMessageToInbox(ctx, in)
-}
-
-// InboxSendChannelMultiMessageToInbox
-// inbox.sendChannelMultiMessageToInbox from_id:long peer_channel_id:long message:Vector<MessageBox> = Void;
-func (m *defaultInboxClient) InboxSendChannelMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendChannelMultiMessageToInbox(ctx, in)
 }
 
 // InboxEditUserMessageToInbox
@@ -109,25 +90,11 @@ func (m *defaultInboxClient) InboxEditChatMessageToInbox(ctx context.Context, in
 	return client.InboxEditChatMessageToInbox(ctx, in)
 }
 
-// InboxEditChannelMessageToInbox
-// inbox.editChannelMessageToInbox from_id:long peer_channel_id:long pts:int pts_count:int message:Message = Void;
-func (m *defaultInboxClient) InboxEditChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChannelMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxEditChannelMessageToInbox(ctx, in)
-}
-
 // InboxDeleteMessagesToInbox
 // inbox.deleteMessagesToInbox from_id:long id:Vector<long> = Void;
 func (m *defaultInboxClient) InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
 	client := inbox.NewRPCInboxClient(m.cli.Conn())
 	return client.InboxDeleteMessagesToInbox(ctx, in)
-}
-
-// InboxDeleteChannelMessagesToInbox
-// inbox.deleteChannelMessagesToInbox from_id:long peer_channel_id:long pts:int pts_count:int id:Vector<int> = Void;
-func (m *defaultInboxClient) InboxDeleteChannelMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxDeleteChannelMessagesToInbox(ctx, in)
 }
 
 // InboxDeleteUserHistoryToInbox
@@ -156,13 +123,6 @@ func (m *defaultInboxClient) InboxReadUserMediaUnreadToInbox(ctx context.Context
 func (m *defaultInboxClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error) {
 	client := inbox.NewRPCInboxClient(m.cli.Conn())
 	return client.InboxReadChatMediaUnreadToInbox(ctx, in)
-}
-
-// InboxReadChannelMediaUnreadToInbox
-// inbox.readChannelMediaUnreadToInbox from_id:long peer_channel_id:long id:Vector<int> = Void;
-func (m *defaultInboxClient) InboxReadChannelMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxReadChannelMediaUnreadToInbox(ctx, in)
 }
 
 // InboxUpdateHistoryReaded

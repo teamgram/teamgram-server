@@ -70,12 +70,6 @@ func (m *defaultInboxMqClient) InboxSendChatMessageToInbox(ctx context.Context, 
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
 
-// InboxSendChannelMessageToInbox
-// inbox.sendChannelMessageToInbox from_id:long peer_channel_id:long message:InboxMessageData = Void;
-func (m *defaultInboxMqClient) InboxSendChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(ctx, proto.MessageName(in), in)
-}
-
 // InboxSendUserMultiMessageToInbox
 // inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
 func (m *defaultInboxMqClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
@@ -85,12 +79,6 @@ func (m *defaultInboxMqClient) InboxSendUserMultiMessageToInbox(ctx context.Cont
 // InboxSendChatMultiMessageToInbox
 // inbox.sendChatMultiMessageToInbox from_id:long peer_chat_id:long message:Vector<InboxMessageData> = Void;
 func (m *defaultInboxMqClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(ctx, proto.MessageName(in), in)
-}
-
-// InboxSendChannelMultiMessageToInbox
-// inbox.sendChannelMultiMessageToInbox from_id:long peer_channel_id:long message:Vector<MessageBox> = Void;
-func (m *defaultInboxMqClient) InboxSendChannelMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
 
@@ -106,21 +94,9 @@ func (m *defaultInboxMqClient) InboxEditChatMessageToInbox(ctx context.Context, 
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
 
-// InboxEditChannelMessageToInbox
-// inbox.editChannelMessageToInbox from_id:long peer_channel_id:long pts:int pts_count:int message:Message = Void;
-func (m *defaultInboxMqClient) InboxEditChannelMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChannelMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(ctx, proto.MessageName(in), in)
-}
-
 // InboxDeleteMessagesToInbox
 // inbox.deleteMessagesToInbox from_id:long id:Vector<int> = Void;
 func (m *defaultInboxMqClient) InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(ctx, proto.MessageName(in), in)
-}
-
-// InboxDeleteChannelMessagesToInbox
-// inbox.deleteChannelMessagesToInbox from_id:long peer_channel_id:long pts:int pts_count:int id:Vector<int> = Void;
-func (m *defaultInboxMqClient) InboxDeleteChannelMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
 
@@ -148,29 +124,11 @@ func (m *defaultInboxMqClient) InboxReadChatMediaUnreadToInbox(ctx context.Conte
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
 
-// InboxReadChannelMediaUnreadToInbox
-// inbox.readChannelMediaUnreadToInbox from_id:long peer_channel_id:long id:Vector<int> = Void;
-func (m *defaultInboxMqClient) InboxReadChannelMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(ctx, proto.MessageName(in), in)
-}
-
 // InboxUpdateHistoryReaded
 // inbox.updateHistoryReaded from_id:long peer_type:int peer_id:long max_id:int = Void;
 func (m *defaultInboxMqClient) InboxUpdateHistoryReaded(ctx context.Context, in *inbox.TLInboxUpdateHistoryReaded) (*mtproto.Void, error) {
 	return m.sendMessage(ctx, proto.MessageName(in), in)
 }
-
-//// InboxUpdatePinnedMessage
-//// inbox.updateHistoryReaded from_id:long peer_type:int peer_id:long max_id:int = Void;
-//func (m *defaultInboxMqClient) InboxUpdatePinnedMessage(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessage) (*mtproto.Void, error) {
-//	return m.sendMessage(ctx, proto.MessageName(in), in)
-//}
-//
-//// InboxUnpinAllMessages
-//// inbox.updateHistoryReaded from_id:long peer_type:int peer_id:long max_id:int = Void;
-//func (m *defaultInboxMqClient) InboxUnpinAllMessages(ctx context.Context, in *inbox.TLInboxUnpinAllMessages) (*mtproto.Void, error) {
-//	return m.sendMessage(ctx, proto.MessageName(in), in)
-//}
 
 // InboxUpdatePinnedMessage
 // inbox.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;

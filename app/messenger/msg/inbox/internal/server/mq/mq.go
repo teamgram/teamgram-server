@@ -94,6 +94,17 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 				c.Logger.Infof("inbox.editUserMessageToInbox - request: %s", r.DebugString())
 
 				c.InboxEditUserMessageToInbox(r)
+			case proto.MessageName((*inbox.TLInboxEditChatMessageToInbox)(nil)):
+				c := core.New(ctx, svcCtx)
+
+				r := new(inbox.TLInboxEditChatMessageToInbox)
+				if err := json.Unmarshal(value, r); err != nil {
+					c.Logger.Errorf("inbox.editChatMessageToInbox - error: %v", err)
+					return
+				}
+				c.Logger.Infof("inbox.editChatMessageToInbox - request: %s", r.DebugString())
+
+				c.InboxEditChatMessageToInbox(r)
 			case proto.MessageName((*inbox.TLInboxDeleteMessagesToInbox)(nil)):
 				c := core.New(ctx, svcCtx)
 

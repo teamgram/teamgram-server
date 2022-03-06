@@ -47,11 +47,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1760197438,
 		}
 	},
-	2050486614: func() mtproto.TLObject { // 0x7a37f156
-		return &TLInboxSendChannelMessageToInbox{
-			Constructor: 2050486614,
-		}
-	},
 	-1782288007: func() mtproto.TLObject { // 0x95c47179
 		return &TLInboxSendUserMultiMessageToInbox{
 			Constructor: -1782288007,
@@ -60,11 +55,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-694455924: func() mtproto.TLObject { // 0xd69b718c
 		return &TLInboxSendChatMultiMessageToInbox{
 			Constructor: -694455924,
-		}
-	},
-	999414081: func() mtproto.TLObject { // 0x3b91d941
-		return &TLInboxSendChannelMultiMessageToInbox{
-			Constructor: 999414081,
 		}
 	},
 	1559967656: func() mtproto.TLObject { // 0x5cfb37a8
@@ -77,19 +67,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2031122959,
 		}
 	},
-	-231965363: func() mtproto.TLObject { // 0xf22c7d4d
-		return &TLInboxEditChannelMessageToInbox{
-			Constructor: -231965363,
-		}
-	},
 	1529778436: func() mtproto.TLObject { // 0x5b2e9104
 		return &TLInboxDeleteMessagesToInbox{
 			Constructor: 1529778436,
-		}
-	},
-	295332038: func() mtproto.TLObject { // 0x119a68c6
-		return &TLInboxDeleteChannelMessagesToInbox{
-			Constructor: 295332038,
 		}
 	},
 	336232792: func() mtproto.TLObject { // 0x140a8158
@@ -110,11 +90,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	1800413425: func() mtproto.TLObject { // 0x6b5020f1
 		return &TLInboxReadChatMediaUnreadToInbox{
 			Constructor: 1800413425,
-		}
-	},
-	-1476338378: func() mtproto.TLObject { // 0xa800dd36
-		return &TLInboxReadChannelMediaUnreadToInbox{
-			Constructor: -1476338378,
 		}
 	},
 	-1010283296: func() mtproto.TLObject { // 0xc3c84ce0
@@ -421,63 +396,6 @@ func (m *TLInboxSendChatMessageToInbox) DebugString() string {
 	return dbgString
 }
 
-// TLInboxSendChannelMessageToInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLInboxSendChannelMessageToInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_inbox_sendChannelMessageToInbox))
-
-	switch uint32(m.Constructor) {
-	case 0x7a37f156:
-		// inbox.sendChannelMessageToInbox from_id:long peer_channel_id:long message:MessageBox = Void;
-		x.UInt(0x7a37f156)
-
-		// no flags
-
-		x.Long(m.GetFromId())
-		x.Long(m.GetPeerChannelId())
-		x.Bytes(m.GetMessage().Encode(layer))
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLInboxSendChannelMessageToInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLInboxSendChannelMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x7a37f156:
-		// inbox.sendChannelMessageToInbox from_id:long peer_channel_id:long message:MessageBox = Void;
-
-		// not has flags
-
-		m.FromId = dBuf.Long()
-		m.PeerChannelId = dBuf.Long()
-
-		m3 := &mtproto.MessageBox{}
-		m3.Decode(dBuf)
-		m.Message = m3
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLInboxSendChannelMessageToInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
 // TLInboxSendUserMultiMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -618,76 +536,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) DebugString() string {
 	return dbgString
 }
 
-// TLInboxSendChannelMultiMessageToInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLInboxSendChannelMultiMessageToInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_inbox_sendChannelMultiMessageToInbox))
-
-	switch uint32(m.Constructor) {
-	case 0x3b91d941:
-		// inbox.sendChannelMultiMessageToInbox from_id:long peer_channel_id:long message:Vector<MessageBox> = Void;
-		x.UInt(0x3b91d941)
-
-		// no flags
-
-		x.Long(m.GetFromId())
-		x.Long(m.GetPeerChannelId())
-
-		x.Int(int32(mtproto.CRC32_vector))
-		x.Int(int32(len(m.GetMessage())))
-		for _, v := range m.GetMessage() {
-			x.Bytes((*v).Encode(layer))
-		}
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x3b91d941:
-		// inbox.sendChannelMultiMessageToInbox from_id:long peer_channel_id:long message:Vector<MessageBox> = Void;
-
-		// not has flags
-
-		m.FromId = dBuf.Long()
-		m.PeerChannelId = dBuf.Long()
-		c3 := dBuf.Int()
-		if c3 != int32(mtproto.CRC32_vector) {
-			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
-			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
-		}
-		l3 := dBuf.Int()
-		v3 := make([]*mtproto.MessageBox, l3)
-		for i := int32(0); i < l3; i++ {
-			v3[i] = &mtproto.MessageBox{}
-			v3[i].Decode(dBuf)
-		}
-		m.Message = v3
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
 // TLInboxEditUserMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -802,67 +650,6 @@ func (m *TLInboxEditChatMessageToInbox) DebugString() string {
 	return dbgString
 }
 
-// TLInboxEditChannelMessageToInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLInboxEditChannelMessageToInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_inbox_editChannelMessageToInbox))
-
-	switch uint32(m.Constructor) {
-	case 0xf22c7d4d:
-		// inbox.editChannelMessageToInbox from_id:long peer_channel_id:long pts:int pts_count:int message:Message = Void;
-		x.UInt(0xf22c7d4d)
-
-		// no flags
-
-		x.Long(m.GetFromId())
-		x.Long(m.GetPeerChannelId())
-		x.Int(m.GetPts())
-		x.Int(m.GetPtsCount())
-		x.Bytes(m.GetMessage().Encode(layer))
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLInboxEditChannelMessageToInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLInboxEditChannelMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xf22c7d4d:
-		// inbox.editChannelMessageToInbox from_id:long peer_channel_id:long pts:int pts_count:int message:Message = Void;
-
-		// not has flags
-
-		m.FromId = dBuf.Long()
-		m.PeerChannelId = dBuf.Long()
-		m.Pts = dBuf.Int()
-		m.PtsCount = dBuf.Int()
-
-		m5 := &mtproto.Message{}
-		m5.Decode(dBuf)
-		m.Message = m5
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLInboxEditChannelMessageToInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
 // TLInboxDeleteMessagesToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -912,66 +699,6 @@ func (m *TLInboxDeleteMessagesToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInboxDeleteMessagesToInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLInboxDeleteChannelMessagesToInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLInboxDeleteChannelMessagesToInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_inbox_deleteChannelMessagesToInbox))
-
-	switch uint32(m.Constructor) {
-	case 0x119a68c6:
-		// inbox.deleteChannelMessagesToInbox from_id:long peer_channel_id:long pts:int pts_count:int id:Vector<int> = Void;
-		x.UInt(0x119a68c6)
-
-		// no flags
-
-		x.Long(m.GetFromId())
-		x.Long(m.GetPeerChannelId())
-		x.Int(m.GetPts())
-		x.Int(m.GetPtsCount())
-
-		x.VectorInt(m.GetId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x119a68c6:
-		// inbox.deleteChannelMessagesToInbox from_id:long peer_channel_id:long pts:int pts_count:int id:Vector<int> = Void;
-
-		// not has flags
-
-		m.FromId = dBuf.Long()
-		m.PeerChannelId = dBuf.Long()
-		m.Pts = dBuf.Int()
-		m.PtsCount = dBuf.Int()
-
-		m.Id = dBuf.VectorInt()
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -1201,62 +928,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(dBuf *mtproto.DecodeBuf) erro
 }
 
 func (m *TLInboxReadChatMediaUnreadToInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLInboxReadChannelMediaUnreadToInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_inbox_readChannelMediaUnreadToInbox))
-
-	switch uint32(m.Constructor) {
-	case 0xa800dd36:
-		// inbox.readChannelMediaUnreadToInbox from_id:long peer_channel_id:long id:Vector<int> = Void;
-		x.UInt(0xa800dd36)
-
-		// no flags
-
-		x.Long(m.GetFromId())
-		x.Long(m.GetPeerChannelId())
-
-		x.VectorInt(m.GetId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xa800dd36:
-		// inbox.readChannelMediaUnreadToInbox from_id:long peer_channel_id:long id:Vector<int> = Void;
-
-		// not has flags
-
-		m.FromId = dBuf.Long()
-		m.PeerChannelId = dBuf.Long()
-
-		m.Id = dBuf.VectorInt()
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

@@ -11,25 +11,22 @@
 package msg
 
 const (
-	Predicate_sender                       = "sender"
-	Predicate_outboxMessage                = "outboxMessage"
-	Predicate_contentMessage               = "contentMessage"
-	Predicate_msg_sendMessage              = "msg_sendMessage"
-	Predicate_msg_sendMultiMessage         = "msg_sendMultiMessage"
-	Predicate_msg_pushUserMessage          = "msg_pushUserMessage"
-	Predicate_msg_readMessageContents      = "msg_readMessageContents"
-	Predicate_msg_sendMessageV2            = "msg_sendMessageV2"
-	Predicate_msg_editMessage              = "msg_editMessage"
-	Predicate_msg_deleteMessages           = "msg_deleteMessages"
-	Predicate_msg_deleteHistory            = "msg_deleteHistory"
-	Predicate_msg_deleteChannelHistory     = "msg_deleteChannelHistory"
-	Predicate_msg_deleteChannelUserHistory = "msg_deleteChannelUserHistory"
-	Predicate_msg_deletePhoneCallHistory   = "msg_deletePhoneCallHistory"
-	Predicate_msg_deleteChatHistory        = "msg_deleteChatHistory"
-	Predicate_msg_readHistory              = "msg_readHistory"
-	Predicate_msg_readChannelHistory       = "msg_readChannelHistory"
-	Predicate_msg_updatePinnedMessage      = "msg_updatePinnedMessage"
-	Predicate_msg_unpinAllMessages         = "msg_unpinAllMessages"
+	Predicate_sender                     = "sender"
+	Predicate_outboxMessage              = "outboxMessage"
+	Predicate_contentMessage             = "contentMessage"
+	Predicate_msg_sendMessage            = "msg_sendMessage"
+	Predicate_msg_sendMultiMessage       = "msg_sendMultiMessage"
+	Predicate_msg_pushUserMessage        = "msg_pushUserMessage"
+	Predicate_msg_readMessageContents    = "msg_readMessageContents"
+	Predicate_msg_sendMessageV2          = "msg_sendMessageV2"
+	Predicate_msg_editMessage            = "msg_editMessage"
+	Predicate_msg_deleteMessages         = "msg_deleteMessages"
+	Predicate_msg_deleteHistory          = "msg_deleteHistory"
+	Predicate_msg_deletePhoneCallHistory = "msg_deletePhoneCallHistory"
+	Predicate_msg_deleteChatHistory      = "msg_deleteChatHistory"
+	Predicate_msg_readHistory            = "msg_readHistory"
+	Predicate_msg_updatePinnedMessage    = "msg_updatePinnedMessage"
+	Predicate_msg_unpinAllMessages       = "msg_unpinAllMessages"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -77,14 +74,6 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1975576778, // 0x75c0e8ca
 
 	},
-	Predicate_msg_deleteChannelHistory: {
-		0: 893376573, // 0x353fd83d
-
-	},
-	Predicate_msg_deleteChannelUserHistory: {
-		0: 1611457677, // 0x600ce48d
-
-	},
 	Predicate_msg_deletePhoneCallHistory: {
 		0: 649568574, // 0x26b7a13e
 
@@ -95,10 +84,6 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_msg_readHistory: {
 		0: 1510960658, // 0x5a0f6e12
-
-	},
-	Predicate_msg_readChannelHistory: {
-		0: -806710520, // 0xcfea9308
 
 	},
 	Predicate_msg_updatePinnedMessage: {
@@ -112,25 +97,22 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	1513645242:  Predicate_sender,                       // 0x5a3864ba
-	1402283185:  Predicate_outboxMessage,                // 0x539524b1
-	-1316261635: Predicate_contentMessage,               // 0xb18b70fd
-	1218652155:  Predicate_msg_sendMessage,              // 0x48a327fb
-	-1727589428: Predicate_msg_sendMultiMessage,         // 0x990713cc
-	902887962:   Predicate_msg_pushUserMessage,          // 0x35d0fa1a
-	673481940:   Predicate_msg_readMessageContents,      // 0x282484d4
-	770211174:   Predicate_msg_sendMessageV2,            // 0x2de87d66
-	-1770495214: Predicate_msg_editMessage,              // 0x96786312
-	568855069:   Predicate_msg_deleteMessages,           // 0x21e80a1d
-	1975576778:  Predicate_msg_deleteHistory,            // 0x75c0e8ca
-	893376573:   Predicate_msg_deleteChannelHistory,     // 0x353fd83d
-	1611457677:  Predicate_msg_deleteChannelUserHistory, // 0x600ce48d
-	649568574:   Predicate_msg_deletePhoneCallHistory,   // 0x26b7a13e
-	-283155749:  Predicate_msg_deleteChatHistory,        // 0xef1f62db
-	1510960658:  Predicate_msg_readHistory,              // 0x5a0f6e12
-	-806710520:  Predicate_msg_readChannelHistory,       // 0xcfea9308
-	-441560663:  Predicate_msg_updatePinnedMessage,      // 0xe5ae51a9
-	-1199153371: Predicate_msg_unpinAllMessages,         // 0xb8865f25
+	1513645242:  Predicate_sender,                     // 0x5a3864ba
+	1402283185:  Predicate_outboxMessage,              // 0x539524b1
+	-1316261635: Predicate_contentMessage,             // 0xb18b70fd
+	1218652155:  Predicate_msg_sendMessage,            // 0x48a327fb
+	-1727589428: Predicate_msg_sendMultiMessage,       // 0x990713cc
+	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
+	673481940:   Predicate_msg_readMessageContents,    // 0x282484d4
+	770211174:   Predicate_msg_sendMessageV2,          // 0x2de87d66
+	-1770495214: Predicate_msg_editMessage,            // 0x96786312
+	568855069:   Predicate_msg_deleteMessages,         // 0x21e80a1d
+	1975576778:  Predicate_msg_deleteHistory,          // 0x75c0e8ca
+	649568574:   Predicate_msg_deletePhoneCallHistory, // 0x26b7a13e
+	-283155749:  Predicate_msg_deleteChatHistory,      // 0xef1f62db
+	1510960658:  Predicate_msg_readHistory,            // 0x5a0f6e12
+	-441560663:  Predicate_msg_updatePinnedMessage,    // 0xe5ae51a9
+	-1199153371: Predicate_msg_unpinAllMessages,       // 0xb8865f25
 
 }
 

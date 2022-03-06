@@ -48,21 +48,6 @@ func (s *Service) InboxSendChatMessageToInbox(ctx context.Context, request *inbo
 	return r, err
 }
 
-// InboxSendChannelMessageToInbox
-// inbox.sendChannelMessageToInbox from_id:long peer_channel_id:long message:MessageBox = Void;
-func (s *Service) InboxSendChannelMessageToInbox(ctx context.Context, request *inbox.TLInboxSendChannelMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("inbox.sendChannelMessageToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.InboxSendChannelMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("inbox.sendChannelMessageToInbox - reply: %s", r.DebugString())
-	return r, err
-}
-
 // InboxSendUserMultiMessageToInbox
 // inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
 func (s *Service) InboxSendUserMultiMessageToInbox(ctx context.Context, request *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
@@ -90,21 +75,6 @@ func (s *Service) InboxSendChatMultiMessageToInbox(ctx context.Context, request 
 	}
 
 	c.Infof("inbox.sendChatMultiMessageToInbox - reply: %s", r.DebugString())
-	return r, err
-}
-
-// InboxSendChannelMultiMessageToInbox
-// inbox.sendChannelMultiMessageToInbox from_id:long peer_channel_id:long message:Vector<MessageBox> = Void;
-func (s *Service) InboxSendChannelMultiMessageToInbox(ctx context.Context, request *inbox.TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("inbox.sendChannelMultiMessageToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.InboxSendChannelMultiMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("inbox.sendChannelMultiMessageToInbox - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -138,21 +108,6 @@ func (s *Service) InboxEditChatMessageToInbox(ctx context.Context, request *inbo
 	return r, err
 }
 
-// InboxEditChannelMessageToInbox
-// inbox.editChannelMessageToInbox from_id:long peer_channel_id:long pts:int pts_count:int message:Message = Void;
-func (s *Service) InboxEditChannelMessageToInbox(ctx context.Context, request *inbox.TLInboxEditChannelMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("inbox.editChannelMessageToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.InboxEditChannelMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("inbox.editChannelMessageToInbox - reply: %s", r.DebugString())
-	return r, err
-}
-
 // InboxDeleteMessagesToInbox
 // inbox.deleteMessagesToInbox from_id:long id:Vector<long> = Void;
 func (s *Service) InboxDeleteMessagesToInbox(ctx context.Context, request *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
@@ -165,21 +120,6 @@ func (s *Service) InboxDeleteMessagesToInbox(ctx context.Context, request *inbox
 	}
 
 	c.Infof("inbox.deleteMessagesToInbox - reply: %s", r.DebugString())
-	return r, err
-}
-
-// InboxDeleteChannelMessagesToInbox
-// inbox.deleteChannelMessagesToInbox from_id:long peer_channel_id:long pts:int pts_count:int id:Vector<int> = Void;
-func (s *Service) InboxDeleteChannelMessagesToInbox(ctx context.Context, request *inbox.TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("inbox.deleteChannelMessagesToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.InboxDeleteChannelMessagesToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("inbox.deleteChannelMessagesToInbox - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -240,21 +180,6 @@ func (s *Service) InboxReadChatMediaUnreadToInbox(ctx context.Context, request *
 	}
 
 	c.Infof("inbox.readChatMediaUnreadToInbox - reply: %s", r.DebugString())
-	return r, err
-}
-
-// InboxReadChannelMediaUnreadToInbox
-// inbox.readChannelMediaUnreadToInbox from_id:long peer_channel_id:long id:Vector<int> = Void;
-func (s *Service) InboxReadChannelMediaUnreadToInbox(ctx context.Context, request *inbox.TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("inbox.readChannelMediaUnreadToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.InboxReadChannelMediaUnreadToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("inbox.readChannelMediaUnreadToInbox - reply: %s", r.DebugString())
 	return r, err
 }
 

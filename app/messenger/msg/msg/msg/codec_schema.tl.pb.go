@@ -87,16 +87,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1975576778,
 		}
 	},
-	893376573: func() mtproto.TLObject { // 0x353fd83d
-		return &TLMsgDeleteChannelHistory{
-			Constructor: 893376573,
-		}
-	},
-	1611457677: func() mtproto.TLObject { // 0x600ce48d
-		return &TLMsgDeleteChannelUserHistory{
-			Constructor: 1611457677,
-		}
-	},
 	649568574: func() mtproto.TLObject { // 0x26b7a13e
 		return &TLMsgDeletePhoneCallHistory{
 			Constructor: 649568574,
@@ -110,11 +100,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	1510960658: func() mtproto.TLObject { // 0x5a0f6e12
 		return &TLMsgReadHistory{
 			Constructor: 1510960658,
-		}
-	},
-	-806710520: func() mtproto.TLObject { // 0xcfea9308
-		return &TLMsgReadChannelHistory{
-			Constructor: -806710520,
 		}
 	},
 	-441560663: func() mtproto.TLObject { // 0xe5ae51a9
@@ -1205,120 +1190,6 @@ func (m *TLMsgDeleteHistory) DebugString() string {
 	return dbgString
 }
 
-// TLMsgDeleteChannelHistory
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgDeleteChannelHistory) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_msg_deleteChannelHistory))
-
-	switch uint32(m.Constructor) {
-	case 0x353fd83d:
-		// msg.deleteChannelHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedHistory;
-		x.UInt(0x353fd83d)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-		x.Int(m.GetMaxId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLMsgDeleteChannelHistory) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgDeleteChannelHistory) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x353fd83d:
-		// msg.deleteChannelHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedHistory;
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		m.MaxId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLMsgDeleteChannelHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLMsgDeleteChannelUserHistory
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgDeleteChannelUserHistory) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_msg_deleteChannelUserHistory))
-
-	switch uint32(m.Constructor) {
-	case 0x600ce48d:
-		// msg.deleteChannelUserHistory user_id:long auth_key_id:long channel_id:long peer_type:int peer_id:long = messages.AffectedHistory;
-		x.UInt(0x600ce48d)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Long(m.GetChannelId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLMsgDeleteChannelUserHistory) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgDeleteChannelUserHistory) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x600ce48d:
-		// msg.deleteChannelUserHistory user_id:long auth_key_id:long channel_id:long peer_type:int peer_id:long = messages.AffectedHistory;
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.ChannelId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLMsgDeleteChannelUserHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
 // TLMsgDeletePhoneCallHistory
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1486,61 +1357,6 @@ func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgReadHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLMsgReadChannelHistory
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgReadChannelHistory) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_msg_readChannelHistory))
-
-	switch uint32(m.Constructor) {
-	case 0xcfea9308:
-		// msg.readChannelHistory user_id:long auth_key_id:long channel_id:long max_id:int = Bool;
-		x.UInt(0xcfea9308)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Long(m.GetChannelId())
-		x.Int(m.GetMaxId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLMsgReadChannelHistory) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgReadChannelHistory) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xcfea9308:
-		// msg.readChannelHistory user_id:long auth_key_id:long channel_id:long max_id:int = Bool;
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.ChannelId = dBuf.Long()
-		m.MaxId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLMsgReadChannelHistory) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

@@ -138,36 +138,6 @@ func (s *Service) MsgDeleteHistory(ctx context.Context, request *msg.TLMsgDelete
 	return r, err
 }
 
-// MsgDeleteChannelHistory
-// msg.deleteChannelHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedHistory;
-func (s *Service) MsgDeleteChannelHistory(ctx context.Context, request *msg.TLMsgDeleteChannelHistory) (*mtproto.Messages_AffectedHistory, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("msg.deleteChannelHistory - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MsgDeleteChannelHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("msg.deleteChannelHistory - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MsgDeleteChannelUserHistory
-// msg.deleteChannelUserHistory user_id:long auth_key_id:long channel_id:long peer_type:int peer_id:long = messages.AffectedHistory;
-func (s *Service) MsgDeleteChannelUserHistory(ctx context.Context, request *msg.TLMsgDeleteChannelUserHistory) (*mtproto.Messages_AffectedHistory, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("msg.deleteChannelUserHistory - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MsgDeleteChannelUserHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("msg.deleteChannelUserHistory - reply: %s", r.DebugString())
-	return r, err
-}
-
 // MsgDeletePhoneCallHistory
 // msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 func (s *Service) MsgDeletePhoneCallHistory(ctx context.Context, request *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error) {
@@ -210,21 +180,6 @@ func (s *Service) MsgReadHistory(ctx context.Context, request *msg.TLMsgReadHist
 	}
 
 	c.Infof("msg.readHistory - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MsgReadChannelHistory
-// msg.readChannelHistory user_id:long auth_key_id:long channel_id:long max_id:int = Bool;
-func (s *Service) MsgReadChannelHistory(ctx context.Context, request *msg.TLMsgReadChannelHistory) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("msg.readChannelHistory - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MsgReadChannelHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("msg.readChannelHistory - reply: %s", r.DebugString())
 	return r, err
 }
 

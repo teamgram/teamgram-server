@@ -30,12 +30,9 @@ type MsgClient interface {
 	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
-	MsgDeleteChannelHistory(ctx context.Context, in *msg.TLMsgDeleteChannelHistory) (*mtproto.Messages_AffectedHistory, error)
-	MsgDeleteChannelUserHistory(ctx context.Context, in *msg.TLMsgDeleteChannelUserHistory) (*mtproto.Messages_AffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error)
 	MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error)
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error)
-	MsgReadChannelHistory(ctx context.Context, in *msg.TLMsgReadChannelHistory) (*mtproto.Bool, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*mtproto.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
 }
@@ -106,20 +103,6 @@ func (m *defaultMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDe
 	return client.MsgDeleteHistory(ctx, in)
 }
 
-// MsgDeleteChannelHistory
-// msg.deleteChannelHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedHistory;
-func (m *defaultMsgClient) MsgDeleteChannelHistory(ctx context.Context, in *msg.TLMsgDeleteChannelHistory) (*mtproto.Messages_AffectedHistory, error) {
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgDeleteChannelHistory(ctx, in)
-}
-
-// MsgDeleteChannelUserHistory
-// msg.deleteChannelUserHistory user_id:long auth_key_id:long channel_id:long peer_type:int peer_id:long = messages.AffectedHistory;
-func (m *defaultMsgClient) MsgDeleteChannelUserHistory(ctx context.Context, in *msg.TLMsgDeleteChannelUserHistory) (*mtproto.Messages_AffectedHistory, error) {
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgDeleteChannelUserHistory(ctx, in)
-}
-
 // MsgDeletePhoneCallHistory
 // msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 func (m *defaultMsgClient) MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error) {
@@ -139,13 +122,6 @@ func (m *defaultMsgClient) MsgDeleteChatHistory(ctx context.Context, in *msg.TLM
 func (m *defaultMsgClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgReadHistory(ctx, in)
-}
-
-// MsgReadChannelHistory
-// msg.readChannelHistory user_id:long auth_key_id:long channel_id:long max_id:int = Bool;
-func (m *defaultMsgClient) MsgReadChannelHistory(ctx context.Context, in *msg.TLMsgReadChannelHistory) (*mtproto.Bool, error) {
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgReadChannelHistory(ctx, in)
 }
 
 // MsgUpdatePinnedMessage
