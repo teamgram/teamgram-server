@@ -63,51 +63,6 @@ func (s *Service) MessageGetUserMessageListByDataIdList(ctx context.Context, req
 	return r, err
 }
 
-// MessageGetScheduledMessageListByIdList
-// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
-func (s *Service) MessageGetScheduledMessageListByIdList(ctx context.Context, request *message.TLMessageGetScheduledMessageListByIdList) (*message.Vector_MessageBox, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("message.getScheduledMessageListByIdList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessageGetScheduledMessageListByIdList(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("message.getScheduledMessageListByIdList - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessageGetScheduledMessageHistory
-// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
-func (s *Service) MessageGetScheduledMessageHistory(ctx context.Context, request *message.TLMessageGetScheduledMessageHistory) (*message.Vector_MessageBox, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("message.getScheduledMessageHistory - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessageGetScheduledMessageHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("message.getScheduledMessageHistory - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessageGetScheduledTimeoutMessageList
-// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
-func (s *Service) MessageGetScheduledTimeoutMessageList(ctx context.Context, request *message.TLMessageGetScheduledTimeoutMessageList) (*message.Vector_MessageBox, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("message.getScheduledTimeoutMessageList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessageGetScheduledTimeoutMessageList(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("message.getScheduledTimeoutMessageList - reply: %s", r.DebugString())
-	return r, err
-}
-
 // MessageGetHistoryMessages
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (s *Service) MessageGetHistoryMessages(ctx context.Context, request *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error) {

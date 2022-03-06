@@ -34,36 +34,28 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type TLConstructor int32
 
 const (
-	CRC32_UNKNOWN                                   TLConstructor = 0
-	CRC32_peerMessageId                             TLConstructor = 1988948676
-	CRC32_message_getUserMessage                    TLConstructor = 2060235208
-	CRC32_message_getUserMessageList                TLConstructor = -749200346
-	CRC32_message_getUserMessageListByDataIdList    TLConstructor = 290824571
-	CRC32_message_getScheduledMessageListByIdList   TLConstructor = 1555880424
-	CRC32_message_deleteScheduledMessageList        TLConstructor = 1794405176
-	CRC32_message_deleteSentScheduledMessageList    TLConstructor = 372084720
-	CRC32_message_getScheduledMessageHistory        TLConstructor = 624854666
-	CRC32_message_getScheduledTimeoutMessageList    TLConstructor = -1887291094
-	CRC32_message_getHistoryMessages                TLConstructor = 50897728
-	CRC32_message_getHistoryMessagesCount           TLConstructor = 256933395
-	CRC32_message_getChannelMessage                 TLConstructor = 112252165
-	CRC32_message_getChannelMessageList             TLConstructor = -1579297828
-	CRC32_message_getChannelMessageListByDataIdList TLConstructor = 21070604
-	CRC32_message_getPeerUserMessageId              TLConstructor = 1940829983
-	CRC32_message_getPeerUserMessage                TLConstructor = 1662161426
-	CRC32_message_getPeerChatMessageIdList          TLConstructor = -917982612
-	CRC32_message_getPeerChatMessageList            TLConstructor = -1442816248
-	CRC32_message_searchByMediaType                 TLConstructor = 287058243
-	CRC32_message_search                            TLConstructor = 1748348963
-	CRC32_message_searchGlobal                      TLConstructor = -1281860155
-	CRC32_message_searchByPinned                    TLConstructor = 1853053781
-	CRC32_message_getSearchCounter                  TLConstructor = -489963706
-	CRC32_message_getLastTwoPinnedMessageId         TLConstructor = -1348859861
-	CRC32_message_updatePinnedMessageId             TLConstructor = -182391344
-	CRC32_message_getPinnedMessageIdList            TLConstructor = -637415203
-	CRC32_message_unPinAllMessages                  TLConstructor = -368432525
-	CRC32_message_getUnreadMentions                 TLConstructor = 1877050548
-	CRC32_message_getUnreadMentionsCount            TLConstructor = -1254023095
+	CRC32_UNKNOWN                                TLConstructor = 0
+	CRC32_peerMessageId                          TLConstructor = 1988948676
+	CRC32_message_getUserMessage                 TLConstructor = 2060235208
+	CRC32_message_getUserMessageList             TLConstructor = -749200346
+	CRC32_message_getUserMessageListByDataIdList TLConstructor = 290824571
+	CRC32_message_getHistoryMessages             TLConstructor = 50897728
+	CRC32_message_getHistoryMessagesCount        TLConstructor = 256933395
+	CRC32_message_getPeerUserMessageId           TLConstructor = 1940829983
+	CRC32_message_getPeerUserMessage             TLConstructor = 1662161426
+	CRC32_message_getPeerChatMessageIdList       TLConstructor = -917982612
+	CRC32_message_getPeerChatMessageList         TLConstructor = -1442816248
+	CRC32_message_searchByMediaType              TLConstructor = 287058243
+	CRC32_message_search                         TLConstructor = 1748348963
+	CRC32_message_searchGlobal                   TLConstructor = -1281860155
+	CRC32_message_searchByPinned                 TLConstructor = 1853053781
+	CRC32_message_getSearchCounter               TLConstructor = -489963706
+	CRC32_message_getLastTwoPinnedMessageId      TLConstructor = -1348859861
+	CRC32_message_updatePinnedMessageId          TLConstructor = -182391344
+	CRC32_message_getPinnedMessageIdList         TLConstructor = -637415203
+	CRC32_message_unPinAllMessages               TLConstructor = -368432525
+	CRC32_message_getUnreadMentions              TLConstructor = 1877050548
+	CRC32_message_getUnreadMentionsCount         TLConstructor = -1254023095
 )
 
 var TLConstructor_name = map[int32]string{
@@ -72,16 +64,8 @@ var TLConstructor_name = map[int32]string{
 	2060235208:  "CRC32_message_getUserMessage",
 	-749200346:  "CRC32_message_getUserMessageList",
 	290824571:   "CRC32_message_getUserMessageListByDataIdList",
-	1555880424:  "CRC32_message_getScheduledMessageListByIdList",
-	1794405176:  "CRC32_message_deleteScheduledMessageList",
-	372084720:   "CRC32_message_deleteSentScheduledMessageList",
-	624854666:   "CRC32_message_getScheduledMessageHistory",
-	-1887291094: "CRC32_message_getScheduledTimeoutMessageList",
 	50897728:    "CRC32_message_getHistoryMessages",
 	256933395:   "CRC32_message_getHistoryMessagesCount",
-	112252165:   "CRC32_message_getChannelMessage",
-	-1579297828: "CRC32_message_getChannelMessageList",
-	21070604:    "CRC32_message_getChannelMessageListByDataIdList",
 	1940829983:  "CRC32_message_getPeerUserMessageId",
 	1662161426:  "CRC32_message_getPeerUserMessage",
 	-917982612:  "CRC32_message_getPeerChatMessageIdList",
@@ -100,36 +84,28 @@ var TLConstructor_name = map[int32]string{
 }
 
 var TLConstructor_value = map[string]int32{
-	"CRC32_UNKNOWN":                                   0,
-	"CRC32_peerMessageId":                             1988948676,
-	"CRC32_message_getUserMessage":                    2060235208,
-	"CRC32_message_getUserMessageList":                -749200346,
-	"CRC32_message_getUserMessageListByDataIdList":    290824571,
-	"CRC32_message_getScheduledMessageListByIdList":   1555880424,
-	"CRC32_message_deleteScheduledMessageList":        1794405176,
-	"CRC32_message_deleteSentScheduledMessageList":    372084720,
-	"CRC32_message_getScheduledMessageHistory":        624854666,
-	"CRC32_message_getScheduledTimeoutMessageList":    -1887291094,
-	"CRC32_message_getHistoryMessages":                50897728,
-	"CRC32_message_getHistoryMessagesCount":           256933395,
-	"CRC32_message_getChannelMessage":                 112252165,
-	"CRC32_message_getChannelMessageList":             -1579297828,
-	"CRC32_message_getChannelMessageListByDataIdList": 21070604,
-	"CRC32_message_getPeerUserMessageId":              1940829983,
-	"CRC32_message_getPeerUserMessage":                1662161426,
-	"CRC32_message_getPeerChatMessageIdList":          -917982612,
-	"CRC32_message_getPeerChatMessageList":            -1442816248,
-	"CRC32_message_searchByMediaType":                 287058243,
-	"CRC32_message_search":                            1748348963,
-	"CRC32_message_searchGlobal":                      -1281860155,
-	"CRC32_message_searchByPinned":                    1853053781,
-	"CRC32_message_getSearchCounter":                  -489963706,
-	"CRC32_message_getLastTwoPinnedMessageId":         -1348859861,
-	"CRC32_message_updatePinnedMessageId":             -182391344,
-	"CRC32_message_getPinnedMessageIdList":            -637415203,
-	"CRC32_message_unPinAllMessages":                  -368432525,
-	"CRC32_message_getUnreadMentions":                 1877050548,
-	"CRC32_message_getUnreadMentionsCount":            -1254023095,
+	"CRC32_UNKNOWN":                                0,
+	"CRC32_peerMessageId":                          1988948676,
+	"CRC32_message_getUserMessage":                 2060235208,
+	"CRC32_message_getUserMessageList":             -749200346,
+	"CRC32_message_getUserMessageListByDataIdList": 290824571,
+	"CRC32_message_getHistoryMessages":             50897728,
+	"CRC32_message_getHistoryMessagesCount":        256933395,
+	"CRC32_message_getPeerUserMessageId":           1940829983,
+	"CRC32_message_getPeerUserMessage":             1662161426,
+	"CRC32_message_getPeerChatMessageIdList":       -917982612,
+	"CRC32_message_getPeerChatMessageList":         -1442816248,
+	"CRC32_message_searchByMediaType":              287058243,
+	"CRC32_message_search":                         1748348963,
+	"CRC32_message_searchGlobal":                   -1281860155,
+	"CRC32_message_searchByPinned":                 1853053781,
+	"CRC32_message_getSearchCounter":               -489963706,
+	"CRC32_message_getLastTwoPinnedMessageId":      -1348859861,
+	"CRC32_message_updatePinnedMessageId":          -182391344,
+	"CRC32_message_getPinnedMessageIdList":         -637415203,
+	"CRC32_message_unPinAllMessages":               -368432525,
+	"CRC32_message_getUnreadMentions":              1877050548,
+	"CRC32_message_getUnreadMentionsCount":         -1254023095,
 }
 
 func (x TLConstructor) String() string {
@@ -463,361 +439,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) GetIdList() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
-type TLMessageGetScheduledMessageListByIdList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
-	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	IdList               []int32       `protobuf:"varint,6,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) Reset() {
-	*m = TLMessageGetScheduledMessageListByIdList{}
-}
-func (m *TLMessageGetScheduledMessageListByIdList) String() string { return proto.CompactTextString(m) }
-func (*TLMessageGetScheduledMessageListByIdList) ProtoMessage()    {}
-func (*TLMessageGetScheduledMessageListByIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{5}
-}
-func (m *TLMessageGetScheduledMessageListByIdList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetScheduledMessageListByIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetScheduledMessageListByIdList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetScheduledMessageListByIdList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetScheduledMessageListByIdList.Merge(m, src)
-}
-func (m *TLMessageGetScheduledMessageListByIdList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetScheduledMessageListByIdList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetScheduledMessageListByIdList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetScheduledMessageListByIdList proto.InternalMessageInfo
-
-func (m *TLMessageGetScheduledMessageListByIdList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) GetPeerType() int32 {
-	if m != nil {
-		return m.PeerType
-	}
-	return 0
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) GetPeerId() int64 {
-	if m != nil {
-		return m.PeerId
-	}
-	return 0
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) GetIdList() []int32 {
-	if m != nil {
-		return m.IdList
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// message.deleteScheduledMessageList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Bool;
-type TLMessageDeleteScheduledMessageList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
-	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	IdList               []int32       `protobuf:"varint,6,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageDeleteScheduledMessageList) Reset()         { *m = TLMessageDeleteScheduledMessageList{} }
-func (m *TLMessageDeleteScheduledMessageList) String() string { return proto.CompactTextString(m) }
-func (*TLMessageDeleteScheduledMessageList) ProtoMessage()    {}
-func (*TLMessageDeleteScheduledMessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{6}
-}
-func (m *TLMessageDeleteScheduledMessageList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageDeleteScheduledMessageList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageDeleteScheduledMessageList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageDeleteScheduledMessageList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageDeleteScheduledMessageList.Merge(m, src)
-}
-func (m *TLMessageDeleteScheduledMessageList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageDeleteScheduledMessageList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageDeleteScheduledMessageList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageDeleteScheduledMessageList proto.InternalMessageInfo
-
-func (m *TLMessageDeleteScheduledMessageList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageDeleteScheduledMessageList) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageDeleteScheduledMessageList) GetPeerType() int32 {
-	if m != nil {
-		return m.PeerType
-	}
-	return 0
-}
-
-func (m *TLMessageDeleteScheduledMessageList) GetPeerId() int64 {
-	if m != nil {
-		return m.PeerId
-	}
-	return 0
-}
-
-func (m *TLMessageDeleteScheduledMessageList) GetIdList() []int32 {
-	if m != nil {
-		return m.IdList
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// message.deleteSentScheduledMessageList id_list:Vector<long> = Bool;
-type TLMessageDeleteSentScheduledMessageList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	IdList               []int64       `protobuf:"varint,3,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) Reset() {
-	*m = TLMessageDeleteSentScheduledMessageList{}
-}
-func (m *TLMessageDeleteSentScheduledMessageList) String() string { return proto.CompactTextString(m) }
-func (*TLMessageDeleteSentScheduledMessageList) ProtoMessage()    {}
-func (*TLMessageDeleteSentScheduledMessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{7}
-}
-func (m *TLMessageDeleteSentScheduledMessageList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageDeleteSentScheduledMessageList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageDeleteSentScheduledMessageList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageDeleteSentScheduledMessageList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageDeleteSentScheduledMessageList.Merge(m, src)
-}
-func (m *TLMessageDeleteSentScheduledMessageList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageDeleteSentScheduledMessageList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageDeleteSentScheduledMessageList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageDeleteSentScheduledMessageList proto.InternalMessageInfo
-
-func (m *TLMessageDeleteSentScheduledMessageList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) GetIdList() []int64 {
-	if m != nil {
-		return m.IdList
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
-type TLMessageGetScheduledMessageHistory struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
-	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetScheduledMessageHistory) Reset()         { *m = TLMessageGetScheduledMessageHistory{} }
-func (m *TLMessageGetScheduledMessageHistory) String() string { return proto.CompactTextString(m) }
-func (*TLMessageGetScheduledMessageHistory) ProtoMessage()    {}
-func (*TLMessageGetScheduledMessageHistory) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{8}
-}
-func (m *TLMessageGetScheduledMessageHistory) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetScheduledMessageHistory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetScheduledMessageHistory.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetScheduledMessageHistory) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetScheduledMessageHistory.Merge(m, src)
-}
-func (m *TLMessageGetScheduledMessageHistory) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetScheduledMessageHistory) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetScheduledMessageHistory.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetScheduledMessageHistory proto.InternalMessageInfo
-
-func (m *TLMessageGetScheduledMessageHistory) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetScheduledMessageHistory) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageGetScheduledMessageHistory) GetPeerType() int32 {
-	if m != nil {
-		return m.PeerType
-	}
-	return 0
-}
-
-func (m *TLMessageGetScheduledMessageHistory) GetPeerId() int64 {
-	if m != nil {
-		return m.PeerId
-	}
-	return 0
-}
-
-//--------------------------------------------------------------------------------------------
-// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
-type TLMessageGetScheduledTimeoutMessageList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	Date                 int64         `protobuf:"varint,3,opt,name=date,proto3" json:"date,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) Reset() {
-	*m = TLMessageGetScheduledTimeoutMessageList{}
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) String() string { return proto.CompactTextString(m) }
-func (*TLMessageGetScheduledTimeoutMessageList) ProtoMessage()    {}
-func (*TLMessageGetScheduledTimeoutMessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{9}
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetScheduledTimeoutMessageList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetScheduledTimeoutMessageList.Merge(m, src)
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetScheduledTimeoutMessageList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetScheduledTimeoutMessageList proto.InternalMessageInfo
-
-func (m *TLMessageGetScheduledTimeoutMessageList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) GetDate() int64 {
-	if m != nil {
-		return m.Date
-	}
-	return 0
-}
-
-//--------------------------------------------------------------------------------------------
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 type TLMessageGetHistoryMessages struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
@@ -840,7 +461,7 @@ func (m *TLMessageGetHistoryMessages) Reset()         { *m = TLMessageGetHistory
 func (m *TLMessageGetHistoryMessages) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetHistoryMessages) ProtoMessage()    {}
 func (*TLMessageGetHistoryMessages) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{10}
+	return fileDescriptor_854009303dbd8a76, []int{5}
 }
 func (m *TLMessageGetHistoryMessages) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -962,7 +583,7 @@ func (m *TLMessageGetHistoryMessagesCount) Reset()         { *m = TLMessageGetHi
 func (m *TLMessageGetHistoryMessagesCount) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetHistoryMessagesCount) ProtoMessage()    {}
 func (*TLMessageGetHistoryMessagesCount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{11}
+	return fileDescriptor_854009303dbd8a76, []int{6}
 }
 func (m *TLMessageGetHistoryMessagesCount) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1020,221 +641,6 @@ func (m *TLMessageGetHistoryMessagesCount) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getChannelMessage user_id:long channel_id:long id:int = MessageBox;
-type TLMessageGetChannelMessage struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ChannelId            int64         `protobuf:"varint,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	Id                   int32         `protobuf:"varint,5,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetChannelMessage) Reset()         { *m = TLMessageGetChannelMessage{} }
-func (m *TLMessageGetChannelMessage) String() string { return proto.CompactTextString(m) }
-func (*TLMessageGetChannelMessage) ProtoMessage()    {}
-func (*TLMessageGetChannelMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{12}
-}
-func (m *TLMessageGetChannelMessage) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetChannelMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetChannelMessage.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetChannelMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetChannelMessage.Merge(m, src)
-}
-func (m *TLMessageGetChannelMessage) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetChannelMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetChannelMessage.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetChannelMessage proto.InternalMessageInfo
-
-func (m *TLMessageGetChannelMessage) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetChannelMessage) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageGetChannelMessage) GetChannelId() int64 {
-	if m != nil {
-		return m.ChannelId
-	}
-	return 0
-}
-
-func (m *TLMessageGetChannelMessage) GetId() int32 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-//--------------------------------------------------------------------------------------------
-// message.getChannelMessageList user_id:long channel_id:long id_list:Vector<int> = Vector<MessageBox>;
-type TLMessageGetChannelMessageList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ChannelId            int64         `protobuf:"varint,4,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	IdList               []int32       `protobuf:"varint,5,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetChannelMessageList) Reset()         { *m = TLMessageGetChannelMessageList{} }
-func (m *TLMessageGetChannelMessageList) String() string { return proto.CompactTextString(m) }
-func (*TLMessageGetChannelMessageList) ProtoMessage()    {}
-func (*TLMessageGetChannelMessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{13}
-}
-func (m *TLMessageGetChannelMessageList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetChannelMessageList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetChannelMessageList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetChannelMessageList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetChannelMessageList.Merge(m, src)
-}
-func (m *TLMessageGetChannelMessageList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetChannelMessageList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetChannelMessageList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetChannelMessageList proto.InternalMessageInfo
-
-func (m *TLMessageGetChannelMessageList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetChannelMessageList) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageGetChannelMessageList) GetChannelId() int64 {
-	if m != nil {
-		return m.ChannelId
-	}
-	return 0
-}
-
-func (m *TLMessageGetChannelMessageList) GetIdList() []int32 {
-	if m != nil {
-		return m.IdList
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// message.getChannelMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
-type TLMessageGetChannelMessageListByDataIdList struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	IdList               []int64       `protobuf:"varint,4,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) Reset() {
-	*m = TLMessageGetChannelMessageListByDataIdList{}
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) String() string {
-	return proto.CompactTextString(m)
-}
-func (*TLMessageGetChannelMessageListByDataIdList) ProtoMessage() {}
-func (*TLMessageGetChannelMessageListByDataIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{14}
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLMessageGetChannelMessageListByDataIdList.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLMessageGetChannelMessageListByDataIdList.Merge(m, src)
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLMessageGetChannelMessageListByDataIdList.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLMessageGetChannelMessageListByDataIdList proto.InternalMessageInfo
-
-func (m *TLMessageGetChannelMessageListByDataIdList) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) GetIdList() []int64 {
-	if m != nil {
-		return m.IdList
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 // message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 type TLMessageGetPeerUserMessageId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
@@ -1250,7 +656,7 @@ func (m *TLMessageGetPeerUserMessageId) Reset()         { *m = TLMessageGetPeerU
 func (m *TLMessageGetPeerUserMessageId) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPeerUserMessageId) ProtoMessage()    {}
 func (*TLMessageGetPeerUserMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{15}
+	return fileDescriptor_854009303dbd8a76, []int{7}
 }
 func (m *TLMessageGetPeerUserMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1323,7 +729,7 @@ func (m *TLMessageGetPeerUserMessage) Reset()         { *m = TLMessageGetPeerUse
 func (m *TLMessageGetPeerUserMessage) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPeerUserMessage) ProtoMessage()    {}
 func (*TLMessageGetPeerUserMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{16}
+	return fileDescriptor_854009303dbd8a76, []int{8}
 }
 func (m *TLMessageGetPeerUserMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1396,7 +802,7 @@ func (m *TLMessageGetPeerChatMessageIdList) Reset()         { *m = TLMessageGetP
 func (m *TLMessageGetPeerChatMessageIdList) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPeerChatMessageIdList) ProtoMessage()    {}
 func (*TLMessageGetPeerChatMessageIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{17}
+	return fileDescriptor_854009303dbd8a76, []int{9}
 }
 func (m *TLMessageGetPeerChatMessageIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1469,7 +875,7 @@ func (m *TLMessageGetPeerChatMessageList) Reset()         { *m = TLMessageGetPee
 func (m *TLMessageGetPeerChatMessageList) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPeerChatMessageList) ProtoMessage()    {}
 func (*TLMessageGetPeerChatMessageList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{18}
+	return fileDescriptor_854009303dbd8a76, []int{10}
 }
 func (m *TLMessageGetPeerChatMessageList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1545,7 +951,7 @@ func (m *TLMessageSearchByMediaType) Reset()         { *m = TLMessageSearchByMed
 func (m *TLMessageSearchByMediaType) String() string { return proto.CompactTextString(m) }
 func (*TLMessageSearchByMediaType) ProtoMessage()    {}
 func (*TLMessageSearchByMediaType) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{19}
+	return fileDescriptor_854009303dbd8a76, []int{11}
 }
 func (m *TLMessageSearchByMediaType) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1642,7 +1048,7 @@ func (m *TLMessageSearch) Reset()         { *m = TLMessageSearch{} }
 func (m *TLMessageSearch) String() string { return proto.CompactTextString(m) }
 func (*TLMessageSearch) ProtoMessage()    {}
 func (*TLMessageSearch) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{20}
+	return fileDescriptor_854009303dbd8a76, []int{12}
 }
 func (m *TLMessageSearch) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1737,7 +1143,7 @@ func (m *TLMessageSearchGlobal) Reset()         { *m = TLMessageSearchGlobal{} }
 func (m *TLMessageSearchGlobal) String() string { return proto.CompactTextString(m) }
 func (*TLMessageSearchGlobal) ProtoMessage()    {}
 func (*TLMessageSearchGlobal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{21}
+	return fileDescriptor_854009303dbd8a76, []int{13}
 }
 func (m *TLMessageSearchGlobal) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1817,7 +1223,7 @@ func (m *TLMessageSearchByPinned) Reset()         { *m = TLMessageSearchByPinned
 func (m *TLMessageSearchByPinned) String() string { return proto.CompactTextString(m) }
 func (*TLMessageSearchByPinned) ProtoMessage()    {}
 func (*TLMessageSearchByPinned) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{22}
+	return fileDescriptor_854009303dbd8a76, []int{14}
 }
 func (m *TLMessageSearchByPinned) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1891,7 +1297,7 @@ func (m *TLMessageGetSearchCounter) Reset()         { *m = TLMessageGetSearchCou
 func (m *TLMessageGetSearchCounter) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetSearchCounter) ProtoMessage()    {}
 func (*TLMessageGetSearchCounter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{23}
+	return fileDescriptor_854009303dbd8a76, []int{15}
 }
 func (m *TLMessageGetSearchCounter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1971,7 +1377,7 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Reset()         { *m = TLMessageGet
 func (m *TLMessageGetLastTwoPinnedMessageId) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetLastTwoPinnedMessageId) ProtoMessage()    {}
 func (*TLMessageGetLastTwoPinnedMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{24}
+	return fileDescriptor_854009303dbd8a76, []int{16}
 }
 func (m *TLMessageGetLastTwoPinnedMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2046,7 +1452,7 @@ func (m *TLMessageUpdatePinnedMessageId) Reset()         { *m = TLMessageUpdateP
 func (m *TLMessageUpdatePinnedMessageId) String() string { return proto.CompactTextString(m) }
 func (*TLMessageUpdatePinnedMessageId) ProtoMessage()    {}
 func (*TLMessageUpdatePinnedMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{25}
+	return fileDescriptor_854009303dbd8a76, []int{17}
 }
 func (m *TLMessageUpdatePinnedMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2133,7 +1539,7 @@ func (m *TLMessageGetPinnedMessageIdList) Reset()         { *m = TLMessageGetPin
 func (m *TLMessageGetPinnedMessageIdList) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPinnedMessageIdList) ProtoMessage()    {}
 func (*TLMessageGetPinnedMessageIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{26}
+	return fileDescriptor_854009303dbd8a76, []int{18}
 }
 func (m *TLMessageGetPinnedMessageIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2206,7 +1612,7 @@ func (m *TLMessageUnPinAllMessages) Reset()         { *m = TLMessageUnPinAllMess
 func (m *TLMessageUnPinAllMessages) String() string { return proto.CompactTextString(m) }
 func (*TLMessageUnPinAllMessages) ProtoMessage()    {}
 func (*TLMessageUnPinAllMessages) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{27}
+	return fileDescriptor_854009303dbd8a76, []int{19}
 }
 func (m *TLMessageUnPinAllMessages) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2284,7 +1690,7 @@ func (m *TLMessageGetUnreadMentions) Reset()         { *m = TLMessageGetUnreadMe
 func (m *TLMessageGetUnreadMentions) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetUnreadMentions) ProtoMessage()    {}
 func (*TLMessageGetUnreadMentions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{28}
+	return fileDescriptor_854009303dbd8a76, []int{20}
 }
 func (m *TLMessageGetUnreadMentions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2392,7 +1798,7 @@ func (m *TLMessageGetUnreadMentionsCount) Reset()         { *m = TLMessageGetUnr
 func (m *TLMessageGetUnreadMentionsCount) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetUnreadMentionsCount) ProtoMessage()    {}
 func (*TLMessageGetUnreadMentionsCount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{29}
+	return fileDescriptor_854009303dbd8a76, []int{21}
 }
 func (m *TLMessageGetUnreadMentionsCount) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2462,7 +1868,7 @@ func (m *Vector_MessageBox) Reset()         { *m = Vector_MessageBox{} }
 func (m *Vector_MessageBox) String() string { return proto.CompactTextString(m) }
 func (*Vector_MessageBox) ProtoMessage()    {}
 func (*Vector_MessageBox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{30}
+	return fileDescriptor_854009303dbd8a76, []int{22}
 }
 func (m *Vector_MessageBox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2509,7 +1915,7 @@ func (m *Vector_PeerMessageId) Reset()         { *m = Vector_PeerMessageId{} }
 func (m *Vector_PeerMessageId) String() string { return proto.CompactTextString(m) }
 func (*Vector_PeerMessageId) ProtoMessage()    {}
 func (*Vector_PeerMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{31}
+	return fileDescriptor_854009303dbd8a76, []int{23}
 }
 func (m *Vector_PeerMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2556,7 +1962,7 @@ func (m *Vector_Int) Reset()         { *m = Vector_Int{} }
 func (m *Vector_Int) String() string { return proto.CompactTextString(m) }
 func (*Vector_Int) ProtoMessage()    {}
 func (*Vector_Int) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{32}
+	return fileDescriptor_854009303dbd8a76, []int{24}
 }
 func (m *Vector_Int) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2599,16 +2005,8 @@ func init() {
 	proto.RegisterType((*TLMessageGetUserMessage)(nil), "message.TL_message_getUserMessage")
 	proto.RegisterType((*TLMessageGetUserMessageList)(nil), "message.TL_message_getUserMessageList")
 	proto.RegisterType((*TLMessageGetUserMessageListByDataIdList)(nil), "message.TL_message_getUserMessageListByDataIdList")
-	proto.RegisterType((*TLMessageGetScheduledMessageListByIdList)(nil), "message.TL_message_getScheduledMessageListByIdList")
-	proto.RegisterType((*TLMessageDeleteScheduledMessageList)(nil), "message.TL_message_deleteScheduledMessageList")
-	proto.RegisterType((*TLMessageDeleteSentScheduledMessageList)(nil), "message.TL_message_deleteSentScheduledMessageList")
-	proto.RegisterType((*TLMessageGetScheduledMessageHistory)(nil), "message.TL_message_getScheduledMessageHistory")
-	proto.RegisterType((*TLMessageGetScheduledTimeoutMessageList)(nil), "message.TL_message_getScheduledTimeoutMessageList")
 	proto.RegisterType((*TLMessageGetHistoryMessages)(nil), "message.TL_message_getHistoryMessages")
 	proto.RegisterType((*TLMessageGetHistoryMessagesCount)(nil), "message.TL_message_getHistoryMessagesCount")
-	proto.RegisterType((*TLMessageGetChannelMessage)(nil), "message.TL_message_getChannelMessage")
-	proto.RegisterType((*TLMessageGetChannelMessageList)(nil), "message.TL_message_getChannelMessageList")
-	proto.RegisterType((*TLMessageGetChannelMessageListByDataIdList)(nil), "message.TL_message_getChannelMessageListByDataIdList")
 	proto.RegisterType((*TLMessageGetPeerUserMessageId)(nil), "message.TL_message_getPeerUserMessageId")
 	proto.RegisterType((*TLMessageGetPeerUserMessage)(nil), "message.TL_message_getPeerUserMessage")
 	proto.RegisterType((*TLMessageGetPeerChatMessageIdList)(nil), "message.TL_message_getPeerChatMessageIdList")
@@ -2632,128 +2030,111 @@ func init() {
 func init() { proto.RegisterFile("message.tl.proto", fileDescriptor_854009303dbd8a76) }
 
 var fileDescriptor_854009303dbd8a76 = []byte{
-	// 1922 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5a, 0x7d, 0x6c, 0x1b, 0x49,
-	0x15, 0xcf, 0x24, 0xb1, 0x1d, 0xbf, 0x34, 0x61, 0x3b, 0x17, 0x1a, 0xd7, 0x49, 0x1c, 0xdf, 0x5e,
-	0x92, 0xba, 0xb9, 0x7c, 0x1c, 0x0e, 0x87, 0xe0, 0x1f, 0x04, 0x71, 0x25, 0x30, 0xa4, 0xb9, 0xc8,
-	0x97, 0xdc, 0x49, 0x45, 0xc2, 0xb7, 0xf1, 0x4e, 0xed, 0x45, 0xf6, 0xae, 0xbb, 0xbb, 0xe6, 0x9a,
-	0xfe, 0x71, 0x12, 0x02, 0x4a, 0x38, 0x3e, 0x84, 0x40, 0x02, 0x74, 0xe2, 0x74, 0xd0, 0x56, 0xa5,
-	0x1f, 0x14, 0x28, 0xad, 0xaa, 0x0a, 0x24, 0xd4, 0x52, 0x5a, 0xb5, 0x95, 0x40, 0x01, 0x41, 0x41,
-	0x82, 0x4a, 0x6d, 0xa0, 0xa8, 0x42, 0x08, 0x55, 0x14, 0x09, 0xd4, 0x86, 0x06, 0xed, 0x87, 0x3f,
-	0x66, 0x3f, 0xbc, 0x06, 0xd5, 0xe0, 0xfe, 0x95, 0x9d, 0x79, 0x6f, 0xe6, 0xfd, 0xde, 0x9b, 0x37,
-	0xf3, 0x3e, 0x1c, 0x60, 0x0a, 0x44, 0x51, 0xb8, 0x2c, 0x99, 0x52, 0xf3, 0x53, 0x45, 0x59, 0x52,
-	0x25, 0x1c, 0x30, 0x67, 0xc2, 0x93, 0x59, 0x41, 0xcd, 0x95, 0x96, 0xa7, 0x32, 0x52, 0x61, 0x3a,
-	0x2b, 0x65, 0xa5, 0x69, 0x9d, 0xbe, 0x5c, 0xda, 0xab, 0x8f, 0xf4, 0x81, 0xfe, 0x65, 0xac, 0x0b,
-	0x47, 0xb2, 0x92, 0x94, 0xcd, 0x93, 0x2a, 0xd7, 0xab, 0x32, 0x57, 0x2c, 0x12, 0x59, 0x31, 0xe9,
-	0x61, 0x25, 0x93, 0x23, 0x05, 0x4e, 0x13, 0x94, 0x91, 0x64, 0x92, 0x56, 0x57, 0x8a, 0xa4, 0x4c,
-	0xdb, 0x5e, 0xa5, 0xa9, 0x32, 0x27, 0x2a, 0x45, 0x49, 0x56, 0x4d, 0x52, 0x5f, 0x95, 0xa4, 0xac,
-	0x88, 0x19, 0x63, 0x96, 0xfd, 0x26, 0x82, 0x9e, 0x05, 0x42, 0xe4, 0xdd, 0x06, 0xd6, 0x24, 0x8f,
-	0x47, 0xa1, 0xb7, 0x28, 0x13, 0x5e, 0xc8, 0x70, 0x2a, 0x49, 0x8b, 0x5c, 0x81, 0x84, 0x50, 0x14,
-	0xc5, 0x82, 0xa9, 0x9e, 0xca, 0xec, 0x3c, 0x57, 0x20, 0xf8, 0xdd, 0xd0, 0x9d, 0x91, 0x44, 0x45,
-	0x95, 0x4b, 0x19, 0x55, 0x92, 0x43, 0xed, 0x51, 0x14, 0xeb, 0x8d, 0x6f, 0x9b, 0x2a, 0x5b, 0x61,
-	0x71, 0x2e, 0x51, 0xa5, 0xa6, 0x6a, 0x59, 0x71, 0x3f, 0x04, 0x4a, 0x0a, 0x91, 0xd3, 0x02, 0x1f,
-	0xea, 0x88, 0xa2, 0x58, 0x47, 0xca, 0xaf, 0x0d, 0x93, 0x3c, 0x7e, 0x3b, 0xf8, 0x0b, 0x4a, 0x56,
-	0x9b, 0xef, 0x8c, 0xa2, 0x98, 0x2f, 0xe5, 0x2b, 0x28, 0xd9, 0x24, 0xcf, 0xbe, 0x0f, 0x98, 0xc5,
-	0xb9, 0x74, 0x91, 0x02, 0x39, 0x01, 0x3e, 0x9e, 0x53, 0xb9, 0xb8, 0x8e, 0xad, 0xbb, 0x46, 0x2e,
-	0xa5, 0x4b, 0xca, 0x60, 0x62, 0x5f, 0x83, 0xed, 0x8b, 0x73, 0x69, 0x93, 0x25, 0x9d, 0x25, 0xea,
-	0x92, 0x52, 0xe1, 0xb2, 0x2a, 0x82, 0x1e, 0x83, 0x22, 0xbd, 0xd0, 0x5e, 0x51, 0xa2, 0x5d, 0xe0,
-	0xd9, 0xcf, 0x21, 0x18, 0x72, 0x05, 0x30, 0x27, 0x28, 0x6a, 0x33, 0x40, 0xf4, 0x43, 0x40, 0xe0,
-	0xd3, 0x79, 0x41, 0x51, 0x43, 0x9d, 0xd1, 0x8e, 0x98, 0x2f, 0xe5, 0x17, 0x78, 0x4d, 0x16, 0xfb,
-	0x35, 0x04, 0x3b, 0xeb, 0xa2, 0x99, 0x5d, 0xd9, 0xc5, 0xa9, 0x5c, 0x92, 0xff, 0x1f, 0x21, 0xeb,
-	0xa8, 0x20, 0xfb, 0x39, 0x82, 0x71, 0x1a, 0xd9, 0x8b, 0x99, 0x1c, 0xe1, 0x4b, 0x79, 0xc2, 0x53,
-	0xf0, 0x9a, 0x07, 0x6d, 0x00, 0x82, 0x9a, 0xa3, 0xe9, 0x77, 0xca, 0x3c, 0xc0, 0x2e, 0x6d, 0x62,
-	0x71, 0xa5, 0x48, 0xb4, 0x55, 0x3a, 0x51, 0xe0, 0x43, 0x3e, 0x63, 0x95, 0x36, 0xa4, 0x15, 0xf2,
-	0x53, 0xa6, 0xbe, 0x86, 0x60, 0xb4, 0x46, 0x21, 0x9e, 0xe4, 0x89, 0x4a, 0x9c, 0x74, 0x7a, 0x02,
-	0x74, 0x79, 0x8d, 0xf2, 0x1a, 0x53, 0x15, 0x22, 0xaa, 0x8f, 0x5f, 0x9d, 0xb2, 0xfc, 0x0e, 0xca,
-	0x39, 0xbe, 0x4f, 0xdb, 0xd2, 0xc1, 0x39, 0x3e, 0x28, 0x28, 0xaa, 0x24, 0xaf, 0xb4, 0x8c, 0x2d,
-	0xd9, 0x15, 0xeb, 0x45, 0xab, 0x20, 0x5e, 0x14, 0x0a, 0x44, 0x2a, 0xa9, 0x8f, 0xc7, 0x64, 0x18,
-	0x3a, 0x79, 0x4e, 0x25, 0x26, 0x64, 0xfd, 0x9b, 0xbd, 0xd9, 0x6e, 0x7d, 0x72, 0x4c, 0xeb, 0x98,
-	0x22, 0x95, 0xd6, 0xf1, 0xb8, 0x01, 0x08, 0x4a, 0x7b, 0xf7, 0x2a, 0x44, 0xd5, 0x48, 0x7e, 0x63,
-	0x95, 0x31, 0x91, 0xe4, 0xf1, 0x30, 0x74, 0x9b, 0x44, 0x5d, 0xc5, 0x80, 0x4e, 0x06, 0x63, 0x6a,
-	0x17, 0xa7, 0x12, 0x3c, 0x04, 0xc0, 0xf1, 0x7c, 0xda, 0x98, 0x09, 0x75, 0xe9, 0xf4, 0x20, 0xc7,
-	0xf3, 0x2f, 0xe8, 0x13, 0xb8, 0x0f, 0x7c, 0x79, 0xa1, 0x20, 0xa8, 0xa1, 0xa0, 0x11, 0x52, 0xf4,
-	0x81, 0x1e, 0x69, 0xb8, 0xfd, 0x9a, 0x3c, 0x30, 0x23, 0x0d, 0xb7, 0xdf, 0x0c, 0x40, 0x82, 0xa8,
-	0x4d, 0x77, 0x9b, 0xd3, 0x82, 0x98, 0xe4, 0x35, 0xfb, 0xe6, 0x38, 0x25, 0x17, 0xda, 0x62, 0xd8,
-	0x57, 0xfb, 0x66, 0x4f, 0x21, 0x60, 0xeb, 0xda, 0x37, 0x21, 0x95, 0xc4, 0xd6, 0xb9, 0xd6, 0x5a,
-	0x9c, 0x1f, 0xa4, 0xf1, 0x26, 0x72, 0x9c, 0x28, 0x92, 0x7c, 0x13, 0xc3, 0xe0, 0x10, 0x40, 0xc6,
-	0x10, 0x52, 0x8e, 0xe9, 0x1d, 0xa9, 0xa0, 0x39, 0x53, 0x89, 0x92, 0xbe, 0x4a, 0x94, 0x3c, 0x85,
-	0x20, 0x5a, 0x0f, 0x62, 0xb3, 0xde, 0x49, 0x0f, 0x98, 0x35, 0x0f, 0x92, 0x8f, 0x7a, 0x10, 0xdf,
-	0x40, 0x30, 0xe1, 0x85, 0xf7, 0xff, 0x16, 0x4a, 0x4f, 0x21, 0x18, 0xa6, 0xc1, 0x69, 0x99, 0x51,
-	0x4d, 0xa0, 0x4f, 0xf2, 0xcd, 0xc0, 0x13, 0x85, 0x2d, 0xba, 0xff, 0x95, 0xa9, 0x86, 0x35, 0xa1,
-	0x68, 0xca, 0xa6, 0x92, 0x3c, 0x5f, 0x6d, 0x92, 0x77, 0xd2, 0x96, 0x22, 0x59, 0xf0, 0xb6, 0x14,
-	0xda, 0xd3, 0x08, 0x9e, 0xb1, 0xa3, 0x4d, 0xe4, 0x38, 0xb5, 0x62, 0xdd, 0x66, 0x9d, 0x78, 0x19,
-	0x73, 0x26, 0xc7, 0xa9, 0x16, 0xcc, 0x9a, 0x7c, 0x77, 0xcc, 0xdf, 0x43, 0xf0, 0x74, 0x5d, 0xcc,
-	0x2d, 0x87, 0xf8, 0xef, 0xf4, 0x9b, 0xa5, 0x10, 0x4e, 0xce, 0xe4, 0x66, 0x57, 0x76, 0x13, 0x5e,
-	0xe0, 0xf4, 0xd7, 0xae, 0x65, 0x42, 0xd8, 0x10, 0x40, 0x41, 0x43, 0x65, 0x2c, 0x33, 0x62, 0x58,
-	0xb0, 0x50, 0xc1, 0xb9, 0x0d, 0xfc, 0x66, 0x7c, 0x32, 0xe2, 0x97, 0x39, 0xaa, 0x06, 0xa7, 0xae,
-	0x9a, 0xe0, 0xc4, 0xfe, 0x16, 0xc1, 0x56, 0x9b, 0xda, 0xad, 0xa3, 0xeb, 0x16, 0x40, 0xfb, 0x74,
-	0x15, 0x83, 0x29, 0xb4, 0xef, 0x3f, 0x54, 0xed, 0x18, 0x82, 0x7e, 0x9b, 0x6a, 0x1f, 0xc8, 0x4b,
-	0xcb, 0x5c, 0xbe, 0x19, 0x0a, 0xea, 0x50, 0x3b, 0xed, 0x50, 0x7d, 0xce, 0x50, 0xfd, 0xb5, 0x50,
-	0x8f, 0x20, 0xaa, 0x68, 0x2c, 0x3b, 0xdf, 0x82, 0x20, 0x8a, 0x84, 0x6f, 0x9d, 0xb8, 0x7e, 0x19,
-	0xc1, 0x80, 0x25, 0xc7, 0xd4, 0x91, 0xea, 0xe9, 0x07, 0x91, 0x9f, 0x94, 0x2b, 0xa2, 0xbd, 0x4e,
-	0x23, 0xb4, 0x1e, 0x73, 0x9c, 0xa2, 0x2e, 0xbe, 0x2a, 0x19, 0x06, 0x6f, 0x6a, 0xd0, 0xfa, 0xef,
-	0x2c, 0xbf, 0x4e, 0xa7, 0x2b, 0xa5, 0xa2, 0x96, 0xa0, 0xb6, 0x2a, 0x5a, 0x33, 0xd9, 0xf2, 0x97,
-	0x93, 0x2d, 0x3c, 0x0a, 0xfe, 0xa2, 0x8e, 0x55, 0xbf, 0xb7, 0xdd, 0xf1, 0x9e, 0xa9, 0x82, 0xaa,
-	0x77, 0x84, 0xa6, 0x66, 0x25, 0x29, 0x9f, 0x32, 0x89, 0xec, 0x77, 0xec, 0x41, 0x83, 0xd6, 0xb0,
-	0xa5, 0x8a, 0x57, 0xf6, 0x28, 0x7d, 0x1b, 0x4a, 0xe2, 0x82, 0x20, 0xbe, 0x3f, 0x9f, 0x6f, 0xb9,
-	0x9a, 0x87, 0x3d, 0xde, 0x6e, 0x4d, 0xc7, 0x97, 0x44, 0x99, 0x70, 0xfc, 0x6e, 0x22, 0xaa, 0x82,
-	0x24, 0x3e, 0x29, 0xd5, 0x19, 0x5d, 0x7c, 0x05, 0x5c, 0x8b, 0xaf, 0x2e, 0x6b, 0xf1, 0x65, 0x54,
-	0x59, 0xc1, 0xda, 0x2a, 0xab, 0x1f, 0x02, 0x7a, 0x4d, 0x26, 0xaa, 0x66, 0x51, 0xa6, 0x95, 0x68,
-	0x49, 0x51, 0x75, 0xf0, 0x41, 0xda, 0x56, 0x2d, 0x56, 0x69, 0xbd, 0x17, 0xb6, 0xbe, 0x44, 0xb4,
-	0x8d, 0xd3, 0xa6, 0xdb, 0xcd, 0x4a, 0xfb, 0xf1, 0x4e, 0xa3, 0x5f, 0xa9, 0x84, 0x50, 0xb4, 0x23,
-	0xd6, 0x1d, 0x7f, 0xaa, 0x72, 0xdb, 0xaa, 0x3c, 0x46, 0xb3, 0x52, 0x61, 0x77, 0x41, 0x9f, 0xb9,
-	0x7e, 0xc1, 0xa9, 0xe5, 0x59, 0xde, 0xa2, 0x6e, 0xcb, 0x53, 0x61, 0x59, 0x00, 0x73, 0x97, 0xa4,
-	0xa8, 0x1f, 0x44, 0x75, 0xad, 0xcf, 0xe4, 0x19, 0xff, 0x33, 0x40, 0x0f, 0x65, 0x17, 0xbc, 0x15,
-	0x7a, 0x12, 0xa9, 0xc4, 0x4c, 0x3c, 0xbd, 0x34, 0xff, 0xe1, 0xf9, 0x17, 0x5e, 0x9e, 0x67, 0xda,
-	0xf0, 0x00, 0x3c, 0x65, 0x4c, 0x51, 0x0d, 0x58, 0xe6, 0xa7, 0x77, 0xce, 0x9c, 0x0d, 0xe0, 0x11,
-	0x18, 0x34, 0x88, 0xce, 0xcd, 0x44, 0xe6, 0xea, 0x1f, 0x7e, 0x70, 0x23, 0x80, 0x27, 0x21, 0x5a,
-	0x8f, 0x4b, 0x7b, 0x42, 0x98, 0xa3, 0xe7, 0x6f, 0xbd, 0xf1, 0xaf, 0xcd, 0xcd, 0xcd, 0x4d, 0x84,
-	0xdf, 0x09, 0x13, 0x5e, 0xec, 0xb5, 0x65, 0x15, 0xf3, 0xf0, 0x27, 0x37, 0x5e, 0x47, 0xf8, 0x79,
-	0x98, 0xb4, 0xad, 0xaa, 0xd7, 0x3d, 0x64, 0xee, 0x9e, 0xb9, 0x7f, 0xc7, 0x87, 0x9f, 0x83, 0x18,
-	0xbd, 0xcc, 0xbd, 0x47, 0xc7, 0x9c, 0xff, 0xd3, 0x2f, 0x7e, 0xe3, 0xb7, 0xc3, 0xab, 0xdf, 0x0a,
-	0x63, 0xee, 0xbd, 0x75, 0xee, 0x34, 0xb2, 0xcb, 0x71, 0xef, 0x5f, 0x31, 0xaf, 0x7f, 0xe1, 0xc1,
-	0xf1, 0x76, 0xfc, 0x1e, 0x07, 0x33, 0xd4, 0xe9, 0x1f, 0x31, 0x27, 0xfe, 0xb6, 0xba, 0xf1, 0x4f,
-	0xc3, 0x82, 0x3b, 0x1c, 0x0c, 0x6e, 0x69, 0x4f, 0x30, 0x17, 0xae, 0x1c, 0x0a, 0xe1, 0x09, 0x18,
-	0xf5, 0x62, 0xd4, 0x6f, 0x17, 0xf3, 0x95, 0x8d, 0x8b, 0x07, 0xf0, 0x18, 0x0c, 0xdb, 0xb8, 0xe9,
-	0x92, 0x97, 0xf9, 0xf4, 0x89, 0x4b, 0xcf, 0xe3, 0xe7, 0xe0, 0x19, 0x0f, 0x3e, 0x1d, 0xf0, 0xef,
-	0xbf, 0xfd, 0x8f, 0x2f, 0x3e, 0x30, 0x00, 0xbf, 0x0b, 0xa6, 0x1b, 0x58, 0x41, 0x9d, 0xfa, 0xe7,
-	0x0f, 0x1e, 0x04, 0x3c, 0x0e, 0xac, 0x6d, 0x9d, 0xad, 0xce, 0x65, 0xde, 0xfa, 0xeb, 0x0f, 0xdf,
-	0x0c, 0xe0, 0x98, 0x83, 0x51, 0x2c, 0xbc, 0xcc, 0x97, 0x8f, 0x5c, 0xff, 0xba, 0x1f, 0xcf, 0xc0,
-	0x98, 0x23, 0xa7, 0xad, 0xbe, 0x63, 0xfe, 0xf2, 0xc7, 0x43, 0xd7, 0x37, 0x0c, 0x15, 0xde, 0x01,
-	0x23, 0x5e, 0x8b, 0xf4, 0x25, 0xab, 0x3f, 0xfe, 0xc4, 0xda, 0x83, 0xf2, 0x31, 0x59, 0xec, 0x69,
-	0xab, 0x70, 0x98, 0x4b, 0xbf, 0xbc, 0xb7, 0x8a, 0xf0, 0x20, 0xf4, 0x39, 0x31, 0x32, 0x87, 0x6f,
-	0xdd, 0xb8, 0xe8, 0xc7, 0x3b, 0x20, 0xec, 0x44, 0x35, 0xd2, 0x6a, 0xe6, 0xf2, 0x8f, 0x6e, 0x7f,
-	0xe3, 0xa1, 0x21, 0xcf, 0x76, 0x5b, 0xe9, 0xa4, 0x96, 0xf9, 0xf5, 0xb9, 0x9f, 0xdd, 0xf7, 0xe3,
-	0x67, 0x21, 0x62, 0xf7, 0xbb, 0xda, 0x9c, 0x92, 0xb9, 0xf2, 0xe8, 0xbb, 0x5f, 0x7d, 0x54, 0xbe,
-	0xab, 0x3b, 0x6c, 0xcc, 0xce, 0x89, 0x1b, 0x73, 0xf2, 0x4b, 0x77, 0x37, 0x4c, 0xc5, 0x6d, 0x0e,
-	0xe2, 0x98, 0x3c, 0x31, 0x6b, 0xbf, 0xfb, 0xe4, 0xf1, 0xcd, 0x3a, 0xd6, 0xb5, 0x67, 0x22, 0xcc,
-	0xcd, 0x6f, 0x7d, 0x66, 0xcd, 0x7c, 0x46, 0x6c, 0x7a, 0x58, 0xb3, 0x01, 0xe6, 0xfe, 0xaf, 0x8e,
-	0xad, 0x3d, 0x72, 0x39, 0x0a, 0x5b, 0x94, 0x61, 0xce, 0x7e, 0xf6, 0xe0, 0xa6, 0xdf, 0x11, 0x88,
-	0x43, 0x38, 0x62, 0xae, 0x5d, 0xf8, 0xd4, 0x09, 0xc3, 0xec, 0xe1, 0xce, 0xd5, 0xc3, 0x91, 0xb6,
-	0xf8, 0x9b, 0x6f, 0x03, 0x48, 0x2d, 0x24, 0xca, 0xdd, 0x8c, 0x17, 0x61, 0x9b, 0xcb, 0xef, 0x51,
-	0x6c, 0x4d, 0xcc, 0x72, 0x79, 0x02, 0xc3, 0x4e, 0xf1, 0x83, 0x6d, 0xc3, 0xcb, 0x10, 0xae, 0xf3,
-	0x1b, 0xd3, 0x98, 0xf7, 0xc6, 0x1a, 0x5f, 0x38, 0x5c, 0xe1, 0xb3, 0xc5, 0x31, 0xb6, 0x0d, 0x1f,
-	0x80, 0xb1, 0x06, 0x7f, 0x39, 0x8a, 0x37, 0x26, 0xaf, 0x76, 0x8d, 0x87, 0x6c, 0x5a, 0x3f, 0x6b,
-	0x43, 0xdb, 0x4d, 0x3f, 0x0b, 0x9f, 0x87, 0x8c, 0x57, 0x60, 0xd8, 0xab, 0xa9, 0xfb, 0x6c, 0x63,
-	0x82, 0x74, 0xe6, 0x70, 0x6f, 0xe5, 0xa8, 0x92, 0xa2, 0x3a, 0x13, 0x67, 0xdb, 0xf0, 0x1e, 0x18,
-	0xac, 0xdb, 0x96, 0x8b, 0xb9, 0x6c, 0x6f, 0xe3, 0x74, 0xd8, 0xfb, 0x23, 0x94, 0x85, 0xac, 0x2d,
-	0xb4, 0xb1, 0xc6, 0x76, 0x76, 0x73, 0xaf, 0x7d, 0x10, 0xf5, 0xec, 0x78, 0x4d, 0xd4, 0x11, 0x61,
-	0xe3, 0x0e, 0x0f, 0x59, 0x8f, 0x82, 0xca, 0x65, 0xd8, 0x36, 0xfc, 0x31, 0x88, 0x78, 0x34, 0xac,
-	0xc6, 0x1b, 0x13, 0xd8, 0x80, 0x77, 0xbd, 0x02, 0xdb, 0xdd, 0x5b, 0x4d, 0xa3, 0x4e, 0x62, 0x6c,
-	0x6c, 0x1e, 0x12, 0x3e, 0x04, 0xbd, 0x96, 0xae, 0x4e, 0xd8, 0x7d, 0x5b, 0x8f, 0xbd, 0x5e, 0x82,
-	0x3e, 0xc7, 0x36, 0x4a, 0xd4, 0x7d, 0x47, 0x83, 0xc3, 0x63, 0xdf, 0x3d, 0xd5, 0x87, 0xc9, 0xd2,
-	0xf3, 0x60, 0xeb, 0x99, 0xc0, 0xe0, 0xf1, 0xd8, 0x3b, 0x05, 0x21, 0xd7, 0x46, 0xc5, 0x88, 0xcb,
-	0x39, 0x52, 0x5c, 0x0e, 0x1e, 0x2f, 0xc0, 0xd3, 0xde, 0x4d, 0x83, 0x49, 0x97, 0xcd, 0x9d, 0xd9,
-	0x35, 0xff, 0xa7, 0xb5, 0xd0, 0xca, 0x10, 0xed, 0x72, 0x0d, 0xd5, 0xaf, 0xf6, 0x77, 0x3a, 0x89,
-	0x71, 0x64, 0x0d, 0xd3, 0xf5, 0x36, 0xdb, 0x86, 0x33, 0xb4, 0xa7, 0x3b, 0x54, 0xd9, 0xae, 0x9e,
-	0x6e, 0xe7, 0x75, 0xd3, 0xe0, 0xe5, 0xea, 0x01, 0xd8, 0x6a, 0x63, 0xc7, 0x03, 0xb0, 0x72, 0xb9,
-	0x6d, 0x5c, 0x73, 0x77, 0xec, 0xb5, 0xec, 0xa8, 0x5b, 0x20, 0xa0, 0xd8, 0x3c, 0x7c, 0xe7, 0xa3,
-	0x94, 0x7d, 0x9c, 0x2a, 0xc0, 0xf1, 0x86, 0xc4, 0xb8, 0xbc, 0xca, 0xb3, 0x4b, 0xf7, 0x6e, 0x47,
-	0xd0, 0xd5, 0xf5, 0x08, 0x5a, 0x5b, 0x8f, 0xa0, 0x5b, 0xeb, 0x11, 0xb4, 0x27, 0x51, 0xf3, 0x6f,
-	0x3b, 0x2a, 0xe1, 0x0a, 0x59, 0x99, 0xab, 0x7e, 0x4c, 0x2a, 0x44, 0xfe, 0x38, 0x91, 0xa7, 0xb9,
-	0x62, 0x71, 0x5a, 0xfb, 0x14, 0x32, 0x64, 0x7a, 0x59, 0x38, 0x30, 0x6d, 0xca, 0x2d, 0xff, 0x5d,
-	0xf6, 0xeb, 0x52, 0x66, 0xfe, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x5f, 0xee, 0x95, 0x1a, 0x1f, 0x24,
-	0x00, 0x00,
+	// 1664 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x5d, 0x6c, 0x14, 0x55,
+	0x14, 0xee, 0xb4, 0xdd, 0xdd, 0xf6, 0x94, 0xd6, 0xe1, 0x52, 0xe9, 0xb2, 0xb4, 0xdb, 0x65, 0xe8,
+	0xcf, 0x52, 0xfa, 0xa3, 0x5b, 0x1f, 0x7c, 0x32, 0xda, 0x92, 0xe8, 0x6a, 0x29, 0xcd, 0x52, 0x20,
+	0xc1, 0xc4, 0x65, 0xba, 0x73, 0xd9, 0x8e, 0xd9, 0x9d, 0x59, 0x66, 0x6e, 0x85, 0xf2, 0x60, 0x62,
+	0x34, 0x8a, 0xfa, 0x62, 0x34, 0x51, 0x63, 0x24, 0x2a, 0x10, 0x02, 0xe2, 0x4f, 0x54, 0x62, 0x8c,
+	0x26, 0x06, 0x54, 0x08, 0x12, 0x4d, 0x1a, 0xa3, 0xc4, 0xc4, 0x90, 0x40, 0xd5, 0xc4, 0x07, 0x63,
+	0x48, 0xf0, 0x49, 0x90, 0x9a, 0xb9, 0x33, 0xbb, 0x3b, 0xbf, 0x3b, 0x95, 0xb8, 0x66, 0x79, 0xea,
+	0xce, 0x3d, 0xdf, 0xbd, 0xe7, 0x3b, 0xf7, 0x9e, 0x73, 0xee, 0x39, 0xb7, 0xc0, 0xe6, 0xb1, 0xaa,
+	0xf2, 0x59, 0x3c, 0x4c, 0x72, 0xc3, 0x05, 0x45, 0x26, 0x32, 0x0a, 0x19, 0x23, 0x91, 0xa1, 0xac,
+	0x48, 0x66, 0xe7, 0x66, 0x86, 0x33, 0x72, 0x7e, 0x24, 0x2b, 0x67, 0xe5, 0x11, 0x2a, 0x9f, 0x99,
+	0xdb, 0x4d, 0xbf, 0xe8, 0x07, 0xfd, 0xa5, 0xcf, 0x8b, 0x44, 0xb3, 0xb2, 0x9c, 0xcd, 0xe1, 0x32,
+	0x6a, 0xaf, 0xc2, 0x17, 0x0a, 0x58, 0x51, 0x0d, 0x79, 0x44, 0xcd, 0xcc, 0xe2, 0x3c, 0xaf, 0x29,
+	0xca, 0xc8, 0x0a, 0x4e, 0x93, 0xf9, 0x02, 0x2e, 0xca, 0xd6, 0x94, 0x65, 0x44, 0xe1, 0x25, 0xb5,
+	0x20, 0x2b, 0xc4, 0x10, 0xb5, 0x97, 0x45, 0xea, 0xbc, 0x94, 0xd1, 0x47, 0xb9, 0x37, 0x19, 0x68,
+	0x9d, 0xc2, 0x58, 0xd9, 0xac, 0x73, 0x4d, 0x0a, 0xa8, 0x17, 0xda, 0x0a, 0x0a, 0x16, 0xc4, 0x0c,
+	0x4f, 0x70, 0x5a, 0xe2, 0xf3, 0x38, 0xcc, 0xc4, 0x98, 0x78, 0x73, 0xaa, 0xb5, 0x34, 0x3a, 0xc9,
+	0xe7, 0x31, 0xba, 0x1b, 0x5a, 0x32, 0xb2, 0xa4, 0x12, 0x65, 0x2e, 0x43, 0x64, 0x25, 0x5c, 0x1f,
+	0x63, 0xe2, 0x6d, 0x89, 0xd5, 0xc3, 0xc5, 0x5d, 0x98, 0x9e, 0x18, 0x2f, 0x4b, 0x53, 0x66, 0x28,
+	0xea, 0x80, 0xd0, 0x9c, 0x8a, 0x95, 0xb4, 0x28, 0x84, 0x1b, 0x62, 0x4c, 0xbc, 0x21, 0x15, 0xd4,
+	0x3e, 0x93, 0x02, 0xba, 0x1d, 0x82, 0x79, 0x35, 0xab, 0x8d, 0x37, 0xc6, 0x98, 0x78, 0x20, 0x15,
+	0xc8, 0xab, 0xd9, 0xa4, 0xc0, 0xdd, 0x0b, 0xec, 0xf4, 0x44, 0xba, 0x60, 0x21, 0x39, 0x08, 0x01,
+	0x81, 0x27, 0x7c, 0x82, 0x72, 0x6b, 0x31, 0xe9, 0xb5, 0xd8, 0x92, 0xd2, 0x41, 0xdc, 0xe3, 0xb0,
+	0x66, 0x7a, 0x22, 0x6d, 0x40, 0xd2, 0x59, 0x4c, 0xb6, 0xa9, 0x25, 0x94, 0xdd, 0x10, 0xe6, 0x3f,
+	0x30, 0xa4, 0x0d, 0xea, 0x4b, 0x46, 0xd4, 0x8b, 0x02, 0xf7, 0x3c, 0x03, 0x5d, 0x9e, 0x04, 0x26,
+	0x44, 0x95, 0x54, 0x83, 0x44, 0x07, 0x84, 0x44, 0x21, 0x9d, 0x13, 0x55, 0x12, 0x6e, 0x8c, 0x35,
+	0xc4, 0x03, 0xa9, 0xa0, 0x28, 0x68, 0xba, 0xb8, 0x57, 0x18, 0xd8, 0x50, 0x91, 0xcd, 0xd8, 0xfc,
+	0x26, 0x9e, 0xf0, 0x49, 0xe1, 0x7f, 0x62, 0xd6, 0x50, 0x62, 0x76, 0xb1, 0xde, 0xbe, 0x4f, 0x0f,
+	0x88, 0x2a, 0x91, 0x95, 0x79, 0x83, 0x9c, 0x5a, 0x0d, 0x36, 0x6b, 0xa1, 0x59, 0xf3, 0x2d, 0x1a,
+	0x46, 0xc6, 0x99, 0x35, 0x69, 0x03, 0xd3, 0xf3, 0x05, 0xac, 0xcd, 0xa2, 0x42, 0x51, 0x08, 0x07,
+	0xf4, 0x59, 0xda, 0xa7, 0x3e, 0x4b, 0xde, 0xbd, 0x5b, 0xc5, 0x44, 0x13, 0x05, 0xf5, 0x59, 0xfa,
+	0x40, 0x52, 0x40, 0xdd, 0xd0, 0x62, 0x08, 0x05, 0x9e, 0xe0, 0x70, 0x88, 0x8a, 0x41, 0x1f, 0xda,
+	0xc4, 0x13, 0x8c, 0xba, 0x00, 0x78, 0x41, 0x48, 0xeb, 0x23, 0xe1, 0x26, 0x2a, 0x6f, 0xe6, 0x05,
+	0x61, 0x0b, 0x1d, 0x40, 0xed, 0x10, 0xc8, 0x89, 0x79, 0x91, 0x84, 0x9b, 0xf5, 0x38, 0xa0, 0x1f,
+	0x34, 0x3c, 0xf8, 0x7d, 0x9a, 0x3e, 0x30, 0xc2, 0x83, 0xdf, 0x67, 0x44, 0x8d, 0x28, 0x69, 0xc3,
+	0x2d, 0xc6, 0xb0, 0x28, 0x25, 0x05, 0x84, 0xa0, 0x71, 0x96, 0x57, 0x67, 0xc3, 0x2b, 0x28, 0x6d,
+	0xfa, 0x9b, 0x7b, 0x97, 0x01, 0xae, 0xe2, 0xfe, 0x8e, 0xcb, 0x73, 0x12, 0xa9, 0x99, 0x4d, 0xd6,
+	0xf8, 0x76, 0x5b, 0xf9, 0x6a, 0xe1, 0x6d, 0xf2, 0xd6, 0xa4, 0x50, 0x0d, 0xb2, 0x31, 0x58, 0x41,
+	0xf9, 0x14, 0xa5, 0x8d, 0x54, 0x0a, 0x05, 0x43, 0xb7, 0x25, 0x53, 0x05, 0xcc, 0x99, 0xea, 0x84,
+	0x23, 0xce, 0x6d, 0x7c, 0x6b, 0x8a, 0xed, 0x07, 0x0c, 0xac, 0x77, 0xb2, 0x1d, 0x9f, 0xe5, 0x49,
+	0x69, 0x77, 0xab, 0x95, 0x01, 0x8a, 0x9c, 0x33, 0xb3, 0x3c, 0xb1, 0x71, 0xd6, 0xf4, 0x7b, 0x73,
+	0x7e, 0x9f, 0x81, 0x75, 0x15, 0x39, 0xd7, 0x1c, 0xe3, 0x3f, 0x19, 0xe8, 0x34, 0x31, 0x56, 0x31,
+	0xaf, 0x64, 0x66, 0xc7, 0xe6, 0x37, 0x63, 0x41, 0xe4, 0xa9, 0xf7, 0xd7, 0x4c, 0x4a, 0xeb, 0x02,
+	0xc8, 0x6b, 0xac, 0xf4, 0x69, 0x7a, 0x4e, 0x6b, 0xce, 0x97, 0x78, 0xae, 0x86, 0xa0, 0x91, 0xaf,
+	0xf4, 0x7c, 0x66, 0x7c, 0x95, 0x93, 0x55, 0x93, 0x29, 0x59, 0x71, 0x3f, 0x32, 0xb0, 0xd2, 0x61,
+	0x76, 0xed, 0xd8, 0xba, 0x02, 0x98, 0x3d, 0xd4, 0xc4, 0xe6, 0x14, 0xb3, 0xe7, 0x5f, 0x9a, 0x76,
+	0x8c, 0x81, 0x0e, 0x87, 0x69, 0xf7, 0xe7, 0xe4, 0x19, 0x3e, 0x57, 0x0d, 0x03, 0x29, 0xd5, 0x46,
+	0x27, 0xd5, 0x80, 0x3b, 0xd5, 0xa0, 0x99, 0xea, 0x11, 0xc6, 0x52, 0xf9, 0x14, 0x9d, 0x6f, 0x4a,
+	0x94, 0x24, 0x2c, 0xd4, 0x4e, 0x9e, 0x3f, 0xc3, 0xc0, 0x5a, 0x6b, 0x54, 0x6f, 0xa5, 0x4c, 0xe9,
+	0x75, 0x84, 0x95, 0x5b, 0x25, 0x44, 0xb4, 0xec, 0xd4, 0x63, 0xb5, 0x63, 0x82, 0x57, 0xc9, 0xf4,
+	0x5e, 0x59, 0xdf, 0xf0, 0xaa, 0x5e, 0x5a, 0x37, 0xb7, 0xf3, 0x8b, 0x0c, 0xc4, 0x4c, 0x8c, 0xe7,
+	0x0a, 0x5a, 0xc1, 0x52, 0xab, 0x6c, 0x8d, 0xba, 0x3a, 0x58, 0xac, 0xab, 0x51, 0x2f, 0x04, 0x0b,
+	0x94, 0x2b, 0x8d, 0xdb, 0x96, 0x44, 0xeb, 0x70, 0x9e, 0xd0, 0xb6, 0x66, 0x78, 0x4c, 0x96, 0x73,
+	0x29, 0x43, 0xc8, 0xbd, 0xe3, 0xbc, 0x34, 0xac, 0x16, 0x56, 0xeb, 0xd2, 0xb8, 0xb9, 0x33, 0x39,
+	0x6a, 0x8d, 0x86, 0x39, 0x69, 0x4a, 0x94, 0xee, 0xcb, 0xe5, 0x6a, 0xae, 0x06, 0xe6, 0x8e, 0xd7,
+	0x5b, 0xae, 0x36, 0xad, 0x91, 0x90, 0x14, 0xcc, 0x0b, 0x9b, 0xb1, 0x44, 0x44, 0x59, 0xba, 0x55,
+	0xaa, 0x75, 0x6b, 0x31, 0x1e, 0xf2, 0x2c, 0xc6, 0x9b, 0xec, 0xc5, 0xb8, 0x5e, 0x75, 0x37, 0x9b,
+	0xab, 0xee, 0x0e, 0x08, 0xd1, 0x1a, 0x5d, 0x22, 0x46, 0x91, 0xae, 0x95, 0xec, 0x49, 0x89, 0xb8,
+	0xf8, 0xa0, 0x75, 0xaf, 0x6a, 0xac, 0xf2, 0xbe, 0x07, 0x56, 0x6e, 0xc7, 0xda, 0xc2, 0x69, 0xc3,
+	0xed, 0xc6, 0xe4, 0x7d, 0x68, 0x83, 0xde, 0x74, 0xab, 0x61, 0x26, 0xd6, 0x10, 0x6f, 0x49, 0xac,
+	0x2a, 0x45, 0x5b, 0x19, 0xa3, 0x77, 0xdc, 0x2a, 0xb7, 0x09, 0xda, 0x8d, 0xf9, 0x53, 0x6e, 0x7d,
+	0x7b, 0x71, 0x89, 0x8a, 0x7d, 0xbb, 0xca, 0x71, 0x00, 0xc6, 0x2a, 0x49, 0x89, 0x1e, 0x44, 0x79,
+	0x6e, 0xc0, 0xc0, 0x0c, 0x7c, 0x13, 0x82, 0x56, 0xcb, 0xbe, 0xa0, 0x95, 0xd0, 0x3a, 0x9e, 0x1a,
+	0x1f, 0x4d, 0xa4, 0xb7, 0x4d, 0x3e, 0x34, 0xb9, 0x65, 0xc7, 0x24, 0x5b, 0x87, 0xd6, 0xc2, 0x2a,
+	0x7d, 0xc8, 0xf2, 0x8a, 0xc0, 0x7e, 0xf5, 0xeb, 0x47, 0x27, 0x43, 0xa8, 0x07, 0x3a, 0x75, 0xa1,
+	0x7b, 0x47, 0xcc, 0x9e, 0xfb, 0xf9, 0xc3, 0x0b, 0x21, 0x34, 0x04, 0xb1, 0x4a, 0x28, 0x2d, 0x85,
+	0xb0, 0x47, 0x3f, 0xb9, 0xf4, 0xda, 0xdf, 0x4b, 0x4b, 0x4b, 0x4b, 0x0c, 0xba, 0x0b, 0x06, 0xfd,
+	0xe0, 0xe6, 0x36, 0x9b, 0xbd, 0xf6, 0xc5, 0x85, 0xe7, 0x18, 0xd4, 0xef, 0xa2, 0xc4, 0xd6, 0xa2,
+	0xb1, 0xa7, 0xce, 0x1e, 0x0a, 0xa3, 0x41, 0xe8, 0xf5, 0x03, 0x52, 0x8f, 0x62, 0x5f, 0xba, 0x7e,
+	0x7a, 0x3f, 0x1a, 0x00, 0xce, 0x81, 0x76, 0x74, 0x52, 0xec, 0x1b, 0x7f, 0x7c, 0x7a, 0x30, 0x84,
+	0xe2, 0x2e, 0x14, 0x6c, 0x58, 0xf6, 0xc5, 0x23, 0xe7, 0x5f, 0x0d, 0xa2, 0x51, 0xe8, 0x73, 0x45,
+	0x3a, 0x3a, 0x08, 0xf6, 0xf7, 0x5f, 0x0e, 0x9d, 0xbf, 0xae, 0xef, 0xcb, 0x9d, 0xd0, 0xe3, 0x37,
+	0x89, 0x4e, 0x39, 0xf0, 0xf9, 0x13, 0x0b, 0x7f, 0xe9, 0x53, 0xfa, 0xa1, 0xdb, 0x3a, 0xc5, 0x51,
+	0x43, 0xb3, 0x5f, 0x7e, 0x77, 0xe5, 0x00, 0x83, 0x3a, 0xa1, 0xdd, 0x0d, 0xc8, 0x1e, 0xbe, 0x74,
+	0xe1, 0x74, 0x10, 0xf5, 0x43, 0xc4, 0x4d, 0xaa, 0x17, 0x6e, 0xec, 0x99, 0xcf, 0x2e, 0xbf, 0x7e,
+	0x4d, 0xd7, 0xe7, 0xf0, 0x07, 0x6b, 0xd9, 0xc4, 0xfe, 0xf0, 0xf1, 0xb7, 0x57, 0x83, 0x68, 0x23,
+	0x44, 0x1d, 0x86, 0x58, 0xaa, 0x16, 0xf6, 0xec, 0x8d, 0xf7, 0x5e, 0xbe, 0x51, 0xf4, 0x86, 0x7e,
+	0x07, 0xd8, 0xbd, 0x34, 0x60, 0x4f, 0xbc, 0xf0, 0xdb, 0x75, 0xc3, 0xf0, 0x3b, 0x60, 0xbd, 0x75,
+	0x96, 0xeb, 0xf5, 0xcc, 0x2e, 0xfc, 0xf4, 0xe4, 0xf1, 0xa5, 0x0a, 0xbb, 0xeb, 0xbc, 0xeb, 0xd8,
+	0x8b, 0x6f, 0x3d, 0xb3, 0x60, 0x38, 0xaa, 0xc3, 0x0e, 0xfb, 0x7d, 0xc3, 0x5e, 0xfd, 0xfe, 0xd8,
+	0xc2, 0x0d, 0x8f, 0xa3, 0x70, 0xe4, 0x31, 0xf6, 0xe4, 0xb3, 0x4f, 0x2f, 0x05, 0x5d, 0x89, 0xb8,
+	0x24, 0x3c, 0xf6, 0xeb, 0x53, 0x4f, 0xbd, 0xad, 0x6f, 0x7b, 0xa4, 0xf1, 0xc0, 0xe1, 0x68, 0x5d,
+	0xe2, 0xe0, 0x6d, 0x00, 0xa9, 0xa9, 0xf1, 0x62, 0xbf, 0xbc, 0x15, 0x56, 0x7b, 0x3c, 0xdb, 0x71,
+	0xa6, 0xac, 0xe8, 0x11, 0x64, 0x11, 0xb7, 0x0c, 0xc5, 0xd5, 0xa1, 0x19, 0x88, 0x54, 0x78, 0x8a,
+	0xeb, 0xf3, 0x5f, 0x58, 0xc3, 0x45, 0x22, 0x25, 0x9c, 0x23, 0x53, 0x72, 0x75, 0x68, 0x3f, 0xf4,
+	0x2d, 0xf3, 0x81, 0x2d, 0xb1, 0x3c, 0x7d, 0xe6, 0x39, 0x3e, 0xba, 0xad, 0xf6, 0xd9, 0x9f, 0xd0,
+	0xbc, 0xec, 0xb3, 0xe1, 0x7c, 0x74, 0xec, 0x82, 0x6e, 0xbf, 0x67, 0xa4, 0x8d, 0xcb, 0x53, 0x44,
+	0xc1, 0x91, 0xb6, 0xd2, 0x51, 0x25, 0x25, 0x32, 0x9a, 0xe0, 0xea, 0xd0, 0x4e, 0xe8, 0xac, 0xf8,
+	0xf0, 0x13, 0xf7, 0x58, 0xde, 0x81, 0x74, 0x59, 0xfb, 0x61, 0xcb, 0x0e, 0xd9, 0x1f, 0x69, 0xfa,
+	0x96, 0xb7, 0xb2, 0x97, 0x7b, 0xed, 0x81, 0x98, 0xef, 0x9b, 0xca, 0x60, 0x05, 0x15, 0x0e, 0x74,
+	0xa4, 0xcb, 0x7e, 0x14, 0x96, 0xdb, 0x92, 0xab, 0x43, 0x8f, 0x42, 0xd4, 0xe7, 0x49, 0x64, 0x60,
+	0x79, 0x0a, 0x97, 0xe1, 0x5d, 0xbb, 0x60, 0x8d, 0xf7, 0x63, 0x46, 0xaf, 0x9b, 0x1a, 0x07, 0xcc,
+	0x47, 0xc3, 0x83, 0xd0, 0x66, 0x7b, 0x37, 0x88, 0x78, 0x2f, 0xeb, 0xb3, 0xd6, 0x76, 0x68, 0x77,
+	0x6d, 0xd4, 0x63, 0xde, 0x2b, 0xea, 0x08, 0x9f, 0x75, 0x77, 0x96, 0x13, 0x93, 0xad, 0xab, 0xe6,
+	0x2a, 0x6d, 0x81, 0x8e, 0xf1, 0x59, 0x3b, 0x05, 0x61, 0xcf, 0x56, 0xb8, 0xc7, 0xe3, 0x1c, 0x2d,
+	0x28, 0x17, 0x8f, 0x17, 0x61, 0x9d, 0x7f, 0x5b, 0x3a, 0xe4, 0xb1, 0xb8, 0x3b, 0x5c, 0xf3, 0x7f,
+	0xab, 0x15, 0x5a, 0xa1, 0xab, 0x05, 0x57, 0x57, 0xe5, 0x7e, 0x72, 0x83, 0x9b, 0x1a, 0x57, 0x68,
+	0xc4, 0xda, 0xd1, 0x71, 0x75, 0x28, 0x63, 0xf5, 0x74, 0x97, 0x3e, 0xce, 0xd3, 0xd3, 0x9d, 0x58,
+	0x2f, 0x0b, 0x76, 0x94, 0x0f, 0xc0, 0xd1, 0x7d, 0xb9, 0x1e, 0x80, 0x1d, 0xe5, 0xb5, 0xb0, 0x29,
+	0x76, 0x9c, 0xdd, 0x52, 0xaf, 0xd7, 0x45, 0x60, 0x81, 0xf9, 0xf8, 0xce, 0x23, 0x96, 0xfd, 0x71,
+	0xeb, 0x31, 0x06, 0x96, 0xa5, 0xc6, 0x23, 0x2b, 0x8f, 0x6d, 0xbb, 0x72, 0x39, 0xca, 0x9c, 0x5b,
+	0x8c, 0x32, 0x0b, 0x8b, 0x51, 0xe6, 0xd2, 0x62, 0x94, 0xd9, 0x39, 0x6e, 0xfa, 0xef, 0x26, 0xc1,
+	0x7c, 0x3e, 0xab, 0xf0, 0xe5, 0x1f, 0x43, 0x2a, 0x56, 0x1e, 0xc3, 0xca, 0x08, 0x5f, 0x28, 0x8c,
+	0x68, 0x3f, 0xc5, 0x0c, 0x1e, 0x99, 0x11, 0xf7, 0x8f, 0x18, 0x7a, 0x8b, 0x7f, 0x67, 0x82, 0x54,
+	0xcb, 0xe8, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x0d, 0x26, 0xf5, 0xc8, 0x46, 0x1d, 0x00, 0x00,
 }
 
 func (this *PeerMessageId) GoString() string {
@@ -2832,84 +2213,6 @@ func (this *TLMessageGetUserMessageListByDataIdList) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *TLMessageGetScheduledMessageListByIdList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&message.TLMessageGetScheduledMessageListByIdList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
-	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
-	s = append(s, "IdList: "+fmt.Sprintf("%#v", this.IdList)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageDeleteScheduledMessageList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 9)
-	s = append(s, "&message.TLMessageDeleteScheduledMessageList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
-	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
-	s = append(s, "IdList: "+fmt.Sprintf("%#v", this.IdList)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageDeleteSentScheduledMessageList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&message.TLMessageDeleteSentScheduledMessageList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "IdList: "+fmt.Sprintf("%#v", this.IdList)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageGetScheduledMessageHistory) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&message.TLMessageGetScheduledMessageHistory{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
-	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageGetScheduledTimeoutMessageList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&message.TLMessageGetScheduledTimeoutMessageList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *TLMessageGetHistoryMessages) GoString() string {
 	if this == nil {
 		return "nil"
@@ -2943,53 +2246,6 @@ func (this *TLMessageGetHistoryMessagesCount) GoString() string {
 	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
 	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
 	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageGetChannelMessage) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&message.TLMessageGetChannelMessage{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "ChannelId: "+fmt.Sprintf("%#v", this.ChannelId)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageGetChannelMessageList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&message.TLMessageGetChannelMessageList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "ChannelId: "+fmt.Sprintf("%#v", this.ChannelId)+",\n")
-	s = append(s, "IdList: "+fmt.Sprintf("%#v", this.IdList)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMessageGetChannelMessageListByDataIdList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&message.TLMessageGetChannelMessageListByDataIdList{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "IdList: "+fmt.Sprintf("%#v", this.IdList)+",\n")
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
@@ -3323,26 +2579,10 @@ type RPCMessageClient interface {
 	MessageGetUserMessageList(ctx context.Context, in *TLMessageGetUserMessageList, opts ...grpc.CallOption) (*Vector_MessageBox, error)
 	// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 	MessageGetUserMessageListByDataIdList(ctx context.Context, in *TLMessageGetUserMessageListByDataIdList, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
-	// rpc message_getScheduledMessageListByIdList(TL_message_getScheduledMessageListByIdList) returns (Vector_MessageBox) {}
-	// message.deleteScheduledMessageList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Bool;
-	// rpc message_deleteScheduledMessageList(TL_message_deleteScheduledMessageList) returns (mtproto.Bool) {}
-	// message.deleteSentScheduledMessageList id_list:Vector<long> = Bool;
-	// rpc message_deleteSentScheduledMessageList(TL_message_deleteSentScheduledMessageList) returns (mtproto.Bool) {}
-	// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
-	// rpc message_getScheduledMessageHistory(TL_message_getScheduledMessageHistory) returns (Vector_MessageBox) {}
-	// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
-	// rpc message_getScheduledTimeoutMessageList(TL_message_getScheduledTimeoutMessageList) returns (Vector_MessageBox) {}
 	// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 	MessageGetHistoryMessages(ctx context.Context, in *TLMessageGetHistoryMessages, opts ...grpc.CallOption) (*Vector_MessageBox, error)
 	// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetHistoryMessagesCount(ctx context.Context, in *TLMessageGetHistoryMessagesCount, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// message.getChannelMessage user_id:long channel_id:long id:int = MessageBox;
-	// rpc message_getChannelMessage(TL_message_getChannelMessage) returns (mtproto.MessageBox) {}
-	// message.getChannelMessageList user_id:long channel_id:long id_list:Vector<int> = Vector<MessageBox>;
-	// rpc message_getChannelMessageList(TL_message_getChannelMessageList) returns (Vector_MessageBox) {}
-	// message.getChannelMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
-	// rpc message_getChannelMessageListByDataIdList(TL_message_getChannelMessageListByDataIdList) returns (Vector_MessageBox) {}
 	// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 	MessageGetPeerUserMessageId(ctx context.Context, in *TLMessageGetPeerUserMessageId, opts ...grpc.CallOption) (*mtproto.Int32, error)
 	// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
@@ -3571,26 +2811,10 @@ type RPCMessageServer interface {
 	MessageGetUserMessageList(context.Context, *TLMessageGetUserMessageList) (*Vector_MessageBox, error)
 	// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 	MessageGetUserMessageListByDataIdList(context.Context, *TLMessageGetUserMessageListByDataIdList) (*Vector_MessageBox, error)
-	// message.getScheduledMessageListByIdList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Vector<MessageBox>;
-	// rpc message_getScheduledMessageListByIdList(TL_message_getScheduledMessageListByIdList) returns (Vector_MessageBox) {}
-	// message.deleteScheduledMessageList user_id:long peer_type:int peer_id:long id_list:Vector<int> = Bool;
-	// rpc message_deleteScheduledMessageList(TL_message_deleteScheduledMessageList) returns (mtproto.Bool) {}
-	// message.deleteSentScheduledMessageList id_list:Vector<long> = Bool;
-	// rpc message_deleteSentScheduledMessageList(TL_message_deleteSentScheduledMessageList) returns (mtproto.Bool) {}
-	// message.getScheduledMessageHistory user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
-	// rpc message_getScheduledMessageHistory(TL_message_getScheduledMessageHistory) returns (Vector_MessageBox) {}
-	// message.getScheduledTimeoutMessageList date:long = Vector<MessageBox>;
-	// rpc message_getScheduledTimeoutMessageList(TL_message_getScheduledTimeoutMessageList) returns (Vector_MessageBox) {}
 	// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 	MessageGetHistoryMessages(context.Context, *TLMessageGetHistoryMessages) (*Vector_MessageBox, error)
 	// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetHistoryMessagesCount(context.Context, *TLMessageGetHistoryMessagesCount) (*mtproto.Int32, error)
-	// message.getChannelMessage user_id:long channel_id:long id:int = MessageBox;
-	// rpc message_getChannelMessage(TL_message_getChannelMessage) returns (mtproto.MessageBox) {}
-	// message.getChannelMessageList user_id:long channel_id:long id_list:Vector<int> = Vector<MessageBox>;
-	// rpc message_getChannelMessageList(TL_message_getChannelMessageList) returns (Vector_MessageBox) {}
-	// message.getChannelMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
-	// rpc message_getChannelMessageListByDataIdList(TL_message_getChannelMessageListByDataIdList) returns (Vector_MessageBox) {}
 	// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 	MessageGetPeerUserMessageId(context.Context, *TLMessageGetPeerUserMessageId) (*mtproto.Int32, error)
 	// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
@@ -4383,273 +3607,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) MarshalToSizedBuffer(dAtA []by
 	return len(dAtA) - i, nil
 }
 
-func (m *TLMessageGetScheduledMessageListByIdList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetScheduledMessageListByIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.IdList) > 0 {
-		dAtA7 := make([]byte, len(m.IdList)*10)
-		var j6 int
-		for _, num1 := range m.IdList {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j6++
-			}
-			dAtA7[j6] = uint8(num)
-			j6++
-		}
-		i -= j6
-		copy(dAtA[i:], dAtA7[:j6])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j6))
-		i--
-		dAtA[i] = 0x32
-	}
-	if m.PeerId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerId))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.PeerType != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerType))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageDeleteScheduledMessageList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageDeleteScheduledMessageList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageDeleteScheduledMessageList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.IdList) > 0 {
-		dAtA9 := make([]byte, len(m.IdList)*10)
-		var j8 int
-		for _, num1 := range m.IdList {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j8++
-			}
-			dAtA9[j8] = uint8(num)
-			j8++
-		}
-		i -= j8
-		copy(dAtA[i:], dAtA9[:j8])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j8))
-		i--
-		dAtA[i] = 0x32
-	}
-	if m.PeerId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerId))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.PeerType != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerType))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.IdList) > 0 {
-		dAtA11 := make([]byte, len(m.IdList)*10)
-		var j10 int
-		for _, num1 := range m.IdList {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j10++
-			}
-			dAtA11[j10] = uint8(num)
-			j10++
-		}
-		i -= j10
-		copy(dAtA[i:], dAtA11[:j10])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j10))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageGetScheduledMessageHistory) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetScheduledMessageHistory) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetScheduledMessageHistory) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.PeerId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerId))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.PeerType != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerType))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Date != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Date))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *TLMessageGetHistoryMessages) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -4765,170 +3722,6 @@ func (m *TLMessageGetHistoryMessagesCount) MarshalToSizedBuffer(dAtA []byte) (in
 		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerType))
 		i--
 		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageGetChannelMessage) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetChannelMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetChannelMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Id != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.ChannelId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.ChannelId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageGetChannelMessageList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetChannelMessageList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetChannelMessageList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.IdList) > 0 {
-		dAtA13 := make([]byte, len(m.IdList)*10)
-		var j12 int
-		for _, num1 := range m.IdList {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA13[j12] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j12++
-			}
-			dAtA13[j12] = uint8(num)
-			j12++
-		}
-		i -= j12
-		copy(dAtA[i:], dAtA13[:j12])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j12))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.ChannelId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.ChannelId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.UserId != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.IdList) > 0 {
-		dAtA15 := make([]byte, len(m.IdList)*10)
-		var j14 int
-		for _, num1 := range m.IdList {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j14++
-			}
-			dAtA15[j14] = uint8(num)
-			j14++
-		}
-		i -= j14
-		copy(dAtA[i:], dAtA15[:j14])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j14))
-		i--
-		dAtA[i] = 0x22
 	}
 	if m.UserId != 0 {
 		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
@@ -5841,21 +4634,21 @@ func (m *Vector_Int) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.Datas) > 0 {
-		dAtA18 := make([]byte, len(m.Datas)*10)
-		var j17 int
+		dAtA8 := make([]byte, len(m.Datas)*10)
+		var j7 int
 		for _, num1 := range m.Datas {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA18[j17] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j17++
+				j7++
 			}
-			dAtA18[j17] = uint8(num)
-			j17++
+			dAtA8[j7] = uint8(num)
+			j7++
 		}
-		i -= j17
-		copy(dAtA[i:], dAtA18[:j17])
-		i = encodeVarintMessageTl(dAtA, i, uint64(j17))
+		i -= j7
+		copy(dAtA[i:], dAtA8[:j7])
+		i = encodeVarintMessageTl(dAtA, i, uint64(j7))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -5985,132 +4778,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) Size() (n int) {
 	return n
 }
 
-func (m *TLMessageGetScheduledMessageListByIdList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if m.PeerType != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerType))
-	}
-	if m.PeerId != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerId))
-	}
-	if len(m.IdList) > 0 {
-		l = 0
-		for _, e := range m.IdList {
-			l += sovMessageTl(uint64(e))
-		}
-		n += 1 + sovMessageTl(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageDeleteScheduledMessageList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if m.PeerType != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerType))
-	}
-	if m.PeerId != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerId))
-	}
-	if len(m.IdList) > 0 {
-		l = 0
-		for _, e := range m.IdList {
-			l += sovMessageTl(uint64(e))
-		}
-		n += 1 + sovMessageTl(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageDeleteSentScheduledMessageList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if len(m.IdList) > 0 {
-		l = 0
-		for _, e := range m.IdList {
-			l += sovMessageTl(uint64(e))
-		}
-		n += 1 + sovMessageTl(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageGetScheduledMessageHistory) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if m.PeerType != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerType))
-	}
-	if m.PeerId != 0 {
-		n += 1 + sovMessageTl(uint64(m.PeerId))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageGetScheduledTimeoutMessageList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.Date != 0 {
-		n += 1 + sovMessageTl(uint64(m.Date))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *TLMessageGetHistoryMessages) Size() (n int) {
 	if m == nil {
 		return 0
@@ -6173,83 +4840,6 @@ func (m *TLMessageGetHistoryMessagesCount) Size() (n int) {
 	}
 	if m.PeerId != 0 {
 		n += 1 + sovMessageTl(uint64(m.PeerId))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageGetChannelMessage) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if m.ChannelId != 0 {
-		n += 1 + sovMessageTl(uint64(m.ChannelId))
-	}
-	if m.Id != 0 {
-		n += 1 + sovMessageTl(uint64(m.Id))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageGetChannelMessageList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if m.ChannelId != 0 {
-		n += 1 + sovMessageTl(uint64(m.ChannelId))
-	}
-	if len(m.IdList) > 0 {
-		l = 0
-		for _, e := range m.IdList {
-			l += sovMessageTl(uint64(e))
-		}
-		n += 1 + sovMessageTl(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLMessageGetChannelMessageListByDataIdList) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovMessageTl(uint64(m.Constructor))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovMessageTl(uint64(m.UserId))
-	}
-	if len(m.IdList) > 0 {
-		l = 0
-		for _, e := range m.IdList {
-			l += sovMessageTl(uint64(e))
-		}
-		n += 1 + sovMessageTl(uint64(l)) + l
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -7391,774 +5981,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLMessageGetScheduledMessageListByIdList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getScheduledMessageListByIdList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getScheduledMessageListByIdList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
-			}
-			m.PeerType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerType |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
-			}
-			m.PeerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType == 0 {
-				var v int32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.IdList = append(m.IdList, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.IdList) == 0 {
-					m.IdList = make([]int32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMessageTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.IdList = append(m.IdList, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdList", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageDeleteScheduledMessageList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_deleteScheduledMessageList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_deleteScheduledMessageList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
-			}
-			m.PeerType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerType |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
-			}
-			m.PeerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType == 0 {
-				var v int32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.IdList = append(m.IdList, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.IdList) == 0 {
-					m.IdList = make([]int32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMessageTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.IdList = append(m.IdList, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdList", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageDeleteSentScheduledMessageList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_deleteSentScheduledMessageList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_deleteSentScheduledMessageList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType == 0 {
-				var v int64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.IdList = append(m.IdList, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.IdList) == 0 {
-					m.IdList = make([]int64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMessageTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.IdList = append(m.IdList, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdList", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageGetScheduledMessageHistory) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getScheduledMessageHistory: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getScheduledMessageHistory: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
-			}
-			m.PeerType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerType |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
-			}
-			m.PeerId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageGetScheduledTimeoutMessageList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getScheduledTimeoutMessageList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getScheduledTimeoutMessageList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Date", wireType)
-			}
-			m.Date = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Date |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *TLMessageGetHistoryMessages) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -8523,482 +6345,6 @@ func (m *TLMessageGetHistoryMessagesCount) Unmarshal(dAtA []byte) error {
 				if b < 0x80 {
 					break
 				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageGetChannelMessage) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getChannelMessage: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getChannelMessage: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
-			}
-			m.ChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageGetChannelMessageList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getChannelMessageList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getChannelMessageList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
-			}
-			m.ChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType == 0 {
-				var v int32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.IdList = append(m.IdList, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.IdList) == 0 {
-					m.IdList = make([]int32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMessageTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.IdList = append(m.IdList, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdList", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMessageTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthMessageTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLMessageGetChannelMessageListByDataIdList) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMessageTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_message_getChannelMessageListByDataIdList: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_message_getChannelMessageListByDataIdList: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMessageTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType == 0 {
-				var v int64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.IdList = append(m.IdList, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowMessageTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthMessageTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.IdList) == 0 {
-					m.IdList = make([]int64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowMessageTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.IdList = append(m.IdList, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdList", wireType)
 			}
 		default:
 			iNdEx = preIndex
