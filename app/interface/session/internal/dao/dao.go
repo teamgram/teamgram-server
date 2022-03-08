@@ -32,7 +32,7 @@ func New(c config.Config) *Dao {
 	return &Dao{
 		cache:             cache.NewLRUCache(1024 * 1024 * 1024),
 		AuthsessionClient: authsession_client.NewAuthsessionClient(zrpc.MustNewClient(c.AuthSession)),
-		BFFProxyClient:    bff_proxy_client.NewBFFProxyClient([]zrpc.RpcClientConf{c.BFFClient}),
+		BFFProxyClient:    bff_proxy_client.NewBFFProxyClients(c.BFFProxyClients.Clients, c.BFFProxyClients.IDMap),
 		StatusClient:      status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
 	}
 }

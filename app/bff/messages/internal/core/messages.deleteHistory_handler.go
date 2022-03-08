@@ -30,15 +30,12 @@ func (c *MessagesCore) MessagesDeleteHistory(in *mtproto.TLMessagesDeleteHistory
 		peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_SELF:
-	case mtproto.PEER_USER:
-	case mtproto.PEER_CHAT:
-	case mtproto.PEER_CHANNEL:
+	if peer.IsChannel() {
 		c.Logger.Errorf("messages.deleteHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
 		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	}
+
+	if !peer.IsChatOrUser() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.deleteHistory - error: %v", err)
 		return nil, err

@@ -24,71 +24,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	idMap = map[string]string{
-		"/mtproto.RPCTos":               "bff.bff", // Accepting the Terms of Service
-		"/mtproto.RPCReports":           "bff.bff", // Dealing with spam and ToS violations
-		"/mtproto.RPCConfiguration":     "bff.bff", // Fetching configuration
-		"/mtproto.RPCQrCode":            "bff.bff", // Login via QR code
-		"/mtproto.RPCMiscellaneous":     "bff.bff", // Miscellaneous
-		"/mtproto.RPCAuthorization":     "bff.bff", // Registration/Authorization
-		"/mtproto.RPCGdpr":              "bff.bff", // Working with GDPR export
-		"/mtproto.RPCGifs":              "bff.bff", // Working with GIFs (actually MPEG4 GIFs)
-		"/mtproto.RPCPromoData":         "bff.bff", // Working with Public Service Announcement and MTProxy channels
-		"/mtproto.RPCTsf":               "bff.bff", // Working with TSF (internal use only)
-		"/mtproto.RPCTwoFa":             "bff.bff", // Working with 2FA login
-		"/mtproto.RPCSeamless":          "bff.bff", // Working with Seamless Telegram Login
-		"/mtproto.RPCVoipCalls":         "bff.bff", // Working with VoIP calls
-		"/mtproto.RPCChannels":          "bff.bff", // Working with channels/supergroups/geogroups
-		"/mtproto.RPCChats":             "bff.bff", // Working with chats/supergroups/channels
-		"/mtproto.RPCDeepLinks":         "bff.bff", // Working with deep links
-		"/mtproto.RPCFiles":             "bff.bff", // Working with files
-		"/mtproto.RPCWebPage":           "bff.bff", // Working with instant view pages
-		"/mtproto.RPCSecretChats":       "bff.bff", // Working with secret chats
-		"/mtproto.RPCPassport":          "bff.bff", // Working with telegram passport
-		"/mtproto.RPCUpdates":           "bff.bff", // Working with updates
-		"/mtproto.RPCInlineBot":         "bff.bff", // Working with bot inline queries and callback buttons
-		"/mtproto.RPCBots":              "bff.bff", // Working with bots
-		"/mtproto.RPCInternalBot":       "bff.bff", // Working with bots (internal bot API use)
-		"/mtproto.RPCThemes":            "bff.bff", // Working with cloud themes
-		"/mtproto.RPCContacts":          "bff.bff", // Working with contacts and top peers
-		"/mtproto.RPCCreditCards":       "bff.bff", // Working with credit cards
-		"/mtproto.RPCDialogs":           "bff.bff", // Working with dialogs
-		"/mtproto.RPCDrafts":            "bff.bff", // Working with drafts
-		"/mtproto.RPCEmoji":             "bff.bff", // Working with emoji keywords
-		"/mtproto.RPCFolders":           "bff.bff", // Working with folders
-		"/mtproto.RPCGames":             "bff.bff", // Working with games
-		"/mtproto.RPCGroupCalls":        "bff.bff", // Working with group calls & live streaming
-		"/mtproto.RPCImportedChats":     "bff.bff", // Working with imported chats
-		"/mtproto.RPCLangpack":          "bff.bff", // Working with localization packs
-		"/mtproto.RPCAutoDownload":      "bff.bff", // Working with media autodownload settings
-		"/mtproto.RPCMessageThreads":    "bff.bff", // Working with message threads
-		"/mtproto.RPCReactions":         "bff.bff", // Working with message reactions
-		"/mtproto.RPCMessages":          "bff.bff", // Working with messages
-		"/mtproto.RPCNotification":      "bff.bff", // Working with notification settings
-		"/mtproto.RPCUsers":             "bff.bff", // Working with other users
-		"/mtproto.RPCPayments":          "bff.bff", // Working with payments
-		"/mtproto.RPCPolls":             "bff.bff", // Working with polls
-		"/mtproto.RPCScheduledMessages": "bff.bff", // Working with scheduled messages
-		"/mtproto.RPCNsfw":              "bff.bff", // Working with sensitive content (NSFW)
-		"/mtproto.RPCSponsoredMessages": "bff.bff", // Working with sponsored messages
-		"/mtproto.RPCProxyData":         "bff.bff", // Working with sponsored proxies
-		"/mtproto.RPCStatistics":        "bff.bff", // Working with statistics
-		"/mtproto.RPCStickers":          "bff.bff", // Working with stickers
-		"/mtproto.RPCAccount":           "bff.bff", // Working with the user's account
-		"/mtproto.RPCPhotos":            "bff.bff", // Working with user profile pictures
-		"/mtproto.RPCUsernames":         "bff.bff", // Working with usernames
-		"/mtproto.RPCWallpapers":        "bff.bff", // Working with wallpapers
-		"/mtproto.RPCTranslate":         "bff.bff", // Working with RPCTranslate
-	}
-)
-
 type BFFProxyClient struct {
 	// zrpc.Client
 	BFFClients map[string]zrpc.Client
 }
 
-func NewBFFProxyClient(cList []zrpc.RpcClientConf) *BFFProxyClient {
+func NewBFFProxyClients(cList []zrpc.RpcClientConf, idMap map[string]string) *BFFProxyClient {
 	var (
 		clients   = make(map[string]zrpc.Client)
 		registers = mtproto.GetRPCContextRegisters()

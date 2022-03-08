@@ -11,8 +11,8 @@ require (
 	github.com/oschwald/geoip2-golang v1.6.1
 	github.com/panjf2000/gnet v1.5.3
 	github.com/stretchr/testify v1.7.0
-	github.com/teamgram/marmota v0.0.0-20220301111906-df1a9d7d3f4f
-	github.com/teamgram/proto v0.0.0-20220226015348-e671d4bec270
+	github.com/teamgram/marmota v0.0.0-20220307130138-3393ec340f58
+	github.com/teamgram/proto v0.0.0-20220307130145-52b427b94215
 	github.com/zeromicro/go-zero v1.3.1
 	google.golang.org/grpc v1.44.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
@@ -84,7 +84,7 @@ require (
 	go.uber.org/automaxprocs v1.4.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	golang.org/x/crypto v0.0.0-20210920023735-84f357641f63 // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
