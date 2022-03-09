@@ -11,6 +11,7 @@ package dao
 
 import (
 	"flag"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/config"
@@ -37,7 +38,8 @@ type Dao struct {
 func New(c config.Config) *Dao {
 	MMDB, err := geoip2.Open(mmdb)
 	if err != nil {
-		panic(err)
+		// panic(err)
+		// logx.Errorf("")
 	}
 	db := sqlx.NewMySQL(&c.Mysql)
 

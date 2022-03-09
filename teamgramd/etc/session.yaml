@@ -31,10 +31,6 @@ BFFProxyClients:
         Hosts:
           - 127.0.0.1:2379
         Key: bff.bff
-    - Etcd:
-        Hosts:
-          - 127.0.0.1:2379
-        Key: messenger.biz_server.phone
   IDMap:
     "/mtproto.RPCTos": "bff.bff"
     "/mtproto.RPCReports": "bff.bff"

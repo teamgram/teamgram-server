@@ -24,11 +24,15 @@ func (d *Dao) CheckApiIdAndHash(apiId int32, apiHash string) error {
 }
 
 func (d *Dao) GetCountryAndRegionByIp(ip string) (string, string) {
-	r, err := d.MMDB.City(net.ParseIP(ip))
-	if err != nil {
-		logx.Errorf("getCountryAndRegionByIp - error: %v", err)
-		return "", ""
-	}
+	if d.MMDB == nil {
+		return "UNKNOWN", ""
+	} else {
+		r, err := d.MMDB.City(net.ParseIP(ip))
+		if err != nil {
+			logx.Errorf("getCountryAndRegionByIp - error: %v", err)
+			return "UNKNOWN", ""
+		}
 
-	return r.City.Names["en"] + ", " + r.Country.Names["en"], r.Country.IsoCode
+		return r.City.Names["en"] + ", " + r.Country.Names["en"], r.Country.IsoCode
+	}
 }
