@@ -20,7 +20,6 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -58,19 +57,11 @@ func (c *ContactsCore) ContactsGetBlocked(in *mtproto.TLContactsGetBlocked) (*mt
 		for _, blocked := range blockedList.GetDatas() {
 			peer := blocked.GetPeerId()
 			idHelper.PickByPeer(peer)
-			switch peer.GetPredicateName() {
-			case mtproto.Predicate_peerUser:
-				// idHelper.AppendUsers(blocked.GetPeerId().GetUserId())
-				contactsBlocked.Blocked = append(contactsBlocked.Blocked, mtproto.MakeTLPeerBlocked(&mtproto.PeerBlocked{
-					PeerId: blocked.GetPeerId(),
-					Date:   blocked.Date,
-				}).To_PeerBlocked())
-			case mtproto.Predicate_peerChat:
-				// idHelper.AppendChats()
-				// chatIdList = append(chatIdList, blocked.GetPeerId().GetUserId())
-			case mtproto.Predicate_peerChannel:
-				// channelIdList = append(channelIdList, blocked.GetPeerId().GetUserId())
-			}
+			// idHelper.AppendUsers(blocked.GetPeerId().GetUserId())
+			contactsBlocked.Blocked = append(contactsBlocked.Blocked, mtproto.MakeTLPeerBlocked(&mtproto.PeerBlocked{
+				PeerId: blocked.GetPeerId(),
+				Date:   blocked.Date,
+			}).To_PeerBlocked())
 		}
 
 		idHelper.Visit(
@@ -82,14 +73,8 @@ func (c *ContactsCore) ContactsGetBlocked(in *mtproto.TLContactsGetBlocked) (*mt
 				contactsBlocked.Users = users.GetUserListByIdList(c.MD.UserId, userIdList...)
 			},
 			func(chatIdList []int64) {
-				chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
-					&chatpb.TLChatGetChatListByIdList{
-						IdList: chatIdList,
-					})
-				contactsBlocked.Chats = chats.GetChatListByIdList(c.MD.UserId, chatIdList...)
 			},
 			func(channelIdList []int64) {
-				// TODO
 			})
 	} else {
 		contactsBlocked = mtproto.MakeTLContactsBlocked(&mtproto.Contacts_Blocked{
