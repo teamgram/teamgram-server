@@ -25,8 +25,7 @@ import (
 // ContactsGetContactIDs
 // contacts.getContactIDs#7adc669d hash:long = Vector<int>;
 func (c *ContactsCore) ContactsGetContactIDs(in *mtproto.TLContactsGetContactIDs) (*mtproto.Vector_Int, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getContactIDs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// @benqi: clients not use
 
 	return &mtproto.Vector_Int{
 		Datas: []int32{},
