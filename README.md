@@ -5,7 +5,7 @@
 Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
 
 ### Architecture
-![Architecture](docs/image/architecture-001.jpeg)
+![Architecture](docs/image/architecture-001.png)
 
 ### Documents
 [Diffie–Hellman key exchange](docs/dh-key-exchange.md)
