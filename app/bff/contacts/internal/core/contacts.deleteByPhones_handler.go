@@ -25,8 +25,7 @@ import (
 // ContactsDeleteByPhones
 // contacts.deleteByPhones#1013fd9e phones:Vector<string> = Bool;
 func (c *ContactsCore) ContactsDeleteByPhones(in *mtproto.TLContactsDeleteByPhones) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.deleteByPhones blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// @benqi: clients not use
 
 	return mtproto.BoolTrue, nil
 }
