@@ -62,9 +62,14 @@ func (m *Vector_ImmutableUser) GetImmutableUser(id int64) (u *ImmutableUser, ok 
 	return nil, false
 }
 
-func (m *Vector_ImmutableUser) CheckExistUser(id int64) bool {
-	_, ok := m.GetImmutableUser(id)
-	return ok
+func (m *Vector_ImmutableUser) CheckExistUser(id ...int64) bool {
+	for _, id2 := range id {
+		if _, ok := m.GetImmutableUser(id2); !ok {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (m *Vector_ImmutableUser) GetUserListByIdList(selfId int64, id ...int64) []*mtproto.User {

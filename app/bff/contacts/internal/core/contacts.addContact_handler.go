@@ -33,37 +33,31 @@ func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mt
 		return nil, err
 	}
 
-	// 400	CONTACT_ID_INVALID	The provided contact ID is invalid
 	id := mtproto.FromInputUser(c.MD.UserId, in.Id)
-	switch id.PeerType {
-	case mtproto.PEER_USER:
-		//
-	default:
-		// TODO:
-		/*
-			Possible errors
-			Code	Type	Description
-			400	CHANNEL_PRIVATE	You haven't joined this channel/supergroup.
-			400	CONTACT_ID_INVALID	The provided contact ID is invalid.
-			400	CONTACT_NAME_EMPTY	Contact name empty.
-			400	MSG_ID_INVALID	Invalid message ID provided.
-		*/
+
+	// TODO: check inputUserFromMessage
+	if !id.IsUser() || id.IsSelf() || id.PeerId == c.MD.UserId {
 		err := mtproto.ErrContactIdInvalid
 		c.Logger.Errorf("contacts.addContact - error: %v", err)
 		return nil, err
 	}
 
-	users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
 		Id: []int64{c.MD.UserId, id.PeerId},
 	})
+	if err != nil {
+		c.Logger.Errorf("contacts.addContact - error: %v", err)
+		err = mtproto.ErrContactIdInvalid
+		return nil, err
+	}
 
-	if !users.CheckExistUser(id.PeerId) {
-		err := mtproto.ErrContactIdInvalid
+	if !users.CheckExistUser(c.MD.UserId, id.PeerId) {
+		err = mtproto.ErrContactIdInvalid
 		c.Logger.Errorf("contacts.addContact - error: %v", err)
 		return nil, err
 	}
 
-	c.svcCtx.Dao.UserClient.UserAddContact(c.ctx, &userpb.TLUserAddContact{
+	changeMutual, err := c.svcCtx.Dao.UserClient.UserAddContact(c.ctx, &userpb.TLUserAddContact{
 		UserId:                   c.MD.UserId,
 		AddPhonePrivacyException: mtproto.ToBool(in.AddPhonePrivacyException),
 		Id:                       id.PeerId,
@@ -71,10 +65,20 @@ func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mt
 		LastName:                 in.LastName,
 		Phone:                    in.Phone,
 	})
+	if err != nil {
+		c.Logger.Errorf("contacts.addContact - error: %v", err)
+		err = mtproto.ErrContactIdInvalid
+		return nil, err
+	}
+
+	cUser, _ := users.GetUnsafeUser(c.MD.UserId, id.PeerId)
+	cUser.Contact = true
+	cUser.MutualContact = mtproto.FromBool(changeMutual)
+	me, _ := users.GetUnsafeUserSelf(c.MD.UserId)
 
 	// TODO(@benqi): 性能优化，复用users
 	rUpdates := mtproto.MakeUpdatesByUpdatesUsers(
-		users.GetUserListByIdList(c.MD.UserId, c.MD.UserId, id.PeerId),
+		[]*mtproto.User{me, cUser},
 		mtproto.MakeTLUpdatePeerSettings(&mtproto.Update{
 			Peer_PEER: id.ToPeer(),
 			Settings: mtproto.MakeTLPeerSettings(&mtproto.PeerSettings{
