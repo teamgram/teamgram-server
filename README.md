@@ -27,7 +27,6 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 - etcd
 - kafka
 - minio
-- ssdb or pika
 
 #### Build
 
