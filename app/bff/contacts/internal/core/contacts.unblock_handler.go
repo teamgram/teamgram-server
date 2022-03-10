@@ -21,7 +21,6 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
-	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -30,64 +29,61 @@ import (
 func (c *ContactsCore) ContactsUnblock(in *mtproto.TLContactsUnblock) (*mtproto.Bool, error) {
 	var (
 		mUsers    *userpb.Vector_ImmutableUser
-		mChat     *chatpb.MutableChat
 		err       error
 		unblockId = mtproto.FromInputPeer2(c.MD.UserId, in.GetId())
 		idHelper  = mtproto.NewIDListHelper(c.MD.UserId)
 	)
 
-	switch unblockId.PeerType {
-	case mtproto.PEER_SELF:
+	if !unblockId.IsUser() || unblockId.IsSelf() {
+		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("contacts.block - error: %v", err)
+		return nil, err
+	}
+
+	if unblockId.PeerId == c.MD.UserId {
+		err = mtproto.ErrContactIdInvalid
+		c.Logger.Errorf("contacts.block - error: %v", err)
+		return nil, err
+	}
+
+	// TODO
+	/*
+		auto BlockPeerBoxController::createRow(not_null<History*> history)
+		-> std::unique_ptr<BlockPeerBoxController::Row> {
+			if (!history->peer->isUser()
+				|| history->peer->isServiceUser()
+				|| history->peer->isSelf()
+				|| history->peer->isRepliesChat()) {
+				return nullptr;
+			}
+			auto row = std::make_unique<Row>(history);
+			updateIsBlocked(row.get(), history->peer);
+			return row;
+		}
+	*/
+
+	mUsers, err = c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+		Id: []int64{c.MD.UserId, unblockId.PeerId},
+	})
+
+	// me, _ := users.GetImmutableUser(c.MD.UserId)
+	blocked, _ := mUsers.GetImmutableUser(unblockId.PeerId)
+
+	if blocked == nil {
 		err = mtproto.ErrContactIdInvalid
 		c.Logger.Errorf("contacts.unblock - error: %v", err)
 		return nil, err
-	case mtproto.PEER_USER:
-		mUsers, err = c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-			Id: []int64{c.MD.UserId, unblockId.PeerId},
-		})
-
-		// me, _ := users.GetImmutableUser(c.MD.UserId)
-		blocked, _ := mUsers.GetImmutableUser(unblockId.PeerId)
-
-		if blocked == nil {
-			err = mtproto.ErrContactIdInvalid
-			c.Logger.Errorf("contacts.unblock - error: %v", err)
-			return nil, err
-		} else if blocked.GetUser().GetDeleted() {
-			err = mtproto.ErrInputUserDeactivated
-			c.Logger.Errorf("contacts.unblock - error: %v", err)
-			return nil, err
-		}
-		c.svcCtx.Dao.UserClient.UserUnBlockPeer(c.ctx, &userpb.TLUserUnBlockPeer{
-			UserId:   c.MD.UserId,
-			PeerType: unblockId.PeerType,
-			PeerId:   unblockId.PeerId,
-		})
-		idHelper.AppendUsers(unblockId.PeerId)
-	case mtproto.PEER_CHAT:
-		mChat, _ = c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
-			ChatId: unblockId.PeerId,
-		})
-		if mChat == nil {
-			err = mtproto.ErrPeerIdInvalid
-			c.Logger.Errorf("contacts.unblock - error: %v", err)
-			return nil, err
-		}
-		c.svcCtx.Dao.UserClient.UserUnBlockPeer(c.ctx, &userpb.TLUserUnBlockPeer{
-			UserId:   c.MD.UserId,
-			PeerType: unblockId.PeerType,
-			PeerId:   unblockId.PeerId,
-		})
-		idHelper.AppendChats(unblockId.PeerId)
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("contacts.unblock blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
-		err = mtproto.ErrInputRequestInvalid
+	} else if blocked.GetUser().GetDeleted() {
+		err = mtproto.ErrInputUserDeactivated
 		c.Logger.Errorf("contacts.unblock - error: %v", err)
 		return nil, err
 	}
+	c.svcCtx.Dao.UserClient.UserUnBlockPeer(c.ctx, &userpb.TLUserUnBlockPeer{
+		UserId:   c.MD.UserId,
+		PeerType: unblockId.PeerType,
+		PeerId:   unblockId.PeerId,
+	})
+	idHelper.AppendUsers(unblockId.PeerId)
 
 	syncUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePeerBlocked(&mtproto.Update{
 		PeerId:  unblockId.ToPeer(),
@@ -99,10 +95,8 @@ func (c *ContactsCore) ContactsUnblock(in *mtproto.TLContactsUnblock) (*mtproto.
 			syncUpdates.PushUser(mUsers.GetUserListByIdList(c.MD.UserId, userIdList...)...)
 		},
 		func(chatIdList []int64) {
-			syncUpdates.PushChat(mChat.ToUnsafeChat(c.MD.UserId))
 		},
 		func(channelIdList []int64) {
-			// TODO
 		})
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{

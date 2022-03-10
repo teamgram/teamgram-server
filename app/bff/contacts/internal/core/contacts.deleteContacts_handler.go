@@ -74,7 +74,10 @@ func (c *ContactsCore) ContactsDeleteContacts(in *mtproto.TLContactsDeleteContac
 					}).To_PeerSettings(),
 				}).To_Update())
 
-			rUpdates.PushUser(it.ToUnsafeUser(me))
+			cUser := it.ToUnsafeUser(me)
+			cUser.Contact = false
+			cUser.MutualContact = false
+			rUpdates.PushUser(cUser)
 		}
 	})
 
