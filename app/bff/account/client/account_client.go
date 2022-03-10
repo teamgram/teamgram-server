@@ -35,8 +35,6 @@ type AccountClient interface {
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
-	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
 	AccountCreatePredefinedUser(ctx context.Context, in *mtproto.TLAccountCreatePredefinedUser) (*mtproto.PredefinedUser, error)
 	AccountUpdatePredefinedUsername(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedUsername) (*mtproto.PredefinedUser, error)
 	AccountUpdatePredefinedProfile(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedProfile) (*mtproto.PredefinedUser, error)
@@ -151,20 +149,6 @@ func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Conte
 func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
-}
-
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (m *defaultAccountClient) AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountSetAuthorizationTTL(ctx, in)
-}
-
-// AccountChangeAuthorizationSettings
-// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
-func (m *defaultAccountClient) AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountChangeAuthorizationSettings(ctx, in)
 }
 
 // AccountCreatePredefinedUser

@@ -22,11 +22,16 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// AccountChangeAuthorizationSettings
-// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
-func (c *AccountCore) AccountChangeAuthorizationSettings(in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
+// ChannelsGetSendAs
+// channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
+func (c *MessagesCore) ChannelsGetSendAs(in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {
 	// TODO: not impl
-	c.Logger.Errorf("account.changeAuthorizationSettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// c.Logger.Errorf("channels.getSendAs - error: method ChannelsGetSendAs not impl")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	// Disable sendAsPeers
+	return mtproto.MakeTLChannelsSendAsPeers(&mtproto.Channels_SendAsPeers{
+		Peers: []*mtproto.Peer{},
+		Chats: []*mtproto.Chat{},
+		Users: []*mtproto.User{},
+	}).To_Channels_SendAsPeers(), nil
 }

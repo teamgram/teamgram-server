@@ -51,7 +51,6 @@ import (
 	stickers_helper "github.com/teamgram/teamgram-server/app/bff/stickers"
 	themes_helper "github.com/teamgram/teamgram-server/app/bff/themes"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
-	translate_helper "github.com/teamgram/teamgram-server/app/bff/translate"
 	tsf_helper "github.com/teamgram/teamgram-server/app/bff/tsf"
 	twofa_helper "github.com/teamgram/teamgram-server/app/bff/twofa"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
@@ -394,13 +393,6 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCWallpapersServer(
 			grpcServer,
 			wallpapers_helper.New(wallpapers_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// translate_helper
-		mtproto.RegisterRPCTranslateServer(
-			grpcServer,
-			translate_helper.New(translate_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 	})

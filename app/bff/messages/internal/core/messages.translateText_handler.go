@@ -24,7 +24,7 @@ import (
 
 // MessagesTranslateText
 // messages.translateText#24ce6dee flags:# peer:flags.0?InputPeer msg_id:flags.0?int text:flags.1?string from_lang:flags.2?string to_lang:string = messages.TranslatedText;
-func (c *TranslateCore) MessagesTranslateText(in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
+func (c *MessagesCore) MessagesTranslateText(in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
 	// TODO: not impl
 	c.Logger.Errorf("messages.translateText blocked, License key from https://teamgram.net required to unlock enterprise features.")
 

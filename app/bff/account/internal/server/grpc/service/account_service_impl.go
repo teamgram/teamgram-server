@@ -227,36 +227,6 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	return r, err
 }
 
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (s *Service) AccountSetAuthorizationTTL(ctx context.Context, request *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.setAuthorizationTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountSetAuthorizationTTL(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.setAuthorizationTTL - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AccountChangeAuthorizationSettings
-// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
-func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, request *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.changeAuthorizationSettings - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountChangeAuthorizationSettings(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.changeAuthorizationSettings - reply: %s", r.DebugString())
-	return r, err
-}
-
 // AccountCreatePredefinedUser
 // account.createPredefinedUser flags:# phone:string first_name:flags.0?string last_name:flags.1?string username:flags.2?string code:string verified:flags.3?true = PredefinedUser;
 func (s *Service) AccountCreatePredefinedUser(ctx context.Context, request *mtproto.TLAccountCreatePredefinedUser) (*mtproto.PredefinedUser, error) {

@@ -12,7 +12,7 @@ require (
 	github.com/panjf2000/gnet v1.5.3
 	github.com/stretchr/testify v1.7.0
 	github.com/teamgram/marmota v0.0.0-20220307130138-3393ec340f58
-	github.com/teamgram/proto v0.0.0-20220307130145-52b427b94215
+	github.com/teamgram/proto v0.0.0-20220310035244-b5f5f063ad96
 	github.com/zeromicro/go-zero v1.3.1
 	google.golang.org/grpc v1.44.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c

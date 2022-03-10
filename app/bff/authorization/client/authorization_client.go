@@ -40,6 +40,8 @@ type AuthorizationClient interface {
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
 	AuthLogOut5717DA40(ctx context.Context, in *mtproto.TLAuthLogOut5717DA40) (*mtproto.Bool, error)
 	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
+	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
+	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
 }
 
 type defaultAuthorizationClient struct {
@@ -183,4 +185,18 @@ func (m *defaultAuthorizationClient) AuthLogOut5717DA40(ctx context.Context, in 
 func (m *defaultAuthorizationClient) AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthToggleBan(ctx, in)
+}
+
+// AccountChangeAuthorizationSettings
+// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
+func (m *defaultAuthorizationClient) AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AccountChangeAuthorizationSettings(ctx, in)
+}
+
+// AccountSetAuthorizationTTL
+// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
+func (m *defaultAuthorizationClient) AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AccountSetAuthorizationTTL(ctx, in)
 }

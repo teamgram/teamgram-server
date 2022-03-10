@@ -400,8 +400,8 @@ github.com/teamgram/gnet v1.6.5-0.20220203114726-06bfacbd8548 h1:7y3x/uDHM8Sxrl0
 github.com/teamgram/gnet v1.6.5-0.20220203114726-06bfacbd8548/go.mod h1:KcOU7QsCaCBjeD5kyshBIamG3d9kAQtlob4Y0v0E+sc=
 github.com/teamgram/marmota v0.0.0-20220307130138-3393ec340f58 h1:q6I+DI2tJCe89GdwepvtRKI/CYUDxExDwCo19wMSud8=
 github.com/teamgram/marmota v0.0.0-20220307130138-3393ec340f58/go.mod h1:be8qyHZSxhdvr1xwmoQd37a/lUEy1DncfUlTMFx6Xps=
-github.com/teamgram/proto v0.0.0-20220307130145-52b427b94215 h1:2JNSSwiTGAD/D9VS91X6+Ce65p39q0dhjx9RCU5SGuc=
-github.com/teamgram/proto v0.0.0-20220307130145-52b427b94215/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.0.0-20220310035244-b5f5f063ad96 h1:MYNA1mgHfNde5yfRzwKd3XuvrGquES545UcvKaSut3c=
+github.com/teamgram/proto v0.0.0-20220310035244-b5f5f063ad96/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203 h1:7t9g04xpc16rdZ+mrJcx+0dgwJzuABuXO/kdGGN/ljo=
 github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203/go.mod h1:JsgCzJSUcjZl487xtqWHzYFa7Wl4f5Gi3lcteOWgNRA=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=

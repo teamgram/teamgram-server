@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (c *AccountCore) AccountSetAuthorizationTTL(in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
+// AccountChangeAuthorizationSettings
+// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
+func (c *AuthorizationCore) AccountChangeAuthorizationSettings(in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("account.setAuthorizationTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.changeAuthorizationSettings blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

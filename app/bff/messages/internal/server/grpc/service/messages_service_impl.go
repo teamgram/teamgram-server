@@ -13,10 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/bff/messages/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/bff/messages/internal/core"
 )
-
 
 // MessagesGetMessages
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
@@ -408,3 +407,32 @@ func (s *Service) MessagesSaveDefaultSendAs(ctx context.Context, request *mtprot
 	return r, err
 }
 
+// ChannelsGetSendAs
+// channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
+func (s *Service) ChannelsGetSendAs(ctx context.Context, request *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("channels.getSendAs - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChannelsGetSendAs(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("channels.getSendAs - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesTranslateText
+// messages.translateText#24ce6dee flags:# peer:flags.0?InputPeer msg_id:flags.0?int text:flags.1?string from_lang:flags.2?string to_lang:string = messages.TranslatedText;
+func (s *Service) MessagesTranslateText(ctx context.Context, request *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("messages.translateText - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesTranslateText(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("messages.translateText - reply: %s", r.DebugString())
+	return r, err
+}
