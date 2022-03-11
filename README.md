@@ -87,7 +87,10 @@ cd ../teamgramd/bin
 ### TODO
 
 ## Feedback
-Please report bugs, concerns, suggestions by issues.
+### TODO
+
+## Feedback
+Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/cnteamgram) Or [Teamgram](https://t.me/enteamgram) to discuss problems around source code.
 
 ## Notes
-If need enterprise edition, please PM the [author](https://t.me/benqi)
+If need enterprise edition, please PM the **[author](https://t.me/benqi)**
