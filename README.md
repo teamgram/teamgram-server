@@ -1,6 +1,8 @@
 # Teamgram - Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
 > open source mtproto server implemented in golang with compatible telegram client.
 
+English | [简体中文](readme-cn.md)
+
 ### Introduce
 Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
 
