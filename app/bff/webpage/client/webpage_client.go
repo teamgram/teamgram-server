@@ -21,9 +21,8 @@ import (
 var _ *mtproto.Bool
 
 type WebPageClient interface {
-MessagesGetWebPagePreview(ctx context.Context, in *mtproto.TLMessagesGetWebPagePreview) (*mtproto.MessageMedia, error)
-MessagesGetWebPage(ctx context.Context, in *mtproto.TLMessagesGetWebPage) (*mtproto.WebPage, error)
-
+	MessagesGetWebPagePreview(ctx context.Context, in *mtproto.TLMessagesGetWebPagePreview) (*mtproto.MessageMedia, error)
+	MessagesGetWebPage(ctx context.Context, in *mtproto.TLMessagesGetWebPage) (*mtproto.WebPage, error)
 }
 
 type defaultWebPageClient struct {
@@ -35,7 +34,6 @@ func NewWebPageClient(cli zrpc.Client) WebPageClient {
 		cli: cli,
 	}
 }
-
 
 // MessagesGetWebPagePreview
 // messages.getWebPagePreview#8b68b0cc flags:# message:string entities:flags.3?Vector<MessageEntity> = MessageMedia;
@@ -50,4 +48,3 @@ func (m *defaultWebPageClient) MessagesGetWebPage(ctx context.Context, in *mtpro
 	client := mtproto.NewRPCWebPageClient(m.cli.Conn())
 	return client.MessagesGetWebPage(ctx, in)
 }
-

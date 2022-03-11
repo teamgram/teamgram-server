@@ -23,8 +23,8 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/teamgram/teamgram-server/app/bff/messages/internal/svc"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
+	"github.com/teamgram/teamgram-server/app/bff/messages/internal/svc"
 )
 
 type MessagesCore struct {

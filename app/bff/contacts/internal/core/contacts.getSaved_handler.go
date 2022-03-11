@@ -26,7 +26,6 @@ import (
 // contacts.getSaved#82f1e39f = Vector<SavedContact>;
 func (c *ContactsCore) ContactsGetSaved(in *mtproto.TLContactsGetSaved) (*mtproto.Vector_SavedContact, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.getSaved blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return &mtproto.Vector_SavedContact{
 		Datas: []*mtproto.SavedContact{},

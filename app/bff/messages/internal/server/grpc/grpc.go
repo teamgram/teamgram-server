@@ -11,15 +11,14 @@
 package grpc
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/bff/messages/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/messages/internal/svc"
-    "github.com/teamgram/proto/mtproto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
-
 
 // New new a grpc server.
 func New(ctx *svc.ServiceContext, c zrpc.RpcServerConf) *zrpc.RpcServer {

@@ -23,4 +23,3 @@ type (
 func New(c Config) *service.Service {
 	return service.New(svc.NewServiceContext(c))
 }
-

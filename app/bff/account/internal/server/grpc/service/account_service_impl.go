@@ -227,51 +227,6 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	return r, err
 }
 
-// AccountCreatePredefinedUser
-// account.createPredefinedUser flags:# phone:string first_name:flags.0?string last_name:flags.1?string username:flags.2?string code:string verified:flags.3?true = PredefinedUser;
-func (s *Service) AccountCreatePredefinedUser(ctx context.Context, request *mtproto.TLAccountCreatePredefinedUser) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.createPredefinedUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountCreatePredefinedUser(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.createPredefinedUser - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AccountUpdatePredefinedUsername
-// account.updatePredefinedUsername phone:string username:string = PredefinedUser;
-func (s *Service) AccountUpdatePredefinedUsername(ctx context.Context, request *mtproto.TLAccountUpdatePredefinedUsername) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.updatePredefinedUsername - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountUpdatePredefinedUsername(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.updatePredefinedUsername - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AccountUpdatePredefinedProfile
-// account.updatePredefinedProfile flags:# phone:string first_name:flags.0?string last_name:flags.1?string about:flags.2?string = PredefinedUser;
-func (s *Service) AccountUpdatePredefinedProfile(ctx context.Context, request *mtproto.TLAccountUpdatePredefinedProfile) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.updatePredefinedProfile - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountUpdatePredefinedProfile(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.updatePredefinedProfile - reply: %s", r.DebugString())
-	return r, err
-}
-
 // AccountUpdateVerified
 // account.updateVerified flags:# id:long verified:flags.0?true = User;
 func (s *Service) AccountUpdateVerified(ctx context.Context, request *mtproto.TLAccountUpdateVerified) (*mtproto.User, error) {
@@ -284,35 +239,5 @@ func (s *Service) AccountUpdateVerified(ctx context.Context, request *mtproto.TL
 	}
 
 	c.Infof("account.updateVerified - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AccountUpdatePredefinedVerified
-// account.updatePredefinedVerified flags:# phone:string verified:flags.0?true = PredefinedUser;
-func (s *Service) AccountUpdatePredefinedVerified(ctx context.Context, request *mtproto.TLAccountUpdatePredefinedVerified) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.updatePredefinedVerified - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountUpdatePredefinedVerified(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.updatePredefinedVerified - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AccountUpdatePredefinedCode
-// account.updatePredefinedCode phone:string code:string = PredefinedUser;
-func (s *Service) AccountUpdatePredefinedCode(ctx context.Context, request *mtproto.TLAccountUpdatePredefinedCode) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("account.updatePredefinedCode - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AccountUpdatePredefinedCode(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("account.updatePredefinedCode - reply: %s", r.DebugString())
 	return r, err
 }

@@ -13,10 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/bff/webpage/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/bff/webpage/internal/core"
 )
-
 
 // MessagesGetWebPagePreview
 // messages.getWebPagePreview#8b68b0cc flags:# message:string entities:flags.3?Vector<MessageEntity> = MessageMedia;
@@ -47,4 +46,3 @@ func (s *Service) MessagesGetWebPage(ctx context.Context, request *mtproto.TLMes
 	c.Infof("messages.getWebPage - reply: %s", r.DebugString())
 	return r, err
 }
-

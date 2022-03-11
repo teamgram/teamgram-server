@@ -62,36 +62,6 @@ func (s *Service) UsersGetFullUserCA30A5B1(ctx context.Context, request *mtproto
 	return r, err
 }
 
-// UsersGetPredefinedUser
-// users.getPredefinedUser phone:string = PredefinedUser;
-func (s *Service) UsersGetPredefinedUser(ctx context.Context, request *mtproto.TLUsersGetPredefinedUser) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("users.getPredefinedUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.UsersGetPredefinedUser(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("users.getPredefinedUser - reply: %s", r.DebugString())
-	return r, err
-}
-
-// UsersGetPredefinedUsers
-// users.getPredefinedUsers = Vector<PredefinedUser>;
-func (s *Service) UsersGetPredefinedUsers(ctx context.Context, request *mtproto.TLUsersGetPredefinedUsers) (*mtproto.Vector_PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("users.getPredefinedUsers - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.UsersGetPredefinedUsers(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("users.getPredefinedUsers - reply: %s", r.DebugString())
-	return r, err
-}
-
 // UsersGetMe
 // users.getMe id:long token:string = User;
 func (s *Service) UsersGetMe(ctx context.Context, request *mtproto.TLUsersGetMe) (*mtproto.User, error) {
