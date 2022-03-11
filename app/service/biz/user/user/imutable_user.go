@@ -7,7 +7,6 @@
 package user
 
 import (
-	"github.com/zeromicro/go-zero/core/logx"
 	"sort"
 
 	"github.com/teamgram/proto/mtproto"
@@ -143,9 +142,9 @@ func (m *ImmutableUser) CheckContact(cId int64) (bool, bool) {
 }
 
 func (m *ImmutableUser) GetContactData(cId int64) *ContactData {
-	logx.Info("GetContactData: %d ==> %s", cId, m.DebugString())
+	// logx.Info("GetContactData: %d ==> %s", cId, m.DebugString())
 	i2 := sort.Search(len(m.Contacts), func(i int) bool {
-		logx.Info("GetContactData: %d ==> %v", cId, m.Contacts[i].ContactUserId)
+		// logx.Info("GetContactData: %d ==> %v", cId, m.Contacts[i].ContactUserId)
 		return m.Contacts[i].ContactUserId >= cId
 	})
 	if i2 < len(m.Contacts) && m.Contacts[i2].ContactUserId == cId {
