@@ -436,3 +436,18 @@ func (s *Service) MessagesTranslateText(ctx context.Context, request *mtproto.TL
 	c.Infof("messages.translateText - reply: %s", r.DebugString())
 	return r, err
 }
+
+// MessagesSearchSentMedia
+// messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
+func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("messages.searchSentMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesSearchSentMedia(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("messages.translateText - reply: %s", r.DebugString())
+	return r, err
+}

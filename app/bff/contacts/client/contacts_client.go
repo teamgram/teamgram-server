@@ -41,6 +41,7 @@ type ContactsClient interface {
 	ContactsAddContact(ctx context.Context, in *mtproto.TLContactsAddContact) (*mtproto.Updates, error)
 	ContactsAcceptContact(ctx context.Context, in *mtproto.TLContactsAcceptContact) (*mtproto.Updates, error)
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
+	ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error)
 }
 
 type defaultContactsClient struct {
@@ -191,4 +192,11 @@ func (m *defaultContactsClient) ContactsAcceptContact(ctx context.Context, in *m
 func (m *defaultContactsClient) ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsGetLocated(ctx, in)
+}
+
+// ContactsResolvePhone
+// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
+func (m *defaultContactsClient) ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsResolvePhone(ctx, in)
 }

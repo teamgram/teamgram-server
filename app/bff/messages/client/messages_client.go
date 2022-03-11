@@ -49,6 +49,7 @@ type MessagesClient interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
 	MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
+	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 }
 
 type defaultMessagesClient struct {
@@ -255,4 +256,11 @@ func (m *defaultMessagesClient) ChannelsGetSendAs(ctx context.Context, in *mtpro
 func (m *defaultMessagesClient) MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesTranslateText(ctx, in)
+}
+
+// MessagesSearchSentMedia
+// messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
+func (m *defaultMessagesClient) MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesSearchSentMedia(ctx, in)
 }
