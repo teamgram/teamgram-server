@@ -21,14 +21,39 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 #### Docker run demo
 
 ### Manual Build and Install
-#### Depends
-- mysql
-- redis
-- etcd
-- kafka
-- minio
+#### Install third_party
+##### mysql
+- install **mysql5.7**
+- init database
+    - create database teamgram
 
-#### Build
+    - init teamgram database
+  
+    ```
+    mysql -uroot teamgram < teamgram2.sql
+    ```
+
+##### redis
+- install [redis](https://redis.io/)
+
+##### etcd
+- install [etcd](https://etcd.io/)
+
+##### kafka
+- install [kafka](https://kafka.apache.org/quickstart)
+
+##### minio
+- install [minio](https://docs.min.io/docs/minio-quickstart-guide.html#GNU/Linux)
+- init minio buckets, bucket names:
+    - `documents`
+    - `encryptedfiles`
+    - `photos`
+    - `videos`
+
+##### ffmpeg
+- install [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
+
+#### Install Teamgram
 
 - Get source code　
 ```
@@ -40,18 +65,13 @@ cd teamgram-server
 ```
 cd scripts
 ./build.sh
-
 ```
 
 - Run
 ```
-cd teamgramd/bin
+cd ../teamgramd/bin
 ./runall2.sh
 ```
-#### More
-
-
-#### **Note**
 
 ### Compatible clients
 **Important**: default signIn and signOut verify code is **12345**
