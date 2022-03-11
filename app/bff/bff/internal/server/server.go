@@ -51,7 +51,6 @@ import (
 	stickers_helper "github.com/teamgram/teamgram-server/app/bff/stickers"
 	themes_helper "github.com/teamgram/teamgram-server/app/bff/themes"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
-	tsf_helper "github.com/teamgram/teamgram-server/app/bff/tsf"
 	twofa_helper "github.com/teamgram/teamgram-server/app/bff/twofa"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
@@ -149,13 +148,6 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCPromoDataServer(
 			grpcServer,
 			promodata_helper.New(promodata_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// tsf_helper
-		mtproto.RegisterRPCTsfServer(
-			grpcServer,
-			tsf_helper.New(tsf_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 
