@@ -25,17 +25,20 @@ import (
 )
 
 func (c *session) onSyncData(obj mtproto.TLObject) {
-	logx.Infof("genericSession]]>> - session: %s, syncData: %s", c, obj.DebugString())
+	// for android, obj maybe is nil
+	if obj != nil {
+		logx.Infof("genericSession]]>> - session: %s, syncData: %s", c, obj.DebugString())
+	} else {
+		logx.Infof("genericSession]]>> - session: %s, syncData: nil", c)
+	}
 
 	gatewayId := c.getGatewayId()
 
 	if c.isAndroidPush {
 		pusMsgId := c.authSessions.getNextNotifyId()
-		// c.pushQueue.Add(pusMsgId, obj)
 		c.sendPushToQueue(gatewayId, pusMsgId, androidPushTooLong)
 	} else {
 		pusMsgId := c.authSessions.getNextPushId()
-		// c.pushQueue.Add(pusMsgId, obj)
 		c.sendPushToQueue(gatewayId, pusMsgId, obj)
 	}
 
