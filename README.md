@@ -42,7 +42,7 @@ cd teamgram-server
 ```
 1. create database teamgram
 2. init teamgram database
-3. mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
+   mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
 ```
 
 - init minio buckets, bucket names:
