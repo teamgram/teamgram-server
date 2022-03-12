@@ -73,11 +73,6 @@ cd ../teamgramd/bin
 
 [tdesktop for Teamgram](https://github.com/teamgram/teamgram-tdesktop)
 
-### TODO
-
-## Feedback
-### TODO
-
 ## Feedback
 Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/cnteamgram) Or [Teamgram](https://t.me/enteamgram) to discuss problems around source code.
 
