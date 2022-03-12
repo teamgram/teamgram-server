@@ -31,6 +31,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 - [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
 
 #### Install Teamgram
+> **Important**, not support **Windows**
 
 - Get source code　
 ```
