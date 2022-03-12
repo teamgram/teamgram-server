@@ -19,41 +19,16 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 [Encrypted CDNs for Speed and Security](docs/cdn.md) Translate By [@steedfly](https://github.com/steedfly)
 
 ### Quick start with Docker
-
-#### Docker run demo
+> TODO...
 
 ### Manual Build and Install
-#### Install third_party
-##### mysql
-- install **mysql5.7**
-- init database
-    - create database teamgram
-
-    - init teamgram database
-  
-    ```
-    mysql -uroot teamgram < teamgram2.sql
-    ```
-
-##### redis
-- install [redis](https://redis.io/)
-
-##### etcd
-- install [etcd](https://etcd.io/)
-
-##### kafka
-- install [kafka](https://kafka.apache.org/quickstart)
-
-##### minio
-- install [minio](https://docs.min.io/docs/minio-quickstart-guide.html#GNU/Linux)
-- init minio buckets, bucket names:
-    - `documents`
-    - `encryptedfiles`
-    - `photos`
-    - `videos`
-
-##### ffmpeg
-- install [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
+#### Depends
+- **mysql5.7**
+- [redis](https://redis.io/)
+- [etcd](https://etcd.io/)
+- [kafka](https://kafka.apache.org/quickstart)
+- [minio](https://docs.min.io/docs/minio-quickstart-guide.html#GNU/Linux)
+- [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
 
 #### Install Teamgram
 
@@ -62,6 +37,19 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 git clone https://github.com/teamgram/teamgram-server.git
 cd teamgram-server
 ```
+
+- init database
+```
+1. create database teamgram
+2. init teamgram database
+3. mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
+```
+
+- init minio buckets, bucket names:
+  - `documents`
+  - `encryptedfiles`
+  - `photos`
+  - `videos`
 
 - Build
 ```
