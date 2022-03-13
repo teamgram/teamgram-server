@@ -35,8 +35,12 @@ func New() *Server {
 func (s *Server) Initialize() error {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
-
 	logx.Infov(c)
+
+	if err := logx.SetUp(c.Log); err != nil {
+		return err
+	}
+
 	ctx := svc.NewServiceContext(c)
 	// s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 	s.mq = mq.New(ctx, c.SyncConsumer)
