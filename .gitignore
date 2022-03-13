@@ -61,3 +61,4 @@ Thumbs.db
 /teamgramd/logs/status/
 /teamgramd/bin/GeoLite2-City.mmdb
 /teamgramd/bin/GeoLite2-Country.mmdb
+app/service/biz/username/cmd/username/username
