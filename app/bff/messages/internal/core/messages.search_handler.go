@@ -19,181 +19,13 @@
 package core
 
 import (
+	"math"
+
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"math"
 )
-
-/*
-// messages.search#8614ef68 flags:#
-	pee	r:InputPeer
-	q:string
-	from_id:flags.0?InputUser
-	filter:MessagesFilter
-	min_date:int
-	max_date:int
-	offset_id:int
-	add_offset:int
-	limit:int
-	max_id:int
-	min_id:int
-	hash:int = messages.Messages;
-
-{
-    "constructor": "CRC32_messages_search_8614ef68",
-    "peer": {
-        "predicate_name": "inputPeerEmpty",
-        "constructor": "CRC32_inputPeerEmpty"
-    },
-    "filter": {
-        "predicate_name": "inputMessagesFilterPhoneCalls",
-        "constructor": "CRC32_inputMessagesFilterPhoneCalls"
-    },
-    "limit": 50
-}
-
-	messages.messages#8c718e87 messages:Vector<Message> chats:Vector<Chat> users:Vector<User> = messages.Messages;
-	messages.messagesSlice#c8edce1e flags:# inexact:flags.1?true count:int next_rate:flags.0?int messages:Vector<Message> chats:Vector<Chat> users:Vector<User> = messages.Messages;
-	messages.channelMessages#99262e37 flags:# inexact:flags.1?true pts:int count:int messages:Vector<Message> chats:Vector<Chat> users:Vector<User> = messages.Messages;
-	messages.messagesNotModified#74535f21 count:int = messages.Messages;
-*/
-
-/*
-## 1. TL_messages_search
-```
-    public void loadMedia(final long uid, final int count, final int max_id, final int type, final int fromCache, final int classGuid) {
-        final boolean isChannel = (int) uid < 0 && ChatObject.isChannel(-(int) uid, currentAccount);
-
-        int lower_part = (int)uid;
-        if (fromCache != 0 || lower_part == 0) {
-            loadMediaDatabase(uid, count, max_id, type, classGuid, isChannel, fromCache);
-        } else {
-		   TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-		   req.limit = count;
-		   req.offset_id = max_id;
-		   if (type == MEDIA_PHOTOVIDEO) {
-			   req.filter = new TLRPC.TL_inputMessagesFilterPhotoVideo();
-		   } else if (type == MEDIA_FILE) {
-			   req.filter = new TLRPC.TL_inputMessagesFilterDocument();
-		   } else if (type == MEDIA_AUDIO) {
-			   req.filter = new TLRPC.TL_inputMessagesFilterRoundVoice();
-		   } else if (type == MEDIA_URL) {
-			   req.filter = new TLRPC.TL_inputMessagesFilterUrl();
-		   } else if (type == MEDIA_MUSIC) {
-			   req.filter = new TLRPC.TL_inputMessagesFilterMusic();
-		   }
-```
-
-## 2. TL_messages_search
-```
-                } else {
-                    boolean missing = false;
-                    for (int a = 0; a < counts.length; a++) {
-                        if (counts[a] == -1 || old[a] == 1) {
-                            final int type = a;
-
-                            TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-                            req.limit = 1;
-                            req.offset_id = 0;
-                            if (a == MEDIA_PHOTOVIDEO) {
-                                req.filter = new TLRPC.TL_inputMessagesFilterPhotoVideo();
-                            } else if (a == MEDIA_FILE) {
-                                req.filter = new TLRPC.TL_inputMessagesFilterDocument();
-                            } else if (a == MEDIA_AUDIO) {
-                                req.filter = new TLRPC.TL_inputMessagesFilterRoundVoice();
-                            } else if (a == MEDIA_URL) {
-                                req.filter = new TLRPC.TL_inputMessagesFilterUrl();
-                            } else if (a == MEDIA_MUSIC) {
-                                req.filter = new TLRPC.TL_inputMessagesFilterMusic();
-                            }
-```
-
-## 3. TL_messages_search
-```
-                } else {
-                    TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-                    req.filter = new TLRPC.TL_inputMessagesFilterChatPhotos();
-                    req.limit = 80;
-                    req.offset_id = 0;
-                    req.q = "";
-                    req.peer = MessagesController.getInstance(currentAccount).getInputPeer(id);
-                    ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> onRequestComplete(locationKey, parentKey, response, true));
-```
-
-## 4. TL_messages_search
-```
-            } else if (did < 0) {
-                TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-                req.filter = new TLRPC.TL_inputMessagesFilterChatPhotos();
-                req.limit = count;
-                req.offset_id = (int) max_id;
-                req.q = "";
-                req.peer = getInputPeer(did);
-                int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-                    if (error == null) {
-                        TLRPC.messages_Messages messages = (TLRPC.messages_Messages) response;
-                        TLRPC.TL_photos_photos res = new TLRPC.TL_photos_photos();
-                        res.count = messages.count;
-                        res.users.addAll(messages.users);
-                        for (int a = 0; a < messages.messages.size(); a++) {
-                            TLRPC.Message message = messages.messages.get(a);
-                            if (message.action == null || message.action.photo == null) {
-                                continue;
-                            }
-                            res.photos.add(message.action.photo);
-                        }
-                        processLoadedUserPhotos(res, did, count, max_id, false, classGuid);
-                    }
-                });
-                ConnectionsManager.getInstance(currentAccount).bindRequestToGuid(reqId, classGuid);
-```
-
-## 5. TL_messages_search
-```
-            TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-            req.limit = 50;
-            req.offset_id = max_id;
-            if (currentType == 1) {
-                req.filter = new TLRPC.TL_inputMessagesFilterDocument();
-            } else if (currentType == 3) {
-                req.filter = new TLRPC.TL_inputMessagesFilterUrl();
-            } else if (currentType == 4) {
-                req.filter = new TLRPC.TL_inputMessagesFilterMusic();
-            }
-            req.q = query;
-            req.peer = MessagesController.getInstance(currentAccount).getInputPeer(uid);
-            if (req.peer == null) {
-                return;
-            }
-            final int currentReqId = ++lastReqId;
-            searchesInProgress++;
-            reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-                final ArrayList<MessageObject> messageObjects = new ArrayList<>();
-                if (error == null) {
-
-```
-
-## 6. TL_messages_search
-```
-		TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-		req.limit = count;
-		req.peer = new TLRPC.TL_inputPeerEmpty();
-		req.filter = new TLRPC.TL_inputMessagesFilterPhoneCalls();
-		req.q = "";
-		req.offset_id = max_id;
-		int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-            if (error == null) {
-                SparseArray<TLRPC.User> users = new SparseArray<>();
-                TLRPC.messages_Messages msgs = (TLRPC.messages_Messages) response;
-                endReached = msgs.messages.isEmpty();
-                for (int a = 0; a < msgs.users.size(); a++) {
-                    TLRPC.User user = msgs.users.get(a);
-                    users.put(user.id, user);
-                }
-```
-*/
 
 // MessagesSearch
 // messages.search#a0fda762 flags:# peer:InputPeer q:string from_id:flags.0?InputPeer top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
@@ -222,55 +54,27 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 	}
 
 	peer := mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-	switch peer.PeerType {
-	case mtproto.PEER_EMPTY, mtproto.PEER_SELF, mtproto.PEER_USER, mtproto.PEER_CHAT:
-		// TODO(@benqi): Not impl
-		rValues = mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
-			Messages: []*mtproto.Message{},
-			Chats:    []*mtproto.Chat{},
-			Users:    []*mtproto.User{},
-		}).To_Messages_Messages()
-	case mtproto.PEER_CHANNEL:
-		rValues = mtproto.MakeTLMessagesChannelMessages(&mtproto.Messages_Messages{
-			Messages: []*mtproto.Message{},
-			Chats:    []*mtproto.Chat{},
-			Users:    []*mtproto.User{},
-		}).To_Messages_Messages()
-	default:
-		err = mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("messages.search - error: %v", err)
-		return nil, err
+	if peer.IsChannel() {
+		// TODO: not impl
+		c.Logger.Errorf("messages.search blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		return nil, mtproto.ErrEnterpriseIsBlocked
 	}
 
-	//TLRPC.TL_messages_search req = new TLRPC.TL_messages_search();
-	//req.limit = count;
-	//req.offset_id = max_id;
-	//if (type == MEDIA_PHOTOVIDEO) {
-	//	req.filter = new TLRPC.TL_inputMessagesFilterPhotoVideo();
-	//} else if (type == MEDIA_FILE) {
-	//	req.filter = new TLRPC.TL_inputMessagesFilterDocument();
-	//} else if (type == MEDIA_AUDIO) {
-	//	req.filter = new TLRPC.TL_inputMessagesFilterRoundVoice();
-	//} else if (type == MEDIA_URL) {
-	//	req.filter = new TLRPC.TL_inputMessagesFilterUrl();
-	//} else if (type == MEDIA_MUSIC) {
-	//	req.filter = new TLRPC.TL_inputMessagesFilterMusic();
-	//}
+	rValues = mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
+		Messages: []*mtproto.Message{},
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{},
+	}).To_Messages_Messages()
 
-	/*
-		- 未使用
-
-		inputMessagesFilterMyMentions#c1f8e69a = MessagesFilter;
-		inputMessagesFilterGeo#e7026d0d = MessagesFilter;
-		inputMessagesFilterContacts#e062db83 = MessagesFilter;
-	*/
 	filterType := mtproto.FromMessagesFilter(in.Filter)
 	switch filterType {
 	case mtproto.FilterPhotos:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		// TODO
+		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
 		return rValues, nil
 	case mtproto.FilterVideo:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		// TODO
+		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
 		return rValues, nil
 	case mtproto.FilterPhotoVideo:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
@@ -312,7 +116,8 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterGif:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		// TODO
+		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
 		return rValues, nil
 	case mtproto.FilterVoice:
 		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())

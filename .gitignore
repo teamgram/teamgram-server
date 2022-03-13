@@ -32,6 +32,7 @@ Thumbs.db
 /app/bff/bff/cmd/bff/bff
 /app/interface/session/cmd/session/session
 /app/interface/gateway/cmd/gateway/gateway
+/app/service/biz/username/cmd/username/username
 /teamgramd/bin/authsession
 /teamgramd/bin/bff
 /teamgramd/bin/biz_service
@@ -61,4 +62,3 @@ Thumbs.db
 /teamgramd/logs/status/
 /teamgramd/bin/GeoLite2-City.mmdb
 /teamgramd/bin/GeoLite2-Country.mmdb
-app/service/biz/username/cmd/username/username
