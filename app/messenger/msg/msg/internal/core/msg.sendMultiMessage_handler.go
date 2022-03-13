@@ -24,19 +24,44 @@ func (c *MsgCore) MsgSendMultiMessage(in *msg.TLMsgSendMultiMessage) (*mtproto.U
 	var (
 		err      error
 		rUpdates *mtproto.Updates
+		peer     = mtproto.MakePeerUtil(in.PeerType, in.PeerId)
 	)
 
-	switch in.PeerType {
-	case mtproto.PEER_USER:
-		rUpdates, err = c.sendUserOutgoingMultiMessage(in)
-	case mtproto.PEER_CHAT:
-		rUpdates, err = c.sendChatOutgoingMultiMessage(in)
-	case mtproto.PEER_CHANNEL:
-		// rUpdates, err = c.sendChannelOutgoingMultiMessage(in)
-	default:
-		err = mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("msg.sendMultiMessage - error: %v")
+	if peer.IsChannel() {
+		// c.Logger.Errorf("msg.sendMultiMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		return nil, mtproto.ErrEnterpriseIsBlocked
+	}
+
+	if len(in.Message) == 0 {
+		err = mtproto.ErrGroupedMediaInvalid
+		c.Logger.Errorf("msg.sendMultiMessage - error: %v", err)
 		return nil, err
+	}
+	if in.Message[0].GetScheduleDate().GetValue() != 0 {
+		// c.Logger.Errorf("msg.sendMultiMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		return nil, mtproto.ErrEnterpriseIsBlocked
+	}
+
+	if !peer.IsChatOrUser() {
+		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("msg.sendMultiMessage - error: %v", err)
+		return nil, err
+	}
+
+	if peer.IsUser() {
+		// private
+		rUpdates, err = c.sendUserOutgoingMultiMessage(in)
+		if err != nil {
+			c.Logger.Errorf("msg.sendMultiMessage - error: %v", err)
+			return nil, err
+		}
+	} else {
+		// chat
+		rUpdates, err = c.sendChatOutgoingMultiMessage(in)
+		if err != nil {
+			c.Logger.Errorf("msg.sendMultiMessage - error: %v", err)
+			return nil, err
+		}
 	}
 
 	return rUpdates, nil

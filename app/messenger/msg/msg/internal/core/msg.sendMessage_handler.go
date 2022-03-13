@@ -27,30 +27,37 @@ func (c *MsgCore) MsgSendMessage(in *msg.TLMsgSendMessage) (*mtproto.Updates, er
 		rUpdates *mtproto.Updates
 		err      error
 		outBox   = in.GetMessage()
+		peer     = mtproto.MakePeerUtil(in.PeerType, in.PeerId)
 	)
 
-	if outBox.GetScheduleDate().GetValue() != 0 {
-		c.Logger.Errorf("sendScheduledMessage: %s", in.DebugString())
-		// rUpdates, err = c.sendScheduledMessage(in.UserId, in.AuthKeyId, mtproto.MakePeerUtil(in.PeerType, in.PeerId), outBox)
-	} else {
-		switch in.PeerType {
-		case mtproto.PEER_USER:
-			c.Logger.Errorf("sendUserOutgoingMessage: %s", in.DebugString())
-			rUpdates, err = c.sendUserOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
-		case mtproto.PEER_CHAT:
-			c.Logger.Errorf("sendChatOutgoingMessage: %s", in.DebugString())
-			rUpdates, err = c.sendChatOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
-		case mtproto.PEER_CHANNEL:
-			// c.Logger.Errorf("sendChannelOutgoingMessage: %s", in.DebugString())
-			// rUpdates, err = c.sendChannelOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
-		default:
-			err = mtproto.ErrPeerIdInvalid
-		}
+	if peer.IsChannel() {
+		// c.Logger.Errorf("msg.sendMultiMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		return nil, mtproto.ErrEnterpriseIsBlocked
 	}
 
-	if err != nil {
+	if outBox.GetScheduleDate().GetValue() != 0 {
+		// c.Logger.Errorf("msg.sendMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		return nil, mtproto.ErrEnterpriseIsBlocked
+	}
+
+	if !peer.IsChatOrUser() {
+		err = mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("msg.sendMessage - error: %v", err)
 		return nil, err
+	}
+
+	if peer.IsUser() {
+		rUpdates, err = c.sendUserOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
+		if err != nil {
+			c.Logger.Errorf("msg.sendMessage - error: %v", err)
+			return nil, err
+		}
+	} else {
+		rUpdates, err = c.sendChatOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
+		if err != nil {
+			c.Logger.Errorf("msg.sendMessage - error: %v", err)
+			return nil, err
+		}
 	}
 
 	return rUpdates, nil
