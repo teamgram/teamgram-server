@@ -1,7 +1,19 @@
-// Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
+// Copyright 2022 Teamgram Authors
 //  All rights reserved.
 //
-// Author: Benqi (wubenqi@gmail.com)
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
 //
 
 package server
@@ -393,48 +405,6 @@ func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, 
 
 	return nil
 }
-
-//func (s *Server) sendClientNew(conn *net2.TcpConnection, authKeyId, sessionId int64) {
-//	ctx, _ := conn.Context.(*connContext)
-//	if ctx == nil {
-//		logx.Errorf("sendClientNew: ctx is nil - {peer: %s}", conn)
-//		return
-//	}
-//
-//	c, err := s.GetSessionClient(strconv2.Int64ToString(authKeyId))
-//	if err != nil {
-//		logx.Errorf("getSessionClient error: {%v} - {peer: %s, authKeyId: %d}", err, conn, authKeyId)
-//		return
-//	}
-//
-//	c.CreateSession(context.Background(), &sessionpb.SessionClientEvent{
-//		ServerId:  env.Hostname,
-//		AuthKeyId: authKeyId,
-//		SessionId: sessionId,
-//		ClientIp:  ctx.clientIp,
-//	})
-//}
-//
-//func (s *Server) sendClientClosed(conn *net2.TcpConnection, authKeyId, sessionId int64) {
-//	ctx, _ := conn.Context.(*connContext)
-//	if ctx == nil {
-//		logx.Errorf("sendClientClosed: ctx is nil - {peer: %s}", conn)
-//		return
-//	}
-//
-//	c, err := s.GetSessionClient(strconv2.Int64ToString(authKeyId))
-//	if err != nil {
-//		logx.Errorf("getSessionClient error: {%v} - {peer: %s, authKeyId: %d}", err, conn, authKeyId)
-//		return
-//	}
-//
-//	c.CloseSession(context.Background(), &sessionpb.SessionClientEvent{
-//		ServerId:  env.Hostname,
-//		AuthKeyId: authKeyId,
-//		SessionId: sessionId,
-//		ClientIp:  ctx.clientIp,
-//	})
-//}
 
 func (s *Server) GetConnByConnID(id uint64) *net2.TcpConnection {
 	return s.server.GetConnection(id)
