@@ -1,26 +1,20 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
 //  All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Author: Benqi (wubenqi@gmail.com)
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package codec
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"io"
 
-	"github.com/panjf2000/gnet"
-	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/teamgram/proto/mtproto"
+
+	log "github.com/zeromicro/go-zero/core/logx"
 )
 
 // https://core.telegram.org/mtproto#tcp-transport
@@ -32,42 +26,212 @@ import (
 // by the data themselves (sequence number and CRC32 not added).
 // In this case, server responses look the same (the server does not send 0xefas the first byte).
 //
+//type MTProtoAbridgedCodec struct {
+//	conn *net2.BufferedConn
+//}
+//
+//func NewMTProtoAbridgedCodec(conn *net2.BufferedConn) *MTProtoAbridgedCodec {
+//	return &MTProtoAbridgedCodec{
+//		conn: conn,
+//	}
+//}
+//
+//func (c *MTProtoAbridgedCodec) Receive() (interface{}, error) {
+//	// minus padding
+//	//size := len(x.buf) / 4 - 1
+//	//
+//	//if size < 127 {
+//	//	x.buf[3] = byte(size)
+//	//	x.buf = x.buf[3:]
+//	//} else {
+//	//	binary.LittleEndian.PutUint32(x.buf, uint32(size << 8 | 127))
+//	//}
+//	//_, err := m.conn.Write(x.buf)
+//	//if err != nil {
+//	//	return err
+//	//}
+//
+//	var size int
+//	var n int
+//	var err error
+//
+//	b := make([]byte, 1)
+//	n, err = io.ReadFull(c.conn, b)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	// log.Info("first_byte: ", hex.EncodeToString(b[:1]))
+//	needAck := bool(b[0]>>7 == 1)
+//	_ = needAck
+//
+//	b[0] = b[0] & 0x7f
+//	// log.Info("first_byte2: ", hex.EncodeToString(b[:1]))
+//
+//	if b[0] < 0x7f {
+//		size = int(b[0]) << 2
+//		log.Infof("size1: %d", size)
+//		if size == 0 {
+//			return nil, nil
+//		}
+//	} else {
+//		log.Infof("first_byte2: %s", hex.EncodeToString(b[:1]))
+//		b2 := make([]byte, 3)
+//		n, err = io.ReadFull(c.conn, b2)
+//		if err != nil {
+//			return nil, err
+//		}
+//		size = (int(b2[0]) | int(b2[1])<<8 | int(b2[2])<<16) << 2
+//		log.Infof("size2: %s", size)
+//	}
+//
+//	left := size
+//	buf := make([]byte, size)
+//	for left > 0 {
+//		n, err = io.ReadFull(c.conn, buf[size-left:])
+//		if err != nil {
+//			log.Errorf("readFull2 error: %v", err)
+//			return nil, err
+//		}
+//		left -= n
+//	}
+//	if size > 10240 {
+//		log.Infof("readFull2: %s", hex.EncodeToString(buf[:256]))
+//	}
+//
+//	// TODO(@benqi): process report ack and quickack
+//	// 截断QuickAck消息，客户端有问题
+//	if size == 4 {
+//		log.Errorf("server response error: ", int32(binary.LittleEndian.Uint32(buf)))
+//		// return nil, fmt.Errorf("Recv QuickAckMessage, ignore!!!!") //  connId: ", c.stream, ", by client ", m.RemoteAddr())
+//		return nil, nil
+//	}
+//
+//	authKeyId := int64(binary.LittleEndian.Uint64(buf))
+//	message := NewMTPRawMessage(authKeyId, 0, TRANSPORT_TCP)
+//	message.Decode(buf)
+//	return message, nil
+//}
+//
+//func (c *MTProtoAbridgedCodec) Send(msg interface{}) error {
+//	message, ok := msg.(*MTPRawMessage)
+//	if !ok {
+//		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
+//		log.Error(err.Error())
+//		return err
+//	}
+//
+//	b := message.Encode()
+//
+//	sb := make([]byte, 4)
+//	// minus padding
+//	size := len(b) / 4
+//
+//	if size < 127 {
+//		sb = []byte{byte(size)}
+//	} else {
+//		binary.LittleEndian.PutUint32(sb, uint32(size<<8|127))
+//	}
+//
+//	b = append(sb, b...)
+//	_, err := c.conn.Write(b)
+//
+//	if err != nil {
+//		log.Errorf("Send msg error: %s", err)
+//	}
+//
+//	return err
+//}
+//
+//func (c *MTProtoAbridgedCodec) Close() error {
+//	return c.conn.Close()
+//}
 
 type AbridgedCodec struct {
-	*AesCTR128Crypto
-	state     int
-	packetLen [4]byte
+	conn io.ReadWriteCloser
 }
 
-func newMTProtoAbridgedCodec(crypto *AesCTR128Crypto) *AbridgedCodec {
+func NewMTProtoAbridgedCodec(conn io.ReadWriteCloser) *AbridgedCodec {
 	return &AbridgedCodec{
-		AesCTR128Crypto: crypto,
-		state:           WAIT_PACKET_LENGTH_1,
+		conn: conn,
 	}
 }
 
-// Encode encodes frames upon server responses into TCP stream.
-func (c *AbridgedCodec) Encode(conn gnet.Conn, msg interface{}) ([]byte, error) {
-	if msg == nil {
-		logx.Error("conn(%s) msg is nil", conn.DebugString())
-		return nil, nil
-	}
+func (c *AbridgedCodec) Receive() (interface{}, error) {
+	var size int
+	var n int
+	var err error
 
-	rm, ok := msg.(*MTPRawMessage)
-	if !ok {
-		err := fmt.Errorf("conn(%s) msg type error, only MTPRawMessage, msg: %s", conn.DebugString(), rm)
+	b := make([]byte, 1)
+	n, err = io.ReadFull(c.conn, b)
+	if err != nil {
 		return nil, err
-	} else if rm == nil {
-		logx.Errorf("conn(%s) msg is nil, msg: %#v", conn.DebugString(), msg)
+	}
+
+	// log.Info("first_byte: ", hex.EncodeToString(b[:1]))
+	needAck := b[0]>>7 == 1
+	_ = needAck
+
+	b[0] = b[0] & 0x7f
+
+	if b[0] < 0x7f {
+		size = int(b[0]) << 2
+		log.Infof("size1: %d", size)
+		if size == 0 {
+			return nil, nil
+		}
+	} else {
+		log.Infof("first_byte2: %s", hex.EncodeToString(b[:1]))
+		b2 := make([]byte, 3)
+		n, err = io.ReadFull(c.conn, b2)
+		if err != nil {
+			return nil, err
+		}
+		size = (int(b2[0]) | int(b2[1])<<8 | int(b2[2])<<16) << 2
+		log.Infof("size2: %d", size)
+	}
+
+	left := size
+	buf := make([]byte, size)
+	for left > 0 {
+		n, err = io.ReadFull(c.conn, buf[size-left:])
+		if err != nil {
+			log.Errorf("readFull2 error: %v", err)
+			return nil, err
+		}
+		left -= n
+	}
+	if size > 4096 {
+		log.Infof("readFull2: %s", hex.EncodeToString(buf[:256]))
+	}
+
+	// TODO(@benqi): process report ack and quickack
+	// 截断QuickAck消息，客户端有问题
+	if size == 4 {
+		log.Errorf("server response error: ", int32(binary.LittleEndian.Uint32(buf)))
+		// return nil, fmt.Errorf("Recv QuickAckMessage, ignore!!!!") //  connId: ", c.stream, ", by client ", m.RemoteAddr())
 		return nil, nil
 	}
 
-	out := rm.Payload
+	authKeyId := int64(binary.LittleEndian.Uint64(buf))
+	message := mtproto.NewMTPRawMessage(authKeyId, 0, TRANSPORT_TCP)
+	message.Decode(buf)
+	return message, nil
+}
 
-	// b := message.Encode() d
+func (c *AbridgedCodec) Send(msg interface{}) error {
+	message, ok := msg.(*mtproto.MTPRawMessage)
+	if !ok {
+		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
+		log.Error(err.Error())
+		return err
+	}
+
+	b := message.Encode()
+
 	sb := make([]byte, 4)
 	// minus padding
-	size := len(out) / 4
+	size := len(b) / 4
 
 	if size < 127 {
 		sb = []byte{byte(size)}
@@ -75,146 +239,16 @@ func (c *AbridgedCodec) Encode(conn gnet.Conn, msg interface{}) ([]byte, error) 
 		binary.LittleEndian.PutUint32(sb, uint32(size<<8|127))
 	}
 
-	buf := append(sb, out...)
-	return c.Encrypt(buf), nil
-}
+	b = append(sb, b...)
+	_, err := c.conn.Write(b)
 
-// Decode decodes frames from TCP stream via specific implementation.
-func (c *AbridgedCodec) Decode(conn gnet.Conn) (interface{}, error) {
-	var (
-		in  innerBuffer
-		buf []byte
-		n   int
-		err error
-	)
-
-	in = conn.Read()
-	// log.Debugf("connId: %d, n = %d", conn.ConnID(), len(in))
-	if len(in) == 0 {
-		return nil, nil
+	if err != nil {
+		log.Errorf("Send msg error: %s", err)
 	}
 
-	switch c.state {
-	case WAIT_PACKET_LENGTH_1:
-		if buf, err = in.readN(1); err != nil {
-			return nil, errUnexpectedEOF
-		}
-		buf = c.Decrypt(buf)
-		c.packetLen[0] = buf[0]
-		conn.ShiftN(1)
-
-		needAck := c.packetLen[0]>>7 == 1
-		_ = needAck
-
-		n = int(c.packetLen[0] & 0x7f)
-		if n < 0x7f {
-			c.state = WAIT_PACKET_LENGTH_1_PACKET
-			n = n << 2
-			// log.Debugf("n = %d", n)
-		} else {
-			c.state = WAIT_PACKET_LENGTH_3
-			if buf, err = in.readN(3); err != nil {
-				return nil, errUnexpectedEOF
-			}
-			buf = c.Decrypt(buf)
-			c.packetLen[1] = buf[0]
-			c.packetLen[2] = buf[1]
-			c.packetLen[3] = buf[2]
-			conn.ShiftN(3)
-
-			c.state = WAIT_PACKET_LENGTH_3_PACKET
-			n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-			// log.Debugf("n = %d", n)
-			if n > MAX_MTPRORO_FRAME_SIZE {
-				// TODO(@benqi): close conn
-				return nil, fmt.Errorf("too large data(%d)", n)
-			}
-		}
-		if buf, err = in.readN(n); err != nil {
-			return nil, errUnexpectedEOF
-		} else if len(buf) <= 4 {
-			// TODO: fix
-			return nil, errUnexpectedEOF
-		}
-
-		buf = c.Decrypt(buf)
-		conn.ShiftN(n)
-		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
-	case WAIT_PACKET_LENGTH_1_PACKET:
-		n = int(c.packetLen[0]&0x7f) << 2
-		if buf, err = in.readN(n); err != nil {
-			return nil, errUnexpectedEOF
-		}
-		// log.Debugf("n = %d", n)
-
-		buf = c.Decrypt(buf)
-		conn.ShiftN(n)
-		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
-	case WAIT_PACKET_LENGTH_3:
-		if buf, err = in.readN(3); err != nil {
-			return nil, errUnexpectedEOF
-		}
-		buf = c.Decrypt(buf)
-		c.packetLen[1] = buf[0]
-		c.packetLen[2] = buf[1]
-		c.packetLen[3] = buf[2]
-		conn.ShiftN(3)
-
-		c.state = WAIT_PACKET_LENGTH_3_PACKET
-		n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-		// log.Debugf("n = %d", n)
-		if n > MAX_MTPRORO_FRAME_SIZE {
-			// TODO(@benqi): close conn
-			return nil, fmt.Errorf("too large data(%d)", n)
-		}
-		if buf, err = in.readN(n); err != nil {
-			return nil, errUnexpectedEOF
-		}
-
-		buf = c.Decrypt(buf)
-		conn.ShiftN(n)
-		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
-	case WAIT_PACKET_LENGTH_3_PACKET:
-		n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
-		// log.Debugf("n = %d", n)
-		if n > MAX_MTPRORO_FRAME_SIZE {
-			// TODO(@benqi): close conn
-			return nil, fmt.Errorf("too large data(%d)", n)
-		}
-		if buf, err = in.readN(n); err != nil {
-			return nil, errUnexpectedEOF
-		}
-
-		buf = c.Decrypt(buf)
-		conn.ShiftN(n)
-		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
-	}
-
-	// TODO(@benqi): close conn
-	return nil, fmt.Errorf("unknown error")
+	return err
 }
 
-// Clone ...
-func (c *AbridgedCodec) Clone() gnet.ICodec {
-	return new(AbridgedCodec)
-}
-
-// Release ...
-func (c *AbridgedCodec) Release() {
+func (c *AbridgedCodec) Close() error {
+	return c.conn.Close()
 }

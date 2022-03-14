@@ -1,17 +1,8 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
 //  All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Author: Benqi (wubenqi@gmail.com)
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package codec
 
@@ -19,12 +10,15 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
+	"flag"
 	"fmt"
+	"io"
+	"net"
 
+	"github.com/teamgram/marmota/pkg/net2"
 	"github.com/teamgram/proto/mtproto/crypto"
 
-	"github.com/panjf2000/gnet"
-	"github.com/zeromicro/go-zero/core/logx"
+	log "github.com/zeromicro/go-zero/core/logx"
 )
 
 // TODO(@benqi): Quick ack (https://core.telegram.org/mtproto#tcp-transport)
@@ -39,18 +33,23 @@ import (
 // if the abridged version is used, bswap is applied to these four bytes.
 //
 
-//// Transport类型，不支持UDP
-//const (
-//	TRANSPORT_TCP  = 1 // TCP
-//	TRANSPORT_HTTP = 2 // HTTP
-//	TRANSPORT_UDP  = 3 // UDP, TODO(@benqi): 未发现有支持UDP的客户端
-//)
+// Transport类型，不支持UDP
+const (
+	TRANSPORT_TCP  = 1 // TCP
+	TRANSPORT_HTTP = 2 // HTTP
+	TRANSPORT_UDP  = 3 // UDP, TODO(@benqi): 未发现有支持UDP的客户端
+)
 
 const (
 	// Tcp Transport
-	ABRIDGED_FLAG            = 0xef
-	ABRIDGED_INT32_FLAG      = 0xefefefef
-	INTERMEDIATE_FLAG        = 0xeeeeeeee
+
+	// ABRIDGED_FLAG = 0xef
+	ABRIDGED_FLAG = 0xef
+	// ABRIDGED_INT32_FLAG = 0xfefefefe
+	ABRIDGED_INT32_FLAG = 0xefefefef
+	// INTERMEDIATE_FLAG = 0xcccccccc
+	INTERMEDIATE_FLAG = 0xeeeeeeee
+	// PADDED_INTERMEDIATE_FLAG = 0xbbbbbbbb
 	PADDED_INTERMEDIATE_FLAG = 0xdddddddd
 	UNKNOWN_FLAG             = 0x02010316
 	PVRG_FLAG                = 0x47725650 // PVrG
@@ -65,46 +64,97 @@ const (
 	// 3d9ff4f1
 )
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-type MTProtoCodec struct {
-	codec       gnet.ICodec
-	firstPacket bool
-	isHttp      bool // codec type
+var (
+	isClientType bool
+	isMTProto    bool // 是否使用MTProto - true为官方mtproto协议，false为定制协议（当前实现为ntproto）
+	// transportType uint32
+)
+
+func init() {
+	net2.RegisterProtocol("mtproto", NewMTProtoTransport())
+	flag.BoolVar(&isClientType, "client", false, "client conn")
+	flag.BoolVar(&isMTProto, "mtproto", true, "mtproto")
 }
 
-func NewMTProtoCodec() *MTProtoCodec {
-	return &MTProtoCodec{
-		codec:       nil,
-		firstPacket: true,
-		isHttp:      false,
+// MTProtoTransport
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+type MTProtoTransport struct {
+}
+
+func NewMTProtoTransport() *MTProtoTransport {
+	return &MTProtoTransport{}
+}
+
+func (m *MTProtoTransport) NewCodec(rw io.ReadWriter) (net2.Codec, error) {
+	codec := &TransportCodec{
+		codecType: TRANSPORT_TCP,
+		conn:      rw.(net.Conn),
+		proto:     m,
 	}
+	return codec, nil
 }
 
-func (c *MTProtoCodec) peekCodec(conn gnet.Conn) (gnet.ICodec, error) {
-	var (
-		firstByte uint8
-	)
+type TransportCodec struct {
+	codecType int // codec type
+	conn      net.Conn
+	codec     net2.Codec
+	proto     *MTProtoTransport
+}
 
-	if size, bytes := conn.ReadN(1); size == 1 {
-		firstByte = bytes[0]
+func (c *TransportCodec) peekCodec() error {
+	if isMTProto {
+		return c.peekMTProtoCodec()
 	} else {
-		return nil, errUnexpectedEOF
+		return c.peekNTProtoCodec()
 	}
+}
+
+/**
+  Android client code:
+
+	RAND_bytes(bytes, 64);
+	uint32_t val = (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0]);
+	uint32_t val2 = (bytes[7] << 24) | (bytes[6] << 16) | (bytes[5] << 8) | (bytes[4]);
+	if (bytes[0] != 0xef &&
+		val != 0x44414548 &&
+		val != 0x54534f50 &&
+		val != 0x20544547 &&
+		val != 0x4954504f &&
+		val != 0xeeeeeeee &&
+		val2 != 0x00000000) {
+		bytes[56] = bytes[57] = bytes[58] = bytes[59] = 0xef;
+		break;
+	}
+*/
+func (c *TransportCodec) peekMTProtoCodec() error {
+	peek, _ := c.conn.(net2.PeekAble)
+
+	// check abridged
+	firstByte, err := peek.PeekByte()
+	if err != nil {
+		log.Errorf("transportCodec - read firstByte error: %v", err)
+		return err
+	}
+	// log.Debugf("firstByte: %s", hex.EncodeToString([]byte{firstByte}))
 
 	if firstByte == ABRIDGED_FLAG {
-		logx.Infof("conn(%s) mtproto abridged version.", conn.DebugString())
-		return new(AbridgedCodec), nil
+		log.Infof("mtproto abridged version.")
+		c.codec = NewMTProtoAbridgedCodec(c.conn)
+		peek.Discard(1)
+		return nil
 	}
 
-	var (
-		firstInt uint32
-	)
 	// not abridged version, we'll lookup codec!
-	if size, bytes := conn.ReadN(4); size == 4 {
-		firstInt = binary.LittleEndian.Uint32(bytes)
-	} else {
-		return nil, errUnexpectedEOF
+	firstInt, err := peek.PeekUint32()
+	if err != nil {
+		log.Errorf("read firstInt error: %v", err)
+		return err
 	}
+
+	// return binary.BigEndian.Uint32(buf), nil
+	var fB [4]byte
+	binary.BigEndian.PutUint32(fB[:], firstInt)
+	// log.Debugf("firstByte: %s", hex.EncodeToString(fB[:]))
 
 	// check http
 	if firstInt == HTTP_HEAD_FLAG ||
@@ -112,82 +162,70 @@ func (c *MTProtoCodec) peekCodec(conn gnet.Conn) (gnet.ICodec, error) {
 		firstInt == HTTP_GET_FLAG ||
 		firstInt == HTTP_OPTION_FLAG {
 		// http 协议
-		// log.Debugf("mtproto http.")
+		log.Infof("mtproto http.")
 
 		// conn2 := NewMTProtoHttpProxyConn(conn)
 		// c.conn = conn2
-		// c.codecType = TRANSPORT_HTTP
-		logx.Infof("conn(%s) mtproto http.", conn.DebugString())
-		return newMTProtoHttpProxyCodec(), nil
+		c.codecType = TRANSPORT_HTTP
+		c.codec = NewMTProtoHttpProxyCodec(c.conn)
+
+		// c.proto.httpListener.acceptChan <- conn2
+		return nil
 	}
 
 	// check intermediate version
 	if firstInt == INTERMEDIATE_FLAG {
-		logx.Infof("conn(%s) intermediate version.", conn.DebugString())
-		conn.ShiftN(4)
-		return new(IntermediateCodec), nil
+		//log.Warn("MTProtoProxyCodec - mtproto intermediate version, impl in the future!!")
+		//return nil, errors.New("mtproto intermediate version not impl!!")
+		log.Infof("mtproto intermediate version.")
+		c.codec = NewMTProtoIntermediateCodec(c.conn)
+		peek.Discard(4)
+		return nil
 	}
 
 	// check intermediate version
 	if firstInt == PADDED_INTERMEDIATE_FLAG {
-		logx.Infof("conn(%s) padded intermediate version.", conn.DebugString())
-		conn.ShiftN(4)
-		return new(PaddedIntermediateCodec), nil
+		//log.Warn("MTProtoProxyCodec - mtproto intermediate version, impl in the future!!")
+		//return nil, errors.New("mtproto intermediate version not impl!!")
+		log.Infof("mtproto padded intermediate version.")
+		c.codec = NewMTProtoPaddedIntermediateCodec(c.conn)
+		peek.Discard(4)
+		return nil
 	}
 
 	// check PVrG
 	if firstInt == PVRG_FLAG {
-		logx.Infof("conn(%s) PVrG version.", conn.DebugString())
-		return nil, errors.New("PVrG transport")
+		log.Infof("PVrG version")
+		return errors.New("PVrG transport")
 	}
 
 	// check 0x02010316
 	if firstInt == UNKNOWN_FLAG {
-		logx.Infof("conn(%s) firstInt is 0x02010316.", conn.DebugString())
-		return nil, errors.New("0x02010316 transport")
+		log.Errorf("PVrG version")
+		return errors.New("0x02010316 transport")
 	}
 
-	var (
-		checkFullBuf []byte
-	)
-
-	if size, bytes := conn.ReadN(12); size == 12 {
-		checkFullBuf = bytes
-	} else {
-		return nil, errUnexpectedEOF
+	checkFullBuf, err := peek.Peek(12)
+	if err != nil {
+		log.Errorf("transportCodec - read b_4_60 error: %v", err)
+		return err
 	}
-
 	secondInt := binary.BigEndian.Uint32(checkFullBuf[:8])
 	if secondInt == FULL_FLAG {
-		logx.Infof("conn(%s) mtproto full version.", conn.DebugString())
-		conn.ShiftN(12)
-		return newMTProtoFullCodec(), nil
+		log.Infof("mtproto full version.")
+		c.codec = NewMTProtoFullCodec(c.conn)
+		peek.Discard(12)
+		return nil
 	}
 
-	// 5. app version.
-
-	// bytes
-	// |  0-3  |  4-7   |    8-55    |     56-59    | 60-63 |
-	// |  val  |  val2  |            | 0xefefefefef |       |
-	//
-	// temp
-	// |    0 ~ 47       |
-	// | 55 ~ 8 (bytes)  |
-	//
-	// encrypt_key_: 8  ~ 39 (btes)
-	// encrypt_iv_ : 40 ~ 55 (bytes)
-	// decrypt_key_: 0  ~ 31 (temp)
-	// decrypt_iv_ : 32 ~ 47 (temp)
-	//
-
-	var (
-		obfuscatedBuf []byte
-	)
-	if size, bytes := conn.ReadN(64); size == 64 {
-		obfuscatedBuf = bytes
-	} else {
-		return nil, errUnexpectedEOF
+	// check obfuscated version
+	obfuscatedBuf, err := peek.Peek(64)
+	if err != nil {
+		log.Errorf("peek error: %v", err)
+		return err
 	}
+
+	log.Infof("obfuscatedBuf: %s", hex.EncodeToString(obfuscatedBuf))
 
 	var tmp [64]byte
 	// 生成decrypt_key
@@ -197,12 +235,14 @@ func (c *MTProtoCodec) peekCodec(conn gnet.Conn) (gnet.ICodec, error) {
 
 	e, err := crypto.NewAesCTR128Encrypt(tmp[:32], tmp[32:48])
 	if err != nil {
-		return nil, err
+		// log.Errorf("NewAesCTR128Encrypt error: %s", err)
+		return err
 	}
 
 	d, err := crypto.NewAesCTR128Encrypt(obfuscatedBuf[8:40], obfuscatedBuf[40:56])
 	if err != nil {
-		return nil, err
+		log.Errorf("NewAesCTR128Encrypt error: %s", err)
+		return err
 	}
 
 	d.Encrypt(obfuscatedBuf)
@@ -211,29 +251,86 @@ func (c *MTProtoCodec) peekCodec(conn gnet.Conn) (gnet.ICodec, error) {
 	if protocolType != ABRIDGED_INT32_FLAG &&
 		protocolType != INTERMEDIATE_FLAG &&
 		protocolType != PADDED_INTERMEDIATE_FLAG {
-		return nil, fmt.Errorf("conn(%s) mtproto buf[56:60]'s byte != 0xef, received: %s",
-			conn.DebugString(),
-			hex.EncodeToString(obfuscatedBuf[56:60]))
+		log.Errorf("transportCodec - invalid obfuscated protocol type - %s",
+			hex.EncodeToString(obfuscatedBuf))
+		return errors.New("mtproto buf[56:60]'s byte != 0xef")
 	}
 
 	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))
 	// TODO: check dcId
 
-	conn.ShiftN(64)
+	log.Infof("mtproto obfuscated version, protocol_type: %s", hex.EncodeToString(obfuscatedBuf[56:60]))
+	c.codec = NewMTProtoObfuscatedCodec(c.conn, d, e, protocolType, dcId)
 
-	logx.Infof("conn(%s) mtproto obfuscated version, {protocol_type: %d, dc_id: %d}", conn.DebugString(), protocolType, dcId)
-	return newMTProtoObfuscatedCodec(d, e, protocolType, dcId), nil
+	peek.Discard(64)
+	return nil
 }
 
-/*
- * for client
+func (c *TransportCodec) peekNTProtoCodec() error {
+	peek, _ := c.conn.(net2.PeekAble)
 
-func (c *MTProtoCodec) selectCodec() (net2.Codec, error) {
+	// check obfuscated version
+	obfuscatedBuf, err := peek.Peek(64)
+	if err != nil {
+		log.Errorf("peek error: %v", err)
+		return err
+	}
+
+	log.Infof("obfuscatedBuf: %s", hex.EncodeToString(obfuscatedBuf))
+
+	var tmp [64]byte
+	// 生成decrypt_key
+	for i := 0; i < 48; i++ {
+		// tmp[i] = obfuscatedBuf[55-i]
+		tmp[i] = obfuscatedBuf[63-i]
+	}
+	log.Infof("e: %s", hex.EncodeToString(tmp[:48]))
+	log.Infof("d: %s", hex.EncodeToString(obfuscatedBuf[16:]))
+
+	e, err := crypto.NewAesCTR128Encrypt(tmp[:32], tmp[32:48])
+	if err != nil {
+		// log.Errorf("NewAesCTR128Encrypt error: %s", err)
+		return err
+	}
+
+	// d, err := crypto.NewAesCTR128Encrypt(obfuscatedBuf[16:48], obfuscatedBuf[40:56])
+	d, err := crypto.NewAesCTR128Encrypt(obfuscatedBuf[16:48], obfuscatedBuf[48:64])
+	if err != nil {
+		log.Errorf("NewAesCTR128Encrypt error: %s", err)
+		return err
+	}
+
+	d.Encrypt(obfuscatedBuf)
+
+	// protocolType := binary.BigEndian.Uint32(obfuscatedBuf[56:])
+	protocolType := binary.BigEndian.Uint32(obfuscatedBuf[8:])
+	if protocolType != ABRIDGED_INT32_FLAG &&
+		protocolType != INTERMEDIATE_FLAG &&
+		protocolType != PADDED_INTERMEDIATE_FLAG {
+		log.Errorf("transportCodec - invalid obfuscated protocol type - %s, buf[8:12] = %s",
+			hex.EncodeToString(obfuscatedBuf), hex.EncodeToString(obfuscatedBuf[8:12]))
+
+		return errors.New("mtproto buf[8:12]'s byte != 0xfefefefe")
+	}
+
+	// dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))
+	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[12:]))
+	// TODO: check dcId
+
+	// log.Debugf("mtproto obfuscated version, protocol_type: %s", hex.EncodeToString(obfuscatedBuf[56:60]))
+	log.Infof("mtproto obfuscated version, protocol_type: %s", hex.EncodeToString(obfuscatedBuf[8:12]))
+	c.codec = NewMTProtoObfuscatedCodec(c.conn, d, e, protocolType, dcId)
+
+	peek.Discard(64)
+	return nil
+}
+
+func (c *TransportCodec) selectCodec() (net2.Codec, error) {
 	var (
 		temp  [64]byte
 		bytes []byte
 
-		dcId = int16(2)
+		dcId = int16(1)
 	)
 
 	for {
@@ -282,71 +379,41 @@ func (c *MTProtoCodec) selectCodec() (net2.Codec, error) {
 
 	return NewMTProtoObfuscatedCodec(c.conn, d, e, ABRIDGED_INT32_FLAG, dcId), nil
 }
-*/
 
-// Encode encodes frames upon server responses into TCP stream.
-func (c *MTProtoCodec) Encode(conn gnet.Conn, msg interface{}) ([]byte, error) {
-	if msg == nil {
-		logx.Infof("conn(%s) msg is nil", conn.DebugString())
-		return nil, nil
+func (c *TransportCodec) Receive() (interface{}, error) {
+	if isClientType {
+		if c.codec == nil {
+			return nil, fmt.Errorf("codec is nil")
+		}
+	} else {
+		if c.codec == nil {
+			err := c.peekCodec()
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
+	return c.codec.Receive()
+}
 
-	// log.Debugf("conn(%s), msg: %#v", conn.DebugString(), msg)
+func (c *TransportCodec) Send(msg interface{}) error {
 	if isClientType {
 		//err := c.peekCodec()
 		//if err != nil {
 		//	return nil, err
 		//}
-		return nil, fmt.Errorf("conn(%s) clientType not impl", conn.DebugString())
 	} else {
 		if c.codec != nil {
-			b, err := c.codec.Encode(conn, msg)
-			if err != nil {
-				logx.Errorf("conn(%s) encode msg error: %v", conn.DebugString(), err)
-				return nil, err
-			} else {
-				return b, nil
-			}
-		} else {
-			return nil, fmt.Errorf("conn(%s) codec is nil", conn.DebugString())
+			return c.codec.Send(msg)
 		}
 	}
+	return fmt.Errorf("codec is nil")
 }
 
-// Decode decodes frames from TCP stream via specific implementation.
-func (c *MTProtoCodec) Decode(conn gnet.Conn) (interface{}, error) {
-	if isClientType {
-		return nil, fmt.Errorf("conn(%s) clientType not impl", conn.DebugString())
+func (c *TransportCodec) Close() error {
+	if c.codec != nil {
+		return c.codec.Close()
 	} else {
-		if c.firstPacket {
-			if codec, err := c.peekCodec(conn); err != nil {
-				logx.Errorf("connId(%s) peekCodec error: %v", conn.DebugString(), err)
-				if err != errUnexpectedEOF {
-					conn.Close()
-				}
-				return nil, err
-			} else {
-				c.codec = codec
-				c.firstPacket = false
-			}
-		}
+		return nil
 	}
-	if msg, err := c.codec.Decode(conn); err != nil {
-		logx.Errorf("conn(%s) decode error: %v", conn.DebugString(), err)
-		if err != errUnexpectedEOF {
-			conn.Close()
-		}
-		return nil, err
-	} else {
-		return msg, nil
-	}
-}
-
-// Clone ...
-func (c *MTProtoCodec) Clone() gnet.ICodec {
-	return NewMTProtoCodec()
-}
-
-// Release ...
-func (c *MTProtoCodec) Release() {
 }

@@ -1,251 +1,358 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
 //  All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Author: Benqi (wubenqi@gmail.com)
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package server
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
-	"time"
+	"sync"
 
+	"github.com/teamgram/marmota/pkg/hack"
+	"github.com/teamgram/marmota/pkg/net2"
+	"github.com/teamgram/marmota/pkg/timer2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/internal/server/codec"
-	"github.com/teamgram/teamgram-server/app/interface/session/client"
-	"github.com/teamgram/teamgram-server/app/interface/session/session"
+	sessionpb "github.com/teamgram/teamgram-server/app/interface/session/session"
 
-	"github.com/panjf2000/gnet"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+type HandshakeStateCtx struct {
+	State         int32  `json:"state,omitempty"`
+	ResState      int32  `json:"res_state,omitempty"`
+	Nonce         []byte `json:"nonce,omitempty"`
+	ServerNonce   []byte `json:"server_nonce,omitempty"`
+	NewNonce      []byte `json:"new_nonce,omitempty"`
+	A             []byte `json:"a,omitempty"`
+	P             []byte `json:"p,omitempty"`
+	handshakeType int
+	ExpiresIn     int32 `json:"expires_in,omitempty"`
+}
+
+func (m *HandshakeStateCtx) DebugString() string {
+	s, _ := json.Marshal(m)
+	return hack.String(s)
+}
+
 type connContext struct {
-	authKey   *authKeyUtil
-	sessionId int64
-	clientIp  string
+	// TODO(@benqi): lock
+	sync.Mutex
+	state      int // 是否握手阶段
+	authKeys   []*authKeyUtil
+	sessionId  int64
+	isHttp     bool
+	canSend    bool
+	trd        *timer2.TimerData
+	handshakes []*HandshakeStateCtx
+	clientIp   string
 }
 
 func newConnContext(clientIp string) *connContext {
 	return &connContext{
-		authKey:   nil,
-		sessionId: 0,
-		clientIp:  clientIp,
+		state:    STATE_CONNECTED2,
+		clientIp: clientIp,
 	}
 }
 
-func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c gnet.Conn)) {
-	s.pool.Submit(func() {
-		if err := execb(); err == nil {
-			s.svr.Trigger(connId, func(c gnet.Conn) {
-				retcb(c)
-			})
-		} else {
-			// do nothing
-		}
-	})
+func (ctx *connContext) getState() int {
+	ctx.Lock()
+	defer ctx.Unlock()
+	return ctx.state
 }
 
-// OnInitComplete fires when the server is ready for accepting connections.
-// The parameter:server has information and various utilities.
-func (s *Server) OnInitComplete(svr gnet.Server) (action gnet.Action) {
-	logx.Infof("egate server is listening on [%s] (multi-cores: %t, loops: %d)",
-		svr.AddrsString(), svr.Multicore, svr.NumEventLoop)
-	s.svr = svr
-	return
+func (ctx *connContext) setState(state int) {
+	ctx.Lock()
+	defer ctx.Unlock()
+	if ctx.state != state {
+		ctx.state = state
+	}
 }
 
-// OnShutdown fires when the server is being shut down, it is called right after
-// all event-loops and connections are closed.
-func (s *Server) OnShutdown(svr gnet.Server) {
-	logx.Infof("egate server shutdown")
-}
-
-// OnOpened fires when a new connection has been opened.
-// The parameter:c has information about the connection such as it's local and remote address.
-// Parameter:out is the return value which is going to be sent back to the client.
-func (s *Server) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
-	logx.Infof("onNewConn - conn(%s)", c.DebugString())
-	return
-}
-
-// OnClosed fires when a connection has been closed.
-// The parameter:err is the last known connection error.
-func (s *Server) OnClosed(c gnet.Conn, err error) (action gnet.Action) {
-	logx.Infof("onConnClosed - conn(%s), err: %v", c.DebugString(), err)
-	if ctx, ok := c.Context().(*connContext); ok && ctx != nil {
-		if ctx.authKey != nil {
-			bDeleted := s.authSessionMgr.RemoveSession(ctx.authKey.AuthKeyId(), ctx.sessionId, c.ConnID())
-			if bDeleted {
-				s.pool.Submit(func() {
-					s.sendToSessionClientClosed(ctx.authKey.AuthKeyId(), ctx.sessionId, ctx.clientIp)
-				})
-			}
+func (ctx *connContext) getAuthKey(id int64) *authKeyUtil {
+	ctx.Lock()
+	defer ctx.Unlock()
+	for _, key := range ctx.authKeys {
+		if key.AuthKeyId() == id {
+			return key
 		}
 	}
 
-	c.SetContext(nil)
-
-	return
+	return nil
 }
 
-// PreWrite fires just before any data is written to any client socket, this event function is usually used to
-// put some code of logging/counting/reporting or any prepositive operations before writing data to client.
-func (s *Server) PreWrite(c gnet.Conn) {
-	// log.Debugf("preWrite")
-}
-
-// React fires when a connection sends the server data.
-// Call c.Read() or c.ReadN(n) within the parameter:c to read incoming data from client.
-// Parameter:out is the return value which is going to be sent back to the client.
-func (s *Server) React(frame interface{}, c gnet.Conn) (out interface{}, action gnet.Action) {
-	if frame == nil {
-		logx.Errorf("conn(%s) frame is nil", c.DebugString())
-		return
-	}
-
-	msg2, ok := frame.(*codec.MTPRawMessage)
-	if !ok {
-		logx.Errorf("onReact - conn(%s) recv error: msg2 not codec.MTPRawMessage type", c.DebugString())
-		action = gnet.Close
-		out = nil
-		return
-	}
-
-	logx.Infof("onReact - conn(%s) recv frame: %s", c.DebugString(), msg2.String())
-
-	var err error
-	if msg2.GetAuthKeyId() == 0 {
-		out, err = s.onHandshake(c, msg2)
-		if err != nil {
-			action = gnet.Close
-			out = nil
+func (ctx *connContext) putAuthKey(k *authKeyUtil) {
+	ctx.Lock()
+	defer ctx.Unlock()
+	for _, key := range ctx.authKeys {
+		if key.Equal(k) {
 			return
 		}
-	} else {
-		ctx, ok := c.Context().(*connContext)
-		if !ok || ctx == nil {
-			ctx = newConnContext(strings.Split(c.RemoteAddr().String(), ":")[0])
-			c.SetContext(ctx)
-		}
+	}
 
-		authKey := ctx.authKey
-		if authKey == nil {
-			key := s.GetAuthKey(msg2.GetAuthKeyId())
-			if key != nil {
-				authKey = newAuthKeyUtil(key)
-				ctx.authKey = authKey
-			}
-		}
+	ctx.authKeys = append(ctx.authKeys, k)
+}
 
-		if authKey == nil {
-			//s.asyncRun(c.ConnID(),
-			//	func() error {
-			var (
-				err2       error
-				sessClient session_client.SessionClient
-				key3       *mtproto.AuthKeyInfo
-				key2       *mtproto.AuthKeyInfo
-			)
-			key2 = s.GetAuthKey(msg2.GetAuthKeyId())
-			if key2 != nil {
-				authKey = newAuthKeyUtil(key2)
-			} else {
-				sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.GetAuthKeyId(), 10))
-				if err2 != nil {
-					logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.GetAuthKeyId())
-					//// return err2
-					//out2 := &codec.MTPRawMessage{
-					//	Payload: make([]byte, 4),
-					//}
-					//var code = int32(-404)
-					//binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-					//out = out2
-					action = gnet.Close
-					out = nil
-					return
-				}
+func (ctx *connContext) getAllAuthKeyId() (idList []int64) {
+	ctx.Lock()
+	defer ctx.Unlock()
 
-				if key3, err2 = sessClient.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-					AuthKeyId: msg2.GetAuthKeyId(),
-				}); err2 != nil {
-					logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c.DebugString(), err2)
-					//// return err2
-					out2 := &codec.MTPRawMessage{
-						Payload: make([]byte, 4),
-					}
-					var code = int32(-404)
-					binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-					out = out2
-					action = gnet.Close
-					// out = nil
-					return
-				} else {
-					key2 = &mtproto.AuthKeyInfo{
-						AuthKeyId:          key3.AuthKeyId,
-						AuthKey:            key3.AuthKey,
-						AuthKeyType:        key3.AuthKeyType,
-						PermAuthKeyId:      key3.PermAuthKeyId,
-						TempAuthKeyId:      key3.TempAuthKeyId,
-						MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
-					}
-					s.PutAuthKey(key2)
-					authKey = newAuthKeyUtil(key2)
-				}
-			}
-			//	return nil
-			//},
-			//func(c gnet.Conn) {
-			ctx.authKey = authKey
-			s.onEncryptedMessage(c, ctx, authKey, msg2)
-			//})
-
-			//if authKey == nil {
-			//	out2 := &codec.MTPRawMessage{
-			//		Payload: make([]byte, 4),
-			//	}
-			//	var code = int32(-404)
-			//	binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-			//	out = out2
-			//}
-		} else {
-			err = s.onEncryptedMessage(c, ctx, authKey, msg2)
-		}
+	idList = make([]int64, len(ctx.authKeys))
+	for i, key := range ctx.authKeys {
+		idList[i] = key.AuthKeyId()
 	}
 
 	return
 }
 
-// Tick fires immediately after the server starts and will fire again
-// following the duration specified by the delay return value.
-func (s *Server) Tick() (delay time.Duration, action gnet.Action) {
-	// log.Debugf("tick")
-	return
+func (ctx *connContext) getHandshakeStateCtx(nonce []byte) *HandshakeStateCtx {
+	ctx.Lock()
+	defer ctx.Unlock()
+
+	for _, state := range ctx.handshakes {
+		if bytes.Equal(nonce, state.Nonce) {
+			return state
+		}
+	}
+
+	return nil
 }
 
-func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, mmsg *codec.MTPRawMessage) error {
-	logx.Infof("conn(%s) onEncryptedMessage: len(%d)", c.DebugString(), len(mmsg.Payload))
+func (ctx *connContext) putHandshakeStateCt(state *HandshakeStateCtx) {
+	ctx.Lock()
+	defer ctx.Unlock()
+
+	ctx.handshakes = append(ctx.handshakes, state)
+}
+
+func (ctx *connContext) encryptedMessageAble() bool {
+	ctx.Lock()
+	defer ctx.Unlock()
+	//return ctx.state == STATE_CONNECTED2 ||
+	//	ctx.state == STATE_AUTH_KEY ||
+	//	(ctx.state == STATE_HANDSHAKE &&
+	//		(ctx.handshakeCtx.State == STATE_pq_res ||
+	//			(ctx.handshakeCtx.State == STATE_dh_gen_res &&
+	//				ctx.handshakeCtx.ResState == RES_STATE_OK)))
+	return true
+}
+
+func (ctx *connContext) DebugString() string {
+	s := make([]string, 0, 4)
+	s = append(s, fmt.Sprintf(`"state":%d`, ctx.state))
+	// s = append(s, fmt.Sprintf(`"handshake_ctx":%s`, ctx.handshakeCtx.DebugString()))
+	//if ctx.authKey != nil {
+	//	s = append(s, fmt.Sprintf(`"auth_key_id":%d`, ctx.authKey.AuthKeyId()))
+	//}
+	return "{" + strings.Join(s, ",") + "}"
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+func (s *Server) OnNewConnection(conn *net2.TcpConnection) {
+	addr := conn.RemoteAddr().String()
+	ctx := newConnContext(strings.Split(addr, ":")[0])
+
+	logx.Infof("onNewConnection - {peer: %s, ctx: {%s}}", conn, ctx.DebugString())
+	conn.Context = ctx
+}
+
+func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface{}) error {
+	msg2, ok := msg.(*mtproto.MTPRawMessage)
+	if !ok {
+		err := fmt.Errorf("recv invalid MTPRawMessage: {peer: %s, msg: %v", conn, msg2)
+		logx.Error(err.Error())
+		return err
+	}
+
+	ctx, _ := conn.Context.(*connContext)
+
+	logx.Infof("onConnectionDataArrived - receive data: {peer: %s, ctx: %s, msg: %s}", conn, ctx.DebugString(), msg2.DebugString())
+
+	if msg2.ConnType() == codec.TRANSPORT_HTTP {
+		ctx.isHttp = true
+	}
+
+	var err error
+	if msg2.AuthKeyId() == 0 {
+		//if ctx.getState() == STATE_AUTH_KEY {
+		//	err = fmt.Errorf("invalid state STATE_AUTH_KEY: %d", ctx.getState())
+		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+		//	conn.Close()
+		//} else {
+		//	err = s.onUnencryptedRawMessage(ctx, conn, msg2)
+		//}
+		err = s.onUnencryptedMessage(ctx, conn, msg2)
+	} else {
+		//if !ctx.encryptedMessageAble() {
+		//	err = fmt.Errorf("invalid state: {state: %d, handshakeState: {%v}}", ctx.state, ctx.handshakeCtx)
+		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+		//	conn.Close()
+		//} else {
+		//	if ctx.state != STATE_AUTH_KEY {
+		authKey := ctx.getAuthKey(msg2.AuthKeyId())
+		if authKey == nil {
+			key := s.GetAuthKey(msg2.AuthKeyId())
+			if key == nil {
+				sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
+				if err2 != nil {
+					logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
+				} else {
+					key, err2 = sessClient.SessionQueryAuthKey(context.Background(), &sessionpb.TLSessionQueryAuthKey{
+						AuthKeyId: msg2.AuthKeyId(),
+					})
+					if err2 != nil {
+						logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", conn.String(), err2)
+					}
+				}
+			}
+			// key := s.GetAuthKey(msg2.AuthKeyId())
+			if key == nil {
+				err = fmt.Errorf("invalid auth_key_id: {%d}", msg2.AuthKeyId())
+				logx.Error("invalid auth_key_id: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+				var code = int32(-404)
+				cData := make([]byte, 4)
+				binary.LittleEndian.PutUint32(cData, uint32(code))
+				conn.Send(&mtproto.MTPRawMessage{Payload: cData})
+				// conn.Close()
+				return err
+			}
+			authKey = newAuthKeyUtil(key)
+			s.PutAuthKey(key)
+			ctx.putAuthKey(authKey)
+		}
+
+		err = s.onEncryptedMessage(ctx, conn, authKey, msg2)
+	}
+
+	return err
+}
+
+func (s *Server) OnConnectionClosed(conn *net2.TcpConnection) {
+	ctx, _ := conn.Context.(*connContext)
+	logx.Info("onServerConnectionClosed - {peer:%s, ctx:%s}", conn, ctx.DebugString())
+
+	if ctx.trd != nil {
+		s.timer.Del(ctx.trd)
+		ctx.trd = nil
+	}
+
+	sessId, connId := ctx.sessionId, conn.GetConnID()
+	for _, id := range ctx.getAllAuthKeyId() {
+		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
+		if bDeleted {
+			s.sendToSessionClientClosed(id, ctx.sessionId, ctx.clientIp)
+			logx.Infof("onServerConnectionClosed - sendClientClosed: {peer:%s, ctx:%s}", conn, ctx.DebugString())
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection, mmsg *mtproto.MTPRawMessage) error {
+	logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+
+	if len(mmsg.Payload) < 8 {
+		err := fmt.Errorf("invalid data len < 8")
+		logx.Error(err.Error())
+		return err
+	}
+
+	_, obj, err := parseFromIncomingMessage(mmsg.Payload[8:])
+	if err != nil {
+		err := fmt.Errorf("invalid data len < 8")
+		logx.Errorf(err.Error())
+	}
+
+	var rData []byte
+
+	switch request := obj.(type) {
+	case *mtproto.TLReqPq:
+		logx.Infof("TLReqPq - {\"request\":%s", request.DebugString())
+		resPQ, err := s.handshake.onReqPq(request)
+		if err != nil {
+			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			conn.Close()
+			return err
+		}
+		ctx.putHandshakeStateCt(&HandshakeStateCtx{
+			State:       STATE_pq_res,
+			Nonce:       resPQ.GetNonce(),
+			ServerNonce: resPQ.GetServerNonce(),
+		})
+		rData = serializeToBuffer(mtproto.GenerateMessageId(), resPQ)
+	case *mtproto.TLReqPqMulti:
+		logx.Infof("TLReqPqMulti - {\"request\":%s", request.DebugString())
+		resPQ, err := s.handshake.onReqPqMulti(request)
+		if err != nil {
+			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			conn.Close()
+			return err
+		}
+		ctx.putHandshakeStateCt(&HandshakeStateCtx{
+			State:       STATE_pq_res,
+			Nonce:       resPQ.GetNonce(),
+			ServerNonce: resPQ.GetServerNonce(),
+		})
+		rData = serializeToBuffer(mtproto.GenerateMessageId(), resPQ)
+	case *mtproto.TLReq_DHParams:
+		logx.Infof("TLReq_DHParams - {\"request\":%s", request.DebugString())
+		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
+			resServerDHParam, err := s.handshake.onReqDHParams(state, obj.(*mtproto.TLReq_DHParams))
+			if err != nil {
+				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				conn.Close()
+				return err
+			}
+			state.State = STATE_DH_params_res
+			rData = serializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
+		} else {
+			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			return conn.Close()
+		}
+	case *mtproto.TLSetClient_DHParams:
+		logx.Infof("TLSetClient_DHParams - {\"request\":%s", request.DebugString())
+		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
+			resSetClientDHParamsAnswer, err := s.handshake.onSetClientDHParams(state, obj.(*mtproto.TLSetClient_DHParams))
+			if err != nil {
+				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				return conn.Close()
+			}
+			state.State = STATE_dh_gen_res
+			rData = serializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
+		} else {
+			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			return conn.Close()
+		}
+	case *mtproto.TLMsgsAck:
+		logx.Infof("TLMsgsAck - {\"request\":%s", request.DebugString())
+		//err = s.onMsgsAck(state, obj.(*mtproto.TLMsgsAck))
+		//return nil, err
+		return nil
+	default:
+		err = fmt.Errorf("invalid handshake type")
+		return conn.Close()
+	}
+	return conn.Send(&mtproto.MTPRawMessage{Payload: rData})
+}
+
+func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, authKey *authKeyUtil, mmsg *mtproto.MTPRawMessage) error {
 	mtpRwaData, err := authKey.AesIgeDecrypt(mmsg.Payload[8:8+16], mmsg.Payload[24:])
 	if err != nil {
-		logx.Errorf("conn(%s) decrypt error: {%v}", c.DebugString(), err)
+		logx.Errorf("conn(%s) decrypt error: {%v}", conn.String(), err)
 		return err
 	}
 
 	var (
 		sessionId = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
 		isNew     = ctx.sessionId == 0
-		authKeyId = mmsg.GetAuthKeyId()
+		authKeyId = mmsg.AuthKeyId()
 	)
 	if isNew {
 		ctx.sessionId = sessionId
@@ -253,38 +360,119 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		// check sessionId??
 	}
 
-	s.pool.Submit(func() {
-		sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.GetAuthKeyId(), 10))
-		if err2 != nil {
-			logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", c.DebugString(), err, mmsg.GetAuthKeyId())
-			return
-		}
+	sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.AuthKeyId(), 10))
+	if err2 != nil {
+		logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", conn.String(), err, mmsg.AuthKeyId())
+		return err2
+	}
 
-		if isNew {
-			if s.authSessionMgr.AddNewSession(authKey, sessionId, c.ConnID()) {
-				sessClient.SessionCreateSession(context.Background(),
-					&session.TLSessionCreateSession{
-						Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-							ServerId:  s.session.gatewayId,
-							AuthKeyId: authKeyId,
-							SessionId: sessionId,
-							ClientIp:  ctx.clientIp,
-						}).To_SessionClientEvent(),
-					})
-			}
+	if isNew {
+		if s.authSessionMgr.AddNewSession(authKey, sessionId, conn.GetConnID()) {
+			sessClient.SessionCreateSession(context.Background(),
+				&sessionpb.TLSessionCreateSession{
+					Client: sessionpb.MakeTLSessionClientEvent(&sessionpb.SessionClientEvent{
+						ServerId:  s.session.gatewayId,
+						AuthKeyId: authKeyId,
+						SessionId: sessionId,
+						ClientIp:  ctx.clientIp,
+					}).To_SessionClientEvent(),
+				})
 		}
+	}
 
-		_, _ = sessClient.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
-			Data: &session.SessionClientData{
-				ServerId:  s.session.gatewayId,
-				AuthKeyId: authKey.AuthKeyId(),
-				SessionId: sessionId,
-				Salt:      int64(binary.LittleEndian.Uint64(mtpRwaData)),
-				Payload:   mtpRwaData[16:],
-				ClientIp:  ctx.clientIp,
-			},
-		})
+	_, _ = sessClient.SessionSendDataToSession(context.Background(), &sessionpb.TLSessionSendDataToSession{
+		Data: &sessionpb.SessionClientData{
+			ServerId:  s.session.gatewayId,
+			AuthKeyId: authKey.AuthKeyId(),
+			SessionId: sessionId,
+			Salt:      int64(binary.LittleEndian.Uint64(mtpRwaData)),
+			Payload:   mtpRwaData[16:],
+			ClientIp:  ctx.clientIp,
+		},
 	})
+
+	return nil
+}
+
+//func (s *Server) sendClientNew(conn *net2.TcpConnection, authKeyId, sessionId int64) {
+//	ctx, _ := conn.Context.(*connContext)
+//	if ctx == nil {
+//		logx.Errorf("sendClientNew: ctx is nil - {peer: %s}", conn)
+//		return
+//	}
+//
+//	c, err := s.GetSessionClient(strconv2.Int64ToString(authKeyId))
+//	if err != nil {
+//		logx.Errorf("getSessionClient error: {%v} - {peer: %s, authKeyId: %d}", err, conn, authKeyId)
+//		return
+//	}
+//
+//	c.CreateSession(context.Background(), &sessionpb.SessionClientEvent{
+//		ServerId:  env.Hostname,
+//		AuthKeyId: authKeyId,
+//		SessionId: sessionId,
+//		ClientIp:  ctx.clientIp,
+//	})
+//}
+//
+//func (s *Server) sendClientClosed(conn *net2.TcpConnection, authKeyId, sessionId int64) {
+//	ctx, _ := conn.Context.(*connContext)
+//	if ctx == nil {
+//		logx.Errorf("sendClientClosed: ctx is nil - {peer: %s}", conn)
+//		return
+//	}
+//
+//	c, err := s.GetSessionClient(strconv2.Int64ToString(authKeyId))
+//	if err != nil {
+//		logx.Errorf("getSessionClient error: {%v} - {peer: %s, authKeyId: %d}", err, conn, authKeyId)
+//		return
+//	}
+//
+//	c.CloseSession(context.Background(), &sessionpb.SessionClientEvent{
+//		ServerId:  env.Hostname,
+//		AuthKeyId: authKeyId,
+//		SessionId: sessionId,
+//		ClientIp:  ctx.clientIp,
+//	})
+//}
+
+func (s *Server) GetConnByConnID(id uint64) *net2.TcpConnection {
+	return s.server.GetConnection(id)
+}
+
+func (s *Server) SendToClient(conn *net2.TcpConnection, authKey *authKeyUtil, b []byte) error {
+	ctx, _ := conn.Context.(*connContext)
+	if ctx.trd != nil {
+		logx.Info("del conn timeout")
+		s.timer.Del(ctx.trd)
+		ctx.trd = nil
+	}
+
+	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(b)
+	x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+	x.Long(authKey.AuthKeyId())
+	x.Bytes(msgKey)
+	x.Bytes(mtpRawData)
+	//logx.Info("egate receiveData - ready sendToClient to: {peer: %s, auth_key_id = %d, session_id = %d}",
+	//	conn,
+	//	r.AuthKeyId,
+	//	r.SessionId)
+
+	msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
+	if ctx.isHttp {
+		//if !ctx.canSend {
+		//	s.authSessionMgr.PushBackHttpData(authKey.AuthKeyId(), ctx.sessionId, msg)
+		//	return nil
+		//}
+		ctx.canSend = false
+	}
+
+	// err := conn.Send(&mtproto.MTPRawMessage{Payload: x.GetBuf()})
+	err := conn.Send(msg)
+	if err != nil {
+		logx.Errorf("send error: %v", err)
+		return err
+	}
 
 	return nil
 }
@@ -296,8 +484,8 @@ func (s *Server) sendToSessionClientNew(authKeyId, sessionId int64, clientIp str
 		return
 	}
 
-	c.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
-		Client: &session.SessionClientEvent{
+	c.SessionCreateSession(context.Background(), &sessionpb.TLSessionCreateSession{
+		Client: &sessionpb.SessionClientEvent{
 			ServerId:  s.session.gatewayId,
 			AuthKeyId: authKeyId,
 			SessionId: sessionId,
@@ -313,16 +501,12 @@ func (s *Server) sendToSessionClientClosed(authKeyId, sessionId int64, clientIp 
 		return
 	}
 
-	c.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
-		Client: &session.SessionClientEvent{
+	c.SessionCloseSession(context.Background(), &sessionpb.TLSessionCloseSession{
+		Client: &sessionpb.SessionClientEvent{
 			ServerId:  s.session.gatewayId,
 			AuthKeyId: authKeyId,
 			SessionId: sessionId,
 			ClientIp:  clientIp,
 		},
 	})
-}
-
-func (s *Server) GetConnCounts() int {
-	return s.svr.CountConnections()
 }

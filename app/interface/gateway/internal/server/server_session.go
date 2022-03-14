@@ -17,12 +17,9 @@ package server
 
 import (
 	"context"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
-	"github.com/teamgram/teamgram-server/app/interface/gateway/internal/server/codec"
 
-	"github.com/panjf2000/gnet"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -74,19 +71,58 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 		return mtproto.BoolFalse, nil
 	}
 
-	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
-	x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
-	x.Long(authKey.AuthKeyId())
-	x.Bytes(msgKey)
-	x.Bytes(mtpRawData)
-	msg := &codec.MTPRawMessage{Payload: x.GetBuf()}
+	//msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
+	//x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+	//x.Long(authKey.AuthKeyId())
+	//x.Bytes(msgKey)
+	//x.Bytes(mtpRawData)
+	//msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
+
+	//for _, connId := range connIdList {
+	//	s.svr.Trigger(connId, func(c gnet.Conn) {
+	//		if err := c.UnThreadSafeWrite(msg); err != nil {
+	//			logx.Errorf("sendToClient error: %v", err)
+	//		}
+	//	})
+	//}
 
 	for _, connId := range connIdList {
-		s.svr.Trigger(connId, func(c gnet.Conn) {
-			if err := c.UnThreadSafeWrite(msg); err != nil {
-				logx.Errorf("sendToClient error: %v", err)
+		logx.Infof("[keyId: %d, sessionId: %d]: %v", in.AuthKeyId, in.SessionId, connId)
+		conn2 := s.server.GetConnection(connId)
+		if conn2 != nil {
+			ctx, _ := conn2.Context.(*connContext)
+			authKey = ctx.getAuthKey(in.AuthKeyId)
+			if authKey == nil {
+				logx.Errorf("invalid authKeyId, authKeyId = %d", in.AuthKeyId)
+				continue
 			}
-		})
+			if ctx.isHttp {
+				// isHttp = true
+				if !ctx.canSend {
+					continue
+				}
+			}
+			// conn = conn2
+			// break
+			if err = s.SendToClient(conn2, authKey, in.Payload); err == nil {
+				logx.Infof("ReceiveData -  result: {auth_key_id = %d, session_id = %d, conn = %s}",
+					in.AuthKeyId,
+					in.SessionId,
+					conn2)
+
+				if ctx.isHttp {
+					s.authSessionMgr.PushBackHttpData(in.AuthKeyId, in.SessionId, in.Payload)
+				}
+				return mtproto.ToBool(true), nil
+			} else {
+				logx.Errorf("ReceiveData - sendToClient error (%v), auth_key_id = %d, session_id = %d, conn_id_list = %v",
+					err,
+					in.AuthKeyId,
+					in.SessionId,
+					connIdList)
+			}
+		}
 	}
+
 	return mtproto.BoolTrue, nil
 }

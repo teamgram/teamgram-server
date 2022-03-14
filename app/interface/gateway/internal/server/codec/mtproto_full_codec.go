@@ -1,27 +1,23 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright (c) 2019-present,  NebulaChat Studio (https://nebula.chat).
 //  All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Author: Benqi (wubenqi@gmail.com)
 //
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 package codec
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+	"io"
 
-	"github.com/panjf2000/gnet"
+	"github.com/teamgram/proto/mtproto"
+
+	log "github.com/zeromicro/go-zero/core/logx"
 )
 
+// FullCodec
 // https://core.telegram.org/mtproto#tcp-transport
 //
 // If a payload (packet) needs to be transmitted from server to client or from client to server,
@@ -32,25 +28,74 @@ import (
 // (the first packet sent is numbered 0, the next one 1, etc.),
 // and 4 CRC32 bytes at the end (length, sequence number, and payload together).
 //
-
-// FullCodec FullCodec
 type FullCodec struct {
+	conn io.ReadWriteCloser
 }
 
-func newMTProtoFullCodec() *FullCodec {
-	return new(FullCodec)
+func NewMTProtoFullCodec(conn io.ReadWriteCloser) *FullCodec {
+	return &FullCodec{
+		conn: conn,
+	}
 }
 
-// Encode encodes frames upon server responses into TCP stream.
-func (c *FullCodec) Encode(conn gnet.Conn, msg interface{}) ([]byte, error) {
-	rawMsg, ok := msg.(*MTPRawMessage)
-	if !ok {
-		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
-		// log.Error(err.Error())
+func (c *FullCodec) Receive() (interface{}, error) {
+	var size int
+	var n int
+	var err error
+
+	b := make([]byte, 4)
+	n, err = io.ReadFull(c.conn, b)
+	if err != nil {
 		return nil, err
 	}
 
-	b := rawMsg.Payload
+	size = int(binary.LittleEndian.Uint32(b))
+	// Check bufLen
+	if size < 12 {
+		err = fmt.Errorf("invalid len: %d", size)
+		return nil, err
+	}
+
+	log.Infof("size1: %d", size)
+
+	left := size
+	buf := make([]byte, size-4)
+	for left > 0 {
+		n, err = io.ReadFull(c.conn, buf[size-left:])
+		if err != nil {
+			log.Errorf("ReadFull2 error: %v", err)
+			return nil, err
+		}
+		left -= n
+	}
+
+	if size > 4096 {
+		log.Infof("readFull2: %s", hex.EncodeToString(buf[:256]))
+	}
+
+	seqNum := binary.LittleEndian.Uint32(buf[:4])
+	// TODO(@benqi): check seqNum, save last seq_num
+	_ = seqNum
+
+	crc32 := binary.LittleEndian.Uint32(buf[len(buf)-4:])
+	// TODO(@benqi): check crc32
+	_ = crc32
+
+	authKeyId := int64(binary.LittleEndian.Uint64(buf[4:]))
+	message := mtproto.NewMTPRawMessage(authKeyId, 0, TRANSPORT_TCP)
+	message.Decode(buf)
+	return message, nil
+}
+
+func (c *FullCodec) Send(msg interface{}) error {
+	message, ok := msg.(*mtproto.MTPRawMessage)
+	if !ok {
+		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
+		log.Error(err.Error())
+		return err
+	}
+
+	b := message.Encode()
 
 	sb := make([]byte, 8)
 	// minus padding
@@ -66,58 +111,14 @@ func (c *FullCodec) Encode(conn gnet.Conn, msg interface{}) ([]byte, error) {
 	binary.LittleEndian.PutUint32(crc32Buf, crc32)
 	b = append(sb, crc32Buf...)
 
-	return b, nil
-}
-
-// Decode decodes frames from TCP stream via specific implementation.
-func (c *FullCodec) Decode(conn gnet.Conn) (interface{}, error) {
-	var (
-		size int
-		buf  []byte
-		n    int
-		in   innerBuffer
-		err  error
-	)
-
-	in = conn.Read()
-
-	if buf, err = in.readN(4); err != nil {
-		return nil, errUnexpectedEOF
-	}
-	size += 4
-
-	n = int(binary.LittleEndian.Uint32(buf))
-	// Check bufLen
-	if n < 12 {
-		err = fmt.Errorf("invalid len: %d", size)
-		return nil, err
+	_, err := c.conn.Write(b)
+	if err != nil {
+		log.Errorf("Send msg error: %s", err)
 	}
 
-	if buf, err = in.readN(n); err != nil {
-		return nil, errUnexpectedEOF
-	}
-	size += n
-	conn.ShiftN(size)
-
-	seq := binary.LittleEndian.Uint32(buf[:4])
-	// TODO(@benqi): check seqNum, save last seq_num
-	_ = seq
-
-	crc32 := binary.LittleEndian.Uint32(buf[len(buf)-4:])
-	// TODO(@benqi): check crc32
-	_ = crc32
-
-	return NewMTPRawMessage(false,
-		int64(binary.LittleEndian.Uint64(buf[4:])),
-		0,
-		buf), nil
+	return err
 }
 
-// Clone ...
-func (c *FullCodec) Clone() gnet.ICodec {
-	return new(FullCodec)
-}
-
-// Release ...
-func (c *FullCodec) Release() {
+func (c *FullCodec) Close() error {
+	return c.conn.Close()
 }

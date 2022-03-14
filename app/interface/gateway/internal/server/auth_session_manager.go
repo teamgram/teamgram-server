@@ -70,7 +70,7 @@ func (m *authSessionManager) PopFrontHttpData(authKeyId, sessionId int64) []byte
 	return nil
 }
 
-func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64, connId int64) (bNew bool) {
+func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64, connId uint64) (bNew bool) {
 	logx.Infof("addNewSession: auth_key_id: %d, session_id: %d, conn_id: %d",
 		authKey.AuthKeyId(),
 		sessionId,
@@ -86,7 +86,7 @@ func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64
 		)
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
 			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
+				if e.Value.(uint64) == connId {
 					cExisted = true
 					break
 				}
@@ -123,7 +123,7 @@ func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64
 	return
 }
 
-func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId int64) (bDeleted bool) {
+func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId uint64) (bDeleted bool) {
 	logx.Infof("removeSession: auth_key_id: %d, session_id: %d, conn_id: %d",
 		authKeyId,
 		sessionId,
@@ -135,7 +135,7 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	if v, ok := m.sessions[authKeyId]; ok {
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
 			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
+				if e.Value.(uint64) == connId {
 					v2.connIdList.Remove(e)
 					break
 				}
@@ -153,15 +153,15 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	return
 }
 
-func (m *authSessionManager) FoundSessionConnIdList(authKeyId, sessionId int64) (*authKeyUtil, []int64) {
+func (m *authSessionManager) FoundSessionConnIdList(authKeyId, sessionId int64) (*authKeyUtil, []uint64) {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
 	if v, ok := m.sessions[authKeyId]; ok {
 		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			connIdList := make([]int64, 0, v2.connIdList.Len())
+			connIdList := make([]uint64, 0, v2.connIdList.Len())
 			for e := v2.connIdList.Back(); e != nil; e = e.Prev() {
-				connIdList = append(connIdList, e.Value.(int64))
+				connIdList = append(connIdList, e.Value.(uint64))
 			}
 			return v.authKey, connIdList
 		}

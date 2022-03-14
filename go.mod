@@ -9,9 +9,8 @@ require (
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/oschwald/geoip2-golang v1.6.1
-	github.com/panjf2000/gnet v1.5.3
 	github.com/stretchr/testify v1.7.0
-	github.com/teamgram/marmota v0.0.0-20220307130138-3393ec340f58
+	github.com/teamgram/marmota v0.0.0-20220314055014-4038ff189d0a
 	github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af
 	github.com/zeromicro/go-zero v1.3.1
 	google.golang.org/grpc v1.44.0
@@ -61,7 +60,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/openzipkin/zipkin-go v0.4.0 // indirect
 	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
-	github.com/panjf2000/ants/v2 v2.4.7 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -71,7 +69,6 @@ require (
 	github.com/prometheus/procfs v0.6.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.2 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.2 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.2 // indirect
@@ -96,7 +93,6 @@ require (
 	google.golang.org/genproto v0.0.0-20220228195345-15d65a4533f7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	k8s.io/api v0.20.12 // indirect
@@ -108,7 +104,4 @@ require (
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
-replace (
-	github.com/panjf2000/gnet v1.5.3 => github.com/teamgram/gnet v1.6.5-0.20220203114726-06bfacbd8548
-	github.com/zeromicro/go-zero v1.3.1 => github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203
-)
+replace github.com/zeromicro/go-zero v1.3.1 => github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203

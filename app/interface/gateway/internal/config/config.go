@@ -10,21 +10,22 @@
 package config
 
 import (
+	"github.com/teamgram/marmota/pkg/net2"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	// MaxProc        int
+	MaxProc        int
 	KeyFile        string
 	KeyFingerprint string
-	Server         *TcpServerConfig
+	Server         *net2.TcpServerConfig
 	Session        zrpc.RpcClientConf
 }
 
-type TcpServerConfig struct {
-	Addrs      []string
-	Multicore  bool
-	SendBuf    int
-	ReceiveBuf int
-}
+//type TcpServerConfig struct {
+//	Addrs      []string
+//	Multicore  bool
+//	SendBuf    int
+//	ReceiveBuf int
+//}
