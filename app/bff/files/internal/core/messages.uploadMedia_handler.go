@@ -30,10 +30,13 @@ import (
 // MessagesUploadMedia
 // messages.uploadMedia#519bc2b1 peer:InputPeer media:InputMedia = MessageMedia;
 func (c *FilesCore) MessagesUploadMedia(in *mtproto.TLMessagesUploadMedia) (*mtproto.MessageMedia, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.uploadMedia blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	rValue, err := c.makeMediaByInputMedia(in.GetMedia())
+	if err != nil {
+		c.Logger.Errorf("messages.uploadMedia - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return rValue, nil
 }
 
 func (c *FilesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
