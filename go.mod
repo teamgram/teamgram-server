@@ -10,7 +10,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/oschwald/geoip2-golang v1.6.1
 	github.com/stretchr/testify v1.7.0
-	github.com/teamgram/marmota v0.0.0-20220314055014-4038ff189d0a
+	github.com/teamgram/marmota v0.0.0-20220314144307-22e582614d69
 	github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af
 	github.com/zeromicro/go-zero v1.3.1
 	google.golang.org/grpc v1.44.0
@@ -104,4 +104,4 @@ require (
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
-replace github.com/zeromicro/go-zero v1.3.1 => github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203
+replace github.com/zeromicro/go-zero v1.3.1 => github.com/teamgramio/go-zero v1.3.1-0.20220314151701-fcad5c744b40

@@ -393,12 +393,12 @@ github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/teamgram/marmota v0.0.0-20220314055014-4038ff189d0a h1:SBE0Xy4J+XdLItqn/QiSfk6MBWwY7fvM8g1ZksP3m9E=
-github.com/teamgram/marmota v0.0.0-20220314055014-4038ff189d0a/go.mod h1:be8qyHZSxhdvr1xwmoQd37a/lUEy1DncfUlTMFx6Xps=
+github.com/teamgram/marmota v0.0.0-20220314144307-22e582614d69 h1:iqm73AYb10I2FqQuTlUk6dJa0fqjoazJ278I+HVYmZo=
+github.com/teamgram/marmota v0.0.0-20220314144307-22e582614d69/go.mod h1:tFClio2OcyK1uuH4cxrTlgTyyS7fmOZld1otoT8VyUw=
 github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af h1:6xu12xKiEw4MsB31ir9xoxYwIaVyLSh1NvDK5NHQ0Vg=
 github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
-github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203 h1:7t9g04xpc16rdZ+mrJcx+0dgwJzuABuXO/kdGGN/ljo=
-github.com/teamgramio/go-zero v1.3.1-0.20220301141601-aaf0bef29203/go.mod h1:JsgCzJSUcjZl487xtqWHzYFa7Wl4f5Gi3lcteOWgNRA=
+github.com/teamgramio/go-zero v1.3.1-0.20220314151701-fcad5c744b40 h1:o9la6ieeAzmabOtznReq5m7711dH3U2l0kIQUvYG8Hc=
+github.com/teamgramio/go-zero v1.3.1-0.20220314151701-fcad5c744b40/go.mod h1:JsgCzJSUcjZl487xtqWHzYFa7Wl4f5Gi3lcteOWgNRA=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.0.2/go.mod h1:1WAq6h33pAW+iRreB34OORO2Nf7qel3VV3fjBj+hCSs=

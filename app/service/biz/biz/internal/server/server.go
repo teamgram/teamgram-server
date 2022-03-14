@@ -117,7 +117,6 @@ func (s *Server) Initialize() error {
 			updates_helper.New(updates_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 				Mysql:         c.Mysql,
-				Cache:         c.Cache,
 				KV:            c.KV,
 				IdgenClient:   c.IdgenClient,
 			}))
@@ -128,7 +127,6 @@ func (s *Server) Initialize() error {
 			user_helper.New(user_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 				Mysql:         c.Mysql,
-				Cache:         c.Cache,
 				MediaClient:   c.MediaClient,
 			}))
 
