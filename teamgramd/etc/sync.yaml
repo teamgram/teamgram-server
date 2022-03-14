@@ -60,12 +60,3 @@ ChatClient:
       - 127.0.0.1:2379
     Key: service.biz_service
 
-PushClient:
-  Topic:   "Push-T"
-  Brokers:
-    - 127.0.0.1:9092
-BotsClient:
-  Topic:   "BotFather-T"
-  Brokers:
-    - 127.0.0.1:9092
-

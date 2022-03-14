@@ -25,44 +25,18 @@ func (c *SyncCore) SyncBroadcastUpdates(in *sync.TLSyncBroadcastUpdates) (*mtpro
 		Updates: in.Updates,
 	}
 
-	switch in.BroadcastType {
-	case sync.BroadcastTypeChat:
-		idList, _ := c.svcCtx.Dao.ChatClient.ChatGetChatParticipantIdList(c.ctx, &chatpb.TLChatGetChatParticipantIdList{
-			ChatId: in.ChatId,
-		})
+	if in.BroadcastType != sync.BroadcastTypeChat {
+		c.Logger.Errorf("invalid broadcast_type: %s", in.DebugString())
+		return mtproto.EmptyVoid, nil
+	}
 
-		for _, id := range idList.GetDatas() {
-			pushUpdates.UserId = id
-			c.SyncPushUpdates(pushUpdates)
-		}
-	default:
-		//ch, _ := c.svcCtx.Dao.ChannelClient.ChannelGetMutableChannelByPush(c.ctx, &channelpb.TLChannelGetMutableChannelByPush{
-		//	ChannelId: in.ChatId,
-		//	OffsetId:  0,
-		//	Limit:     0,
-		//})
-		//
-		//ch.WalkByPush(func(isAdmin bool, pushUserId int64) {
-		//	if ok, _ := container2.Contains(pushUserId, in.ExcludeIdList); ok {
-		//		return
-		//	}
-		//	switch in.BroadcastType {
-		//	case sync.BroadcastTypeChannel:
-		//	case sync.BroadcastTypeChannelAdmin:
-		//		if !isAdmin {
-		//			return
-		//		}
-		//	case sync.BroadcastTypeChannelNotAdmin:
-		//		if isAdmin {
-		//			return
-		//		}
-		//	default:
-		//		return
-		//	}
-		//
-		//	pushUpdates.UserId = pushUserId
-		//	c.SyncPushUpdates(pushUpdates)
-		//})
+	idList, _ := c.svcCtx.Dao.ChatClient.ChatGetChatParticipantIdList(c.ctx, &chatpb.TLChatGetChatParticipantIdList{
+		ChatId: in.ChatId,
+	})
+
+	for _, id := range idList.GetDatas() {
+		pushUpdates.UserId = id
+		c.SyncPushUpdates(pushUpdates)
 	}
 
 	return mtproto.EmptyVoid, nil

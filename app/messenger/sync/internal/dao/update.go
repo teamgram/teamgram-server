@@ -9,25 +9,11 @@ package dao
 import (
 	"context"
 	"github.com/zeromicro/go-zero/core/jsonx"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/dal/dataobject"
 )
-
-func (d *Dao) AddQtsToUpdatesQueue(ctx context.Context, userId int64, qts, updateType int32, updateData []byte) int32 {
-	do := &dataobject.UserQtsUpdatesDO{
-		UserId:     userId,
-		UpdateType: updateType,
-		UpdateData: updateData,
-		Date2:      time.Now().Unix(),
-		Qts:        qts,
-	}
-
-	i, _, _ := d.UserQtsUpdatesDAO.Insert(ctx, do)
-	return int32(i)
-}
 
 func (d *Dao) AddSeqToUpdatesQueue(ctx context.Context, authId, userId int64, updateType int32, updateData []byte) int32 {
 	seq := int32(d.NextSeqId(ctx, authId))
@@ -61,40 +47,40 @@ func (d *Dao) AddToPtsQueue(ctx context.Context, userId int64, pts, ptsCount int
 	return int32(i)
 }
 
-func (d *Dao) AddToChannelPtsQueue(ctx context.Context, channelId int64, pts, ptsCount int32, update *mtproto.Update) int32 {
-	// TODO(@benqi): check error
-	updateData, _ := jsonx.Marshal(update)
-
-	do := &dataobject.ChannelPtsUpdatesDO{
-		ChannelId:  channelId,
-		Pts:        pts,
-		PtsCount:   ptsCount,
-		UpdateType: mtproto.GetUpdateType(update),
-		UpdateData: string(updateData),
-		Date2:      time.Now().Unix(),
-	}
-
-	logx.WithContext(ctx).Infof("addToChannelPtsQueue: %v", do)
-
-	i, _, _ := d.ChannelPtsUpdatesDAO.Insert(ctx, do)
-	return int32(i)
-}
-
-func (d *Dao) AddToBotUpdateQueue(ctx context.Context, botId int64, update *mtproto.Update) int32 {
-	// TODO(@benqi): check error
-	updateId := d.IDGenClient2.NextBotUpdateId(ctx, botId)
-	updateData, _ := jsonx.Marshal(update)
-
-	do := &dataobject.BotUpdatesDO{
-		BotId:      botId,
-		UpdateId:   updateId,
-		UpdateType: mtproto.GetUpdateType(update),
-		UpdateData: string(updateData),
-		Date2:      time.Now().Unix(),
-	}
-
-	if _, _, err := d.BotUpdatesDAO.Insert(ctx, do); err != nil {
-		_ = err
-	}
-	return updateId
-}
+//func (d *Dao) AddToChannelPtsQueue(ctx context.Context, channelId int64, pts, ptsCount int32, update *mtproto.Update) int32 {
+//	// TODO(@benqi): check error
+//	updateData, _ := jsonx.Marshal(update)
+//
+//	do := &dataobject.ChannelPtsUpdatesDO{
+//		ChannelId:  channelId,
+//		Pts:        pts,
+//		PtsCount:   ptsCount,
+//		UpdateType: mtproto.GetUpdateType(update),
+//		UpdateData: string(updateData),
+//		Date2:      time.Now().Unix(),
+//	}
+//
+//	logx.WithContext(ctx).Infof("addToChannelPtsQueue: %v", do)
+//
+//	i, _, _ := d.ChannelPtsUpdatesDAO.Insert(ctx, do)
+//	return int32(i)
+//}
+//
+//func (d *Dao) AddToBotUpdateQueue(ctx context.Context, botId int64, update *mtproto.Update) int32 {
+//	// TODO(@benqi): check error
+//	updateId := d.IDGenClient2.NextBotUpdateId(ctx, botId)
+//	updateData, _ := jsonx.Marshal(update)
+//
+//	do := &dataobject.BotUpdatesDO{
+//		BotId:      botId,
+//		UpdateId:   updateId,
+//		UpdateType: mtproto.GetUpdateType(update),
+//		UpdateData: string(updateData),
+//		Date2:      time.Now().Unix(),
+//	}
+//
+//	if _, _, err := d.BotUpdatesDAO.Insert(ctx, do); err != nil {
+//		_ = err
+//	}
+//	return updateId
+//}

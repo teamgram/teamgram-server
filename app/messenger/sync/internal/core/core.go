@@ -11,11 +11,12 @@ package core
 
 import (
 	"context"
+	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/svc"
-	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -54,12 +55,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			if isBot {
-				update.Pts_INT32 = c.svcCtx.Dao.AddToBotUpdateQueue(c.ctx, userId, update)
-			} else {
-				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-				needPush = true
-			}
+			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			needPush = true
 		},
 		mtproto.Predicate_updateDeleteMessages: func(
 			userId int64,
@@ -69,9 +66,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			if !isBot {
-				needPush = true
-			}
+			needPush = true
 		},
 		mtproto.Predicate_updateReadHistoryInbox: func(
 			userId int64,
@@ -81,9 +76,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			if !isBot {
-				needPush = true
-			}
+			needPush = true
 		},
 		mtproto.Predicate_updateReadHistoryOutbox: func(
 			userId int64,
@@ -93,9 +86,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			if !isBot {
-				needPush = true
-			}
+			needPush = true
 		},
 		mtproto.Predicate_updateWebPage: func(
 			userId int64,
@@ -104,11 +95,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-
 			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			if !isBot {
-				needPush = true
-			}
+			needPush = true
 		},
 		mtproto.Predicate_updateReadMessagesContents: func(
 			userId int64,
@@ -118,45 +106,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-			if !isBot {
-				needPush = true
-			}
-		},
-		mtproto.Predicate_updateNewChannelMessage: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.Pts_INT32, update.PtsCount, update)
-			}
-			if !isBot {
-				needPush = true
-			}
-		},
-		mtproto.Predicate_updateDeleteChannelMessages: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.Pts_INT32, update.PtsCount, update)
-			}
-		},
-		mtproto.Predicate_updateEditChannelMessage: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.Pts_INT32, update.PtsCount, update)
-			}
+			needPush = true
 		},
 		mtproto.Predicate_updateEditMessage: func(
 			userId int64,
@@ -165,23 +115,8 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			if isBot {
-				update.Pts_INT32 = c.svcCtx.Dao.AddToBotUpdateQueue(c.ctx, userId, update)
-			} else {
-				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
-				needPush = true
-			}
-		},
-		mtproto.Predicate_updateChannelWebPage: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.Pts_INT32, update.PtsCount, update)
-			}
+			c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
+			needPush = true
 		},
 		mtproto.Predicate_updateFolderPeers: func(
 			userId int64,
@@ -191,7 +126,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.PtsCount, update.PtsCount, update)
+				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
 			}
 		},
 		mtproto.Predicate_updatePinnedMessages: func(
@@ -202,18 +137,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			date int32,
 		) {
 			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.PtsCount, update.PtsCount, update)
-			}
-		},
-		mtproto.Predicate_updateBotCallbackQuery: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if isBot {
-				update.Pts_INT32 = c.svcCtx.Dao.AddToBotUpdateQueue(c.ctx, userId, update)
+				c.svcCtx.Dao.AddToPtsQueue(c.ctx, userId, update.Pts_INT32, update.PtsCount, update)
 			}
 		},
 		mtproto.Predicate_updatePhoneCall: func(
@@ -235,42 +159,9 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 			chats []*mtproto.Chat,
 			date int32,
 		) {
-			if !isBot {
-				needPush = true
-			}
-		},
-		mtproto.Predicate_updatePinnedChannelMessages: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if syncType == syncTypeUserNotMe {
-				c.svcCtx.Dao.AddToChannelPtsQueue(c.ctx, update.ChannelId, update.Pts_INT32, update.PtsCount, update)
-			}
-		},
-		mtproto.Predicate_updateEncryption: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
-			if update.GetChat().GetPredicateName() == mtproto.Predicate_encryptedChatRequested ||
-				update.GetChat().GetPredicateName() == mtproto.Predicate_updateEncryption {
-				needPush = true
-			}
-		},
-		mtproto.Predicate_updateNewEncryptedMessage: func(
-			userId int64,
-			update *mtproto.Update,
-			users []*mtproto.User,
-			chats []*mtproto.Chat,
-			date int32,
-		) {
 			needPush = true
-		}})
+		},
+	})
 
 	return false, nil
 }
@@ -319,18 +210,6 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, cl
 				serverIdKeyIdList[sess.Gateway] = []int64{sess.AuthKeyId}
 			}
 		}
-		//for keyId, serverId := range statusList {
-		//	if syncType == syncTypeUserNotMe && authKeyId == keyId {
-		//		continue
-		//	}
-		//	pushExcludeList = append(pushExcludeList, keyId)
-		//	if keyIdList, ok := serverIdKeyIdList[serverId]; ok {
-		//		keyIdList = append(keyIdList, keyId)
-		//		serverIdKeyIdList[serverId] = keyIdList
-		//	} else {
-		//		serverIdKeyIdList[serverId] = []int64{keyId}
-		//	}
-		//}
 
 		logx.Infof("serverIdKeyIdList - #%v", serverIdKeyIdList)
 		for serverId, keyIdList := range serverIdKeyIdList {
@@ -348,32 +227,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, cl
 		}
 
 		if syncType == syncTypeUser {
-			if mtproto.IsBotFather(userId) {
-				c.svcCtx.Dao.BotsClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-					UserId:  userId,
-					Updates: pushData,
-				})
-			} else if mtproto.IsBotBing(userId) {
-				//c.svcCtx.Dao.BotsClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-				//	UserId:   userId,
-				//	Updates: pushData,
-				//})
-			} else if mtproto.IsBotGif(userId) {
-				//c.svcCtx.Dao.BotsClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-				//	UserId:   userId,
-				//	Updates: pushData,
-				//})
-			} else if mtproto.IsBotPic(userId) {
-				//c.svcCtx.Dao.BotsClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-				//	UserId:   userId,
-				//	Updates: pushData,
-				//})
-			} else if mtproto.IsBotFoursquare(userId) {
-				//c.svcCtx.Dao.BotsClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-				//	UserId:   userId,
-				//	Updates: pushData,
-				//})
-			} else if notification {
+			if c.svcCtx.Dao.PushClient != nil {
 				c.Logger.Infof("push PushClient...")
 				c.svcCtx.Dao.PushClient.SyncPushUpdatesIfNot(c.ctx, &sync.TLSyncPushUpdatesIfNot{
 					UserId:   userId,

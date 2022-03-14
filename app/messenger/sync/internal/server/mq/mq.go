@@ -62,17 +62,6 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 				c.Logger.Infof("sync.pushUpdates - request: %s", r.DebugString())
 
 				c.SyncPushUpdates(r)
-			case proto.MessageName((*sync.TLSyncPushBotUpdates)(nil)):
-				c := core.New(ctx, svcCtx)
-
-				r := new(sync.TLSyncPushBotUpdates)
-				if err := json.Unmarshal(value, r); err != nil {
-					c.Logger.Error(err.Error())
-					return
-				}
-				c.Logger.Infof("sync.pushBotUpdates - request: %s", r.DebugString())
-
-				c.SyncPushBotUpdates(r)
 			case proto.MessageName((*sync.TLSyncPushRpcResult)(nil)):
 				c := core.New(ctx, svcCtx)
 

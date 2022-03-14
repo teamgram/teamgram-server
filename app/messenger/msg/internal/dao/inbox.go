@@ -118,7 +118,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 		RandomId:          clientRandomId,
 		Pts:               0,
 		PtsCount:          0,
-		MessageFilterType: int32(mtproto.GetMediaType(message)),
+		MessageFilterType: mtproto.GetMediaType(message),
 		Message:           message,
 		Mentioned:         message.Mentioned,
 		MediaUnread:       message.MediaUnread,
