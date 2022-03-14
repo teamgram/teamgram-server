@@ -43,7 +43,6 @@ type Config struct {
 	SessionClient zrpc.RpcClientConf
 	IdgenClient   zrpc.RpcClientConf
 	StatusClient  zrpc.RpcClientConf
-	ChannelClient zrpc.RpcClientConf
 	ChatClient    zrpc.RpcClientConf
 	PushClient    *kafka.KafkaProducerConf `json:",optional"`
 }
