@@ -30,6 +30,15 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 - [minio](https://docs.min.io/docs/minio-quickstart-guide.html#GNU/Linux)
 - [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
 
+##### Run dpends with docker-compose
+```bash
+# pull docker images
+docker-compose pull
+
+# run docker-compose
+docker-compose up -d
+```
+
 #### Install Teamgram
 - Get source code　
 ```
