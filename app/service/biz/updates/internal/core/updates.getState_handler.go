@@ -23,7 +23,7 @@ func (c *UpdatesCore) UpdatesGetState(in *updates.TLUpdatesGetState) (*mtproto.U
 		pts = int32(c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId))
 	}
 
-	seq := int32(c.svcCtx.Dao.IDGenClient2.CurrentSeqId(c.ctx, in.AuthKeyId))
+	seq := c.svcCtx.Dao.IDGenClient2.CurrentSeqId(c.ctx, in.AuthKeyId)
 	if seq == 0 {
 		seq = -1
 	}
