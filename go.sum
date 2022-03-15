@@ -397,6 +397,8 @@ github.com/teamgram/marmota v0.0.0-20220314144307-22e582614d69 h1:iqm73AYb10I2Fq
 github.com/teamgram/marmota v0.0.0-20220314144307-22e582614d69/go.mod h1:tFClio2OcyK1uuH4cxrTlgTyyS7fmOZld1otoT8VyUw=
 github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af h1:6xu12xKiEw4MsB31ir9xoxYwIaVyLSh1NvDK5NHQ0Vg=
 github.com/teamgram/proto v0.0.0-20220311130431-cc9afe0da7af/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.0.0-20220315100427-c0acd8ce93d5 h1:hQB79vr6uJDmtGhX7B9OWwx7joTzDbbiXMeqguHkKLA=
+github.com/teamgram/proto v0.0.0-20220315100427-c0acd8ce93d5/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/teamgramio/go-zero v1.3.1-0.20220314151701-fcad5c744b40 h1:o9la6ieeAzmabOtznReq5m7711dH3U2l0kIQUvYG8Hc=
 github.com/teamgramio/go-zero v1.3.1-0.20220314151701-fcad5c744b40/go.mod h1:JsgCzJSUcjZl487xtqWHzYFa7Wl4f5Gi3lcteOWgNRA=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
