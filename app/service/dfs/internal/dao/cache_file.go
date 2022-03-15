@@ -74,7 +74,7 @@ func (d *Dao) getCacheFileInfo(ctx context.Context, id int64) (ownerId, fileId i
 
 	v := strings.Split(s, "_")
 	if len(v) != 2 {
-		logx.WithContext(ctx).Errorf("getCacheFileInfo(%s) error(%v)", key, err)
+		logx.WithContext(ctx).Errorf("split error(len(%v)!=2)", s)
 		return
 	}
 

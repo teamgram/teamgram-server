@@ -183,6 +183,7 @@ func (trans *FFmpegUtil) ConvertToMp4ByPipe(gifPath string, dstW, dstH int) (byt
 	return
 }
 
+// GetFirstFrame
 // cmd := exec.Command("ffmpeg", "-i", filename, "-vframes", "1", "-s", fmt.Sprintf("%dx%d", width, height), "-f", "singlejpeg", "-")
 func (trans *FFmpegUtil) GetFirstFrame(iFilePath string) (bytes []byte, err error) {
 	// Create new instance of transcoder
@@ -197,10 +198,10 @@ func (trans *FFmpegUtil) GetFirstFrame(iFilePath string) (bytes []byte, err erro
 
 	trans.MediaFile().SetInputPath(iFilePath)
 
-	trans.MediaFile().SetOutputFormat("singlejpeg")
+	trans.MediaFile().SetOutputFormat("image2")
 	trans.MediaFile().SetVframes(1)
 
-	r, err := trans.CreateOutputPipe("singlejpeg")
+	r, err := trans.CreateOutputPipe("image2")
 	if err != nil {
 		logx.Errorf("createOutputPipe error: %v", err)
 		return
@@ -257,7 +258,7 @@ func (trans *FFmpegUtil) GetFirstFrameByPipe(iPipeData []byte) (bytes []byte, er
 		return
 	}
 
-	trans.MediaFile().SetOutputFormat("singlejpeg")
+	trans.MediaFile().SetOutputFormat("image2")
 	trans.MediaFile().SetVframes(1)
 
 	// Create an input pipe to write to, which will return *io.PipeWriter
@@ -268,7 +269,7 @@ func (trans *FFmpegUtil) GetFirstFrameByPipe(iPipeData []byte) (bytes []byte, er
 	}
 	// log.Println(err)
 
-	r, err := trans.CreateOutputPipe("singlejpeg")
+	r, err := trans.CreateOutputPipe("image2")
 	if err != nil {
 		logx.Errorf("createOutputPipe error: %v", err)
 		return

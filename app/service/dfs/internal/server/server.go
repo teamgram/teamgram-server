@@ -41,12 +41,12 @@ func (s *Server) Initialize() error {
 	logx.Infov(c)
 	ctx := svc.NewServiceContext(c)
 
-	s.httpSrv = http.New(ctx, c.MiniHttp)
-
 	s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 	go func() {
 		s.grpcSrv.Start()
 	}()
+
+	s.httpSrv = http.New(ctx, c.MiniHttp)
 
 	return nil
 }
