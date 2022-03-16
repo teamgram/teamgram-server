@@ -65,10 +65,14 @@ func (c *InboxCore) InboxSendUserMessageToInbox(in *inbox.TLInboxSendUserMessage
 		}
 	}
 	if isBot {
-		_, err = c.svcCtx.Dao.SyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
-			UserId:  inBox.UserId,
-			Updates: pushUpdates,
-		})
+		if c.svcCtx.Dao.BotSyncClient != nil {
+			_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
+				UserId:  inBox.UserId,
+				Updates: pushUpdates,
+			})
+		} else {
+			// TODO: log
+		}
 	} else {
 		_, err = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 			UserId:  inBox.UserId,

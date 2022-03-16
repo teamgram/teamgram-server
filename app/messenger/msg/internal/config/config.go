@@ -34,4 +34,5 @@ type Config struct {
 	BizServiceClient zrpc.RpcClientConf
 	InboxClient      *kafka.KafkaProducerConf
 	SyncClient       *kafka.KafkaProducerConf
+	BotSyncClient    *kafka.KafkaProducerConf `json:",optional"`
 }

@@ -32,18 +32,22 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	db := sqlx.NewMySQL(&c.Mysql)
-	return &ServiceContext{
-		Config: c,
-		Dao: &dao.Dao{
-			Mysql:        dao.NewMysqlDao(db),
-			KV:           kv.NewStore(c.KV),
-			IDGenClient2: idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
-			UserClient:   user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
-			ChatClient:   chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
-			SyncClient:   sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.SyncClient)),
-			// ChannelClient: channel_client.NewChannelClient(rpcx.GetCachedRpcClient(c.ChannelClient)),
-			DialogClient: dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
-		},
+
+	dao := &dao.Dao{
+		Mysql:        dao.NewMysqlDao(db),
+		KV:           kv.NewStore(c.KV),
+		IDGenClient2: idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
+		UserClient:   user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
+		ChatClient:   chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+		SyncClient:   sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.SyncClient)),
+		DialogClient: dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
+	}
+	if c.BotSyncClient != nil {
+		dao.BotSyncClient = sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.BotSyncClient))
 	}
 
+	return &ServiceContext{
+		Config: c,
+		Dao:    dao,
+	}
 }

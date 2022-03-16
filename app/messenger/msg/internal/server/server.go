@@ -65,7 +65,6 @@ func (s *Server) Initialize() error {
 				ChatClient:    c.BizServiceClient,
 				SyncClient:    c.SyncClient,
 				InboxClient:   c.InboxClient,
-				ChannelClient: c.BizServiceClient,
 				DialogClient:  c.BizServiceClient,
 			}))
 	})
@@ -83,7 +82,7 @@ func (s *Server) Initialize() error {
 		UserClient:    c.BizServiceClient,
 		ChatClient:    c.BizServiceClient,
 		SyncClient:    c.SyncClient,
-		ChannelClient: c.BizServiceClient,
+		BotSyncClient: c.BotSyncClient,
 		DialogClient:  c.BizServiceClient,
 	})
 

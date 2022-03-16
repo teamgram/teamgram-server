@@ -29,7 +29,7 @@ import (
 // inbox.deleteMessagesToInbox from_id:long id:Vector<int> = Void;
 func (c *InboxCore) InboxDeleteMessagesToInbox(in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
 	c.svcCtx.Dao.DeleteInboxMessages(c.ctx, in.FromId, in.Id, func(ctx context.Context, userId int64, idList []int32) {
-		c.svcCtx.Dao.SyncPushUpdates(ctx, &sync.TLSyncPushUpdates{
+		c.svcCtx.Dao.SyncClient.SyncPushUpdates(ctx, &sync.TLSyncPushUpdates{
 			UserId: userId,
 			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
 				Messages:  idList,

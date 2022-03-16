@@ -52,7 +52,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 
 		pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, peer.PeerId, len(idList))
 		ptsCount = int32(len(idList))
-		c.svcCtx.Dao.SyncPushUpdates(
+		c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
 			&sync.TLSyncPushUpdates{
 				UserId: peer.PeerId,
@@ -93,7 +93,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 
 				pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, v.UserId, len(idList))
 				ptsCount = int32(len(idList))
-				c.svcCtx.Dao.SyncPushUpdates(
+				c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 					c.ctx,
 					&sync.TLSyncPushUpdates{
 						UserId: v.UserId,

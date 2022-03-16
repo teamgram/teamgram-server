@@ -24,7 +24,7 @@ type Config struct {
 	IdgenClient   zrpc.RpcClientConf
 	UserClient    zrpc.RpcClientConf
 	ChatClient    zrpc.RpcClientConf
-	SyncClient    *kafka.KafkaProducerConf
-	ChannelClient zrpc.RpcClientConf
 	DialogClient  zrpc.RpcClientConf
+	SyncClient    *kafka.KafkaProducerConf
+	BotSyncClient *kafka.KafkaProducerConf `json:",optional"`
 }

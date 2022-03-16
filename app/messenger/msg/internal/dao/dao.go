@@ -28,6 +28,7 @@ type Dao struct {
 	user_client.UserClient
 	chat_client.ChatClient
 	inbox_client.InboxClient
-	sync_client.SyncClient
+	SyncClient    sync_client.SyncClient
+	BotSyncClient sync_client.SyncClient
 	dialog_client.DialogClient
 }
