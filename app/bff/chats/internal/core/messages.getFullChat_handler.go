@@ -71,7 +71,7 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		BotInfo:                nil, // TODO
 		PinnedMsgId:            nil, // TODO
 		FolderId:               dlg.FolderId,
-		Call:                   nil, // TODO
+		Call:                   chat.Call(),
 		TtlPeriod:              nil, // TODO
 		GroupcallDefaultJoinAs: nil, // TODO
 		ThemeEmoticon:          nil, // TODO

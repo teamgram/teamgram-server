@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -35,9 +35,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 650553001
 		return o
 	},
-	1262617707: func() mtproto.TLObject { // 0x4b42046b
+	-1483013537: func() mtproto.TLObject { // 0xa79b025f
 		o := MakeTLImmutableChat(nil)
-		o.Data2.Constructor = 1262617707
+		o.Data2.Constructor = -1483013537
 		return o
 	},
 	-34609042: func() mtproto.TLObject { // 0xfdefe86e
@@ -467,7 +467,7 @@ func (m *ImmutableChat) CalcByteSize(layer int32) int {
 func (m *ImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x4b42046b:
+	case 0xa79b025f:
 		m2 := MakeTLImmutableChat(m)
 		m2.Decode(dBuf)
 
@@ -489,7 +489,7 @@ func (m *ImmutableChat) DebugString() string {
 }
 
 // To_ImmutableChat
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> = ImmutableChat;
+// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall groupcall_default_join_as:flags.8?Peer = ImmutableChat;
 func (m *ImmutableChat) To_ImmutableChat() *TLImmutableChat {
 	m.PredicateName = Predicate_immutableChat
 	return &TLImmutableChat{
@@ -498,7 +498,7 @@ func (m *ImmutableChat) To_ImmutableChat() *TLImmutableChat {
 }
 
 // MakeTLImmutableChat
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> = ImmutableChat;
+// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall groupcall_default_join_as:flags.8?Peer = ImmutableChat;
 func MakeTLImmutableChat(data2 *ImmutableChat) *TLImmutableChat {
 	if data2 == nil {
 		return &TLImmutableChat{Data2: &ImmutableChat{
@@ -572,6 +572,16 @@ func (m *TLImmutableChat) GetExportedInvite() *mtproto.ExportedChatInvite {
 func (m *TLImmutableChat) SetBotInfo(v []*mtproto.BotInfo) { m.Data2.BotInfo = v }
 func (m *TLImmutableChat) GetBotInfo() []*mtproto.BotInfo  { return m.Data2.BotInfo }
 
+func (m *TLImmutableChat) SetCall(v *mtproto.InputGroupCall) { m.Data2.Call = v }
+func (m *TLImmutableChat) GetCall() *mtproto.InputGroupCall  { return m.Data2.Call }
+
+func (m *TLImmutableChat) SetGroupcallDefaultJoinAs(v *mtproto.Peer) {
+	m.Data2.GroupcallDefaultJoinAs = v
+}
+func (m *TLImmutableChat) GetGroupcallDefaultJoinAs() *mtproto.Peer {
+	return m.Data2.GroupcallDefaultJoinAs
+}
+
 func (m *TLImmutableChat) GetPredicateName() string {
 	return Predicate_immutableChat
 }
@@ -580,9 +590,9 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0x4b42046b: func() []byte {
-			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> = ImmutableChat;
-			x.UInt(0x4b42046b)
+		0xa79b025f: func() []byte {
+			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall groupcall_default_join_as:flags.8?Peer = ImmutableChat;
+			x.UInt(0xa79b025f)
 
 			// set flags
 			var getFlags = func() uint32 {
@@ -611,6 +621,12 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 				}
 				if m.GetBotInfo() != nil {
 					flags |= 1 << 6
+				}
+				if m.GetCall() != nil {
+					flags |= 1 << 7
+				}
+				if m.GetGroupcallDefaultJoinAs() != nil {
+					flags |= 1 << 8
 				}
 
 				return flags
@@ -643,6 +659,14 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 					x.Bytes((*v).Encode(layer))
 				}
 			}
+			if m.GetCall() != nil {
+				x.Bytes(m.GetCall().Encode(layer))
+			}
+
+			if m.GetGroupcallDefaultJoinAs() != nil {
+				x.Bytes(m.GetGroupcallDefaultJoinAs().Encode(layer))
+			}
+
 			return x.GetBuf()
 		},
 	}
@@ -665,8 +689,8 @@ func (m *TLImmutableChat) CalcByteSize(layer int32) int {
 
 func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x4b42046b: func() error {
-			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> = ImmutableChat;
+		0xa79b025f: func() error {
+			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall groupcall_default_join_as:flags.8?Peer = ImmutableChat;
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Long())
@@ -721,6 +745,16 @@ func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 					v16[i].Decode(dBuf)
 				}
 				m.SetBotInfo(v16)
+			}
+			if (flags & (1 << 7)) != 0 {
+				m17 := &mtproto.InputGroupCall{}
+				m17.Decode(dBuf)
+				m.SetCall(m17)
+			}
+			if (flags & (1 << 8)) != 0 {
+				m18 := &mtproto.Peer{}
+				m18.Decode(dBuf)
+				m.SetGroupcallDefaultJoinAs(m18)
 			}
 			return dBuf.GetError()
 		},

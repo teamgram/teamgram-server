@@ -21,6 +21,7 @@ package dao
 import (
 	"context"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/plugin"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -33,15 +34,17 @@ type Dao struct {
 	*Mysql
 	sqlc.CachedConn
 	media_client.MediaClient
+	Plugin plugin.ChatPlugin
 }
 
 // New new a dao and return.
-func New(c config.Config) (dao *Dao) {
+func New(c config.Config, plugin plugin.ChatPlugin) (dao *Dao) {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Dao{
 		Mysql:       newMysqlDao(db),
 		CachedConn:  sqlc.NewConn(db, c.Cache),
 		MediaClient: media_client.NewMediaClient(rpcx.GetCachedRpcClient(c.MediaClient)),
+		Plugin:      plugin,
 	}
 }
 

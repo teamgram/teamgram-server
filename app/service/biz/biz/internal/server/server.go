@@ -75,12 +75,14 @@ func (s *Server) Initialize() error {
 		// chat_helper
 		chat.RegisterRPCChatServer(
 			grpcServer,
-			chat_helper.New(chat_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-				MediaClient:   c.MediaClient,
-			}))
+			chat_helper.New(
+				chat_helper.Config{
+					RpcServerConf: c.RpcServerConf,
+					Mysql:         c.Mysql,
+					Cache:         c.Cache,
+					MediaClient:   c.MediaClient,
+				},
+				nil))
 
 		// code_helper
 		code.RegisterRPCCodeServer(

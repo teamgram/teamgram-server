@@ -16,15 +16,12 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/svc"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/plugin"
 )
 
 type (
 	Config = config.Config
 )
-
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
-}
 
 type (
 	ChatParticipantsDAO = mysql_dao.ChatParticipantsDAO
@@ -34,3 +31,7 @@ type (
 var (
 	NewChatParticipantsDAO = mysql_dao.NewChatParticipantsDAO
 )
+
+func New(c Config, plugin plugin.ChatPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin))
+}

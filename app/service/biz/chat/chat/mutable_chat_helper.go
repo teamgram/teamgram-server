@@ -59,6 +59,18 @@ func (m *MutableChat) Deactivated() bool {
 	return m.GetChat().GetDeactivated()
 }
 
+func (m *MutableChat) CallActive() bool {
+	return m.GetChat().GetCallActive()
+}
+
+func (m *MutableChat) CallNotEmpty() bool {
+	return m.GetChat().GetCallNotEmpty()
+}
+
+func (m *MutableChat) Call() *mtproto.InputGroupCall {
+	return m.GetChat().GetCall()
+}
+
 func (m *MutableChat) ParticipantIdList() []int64 {
 	var (
 		idList []int64
@@ -120,8 +132,8 @@ func (m *MutableChat) ToUnsafeChat(id int64) *mtproto.Chat {
 		Kicked:                  false,
 		Left:                    false,
 		Deactivated:             false,
-		CallActive:              false,
-		CallNotEmpty:            false,
+		CallActive:              m.CallActive(),
+		CallNotEmpty:            m.CallNotEmpty(),
 		Id:                      m.Id(),
 		Title:                   m.Title(),
 		Photo:                   mtproto.MakeChatPhotoByPhoto(m.Chat.Photo),

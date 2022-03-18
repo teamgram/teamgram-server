@@ -1,12 +1,8 @@
-/*
- * WARNING! All changes made in this file will be lost!
- * Created from 'scheme.tl' by 'mtprotoc'
- *
- * Copyright (c) 2022-present,  Teamgram Authors.
- *  All rights reserved.
- *
- * Author: teagramio (teagram.io@gmail.com)
- */
+// Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+//  All rights reserved.
+//
+// Author: Benqi (wubenqi@gmail.com)
+//
 
 package chat
 
@@ -53,7 +49,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_immutableChat: {
-		0: 1262617707, // 0x4b42046b
+		0: -1483013537, // 0xa79b025f
 
 	},
 	Predicate_mutableChat: {
@@ -188,7 +184,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 var clazzIdNameRegisters2 = map[int32]string{
 	650553001:   Predicate_immutableChatParticipant,              // 0x26c6a6a9
-	1262617707:  Predicate_immutableChat,                         // 0x4b42046b
+	-1483013537: Predicate_immutableChat,                         // 0xa79b025f
 	-34609042:   Predicate_mutableChat,                           // 0xfdefe86e
 	-1542554274: Predicate_chatInviteAlready,                     // 0xa40e7d5e
 	-613035609:  Predicate_chatInvite,                            // 0xdb75d1a7

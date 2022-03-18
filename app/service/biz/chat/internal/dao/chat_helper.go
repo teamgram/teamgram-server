@@ -113,7 +113,10 @@ func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (ch
 	if err != nil {
 		return
 	}
-
+	if d.Plugin != nil {
+		immutableChat.CallActive, immutableChat.CallNotEmpty = d.Plugin.GetChatCallActiveAndNotEmpty(ctx, 0, chatId)
+		immutableChat.Call = d.Plugin.GetChatGroupCall(ctx, 0, chatId)
+	}
 	participants, err = d.getImmutableChatParticipants(ctx, immutableChat, id...)
 	if err != nil {
 		return
