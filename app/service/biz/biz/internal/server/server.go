@@ -127,6 +127,7 @@ func (s *Server) Initialize() error {
 			user_helper.New(user_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 				Mysql:         c.Mysql,
+				Cache:         c.Cache,
 				MediaClient:   c.MediaClient,
 			}))
 
