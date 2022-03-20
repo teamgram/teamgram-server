@@ -38,7 +38,7 @@ func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*
 		}).To_Messages_Messages()
 	)
 
-	for _, id := range in.GetId() {
+	for _, id := range in.GetId_VECTORINPUTMESSAGE() {
 		switch id.PredicateName {
 		case mtproto.Predicate_inputMessageID:
 			idList = append(idList, id.Id)
@@ -49,6 +49,10 @@ func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*
 			return nil, err
 		}
 	}
+	if len(in.GetId_VECTORINT32()) > 0 {
+		idList = append(idList, in.Id_VECTORINT32...)
+	}
+
 	if len(idList) == 0 {
 		return rValues, nil
 	}
