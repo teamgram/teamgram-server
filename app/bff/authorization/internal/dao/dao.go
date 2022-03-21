@@ -55,7 +55,7 @@ type Dao struct {
 func New(c config.Config) *Dao {
 	MMDB, err := geoip2.Open(mmdb)
 	if err != nil {
-		panic(err)
+		// panic(err)
 	}
 	return &Dao{
 		kv:                kv.NewStore(c.KV),
