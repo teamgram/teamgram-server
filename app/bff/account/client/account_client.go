@@ -35,12 +35,6 @@ type AccountClient interface {
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-	AccountCreatePredefinedUser(ctx context.Context, in *mtproto.TLAccountCreatePredefinedUser) (*mtproto.PredefinedUser, error)
-	AccountUpdatePredefinedUsername(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedUsername) (*mtproto.PredefinedUser, error)
-	AccountUpdatePredefinedProfile(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedProfile) (*mtproto.PredefinedUser, error)
-	AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error)
-	AccountUpdatePredefinedVerified(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedVerified) (*mtproto.PredefinedUser, error)
-	AccountUpdatePredefinedCode(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedCode) (*mtproto.PredefinedUser, error)
 }
 
 type defaultAccountClient struct {
@@ -149,46 +143,4 @@ func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Conte
 func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
-}
-
-// AccountCreatePredefinedUser
-// account.createPredefinedUser flags:# phone:string first_name:flags.0?string last_name:flags.1?string username:flags.2?string code:string verified:flags.3?true = PredefinedUser;
-func (m *defaultAccountClient) AccountCreatePredefinedUser(ctx context.Context, in *mtproto.TLAccountCreatePredefinedUser) (*mtproto.PredefinedUser, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountCreatePredefinedUser(ctx, in)
-}
-
-// AccountUpdatePredefinedUsername
-// account.updatePredefinedUsername phone:string username:string = PredefinedUser;
-func (m *defaultAccountClient) AccountUpdatePredefinedUsername(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedUsername) (*mtproto.PredefinedUser, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdatePredefinedUsername(ctx, in)
-}
-
-// AccountUpdatePredefinedProfile
-// account.updatePredefinedProfile flags:# phone:string first_name:flags.0?string last_name:flags.1?string about:flags.2?string = PredefinedUser;
-func (m *defaultAccountClient) AccountUpdatePredefinedProfile(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedProfile) (*mtproto.PredefinedUser, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdatePredefinedProfile(ctx, in)
-}
-
-// AccountUpdateVerified
-// account.updateVerified flags:# id:long verified:flags.0?true = User;
-func (m *defaultAccountClient) AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdateVerified(ctx, in)
-}
-
-// AccountUpdatePredefinedVerified
-// account.updatePredefinedVerified flags:# phone:string verified:flags.0?true = PredefinedUser;
-func (m *defaultAccountClient) AccountUpdatePredefinedVerified(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedVerified) (*mtproto.PredefinedUser, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdatePredefinedVerified(ctx, in)
-}
-
-// AccountUpdatePredefinedCode
-// account.updatePredefinedCode phone:string code:string = PredefinedUser;
-func (m *defaultAccountClient) AccountUpdatePredefinedCode(ctx context.Context, in *mtproto.TLAccountUpdatePredefinedCode) (*mtproto.PredefinedUser, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdatePredefinedCode(ctx, in)
 }
