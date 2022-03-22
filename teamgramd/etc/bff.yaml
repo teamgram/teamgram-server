@@ -4,6 +4,7 @@ Etcd:
   Hosts:
     - 127.0.0.1:2379
   Key: bff.bff
+Timeout: 0
 Log:
   Mode: file
   Path: ../logs/bff
@@ -33,6 +34,7 @@ MediaClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.media
+  Timeout: 0
 IdgenClient:
   Etcd:
     Hosts:
@@ -43,11 +45,13 @@ MsgClient:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.msg
+  Timeout: 0
 DfsClient:
   Etcd:
     Hosts:
       - 127.0.0.1:2379
     Key: service.dfs
+  Timeout: 0
 StatusClient:
   Etcd:
     Hosts:
