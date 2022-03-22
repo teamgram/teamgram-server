@@ -31,6 +31,7 @@ BFFProxyClients:
         Hosts:
           - 127.0.0.1:2379
         Key: bff.bff
+      Timeout: 0
   IDMap:
     "/mtproto.RPCTos": "bff.bff"
     "/mtproto.RPCReports": "bff.bff"
