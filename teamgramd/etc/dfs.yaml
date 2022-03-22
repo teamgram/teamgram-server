@@ -12,6 +12,7 @@ MiniHttp:
   Name: service.dfs.minihttp
   Host: 0.0.0.0
   Port: 11701
+  Timeout: 0
 Cache:
   - Host: 127.0.0.1:6379
 Minio:
