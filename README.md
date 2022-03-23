@@ -21,6 +21,8 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 ### Quick start with Docker
 > TODO...
 
+### [Centos 9 Stream Build and Install](docs/install-centos-9.md) [@A Feel]
+
 ### Manual Build and Install
 #### Depends
 - **mysql5.7**
@@ -30,7 +32,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 - [minio](https://docs.min.io/docs/minio-quickstart-guide.html#GNU/Linux)
 - [ffmpeg](https://www.johnvansickle.com/ffmpeg/)
 
-##### Run dpends with docker-compose
+##### Run depends with docker-compose
 ```bash
 # pull docker images
 docker-compose pull
@@ -70,6 +72,7 @@ cd scripts
 cd ../teamgramd/bin
 ./runall2.sh
 ```
+
 
 ### Compatible clients
 **Important**: default signIn and signOut verify code is **12345**
