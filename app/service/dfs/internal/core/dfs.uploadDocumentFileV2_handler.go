@@ -147,17 +147,17 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 		}
 
 		// upload thumb
-		path := fmt.Sprintf("%s/%d.dat", model.PhotoSZMediumType, documentId)
+		path := fmt.Sprintf("%s/%d.dat", mtproto.PhotoSZMediumType, documentId)
 		// upload
 		c.svcCtx.Dao.PutPhotoFile(c.ctx, path, mThumbData.Bytes())
 
 		document.Thumbs = []*mtproto.PhotoSize{
 			mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
-				Type:  model.PhotoSZStrippedType,
+				Type:  mtproto.PhotoSZStrippedType,
 				Bytes: stripped.Bytes(),
 			}).To_PhotoSize(),
 			mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
-				Type:  model.PhotoSZMediumType,
+				Type:  mtproto.PhotoSZMediumType,
 				W:     int32(mThumb.Bounds().Dx()),
 				H:     int32(mThumb.Bounds().Dy()),
 				Size2: int32(len(mThumbData.Bytes())),

@@ -20,13 +20,12 @@ package imaging
 
 import (
 	"bytes"
+	"github.com/teamgram/proto/mtproto"
 	"image"
 	"strings"
 
-	"github.com/teamgram/marmota/pkg/bytes2"
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
-
 	"github.com/disintegration/imaging"
+	"github.com/teamgram/marmota/pkg/bytes2"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -86,15 +85,15 @@ func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, l
 	imgSz := makeResizeInfo(img)
 
 	var (
-		szList    []model.ReSizeInfo
+		szList    []mtproto.ReSizeInfo
 		willBreak = false
 		rsz       int
 	)
 
 	if isABC {
-		szList = model.ReSizeInfoABCList
+		szList = mtproto.ReSizeInfoABCList
 	} else {
-		szList = model.ReSizeInfoPhotoList
+		szList = mtproto.ReSizeInfoPhotoList
 	}
 
 	for _, sz := range szList {

@@ -75,7 +75,7 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 		} else {
 			path := fmt.Sprintf("%s/%d.dat", location.GetThumbSize(), location.GetId())
 
-			isVideo := model.PhotoSizeIsVideo(location.GetThumbSize())
+			isVideo := mtproto.PhotoSizeIsVideo(location.GetThumbSize())
 			c.Logger.Infof("path: %s", path)
 			if isVideo {
 				bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "videos", path, offset, limit)
@@ -111,7 +111,7 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 	case mtproto.Predicate_inputPhotoFileLocation:
 		//inputPhotoFileLocation#40181ffe id:long access_hash:long file_reference:bytes thumb_size:string = InputFileLocation;
 
-		isVideo := model.PhotoSizeIsVideo(location.GetThumbSize())
+		isVideo := mtproto.PhotoSizeIsVideo(location.GetThumbSize())
 		path := fmt.Sprintf("%s/%d.dat", location.GetThumbSize(), location.GetId())
 		// log.Debugf("path: %s", path)
 		if isVideo {

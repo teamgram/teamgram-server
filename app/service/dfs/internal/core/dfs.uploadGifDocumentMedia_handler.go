@@ -269,20 +269,20 @@ func (c *DfsCore) uploadGifMp4Media(creatorId int64, media *mtproto.InputMedia) 
 		dstW int
 		dstH int
 		isW  = imgSize.GetW() >= imgSize.GetH()
-		sz   = model.GetMaxResizeInfo(false, int(imgSize.GetW()), int(imgSize.GetH()))
+		sz   = mtproto.GetMaxResizeInfo(false, int(imgSize.GetW()), int(imgSize.GetH()))
 	)
 
 	if isW {
-		if int(imgSize.GetW()) >= model.PhotoSZMediumSize {
-			dstW = model.PhotoSZMediumSize
+		if int(imgSize.GetW()) >= mtproto.PhotoSZMediumSize {
+			dstW = mtproto.PhotoSZMediumSize
 			dstH = -2
 		} else {
 			dstW = sz.Size
 			dstH = -2
 		}
 	} else {
-		if int(imgSize.GetH()) >= model.PhotoSZMediumSize {
-			dstH = model.PhotoSZMediumSize
+		if int(imgSize.GetH()) >= mtproto.PhotoSZMediumSize {
+			dstH = mtproto.PhotoSZMediumSize
 			dstW = -2
 		} else {
 			dstH = sz.Size
@@ -385,27 +385,27 @@ func (c *DfsCore) uploadGifThumb(id int64, gifThumb image.Image) ([]*mtproto.Pho
 	}
 
 	szList = append(szList, mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
-		Type:  model.PhotoSZStrippedType,
+		Type:  mtproto.PhotoSZStrippedType,
 		Bytes: stripped.Bytes(),
 	}).To_PhotoSize())
 
 	// 2. photoSize
-	sz := model.GetMaxResizeInfo(false, gifThumb.Bounds().Dx(), gifThumb.Bounds().Dy())
+	sz := mtproto.GetMaxResizeInfo(false, gifThumb.Bounds().Dx(), gifThumb.Bounds().Dy())
 	if isW {
-		if gifThumb.Bounds().Dx() >= model.PhotoSZMediumSize {
-			thumb = imaging.Resize(gifThumb, model.PhotoSZMediumSize, 0)
-			sz.Size = model.PhotoSZMediumSize
-			sz.LocalId = model.PhotoSZMediumLocalId
-			sz.Type = model.PhotoSZMediumType
+		if gifThumb.Bounds().Dx() >= mtproto.PhotoSZMediumSize {
+			thumb = imaging.Resize(gifThumb, mtproto.PhotoSZMediumSize, 0)
+			sz.Size = mtproto.PhotoSZMediumSize
+			sz.LocalId = mtproto.PhotoSZMediumLocalId
+			sz.Type = mtproto.PhotoSZMediumType
 		} else {
 			thumb = imaging.Resize(gifThumb, 0, 320)
 		}
 	} else {
-		if gifThumb.Bounds().Dy() >= model.PhotoSZMediumSize {
-			thumb = imaging.Resize(gifThumb, model.PhotoSZMediumSize, 0)
-			sz.Size = model.PhotoSZMediumSize
-			sz.LocalId = model.PhotoSZMediumLocalId
-			sz.Type = model.PhotoSZMediumType
+		if gifThumb.Bounds().Dy() >= mtproto.PhotoSZMediumSize {
+			thumb = imaging.Resize(gifThumb, mtproto.PhotoSZMediumSize, 0)
+			sz.Size = mtproto.PhotoSZMediumSize
+			sz.LocalId = mtproto.PhotoSZMediumLocalId
+			sz.Type = mtproto.PhotoSZMediumType
 		} else {
 			thumb = imaging.Resize(gifThumb, 0, sz.Size)
 		}

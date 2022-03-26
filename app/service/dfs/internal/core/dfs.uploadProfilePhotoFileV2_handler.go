@@ -161,7 +161,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 	// ext = model.GetFileExtName(video.GetName())
 	// extType = model.GetStorageFileTypeConstructor(ext)
 	// secretId := int64(extType)<<32 | int64(rand.Uint32())
-	path := fmt.Sprintf("%s/%d.dat", model.VideoSZVType, photoId)
+	path := fmt.Sprintf("%s/%d.dat", mtproto.VideoSZVType, photoId)
 	_, err = c.svcCtx.Dao.PutVideoFile(c.ctx, path, videoMp4Data)
 	if err != nil {
 		c.Logger.Errorf("uploadVideoSizeList - error: %v", err)
@@ -169,7 +169,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 	}
 
 	videoSize := mtproto.MakeTLVideoSize(&mtproto.VideoSize{
-		Type:         model.VideoSZVType,
+		Type:         mtproto.VideoSZVType,
 		W:            800,
 		H:            800,
 		Size2:        int32(len(videoMp4Data)),
