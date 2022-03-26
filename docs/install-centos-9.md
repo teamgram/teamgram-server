@@ -120,6 +120,8 @@ shell> mysql -uroot -p
 mysql> create database teamgram;
 mysql> exit
 shell> mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
+shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220321.sql
+shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220326.sql
 ```
 
 ### Build

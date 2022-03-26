@@ -21,32 +21,127 @@ package dao
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
+
+func makePhotoSizesDO(szId int64, sz *mtproto.PhotoSize) *dataobject.PhotoSizesDO {
+	szDO := &dataobject.PhotoSizesDO{
+		PhotoSizeId: szId,
+		SizeType:    sz.Type,
+		Width:       sz.W,
+		Height:      sz.H,
+		FileSize:    sz.Size2,
+		FilePath:    fmt.Sprintf("%s/%d.dat", sz.Type, szId),
+		CachedType:  0,
+		CachedBytes: "",
+	}
+
+	switch sz.GetPredicateName() {
+	case mtproto.Predicate_photoPathSize:
+		szDO.CachedType = CachedTypePathSize
+		szDO.CachedBytes = base64.RawStdEncoding.EncodeToString(sz.Bytes)
+		szDO.FileSize = int32(len(sz.Bytes))
+	case mtproto.Predicate_photoStrippedSize:
+		szDO.CachedType = CachedTypeStrippedSize
+		szDO.CachedBytes = base64.RawStdEncoding.EncodeToString(sz.Bytes)
+		szDO.FileSize = int32(len(sz.Bytes))
+	case mtproto.Predicate_photoCachedSize:
+		szDO.CachedType = CachedTypeSizeProgressive
+		szDO.CachedBytes = base64.RawStdEncoding.EncodeToString(sz.Bytes)
+		szDO.FileSize = int32(len(sz.Bytes))
+	case mtproto.Predicate_photoSizeProgressive:
+		szDO.CachedType = CachedTypeSizeProgressive
+		cachedBytes, _ := jsonx.Marshal(sz.Sizes)
+		if cachedBytes != nil {
+			szDO.CachedBytes = string(cachedBytes)
+		}
+		szDO.FileSize = sz.Size2
+	case mtproto.Predicate_photoSize:
+		szDO.CachedType = CachedTypeSize
+		szDO.FileSize = sz.Size2
+	default:
+		// TODO: log
+		return nil
+	}
+
+	return szDO
+}
+
+func getPhotoSize(szDO *dataobject.PhotoSizesDO) *mtproto.PhotoSize {
+	switch szDO.SizeType {
+	case "j":
+		bytes, _ := base64.RawStdEncoding.DecodeString(szDO.CachedBytes)
+		if len(bytes) == 0 {
+			return nil
+		}
+		return mtproto.MakeTLPhotoPathSize(&mtproto.PhotoSize{
+			Type:  szDO.SizeType,
+			Bytes: bytes,
+		}).To_PhotoSize()
+	case "i":
+		bytes, _ := base64.RawStdEncoding.DecodeString(szDO.CachedBytes)
+		if len(bytes) == 0 {
+			return nil
+		}
+		return mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
+			Type:  szDO.SizeType,
+			Bytes: bytes,
+		}).To_PhotoSize()
+	default:
+		switch szDO.CachedType {
+		case CachedTypeCachedSize:
+			bytes, _ := base64.RawStdEncoding.DecodeString(szDO.CachedBytes)
+			if len(bytes) == 0 {
+				return nil
+			}
+			return mtproto.MakeTLPhotoCachedSize(&mtproto.PhotoSize{
+				Type:  szDO.SizeType,
+				W:     szDO.Width,
+				H:     szDO.Height,
+				Bytes: bytes,
+			}).To_PhotoSize()
+		case CachedTypeSizeProgressive:
+			if len(szDO.CachedBytes) == 0 {
+				return nil
+			}
+			var (
+				sizes []int32
+			)
+			err := jsonx.UnmarshalFromString(szDO.CachedBytes, sizes)
+			if err != nil {
+				return nil
+			}
+			return mtproto.MakeTLPhotoSizeProgressive(&mtproto.PhotoSize{
+				Type:  szDO.SizeType,
+				W:     szDO.Width,
+				H:     szDO.Height,
+				Sizes: sizes,
+			}).To_PhotoSize()
+		case CachedTypeSize:
+			return mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
+				Type:  szDO.SizeType,
+				W:     szDO.Width,
+				H:     szDO.Height,
+				Size2: szDO.FileSize,
+			}).To_PhotoSize()
+		default:
+			return nil
+		}
+	}
+}
 
 func (m *Dao) SavePhotoSizeV2(ctx context.Context, szId int64, szList []*mtproto.PhotoSize) error {
 	for _, sz := range szList {
-		szDO := &dataobject.PhotoSizesDO{
-			PhotoSizeId: szId,
-			SizeType:    sz.Type,
-			FilePath:    "",
+		szDO := makePhotoSizesDO(szId, sz)
+		if szDO == nil {
+			continue
 		}
-		if sz.PredicateName == mtproto.Predicate_photoStrippedSize {
-			szDO.HasStripped = true
-			szDO.FileSize = int32(len(sz.Bytes))
-			szDO.StrippedBytes = base64.RawStdEncoding.EncodeToString(sz.Bytes)
-		} else {
-			// szDO.VolumeId = sz.GetLocation().GetVolumeId()
-			// szDO.LocalId = sz.GetLocation().GetLocalId()
-			// szDO.Secret = sz.GetLocation().GetSecret()
-			szDO.Width = sz.W
-			szDO.Height = sz.H
-			szDO.FileSize = sz.Size2
-		}
-
 		if _, _, err := m.PhotoSizesDAO.Insert(ctx, szDO); err != nil {
 			return err
 		}
@@ -82,24 +177,11 @@ func (m *Dao) GetPhotoSizeListList(ctx context.Context, idList []int64) (sizes m
 			szList = []*mtproto.PhotoSize{}
 		}
 
-		size := &sizeDOList[i]
-		if size.SizeType == "i" {
-			bytes, _ := base64.RawStdEncoding.DecodeString(size.StrippedBytes)
-			if len(bytes) == 0 {
-				continue
-			}
-			szList = append(szList, mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
-				Type:  size.SizeType,
-				Bytes: bytes,
-			}).To_PhotoSize())
-		} else {
-			szList = append(szList, mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
-				Type:  size.SizeType,
-				W:     size.Width,
-				H:     size.Height,
-				Size2: size.FileSize,
-			}).To_PhotoSize())
+		sz := getPhotoSize(&sizeDOList[i])
+		if sz != nil {
+			szList = append(szList, sz)
 		}
+
 		sizes[sizeDOList[i].PhotoSizeId] = szList
 	}
 	return
@@ -111,23 +193,9 @@ func (m *Dao) GetPhotoSizeListV2(ctx context.Context, sizeId int64) (sizes []*mt
 	if len(sizeDOList) >= 0 {
 		sizes = make([]*mtproto.PhotoSize, 0, len(sizeDOList))
 		for i := 0; i < len(sizeDOList); i++ {
-			size := &sizeDOList[i]
-			if size.SizeType == "i" {
-				bytes, _ := base64.RawStdEncoding.DecodeString(size.StrippedBytes)
-				if len(bytes) == 0 {
-					continue
-				}
-				sizes = append(sizes, mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
-					Type:  size.SizeType,
-					Bytes: bytes,
-				}).To_PhotoSize())
-			} else {
-				sizes = append(sizes, mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
-					Type:  size.SizeType,
-					W:     size.Width,
-					H:     size.Height,
-					Size2: size.FileSize,
-				}).To_PhotoSize())
+			sz := getPhotoSize(&sizeDOList[i])
+			if sz != nil {
+				sizes = append(sizes, sz)
 			}
 		}
 	}

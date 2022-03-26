@@ -20,6 +20,7 @@ package dao
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gogo/protobuf/types"
 
@@ -56,16 +57,13 @@ func (m *Dao) SaveVideoSizeV2(ctx context.Context, szId int64, szList []*mtproto
 
 	for _, sz := range szList {
 		szDO := &dataobject.VideoSizesDO{
-			VideoSizeId: szId,
-			SizeType:    sz.Type,
-			// VolumeId:     sz.GetLocation().GetVolumeId(),
-			// LocalId:      sz.GetLocation().GetLocalId(),
-			// Secret:       sz.GetLocation().GetSecret(),
+			VideoSizeId:  szId,
+			SizeType:     sz.Type,
 			Width:        sz.W,
 			Height:       sz.H,
 			FileSize:     sz.Size2,
 			VideoStartTs: sz.GetVideoStartTs().GetValue(),
-			FilePath:     "",
+			FilePath:     fmt.Sprintf("%s/%d.dat", sz.Type, szId),
 		}
 		if _, _, err := m.VideoSizesDAO.Insert(ctx, szDO); err != nil {
 			return err

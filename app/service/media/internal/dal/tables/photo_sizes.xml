@@ -3,31 +3,9 @@
     <operation name="Insert">
         <sql>
             INSERT INTO photo_sizes
-                (photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes)
+                (photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes)
             VALUES
-                (:photo_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes)
-        </sql>
-    </operation>
-
-    <operation name="SelectByFileLocation">
-        <sql>
-            SELECT
-                id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes
-            FROM
-                photo_sizes
-            WHERE
-                volume_id = :volume_id AND local_id = :local_id
-        </sql>
-    </operation>
-
-    <operation name="SelectSecret" result_set="single">
-        <sql>
-            SELECT
-                secret
-            FROM
-                photo_sizes
-            WHERE
-                volume_id = :volume_id AND local_id = :local_id LIMIT 1
+                (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
         </sql>
     </operation>
 
@@ -35,11 +13,11 @@
         <sql>
             <![CDATA[
             SELECT
-                id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes
+                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
             FROM
                 photo_sizes
             WHERE
-                photo_size_id = :photo_size_id ORDER BY local_id
+                photo_size_id = :photo_size_id ORDER BY id
             ]]>
         </sql>
     </operation>
@@ -51,7 +29,7 @@
         <sql>
             <![CDATA[
             SELECT
-                id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes
+                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
             FROM
                 photo_sizes
             WHERE
@@ -59,5 +37,4 @@
             ]]>
         </sql>
     </operation>
-
 </table>

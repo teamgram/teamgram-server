@@ -31,11 +31,10 @@ func NewPhotoSizesDAO(db *sqlx.DB) *PhotoSizesDAO {
 }
 
 // Insert
-// insert into photo_sizes(photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes) values (:photo_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes)
-// TODO(@benqi): sqlmap
+// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
 func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes) values (:photo_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes)"
+		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
 		r     sql.Result
 	)
 
@@ -59,11 +58,10 @@ func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesD
 }
 
 // InsertTx
-// insert into photo_sizes(photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes) values (:photo_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes)
-// TODO(@benqi): sqlmap
+// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
 func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes) values (:photo_size_id, :size_type, :volume_id, :local_id, :secret, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes)"
+		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
 		r     sql.Result
 	)
 
@@ -86,58 +84,11 @@ func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (la
 	return
 }
 
-// SelectByFileLocation
-// select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where volume_id = :volume_id and local_id = :local_id
-// TODO(@benqi): sqlmap
-func (dao *PhotoSizesDAO) SelectByFileLocation(ctx context.Context, volume_id int64, local_id int32) (rValue *dataobject.PhotoSizesDO, err error) {
-	var (
-		query = "select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where volume_id = ? and local_id = ?"
-		rows  *sqlx.Rows
-	)
-	rows, err = dao.db.Query(ctx, query, volume_id, local_id)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.PhotoSizesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByFileLocation(_), error: %v", err)
-			return
-		} else {
-			rValue = do
-		}
-	}
-
-	return
-}
-
-// SelectSecret
-// select secret from photo_sizes where volume_id = :volume_id and local_id = :local_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *PhotoSizesDAO) SelectSecret(ctx context.Context, volume_id int64, local_id int32) (rValue int64, err error) {
-	var query = "select secret from photo_sizes where volume_id = ? and local_id = ? limit 1"
-	err = dao.db.Get(ctx, &rValue, query, volume_id, local_id)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectSecret(_), error: %v", err)
-	}
-
-	return
-}
-
 // SelectListByPhotoSizeId
-// select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id = :photo_size_id order by local_id asc
-// TODO(@benqi): sqlmap
+// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photo_size_id int64) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id = ? order by local_id asc"
+		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, photo_size_id)
@@ -167,11 +118,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photo_siz
 }
 
 // SelectListByPhotoSizeIdWithCB
-// select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id = :photo_size_id order by local_id asc
-// TODO(@benqi): sqlmap
+// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdWithCB(ctx context.Context, photo_size_id int64, cb func(i int, v *dataobject.PhotoSizesDO)) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id = ? order by local_id asc"
+		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, photo_size_id)
@@ -208,11 +158,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdWithCB(ctx context.Context, pho
 }
 
 // SelectListByPhotoSizeIdList
-// select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
-// TODO(@benqi): sqlmap
+// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idList []int64) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id in (?) order by id asc"
+		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
 		a     []interface{}
 		rows  *sqlx.Rows
 	)
@@ -254,11 +203,10 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idLis
 }
 
 // SelectListByPhotoSizeIdListWithCB
-// select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
-// TODO(@benqi): sqlmap
+// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.PhotoSizesDO)) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, volume_id, local_id, secret, width, height, file_size, file_path, has_stripped, stripped_bytes from photo_sizes where photo_size_id in (?) order by id asc"
+		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
 		a     []interface{}
 		rows  *sqlx.Rows
 	)
