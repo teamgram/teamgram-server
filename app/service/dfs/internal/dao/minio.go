@@ -91,6 +91,25 @@ func (d *Dao) PutPhotoFile(ctx context.Context, path string, buf []byte) (n int6
 	return
 }
 
+func (d *Dao) PutPhotoFileV2(ctx context.Context, path string, r io.Reader) (n int64, err error) {
+	var (
+		contentType string
+	)
+
+	if ext := filepath.Ext(path); model.IsFileExtImage(ext) {
+		contentType = model.GetImageMimeType(ext)
+	} else {
+		contentType = "binary/octet-stream"
+	}
+
+	options := s3PutOptions(false, contentType)
+	n, err = d.minio.Client.PutObject("photos", path, r, -1, options)
+	if err != nil {
+		logx.Errorf("PutPhotoFile (%s) error: %v", path, err)
+	}
+	return
+}
+
 func (d *Dao) PutVideoFile(ctx context.Context, path string, buf []byte) (n int64, err error) {
 	_ = ctx
 

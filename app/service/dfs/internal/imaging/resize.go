@@ -20,13 +20,23 @@ package imaging
 
 import (
 	"bytes"
-	"github.com/teamgram/proto/mtproto"
 	"image"
 	"strings"
 
-	"github.com/disintegration/imaging"
 	"github.com/teamgram/marmota/pkg/bytes2"
+	"github.com/teamgram/proto/mtproto"
+
+	"github.com/disintegration/imaging"
 	"github.com/zeromicro/go-zero/core/logx"
+)
+
+const (
+	JPEG imaging.Format = iota
+	PNG
+	GIF
+	TIFF
+	BMP
+	WEBP
 )
 
 type resizeInfo struct {
@@ -53,13 +63,14 @@ func makeResizeInfo(img image.Image) resizeInfo {
 
 func getImageFormat(extName string) (int, error) {
 	formats := map[string]imaging.Format{
-		".jpg":  imaging.JPEG,
-		".jpeg": imaging.JPEG,
-		".png":  imaging.PNG,
-		".tif":  imaging.TIFF,
-		".tiff": imaging.TIFF,
-		".bmp":  imaging.BMP,
-		".gif":  imaging.GIF,
+		".jpg":  JPEG,
+		".jpeg": JPEG,
+		".png":  PNG,
+		".tif":  TIFF,
+		".tiff": TIFF,
+		".bmp":  BMP,
+		".gif":  GIF,
+		// ".webp": WEBP,
 	}
 
 	ext := strings.ToLower(extName)

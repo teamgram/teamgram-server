@@ -31,3 +31,11 @@ func New(c config.Config) *Dao {
 		ssdb:         kv.NewStore(c.SSDB),
 	}
 }
+
+func NewDFSHelper(minio *minio_util.MinioConfig, idgen zrpc.RpcClientConf, ssdb kv.KvConf) *Dao {
+	return &Dao{
+		minio:        minio_util.MustNewMinioClient(minio),
+		IDGenClient2: idgen_client.NewIDGenClient2(zrpc.MustNewClient(idgen)),
+		ssdb:         kv.NewStore(ssdb),
+	}
+}
