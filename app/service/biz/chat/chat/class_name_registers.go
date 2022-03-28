@@ -41,6 +41,7 @@ const (
 	Predicate_chat_deleteExportedChatInvite         = "chat_deleteExportedChatInvite"
 	Predicate_chat_deleteRevokedExportedChatInvites = "chat_deleteRevokedExportedChatInvites"
 	Predicate_chat_editExportedChatInvite           = "chat_editExportedChatInvite"
+	Predicate_chat_setChatAvailableReactions        = "chat_setChatAvailableReactions"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -49,7 +50,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_immutableChat: {
-		0: -1483013537, // 0xa79b025f
+		0: -771834191, // 0xd1febeb1
 
 	},
 	Predicate_mutableChat: {
@@ -180,11 +181,15 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1348907914, // 0xaf994c76
 
 	},
+	Predicate_chat_setChatAvailableReactions: {
+		0: 1372233637, // 0x51ca9fa5
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
 	650553001:   Predicate_immutableChatParticipant,              // 0x26c6a6a9
-	-1483013537: Predicate_immutableChat,                         // 0xa79b025f
+	-771834191:  Predicate_immutableChat,                         // 0xd1febeb1
 	-34609042:   Predicate_mutableChat,                           // 0xfdefe86e
 	-1542554274: Predicate_chatInviteAlready,                     // 0xa40e7d5e
 	-613035609:  Predicate_chatInvite,                            // 0xdb75d1a7
@@ -217,6 +222,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1445103800:  Predicate_chat_deleteExportedChatInvite,         // 0x562288b8
 	-804101527:  Predicate_chat_deleteRevokedExportedChatInvites, // 0xd0126269
 	-1348907914: Predicate_chat_editExportedChatInvite,           // 0xaf994c76
+	1372233637:  Predicate_chat_setChatAvailableReactions,        // 0x51ca9fa5
 
 }
 

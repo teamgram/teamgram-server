@@ -22,6 +22,7 @@ type ChatsDO struct {
 	DefaultBannedRights  int64  `db:"default_banned_rights"`
 	MigratedToId         int64  `db:"migrated_to_id"`
 	MigratedToAccessHash int64  `db:"migrated_to_access_hash"`
+	AvailableReactions   string `db:"available_reactions"`
 	Deactivated          bool   `db:"deactivated"`
 	Version              int32  `db:"version"`
 	Date                 int64  `db:"date"`

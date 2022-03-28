@@ -8,11 +8,11 @@ package dao
 
 import (
 	"context"
-
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.ChatsDO) (chat *chatpb.ImmutableChat) {
@@ -76,6 +76,10 @@ func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.Cha
 	//} else {
 	chat.ExportedInvite = nil // model.ExportedChatInviteEmpty
 	//}
+
+	if chatsDO.AvailableReactions != "" {
+		jsonx.UnmarshalFromString(chatsDO.AvailableReactions, &chat.AvailableReactions)
+	}
 
 	return
 }
@@ -142,6 +146,7 @@ func (d *Dao) getImmutableChat(ctx context.Context, chatId int64) (chat *chatpb.
 		err = mtproto.ErrChatIdInvalid
 		return
 	}
+	// logx.Errorf("chatsDO: %#v", chatsDO)
 	chat = d.MakeImmutableChatByDO(ctx, chatsDO)
 
 	return

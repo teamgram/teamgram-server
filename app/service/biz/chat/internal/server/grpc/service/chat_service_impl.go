@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
@@ -422,3 +423,19 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 	c.Infof("chat.editExportedChatInvite - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ChatSetChatAvailableReactions
+// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = MutableChat;
+func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("chat.setChatAvailableReactions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatSetChatAvailableReactions(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("chat.setChatAvailableReactions - reply: %s", r.DebugString())
+	return r, err
+}
+

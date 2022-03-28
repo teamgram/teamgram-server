@@ -75,6 +75,9 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		TtlPeriod:              nil, // TODO
 		GroupcallDefaultJoinAs: nil, // TODO
 		ThemeEmoticon:          nil, // TODO
+		RequestsPending:        nil, // TODO
+		RecentRequesters:       nil, // TODO
+		AvailableReactions:     chat.AvailableReactions(),
 	}).To_ChatFull()
 
 	var (

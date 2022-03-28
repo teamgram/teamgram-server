@@ -71,6 +71,15 @@ func (m *MutableChat) Call() *mtproto.InputGroupCall {
 	return m.GetChat().GetCall()
 }
 
+func (m *MutableChat) AvailableReactions() []string {
+	reactions := m.GetChat().GetAvailableReactions()
+	if len(reactions) == 0 {
+		return nil
+	} else {
+		return reactions
+	}
+}
+
 func (m *MutableChat) ParticipantIdList() []int64 {
 	var (
 		idList []int64
