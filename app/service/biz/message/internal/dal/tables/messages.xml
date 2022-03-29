@@ -14,7 +14,7 @@
     <operation name="SelectByRandomId">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -28,7 +28,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -39,7 +39,7 @@
     <operation name="SelectByMessageId">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -53,7 +53,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -64,23 +64,13 @@
     <operation name="SelectByMessageDataId">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
                 user_id = :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1
         </sql>
     </operation>
-<!--    <operation name="SelectByDialogAndDialogMessageId">-->
-<!--        <sql>-->
-<!--            SELECT-->
-<!--                user_id, user_message_box_id, dialog_id, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_type, message_data, message_data_id, message_data_type, message, message_box_type, reply_to_msg_id, mentioned, media_unread, has_media_unread, pinned, date2-->
-<!--            FROM-->
-<!--                messages-->
-<!--            WHERE-->
-<!--                user_id = :user_id AND dialog_id = :dialog_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1-->
-<!--        </sql>-->
-<!--    </operation>-->
 
     <!-- // Backward -->
     <operation name="SelectBackwardByOffsetIdLimit" result_set="list">
@@ -90,7 +80,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -108,7 +98,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -126,7 +116,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -144,7 +134,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -175,7 +165,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -191,7 +181,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -203,7 +193,7 @@
     <operation name="SelectDialogMessageListByMessageId" result_set="list">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -228,7 +218,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -242,7 +232,7 @@
         </params>
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -267,7 +257,7 @@
     <operation name="SelectDialogMessageIdList" result_set="list">
         <sql>
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -279,7 +269,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -318,7 +308,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -335,7 +325,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -353,7 +343,7 @@
         <sql>
             <![CDATA[
            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -371,7 +361,7 @@
         <sql>
             <![CDATA[
            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -389,7 +379,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -407,7 +397,7 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE
@@ -421,7 +411,7 @@
         <sql>
             <![CDATA[
            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, date2
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2
             FROM
                 messages
             WHERE

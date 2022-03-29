@@ -27,6 +27,8 @@ type MessagesDO struct {
 	Mentioned         bool   `db:"mentioned"`
 	MediaUnread       bool   `db:"media_unread"`
 	Pinned            bool   `db:"pinned"`
+	Reaction          string `db:"reaction"`
+	ReactionDate      int64  `db:"reaction_date"`
 	Date2             int64  `db:"date2"`
 	Deleted           bool   `db:"deleted"`
 }

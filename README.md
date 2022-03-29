@@ -78,7 +78,7 @@ cd ../teamgramd/bin
 
 
 ### Compatible clients
-**Important**: default signIn and signOut verify code is **12345**
+**Important**: default signIn verify code is **12345**
 
 [Android client for Teamgram](https://github.com/teamgram/teamgram-android)
 

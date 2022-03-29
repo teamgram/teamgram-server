@@ -17,8 +17,15 @@ import (
 // MessageGetPeerUserMessage
 // message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 func (c *MessageCore) MessageGetPeerUserMessage(in *message.TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error) {
-	// TODO: not impl
-	c.Logger.Errorf("message.getPeerUserMessage - error: method MessageGetPeerUserMessage not impl")
+	pDO, err := c.svcCtx.Dao.MessagesDAO.SelectPeerUserMessage(c.ctx, in.PeerUserId, in.UserId, in.MsgId)
+	if err != nil {
+		c.Logger.Errorf("message.getPeerUserMessage - error: %v", err)
+		return nil, err
+	} else if pDO == nil {
+		err = mtproto.ErrMsgIdInvalid
+		c.Logger.Errorf("message.getPeerUserMessage - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrMethodNotImpl
+	return c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, pDO), nil
 }
