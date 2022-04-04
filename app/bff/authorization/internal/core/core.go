@@ -22,6 +22,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -56,6 +57,12 @@ func checkPhoneNumberInvalid(phone string) (string, error) {
 	if phone == "" {
 		// log.Errorf("check phone_number error - empty")
 		return "", mtproto.ErrPhoneNumberInvalid
+	}
+
+	phone = strings.ReplaceAll(phone, " ", "")
+	if phone == "+42400" ||
+		phone == "+42777" {
+		return phone[1:], nil
 	}
 
 	// 3.2. check phone_number

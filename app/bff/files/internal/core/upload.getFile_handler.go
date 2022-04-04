@@ -100,6 +100,17 @@ func (c *FilesCore) UploadGetFile(in *mtproto.TLUploadGetFile) (*mtproto.Upload_
 		//	time_ms:long
 		//	scale:int = InputFileLocation;
 		//
+		if c.svcCtx.Plugin != nil {
+			uploadFile, err := c.svcCtx.Plugin.GetGroupCallStreamFile(
+				c.ctx,
+				c.MD.UserId,
+				in.GetLocation())
+			if err != nil {
+				c.Logger.Errorf("upload.getFile - error: %v inputFileLocation", err)
+				return nil, mtproto.ErrGroupcallForbidden
+			}
+			return uploadFile, nil
+		}
 	default:
 		c.Logger.Errorf("upload.getFile - error: invalid location")
 		return nil, mtproto.ErrLocationInvalid

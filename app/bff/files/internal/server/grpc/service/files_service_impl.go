@@ -73,7 +73,11 @@ func (s *Service) UploadSaveFilePart(ctx context.Context, request *mtproto.TLUpl
 		return nil, err
 	}
 
-	c.Infof("upload.saveFilePart - reply: %s", r.DebugString())
+	c.Infof("upload.saveFilePart#b304a621 - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
+		c.MD.DebugString(),
+		request.FileId,
+		request.FilePart,
+		len(request.Bytes))
 	return r, err
 }
 
@@ -88,7 +92,10 @@ func (s *Service) UploadGetFile(ctx context.Context, request *mtproto.TLUploadGe
 		return nil, err
 	}
 
-	c.Infof("upload.getFile - reply: %s", r.DebugString())
+	c.Infof("upload.getFile - reply: {type: %v, mime: %d, len_bytes: %d}",
+		r.GetType(),
+		r.GetMtime(),
+		len(r.GetBytes()))
 	return r, err
 }
 
@@ -96,7 +103,11 @@ func (s *Service) UploadGetFile(ctx context.Context, request *mtproto.TLUploadGe
 // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
 func (s *Service) UploadSaveBigFilePart(ctx context.Context, request *mtproto.TLUploadSaveBigFilePart) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("upload.saveBigFilePart - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Infof("upload.saveBigFilePart#de7b673d - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
+		c.MD.DebugString(),
+		request.FileId,
+		request.FilePart,
+		len(request.Bytes))
 
 	r, err := c.UploadSaveBigFilePart(request)
 	if err != nil {
@@ -118,7 +129,11 @@ func (s *Service) UploadGetWebFile(ctx context.Context, request *mtproto.TLUploa
 		return nil, err
 	}
 
-	c.Infof("upload.getWebFile - reply: %s", r.DebugString())
+	c.Infof("upload.getWebFile - reply: {size: %d, mime_type: %, file_type: %s, len_bytes: %d}",
+		r.GetSize2(),
+		r.GetMimeType(),
+		r.GetFileType().DebugString(),
+		len(r.GetBytes()))
 	return r, err
 }
 

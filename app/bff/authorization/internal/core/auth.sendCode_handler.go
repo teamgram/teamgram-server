@@ -156,6 +156,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 	*/
 
 	// 3. check number
+
 	// client phone number format: "+86 111 1111 1111"
 	phoneNumber, err := checkPhoneNumberInvalid(request.PhoneNumber)
 	if err != nil {
