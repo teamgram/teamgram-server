@@ -28,10 +28,10 @@ type MinioConfig struct {
 	UseSSL          bool
 }
 
-//endpoint := "127.0.0.1:9000"
-//accessKeyID := "Q3AM3UQ867SPQQA43P2F"
-//secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-//useSSL := true
+// endpoint := "127.0.0.1:9000"
+// accessKeyID := "Q3AM3UQ867SPQQA43P2F"
+// secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
+// useSSL := true
 
 func MustNewMinioClient(c *MinioConfig) *minio.Core {
 	core, err := minio.NewCore(c.Endpoint, c.AccessKeyID, c.SecretAccessKey, c.UseSSL)
