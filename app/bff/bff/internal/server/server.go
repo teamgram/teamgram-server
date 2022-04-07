@@ -31,17 +31,13 @@ import (
 	contacts_helper "github.com/teamgram/teamgram-server/app/bff/contacts"
 	dialogs_helper "github.com/teamgram/teamgram-server/app/bff/dialogs"
 	drafts_helper "github.com/teamgram/teamgram-server/app/bff/drafts"
-	emoji_helper "github.com/teamgram/teamgram-server/app/bff/emoji"
 	files_helper "github.com/teamgram/teamgram-server/app/bff/files"
-	gifs_helper "github.com/teamgram/teamgram-server/app/bff/gifs"
 	messages_helper "github.com/teamgram/teamgram-server/app/bff/messages"
 	miscellaneous_helper "github.com/teamgram/teamgram-server/app/bff/miscellaneous"
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
 	photos_helper "github.com/teamgram/teamgram-server/app/bff/photos"
-	promodata_helper "github.com/teamgram/teamgram-server/app/bff/promodata"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
-	reports_helper "github.com/teamgram/teamgram-server/app/bff/reports"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
@@ -77,13 +73,6 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCTosServer(
 			grpcServer,
 			tos_helper.New(tos_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// reports_helper
-		mtproto.RegisterRPCReportsServer(
-			grpcServer,
-			reports_helper.New(reports_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 
@@ -126,20 +115,6 @@ func (s *Server) Initialize() error {
 				SyncClient:        c.SyncClient,
 				MsgClient:         c.MsgClient,
 			}, nil))
-
-		// gifs_helper
-		mtproto.RegisterRPCGifsServer(
-			grpcServer,
-			gifs_helper.New(gifs_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// gifs_helper
-		mtproto.RegisterRPCPromoDataServer(
-			grpcServer,
-			promodata_helper.New(promodata_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
 
 		// chats_helper
 		mtproto.RegisterRPCChatsServer(
@@ -213,12 +188,6 @@ func (s *Server) Initialize() error {
 				ChatClient:    c.BizServiceClient,
 			}, nil))
 
-		// emoji_helper
-		mtproto.RegisterRPCEmojiServer(
-			grpcServer,
-			emoji_helper.New(emoji_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
 		// autodownload_helper
 		mtproto.RegisterRPCAutoDownloadServer(
 			grpcServer,

@@ -198,16 +198,69 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Users:    []*mtproto.User{},
 		}).To_Messages_Messages(), nil
 
+	// reactions
 	case "TLMessagesGetAvailableReactions":
 		return mtproto.MakeTLMessagesAvailableReactions(&mtproto.Messages_AvailableReactions{
 			Hash:      0,
 			Reactions: []*mtproto.AvailableReaction{},
 		}).To_Messages_AvailableReactions(), nil
 
+	// folders
 	case "TLMessagesGetDialogFilters":
 		return &mtproto.Vector_DialogFilter{
 			Datas: []*mtproto.DialogFilter{},
 		}, nil
+
+	// gifs
+	case "TLMessagesGetSavedGifs":
+		return mtproto.MakeTLMessagesSavedGifs(&mtproto.Messages_SavedGifs{
+			Hash: 0,
+			Gifs: []*mtproto.Document{},
+		}).To_Messages_SavedGifs(), nil
+	case "TLMessagesSaveGif":
+		return mtproto.BoolTrue, nil
+
+	// promodata
+	case "TLHelpGetPromoData":
+		return mtproto.MakeTLHelpPromoDataEmpty(&mtproto.Help_PromoData{
+			Expires: int32(time.Now().Unix() + 60*60),
+		}).To_Help_PromoData(), nil
+	case "TLHelpHidePromoData":
+		return mtproto.BoolTrue, nil
+
+	// emoji
+	case "TLMessagesGetEmojiKeywords":
+		in := object.(*mtproto.TLMessagesGetEmojiKeywords)
+		return mtproto.MakeTLEmojiKeywordsDifference(&mtproto.EmojiKeywordsDifference{
+			LangCode:    in.LangCode,
+			FromVersion: 0,
+			Version:     0,
+			Keywords:    []*mtproto.EmojiKeyword{},
+		}).To_EmojiKeywordsDifference(), nil
+	case "TLMessagesGetEmojiKeywordsDifference":
+		in := object.(*mtproto.TLMessagesGetEmojiKeywordsDifference)
+		return mtproto.MakeTLEmojiKeywordsDifference(&mtproto.EmojiKeywordsDifference{
+			LangCode:    in.LangCode,
+			FromVersion: in.FromVersion,
+			Version:     in.FromVersion,
+			Keywords:    []*mtproto.EmojiKeyword{},
+		}).To_EmojiKeywordsDifference(), nil
+	case "TLMessagesGetEmojiKeywordsLanguages":
+		return &mtproto.Vector_EmojiLanguage{
+			Datas: []*mtproto.EmojiLanguage{},
+		}, nil
+
+	// reports
+	case "TLAccountReportPeer":
+		return mtproto.BoolTrue, nil
+	case "TLAccountReportProfilePhoto":
+		return mtproto.BoolTrue, nil
+	case "TLChannelsReportSpam":
+		return mtproto.BoolTrue, nil
+	case "TLMessagesReport":
+		return mtproto.BoolTrue, nil
+	case "TLMessagesReportSpam":
+		return mtproto.BoolTrue, nil
 	}
 
 	logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
