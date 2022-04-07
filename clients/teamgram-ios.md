@@ -4,7 +4,7 @@
 
 - Get *[teamgram-ios](https://github.com/teamgram/teamgram-ios)* source code
 
-- build, see [build teamgram-ios](https://github.com/teamgram/teamgram-ios), and google
+- build, see [build teamgram-ios](https://github.com/teamgram/teamgram-ios#compilation-guide), and google
 
 ## Patch
 

@@ -4,7 +4,7 @@
 
 - Get *[teamgram-android](https://github.com/teamgram/teamgram-android)* source code
 
-- build, see [build teamgram-android](https://github.com/teamgram/teamgram-android/blob/master/README.md), and google
+- build, see [build teamgram-android](https://github.com/teamgram/teamgram-android/tree/master#compilation-guide), and google
 
 ## patch
 
