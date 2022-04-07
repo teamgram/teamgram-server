@@ -81,11 +81,11 @@ cd ../teamgramd/bin
 ### Compatible clients
 **Important**: default signIn verify code is **12345**
 
-[Android client for Teamgram](https://github.com/teamgram/teamgram-android)
+[Android client for Teamgram](clients/teamgram-android.md)
 
-[iOS client for Teamgram](https://github.com/teamgram/teamgram-ios)
+[iOS client for Teamgram](clients/teamgram-ios.md)
 
-[tdesktop for Teamgram](https://github.com/teamgram/teamgram-tdesktop)
+[tdesktop for Teamgram](clients/teamgram-tdesktop.md)
 
 ## Feedback
 Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/cnteamgram) Or [Teamgram](https://t.me/enteamgram) to discuss problems around source code.
