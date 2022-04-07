@@ -147,6 +147,16 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Hash:   0,
 			Themes: []*mtproto.Theme{},
 		}).To_Account_Themes(), nil
+	case "TLAccountGetChatThemesD6D71D7B":
+		return mtproto.MakeTLAccountChatThemes(&mtproto.Account_ChatThemes{
+			Hash:   0,
+			Themes: []*mtproto.ChatTheme{},
+		}).To_Account_ChatThemes(), nil
+	case "TLAccountGetChatThemesD638DE89":
+		return mtproto.MakeTLAccountThemes(&mtproto.Account_Themes{
+			Hash:   0,
+			Themes: []*mtproto.Theme{},
+		}).To_Account_Themes(), nil
 
 	// stickers
 	case "TLMessagesGetAllStickers":
@@ -189,6 +199,15 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Hash:     0,
 			Stickers: []*mtproto.Document{},
 		}).To_Messages_Stickers(), nil
+	case "TLMessagesGetFeaturedStickers":
+		return mtproto.MakeTLMessagesFeaturedStickers(&mtproto.Messages_FeaturedStickers{
+			Count:  0,
+			Hash:   0,
+			Sets:   []*mtproto.StickerSetCovered{},
+			Unread: []int64{},
+		}).To_Messages_FeaturedStickers(), nil
+	case "TLMessagesGetStickerSet":
+		return nil, mtproto.ErrStickerIdInvalid
 
 	// 	scheduledmessages
 	case "TLMessagesGetScheduledMessages":
@@ -261,6 +280,24 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 		return mtproto.BoolTrue, nil
 	case "TLMessagesReportSpam":
 		return mtproto.BoolTrue, nil
+
+	// phone
+	case "TLPhoneGetCallConfig":
+		return mtproto.MakeTLDataJSON(&mtproto.DataJSON{
+			Data: "{}",
+		}).To_DataJSON(), nil
+
+	case "TLAccountGetAuthorizations":
+		return mtproto.MakeTLAccountAuthorizations(&mtproto.Account_Authorizations{
+			AuthorizationTtlDays: 0,
+			Authorizations:       []*mtproto.Authorization{},
+		}).To_Account_Authorizations(), nil
+
+	case "TLAccountGetWebAuthorizations":
+		return mtproto.MakeTLAccountWebAuthorizations(&mtproto.Account_WebAuthorizations{
+			Authorizations: []*mtproto.WebAuthorization{},
+			Users:          []*mtproto.User{},
+		}).To_Account_WebAuthorizations(), nil
 	}
 
 	logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
