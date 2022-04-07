@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -30,8 +31,17 @@ import (
 // UpdatesGetDifference
 // updates.getDifference#25939651 flags:# pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
 func (c *UpdatesCore) UpdatesGetDifference(in *mtproto.TLUpdatesGetDifference) (*mtproto.Updates_Difference, error) {
+	keyId, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionGetPermAuthKeyId(c.ctx, &authsession.TLAuthsessionGetPermAuthKeyId{
+		AuthKeyId: c.MD.AuthId,
+	})
+	if err != nil {
+		c.Logger.Errorf("updates.getDifference - error: %v", err)
+		return nil, err
+	}
+	c.Logger.Infof("updates.getDifference - keyId: %v", keyId)
+
 	updatesDiff, err := c.svcCtx.Dao.UpdatesClient.UpdatesGetDifferenceV2(c.ctx, &updates.TLUpdatesGetDifferenceV2{
-		AuthKeyId:     c.MD.AuthId,
+		AuthKeyId:     keyId.GetV(),
 		UserId:        c.MD.UserId,
 		Pts:           in.Pts,
 		PtsTotalLimit: in.PtsTotalLimit,

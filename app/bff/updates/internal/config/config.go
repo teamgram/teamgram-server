@@ -24,7 +24,8 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	UpdatesClient zrpc.RpcClientConf
-	UserClient    zrpc.RpcClientConf
-	ChatClient    zrpc.RpcClientConf
+	UpdatesClient     zrpc.RpcClientConf
+	UserClient        zrpc.RpcClientConf
+	ChatClient        zrpc.RpcClientConf
+	AuthsessionClient zrpc.RpcClientConf
 }

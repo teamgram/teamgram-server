@@ -68,8 +68,8 @@ func (c *BFFProxyClient) GetRpcClientByRequest(t interface{}) (zrpc.Client, erro
 	if c2, ok := c.BFFClients[rt.Name()]; ok {
 		return c2, nil
 	} else {
-		logx.Errorf("not found method: %s", rt.Name())
-		logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
+		// logx.Errorf("not found method: %s", rt.Name())
+		// logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
 	}
 
 	// TODO(@benqi):
@@ -81,7 +81,11 @@ func (c *BFFProxyClient) GetRpcClientByRequest(t interface{}) (zrpc.Client, erro
 func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
 	conn, err := c.GetRpcClientByRequest(object)
 	if err != nil {
-		return nil, err
+		r, err2 := c.TryReturnFakeRpcResult(object)
+		if err2 != nil {
+			return nil, mtproto.NewRpcError(status.Convert(err2))
+		}
+		return r, nil
 	}
 
 	t := mtproto.FindRPCContextTuple(object)

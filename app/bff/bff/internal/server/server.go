@@ -20,7 +20,6 @@ package server
 
 import (
 	"flag"
-	scheduledmessages_helper "github.com/teamgram/teamgram-server/app/bff/scheduledmessages"
 
 	"github.com/teamgram/proto/mtproto"
 	account_helper "github.com/teamgram/teamgram-server/app/bff/account"
@@ -34,9 +33,7 @@ import (
 	drafts_helper "github.com/teamgram/teamgram-server/app/bff/drafts"
 	emoji_helper "github.com/teamgram/teamgram-server/app/bff/emoji"
 	files_helper "github.com/teamgram/teamgram-server/app/bff/files"
-	folders_helper "github.com/teamgram/teamgram-server/app/bff/folders"
 	gifs_helper "github.com/teamgram/teamgram-server/app/bff/gifs"
-	langpack_helper "github.com/teamgram/teamgram-server/app/bff/langpack"
 	messages_helper "github.com/teamgram/teamgram-server/app/bff/messages"
 	miscellaneous_helper "github.com/teamgram/teamgram-server/app/bff/miscellaneous"
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
@@ -44,19 +41,12 @@ import (
 	photos_helper "github.com/teamgram/teamgram-server/app/bff/photos"
 	promodata_helper "github.com/teamgram/teamgram-server/app/bff/promodata"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
-	reactions_helper "github.com/teamgram/teamgram-server/app/bff/reactions"
 	reports_helper "github.com/teamgram/teamgram-server/app/bff/reports"
-	secretchats_helper "github.com/teamgram/teamgram-server/app/bff/secretchats"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
-	stickers_helper "github.com/teamgram/teamgram-server/app/bff/stickers"
-	themes_helper "github.com/teamgram/teamgram-server/app/bff/themes"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
-	twofa_helper "github.com/teamgram/teamgram-server/app/bff/twofa"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
 	users_helper "github.com/teamgram/teamgram-server/app/bff/users"
-	wallpapers_helper "github.com/teamgram/teamgram-server/app/bff/wallpapers"
-	webpage_helper "github.com/teamgram/teamgram-server/app/bff/webpage"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -151,13 +141,6 @@ func (s *Server) Initialize() error {
 				RpcServerConf: c.RpcServerConf,
 			}))
 
-		// twofa_helper
-		mtproto.RegisterRPCTwoFaServer(
-			grpcServer,
-			twofa_helper.New(twofa_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
 		// chats_helper
 		mtproto.RegisterRPCChatsServer(
 			grpcServer,
@@ -184,35 +167,15 @@ func (s *Server) Initialize() error {
 				MediaClient:   c.MediaClient,
 			}, nil))
 
-		// webpage_helper
-		mtproto.RegisterRPCWebPageServer(
-			grpcServer,
-			webpage_helper.New(webpage_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// secretchats_helper
-		mtproto.RegisterRPCSecretChatsServer(
-			grpcServer,
-			secretchats_helper.New(secretchats_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
 		// updates_helper
 		mtproto.RegisterRPCUpdatesServer(
 			grpcServer,
 			updates_helper.New(updates_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				UpdatesClient: c.BizServiceClient,
-				UserClient:    c.BizServiceClient,
-				ChatClient:    c.BizServiceClient,
-			}))
-
-		// themes_helper
-		mtproto.RegisterRPCThemesServer(
-			grpcServer,
-			themes_helper.New(themes_helper.Config{
-				RpcServerConf: c.RpcServerConf,
+				RpcServerConf:     c.RpcServerConf,
+				UpdatesClient:     c.BizServiceClient,
+				UserClient:        c.BizServiceClient,
+				ChatClient:        c.BizServiceClient,
+				AuthsessionClient: c.AuthSessionClient,
 			}))
 
 		// contacts_helper
@@ -256,32 +219,10 @@ func (s *Server) Initialize() error {
 			emoji_helper.New(emoji_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
-
-		// folders_helper
-		mtproto.RegisterRPCFoldersServer(
-			grpcServer,
-			folders_helper.New(folders_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// langpack_helper
-		mtproto.RegisterRPCLangpackServer(
-			grpcServer,
-			langpack_helper.New(langpack_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
 		// autodownload_helper
 		mtproto.RegisterRPCAutoDownloadServer(
 			grpcServer,
 			autodownload_helper.New(autodownload_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// reactions_helper
-		mtproto.RegisterRPCReactionsServer(
-			grpcServer,
-			reactions_helper.New(reactions_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 
@@ -320,13 +261,6 @@ func (s *Server) Initialize() error {
 				ChatClient:    c.BizServiceClient,
 			}))
 
-		// scheduledmessages_helper
-		mtproto.RegisterRPCScheduledMessagesServer(
-			grpcServer,
-			scheduledmessages_helper.New(scheduledmessages_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
 		// nsfw_helper
 		mtproto.RegisterRPCNsfwServer(
 			grpcServer,
@@ -339,13 +273,6 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCSponsoredMessagesServer(
 			grpcServer,
 			sponsoredmessages_helper.New(sponsoredmessages_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
-
-		// stickers_helper
-		mtproto.RegisterRPCStickersServer(
-			grpcServer,
-			stickers_helper.New(stickers_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 
@@ -380,13 +307,6 @@ func (s *Server) Initialize() error {
 				ChatClient:     c.BizServiceClient,
 				SyncClient:     c.SyncClient,
 			}, nil))
-
-		// usernames_helper
-		mtproto.RegisterRPCWallpapersServer(
-			grpcServer,
-			wallpapers_helper.New(wallpapers_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
 	})
 
 	// logx.Must(err)

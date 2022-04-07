@@ -62,3 +62,5 @@ Thumbs.db
 /teamgramd/logs/status/
 /teamgramd/bin/GeoLite2-City.mmdb
 /teamgramd/bin/GeoLite2-Country.mmdb
+/teamgramd/logs/dfs/
+/teamgramd/logs/sync/
