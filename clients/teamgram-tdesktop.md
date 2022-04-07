@@ -6,7 +6,7 @@
 
 - build, see [Build teamgram-tdesktop](https://github.com/teamgram/teamgram-tdesktop#build-instructions)
 
-## patch
+## Patch
 
 **Default connect to Teamgram Test Server.**
 

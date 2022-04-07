@@ -6,7 +6,7 @@
 
 - build, see [build teamgram-ios](https://github.com/teamgram/teamgram-ios), and google
 
-## patch
+## Patch
 
 **Default connect to Teamgram Test Server.**
 

@@ -1,4 +1,4 @@
-# Teamgram-Android
+# teamgram-android
 
 ## Install
 
