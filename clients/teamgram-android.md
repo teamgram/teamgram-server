@@ -12,10 +12,10 @@
 
 If you want to connect to your own server, you can modify the following code:
 
-[ConnectionsManager.cpp#L1684](https://github.com/teamgram/teamgram-android/blob/5b790e0fd27aab272ed5933968e9187ce7c61899/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1684)
+[ConnectionsManager.cpp#L1684](https://github.com/teamgram/teamgram-android/blob/f098cb1e2389dad67940ac905a8d45f646a99940/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1684)
 
 ```
-https://github.com/teamgram/teamgram-android/blob/5b790e0fd27aab272ed5933968e9187ce7c61899/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1684
+https://github.com/teamgram/teamgram-android/blob/f098cb1e2389dad67940ac905a8d45f646a99940/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1684
 
 void ConnectionsManager::initDatacenters() {
     Datacenter *datacenter;
