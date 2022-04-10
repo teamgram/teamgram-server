@@ -212,7 +212,6 @@
         </sql>
     </operation>
 
-
     <operation name="SelectDialogLastMessageIdNotIdList" result_set="single">
         <params>
             <param name="idList" type="[]int32" />

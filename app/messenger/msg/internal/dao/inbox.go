@@ -335,34 +335,6 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, delet
 			msgIds = append(msgIds, msgDOList[i].UserMessageBoxId)
 		}
 
-		//// 会话里最后n条消息，检查是否需要修改会话信息
-		//topMessageDOList, err := d.MessagesDAO.SelectDialogLastMessageList(ctx, userId, dialogId.A, dialogId.B, int32(len(msgIds)+1))
-		//if err != nil {
-		//	return err
-		//} else if len(topMessageDOList) == 0 {
-		//	// return []int64{}, nil
-		//
-		//} else {
-		//	topMessageIndex = math.MaxInt32
-		//}
-		//
-		//getLastTopMessage := func(topMessage2 int32) int32 {
-		//	for i := 0; i < len(topMessageDOList); i++ {
-		//		if topMessageDOList[i].UserMessageBoxId >= topMessage2 {
-		//			continue
-		//		} else {
-		//			return topMessageDOList[i].UserMessageBoxId
-		//		}
-		//	}
-		//	return 0
-		//}
-
-		// TODO: ???
-		//rList, _ := d.DialogsDAO.SelectPeerDialogList(ctx, userId, []int64{dialogId})
-		//if len(rList) != 1 {
-		//
-		//}
-
 		dlgDO, _ := d.DialogsDAO.SelectDialog(ctx, userId, msgDOList[0].PeerType, mtproto.GetPeerIdByDialogId(userId, dialogId))
 		if dlgDO != nil {
 			topMessage := dlgDO.TopMessage
