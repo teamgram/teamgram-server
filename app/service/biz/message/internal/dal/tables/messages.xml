@@ -212,6 +212,21 @@
         </sql>
     </operation>
 
+
+    <operation name="SelectDialogLastMessageIdNotIdList" result_set="single">
+        <params>
+            <param name="idList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                user_message_box_id
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2 AND user_message_box_id NOT IN (:idList) AND deleted = 0 ORDER BY user_message_box_id DESC LIMIT 1
+        </sql>
+    </operation>
+
     <operation name="SelectDialogsByMessageIdList" result_set="list">
         <params>
             <param name="idList" type="[]int32" />

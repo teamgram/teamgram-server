@@ -912,6 +912,34 @@ func (dao *MessagesDAO) SelectDialogLastMessageId(ctx context.Context, user_id i
 	return
 }
 
+// SelectDialogLastMessageIdNotIdList
+// select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and user_message_box_id not in (:idList) and deleted = 0 order by user_message_box_id desc limit 1
+func (dao *MessagesDAO) SelectDialogLastMessageIdNotIdList(ctx context.Context, user_id int64, dialog_id1 int64, dialog_id2 int64, idList []int32) (rValue int32, err error) {
+	var (
+		query = "select user_message_box_id from messages where user_id = ? and dialog_id1 = ? and dialog_id2 = ? and user_message_box_id not in (?) and deleted = 0 order by user_message_box_id desc limit 1"
+		a     []interface{}
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	query, a, err = sqlx.In(query, user_id, dialog_id1, dialog_id2, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectDialogLastMessageIdNotIdList(_), error: %v", err)
+		return
+	}
+
+	err = dao.db.Get(ctx, &rValue, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("get in SelectDialogLastMessageIdNotIdList(_), error: %v", err)
+	}
+
+	return
+}
+
 // SelectDialogsByMessageIdList
 // select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, reaction, reaction_date, date2 from messages where user_id = :user_id and user_message_box_id in (:idList) and deleted = 0
 func (dao *MessagesDAO) SelectDialogsByMessageIdList(ctx context.Context, user_id int64, idList []int32) (rList []dataobject.MessagesDO, err error) {

@@ -21,16 +21,15 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
-	"github.com/zeromicro/go-zero/core/jsonx"
-	"math"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 
 	"github.com/gogo/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -304,12 +303,20 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, delet
 	// TODO(@benqi): sort
 
 	for userId, msgDOList := range deletedDialogsMap {
-
 		var (
-			topMessageIndex int32
-			dialogId        mtproto.DialogID
-			msgIds          []int32
+			// topMessage int32
+			dialogId mtproto.DialogID
+			msgIds   []int32
 		)
+
+		//if dlgDO == nil {
+		//	dlgDO = &dataobject.DialogsDO{
+		//		ReadInboxMaxId: math.MaxInt32,
+		//		UnreadCount:    0,
+		//		TopMessage:     0,
+		//	}
+		//	topMessage = dlgDO.TopMessage
+		//}
 
 		for i := 0; i < len(msgDOList); i++ {
 			if dialogId.A == 0 && dialogId.B == 0 {
@@ -319,34 +326,36 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, delet
 
 			// check conversation peer_id
 			if dialogId.A != msgDOList[i].DialogId1 && dialogId.B != msgDOList[i].DialogId2 {
-				err = mtproto.ErrMessageIdInvalid
 				// dialogId
+				err = mtproto.ErrMessageIdInvalid
+				logx.WithContext(ctx).Errorf("deleteInboxMessages error: %v", err)
+				// continue
 				return err
 			}
 			msgIds = append(msgIds, msgDOList[i].UserMessageBoxId)
 		}
 
-		// 会话里最后n条消息，检查是否需要修改会话信息
-		topMessageDOList, err := d.MessagesDAO.SelectDialogLastMessageList(ctx, userId, dialogId.A, dialogId.B, int32(len(msgIds)+1))
-		if err != nil {
-			return err
-		} else if len(topMessageDOList) == 0 {
-			// return []int64{}, nil
-
-		} else {
-			topMessageIndex = math.MaxInt32
-		}
-
-		getLastTopMessage := func(topMessage2 int32) int32 {
-			for i := 0; i < len(topMessageDOList); i++ {
-				if topMessageDOList[i].UserMessageBoxId >= topMessage2 {
-					continue
-				} else {
-					return topMessageDOList[i].UserMessageBoxId
-				}
-			}
-			return 0
-		}
+		//// 会话里最后n条消息，检查是否需要修改会话信息
+		//topMessageDOList, err := d.MessagesDAO.SelectDialogLastMessageList(ctx, userId, dialogId.A, dialogId.B, int32(len(msgIds)+1))
+		//if err != nil {
+		//	return err
+		//} else if len(topMessageDOList) == 0 {
+		//	// return []int64{}, nil
+		//
+		//} else {
+		//	topMessageIndex = math.MaxInt32
+		//}
+		//
+		//getLastTopMessage := func(topMessage2 int32) int32 {
+		//	for i := 0; i < len(topMessageDOList); i++ {
+		//		if topMessageDOList[i].UserMessageBoxId >= topMessage2 {
+		//			continue
+		//		} else {
+		//			return topMessageDOList[i].UserMessageBoxId
+		//		}
+		//	}
+		//	return 0
+		//}
 
 		// TODO: ???
 		//rList, _ := d.DialogsDAO.SelectPeerDialogList(ctx, userId, []int64{dialogId})
@@ -354,22 +363,44 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, delet
 		//
 		//}
 
-		for i := 0; i < len(msgDOList); i++ {
-			topMessage := getLastTopMessage(topMessageIndex)
-			if topMessage == msgDOList[i].UserMessageBoxId {
-				topMessageIndex = topMessage
+		dlgDO, _ := d.DialogsDAO.SelectDialog(ctx, userId, msgDOList[0].PeerType, mtproto.GetPeerIdByDialogId(userId, dialogId))
+		if dlgDO != nil {
+			topMessage := dlgDO.TopMessage
+			for i := 0; i < len(msgDOList); i++ {
+				if msgDOList[i].UserMessageBoxId >= dlgDO.TopMessage {
+					dlgDO.TopMessage -= 1
+				}
+				if msgDOList[i].UserMessageBoxId > dlgDO.ReadInboxMaxId {
+					dlgDO.UnreadCount -= 1
+				}
+			}
+			if !(topMessage == dlgDO.TopMessage ||
+				dlgDO.TopMessage == msgDOList[len(msgDOList)-1].UserMessageBoxId) {
+
+				dlgDO.TopMessage, _ = d.MessagesDAO.SelectDialogLastMessageIdNotIdList(ctx, userId, dialogId.A, dialogId.B, msgIds)
+			}
+
+			if dlgDO.UnreadCount < 0 {
+				dlgDO.UnreadCount = 0
 			}
 		}
 
 		tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-			_, result.Err = d.MessagesDAO.DeleteMessagesByMessageIdList(ctx, userId, msgIds)
+			_, result.Err = d.MessagesDAO.DeleteMessagesByMessageIdListTx(tx, userId, msgIds)
 			if result.Err != nil {
 				return
 			}
-			_, result.Err = d.DialogsDAO.UpdateTopMessage(ctx,
-				getLastTopMessage(topMessageIndex),
-				userId,
-				mtproto.GetPeerIdByDialogId(userId, dialogId))
+			if dlgDO != nil {
+				_, result.Err = d.DialogsDAO.UpdateCustomMapTx(
+					tx,
+					map[string]interface{}{
+						"top_message":  dlgDO.TopMessage,
+						"unread_count": dlgDO.UnreadCount,
+					},
+					userId,
+					dlgDO.PeerType,
+					dlgDO.PeerId)
+			}
 		})
 		if tR.Err != nil {
 			return tR.Err
