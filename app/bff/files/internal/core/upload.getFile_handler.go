@@ -126,6 +126,9 @@ func (c *FilesCore) UploadGetFile(in *mtproto.TLUploadGetFile) (*mtproto.Upload_
 		// err = mtproto.ErrOffsetInvalid
 		return nil, err
 	}
+	if uploadFile.GetType().GetPredicateName() == mtproto.Predicate_storage_fileUnknown {
+		uploadFile.Type.PredicateName = mtproto.Predicate_storage_filePartial
+	}
 
 	return uploadFile, nil
 }
