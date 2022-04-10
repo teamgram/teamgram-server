@@ -90,7 +90,7 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 	idHelper := mtproto.NewIDListHelper(c.MD.UserId)
 
 	for _, dialogExt := range dialogExtList {
-		c.Logger.Infof("dialogEx: %v", dialogExt)
+		// c.Logger.Infof("dialogEx: %v", dialogExt)
 		peer2 := mtproto.FromPeer(dialogExt.Dialog.Peer)
 		// idHelper.PickByPeer(peer2)
 		switch peer2.PeerType {
@@ -101,6 +101,9 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 					dialogExt.Dialog.TopMessage = dialog.Dialog.TopMessage
 					dialogExt.Dialog.Pts = dialog.Dialog.Pts
 					dialogExt.Dialog.UnreadCount = dialog.Dialog.TopMessage - dialogExt.Dialog.ReadInboxMaxId
+					if dialog.Dialog.UnreadCount < 0 {
+						dialog.Dialog.UnreadCount = 0
+					}
 					msgBox, _ := c.svcCtx.Plugin.GetChannelMessage(c.ctx, c.MD.UserId, peer2.PeerId, dialogExt.Dialog.TopMessage)
 					if msgBox != nil {
 						m := msgBox.ToMessage(c.MD.UserId)
@@ -111,7 +114,7 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 							PeerType: mtproto.PEER_CHANNEL,
 							PeerId:   peer2.PeerId,
 						})
-						dialogExt.Dialog.UnreadMentionsCount = mentionsCount.V
+						dialogExt.Dialog.UnreadMentionsCount = mentionsCount.GetV()
 					}
 				}
 			} else {
