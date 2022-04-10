@@ -31,7 +31,7 @@ func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*chat.Muta
 		kicked          = operatorId != deleteUserId
 	)
 
-	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, operatorId, deleteUserId)
+	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId)
 	if err != nil {
 		c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
 		return nil, err
