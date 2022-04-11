@@ -209,7 +209,7 @@ func (s *Server) Initialize() error {
 				MediaClient:    c.MediaClient,
 				UsernameClient: c.BizServiceClient,
 				SyncClient:     c.SyncClient,
-			}))
+			}, nil))
 
 		// notification_helper
 		mtproto.RegisterRPCNotificationServer(

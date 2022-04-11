@@ -7,6 +7,7 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"math/rand"
@@ -387,16 +388,16 @@ func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, 
 		}
 
 		if canEmbedLink {
-			//// TODO(@benqi): disable
-			//if webpage, err := c.svcCtx.Dao.WebpageClient.WebpageGetWebPagePreview(c.ctx, &webpagepb.TLWebpageGetWebPagePreview{
-			//	Message: firstUrl,
-			//}); err != nil {
-			//	// nil
-			//} else {
-			//	message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
-			//		Webpage: webpage,
-			//	}).To_MessageMedia()
-			//}
+			// TODO(@benqi): disable
+			if c.svcCtx.Plugin != nil {
+				ctx, _ := metadata.RpcMetadataToOutgoing(c.ctx, c.MD)
+				webpage, _ := c.svcCtx.Plugin.GetWebpagePreview(ctx, firstUrl)
+				if webpage != nil {
+					message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
+						Webpage: webpage,
+					}).To_MessageMedia()
+				}
+			}
 		}
 	}
 

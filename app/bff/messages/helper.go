@@ -14,12 +14,13 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/messages/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/messages/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/messages/internal/svc"
+	"github.com/teamgram/teamgram-server/app/bff/messages/plugin"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+func New(c Config, plugin plugin.MessagesPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin))
 }

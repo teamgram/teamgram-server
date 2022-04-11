@@ -17,3 +17,12 @@
 //
 
 package plugin
+
+import (
+	"context"
+	"github.com/teamgram/proto/mtproto"
+)
+
+type MessagesPlugin interface {
+	GetWebpagePreview(ctx context.Context, url string) (*mtproto.WebPage, error)
+}
