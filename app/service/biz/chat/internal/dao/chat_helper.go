@@ -22,6 +22,9 @@ func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.Cha
 		Title:               chatsDO.Title,
 		Photo:               nil,
 		Deactivated:         chatsDO.Deactivated,
+		CallActive:          false,
+		CallNotEmpty:        false,
+		Noforwards:          chatsDO.Noforwards,
 		ParticipantsCount:   chatsDO.ParticipantCount,
 		Date:                chatsDO.Date,
 		Version:             chatsDO.Version,
@@ -31,6 +34,7 @@ func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.Cha
 		About:               chatsDO.About,
 		ExportedInvite:      nil,
 		BotInfo:             nil,
+		Call:                nil,
 	}
 
 	if chatsDO.MigratedToId != 0 && chatsDO.MigratedToAccessHash != 0 {
@@ -50,32 +54,7 @@ func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.Cha
 		chat.Photo = mtproto.MakeTLPhotoEmpty(nil).To_Photo()
 	}
 
-	//if chatsDO.Link != "" {
-	//	// chatInviteExported#6e24fc9d flags:#
-	//	//	revoked:flags.0?true
-	//	//	permanent:flags.5?true
-	//	//	link:string
-	//	//	admin_id:int
-	//	//	date:int
-	//	//	start_date:flags.4?int
-	//	//	expire_date:flags.1?int
-	//	//	usage_limit:flags.2?int
-	//	//	usage:flags.3?int = ExportedChatInvite;
-	//	//
-	//	chat.ExportedInvite = mtproto.MakeTLChatInviteExported(&mtproto.ExportedChatInvite{
-	//		Revoked:    false,
-	//		Permanent:  true,
-	//		Link:       chatsDO.Link,
-	//		AdminId:    chat.Creator,
-	//		Date:       int32(chat.Date),
-	//		StartDate:  nil,
-	//		ExpireDate: nil,
-	//		UsageLimit: nil,
-	//		Usage:      nil,
-	//	}).To_ExportedChatInvite()
-	//} else {
 	chat.ExportedInvite = nil // model.ExportedChatInviteEmpty
-	//}
 
 	if chatsDO.AvailableReactions != "" {
 		jsonx.UnmarshalFromString(chatsDO.AvailableReactions, &chat.AvailableReactions)

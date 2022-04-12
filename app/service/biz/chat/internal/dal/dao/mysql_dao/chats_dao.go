@@ -85,10 +85,10 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 }
 
 // Select
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id = :id
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id = :id
 func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id = ?"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id = ?"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, id)
@@ -116,10 +116,10 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 }
 
 // SelectLastCreator
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creator_user_id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, creator_user_id)
@@ -235,10 +235,10 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 }
 
 // SelectByIdList
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (:idList)
 func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id in (?)"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (?)"
 		a     []interface{}
 		rows  *sqlx.Rows
 	)
@@ -280,10 +280,10 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 }
 
 // SelectByIdListWithCB
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (:idList)
 func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(i int, v *dataobject.ChatsDO)) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, available_reactions, deactivated, version, `date` from chats where id in (?)"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (?)"
 		a     []interface{}
 		rows  *sqlx.Rows
 	)
@@ -634,6 +634,50 @@ func (dao *ChatsDAO) UpdateAvailableReactionsTx(tx *sqlx.Tx, available_reactions
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateAvailableReactions(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateNoforwards
+// update chats set noforwards = :noforwards, version = version + 1 where id = :id
+func (dao *ChatsDAO) UpdateNoforwards(ctx context.Context, noforwards bool, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chats set noforwards = ?, version = version + 1 where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, noforwards, id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateNoforwards(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateNoforwards(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateNoforwardsTx
+// update chats set noforwards = :noforwards, version = version + 1 where id = :id
+func (dao *ChatsDAO) UpdateNoforwardsTx(tx *sqlx.Tx, noforwards bool, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chats set noforwards = ?, version = version + 1 where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, noforwards, id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateNoforwards(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateNoforwards(_), error: %v", err)
 	}
 
 	return

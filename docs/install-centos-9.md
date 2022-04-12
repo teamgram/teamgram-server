@@ -124,6 +124,7 @@ shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220321.sql
 shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220326.sql
 shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220328.sql
 shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220401.sql
+shell> mysql -uroot teamgram < teamgramd/sql/migrate_20220412.sql
 ```
 
 ### Build

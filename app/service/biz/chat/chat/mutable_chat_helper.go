@@ -67,6 +67,10 @@ func (m *MutableChat) CallNotEmpty() bool {
 	return m.GetChat().GetCallNotEmpty()
 }
 
+func (m *MutableChat) Noforwards() bool {
+	return m.GetChat().GetNoforwards()
+}
+
 func (m *MutableChat) Call() *mtproto.InputGroupCall {
 	return m.GetChat().GetCall()
 }
@@ -143,6 +147,7 @@ func (m *MutableChat) ToUnsafeChat(id int64) *mtproto.Chat {
 		Deactivated:             false,
 		CallActive:              m.CallActive(),
 		CallNotEmpty:            m.CallNotEmpty(),
+		Noforwards:              m.Noforwards(),
 		Id:                      m.Id(),
 		Title:                   m.Title(),
 		Photo:                   mtproto.MakeChatPhotoByPhoto(m.Chat.Photo),

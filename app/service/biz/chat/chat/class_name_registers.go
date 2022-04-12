@@ -27,6 +27,7 @@ const (
 	Predicate_chat_editChatDefaultBannedRights      = "chat_editChatDefaultBannedRights"
 	Predicate_chat_addChatUser                      = "chat_addChatUser"
 	Predicate_chat_getMutableChatByLink             = "chat_getMutableChatByLink"
+	Predicate_chat_toggleNoForwards                 = "chat_toggleNoForwards"
 	Predicate_chat_migratedToChannel                = "chat_migratedToChannel"
 	Predicate_chat_getChatParticipantIdList         = "chat_getChatParticipantIdList"
 	Predicate_chat_getUsersChatIdList               = "chat_getUsersChatIdList"
@@ -125,6 +126,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1570363509, // 0xa266278b
 
 	},
+	Predicate_chat_toggleNoForwards: {
+		0: -711644423, // 0xd5952af9
+
+	},
 	Predicate_chat_migratedToChannel: {
 		0: 138390239, // 0x83faadf
 
@@ -208,6 +213,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1513399943:  Predicate_chat_editChatDefaultBannedRights,      // 0x5a34a687
 	2086511757:  Predicate_chat_addChatUser,                      // 0x7c5da48d
 	-1570363509: Predicate_chat_getMutableChatByLink,             // 0xa266278b
+	-711644423:  Predicate_chat_toggleNoForwards,                 // 0xd5952af9
 	138390239:   Predicate_chat_migratedToChannel,                // 0x83faadf
 	848700073:   Predicate_chat_getChatParticipantIdList,         // 0x329622a9
 	792111948:   Predicate_chat_getUsersChatIdList,               // 0x2f36ab4c

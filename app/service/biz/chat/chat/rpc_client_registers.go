@@ -39,6 +39,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLChatEditChatDefaultBannedRights":      RPCContextTuple{"/mtproto.RPCChat/chat_editChatDefaultBannedRights", func() interface{} { return new(MutableChat) }},
 	"TLChatAddChatUser":                      RPCContextTuple{"/mtproto.RPCChat/chat_addChatUser", func() interface{} { return new(MutableChat) }},
 	"TLChatGetMutableChatByLink":             RPCContextTuple{"/mtproto.RPCChat/chat_getMutableChatByLink", func() interface{} { return new(MutableChat) }},
+	"TLChatToggleNoForwards":                 RPCContextTuple{"/mtproto.RPCChat/chat_toggleNoForwards", func() interface{} { return new(MutableChat) }},
 	"TLChatMigratedToChannel":                RPCContextTuple{"/mtproto.RPCChat/chat_migratedToChannel", func() interface{} { return new(mtproto.Bool) }},
 	"TLChatGetChatParticipantIdList":         RPCContextTuple{"/mtproto.RPCChat/chat_getChatParticipantIdList", func() interface{} { return new(Vector_Long) }},
 	"TLChatGetUsersChatIdList":               RPCContextTuple{"/mtproto.RPCChat/chat_getUsersChatIdList", func() interface{} { return new(Vector_UserChatIdList) }},

@@ -30,11 +30,6 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	1342599716: func() mtproto.TLObject { // 0x50067224
-		o := MakeTLUserChatIdList(nil)
-		o.Data2.Constructor = 1342599716
-		return o
-	},
 	650553001: func() mtproto.TLObject { // 0x26c6a6a9
 		o := MakeTLImmutableChatParticipant(nil)
 		o.Data2.Constructor = 650553001
@@ -63,6 +58,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-1394351506: func() mtproto.TLObject { // 0xace3e26e
 		o := MakeTLChatInvitePeek(nil)
 		o.Data2.Constructor = -1394351506
+		return o
+	},
+	1342599716: func() mtproto.TLObject { // 0x50067224
+		o := MakeTLUserChatIdList(nil)
+		o.Data2.Constructor = 1342599716
 		return o
 	},
 
@@ -130,6 +130,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-1570363509: func() mtproto.TLObject { // 0xa266278b
 		return &TLChatGetMutableChatByLink{
 			Constructor: -1570363509,
+		}
+	},
+	-711644423: func() mtproto.TLObject { // 0xd5952af9
+		return &TLChatToggleNoForwards{
+			Constructor: -711644423,
 		}
 	},
 	138390239: func() mtproto.TLObject { // 0x83faadf
@@ -223,158 +228,6 @@ func CheckClassID(classId int32) (ok bool) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-
-///////////////////////////////////////////////////////////////////////////////
-// UserChatIdList <--
-//  + TL_UserChatIdList
-//
-
-func (m *UserChatIdList) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_userChatIdList:
-		t := m.To_UserChatIdList()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *UserChatIdList) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *UserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x50067224:
-		m2 := MakeTLUserChatIdList(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *UserChatIdList) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_userChatIdList:
-		t := m.To_UserChatIdList()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_UserChatIdList
-// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
-func (m *UserChatIdList) To_UserChatIdList() *TLUserChatIdList {
-	m.PredicateName = Predicate_userChatIdList
-	return &TLUserChatIdList{
-		Data2: m,
-	}
-}
-
-// MakeTLUserChatIdList
-// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
-func MakeTLUserChatIdList(data2 *UserChatIdList) *TLUserChatIdList {
-	if data2 == nil {
-		return &TLUserChatIdList{Data2: &UserChatIdList{
-			PredicateName: Predicate_userChatIdList,
-		}}
-	} else {
-		data2.PredicateName = Predicate_userChatIdList
-		return &TLUserChatIdList{Data2: data2}
-	}
-}
-
-func (m *TLUserChatIdList) To_UserChatIdList() *UserChatIdList {
-	m.Data2.PredicateName = Predicate_userChatIdList
-	return m.Data2
-}
-
-func (m *TLUserChatIdList) SetUserId(v int64) { m.Data2.UserId = v }
-func (m *TLUserChatIdList) GetUserId() int64  { return m.Data2.UserId }
-
-func (m *TLUserChatIdList) SetChatIdList(v []int64) { m.Data2.ChatIdList = v }
-func (m *TLUserChatIdList) GetChatIdList() []int64  { return m.Data2.ChatIdList }
-
-func (m *TLUserChatIdList) GetPredicateName() string {
-	return Predicate_userChatIdList
-}
-
-func (m *TLUserChatIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x50067224: func() []byte {
-			// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
-			x.UInt(0x50067224)
-
-			x.Long(m.GetUserId())
-
-			x.VectorLong(m.GetChatIdList())
-
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_userChatIdList, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_userChatIdList, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLUserChatIdList) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLUserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x50067224: func() error {
-			// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
-			m.SetUserId(dBuf.Long())
-
-			m.SetChatIdList(dBuf.VectorLong())
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLUserChatIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ImmutableChatParticipant <--
@@ -646,7 +499,7 @@ func (m *ImmutableChat) DebugString() string {
 }
 
 // To_ImmutableChat
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
+// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
 func (m *ImmutableChat) To_ImmutableChat() *TLImmutableChat {
 	m.PredicateName = Predicate_immutableChat
 	return &TLImmutableChat{
@@ -655,7 +508,7 @@ func (m *ImmutableChat) To_ImmutableChat() *TLImmutableChat {
 }
 
 // MakeTLImmutableChat
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
+// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
 func MakeTLImmutableChat(data2 *ImmutableChat) *TLImmutableChat {
 	if data2 == nil {
 		return &TLImmutableChat{Data2: &ImmutableChat{
@@ -693,6 +546,9 @@ func (m *TLImmutableChat) GetCallActive() bool  { return m.Data2.CallActive }
 
 func (m *TLImmutableChat) SetCallNotEmpty(v bool) { m.Data2.CallNotEmpty = v }
 func (m *TLImmutableChat) GetCallNotEmpty() bool  { return m.Data2.CallNotEmpty }
+
+func (m *TLImmutableChat) SetNoforwards(v bool) { m.Data2.Noforwards = v }
+func (m *TLImmutableChat) GetNoforwards() bool  { return m.Data2.Noforwards }
 
 func (m *TLImmutableChat) SetParticipantsCount(v int32) { m.Data2.ParticipantsCount = v }
 func (m *TLImmutableChat) GetParticipantsCount() int32  { return m.Data2.ParticipantsCount }
@@ -744,7 +600,7 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0xd1febeb1: func() []byte {
-			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
+			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
 			x.UInt(0xd1febeb1)
 
 			// set flags
@@ -759,6 +615,9 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 				}
 				if m.GetCallNotEmpty() == true {
 					flags |= 1 << 2
+				}
+				if m.GetNoforwards() == true {
+					flags |= 1 << 25
 				}
 
 				if m.GetMigratedTo() != nil {
@@ -838,7 +697,7 @@ func (m *TLImmutableChat) CalcByteSize(layer int32) int {
 func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0xd1febeb1: func() error {
-			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
+			// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Long())
@@ -858,46 +717,49 @@ func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 			if (flags & (1 << 2)) != 0 {
 				m.SetCallNotEmpty(true)
 			}
+			if (flags & (1 << 25)) != 0 {
+				m.SetNoforwards(true)
+			}
 			m.SetParticipantsCount(dBuf.Int())
 			m.SetDate(dBuf.Long())
 			m.SetVersion(dBuf.Int())
 			if (flags & (1 << 3)) != 0 {
-				m11 := &mtproto.InputChannel{}
-				m11.Decode(dBuf)
-				m.SetMigratedTo(m11)
+				m12 := &mtproto.InputChannel{}
+				m12.Decode(dBuf)
+				m.SetMigratedTo(m12)
 			}
 
-			m12 := &mtproto.ChatBannedRights{}
-			m12.Decode(dBuf)
-			m.SetDefaultBannedRights(m12)
+			m13 := &mtproto.ChatBannedRights{}
+			m13.Decode(dBuf)
+			m.SetDefaultBannedRights(m13)
 
 			if (flags & (1 << 4)) != 0 {
 				m.SetCanSetUsername(true)
 			}
 			m.SetAbout(dBuf.String())
 			if (flags & (1 << 5)) != 0 {
-				m15 := &mtproto.ExportedChatInvite{}
-				m15.Decode(dBuf)
-				m.SetExportedInvite(m15)
+				m16 := &mtproto.ExportedChatInvite{}
+				m16.Decode(dBuf)
+				m.SetExportedInvite(m16)
 			}
 			if (flags & (1 << 6)) != 0 {
-				c16 := dBuf.Int()
-				if c16 != int32(mtproto.CRC32_vector) {
-					// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 16, c16)
-					return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 16, c16)
+				c17 := dBuf.Int()
+				if c17 != int32(mtproto.CRC32_vector) {
+					// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 17, c17)
+					return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 17, c17)
 				}
-				l16 := dBuf.Int()
-				v16 := make([]*mtproto.BotInfo, l16)
-				for i := int32(0); i < l16; i++ {
-					v16[i] = &mtproto.BotInfo{}
-					v16[i].Decode(dBuf)
+				l17 := dBuf.Int()
+				v17 := make([]*mtproto.BotInfo, l17)
+				for i := int32(0); i < l17; i++ {
+					v17[i] = &mtproto.BotInfo{}
+					v17[i].Decode(dBuf)
 				}
-				m.SetBotInfo(v16)
+				m.SetBotInfo(v17)
 			}
 			if (flags & (1 << 7)) != 0 {
-				m17 := &mtproto.InputGroupCall{}
-				m17.Decode(dBuf)
-				m.SetCall(m17)
+				m18 := &mtproto.InputGroupCall{}
+				m18.Decode(dBuf)
+				m.SetCall(m18)
 			}
 
 			m.SetAvailableReactions(dBuf.VectorString())
@@ -1498,6 +1360,158 @@ func (m *TLChatInvitePeek) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvitePeek) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// UserChatIdList <--
+//  + TL_UserChatIdList
+//
+
+func (m *UserChatIdList) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_userChatIdList:
+		t := m.To_UserChatIdList()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *UserChatIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *UserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x50067224:
+		m2 := MakeTLUserChatIdList(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *UserChatIdList) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_userChatIdList:
+		t := m.To_UserChatIdList()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_UserChatIdList
+// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
+func (m *UserChatIdList) To_UserChatIdList() *TLUserChatIdList {
+	m.PredicateName = Predicate_userChatIdList
+	return &TLUserChatIdList{
+		Data2: m,
+	}
+}
+
+// MakeTLUserChatIdList
+// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
+func MakeTLUserChatIdList(data2 *UserChatIdList) *TLUserChatIdList {
+	if data2 == nil {
+		return &TLUserChatIdList{Data2: &UserChatIdList{
+			PredicateName: Predicate_userChatIdList,
+		}}
+	} else {
+		data2.PredicateName = Predicate_userChatIdList
+		return &TLUserChatIdList{Data2: data2}
+	}
+}
+
+func (m *TLUserChatIdList) To_UserChatIdList() *UserChatIdList {
+	m.Data2.PredicateName = Predicate_userChatIdList
+	return m.Data2
+}
+
+func (m *TLUserChatIdList) SetUserId(v int64) { m.Data2.UserId = v }
+func (m *TLUserChatIdList) GetUserId() int64  { return m.Data2.UserId }
+
+func (m *TLUserChatIdList) SetChatIdList(v []int64) { m.Data2.ChatIdList = v }
+func (m *TLUserChatIdList) GetChatIdList() []int64  { return m.Data2.ChatIdList }
+
+func (m *TLUserChatIdList) GetPredicateName() string {
+	return Predicate_userChatIdList
+}
+
+func (m *TLUserChatIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x50067224: func() []byte {
+			// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
+			x.UInt(0x50067224)
+
+			x.Long(m.GetUserId())
+
+			x.VectorLong(m.GetChatIdList())
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_userChatIdList, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_userChatIdList, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserChatIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x50067224: func() error {
+			// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
+			m.SetUserId(dBuf.Long())
+
+			m.SetChatIdList(dBuf.VectorLong())
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLUserChatIdList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -2195,6 +2209,63 @@ func (m *TLChatGetMutableChatByLink) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMutableChatByLink) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLChatToggleNoForwards
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatToggleNoForwards) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_chat_toggleNoForwards))
+
+	switch uint32(m.Constructor) {
+	case 0xd5952af9:
+		// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
+		x.UInt(0xd5952af9)
+
+		// no flags
+
+		x.Long(m.GetChatId())
+		x.Long(m.GetOperatorId())
+		x.Bytes(m.GetEnabled().Encode(layer))
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatToggleNoForwards) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatToggleNoForwards) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xd5952af9:
+		// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
+
+		// not has flags
+
+		m.ChatId = dBuf.Long()
+		m.OperatorId = dBuf.Long()
+
+		m3 := &mtproto.Bool{}
+		m3.Decode(dBuf)
+		m.Enabled = m3
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLChatToggleNoForwards) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

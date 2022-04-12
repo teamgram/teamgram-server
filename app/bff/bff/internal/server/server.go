@@ -156,13 +156,15 @@ func (s *Server) Initialize() error {
 		// contacts_helper
 		mtproto.RegisterRPCContactsServer(
 			grpcServer,
-			contacts_helper.New(contacts_helper.Config{
-				RpcServerConf:  c.RpcServerConf,
-				UserClient:     c.BizServiceClient,
-				ChatClient:     c.BizServiceClient,
-				UsernameClient: c.BizServiceClient,
-				SyncClient:     c.SyncClient,
-			}, nil))
+			contacts_helper.New(
+				contacts_helper.Config{
+					RpcServerConf:  c.RpcServerConf,
+					UserClient:     c.BizServiceClient,
+					ChatClient:     c.BizServiceClient,
+					UsernameClient: c.BizServiceClient,
+					SyncClient:     c.SyncClient,
+				},
+				nil))
 
 		// dialogs_helper
 		mtproto.RegisterRPCDialogsServer(

@@ -397,8 +397,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/teamgram/marmota v0.0.0-20220322002426-fb351e5038b2 h1:iHDjTmTqgEm78AlttdqxDVYlKFnM7OmHmHRDO4Db5+8=
 github.com/teamgram/marmota v0.0.0-20220322002426-fb351e5038b2/go.mod h1:OUOKUDzY2qR8POI1aucIwop2v7is+WGBju61iMtsuT0=
-github.com/teamgram/proto v0.139.4-0.20220410145729-77debe802a83 h1:OnAR4lNsM8lW04DWZk2pRj/8noN+Haqnyhm1PCKVGuo=
-github.com/teamgram/proto v0.139.4-0.20220410145729-77debe802a83/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.139.4-0.20220412153827-b8472fbde76b h1:oz4dA+9wmT6jqAj0qLr5Iv+JrXjbbKYA9RzhUlvQH4U=
+github.com/teamgram/proto v0.139.4-0.20220412153827-b8472fbde76b/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/teamgramio/go-zero v1.3.1-0.20220322035857-cbb1c96af408 h1:o4dVSonefmY7ar87obwbf40jFqkLru2qmAOkiiM3+3I=
 github.com/teamgramio/go-zero v1.3.1-0.20220322035857-cbb1c96af408/go.mod h1:JsgCzJSUcjZl487xtqWHzYFa7Wl4f5Gi3lcteOWgNRA=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=

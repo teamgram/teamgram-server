@@ -23,6 +23,7 @@ import (
 	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
@@ -168,6 +169,24 @@ func (c *MessagesCore) makeForwardMessages(
 			UserId: c.MD.UserId,
 			IdList: idList,
 		})
+		if messageList.Length() > 0 {
+			msgBox0 := messageList.Datas[0]
+			if msgBox0.PeerType == mtproto.PEER_CHAT {
+				chat, err := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
+					ChatId: msgBox0.PeerId,
+				})
+				if err != nil {
+					c.Logger.Errorf("messages.forwardMessages - error: %v", err)
+					return nil, err
+				}
+
+				if chat.Noforwards() {
+					err = mtproto.ErrChatForwardsRestricted
+					c.Logger.Errorf("messages.forwardMessages - error: %v", err)
+					return nil, err
+				}
+			}
+		}
 	}
 
 	fwdOutboxList := make([]*msgpb.OutboxMessage, 0, int(messageList.Length()))

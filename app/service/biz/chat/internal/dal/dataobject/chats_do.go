@@ -24,6 +24,7 @@ type ChatsDO struct {
 	MigratedToAccessHash int64  `db:"migrated_to_access_hash"`
 	AvailableReactions   string `db:"available_reactions"`
 	Deactivated          bool   `db:"deactivated"`
+	Noforwards           bool   `db:"noforwards"`
 	Version              int32  `db:"version"`
 	Date                 int64  `db:"date"`
 }

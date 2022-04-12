@@ -13,8 +13,8 @@ package chat_client
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,35 +22,35 @@ import (
 var _ *mtproto.Bool
 
 type ChatClient interface {
-    ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*chat.MutableChat, error)
-    ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.Vector_MutableChat, error)
-    ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*chat.MutableChat, error)
-    ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*chat.MutableChat, error)
-    ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*chat.MutableChat, error)
-    ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*chat.MutableChat, error)
-    ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*chat.MutableChat, error)
-    ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*chat.MutableChat, error)
-    ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*chat.MutableChat, error)
-    ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*chat.MutableChat, error)
-    ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error)
-    ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*chat.MutableChat, error)
-    ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error)
-    ChatMigratedToChannel(ctx context.Context, in *chat.TLChatMigratedToChannel) (*mtproto.Bool, error)
-    ChatGetChatParticipantIdList(ctx context.Context, in *chat.TLChatGetChatParticipantIdList) (*chat.Vector_Long, error)
-    ChatGetUsersChatIdList(ctx context.Context, in *chat.TLChatGetUsersChatIdList) (*chat.Vector_UserChatIdList, error)
-    ChatGetMyChatList(ctx context.Context, in *chat.TLChatGetMyChatList) (*chat.Vector_MutableChat, error)
-    ChatExportChatInvite(ctx context.Context, in *chat.TLChatExportChatInvite) (*mtproto.ExportedChatInvite, error)
-    ChatGetAdminsWithInvites(ctx context.Context, in *chat.TLChatGetAdminsWithInvites) (*chat.Vector_ChatAdminWithInvites, error)
-    ChatGetExportedChatInvite(ctx context.Context, in *chat.TLChatGetExportedChatInvite) (*mtproto.ExportedChatInvite, error)
-    ChatGetExportedChatInvites(ctx context.Context, in *chat.TLChatGetExportedChatInvites) (*chat.Vector_ExportedChatInvite, error)
-    ChatCheckChatInvite(ctx context.Context, in *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error)
-    ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*chat.MutableChat, error)
-    ChatGetChatInviteImporters(ctx context.Context, in *chat.TLChatGetChatInviteImporters) (*chat.Vector_ChatInviteImporter, error)
-    ChatDeleteExportedChatInvite(ctx context.Context, in *chat.TLChatDeleteExportedChatInvite) (*mtproto.Bool, error)
-    ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *chat.TLChatDeleteRevokedExportedChatInvites) (*mtproto.Bool, error)
-    ChatEditExportedChatInvite(ctx context.Context, in *chat.TLChatEditExportedChatInvite) (*chat.Vector_ExportedChatInvite, error)
-    ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error)
-
+	ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*chat.MutableChat, error)
+	ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.Vector_MutableChat, error)
+	ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*chat.MutableChat, error)
+	ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*chat.MutableChat, error)
+	ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*chat.MutableChat, error)
+	ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*chat.MutableChat, error)
+	ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*chat.MutableChat, error)
+	ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*chat.MutableChat, error)
+	ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*chat.MutableChat, error)
+	ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*chat.MutableChat, error)
+	ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error)
+	ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*chat.MutableChat, error)
+	ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error)
+	ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*chat.MutableChat, error)
+	ChatMigratedToChannel(ctx context.Context, in *chat.TLChatMigratedToChannel) (*mtproto.Bool, error)
+	ChatGetChatParticipantIdList(ctx context.Context, in *chat.TLChatGetChatParticipantIdList) (*chat.Vector_Long, error)
+	ChatGetUsersChatIdList(ctx context.Context, in *chat.TLChatGetUsersChatIdList) (*chat.Vector_UserChatIdList, error)
+	ChatGetMyChatList(ctx context.Context, in *chat.TLChatGetMyChatList) (*chat.Vector_MutableChat, error)
+	ChatExportChatInvite(ctx context.Context, in *chat.TLChatExportChatInvite) (*mtproto.ExportedChatInvite, error)
+	ChatGetAdminsWithInvites(ctx context.Context, in *chat.TLChatGetAdminsWithInvites) (*chat.Vector_ChatAdminWithInvites, error)
+	ChatGetExportedChatInvite(ctx context.Context, in *chat.TLChatGetExportedChatInvite) (*mtproto.ExportedChatInvite, error)
+	ChatGetExportedChatInvites(ctx context.Context, in *chat.TLChatGetExportedChatInvites) (*chat.Vector_ExportedChatInvite, error)
+	ChatCheckChatInvite(ctx context.Context, in *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error)
+	ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*chat.MutableChat, error)
+	ChatGetChatInviteImporters(ctx context.Context, in *chat.TLChatGetChatInviteImporters) (*chat.Vector_ChatInviteImporter, error)
+	ChatDeleteExportedChatInvite(ctx context.Context, in *chat.TLChatDeleteExportedChatInvite) (*mtproto.Bool, error)
+	ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *chat.TLChatDeleteRevokedExportedChatInvites) (*mtproto.Bool, error)
+	ChatEditExportedChatInvite(ctx context.Context, in *chat.TLChatEditExportedChatInvite) (*chat.Vector_ExportedChatInvite, error)
+	ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error)
 }
 
 type defaultChatClient struct {
@@ -62,7 +62,6 @@ func NewChatClient(cli zrpc.Client) ChatClient {
 		cli: cli,
 	}
 }
-
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
@@ -153,6 +152,13 @@ func (m *defaultChatClient) ChatAddChatUser(ctx context.Context, in *chat.TLChat
 func (m *defaultChatClient) ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatGetMutableChatByLink(ctx, in)
+}
+
+// ChatToggleNoForwards
+// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
+func (m *defaultChatClient) ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*chat.MutableChat, error) {
+	client := chat.NewRPCChatClient(m.cli.Conn())
+	return client.ChatToggleNoForwards(ctx, in)
 }
 
 // ChatMigratedToChannel
@@ -259,4 +265,3 @@ func (m *defaultChatClient) ChatSetChatAvailableReactions(ctx context.Context, i
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatSetChatAvailableReactions(ctx, in)
 }
-

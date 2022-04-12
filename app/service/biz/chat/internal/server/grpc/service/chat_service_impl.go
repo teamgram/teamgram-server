@@ -214,6 +214,21 @@ func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TL
 	return r, err
 }
 
+// ChatToggleNoForwards
+// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
+func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChatToggleNoForwards) (*chat.MutableChat, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("chat.toggleNoForwards - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatToggleNoForwards(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("chat.toggleNoForwards - reply: %s", r.DebugString())
+	return r, err
+}
+
 // ChatMigratedToChannel
 // chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLChatMigratedToChannel) (*mtproto.Bool, error) {
