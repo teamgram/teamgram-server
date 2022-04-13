@@ -20,7 +20,12 @@ import (
 func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvites) (*chat.Vector_ExportedChatInvite, error) {
 	var (
 		rInvites []*mtproto.ExportedChatInvite
+		limit    = in.Limit
 	)
+
+	if limit == 0 {
+		limit = 50
+	}
 
 	c.svcCtx.Dao.ChatInvitesDAO.SelectListByAdminIdWithCB(
 		c.ctx,
@@ -43,10 +48,10 @@ func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvi
 	}
 
 	var (
-		offset = 0
+		offset = -1
 	)
 
-	if in.OffsetLink != nil && in.OffsetDate != nil {
+	if in.OffsetLink.GetValue() != "" && in.OffsetDate.GetValue() != 0 {
 		for i, v := range rInvites {
 			if in.OffsetLink.GetValue() == v.Link && in.OffsetDate.GetValue() == v.Date {
 				offset = i
@@ -60,8 +65,8 @@ func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvi
 	if offset == -1 {
 		rInvites = rInvites[0:0]
 	} else {
-		if len(rInvites) > offset+int(in.Limit) {
-			rInvites = rInvites[offset : offset+int(in.Limit)]
+		if len(rInvites) > offset+int(limit) {
+			rInvites = rInvites[offset : offset+int(limit)]
 		} else {
 			rInvites = rInvites[offset:]
 		}
