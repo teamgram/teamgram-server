@@ -31,24 +31,19 @@ func (c *ChatInvitesCore) MessagesDeleteExportedChatInvite(in *mtproto.TLMessage
 		err  error
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		_, err = c.svcCtx.Dao.ChatClient.ChatDeleteExportedChatInvite(c.ctx, &chatpb.TLChatDeleteExportedChatInvite{
-			SelfId: c.MD.UserId,
-			ChatId: peer.PeerId,
-			Link:   in.GetLink(),
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.deleteExportedChatInvite - error: %v", err)
-			return nil, err
-		}
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.deleteExportedChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err = mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.deleteExportedChatInvite - error: ", err)
+		return nil, err
+	}
+
+	_, err = c.svcCtx.Dao.ChatClient.ChatDeleteExportedChatInvite(c.ctx, &chatpb.TLChatDeleteExportedChatInvite{
+		SelfId: c.MD.UserId,
+		ChatId: peer.PeerId,
+		Link:   in.GetLink(),
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.deleteExportedChatInvite - error: %v", err)
 		return nil, err
 	}
 

@@ -34,11 +34,11 @@ func (c *ChatCore) ChatGetExportedChatInvites(in *chat.TLChatGetExportedChatInvi
 		func(i int, v *dataobject.ChatInvitesDO) {
 			if in.Revoked {
 				if v.Revoked {
-					rInvites = append(rInvites, c.makeChatInviteExported(v))
+					rInvites = append(rInvites, c.svcCtx.Dao.MakeChatInviteExported(c.ctx, v))
 				}
 			} else {
 				if !v.Revoked {
-					rInvites = append(rInvites, c.makeChatInviteExported(v))
+					rInvites = append(rInvites, c.svcCtx.Dao.MakeChatInviteExported(c.ctx, v))
 				}
 			}
 		})

@@ -10,6 +10,8 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -28,40 +30,66 @@ func (c *ChatCore) ChatEditChatAdmin(in *chat.TLChatEditChatAdmin) (*chat.Mutabl
 
 	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, in.ChatId, in.OperatorId, in.EditChatAdminId)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatAdmin - error: %v", err)
+		err = mtproto.ErrChatIdInvalid
 		return nil, err
 	}
 
 	me, _ = chat2.GetImmutableChatParticipant(in.OperatorId)
 	if me == nil || me.State != mtproto.ChatMemberStateNormal {
-		err = mtproto.ErrInputUserDeactivated
+		err = mtproto.ErrUserNotParticipant
+		c.Logger.Errorf("chat.editChatAdmin - error: %v", err)
 		return nil, err
 	}
 
 	editAdmin, _ = chat2.GetImmutableChatParticipant(in.EditChatAdminId)
 	if editAdmin != nil && editAdmin.State != mtproto.ChatMemberStateNormal {
 		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("chat.editChatAdmin - error: %v", err)
 		return nil, err
 	}
 
 	if !me.CanAdminAddAdmins() {
 		err = mtproto.ErrChatAdminRequired
+		c.Logger.Errorf("chat.editChatAdmin - error: %v", err)
 		return nil, err
 	}
 
-	if mtproto.FromBool(in.IsAdmin) {
-		_, err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateParticipantType(c.ctx, mtproto.ChatMemberAdmin, editAdmin.Id)
-		if err != nil {
-			return nil, err
+	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+		if mtproto.FromBool(in.IsAdmin) {
+			_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateParticipantTypeTx(tx, mtproto.ChatMemberAdmin, editAdmin.Id)
+			if result.Err != nil {
+				c.Logger.Errorf("chat.editChatAdmin - error: %v", result.Err)
+				return
+			}
+
+			if editAdmin.Link == "" {
+				editAdmin.Link = chat.GenChatInviteHash()
+				c.svcCtx.Dao.ChatParticipantsDAO.UpdateLinkTx(tx, editAdmin.Link, in.ChatId, in.EditChatAdminId)
+				c.svcCtx.Dao.ChatInvitesDAO.InsertTx(tx, &dataobject.ChatInvitesDO{
+					ChatId:    in.ChatId,
+					AdminId:   in.EditChatAdminId,
+					Link:      editAdmin.Link,
+					Permanent: true,
+					Date2:     now,
+				})
+			}
+
+			editAdmin.AdminRights = mtproto.MakeDefaultChatAdminRights()
+			editAdmin.ParticipantType = mtproto.ChatMemberAdmin
+		} else {
+			_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateParticipantType(c.ctx, mtproto.ChatMemberNormal, editAdmin.Id)
+			if result.Err != nil {
+				c.Logger.Errorf("chat.editChatAdmin - error: %v", result.Err)
+				return
+			}
+			editAdmin.AdminRights = nil
+			editAdmin.ParticipantType = mtproto.ChatMemberNormal
+			editAdmin.Link = ""
 		}
-		editAdmin.AdminRights = mtproto.MakeDefaultChatAdminRights()
-		editAdmin.ParticipantType = mtproto.ChatMemberAdmin
-	} else {
-		_, err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateParticipantType(c.ctx, mtproto.ChatMemberNormal, editAdmin.Id)
-		if err != nil {
-			return nil, err
-		}
-		editAdmin.AdminRights = nil
-		editAdmin.ParticipantType = mtproto.ChatMemberNormal
+	})
+	if tR.Err != nil {
+		return nil, tR.Err
 	}
 
 	chat2.Chat.Version += 1

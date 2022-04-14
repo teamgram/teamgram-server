@@ -41,5 +41,5 @@ func (c *ChatCore) ChatExportChatInvite(in *chat.TLChatExportChatInvite) (*mtpro
 		return nil, err
 	}
 
-	return c.makeChatInviteExported(chatInviteDO), nil
+	return c.svcCtx.Dao.MakeChatInviteExported(c.ctx, chatInviteDO), nil
 }

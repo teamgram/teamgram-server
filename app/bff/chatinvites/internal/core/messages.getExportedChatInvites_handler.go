@@ -30,41 +30,36 @@ func (c *ChatInvitesCore) MessagesGetExportedChatInvites(in *mtproto.TLMessagesG
 	var (
 		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		adminId = mtproto.FromInputUser(c.MD.UserId, in.AdminId)
-
-		rValues = mtproto.MakeTLMessagesExportedChatInvites(&mtproto.Messages_ExportedChatInvites{
-			Count:   0,
-			Invites: []*mtproto.ExportedChatInvite{},
-			Users:   []*mtproto.User{},
-		}).To_Messages_ExportedChatInvites()
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		// TODO: check adminId
-		rInvites, err := c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvites(c.ctx, &chatpb.TLChatGetExportedChatInvites{
-			ChatId:     peer.PeerId,
-			AdminId:    adminId.PeerId,
-			Revoked:    in.Revoked,
-			OffsetDate: in.OffsetDate,
-			OffsetLink: in.OffsetLink,
-			Limit:      in.Limit,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.getExportedChatInvites - error: ", err)
-			return nil, err
-		}
-
-		rValues.Count = int32(len(rInvites.Datas))
-		rValues.Invites = rInvites.Datas
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.getExportedChatInvites blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("messages.getExportedChatInvite - error: ", err)
+		c.Logger.Errorf("messages.getExportedChatInvites - error: ", err)
 		return nil, err
 	}
+
+	// TODO: check adminId
+	rInvites, err := c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvites(c.ctx, &chatpb.TLChatGetExportedChatInvites{
+		ChatId:     peer.PeerId,
+		AdminId:    adminId.PeerId,
+		Revoked:    in.Revoked,
+		OffsetDate: in.OffsetDate,
+		OffsetLink: in.OffsetLink,
+		Limit:      in.Limit,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getExportedChatInvites - error: ", err)
+		return nil, err
+	}
+
+	rValues := mtproto.MakeTLMessagesExportedChatInvites(&mtproto.Messages_ExportedChatInvites{
+		Count:   0,
+		Invites: []*mtproto.ExportedChatInvite{},
+		Users:   []*mtproto.User{},
+	}).To_Messages_ExportedChatInvites()
+
+	rValues.Count = int32(len(rInvites.Datas))
+	rValues.Invites = rInvites.Datas
 
 	if len(rValues.Invites) == 0 {
 		return rValues, nil

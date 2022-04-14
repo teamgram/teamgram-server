@@ -31,14 +31,7 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 	var (
 		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		offsetPeer = mtproto.FromInputUser(c.MD.UserId, in.OffsetUser)
-
-		rValues = mtproto.MakeTLMessagesChatInviteImporters(&mtproto.Messages_ChatInviteImporters{
-			Count:     0,
-			Importers: []*mtproto.ChatInviteImporter{},
-			Users:     []*mtproto.User{},
-		}).To_Messages_ChatInviteImporters()
-
-		link *types.StringValue
+		link       *types.StringValue
 	)
 
 	if in.Link_FLAGSTRING != nil {
@@ -47,33 +40,34 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		link = mtproto.MakeFlagsString(in.Link_STRING)
 	}
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		inviteImporters, err := c.svcCtx.Dao.ChatClient.ChatGetChatInviteImporters(c.ctx, &chatpb.TLChatGetChatInviteImporters{
-			SelfId:     c.MD.UserId,
-			ChatId:     peer.PeerId,
-			Requested:  in.Requested,
-			Link:       link,
-			Q:          in.Q,
-			OffsetDate: in.OffsetDate,
-			OffsetUser: offsetPeer.PeerId,
-			Limit:      in.Limit,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)
-			return nil, err
-		}
-
-		rValues.Importers = inviteImporters.Datas
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.getChatInviteImporters blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)
 		return nil, err
 	}
+
+	rValues := mtproto.MakeTLMessagesChatInviteImporters(&mtproto.Messages_ChatInviteImporters{
+		Count:     0,
+		Importers: []*mtproto.ChatInviteImporter{},
+		Users:     []*mtproto.User{},
+	}).To_Messages_ChatInviteImporters()
+
+	inviteImporters, err := c.svcCtx.Dao.ChatClient.ChatGetChatInviteImporters(c.ctx, &chatpb.TLChatGetChatInviteImporters{
+		SelfId:     c.MD.UserId,
+		ChatId:     peer.PeerId,
+		Requested:  in.Requested,
+		Link:       link,
+		Q:          in.Q,
+		OffsetDate: in.OffsetDate,
+		OffsetUser: offsetPeer.PeerId,
+		Limit:      in.Limit,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)
+		return nil, err
+	}
+
+	rValues.Importers = inviteImporters.Datas
 
 	if len(rValues.Importers) == 0 {
 		return rValues, nil

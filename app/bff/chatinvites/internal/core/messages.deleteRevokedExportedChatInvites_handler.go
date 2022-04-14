@@ -32,24 +32,19 @@ func (c *ChatInvitesCore) MessagesDeleteRevokedExportedChatInvites(in *mtproto.T
 		adminId = mtproto.FromInputUser(c.MD.UserId, in.AdminId)
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		_, err = c.svcCtx.Dao.ChatClient.ChatDeleteRevokedExportedChatInvites(c.ctx, &chatpb.TLChatDeleteRevokedExportedChatInvites{
-			SelfId:  c.MD.UserId,
-			ChatId:  peer.PeerId,
-			AdminId: adminId.PeerId,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: %v", err)
-			return nil, err
-		}
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err = mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: ", err)
+		return nil, err
+	}
+
+	_, err = c.svcCtx.Dao.ChatClient.ChatDeleteRevokedExportedChatInvites(c.ctx, &chatpb.TLChatDeleteRevokedExportedChatInvites{
+		SelfId:  c.MD.UserId,
+		ChatId:  peer.PeerId,
+		AdminId: adminId.PeerId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: %v", err)
 		return nil, err
 	}
 

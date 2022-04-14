@@ -31,41 +31,35 @@ func (c *ChatInvitesCore) MessagesEditExportedChatInvite(in *mtproto.TLMessagesE
 		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		invites []*mtproto.ExportedChatInvite
 		rValue  *mtproto.Messages_ExportedChatInvite
-		// newInvite *mtproto.ExportedChatInvite
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		chatInvites, err := c.svcCtx.Dao.ChatClient.ChatEditExportedChatInvite(c.ctx, &chatpb.TLChatEditExportedChatInvite{
-			SelfId:        c.MD.UserId,
-			ChatId:        peer.PeerId,
-			Revoked:       in.Revoked,
-			Link:          in.Link,
-			ExpireDate:    in.ExpireDate,
-			UsageLimit:    in.UsageLimit,
-			RequestNeeded: in.RequestNeeded,
-			Title:         in.Title,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.editExportedChatInvite - error: %v", err)
-			return nil, err
-		}
-		if len(chatInvites.Datas) == 0 || len(chatInvites.Datas) > 2 {
-			err = mtproto.ErrInternelServerError
-			c.Logger.Errorf("messages.editExportedChatInvite - error: %v", err)
-			return nil, err
-		}
-
-		invites = chatInvites.Datas
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.editExportedChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.editExportedChatInvite - error: ", err)
 		return nil, err
 	}
+
+	chatInvites, err := c.svcCtx.Dao.ChatClient.ChatEditExportedChatInvite(c.ctx, &chatpb.TLChatEditExportedChatInvite{
+		SelfId:        c.MD.UserId,
+		ChatId:        peer.PeerId,
+		Revoked:       in.Revoked,
+		Link:          in.Link,
+		ExpireDate:    in.ExpireDate,
+		UsageLimit:    in.UsageLimit,
+		RequestNeeded: in.RequestNeeded,
+		Title:         in.Title,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.editExportedChatInvite - error: %v", err)
+		return nil, err
+	}
+	if len(chatInvites.Datas) == 0 || len(chatInvites.Datas) > 2 {
+		err = mtproto.ErrInternelServerError
+		c.Logger.Errorf("messages.editExportedChatInvite - error: %v", err)
+		return nil, err
+	}
+
+	invites = chatInvites.Datas
 
 	users, err2 := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
 		Id: []int64{c.MD.UserId, invites[0].AdminId},

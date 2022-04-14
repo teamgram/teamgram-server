@@ -28,32 +28,28 @@ import (
 // messages.getAdminsWithInvites#3920e6ef peer:InputPeer = messages.ChatAdminsWithInvites;
 func (c *ChatInvitesCore) MessagesGetAdminsWithInvites(in *mtproto.TLMessagesGetAdminsWithInvites) (*mtproto.Messages_ChatAdminsWithInvites, error) {
 	var (
-		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-		rValues = mtproto.MakeTLMessagesChatAdminsWithInvites(&mtproto.Messages_ChatAdminsWithInvites{
-			Admins: nil,
-			Users:  []*mtproto.User{},
-		}).To_Messages_ChatAdminsWithInvites()
+		peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		rAdmins, err := c.svcCtx.Dao.ChatClient.ChatGetAdminsWithInvites(c.ctx, &chatpb.TLChatGetAdminsWithInvites{
-			SelfId: c.MD.UserId,
-			ChatId: peer.PeerId,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.getAdminsWithInvites - error: %v", err)
-			return nil, err
-		}
-		rValues.Admins = rAdmins.GetDatas()
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.getAdminsWithInvites blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
-		c.Logger.Errorf("messages.getAdminsWithInvites - error: peer invalid: %s", in.DebugString())
-		return nil, mtproto.ErrPeerIdInvalid
+	if !peer.IsChat() {
+		err := mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("messages.getAdminsWithInvites - error: ", err)
+		return nil, err
 	}
+
+	rAdmins, err := c.svcCtx.Dao.ChatClient.ChatGetAdminsWithInvites(c.ctx, &chatpb.TLChatGetAdminsWithInvites{
+		SelfId: c.MD.UserId,
+		ChatId: peer.PeerId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getAdminsWithInvites - error: %v", err)
+		return nil, err
+	}
+
+	rValues := mtproto.MakeTLMessagesChatAdminsWithInvites(&mtproto.Messages_ChatAdminsWithInvites{
+		Admins: rAdmins.GetDatas(),
+		Users:  []*mtproto.User{},
+	}).To_Messages_ChatAdminsWithInvites()
 
 	if len(rValues.Admins) == 0 {
 		return rValues, nil

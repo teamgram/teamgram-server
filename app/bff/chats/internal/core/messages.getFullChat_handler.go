@@ -23,7 +23,6 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/pkg/env2"
 )
 
 // MessagesGetFullChat
@@ -92,23 +91,14 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 	}); settings != nil {
 		chatFull.NotifySettings = settings
 	}
-	// chatFull.NotifySettings
 
-	if len(me.Link) > 0 {
-		chatFull.ExportedInvite = mtproto.MakeTLChatInviteExported(&mtproto.ExportedChatInvite{
-			Revoked:       false,
-			Permanent:     true,
-			RequestNeeded: false,
-			Link:          "https://" + env2.TDotMe + "/+" + me.Link,
-			AdminId:       c.MD.UserId,
-			Date:          int32(me.Date),
-			StartDate:     nil,
-			ExpireDate:    nil,
-			UsageLimit:    nil,
-			Usage:         mtproto.MakeFlagsInt32(me.Useage),
-			Requested:     nil,
-			Title:         nil,
-		}).To_ExportedChatInvite()
+	if me.GetAdminRights().GetInviteUsers() {
+		if me.Link != "" {
+			chatFull.ExportedInvite, _ = c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
+				ChatId: in.ChatId,
+				Link:   me.Link,
+			})
+		}
 	}
 
 	rValue := mtproto.MakeTLMessagesChatFull(&mtproto.Messages_ChatFull{

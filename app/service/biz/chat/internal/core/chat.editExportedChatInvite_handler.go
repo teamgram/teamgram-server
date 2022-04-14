@@ -43,7 +43,7 @@ func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInv
 			in.ChatId,
 			hash)
 		chatInviteDO.Revoked = in.Revoked
-		chatInvites = append(chatInvites, c.makeChatInviteExported(chatInviteDO))
+		chatInvites = append(chatInvites, c.svcCtx.Dao.MakeChatInviteExported(c.ctx, chatInviteDO))
 
 		// chatInvites
 		if chatInviteDO.Permanent {
@@ -63,7 +63,7 @@ func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInv
 				Date2:         time.Now().Unix(),
 			}
 			c.svcCtx.Dao.ChatInvitesDAO.Insert(c.ctx, chatInviteDO)
-			chatInvites = append(chatInvites, c.makeChatInviteExported(chatInviteDO))
+			chatInvites = append(chatInvites, c.svcCtx.Dao.MakeChatInviteExported(c.ctx, chatInviteDO))
 			c.svcCtx.Dao.ChatParticipantsDAO.UpdateLink(
 				c.ctx,
 				chatInviteDO.Link,
@@ -95,7 +95,7 @@ func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInv
 			cMap,
 			in.ChatId,
 			hash)
-		chatInvites = append(chatInvites, c.makeChatInviteExported(chatInviteDO))
+		chatInvites = append(chatInvites, c.svcCtx.Dao.MakeChatInviteExported(c.ctx, chatInviteDO))
 	}
 
 	return &chat.Vector_ExportedChatInvite{

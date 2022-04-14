@@ -33,22 +33,17 @@ func (c *ChatInvitesCore) MessagesGetExportedChatInvite(in *mtproto.TLMessagesGe
 		err                error
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		exportedChatInvite, err = c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
-			ChatId: peer.PeerId,
-			Link:   in.Link,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.getExportedChatInvite - error: ", err)
-			return nil, err
-		}
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.getExportedChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if !peer.IsChat() {
+		err := mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("messages.getExportedChatInvite - error: ", err)
+		return nil, err
+	}
 
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
-		err = mtproto.ErrPeerIdInvalid
+	exportedChatInvite, err = c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
+		ChatId: peer.PeerId,
+		Link:   in.GetLink(),
+	})
+	if err != nil {
 		c.Logger.Errorf("messages.getExportedChatInvite - error: ", err)
 		return nil, err
 	}

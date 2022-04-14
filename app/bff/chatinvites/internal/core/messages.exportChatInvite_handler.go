@@ -27,36 +27,27 @@ import (
 // messages.exportChatInvite#a02ce5d5 flags:# legacy_revoke_permanent:flags.2?true request_needed:flags.3?true peer:InputPeer expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (c *ChatInvitesCore) MessagesExportChatInvite(in *mtproto.TLMessagesExportChatInvite) (*mtproto.ExportedChatInvite, error) {
 	var (
-		peer *mtproto.PeerUtil
-		// link string
+		peer               = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		err                error
 		exportedChatInvite *mtproto.ExportedChatInvite
 	)
 
-	peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-
-	switch peer.PeerType {
-	case mtproto.PEER_CHAT:
-		exportedChatInvite, err = c.svcCtx.Dao.ChatClient.ChatExportChatInvite(c.ctx, &chatpb.TLChatExportChatInvite{
-			ChatId:                peer.PeerId,
-			AdminId:               c.MD.UserId,
-			LegacyRevokePermanent: in.LegacyRevokePermanent,
-			RequestNeeded:         in.RequestNeeded,
-			ExpireDate:            in.ExpireDate,
-			UsageLimit:            in.UsageLimit,
-			Title:                 in.Title,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.exportChatInvite - error: ", err)
-			return nil, err
-		}
-		// exportedChatInvite = chat.Chat.ExportedInvite
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.exportChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
+	if !peer.IsChat() {
 		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("messages.exportChatInvite - error: ", err)
+		return nil, err
+	}
+
+	exportedChatInvite, err = c.svcCtx.Dao.ChatClient.ChatExportChatInvite(c.ctx, &chatpb.TLChatExportChatInvite{
+		ChatId:                peer.PeerId,
+		AdminId:               c.MD.UserId,
+		LegacyRevokePermanent: in.LegacyRevokePermanent,
+		RequestNeeded:         in.RequestNeeded,
+		ExpireDate:            in.ExpireDate,
+		UsageLimit:            in.UsageLimit,
+		Title:                 in.Title,
+	})
+	if err != nil {
 		c.Logger.Errorf("messages.exportChatInvite - error: ", err)
 		return nil, err
 	}

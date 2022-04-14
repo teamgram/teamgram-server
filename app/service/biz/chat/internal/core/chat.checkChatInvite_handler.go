@@ -29,10 +29,31 @@ func (c *ChatCore) ChatCheckChatInvite(in *chat.TLChatCheckChatInvite) (*chat.Ch
 	}
 
 	// check expire
+	if chatInviteDO.Revoked {
+		c.Logger.Errorf("chat.checkChatInvite - error: invite hash %s expired", in.Hash)
+		err = mtproto.ErrInviteHashExpired
+		return nil, err
+	}
+
 	if chatInviteDO.ExpireDate != 0 && time.Now().Unix() > chatInviteDO.ExpireDate {
 		c.Logger.Errorf("chat.checkChatInvite - error: invite hash %s expired", in.Hash)
 		err = mtproto.ErrInviteHashExpired
 		return nil, err
+	}
+
+	if chatInviteDO.UsageLimit > 0 {
+		// TODO: calc
+		sz := c.svcCtx.Dao.CommonDAO.CalcSize(
+			c.ctx,
+			"chat_invite_participants",
+			map[string]interface{}{
+				"link": chatInviteDO.Link,
+			})
+		if sz >= int(chatInviteDO.UsageLimit) {
+			err = mtproto.ErrInviteHashExpired
+			c.Logger.Errorf("chat.importChatInvite - error: %v", err)
+			return nil, err
+		}
 	}
 
 	mChat, err := c.svcCtx.Dao.GetMutableChat(c.ctx, chatInviteDO.ChatId)
@@ -41,16 +62,25 @@ func (c *ChatCore) ChatCheckChatInvite(in *chat.TLChatCheckChatInvite) (*chat.Ch
 		return nil, err
 	}
 
+	admin, _ := mChat.GetImmutableChatParticipant(chatInviteDO.AdminId)
+	if admin == nil || !admin.CanInviteUsers() {
+		err = mtproto.ErrInviteHashExpired
+		c.Logger.Errorf("chat.importChatInvite - error: %v", err)
+		return nil, err
+	}
+
 	me, _ := mChat.GetImmutableChatParticipant(in.SelfId)
 	if me == nil || !me.IsChatMemberStateNormal() {
-		return chat.MakeTLChatInvite(&chat.ChatInviteExt{
+		rValue := chat.MakeTLChatInvite(&chat.ChatInviteExt{
 			RequestNeeded:     chatInviteDO.RequestNeeded,
 			Title:             mChat.Title(),
 			About:             mtproto.MakeFlagsString(mChat.About()),
 			Photo:             mChat.Photo(),
 			ParticipantsCount: mChat.Chat.ParticipantsCount,
 			Participants:      mChat.ParticipantIdList(),
-		}).To_ChatInviteExt(), nil
+		}).To_ChatInviteExt()
+
+		return rValue, nil
 	} else {
 		return chat.MakeTLChatInviteAlready(&chat.ChatInviteExt{
 			Chat: mChat,
