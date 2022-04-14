@@ -26,7 +26,7 @@ import (
 
 // MessagesEditExportedChatInvite
 // messages.editExportedChatInvite#bdca2f75 flags:# revoked:flags.2?true peer:InputPeer link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = messages.ExportedChatInvite;
-func (c *ChatsCore) MessagesEditExportedChatInvite(in *mtproto.TLMessagesEditExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error) {
+func (c *ChatInvitesCore) MessagesEditExportedChatInvite(in *mtproto.TLMessagesEditExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error) {
 	var (
 		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		invites []*mtproto.ExportedChatInvite

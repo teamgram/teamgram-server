@@ -16,17 +16,21 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package core
+package svc
 
 import (
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/bff/chatinvites/internal/config"
+	"github.com/teamgram/teamgram-server/app/bff/chatinvites/internal/dao"
 )
 
-// ContactsResolvePhone
-// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
-func (c *ContactsCore) ContactsResolvePhone(in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.resolvePhone blocked, License key from https://teamgram.net required to unlock enterprise features.")
+type ServiceContext struct {
+	Config config.Config
+	*dao.Dao
+}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+func NewServiceContext(c config.Config) *ServiceContext {
+	return &ServiceContext{
+		Config: c,
+		Dao:    dao.New(c),
+	}
 }

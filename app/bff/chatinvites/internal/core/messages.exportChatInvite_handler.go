@@ -25,7 +25,7 @@ import (
 
 // MessagesExportChatInvite
 // messages.exportChatInvite#a02ce5d5 flags:# legacy_revoke_permanent:flags.2?true request_needed:flags.3?true peer:InputPeer expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
-func (c *ChatsCore) MessagesExportChatInvite(in *mtproto.TLMessagesExportChatInvite) (*mtproto.ExportedChatInvite, error) {
+func (c *ChatInvitesCore) MessagesExportChatInvite(in *mtproto.TLMessagesExportChatInvite) (*mtproto.ExportedChatInvite, error) {
 	var (
 		peer *mtproto.PeerUtil
 		// link string

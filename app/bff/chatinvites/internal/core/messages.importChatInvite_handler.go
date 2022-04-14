@@ -19,14 +19,16 @@
 package core
 
 import (
+	"math/rand"
+
 	"github.com/teamgram/proto/mtproto"
+	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesCheckChatInvite
-// messages.checkChatInvite#3eadb1bb hash:string = ChatInvite;
-func (c *ChatsCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckChatInvite) (*mtproto.ChatInvite, error) {
+// MessagesImportChatInvite
+// messages.importChatInvite#6c50051c hash:string = Updates;
+func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportChatInvite) (*mtproto.Updates, error) {
 	// Code	Type	Description
 	// 400	INVITE_HASH_EMPTY	The invite hash is empty.
 	// 400	INVITE_HASH_EXPIRED	The invite link has expired.
@@ -34,51 +36,56 @@ func (c *ChatsCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckChatInvit
 
 	if len(in.Hash) == 0 {
 		err := mtproto.ErrInviteHashEmpty
-		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
+		c.Logger.Errorf("messages.importChatInvite - error: %v", err)
 		return nil, err
 	}
 	if len(in.Hash) != 20 {
 		err := mtproto.ErrInviteHashInvalid
-		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
+		c.Logger.Errorf("messages.importChatInvite - error: %v", err)
 		return nil, err
-	}
-
-	getUserListF := func(idList []int64) []*mtproto.User {
-		users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-			Id: append(idList, c.MD.UserId),
-		})
-		return users.GetUserListByIdList(c.MD.UserId, idList...)
 	}
 
 	peerType := chatpb.GetChatTypeByInviteHash(in.Hash)
 	switch peerType {
 	case mtproto.PEER_CHAT:
-		chatInviteExt, err := c.svcCtx.Dao.ChatClient.ChatCheckChatInvite(c.ctx, &chatpb.TLChatCheckChatInvite{
+		mChat, err := c.svcCtx.Dao.ChatClient.ChatImportChatInvite(c.ctx, &chatpb.TLChatImportChatInvite{
 			SelfId: c.MD.UserId,
 			Hash:   in.Hash,
 		})
 		if err != nil {
-			c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
+			c.Logger.Errorf("messages.importChatInvite - error: %v", err)
 			return nil, err
 		}
 
-		rValue := chatInviteExt.ToChatInvite(c.MD.UserId, func(idList []int64) []*mtproto.User {
-			return getUserListF(idList)
-		})
-		if rValue == nil {
-			err = mtproto.ErrInternelServerError
-			c.Logger.Errorf("messages.checkChatInvite - error: ", err)
+		// TODO: found link
+		rUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(
+			c.ctx,
+			&msgpb.TLMsgSendMessage{
+				UserId:    c.MD.UserId,
+				AuthKeyId: c.MD.AuthId,
+				PeerType:  mtproto.PEER_CHAT,
+				PeerId:    mChat.Id(),
+				Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+					NoWebpage:    true,
+					Background:   false,
+					RandomId:     rand.Int63(),
+					Message:      mChat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatJoinByLink(mChat.Creator())),
+					ScheduleDate: nil,
+				}).To_OutboxMessage(),
+			})
+		if err != nil {
+			c.Logger.Errorf("messages.importChatInvite - error: %v", err)
 			return nil, err
 		}
 
-		return rValue, nil
+		return rUpdates, nil
 	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.checkChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		c.Logger.Errorf("messages.importChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 		return nil, mtproto.ErrEnterpriseIsBlocked
 	default:
 		err := mtproto.ErrInviteHashInvalid
-		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
+		c.Logger.Errorf("messages.importChatInvite - error: %v", err)
 		return nil, err
 	}
 }

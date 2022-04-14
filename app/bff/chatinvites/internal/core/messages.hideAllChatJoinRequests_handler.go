@@ -24,7 +24,7 @@ import (
 
 // MessagesHideAllChatJoinRequests
 // messages.hideAllChatJoinRequests#e085f4ea flags:# approved:flags.0?true peer:InputPeer link:flags.1?string = Updates;
-func (c *ChatsCore) MessagesHideAllChatJoinRequests(in *mtproto.TLMessagesHideAllChatJoinRequests) (*mtproto.Updates, error) {
+func (c *ChatInvitesCore) MessagesHideAllChatJoinRequests(in *mtproto.TLMessagesHideAllChatJoinRequests) (*mtproto.Updates, error) {
 	// TODO: not impl
 	c.Logger.Errorf("messages.hideAllChatJoinRequests blocked, License key from https://teamgram.net required to unlock enterprise features.")
 

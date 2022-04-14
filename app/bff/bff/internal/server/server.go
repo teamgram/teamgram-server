@@ -20,12 +20,12 @@ package server
 
 import (
 	"flag"
-
 	"github.com/teamgram/proto/mtproto"
 	account_helper "github.com/teamgram/teamgram-server/app/bff/account"
 	authorization_helper "github.com/teamgram/teamgram-server/app/bff/authorization"
 	autodownload_helper "github.com/teamgram/teamgram-server/app/bff/autodownload"
 	"github.com/teamgram/teamgram-server/app/bff/bff/internal/config"
+	chatinvites_helper "github.com/teamgram/teamgram-server/app/bff/chatinvites"
 	chats_helper "github.com/teamgram/teamgram-server/app/bff/chats"
 	configuration_helper "github.com/teamgram/teamgram-server/app/bff/configuration"
 	contacts_helper "github.com/teamgram/teamgram-server/app/bff/contacts"
@@ -115,6 +115,16 @@ func (s *Server) Initialize() error {
 				SyncClient:        c.SyncClient,
 				MsgClient:         c.MsgClient,
 			}, nil))
+
+		// chatinvites_helper
+		mtproto.RegisterRPCChatInvitesServer(
+			grpcServer,
+			chatinvites_helper.New(chatinvites_helper.Config{
+				RpcServerConf: c.RpcServerConf,
+				UserClient:    c.BizServiceClient,
+				ChatClient:    c.BizServiceClient,
+				MsgClient:     c.MsgClient,
+			}))
 
 		// chats_helper
 		mtproto.RegisterRPCChatsServer(

@@ -23,33 +23,32 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
 
-// MessagesDeleteRevokedExportedChatInvites
-// messages.deleteRevokedExportedChatInvites#56987bd5 peer:InputPeer admin_id:InputUser = Bool;
-func (c *ChatsCore) MessagesDeleteRevokedExportedChatInvites(in *mtproto.TLMessagesDeleteRevokedExportedChatInvites) (*mtproto.Bool, error) {
+// MessagesDeleteExportedChatInvite
+// messages.deleteExportedChatInvite#d464a42b peer:InputPeer link:string = Bool;
+func (c *ChatInvitesCore) MessagesDeleteExportedChatInvite(in *mtproto.TLMessagesDeleteExportedChatInvite) (*mtproto.Bool, error) {
 	var (
-		err     error
-		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-		adminId = mtproto.FromInputUser(c.MD.UserId, in.AdminId)
+		peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
+		err  error
 	)
 
 	switch peer.PeerType {
 	case mtproto.PEER_CHAT:
-		_, err = c.svcCtx.Dao.ChatClient.ChatDeleteRevokedExportedChatInvites(c.ctx, &chatpb.TLChatDeleteRevokedExportedChatInvites{
-			SelfId:  c.MD.UserId,
-			ChatId:  peer.PeerId,
-			AdminId: adminId.PeerId,
+		_, err = c.svcCtx.Dao.ChatClient.ChatDeleteExportedChatInvite(c.ctx, &chatpb.TLChatDeleteExportedChatInvite{
+			SelfId: c.MD.UserId,
+			ChatId: peer.PeerId,
+			Link:   in.GetLink(),
 		})
 		if err != nil {
-			c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: %v", err)
+			c.Logger.Errorf("messages.deleteExportedChatInvite - error: %v", err)
 			return nil, err
 		}
 	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites blocked, License key from https://teamgram.net required to unlock enterprise features.")
+		c.Logger.Errorf("messages.deleteExportedChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 		return nil, mtproto.ErrEnterpriseIsBlocked
 	default:
 		err = mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("messages.deleteRevokedExportedChatInvites - error: ", err)
+		c.Logger.Errorf("messages.deleteExportedChatInvite - error: ", err)
 		return nil, err
 	}
 

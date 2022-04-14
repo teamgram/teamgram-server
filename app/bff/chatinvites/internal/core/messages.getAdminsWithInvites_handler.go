@@ -26,7 +26,7 @@ import (
 
 // MessagesGetAdminsWithInvites
 // messages.getAdminsWithInvites#3920e6ef peer:InputPeer = messages.ChatAdminsWithInvites;
-func (c *ChatsCore) MessagesGetAdminsWithInvites(in *mtproto.TLMessagesGetAdminsWithInvites) (*mtproto.Messages_ChatAdminsWithInvites, error) {
+func (c *ChatInvitesCore) MessagesGetAdminsWithInvites(in *mtproto.TLMessagesGetAdminsWithInvites) (*mtproto.Messages_ChatAdminsWithInvites, error) {
 	var (
 		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		rValues = mtproto.MakeTLMessagesChatAdminsWithInvites(&mtproto.Messages_ChatAdminsWithInvites{

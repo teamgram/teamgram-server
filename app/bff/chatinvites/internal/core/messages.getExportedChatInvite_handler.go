@@ -26,7 +26,7 @@ import (
 
 // MessagesGetExportedChatInvite
 // messages.getExportedChatInvite#73746f5c peer:InputPeer link:string = messages.ExportedChatInvite;
-func (c *ChatsCore) MessagesGetExportedChatInvite(in *mtproto.TLMessagesGetExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error) {
+func (c *ChatInvitesCore) MessagesGetExportedChatInvite(in *mtproto.TLMessagesGetExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error) {
 	var (
 		peer               = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		exportedChatInvite *mtproto.ExportedChatInvite

@@ -27,7 +27,7 @@ import (
 
 // MessagesGetChatInviteImporters
 // messages.getChatInviteImporters#df04dd4e flags:# requested:flags.0?true peer:InputPeer link:flags.1?string q:flags.2?string offset_date:int offset_user:InputUser limit:int = messages.ChatInviteImporters;
-func (c *ChatsCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesGetChatInviteImporters) (*mtproto.Messages_ChatInviteImporters, error) {
+func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesGetChatInviteImporters) (*mtproto.Messages_ChatInviteImporters, error) {
 	var (
 		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		offsetPeer = mtproto.FromInputUser(c.MD.UserId, in.OffsetUser)

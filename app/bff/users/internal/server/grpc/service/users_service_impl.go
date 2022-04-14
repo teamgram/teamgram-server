@@ -76,3 +76,18 @@ func (s *Service) UsersGetMe(ctx context.Context, request *mtproto.TLUsersGetMe)
 	c.Infof("users.getMe - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ContactsResolvePhone
+// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
+func (s *Service) ContactsResolvePhone(ctx context.Context, request *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("contacts.resolvePhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsResolvePhone(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("contacts.getLocated - reply: %s", r.DebugString())
+	return r, err
+}

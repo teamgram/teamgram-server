@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesHideChatJoinRequest
-// messages.hideChatJoinRequest#7fe7e815 flags:# approved:flags.0?true peer:InputPeer user_id:InputUser = Updates;
-func (c *ChatsCore) MessagesHideChatJoinRequest(in *mtproto.TLMessagesHideChatJoinRequest) (*mtproto.Updates, error) {
+// ContactsResolvePhone
+// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
+func (c *UsersCore) ContactsResolvePhone(in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.hideChatJoinRequest blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("contacts.resolvePhone blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

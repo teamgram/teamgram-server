@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
@@ -453,4 +452,3 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 	c.Infof("chat.setChatAvailableReactions - reply: %s", r.DebugString())
 	return r, err
 }
-
