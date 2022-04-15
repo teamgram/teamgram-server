@@ -86,6 +86,11 @@ func (c *UpdatesCore) UpdatesGetDifference(in *mtproto.TLUpdatesGetDifference) (
 		}).To_Updates_Difference()
 
 		// TODO: fix IntermediateState
+	case updates.Predicate_differenceTooLong:
+		// TODO: iOS
+		rDifference = mtproto.MakeTLUpdatesDifferenceTooLong(&mtproto.Updates_Difference{
+			Pts: updatesDiff.Pts,
+		}).To_Updates_Difference()
 	default:
 	}
 

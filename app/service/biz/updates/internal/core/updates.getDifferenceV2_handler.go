@@ -22,8 +22,8 @@ import (
 func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error) {
 	limit := in.GetPtsTotalLimit().GetValue()
 	// check pts_total_limit
-	if limit <= 0 || limit > 1000 {
-		limit = 1000
+	if limit <= 0 || limit > 5000 {
+		limit = 5000
 	}
 
 	updateList, lastPts, lastSeq, lastDate := c.GetMergedUpdateList(in.UserId, in.AuthKeyId, in.Pts, int32(in.Date), limit)
