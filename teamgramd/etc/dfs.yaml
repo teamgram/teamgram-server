@@ -16,10 +16,10 @@ MiniHttp:
 Cache:
   - Host: 127.0.0.1:6379
 Minio:
-   Endpoint: localhost:9000
-   AccessKeyID: minio
-   SecretAccessKey: miniostorage
-   UseSSL: false
+  Endpoint: localhost:9000
+  AccessKeyID: minio
+  SecretAccessKey: miniostorage
+  UseSSL: false
 IdGen:
   Etcd:
     Hosts:

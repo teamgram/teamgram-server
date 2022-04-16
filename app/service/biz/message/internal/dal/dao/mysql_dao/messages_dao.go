@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dal/dataobject"
@@ -2140,6 +2142,72 @@ func (dao *MessagesDAO) UpdateEditMessageTx(tx *sqlx.Tx, message_data string, me
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateEditMessage(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateCustomMap
+// update messages set %s where user_id = :user_id and user_message_box_id = :user_message_box_id
+func (dao *MessagesDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, user_id int64, user_message_box_id int32) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update messages set %s where user_id = ? and user_message_box_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, user_id)
+	aValues = append(aValues, user_message_box_id)
+
+	rResult, err = dao.db.Exec(ctx, query, aValues...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateCustomMapTx
+// update messages set %s where user_id = :user_id and user_message_box_id = :user_message_box_id
+func (dao *MessagesDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, user_message_box_id int32) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update messages set %s where user_id = ? and user_message_box_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, user_id)
+	aValues = append(aValues, user_message_box_id)
+
+	rResult, err = tx.Exec(query, aValues...)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
 	}
 
 	return

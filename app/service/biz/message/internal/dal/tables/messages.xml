@@ -484,7 +484,6 @@
         </sql>
     </operation>
 
-
     <operation name="UpdateEditMessage">
         <sql>
             UPDATE
@@ -496,5 +495,18 @@
         </sql>
     </operation>
 
+    <operation name="UpdateCustomMap">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                messages
+            SET
+                cMap = :cMap
+            WHERE
+                user_id = :user_id AND user_message_box_id = :user_message_box_id
+        </sql>
+    </operation>
 </table>
 
