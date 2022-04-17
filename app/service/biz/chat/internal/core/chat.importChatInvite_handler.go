@@ -29,11 +29,21 @@ func (c *ChatCore) ChatImportChatInvite(in *chat.TLChatImportChatInvite) (*chat.
 		return nil, err
 	}
 
-	// TODO: check inviteDO
 	if chatInviteDO.ExpireDate != 0 && time.Now().Unix() > chatInviteDO.ExpireDate {
 		err = mtproto.ErrInviteHashExpired
 		c.Logger.Errorf("chat.importChatInvite - error: %v", err)
 		return nil, err
+	}
+	if chatInviteDO.UsageLimit > 0 {
+		sz := c.svcCtx.Dao.CommonDAO.CalcSize(c.ctx, "chat_invite_participants", map[string]interface{}{
+			"link": chatInviteDO.Link,
+		})
+
+		if sz >= int(chatInviteDO.UsageLimit) {
+			err = mtproto.ErrInviteHashExpired
+			c.Logger.Errorf("chat.importChatInvite - error: %v", err)
+			return nil, err
+		}
 	}
 
 	chat2, err := c.ChatAddChatUser(&chat.TLChatAddChatUser{
