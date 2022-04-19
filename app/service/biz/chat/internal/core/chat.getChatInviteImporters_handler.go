@@ -136,8 +136,8 @@ func (c *ChatCore) ChatGetChatInviteImporters(in *chat.TLChatGetChatInviteImport
 			break
 		}
 	}
-	if len(rInvites) >= offset+int(in.Limit) {
-		rInvites = rInvites[offset : offset+int(in.Limit)]
+	if len(rInvites) >= offset+int(limit) {
+		rInvites = rInvites[offset : offset+int(limit)]
 	} else {
 		rInvites = rInvites[offset:]
 	}
