@@ -216,5 +216,11 @@ func (c *UpdatesCore) GetMergedUpdateList(userId int64, authId int64, pts, date,
 		bIndex++
 	}
 
+	for i := 0; i < len(b); i++ {
+		if b[i].Date2 > lastDate {
+			lastDate = b[i].Date2
+		}
+	}
+
 	return c2, pts, lastSeq, lastDate
 }
