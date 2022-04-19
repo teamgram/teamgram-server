@@ -135,7 +135,7 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 						PeerType: mtproto.PEER_CHAT,
 						PeerId:   peer2.PeerId,
 					})
-					dialogExt.Dialog.UnreadMentionsCount = mentionsCount.V
+					dialogExt.Dialog.UnreadMentionsCount = mentionsCount.GetV()
 				}
 			}
 		}
