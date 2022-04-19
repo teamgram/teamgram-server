@@ -58,6 +58,7 @@ func (c *ChatCore) ChatImportChatInvite(in *chat.TLChatImportChatInvite) (*chat.
 	}
 
 	c.svcCtx.Dao.ChatInviteParticipantsDAO.Insert(c.ctx, &dataobject.ChatInviteParticipantsDO{
+		ChatId: chatInviteDO.ChatId,
 		Link:   in.Hash,
 		UserId: in.SelfId,
 		Date2:  time.Now().Unix(),
