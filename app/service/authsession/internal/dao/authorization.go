@@ -201,7 +201,7 @@ func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, h
 	if hash == 0 {
 		for i := 0; i < len(doList); i++ {
 			if doList[i].AuthKeyId != authKeyId {
-				idList = append(idList, doList[i].Hash)
+				idList = append(idList, doList[i].Id)
 				keyIdList = append(keyIdList, doList[i].AuthKeyId)
 			}
 		}
