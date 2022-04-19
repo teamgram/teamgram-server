@@ -32,6 +32,7 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		offsetPeer = mtproto.FromInputUser(c.MD.UserId, in.OffsetUser)
 		link       *types.StringValue
+		limit      = in.GetLimit()
 	)
 
 	if in.Link_FLAGSTRING != nil {
@@ -44,6 +45,10 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)
 		return nil, err
+	}
+
+	if limit == 0 {
+		limit = 50
 	}
 
 	rValues := mtproto.MakeTLMessagesChatInviteImporters(&mtproto.Messages_ChatInviteImporters{
@@ -60,7 +65,7 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		Q:          in.Q,
 		OffsetDate: in.OffsetDate,
 		OffsetUser: offsetPeer.PeerId,
-		Limit:      in.Limit,
+		Limit:      limit,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)

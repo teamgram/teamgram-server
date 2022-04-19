@@ -31,10 +31,10 @@ func NewChatInviteParticipantsDAO(db *sqlx.DB) *ChatInviteParticipantsDAO {
 }
 
 // Insert
-// insert into chat_invite_participants(link, user_id, date2) values (:link, :user_id, :date2)
+// insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
 func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_invite_participants(link, user_id, date2) values (:link, :user_id, :date2)"
+		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
 		r     sql.Result
 	)
 
@@ -58,10 +58,10 @@ func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject
 }
 
 // InsertTx
-// insert into chat_invite_participants(link, user_id, date2) values (:link, :user_id, :date2)
+// insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
 func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_invite_participants(link, user_id, date2) values (:link, :user_id, :date2)"
+		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
 		r     sql.Result
 	)
 
@@ -85,10 +85,10 @@ func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatI
 }
 
 // SelectListByLink
-// select id, link, user_id, date2 from chat_invite_participants where link = :link
+// select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
 func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link string) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query = "select id, link, user_id, date2 from chat_invite_participants where link = ?"
+		query = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, link)
@@ -118,10 +118,10 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link
 }
 
 // SelectListByLinkWithCB
-// select id, link, user_id, date2 from chat_invite_participants where link = :link
+// select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
 func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context, link string, cb func(i int, v *dataobject.ChatInviteParticipantsDO)) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query = "select id, link, user_id, date2 from chat_invite_participants where link = ?"
+		query = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
 		rows  *sqlx.Rows
 	)
 	rows, err = dao.db.Query(ctx, query, link)
@@ -153,6 +153,50 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context
 		values = append(values, v)
 	}
 	rList = values
+
+	return
+}
+
+// Delete
+// delete from chat_invite_participants where chat_id = :chat_id and user_id = :user_id
+func (dao *ChatInviteParticipantsDAO) Delete(ctx context.Context, chat_id int64, user_id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, chat_id, user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in Delete(_), error: %v", err)
+	}
+
+	return
+}
+
+// DeleteTx
+// delete from chat_invite_participants where chat_id = :chat_id and user_id = :user_id
+func (dao *ChatInviteParticipantsDAO) DeleteTx(tx *sqlx.Tx, chat_id int64, user_id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, chat_id, user_id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+	}
 
 	return
 }

@@ -30,12 +30,17 @@ func (c *ChatInvitesCore) MessagesGetExportedChatInvites(in *mtproto.TLMessagesG
 	var (
 		peer    = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		adminId = mtproto.FromInputUser(c.MD.UserId, in.AdminId)
+		limit   = in.GetLimit()
 	)
 
 	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.getExportedChatInvites - error: ", err)
 		return nil, err
+	}
+
+	if limit == 0 {
+		limit = 50
 	}
 
 	// TODO: check adminId
@@ -45,7 +50,7 @@ func (c *ChatInvitesCore) MessagesGetExportedChatInvites(in *mtproto.TLMessagesG
 		Revoked:    in.Revoked,
 		OffsetDate: in.OffsetDate,
 		OffsetLink: in.OffsetLink,
-		Limit:      in.Limit,
+		Limit:      limit,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.getExportedChatInvites - error: ", err)

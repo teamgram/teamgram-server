@@ -4,19 +4,29 @@
     <operation name="Insert">
         <sql>
             INSERT INTO chat_invite_participants
-                (link, user_id, date2)
+                (chat_id, link, user_id, date2)
             VALUES
-                (:link, :user_id, :date2)
+                (:chat_id, :link, :user_id, :date2)
         </sql>
     </operation>
+
     <operation name="SelectListByLink" result_set="list">
         <sql>
             SELECT
-                id, link, user_id, date2
+                id, chat_id, link, user_id, date2
             FROM
                 chat_invite_participants
             WHERE
                 link = :link
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM
+                chat_invite_participants
+            WHERE
+                chat_id = :chat_id AND user_id = :user_id
         </sql>
     </operation>
 </table>

@@ -99,9 +99,14 @@ func (c *ChatCore) ChatGetChatInviteImporters(in *chat.TLChatGetChatInviteImport
 	var (
 		rInvites []*mtproto.ChatInviteImporter
 		link     = chat.GetInviteHashByLink(in.GetLink().GetValue())
+		limit    = in.Limit
 	)
 
 	// TODO: see (case1, case2, case3)
+
+	if limit == 0 {
+		limit = 50
+	}
 
 	c.svcCtx.Dao.ChatInviteParticipantsDAO.SelectListByLinkWithCB(
 		c.ctx,

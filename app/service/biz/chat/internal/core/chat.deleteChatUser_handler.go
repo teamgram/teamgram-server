@@ -104,6 +104,12 @@ func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*chat.Muta
 		chat2.Chat.Date = now
 		chat2.Chat.Version += 1
 		_, result.Err = c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, chat2.Chat.ParticipantsCount, chat2.Chat.Id)
+		if result.Err != nil {
+			c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
+			return
+		}
+
+		_, result.Err = c.svcCtx.Dao.ChatInviteParticipantsDAO.DeleteTx(tx, chat2.Chat.Id, deleteUserId)
 	})
 
 	if tR.Err != nil {
