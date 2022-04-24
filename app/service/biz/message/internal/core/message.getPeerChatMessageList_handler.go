@@ -23,7 +23,7 @@ func (c *MessageCore) MessageGetPeerChatMessageList(in *message.TLMessageGetPeer
 	}
 	//
 	//peerMsgs = make(map[int32]*model.MessageBox)
-	myDO, err := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(c.ctx, in.PeerChatId, in.MsgId)
+	myDO, err := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(c.ctx, in.UserId, in.MsgId)
 	if err != nil || myDO == nil {
 		err = mtproto.ErrMsgIdInvalid
 		c.Logger.Errorf("message.getPeerUserMessage - error: %v", err)

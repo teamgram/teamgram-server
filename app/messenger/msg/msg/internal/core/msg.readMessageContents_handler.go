@@ -22,12 +22,53 @@ func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*mtp
 		pts, ptsCount int32
 	)
 
+	affected, _ := c.readMentionedMessageContents(in)
+	ptsCount += affected
+	affected, _ = c.readMediaUnreadMessageContents(in)
+	ptsCount += affected
+	affected, _ = c.readReactionUnreadMessageContents(in)
+	ptsCount += affected
+
+	if ptsCount > 0 {
+		pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, in.UserId, int(ptsCount))
+	} else {
+		ptsCount = 0
+		pts = c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, in.UserId)
+	}
+
+	return mtproto.MakeTLMessagesAffectedMessages(&mtproto.Messages_AffectedMessages{
+		Pts:      pts,
+		PtsCount: ptsCount,
+	}).To_Messages_AffectedMessages(), nil
+}
+
+func (c *MsgCore) readMentionedMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
+	switch in.PeerType {
+	case mtproto.PEER_USER:
+		return 0, nil
+	case mtproto.PEER_CHAT:
+		for _, m := range in.Id {
+			if m.Mentioned {
+				c.svcCtx.Dao.MessagesDAO.UpdateMentionedAndMediaUnread(c.ctx, in.UserId, m.Id) //UpdateMentioned()
+			}
+		}
+		return 0, nil
+	default:
+		err := mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("DeleteMessages - error: %v", err)
+		return 0, err
+	}
+}
+
+func (c *MsgCore) readMediaUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
 	switch in.PeerType {
 	case mtproto.PEER_USER:
 		id := make([]int32, 0, len(in.Id))
 		for _, m := range in.Id {
-			c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-			id = append(id, m.Id)
+			if m.MediaUnread {
+				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
+				id = append(id, m.Id)
+			}
 		}
 
 		if in.UserId != in.PeerId {
@@ -37,24 +78,13 @@ func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*mtp
 			})
 		}
 
-		if len(in.Id) > 0 {
-			ptsCount = int32(len(id))
-			pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, in.UserId, len(in.Id)) - ptsCount + 1
-		} else {
-			ptsCount = 0
-			pts = c.svcCtx.Dao.CurrentPtsId(c.ctx, in.UserId)
-		}
+		return int32(len(id)), nil
 	case mtproto.PEER_CHAT:
 		// TODO: update sender
 		id := make([]int32, 0, len(in.Id))
 		for _, m := range in.Id {
-			if mtproto.FromBool(m.IsMentioned) {
-				c.svcCtx.Dao.MessagesDAO.UpdateMentionedAndMediaUnread(c.ctx, in.UserId, m.Id) //UpdateMentioned()
-				// TODO:
-			} else {
-				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-				id = append(id, m.Id)
-			}
+			c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
+			id = append(id, m.Id)
 		}
 		if len(id) > 0 {
 			c.svcCtx.Dao.InboxClient.InboxReadChatMediaUnreadToInbox(c.ctx, &inbox.TLInboxReadChatMediaUnreadToInbox{
@@ -64,22 +94,22 @@ func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*mtp
 			})
 		}
 
-		if len(in.Id) > 0 {
-			ptsCount = int32(len(id))
-			pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, in.UserId, len(in.Id)) - ptsCount + 1
-		} else {
-			ptsCount = 0
-			pts = c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, in.UserId)
-		}
-	case mtproto.PEER_CHANNEL:
+		return int32(len(id)), nil
 	default:
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("DeleteMessages - error: %v", err)
-		return nil, err
+		return 0, err
+	}
+}
+
+func (c *MsgCore) readReactionUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
+	for _, m := range in.Id {
+		if m.Reaction {
+			if c.svcCtx.Dao.MsgPlugin != nil {
+				c.svcCtx.Dao.MsgPlugin.ReadReactionUnreadMessage(c.ctx, in.UserId, m.Id)
+			}
+		}
 	}
 
-	return mtproto.MakeTLMessagesAffectedMessages(&mtproto.Messages_AffectedMessages{
-		Pts:      pts,
-		PtsCount: ptsCount,
-	}).To_Messages_AffectedMessages(), nil
+	return 0, nil
 }

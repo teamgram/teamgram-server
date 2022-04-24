@@ -25,6 +25,7 @@ import (
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dao"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/internal/config"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
@@ -38,7 +39,7 @@ type ServiceContext struct {
 	*dao.Dao
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &ServiceContext{
 		Config: c,
@@ -51,6 +52,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			ChatClient:   chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
 			SyncClient:   sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.SyncClient)),
 			DialogClient: dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
+			MsgPlugin:    plugin,
 		},
 	}
 }

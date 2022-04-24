@@ -11,6 +11,7 @@ package dao
 
 import (
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	// channel_client "github.com/teamgram/teamgram-server/app/service/biz/channel/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
@@ -31,4 +32,5 @@ type Dao struct {
 	SyncClient    sync_client.SyncClient
 	BotSyncClient sync_client.SyncClient
 	dialog_client.DialogClient
+	plugin.MsgPlugin
 }

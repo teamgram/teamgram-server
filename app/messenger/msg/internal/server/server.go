@@ -56,17 +56,18 @@ func (s *Server) Initialize() error {
 		// msg_helper
 		msg.RegisterRPCMsgServer(
 			grpcServer,
-			msg_helper.New(msg_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				KV:            c.KV,
-				IdgenClient:   c.IdgenClient,
-				UserClient:    c.BizServiceClient,
-				ChatClient:    c.BizServiceClient,
-				SyncClient:    c.SyncClient,
-				InboxClient:   c.InboxClient,
-				DialogClient:  c.BizServiceClient,
-			}))
+			msg_helper.New(
+				msg_helper.Config{
+					RpcServerConf: c.RpcServerConf,
+					Mysql:         c.Mysql,
+					KV:            c.KV,
+					IdgenClient:   c.IdgenClient,
+					UserClient:    c.BizServiceClient,
+					ChatClient:    c.BizServiceClient,
+					SyncClient:    c.SyncClient,
+					InboxClient:   c.InboxClient,
+					DialogClient:  c.BizServiceClient,
+				}, nil))
 	})
 
 	go func() {

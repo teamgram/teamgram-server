@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -35,9 +35,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 1402283185
 		return o
 	},
-	-1316261635: func() mtproto.TLObject { // 0xb18b70fd
+	295822890: func() mtproto.TLObject { // 0x11a1e62a
 		o := MakeTLContentMessage(nil)
-		o.Data2.Constructor = -1316261635
+		o.Data2.Constructor = 295822890
 		return o
 	},
 	1513645242: func() mtproto.TLObject { // 0x5a3864ba
@@ -188,7 +188,6 @@ func (m *OutboxMessage) DebugString() string {
 }
 
 // To_OutboxMessage
-// outboxMessage flags:# no_webpage:flags.0?true background:flags.1?true random_id:long message:Message schedule_date:flags.2?int = OutboxMessage;
 func (m *OutboxMessage) To_OutboxMessage() *TLOutboxMessage {
 	m.PredicateName = Predicate_outboxMessage
 	return &TLOutboxMessage{
@@ -197,7 +196,6 @@ func (m *OutboxMessage) To_OutboxMessage() *TLOutboxMessage {
 }
 
 // MakeTLOutboxMessage
-// outboxMessage flags:# no_webpage:flags.0?true background:flags.1?true random_id:long message:Message schedule_date:flags.2?int = OutboxMessage;
 func MakeTLOutboxMessage(data2 *OutboxMessage) *TLOutboxMessage {
 	if data2 == nil {
 		return &TLOutboxMessage{Data2: &OutboxMessage{
@@ -239,7 +237,6 @@ func (m *TLOutboxMessage) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x539524b1: func() []byte {
-			// outboxMessage flags:# no_webpage:flags.0?true background:flags.1?true random_id:long message:Message schedule_date:flags.2?int = OutboxMessage;
 			x.UInt(0x539524b1)
 
 			// set flags
@@ -292,7 +289,6 @@ func (m *TLOutboxMessage) CalcByteSize(layer int32) int {
 func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x539524b1: func() error {
-			// outboxMessage flags:# no_webpage:flags.0?true background:flags.1?true random_id:long message:Message schedule_date:flags.2?int = OutboxMessage;
 			var flags = dBuf.UInt()
 			_ = flags
 			if (flags & (1 << 0)) != 0 {
@@ -365,7 +361,7 @@ func (m *ContentMessage) CalcByteSize(layer int32) int {
 func (m *ContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xb18b70fd:
+	case 0x11a1e62a:
 		m2 := MakeTLContentMessage(m)
 		m2.Decode(dBuf)
 
@@ -387,7 +383,6 @@ func (m *ContentMessage) DebugString() string {
 }
 
 // To_ContentMessage
-// contentMessage id:int is_mentioned:Bool = ContentMessage;
 func (m *ContentMessage) To_ContentMessage() *TLContentMessage {
 	m.PredicateName = Predicate_contentMessage
 	return &TLContentMessage{
@@ -396,7 +391,6 @@ func (m *ContentMessage) To_ContentMessage() *TLContentMessage {
 }
 
 // MakeTLContentMessage
-// contentMessage id:int is_mentioned:Bool = ContentMessage;
 func MakeTLContentMessage(data2 *ContentMessage) *TLContentMessage {
 	if data2 == nil {
 		return &TLContentMessage{Data2: &ContentMessage{
@@ -413,11 +407,18 @@ func (m *TLContentMessage) To_ContentMessage() *ContentMessage {
 	return m.Data2
 }
 
+//// flags
 func (m *TLContentMessage) SetId(v int32) { m.Data2.Id = v }
 func (m *TLContentMessage) GetId() int32  { return m.Data2.Id }
 
-func (m *TLContentMessage) SetIsMentioned(v *mtproto.Bool) { m.Data2.IsMentioned = v }
-func (m *TLContentMessage) GetIsMentioned() *mtproto.Bool  { return m.Data2.IsMentioned }
+func (m *TLContentMessage) SetMentioned(v bool) { m.Data2.Mentioned = v }
+func (m *TLContentMessage) GetMentioned() bool  { return m.Data2.Mentioned }
+
+func (m *TLContentMessage) SetMediaUnread(v bool) { m.Data2.MediaUnread = v }
+func (m *TLContentMessage) GetMediaUnread() bool  { return m.Data2.MediaUnread }
+
+func (m *TLContentMessage) SetReaction(v bool) { m.Data2.Reaction = v }
+func (m *TLContentMessage) GetReaction() bool  { return m.Data2.Reaction }
 
 func (m *TLContentMessage) GetPredicateName() string {
 	return Predicate_contentMessage
@@ -427,12 +428,30 @@ func (m *TLContentMessage) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0xb18b70fd: func() []byte {
-			// contentMessage id:int is_mentioned:Bool = ContentMessage;
-			x.UInt(0xb18b70fd)
+		0x11a1e62a: func() []byte {
+			x.UInt(0x11a1e62a)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetMentioned() == true {
+					flags |= 1 << 0
+				}
+				if m.GetMediaUnread() == true {
+					flags |= 1 << 1
+				}
+				if m.GetReaction() == true {
+					flags |= 1 << 2
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
 			x.Int(m.GetId())
-			x.Bytes(m.GetIsMentioned().Encode(layer))
 			return x.GetBuf()
 		},
 	}
@@ -455,14 +474,19 @@ func (m *TLContentMessage) CalcByteSize(layer int32) int {
 
 func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xb18b70fd: func() error {
-			// contentMessage id:int is_mentioned:Bool = ContentMessage;
+		0x11a1e62a: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
 			m.SetId(dBuf.Int())
-
-			m1 := &mtproto.Bool{}
-			m1.Decode(dBuf)
-			m.SetIsMentioned(m1)
-
+			if (flags & (1 << 0)) != 0 {
+				m.SetMentioned(true)
+			}
+			if (flags & (1 << 1)) != 0 {
+				m.SetMediaUnread(true)
+			}
+			if (flags & (1 << 2)) != 0 {
+				m.SetReaction(true)
+			}
 			return dBuf.GetError()
 		},
 	}
@@ -539,7 +563,6 @@ func (m *Sender) DebugString() string {
 }
 
 // To_Sender
-// sender user_id:long type:int auth_key_id:long = Sender;
 func (m *Sender) To_Sender() *TLSender {
 	m.PredicateName = Predicate_sender
 	return &TLSender{
@@ -548,7 +571,6 @@ func (m *Sender) To_Sender() *TLSender {
 }
 
 // MakeTLSender
-// sender user_id:long type:int auth_key_id:long = Sender;
 func MakeTLSender(data2 *Sender) *TLSender {
 	if data2 == nil {
 		return &TLSender{Data2: &Sender{
@@ -583,7 +605,6 @@ func (m *TLSender) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x5a3864ba: func() []byte {
-			// sender user_id:long type:int auth_key_id:long = Sender;
 			x.UInt(0x5a3864ba)
 
 			x.Long(m.GetUserId())
@@ -612,7 +633,6 @@ func (m *TLSender) CalcByteSize(layer int32) int {
 func (m *TLSender) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x5a3864ba: func() error {
-			// sender user_id:long type:int auth_key_id:long = Sender;
 			m.SetUserId(dBuf.Long())
 			m.SetType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
@@ -643,7 +663,6 @@ func (m *TLMsgSendMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x48a327fb:
-		// msg.sendMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
 		x.UInt(0x48a327fb)
 
 		// no flags
@@ -668,7 +687,6 @@ func (m *TLMsgSendMessage) CalcByteSize(layer int32) int {
 func (m *TLMsgSendMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x48a327fb:
-		// msg.sendMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
 
 		// not has flags
 
@@ -704,7 +722,6 @@ func (m *TLMsgSendMultiMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x990713cc:
-		// msg.sendMultiMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 		x.UInt(0x990713cc)
 
 		// no flags
@@ -734,7 +751,6 @@ func (m *TLMsgSendMultiMessage) CalcByteSize(layer int32) int {
 func (m *TLMsgSendMultiMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x990713cc:
-		// msg.sendMultiMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 
 		// not has flags
 
@@ -778,7 +794,6 @@ func (m *TLMsgPushUserMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x35d0fa1a:
-		// msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
 		x.UInt(0x35d0fa1a)
 
 		// no flags
@@ -804,7 +819,6 @@ func (m *TLMsgPushUserMessage) CalcByteSize(layer int32) int {
 func (m *TLMsgPushUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x35d0fa1a:
-		// msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
 
 		// not has flags
 
@@ -841,7 +855,6 @@ func (m *TLMsgReadMessageContents) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x282484d4:
-		// msg.readMessageContents user_id:long auth_key_id:long peer_type:int peer_id:long id:Vector<ContentMessage> = messages.AffectedMessages;
 		x.UInt(0x282484d4)
 
 		// no flags
@@ -871,7 +884,6 @@ func (m *TLMsgReadMessageContents) CalcByteSize(layer int32) int {
 func (m *TLMsgReadMessageContents) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x282484d4:
-		// msg.readMessageContents user_id:long auth_key_id:long peer_type:int peer_id:long id:Vector<ContentMessage> = messages.AffectedMessages;
 
 		// not has flags
 
@@ -915,7 +927,6 @@ func (m *TLMsgSendMessageV2) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x2de87d66:
-		// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = UpdateList;
 		x.UInt(0x2de87d66)
 
 		// no flags
@@ -945,7 +956,6 @@ func (m *TLMsgSendMessageV2) CalcByteSize(layer int32) int {
 func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x2de87d66:
-		// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = UpdateList;
 
 		// not has flags
 
@@ -989,7 +999,6 @@ func (m *TLMsgEditMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x96786312:
-		// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
 		x.UInt(0x96786312)
 
 		// no flags
@@ -1014,7 +1023,6 @@ func (m *TLMsgEditMessage) CalcByteSize(layer int32) int {
 func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x96786312:
-		// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
 
 		// not has flags
 
@@ -1050,7 +1058,6 @@ func (m *TLMsgDeleteMessages) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x21e80a1d:
-		// msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 		x.UInt(0x21e80a1d)
 
 		// set flags
@@ -1084,7 +1091,6 @@ func (m *TLMsgDeleteMessages) CalcByteSize(layer int32) int {
 func (m *TLMsgDeleteMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x21e80a1d:
-		// msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1123,7 +1129,6 @@ func (m *TLMsgDeleteHistory) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x75c0e8ca:
-		// msg.deleteHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long just_clear:flags.0?true revoke:flags.1?true max_id:int = messages.AffectedHistory;
 		x.UInt(0x75c0e8ca)
 
 		// set flags
@@ -1159,7 +1164,6 @@ func (m *TLMsgDeleteHistory) CalcByteSize(layer int32) int {
 func (m *TLMsgDeleteHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x75c0e8ca:
-		// msg.deleteHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long just_clear:flags.0?true revoke:flags.1?true max_id:int = messages.AffectedHistory;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1199,7 +1203,6 @@ func (m *TLMsgDeletePhoneCallHistory) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x26b7a13e:
-		// msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 		x.UInt(0x26b7a13e)
 
 		// set flags
@@ -1229,7 +1232,6 @@ func (m *TLMsgDeletePhoneCallHistory) CalcByteSize(layer int32) int {
 func (m *TLMsgDeletePhoneCallHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x26b7a13e:
-		// msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1263,7 +1265,6 @@ func (m *TLMsgDeleteChatHistory) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xef1f62db:
-		// msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
 		x.UInt(0xef1f62db)
 
 		// no flags
@@ -1285,7 +1286,6 @@ func (m *TLMsgDeleteChatHistory) CalcByteSize(layer int32) int {
 func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xef1f62db:
-		// msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
 
 		// not has flags
 
@@ -1314,7 +1314,6 @@ func (m *TLMsgReadHistory) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x5a0f6e12:
-		// msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 		x.UInt(0x5a0f6e12)
 
 		// no flags
@@ -1339,7 +1338,6 @@ func (m *TLMsgReadHistory) CalcByteSize(layer int32) int {
 func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x5a0f6e12:
-		// msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 
 		// not has flags
 
@@ -1371,7 +1369,6 @@ func (m *TLMsgUpdatePinnedMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe5ae51a9:
-		// msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 		x.UInt(0xe5ae51a9)
 
 		// set flags
@@ -1410,7 +1407,6 @@ func (m *TLMsgUpdatePinnedMessage) CalcByteSize(layer int32) int {
 func (m *TLMsgUpdatePinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe5ae51a9:
-		// msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1453,7 +1449,6 @@ func (m *TLMsgUnpinAllMessages) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb8865f25:
-		// msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;
 		x.UInt(0xb8865f25)
 
 		// no flags
@@ -1477,7 +1472,6 @@ func (m *TLMsgUnpinAllMessages) CalcByteSize(layer int32) int {
 func (m *TLMsgUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb8865f25:
-		// msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;
 
 		// not has flags
 

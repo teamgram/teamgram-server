@@ -1,12 +1,8 @@
-/*
- * WARNING! All changes made in this file will be lost!
- * Created from 'scheme.tl' by 'mtprotoc'
- *
- * Copyright (c) 2022-present,  Teamgram Authors.
- *  All rights reserved.
- *
- * Author: teagramio (teagram.io@gmail.com)
- */
+// Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+//  All rights reserved.
+//
+// Author: Benqi (wubenqi@gmail.com)
+//
 
 package msg
 
@@ -39,7 +35,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_contentMessage: {
-		0: -1316261635, // 0xb18b70fd
+		0: 295822890, // 0x11a1e62a
 
 	},
 	Predicate_msg_sendMessage: {
@@ -99,7 +95,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 var clazzIdNameRegisters2 = map[int32]string{
 	1513645242:  Predicate_sender,                     // 0x5a3864ba
 	1402283185:  Predicate_outboxMessage,              // 0x539524b1
-	-1316261635: Predicate_contentMessage,             // 0xb18b70fd
+	295822890:   Predicate_contentMessage,             // 0x11a1e62a
 	1218652155:  Predicate_msg_sendMessage,            // 0x48a327fb
 	-1727589428: Predicate_msg_sendMultiMessage,       // 0x990713cc
 	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
