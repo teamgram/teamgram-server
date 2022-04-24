@@ -59,6 +59,7 @@ cd teamgram-server
    mysql -uroot teamgram < teamgramd/sql/migrate-20220401.sql
    mysql -uroot teamgram < teamgramd/sql/migrate-20220412.sql
    mysql -uroot teamgram < teamgramd/sql/migrate-20220419.sql
+   mysql -uroot teamgram < teamgramd/sql/migrate-20220423.sql
 ```
 
 - init minio buckets, bucket names:
