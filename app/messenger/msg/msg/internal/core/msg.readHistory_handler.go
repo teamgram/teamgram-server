@@ -31,7 +31,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 
 	// 消息已读逻辑
 	// 1. inbox，设置unread_count为0以及read_inbox_max_id
-	if maxId == 0 {
+	if maxId == 0 || maxId >= 1000000000 {
 		c.svcCtx.Dao.SelectDialogLastMessageListWithCB(
 			c.ctx,
 			in.UserId,
@@ -52,7 +52,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 	switch in.PeerType {
 	case mtproto.PEER_SELF, mtproto.PEER_USER:
 		sendMe = in.UserId == in.PeerId
-		if maxId == 0 {
+		if maxId == 0 || maxId >= 1000000000 {
 			// topMessage, err :=
 			_, err := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
 				c.ctx,
@@ -72,23 +72,25 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 		}
 		c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(c.ctx, in.MaxId, in.UserId, peerDialogId)
 	case mtproto.PEER_CHAT:
-		_, err := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
-			c.ctx,
-			in.UserId,
-			[]int64{peerDialogId},
-			func(i int, v *dataobject.DialogsDO) {
-				maxId = v.TopMessage
-			},
-		)
-		if err != nil {
-			c.Logger.Errorf("msg.readHistory - error: %v", err)
-			return nil, mtproto.ErrMsgIdInvalid
-		} else if maxId == 0 {
-			c.Logger.Errorf("msg.readHistory - error: not found peer_dialog_id")
-			return nil, mtproto.ErrMsgIdInvalid
+		if maxId == 0 || maxId >= 1000000000 {
+			_, err := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
+				c.ctx,
+				in.UserId,
+				[]int64{peerDialogId},
+				func(i int, v *dataobject.DialogsDO) {
+					maxId = v.TopMessage
+				},
+			)
+			if err != nil {
+				c.Logger.Errorf("msg.readHistory - error: %v", err)
+				return nil, mtproto.ErrMsgIdInvalid
+			} else if maxId == 0 {
+				c.Logger.Errorf("msg.readHistory - error: not found peer_dialog_id")
+				return nil, mtproto.ErrMsgIdInvalid
+			}
 		}
 
-		c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(c.ctx, in.MaxId, in.UserId, peerDialogId)
+		c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(c.ctx, maxId, in.UserId, peerDialogId)
 	default:
 		c.Logger.Errorf("messages.readHistory - error: invalid peer %v", in)
 		err := mtproto.ErrPeerIdInvalid
@@ -118,7 +120,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 			FromId:   in.UserId,
 			PeerType: in.PeerType,
 			PeerId:   in.PeerId,
-			MaxId:    in.MaxId,
+			MaxId:    maxId,
 			Sender:   senderId,
 		})
 	}
