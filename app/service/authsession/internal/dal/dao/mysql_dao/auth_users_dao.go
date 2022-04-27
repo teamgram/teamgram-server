@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *AuthUsersDAO) InsertOrUpdatesTx(tx *sqlx.Tx, do *dataobject.AuthUsers
 func (dao *AuthUsersDAO) Select(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthUsersDO, err error) {
 	var (
 		query = "select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where auth_key_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		do    = &dataobject.AuthUsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.AuthUsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,30 +115,16 @@ func (dao *AuthUsersDAO) Select(ctx context.Context, auth_key_id int64) (rValue 
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectAuthKeyIds(ctx context.Context, user_id int64) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		values []dataobject.AuthUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAuthKeyIds(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.AuthUsersDO
-	for rows.Next() {
-		v := dataobject.AuthUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAuthKeyIds(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -157,38 +135,23 @@ func (dao *AuthUsersDAO) SelectAuthKeyIds(ctx context.Context, user_id int64) (r
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectAuthKeyIdsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.AuthUsersDO)) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		values []dataobject.AuthUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAuthKeyIds(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.AuthUsersDO
-	for rows.Next() {
-		v := dataobject.AuthUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAuthKeyIds(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -268,30 +231,16 @@ func (dao *AuthUsersDAO) DeleteByHashListTx(tx *sqlx.Tx, idList []int64) (rowsAf
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectListByUserId(ctx context.Context, user_id int64) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		values []dataobject.AuthUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.AuthUsersDO
-	for rows.Next() {
-		v := dataobject.AuthUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByUserId(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -302,38 +251,23 @@ func (dao *AuthUsersDAO) SelectListByUserId(ctx context.Context, user_id int64) 
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectListByUserIdWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.AuthUsersDO)) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		values []dataobject.AuthUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByUserId(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.AuthUsersDO
-	for rows.Next() {
-		v := dataobject.AuthUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByUserId(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

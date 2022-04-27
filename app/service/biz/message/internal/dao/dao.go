@@ -10,8 +10,6 @@
 package dao
 
 import (
-	"context"
-
 	// "github.com/teamgram/marmota/pkg/net/rpcx"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -34,14 +32,4 @@ func New(c config.Config) (dao *Dao) {
 		CachedConn: sqlc.NewConn(db, c.Cache),
 		// PollClient: poll_client.NewPollClient(rpcx.GetCachedRpcClient(c.PollClient)),
 	}
-}
-
-// Close close the resource.
-func (d *Dao) Close() {
-	d.Mysql.Close()
-}
-
-// Ping ping the resource.
-func (d *Dao) Ping(ctx context.Context) (err error) {
-	return d.Mysql.Ping(ctx)
 }

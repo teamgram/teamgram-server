@@ -123,10 +123,10 @@ func (dao *UserNotifySettingsDAO) InsertOrUpdateExtTx(tx *sqlx.Tx, userId int64,
 // TODO(@benqi): sqlmap
 func (dao *UserNotifySettingsDAO) SelectList(ctx context.Context, userId int64, userIdList, chatIdList, channelIdList []int64) (rList []dataobject.UserNotifySettingsDO, err error) {
 	var (
-		rows *sqlx.Rows
-		qVs  []string
-		args []interface{}
-		a    []interface{}
+		qVs    []string
+		args   []interface{}
+		a      []interface{}
+		values []dataobject.UserNotifySettingsDO
 	)
 
 	if len(userIdList) == 0 && len(chatIdList) == 0 && len(channelIdList) == 0 {
@@ -164,26 +164,11 @@ func (dao *UserNotifySettingsDAO) SelectList(ctx context.Context, userId int64, 
 		return
 	}
 
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectNotifySettingsList(_), error: %v", err)
 		return
-	}
-
-	defer rows.Close()
-
-	var values []dataobject.UserNotifySettingsDO
-	for rows.Next() {
-		v := dataobject.UserNotifySettingsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectNotifySettingsList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
 	}
 	rList = values
 

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,9 +91,9 @@ func (dao *AuthsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (last
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList []dataobject.AuthsDO, err error) {
 	var (
-		query = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
+		a      []interface{}
+		values []dataobject.AuthsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.AuthsDO{}
@@ -106,27 +106,13 @@ func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList 
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectSessions(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.AuthsDO
-	for rows.Next() {
-		v := dataobject.AuthsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectSessions(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -137,9 +123,9 @@ func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList 
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.AuthsDO)) (rList []dataobject.AuthsDO, err error) {
 	var (
-		query = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
+		a      []interface{}
+		values []dataobject.AuthsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.AuthsDO{}
@@ -152,35 +138,20 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectSessions(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.AuthsDO
-	for rows.Next() {
-		v := dataobject.AuthsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectSessions(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -191,27 +162,19 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthsDO, err error) {
 	var (
 		query = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id = ? and deleted = 0 limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.AuthsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.AuthsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByAuthKeyId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -222,7 +185,7 @@ func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectLayer(ctx context.Context, auth_key_id int64) (rValue int32, err error) {
 	var query = "select layer from auths where auth_key_id = ? limit 1"
-	err = dao.db.Get(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectLayer(_), error: %v", err)
@@ -236,7 +199,7 @@ func (dao *AuthsDAO) SelectLayer(ctx context.Context, auth_key_id int64) (rValue
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectLangCode(ctx context.Context, auth_key_id int64) (rValue string, err error) {
 	var query = "select lang_code from auths where auth_key_id = ? limit 1"
-	err = dao.db.Get(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectLangCode(_), error: %v", err)
@@ -250,7 +213,7 @@ func (dao *AuthsDAO) SelectLangCode(ctx context.Context, auth_key_id int64) (rVa
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectLangPack(ctx context.Context, auth_key_id int64) (rValue string, err error) {
 	var query = "select lang_pack from auths where auth_key_id = ? limit 1"
-	err = dao.db.Get(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectLangPack(_), error: %v", err)

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -208,27 +208,19 @@ func (dao *PopularContactsDAO) IncreaseImportersListTx(tx *sqlx.Tx, phoneList []
 func (dao *PopularContactsDAO) SelectImporters(ctx context.Context, phone string) (rValue *dataobject.PopularContactsDO, err error) {
 	var (
 		query = "select phone, importers from popular_contacts where phone = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.PopularContactsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, phone)
+	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectImporters(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.PopularContactsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectImporters(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectImporters(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -239,9 +231,9 @@ func (dao *PopularContactsDAO) SelectImporters(ctx context.Context, phone string
 // TODO(@benqi): sqlmap
 func (dao *PopularContactsDAO) SelectImportersList(ctx context.Context, phoneList []string) (rList []dataobject.PopularContactsDO, err error) {
 	var (
-		query = "select phone, importers from popular_contacts where phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select phone, importers from popular_contacts where phone in (?)"
+		a      []interface{}
+		values []dataobject.PopularContactsDO
 	)
 	if len(phoneList) == 0 {
 		rList = []dataobject.PopularContactsDO{}
@@ -254,27 +246,13 @@ func (dao *PopularContactsDAO) SelectImportersList(ctx context.Context, phoneLis
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectImportersList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.PopularContactsDO
-	for rows.Next() {
-		v := dataobject.PopularContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectImportersList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -285,9 +263,9 @@ func (dao *PopularContactsDAO) SelectImportersList(ctx context.Context, phoneLis
 // TODO(@benqi): sqlmap
 func (dao *PopularContactsDAO) SelectImportersListWithCB(ctx context.Context, phoneList []string, cb func(i int, v *dataobject.PopularContactsDO)) (rList []dataobject.PopularContactsDO, err error) {
 	var (
-		query = "select phone, importers from popular_contacts where phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select phone, importers from popular_contacts where phone in (?)"
+		a      []interface{}
+		values []dataobject.PopularContactsDO
 	)
 	if len(phoneList) == 0 {
 		rList = []dataobject.PopularContactsDO{}
@@ -300,35 +278,20 @@ func (dao *PopularContactsDAO) SelectImportersListWithCB(ctx context.Context, ph
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectImportersList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.PopularContactsDO
-	for rows.Next() {
-		v := dataobject.PopularContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectImportersList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

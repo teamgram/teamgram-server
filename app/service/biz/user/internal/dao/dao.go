@@ -33,8 +33,3 @@ func New(c config.Config) *Dao {
 		MediaClient: media_client.NewMediaClient(rpcx.GetCachedRpcClient(c.MediaClient)),
 	}
 }
-
-// Close close the resource.
-func (d *Dao) Close() {
-	d.Mysql.Close()
-}

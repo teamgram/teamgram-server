@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,30 +91,16 @@ func (dao *UnregisteredContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject
 // TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) SelectImportersByPhone(ctx context.Context, phone string) (rList []dataobject.UnregisteredContactsDO, err error) {
 	var (
-		query = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
-		rows  *sqlx.Rows
+		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
+		values []dataobject.UnregisteredContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, phone)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersByPhone(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UnregisteredContactsDO
-	for rows.Next() {
-		v := dataobject.UnregisteredContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectImportersByPhone(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -125,38 +111,23 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhone(ctx context.Context, 
 // TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Context, phone string, cb func(i int, v *dataobject.UnregisteredContactsDO)) (rList []dataobject.UnregisteredContactsDO, err error) {
 	var (
-		query = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
-		rows  *sqlx.Rows
+		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
+		values []dataobject.UnregisteredContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, phone)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, phone)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersByPhone(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UnregisteredContactsDO
-	for rows.Next() {
-		v := dataobject.UnregisteredContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectImportersByPhone(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

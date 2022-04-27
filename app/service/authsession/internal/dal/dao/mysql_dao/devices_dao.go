@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *DevicesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DevicesDO) (
 func (dao *DevicesDAO) Select(ctx context.Context, auth_key_id int64, user_id int64, token_type int32) (rValue *dataobject.DevicesDO, err error) {
 	var (
 		query = "select id, auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids from devices where auth_key_id = ? and user_id = ? and token_type = ? and state = 0"
-		rows  *sqlx.Rows
+		do    = &dataobject.DevicesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, auth_key_id, user_id, token_type)
+	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id, user_id, token_type)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.DevicesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,30 +115,16 @@ func (dao *DevicesDAO) Select(ctx context.Context, auth_key_id int64, user_id in
 // TODO(@benqi): sqlmap
 func (dao *DevicesDAO) SelectListById(ctx context.Context, token_type int32, token string) (rList []dataobject.DevicesDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
+		values []dataobject.DevicesDO
 	)
-	rows, err = dao.db.Query(ctx, query, token_type, token)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, token_type, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListById(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DevicesDO
-	for rows.Next() {
-		v := dataobject.DevicesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListById(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -157,38 +135,23 @@ func (dao *DevicesDAO) SelectListById(ctx context.Context, token_type int32, tok
 // TODO(@benqi): sqlmap
 func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, token_type int32, token string, cb func(i int, v *dataobject.DevicesDO)) (rList []dataobject.DevicesDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
-		rows  *sqlx.Rows
+		query  = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
+		values []dataobject.DevicesDO
 	)
-	rows, err = dao.db.Query(ctx, query, token_type, token)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, token_type, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListById(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DevicesDO
-	for rows.Next() {
-		v := dataobject.DevicesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListById(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

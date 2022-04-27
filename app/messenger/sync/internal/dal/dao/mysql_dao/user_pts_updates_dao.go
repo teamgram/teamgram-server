@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *UserPtsUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UserPtsUpdate
 func (dao *UserPtsUpdatesDAO) SelectLastPts(ctx context.Context, user_id int64) (rValue *dataobject.UserPtsUpdatesDO, err error) {
 	var (
 		query = "select pts from user_pts_updates where user_id = ? order by pts desc limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserPtsUpdatesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectLastPts(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserPtsUpdatesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectLastPts(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectLastPts(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,30 +115,16 @@ func (dao *UserPtsUpdatesDAO) SelectLastPts(ctx context.Context, user_id int64) 
 // TODO(@benqi): sqlmap
 func (dao *UserPtsUpdatesDAO) SelectByGtPts(ctx context.Context, user_id int64, pts int32) (rList []dataobject.UserPtsUpdatesDO, err error) {
 	var (
-		query = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
-		rows  *sqlx.Rows
+		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
+		values []dataobject.UserPtsUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, pts)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, pts)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtPts(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPtsUpdatesDO
-	for rows.Next() {
-		v := dataobject.UserPtsUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtPts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -157,38 +135,23 @@ func (dao *UserPtsUpdatesDAO) SelectByGtPts(ctx context.Context, user_id int64, 
 // TODO(@benqi): sqlmap
 func (dao *UserPtsUpdatesDAO) SelectByGtPtsWithCB(ctx context.Context, user_id int64, pts int32, cb func(i int, v *dataobject.UserPtsUpdatesDO)) (rList []dataobject.UserPtsUpdatesDO, err error) {
 	var (
-		query = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
-		rows  *sqlx.Rows
+		query  = "select user_id, pts, pts_count, update_type, update_data from user_pts_updates where user_id = ? and pts > ? order by pts asc"
+		values []dataobject.UserPtsUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, pts)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, pts)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtPts(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPtsUpdatesDO
-	for rows.Next() {
-		v := dataobject.UserPtsUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtPts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

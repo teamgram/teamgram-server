@@ -10,7 +10,9 @@
 package core
 
 import (
+	"context"
 	"fmt"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
 	"github.com/teamgram/teamgram-server/app/service/biz/username/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
@@ -21,13 +23,17 @@ import (
 func (c *UsernameCore) UsernameGetAccountUsername(in *username.TLUsernameGetAccountUsername) (*username.UsernameData, error) {
 	v := new(dataobject.UsernameDO)
 
-	err := c.svcCtx.CachedConn.QueryRow(v, fmt.Sprintf("username_%d", in.GetUserId()), func(v interface{}) error {
-		usernameDO, err2 := c.svcCtx.UsernameDAO.SelectByUserId(c.ctx, in.GetUserId())
-		if err2 == nil {
-			*(v.(*dataobject.UsernameDO)) = *usernameDO
-		}
-		return err2
-	})
+	err := c.svcCtx.CachedConn.QueryRow(
+		c.ctx,
+		v,
+		fmt.Sprintf("username_%d", in.GetUserId()),
+		func(ctx context.Context, db *sqlx.DB, v interface{}) error {
+			usernameDO, err2 := c.svcCtx.UsernameDAO.SelectByUserId(c.ctx, in.GetUserId())
+			if err2 == nil {
+				*(v.(*dataobject.UsernameDO)) = *usernameDO
+			}
+			return err2
+		})
 	if err != nil {
 		return nil, err
 	}

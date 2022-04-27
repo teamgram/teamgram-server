@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *DocumentsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.DocumentsDO) (last
 func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, document_id int64, access_hash int64, version int32) (rValue *dataobject.DocumentsDO, err error) {
 	var (
 		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where dc_id = 2 and document_id = ? and access_hash = ? and version = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.DocumentsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, document_id, access_hash, version)
+	err = dao.db.QueryRowPartial(ctx, do, query, document_id, access_hash, version)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.DocumentsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByFileLocation(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -124,27 +116,19 @@ func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, document_id i
 func (dao *DocumentsDAO) SelectById(ctx context.Context, document_id int64) (rValue *dataobject.DocumentsDO, err error) {
 	var (
 		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.DocumentsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, document_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, document_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.DocumentsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectById(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -155,9 +139,9 @@ func (dao *DocumentsDAO) SelectById(ctx context.Context, document_id int64) (rVa
 // TODO(@benqi): sqlmap
 func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rList []dataobject.DocumentsDO, err error) {
 	var (
-		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		a      []interface{}
+		values []dataobject.DocumentsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.DocumentsDO{}
@@ -170,27 +154,13 @@ func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rL
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DocumentsDO
-	for rows.Next() {
-		v := dataobject.DocumentsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -201,9 +171,9 @@ func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rL
 // TODO(@benqi): sqlmap
 func (dao *DocumentsDAO) SelectByIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.DocumentsDO)) (rList []dataobject.DocumentsDO, err error) {
 	var (
-		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		a      []interface{}
+		values []dataobject.DocumentsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.DocumentsDO{}
@@ -216,35 +186,20 @@ func (dao *DocumentsDAO) SelectByIdListWithCB(ctx context.Context, idList []int6
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DocumentsDO
-	for rows.Next() {
-		v := dataobject.DocumentsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

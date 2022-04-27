@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *AuthKeysDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeysDO) (lastIn
 func (dao *AuthKeysDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthKeysDO, err error) {
 	var (
 		query = "select auth_key_id, body from auth_keys where auth_key_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.AuthKeysDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.AuthKeysDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByAuthKeyId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *PhotosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotosDO) (lastInsert
 func (dao *PhotosDAO) SelectByPhotoId(ctx context.Context, photo_id int64) (rValue *dataobject.PhotosDO, err error) {
 	var (
 		query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.PhotosDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, photo_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, photo_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByPhotoId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.PhotosDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByPhotoId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByPhotoId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

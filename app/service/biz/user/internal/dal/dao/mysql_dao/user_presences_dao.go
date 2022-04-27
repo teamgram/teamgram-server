@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *UserPresencesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UserPresencesD
 func (dao *UserPresencesDAO) Select(ctx context.Context, user_id int64) (rValue *dataobject.UserPresencesDO, err error) {
 	var (
 		query = "select id, user_id, last_seen_at, expires from user_presences where user_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserPresencesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserPresencesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,9 +115,9 @@ func (dao *UserPresencesDAO) Select(ctx context.Context, user_id int64) (rValue 
 // TODO(@benqi): sqlmap
 func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rList []dataobject.UserPresencesDO, err error) {
 	var (
-		query = "select id, user_id, last_seen_at, expires from user_presences where user_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, last_seen_at, expires from user_presences where user_id in (?)"
+		a      []interface{}
+		values []dataobject.UserPresencesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPresencesDO{}
@@ -138,27 +130,13 @@ func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rL
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPresencesDO
-	for rows.Next() {
-		v := dataobject.UserPresencesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -169,9 +147,9 @@ func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rL
 // TODO(@benqi): sqlmap
 func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.UserPresencesDO)) (rList []dataobject.UserPresencesDO, err error) {
 	var (
-		query = "select id, user_id, last_seen_at, expires from user_presences where user_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, last_seen_at, expires from user_presences where user_id in (?)"
+		a      []interface{}
+		values []dataobject.UserPresencesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPresencesDO{}
@@ -184,35 +162,20 @@ func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int6
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPresencesDO
-	for rows.Next() {
-		v := dataobject.UserPresencesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

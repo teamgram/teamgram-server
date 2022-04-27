@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,7 +91,7 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Us
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) (rList []int64, err error) {
 	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by id asc"
-	err = dao.db.Select(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
@@ -105,7 +105,7 @@ func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) 
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
 	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by id asc"
-	err = dao.db.Select(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
@@ -140,7 +140,7 @@ func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, user_id int64, 
 		return
 	}
 
-	err = dao.db.Get(ctx, &rValue, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectNext(_), error: %v", err)

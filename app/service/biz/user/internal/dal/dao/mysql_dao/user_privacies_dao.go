@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -156,27 +156,19 @@ func (dao *UserPrivaciesDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.User
 func (dao *UserPrivaciesDAO) SelectPrivacy(ctx context.Context, user_id int64, key_type int32) (rValue *dataobject.UserPrivaciesDO, err error) {
 	var (
 		query = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserPrivaciesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, key_type)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, key_type)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPrivacy(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserPrivaciesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPrivacy(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectPrivacy(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -187,9 +179,9 @@ func (dao *UserPrivaciesDAO) SelectPrivacy(ctx context.Context, user_id int64, k
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, user_id int64, keyList []int32) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (?)"
+		a      []interface{}
+		values []dataobject.UserPrivaciesDO
 	)
 
 	if len(keyList) == 0 {
@@ -203,27 +195,13 @@ func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, user_id int6
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectPrivacyList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPrivacyList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -234,9 +212,9 @@ func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, user_id int6
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, user_id int64, keyList []int32, cb func(i int, v *dataobject.UserPrivaciesDO)) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ? and key_type in (?)"
+		a      []interface{}
+		values []dataobject.UserPrivaciesDO
 	)
 
 	if len(keyList) == 0 {
@@ -250,35 +228,20 @@ func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, user_i
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectPrivacyList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPrivacyList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -288,9 +251,9 @@ func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, user_i
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList []int32, keyList []int32) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id in (?) and key_type in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id in (?) and key_type in (?)"
+		a      []interface{}
+		values []dataobject.UserPrivaciesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
@@ -307,27 +270,13 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList 
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersPrivacyList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersPrivacyList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -338,9 +287,9 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList 
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, idList []int32, keyList []int32, cb func(i int, v *dataobject.UserPrivaciesDO)) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id in (?) and key_type in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id in (?) and key_type in (?)"
+		a      []interface{}
+		values []dataobject.UserPrivaciesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.UserPrivaciesDO{}
@@ -357,35 +306,20 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, i
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersPrivacyList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersPrivacyList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -395,30 +329,16 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, i
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectPrivacyAll(ctx context.Context, user_id int64) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
+		values []dataobject.UserPrivaciesDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyAll(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPrivacyAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -429,38 +349,23 @@ func (dao *UserPrivaciesDAO) SelectPrivacyAll(ctx context.Context, user_id int64
 // TODO(@benqi): sqlmap
 func (dao *UserPrivaciesDAO) SelectPrivacyAllWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.UserPrivaciesDO)) (rList []dataobject.UserPrivaciesDO, err error) {
 	var (
-		query = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, key_type, rules from user_privacies where user_id = ?"
+		values []dataobject.UserPrivaciesDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyAll(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPrivaciesDO
-	for rows.Next() {
-		v := dataobject.UserPrivaciesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPrivacyAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

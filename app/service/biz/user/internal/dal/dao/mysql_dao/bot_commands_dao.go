@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -201,30 +201,16 @@ func (dao *BotCommandsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.BotComma
 // TODO(@benqi): sqlmap
 func (dao *BotCommandsDAO) SelectList(ctx context.Context, bot_id int64) (rList []dataobject.BotCommandsDO, err error) {
 	var (
-		query = "select id, bot_id, command, description from bot_commands where bot_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, command, description from bot_commands where bot_id = ?"
+		values []dataobject.BotCommandsDO
 	)
-	rows, err = dao.db.Query(ctx, query, bot_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, bot_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.BotCommandsDO
-	for rows.Next() {
-		v := dataobject.BotCommandsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -235,38 +221,23 @@ func (dao *BotCommandsDAO) SelectList(ctx context.Context, bot_id int64) (rList 
 // TODO(@benqi): sqlmap
 func (dao *BotCommandsDAO) SelectListWithCB(ctx context.Context, bot_id int64, cb func(i int, v *dataobject.BotCommandsDO)) (rList []dataobject.BotCommandsDO, err error) {
 	var (
-		query = "select id, bot_id, command, description from bot_commands where bot_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, command, description from bot_commands where bot_id = ?"
+		values []dataobject.BotCommandsDO
 	)
-	rows, err = dao.db.Query(ctx, query, bot_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, bot_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.BotCommandsDO
-	for rows.Next() {
-		v := dataobject.BotCommandsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -276,9 +247,9 @@ func (dao *BotCommandsDAO) SelectListWithCB(ctx context.Context, bot_id int64, c
 // TODO(@benqi): sqlmap
 func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, id_list []int32) (rList []dataobject.BotCommandsDO, err error) {
 	var (
-		query = "select id, bot_id, command, description from bot_commands where bot_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, command, description from bot_commands where bot_id in (?)"
+		a      []interface{}
+		values []dataobject.BotCommandsDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.BotCommandsDO{}
@@ -291,27 +262,13 @@ func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, id_list []int
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.BotCommandsDO
-	for rows.Next() {
-		v := dataobject.BotCommandsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -322,9 +279,9 @@ func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, id_list []int
 // TODO(@benqi): sqlmap
 func (dao *BotCommandsDAO) SelectListByIdListWithCB(ctx context.Context, id_list []int32, cb func(i int, v *dataobject.BotCommandsDO)) (rList []dataobject.BotCommandsDO, err error) {
 	var (
-		query = "select id, bot_id, command, description from bot_commands where bot_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, command, description from bot_commands where bot_id in (?)"
+		a      []interface{}
+		values []dataobject.BotCommandsDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.BotCommandsDO{}
@@ -337,35 +294,20 @@ func (dao *BotCommandsDAO) SelectListByIdListWithCB(ctx context.Context, id_list
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.BotCommandsDO
-	for rows.Next() {
-		v := dataobject.BotCommandsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

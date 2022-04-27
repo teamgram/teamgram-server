@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ func NewChatInviteParticipantsDAO(db *sqlx.DB) *ChatInviteParticipantsDAO {
 
 // Insert
 // insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
@@ -59,6 +60,7 @@ func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject
 
 // InsertTx
 // insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
@@ -86,32 +88,19 @@ func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatI
 
 // SelectListByLink
 // select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link string) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
-		rows  *sqlx.Rows
+		query  = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
+		values []dataobject.ChatInviteParticipantsDO
 	)
-	rows, err = dao.db.Query(ctx, query, link)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, link)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByLink(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.ChatInviteParticipantsDO
-	for rows.Next() {
-		v := dataobject.ChatInviteParticipantsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByLink(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -119,46 +108,33 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link
 
 // SelectListByLinkWithCB
 // select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context, link string, cb func(i int, v *dataobject.ChatInviteParticipantsDO)) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
-		rows  *sqlx.Rows
+		query  = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
+		values []dataobject.ChatInviteParticipantsDO
 	)
-	rows, err = dao.db.Query(ctx, query, link)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, link)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByLink(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.ChatInviteParticipantsDO
-	for rows.Next() {
-		v := dataobject.ChatInviteParticipantsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByLink(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // Delete
 // delete from chat_invite_participants where chat_id = :chat_id and user_id = :user_id
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) Delete(ctx context.Context, chat_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"
@@ -181,6 +157,7 @@ func (dao *ChatInviteParticipantsDAO) Delete(ctx context.Context, chat_id int64,
 
 // DeleteTx
 // delete from chat_invite_participants where chat_id = :chat_id and user_id = :user_id
+// TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) DeleteTx(tx *sqlx.Tx, chat_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invite_participants where chat_id = ? and user_id = ?"

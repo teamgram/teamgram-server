@@ -19,7 +19,6 @@
 package dao
 
 import (
-	"context"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/plugin"
 
@@ -46,14 +45,4 @@ func New(c config.Config, plugin plugin.ChatPlugin) (dao *Dao) {
 		MediaClient: media_client.NewMediaClient(rpcx.GetCachedRpcClient(c.MediaClient)),
 		Plugin:      plugin,
 	}
-}
-
-// Close close the resource.
-func (d *Dao) Close() {
-	d.Mysql.Close()
-}
-
-// Ping ping the resource.
-func (d *Dao) Ping(ctx context.Context) (err error) {
-	return d.Mysql.Ping(ctx)
 }

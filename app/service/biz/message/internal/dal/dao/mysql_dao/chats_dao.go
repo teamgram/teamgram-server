@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ func NewChatsDAO(db *sqlx.DB) *ChatsDAO {
 
 // Insert
 // insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) Insert(ctx context.Context, do *dataobject.ChatsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
@@ -59,6 +60,7 @@ func (dao *ChatsDAO) Insert(ctx context.Context, do *dataobject.ChatsDO) (lastIn
 
 // InsertTx
 // insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chats(creator_user_id, access_hash, random_id, participant_count, title, about, `date`) values (:creator_user_id, :access_hash, :random_id, :participant_count, :title, :about, :date)"
@@ -86,30 +88,23 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 
 // Select
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
 		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.ChatsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, id)
+	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.ChatsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -117,9 +112,10 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 
 // SelectPhotoId
 // select photo_id from chats where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64, err error) {
 	var query = "select photo_id from chats where id = ?"
-	err = dao.db.Get(ctx, &rValue, query, id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectPhotoId(_), error: %v", err)
@@ -130,30 +126,23 @@ func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64,
 
 // SelectLastCreator
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creator_user_id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
 		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.ChatsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, creator_user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, creator_user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectLastCreator(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.ChatsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectLastCreator(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectLastCreator(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -161,6 +150,7 @@ func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creator_user_id int6
 
 // UpdateTitle
 // update chats set title = :title, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateTitle(ctx context.Context, title string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set title = ?, version = version + 1 where id = ?"
@@ -181,8 +171,9 @@ func (dao *ChatsDAO) UpdateTitle(ctx context.Context, title string, id int64) (r
 	return
 }
 
-// UpdateTitleTx
 // update chats set title = :title, version = version + 1 where id = :id
+// UpdateTitleTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set title = ?, version = version + 1 where id = ?"
@@ -205,6 +196,7 @@ func (dao *ChatsDAO) UpdateTitleTx(tx *sqlx.Tx, title string, id int64) (rowsAff
 
 // UpdateAbout
 // update chats set about = :about where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateAbout(ctx context.Context, about string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set about = ? where id = ?"
@@ -225,8 +217,9 @@ func (dao *ChatsDAO) UpdateAbout(ctx context.Context, about string, id int64) (r
 	return
 }
 
-// UpdateAboutTx
 // update chats set about = :about where id = :id
+// UpdateAboutTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set about = ? where id = ?"
@@ -249,11 +242,12 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 
 // SelectByIdList
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (?)"
+		a      []interface{}
+		values []dataobject.ChatsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.ChatsDO{}
@@ -266,27 +260,13 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.ChatsDO
-	for rows.Next() {
-		v := dataobject.ChatsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -294,11 +274,12 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 
 // SelectByIdListWithCB
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(i int, v *dataobject.ChatsDO)) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where id in (?)"
+		a      []interface{}
+		values []dataobject.ChatsDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.ChatsDO{}
@@ -311,41 +292,27 @@ func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, c
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.ChatsDO
-	for rows.Next() {
-		v := dataobject.ChatsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // UpdateParticipantCount
 // update chats set participant_count = :participant_count, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateParticipantCount(ctx context.Context, participant_count int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
@@ -366,8 +333,9 @@ func (dao *ChatsDAO) UpdateParticipantCount(ctx context.Context, participant_cou
 	return
 }
 
-// UpdateParticipantCountTx
 // update chats set participant_count = :participant_count, version = version + 1 where id = :id
+// UpdateParticipantCountTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateParticipantCountTx(tx *sqlx.Tx, participant_count int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set participant_count = ?, version = version + 1 where id = ?"
@@ -390,6 +358,7 @@ func (dao *ChatsDAO) UpdateParticipantCountTx(tx *sqlx.Tx, participant_count int
 
 // UpdatePhotoId
 // update chats set photo_id = :photo_id, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdatePhotoId(ctx context.Context, photo_id int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
@@ -410,8 +379,9 @@ func (dao *ChatsDAO) UpdatePhotoId(ctx context.Context, photo_id int64, id int64
 	return
 }
 
-// UpdatePhotoIdTx
 // update chats set photo_id = :photo_id, version = version + 1 where id = :id
+// UpdatePhotoIdTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdatePhotoIdTx(tx *sqlx.Tx, photo_id int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set photo_id = ?, version = version + 1 where id = ?"
@@ -434,6 +404,7 @@ func (dao *ChatsDAO) UpdatePhotoIdTx(tx *sqlx.Tx, photo_id int64, id int64) (row
 
 // UpdateAdminsEnabled
 // update chats set admins_enabled = :admins_enabled, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateAdminsEnabled(ctx context.Context, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
@@ -454,8 +425,9 @@ func (dao *ChatsDAO) UpdateAdminsEnabled(ctx context.Context, id int64) (rowsAff
 	return
 }
 
-// UpdateAdminsEnabledTx
 // update chats set admins_enabled = :admins_enabled, version = version + 1 where id = :id
+// UpdateAdminsEnabledTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateAdminsEnabledTx(tx *sqlx.Tx, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set admins_enabled = ?, version = version + 1 where id = ?"
@@ -478,6 +450,7 @@ func (dao *ChatsDAO) UpdateAdminsEnabledTx(tx *sqlx.Tx, id int64) (rowsAffected 
 
 // UpdateDefaultBannedRights
 // update chats set default_banned_rights = :default_banned_rights, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateDefaultBannedRights(ctx context.Context, default_banned_rights int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
@@ -498,8 +471,9 @@ func (dao *ChatsDAO) UpdateDefaultBannedRights(ctx context.Context, default_bann
 	return
 }
 
-// UpdateDefaultBannedRightsTx
 // update chats set default_banned_rights = :default_banned_rights, version = version + 1 where id = :id
+// UpdateDefaultBannedRightsTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, default_banned_rights int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set default_banned_rights = ?, version = version + 1 where id = ?"
@@ -522,6 +496,7 @@ func (dao *ChatsDAO) UpdateDefaultBannedRightsTx(tx *sqlx.Tx, default_banned_rig
 
 // UpdateVersion
 // update chats set version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateVersion(ctx context.Context, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set version = version + 1 where id = ?"
@@ -542,8 +517,9 @@ func (dao *ChatsDAO) UpdateVersion(ctx context.Context, id int64) (rowsAffected 
 	return
 }
 
-// UpdateVersionTx
 // update chats set version = version + 1 where id = :id
+// UpdateVersionTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set version = version + 1 where id = ?"
@@ -566,6 +542,7 @@ func (dao *ChatsDAO) UpdateVersionTx(tx *sqlx.Tx, id int64) (rowsAffected int64,
 
 // UpdateDeactivated
 // update chats set deactivated = :deactivated, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateDeactivated(ctx context.Context, deactivated bool, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
@@ -586,8 +563,9 @@ func (dao *ChatsDAO) UpdateDeactivated(ctx context.Context, deactivated bool, id
 	return
 }
 
-// UpdateDeactivatedTx
 // update chats set deactivated = :deactivated, version = version + 1 where id = :id
+// UpdateDeactivatedTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set deactivated = ?, version = version + 1 where id = ?"
@@ -610,30 +588,23 @@ func (dao *ChatsDAO) UpdateDeactivatedTx(tx *sqlx.Tx, deactivated bool, id int64
 
 // SelectByLink
 // select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where deactivated = 0 and link = :link
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByLink(ctx context.Context) (rValue *dataobject.ChatsDO, err error) {
 	var (
 		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, link, admins_enabled, default_banned_rights, migrated_to_id, migrated_to_access_hash, deactivated, version, `date` from chats where deactivated = 0 and link = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.ChatsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query)
+	err = dao.db.QueryRowPartial(ctx, do, query)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.ChatsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByLink(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -641,6 +612,7 @@ func (dao *ChatsDAO) SelectByLink(ctx context.Context) (rValue *dataobject.Chats
 
 // UpdateLink
 // update chats set link = :link, `date` = :date, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateLink(ctx context.Context, date int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
@@ -661,8 +633,9 @@ func (dao *ChatsDAO) UpdateLink(ctx context.Context, date int64, id int64) (rows
 	return
 }
 
-// UpdateLinkTx
 // update chats set link = :link, `date` = :date, version = version + 1 where id = :id
+// UpdateLinkTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateLinkTx(tx *sqlx.Tx, date int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set link = ?, `date` = ?, version = version + 1 where id = ?"
@@ -685,6 +658,7 @@ func (dao *ChatsDAO) UpdateLinkTx(tx *sqlx.Tx, date int64, id int64) (rowsAffect
 
 // UpdateMigratedTo
 // update chats set migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version = version + 1 where id = :id
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateMigratedTo(ctx context.Context, migrated_to_id int64, migrated_to_access_hash int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"
@@ -705,8 +679,9 @@ func (dao *ChatsDAO) UpdateMigratedTo(ctx context.Context, migrated_to_id int64,
 	return
 }
 
-// UpdateMigratedToTx
 // update chats set migrated_to_id = :migrated_to_id, migrated_to_access_hash = :migrated_to_access_hash, participant_count = 0, deactivated = 1, version = version + 1 where id = :id
+// UpdateMigratedToTx
+// TODO(@benqi): sqlmap
 func (dao *ChatsDAO) UpdateMigratedToTx(tx *sqlx.Tx, migrated_to_id int64, migrated_to_access_hash int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chats set migrated_to_id = ?, migrated_to_access_hash = ?, participant_count = 0, deactivated = 1, version = version + 1 where id = ?"

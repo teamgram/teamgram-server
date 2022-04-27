@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *AuthSeqUpdatesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthSeqUpdate
 func (dao *AuthSeqUpdatesDAO) SelectLastSeq(ctx context.Context, auth_id int64, user_id int64) (rValue *dataobject.AuthSeqUpdatesDO, err error) {
 	var (
 		query = "select seq from auth_seq_updates where auth_id = ? and user_id = ? order by seq desc limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.AuthSeqUpdatesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, auth_id, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, auth_id, user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectLastSeq(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.AuthSeqUpdatesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectLastSeq(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectLastSeq(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,30 +115,16 @@ func (dao *AuthSeqUpdatesDAO) SelectLastSeq(ctx context.Context, auth_id int64, 
 // TODO(@benqi): sqlmap
 func (dao *AuthSeqUpdatesDAO) SelectByGtSeq(ctx context.Context, auth_id int64, user_id int64, seq int32) (rList []dataobject.AuthSeqUpdatesDO, err error) {
 	var (
-		query = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
-		rows  *sqlx.Rows
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
+		values []dataobject.AuthSeqUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, auth_id, user_id, seq)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, auth_id, user_id, seq)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtSeq(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.AuthSeqUpdatesDO
-	for rows.Next() {
-		v := dataobject.AuthSeqUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtSeq(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -157,38 +135,23 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtSeq(ctx context.Context, auth_id int64, 
 // TODO(@benqi): sqlmap
 func (dao *AuthSeqUpdatesDAO) SelectByGtSeqWithCB(ctx context.Context, auth_id int64, user_id int64, seq int32, cb func(i int, v *dataobject.AuthSeqUpdatesDO)) (rList []dataobject.AuthSeqUpdatesDO, err error) {
 	var (
-		query = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
-		rows  *sqlx.Rows
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and seq > ? order by seq asc"
+		values []dataobject.AuthSeqUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, auth_id, user_id, seq)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, auth_id, user_id, seq)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtSeq(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.AuthSeqUpdatesDO
-	for rows.Next() {
-		v := dataobject.AuthSeqUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtSeq(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -198,30 +161,16 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtSeqWithCB(ctx context.Context, auth_id i
 // TODO(@benqi): sqlmap
 func (dao *AuthSeqUpdatesDAO) SelectByGtDate(ctx context.Context, auth_id int64, user_id int64, date2 int64) (rList []dataobject.AuthSeqUpdatesDO, err error) {
 	var (
-		query = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
-		rows  *sqlx.Rows
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
+		values []dataobject.AuthSeqUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, auth_id, user_id, date2)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, auth_id, user_id, date2)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtDate(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.AuthSeqUpdatesDO
-	for rows.Next() {
-		v := dataobject.AuthSeqUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtDate(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -232,38 +181,23 @@ func (dao *AuthSeqUpdatesDAO) SelectByGtDate(ctx context.Context, auth_id int64,
 // TODO(@benqi): sqlmap
 func (dao *AuthSeqUpdatesDAO) SelectByGtDateWithCB(ctx context.Context, auth_id int64, user_id int64, date2 int64, cb func(i int, v *dataobject.AuthSeqUpdatesDO)) (rList []dataobject.AuthSeqUpdatesDO, err error) {
 	var (
-		query = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
-		rows  *sqlx.Rows
+		query  = "select auth_id, user_id, seq, update_type, update_data, date2 from auth_seq_updates where auth_id = ? and user_id = ? and date2 > ? order by seq asc"
+		values []dataobject.AuthSeqUpdatesDO
 	)
-	rows, err = dao.db.Query(ctx, query, auth_id, user_id, date2)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, auth_id, user_id, date2)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByGtDate(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.AuthSeqUpdatesDO
-	for rows.Next() {
-		v := dataobject.AuthSeqUpdatesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByGtDate(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -36,27 +36,19 @@ func NewBotsDAO(db *sqlx.DB) *BotsDAO {
 func (dao *BotsDAO) Select(ctx context.Context, bot_id int64) (rValue *dataobject.BotsDO, err error) {
 	var (
 		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.BotsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, bot_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, bot_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.BotsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -67,7 +59,7 @@ func (dao *BotsDAO) Select(ctx context.Context, bot_id int64) (rValue *dataobjec
 // TODO(@benqi): sqlmap
 func (dao *BotsDAO) SelectByToken(ctx context.Context, token string) (rValue int64, err error) {
 	var query = "select bot_id from bots where token = ?"
-	err = dao.db.Get(ctx, &rValue, query, token)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectByToken(_), error: %v", err)
@@ -81,9 +73,9 @@ func (dao *BotsDAO) SelectByToken(ctx context.Context, token string) (rValue int
 // TODO(@benqi): sqlmap
 func (dao *BotsDAO) SelectByIdList(ctx context.Context, id_list []int32) (rList []dataobject.BotsDO, err error) {
 	var (
-		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
+		a      []interface{}
+		values []dataobject.BotsDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.BotsDO{}
@@ -96,27 +88,13 @@ func (dao *BotsDAO) SelectByIdList(ctx context.Context, id_list []int32) (rList 
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.BotsDO
-	for rows.Next() {
-		v := dataobject.BotsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -127,9 +105,9 @@ func (dao *BotsDAO) SelectByIdList(ctx context.Context, id_list []int32) (rList 
 // TODO(@benqi): sqlmap
 func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, cb func(i int, v *dataobject.BotsDO)) (rList []dataobject.BotsDO, err error) {
 	var (
-		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
+		a      []interface{}
+		values []dataobject.BotsDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.BotsDO{}
@@ -142,35 +120,20 @@ func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, c
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.BotsDO
-	for rows.Next() {
-		v := dataobject.BotsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

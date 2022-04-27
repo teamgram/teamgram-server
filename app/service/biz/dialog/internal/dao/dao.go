@@ -10,8 +10,6 @@
 package dao
 
 import (
-	"context"
-
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/config"
@@ -30,14 +28,4 @@ func New(c config.Config) (dao *Dao) {
 		Mysql:      newMysqlDao(db),
 		CachedConn: sqlc.NewConn(db, c.Cache),
 	}
-}
-
-// Close close the resource.
-func (d *Dao) Close() {
-	d.Mysql.Close()
-}
-
-// Ping ping the resource.
-func (d *Dao) Ping(ctx context.Context) (err error) {
-	return d.Mysql.Ping(ctx)
 }

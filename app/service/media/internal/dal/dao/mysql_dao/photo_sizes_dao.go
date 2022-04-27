@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ func NewPhotoSizesDAO(db *sqlx.DB) *PhotoSizesDAO {
 
 // Insert
 // insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
@@ -59,6 +60,7 @@ func (dao *PhotoSizesDAO) Insert(ctx context.Context, do *dataobject.PhotoSizesD
 
 // InsertTx
 // insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
@@ -86,32 +88,19 @@ func (dao *PhotoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotoSizesDO) (la
 
 // SelectListByPhotoSizeId
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photo_size_id int64) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
-		rows  *sqlx.Rows
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		values []dataobject.PhotoSizesDO
 	)
-	rows, err = dao.db.Query(ctx, query, photo_size_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, photo_size_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeId(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.PhotoSizesDO
-	for rows.Next() {
-		v := dataobject.PhotoSizesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhotoSizeId(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -119,51 +108,38 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeId(ctx context.Context, photo_siz
 
 // SelectListByPhotoSizeIdWithCB
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdWithCB(ctx context.Context, photo_size_id int64, cb func(i int, v *dataobject.PhotoSizesDO)) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
-		rows  *sqlx.Rows
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		values []dataobject.PhotoSizesDO
 	)
-	rows, err = dao.db.Query(ctx, query, photo_size_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, photo_size_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeId(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.PhotoSizesDO
-	for rows.Next() {
-		v := dataobject.PhotoSizesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhotoSizeId(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectListByPhotoSizeIdList
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idList []int64) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
+		a      []interface{}
+		values []dataobject.PhotoSizesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.PhotoSizesDO{}
@@ -176,27 +152,13 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idLis
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByPhotoSizeIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.PhotoSizesDO
-	for rows.Next() {
-		v := dataobject.PhotoSizesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhotoSizeIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -204,11 +166,12 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idLis
 
 // SelectListByPhotoSizeIdListWithCB
 // select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
+// TODO(@benqi): sqlmap
 func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.PhotoSizesDO)) (rList []dataobject.PhotoSizesDO, err error) {
 	var (
-		query = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (?) order by id asc"
+		a      []interface{}
+		values []dataobject.PhotoSizesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.PhotoSizesDO{}
@@ -221,35 +184,20 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdListWithCB(ctx context.Context,
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByPhotoSizeIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.PhotoSizesDO
-	for rows.Next() {
-		v := dataobject.PhotoSizesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhotoSizeIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

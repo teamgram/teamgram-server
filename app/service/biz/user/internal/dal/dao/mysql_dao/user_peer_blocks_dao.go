@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,30 +91,16 @@ func (dao *UserPeerBlocksDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserP
 // TODO(@benqi): sqlmap
 func (dao *UserPeerBlocksDAO) SelectList(ctx context.Context, user_id int64, limit int32) (rList []dataobject.UserPeerBlocksDO, err error) {
 	var (
-		query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
-		rows  *sqlx.Rows
+		query  = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
+		values []dataobject.UserPeerBlocksDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserPeerBlocksDO
-	for rows.Next() {
-		v := dataobject.UserPeerBlocksDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -125,38 +111,23 @@ func (dao *UserPeerBlocksDAO) SelectList(ctx context.Context, user_id int64, lim
 // TODO(@benqi): sqlmap
 func (dao *UserPeerBlocksDAO) SelectListWithCB(ctx context.Context, user_id int64, limit int32, cb func(i int, v *dataobject.UserPeerBlocksDO)) (rList []dataobject.UserPeerBlocksDO, err error) {
 	var (
-		query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
-		rows  *sqlx.Rows
+		query  = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and deleted = 0 order by id asc limit ?"
+		values []dataobject.UserPeerBlocksDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserPeerBlocksDO
-	for rows.Next() {
-		v := dataobject.UserPeerBlocksDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -182,7 +153,7 @@ func (dao *UserPeerBlocksDAO) SelectListByIdList(ctx context.Context, user_id in
 		return
 	}
 
-	err = dao.db.Select(ctx, &rList, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectListByIdList(_), error: %v", err)
@@ -212,7 +183,7 @@ func (dao *UserPeerBlocksDAO) SelectListByIdListWithCB(ctx context.Context, user
 		return
 	}
 
-	err = dao.db.Select(ctx, &rList, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectListByIdList(_), error: %v", err)
@@ -233,27 +204,19 @@ func (dao *UserPeerBlocksDAO) SelectListByIdListWithCB(ctx context.Context, user
 func (dao *UserPeerBlocksDAO) Select(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rValue *dataobject.UserPeerBlocksDO, err error) {
 	var (
 		query = "select user_id, peer_type, peer_id, `date` from user_peer_blocks where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserPeerBlocksDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, peer_type, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserPeerBlocksDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

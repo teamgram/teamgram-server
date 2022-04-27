@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -22,7 +22,9 @@ type ChatsDO struct {
 	DefaultBannedRights  int64  `db:"default_banned_rights"`
 	MigratedToId         int64  `db:"migrated_to_id"`
 	MigratedToAccessHash int64  `db:"migrated_to_access_hash"`
+	AvailableReactions   string `db:"available_reactions"`
 	Deactivated          bool   `db:"deactivated"`
+	Noforwards           bool   `db:"noforwards"`
 	Version              int32  `db:"version"`
 	Date                 int64  `db:"date"`
 }

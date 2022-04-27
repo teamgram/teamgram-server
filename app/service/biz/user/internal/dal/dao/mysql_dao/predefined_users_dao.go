@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -94,27 +94,19 @@ func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUs
 func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) (rValue *dataobject.PredefinedUsersDO, err error) {
 	var (
 		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.PredefinedUsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, phone)
+	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByPhone(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.PredefinedUsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByPhone(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByPhone(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -125,30 +117,16 @@ func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) 
 // TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
-		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
-		rows  *sqlx.Rows
+		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
+		values []dataobject.PredefinedUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPredefinedUsersAll(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.PredefinedUsersDO
-	for rows.Next() {
-		v := dataobject.PredefinedUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPredefinedUsersAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -159,38 +137,23 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rL
 // TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(i int, v *dataobject.PredefinedUsersDO)) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
-		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
-		rows  *sqlx.Rows
+		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
+		values []dataobject.PredefinedUsersDO
 	)
-	rows, err = dao.db.Query(ctx, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPredefinedUsersAll(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.PredefinedUsersDO
-	for rows.Next() {
-		v := dataobject.PredefinedUsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPredefinedUsersAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

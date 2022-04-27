@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -94,27 +94,19 @@ func (dao *UsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId
 func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rValue *dataobject.UsersDO, err error) {
 	var (
 		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone = ? limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, phone)
+	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByPhoneNumber(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByPhoneNumber(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByPhoneNumber(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -126,27 +118,19 @@ func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rVa
 func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
 		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id = ? limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, id)
+	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectById(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -157,9 +141,9 @@ func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobje
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.UsersDO{}
@@ -172,27 +156,13 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -203,9 +173,9 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []int64, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 	if len(id_list) == 0 {
 		rList = []dataobject.UsersDO{}
@@ -218,35 +188,20 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []in
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -256,9 +211,9 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []in
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 	if len(phoneList) == 0 {
 		rList = []dataobject.UsersDO{}
@@ -271,27 +226,13 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersByPhoneList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByPhoneList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersByPhoneList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -302,9 +243,9 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList []string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 	if len(phoneList) == 0 {
 		rList = []dataobject.UsersDO{}
@@ -317,35 +258,20 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectUsersByPhoneList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByPhoneList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUsersByPhoneList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -355,30 +281,16 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByQueryString(ctx context.Context, username string, first_name string, last_name string, phone string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
+		values []dataobject.UsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, username, first_name, last_name, phone)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByQueryString(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByQueryString(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -389,38 +301,23 @@ func (dao *UsersDAO) SelectByQueryString(ctx context.Context, username string, f
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByQueryStringWithCB(ctx context.Context, username string, first_name string, last_name string, phone string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
+		values []dataobject.UsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, username, first_name, last_name, phone)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByQueryString(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByQueryString(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -430,9 +327,9 @@ func (dao *UsersDAO) SelectByQueryStringWithCB(ctx context.Context, username str
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, id_list []int64, limit int32) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id from users where username like ? and id not in (?) limit ?"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id from users where username like ? and id not in (?) limit ?"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 
 	if len(id_list) == 0 {
@@ -446,27 +343,13 @@ func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, id_l
 		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SearchByQueryNotIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -477,9 +360,9 @@ func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, id_l
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, id_list []int64, limit int32, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id from users where username like ? and id not in (?) limit ?"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id from users where username like ? and id not in (?) limit ?"
+		a      []interface{}
+		values []dataobject.UsersDO
 	)
 
 	if len(id_list) == 0 {
@@ -493,35 +376,20 @@ func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string
 		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SearchByQueryNotIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -762,27 +630,19 @@ func (dao *UsersDAO) UpdateProfileTx(tx *sqlx.Tx, first_name string, last_name s
 func (dao *UsersDAO) SelectByUsername(ctx context.Context, username string) (rValue *dataobject.UsersDO, err error) {
 	var (
 		query = "select id from users where username = ? limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, username)
+	err = dao.db.QueryRowPartial(ctx, do, query, username)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByUsername(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -794,27 +654,19 @@ func (dao *UsersDAO) SelectByUsername(ctx context.Context, username string) (rVa
 func (dao *UsersDAO) SelectAccountDaysTTL(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
 		query = "select account_days_ttl from users where id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, id)
+	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectAccountDaysTTL(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAccountDaysTTL(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectAccountDaysTTL(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -871,7 +723,7 @@ func (dao *UsersDAO) UpdateAccountDaysTTLTx(tx *sqlx.Tx, account_days_ttl int32,
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectProfilePhoto(ctx context.Context, id int64) (rValue int64, err error) {
 	var query = "select photo_id from users where id = ? limit 1"
-	err = dao.db.Get(ctx, &rValue, query, id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("get in SelectProfilePhoto(_), error: %v", err)
@@ -886,27 +738,19 @@ func (dao *UsersDAO) SelectProfilePhoto(ctx context.Context, id int64) (rValue i
 func (dao *UsersDAO) SelectCountryCode(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
 		query = "select country_code from users where id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsersDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, id)
+	err = dao.db.QueryRowPartial(ctx, do, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectCountryCode(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsersDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectCountryCode(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectCountryCode(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -1029,30 +873,16 @@ func (dao *UsersDAO) UpdateUserTx(tx *sqlx.Tx, cMap map[string]interface{}, id i
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int64, q1 string, q2 string, q3 string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		values []dataobject.UsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, channelId, q1, q2, q3)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in QueryChannelParticipants(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in QueryChannelParticipants(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -1063,38 +893,23 @@ func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipantsWithCB(ctx context.Context, channelId int64, q1 string, q2 string, q3 string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
-		rows  *sqlx.Rows
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		values []dataobject.UsersDO
 	)
-	rows, err = dao.db.Query(ctx, query, channelId, q1, q2, q3)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in QueryChannelParticipants(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsersDO
-	for rows.Next() {
-		v := dataobject.UsersDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in QueryChannelParticipants(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *UserGlobalPrivacySettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *datao
 func (dao *UserGlobalPrivacySettingsDAO) Select(ctx context.Context, user_id int64) (rValue *dataobject.UserGlobalPrivacySettingsDO, err error) {
 	var (
 		query = "select id, user_id, archive_and_mute_new_noncontact_peers from user_global_privacy_settings where user_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserGlobalPrivacySettingsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserGlobalPrivacySettingsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

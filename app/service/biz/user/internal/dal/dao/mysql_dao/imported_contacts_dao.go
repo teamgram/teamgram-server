@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ func NewImportedContactsDAO(db *sqlx.DB) *ImportedContactsDAO {
 
 // InsertOrUpdate
 // insert into imported_contacts(user_id, imported_user_id) values (:user_id, :imported_user_id) on duplicate key update deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.ImportedContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into imported_contacts(user_id, imported_user_id) values (:user_id, :imported_user_id) on duplicate key update deleted = 0"
@@ -59,6 +60,7 @@ func (dao *ImportedContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 
 // InsertOrUpdateTx
 // insert into imported_contacts(user_id, imported_user_id) values (:user_id, :imported_user_id) on duplicate key update deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.ImportedContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into imported_contacts(user_id, imported_user_id) values (:user_id, :imported_user_id) on duplicate key update deleted = 0"
@@ -86,32 +88,19 @@ func (dao *ImportedContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Imp
 
 // SelectList
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectList(ctx context.Context, user_id int64) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
+		values []dataobject.ImportedContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -119,51 +108,38 @@ func (dao *ImportedContactsDAO) SelectList(ctx context.Context, user_id int64) (
 
 // SelectListWithCB
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectListWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.ImportedContactsDO)) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0"
+		values []dataobject.ImportedContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectListByImportedList
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0 and imported_user_id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, user_id int64, idList []int64) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (?)"
+		a      []interface{}
+		values []dataobject.ImportedContactsDO
 	)
 
 	if len(idList) == 0 {
@@ -177,27 +153,13 @@ func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, us
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByImportedList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByImportedList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -205,11 +167,12 @@ func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, us
 
 // SelectListByImportedListWithCB
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id and deleted = 0 and imported_user_id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectListByImportedListWithCB(ctx context.Context, user_id int64, idList []int64, cb func(i int, v *dataobject.ImportedContactsDO)) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ? and deleted = 0 and imported_user_id in (?)"
+		a      []interface{}
+		values []dataobject.ImportedContactsDO
 	)
 
 	if len(idList) == 0 {
@@ -223,67 +186,39 @@ func (dao *ImportedContactsDAO) SelectListByImportedListWithCB(ctx context.Conte
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByImportedList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByImportedList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectAllList
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectAllList(ctx context.Context, user_id int64) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
+		values []dataobject.ImportedContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -291,46 +226,33 @@ func (dao *ImportedContactsDAO) SelectAllList(ctx context.Context, user_id int64
 
 // SelectAllListWithCB
 // select id, user_id, imported_user_id from imported_contacts where user_id = :user_id
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) SelectAllListWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.ImportedContactsDO)) (rList []dataobject.ImportedContactsDO, err error) {
 	var (
-		query = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, imported_user_id from imported_contacts where user_id = ?"
+		values []dataobject.ImportedContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.ImportedContactsDO
-	for rows.Next() {
-		v := dataobject.ImportedContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // Delete
 // update imported_contacts set deleted = 1 where user_id = :user_id and imported_user_id = :imported_user_id
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) Delete(ctx context.Context, user_id int64, imported_user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update imported_contacts set deleted = 1 where user_id = ? and imported_user_id = ?"
@@ -351,8 +273,9 @@ func (dao *ImportedContactsDAO) Delete(ctx context.Context, user_id int64, impor
 	return
 }
 
-// DeleteTx
 // update imported_contacts set deleted = 1 where user_id = :user_id and imported_user_id = :imported_user_id
+// DeleteTx
+// TODO(@benqi): sqlmap
 func (dao *ImportedContactsDAO) DeleteTx(tx *sqlx.Tx, user_id int64, imported_user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update imported_contacts set deleted = 1 where user_id = ? and imported_user_id = ?"

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ func NewHashTagsDAO(db *sqlx.DB) *HashTagsDAO {
 
 // InsertOrUpdate
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
@@ -59,6 +60,7 @@ func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashT
 
 // InsertOrUpdateTx
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
@@ -86,9 +88,10 @@ func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO)
 
 // SelectPeerHashTagList
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.Select(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
@@ -99,9 +102,10 @@ func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64
 
 // SelectPeerHashTagListWithCB
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string, cb func(i int, v int32)) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.Select(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
@@ -118,6 +122,7 @@ func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, user_id
 
 // DeleteHashTagMessageId
 // update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, user_id int64, hash_tag_message_id int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
@@ -138,8 +143,9 @@ func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, user_id int6
 	return
 }
 
-// DeleteHashTagMessageIdTx
 // update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
+// DeleteHashTagMessageIdTx
+// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) DeleteHashTagMessageIdTx(tx *sqlx.Tx, user_id int64, hash_tag_message_id int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"

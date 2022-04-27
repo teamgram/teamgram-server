@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -93,9 +93,9 @@ func (dao *UsernameDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsernameDO) (lastIn
 // TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query = "select username, peer_type, peer_id from username where username in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select username, peer_type, peer_id from username where username in (?)"
+		a      []interface{}
+		values []dataobject.UsernameDO
 	)
 	if len(nameList) == 0 {
 		rList = []dataobject.UsernameDO{}
@@ -108,27 +108,13 @@ func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rLis
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsernameDO
-	for rows.Next() {
-		v := dataobject.UsernameDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -139,9 +125,9 @@ func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rLis
 // TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string, cb func(i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query = "select username, peer_type, peer_id from username where username in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select username, peer_type, peer_id from username where username in (?)"
+		a      []interface{}
+		values []dataobject.UsernameDO
 	)
 	if len(nameList) == 0 {
 		rList = []dataobject.UsernameDO{}
@@ -154,35 +140,20 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsernameDO
-	for rows.Next() {
-		v := dataobject.UsernameDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -193,27 +164,19 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 func (dao *UsernameDAO) SelectByUsername(ctx context.Context, username string) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select username, peer_type, peer_id, deleted from username where username = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsernameDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, username)
+	err = dao.db.QueryRowPartial(ctx, do, query, username)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsernameDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByUsername(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -383,27 +346,19 @@ func (dao *UsernameDAO) Delete2Tx(tx *sqlx.Tx, peer_type int32, peer_id int64) (
 func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peer_type int32, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = ? and peer_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsernameDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peer_type, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByPeer(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsernameDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByPeer(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByPeer(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -415,27 +370,19 @@ func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peer_type int32, peer_
 func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = 2 and peer_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsernameDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByUserId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsernameDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByUserId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByUserId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -447,27 +394,19 @@ func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peer_id int64) (rVal
 func (dao *UsernameDAO) SelectByChannelId(ctx context.Context, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = 4 and peer_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UsernameDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByChannelId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UsernameDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByChannelId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByChannelId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -520,13 +459,13 @@ func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peer_type
 }
 
 // SearchByQueryNotIdList
-// select peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
+// select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
 // TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, id_list []int64, limit int32) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query = "select peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select username, peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
+		a      []interface{}
+		values []dataobject.UsernameDO
 	)
 
 	if len(id_list) == 0 {
@@ -540,40 +479,26 @@ func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, i
 		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UsernameDO
-	for rows.Next() {
-		v := dataobject.UsernameDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SearchByQueryNotIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
 }
 
 // SearchByQueryNotIdListWithCB
-// select peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
+// select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
 // TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, id_list []int64, limit int32, cb func(i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query = "select peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select username, peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
+		a      []interface{}
+		values []dataobject.UsernameDO
 	)
 
 	if len(id_list) == 0 {
@@ -587,35 +512,20 @@ func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 str
 		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UsernameDO
-	for rows.Next() {
-		v := dataobject.UsernameDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SearchByQueryNotIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

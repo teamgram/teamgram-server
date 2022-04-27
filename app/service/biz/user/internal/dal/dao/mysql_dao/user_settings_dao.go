@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *UserSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserSet
 func (dao *UserSettingsDAO) SelectByKey(ctx context.Context, user_id int64, key2 string) (rValue *dataobject.UserSettingsDO, err error) {
 	var (
 		query = "select id, user_id, key2, value from user_settings where user_id = ? and key2 = ? and deleted = 0 limit 1"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserSettingsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, key2)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, key2)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByKey(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserSettingsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByKey(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByKey(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

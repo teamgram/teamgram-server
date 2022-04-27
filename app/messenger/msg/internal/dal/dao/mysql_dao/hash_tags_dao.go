@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,7 +91,7 @@ func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO)
 // TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.Select(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
@@ -105,7 +105,7 @@ func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64
 // TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string, cb func(i int, v int32)) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.Select(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)

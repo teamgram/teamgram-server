@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -91,30 +91,16 @@ func (dao *UserNotifySettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.U
 // TODO(@benqi): sqlmap
 func (dao *UserNotifySettingsDAO) SelectAll(ctx context.Context, user_id int64) (rList []dataobject.UserNotifySettingsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and deleted = 0"
+		values []dataobject.UserNotifySettingsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserNotifySettingsDO
-	for rows.Next() {
-		v := dataobject.UserNotifySettingsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -125,38 +111,23 @@ func (dao *UserNotifySettingsDAO) SelectAll(ctx context.Context, user_id int64) 
 // TODO(@benqi): sqlmap
 func (dao *UserNotifySettingsDAO) SelectAllWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.UserNotifySettingsDO)) (rList []dataobject.UserNotifySettingsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and deleted = 0"
+		values []dataobject.UserNotifySettingsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserNotifySettingsDO
-	for rows.Next() {
-		v := dataobject.UserNotifySettingsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAll(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -167,27 +138,19 @@ func (dao *UserNotifySettingsDAO) SelectAllWithCB(ctx context.Context, user_id i
 func (dao *UserNotifySettingsDAO) Select(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rValue *dataobject.UserNotifySettingsDO, err error) {
 	var (
 		query = "select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserNotifySettingsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, peer_type, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserNotifySettingsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in Select(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *EncryptedFilesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.EncryptedFile
 func (dao *EncryptedFilesDAO) SelectByFileLocation(ctx context.Context, encrypted_file_id int64, access_hash int64) (rValue *dataobject.EncryptedFilesDO, err error) {
 	var (
 		query = "select id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path from encrypted_files where dc_id = 2 and encrypted_file_id = ? and access_hash = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.EncryptedFilesDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, encrypted_file_id, access_hash)
+	err = dao.db.QueryRowPartial(ctx, do, query, encrypted_file_id, access_hash)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.EncryptedFilesDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByFileLocation(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByFileLocation(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -123,9 +115,9 @@ func (dao *EncryptedFilesDAO) SelectByFileLocation(ctx context.Context, encrypte
 // TODO(@benqi): sqlmap
 func (dao *EncryptedFilesDAO) SelectByIdList(ctx context.Context, idList []int64) (rList []dataobject.EncryptedFilesDO, err error) {
 	var (
-		query = "select id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path from encrypted_files where encrypted_file_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path from encrypted_files where encrypted_file_id in (?)"
+		a      []interface{}
+		values []dataobject.EncryptedFilesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.EncryptedFilesDO{}
@@ -138,27 +130,13 @@ func (dao *EncryptedFilesDAO) SelectByIdList(ctx context.Context, idList []int64
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.EncryptedFilesDO
-	for rows.Next() {
-		v := dataobject.EncryptedFilesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -169,9 +147,9 @@ func (dao *EncryptedFilesDAO) SelectByIdList(ctx context.Context, idList []int64
 // TODO(@benqi): sqlmap
 func (dao *EncryptedFilesDAO) SelectByIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.EncryptedFilesDO)) (rList []dataobject.EncryptedFilesDO, err error) {
 	var (
-		query = "select id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path from encrypted_files where encrypted_file_id in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, encrypted_file_id, access_hash, dc_id, file_size, key_fingerprint, md5_checksum, file_path from encrypted_files where encrypted_file_id in (?)"
+		a      []interface{}
+		values []dataobject.EncryptedFilesDO
 	)
 	if len(idList) == 0 {
 		rList = []dataobject.EncryptedFilesDO{}
@@ -184,35 +162,20 @@ func (dao *EncryptedFilesDAO) SelectByIdListWithCB(ctx context.Context, idList [
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.EncryptedFilesDO
-	for rows.Next() {
-		v := dataobject.EncryptedFilesDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

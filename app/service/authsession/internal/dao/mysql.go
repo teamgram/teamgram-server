@@ -19,8 +19,6 @@
 package dao
 
 import (
-	"context"
-
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dao/mysql_dao"
 )
@@ -45,12 +43,4 @@ func newMysqlDao(db *sqlx.DB) *Mysql {
 		AuthKeyInfosDAO: mysql_dao.NewAuthKeyInfosDAO(db),
 		CommonDAO:       sqlx.NewCommonDAO(db),
 	}
-}
-
-func (d *Mysql) Close() error {
-	return d.DB.Close()
-}
-
-func (d *Mysql) Ping(ctx context.Context) (err error) {
-	return d.DB.Ping(ctx)
 }

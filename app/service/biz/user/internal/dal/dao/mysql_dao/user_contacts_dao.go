@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -92,27 +92,19 @@ func (dao *UserContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserCon
 func (dao *UserContactsDAO) SelectContact(ctx context.Context, owner_user_id int64, contact_user_id int64) (rValue *dataobject.UserContactsDO, err error) {
 	var (
 		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_user_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserContactsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id, contact_user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, owner_user_id, contact_user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectContact(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserContactsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectContact(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectContact(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -124,27 +116,19 @@ func (dao *UserContactsDAO) SelectContact(ctx context.Context, owner_user_id int
 func (dao *UserContactsDAO) SelectByContactId(ctx context.Context, owner_user_id int64, contact_user_id int64) (rValue *dataobject.UserContactsDO, err error) {
 	var (
 		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id = ?"
-		rows  *sqlx.Rows
+		do    = &dataobject.UserContactsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id, contact_user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, owner_user_id, contact_user_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByContactId(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.UserContactsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectByContactId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByContactId(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -155,9 +139,9 @@ func (dao *UserContactsDAO) SelectByContactId(ctx context.Context, owner_user_id
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, owner_user_id int64, phoneList []string) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 
 	if len(phoneList) == 0 {
@@ -171,27 +155,13 @@ func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, owner_use
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByPhoneList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhoneList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -202,9 +172,9 @@ func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, owner_use
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, owner_user_id int64, phoneList []string, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 
 	if len(phoneList) == 0 {
@@ -218,35 +188,20 @@ func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, own
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByPhoneList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByPhoneList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -256,30 +211,16 @@ func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, own
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectAllUserContacts(ctx context.Context, owner_user_id int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
+		values []dataobject.UserContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllUserContacts(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllUserContacts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -290,38 +231,23 @@ func (dao *UserContactsDAO) SelectAllUserContacts(ctx context.Context, owner_use
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectAllUserContactsWithCB(ctx context.Context, owner_user_id int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
+		values []dataobject.UserContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllUserContacts(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllUserContacts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -331,30 +257,16 @@ func (dao *UserContactsDAO) SelectAllUserContactsWithCB(ctx context.Context, own
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectUserContacts(ctx context.Context, owner_user_id int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
+		values []dataobject.UserContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUserContacts(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUserContacts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -365,38 +277,23 @@ func (dao *UserContactsDAO) SelectUserContacts(ctx context.Context, owner_user_i
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectUserContactsWithCB(ctx context.Context, owner_user_id int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
+		values []dataobject.UserContactsDO
 	)
-	rows, err = dao.db.Query(ctx, query, owner_user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUserContacts(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectUserContacts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -406,9 +303,9 @@ func (dao *UserContactsDAO) SelectUserContactsWithCB(ctx context.Context, owner_
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, owner_user_id int64, id_list []int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 
 	if len(id_list) == 0 {
@@ -422,27 +319,13 @@ func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, owner_user_i
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -453,9 +336,9 @@ func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, owner_user_i
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByIdListWithCB(ctx context.Context, owner_user_id int64, id_list []int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 
 	if len(id_list) == 0 {
@@ -469,35 +352,20 @@ func (dao *UserContactsDAO) SelectListByIdListWithCB(ctx context.Context, owner_
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByIdList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByIdList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
@@ -507,9 +375,9 @@ func (dao *UserContactsDAO) SelectListByIdListWithCB(ctx context.Context, owner_
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByOwnerListAndContactList(ctx context.Context, idList1 []int64, idList2 []int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id in (?) and contact_user_id in (?) and is_deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id in (?) and contact_user_id in (?) and is_deleted = 0"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 	if len(idList1) == 0 {
 		rList = []dataobject.UserContactsDO{}
@@ -526,27 +394,13 @@ func (dao *UserContactsDAO) SelectListByOwnerListAndContactList(ctx context.Cont
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByOwnerListAndContactList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByOwnerListAndContactList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -557,9 +411,9 @@ func (dao *UserContactsDAO) SelectListByOwnerListAndContactList(ctx context.Cont
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByOwnerListAndContactListWithCB(ctx context.Context, idList1 []int64, idList2 []int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id in (?) and contact_user_id in (?) and is_deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id in (?) and contact_user_id in (?) and is_deleted = 0"
+		a      []interface{}
+		values []dataobject.UserContactsDO
 	)
 	if len(idList1) == 0 {
 		rList = []dataobject.UserContactsDO{}
@@ -576,35 +430,20 @@ func (dao *UserContactsDAO) SelectListByOwnerListAndContactListWithCB(ctx contex
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByOwnerListAndContactList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.UserContactsDO
-	for rows.Next() {
-		v := dataobject.UserContactsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectListByOwnerListAndContactList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }

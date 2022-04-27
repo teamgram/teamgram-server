@@ -19,7 +19,6 @@
 package dao
 
 import (
-	"context"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -37,14 +36,4 @@ func New(db *sqlx.DB, c sqlc.CachedConn) (dao *Dao) {
 		CachedConn: c,
 	}
 	return
-}
-
-// Close close the resource.
-func (d *Dao) Close() {
-	d.Mysql.Close()
-}
-
-// Ping ping the resource.
-func (d *Dao) Ping(ctx context.Context) (err error) {
-	return d.Mysql.Ping(ctx)
 }

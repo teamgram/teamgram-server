@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -34,6 +34,7 @@ func NewDialogsDAO(db *sqlx.DB) *DialogsDAO {
 
 // InsertIgnore
 // insert ignore into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :read_inbox_max_id, :read_outbox_max_id, :unread_count, :unread_mark, :draft_message_data, :date2)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertIgnore(ctx context.Context, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert ignore into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :read_inbox_max_id, :read_outbox_max_id, :unread_count, :unread_mark, :draft_message_data, :date2)"
@@ -61,6 +62,7 @@ func (dao *DialogsDAO) InsertIgnore(ctx context.Context, do *dataobject.DialogsD
 
 // InsertIgnoreTx
 // insert ignore into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :read_inbox_max_id, :read_outbox_max_id, :unread_count, :unread_mark, :draft_message_data, :date2)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertIgnoreTx(tx *sqlx.Tx, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert ignore into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :read_inbox_max_id, :read_outbox_max_id, :unread_count, :unread_mark, :draft_message_data, :date2)"
@@ -88,6 +90,7 @@ func (dao *DialogsDAO) InsertIgnoreTx(tx *sqlx.Tx, do *dataobject.DialogsDO) (la
 
 // InsertOrUpdate
 // insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, unread_count, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :unread_count, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), unread_count = unread_count + values(unread_count), date2 = values(date2)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, unread_count, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :unread_count, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), unread_count = unread_count + values(unread_count), date2 = values(date2)"
@@ -115,6 +118,7 @@ func (dao *DialogsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.Dialog
 
 // InsertOrUpdateTx
 // insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, unread_count, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :unread_count, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), unread_count = unread_count + values(unread_count), date2 = values(date2)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, unread_count, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :unread_count, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), unread_count = unread_count + values(unread_count), date2 = values(date2)"
@@ -142,6 +146,7 @@ func (dao *DialogsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DialogsDO) (
 
 // InsertOrUpdateDialog
 // insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, peer_dialog_id, read_inbox_max_id, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :peer_dialog_id, :read_inbox_max_id, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), read_inbox_max_id = values(read_inbox_max_id), draft_message_data = values(draft_message_data), date2 = values(date2), deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertOrUpdateDialog(ctx context.Context, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, peer_dialog_id, read_inbox_max_id, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :peer_dialog_id, :read_inbox_max_id, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), read_inbox_max_id = values(read_inbox_max_id), draft_message_data = values(draft_message_data), date2 = values(date2), deleted = 0"
@@ -169,6 +174,7 @@ func (dao *DialogsDAO) InsertOrUpdateDialog(ctx context.Context, do *dataobject.
 
 // InsertOrUpdateDialogTx
 // insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, peer_dialog_id, read_inbox_max_id, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :peer_dialog_id, :read_inbox_max_id, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), read_inbox_max_id = values(read_inbox_max_id), draft_message_data = values(draft_message_data), date2 = values(date2), deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) InsertOrUpdateDialogTx(tx *sqlx.Tx, do *dataobject.DialogsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into dialogs(user_id, peer_type, peer_id, peer_dialog_id, top_message, pinned_msg_id, peer_dialog_id, read_inbox_max_id, draft_message_data, date2) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :top_message, :pinned_msg_id, :peer_dialog_id, :read_inbox_max_id, :draft_message_data, :date2) on duplicate key update top_message = values(top_message), read_inbox_max_id = values(read_inbox_max_id), draft_message_data = values(draft_message_data), date2 = values(date2), deleted = 0"
@@ -196,6 +202,7 @@ func (dao *DialogsDAO) InsertOrUpdateDialogTx(tx *sqlx.Tx, do *dataobject.Dialog
 
 // UpdateOutboxDialog
 // update dialogs set unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null' where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateOutboxDialog(ctx context.Context, top_message int32, date2 int64, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set unread_count = 0, deleted = 0, top_message = ?, date2 = ?, unread_mark = 0, draft_message_data = 'null' where user_id = ? and peer_type = ? and peer_id = ?"
@@ -216,8 +223,9 @@ func (dao *DialogsDAO) UpdateOutboxDialog(ctx context.Context, top_message int32
 	return
 }
 
-// UpdateOutboxDialogTx
 // update dialogs set unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null' where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// UpdateOutboxDialogTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, top_message int32, date2 int64, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set unread_count = 0, deleted = 0, top_message = ?, date2 = ?, unread_mark = 0, draft_message_data = 'null' where user_id = ? and peer_type = ? and peer_id = ?"
@@ -240,6 +248,7 @@ func (dao *DialogsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, top_message int32, date
 
 // UpdateInboxDialog
 // update dialogs set unread_count = unread_count + 1, deleted = 0, %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateInboxDialog(ctx context.Context, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -274,6 +283,7 @@ func (dao *DialogsDAO) UpdateInboxDialog(ctx context.Context, cMap map[string]in
 
 // UpdateInboxDialogTx
 // update dialogs set unread_count = unread_count + 1, deleted = 0, %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -308,32 +318,19 @@ func (dao *DialogsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]interfac
 
 // SelectPinnedDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 0 and pinned > 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectPinnedDialogs(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned > 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned > 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -341,72 +338,45 @@ func (dao *DialogsDAO) SelectPinnedDialogs(ctx context.Context, user_id int64) (
 
 // SelectPinnedDialogsWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 0 and pinned > 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectPinnedDialogsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned > 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned > 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectFolderPinnedDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectFolderPinnedDialogs(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned > 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned > 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectFolderPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectFolderPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -414,51 +384,38 @@ func (dao *DialogsDAO) SelectFolderPinnedDialogs(ctx context.Context, user_id in
 
 // SelectFolderPinnedDialogsWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectFolderPinnedDialogsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned > 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned > 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectFolderPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectFolderPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectPeerDialogList
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and peer_dialog_id in (:idList) and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectPeerDialogList(ctx context.Context, user_id int64, idList []int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_dialog_id in (?) and deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_dialog_id in (?) and deleted = 0"
+		a      []interface{}
+		values []dataobject.DialogsDO
 	)
 
 	if len(idList) == 0 {
@@ -472,27 +429,13 @@ func (dao *DialogsDAO) SelectPeerDialogList(ctx context.Context, user_id int64, 
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectPeerDialogList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPeerDialogList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -500,11 +443,12 @@ func (dao *DialogsDAO) SelectPeerDialogList(ctx context.Context, user_id int64, 
 
 // SelectPeerDialogListWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and peer_dialog_id in (:idList) and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectPeerDialogListWithCB(ctx context.Context, user_id int64, idList []int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_dialog_id in (?) and deleted = 0"
-		a     []interface{}
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_dialog_id in (?) and deleted = 0"
+		a      []interface{}
+		values []dataobject.DialogsDO
 	)
 
 	if len(idList) == 0 {
@@ -518,65 +462,43 @@ func (dao *DialogsDAO) SelectPeerDialogListWithCB(ctx context.Context, user_id i
 		logx.WithContext(ctx).Errorf("sqlx.In in SelectPeerDialogList(_), error: %v", err)
 		return
 	}
-	rows, err = dao.db.Query(ctx, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectPeerDialogList(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectDialog
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectDialog(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rValue *dataobject.DialogsDO, err error) {
 	var (
 		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_type = ? and peer_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		do    = &dataobject.DialogsDO{}
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, peer_type, peer_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectDialog(_), error: %v", err)
-		return
-	}
-
-	defer rows.Close()
-
-	do := &dataobject.DialogsDO{}
-	if rows.Next() {
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(do)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectDialog(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectDialog(_), error: %v", err)
 			return
 		} else {
-			rValue = do
+			err = nil
 		}
+	} else {
+		rValue = do
 	}
 
 	return
@@ -584,32 +506,19 @@ func (dao *DialogsDAO) SelectDialog(ctx context.Context, user_id int64, peer_typ
 
 // SelectDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = :folder_id and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectDialogs(ctx context.Context, user_id int64, folder_id int32) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = ? and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, folder_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, folder_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -617,72 +526,45 @@ func (dao *DialogsDAO) SelectDialogs(ctx context.Context, user_id int64, folder_
 
 // SelectDialogsWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = :folder_id and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectDialogsWithCB(ctx context.Context, user_id int64, folder_id int32, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = ? and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = ? and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id, folder_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, folder_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogs(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectExcludePinnedDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 0 and pinned = 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectExcludePinnedDialogs(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned = 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned = 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectExcludePinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -690,72 +572,45 @@ func (dao *DialogsDAO) SelectExcludePinnedDialogs(ctx context.Context, user_id i
 
 // SelectExcludePinnedDialogsWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 0 and pinned = 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectExcludePinnedDialogsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned = 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 0 and pinned = 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectExcludePinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // SelectExcludeFolderPinnedDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 1 and folder_pinned = 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectExcludeFolderPinnedDialogs(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned = 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned = 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -763,46 +618,33 @@ func (dao *DialogsDAO) SelectExcludeFolderPinnedDialogs(ctx context.Context, use
 
 // SelectExcludeFolderPinnedDialogsWithCB
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = 1 and folder_pinned = 0 and deleted = 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectExcludeFolderPinnedDialogsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned = 0 and deleted = 0"
-		rows  *sqlx.Rows
+		query  = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and folder_id = 1 and folder_pinned = 0 and deleted = 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectExcludeFolderPinnedDialogs(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // UpdateReadInboxMaxId
 // update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateReadInboxMaxId(ctx context.Context, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -823,8 +665,9 @@ func (dao *DialogsDAO) UpdateReadInboxMaxId(ctx context.Context, read_inbox_max_
 	return
 }
 
-// UpdateReadInboxMaxIdTx
 // update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// UpdateReadInboxMaxIdTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -847,6 +690,7 @@ func (dao *DialogsDAO) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, read_inbox_max_id int
 
 // UpdateReadOutboxMaxId
 // update dialogs set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateReadOutboxMaxId(ctx context.Context, read_outbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set read_outbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -867,8 +711,9 @@ func (dao *DialogsDAO) UpdateReadOutboxMaxId(ctx context.Context, read_outbox_ma
 	return
 }
 
-// UpdateReadOutboxMaxIdTx
 // update dialogs set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// UpdateReadOutboxMaxIdTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, read_outbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set read_outbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -891,6 +736,7 @@ func (dao *DialogsDAO) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, read_outbox_max_id i
 
 // UpdateTopMessage
 // update dialogs set top_message = :top_message where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateTopMessage(ctx context.Context, top_message int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set top_message = ? where user_id = ? and peer_dialog_id = ?"
@@ -911,8 +757,9 @@ func (dao *DialogsDAO) UpdateTopMessage(ctx context.Context, top_message int32, 
 	return
 }
 
-// UpdateTopMessageTx
 // update dialogs set top_message = :top_message where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// UpdateTopMessageTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateTopMessageTx(tx *sqlx.Tx, top_message int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set top_message = ? where user_id = ? and peer_dialog_id = ?"
@@ -935,6 +782,7 @@ func (dao *DialogsDAO) UpdateTopMessageTx(tx *sqlx.Tx, top_message int32, user_i
 
 // UpdatePinnedMsgId
 // update dialogs set pinned_msg_id = :pinned_msg_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePinnedMsgId(ctx context.Context, pinned_msg_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set pinned_msg_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -955,8 +803,9 @@ func (dao *DialogsDAO) UpdatePinnedMsgId(ctx context.Context, pinned_msg_id int3
 	return
 }
 
-// UpdatePinnedMsgIdTx
 // update dialogs set pinned_msg_id = :pinned_msg_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// UpdatePinnedMsgIdTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinned_msg_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set pinned_msg_id = ? where user_id = ? and peer_dialog_id = ?"
@@ -979,6 +828,7 @@ func (dao *DialogsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinned_msg_id int32, use
 
 // Delete
 // delete from dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) Delete(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from dialogs where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1001,6 +851,7 @@ func (dao *DialogsDAO) Delete(ctx context.Context, user_id int64, peer_type int3
 
 // DeleteTx
 // delete from dialogs where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) DeleteTx(tx *sqlx.Tx, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from dialogs where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1023,9 +874,10 @@ func (dao *DialogsDAO) DeleteTx(tx *sqlx.Tx, user_id int64, peer_type int32, pee
 
 // SelectDialogsByGTReadInboxMaxId
 // select user_id from dialogs where peer_type = :peer_type and peer_id = :peer_id and read_inbox_max_id >= :read_inbox_max_id and user_id != :user_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectDialogsByGTReadInboxMaxId(ctx context.Context, peer_type int32, peer_id int64, read_inbox_max_id int32, user_id int64) (rList []int64, err error) {
 	var query = "select user_id from dialogs where peer_type = ? and peer_id = ? and read_inbox_max_id >= ? and user_id != ?"
-	err = dao.db.Select(ctx, &rList, query, peer_type, peer_id, read_inbox_max_id, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, peer_type, peer_id, read_inbox_max_id, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectDialogsByGTReadInboxMaxId(_), error: %v", err)
@@ -1036,9 +888,10 @@ func (dao *DialogsDAO) SelectDialogsByGTReadInboxMaxId(ctx context.Context, peer
 
 // SelectDialogsByGTReadInboxMaxIdWithCB
 // select user_id from dialogs where peer_type = :peer_type and peer_id = :peer_id and read_inbox_max_id >= :read_inbox_max_id and user_id != :user_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectDialogsByGTReadInboxMaxIdWithCB(ctx context.Context, peer_type int32, peer_id int64, read_inbox_max_id int32, user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
 	var query = "select user_id from dialogs where peer_type = ? and peer_id = ? and read_inbox_max_id >= ? and user_id != ?"
-	err = dao.db.Select(ctx, &rList, query, peer_type, peer_id, read_inbox_max_id, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, peer_type, peer_id, read_inbox_max_id, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectDialogsByGTReadInboxMaxId(_), error: %v", err)
@@ -1055,6 +908,7 @@ func (dao *DialogsDAO) SelectDialogsByGTReadInboxMaxIdWithCB(ctx context.Context
 
 // UpdateCustomMap
 // update dialogs set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -1089,6 +943,7 @@ func (dao *DialogsDAO) UpdateCustomMap(ctx context.Context, cMap map[string]inte
 
 // UpdateCustomMapTx
 // update dialogs set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -1123,6 +978,7 @@ func (dao *DialogsDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{
 
 // SaveDraft
 // update dialogs set draft_type = :draft_type, draft_message_data = :draft_message_data where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SaveDraft(ctx context.Context, draft_type int32, draft_message_data string, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set draft_type = ?, draft_message_data = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1143,8 +999,9 @@ func (dao *DialogsDAO) SaveDraft(ctx context.Context, draft_type int32, draft_me
 	return
 }
 
-// SaveDraftTx
 // update dialogs set draft_type = :draft_type, draft_message_data = :draft_message_data where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// SaveDraftTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SaveDraftTx(tx *sqlx.Tx, draft_type int32, draft_message_data string, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set draft_type = ?, draft_message_data = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1167,32 +1024,19 @@ func (dao *DialogsDAO) SaveDraftTx(tx *sqlx.Tx, draft_type int32, draft_message_
 
 // SelectAllDrafts
 // select user_id, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectAllDrafts(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
-		rows  *sqlx.Rows
+		query  = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllDrafts(_), error: %v", err)
 		return
 	}
 
-	defer rows.Close()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllDrafts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
 
 	return
@@ -1200,46 +1044,33 @@ func (dao *DialogsDAO) SelectAllDrafts(ctx context.Context, user_id int64) (rLis
 
 // SelectAllDraftsWithCB
 // select user_id, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectAllDraftsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
-		rows  *sqlx.Rows
+		query  = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
+		values []dataobject.DialogsDO
 	)
-	rows, err = dao.db.Query(ctx, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectAllDrafts(_), error: %v", err)
 		return
 	}
 
-	defer func() {
-		rows.Close()
-		if err == nil && cb != nil {
-			for i := 0; i < len(rList); i++ {
-				cb(i, &rList[i])
-			}
-		}
-	}()
-
-	var values []dataobject.DialogsDO
-	for rows.Next() {
-		v := dataobject.DialogsDO{}
-
-		// TODO(@benqi): not use reflect
-		err = rows.StructScan(&v)
-		if err != nil {
-			logx.WithContext(ctx).Errorf("structScan in SelectAllDrafts(_), error: %v", err)
-			return
-		}
-		values = append(values, v)
-	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
 
 // ClearAllDrafts
 // update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and draft_type = 2
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) ClearAllDrafts(ctx context.Context, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = ? and draft_type = 2"
@@ -1260,8 +1091,9 @@ func (dao *DialogsDAO) ClearAllDrafts(ctx context.Context, user_id int64) (rowsA
 	return
 }
 
-// ClearAllDraftsTx
 // update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and draft_type = 2
+// ClearAllDraftsTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) ClearAllDraftsTx(tx *sqlx.Tx, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = ? and draft_type = 2"
@@ -1284,6 +1116,7 @@ func (dao *DialogsDAO) ClearAllDraftsTx(tx *sqlx.Tx, user_id int64) (rowsAffecte
 
 // UpdatePeerFolderId
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerFolderId(ctx context.Context, folder_id int32, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_id = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1304,8 +1137,9 @@ func (dao *DialogsDAO) UpdatePeerFolderId(ctx context.Context, folder_id int32, 
 	return
 }
 
-// UpdatePeerFolderIdTx
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+// UpdatePeerFolderIdTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerFolderIdTx(tx *sqlx.Tx, folder_id int32, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_id = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -1328,6 +1162,7 @@ func (dao *DialogsDAO) UpdatePeerFolderIdTx(tx *sqlx.Tx, folder_id int32, user_i
 
 // UpdatePeerDialogListFolderId
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_dialog_id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListFolderId(ctx context.Context, folder_id int32, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_id = ? where user_id = ? and peer_dialog_id in (?)"
@@ -1360,8 +1195,9 @@ func (dao *DialogsDAO) UpdatePeerDialogListFolderId(ctx context.Context, folder_
 	return
 }
 
-// UpdatePeerDialogListFolderIdTx
 // update dialogs set folder_id = :folder_id where user_id = :user_id and peer_dialog_id in (:idList)
+// UpdatePeerDialogListFolderIdTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder_id int32, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_id = ? where user_id = ? and peer_dialog_id in (?)"
@@ -1396,6 +1232,7 @@ func (dao *DialogsDAO) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder_id int
 
 // UpdatePeerDialogListPinned
 // update dialogs set pinned = :pinned where user_id = :user_id and folder_id = 0 and peer_dialog_id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListPinned(ctx context.Context, pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set pinned = ? where user_id = ? and folder_id = 0 and peer_dialog_id in (?)"
@@ -1428,8 +1265,9 @@ func (dao *DialogsDAO) UpdatePeerDialogListPinned(ctx context.Context, pinned in
 	return
 }
 
-// UpdatePeerDialogListPinnedTx
 // update dialogs set pinned = :pinned where user_id = :user_id and folder_id = 0 and peer_dialog_id in (:idList)
+// UpdatePeerDialogListPinnedTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set pinned = ? where user_id = ? and folder_id = 0 and peer_dialog_id in (?)"
@@ -1464,6 +1302,7 @@ func (dao *DialogsDAO) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned int64, u
 
 // UpdateFolderPeerDialogListPinned
 // update dialogs set folder_pinned = :folder_pinned where user_id = :user_id and folder_id = 1 and peer_dialog_id in (:idList)
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateFolderPeerDialogListPinned(ctx context.Context, folder_pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_pinned = ? where user_id = ? and folder_id = 1 and peer_dialog_id in (?)"
@@ -1496,8 +1335,9 @@ func (dao *DialogsDAO) UpdateFolderPeerDialogListPinned(ctx context.Context, fol
 	return
 }
 
-// UpdateFolderPeerDialogListPinnedTx
 // update dialogs set folder_pinned = :folder_pinned where user_id = :user_id and folder_id = 1 and peer_dialog_id in (:idList)
+// UpdateFolderPeerDialogListPinnedTx
+// TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, folder_pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialogs set folder_pinned = ? where user_id = ? and folder_id = 1 and peer_dialog_id in (?)"
