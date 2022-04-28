@@ -62,7 +62,12 @@ func (dao *BotsDAO) SelectByToken(ctx context.Context, token string) (rValue int
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, token)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectByToken(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectByToken(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return

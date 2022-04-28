@@ -660,7 +660,12 @@ func (dao *MessagesDAO) SelectDialogLastMessageId(ctx context.Context, user_id i
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, user_id, dialog_id1, dialog_id2)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectDialogLastMessageId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectDialogLastMessageId(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return
@@ -689,7 +694,12 @@ func (dao *MessagesDAO) SelectDialogLastMessageIdNotIdList(ctx context.Context, 
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, a...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectDialogLastMessageIdNotIdList(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectDialogLastMessageIdNotIdList(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return

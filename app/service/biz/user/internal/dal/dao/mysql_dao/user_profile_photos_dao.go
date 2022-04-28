@@ -143,7 +143,12 @@ func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, user_id int64, 
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, a...)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectNext(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectNext(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return

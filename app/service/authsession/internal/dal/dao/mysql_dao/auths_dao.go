@@ -188,7 +188,12 @@ func (dao *AuthsDAO) SelectLayer(ctx context.Context, auth_key_id int64) (rValue
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectLayer(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectLayer(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return
@@ -202,7 +207,12 @@ func (dao *AuthsDAO) SelectLangCode(ctx context.Context, auth_key_id int64) (rVa
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectLangCode(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectLangCode(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return
@@ -216,7 +226,12 @@ func (dao *AuthsDAO) SelectLangPack(ctx context.Context, auth_key_id int64) (rVa
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectLangPack(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectLangPack(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return

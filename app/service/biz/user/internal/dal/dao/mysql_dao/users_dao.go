@@ -726,7 +726,12 @@ func (dao *UsersDAO) SelectProfilePhoto(ctx context.Context, id int64) (rValue i
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectProfilePhoto(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectProfilePhoto(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return

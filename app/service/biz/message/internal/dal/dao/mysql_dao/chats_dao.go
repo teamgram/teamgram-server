@@ -118,7 +118,12 @@ func (dao *ChatsDAO) SelectPhotoId(ctx context.Context, id int64) (rValue int64,
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, id)
 
 	if err != nil {
-		logx.WithContext(ctx).Errorf("get in SelectPhotoId(_), error: %v", err)
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectPhotoId(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
 	}
 
 	return
