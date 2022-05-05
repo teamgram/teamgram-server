@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/teamgram/marmota v0.1.1
 	github.com/teamgram/proto v0.139.4-0.20220425055237-b4b5bfef90ab
-	github.com/zeromicro/go-zero v1.3.2
+	github.com/zeromicro/go-zero v1.3.3
 	google.golang.org/grpc v1.46.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	mvdan.cc/xurls/v2 v2.3.0
@@ -105,4 +105,4 @@ require (
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
-replace github.com/zeromicro/go-zero v1.3.2 => github.com/teamgramio/go-zero v1.3.1-0.20220427022919-4e594799126a
+replace github.com/zeromicro/go-zero v1.3.3 => github.com/teamgramio/go-zero v1.3.3-teamgram

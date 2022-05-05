@@ -428,8 +428,8 @@ github.com/teamgram/marmota v0.1.1 h1:vojQMUCnieMyk1iikbT+M0PKD+M73mu0SRvqWI9sKj
 github.com/teamgram/marmota v0.1.1/go.mod h1:JlnrBWYSwy5TR30c2tx38Eu0Y3YhipGht2wIZ5tcWis=
 github.com/teamgram/proto v0.139.4-0.20220425055237-b4b5bfef90ab h1:f0P39i+tC8vVGeLxEBzOstXV2pGsutmlV1KNEpDSQ5c=
 github.com/teamgram/proto v0.139.4-0.20220425055237-b4b5bfef90ab/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
-github.com/teamgramio/go-zero v1.3.1-0.20220427022919-4e594799126a h1:y0rsfhj0nLttsKUYOSmcax+3NhvZfwXgESPD/B4h68E=
-github.com/teamgramio/go-zero v1.3.1-0.20220427022919-4e594799126a/go.mod h1:LwuYc2V04ZHhWPWGJYQ+kJ5DT4QSkeaZGqXiQcpkfks=
+github.com/teamgramio/go-zero v1.3.3-teamgram h1:TjZvnYzvbsZqW1KpUYYPiRxd9kGAtYVas7sEypf2CjA=
+github.com/teamgramio/go-zero v1.3.3-teamgram/go.mod h1:LwuYc2V04ZHhWPWGJYQ+kJ5DT4QSkeaZGqXiQcpkfks=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
