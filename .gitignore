@@ -64,3 +64,4 @@ Thumbs.db
 /teamgramd/bin/GeoLite2-Country.mmdb
 /teamgramd/logs/dfs/
 /teamgramd/logs/sync/
+/app/service/media/internal/dao/examples/examples
