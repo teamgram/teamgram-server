@@ -19,10 +19,10 @@
 package core
 
 import (
-	"context"
 	"github.com/teamgram/proto/mtproto"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/zeromicro/go-zero/core/contextx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"time"
 )
 
@@ -57,13 +57,16 @@ func (c *AccountCore) AccountUpdateStatus(in *mtproto.TLAccountUpdateStatus) (*m
 		}).To_UserStatus()
 	}
 
-	go func(ctx context.Context) {
-		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(ctx, &userpb.TLUserUpdateLastSeen{
-			Id:         c.MD.UserId,
-			LastSeenAt: now,
-			Expries:    expries,
-		})
-	}(contextx.ValueOnlyFrom(c.ctx))
+	// threading.GoSafe()
+	threading.GoSafe(func() {
+		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(
+			contextx.ValueOnlyFrom(c.ctx),
+			&userpb.TLUserUpdateLastSeen{
+				Id:         c.MD.UserId,
+				LastSeenAt: now,
+				Expries:    expries,
+			})
+	})
 
 	// TODO: push
 	//// log.Debugf("account.updateStatus - reply: {true}")
