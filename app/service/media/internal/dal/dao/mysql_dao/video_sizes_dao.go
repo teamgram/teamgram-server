@@ -131,3 +131,73 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdWithCB(ctx context.Context, vid
 
 	return
 }
+
+// SelectListByVideoSizeIdList
+// select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (:idList) order by id asc
+// TODO(@benqi): sqlmap
+func (dao *VideoSizesDAO) SelectListByVideoSizeIdList(ctx context.Context, idList []int64) (rList []dataobject.VideoSizesDO, err error) {
+	var (
+		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (?) order by id asc"
+		a      []interface{}
+		values []dataobject.VideoSizesDO
+	)
+	if len(idList) == 0 {
+		rList = []dataobject.VideoSizesDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByVideoSizeIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectListByVideoSizeIdListWithCB
+// select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (:idList) order by id asc
+// TODO(@benqi): sqlmap
+func (dao *VideoSizesDAO) SelectListByVideoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.VideoSizesDO)) (rList []dataobject.VideoSizesDO, err error) {
+	var (
+		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (?) order by id asc"
+		a      []interface{}
+		values []dataobject.VideoSizesDO
+	)
+	if len(idList) == 0 {
+		rList = []dataobject.VideoSizesDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByVideoSizeIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
+
+	return
+}

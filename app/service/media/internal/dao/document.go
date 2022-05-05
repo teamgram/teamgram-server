@@ -22,18 +22,25 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/jsonx"
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/mr"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
 
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type documentData struct {
-	*dataobject.DocumentsDO
+var (
+	cacheDocumentPrefix = "document"
+)
+
+func genCacheDocumentKey(id int64) string {
+	return fmt.Sprintf("%s_%d", cacheDocumentPrefix, id)
 }
 
 /*
@@ -49,86 +56,209 @@ document#1e87342b flags:#
 	dc_id:int
 	attributes:Vector<DocumentAttribute> = Document;
 */
-func (m *Dao) makeDocumentByDO(ctx context.Context, id int64, do *dataobject.DocumentsDO) (document *mtproto.Document) {
-	var (
-		thumbs      []*mtproto.PhotoSize
-		videoThumbs []*mtproto.VideoSize
-	)
+func (m *Dao) makeDocumentByDO(
+	ctx context.Context,
+	document *mtproto.Document,
+	id int64,
+	do *dataobject.DocumentsDO,
+	thumbs []*mtproto.PhotoSize,
+	videoThumbs []*mtproto.VideoSize) {
+	document.Id = do.DocumentId
 
 	if do == nil {
-		document = mtproto.MakeTLDocumentEmpty(&mtproto.Document{
+		document.Id = id
+		mtproto.MakeTLDocumentEmpty(&mtproto.Document{
 			Id: id,
-		}).To_Document()
+		})
 		return
 	}
 
-	// thumbs
-	if do.ThumbId != 0 {
-		thumbs = m.GetPhotoSizeListV2(ctx, do.ThumbId)
-		logx.WithContext(ctx).Infof("sizeList = %#v", thumbs)
+	mtproto.MakeTLDocument(document)
+	document.AccessHash = do.AccessHash
+	document.FileReference = []byte{}
+	document.Date = int32(do.Date2)
+	if document.Date == 0 {
+		document.Date = int32(time.Now().Unix())
+	}
+	document.MimeType = do.MimeType
+	document.Size2 = do.FileSize
+
+	if do.ThumbId != 0 && do.VideoThumbId != 0 {
+		if len(thumbs) > 0 && len(videoThumbs) > 0 {
+			document.Thumbs = thumbs
+			document.VideoThumbs = videoThumbs
+		} else {
+			mr.FinishVoid(
+				func() {
+					document.Thumbs = m.GetPhotoSizeListV2(ctx, do.ThumbId)
+				},
+				func() {
+					document.VideoThumbs = m.GetVideoSizeList(ctx, do.VideoThumbId)
+				})
+		}
+	} else {
+		// thumbs
+		if do.ThumbId != 0 {
+			if len(thumbs) > 0 {
+				document.Thumbs = thumbs
+			} else {
+				document.Thumbs = m.GetPhotoSizeListV2(ctx, do.ThumbId)
+			}
+		}
+
+		// video_thumbs
+		if do.VideoThumbId != 0 {
+			if len(videoThumbs) > 0 {
+				document.VideoThumbs = videoThumbs
+			} else {
+				document.VideoThumbs = m.GetVideoSizeList(ctx, do.VideoThumbId)
+			}
+		}
 	}
 
-	// video_thumbs
-	if do.VideoThumbId > 0 {
-		videoThumbs = m.GetVideoSizeList(ctx, do.VideoThumbId)
-	}
-
-	var attributes []*mtproto.DocumentAttribute
-	err := json.Unmarshal([]byte(do.Attributes), &attributes)
+	document.DcId = 1
+	err := json.Unmarshal([]byte(do.Attributes), &document.Attributes)
 	if err != nil {
-		logx.WithContext(ctx).Error(err.Error())
-		attributes = []*mtproto.DocumentAttribute{}
+		document.Attributes = []*mtproto.DocumentAttribute{}
 	}
-
-	if do.Date2 == 0 {
-		do.Date2 = time.Now().Unix()
-	}
-	// if do.Attributes
-	document = mtproto.MakeTLDocument(&mtproto.Document{
-		Id:            do.DocumentId,
-		AccessHash:    do.AccessHash,
-		FileReference: []byte{},
-		Date:          int32(do.Date2),
-		MimeType:      do.MimeType,
-		Size2:         do.FileSize,
-		Thumbs:        thumbs,
-		VideoThumbs:   videoThumbs,
-		DcId:          1,
-		Attributes:    attributes,
-	}).To_Document()
-
-	return
-}
-
-// ???
-func (m *Dao) GetDocument(ctx context.Context, id, accessHash int64, version int32) *mtproto.Document {
-	do, _ := m.DocumentsDAO.SelectByFileLocation(ctx, id, accessHash, version)
-	if do == nil {
-		logx.WithContext(ctx).Infof("getDocument")
-	}
-	return m.makeDocumentByDO(ctx, id, do)
 }
 
 func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {
-	do, _ := m.DocumentsDAO.SelectById(ctx, id)
-	if do == nil {
-		logx.WithContext(ctx).Infof("not found document by id: %d", id)
-	}
-	return m.makeDocumentByDO(ctx, id, do)
+	var (
+		key      = genCacheDocumentKey(id)
+		document = new(mtproto.Document)
+	)
+
+	m.CachedConn.QueryRow(ctx, document, key, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+		do, _ := m.DocumentsDAO.SelectByDocumentId(ctx, id)
+		if do == nil {
+			logx.WithContext(ctx).Infof("not found document by id: %d", id)
+		}
+		m.makeDocumentByDO(ctx, v.(*mtproto.Document), id, do, nil, nil)
+		return nil
+	})
+
+	return document
 }
 
-func (m *Dao) GetDocumentList(ctx context.Context, idList []int64) []*mtproto.Document {
-	documentList := make([]*mtproto.Document, 0, len(idList))
-	if len(idList) == 0 {
+func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mtproto.Document {
+	rList, err := mr.MapReduce(
+		func(source chan<- interface{}) {
+			for _, id2 := range idList {
+				source <- id2
+			}
+		},
+		func(item interface{}, writer mr.Writer, cancel func(error)) {
+			id2 := item.(int64)
+			document := new(mtproto.Document)
+			// since2 := timex.Now()
+			err := m.GetCache(ctx, genCacheDocumentKey(id2), document)
+			if err != nil {
+				if err != sqlc.ErrNotFound {
+					cancel(err)
+				} else {
+					//
+				}
+			} else if document != nil {
+				writer.Write(document)
+			}
+			// logx.WithDuration(timex.Since(since2)).Infof("getCache: %v", do)
+		},
+		func(pipe <-chan interface{}, writer mr.Writer, cancel func(error)) {
+			var documentList2 []*mtproto.Document
+			for p := range pipe {
+				documentList2 = append(documentList2, p.(*mtproto.Document))
+			}
+			writer.Write(documentList2)
+		})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("findListByIdList - %v", err)
+	}
+
+	var documentList []*mtproto.Document
+	if rList != nil {
+		documentList = rList.([]*mtproto.Document)
+	}
+	// logx.Infof("doList: %v", doList)
+
+	if len(documentList) == len(idList) {
 		return documentList
 	}
 
-	doList, _ := m.DocumentsDAO.SelectByIdList(ctx, idList)
-	for i := 0; i < len(doList); i++ {
-		documentList = append(documentList, m.makeDocumentByDO(ctx, 0, &doList[i]))
+	var (
+		idList2 []int64
+	)
+
+	for _, id2 := range idList {
+		for i := 0; i < len(documentList); i++ {
+			if documentList[i].Id == id2 {
+				goto Line100
+			}
+		}
+		idList2 = append(idList2, id2)
+	Line100:
 	}
 
-	return documentList
+	var (
+		thumbSizeIdList      = make([]int64, 0)
+		videoThumbSizeIdList = make([]int64, 0)
+	)
+	missDoList, _ := m.DocumentsDAO.SelectByDocumentIdListWithCB(
+		ctx,
+		idList2,
+		func(i int, v *dataobject.DocumentsDO) {
+			if v.ThumbId != 0 {
+				thumbSizeIdList = append(thumbSizeIdList, v.ThumbId)
+			}
+			if v.VideoThumbId != 0 {
+				videoThumbSizeIdList = append(videoThumbSizeIdList, v.VideoThumbId)
+			}
+			v.Id = int64(i)
+		})
+
+	if len(missDoList) == 0 {
+		return documentList
+	}
+
+	var (
+		thumbSizeListList      map[int64][]*mtproto.PhotoSize
+		videoThumbSizeListList map[int64][]*mtproto.VideoSize
+		missDocumentList       = make([]*mtproto.Document, len(missDoList))
+	)
+	if len(thumbSizeIdList) > 0 && len(videoThumbSizeIdList) > 0 {
+		mr.FinishVoid(
+			func() {
+				thumbSizeListList = m.GetPhotoSizeListList(ctx, thumbSizeIdList)
+			},
+			func() {
+				videoThumbSizeListList = m.GetVideoSizeListList(ctx, videoThumbSizeIdList)
+			})
+	} else {
+		if len(thumbSizeIdList) != 0 {
+			thumbSizeListList = m.GetPhotoSizeListList(ctx, thumbSizeIdList)
+		}
+		if len(videoThumbSizeIdList) != 0 {
+			videoThumbSizeListList = m.GetVideoSizeListList(ctx, videoThumbSizeIdList)
+		}
+	}
+
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			for i := 0; i < len(missDoList); i++ {
+				source <- &missDoList[i]
+			}
+		},
+		func(item interface{}) {
+			var (
+				do       = item.(*dataobject.DocumentsDO)
+				document = new(mtproto.Document)
+			)
+			m.makeDocumentByDO(ctx, document, do.DocumentId, do, thumbSizeListList[do.ThumbId], videoThumbSizeListList[do.VideoThumbId])
+			m.SetCache(ctx, genCacheDocumentKey(do.DocumentId), document)
+			missDocumentList[do.Id] = document
+		})
+
+	return append(documentList, missDocumentList...)
 }
 
 func (m *Dao) SaveDocumentV2(ctx context.Context, fileName string, document *mtproto.Document) {

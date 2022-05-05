@@ -149,7 +149,7 @@ func (s *Service) MediaGetDocumentList(ctx context.Context, request *media.TLMed
 		return nil, err
 	}
 
-	c.Infof("media.getDocumentList - reply: %s", r.DebugString())
+	// c.Infof("media.getDocumentList - reply: %s", r.DebugString())
 	return r, err
 }
 

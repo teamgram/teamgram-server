@@ -16,7 +16,7 @@ import (
 // MediaGetDocumentList
 // media.getDocumentList id_list:Vector<long> = Vector<Document>;
 func (c *MediaCore) MediaGetDocumentList(in *media.TLMediaGetDocumentList) (*media.Vector_Document, error) {
-	documents := c.svcCtx.Dao.GetDocumentList(c.ctx, in.IdList)
+	documents := c.svcCtx.Dao.GetDocumentListByIdList(c.ctx, in.IdList)
 
 	return &media.Vector_Document{
 		Datas: documents,

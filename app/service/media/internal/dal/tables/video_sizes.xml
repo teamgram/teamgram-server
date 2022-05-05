@@ -22,4 +22,20 @@
         </sql>
     </operation>
 
+    <operation name="SelectListByVideoSizeIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path
+            FROM
+                video_sizes
+            WHERE
+                video_size_id IN (:idList) ORDER BY id
+            ]]>
+        </sql>
+    </operation>
+
 </table>

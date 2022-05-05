@@ -110,10 +110,10 @@ func (dao *DocumentsDAO) SelectByFileLocation(ctx context.Context, document_id i
 	return
 }
 
-// SelectById
+// SelectByDocumentId
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = :document_id
 // TODO(@benqi): sqlmap
-func (dao *DocumentsDAO) SelectById(ctx context.Context, document_id int64) (rValue *dataobject.DocumentsDO, err error) {
+func (dao *DocumentsDAO) SelectByDocumentId(ctx context.Context, document_id int64) (rValue *dataobject.DocumentsDO, err error) {
 	var (
 		query = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id = ?"
 		do    = &dataobject.DocumentsDO{}
@@ -122,7 +122,7 @@ func (dao *DocumentsDAO) SelectById(ctx context.Context, document_id int64) (rVa
 
 	if err != nil {
 		if err != sqlx.ErrNotFound {
-			logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
+			logx.WithContext(ctx).Errorf("queryx in SelectByDocumentId(_), error: %v", err)
 			return
 		} else {
 			err = nil
@@ -134,12 +134,82 @@ func (dao *DocumentsDAO) SelectById(ctx context.Context, document_id int64) (rVa
 	return
 }
 
-// SelectByIdList
+// SelectByDocumentIdList
 // select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (:idList)
+// TODO(@benqi): sqlmap
+func (dao *DocumentsDAO) SelectByDocumentIdList(ctx context.Context, idList []int64) (rList []dataobject.DocumentsDO, err error) {
+	var (
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		a      []interface{}
+		values []dataobject.DocumentsDO
+	)
+	if len(idList) == 0 {
+		rList = []dataobject.DocumentsDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectByDocumentIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectByDocumentIdListWithCB
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (:idList)
+// TODO(@benqi): sqlmap
+func (dao *DocumentsDAO) SelectByDocumentIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.DocumentsDO)) (rList []dataobject.DocumentsDO, err error) {
+	var (
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		a      []interface{}
+		values []dataobject.DocumentsDO
+	)
+	if len(idList) == 0 {
+		rList = []dataobject.DocumentsDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectByDocumentIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectByIdList
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rList []dataobject.DocumentsDO, err error) {
 	var (
-		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (?)"
 		a      []interface{}
 		values []dataobject.DocumentsDO
 	)
@@ -167,11 +237,11 @@ func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rL
 }
 
 // SelectByIdListWithCB
-// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (:idList)
+// select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DocumentsDAO) SelectByIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.DocumentsDO)) (rList []dataobject.DocumentsDO, err error) {
 	var (
-		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where document_id in (?)"
+		query  = "select id, document_id, access_hash, dc_id, file_path, file_size, uploaded_file_name, ext, mime_type, thumb_id, video_thumb_id, attributes, version, date2 from documents where id in (?)"
 		a      []interface{}
 		values []dataobject.DocumentsDO
 	)
