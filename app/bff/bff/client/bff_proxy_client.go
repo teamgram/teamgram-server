@@ -104,14 +104,14 @@ func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtprot
 	// Fixed @LionPuChiPuChi, 2018-12-19
 	ctxWithTimeout, _ := context.WithTimeout(context.Background(), 60*time.Second)
 	ctx, _ := metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
-
+	logger := logx.WithContext(ctx)
 	rt := time.Now()
 
-	logx.Infof("Invoke - NewReplyFunc: {%#v}", r)
+	logger.Infof("Invoke - NewReplyFunc: {%#v}", r)
 	err = conn.Conn().Invoke(ctx, t.Method, object, r, grpc.Header(&header), grpc.Trailer(&trailer))
 
 	// log.Debugf("rpc %s time: %d", t.Method, time.Now().Unix()-rpcMetaData.ReceiveTime)
-	logx.Infof("rpc Invoke: {method: %s, metadata: %s,  result: {%s}, error: {%v}}, cost = %v",
+	logger.Infof("rpc Invoke: {method: %s, metadata: %s,  result: {%s}, error: {%v}}, cost = %v",
 		t.Method,
 		rpcMetaData.DebugString(),
 		reflect.TypeOf(r),
@@ -123,7 +123,7 @@ func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtprot
 	// log.Debugf("Invoke - error: {%v}", err)
 
 	if err != nil {
-		logx.Errorf("RPC method: %s,  >> %v.Invoke(_) = _, %v: %#v", t.Method, conn.Conn(), err, reflect.TypeOf(err))
+		logger.Errorf("RPC method: %s,  >> %v.Invoke(_) = _, %v: %#v", t.Method, conn.Conn(), err, reflect.TypeOf(err))
 		if nErr, ok := status.FromError(err); ok {
 			return nil, mtproto.MakeTLRpcError(&mtproto.RpcError{
 				ErrorCode:    int32(nErr.Code()),
