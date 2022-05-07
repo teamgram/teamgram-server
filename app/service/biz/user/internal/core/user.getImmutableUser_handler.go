@@ -10,103 +10,66 @@
 package core
 
 import (
-	"encoding/json"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/media/media"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // UserGetImmutableUser
 // user.getImmutableUser id:long = ImmutableUser;
 func (c *UserCore) UserGetImmutableUser(in *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
-	userDO, _ := c.svcCtx.Dao.UsersDAO.SelectById(c.ctx, in.Id)
-	if userDO == nil {
+	imUser, err := c.getImmutableUser(in.GetId(), false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	return imUser, nil
+}
+
+func (c *UserCore) getImmutableUser(id int64, contacts, privacy bool) (*user.ImmutableUser, error) {
+	userData := c.svcCtx.Dao.GetUserData(c.ctx, id)
+
+	// userDO, _ := c.svcCtx.Dao.UsersDAO.SelectById(c.ctx, in.Id)
+	if userData == nil {
 		err := mtproto.ErrUserIdInvalid
 		c.Logger.Errorf("user.getImmutableUser - error: %v", err)
 		return nil, err
 	}
 
-	imUser := user.MakeTLImmutableUser(&user.ImmutableUser{
-		User:             nil,
+	immutableUser := user.MakeTLImmutableUser(&user.ImmutableUser{
+		User:             userData,
 		LastSeenAt:       0,
 		Contacts:         nil,
 		KeysPrivacyRules: nil,
 	}).To_ImmutableUser()
 
-	// deleted
-	if userDO.Deleted {
-		imUser.User = user.MakeTLUserData(&user.UserData{
-			Id:         userDO.Id,
-			AccessHash: userDO.AccessHash,
-			Deleted:    true,
-		}).To_UserData()
-	}
-
-	imUser.User = user.MakeTLUserData(&user.UserData{
-		Id:                userDO.Id,
-		AccessHash:        userDO.AccessHash,
-		UserType:          userDO.UserType,
-		SceretKeyId:       userDO.SecretKeyId,
-		FirstName:         userDO.FirstName,
-		LastName:          userDO.LastName,
-		Username:          userDO.Username,
-		Phone:             userDO.Phone,
-		ProfilePhoto:      nil, //
-		Bot:               nil,
-		CountryCode:       userDO.CountryCode,
-		Verified:          userDO.Verified,
-		Support:           userDO.Support,
-		Scam:              userDO.Scam,
-		Fake:              userDO.Fake,
-		About:             mtproto.MakeFlagsString(userDO.About),
-		Restricted:        userDO.Restricted,
-		RestrictionReason: nil,
-		ContactsVersion:   1,
-		PrivaciesVersion:  1,
-		Deleted:           false,
-	}).To_UserData()
-
-	//// 1. bot
-	if userDO.IsBot {
-		botDO, _ := c.svcCtx.Dao.BotsDAO.Select(c.ctx, in.Id)
-		if botDO != nil {
-			// userData.Bot
-			imUser.User.Bot = user.MakeTLBotData(&user.BotData{
-				Id:                   botDO.BotId,
-				BotType:              botDO.BotType,
-				Creator:              botDO.CreatorUserId,
-				Token:                botDO.Token,
-				Description:          botDO.Description,
-				BotChatHistory:       botDO.BotChatHistory,
-				BotNochats:           botDO.BotNochats,
-				BotInlineGeo:         botDO.BotInlineGeo,
-				BotInfoVersion:       botDO.BotInfoVersion,
-				BotInlinePlaceholder: mtproto.MakeFlagsString(botDO.BotInlinePlaceholder),
-			}).To_BotData()
-
-			//
+	if !userData.Deleted {
+		if int(userData.UserType) == user.UserTypeRegular {
+			mr.FinishVoid(
+				func() {
+					lastSeenAt, _ := c.svcCtx.Dao.GetLastSeenAt(c.ctx, id)
+					if lastSeenAt != nil {
+						immutableUser.LastSeenAt = lastSeenAt.LastSeenAt
+					}
+				},
+				func() {
+					if contacts {
+						// TODO: aaa
+						immutableUser.Contacts = c.svcCtx.Dao.GetUserContactList(c.ctx, id)
+					}
+				},
+				func() {
+					if privacy {
+						immutableUser.KeysPrivacyRules = c.svcCtx.Dao.GetUserPrivacyRulesListByKeys(
+							c.ctx,
+							id,
+							user.STATUS_TIMESTAMP,
+							user.PROFILE_PHOTO,
+							user.PHONE_NUMBER)
+					}
+				})
 		}
 	}
 
-	// 2. ProfilePhoto
-	// TODO: ProfilePhoto
-	// (userDO.RestrictionReason)
-
-	imUser.User.ProfilePhoto, _ = c.svcCtx.Dao.MediaClient.MediaGetPhoto(c.ctx, &media.TLMediaGetPhoto{
-		PhotoId: userDO.PhotoId,
-	})
-
-	// 3. RestrictionReason
-	// TODO: RestrictionReason
-	if imUser.User.Restricted {
-		json.Unmarshal([]byte(userDO.RestrictionReason), &imUser.User.RestrictionReason)
-	}
-
-	// 4. LastSeenAt
-	lastSeenDO, _ := c.svcCtx.Dao.UserPresencesDAO.Select(c.ctx, in.Id)
-	if lastSeenDO != nil {
-		imUser.LastSeenAt = lastSeenDO.LastSeenAt
-	}
-
-	return imUser, nil
+	return immutableUser, nil
 }

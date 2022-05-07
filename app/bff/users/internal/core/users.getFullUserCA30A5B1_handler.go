@@ -23,6 +23,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // UsersGetFullUserCA30A5B1
@@ -107,53 +108,58 @@ func (c *UsersCore) UsersGetFullUserCA30A5B1(in *mtproto.TLUsersGetFullUserCA30A
 		User:                user.ToUnsafeUser(me),
 	}).To_UserFull()
 
-	// blocked
-	if c.MD.UserId != peerId {
-		blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(
-			c.ctx,
-			&userpb.TLUserBlockedByUser{
-				UserId:     c.MD.UserId,
-				PeerUserId: peerId,
+	mr.FinishVoid(
+		func() {
+			// blocked
+			if c.MD.UserId != peerId {
+				blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(
+					c.ctx,
+					&userpb.TLUserBlockedByUser{
+						UserId:     c.MD.UserId,
+						PeerUserId: peerId,
+					})
+				userFull.Blocked = mtproto.FromBool(blocked)
+			}
+		},
+		func() {
+			userFull.Settings, _ = c.svcCtx.Dao.UserClient.UserGetPeerSettings(c.ctx, &userpb.TLUserGetPeerSettings{
+				UserId:   c.MD.UserId,
+				PeerType: mtproto.PEER_USER,
+				PeerId:   peerId,
 			})
-		userFull.Blocked = mtproto.FromBool(blocked)
-	}
+		},
+		func() {
+			userFull.NotifySettings, _ = c.svcCtx.Dao.UserClient.UserGetNotifySettings(c.ctx, &userpb.TLUserGetNotifySettings{
+				UserId:   c.MD.UserId,
+				PeerType: mtproto.PEER_USER,
+				PeerId:   peerId,
+			})
+		},
+		func() {
+			if user.GetUser().GetBot() != nil {
+				userFull.PhoneCallsAvailable = false
+				userFull.PhoneCallsPrivate = false
+				userFull.BotInfo, _ = c.svcCtx.Dao.UserClient.UserGetBotInfo(c.ctx, &userpb.TLUserGetBotInfo{
+					BotId: peerId,
+				})
+			}
+		},
+		func() {
+			// TODO: PinnedMsgId:         nil,
+			if c.MD.UserId != peerId {
+				usersChatIdList, _ := c.svcCtx.Dao.ChatClient.ChatGetUsersChatIdList(c.ctx, &chatpb.TLChatGetUsersChatIdList{
+					Id: []int64{c.MD.UserId, peerId},
+				})
+				if len(usersChatIdList.Datas) == 2 {
+					commonChats := utils.Int64Intersect(
+						usersChatIdList.Datas[0].ChatIdList,
+						usersChatIdList.Datas[1].ChatIdList)
+					userFull.CommonChatsCount = int32(len(commonChats))
+				}
 
-	userFull.Settings, _ = c.svcCtx.Dao.UserClient.UserGetPeerSettings(c.ctx, &userpb.TLUserGetPeerSettings{
-		UserId:   c.MD.UserId,
-		PeerType: mtproto.PEER_USER,
-		PeerId:   peerId,
-	})
-
-	userFull.NotifySettings, _ = c.svcCtx.Dao.UserClient.UserGetNotifySettings(c.ctx, &userpb.TLUserGetNotifySettings{
-		UserId:   c.MD.UserId,
-		PeerType: mtproto.PEER_USER,
-		PeerId:   peerId,
-	})
-
-	if user.GetUser().GetBot() != nil {
-		userFull.PhoneCallsAvailable = false
-		userFull.PhoneCallsPrivate = false
-		userFull.BotInfo, _ = c.svcCtx.Dao.UserClient.UserGetBotInfo(c.ctx, &userpb.TLUserGetBotInfo{
-			BotId: peerId,
+				// TODO: Fetch CommonChannelsCount
+			}
 		})
-	}
-
-	// TODO: PinnedMsgId:         nil,
-	if c.MD.UserId != peerId {
-		usersChatIdList, _ := c.svcCtx.Dao.ChatClient.ChatGetUsersChatIdList(c.ctx, &chatpb.TLChatGetUsersChatIdList{
-			Id: []int64{c.MD.UserId, peerId},
-		})
-		if len(usersChatIdList.Datas) == 2 {
-			// c.Logger.Errorf("0: %v", usersChatIdList.Datas[0].ChatIdList)
-			// c.Logger.Errorf("1: %v", usersChatIdList.Datas[1].ChatIdList)
-			commonChats := utils.Int64Intersect(
-				usersChatIdList.Datas[0].ChatIdList,
-				usersChatIdList.Datas[1].ChatIdList)
-			userFull.CommonChatsCount = int32(len(commonChats))
-		}
-
-		// TODO: Fetch CommonChannelsCount
-	}
 
 	// TODO: FolderId:    0,
 

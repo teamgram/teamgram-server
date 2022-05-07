@@ -17,13 +17,10 @@ import (
 // UserUpdateUsername
 // user.updateUsername user_id:long username:string = Bool;
 func (c *UserCore) UserUpdateUsername(in *user.TLUserUpdateUsername) (*mtproto.Bool, error) {
-	rowsAffected, err := c.svcCtx.Dao.UsersDAO.UpdateUser(c.ctx, map[string]interface{}{
-		"username": in.Username,
-	}, in.GetUserId())
-	if err != nil {
-		c.Logger.Errorf("user.updateUsername - error: %v", err)
-		return mtproto.BoolFalse, nil
-	}
+	rB := c.svcCtx.Dao.UpdateUserUsername(
+		c.ctx,
+		in.GetUserId(),
+		in.GetUsername())
 
-	return mtproto.ToBool(rowsAffected != 0), nil
+	return mtproto.ToBool(rB), nil
 }

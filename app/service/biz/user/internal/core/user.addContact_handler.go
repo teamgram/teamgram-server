@@ -20,12 +20,6 @@ import (
 // UserAddContact
 // user.addContact user_id:long add_phone_privacy_exception:Bool id:long first_name:string last_name:string phone:string = Bool;
 func (c *UserCore) UserAddContact(in *user.TLUserAddContact) (*mtproto.Bool, error) {
-	//// meDO, err := c.svcCtx.Dao.UserContactsDAO.SelectByContactId(c.ctx, in.UserId, in.Id)
-	//if err != nil {
-	//	c.Logger.Errorf("user.addContact - error: %v", err)
-	//	return mtproto.BoolFalse, nil
-	//}
-
 	var (
 		needCheckMutual = false
 		changeMutual    = false
