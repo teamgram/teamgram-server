@@ -12,7 +12,6 @@ package core
 import (
 	"time"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
@@ -21,63 +20,51 @@ import (
 // UserAddContact
 // user.addContact user_id:long add_phone_privacy_exception:Bool id:long first_name:string last_name:string phone:string = Bool;
 func (c *UserCore) UserAddContact(in *user.TLUserAddContact) (*mtproto.Bool, error) {
-	// 1. Check mutal_contact
-	meDO, err := c.svcCtx.Dao.UserContactsDAO.SelectByContactId(c.ctx, in.UserId, in.Id)
-	if err != nil {
-		c.Logger.Errorf("user.addContact - error: %v", err)
-		return mtproto.BoolFalse, nil
-	}
+	//// meDO, err := c.svcCtx.Dao.UserContactsDAO.SelectByContactId(c.ctx, in.UserId, in.Id)
+	//if err != nil {
+	//	c.Logger.Errorf("user.addContact - error: %v", err)
+	//	return mtproto.BoolFalse, nil
+	//}
 
 	var (
 		needCheckMutual = false
 		changeMutual    = false
 	)
 
-	if meDO == nil || meDO.IsDeleted {
+	// 1. Check mutal_contact
+	meContact := c.svcCtx.Dao.GetUserContact(c.ctx, in.GetUserId(), in.GetId())
+	if meContact == nil {
 		needCheckMutual = true
 	}
 
-	if meDO == nil {
-		meDO = &dataobject.UserContactsDO{
-			OwnerUserId:      in.UserId,
-			ContactUserId:    in.Id,
-			ContactPhone:     "",
-			ContactFirstName: in.FirstName,
-			ContactLastName:  in.LastName,
-			Mutual:           false,
-			IsDeleted:        false,
-			Date2:            time.Now().Unix(),
-		}
-	} else {
-		meDO.ContactFirstName = in.FirstName
-		meDO.ContactLastName = in.LastName
-		meDO.IsDeleted = false
+	meDO := &dataobject.UserContactsDO{
+		OwnerUserId:      in.UserId,
+		ContactUserId:    in.Id,
+		ContactPhone:     in.GetPhone(),
+		ContactFirstName: in.FirstName,
+		ContactLastName:  in.LastName,
+		Mutual:           false,
+		IsDeleted:        false,
+		Date2:            time.Now().Unix(),
+	}
+	if meContact != nil {
+		meDO.Mutual = meContact.GetMutualContact()
 	}
 
 	// not contact
 	if needCheckMutual {
-		contactDO, _ := c.svcCtx.Dao.UserContactsDAO.SelectByContactId(c.ctx, in.Id, in.UserId)
-		if contactDO != nil && !contactDO.IsDeleted {
+		mutual := c.svcCtx.Dao.GetUserContact(c.ctx, in.Id, in.UserId)
+		if mutual != nil {
 			meDO.Mutual = true
 			changeMutual = true
 		}
 	}
 
-	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		if changeMutual {
-			c.svcCtx.Dao.UserContactsDAO.UpdateMutualTx(tx, true, in.Id, in.UserId)
-		}
-		_, _, err = c.svcCtx.Dao.UserContactsDAO.InsertOrUpdateTx(tx, meDO)
-		if err != nil {
-			result.Err = err
-			return
-		}
+	err := c.svcCtx.Dao.PutUserContact(c.ctx, changeMutual, meDO)
+	if err != nil {
+		c.Logger.Errorf(" - error: %v", err)
+		return nil, err
+	}
 
-		// TODO(@benqi): set addPhonePrivacyException
-		if mtproto.FromBool(in.AddPhonePrivacyException) {
-
-		}
-	})
-
-	return mtproto.ToBool(changeMutual), tR.Err
+	return mtproto.ToBool(changeMutual), nil
 }

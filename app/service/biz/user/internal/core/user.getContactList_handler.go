@@ -10,8 +10,6 @@
 package core
 
 import (
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -20,18 +18,10 @@ import (
 func (c *UserCore) UserGetContactList(in *user.TLUserGetContactList) (*user.Vector_ContactData, error) {
 	rValList := &user.Vector_ContactData{}
 
-	c.svcCtx.UserContactsDAO.SelectUserContactsWithCB(
-		c.ctx,
-		in.UserId,
-		func(i int, v *dataobject.UserContactsDO) {
-			rValList.Datas = append(rValList.Datas, user.MakeTLContactData(&user.ContactData{
-				UserId:        in.UserId,
-				ContactUserId: v.ContactUserId,
-				FirstName:     mtproto.MakeFlagsString(v.ContactFirstName),
-				LastName:      mtproto.MakeFlagsString(v.ContactLastName),
-				MutualContact: v.Mutual,
-			}).To_ContactData())
-		})
+	rValList.Datas = c.svcCtx.Dao.GetUserContactList(c.ctx, in.GetUserId())
+	if rValList.Datas == nil {
+		rValList.Datas = []*user.ContactData{}
+	}
 
 	return rValList, nil
 }

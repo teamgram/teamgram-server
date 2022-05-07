@@ -10,6 +10,7 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
@@ -17,10 +18,8 @@ import (
 // UserCheckContact
 // user.checkContact user_id:long id:long = Bool;
 func (c *UserCore) UserCheckContact(in *user.TLUserCheckContact) (*mtproto.Bool, error) {
-	contact, _ := c.UserGetContact(&user.TLUserGetContact{
-		UserId: in.UserId,
-		Id:     in.Id,
-	})
+	_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
+	isContact, _ := container2.Contains(in.GetId(), idList)
 
-	return mtproto.ToBool(contact != nil), nil
+	return mtproto.ToBool(isContact), nil
 }

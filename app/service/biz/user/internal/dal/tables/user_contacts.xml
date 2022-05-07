@@ -68,6 +68,16 @@
                 owner_user_id=:owner_user_id AND is_deleted = 0 ORDER BY contact_user_id
         </sql>
     </operation>
+    <operation name="SelectUserContactIdList" result_set="single_list">
+        <sql>
+            SELECT
+                contact_user_id
+            FROM
+                user_contacts
+            WHERE
+                owner_user_id=:owner_user_id AND is_deleted = 0 ORDER BY contact_user_id
+        </sql>
+    </operation>
     <operation name="SelectListByIdList" result_set="list">
         <params>
             <param name="id_list" type="[]int64" />

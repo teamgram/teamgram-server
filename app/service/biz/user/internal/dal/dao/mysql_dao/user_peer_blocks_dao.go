@@ -245,8 +245,8 @@ func (dao *UserPeerBlocksDAO) Delete(ctx context.Context, user_id int64, peer_ty
 	return
 }
 
-// update user_peer_blocks set deleted = 1, `date` = 0 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // DeleteTx
+// update user_peer_blocks set deleted = 1, `date` = 0 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // TODO(@benqi): sqlmap
 func (dao *UserPeerBlocksDAO) DeleteTx(tx *sqlx.Tx, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (

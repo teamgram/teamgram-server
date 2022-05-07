@@ -10,7 +10,6 @@
 package core
 
 import (
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
@@ -18,14 +17,7 @@ import (
 // UserDeleteContact
 // user.deleteContact user_id:long id:long = Bool;
 func (c *UserCore) UserDeleteContact(in *user.TLUserDeleteContact) (*mtproto.Bool, error) {
-	// A 删除 B
-	// 如果AB is mutual，则BA设置为非mutual
+	c.svcCtx.Dao.DeleteUserContact(c.ctx, in.GetUserId(), in.GetId())
 
-	sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		c.svcCtx.Dao.UserContactsDAO.DeleteContactsTx(tx, in.UserId, []int64{in.Id})
-		c.svcCtx.Dao.UserContactsDAO.UpdateMutualTx(tx, false, in.Id, in.UserId)
-	})
-
-	return mtproto.ToBool(true), nil
-
+	return mtproto.BoolTrue, nil
 }

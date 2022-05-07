@@ -10,7 +10,6 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -21,12 +20,10 @@ func (c *UserCore) UserGetContactIdList(in *user.TLUserGetContactIdList) (*user.
 		Datas: []int64{},
 	}
 
-	c.svcCtx.UserContactsDAO.SelectUserContactsWithCB(
-		c.ctx,
-		in.UserId,
-		func(i int, v *dataobject.UserContactsDO) {
-			rValList.Datas = append(rValList.Datas, v.Id)
-		})
+	_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
+	if len(idList) > 0 {
+		rValList.Datas = idList
+	}
 
 	return rValList, nil
 }

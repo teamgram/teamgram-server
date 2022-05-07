@@ -17,18 +17,12 @@ import (
 // UserGetContact
 // user.getContact user_id:long id:long = ContactData;
 func (c *UserCore) UserGetContact(in *user.TLUserGetContact) (*user.ContactData, error) {
-	do, _ := c.svcCtx.Dao.UserContactsDAO.SelectContact(c.ctx, in.UserId, in.Id)
-	if do == nil {
+	contact := c.svcCtx.Dao.GetUserContact(c.ctx, in.GetUserId(), in.GetId())
+	if contact == nil {
 		err := mtproto.ErrContactIdInvalid
 		c.Logger.Errorf("user.getContact - error: %v", err)
 		return nil, err
 	}
 
-	return user.MakeTLContactData(&user.ContactData{
-		UserId:        in.UserId,
-		ContactUserId: in.Id,
-		FirstName:     mtproto.MakeFlagsString(do.ContactFirstName),
-		LastName:      mtproto.MakeFlagsString(do.ContactLastName),
-		MutualContact: do.Mutual,
-	}).To_ContactData(), nil
+	return contact, nil
 }

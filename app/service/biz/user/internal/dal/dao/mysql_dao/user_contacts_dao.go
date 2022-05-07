@@ -298,6 +298,40 @@ func (dao *UserContactsDAO) SelectUserContactsWithCB(ctx context.Context, owner_
 	return
 }
 
+// SelectUserContactIdList
+// select contact_user_id from user_contacts where owner_user_id = :owner_user_id and is_deleted = 0 order by contact_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectUserContactIdList(ctx context.Context, owner_user_id int64) (rList []int64, err error) {
+	var query = "select contact_user_id from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, owner_user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectUserContactIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectUserContactIdListWithCB
+// select contact_user_id from user_contacts where owner_user_id = :owner_user_id and is_deleted = 0 order by contact_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectUserContactIdListWithCB(ctx context.Context, owner_user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
+	var query = "select contact_user_id from user_contacts where owner_user_id = ? and is_deleted = 0 order by contact_user_id asc"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, owner_user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectUserContactIdList(_), error: %v", err)
+	}
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, rList[i])
+		}
+	}
+
+	return
+}
+
 // SelectListByIdList
 // select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id in (:id_list) and is_deleted = 0
 // TODO(@benqi): sqlmap
