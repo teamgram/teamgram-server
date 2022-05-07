@@ -32,57 +32,57 @@ func NewUserPeerSettingsDAO(db *sqlx.DB) *UserPeerSettingsDAO {
 	return &UserPeerSettingsDAO{db}
 }
 
-// InsertIgnore
-// insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)
+// InsertOrUpdate
+// insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
 // TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) InsertIgnore(ctx context.Context, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
+func (dao *UserPeerSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)"
+		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
 		r     sql.Result
 	)
 
 	r, err = dao.db.NamedExec(ctx, query, do)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("namedExec in InsertIgnore(%v), error: %v", do, err)
+		logx.WithContext(ctx).Errorf("namedExec in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(ctx).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", do, err)
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
 	}
 
 	return
 }
 
-// InsertIgnoreTx
-// insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)
+// InsertOrUpdateTx
+// insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
 // TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) InsertIgnoreTx(tx *sqlx.Tx, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
+func (dao *UserPeerSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)"
+		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
 		r     sql.Result
 	)
 
 	r, err = tx.NamedExec(query, do)
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("namedExec in InsertIgnore(%v), error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("namedExec in InsertOrUpdate(%v), error: %v", do, err)
 		return
 	}
 
 	lastInsertId, err = r.LastInsertId()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertIgnore(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertOrUpdate(%v)_error: %v", do, err)
 		return
 	}
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
-		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertIgnore(%v)_error: %v", do, err)
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertOrUpdate(%v)_error: %v", do, err)
 	}
 
 	return

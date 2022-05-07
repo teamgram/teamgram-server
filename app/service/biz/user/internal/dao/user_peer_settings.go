@@ -24,6 +24,7 @@ import (
 	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 )
 
 const (
@@ -82,4 +83,42 @@ func (d *Dao) GetUserPeerSettings(ctx context.Context, id int64, peerType int32,
 	}
 
 	return settings, nil
+}
+
+func (d *Dao) SetUserPeerSettings(ctx context.Context, id int64, peerType int32, peerId int64, settings *mtproto.PeerSettings) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			return d.UserPeerSettingsDAO.InsertOrUpdate(
+				ctx,
+				&dataobject.UserPeerSettingsDO{
+					UserId:                id,
+					PeerType:              peerType,
+					PeerId:                peerId,
+					Hide:                  false,
+					ReportSpam:            settings.ReportSpam,
+					AddContact:            settings.AddContact,
+					BlockContact:          settings.BlockContact,
+					ShareContact:          settings.ShareContact,
+					NeedContactsException: settings.NeedContactsException,
+					ReportGeo:             settings.ReportGeo,
+					Autoarchived:          settings.Autoarchived,
+					GeoDistance:           settings.GetGeoDistance().GetValue(),
+				})
+		},
+		genUserPeerSettingsCacheKey(id, peerType, peerId))
+
+	return err
+}
+
+func (d *Dao) DeleteUserPeerSettings(ctx context.Context, id int64, peerType int32, peerId int64) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			affected, err := d.UserPeerSettingsDAO.Delete(ctx, id, peerType, peerId)
+			return 0, affected, err
+		},
+		genUserPeerSettingsCacheKey(id, peerType, peerId))
+
+	return err
 }

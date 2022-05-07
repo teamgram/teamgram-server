@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table sqlname="user_peer_settings">
-    <operation name="InsertIgnore">
+    <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO user_peer_settings
                 (user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance)
             VALUES
                 (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)
+            ON DUPLICATE KEY UPDATE
+                report_spam = VALUES(report_spam),
+                add_contact = VALUES(add_contact),
+                block_contact = VALUES(block_contact),
+                share_contact = VALUES(share_contact),
+                need_contacts_exception = VALUES(need_contacts_exception),
+                report_geo = VALUES(report_geo),
+                autoarchived = VALUES(autoarchived),
+                geo_distance = VALUES(geo_distance),
+                hide = 0
         </sql>
     </operation>
 
