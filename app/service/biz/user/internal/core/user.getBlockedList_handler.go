@@ -17,6 +17,7 @@ import (
 // UserGetBlockedList
 // user.getBlockedList user_id:long offset:int limit:int = Vector<PeerBlocked>;
 func (c *UserCore) UserGetBlockedList(in *user.TLUserGetBlockedList) (*user.Vector_PeerBlocked, error) {
+	// TODO: recache
 	doList, _ := c.svcCtx.Dao.UserPeerBlocksDAO.SelectList(c.ctx, in.UserId, in.Limit)
 	bockedList := &user.Vector_PeerBlocked{
 		Datas: make([]*mtproto.PeerBlocked, 0, len(doList)),

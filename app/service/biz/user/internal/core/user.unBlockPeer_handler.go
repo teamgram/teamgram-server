@@ -17,7 +17,7 @@ import (
 // UserUnBlockPeer
 // user.unBlockPeer user_id:long peer_type:int peer_id:long = Bool;
 func (c *UserCore) UserUnBlockPeer(in *user.TLUserUnBlockPeer) (*mtproto.Bool, error) {
-	c.svcCtx.UserPeerBlocksDAO.Delete(c.ctx, in.UserId, in.PeerType, in.PeerId)
+	unblocked := c.svcCtx.Dao.UnBlockUser(c.ctx, in.GetUserId(), in.GetPeerId())
 
-	return mtproto.BoolTrue, nil
+	return mtproto.ToBool(unblocked), nil
 }

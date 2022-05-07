@@ -17,7 +17,7 @@ import (
 // UserIsBlockedByUser
 // user.isBlockedByUser user_id:long peer_user_id:long = Bool;
 func (c *UserCore) UserIsBlockedByUser(in *user.TLUserIsBlockedByUser) (*mtproto.Bool, error) {
-	do, _ := c.svcCtx.Dao.UserPeerBlocksDAO.Select(c.ctx, in.UserId, mtproto.PEER_USER, in.PeerUserId)
+	blocked := c.svcCtx.Dao.CheckBlocked(c.ctx, in.GetUserId(), in.GetPeerUserId())
 
-	return mtproto.ToBool(do != nil), nil
+	return mtproto.ToBool(blocked), nil
 }
