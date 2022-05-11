@@ -19,10 +19,11 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"time"
 )
 
 // MessagesSendMessage
@@ -104,6 +105,7 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		Legacy:            false,
 		EditHide:          false,
 		Pinned:            false,
+		Noforwards:        in.GetNoforwards(),
 		Id:                0,
 		FromId:            mtproto.MakePeerUser(c.MD.UserId),
 		PeerId:            peer.ToPeer(),
@@ -121,6 +123,7 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		EditDate:          nil,
 		PostAuthor:        nil,
 		GroupedId:         nil,
+		Reactions:         nil,
 		RestrictionReason: nil,
 		TtlPeriod:         nil,
 	}).To_Message()

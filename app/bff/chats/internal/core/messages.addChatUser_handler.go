@@ -19,11 +19,12 @@
 package core
 
 import (
+	"math/rand"
+
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"math/rand"
 )
 
 // MessagesAddChatUser

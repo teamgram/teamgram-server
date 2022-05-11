@@ -1369,3 +1369,143 @@ func (dao *DialogsDAO) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, folder_pi
 
 	return
 }
+
+// UpdateUnPinnedNotIdList
+// update dialogs set pinned = 0 where user_id = :user_id and folder_id = 0 and pinned > 0 and peer_dialog_id not in (:idList)
+// TODO(@benqi): sqlmap
+func (dao *DialogsDAO) UpdateUnPinnedNotIdList(ctx context.Context, user_id int64, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialogs set pinned = 0 where user_id = ? and folder_id = 0 and pinned > 0 and peer_dialog_id not in (?)"
+		a       []interface{}
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	query, a, err = sqlx.In(query, user_id, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in UpdateUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+	rResult, err = dao.db.Exec(ctx, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateUnPinnedNotIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// update dialogs set pinned = 0 where user_id = :user_id and folder_id = 0 and pinned > 0 and peer_dialog_id not in (:idList)
+// UpdateUnPinnedNotIdListTx
+// TODO(@benqi): sqlmap
+func (dao *DialogsDAO) UpdateUnPinnedNotIdListTx(tx *sqlx.Tx, user_id int64, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialogs set pinned = 0 where user_id = ? and folder_id = 0 and pinned > 0 and peer_dialog_id not in (?)"
+		a       []interface{}
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	query, a, err = sqlx.In(query, user_id, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(tx.Context()).Errorf("sqlx.In in UpdateUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+	rResult, err = tx.Exec(query, a...)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateUnPinnedNotIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateFolderUnPinnedNotIdList
+// update dialogs set folder_pinned = 0 where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (:idList)
+// TODO(@benqi): sqlmap
+func (dao *DialogsDAO) UpdateFolderUnPinnedNotIdList(ctx context.Context, user_id int64, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialogs set folder_pinned = 0 where user_id = ? and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (?)"
+		a       []interface{}
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	query, a, err = sqlx.In(query, user_id, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+	rResult, err = dao.db.Exec(ctx, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// update dialogs set folder_pinned = 0 where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (:idList)
+// UpdateFolderUnPinnedNotIdListTx
+// TODO(@benqi): sqlmap
+func (dao *DialogsDAO) UpdateFolderUnPinnedNotIdListTx(tx *sqlx.Tx, user_id int64, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialogs set folder_pinned = 0 where user_id = ? and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (?)"
+		a       []interface{}
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	query, a, err = sqlx.In(query, user_id, idList)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(tx.Context()).Errorf("sqlx.In in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+	rResult, err = tx.Exec(query, a...)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateFolderUnPinnedNotIdList(_), error: %v", err)
+	}
+
+	return
+}

@@ -216,9 +216,9 @@ func (m *ImmutableUser) ToUnsafeUser(selfUser *ImmutableUser) *mtproto.User {
 	}
 
 	// phone
-	if m.CheckPrivacy(PHONE_NUMBER, selfUser.Id()) {
-		// user.Phone = mtproto.MakeFlagsString(m.Phone())
-	}
+	//if m.CheckPrivacy(PHONE_NUMBER, selfUser.Id()) {
+	user.Phone = mtproto.MakeFlagsString(m.Phone())
+	//}
 
 	// photo
 	if m.CheckPrivacy(PROFILE_PHOTO, selfUser.Id()) {

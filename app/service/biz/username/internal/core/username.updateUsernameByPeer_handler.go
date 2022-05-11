@@ -24,6 +24,7 @@ func (c *UsernameCore) UsernameUpdateUsernameByPeer(in *username.TLUsernameUpdat
 		PeerType: in.PeerType,
 		PeerId:   in.PeerId,
 	})
+
 	if err != nil {
 		if sqlx.IsDuplicate(err) {
 			return mtproto.BoolFalse, nil

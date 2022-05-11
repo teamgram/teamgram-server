@@ -457,4 +457,32 @@
         </sql>
     </operation>
 
+    <operation name="UpdateUnPinnedNotIdList">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                pinned = 0
+            WHERE
+                user_id=:user_id AND folder_id = 0 AND pinned>0 AND peer_dialog_id NOT IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="UpdateFolderUnPinnedNotIdList">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                folder_pinned = 0
+            WHERE
+                user_id=:user_id AND folder_id = 1 AND folder_pinned>0 AND peer_dialog_id NOT IN (:idList)
+        </sql>
+    </operation>
+
 </table>
