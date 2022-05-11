@@ -79,6 +79,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 	outMessage := editMessages.Datas[0].Message
 	// edit_date
 	outMessage.EditDate = &types.Int32Value{Value: int32(time.Now().Unix())}
+	outMessage.EditHide = false
 
 	// entities
 	if in.Entities != nil {
