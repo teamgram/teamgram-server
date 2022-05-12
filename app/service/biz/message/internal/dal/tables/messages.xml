@@ -508,5 +508,23 @@
                 user_id = :user_id AND user_message_box_id = :user_message_box_id
         </sql>
     </operation>
+
+    <!-- // Backward -->
+    <operation name="SelectBackwardBySendUserIdOffsetIdLimit" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND sender_user_id = :sender_user_id AND user_message_box_id < :user_message_box_id AND deleted = 0
+            ORDER BY user_message_box_id DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
 </table>
 

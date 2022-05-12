@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
@@ -228,6 +229,21 @@ func (s *Service) MessageGetSearchCounter(ctx context.Context, request *message.
 	return r, err
 }
 
+// MessageSearchV2
+// message.searchV2 user_id:long peer_type:int peer_id:long q:string from_id:long min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
+func (s *Service) MessageSearchV2(ctx context.Context, request *message.TLMessageSearchV2) (*message.Vector_MessageBox, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("message.searchV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessageSearchV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("message.searchV2 - reply: %s", r.DebugString())
+	return r, err
+}
+
 // MessageGetLastTwoPinnedMessageId
 // message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
 func (s *Service) MessageGetLastTwoPinnedMessageId(ctx context.Context, request *message.TLMessageGetLastTwoPinnedMessageId) (*message.Vector_Int, error) {
@@ -317,3 +333,4 @@ func (s *Service) MessageGetUnreadMentionsCount(ctx context.Context, request *me
 	c.Infof("message.getUnreadMentionsCount - reply: %s", r.DebugString())
 	return r, err
 }
+

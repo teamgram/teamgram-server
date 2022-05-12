@@ -43,6 +43,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		limit    = in.Limit
 		boxList  *message.Vector_MessageBox
 		err      error
+		fromId   *mtproto.PeerUtil
 	)
 
 	if offsetId == 0 {
@@ -58,6 +59,26 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		// TODO: not impl
 		c.Logger.Errorf("messages.search blocked, License key from https://teamgram.net required to unlock enterprise features.")
 		return nil, mtproto.ErrEnterpriseIsBlocked
+	}
+
+	if in.GetFromId() != nil {
+		// 1. peer must chat and channel
+		if !peer.IsChatOrChannel() {
+			err = mtproto.ErrPeerIdInvalid
+			c.Logger.Errorf("messages.search - error: %v", err)
+			return nil, err
+		}
+
+		fromId = mtproto.FromInputPeer2(c.MD.UserId, in.FromId)
+		// 2. fromId must user
+		if !fromId.IsUser() {
+			err = mtproto.ErrFromPeerInvalid
+			c.Logger.Errorf("messages.search - error: %v", err)
+			return nil, err
+		}
+
+		// TODO: check user was deleted?
+		// 400	INPUT_USER_DEACTIVATED	The specified user was deleted.
 	}
 
 	rValues = mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
@@ -186,28 +207,37 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterEmpty:
-		if in.Q == "" {
+		if fromId == nil && in.Q == "" {
 			err = mtproto.ErrSearchQueryEmpty
 			c.Logger.Errorf("messages.search - error: %v", err)
 			return nil, err
 		}
 
-		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearch(c.ctx, &message.TLMessageSearch{
-			UserId:   c.MD.UserId,
-			PeerType: peer.PeerType,
-			PeerId:   peer.PeerId,
-			Q:        in.Q,
-			Offset:   offsetId,
-			Limit:    limit,
-		})
+		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchV2(
+			c.ctx,
+			&message.TLMessageSearchV2{
+				UserId:    c.MD.UserId,
+				PeerType:  peer.PeerType,
+				PeerId:    peer.PeerId,
+				Q:         in.Q,
+				FromId:    fromId.PeerId,
+				MinDate:   in.MinDate,
+				MaxDate:   in.MaxDate,
+				OffsetId:  offsetId,
+				AddOffset: in.AddOffset,
+				Limit:     limit,
+				MaxId:     in.MaxId,
+				MinId:     in.MinId,
+				Hash:      in.Hash,
+			})
 		if err != nil {
 			c.Logger.Errorf("messages.search - error: %v", err)
 			return rValues, nil
 		}
 	default:
-		// TODO
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
-		return rValues, nil
+		err = mtproto.ErrInputFilterInvalid
+		c.Logger.Errorf("messages.search - error: %v", err)
+		return nil, err
 	}
 
 	//

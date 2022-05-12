@@ -50,6 +50,7 @@ const (
 	CRC32_message_searchGlobal                   TLConstructor = -1281860155
 	CRC32_message_searchByPinned                 TLConstructor = 1853053781
 	CRC32_message_getSearchCounter               TLConstructor = -489963706
+	CRC32_message_searchV2                       TLConstructor = -1580848351
 	CRC32_message_getLastTwoPinnedMessageId      TLConstructor = -1348859861
 	CRC32_message_updatePinnedMessageId          TLConstructor = -182391344
 	CRC32_message_getPinnedMessageIdList         TLConstructor = -637415203
@@ -75,6 +76,7 @@ var TLConstructor_name = map[int32]string{
 	-1281860155: "CRC32_message_searchGlobal",
 	1853053781:  "CRC32_message_searchByPinned",
 	-489963706:  "CRC32_message_getSearchCounter",
+	-1580848351: "CRC32_message_searchV2",
 	-1348859861: "CRC32_message_getLastTwoPinnedMessageId",
 	-182391344:  "CRC32_message_updatePinnedMessageId",
 	-637415203:  "CRC32_message_getPinnedMessageIdList",
@@ -100,6 +102,7 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_message_searchGlobal":                   -1281860155,
 	"CRC32_message_searchByPinned":                 1853053781,
 	"CRC32_message_getSearchCounter":               -489963706,
+	"CRC32_message_searchV2":                       -1580848351,
 	"CRC32_message_getLastTwoPinnedMessageId":      -1348859861,
 	"CRC32_message_updatePinnedMessageId":          -182391344,
 	"CRC32_message_getPinnedMessageIdList":         -637415203,
@@ -116,9 +119,6 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_854009303dbd8a76, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
-// peerMessageId user_id:long msg_id:int = PeerMessageId;
-//
 // PeerMessageId <--
 //  + TL_peerMessageId
 //
@@ -193,7 +193,6 @@ func (m *PeerMessageId) GetMsgId() int32 {
 	return 0
 }
 
-// peerMessageId user_id:long msg_id:int = PeerMessageId;
 type TLPeerMessageId struct {
 	Data2                *PeerMessageId `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
@@ -242,7 +241,6 @@ func (m *TLPeerMessageId) GetData2() *PeerMessageId {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getUserMessage user_id:long id:int = MessageBox;
 type TLMessageGetUserMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -307,7 +305,6 @@ func (m *TLMessageGetUserMessage) GetId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 type TLMessageGetUserMessageList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -372,7 +369,6 @@ func (m *TLMessageGetUserMessageList) GetIdList() []int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 type TLMessageGetUserMessageListByDataIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -439,7 +435,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) GetIdList() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 type TLMessageGetHistoryMessages struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -568,7 +563,6 @@ func (m *TLMessageGetHistoryMessages) GetHash() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 type TLMessageGetHistoryMessagesCount struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -641,7 +635,6 @@ func (m *TLMessageGetHistoryMessagesCount) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 type TLMessageGetPeerUserMessageId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -714,7 +707,6 @@ func (m *TLMessageGetPeerUserMessageId) GetMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 type TLMessageGetPeerUserMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -787,7 +779,6 @@ func (m *TLMessageGetPeerUserMessage) GetMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
 type TLMessageGetPeerChatMessageIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -860,7 +851,6 @@ func (m *TLMessageGetPeerChatMessageIdList) GetMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
 type TLMessageGetPeerChatMessageList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -933,7 +923,6 @@ func (m *TLMessageGetPeerChatMessageList) GetMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 type TLMessageSearchByMediaType struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1030,7 +1019,6 @@ func (m *TLMessageSearchByMediaType) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 type TLMessageSearch struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1127,7 +1115,6 @@ func (m *TLMessageSearch) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 type TLMessageSearchGlobal struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1208,7 +1195,6 @@ func (m *TLMessageSearchGlobal) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 type TLMessageSearchByPinned struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1281,7 +1267,6 @@ func (m *TLMessageSearchByPinned) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 type TLMessageGetSearchCounter struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1362,7 +1347,158 @@ func (m *TLMessageGetSearchCounter) GetMediaType() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
+type TLMessageSearchV2 struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
+	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
+	Q                    string        `protobuf:"bytes,6,opt,name=q,proto3" json:"q,omitempty"`
+	FromId               int64         `protobuf:"varint,7,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
+	MinDate              int32         `protobuf:"varint,8,opt,name=min_date,json=minDate,proto3" json:"min_date,omitempty"`
+	MaxDate              int32         `protobuf:"varint,9,opt,name=max_date,json=maxDate,proto3" json:"max_date,omitempty"`
+	OffsetId             int32         `protobuf:"varint,10,opt,name=offset_id,json=offsetId,proto3" json:"offset_id,omitempty"`
+	AddOffset            int32         `protobuf:"varint,11,opt,name=add_offset,json=addOffset,proto3" json:"add_offset,omitempty"`
+	Limit                int32         `protobuf:"varint,12,opt,name=limit,proto3" json:"limit,omitempty"`
+	MaxId                int32         `protobuf:"varint,13,opt,name=max_id,json=maxId,proto3" json:"max_id,omitempty"`
+	MinId                int32         `protobuf:"varint,14,opt,name=min_id,json=minId,proto3" json:"min_id,omitempty"`
+	Hash                 int64         `protobuf:"varint,15,opt,name=hash,proto3" json:"hash,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLMessageSearchV2) Reset()         { *m = TLMessageSearchV2{} }
+func (m *TLMessageSearchV2) String() string { return proto.CompactTextString(m) }
+func (*TLMessageSearchV2) ProtoMessage()    {}
+func (*TLMessageSearchV2) Descriptor() ([]byte, []int) {
+	return fileDescriptor_854009303dbd8a76, []int{16}
+}
+func (m *TLMessageSearchV2) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLMessageSearchV2) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLMessageSearchV2.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLMessageSearchV2) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLMessageSearchV2.Merge(m, src)
+}
+func (m *TLMessageSearchV2) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLMessageSearchV2) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLMessageSearchV2.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLMessageSearchV2 proto.InternalMessageInfo
+
+func (m *TLMessageSearchV2) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLMessageSearchV2) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetPeerType() int32 {
+	if m != nil {
+		return m.PeerType
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetPeerId() int64 {
+	if m != nil {
+		return m.PeerId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetQ() string {
+	if m != nil {
+		return m.Q
+	}
+	return ""
+}
+
+func (m *TLMessageSearchV2) GetFromId() int64 {
+	if m != nil {
+		return m.FromId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetMinDate() int32 {
+	if m != nil {
+		return m.MinDate
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetMaxDate() int32 {
+	if m != nil {
+		return m.MaxDate
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetOffsetId() int32 {
+	if m != nil {
+		return m.OffsetId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetAddOffset() int32 {
+	if m != nil {
+		return m.AddOffset
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetMaxId() int32 {
+	if m != nil {
+		return m.MaxId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetMinId() int32 {
+	if m != nil {
+		return m.MinId
+	}
+	return 0
+}
+
+func (m *TLMessageSearchV2) GetHash() int64 {
+	if m != nil {
+		return m.Hash
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
 type TLMessageGetLastTwoPinnedMessageId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1377,7 +1513,7 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Reset()         { *m = TLMessageGet
 func (m *TLMessageGetLastTwoPinnedMessageId) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetLastTwoPinnedMessageId) ProtoMessage()    {}
 func (*TLMessageGetLastTwoPinnedMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{16}
+	return fileDescriptor_854009303dbd8a76, []int{17}
 }
 func (m *TLMessageGetLastTwoPinnedMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1435,7 +1571,6 @@ func (m *TLMessageGetLastTwoPinnedMessageId) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 type TLMessageUpdatePinnedMessageId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1452,7 +1587,7 @@ func (m *TLMessageUpdatePinnedMessageId) Reset()         { *m = TLMessageUpdateP
 func (m *TLMessageUpdatePinnedMessageId) String() string { return proto.CompactTextString(m) }
 func (*TLMessageUpdatePinnedMessageId) ProtoMessage()    {}
 func (*TLMessageUpdatePinnedMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{17}
+	return fileDescriptor_854009303dbd8a76, []int{18}
 }
 func (m *TLMessageUpdatePinnedMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1524,7 +1659,6 @@ func (m *TLMessageUpdatePinnedMessageId) GetPinned() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 type TLMessageGetPinnedMessageIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1539,7 +1673,7 @@ func (m *TLMessageGetPinnedMessageIdList) Reset()         { *m = TLMessageGetPin
 func (m *TLMessageGetPinnedMessageIdList) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetPinnedMessageIdList) ProtoMessage()    {}
 func (*TLMessageGetPinnedMessageIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{18}
+	return fileDescriptor_854009303dbd8a76, []int{19}
 }
 func (m *TLMessageGetPinnedMessageIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1597,7 +1731,6 @@ func (m *TLMessageGetPinnedMessageIdList) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 type TLMessageUnPinAllMessages struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1612,7 +1745,7 @@ func (m *TLMessageUnPinAllMessages) Reset()         { *m = TLMessageUnPinAllMess
 func (m *TLMessageUnPinAllMessages) String() string { return proto.CompactTextString(m) }
 func (*TLMessageUnPinAllMessages) ProtoMessage()    {}
 func (*TLMessageUnPinAllMessages) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{19}
+	return fileDescriptor_854009303dbd8a76, []int{20}
 }
 func (m *TLMessageUnPinAllMessages) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1670,7 +1803,6 @@ func (m *TLMessageUnPinAllMessages) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 type TLMessageGetUnreadMentions struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1690,7 +1822,7 @@ func (m *TLMessageGetUnreadMentions) Reset()         { *m = TLMessageGetUnreadMe
 func (m *TLMessageGetUnreadMentions) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetUnreadMentions) ProtoMessage()    {}
 func (*TLMessageGetUnreadMentions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{20}
+	return fileDescriptor_854009303dbd8a76, []int{21}
 }
 func (m *TLMessageGetUnreadMentions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1783,7 +1915,6 @@ func (m *TLMessageGetUnreadMentions) GetMaxInt() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 type TLMessageGetUnreadMentionsCount struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=message.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1798,7 +1929,7 @@ func (m *TLMessageGetUnreadMentionsCount) Reset()         { *m = TLMessageGetUnr
 func (m *TLMessageGetUnreadMentionsCount) String() string { return proto.CompactTextString(m) }
 func (*TLMessageGetUnreadMentionsCount) ProtoMessage()    {}
 func (*TLMessageGetUnreadMentionsCount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{21}
+	return fileDescriptor_854009303dbd8a76, []int{22}
 }
 func (m *TLMessageGetUnreadMentionsCount) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1868,7 +1999,7 @@ func (m *Vector_MessageBox) Reset()         { *m = Vector_MessageBox{} }
 func (m *Vector_MessageBox) String() string { return proto.CompactTextString(m) }
 func (*Vector_MessageBox) ProtoMessage()    {}
 func (*Vector_MessageBox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{22}
+	return fileDescriptor_854009303dbd8a76, []int{23}
 }
 func (m *Vector_MessageBox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1915,7 +2046,7 @@ func (m *Vector_PeerMessageId) Reset()         { *m = Vector_PeerMessageId{} }
 func (m *Vector_PeerMessageId) String() string { return proto.CompactTextString(m) }
 func (*Vector_PeerMessageId) ProtoMessage()    {}
 func (*Vector_PeerMessageId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{23}
+	return fileDescriptor_854009303dbd8a76, []int{24}
 }
 func (m *Vector_PeerMessageId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1962,7 +2093,7 @@ func (m *Vector_Int) Reset()         { *m = Vector_Int{} }
 func (m *Vector_Int) String() string { return proto.CompactTextString(m) }
 func (*Vector_Int) ProtoMessage()    {}
 func (*Vector_Int) Descriptor() ([]byte, []int) {
-	return fileDescriptor_854009303dbd8a76, []int{24}
+	return fileDescriptor_854009303dbd8a76, []int{25}
 }
 func (m *Vector_Int) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2016,6 +2147,7 @@ func init() {
 	proto.RegisterType((*TLMessageSearchGlobal)(nil), "message.TL_message_searchGlobal")
 	proto.RegisterType((*TLMessageSearchByPinned)(nil), "message.TL_message_searchByPinned")
 	proto.RegisterType((*TLMessageGetSearchCounter)(nil), "message.TL_message_getSearchCounter")
+	proto.RegisterType((*TLMessageSearchV2)(nil), "message.TL_message_searchV2")
 	proto.RegisterType((*TLMessageGetLastTwoPinnedMessageId)(nil), "message.TL_message_getLastTwoPinnedMessageId")
 	proto.RegisterType((*TLMessageUpdatePinnedMessageId)(nil), "message.TL_message_updatePinnedMessageId")
 	proto.RegisterType((*TLMessageGetPinnedMessageIdList)(nil), "message.TL_message_getPinnedMessageIdList")
@@ -2030,111 +2162,119 @@ func init() {
 func init() { proto.RegisterFile("message.tl.proto", fileDescriptor_854009303dbd8a76) }
 
 var fileDescriptor_854009303dbd8a76 = []byte{
-	// 1664 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x5d, 0x6c, 0x14, 0x55,
-	0x14, 0xee, 0xb4, 0xdd, 0xdd, 0xf6, 0x94, 0xd6, 0xe1, 0x52, 0xe9, 0xb2, 0xb4, 0xdb, 0x65, 0xe8,
-	0xcf, 0x52, 0xfa, 0xa3, 0x5b, 0x1f, 0x7c, 0x32, 0xda, 0x92, 0xe8, 0x6a, 0x29, 0xcd, 0x52, 0x20,
-	0xc1, 0xc4, 0x65, 0xba, 0x73, 0xd9, 0x8e, 0xd9, 0x9d, 0x59, 0x66, 0x6e, 0x85, 0xf2, 0x60, 0x62,
-	0x34, 0x8a, 0xfa, 0x62, 0x34, 0x51, 0x63, 0x24, 0x2a, 0x10, 0x02, 0xe2, 0x4f, 0x54, 0x62, 0x8c,
-	0x26, 0x06, 0x54, 0x08, 0x12, 0x4d, 0x1a, 0xa3, 0xc4, 0xc4, 0x90, 0x40, 0xd5, 0xc4, 0x07, 0x63,
-	0x48, 0xf0, 0x49, 0x90, 0x9a, 0xb9, 0x33, 0xbb, 0x3b, 0xbf, 0x3b, 0x95, 0xb8, 0x66, 0x79, 0xea,
-	0xce, 0x3d, 0xdf, 0xbd, 0xe7, 0x3b, 0xf7, 0x9e, 0x73, 0xee, 0x39, 0xb7, 0xc0, 0xe6, 0xb1, 0xaa,
-	0xf2, 0x59, 0x3c, 0x4c, 0x72, 0xc3, 0x05, 0x45, 0x26, 0x32, 0x0a, 0x19, 0x23, 0x91, 0xa1, 0xac,
-	0x48, 0x66, 0xe7, 0x66, 0x86, 0x33, 0x72, 0x7e, 0x24, 0x2b, 0x67, 0xe5, 0x11, 0x2a, 0x9f, 0x99,
-	0xdb, 0x4d, 0xbf, 0xe8, 0x07, 0xfd, 0xa5, 0xcf, 0x8b, 0x44, 0xb3, 0xb2, 0x9c, 0xcd, 0xe1, 0x32,
-	0x6a, 0xaf, 0xc2, 0x17, 0x0a, 0x58, 0x51, 0x0d, 0x79, 0x44, 0xcd, 0xcc, 0xe2, 0x3c, 0xaf, 0x29,
-	0xca, 0xc8, 0x0a, 0x4e, 0x93, 0xf9, 0x02, 0x2e, 0xca, 0xd6, 0x94, 0x65, 0x44, 0xe1, 0x25, 0xb5,
-	0x20, 0x2b, 0xc4, 0x10, 0xb5, 0x97, 0x45, 0xea, 0xbc, 0x94, 0xd1, 0x47, 0xb9, 0x37, 0x19, 0x68,
-	0x9d, 0xc2, 0x58, 0xd9, 0xac, 0x73, 0x4d, 0x0a, 0xa8, 0x17, 0xda, 0x0a, 0x0a, 0x16, 0xc4, 0x0c,
-	0x4f, 0x70, 0x5a, 0xe2, 0xf3, 0x38, 0xcc, 0xc4, 0x98, 0x78, 0x73, 0xaa, 0xb5, 0x34, 0x3a, 0xc9,
-	0xe7, 0x31, 0xba, 0x1b, 0x5a, 0x32, 0xb2, 0xa4, 0x12, 0x65, 0x2e, 0x43, 0x64, 0x25, 0x5c, 0x1f,
-	0x63, 0xe2, 0x6d, 0x89, 0xd5, 0xc3, 0xc5, 0x5d, 0x98, 0x9e, 0x18, 0x2f, 0x4b, 0x53, 0x66, 0x28,
-	0xea, 0x80, 0xd0, 0x9c, 0x8a, 0x95, 0xb4, 0x28, 0x84, 0x1b, 0x62, 0x4c, 0xbc, 0x21, 0x15, 0xd4,
-	0x3e, 0x93, 0x02, 0xba, 0x1d, 0x82, 0x79, 0x35, 0xab, 0x8d, 0x37, 0xc6, 0x98, 0x78, 0x20, 0x15,
-	0xc8, 0xab, 0xd9, 0xa4, 0xc0, 0xdd, 0x0b, 0xec, 0xf4, 0x44, 0xba, 0x60, 0x21, 0x39, 0x08, 0x01,
-	0x81, 0x27, 0x7c, 0x82, 0x72, 0x6b, 0x31, 0xe9, 0xb5, 0xd8, 0x92, 0xd2, 0x41, 0xdc, 0xe3, 0xb0,
-	0x66, 0x7a, 0x22, 0x6d, 0x40, 0xd2, 0x59, 0x4c, 0xb6, 0xa9, 0x25, 0x94, 0xdd, 0x10, 0xe6, 0x3f,
-	0x30, 0xa4, 0x0d, 0xea, 0x4b, 0x46, 0xd4, 0x8b, 0x02, 0xf7, 0x3c, 0x03, 0x5d, 0x9e, 0x04, 0x26,
-	0x44, 0x95, 0x54, 0x83, 0x44, 0x07, 0x84, 0x44, 0x21, 0x9d, 0x13, 0x55, 0x12, 0x6e, 0x8c, 0x35,
-	0xc4, 0x03, 0xa9, 0xa0, 0x28, 0x68, 0xba, 0xb8, 0x57, 0x18, 0xd8, 0x50, 0x91, 0xcd, 0xd8, 0xfc,
-	0x26, 0x9e, 0xf0, 0x49, 0xe1, 0x7f, 0x62, 0xd6, 0x50, 0x62, 0x76, 0xb1, 0xde, 0xbe, 0x4f, 0x0f,
-	0x88, 0x2a, 0x91, 0x95, 0x79, 0x83, 0x9c, 0x5a, 0x0d, 0x36, 0x6b, 0xa1, 0x59, 0xf3, 0x2d, 0x1a,
-	0x46, 0xc6, 0x99, 0x35, 0x69, 0x03, 0xd3, 0xf3, 0x05, 0xac, 0xcd, 0xa2, 0x42, 0x51, 0x08, 0x07,
-	0xf4, 0x59, 0xda, 0xa7, 0x3e, 0x4b, 0xde, 0xbd, 0x5b, 0xc5, 0x44, 0x13, 0x05, 0xf5, 0x59, 0xfa,
-	0x40, 0x52, 0x40, 0xdd, 0xd0, 0x62, 0x08, 0x05, 0x9e, 0xe0, 0x70, 0x88, 0x8a, 0x41, 0x1f, 0xda,
-	0xc4, 0x13, 0x8c, 0xba, 0x00, 0x78, 0x41, 0x48, 0xeb, 0x23, 0xe1, 0x26, 0x2a, 0x6f, 0xe6, 0x05,
-	0x61, 0x0b, 0x1d, 0x40, 0xed, 0x10, 0xc8, 0x89, 0x79, 0x91, 0x84, 0x9b, 0xf5, 0x38, 0xa0, 0x1f,
-	0x34, 0x3c, 0xf8, 0x7d, 0x9a, 0x3e, 0x30, 0xc2, 0x83, 0xdf, 0x67, 0x44, 0x8d, 0x28, 0x69, 0xc3,
-	0x2d, 0xc6, 0xb0, 0x28, 0x25, 0x05, 0x84, 0xa0, 0x71, 0x96, 0x57, 0x67, 0xc3, 0x2b, 0x28, 0x6d,
-	0xfa, 0x9b, 0x7b, 0x97, 0x01, 0xae, 0xe2, 0xfe, 0x8e, 0xcb, 0x73, 0x12, 0xa9, 0x99, 0x4d, 0xd6,
-	0xf8, 0x76, 0x5b, 0xf9, 0x6a, 0xe1, 0x6d, 0xf2, 0xd6, 0xa4, 0x50, 0x0d, 0xb2, 0x31, 0x58, 0x41,
-	0xf9, 0x14, 0xa5, 0x8d, 0x54, 0x0a, 0x05, 0x43, 0xb7, 0x25, 0x53, 0x05, 0xcc, 0x99, 0xea, 0x84,
-	0x23, 0xce, 0x6d, 0x7c, 0x6b, 0x8a, 0xed, 0x07, 0x0c, 0xac, 0x77, 0xb2, 0x1d, 0x9f, 0xe5, 0x49,
-	0x69, 0x77, 0xab, 0x95, 0x01, 0x8a, 0x9c, 0x33, 0xb3, 0x3c, 0xb1, 0x71, 0xd6, 0xf4, 0x7b, 0x73,
-	0x7e, 0x9f, 0x81, 0x75, 0x15, 0x39, 0xd7, 0x1c, 0xe3, 0x3f, 0x19, 0xe8, 0x34, 0x31, 0x56, 0x31,
-	0xaf, 0x64, 0x66, 0xc7, 0xe6, 0x37, 0x63, 0x41, 0xe4, 0xa9, 0xf7, 0xd7, 0x4c, 0x4a, 0xeb, 0x02,
-	0xc8, 0x6b, 0xac, 0xf4, 0x69, 0x7a, 0x4e, 0x6b, 0xce, 0x97, 0x78, 0xae, 0x86, 0xa0, 0x91, 0xaf,
-	0xf4, 0x7c, 0x66, 0x7c, 0x95, 0x93, 0x55, 0x93, 0x29, 0x59, 0x71, 0x3f, 0x32, 0xb0, 0xd2, 0x61,
-	0x76, 0xed, 0xd8, 0xba, 0x02, 0x98, 0x3d, 0xd4, 0xc4, 0xe6, 0x14, 0xb3, 0xe7, 0x5f, 0x9a, 0x76,
-	0x8c, 0x81, 0x0e, 0x87, 0x69, 0xf7, 0xe7, 0xe4, 0x19, 0x3e, 0x57, 0x0d, 0x03, 0x29, 0xd5, 0x46,
-	0x27, 0xd5, 0x80, 0x3b, 0xd5, 0xa0, 0x99, 0xea, 0x11, 0xc6, 0x52, 0xf9, 0x14, 0x9d, 0x6f, 0x4a,
-	0x94, 0x24, 0x2c, 0xd4, 0x4e, 0x9e, 0x3f, 0xc3, 0xc0, 0x5a, 0x6b, 0x54, 0x6f, 0xa5, 0x4c, 0xe9,
-	0x75, 0x84, 0x95, 0x5b, 0x25, 0x44, 0xb4, 0xec, 0xd4, 0x63, 0xb5, 0x63, 0x82, 0x57, 0xc9, 0xf4,
-	0x5e, 0x59, 0xdf, 0xf0, 0xaa, 0x5e, 0x5a, 0x37, 0xb7, 0xf3, 0x8b, 0x0c, 0xc4, 0x4c, 0x8c, 0xe7,
-	0x0a, 0x5a, 0xc1, 0x52, 0xab, 0x6c, 0x8d, 0xba, 0x3a, 0x58, 0xac, 0xab, 0x51, 0x2f, 0x04, 0x0b,
-	0x94, 0x2b, 0x8d, 0xdb, 0x96, 0x44, 0xeb, 0x70, 0x9e, 0xd0, 0xb6, 0x66, 0x78, 0x4c, 0x96, 0x73,
-	0x29, 0x43, 0xc8, 0xbd, 0xe3, 0xbc, 0x34, 0xac, 0x16, 0x56, 0xeb, 0xd2, 0xb8, 0xb9, 0x33, 0x39,
-	0x6a, 0x8d, 0x86, 0x39, 0x69, 0x4a, 0x94, 0xee, 0xcb, 0xe5, 0x6a, 0xae, 0x06, 0xe6, 0x8e, 0xd7,
-	0x5b, 0xae, 0x36, 0xad, 0x91, 0x90, 0x14, 0xcc, 0x0b, 0x9b, 0xb1, 0x44, 0x44, 0x59, 0xba, 0x55,
-	0xaa, 0x75, 0x6b, 0x31, 0x1e, 0xf2, 0x2c, 0xc6, 0x9b, 0xec, 0xc5, 0xb8, 0x5e, 0x75, 0x37, 0x9b,
-	0xab, 0xee, 0x0e, 0x08, 0xd1, 0x1a, 0x5d, 0x22, 0x46, 0x91, 0xae, 0x95, 0xec, 0x49, 0x89, 0xb8,
-	0xf8, 0xa0, 0x75, 0xaf, 0x6a, 0xac, 0xf2, 0xbe, 0x07, 0x56, 0x6e, 0xc7, 0xda, 0xc2, 0x69, 0xc3,
-	0xed, 0xc6, 0xe4, 0x7d, 0x68, 0x83, 0xde, 0x74, 0xab, 0x61, 0x26, 0xd6, 0x10, 0x6f, 0x49, 0xac,
-	0x2a, 0x45, 0x5b, 0x19, 0xa3, 0x77, 0xdc, 0x2a, 0xb7, 0x09, 0xda, 0x8d, 0xf9, 0x53, 0x6e, 0x7d,
-	0x7b, 0x71, 0x89, 0x8a, 0x7d, 0xbb, 0xca, 0x71, 0x00, 0xc6, 0x2a, 0x49, 0x89, 0x1e, 0x44, 0x79,
-	0x6e, 0xc0, 0xc0, 0x0c, 0x7c, 0x13, 0x82, 0x56, 0xcb, 0xbe, 0xa0, 0x95, 0xd0, 0x3a, 0x9e, 0x1a,
-	0x1f, 0x4d, 0xa4, 0xb7, 0x4d, 0x3e, 0x34, 0xb9, 0x65, 0xc7, 0x24, 0x5b, 0x87, 0xd6, 0xc2, 0x2a,
-	0x7d, 0xc8, 0xf2, 0x8a, 0xc0, 0x7e, 0xf5, 0xeb, 0x47, 0x27, 0x43, 0xa8, 0x07, 0x3a, 0x75, 0xa1,
-	0x7b, 0x47, 0xcc, 0x9e, 0xfb, 0xf9, 0xc3, 0x0b, 0x21, 0x34, 0x04, 0xb1, 0x4a, 0x28, 0x2d, 0x85,
-	0xb0, 0x47, 0x3f, 0xb9, 0xf4, 0xda, 0xdf, 0x4b, 0x4b, 0x4b, 0x4b, 0x0c, 0xba, 0x0b, 0x06, 0xfd,
-	0xe0, 0xe6, 0x36, 0x9b, 0xbd, 0xf6, 0xc5, 0x85, 0xe7, 0x18, 0xd4, 0xef, 0xa2, 0xc4, 0xd6, 0xa2,
-	0xb1, 0xa7, 0xce, 0x1e, 0x0a, 0xa3, 0x41, 0xe8, 0xf5, 0x03, 0x52, 0x8f, 0x62, 0x5f, 0xba, 0x7e,
-	0x7a, 0x3f, 0x1a, 0x00, 0xce, 0x81, 0x76, 0x74, 0x52, 0xec, 0x1b, 0x7f, 0x7c, 0x7a, 0x30, 0x84,
-	0xe2, 0x2e, 0x14, 0x6c, 0x58, 0xf6, 0xc5, 0x23, 0xe7, 0x5f, 0x0d, 0xa2, 0x51, 0xe8, 0x73, 0x45,
-	0x3a, 0x3a, 0x08, 0xf6, 0xf7, 0x5f, 0x0e, 0x9d, 0xbf, 0xae, 0xef, 0xcb, 0x9d, 0xd0, 0xe3, 0x37,
-	0x89, 0x4e, 0x39, 0xf0, 0xf9, 0x13, 0x0b, 0x7f, 0xe9, 0x53, 0xfa, 0xa1, 0xdb, 0x3a, 0xc5, 0x51,
-	0x43, 0xb3, 0x5f, 0x7e, 0x77, 0xe5, 0x00, 0x83, 0x3a, 0xa1, 0xdd, 0x0d, 0xc8, 0x1e, 0xbe, 0x74,
-	0xe1, 0x74, 0x10, 0xf5, 0x43, 0xc4, 0x4d, 0xaa, 0x17, 0x6e, 0xec, 0x99, 0xcf, 0x2e, 0xbf, 0x7e,
-	0x4d, 0xd7, 0xe7, 0xf0, 0x07, 0x6b, 0xd9, 0xc4, 0xfe, 0xf0, 0xf1, 0xb7, 0x57, 0x83, 0x68, 0x23,
-	0x44, 0x1d, 0x86, 0x58, 0xaa, 0x16, 0xf6, 0xec, 0x8d, 0xf7, 0x5e, 0xbe, 0x51, 0xf4, 0x86, 0x7e,
-	0x07, 0xd8, 0xbd, 0x34, 0x60, 0x4f, 0xbc, 0xf0, 0xdb, 0x75, 0xc3, 0xf0, 0x3b, 0x60, 0xbd, 0x75,
-	0x96, 0xeb, 0xf5, 0xcc, 0x2e, 0xfc, 0xf4, 0xe4, 0xf1, 0xa5, 0x0a, 0xbb, 0xeb, 0xbc, 0xeb, 0xd8,
-	0x8b, 0x6f, 0x3d, 0xb3, 0x60, 0x38, 0xaa, 0xc3, 0x0e, 0xfb, 0x7d, 0xc3, 0x5e, 0xfd, 0xfe, 0xd8,
-	0xc2, 0x0d, 0x8f, 0xa3, 0x70, 0xe4, 0x31, 0xf6, 0xe4, 0xb3, 0x4f, 0x2f, 0x05, 0x5d, 0x89, 0xb8,
-	0x24, 0x3c, 0xf6, 0xeb, 0x53, 0x4f, 0xbd, 0xad, 0x6f, 0x7b, 0xa4, 0xf1, 0xc0, 0xe1, 0x68, 0x5d,
-	0xe2, 0xe0, 0x6d, 0x00, 0xa9, 0xa9, 0xf1, 0x62, 0xbf, 0xbc, 0x15, 0x56, 0x7b, 0x3c, 0xdb, 0x71,
-	0xa6, 0xac, 0xe8, 0x11, 0x64, 0x11, 0xb7, 0x0c, 0xc5, 0xd5, 0xa1, 0x19, 0x88, 0x54, 0x78, 0x8a,
-	0xeb, 0xf3, 0x5f, 0x58, 0xc3, 0x45, 0x22, 0x25, 0x9c, 0x23, 0x53, 0x72, 0x75, 0x68, 0x3f, 0xf4,
-	0x2d, 0xf3, 0x81, 0x2d, 0xb1, 0x3c, 0x7d, 0xe6, 0x39, 0x3e, 0xba, 0xad, 0xf6, 0xd9, 0x9f, 0xd0,
-	0xbc, 0xec, 0xb3, 0xe1, 0x7c, 0x74, 0xec, 0x82, 0x6e, 0xbf, 0x67, 0xa4, 0x8d, 0xcb, 0x53, 0x44,
-	0xc1, 0x91, 0xb6, 0xd2, 0x51, 0x25, 0x25, 0x32, 0x9a, 0xe0, 0xea, 0xd0, 0x4e, 0xe8, 0xac, 0xf8,
-	0xf0, 0x13, 0xf7, 0x58, 0xde, 0x81, 0x74, 0x59, 0xfb, 0x61, 0xcb, 0x0e, 0xd9, 0x1f, 0x69, 0xfa,
-	0x96, 0xb7, 0xb2, 0x97, 0x7b, 0xed, 0x81, 0x98, 0xef, 0x9b, 0xca, 0x60, 0x05, 0x15, 0x0e, 0x74,
-	0xa4, 0xcb, 0x7e, 0x14, 0x96, 0xdb, 0x92, 0xab, 0x43, 0x8f, 0x42, 0xd4, 0xe7, 0x49, 0x64, 0x60,
-	0x79, 0x0a, 0x97, 0xe1, 0x5d, 0xbb, 0x60, 0x8d, 0xf7, 0x63, 0x46, 0xaf, 0x9b, 0x1a, 0x07, 0xcc,
-	0x47, 0xc3, 0x83, 0xd0, 0x66, 0x7b, 0x37, 0x88, 0x78, 0x2f, 0xeb, 0xb3, 0xd6, 0x76, 0x68, 0x77,
-	0x6d, 0xd4, 0x63, 0xde, 0x2b, 0xea, 0x08, 0x9f, 0x75, 0x77, 0x96, 0x13, 0x93, 0xad, 0xab, 0xe6,
-	0x2a, 0x6d, 0x81, 0x8e, 0xf1, 0x59, 0x3b, 0x05, 0x61, 0xcf, 0x56, 0xb8, 0xc7, 0xe3, 0x1c, 0x2d,
-	0x28, 0x17, 0x8f, 0x17, 0x61, 0x9d, 0x7f, 0x5b, 0x3a, 0xe4, 0xb1, 0xb8, 0x3b, 0x5c, 0xf3, 0x7f,
-	0xab, 0x15, 0x5a, 0xa1, 0xab, 0x05, 0x57, 0x57, 0xe5, 0x7e, 0x72, 0x83, 0x9b, 0x1a, 0x57, 0x68,
-	0xc4, 0xda, 0xd1, 0x71, 0x75, 0x28, 0x63, 0xf5, 0x74, 0x97, 0x3e, 0xce, 0xd3, 0xd3, 0x9d, 0x58,
-	0x2f, 0x0b, 0x76, 0x94, 0x0f, 0xc0, 0xd1, 0x7d, 0xb9, 0x1e, 0x80, 0x1d, 0xe5, 0xb5, 0xb0, 0x29,
-	0x76, 0x9c, 0xdd, 0x52, 0xaf, 0xd7, 0x45, 0x60, 0x81, 0xf9, 0xf8, 0xce, 0x23, 0x96, 0xfd, 0x71,
-	0xeb, 0x31, 0x06, 0x96, 0xa5, 0xc6, 0x23, 0x2b, 0x8f, 0x6d, 0xbb, 0x72, 0x39, 0xca, 0x9c, 0x5b,
-	0x8c, 0x32, 0x0b, 0x8b, 0x51, 0xe6, 0xd2, 0x62, 0x94, 0xd9, 0x39, 0x6e, 0xfa, 0xef, 0x26, 0xc1,
-	0x7c, 0x3e, 0xab, 0xf0, 0xe5, 0x1f, 0x43, 0x2a, 0x56, 0x1e, 0xc3, 0xca, 0x08, 0x5f, 0x28, 0x8c,
-	0x68, 0x3f, 0xc5, 0x0c, 0x1e, 0x99, 0x11, 0xf7, 0x8f, 0x18, 0x7a, 0x8b, 0x7f, 0x67, 0x82, 0x54,
-	0xcb, 0xe8, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x0d, 0x26, 0xf5, 0xc8, 0x46, 0x1d, 0x00, 0x00,
+	// 1780 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x6f, 0x68, 0x1c, 0xd5,
+	0x16, 0xcf, 0x24, 0xd9, 0xdd, 0xec, 0xc9, 0x9f, 0x4e, 0x6f, 0xf3, 0x92, 0xcd, 0x36, 0xd9, 0x6c,
+	0xa7, 0xf9, 0xb3, 0x4d, 0xf3, 0xe7, 0xbd, 0xcd, 0xfb, 0xf0, 0x3e, 0x3d, 0xde, 0x4b, 0x0a, 0xef,
+	0xad, 0xa6, 0x69, 0xd8, 0xa6, 0x29, 0x54, 0x70, 0x3b, 0xd9, 0x99, 0x6c, 0x46, 0x76, 0x67, 0xb6,
+	0x33, 0x13, 0x9b, 0xf4, 0x83, 0x20, 0x8a, 0x56, 0x05, 0x15, 0x05, 0x2d, 0xa2, 0x68, 0xff, 0x50,
+	0x5a, 0xab, 0x16, 0xb5, 0x88, 0x28, 0x48, 0xab, 0xb6, 0xd4, 0x82, 0x10, 0x44, 0x83, 0x20, 0x85,
+	0x36, 0x2a, 0xf8, 0x41, 0xa5, 0x52, 0x3f, 0xb5, 0xb5, 0x91, 0xb9, 0x77, 0x76, 0x77, 0xfe, 0xee,
+	0xc4, 0x62, 0x64, 0xfb, 0x29, 0x3b, 0xf7, 0x9c, 0x7b, 0xce, 0xef, 0xdc, 0x7b, 0xce, 0xb9, 0xe7,
+	0x9c, 0x00, 0x9d, 0xe3, 0x15, 0x85, 0xcd, 0xf0, 0x83, 0x6a, 0x76, 0x30, 0x2f, 0x4b, 0xaa, 0x84,
+	0x02, 0xfa, 0x4a, 0x78, 0x20, 0x23, 0xa8, 0xb3, 0x73, 0xd3, 0x83, 0x69, 0x29, 0x37, 0x94, 0x91,
+	0x32, 0xd2, 0x10, 0xa6, 0x4f, 0xcf, 0xcd, 0xe0, 0x2f, 0xfc, 0x81, 0x7f, 0x91, 0x7d, 0xe1, 0x48,
+	0x46, 0x92, 0x32, 0x59, 0xbe, 0xc4, 0xb5, 0x5f, 0x66, 0xf3, 0x79, 0x5e, 0x56, 0x74, 0x7a, 0x58,
+	0x49, 0xcf, 0xf2, 0x39, 0x56, 0x53, 0x94, 0x96, 0x64, 0x3e, 0xa5, 0x2e, 0xe4, 0xf9, 0x02, 0xad,
+	0xad, 0x44, 0x53, 0x65, 0x56, 0x54, 0xf2, 0x92, 0xac, 0xea, 0xa4, 0xe6, 0x12, 0x49, 0x59, 0x10,
+	0xd3, 0x64, 0x95, 0x79, 0x8d, 0x82, 0xc6, 0x09, 0x9e, 0x97, 0xb7, 0x13, 0xac, 0x09, 0x0e, 0x75,
+	0x43, 0x53, 0x5e, 0xe6, 0x39, 0x21, 0xcd, 0xaa, 0x7c, 0x4a, 0x64, 0x73, 0x7c, 0x88, 0x8a, 0x52,
+	0xb1, 0x60, 0xb2, 0xb1, 0xb8, 0x3a, 0xce, 0xe6, 0x78, 0xf4, 0x2f, 0xa8, 0x4f, 0x4b, 0xa2, 0xa2,
+	0xca, 0x73, 0x69, 0x55, 0x92, 0x43, 0xd5, 0x51, 0x2a, 0xd6, 0x14, 0x6f, 0x19, 0x2c, 0x9c, 0xc2,
+	0xe4, 0xd8, 0x68, 0x89, 0x9a, 0x34, 0xb2, 0xa2, 0x56, 0x08, 0xcc, 0x29, 0xbc, 0x9c, 0x12, 0xb8,
+	0x50, 0x4d, 0x94, 0x8a, 0xd5, 0x24, 0xfd, 0xda, 0x67, 0x82, 0x43, 0x7f, 0x03, 0x7f, 0x4e, 0xc9,
+	0x68, 0xeb, 0xb5, 0x51, 0x2a, 0xe6, 0x4b, 0xfa, 0x72, 0x4a, 0x26, 0xc1, 0x31, 0xff, 0x01, 0x7a,
+	0x72, 0x2c, 0x95, 0x37, 0x81, 0xec, 0x07, 0x1f, 0xc7, 0xaa, 0x6c, 0x1c, 0x63, 0xab, 0x37, 0xe8,
+	0x35, 0xd9, 0x92, 0x24, 0x4c, 0xcc, 0x43, 0xd0, 0x36, 0x39, 0x96, 0xd2, 0x59, 0x52, 0x19, 0x5e,
+	0xdd, 0xa5, 0x14, 0xb9, 0xac, 0x86, 0x50, 0x7f, 0x82, 0x21, 0x4d, 0x50, 0x5d, 0x34, 0xa2, 0x5a,
+	0xe0, 0x98, 0xa7, 0x28, 0xe8, 0x70, 0x05, 0x30, 0x26, 0x28, 0xea, 0x5a, 0x80, 0x68, 0x85, 0x80,
+	0xc0, 0xa5, 0xb2, 0x82, 0xa2, 0x86, 0x6a, 0xa3, 0x35, 0x31, 0x5f, 0xd2, 0x2f, 0x70, 0x9a, 0x2e,
+	0xe6, 0x45, 0x0a, 0xb6, 0x94, 0x45, 0x33, 0xb2, 0xb0, 0x8d, 0x55, 0xd9, 0x04, 0xf7, 0x17, 0x21,
+	0xab, 0x29, 0x22, 0xbb, 0x5c, 0x6d, 0x3d, 0xa7, 0xff, 0x0b, 0x8a, 0x2a, 0xc9, 0x0b, 0x3a, 0x38,
+	0x65, 0x2d, 0xd0, 0x6c, 0x84, 0xa0, 0xe6, 0x5b, 0x38, 0x8c, 0xf4, 0x3b, 0xab, 0xd3, 0x16, 0x26,
+	0x17, 0xf2, 0xbc, 0xb6, 0x0b, 0x13, 0x05, 0x2e, 0xe4, 0x23, 0xbb, 0xb4, 0x4f, 0xb2, 0x4b, 0x9a,
+	0x99, 0x51, 0x78, 0x55, 0x23, 0xf9, 0xc9, 0x2e, 0xb2, 0x90, 0xe0, 0x50, 0x27, 0xd4, 0xeb, 0x44,
+	0x8e, 0x55, 0xf9, 0x50, 0x00, 0x93, 0x81, 0x2c, 0x6d, 0x63, 0x55, 0x1e, 0x75, 0x00, 0xb0, 0x1c,
+	0x97, 0x22, 0x2b, 0xa1, 0x3a, 0x4c, 0x0f, 0xb2, 0x1c, 0xb7, 0x03, 0x2f, 0xa0, 0x66, 0xf0, 0x65,
+	0x85, 0x9c, 0xa0, 0x86, 0x82, 0x24, 0x0e, 0xf0, 0x07, 0x0e, 0x0f, 0x76, 0x5e, 0xd3, 0x07, 0x7a,
+	0x78, 0xb0, 0xf3, 0x7a, 0xd4, 0x08, 0xa2, 0xb6, 0x5c, 0xaf, 0x2f, 0x0b, 0x62, 0x82, 0x43, 0x08,
+	0x6a, 0x67, 0x59, 0x65, 0x36, 0xd4, 0x80, 0x61, 0xe3, 0xdf, 0xcc, 0x9b, 0x14, 0x30, 0x65, 0xcf,
+	0x77, 0x54, 0x9a, 0x13, 0xd5, 0x8a, 0x39, 0x64, 0x0d, 0x6f, 0xa7, 0x19, 0xaf, 0x16, 0xde, 0x06,
+	0x6f, 0x4d, 0x70, 0x6b, 0x01, 0x36, 0x0a, 0x0d, 0x18, 0x4f, 0x81, 0x5a, 0x8b, 0xa9, 0x90, 0xd7,
+	0x75, 0x9b, 0x32, 0x95, 0xcf, 0x98, 0xa9, 0x4e, 0xd9, 0xe2, 0xdc, 0x82, 0xb7, 0xa2, 0xd0, 0xbe,
+	0x4d, 0xc1, 0x66, 0x3b, 0xda, 0xd1, 0x59, 0x56, 0x2d, 0x9e, 0xee, 0x5a, 0x65, 0x80, 0x02, 0xe6,
+	0xf4, 0x2c, 0xab, 0x5a, 0x30, 0x6b, 0xfa, 0xdd, 0x31, 0x9f, 0xa6, 0x60, 0x53, 0x59, 0xcc, 0x15,
+	0x87, 0xf8, 0x57, 0x0a, 0xda, 0x0d, 0x88, 0x15, 0x9e, 0x95, 0xd3, 0xb3, 0x23, 0x0b, 0xdb, 0x79,
+	0x4e, 0x60, 0xb1, 0xf7, 0x57, 0x4c, 0x4a, 0xeb, 0x00, 0xc8, 0x69, 0xa8, 0xc8, 0x36, 0x92, 0xd3,
+	0x82, 0xb9, 0x22, 0xce, 0x16, 0xf0, 0xeb, 0xf9, 0x8a, 0xe4, 0x33, 0xfd, 0xab, 0x94, 0xac, 0xea,
+	0x0c, 0xc9, 0x8a, 0xf9, 0x9a, 0x82, 0xf5, 0x36, 0xb3, 0x2b, 0xc7, 0xd6, 0x06, 0xa0, 0xf6, 0x61,
+	0x13, 0x83, 0x49, 0x6a, 0xdf, 0x1f, 0x34, 0xed, 0x04, 0x05, 0xad, 0x36, 0xd3, 0xfe, 0x97, 0x95,
+	0xa6, 0xd9, 0xec, 0x5a, 0x18, 0x88, 0xa1, 0xd6, 0xda, 0xa1, 0xfa, 0x9c, 0xa1, 0xfa, 0x8d, 0x50,
+	0x8f, 0x51, 0xa6, 0xca, 0xa7, 0xe0, 0x7c, 0x13, 0x82, 0x28, 0xf2, 0x5c, 0xe5, 0xe4, 0xf9, 0xf3,
+	0x14, 0x6c, 0x34, 0x47, 0xf5, 0x4e, 0x8c, 0x14, 0x3f, 0x47, 0xbc, 0x7c, 0xb7, 0x84, 0x08, 0xf3,
+	0x4c, 0x0d, 0x6c, 0xb0, 0x1d, 0xf7, 0x54, 0xbc, 0x52, 0xdd, 0xbe, 0x15, 0x02, 0x33, 0xb2, 0x94,
+	0xd3, 0xd8, 0x02, 0x84, 0x4d, 0xfb, 0x4c, 0x70, 0xa8, 0x0d, 0xea, 0xb4, 0x92, 0x02, 0x17, 0x2f,
+	0xc4, 0xf5, 0x03, 0x39, 0x41, 0xc4, 0x95, 0x8b, 0x46, 0x62, 0xe7, 0x09, 0x29, 0xa8, 0x93, 0xd8,
+	0x79, 0x4c, 0x32, 0x95, 0x44, 0x60, 0x29, 0x89, 0xcc, 0x15, 0x4f, 0xbd, 0x6b, 0xc5, 0xd3, 0xe0,
+	0x5c, 0xf1, 0x34, 0x3a, 0x57, 0x3c, 0x4d, 0x4e, 0x15, 0xcf, 0x3a, 0x43, 0xc5, 0x73, 0x9a, 0x82,
+	0x2e, 0xb3, 0x67, 0x8d, 0xb1, 0x8a, 0x3a, 0xb9, 0x5f, 0x22, 0x21, 0xb0, 0xa6, 0x65, 0xc4, 0x9d,
+	0xc5, 0xc2, 0x32, 0x05, 0x51, 0x03, 0xe2, 0xb9, 0xbc, 0x76, 0xd4, 0x95, 0x8a, 0x56, 0xef, 0x74,
+	0xfc, 0x85, 0x4e, 0x07, 0x75, 0x83, 0x3f, 0x8f, 0xb1, 0x62, 0x8f, 0xaa, 0x8f, 0x37, 0x0e, 0xe6,
+	0x54, 0xdc, 0x68, 0x0e, 0x8e, 0x48, 0x52, 0x36, 0xa9, 0x13, 0x99, 0x37, 0xec, 0xcf, 0xb8, 0xd9,
+	0xc2, 0xb5, 0x7a, 0xc6, 0xef, 0xec, 0x4e, 0x8e, 0x9b, 0xf3, 0xd3, 0x9c, 0x38, 0x21, 0x88, 0xff,
+	0xcd, 0x66, 0x2b, 0xae, 0x2b, 0x61, 0x4e, 0x56, 0x9b, 0x8a, 0x0d, 0xad, 0xb5, 0x13, 0x65, 0x9e,
+	0xe5, 0xb6, 0xf3, 0xa2, 0x2a, 0x48, 0xe2, 0xdd, 0xd2, 0x3f, 0x99, 0x93, 0x45, 0xc0, 0x35, 0x59,
+	0xd4, 0x59, 0x93, 0x05, 0xc9, 0x0a, 0x41, 0x63, 0x56, 0x68, 0x85, 0x00, 0xce, 0x21, 0xa2, 0xaa,
+	0xe7, 0x24, 0x2d, 0xa5, 0x24, 0x44, 0xd5, 0xc1, 0x07, 0xcd, 0x67, 0x55, 0x61, 0xbd, 0xd0, 0xbf,
+	0x61, 0xfd, 0x14, 0xaf, 0x09, 0x4e, 0xe9, 0x6e, 0x37, 0x22, 0xcd, 0xa3, 0x2d, 0x64, 0x0c, 0xa2,
+	0x84, 0xa8, 0x68, 0x4d, 0xac, 0x3e, 0xbe, 0xa1, 0x18, 0x6d, 0x25, 0x1e, 0x32, 0x03, 0x51, 0x98,
+	0x6d, 0xd0, 0xac, 0xef, 0x9f, 0x70, 0x9a, 0xa4, 0x14, 0x44, 0x94, 0x9d, 0xa4, 0x28, 0x0c, 0x03,
+	0xa0, 0x4b, 0x49, 0x88, 0xf8, 0x22, 0x4a, 0x7b, 0x7d, 0x3a, 0x4f, 0xdf, 0x2f, 0x01, 0x68, 0x34,
+	0x9d, 0x0b, 0x5a, 0x0f, 0x8d, 0xa3, 0xc9, 0xd1, 0xe1, 0x78, 0x6a, 0xd7, 0xf8, 0xbd, 0xe3, 0x3b,
+	0x76, 0x8f, 0xd3, 0x55, 0x68, 0x23, 0x6c, 0x20, 0x4b, 0xa6, 0xb9, 0x0e, 0xfd, 0xe9, 0xf7, 0xef,
+	0x9e, 0x09, 0xa0, 0x2e, 0x68, 0x27, 0x44, 0xe7, 0x19, 0x05, 0x7d, 0xf1, 0xdb, 0x77, 0x96, 0x02,
+	0x68, 0x00, 0xa2, 0xe5, 0xb8, 0xb4, 0x14, 0x42, 0x1f, 0x7f, 0xff, 0xca, 0x4b, 0xbf, 0xad, 0xac,
+	0xac, 0xac, 0x50, 0xe8, 0x9f, 0xd0, 0xef, 0xc5, 0x6e, 0x1c, 0x7c, 0xd0, 0x37, 0x3f, 0x5e, 0x7a,
+	0x92, 0x42, 0xbd, 0x0e, 0x4a, 0x2c, 0x4d, 0x33, 0x7d, 0xf6, 0xc2, 0x91, 0x10, 0xea, 0x87, 0x6e,
+	0x2f, 0x46, 0xec, 0x51, 0xf4, 0xf3, 0xb7, 0xce, 0x1d, 0x40, 0x7d, 0xc0, 0xd8, 0xb8, 0x6d, 0xbd,
+	0x2d, 0xfd, 0xea, 0xcf, 0x1f, 0xbc, 0x12, 0x40, 0x31, 0x07, 0x08, 0x16, 0x5e, 0xfa, 0xb9, 0x63,
+	0x97, 0x0e, 0xf9, 0xd1, 0x30, 0xf4, 0x38, 0x72, 0xda, 0x7a, 0x3a, 0xfa, 0xc7, 0xef, 0x8e, 0x5c,
+	0xba, 0x45, 0xce, 0xe5, 0x1f, 0xd0, 0xe5, 0xb5, 0x09, 0x6f, 0x39, 0xf8, 0xd1, 0xc3, 0x8b, 0x37,
+	0xc8, 0x96, 0x5e, 0xe8, 0x34, 0x6f, 0xb1, 0x75, 0x35, 0xf4, 0x27, 0x5f, 0x5c, 0x3b, 0x48, 0xa1,
+	0x76, 0x68, 0x76, 0x62, 0xa4, 0x8f, 0x5e, 0x59, 0x3a, 0xe7, 0x47, 0xbd, 0x10, 0x76, 0xa2, 0x92,
+	0x52, 0x9a, 0x3e, 0xff, 0xe1, 0xd5, 0x97, 0x6f, 0x12, 0x7d, 0x36, 0x7f, 0x30, 0x17, 0xb2, 0xf4,
+	0x57, 0xef, 0x7d, 0x7e, 0xdd, 0x8f, 0xb6, 0x42, 0xc4, 0x66, 0x88, 0xa9, 0x8e, 0xa4, 0x2f, 0xdc,
+	0x7e, 0xeb, 0x85, 0xdb, 0x44, 0xe4, 0x66, 0x68, 0x71, 0x12, 0x39, 0x15, 0xa7, 0x0f, 0x2f, 0x1d,
+	0x7a, 0xfa, 0x46, 0xc1, 0x65, 0x7a, 0x6d, 0x12, 0x9d, 0xeb, 0x07, 0xfa, 0xd4, 0xb3, 0x3f, 0xdc,
+	0xd2, 0x77, 0xfd, 0x1d, 0x36, 0x9b, 0x77, 0x39, 0xbe, 0xe1, 0xf4, 0xe2, 0x37, 0x8f, 0x9c, 0x5c,
+	0x29, 0x73, 0x05, 0xf6, 0x07, 0x91, 0xbe, 0x7c, 0xf8, 0xf1, 0x45, 0xdd, 0x9b, 0x6d, 0xc6, 0x5a,
+	0x1f, 0x25, 0xfa, 0xfa, 0x97, 0x27, 0x16, 0x6f, 0xbb, 0xdc, 0x97, 0x2d, 0xd9, 0xd1, 0x67, 0x9e,
+	0x78, 0x6c, 0xc5, 0xef, 0x08, 0xc4, 0x21, 0x2b, 0xd2, 0x9f, 0x9d, 0x7d, 0xf4, 0x75, 0x72, 0x37,
+	0xe1, 0xda, 0x83, 0x47, 0x23, 0x55, 0xf1, 0x9f, 0xd6, 0x01, 0x24, 0x27, 0x46, 0x0b, 0x63, 0x8e,
+	0x9d, 0xd0, 0xe2, 0x32, 0x6d, 0x65, 0x0c, 0xa9, 0xd3, 0x25, 0x12, 0xc3, 0x4e, 0x69, 0x8c, 0xa9,
+	0x42, 0xd3, 0x10, 0x2e, 0x33, 0x41, 0xed, 0xf1, 0x16, 0xac, 0xf1, 0x85, 0xc3, 0x45, 0x3e, 0x5b,
+	0x3a, 0x65, 0xaa, 0xd0, 0x01, 0xe8, 0x59, 0xe5, 0x5c, 0x34, 0xbe, 0x3a, 0x7d, 0xc6, 0x3d, 0x1e,
+	0xba, 0xcd, 0xf6, 0x59, 0x27, 0x9f, 0x6e, 0xf6, 0x59, 0xf8, 0x3c, 0x74, 0xec, 0x85, 0x4e, 0xaf,
+	0xe9, 0xdf, 0xd6, 0xd5, 0x29, 0xc2, 0xcc, 0xe1, 0xa6, 0xe2, 0x55, 0x25, 0x44, 0x75, 0x38, 0xce,
+	0x54, 0xa1, 0x3d, 0xd0, 0x5e, 0x76, 0x5e, 0x17, 0x73, 0x11, 0x6f, 0xe3, 0x74, 0x90, 0x7d, 0x9f,
+	0xe9, 0x84, 0xac, 0xb3, 0xb5, 0x9e, 0xd5, 0x49, 0x76, 0x73, 0xaf, 0x7d, 0x10, 0xf5, 0x1c, 0x85,
+	0xf5, 0x97, 0x51, 0x61, 0xe3, 0x0e, 0x77, 0x58, 0xaf, 0xc2, 0xf4, 0xa4, 0x32, 0x55, 0xe8, 0x01,
+	0x88, 0x78, 0x4c, 0xb2, 0xfa, 0x56, 0xa7, 0x70, 0x15, 0xde, 0xb5, 0x17, 0xda, 0xdc, 0x67, 0x50,
+	0xdd, 0x4e, 0x6a, 0x6c, 0x6c, 0x1e, 0x1a, 0xee, 0x81, 0x26, 0xcb, 0xb8, 0x27, 0xec, 0x2e, 0xd6,
+	0x43, 0xd6, 0x14, 0x34, 0x3b, 0xce, 0x57, 0xa2, 0xee, 0x12, 0x09, 0x87, 0x87, 0xdc, 0x3d, 0xa5,
+	0xc4, 0x64, 0x19, 0x86, 0x30, 0xe5, 0x8e, 0x80, 0xf0, 0x78, 0xc8, 0x4e, 0x42, 0xc8, 0x75, 0x82,
+	0xd1, 0xe5, 0x72, 0x8f, 0x26, 0x2e, 0x07, 0x8f, 0x1f, 0x2f, 0xfe, 0x5f, 0xb1, 0x34, 0x4d, 0x68,
+	0x77, 0x47, 0x3a, 0x15, 0xf7, 0xc0, 0x28, 0xc0, 0x26, 0xef, 0x5e, 0x78, 0xc0, 0x05, 0xac, 0x33,
+	0xbb, 0x16, 0x4f, 0x66, 0x8d, 0x5a, 0x75, 0xad, 0x05, 0x6b, 0x47, 0xf9, 0x26, 0x76, 0x8b, 0x93,
+	0x1a, 0x47, 0xd6, 0xb0, 0xb9, 0x8d, 0x64, 0xaa, 0x50, 0xda, 0x1c, 0x39, 0x0e, 0xcd, 0xa3, 0x6b,
+	0xe4, 0xd8, 0x79, 0xdd, 0x2c, 0xd8, 0x5d, 0xba, 0x50, 0x5b, 0xcb, 0xe7, 0x78, 0xa1, 0x56, 0x2e,
+	0x37, 0xc1, 0x86, 0x58, 0xb4, 0xb7, 0x68, 0xdd, 0x6e, 0x0f, 0x8b, 0x89, 0xcd, 0xe3, 0x9e, 0xef,
+	0x37, 0x9d, 0x8f, 0x53, 0x63, 0xd3, 0xb7, 0x2a, 0x35, 0x2e, 0x59, 0x7e, 0x64, 0xd7, 0xb5, 0xab,
+	0x11, 0xea, 0xe2, 0x72, 0x84, 0x5a, 0x5c, 0x8e, 0x50, 0x57, 0x96, 0x23, 0xd4, 0x9e, 0x51, 0xc3,
+	0x3f, 0xb9, 0x55, 0x9e, 0xcd, 0x65, 0x64, 0xb6, 0xf4, 0x63, 0x40, 0xe1, 0xe5, 0x07, 0x79, 0x79,
+	0x88, 0xcd, 0xe7, 0x87, 0xb4, 0x9f, 0x42, 0x9a, 0x1f, 0x9a, 0x16, 0x0e, 0x0c, 0xe9, 0x7a, 0x0b,
+	0x7f, 0xa7, 0xfd, 0x58, 0xcb, 0xf0, 0xef, 0x01, 0x00, 0x00, 0xff, 0xff, 0x4d, 0x64, 0x9e, 0xdb,
+	0x4d, 0x1f, 0x00, 0x00,
 }
 
 func (this *PeerMessageId) GoString() string {
@@ -2404,6 +2544,32 @@ func (this *TLMessageGetSearchCounter) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLMessageSearchV2) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 18)
+	s = append(s, "&message.TLMessageSearchV2{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
+	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
+	s = append(s, "Q: "+fmt.Sprintf("%#v", this.Q)+",\n")
+	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
+	s = append(s, "MinDate: "+fmt.Sprintf("%#v", this.MinDate)+",\n")
+	s = append(s, "MaxDate: "+fmt.Sprintf("%#v", this.MaxDate)+",\n")
+	s = append(s, "OffsetId: "+fmt.Sprintf("%#v", this.OffsetId)+",\n")
+	s = append(s, "AddOffset: "+fmt.Sprintf("%#v", this.AddOffset)+",\n")
+	s = append(s, "Limit: "+fmt.Sprintf("%#v", this.Limit)+",\n")
+	s = append(s, "MaxId: "+fmt.Sprintf("%#v", this.MaxId)+",\n")
+	s = append(s, "MinId: "+fmt.Sprintf("%#v", this.MinId)+",\n")
+	s = append(s, "Hash: "+fmt.Sprintf("%#v", this.Hash)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *TLMessageGetLastTwoPinnedMessageId) GoString() string {
 	if this == nil {
 		return "nil"
@@ -2573,45 +2739,26 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RPCMessageClient interface {
-	// message.getUserMessage user_id:long id:int = MessageBox;
 	MessageGetUserMessage(ctx context.Context, in *TLMessageGetUserMessage, opts ...grpc.CallOption) (*mtproto.MessageBox, error)
-	// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 	MessageGetUserMessageList(ctx context.Context, in *TLMessageGetUserMessageList, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 	MessageGetUserMessageListByDataIdList(ctx context.Context, in *TLMessageGetUserMessageListByDataIdList, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 	MessageGetHistoryMessages(ctx context.Context, in *TLMessageGetHistoryMessages, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetHistoryMessagesCount(ctx context.Context, in *TLMessageGetHistoryMessagesCount, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 	MessageGetPeerUserMessageId(ctx context.Context, in *TLMessageGetPeerUserMessageId, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 	MessageGetPeerUserMessage(ctx context.Context, in *TLMessageGetPeerUserMessage, opts ...grpc.CallOption) (*mtproto.MessageBox, error)
-	// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
 	MessageGetPeerChatMessageIdList(ctx context.Context, in *TLMessageGetPeerChatMessageIdList, opts ...grpc.CallOption) (*Vector_PeerMessageId, error)
-	// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
 	MessageGetPeerChatMessageList(ctx context.Context, in *TLMessageGetPeerChatMessageList, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 	MessageSearchByMediaType(ctx context.Context, in *TLMessageSearchByMediaType, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 	MessageSearch(ctx context.Context, in *TLMessageSearch, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 	MessageSearchGlobal(ctx context.Context, in *TLMessageSearchGlobal, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 	MessageSearchByPinned(ctx context.Context, in *TLMessageSearchByPinned, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 	MessageGetSearchCounter(ctx context.Context, in *TLMessageGetSearchCounter, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
+	MessageSearchV2(ctx context.Context, in *TLMessageSearchV2, opts ...grpc.CallOption) (*Vector_MessageBox, error)
 	MessageGetLastTwoPinnedMessageId(ctx context.Context, in *TLMessageGetLastTwoPinnedMessageId, opts ...grpc.CallOption) (*Vector_Int, error)
-	// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 	MessageUpdatePinnedMessageId(ctx context.Context, in *TLMessageUpdatePinnedMessageId, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 	MessageGetPinnedMessageIdList(ctx context.Context, in *TLMessageGetPinnedMessageIdList, opts ...grpc.CallOption) (*Vector_Int, error)
-	// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 	MessageUnPinAllMessages(ctx context.Context, in *TLMessageUnPinAllMessages, opts ...grpc.CallOption) (*Vector_Int, error)
-	// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 	MessageGetUnreadMentions(ctx context.Context, in *TLMessageGetUnreadMentions, opts ...grpc.CallOption) (*Vector_MessageBox, error)
-	// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetUnreadMentionsCount(ctx context.Context, in *TLMessageGetUnreadMentionsCount, opts ...grpc.CallOption) (*mtproto.Int32, error)
 }
 
@@ -2749,6 +2896,15 @@ func (c *rPCMessageClient) MessageGetSearchCounter(ctx context.Context, in *TLMe
 	return out, nil
 }
 
+func (c *rPCMessageClient) MessageSearchV2(ctx context.Context, in *TLMessageSearchV2, opts ...grpc.CallOption) (*Vector_MessageBox, error) {
+	out := new(Vector_MessageBox)
+	err := c.cc.Invoke(ctx, "/message.RPCMessage/message_searchV2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rPCMessageClient) MessageGetLastTwoPinnedMessageId(ctx context.Context, in *TLMessageGetLastTwoPinnedMessageId, opts ...grpc.CallOption) (*Vector_Int, error) {
 	out := new(Vector_Int)
 	err := c.cc.Invoke(ctx, "/message.RPCMessage/message_getLastTwoPinnedMessageId", in, out, opts...)
@@ -2805,45 +2961,26 @@ func (c *rPCMessageClient) MessageGetUnreadMentionsCount(ctx context.Context, in
 
 // RPCMessageServer is the server API for RPCMessage service.
 type RPCMessageServer interface {
-	// message.getUserMessage user_id:long id:int = MessageBox;
 	MessageGetUserMessage(context.Context, *TLMessageGetUserMessage) (*mtproto.MessageBox, error)
-	// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 	MessageGetUserMessageList(context.Context, *TLMessageGetUserMessageList) (*Vector_MessageBox, error)
-	// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 	MessageGetUserMessageListByDataIdList(context.Context, *TLMessageGetUserMessageListByDataIdList) (*Vector_MessageBox, error)
-	// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 	MessageGetHistoryMessages(context.Context, *TLMessageGetHistoryMessages) (*Vector_MessageBox, error)
-	// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetHistoryMessagesCount(context.Context, *TLMessageGetHistoryMessagesCount) (*mtproto.Int32, error)
-	// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 	MessageGetPeerUserMessageId(context.Context, *TLMessageGetPeerUserMessageId) (*mtproto.Int32, error)
-	// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 	MessageGetPeerUserMessage(context.Context, *TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error)
-	// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
 	MessageGetPeerChatMessageIdList(context.Context, *TLMessageGetPeerChatMessageIdList) (*Vector_PeerMessageId, error)
-	// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
 	MessageGetPeerChatMessageList(context.Context, *TLMessageGetPeerChatMessageList) (*Vector_MessageBox, error)
-	// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 	MessageSearchByMediaType(context.Context, *TLMessageSearchByMediaType) (*Vector_MessageBox, error)
-	// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 	MessageSearch(context.Context, *TLMessageSearch) (*Vector_MessageBox, error)
-	// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 	MessageSearchGlobal(context.Context, *TLMessageSearchGlobal) (*Vector_MessageBox, error)
-	// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 	MessageSearchByPinned(context.Context, *TLMessageSearchByPinned) (*Vector_MessageBox, error)
-	// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 	MessageGetSearchCounter(context.Context, *TLMessageGetSearchCounter) (*mtproto.Int32, error)
-	// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
+	MessageSearchV2(context.Context, *TLMessageSearchV2) (*Vector_MessageBox, error)
 	MessageGetLastTwoPinnedMessageId(context.Context, *TLMessageGetLastTwoPinnedMessageId) (*Vector_Int, error)
-	// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 	MessageUpdatePinnedMessageId(context.Context, *TLMessageUpdatePinnedMessageId) (*mtproto.Bool, error)
-	// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 	MessageGetPinnedMessageIdList(context.Context, *TLMessageGetPinnedMessageIdList) (*Vector_Int, error)
-	// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 	MessageUnPinAllMessages(context.Context, *TLMessageUnPinAllMessages) (*Vector_Int, error)
-	// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 	MessageGetUnreadMentions(context.Context, *TLMessageGetUnreadMentions) (*Vector_MessageBox, error)
-	// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 	MessageGetUnreadMentionsCount(context.Context, *TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
 }
 
@@ -2892,6 +3029,9 @@ func (*UnimplementedRPCMessageServer) MessageSearchByPinned(ctx context.Context,
 }
 func (*UnimplementedRPCMessageServer) MessageGetSearchCounter(ctx context.Context, req *TLMessageGetSearchCounter) (*mtproto.Int32, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MessageGetSearchCounter not implemented")
+}
+func (*UnimplementedRPCMessageServer) MessageSearchV2(ctx context.Context, req *TLMessageSearchV2) (*Vector_MessageBox, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MessageSearchV2 not implemented")
 }
 func (*UnimplementedRPCMessageServer) MessageGetLastTwoPinnedMessageId(ctx context.Context, req *TLMessageGetLastTwoPinnedMessageId) (*Vector_Int, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MessageGetLastTwoPinnedMessageId not implemented")
@@ -3168,6 +3308,24 @@ func _RPCMessage_MessageGetSearchCounter_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCMessage_MessageSearchV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLMessageSearchV2)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCMessageServer).MessageSearchV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/message.RPCMessage/MessageSearchV2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCMessageServer).MessageSearchV2(ctx, req.(*TLMessageSearchV2))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RPCMessage_MessageGetLastTwoPinnedMessageId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TLMessageGetLastTwoPinnedMessageId)
 	if err := dec(in); err != nil {
@@ -3335,6 +3493,10 @@ var _RPCMessage_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "message_getSearchCounter",
 			Handler:    _RPCMessage_MessageGetSearchCounter_Handler,
+		},
+		{
+			MethodName: "message_searchV2",
+			Handler:    _RPCMessage_MessageSearchV2_Handler,
 		},
 		{
 			MethodName: "message_getLastTwoPinnedMessageId",
@@ -4179,6 +4341,105 @@ func (m *TLMessageGetSearchCounter) MarshalToSizedBuffer(dAtA []byte) (int, erro
 		i = encodeVarintMessageTl(dAtA, i, uint64(m.MediaType))
 		i--
 		dAtA[i] = 0x30
+	}
+	if m.PeerId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerId))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.PeerType != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.UserId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLMessageSearchV2) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLMessageSearchV2) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLMessageSearchV2) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Hash != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.Hash))
+		i--
+		dAtA[i] = 0x78
+	}
+	if m.MinId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.MinId))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.MaxId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.MaxId))
+		i--
+		dAtA[i] = 0x68
+	}
+	if m.Limit != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x60
+	}
+	if m.AddOffset != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.AddOffset))
+		i--
+		dAtA[i] = 0x58
+	}
+	if m.OffsetId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.OffsetId))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.MaxDate != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.MaxDate))
+		i--
+		dAtA[i] = 0x48
+	}
+	if m.MinDate != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.MinDate))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.FromId != 0 {
+		i = encodeVarintMessageTl(dAtA, i, uint64(m.FromId))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.Q) > 0 {
+		i -= len(m.Q)
+		copy(dAtA[i:], m.Q)
+		i = encodeVarintMessageTl(dAtA, i, uint64(len(m.Q)))
+		i--
+		dAtA[i] = 0x32
 	}
 	if m.PeerId != 0 {
 		i = encodeVarintMessageTl(dAtA, i, uint64(m.PeerId))
@@ -5082,6 +5343,61 @@ func (m *TLMessageGetSearchCounter) Size() (n int) {
 	}
 	if m.MediaType != 0 {
 		n += 1 + sovMessageTl(uint64(m.MediaType))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLMessageSearchV2) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovMessageTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovMessageTl(uint64(m.UserId))
+	}
+	if m.PeerType != 0 {
+		n += 1 + sovMessageTl(uint64(m.PeerType))
+	}
+	if m.PeerId != 0 {
+		n += 1 + sovMessageTl(uint64(m.PeerId))
+	}
+	l = len(m.Q)
+	if l > 0 {
+		n += 1 + l + sovMessageTl(uint64(l))
+	}
+	if m.FromId != 0 {
+		n += 1 + sovMessageTl(uint64(m.FromId))
+	}
+	if m.MinDate != 0 {
+		n += 1 + sovMessageTl(uint64(m.MinDate))
+	}
+	if m.MaxDate != 0 {
+		n += 1 + sovMessageTl(uint64(m.MaxDate))
+	}
+	if m.OffsetId != 0 {
+		n += 1 + sovMessageTl(uint64(m.OffsetId))
+	}
+	if m.AddOffset != 0 {
+		n += 1 + sovMessageTl(uint64(m.AddOffset))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovMessageTl(uint64(m.Limit))
+	}
+	if m.MaxId != 0 {
+		n += 1 + sovMessageTl(uint64(m.MaxId))
+	}
+	if m.MinId != 0 {
+		n += 1 + sovMessageTl(uint64(m.MinId))
+	}
+	if m.Hash != 0 {
+		n += 1 + sovMessageTl(uint64(m.Hash))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -7663,6 +7979,336 @@ func (m *TLMessageGetSearchCounter) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.MediaType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMessageTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthMessageTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLMessageSearchV2) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMessageTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_message_searchV2: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_message_searchV2: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
+			}
+			m.PeerType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
+			}
+			m.PeerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Q", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMessageTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMessageTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Q = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
+			}
+			m.FromId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FromId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinDate", wireType)
+			}
+			m.MinDate = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinDate |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxDate", wireType)
+			}
+			m.MaxDate = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxDate |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OffsetId", wireType)
+			}
+			m.OffsetId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OffsetId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AddOffset", wireType)
+			}
+			m.AddOffset = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AddOffset |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxId", wireType)
+			}
+			m.MaxId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinId", wireType)
+			}
+			m.MinId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+			}
+			m.Hash = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMessageTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Hash |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package message
@@ -40,6 +40,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLMessageSearchGlobal":                   RPCContextTuple{"/mtproto.RPCMessage/message_searchGlobal", func() interface{} { return new(Vector_MessageBox) }},
 	"TLMessageSearchByPinned":                 RPCContextTuple{"/mtproto.RPCMessage/message_searchByPinned", func() interface{} { return new(Vector_MessageBox) }},
 	"TLMessageGetSearchCounter":               RPCContextTuple{"/mtproto.RPCMessage/message_getSearchCounter", func() interface{} { return new(mtproto.Int32) }},
+	"TLMessageSearchV2":                       RPCContextTuple{"/mtproto.RPCMessage/message_searchV2", func() interface{} { return new(Vector_MessageBox) }},
 	"TLMessageGetLastTwoPinnedMessageId":      RPCContextTuple{"/mtproto.RPCMessage/message_getLastTwoPinnedMessageId", func() interface{} { return new(Vector_Int) }},
 	"TLMessageUpdatePinnedMessageId":          RPCContextTuple{"/mtproto.RPCMessage/message_updatePinnedMessageId", func() interface{} { return new(mtproto.Bool) }},
 	"TLMessageGetPinnedMessageIdList":         RPCContextTuple{"/mtproto.RPCMessage/message_getPinnedMessageIdList", func() interface{} { return new(Vector_Int) }},

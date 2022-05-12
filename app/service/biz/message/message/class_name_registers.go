@@ -1,12 +1,8 @@
-/*
- * WARNING! All changes made in this file will be lost!
- * Created from 'scheme.tl' by 'mtprotoc'
- *
- * Copyright (c) 2022-present,  Teamgram Authors.
- *  All rights reserved.
- *
- * Author: teagramio (teagram.io@gmail.com)
- */
+// Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+//  All rights reserved.
+//
+// Author: Benqi (wubenqi@gmail.com)
+//
 
 package message
 
@@ -26,6 +22,7 @@ const (
 	Predicate_message_searchGlobal                   = "message_searchGlobal"
 	Predicate_message_searchByPinned                 = "message_searchByPinned"
 	Predicate_message_getSearchCounter               = "message_getSearchCounter"
+	Predicate_message_searchV2                       = "message_searchV2"
 	Predicate_message_getLastTwoPinnedMessageId      = "message_getLastTwoPinnedMessageId"
 	Predicate_message_updatePinnedMessageId          = "message_updatePinnedMessageId"
 	Predicate_message_getPinnedMessageIdList         = "message_getPinnedMessageIdList"
@@ -95,6 +92,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -489963706, // 0xe2cbbf46
 
 	},
+	Predicate_message_searchV2: {
+		0: -1580848351, // 0xa1c62b21
+
+	},
 	Predicate_message_getLastTwoPinnedMessageId: {
 		0: -1348859861, // 0xaf9a082b
 
@@ -137,6 +138,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1281860155: Predicate_message_searchGlobal,                   // 0xb3985dc5
 	1853053781:  Predicate_message_searchByPinned,                 // 0x6e735b55
 	-489963706:  Predicate_message_getSearchCounter,               // 0xe2cbbf46
+	-1580848351: Predicate_message_searchV2,                       // 0xa1c62b21
 	-1348859861: Predicate_message_getLastTwoPinnedMessageId,      // 0xaf9a082b
 	-182391344:  Predicate_message_updatePinnedMessageId,          // 0xf520edd0
 	-637415203:  Predicate_message_getPinnedMessageIdList,         // 0xda01d0dd

@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -105,6 +105,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-489963706: func() mtproto.TLObject { // 0xe2cbbf46
 		return &TLMessageGetSearchCounter{
 			Constructor: -489963706,
+		}
+	},
+	-1580848351: func() mtproto.TLObject { // 0xa1c62b21
+		return &TLMessageSearchV2{
+			Constructor: -1580848351,
 		}
 	},
 	-1348859861: func() mtproto.TLObject { // 0xaf9a082b
@@ -213,7 +218,6 @@ func (m *PeerMessageId) DebugString() string {
 }
 
 // To_PeerMessageId
-// peerMessageId user_id:long msg_id:int = PeerMessageId;
 func (m *PeerMessageId) To_PeerMessageId() *TLPeerMessageId {
 	m.PredicateName = Predicate_peerMessageId
 	return &TLPeerMessageId{
@@ -222,7 +226,6 @@ func (m *PeerMessageId) To_PeerMessageId() *TLPeerMessageId {
 }
 
 // MakeTLPeerMessageId
-// peerMessageId user_id:long msg_id:int = PeerMessageId;
 func MakeTLPeerMessageId(data2 *PeerMessageId) *TLPeerMessageId {
 	if data2 == nil {
 		return &TLPeerMessageId{Data2: &PeerMessageId{
@@ -254,7 +257,6 @@ func (m *TLPeerMessageId) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x768cf2c4: func() []byte {
-			// peerMessageId user_id:long msg_id:int = PeerMessageId;
 			x.UInt(0x768cf2c4)
 
 			x.Long(m.GetUserId())
@@ -282,7 +284,6 @@ func (m *TLPeerMessageId) CalcByteSize(layer int32) int {
 func (m *TLPeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x768cf2c4: func() error {
-			// peerMessageId user_id:long msg_id:int = PeerMessageId;
 			m.SetUserId(dBuf.Long())
 			m.SetMsgId(dBuf.Int())
 			return dBuf.GetError()
@@ -312,7 +313,6 @@ func (m *TLMessageGetUserMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x7accb1c8:
-		// message.getUserMessage user_id:long id:int = MessageBox;
 		x.UInt(0x7accb1c8)
 
 		// no flags
@@ -334,7 +334,6 @@ func (m *TLMessageGetUserMessage) CalcByteSize(layer int32) int {
 func (m *TLMessageGetUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x7accb1c8:
-		// message.getUserMessage user_id:long id:int = MessageBox;
 
 		// not has flags
 
@@ -363,7 +362,6 @@ func (m *TLMessageGetUserMessageList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xd3581c26:
-		// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 		x.UInt(0xd3581c26)
 
 		// no flags
@@ -386,7 +384,6 @@ func (m *TLMessageGetUserMessageList) CalcByteSize(layer int32) int {
 func (m *TLMessageGetUserMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xd3581c26:
-		// message.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
 
 		// not has flags
 
@@ -417,7 +414,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x1155a17b:
-		// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 		x.UInt(0x1155a17b)
 
 		// no flags
@@ -440,7 +436,6 @@ func (m *TLMessageGetUserMessageListByDataIdList) CalcByteSize(layer int32) int 
 func (m *TLMessageGetUserMessageListByDataIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1155a17b:
-		// message.getUserMessageListByDataIdList user_id:long id_list:Vector<long> = Vector<MessageBox>;
 
 		// not has flags
 
@@ -471,7 +466,6 @@ func (m *TLMessageGetHistoryMessages) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x308a340:
-		// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 		x.UInt(0x308a340)
 
 		// no flags
@@ -501,7 +495,6 @@ func (m *TLMessageGetHistoryMessages) CalcByteSize(layer int32) int {
 func (m *TLMessageGetHistoryMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x308a340:
-		// message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 
 		// not has flags
 
@@ -538,7 +531,6 @@ func (m *TLMessageGetHistoryMessagesCount) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xf507e13:
-		// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 		x.UInt(0xf507e13)
 
 		// no flags
@@ -561,7 +553,6 @@ func (m *TLMessageGetHistoryMessagesCount) CalcByteSize(layer int32) int {
 func (m *TLMessageGetHistoryMessagesCount) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xf507e13:
-		// message.getHistoryMessagesCount user_id:long peer_type:int peer_id:long = Int32;
 
 		// not has flags
 
@@ -591,7 +582,6 @@ func (m *TLMessageGetPeerUserMessageId) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x73aeb71f:
-		// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 		x.UInt(0x73aeb71f)
 
 		// no flags
@@ -614,7 +604,6 @@ func (m *TLMessageGetPeerUserMessageId) CalcByteSize(layer int32) int {
 func (m *TLMessageGetPeerUserMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x73aeb71f:
-		// message.getPeerUserMessageId user_id:long peer_user_id:long msg_id:int = Int32;
 
 		// not has flags
 
@@ -644,7 +633,6 @@ func (m *TLMessageGetPeerUserMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x63129212:
-		// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 		x.UInt(0x63129212)
 
 		// no flags
@@ -667,7 +655,6 @@ func (m *TLMessageGetPeerUserMessage) CalcByteSize(layer int32) int {
 func (m *TLMessageGetPeerUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x63129212:
-		// message.getPeerUserMessage user_id:long peer_user_id:long msg_id:int = MessageBox;
 
 		// not has flags
 
@@ -697,7 +684,6 @@ func (m *TLMessageGetPeerChatMessageIdList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc948b26c:
-		// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
 		x.UInt(0xc948b26c)
 
 		// no flags
@@ -720,7 +706,6 @@ func (m *TLMessageGetPeerChatMessageIdList) CalcByteSize(layer int32) int {
 func (m *TLMessageGetPeerChatMessageIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc948b26c:
-		// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
 
 		// not has flags
 
@@ -750,7 +735,6 @@ func (m *TLMessageGetPeerChatMessageList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xaa005f08:
-		// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
 		x.UInt(0xaa005f08)
 
 		// no flags
@@ -773,7 +757,6 @@ func (m *TLMessageGetPeerChatMessageList) CalcByteSize(layer int32) int {
 func (m *TLMessageGetPeerChatMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xaa005f08:
-		// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
 
 		// not has flags
 
@@ -803,7 +786,6 @@ func (m *TLMessageSearchByMediaType) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x111c2943:
-		// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 		x.UInt(0x111c2943)
 
 		// no flags
@@ -829,7 +811,6 @@ func (m *TLMessageSearchByMediaType) CalcByteSize(layer int32) int {
 func (m *TLMessageSearchByMediaType) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x111c2943:
-		// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
 
 		// not has flags
 
@@ -862,7 +843,6 @@ func (m *TLMessageSearch) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x6835b023:
-		// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 		x.UInt(0x6835b023)
 
 		// no flags
@@ -888,7 +868,6 @@ func (m *TLMessageSearch) CalcByteSize(layer int32) int {
 func (m *TLMessageSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6835b023:
-		// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
 
 		// not has flags
 
@@ -921,7 +900,6 @@ func (m *TLMessageSearchGlobal) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb3985dc5:
-		// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 		x.UInt(0xb3985dc5)
 
 		// no flags
@@ -945,7 +923,6 @@ func (m *TLMessageSearchGlobal) CalcByteSize(layer int32) int {
 func (m *TLMessageSearchGlobal) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb3985dc5:
-		// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
 
 		// not has flags
 
@@ -976,7 +953,6 @@ func (m *TLMessageSearchByPinned) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x6e735b55:
-		// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 		x.UInt(0x6e735b55)
 
 		// no flags
@@ -999,7 +975,6 @@ func (m *TLMessageSearchByPinned) CalcByteSize(layer int32) int {
 func (m *TLMessageSearchByPinned) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6e735b55:
-		// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
 
 		// not has flags
 
@@ -1029,7 +1004,6 @@ func (m *TLMessageGetSearchCounter) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe2cbbf46:
-		// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 		x.UInt(0xe2cbbf46)
 
 		// no flags
@@ -1053,7 +1027,6 @@ func (m *TLMessageGetSearchCounter) CalcByteSize(layer int32) int {
 func (m *TLMessageGetSearchCounter) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe2cbbf46:
-		// message.getSearchCounter user_id:long peer_type:int peer_id:long media_type:int = Int32;
 
 		// not has flags
 
@@ -1075,6 +1048,77 @@ func (m *TLMessageGetSearchCounter) DebugString() string {
 	return dbgString
 }
 
+// TLMessageSearchV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageSearchV2) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_searchV2))
+
+	switch uint32(m.Constructor) {
+	case 0xa1c62b21:
+		x.UInt(0xa1c62b21)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.String(m.GetQ())
+		x.Long(m.GetFromId())
+		x.Int(m.GetMinDate())
+		x.Int(m.GetMaxDate())
+		x.Int(m.GetOffsetId())
+		x.Int(m.GetAddOffset())
+		x.Int(m.GetLimit())
+		x.Int(m.GetMaxId())
+		x.Int(m.GetMinId())
+		x.Long(m.GetHash())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageSearchV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageSearchV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xa1c62b21:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.Q = dBuf.String()
+		m.FromId = dBuf.Long()
+		m.MinDate = dBuf.Int()
+		m.MaxDate = dBuf.Int()
+		m.OffsetId = dBuf.Int()
+		m.AddOffset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		m.MaxId = dBuf.Int()
+		m.MinId = dBuf.Int()
+		m.Hash = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageSearchV2) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // TLMessageGetLastTwoPinnedMessageId
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1084,7 +1128,6 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xaf9a082b:
-		// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
 		x.UInt(0xaf9a082b)
 
 		// no flags
@@ -1107,7 +1150,6 @@ func (m *TLMessageGetLastTwoPinnedMessageId) CalcByteSize(layer int32) int {
 func (m *TLMessageGetLastTwoPinnedMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xaf9a082b:
-		// message.getLastTwoPinnedMessageId user_id:long peer_type:int peer_id:long = Vector<int>;
 
 		// not has flags
 
@@ -1137,7 +1179,6 @@ func (m *TLMessageUpdatePinnedMessageId) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xf520edd0:
-		// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 		x.UInt(0xf520edd0)
 
 		// no flags
@@ -1162,7 +1203,6 @@ func (m *TLMessageUpdatePinnedMessageId) CalcByteSize(layer int32) int {
 func (m *TLMessageUpdatePinnedMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xf520edd0:
-		// message.updatePinnedMessageId user_id:long peer_type:int peer_id:long id:int pinned:Bool = Bool;
 
 		// not has flags
 
@@ -1198,7 +1238,6 @@ func (m *TLMessageGetPinnedMessageIdList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xda01d0dd:
-		// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 		x.UInt(0xda01d0dd)
 
 		// no flags
@@ -1221,7 +1260,6 @@ func (m *TLMessageGetPinnedMessageIdList) CalcByteSize(layer int32) int {
 func (m *TLMessageGetPinnedMessageIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xda01d0dd:
-		// message.getPinnedMessageIdList user_id:long peer_type:int peer_id:long = Vector<int>;
 
 		// not has flags
 
@@ -1251,7 +1289,6 @@ func (m *TLMessageUnPinAllMessages) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xea0a2a73:
-		// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 		x.UInt(0xea0a2a73)
 
 		// no flags
@@ -1274,7 +1311,6 @@ func (m *TLMessageUnPinAllMessages) CalcByteSize(layer int32) int {
 func (m *TLMessageUnPinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xea0a2a73:
-		// message.unPinAllMessages user_id:long peer_type:int peer_id:long = Vector<int>;
 
 		// not has flags
 
@@ -1304,7 +1340,6 @@ func (m *TLMessageGetUnreadMentions) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x6fe184b4:
-		// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 		x.UInt(0x6fe184b4)
 
 		// no flags
@@ -1332,7 +1367,6 @@ func (m *TLMessageGetUnreadMentions) CalcByteSize(layer int32) int {
 func (m *TLMessageGetUnreadMentions) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6fe184b4:
-		// message.getUnreadMentions user_id:long peer_type:int peer_id:long offset_id:int add_offset:int limit:int min_id:int max_int:int = Vector<MessageBox>;
 
 		// not has flags
 
@@ -1367,7 +1401,6 @@ func (m *TLMessageGetUnreadMentionsCount) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb5412049:
-		// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 		x.UInt(0xb5412049)
 
 		// no flags
@@ -1390,7 +1423,6 @@ func (m *TLMessageGetUnreadMentionsCount) CalcByteSize(layer int32) int {
 func (m *TLMessageGetUnreadMentionsCount) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb5412049:
-		// message.getUnreadMentionsCount user_id:long peer_type:int peer_id:long = Int32;
 
 		// not has flags
 

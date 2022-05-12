@@ -1696,3 +1696,49 @@ func (dao *MessagesDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface
 
 	return
 }
+
+// SelectBackwardBySendUserIdOffsetIdLimit
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and sender_user_id = :sender_user_id and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+// TODO(@benqi): sqlmap
+func (dao *MessagesDAO) SelectBackwardBySendUserIdOffsetIdLimit(ctx context.Context, user_id int64, dialog_id1 int64, dialog_id2 int64, sender_user_id int64, user_message_box_id int32, limit int32) (rList []dataobject.MessagesDO, err error) {
+	var (
+		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and sender_user_id = ? and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?"
+		values []dataobject.MessagesDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, dialog_id1, dialog_id2, sender_user_id, user_message_box_id, limit)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectBackwardBySendUserIdOffsetIdLimit(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectBackwardBySendUserIdOffsetIdLimitWithCB
+// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id = :user_id and (dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2) and sender_user_id = :sender_user_id and user_message_box_id < :user_message_box_id and deleted = 0 order by user_message_box_id desc limit :limit
+// TODO(@benqi): sqlmap
+func (dao *MessagesDAO) SelectBackwardBySendUserIdOffsetIdLimitWithCB(ctx context.Context, user_id int64, dialog_id1 int64, dialog_id2 int64, sender_user_id int64, user_message_box_id int32, limit int32, cb func(i int, v *dataobject.MessagesDO)) (rList []dataobject.MessagesDO, err error) {
+	var (
+		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id = ? and (dialog_id1 = ? and dialog_id2 = ?) and sender_user_id = ? and user_message_box_id < ? and deleted = 0 order by user_message_box_id desc limit ?"
+		values []dataobject.MessagesDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, dialog_id1, dialog_id2, sender_user_id, user_message_box_id, limit)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectBackwardBySendUserIdOffsetIdLimit(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
+
+	return
+}
