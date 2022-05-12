@@ -81,22 +81,38 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 		i = 0
 	)
 	for _, u := range in.Users {
-		if user, ok := users.GetImmutableUser(u.UserId); !ok {
+		if addUser, ok := users.GetImmutableUser(u.UserId); !ok {
 			err := mtproto.ErrInputUserDeactivated
 			c.Logger.Errorf("messages.createChat - error: %v", err)
 			return nil, err
 		} else {
-			if allowAddChat, _ := c.svcCtx.Dao.UserClient.UserCheckPrivacy(c.ctx, &userpb.TLUserCheckPrivacy{
-				UserId:  user.Id(),
+			rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
+				UserId:  addUser.Id(),
 				KeyType: userpb.CHAT_INVITE,
-				PeerId:  c.MD.UserId,
-			}); !mtproto.FromBool(allowAddChat) {
-				c.Logger.Errorf("chatInvite privacy, ignore %d", u.UserId)
-				continue
-			} else {
-				chatUserIdList[i] = user.Id()
-				i++
+			})
+			if len(rules.Datas) > 0 {
+				allowAddChat := userpb.CheckPrivacyIsAllow(
+					addUser.Id(),
+					rules.Datas,
+					c.MD.UserId,
+					func(id, checkId int64) bool {
+						contact, _ := c.svcCtx.Dao.UserClient.UserCheckContact(c.ctx, &userpb.TLUserCheckContact{
+							UserId: id,
+							Id:     checkId,
+						})
+						return mtproto.FromBool(contact)
+					},
+					func(checkId int64, idList []int64) bool {
+						chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+						return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
+					})
+				if !allowAddChat {
+					c.Logger.Errorf("chatInvite privacy, ignore %d", u.UserId)
+					continue
+				}
 			}
+			chatUserIdList[i] = addUser.Id()
+			i++
 		}
 	}
 	chatUserIdList = chatUserIdList[:i]

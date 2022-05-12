@@ -155,17 +155,26 @@ func (m *ImmutableUser) GetContactData(cId int64) *ContactData {
 }
 
 func (m *ImmutableUser) CheckPrivacy(keyType int, id int64) bool {
-	//i := sort.Search(len(m.KeysPrivacyRules), func(i int) bool {
-	//	return keyType >= i
-	//})
-	//if i <= len(m.KeysPrivacyRules) && i == keyType {
-	//	return  privacyIsAllow(m.KeysPrivacyRules[i], id, isContact)
-	//}
-	//_, isContact := m.Contacts[id]
-	//if p, ok := m.KeysPrivacyRules[keyType]; ok {
-	//	return privacyIsAllow(p, id, isContact)
-	//}
-	return true
+	var (
+		rules *PrivacyKeyRules
+	)
+
+	for _, v := range m.KeysPrivacyRules {
+		if v.Key == int32(keyType) {
+			rules = v
+			break
+		}
+	}
+
+	if rules == nil {
+		return true
+	}
+
+	isContact, _ := m.CheckContact(id)
+	allow := privacyIsAllow(rules.Rules, id, isContact)
+
+	// logx.Infof("CheckPrivacy(%d, %s, %d): %v", m.Id(), rules.DebugString(), id, allow)
+	return allow
 }
 
 func (m *ImmutableUser) ToUnsafeUser(selfUser *ImmutableUser) *mtproto.User {
@@ -216,9 +225,9 @@ func (m *ImmutableUser) ToUnsafeUser(selfUser *ImmutableUser) *mtproto.User {
 	}
 
 	// phone
-	//if m.CheckPrivacy(PHONE_NUMBER, selfUser.Id()) {
-	user.Phone = mtproto.MakeFlagsString(m.Phone())
-	//}
+	if m.CheckPrivacy(PHONE_NUMBER, selfUser.Id()) {
+		user.Phone = mtproto.MakeFlagsString(m.Phone())
+	}
 
 	// photo
 	if m.CheckPrivacy(PROFILE_PHOTO, selfUser.Id()) {

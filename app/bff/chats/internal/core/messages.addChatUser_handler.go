@@ -61,15 +61,32 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 		return nil, err
 	}
 
-	allowAddChat, _ := c.svcCtx.Dao.UserClient.UserCheckPrivacy(c.ctx, &userpb.TLUserCheckPrivacy{
+	rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 		UserId:  addUser.PeerId,
 		KeyType: userpb.CHAT_INVITE,
-		PeerId:  c.MD.UserId,
 	})
-	if !mtproto.FromBool(allowAddChat) {
-		err = mtproto.ErrUserPrivacyRestricted
-		c.Logger.Errorf("not allow addChat: %v", err)
-		return nil, err
+	if len(rules.Datas) > 0 {
+		// return true
+		allowAddChat := userpb.CheckPrivacyIsAllow(
+			addUser.PeerId,
+			rules.Datas,
+			c.MD.UserId,
+			func(id, checkId int64) bool {
+				contact, _ := c.svcCtx.Dao.UserClient.UserCheckContact(c.ctx, &userpb.TLUserCheckContact{
+					UserId: id,
+					Id:     checkId,
+				})
+				return mtproto.FromBool(contact)
+			},
+			func(checkId int64, idList []int64) bool {
+				chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+				return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
+			})
+		if !allowAddChat {
+			err = mtproto.ErrUserPrivacyRestricted
+			c.Logger.Errorf("not allow addChat: %v", err)
+			return nil, err
+		}
 	}
 
 	chat, err = c.svcCtx.Dao.ChatClient.Client().ChatAddChatUser(c.ctx, &chatpb.TLChatAddChatUser{

@@ -120,14 +120,15 @@ func (c *MessagesCore) checkForwardPrivacy(ctx context.Context, selfUserId, chec
 		rules.Datas,
 		checkId,
 		func(id, checkId int64) bool {
-			// return s.UserFacade.CheckContact(ctx, id, checkId)
-			return true
+			contact, _ := c.svcCtx.Dao.UserClient.UserCheckContact(c.ctx, &userpb.TLUserCheckContact{
+				UserId: id,
+				Id:     checkId,
+			})
+			return mtproto.FromBool(contact)
 		},
 		func(checkId int64, idList []int64) bool {
-			//chatIdList, channelIdList := model.SplitChatAndChannelIdList(idList)
-			//return s.ChatFacade.CheckParticipantIsExist(ctx, checkId, chatIdList) ||
-			//	s.ChannelFacade.CheckParticipantIsExist(ctx, checkId, channelIdList)
-			return true
+			chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+			return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
 		})
 }
 

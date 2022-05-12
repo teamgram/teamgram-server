@@ -36,3 +36,27 @@ func (m *ChatClientHelper) GetChatListByIdList(ctx context.Context, selfId int64
 
 	return chatList.GetChatListByIdList(selfId, id...)
 }
+
+func (m *ChatClientHelper) CheckParticipantIsExist(ctx context.Context, userId int64, chatIdList []int64) bool {
+	usersChatIdList, _ := m.cli.ChatGetUsersChatIdList(ctx, &chat.TLChatGetUsersChatIdList{
+		Id: []int64{userId},
+	})
+
+	if len(usersChatIdList.GetDatas()) == 0 {
+		return false
+	}
+
+	for _, v := range usersChatIdList.GetDatas() {
+		if v.UserId == userId {
+			for _, id := range chatIdList {
+				for _, id2 := range v.ChatIdList {
+					if id == id2 {
+						return true
+					}
+				}
+			}
+		}
+	}
+
+	return false
+}
