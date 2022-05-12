@@ -28,7 +28,7 @@ import (
 // MessagesGetFullChat
 // messages.getFullChat#aeb00b34 chat_id:long = messages.ChatFull;
 func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtproto.Messages_ChatFull, error) {
-	chat, err := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
 		ChatId: in.ChatId,
 	})
 	if err != nil {
@@ -94,7 +94,7 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 
 	if me.GetAdminRights().GetInviteUsers() {
 		if me.Link != "" {
-			chatFull.ExportedInvite, _ = c.svcCtx.Dao.ChatClient.ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
+			chatFull.ExportedInvite, _ = c.svcCtx.Dao.ChatClient.Client().ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
 				ChatId: in.ChatId,
 				Link:   me.Link,
 			})

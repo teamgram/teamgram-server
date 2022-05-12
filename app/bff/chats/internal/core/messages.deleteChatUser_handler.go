@@ -40,7 +40,7 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatDeleteChatUser(c.ctx, &chatpb.TLChatDeleteChatUser{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatDeleteChatUser(c.ctx, &chatpb.TLChatDeleteChatUser{
 		ChatId:       in.ChatId,
 		OperatorId:   c.MD.UserId,
 		DeleteUserId: deleteUser.PeerId,

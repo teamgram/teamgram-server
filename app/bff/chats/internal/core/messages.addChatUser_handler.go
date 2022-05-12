@@ -72,7 +72,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 		return nil, err
 	}
 
-	chat, err = c.svcCtx.Dao.ChatClient.ChatAddChatUser(c.ctx, &chatpb.TLChatAddChatUser{
+	chat, err = c.svcCtx.Dao.ChatClient.Client().ChatAddChatUser(c.ctx, &chatpb.TLChatAddChatUser{
 		ChatId:    in.ChatId,
 		InviterId: c.MD.UserId,
 		UserId:    addUser.PeerId,

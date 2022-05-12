@@ -35,7 +35,7 @@ func (c *ChatsCore) MessagesEditChatTitle(in *mtproto.TLMessagesEditChatTitle) (
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatEditChatTitle(c.ctx, &chatpb.TLChatEditChatTitle{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatEditChatTitle(c.ctx, &chatpb.TLChatEditChatTitle{
 		ChatId:     in.ChatId,
 		EditUserId: c.MD.UserId,
 		Title:      in.Title,

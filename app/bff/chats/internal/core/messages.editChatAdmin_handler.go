@@ -39,7 +39,7 @@ func (c *ChatsCore) MessagesEditChatAdmin(in *mtproto.TLMessagesEditChatAdmin) (
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatEditChatAdmin(c.ctx, &chatpb.TLChatEditChatAdmin{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatEditChatAdmin(c.ctx, &chatpb.TLChatEditChatAdmin{
 		ChatId:          in.ChatId,
 		OperatorId:      c.MD.UserId,
 		EditChatAdminId: adminUser.PeerId,

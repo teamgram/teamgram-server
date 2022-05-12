@@ -106,7 +106,7 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatCreateChat2(c.ctx, &chatpb.TLChatCreateChat2{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatCreateChat2(c.ctx, &chatpb.TLChatCreateChat2{
 		CreatorId:  c.MD.UserId,
 		UserIdList: chatUserIdList,
 		Title:      chatTitle,

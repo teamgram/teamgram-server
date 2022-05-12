@@ -126,7 +126,7 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatEditChatPhoto(c.ctx, &chatpb.TLChatEditChatPhoto{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatEditChatPhoto(c.ctx, &chatpb.TLChatEditChatPhoto{
 		ChatId:     in.ChatId,
 		EditUserId: c.MD.UserId,
 		ChatPhoto:  photo,

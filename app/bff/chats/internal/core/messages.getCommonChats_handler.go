@@ -45,7 +45,7 @@ func (c *ChatsCore) MessagesGetCommonChats(in *mtproto.TLMessagesGetCommonChats)
 	}
 
 	// chat
-	usersChatIdList, err := c.svcCtx.Dao.ChatClient.ChatGetUsersChatIdList(c.ctx, &chatpb.TLChatGetUsersChatIdList{
+	usersChatIdList, err := c.svcCtx.Dao.ChatClient.Client().ChatGetUsersChatIdList(c.ctx, &chatpb.TLChatGetUsersChatIdList{
 		Id: []int64{c.MD.UserId, userId},
 	})
 	if err != nil {
@@ -66,7 +66,7 @@ func (c *ChatsCore) MessagesGetCommonChats(in *mtproto.TLMessagesGetCommonChats)
 			}
 		}
 		if found {
-			mChats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx, &chatpb.TLChatGetChatListByIdList{
+			mChats, _ := c.svcCtx.Dao.ChatClient.Client().ChatGetChatListByIdList(c.ctx, &chatpb.TLChatGetChatListByIdList{
 				SelfId: c.MD.UserId,
 				IdList: commonChats,
 			})

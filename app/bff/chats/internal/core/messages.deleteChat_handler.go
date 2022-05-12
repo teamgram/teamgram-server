@@ -29,7 +29,7 @@ import (
 // messages.deleteChat#5bd0ee50 chat_id:long = Bool;
 func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error) {
 	// 2. delete chat
-	chat, err := c.svcCtx.Dao.ChatClient.ChatDeleteChat(c.ctx, &chatpb.TLChatDeleteChat{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatDeleteChat(c.ctx, &chatpb.TLChatDeleteChat{
 		ChatId: in.ChatId,
 	})
 	if err != nil {

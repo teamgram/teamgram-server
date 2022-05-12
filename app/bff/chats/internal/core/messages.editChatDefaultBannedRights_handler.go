@@ -36,7 +36,7 @@ func (c *ChatsCore) MessagesEditChatDefaultBannedRights(in *mtproto.TLMessagesEd
 
 	switch peer.PeerType {
 	case mtproto.PEER_CHAT:
-		chat, err := c.svcCtx.Dao.ChatClient.ChatEditChatDefaultBannedRights(c.ctx, &chatpb.TLChatEditChatDefaultBannedRights{
+		chat, err := c.svcCtx.Dao.ChatClient.Client().ChatEditChatDefaultBannedRights(c.ctx, &chatpb.TLChatEditChatDefaultBannedRights{
 			ChatId:       peer.PeerId,
 			OperatorId:   c.MD.UserId,
 			BannedRights: in.BannedRights,

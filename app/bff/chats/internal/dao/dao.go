@@ -35,7 +35,7 @@ import (
 
 type Dao struct {
 	user_client.UserClient
-	chat_client.ChatClient
+	ChatClient *chat_client.ChatClientHelper
 	msg_client.MsgClient
 	sync_client.SyncClient
 	media_client.MediaClient
@@ -48,7 +48,7 @@ type Dao struct {
 func New(c config.Config) *Dao {
 	return &Dao{
 		UserClient:        user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
-		ChatClient:        chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+		ChatClient:        chat_client.NewChatClientHelper(rpcx.GetCachedRpcClient(c.ChatClient)),
 		MsgClient:         msg_client.NewMsgClient(rpcx.GetCachedRpcClient(c.MsgClient)),
 		DialogClient:      dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 		SyncClient:        sync_client.NewSyncMqClient(kafka.MustKafkaProducer(c.SyncClient)),

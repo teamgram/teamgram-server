@@ -30,7 +30,7 @@ func (c *ChatsCore) MessagesEditChatAbout(in *mtproto.TLMessagesEditChatAbout) (
 
 	switch peer.PeerType {
 	case mtproto.PEER_CHAT:
-		_, err := c.svcCtx.Dao.ChatClient.ChatEditChatAbout(c.ctx, &chatpb.TLChatEditChatAbout{
+		_, err := c.svcCtx.Dao.ChatClient.Client().ChatEditChatAbout(c.ctx, &chatpb.TLChatEditChatAbout{
 			ChatId:     peer.PeerId,
 			EditUserId: c.MD.UserId,
 			About:      in.About,

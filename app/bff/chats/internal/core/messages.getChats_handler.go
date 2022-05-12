@@ -31,7 +31,7 @@ func (c *ChatsCore) MessagesGetChats(in *mtproto.TLMessagesGetChats) (*mtproto.M
 	}).To_Messages_Chats()
 
 	for _, id := range in.Id {
-		chat, _ := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
+		chat, _ := c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
 			ChatId: id,
 		})
 		if chat != nil {
