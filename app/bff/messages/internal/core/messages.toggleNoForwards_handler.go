@@ -37,7 +37,7 @@ func (c *MessagesCore) MessagesToggleNoForwards(in *mtproto.TLMessagesToggleNoFo
 		return nil, err
 	}
 
-	chat, err := c.svcCtx.Dao.ChatClient.ChatToggleNoForwards(c.ctx, &chatpb.TLChatToggleNoForwards{
+	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatToggleNoForwards(c.ctx, &chatpb.TLChatToggleNoForwards{
 		ChatId:     peer.PeerId,
 		OperatorId: c.MD.UserId,
 		Enabled:    in.Enabled,

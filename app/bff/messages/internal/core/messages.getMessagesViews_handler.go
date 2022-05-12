@@ -93,7 +93,7 @@ func (c *MessagesCore) MessagesGetMessagesViews(in *mtproto.TLMessagesGetMessage
 				return nil, err
 			}
 		case mtproto.PEER_CHAT:
-			mutableChat, err := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(
+			mutableChat, err := c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(
 				c.ctx,
 				&chatpb.TLChatGetMutableChat{
 					ChatId: peer.PeerId,

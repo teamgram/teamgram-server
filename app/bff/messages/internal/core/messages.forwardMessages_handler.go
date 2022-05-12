@@ -172,7 +172,7 @@ func (c *MessagesCore) makeForwardMessages(
 		if messageList.Length() > 0 {
 			msgBox0 := messageList.Datas[0]
 			if msgBox0.PeerType == mtproto.PEER_CHAT {
-				chat, err := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
+				chat, err := c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
 					ChatId: msgBox0.PeerId,
 				})
 				if err != nil {

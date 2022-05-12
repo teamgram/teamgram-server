@@ -100,7 +100,7 @@ func (c *MessagesCore) MessagesGetMessageEditData(in *mtproto.TLMessagesGetMessa
 		if peer.PeerType == mtproto.PEER_CHAT {
 			//// TODO: need chat admin
 			if c.MD.UserId != boxMsg.SenderUserId {
-				mChat, err := c.svcCtx.Dao.ChatClient.ChatGetChatBySelfId(c.ctx, &chatpb.TLChatGetChatBySelfId{
+				mChat, err := c.svcCtx.Dao.ChatClient.Client().ChatGetChatBySelfId(c.ctx, &chatpb.TLChatGetChatBySelfId{
 					SelfId: c.MD.UserId,
 					ChatId: peer.PeerId,
 				})

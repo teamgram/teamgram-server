@@ -46,7 +46,7 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 	case mtproto.PEER_SELF, mtproto.PEER_USER, mtproto.PEER_CHAT:
 		if peer.PeerType == mtproto.PEER_CHAT {
 			// 400	CHAT_ID_INVALID	The provided chat id is invalid
-			if chat, err = c.svcCtx.Dao.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
+			if chat, err = c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
 				ChatId: peer.PeerId,
 			}); err != nil {
 				err = mtproto.ErrPeerIdInvalid
@@ -125,7 +125,7 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 			users = append(users, mUsers.GetUserListByIdList(c.MD.UserId, userIdList...)...)
 		},
 		func(chatIdList []int64) {
-			mChats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+			mChats, _ := c.svcCtx.Dao.ChatClient.Client().ChatGetChatListByIdList(c.ctx,
 				&chatpb.TLChatGetChatListByIdList{
 					IdList: chatIdList,
 				})

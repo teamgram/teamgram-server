@@ -53,7 +53,7 @@ func (c *MessagesCore) MessagesGetUnreadMentions(in *mtproto.TLMessagesGetUnread
 	switch peer.PeerType {
 	case mtproto.PEER_CHAT:
 		// 400	CHAT_ID_INVALID	The provided chat id is invalid
-		chat, err = c.svcCtx.Dao.ChatClient.ChatGetMutableChat(
+		chat, err = c.svcCtx.Dao.ChatClient.Client().ChatGetMutableChat(
 			c.ctx,
 			&chatpb.TLChatGetMutableChat{
 				ChatId: peer.PeerId,
@@ -144,7 +144,7 @@ func (c *MessagesCore) MessagesGetUnreadMentions(in *mtproto.TLMessagesGetUnread
 			rValues.Users = append(rValues.Users, mUsers.GetUserListByIdList(c.MD.UserId, userIdList...)...)
 		},
 		func(chatIdList []int64) {
-			mChats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+			mChats, _ := c.svcCtx.Dao.ChatClient.Client().ChatGetChatListByIdList(c.ctx,
 				&chatpb.TLChatGetChatListByIdList{
 					IdList: chatIdList,
 				})

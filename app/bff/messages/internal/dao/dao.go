@@ -36,7 +36,7 @@ import (
 type Dao struct {
 	msg_client.MsgClient
 	user_client.UserClient
-	chat_client.ChatClient
+	ChatClient *chat_client.ChatClientHelper
 	media_client.MediaClient
 	username_client.UsernameClient
 	message_client.MessageClient
@@ -49,7 +49,7 @@ func New(c config.Config) *Dao {
 	return &Dao{
 		MsgClient:      msg_client.NewMsgClient(rpcx.GetCachedRpcClient(c.MsgClient)),
 		UserClient:     user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
-		ChatClient:     chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+		ChatClient:     chat_client.NewChatClientHelper(rpcx.GetCachedRpcClient(c.ChatClient)),
 		MediaClient:    media_client.NewMediaClient(rpcx.GetCachedRpcClient(c.MediaClient)),
 		DialogClient:   dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 		IDGenClient2:   idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
