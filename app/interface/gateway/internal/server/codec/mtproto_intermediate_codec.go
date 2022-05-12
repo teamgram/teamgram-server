@@ -126,3 +126,7 @@ func (c *IntermediateCodec) Send(msg interface{}) error {
 func (c *IntermediateCodec) Close() error {
 	return c.conn.Close()
 }
+
+func (c *IntermediateCodec) Context() interface{} {
+	return ""
+}

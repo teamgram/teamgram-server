@@ -134,3 +134,7 @@ func (c *FullCodec) Send(msg interface{}) error {
 func (c *FullCodec) Close() error {
 	return c.conn.Close()
 }
+
+func (c *FullCodec) Context() interface{} {
+	return ""
+}

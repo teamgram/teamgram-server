@@ -27,6 +27,7 @@ import (
 	"io"
 	"net"
 
+	"github.com/teamgram/marmota/pkg/net/ip"
 	"github.com/teamgram/marmota/pkg/net2"
 	"github.com/teamgram/proto/mtproto/crypto"
 
@@ -67,7 +68,10 @@ const (
 	PVRG_FLAG                = 0x47725650 // PVrG
 	FULL_FLAG                = 0x00000000
 
-	// Http Transport
+	// PROXY_FLAG websocket flag
+	PROXY_FLAG = 0xaaaaaaaa
+
+	// HTTP_HEAD_FLAG Http Transport
 	HTTP_HEAD_FLAG   = 0x44414548 // HEAD
 	HTTP_POST_FLAG   = 0x54534f50 // POST
 	HTTP_GET_FLAG    = 0x20544547 // GET
@@ -111,6 +115,7 @@ type TransportCodec struct {
 	conn      net.Conn
 	codec     net2.Codec
 	proto     *MTProtoTransport
+	remoteIp  string
 }
 
 func (c *TransportCodec) peekCodec() error {
@@ -157,16 +162,13 @@ func (c *TransportCodec) peekMTProtoCodec() error {
 	}
 
 	// not abridged version, we'll lookup codec!
-	firstInt, err := peek.PeekUint32()
+	fB, err := peek.Peek(4)
 	if err != nil {
 		log.Errorf("read firstInt error: %v", err)
 		return err
 	}
 
-	// return binary.BigEndian.Uint32(buf), nil
-	var fB [4]byte
-	binary.BigEndian.PutUint32(fB[:], firstInt)
-	// log.Debugf("firstByte: %s", hex.EncodeToString(fB[:]))
+	firstInt := binary.BigEndian.Uint32(fB)
 
 	// check http
 	if firstInt == HTTP_HEAD_FLAG ||
@@ -222,7 +224,7 @@ func (c *TransportCodec) peekMTProtoCodec() error {
 		log.Errorf("transportCodec - read b_4_60 error: %v", err)
 		return err
 	}
-	secondInt := binary.BigEndian.Uint32(checkFullBuf[:8])
+	secondInt := binary.BigEndian.Uint32(checkFullBuf[4:8])
 	if secondInt == FULL_FLAG {
 		log.Infof("mtproto full version.")
 		c.codec = NewMTProtoFullCodec(c.conn)
@@ -270,6 +272,10 @@ func (c *TransportCodec) peekMTProtoCodec() error {
 
 	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))
 	// TODO: check dcId
+
+	if secondInt == PROXY_FLAG {
+		c.remoteIp = ip.IntToIP(firstInt)
+	}
 
 	log.Infof("mtproto obfuscated version, protocol_type: %s", hex.EncodeToString(obfuscatedBuf[56:60]))
 	c.codec = NewMTProtoObfuscatedCodec(c.conn, d, e, protocolType, dcId)
@@ -428,4 +434,8 @@ func (c *TransportCodec) Close() error {
 	} else {
 		return nil
 	}
+}
+
+func (c *TransportCodec) Context() interface{} {
+	return c.remoteIp
 }

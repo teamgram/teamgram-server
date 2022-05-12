@@ -21,6 +21,9 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
+
+	"github.com/zeromicro/go-zero/core/contextx"
+	"github.com/zeromicro/go-zero/core/threading"
 )
 
 // DfsUploadMp4DocumentMedia
@@ -62,12 +65,15 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 		c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, fileInfo)
 		path = fmt.Sprintf("%d.dat", documentId)
 
-		go func() {
-			_, err2 := c.svcCtx.Dao.PutDocumentFile(c.ctx, path, c.svcCtx.Dao.NewSSDBReader(fileInfo))
+		threading.RunSafe(func() {
+			_, err2 := c.svcCtx.Dao.PutDocumentFile(
+				contextx.ValueOnlyFrom(c.ctx),
+				path,
+				c.svcCtx.Dao.NewSSDBReader(fileInfo))
 			if err2 != nil {
 				c.Logger.Errorf("dfs.PutDocumentFile - error: %v", err)
 			}
-		}()
+		})
 		//c.Logger.Errorf("getFirstFrameByPipe - error: %v", err)
 		//return nil, err
 
@@ -150,12 +156,15 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 		c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, fileInfo)
 		path = fmt.Sprintf("%d.dat", documentId)
 
-		go func() {
-			_, err2 := c.svcCtx.Dao.PutDocumentFile(c.ctx, path, c.svcCtx.Dao.NewSSDBReader(fileInfo))
+		threading.RunSafe(func() {
+			_, err2 := c.svcCtx.Dao.PutDocumentFile(
+				contextx.ValueOnlyFrom(c.ctx),
+				path,
+				c.svcCtx.Dao.NewSSDBReader(fileInfo))
 			if err2 != nil {
 				c.Logger.Errorf("dfs.PutDocumentFile - error: %v", err)
 			}
-		}()
+		})
 
 		attributes := make([]*mtproto.DocumentAttribute, 0, 2)
 		attrVideo := mtproto.GetDocumentAttribute(media.GetAttributes(), mtproto.Predicate_documentAttributeVideo)

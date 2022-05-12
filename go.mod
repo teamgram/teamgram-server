@@ -11,7 +11,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/oschwald/geoip2-golang v1.6.1
 	github.com/stretchr/testify v1.7.0
-	github.com/teamgram/marmota v0.1.2
+	github.com/teamgram/marmota v0.1.3
 	github.com/teamgram/proto v0.139.4-0.20220425055237-b4b5bfef90ab
 	github.com/zeromicro/go-zero v1.3.3
 	google.golang.org/grpc v1.46.0

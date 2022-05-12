@@ -125,3 +125,7 @@ func (c *HttpProxyCodec) Close() error {
 	c.canSend = false
 	return c.conn.Close()
 }
+
+func (c *HttpProxyCodec) Context() interface{} {
+	return ""
+}

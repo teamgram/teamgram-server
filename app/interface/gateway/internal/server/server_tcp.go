@@ -58,21 +58,46 @@ func (m *HandshakeStateCtx) DebugString() string {
 type connContext struct {
 	// TODO(@benqi): lock
 	sync.Mutex
-	state      int // 是否握手阶段
-	authKeys   []*authKeyUtil
-	sessionId  int64
-	isHttp     bool
-	canSend    bool
-	trd        *timer2.TimerData
-	handshakes []*HandshakeStateCtx
-	clientIp   string
+	state           int // 是否握手阶段
+	authKeys        []*authKeyUtil
+	sessionId       int64
+	isHttp          bool
+	canSend         bool
+	trd             *timer2.TimerData
+	handshakes      []*HandshakeStateCtx
+	clientIp        string
+	xForwardedForIp string
 }
 
-func newConnContext(clientIp string) *connContext {
+func newConnContext() *connContext {
 	return &connContext{
-		state:    STATE_CONNECTED2,
-		clientIp: clientIp,
+		state:           STATE_CONNECTED2,
+		clientIp:        "",
+		xForwardedForIp: "*",
 	}
+}
+
+func (ctx *connContext) getClientIp(xForwarderForIp interface{}) string {
+	ctx.Lock()
+	defer ctx.Unlock()
+	if ctx.xForwardedForIp == "*" {
+		ctx.xForwardedForIp = ""
+		if xForwarderForIp != nil {
+			ctx.xForwardedForIp, _ = xForwarderForIp.(string)
+		}
+	}
+
+	if ctx.xForwardedForIp != "" {
+		return ctx.xForwardedForIp
+	}
+	return ctx.clientIp
+}
+
+func (ctx *connContext) setClientIp(ip string) {
+	ctx.Lock()
+	defer ctx.Unlock()
+
+	ctx.clientIp = ip
 }
 
 func (ctx *connContext) getState() int {
@@ -167,10 +192,11 @@ func (ctx *connContext) DebugString() string {
 	return "{" + strings.Join(s, ",") + "}"
 }
 
+// OnNewConnection
 ///////////////////////////////////////////////////////////////////////////////////////////////
 func (s *Server) OnNewConnection(conn *net2.TcpConnection) {
-	addr := conn.RemoteAddr().String()
-	ctx := newConnContext(strings.Split(addr, ":")[0])
+	ctx := newConnContext()
+	ctx.setClientIp(strings.Split(conn.RemoteAddr().String(), ":")[0])
 
 	logx.Infof("onNewConnection - {peer: %s, ctx: {%s}}", conn, ctx.DebugString())
 	conn.Context = ctx
@@ -260,7 +286,7 @@ func (s *Server) OnConnectionClosed(conn *net2.TcpConnection) {
 	for _, id := range ctx.getAllAuthKeyId() {
 		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
 		if bDeleted {
-			s.sendToSessionClientClosed(id, ctx.sessionId, ctx.clientIp)
+			s.sendToSessionClientClosed(id, ctx.sessionId, ctx.getClientIp(conn.Codec().Context()))
 			logx.Infof("onServerConnectionClosed - sendClientClosed: {peer:%s, ctx:%s}", conn, ctx.DebugString())
 		}
 	}
@@ -386,7 +412,7 @@ func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, 
 						ServerId:  s.session.gatewayId,
 						AuthKeyId: authKeyId,
 						SessionId: sessionId,
-						ClientIp:  ctx.clientIp,
+						ClientIp:  ctx.getClientIp(conn.Codec().Context()),
 					}).To_SessionClientEvent(),
 				})
 		}
@@ -399,7 +425,7 @@ func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, 
 			SessionId: sessionId,
 			Salt:      int64(binary.LittleEndian.Uint64(mtpRwaData)),
 			Payload:   mtpRwaData[16:],
-			ClientIp:  ctx.clientIp,
+			ClientIp:  ctx.getClientIp(conn.Codec().Context()),
 		},
 	})
 

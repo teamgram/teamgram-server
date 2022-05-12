@@ -144,3 +144,7 @@ func (c *AbridgedCodec) Send(msg interface{}) error {
 func (c *AbridgedCodec) Close() error {
 	return c.conn.Close()
 }
+
+func (c *AbridgedCodec) Context() interface{} {
+	return ""
+}
