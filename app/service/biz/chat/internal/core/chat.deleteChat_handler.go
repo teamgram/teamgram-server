@@ -35,9 +35,9 @@ func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*chat.MutableChat,
 		c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, 0, in.ChatId)
 		c.svcCtx.Dao.ChatsDAO.UpdateDeactivatedTx(tx, false, in.ChatId)
 	})
-	if tR != nil {
-		c.Logger.Errorf("chat.deleteChat - error: %v", err)
-		return nil, err
+	if tR.Err != nil {
+		c.Logger.Errorf("chat.deleteChat - error: %v", tR.Err)
+		return nil, tR.Err
 	}
 
 	return mChat, nil

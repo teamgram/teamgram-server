@@ -58,6 +58,7 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 	lastMessage, deleteIds := c.svcCtx.Dao.GetLastMessageAndIdListByDialog(c.ctx, in.UserId, peer)
 	if len(deleteIds) == 0 ||
 		len(deleteIds) == 1 &&
+			in.GetJustClear() &&
 			lastMessage.GetPredicateName() == mtproto.Predicate_messageService &&
 			lastMessage.GetAction().GetPredicateName() == mtproto.Predicate_messageActionHistoryClear {
 		pts = c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, in.UserId)

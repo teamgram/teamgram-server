@@ -86,15 +86,16 @@ func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatPa
 	return
 }
 
-func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (chat *chatpb.MutableChat, err error) {
+func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*chatpb.MutableChat, error) {
 	var (
 		immutableChat *chatpb.ImmutableChat
 		participants  []*chatpb.ImmutableChatParticipant
+		err           error
 	)
 
 	immutableChat, err = d.getImmutableChat(ctx, chatId)
 	if err != nil {
-		return
+		return nil, err
 	}
 	if d.Plugin != nil {
 		immutableChat.CallActive, immutableChat.CallNotEmpty = d.Plugin.GetChatCallActiveAndNotEmpty(ctx, 0, chatId)
@@ -102,15 +103,13 @@ func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (ch
 	}
 	participants, err = d.getImmutableChatParticipants(ctx, immutableChat, id...)
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	chat = chatpb.MakeTLMutableChat(&chatpb.MutableChat{
+	return chatpb.MakeTLMutableChat(&chatpb.MutableChat{
 		Chat:             immutableChat,
 		ChatParticipants: participants,
-	}).To_MutableChat()
-
-	return
+	}).To_MutableChat(), nil
 }
 
 func (d *Dao) getImmutableChat(ctx context.Context, chatId int64) (chat *chatpb.ImmutableChat, err error) {

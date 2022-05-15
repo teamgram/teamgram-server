@@ -30,7 +30,8 @@ import (
 func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error) {
 	// 2. delete chat
 	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatDeleteChat(c.ctx, &chatpb.TLChatDeleteChat{
-		ChatId: in.ChatId,
+		ChatId:     in.ChatId,
+		OperatorId: c.MD.UserId,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.deleteChat - error: %v", err)
@@ -50,9 +51,13 @@ func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtpro
 			})
 		}
 
-		c.svcCtx.Dao.MsgClient.MsgDeleteChatHistory(c.ctx, &msgpb.TLMsgDeleteChatHistory{
-			ChatId:       chat.Id(),
-			DeleteUserId: userId,
+		c.svcCtx.Dao.MsgClient.MsgDeleteHistory(c.ctx, &msgpb.TLMsgDeleteHistory{
+			UserId:    userId,
+			AuthKeyId: 0,
+			PeerType:  mtproto.PEER_CHAT,
+			PeerId:    chat.Id(),
+			JustClear: false,
+			Revoke:    false,
 		})
 		return nil
 	})
