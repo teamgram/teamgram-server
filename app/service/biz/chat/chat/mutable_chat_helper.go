@@ -223,7 +223,7 @@ func (m *MutableChat) Walk(visit func(userId int64, participant *ImmutableChatPa
 	if visit == nil {
 		return
 	}
-	for _, v := range m.ChatParticipants {
+	for _, v := range m.GetChatParticipants() {
 		visit(v.UserId, v)
 	}
 }

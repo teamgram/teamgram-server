@@ -18,7 +18,9 @@
 
 package dao
 
-import userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+import (
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+)
 
 const (
 	versionField = "0"
@@ -29,20 +31,25 @@ type idxId struct {
 	id  int64
 }
 
-func removeAllNil(contacts []*userpb.ContactData) []*userpb.ContactData {
-	for i := 0; i < len(contacts); {
-		if contacts[i] != nil {
+type kv struct {
+	k string
+	v interface{}
+}
+
+func removeAllNil(participants []*chatpb.ImmutableChatParticipant) []*chatpb.ImmutableChatParticipant {
+	for i := 0; i < len(participants); {
+		if participants[i] != nil {
 			i++
 			continue
 		}
 
-		if i < len(contacts)-1 {
-			copy(contacts[i:], contacts[i+1:])
+		if i < len(participants)-1 {
+			copy(participants[i:], participants[i+1:])
 		}
 
-		contacts[len(contacts)-1] = nil
-		contacts = contacts[:len(contacts)-1]
+		participants[len(participants)-1] = nil
+		participants = participants[:len(participants)-1]
 	}
 
-	return contacts
+	return participants
 }

@@ -7,20 +7,18 @@
 package dao
 
 import (
-	"context"
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/app/service/media/media"
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
-func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.ChatsDO) (chat *chatpb.ImmutableChat) {
+func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.ImmutableChat) {
 	chat = &chatpb.ImmutableChat{
 		Id:                  chatsDO.Id,
 		Creator:             chatsDO.CreatorUserId,
 		Title:               chatsDO.Title,
-		Photo:               nil,
+		Photo:               mtproto.MakeTLPhotoEmpty(nil).To_Photo(),
 		Deactivated:         chatsDO.Deactivated,
 		CallActive:          false,
 		CallNotEmpty:        false,
@@ -43,16 +41,16 @@ func (d *Dao) MakeImmutableChatByDO(ctx context.Context, chatsDO *dataobject.Cha
 			AccessHash: chatsDO.MigratedToAccessHash,
 		}).To_InputChannel()
 	}
-
-	//// chat_photo && photo
-	if chatsDO.PhotoId != 0 {
-		chat.Photo, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
-			PhotoId: chatsDO.PhotoId,
-		})
-	}
-	if chat.Photo == nil {
-		chat.Photo = mtproto.MakeTLPhotoEmpty(nil).To_Photo()
-	}
+	//
+	////// chat_photo && photo
+	//if chatsDO.PhotoId != 0 {
+	//	chat.Photo, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
+	//		PhotoId: chatsDO.PhotoId,
+	//	})
+	//}
+	//if chat.Photo == nil {
+	//	chat.Photo = mtproto.MakeTLPhotoEmpty(nil).To_Photo()
+	//}
 
 	chat.ExportedInvite = nil // model.ExportedChatInviteEmpty
 
@@ -83,69 +81,5 @@ func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatPa
 		participant.AdminRights = mtproto.MakeDefaultChatAdminRights()
 	}
 
-	return
-}
-
-func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*chatpb.MutableChat, error) {
-	var (
-		immutableChat *chatpb.ImmutableChat
-		participants  []*chatpb.ImmutableChatParticipant
-		err           error
-	)
-
-	immutableChat, err = d.getImmutableChat(ctx, chatId)
-	if err != nil {
-		return nil, err
-	}
-	if d.Plugin != nil {
-		immutableChat.CallActive, immutableChat.CallNotEmpty = d.Plugin.GetChatCallActiveAndNotEmpty(ctx, 0, chatId)
-		immutableChat.Call = d.Plugin.GetChatGroupCall(ctx, 0, chatId)
-	}
-	participants, err = d.getImmutableChatParticipants(ctx, immutableChat, id...)
-	if err != nil {
-		return nil, err
-	}
-
-	return chatpb.MakeTLMutableChat(&chatpb.MutableChat{
-		Chat:             immutableChat,
-		ChatParticipants: participants,
-	}).To_MutableChat(), nil
-}
-
-func (d *Dao) getImmutableChat(ctx context.Context, chatId int64) (chat *chatpb.ImmutableChat, err error) {
-	var (
-		chatsDO *dataobject.ChatsDO
-	)
-
-	chatsDO, err = d.ChatsDAO.Select(ctx, chatId)
-	if err != nil {
-		return
-	} else if chatsDO == nil {
-		err = mtproto.ErrChatIdInvalid
-		return
-	}
-	// logx.Errorf("chatsDO: %#v", chatsDO)
-	chat = d.MakeImmutableChatByDO(ctx, chatsDO)
-
-	return
-}
-
-func (d *Dao) getImmutableChatParticipants(ctx context.Context, chat *chatpb.ImmutableChat, id ...int64) (participants []*chatpb.ImmutableChatParticipant, err error) {
-	if len(id) == 0 {
-		_, err = d.ChatParticipantsDAO.SelectListWithCB(
-			ctx,
-			chat.Id,
-			func(i int, v *dataobject.ChatParticipantsDO) {
-				participants = append(participants, d.MakeImmutableChatParticipant(v))
-			})
-	} else {
-		_, err = d.ChatParticipantsDAO.SelectListByParticipantIdListWithCB(
-			ctx,
-			chat.Id,
-			id,
-			func(i int, v *dataobject.ChatParticipantsDO) {
-				participants = append(participants, d.MakeImmutableChatParticipant(v))
-			})
-	}
 	return
 }

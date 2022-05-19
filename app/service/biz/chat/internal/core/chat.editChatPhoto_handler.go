@@ -10,8 +10,10 @@
 package core
 
 import (
+	"context"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
@@ -46,10 +48,13 @@ func (c *ChatCore) ChatEditChatPhoto(in *chat.TLChatEditChatPhoto) (*chat.Mutabl
 		return nil, err
 	}
 
-	c.svcCtx.Dao.ChatsDAO.UpdatePhotoId(c.ctx, in.GetChatPhoto().GetId(), chatId)
-	if err != nil {
-		return nil, err
-	}
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			affected, err2 := c.svcCtx.Dao.ChatsDAO.UpdatePhotoId(c.ctx, in.GetChatPhoto().GetId(), chatId)
+			return 0, affected, err2
+		},
+		c.svcCtx.Dao.GetChatCacheKey(chatId))
 
 	chat2.Chat.Version += 1
 	chat2.Chat.Date = now

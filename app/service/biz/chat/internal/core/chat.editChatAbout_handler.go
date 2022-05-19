@@ -10,6 +10,8 @@
 package core
 
 import (
+	"context"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -50,7 +52,13 @@ func (c *ChatCore) ChatEditChatAbout(in *chat.TLChatEditChatAbout) (*chat.Mutabl
 		return nil, err
 	}
 
-	_, err = c.svcCtx.Dao.ChatsDAO.UpdateAbout(c.ctx, in.About, chat2.Chat.Id)
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateAbout(c.ctx, in.About, chat2.Id())
+			return 0, rowsAffected, err2
+		},
+		c.svcCtx.Dao.GetChatCacheKey(chat2.Id()))
 	if err != nil {
 		return nil, err
 	}

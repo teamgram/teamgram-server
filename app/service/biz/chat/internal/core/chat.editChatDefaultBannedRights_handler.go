@@ -10,9 +10,11 @@
 package core
 
 import (
+	"context"
 	"math"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
@@ -35,11 +37,13 @@ func (c *ChatCore) ChatEditChatDefaultBannedRights(in *chat.TLChatEditChatDefaul
 	me, _ = chat2.GetImmutableChatParticipant(in.OperatorId)
 	if me == nil || me.State != mtproto.ChatMemberStateNormal {
 		err = mtproto.ErrInputUserDeactivated
+		c.Logger.Errorf("chat.editChatDefaultBannedRights - error: %v", err)
 		return nil, err
 	}
 
 	if me.IsChatMemberNormal() {
 		err = mtproto.ErrChatAdminRequired
+		c.Logger.Errorf("chat.editChatDefaultBannedRights - error: %v", err)
 		return nil, err
 	}
 
@@ -50,8 +54,15 @@ func (c *ChatCore) ChatEditChatDefaultBannedRights(in *chat.TLChatEditChatDefaul
 		bannedRights.UntilDate = math.MaxInt32
 	}
 
-	_, err = c.svcCtx.Dao.ChatsDAO.UpdateDefaultBannedRights(c.ctx, int64(bannedRights.ToBannedRights()), in.ChatId)
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			affected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateDefaultBannedRights(c.ctx, int64(bannedRights.ToBannedRights()), in.ChatId)
+			return 0, affected, err2
+		},
+		c.svcCtx.Dao.GetChatCacheKey(in.ChatId))
 	if err != nil {
+		c.Logger.Errorf("chat.editChatDefaultBannedRights - error: %v", err)
 		return nil, err
 	}
 

@@ -20,13 +20,14 @@ package core
 
 import (
 	"encoding/binary"
+	"strconv"
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/model"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"strconv"
-	"time"
 )
 
 // AuthAcceptLoginToken

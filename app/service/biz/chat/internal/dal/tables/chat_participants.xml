@@ -47,6 +47,17 @@
         </sql>
     </operation>
 
+    <operation name="SelectChatParticipantIdList" result_set="single_list">
+        <sql>
+            SELECT
+                user_id
+            FROM
+                chat_participants
+            WHERE
+                chat_id=:chat_id
+        </sql>
+    </operation>
+
     <operation name="SelectByParticipantId">
         <sql>
             SELECT

@@ -30,17 +30,17 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 		userIdList = in.UserIdList
 		title      = in.Title
 	)
-
-	if chatsDO, err = c.svcCtx.Dao.ChatsDAO.SelectLastCreator(c.ctx, creatorId); err != nil {
-		c.Logger.Errorf("chat.createChat2 - error: %v", err)
-		return nil, err
-	} else if chatsDO != nil {
-		if date-chatsDO.Date < createChatFlood {
-			err = mtproto.NewErrFloodWaitX(int32(date - chatsDO.Date))
-			c.Logger.Errorf("createChat error: %v. lastCreate = ", err, chatsDO.Date)
-			return nil, err
-		}
-	}
+	//
+	//if chatsDO, err = c.svcCtx.Dao.ChatsDAO.SelectLastCreator(c.ctx, creatorId); err != nil {
+	//	c.Logger.Errorf("chat.createChat2 - error: %v", err)
+	//	return nil, err
+	//} else if chatsDO != nil {
+	//	if date-chatsDO.Date < createChatFlood {
+	//		err = mtproto.NewErrFloodWaitX(int32(date - chatsDO.Date))
+	//		c.Logger.Errorf("createChat error: %v. lastCreate = ", err, chatsDO.Date)
+	//		return nil, err
+	//	}
+	//}
 
 	chatsDO = &dataobject.ChatsDO{
 		Id:                   0,
@@ -117,7 +117,7 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 	}
 
 	chat2 := chat.MakeTLMutableChat(&chat.MutableChat{
-		Chat:             c.svcCtx.Dao.MakeImmutableChatByDO(c.ctx, chatsDO),
+		Chat:             c.svcCtx.Dao.MakeImmutableChatByDO(chatsDO),
 		ChatParticipants: make([]*chat.ImmutableChatParticipant, 0, len(participantDOList)),
 	}).To_MutableChat()
 
@@ -128,8 +128,7 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 
 	chat2.Chat.ParticipantsCount = int32(len(participantDOList))
 
-	// put to cache
-	// m.Dao.Redis.PutCacheChat(ctx, chat.Chat)
-	// m.Dao.Redis.PutCacheChatParticipants(ctx, chat.Chat.Id, chat.Participants)
+	c.svcCtx.Dao.PutMutableChat(c.ctx, chat2)
+
 	return chat2, nil
 }

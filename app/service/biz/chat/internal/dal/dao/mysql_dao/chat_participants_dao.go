@@ -252,6 +252,40 @@ func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chat_id in
 	return
 }
 
+// SelectChatParticipantIdList
+// select user_id from chat_participants where chat_id = :chat_id
+// TODO(@benqi): sqlmap
+func (dao *ChatParticipantsDAO) SelectChatParticipantIdList(ctx context.Context, chat_id int64) (rList []int64, err error) {
+	var query = "select user_id from chat_participants where chat_id = ?"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, chat_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectChatParticipantIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectChatParticipantIdListWithCB
+// select user_id from chat_participants where chat_id = :chat_id
+// TODO(@benqi): sqlmap
+func (dao *ChatParticipantsDAO) SelectChatParticipantIdListWithCB(ctx context.Context, chat_id int64, cb func(i int, v int64)) (rList []int64, err error) {
+	var query = "select user_id from chat_participants where chat_id = ?"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, chat_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectChatParticipantIdList(_), error: %v", err)
+	}
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, rList[i])
+		}
+	}
+
+	return
+}
+
 // SelectByParticipantId
 // select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
 // TODO(@benqi): sqlmap

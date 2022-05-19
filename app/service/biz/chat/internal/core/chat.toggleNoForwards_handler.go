@@ -19,6 +19,8 @@
 package core
 
 import (
+	"context"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"time"
@@ -53,11 +55,18 @@ func (c *ChatCore) ChatToggleNoForwards(in *chat.TLChatToggleNoForwards) (*chat.
 		return nil, err
 	}
 
-	_, err = c.svcCtx.Dao.ChatsDAO.UpdateNoforwards(c.ctx, mtproto.FromBool(in.Enabled), in.ChatId)
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			affected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateNoforwards(c.ctx, mtproto.FromBool(in.Enabled), in.ChatId)
+			return 0, affected, err2
+		},
+		c.svcCtx.Dao.GetChatCacheKey(in.ChatId))
 	if err != nil {
 		c.Logger.Errorf("chat.toggleNoForwards - error: %v", err)
 		return nil, err
 	}
+
 	chat2.Chat.Version += 1
 	chat2.Chat.Date = now
 	chat2.Chat.Noforwards = mtproto.FromBool(in.Enabled)

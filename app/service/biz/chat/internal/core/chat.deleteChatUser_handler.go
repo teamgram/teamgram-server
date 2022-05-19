@@ -10,6 +10,7 @@
 package core
 
 import (
+	"context"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -83,37 +84,44 @@ func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*chat.Muta
 		}
 	}
 
-	// deletedUser.Dialog.TopMessage
-	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		if kicked {
-			_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateKickedTx(tx, now, deletedUser.Id)
-			if result.Err != nil {
-				c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
-				return
-			}
-			deletedUser.State = mtproto.ChatMemberStateKicked
-		} else {
-			_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateLeftTx(tx, now, deletedUser.Id)
-			if result.Err != nil {
-				c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
-				return
-			}
-			deletedUser.State = mtproto.ChatMemberStateLeft
-		}
-		chat2.Chat.ParticipantsCount -= 1
-		chat2.Chat.Date = now
-		chat2.Chat.Version += 1
-		_, result.Err = c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, chat2.Chat.ParticipantsCount, chat2.Chat.Id)
-		if result.Err != nil {
-			c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
-			return
-		}
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			// deletedUser.Dialog.TopMessage
+			tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+				if kicked {
+					_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateKickedTx(tx, now, deletedUser.Id)
+					if result.Err != nil {
+						c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
+						return
+					}
+					deletedUser.State = mtproto.ChatMemberStateKicked
+				} else {
+					_, result.Err = c.svcCtx.Dao.ChatParticipantsDAO.UpdateLeftTx(tx, now, deletedUser.Id)
+					if result.Err != nil {
+						c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
+						return
+					}
+					deletedUser.State = mtproto.ChatMemberStateLeft
+				}
+				chat2.Chat.ParticipantsCount -= 1
+				chat2.Chat.Date = now
+				chat2.Chat.Version += 1
+				_, result.Err = c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, chat2.Chat.ParticipantsCount, chat2.Chat.Id)
+				if result.Err != nil {
+					c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
+					return
+				}
 
-		_, result.Err = c.svcCtx.Dao.ChatInviteParticipantsDAO.DeleteTx(tx, chat2.Chat.Id, deleteUserId)
-	})
+				_, result.Err = c.svcCtx.Dao.ChatInviteParticipantsDAO.DeleteTx(tx, chat2.Chat.Id, deleteUserId)
+			})
+			return 0, 0, tR.Err
+		},
+		c.svcCtx.Dao.GetChatCacheKey(chat2.Id()),
+		c.svcCtx.Dao.GetChatParticipantCacheKey(chat2.Id(), deleteUserId))
 
-	if tR.Err != nil {
-		err = tR.Err
+	if err != nil {
+		c.Logger.Errorf("chat.deleteChatUser - error: %v", err)
 		return nil, err
 	}
 

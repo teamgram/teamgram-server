@@ -10,6 +10,7 @@
 package core
 
 import (
+	"context"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
@@ -29,15 +30,27 @@ func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*chat.MutableChat,
 		return nil, err
 	}
 
-	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		// kicked
-		c.svcCtx.Dao.ChatParticipantsDAO.UpdateStateByChatIdTx(tx, mtproto.ChatMemberStateKicked, in.ChatId)
-		c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, 0, in.ChatId)
-		c.svcCtx.Dao.ChatsDAO.UpdateDeactivatedTx(tx, false, in.ChatId)
+	keys := []string{c.svcCtx.Dao.GetChatCacheKey(in.ChatId)}
+	mChat.Walk(func(userId int64, participant *chat.ImmutableChatParticipant) error {
+		keys = append(keys, c.svcCtx.Dao.GetChatParticipantCacheKey(participant.ChatId, participant.UserId))
+		return nil
 	})
-	if tR.Err != nil {
-		c.Logger.Errorf("chat.deleteChat - error: %v", tR.Err)
-		return nil, tR.Err
+
+	_, _, err = c.svcCtx.Dao.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+				// kicked
+				c.svcCtx.Dao.ChatParticipantsDAO.UpdateStateByChatIdTx(tx, mtproto.ChatMemberStateKicked, in.ChatId)
+				c.svcCtx.Dao.ChatsDAO.UpdateParticipantCountTx(tx, 0, in.ChatId)
+				c.svcCtx.Dao.ChatsDAO.UpdateDeactivatedTx(tx, false, in.ChatId)
+			})
+			return 0, 0, tR.Err
+		},
+		keys...)
+	if err != nil {
+		c.Logger.Errorf("chat.deleteChat - error: %v", err)
+		return nil, err
 	}
 
 	return mChat, nil

@@ -10,6 +10,8 @@
 package core
 
 import (
+	"context"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -29,21 +31,25 @@ func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*chat.Mutabl
 
 	if in.Title == "" {
 		err = mtproto.ErrChatTitleEmpty
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 
 	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, editUserId)
 	if err != nil {
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 	if chat2.Chat.Title == in.Title {
 		err = mtproto.ErrChatNotModified
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 
 	me, _ = chat2.GetImmutableChatParticipant(editUserId)
 	if me == nil || me.State != mtproto.ChatMemberStateNormal {
 		err = mtproto.ErrInputUserDeactivated
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 
@@ -51,11 +57,19 @@ func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*chat.Mutabl
 	// 400	CHAT_ADMIN_REQUIRED	You must be an admin in this chat to do this
 	if !me.CanChangeInfo() {
 		err = mtproto.ErrChatAdminRequired
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 
-	_, err = c.svcCtx.Dao.ChatsDAO.UpdateTitle(c.ctx, in.Title, chatId)
+	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowAffected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateTitle(c.ctx, in.Title, chatId)
+			return 0, rowAffected, err2
+		},
+		c.svcCtx.Dao.GetChatCacheKey(chatId))
 	if err != nil {
+		c.Logger.Errorf("chat.editChatTitle - error: %v", err)
 		return nil, err
 	}
 
