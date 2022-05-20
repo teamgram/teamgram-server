@@ -27,4 +27,11 @@ func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dia
 	}
 
 	return makeDialog(dialogDO), nil
+	//dlgExt, err := c.svcCtx.Dao.GetDialog(c.ctx, in.UserId, in.PeerType, in.PeerId)
+	//if err != nil {
+	//	c.Logger.Errorf("dialog.getDialogById - error: %v", err)
+	//	return nil, err
+	//}
+	//
+	//return dlgExt, nil
 }

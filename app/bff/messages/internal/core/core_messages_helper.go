@@ -7,6 +7,7 @@
 package core
 
 import (
+	"context"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
@@ -24,7 +25,7 @@ import (
 )
 
 // draft
-func (c *MessagesCore) doClearDraft(userId int64, authKeyId int64, peer *mtproto.PeerUtil) {
+func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId int64, peer *mtproto.PeerUtil) {
 	var (
 		hasClearDraft bool
 	)

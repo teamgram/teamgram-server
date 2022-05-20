@@ -504,6 +504,30 @@ func (dao *DialogsDAO) SelectDialog(ctx context.Context, user_id int64, peer_typ
 	return
 }
 
+// SelectByPeerDialogId
+// select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and peer_dialog_id = :peer_dialog_id and deleted = 0
+// TODO(@benqi): sqlmap
+func (dao *DialogsDAO) SelectByPeerDialogId(ctx context.Context, user_id int64, peer_dialog_id int64) (rValue *dataobject.DialogsDO, err error) {
+	var (
+		query = "select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = ? and peer_dialog_id = ? and deleted = 0"
+		do    = &dataobject.DialogsDO{}
+	)
+	err = dao.db.QueryRowPartial(ctx, do, query, user_id, peer_dialog_id)
+
+	if err != nil {
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectByPeerDialogId(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
+	} else {
+		rValue = do
+	}
+
+	return
+}
+
 // SelectDialogs
 // select id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2 from dialogs where user_id = :user_id and folder_id = :folder_id and deleted = 0
 // TODO(@benqi): sqlmap

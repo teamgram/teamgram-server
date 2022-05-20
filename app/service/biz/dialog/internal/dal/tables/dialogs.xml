@@ -111,6 +111,17 @@
         </sql>
     </operation>
 
+    <operation name="SelectByPeerDialogId">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND peer_dialog_id = :peer_dialog_id AND deleted = 0
+        </sql>
+    </operation>
+
     <operation name="SelectDialogs" result_set="list">
         <sql>
             SELECT

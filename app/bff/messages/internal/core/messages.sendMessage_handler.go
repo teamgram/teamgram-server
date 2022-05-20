@@ -19,6 +19,8 @@
 package core
 
 import (
+	"github.com/zeromicro/go-zero/core/contextx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -31,36 +33,32 @@ import (
 func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	// peer
 	var (
-		hasBot     = c.MD.IsBot
-		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-		linkChatId int64
+		hasBot = c.MD.IsBot
+		peer   = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_SELF:
-		peer.PeerType = mtproto.PEER_USER
-	case mtproto.PEER_USER:
-		if !c.MD.IsBot {
-			mUsers, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-				Id: []int64{c.MD.UserId, peer.PeerId},
-			})
-			peerUser, _ := mUsers.GetImmutableUser(peer.PeerId)
-			if peerUser == nil {
-				err := mtproto.ErrPeerIdInvalid
-				return nil, err
-			}
-			hasBot = peerUser.IsBot()
-		}
-	case mtproto.PEER_CHAT:
-	case mtproto.PEER_CHANNEL:
-		//channel, _ := s.ChannelFacade.GetMutableChannel(ctx, peer.PeerId, md.UserId)
-		//if channel != nil && channel.Channel.LinkedChatId > 0 {
-		//	linkChatId = channel.Channel.LinkedChatId
-		//}
-	default:
+	if !peer.IsChatOrUser() {
 		c.Logger.Errorf("invalid peer: %v", in.Peer)
 		err := mtproto.ErrPeerIdInvalid
 		return nil, err
+	}
+
+	if peer.IsUser() {
+		if peer.IsSelfUser(c.MD.UserId) {
+			peer.PeerType = mtproto.PEER_USER
+		} else {
+			if !c.MD.IsBot {
+				mUsers, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+					Id: []int64{c.MD.UserId, peer.PeerId},
+				})
+				peerUser, _ := mUsers.GetImmutableUser(peer.PeerId)
+				if peerUser == nil {
+					err := mtproto.ErrPeerIdInvalid
+					return nil, err
+				}
+				hasBot = peerUser.IsBot()
+			}
+		}
 	}
 
 	if in.Message == "" {
@@ -75,26 +73,6 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 	//	return
 	//}
 
-	// s.UserFacade.
-	/*
-		# messages.sendMessage
-
-		## Parameters
-		| Name | Type | Description |
-		| ---- | ---- | ----------- |
-		| flags | # | Flags, see TL conditional fields |
-		| no_webpage | flags.1?true | Set this flag to disable generation of the webpage preview |
-		| silent | flags.5?true | Send this message silently (no notifications for the receivers) |
-		| background | flags.6?true | Send this message as background message |
-		| clear_draft | flags.7?true | Clear the draft field |
-		| peer | InputPeer | The destination where the message will be sent |
-		| reply_to_msg_id | flags.0?int | The message ID to which this message will reply to |
-		| message | string | The message |
-		| random_id | long | Unique client message ID required to prevent message resending |
-		| reply_markup | flags.2?ReplyMarkup | Reply markup for sending bot buttons |
-		| entities | flags.3?Vector<MessageEntity> | Message entities for sending styled text |
-		| schedule_date | flags.10?int | Scheduled message date for scheduled messages |
-	*/
 	outMessage := mtproto.MakeTLMessage(&mtproto.Message{
 		Out:               true,
 		Mentioned:         false,
@@ -137,18 +115,6 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		}).To_MessageReplyHeader()
 	}
 
-	if linkChatId > 0 {
-		outMessage.Replies = mtproto.MakeTLMessageReplies(&mtproto.MessageReplies{
-			Comments:       true,
-			Replies:        0,
-			RepliesPts:     0,
-			RecentRepliers: nil,
-			ChannelId:      mtproto.MakeFlagsInt64(linkChatId),
-			MaxId:          nil,
-			ReadMaxId:      nil,
-		}).To_MessageReplies()
-	}
-
 	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, hasBot)
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
@@ -166,15 +132,19 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 
 	if err != nil {
 		c.Logger.Errorf("messages.sendMessage#fa88427a - error: %v", err)
-	} else {
+		return nil, err
+	}
+
+	ctx := contextx.ValueOnlyFrom(c.ctx)
+	threading.GoSafe(func() {
 		if in.ClearDraft {
-			c.doClearDraft(c.MD.UserId, c.MD.AuthId, peer)
+			c.doClearDraft(ctx, c.MD.UserId, c.MD.AuthId, peer)
 		}
-		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(c.ctx, &userpb.TLUserUpdateLastSeen{
+		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(ctx, &userpb.TLUserUpdateLastSeen{
 			Id:         c.MD.UserId,
 			LastSeenAt: time.Now().Unix(),
 		})
-	}
+	})
 
 	return rUpdate, nil
 }

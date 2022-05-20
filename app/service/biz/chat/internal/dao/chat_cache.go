@@ -9,19 +9,20 @@ package dao
 import (
 	"context"
 	"fmt"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/app/service/media/media"
-	"github.com/zeromicro/go-zero/core/mr"
-
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/app/service/media/media"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 const (
 	chatKeyPrefix            = "chat"
-	chatParticipantKeyPrefix = "chat_participant"
+	chatParticipantKeyPrefix = "chat_participant2"
 )
 
 type ChatCacheData struct {
@@ -113,22 +114,25 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 		func(item interface{}) {
 			idx := item.(idxId)
 			var (
-				do *dataobject.ChatParticipantsDO
+				p *chatpb.ImmutableChatParticipant
 			)
 			err2 := d.CachedConn.QueryRow(
 				ctx,
-				&do,
+				&p,
 				genChatParticipantCacheKey(chatId, idx.id),
 				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 					do2, _ := d.ChatParticipantsDAO.SelectByParticipantId(ctx, chatId, idx.id)
 					if do2 == nil {
 						return sqlc.ErrNotFound
 					}
-					*v.(**dataobject.ChatParticipantsDO) = do2
+					logx.WithContext(ctx).Infof("do2: %v", do2)
+					*v.(**chatpb.ImmutableChatParticipant) = d.MakeImmutableChatParticipant(do2)
 					return nil
 				})
+
+			logx.WithContext(ctx).Infof("do: %v", p)
 			if err2 == nil {
-				participantList[idx.idx] = d.MakeImmutableChatParticipant(do)
+				participantList[idx.idx] = p
 			}
 		})
 

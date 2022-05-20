@@ -212,7 +212,7 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		//}
 
 		if in.ClearDraft {
-			c.doClearDraft(c.MD.UserId, c.MD.AuthId, peer)
+			c.doClearDraft(c.ctx, c.MD.UserId, c.MD.AuthId, peer)
 		}
 
 		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(c.ctx, &userpb.TLUserUpdateLastSeen{
