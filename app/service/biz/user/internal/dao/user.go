@@ -21,6 +21,8 @@ package dao
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
@@ -212,4 +214,51 @@ func (d *Dao) UpdateUserUsername(ctx context.Context, id int64, username string)
 	}
 
 	return true
+}
+
+func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int64 {
+	var (
+		mainPhotoId = photoId
+	)
+
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			var err error
+			if photoId == 0 {
+				mainPhotoId, _ = d.UsersDAO.SelectProfilePhoto(ctx, userId)
+				if mainPhotoId > 0 {
+					nextPhotoId, _ := d.UserProfilePhotosDAO.SelectNext(ctx, userId, []int64{mainPhotoId})
+					tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+						_, result.Err = d.UserProfilePhotosDAO.DeleteTx(tx, userId, []int64{mainPhotoId})
+						if result.Err != nil {
+							return
+						}
+						_, result.Err = d.UsersDAO.UpdateProfilePhotoTx(tx, nextPhotoId, userId)
+					})
+					err = tR.Err
+				}
+			} else {
+				tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+					_, _, result.Err = d.UserProfilePhotosDAO.InsertOrUpdateTx(tx, &dataobject.UserProfilePhotosDO{
+						UserId:  userId,
+						PhotoId: mainPhotoId,
+						Date2:   time.Now().Unix(),
+					})
+					if result.Err != nil {
+						return
+					}
+					_, result.Err = d.UsersDAO.UpdateProfilePhotoTx(tx, mainPhotoId, userId)
+				})
+				err = tR.Err
+			}
+
+			return 0, 0, err
+		},
+		genUserDataCacheKey(userId))
+	if err != nil {
+		return 0
+	}
+
+	return mainPhotoId
 }
