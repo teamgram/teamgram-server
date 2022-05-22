@@ -77,8 +77,12 @@ func (c *BFFProxyClient) GetRpcClientByRequest(t interface{}) (zrpc.Client, erro
 	return nil, fmt.Errorf("not found method: %s", rt.Name())
 }
 
-// Invoke 通用grpc转发器
 func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
+	return c.InvokeContext(context.Background(), rpcMetaData, object)
+}
+
+// InvokeContext 通用grpc转发器
+func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
 	conn, err := c.GetRpcClientByRequest(object)
 	if err != nil {
 		r, err2 := c.TryReturnFakeRpcResult(object)
@@ -102,8 +106,8 @@ func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtprot
 	var header, trailer metadata.MD
 
 	// Fixed @LionPuChiPuChi, 2018-12-19
-	ctxWithTimeout, _ := context.WithTimeout(context.Background(), 60*time.Second)
-	ctx, _ := metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
+	ctxWithTimeout, _ := context.WithTimeout(ctx, 60*time.Second)
+	ctx, _ = metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
 	logger := logx.WithContext(ctx)
 	rt := time.Now()
 
