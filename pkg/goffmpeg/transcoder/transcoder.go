@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/ffmpegutil/goffmpeg/ffmpeg"
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/ffmpegutil/goffmpeg/models"
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/ffmpegutil/goffmpeg/utils"
+	"github.com/teamgram/teamgram-server/pkg/goffmpeg/ffmpeg"
+	"github.com/teamgram/teamgram-server/pkg/goffmpeg/models"
+	"github.com/teamgram/teamgram-server/pkg/goffmpeg/utils"
 )
 
 // Transcoder Main struct
