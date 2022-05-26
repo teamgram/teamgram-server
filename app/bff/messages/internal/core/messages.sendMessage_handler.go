@@ -135,16 +135,12 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		return nil, err
 	}
 
-	ctx := contextx.ValueOnlyFrom(c.ctx)
-	threading.GoSafe(func() {
-		if in.ClearDraft {
+	if in.ClearDraft {
+		ctx := contextx.ValueOnlyFrom(c.ctx)
+		threading.GoSafe(func() {
 			c.doClearDraft(ctx, c.MD.UserId, c.MD.AuthId, peer)
-		}
-		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(ctx, &userpb.TLUserUpdateLastSeen{
-			Id:         c.MD.UserId,
-			LastSeenAt: time.Now().Unix(),
 		})
-	})
+	}
 
 	return rUpdate, nil
 }

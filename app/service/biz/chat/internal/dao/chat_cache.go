@@ -74,16 +74,6 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 					},
 					func() {
 						cacheData.ChatParticipantIdList, _ = d.ChatParticipantsDAO.SelectChatParticipantIdList(ctx, chatId)
-					},
-					func() {
-						if d.Plugin != nil {
-							cacheData.ChatData.CallActive, cacheData.ChatData.CallNotEmpty = d.Plugin.GetChatCallActiveAndNotEmpty(ctx, 0, chatId)
-						}
-					},
-					func() {
-						if d.Plugin != nil {
-							cacheData.ChatData.Call = d.Plugin.GetChatGroupCall(ctx, 0, chatId)
-						}
 					})
 			} else {
 				cacheData.ChatParticipantIdList, _ = d.ChatParticipantsDAO.SelectChatParticipantIdList(ctx, chatId)
@@ -97,6 +87,12 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 			err = mtproto.ErrChatIdInvalid
 		}
 		return nil, err
+	}
+
+	// TODO: cache
+	if d.Plugin != nil {
+		chatData.ChatData.CallActive, chatData.ChatData.CallNotEmpty = d.Plugin.GetChatCallActiveAndNotEmpty(ctx, 0, chatId)
+		chatData.ChatData.Call = d.Plugin.GetChatGroupCall(ctx, 0, chatId)
 	}
 
 	return chatData, nil

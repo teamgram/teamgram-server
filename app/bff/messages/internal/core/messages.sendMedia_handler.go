@@ -21,7 +21,8 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/zeromicro/go-zero/core/contextx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"time"
 )
 
@@ -185,48 +186,13 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 	if err != nil {
 		c.Logger.Errorf("messages.sendMedia#c8f16791 - error: %v", err)
 		return nil, err
-	} else {
-		//if peer.PeerType == model.PEER_CHANNEL {
-		//	updateChannelInbox := mtproto.MakeTLUpdateReadChannelInbox(&mtproto.Update{
-		//		FolderId:         nil,
-		//		ChannelId:        peer.PeerId,
-		//		MaxId:            0,
-		//		StillUnreadCount: 0,
-		//		Pts_INT32:        0,
-		//	}).To_Update()
-		//
-		//	model.VisitUpdates(md.UserId, reply, map[string]model.UpdateVisitedFunc{
-		//		// DC_UPDATE
-		//		mtproto.Predicate_updateNewChannelMessage: func(
-		//			userId int32,
-		//			update *mtproto.Update,
-		//			users []*mtproto.User,
-		//			chats []*mtproto.Chat,
-		//			date int32) {
-		//			updateChannelInbox.MaxId = update.Message_MESSAGE.Id
-		//			updateChannelInbox.Pts_INT32 = update.Pts_INT32
-		//		},
-		//	})
-		//
-		//	reply.Updates = append(reply.Updates, updateChannelInbox)
-		//}
+	}
 
-		if in.ClearDraft {
-			c.doClearDraft(c.ctx, c.MD.UserId, c.MD.AuthId, peer)
-		}
-
-		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(c.ctx, &userpb.TLUserUpdateLastSeen{
-			Id:         c.MD.UserId,
-			LastSeenAt: time.Now().Unix(),
+	if in.ClearDraft {
+		ctx := contextx.ValueOnlyFrom(c.ctx)
+		threading.GoSafe(func() {
+			c.doClearDraft(ctx, c.MD.UserId, c.MD.AuthId, peer)
 		})
-
-		//sync_client.PushUpdates(ctx, md.UserId, model.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadChannelInbox(&mtproto.Update{
-		//	FolderId:         nil,
-		//	ChannelId:        peer.PeerId,
-		//	MaxId:            readInboxId,
-		//	StillUnreadCount: 0,
-		//	Pts_INT32:        0,
-		//}).To_Update()))
 	}
 
 	return rUpdate, nil

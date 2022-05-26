@@ -21,7 +21,8 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/zeromicro/go-zero/core/contextx"
+	"github.com/zeromicro/go-zero/core/threading"
 	"time"
 )
 
@@ -175,16 +176,14 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 
 	if err != nil {
 		c.Logger.Errorf("messages.sendMedia#c8f16791 - error: %v", err)
-	} else {
-		// go func() {
-		if in.ClearDraft {
-			c.doClearDraft(c.ctx, c.MD.UserId, c.MD.AuthId, peer)
-		}
-		c.svcCtx.Dao.UserClient.UserUpdateLastSeen(c.ctx, &userpb.TLUserUpdateLastSeen{
-			Id:         c.MD.UserId,
-			LastSeenAt: time.Now().Unix(),
+		return nil, err
+	}
+
+	if in.ClearDraft {
+		ctx := contextx.ValueOnlyFrom(c.ctx)
+		threading.GoSafe(func() {
+			c.doClearDraft(ctx, c.MD.UserId, c.MD.AuthId, peer)
 		})
-		// }()
 	}
 
 	return rUpdate, nil

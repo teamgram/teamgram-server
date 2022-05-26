@@ -8,20 +8,21 @@ package core
 
 import (
 	"context"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
-	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"math/rand"
-	"mvdan.cc/xurls/v2"
 	"sort"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
+	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 	mediapb "github.com/teamgram/teamgram-server/app/service/media/media"
 	"github.com/teamgram/teamgram-server/pkg/mention"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
+
+	"mvdan.cc/xurls/v2"
 )
 
 // draft
@@ -30,7 +31,7 @@ func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId
 		hasClearDraft bool
 	)
 
-	c.svcCtx.Dao.DialogClient.DialogClearDraftMessage(c.ctx, &dialog.TLDialogClearDraftMessage{
+	c.svcCtx.Dao.DialogClient.DialogClearDraftMessage(ctx, &dialog.TLDialogClearDraftMessage{
 		UserId:   c.MD.UserId,
 		PeerType: peer.PeerType,
 		PeerId:   peer.PeerId,
@@ -44,7 +45,7 @@ func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId
 		}).To_Update()
 
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
-			c.ctx,
+			ctx,
 			&sync.TLSyncUpdatesNotMe{
 				UserId:    userId,
 				AuthKeyId: authKeyId,
@@ -52,77 +53,6 @@ func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId
 			})
 	}
 }
-
-/*
-## gifVideo
-
-wubenqideMacBook-Pro:Desktop wubenqi$ ffmpeg -i facebook-ad-gif.gif.mp4
-ffmpeg version 4.1.3 Copyright (c) 2000-2019 the FFmpeg developers
-  built with Apple LLVM version 10.0.1 (clang-1001.0.46.4)
-  configuration: --prefix=/usr/local/Cellar/ffmpeg/4.1.3_1 --enable-shared --enable-pthreads --enable-version3 --enable-hardcoded-tables --enable-avresample --cc=clang --host-cflags='-I/Library/Java/JavaVirtualMachines/adoptopenjdk-11.0.2.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/adoptopenjdk-11.0.2.jdk/Contents/Home/include/darwin' --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libbluray --enable-libmp3lame --enable-libopus --enable-librubberband --enable-libsnappy --enable-libtesseract --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librtmp --enable-libspeex --enable-videotoolbox --disable-libjack --disable-indev=jack --enable-libaom --enable-libsoxr
-  libavutil      56. 22.100 / 56. 22.100
-  libavcodec     58. 35.100 / 58. 35.100
-  libavformat    58. 20.100 / 58. 20.100
-  libavdevice    58.  5.100 / 58.  5.100
-  libavfilter     7. 40.101 /  7. 40.101
-  libavresample   4.  0.  0 /  4.  0.  0
-  libswscale      5.  3.100 /  5.  3.100
-  libswresample   3.  3.100 /  3.  3.100
-  libpostproc    55.  3.100 / 55.  3.100
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'facebook-ad-gif.gif.mp4':
-  Metadata:
-    major_brand     : isom
-    minor_version   : 512
-    compatible_brands: isomiso2avc1mp41
-    encoder         : Lavf58.20.100
-  Duration: 00:00:03.92, start: 0.000000, bitrate: 271 kb/s
-    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 286x320, 268 kb/s, 14.29 fps, 14.29 tbr, 12800 tbn, 28.57 tbc (default)
-    Metadata:
-      handler_name    : VideoHandler
-
-## mp4
-wubenqideMacBook-Pro:Desktop wubenqi$ ffmpeg -i 111.gif.mp4
-ffmpeg version 4.1.3 Copyright (c) 2000-2019 the FFmpeg developers
-  built with Apple LLVM version 10.0.1 (clang-1001.0.46.4)
-  configuration: --prefix=/usr/local/Cellar/ffmpeg/4.1.3_1 --enable-shared --enable-pthreads --enable-version3 --enable-hardcoded-tables --enable-avresample --cc=clang --host-cflags='-I/Library/Java/JavaVirtualMachines/adoptopenjdk-11.0.2.jdk/Contents/Home/include -I/Library/Java/JavaVirtualMachines/adoptopenjdk-11.0.2.jdk/Contents/Home/include/darwin' --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libbluray --enable-libmp3lame --enable-libopus --enable-librubberband --enable-libsnappy --enable-libtesseract --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librtmp --enable-libspeex --enable-videotoolbox --disable-libjack --disable-indev=jack --enable-libaom --enable-libsoxr
-  libavutil      56. 22.100 / 56. 22.100
-  libavcodec     58. 35.100 / 58. 35.100
-  libavformat    58. 20.100 / 58. 20.100
-  libavdevice    58.  5.100 / 58.  5.100
-  libavfilter     7. 40.101 /  7. 40.101
-  libavresample   4.  0.  0 /  4.  0.  0
-  libswscale      5.  3.100 /  5.  3.100
-  libswresample   3.  3.100 /  3.  3.100
-  libpostproc    55.  3.100 / 55.  3.100
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '111.gif.mp4':
-  Metadata:
-    major_brand     : isom
-    minor_version   : 512
-    compatible_brands: isomiso2avc1mp41
-    encoder         : Lavf58.20.100
-  Duration: 00:00:14.19, start: 0.000000, bitrate: 429 kb/s
-    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 320x180, 289 kb/s, 29.97 fps, 29.97 tbr, 30k tbn, 59.94 tbc (default)
-    Metadata:
-      handler_name    : Core Media Video
-    Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 131 kb/s (default)
-    Metadata:
-      handler_name    : Core Media Audio
-
-## tdesktop 检查 isGifv
-
-bool FFMpegReaderImplementation::isGifv() const {
-	if (_hasAudioStream) {
-		return false;
-	}
-	if (dataSize() > Storage::kMaxAnimationInMemory) {
-		return false;
-	}
-	if (_codecContext->codec_id != AV_CODEC_ID_H264) {
-		return false;
-	}
-	return true;
-}
-*/
 
 func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
 	var (
@@ -381,23 +311,14 @@ func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, 
 	}
 
 	if !noWebpage && firstUrl != "" {
-		canEmbedLink := true
-		// TODO(@benqi): check channel or super chat
-		if peer.PeerType == mtproto.PEER_CHANNEL {
-			// TODO(@benqi): enable check CanEmbedLinks
-			// canEmbedLink = s.ChannelFacade.CanEmbedLinks(ctx, r.PeerId, r.From.Id)
-		}
-
-		if canEmbedLink {
-			// TODO(@benqi): disable
-			if c.svcCtx.Plugin != nil {
-				ctx, _ := metadata.RpcMetadataToOutgoing(c.ctx, c.MD)
-				webpage, _ := c.svcCtx.Plugin.GetWebpagePreview(ctx, firstUrl)
-				if webpage != nil {
-					message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
-						Webpage: webpage,
-					}).To_MessageMedia()
-				}
+		// TODO(@benqi): disable
+		if c.svcCtx.Plugin != nil {
+			ctx, _ := metadata.RpcMetadataToOutgoing(c.ctx, c.MD)
+			webpage, _ := c.svcCtx.Plugin.GetWebpagePreview(ctx, firstUrl)
+			if webpage != nil {
+				message.Media = mtproto.MakeTLMessageMediaWebPage(&mtproto.MessageMedia{
+					Webpage: webpage,
+				}).To_MessageMedia()
 			}
 		}
 	}
