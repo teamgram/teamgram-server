@@ -660,6 +660,7 @@ func (m *Mediafile) ToStrCommand() []string {
 	var strCommand []string
 
 	opts := []string{
+		"ThreadQueueSize",
 		"SeekTimeInput",
 		"SeekUsingTsInput",
 		"NativeFramerateInput",
@@ -723,7 +724,6 @@ func (m *Mediafile) ToStrCommand() []string {
 		"MovFlags",
 		"OutputFormat",
 		"OutputPipe",
-		"ThreadQueueSize",
 	}
 
 	for _, name := range opts {
