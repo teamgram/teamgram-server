@@ -81,6 +81,7 @@ type Mediafile struct {
 	pixFmt                string
 	rawInputArgs          []string
 	rawOutputArgs         []string
+	threadQueueSize       int
 }
 
 /*** SETTERS ***/
@@ -361,6 +362,10 @@ func (m *Mediafile) SetRawInputArgs(args []string) {
 
 func (m *Mediafile) SetRawOutputArgs(args []string) {
 	m.rawOutputArgs = args
+}
+
+func (m *Mediafile) SetThreadQueueSize(v int) {
+	m.threadQueueSize = v
 }
 
 /*** GETTERS ***/
@@ -718,6 +723,7 @@ func (m *Mediafile) ToStrCommand() []string {
 		"MovFlags",
 		"OutputFormat",
 		"OutputPipe",
+		"ThreadQueueSize",
 	}
 
 	for _, name := range opts {
@@ -1193,4 +1199,11 @@ func (m *Mediafile) ObtainRawInputArgs() []string {
 
 func (m *Mediafile) ObtainRawOutputArgs() []string {
 	return m.rawOutputArgs
+}
+
+func (m *Mediafile) ObtainThreadQueueSize() []string {
+	if m.threadQueueSize != 0 {
+		return []string{"-thread_queue_size", fmt.Sprintf("%d", m.threadQueueSize)}
+	}
+	return nil
 }
