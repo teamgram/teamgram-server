@@ -82,7 +82,7 @@ cd ../teamgramd/bin
 [tdesktop for Teamgram](clients/teamgram-tdesktop.md)
 
 ## Feedback
-Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/cnteamgram) Or [Teamgram](https://t.me/enteamgram) to discuss problems around source code.
+Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/+S1_22-6EM1BaffXS) Or [Teamgram](https://t.me/+TjD5LZJ5XLRlCYLF) to discuss problems around source code.
 
 ## Notes
 If need enterprise edition, please PM the **[author](https://t.me/benqi)**
