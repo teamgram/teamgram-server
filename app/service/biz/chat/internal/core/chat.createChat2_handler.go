@@ -30,17 +30,18 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 		userIdList = in.UserIdList
 		title      = in.Title
 	)
-	//
-	//if chatsDO, err = c.svcCtx.Dao.ChatsDAO.SelectLastCreator(c.ctx, creatorId); err != nil {
-	//	c.Logger.Errorf("chat.createChat2 - error: %v", err)
-	//	return nil, err
-	//} else if chatsDO != nil {
-	//	if date-chatsDO.Date < createChatFlood {
-	//		err = mtproto.NewErrFloodWaitX(int32(date - chatsDO.Date))
-	//		c.Logger.Errorf("createChat error: %v. lastCreate = ", err, chatsDO.Date)
-	//		return nil, err
-	//	}
-	//}
+
+	// TODO:
+	if chatsDO, err = c.svcCtx.Dao.ChatsDAO.SelectLastCreator(c.ctx, creatorId); err != nil {
+		c.Logger.Errorf("chat.createChat2 - error: %v", err)
+		return nil, err
+	} else if chatsDO != nil {
+		if date-chatsDO.Date < createChatFlood {
+			err = mtproto.NewErrFloodWaitX(int32(date - chatsDO.Date))
+			c.Logger.Errorf("createChat error: %v. lastCreate = ", err, chatsDO.Date)
+			return nil, err
+		}
+	}
 
 	chatsDO = &dataobject.ChatsDO{
 		Id:                   0,

@@ -57,7 +57,7 @@ func (c *ChatCore) ChatGetAdminsWithInvites(in *chat.TLChatGetAdminsWithInvites)
 				admin *mtproto.ChatAdminWithInvites
 			)
 
-			if ok, _ := container2.Contains(canInviteUsers, v.AdminId); !ok {
+			if ok, _ := container2.Contains(v.AdminId, canInviteUsers); !ok {
 				return
 			}
 

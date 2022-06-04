@@ -22,10 +22,6 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
 
-const (
-	versionField = "0"
-)
-
 type idxId struct {
 	idx int
 	id  int64
