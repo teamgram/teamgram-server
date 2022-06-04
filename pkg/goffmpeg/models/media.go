@@ -82,9 +82,31 @@ type Mediafile struct {
 	rawInputArgs          []string
 	rawOutputArgs         []string
 	threadQueueSize       int
+	map2                  string
+	segmentTime           int
+	resetTimestamps       int
+	scThreshold           string
+	forceKeyFrames        string
 }
 
 /*** SETTERS ***/
+
+func (m *Mediafile) SetScThreshold(v string) {
+	m.scThreshold = v
+}
+
+func (m *Mediafile) SetForceKeyFrames(v string) {
+	m.forceKeyFrames = v
+}
+
+func (m *Mediafile) SetSegmentTime(v int) {
+	m.segmentTime = v
+}
+
+func (m *Mediafile) SetResetTimestamps(v int) {
+	m.resetTimestamps = v
+}
+
 func (m *Mediafile) SetAudioFilter(v string) {
 	m.audioFilter = v
 }
@@ -366,6 +388,10 @@ func (m *Mediafile) SetRawOutputArgs(args []string) {
 
 func (m *Mediafile) SetThreadQueueSize(v int) {
 	m.threadQueueSize = v
+}
+
+func (m *Mediafile) SetMap2(v string) {
+	m.map2 = v
 }
 
 /*** GETTERS ***/
@@ -655,6 +681,10 @@ func (m *Mediafile) RawOutputArgs() []string {
 	return m.rawOutputArgs
 }
 
+func (m *Mediafile) ThreadQueueSize() int {
+	return m.threadQueueSize
+}
+
 /** OPTS **/
 func (m *Mediafile) ToStrCommand() []string {
 	var strCommand []string
@@ -683,6 +713,7 @@ func (m *Mediafile) ToStrCommand() []string {
 		"VideoMaxBitRate",
 		"VideoMinBitRate",
 		"VideoProfile",
+		"Map2",
 		"SkipVideo",
 		"AudioCodec",
 		"AudioBitRate",
@@ -706,11 +737,15 @@ func (m *Mediafile) ToStrCommand() []string {
 		"StreamIds",
 		"MovFlags",
 		"RawOutputArgs",
+		"SegmentTime",
+		"ResetTimestamps",
 		"HlsListSize",
 		"HlsSegmentDuration",
 		"HlsPlaylistType",
 		"HlsMasterPlaylistName",
 		"HlsSegmentFilename",
+		"ScThreshold",
+		"ForceKeyFrames",
 		"AudioFilter",
 		"VideoFilter",
 		"HttpMethod",
@@ -719,10 +754,10 @@ func (m *Mediafile) ToStrCommand() []string {
 		"MapMetadata",
 		"Tags",
 		"EncryptionKey",
+		"OutputFormat",
 		"OutputPath",
 		"Bframe",
 		"MovFlags",
-		"OutputFormat",
 		"OutputPipe",
 	}
 
@@ -1204,6 +1239,41 @@ func (m *Mediafile) ObtainRawOutputArgs() []string {
 func (m *Mediafile) ObtainThreadQueueSize() []string {
 	if m.threadQueueSize != 0 {
 		return []string{"-thread_queue_size", fmt.Sprintf("%d", m.threadQueueSize)}
+	}
+	return nil
+}
+
+func (m *Mediafile) ObtainMap2() []string {
+	if m.map2 != "" {
+		return []string{"-map", m.map2}
+	}
+	return nil
+}
+
+func (m *Mediafile) ObtainSegmentTime() []string {
+	if m.segmentTime != 0 {
+		return []string{"-segment_time", fmt.Sprintf("%d", m.segmentTime)}
+	}
+	return nil
+}
+
+func (m *Mediafile) ObtainResetTimestamps() []string {
+	if m.resetTimestamps != 0 {
+		return []string{"-reset_timestamps", fmt.Sprintf("%d", m.resetTimestamps)}
+	}
+	return nil
+}
+
+func (m *Mediafile) ObtainScThreshold() []string {
+	if m.scThreshold != "" {
+		return []string{"-sc_threshold", m.scThreshold}
+	}
+	return nil
+}
+
+func (m *Mediafile) ObtainForceKeyFrames() []string {
+	if m.forceKeyFrames != "" {
+		return []string{"-force_key_frames", m.forceKeyFrames}
 	}
 	return nil
 }
