@@ -7,8 +7,9 @@
 package chat
 
 import (
-	"github.com/teamgram/proto/mtproto"
 	"time"
+
+	"github.com/teamgram/proto/mtproto"
 )
 
 func (m *MutableChat) Id() int64 {
@@ -142,7 +143,6 @@ func (m *MutableChat) ToUnsafeChat(id int64) *mtproto.Chat {
 
 	chat := &mtproto.Chat{
 		Creator:                 false,
-		Kicked:                  false,
 		Left:                    false,
 		Deactivated:             false,
 		CallActive:              m.CallActive(),

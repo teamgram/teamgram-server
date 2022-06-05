@@ -5,44 +5,73 @@ Please note, that client developers are required to comply with the Security Gui
 ### General
 
 Why did you use a custom protocol?
+
 How does it work?
+
 Server-client encryption
+
 End-to-end encryption
+
 Why didn't you use a different solution?
+
 Why are you mostly relying on classical crypto algorithms?
+
 I'm a security expert and I have comments about your setup
 ### Encryption
 
 How are MTProto messages authenticated?
+
 Are you using Encrypt-and-MAC?
+
 Why not go for Encrypt-then-MAC?
+
 Do you still use SHA-1?
+
 Do you use IGE? IGE is broken!
 ### Authentication
 
 How is the server authenticated during DH key exchange?
+
 How are clients authenticated?
+
 How are secret chats authenticated?
+
 How are voice calls authentication?
+
 Do you have Forward Secrecy?
+
 ### Protection against known attacks
 
 Known-plaintext attacks
+
 Chosen-plaintext attacks
+
 Chosen-ciphertext attacks
+
 What about IND CCA?
+
 Replay attacks
+
 Man-in-the-middle attacks
+
 Hash collisions for DH keys
+
 Length extension attacks
+
 ### Encrypted CDNs
 
 Why do you use CDNs?
+
 Can CDNs decipher any files?
+
 Can CDNs substitute files with their own versions?
+
 Can CDNs be used for censorship?
+
 Can I verify this?
+
 Does this affect private data?
+
 Is this connected to government requests to move servers to their territory?
 Does this give countries any influence over Telegram?
 
