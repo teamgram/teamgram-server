@@ -13,8 +13,8 @@ package message_client
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,28 +22,27 @@ import (
 var _ *mtproto.Bool
 
 type MessageClient interface {
-    MessageGetUserMessage(ctx context.Context, in *message.TLMessageGetUserMessage) (*mtproto.MessageBox, error)
-    MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.Vector_MessageBox, error)
-    MessageGetUserMessageListByDataIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdList) (*message.Vector_MessageBox, error)
-    MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error)
-    MessageGetHistoryMessagesCount(ctx context.Context, in *message.TLMessageGetHistoryMessagesCount) (*mtproto.Int32, error)
-    MessageGetPeerUserMessageId(ctx context.Context, in *message.TLMessageGetPeerUserMessageId) (*mtproto.Int32, error)
-    MessageGetPeerUserMessage(ctx context.Context, in *message.TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error)
-    MessageGetPeerChatMessageIdList(ctx context.Context, in *message.TLMessageGetPeerChatMessageIdList) (*message.Vector_PeerMessageId, error)
-    MessageGetPeerChatMessageList(ctx context.Context, in *message.TLMessageGetPeerChatMessageList) (*message.Vector_MessageBox, error)
-    MessageSearchByMediaType(ctx context.Context, in *message.TLMessageSearchByMediaType) (*message.Vector_MessageBox, error)
-    MessageSearch(ctx context.Context, in *message.TLMessageSearch) (*message.Vector_MessageBox, error)
-    MessageSearchGlobal(ctx context.Context, in *message.TLMessageSearchGlobal) (*message.Vector_MessageBox, error)
-    MessageSearchByPinned(ctx context.Context, in *message.TLMessageSearchByPinned) (*message.Vector_MessageBox, error)
-    MessageGetSearchCounter(ctx context.Context, in *message.TLMessageGetSearchCounter) (*mtproto.Int32, error)
-    MessageSearchV2(ctx context.Context, in *message.TLMessageSearchV2) (*message.Vector_MessageBox, error)
-    MessageGetLastTwoPinnedMessageId(ctx context.Context, in *message.TLMessageGetLastTwoPinnedMessageId) (*message.Vector_Int, error)
-    MessageUpdatePinnedMessageId(ctx context.Context, in *message.TLMessageUpdatePinnedMessageId) (*mtproto.Bool, error)
-    MessageGetPinnedMessageIdList(ctx context.Context, in *message.TLMessageGetPinnedMessageIdList) (*message.Vector_Int, error)
-    MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.Vector_Int, error)
-    MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.Vector_MessageBox, error)
-    MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
-
+	MessageGetUserMessage(ctx context.Context, in *message.TLMessageGetUserMessage) (*mtproto.MessageBox, error)
+	MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.Vector_MessageBox, error)
+	MessageGetUserMessageListByDataIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdList) (*message.Vector_MessageBox, error)
+	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error)
+	MessageGetHistoryMessagesCount(ctx context.Context, in *message.TLMessageGetHistoryMessagesCount) (*mtproto.Int32, error)
+	MessageGetPeerUserMessageId(ctx context.Context, in *message.TLMessageGetPeerUserMessageId) (*mtproto.Int32, error)
+	MessageGetPeerUserMessage(ctx context.Context, in *message.TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error)
+	MessageGetPeerChatMessageIdList(ctx context.Context, in *message.TLMessageGetPeerChatMessageIdList) (*message.Vector_PeerMessageId, error)
+	MessageGetPeerChatMessageList(ctx context.Context, in *message.TLMessageGetPeerChatMessageList) (*message.Vector_MessageBox, error)
+	MessageSearchByMediaType(ctx context.Context, in *message.TLMessageSearchByMediaType) (*message.Vector_MessageBox, error)
+	MessageSearch(ctx context.Context, in *message.TLMessageSearch) (*message.Vector_MessageBox, error)
+	MessageSearchGlobal(ctx context.Context, in *message.TLMessageSearchGlobal) (*message.Vector_MessageBox, error)
+	MessageSearchByPinned(ctx context.Context, in *message.TLMessageSearchByPinned) (*message.Vector_MessageBox, error)
+	MessageGetSearchCounter(ctx context.Context, in *message.TLMessageGetSearchCounter) (*mtproto.Int32, error)
+	MessageSearchV2(ctx context.Context, in *message.TLMessageSearchV2) (*message.Vector_MessageBox, error)
+	MessageGetLastTwoPinnedMessageId(ctx context.Context, in *message.TLMessageGetLastTwoPinnedMessageId) (*message.Vector_Int, error)
+	MessageUpdatePinnedMessageId(ctx context.Context, in *message.TLMessageUpdatePinnedMessageId) (*mtproto.Bool, error)
+	MessageGetPinnedMessageIdList(ctx context.Context, in *message.TLMessageGetPinnedMessageIdList) (*message.Vector_Int, error)
+	MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.Vector_Int, error)
+	MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.Vector_MessageBox, error)
+	MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
 }
 
 type defaultMessageClient struct {
@@ -55,7 +54,6 @@ func NewMessageClient(cli zrpc.Client) MessageClient {
 		cli: cli,
 	}
 }
-
 
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
@@ -203,4 +201,3 @@ func (m *defaultMessageClient) MessageGetUnreadMentionsCount(ctx context.Context
 	client := message.NewRPCMessageClient(m.cli.Conn())
 	return client.MessageGetUnreadMentionsCount(ctx, in)
 }
-

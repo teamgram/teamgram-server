@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 )
-
 
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
@@ -333,4 +332,3 @@ func (s *Service) MessageGetUnreadMentionsCount(ctx context.Context, request *me
 	c.Infof("message.getUnreadMentionsCount - reply: %s", r.DebugString())
 	return r, err
 }
-
