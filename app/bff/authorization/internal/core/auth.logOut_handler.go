@@ -23,9 +23,9 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
 
-// AuthLogOut3E72BA19
+// AuthLogOut
 // auth.logOut#3e72ba19 = auth.LoggedOut;
-func (c *AuthorizationCore) AuthLogOut3E72BA19(in *mtproto.TLAuthLogOut3E72BA19) (*mtproto.Auth_LoggedOut, error) {
+func (c *AuthorizationCore) AuthLogOut(in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	// unbind auth_key and user_id
 	_, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionUnbindAuthKeyUser(c.ctx, &authsession.TLAuthsessionUnbindAuthKeyUser{
 		AuthKeyId: c.MD.AuthId,

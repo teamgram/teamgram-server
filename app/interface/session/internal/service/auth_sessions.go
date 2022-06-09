@@ -775,11 +775,7 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 
 	request.rpcResult = reply
 
-	if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut3E72BA19); ok {
-		logx.Infof("authLogOut - %#v", rpcMetadata)
-		s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
-	}
-	if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut5717DA40); ok {
+	if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut); ok {
 		logx.Infof("authLogOut - %#v", rpcMetadata)
 		s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
 	}

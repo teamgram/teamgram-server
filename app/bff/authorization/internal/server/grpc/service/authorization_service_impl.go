@@ -62,18 +62,18 @@ func (s *Service) AuthSignIn(ctx context.Context, request *mtproto.TLAuthSignIn)
 	return r, err
 }
 
-// AuthLogOut3E72BA19
+// AuthLogOut
 // auth.logOut#3e72ba19 = auth.LoggedOut;
-func (s *Service) AuthLogOut3E72BA19(ctx context.Context, request *mtproto.TLAuthLogOut3E72BA19) (*mtproto.Auth_LoggedOut, error) {
+func (s *Service) AuthLogOut(ctx context.Context, request *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("auth.logOut3E72BA19 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Infof("auth.logOut - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.AuthLogOut3E72BA19(request)
+	r, err := c.AuthLogOut(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Infof("auth.logOut3E72BA19 - reply: %s", r.DebugString())
+	c.Infof("auth.logOut - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -269,21 +269,6 @@ func (s *Service) AccountResetPassword(ctx context.Context, request *mtproto.TLA
 	}
 
 	c.Infof("account.resetPassword - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AuthLogOut5717DA40
-// auth.logOut#5717da40 = Bool;
-func (s *Service) AuthLogOut5717DA40(ctx context.Context, request *mtproto.TLAuthLogOut5717DA40) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("auth.logOut5717DA40 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AuthLogOut5717DA40(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("auth.logOut5717DA40 - reply: %s", r.DebugString())
 	return r, err
 }
 

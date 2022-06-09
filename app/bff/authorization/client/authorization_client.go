@@ -24,7 +24,7 @@ type AuthorizationClient interface {
 	AuthSendCode(ctx context.Context, in *mtproto.TLAuthSendCode) (*mtproto.Auth_SentCode, error)
 	AuthSignUp(ctx context.Context, in *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error)
 	AuthSignIn(ctx context.Context, in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error)
-	AuthLogOut3E72BA19(ctx context.Context, in *mtproto.TLAuthLogOut3E72BA19) (*mtproto.Auth_LoggedOut, error)
+	AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error)
 	AuthResetAuthorizations(ctx context.Context, in *mtproto.TLAuthResetAuthorizations) (*mtproto.Bool, error)
 	AuthExportAuthorization(ctx context.Context, in *mtproto.TLAuthExportAuthorization) (*mtproto.Auth_ExportedAuthorization, error)
 	AuthImportAuthorization(ctx context.Context, in *mtproto.TLAuthImportAuthorization) (*mtproto.Auth_Authorization, error)
@@ -38,7 +38,6 @@ type AuthorizationClient interface {
 	AuthDropTempAuthKeys(ctx context.Context, in *mtproto.TLAuthDropTempAuthKeys) (*mtproto.Bool, error)
 	AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
-	AuthLogOut5717DA40(ctx context.Context, in *mtproto.TLAuthLogOut5717DA40) (*mtproto.Bool, error)
 	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
 	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
 	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
@@ -75,11 +74,11 @@ func (m *defaultAuthorizationClient) AuthSignIn(ctx context.Context, in *mtproto
 	return client.AuthSignIn(ctx, in)
 }
 
-// AuthLogOut3E72BA19
+// AuthLogOut
 // auth.logOut#3e72ba19 = auth.LoggedOut;
-func (m *defaultAuthorizationClient) AuthLogOut3E72BA19(ctx context.Context, in *mtproto.TLAuthLogOut3E72BA19) (*mtproto.Auth_LoggedOut, error) {
+func (m *defaultAuthorizationClient) AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AuthLogOut3E72BA19(ctx, in)
+	return client.AuthLogOut(ctx, in)
 }
 
 // AuthResetAuthorizations
@@ -171,13 +170,6 @@ func (m *defaultAuthorizationClient) AuthCheckRecoveryPassword(ctx context.Conte
 func (m *defaultAuthorizationClient) AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AccountResetPassword(ctx, in)
-}
-
-// AuthLogOut5717DA40
-// auth.logOut#5717da40 = Bool;
-func (m *defaultAuthorizationClient) AuthLogOut5717DA40(ctx context.Context, in *mtproto.TLAuthLogOut5717DA40) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AuthLogOut5717DA40(ctx, in)
 }
 
 // AuthToggleBan

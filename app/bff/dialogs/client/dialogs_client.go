@@ -23,7 +23,7 @@ var _ *mtproto.Bool
 type DialogsClient interface {
 	MessagesGetDialogs(ctx context.Context, in *mtproto.TLMessagesGetDialogs) (*mtproto.Messages_Dialogs, error)
 	MessagesSetTyping(ctx context.Context, in *mtproto.TLMessagesSetTyping) (*mtproto.Bool, error)
-	MessagesGetPeerSettingsEFD9A6A2(ctx context.Context, in *mtproto.TLMessagesGetPeerSettingsEFD9A6A2) (*mtproto.Messages_PeerSettings, error)
+	MessagesGetPeerSettings(ctx context.Context, in *mtproto.TLMessagesGetPeerSettings) (*mtproto.Messages_PeerSettings, error)
 	MessagesGetPeerDialogs(ctx context.Context, in *mtproto.TLMessagesGetPeerDialogs) (*mtproto.Messages_PeerDialogs, error)
 	MessagesToggleDialogPin(ctx context.Context, in *mtproto.TLMessagesToggleDialogPin) (*mtproto.Bool, error)
 	MessagesReorderPinnedDialogs(ctx context.Context, in *mtproto.TLMessagesReorderPinnedDialogs) (*mtproto.Bool, error)
@@ -34,7 +34,6 @@ type DialogsClient interface {
 	MessagesGetOnlines(ctx context.Context, in *mtproto.TLMessagesGetOnlines) (*mtproto.ChatOnlines, error)
 	MessagesHidePeerSettingsBar(ctx context.Context, in *mtproto.TLMessagesHidePeerSettingsBar) (*mtproto.Bool, error)
 	MessagesSetHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetHistoryTTL) (*mtproto.Updates, error)
-	MessagesGetPeerSettings3672E09C(ctx context.Context, in *mtproto.TLMessagesGetPeerSettings3672E09C) (*mtproto.PeerSettings, error)
 }
 
 type defaultDialogsClient struct {
@@ -61,11 +60,11 @@ func (m *defaultDialogsClient) MessagesSetTyping(ctx context.Context, in *mtprot
 	return client.MessagesSetTyping(ctx, in)
 }
 
-// MessagesGetPeerSettingsEFD9A6A2
+// MessagesGetPeerSettings
 // messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
-func (m *defaultDialogsClient) MessagesGetPeerSettingsEFD9A6A2(ctx context.Context, in *mtproto.TLMessagesGetPeerSettingsEFD9A6A2) (*mtproto.Messages_PeerSettings, error) {
+func (m *defaultDialogsClient) MessagesGetPeerSettings(ctx context.Context, in *mtproto.TLMessagesGetPeerSettings) (*mtproto.Messages_PeerSettings, error) {
 	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
-	return client.MessagesGetPeerSettingsEFD9A6A2(ctx, in)
+	return client.MessagesGetPeerSettings(ctx, in)
 }
 
 // MessagesGetPeerDialogs
@@ -136,11 +135,4 @@ func (m *defaultDialogsClient) MessagesHidePeerSettingsBar(ctx context.Context, 
 func (m *defaultDialogsClient) MessagesSetHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetHistoryTTL) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
 	return client.MessagesSetHistoryTTL(ctx, in)
-}
-
-// MessagesGetPeerSettings3672E09C
-// messages.getPeerSettings#3672e09c peer:InputPeer = PeerSettings;
-func (m *defaultDialogsClient) MessagesGetPeerSettings3672E09C(ctx context.Context, in *mtproto.TLMessagesGetPeerSettings3672E09C) (*mtproto.PeerSettings, error) {
-	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
-	return client.MessagesGetPeerSettings3672E09C(ctx, in)
 }

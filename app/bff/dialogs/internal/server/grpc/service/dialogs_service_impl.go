@@ -47,13 +47,13 @@ func (s *Service) MessagesSetTyping(ctx context.Context, request *mtproto.TLMess
 	return r, err
 }
 
-// MessagesGetPeerSettingsEFD9A6A2
+// MessagesGetPeerSettings
 // messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
-func (s *Service) MessagesGetPeerSettingsEFD9A6A2(ctx context.Context, request *mtproto.TLMessagesGetPeerSettingsEFD9A6A2) (*mtproto.Messages_PeerSettings, error) {
+func (s *Service) MessagesGetPeerSettings(ctx context.Context, request *mtproto.TLMessagesGetPeerSettings) (*mtproto.Messages_PeerSettings, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("messages.getPeerSettingsEFD9A6A2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.MessagesGetPeerSettingsEFD9A6A2(request)
+	r, err := c.MessagesGetPeerSettings(request)
 	if err != nil {
 		return nil, err
 	}
@@ -209,20 +209,5 @@ func (s *Service) MessagesSetHistoryTTL(ctx context.Context, request *mtproto.TL
 	}
 
 	c.Infof("messages.setHistoryTTL - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesGetPeerSettings3672E09C
-// messages.getPeerSettings#3672e09c peer:InputPeer = PeerSettings;
-func (s *Service) MessagesGetPeerSettings3672E09C(ctx context.Context, request *mtproto.TLMessagesGetPeerSettings3672E09C) (*mtproto.PeerSettings, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("messages.getPeerSettings3672E09C - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesGetPeerSettings3672E09C(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("messages.getPeerSettings3672E09C - reply: %s", r.DebugString())
 	return r, err
 }

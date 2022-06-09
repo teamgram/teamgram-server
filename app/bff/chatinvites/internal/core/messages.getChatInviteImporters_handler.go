@@ -35,10 +35,10 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		limit      = in.GetLimit()
 	)
 
-	if in.Link_FLAGSTRING != nil {
-		link = in.GetLink_FLAGSTRING()
+	if in.Link != nil {
+		link = in.GetLink()
 	} else {
-		link = mtproto.MakeFlagsString(in.Link_STRING)
+		// link = mtproto.MakeFlagsString(in.Link)
 	}
 
 	if !peer.IsChat() {

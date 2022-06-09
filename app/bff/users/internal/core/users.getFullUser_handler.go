@@ -26,9 +26,9 @@ import (
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
-// UsersGetFullUserCA30A5B1
-// users.getFullUser#ca30a5b1 id:InputUser = UserFull;
-func (c *UsersCore) UsersGetFullUserCA30A5B1(in *mtproto.TLUsersGetFullUserCA30A5B1) (*mtproto.UserFull, error) {
+// UsersGetFullUserB60F5918
+// users.getFullUser#b60f5918 id:InputUser = users.UserFull;
+func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	var (
 		peerId int64
 		id     = mtproto.FromInputUser(c.MD.UserId, in.Id)
@@ -105,7 +105,6 @@ func (c *UsersCore) UsersGetFullUserCA30A5B1(in *mtproto.TLUsersGetFullUserCA30A
 		TtlPeriod:           nil,
 		ThemeEmoticon:       nil,
 		PrivateForwardName:  nil,
-		User:                user.ToUnsafeUser(me),
 	}).To_UserFull()
 
 	mr.FinishVoid(
@@ -163,5 +162,9 @@ func (c *UsersCore) UsersGetFullUserCA30A5B1(in *mtproto.TLUsersGetFullUserCA30A
 
 	// TODO: FolderId:    0,
 
-	return userFull, nil
+	return mtproto.MakeTLUsersUserFull(&mtproto.Users_UserFull{
+		FullUser: userFull,
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{user.ToUnsafeUser(me)},
+	}).To_Users_UserFull(), nil
 }

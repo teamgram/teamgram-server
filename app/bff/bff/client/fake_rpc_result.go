@@ -147,12 +147,7 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Hash:   0,
 			Themes: []*mtproto.Theme{},
 		}).To_Account_Themes(), nil
-	case "TLAccountGetChatThemesD6D71D7B":
-		return mtproto.MakeTLAccountChatThemes(&mtproto.Account_ChatThemes{
-			Hash:   0,
-			Themes: []*mtproto.ChatTheme{},
-		}).To_Account_ChatThemes(), nil
-	case "TLAccountGetChatThemesD638DE89":
+	case "TLAccountGetChatThemes":
 		return mtproto.MakeTLAccountThemes(&mtproto.Account_Themes{
 			Hash:   0,
 			Themes: []*mtproto.Theme{},

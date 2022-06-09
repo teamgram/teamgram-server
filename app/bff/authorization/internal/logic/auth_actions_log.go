@@ -43,9 +43,7 @@ func GetActionType(request proto.Message) int {
 		return opTypeSignIn
 	case *mtproto.TLAuthSignUp:
 		return opTypeSignUp
-	case *mtproto.TLAuthLogOut3E72BA19:
-		return opTypeLogout
-	case *mtproto.TLAuthLogOut5717DA40:
+	case *mtproto.TLAuthLogOut:
 		return opTypeLogout
 	case *mtproto.TLAuthCancelCode:
 		return opTypeCancelCode

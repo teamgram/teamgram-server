@@ -22,8 +22,7 @@ var _ *mtproto.Bool
 
 type UsersClient interface {
 	UsersGetUsers(ctx context.Context, in *mtproto.TLUsersGetUsers) (*mtproto.Vector_User, error)
-	UsersGetFullUserB60F5918(ctx context.Context, in *mtproto.TLUsersGetFullUserB60F5918) (*mtproto.Users_UserFull, error)
-	UsersGetFullUserCA30A5B1(ctx context.Context, in *mtproto.TLUsersGetFullUserCA30A5B1) (*mtproto.UserFull, error)
+	UsersGetFullUser(ctx context.Context, in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error)
 	UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error)
 	ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error)
 }
@@ -45,18 +44,11 @@ func (m *defaultUsersClient) UsersGetUsers(ctx context.Context, in *mtproto.TLUs
 	return client.UsersGetUsers(ctx, in)
 }
 
-// UsersGetFullUserB60F5918
+// UsersGetFullUser
 // users.getFullUser#b60f5918 id:InputUser = users.UserFull;
-func (m *defaultUsersClient) UsersGetFullUserB60F5918(ctx context.Context, in *mtproto.TLUsersGetFullUserB60F5918) (*mtproto.Users_UserFull, error) {
+func (m *defaultUsersClient) UsersGetFullUser(ctx context.Context, in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	client := mtproto.NewRPCUsersClient(m.cli.Conn())
-	return client.UsersGetFullUserB60F5918(ctx, in)
-}
-
-// UsersGetFullUserCA30A5B1
-// users.getFullUser#ca30a5b1 id:InputUser = UserFull;
-func (m *defaultUsersClient) UsersGetFullUserCA30A5B1(ctx context.Context, in *mtproto.TLUsersGetFullUserCA30A5B1) (*mtproto.UserFull, error) {
-	client := mtproto.NewRPCUsersClient(m.cli.Conn())
-	return client.UsersGetFullUserCA30A5B1(ctx, in)
+	return client.UsersGetFullUser(ctx, in)
 }
 
 // UsersGetMe

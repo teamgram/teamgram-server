@@ -23,9 +23,9 @@ import (
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesGetPeerSettings3672E09C
-// messages.getPeerSettings#3672e09c peer:InputPeer = PeerSettings;
-func (c *DialogsCore) MessagesGetPeerSettings3672E09C(in *mtproto.TLMessagesGetPeerSettings3672E09C) (*mtproto.PeerSettings, error) {
+// MessagesGetPeerSettings
+// messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
+func (c *DialogsCore) MessagesGetPeerSettings(in *mtproto.TLMessagesGetPeerSettings) (*mtproto.Messages_PeerSettings, error) {
 	peer := mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 
 	peerSettings, err := c.svcCtx.UserClient.UserGetPeerSettings(c.ctx, &userpb.TLUserGetPeerSettings{
@@ -41,5 +41,9 @@ func (c *DialogsCore) MessagesGetPeerSettings3672E09C(in *mtproto.TLMessagesGetP
 		peerSettings = mtproto.MakeTLPeerSettings(nil).To_PeerSettings()
 	}
 
-	return peerSettings, nil
+	return mtproto.MakeTLMessagesPeerSettings(&mtproto.Messages_PeerSettings{
+		Settings: peerSettings,
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{},
+	}).To_Messages_PeerSettings(), nil
 }

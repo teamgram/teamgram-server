@@ -433,10 +433,7 @@ func (c *session) onRpcRequest(gatewayId, clientIp string, msgId *inboxMsg, quer
 
 func (c *session) onRpcResult(rpcResult *rpcApiMessage) {
 	defer func() {
-		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut3E72BA19); ok {
-			c.DeleteByAuthKeyId(c.cb.getAuthKeyId())
-		}
-		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut5717DA40); ok {
+		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut); ok {
 			c.DeleteByAuthKeyId(c.cb.getAuthKeyId())
 		}
 	}()
