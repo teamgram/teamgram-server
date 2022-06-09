@@ -110,7 +110,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 				}
 			}
 			if idx > 0 {
-				if idx+int(limit) > len(dialogExtList)-2 {
+				if idx+1+int(limit) > len(dialogExtList) {
 					dialogExtList = dialogExtList[idx+1:]
 				} else {
 					dialogExtList = dialogExtList[idx+1 : idx+1+int(limit)]
