@@ -146,7 +146,7 @@ func (d *Dao) GetClient(ctx context.Context, authKeyId int64) string {
 			c = "react"
 		}
 	} else if c == "" {
-		if do.AppVersion == "dev Z" {
+		if strings.HasSuffix(do.AppVersion, " Z") {
 			c = "webz"
 		}
 	}
