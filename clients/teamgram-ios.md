@@ -6,7 +6,7 @@
 ```
 mkdir ~/Teamgram
 cd ~/Teamgram
-git clone https://github.com/teamgram/teamgram-ios.git
+git clone --recursive https://github.com/teamgram/teamgram-ios.git
 ```
 
 - build, see [build teamgram-ios](https://github.com/teamgram/teamgram-ios#compilation-guide), and google
