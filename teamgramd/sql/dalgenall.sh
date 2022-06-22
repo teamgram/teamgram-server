@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PWD=`pwd`
-TEAMGRAMAPP=${PWD}"/../app"
+TEAMGRAMAPP=${PWD}"/../../app"
 
 cd ${TEAMGRAMAPP}/messenger/msg/internal/dal/dalgen
 ./dalgen_all.sh

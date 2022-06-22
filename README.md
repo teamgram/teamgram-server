@@ -59,8 +59,7 @@ cd teamgram-server
 
 - Build
 ```
-cd scripts
-./build.sh
+make
 ```
 
 - Run

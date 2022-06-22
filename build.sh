@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 PWD=`pwd`
-TEAMGRAMAPP=${PWD}"/../app"
-INSTALL=${PWD}"/../teamgramd"
+TEAMGRAMAPP=${PWD}"/app"
+INSTALL=${PWD}"/teamgramd"
 
 echo "build idgen ..."
 cd ${TEAMGRAMAPP}/service/idgen/cmd/idgen
