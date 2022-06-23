@@ -70,4 +70,4 @@ clean:
 	@rm -rf teamgramd/bin/sync
 	@rm -rf teamgramd/bin/bff
 	@rm -rf teamgramd/bin/session
-	@rm -rf teamgramd/bin/session
+	@rm -rf teamgramd/bin/gateway
