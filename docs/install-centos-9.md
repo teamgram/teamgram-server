@@ -132,8 +132,7 @@ shell> mysql -uroot teamgram < teamgramd/sql/migrate-20220423.sql
 ### Build
 ```
 dnf install go -y
-cd scripts
-./build.sh
+make
 ```
 
 ### Modify config file 
