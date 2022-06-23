@@ -1,4 +1,4 @@
-VERSION=0.87.0
+VERSION=v0.87.0-teamgram-server
 BUILD=`date +%F`
 SHELL := /bin/bash
 BASEDIR = $(shell pwd)
