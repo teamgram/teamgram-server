@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/container2/linkedmap"
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
@@ -29,9 +30,9 @@ import (
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
 func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*mtproto.Messages_Messages, error) {
 	var (
-		idList  []int32
-		rValues = mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
-			Count:    0,
+		idList    []int32
+		rMessages = linkedmap.New()
+		rValues   = mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
 			Messages: []*mtproto.Message{},
 			Users:    []*mtproto.User{},
 			Chats:    []*mtproto.Chat{},
@@ -55,6 +56,13 @@ func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*
 
 	if len(idList) == 0 {
 		return rValues, nil
+	} else {
+		for _, id := range idList {
+			rMessages.Add(id, mtproto.MakeTLMessageEmpty(&mtproto.Message{
+				Id:     id,
+				PeerId: nil,
+			}).To_Message())
+		}
 	}
 
 	boxList, _ := c.svcCtx.Dao.MessageClient.MessageGetUserMessageList(
@@ -66,7 +74,12 @@ func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*
 
 	boxList.Visit(c.MD.UserId,
 		func(messageList []*mtproto.Message) {
-			rValues.Messages = messageList
+			for _, msg := range messageList {
+				rMessages.Add(msg.Id, msg)
+			}
+			for i := rMessages.First(); i != nil; i = i.Next() {
+				rValues.Messages = append(rValues.Messages, i.Value().(*mtproto.Message))
+			}
 		},
 		func(userIdList []int64) {
 			mUsers, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(
