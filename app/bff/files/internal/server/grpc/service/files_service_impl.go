@@ -66,18 +66,18 @@ func (s *Service) MessagesUploadEncryptedFile(ctx context.Context, request *mtpr
 // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
 func (s *Service) UploadSaveFilePart(ctx context.Context, request *mtproto.TLUploadSaveFilePart) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("upload.saveFilePart - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Infof("upload.saveFilePart - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
+		c.MD.DebugString(),
+		request.FileId,
+		request.FilePart,
+		len(request.Bytes))
 
 	r, err := c.UploadSaveFilePart(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Infof("upload.saveFilePart#b304a621 - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
-		c.MD.DebugString(),
-		request.FileId,
-		request.FilePart,
-		len(request.Bytes))
+	c.Infof("upload.saveFilePart - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -103,7 +103,7 @@ func (s *Service) UploadGetFile(ctx context.Context, request *mtproto.TLUploadGe
 // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
 func (s *Service) UploadSaveBigFilePart(ctx context.Context, request *mtproto.TLUploadSaveBigFilePart) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("upload.saveBigFilePart#de7b673d - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
+	c.Infof("upload.saveBigFilePart - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
 		c.MD.DebugString(),
 		request.FileId,
 		request.FilePart,
