@@ -195,67 +195,71 @@ func (c *MessagesCore) makeForwardMessages(
 		m := box.Message
 		// TODO(@benqi): rid is 0
 
-		if m.FwdFrom == nil {
-			fwdFrom := mtproto.MakeTLMessageFwdHeader(&mtproto.MessageFwdHeader{
-				Imported:       false,
-				FromId:         nil,
-				FromName:       nil,
-				Date:           m.GetDate(),
-				ChannelPost:    nil,
-				PostAuthor:     nil,
-				SavedFromPeer:  nil,
-				SavedFromMsgId: nil,
-				PsaType:        nil,
-			}).To_MessageFwdHeader()
-
-			//fwdFrom := mtproto.MakeTLMessageFwdHeader(&mtproto.MessageFwdHeader{
-			//	// FromId: m.GetFromId(),
-			//	Date: m.GetDate(),
-			//}).To_MessageFwdHeader()
-
-			if m.Views != nil {
-				// Broadcast
-				// fwdFrom.ChannelId = &types.Int32Value{Value: fromPeer.PeerId}
-				fwdFrom.ChannelPost = &types.Int32Value{Value: m.Id}
-				fwdFrom.PostAuthor = m.PostAuthor
-				fwdFrom.FromId = mtproto.MakePeerChannel(fromPeer.PeerId)
-				// TODO(@benqi): saved_from_peer and saved_from_msg_id??
-			} else {
-				fromId := box.SenderUserId
-				if c.checkForwardPrivacy(c.ctx, fromId, c.MD.UserId) {
-					fwdFrom.FromId = mtproto.MakePeerUser(fromId)
-				} else {
-					uname, _ := c.svcCtx.Dao.UsernameClient.UsernameGetAccountUsername(c.ctx, &username.TLUsernameGetAccountUsername{
-						UserId: fromId,
-					})
-					fwdFrom.FromName = &types.StringValue{Value: uname.GetUsername()}
-				}
-				m.Post = false
-				m.PostAuthor = nil
-			}
-
-			if saved {
-				if m.Views != nil {
-					// fwdFrom
-					fwdFrom.SavedFromPeer = box.Message.GetPeerId()
-				} else {
-					fwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
-				}
-				fwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
-			}
-			m.FwdFrom = fwdFrom
+		if mtproto.IsMusicMessage(m) {
+			m.FwdFrom = nil
 		} else {
-			if saved {
+			if m.FwdFrom == nil {
+				fwdFrom := mtproto.MakeTLMessageFwdHeader(&mtproto.MessageFwdHeader{
+					Imported:       false,
+					FromId:         nil,
+					FromName:       nil,
+					Date:           m.GetDate(),
+					ChannelPost:    nil,
+					PostAuthor:     nil,
+					SavedFromPeer:  nil,
+					SavedFromMsgId: nil,
+					PsaType:        nil,
+				}).To_MessageFwdHeader()
+
+				//fwdFrom := mtproto.MakeTLMessageFwdHeader(&mtproto.MessageFwdHeader{
+				//	// FromId: m.GetFromId(),
+				//	Date: m.GetDate(),
+				//}).To_MessageFwdHeader()
+
 				if m.Views != nil {
-					// fwdFrom
-					m.FwdFrom.SavedFromPeer = box.Message.GetFromId()
+					// Broadcast
+					// fwdFrom.ChannelId = &types.Int32Value{Value: fromPeer.PeerId}
+					fwdFrom.ChannelPost = &types.Int32Value{Value: m.Id}
+					fwdFrom.PostAuthor = m.PostAuthor
+					fwdFrom.FromId = mtproto.MakePeerChannel(fromPeer.PeerId)
+					// TODO(@benqi): saved_from_peer and saved_from_msg_id??
 				} else {
-					m.FwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
+					fromId := box.SenderUserId
+					if c.checkForwardPrivacy(c.ctx, fromId, c.MD.UserId) {
+						fwdFrom.FromId = mtproto.MakePeerUser(fromId)
+					} else {
+						uname, _ := c.svcCtx.Dao.UsernameClient.UsernameGetAccountUsername(c.ctx, &username.TLUsernameGetAccountUsername{
+							UserId: fromId,
+						})
+						fwdFrom.FromName = &types.StringValue{Value: uname.GetUsername()}
+					}
+					m.Post = false
+					m.PostAuthor = nil
 				}
-				m.FwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+
+				if saved {
+					if m.Views != nil {
+						// fwdFrom
+						fwdFrom.SavedFromPeer = box.Message.GetPeerId()
+					} else {
+						fwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
+					}
+					fwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+				}
+				m.FwdFrom = fwdFrom
 			} else {
-				m.FwdFrom.SavedFromPeer = nil
-				m.FwdFrom.SavedFromMsgId = nil
+				if saved {
+					if m.Views != nil {
+						// fwdFrom
+						m.FwdFrom.SavedFromPeer = box.Message.GetFromId()
+					} else {
+						m.FwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
+					}
+					m.FwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+				} else {
+					m.FwdFrom.SavedFromPeer = nil
+					m.FwdFrom.SavedFromMsgId = nil
+				}
 			}
 		}
 
@@ -265,6 +269,7 @@ func (c *MessagesCore) makeForwardMessages(
 		m.Date = now
 		m.Silent = request.Silent
 		m.Post = false
+		m.GroupedId = nil
 
 		fwdOutboxList = append(fwdOutboxList, &msgpb.OutboxMessage{
 			NoWebpage:    true,
