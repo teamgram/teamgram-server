@@ -26,7 +26,9 @@ import (
 // messages.getSearchResultsPositions#6e9583a3 peer:InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (c *MessagesCore) MessagesGetSearchResultsPositions(in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSearchResultsPositions blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLMessagesSearchResultsPositions(&mtproto.Messages_SearchResultsPositions{
+		Count:     0,
+		Positions: []*mtproto.SearchResultsPosition{},
+	}).To_Messages_SearchResultsPositions(), nil
 }
