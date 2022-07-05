@@ -21,8 +21,6 @@ package server
 import (
 	"flag"
 
-	auth_helper "github.com/teamgram/teamgram-server/app/service/biz/auth"
-	"github.com/teamgram/teamgram-server/app/service/biz/auth/auth"
 	"github.com/teamgram/teamgram-server/app/service/biz/biz/internal/config"
 	chat_helper "github.com/teamgram/teamgram-server/app/service/biz/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
@@ -64,15 +62,6 @@ func (s *Server) Initialize() error {
 	// s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 
 	s.grpcSrv = zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		// auth_helper
-		auth.RegisterRPCAuthServer(
-			grpcServer,
-			auth_helper.New(auth_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-			}))
-
 		// chat_helper
 		chat.RegisterRPCChatServer(
 			grpcServer,
