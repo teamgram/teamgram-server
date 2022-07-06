@@ -44,7 +44,7 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 ```
 dnf install java
 cd /tmp
-wget https://dlcdn.apache.org/kafka/2.11/kafka_2.11-2.2.1.tgz
+wget http://archive.apache.org/dist/kafka/2.2.1/kafka_2.11-2.2.1.tgz
 tar -xzf kafka_2.11-2.2.1.tgz
 cd kafka_2.11-2.2.1
 
