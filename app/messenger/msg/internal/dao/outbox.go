@@ -413,7 +413,7 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 	peer := dialogId.ToPeerUtil(userId)
 
 	tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		_, result.Err = d.MessagesDAO.DeleteMessagesByMessageIdList(ctx, userId, msgIds)
+		_, result.Err = d.MessagesDAO.DeleteMessagesByMessageIdListTx(tx, userId, msgIds)
 		if result.Err != nil {
 			return
 		}

@@ -19,7 +19,8 @@ Open source [mtproto](https://core.telegram.org/mtproto) server written in golan
 ### Quick start with Docker
 > TODO...
 
-### [Centos 9 Stream Build and Install](docs/install-centos-9.md) [@A Feel]
+### [Centos9 Stream Build and Install](docs/install-centos-9.md) [@A Feel]
+### [CentOS7 teamgram-server环境搭建](docs/install-centos-7.md) [@saeipi]
 
 ### Manual Build and Install
 #### Depends
