@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"math/rand"
 
 	"github.com/teamgram/proto/mtproto"
@@ -49,6 +50,12 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 		c.Logger.Errorf("messages.deleteChatUser - error: %v", err)
 		return nil, err
 	}
+	c.svcCtx.Dao.DialogClient.DialogDeleteDialog(c.ctx, &dialog.TLDialogDeleteDialog{
+		UserId:   deleteUser.PeerId,
+		PeerType: mtproto.PEER_CHAT,
+		PeerId:   in.ChatId,
+	})
+
 	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.AuthId,

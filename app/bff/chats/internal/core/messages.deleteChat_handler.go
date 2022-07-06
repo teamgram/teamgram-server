@@ -23,6 +23,7 @@ import (
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MessagesDeleteChat
@@ -44,6 +45,12 @@ func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtpro
 
 	// 1. kicked all
 	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		c.svcCtx.Dao.DialogClient.DialogDeleteDialog(c.ctx, &dialog.TLDialogDeleteDialog{
+			UserId:   userId,
+			PeerType: mtproto.PEER_CHAT,
+			PeerId:   chat.Id(),
+		})
+
 		if userId == c.MD.UserId || participant.IsChatMemberStateNormal() {
 			c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 				UserId:  userId,
