@@ -21,6 +21,7 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MessagesDeleteHistory
@@ -54,6 +55,23 @@ func (c *MessagesCore) MessagesDeleteHistory(in *mtproto.TLMessagesDeleteHistory
 	if err != nil {
 		c.Logger.Errorf("messages.deleteHistory - error: %v", err)
 		return nil, err
+	}
+
+	if !in.GetJustClear() {
+		if peer.IsUser() {
+			c.svcCtx.Dao.DialogDeleteDialog(c.ctx, &dialog.TLDialogDeleteDialog{
+				UserId:   c.MD.UserId,
+				PeerType: peer.PeerType,
+				PeerId:   peer.PeerId,
+			})
+			if in.Revoke && !peer.IsSelf() {
+				c.svcCtx.Dao.DialogDeleteDialog(c.ctx, &dialog.TLDialogDeleteDialog{
+					UserId:   peer.PeerId,
+					PeerType: peer.PeerType,
+					PeerId:   c.MD.UserId,
+				})
+			}
+		}
 	}
 
 	return affectedHistory, nil
