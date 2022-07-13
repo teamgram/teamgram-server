@@ -129,7 +129,7 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 
 	chat2.Chat.ParticipantsCount = int32(len(participantDOList))
 
-	c.svcCtx.Dao.PutMutableChat(c.ctx, chat2)
+	// c.svcCtx.Dao.PutMutableChat(c.ctx, chat2)
 
 	return chat2, nil
 }
