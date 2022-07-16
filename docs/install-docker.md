@@ -184,9 +184,9 @@ ip_range: 192.168.1.0/24
 ![image.png](./image/23165610-160e8d1a7adb4d78.webp)
 
 ## 3、mysql初始化脚本 init_database.sh
+```
 #!/bin/bash
 # 将teamgram2.sql改名为init-teamgram2.sql 确保先执行
-```
 MYSQL_USER=${MYSQL_USER:-root}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-teamgram2022}
 MYSQL_DB="teamgram"
@@ -205,7 +205,7 @@ FLUSH_PRIVILEGES_SQL="FLUSH PRIVILEGES;"
 mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" -e "$CHANGE_AUTHENTICATION $CHANGE_PASSWORD $FLUSH_PRIVILEGES_SQL"
 ```
 
-4、将mysql/redis/etcd/kafka/minos等改为通过网络名访问
+## 4、将mysql/redis/etcd/kafka/minos等改为通过网络名访问
 ![image.png](./image/23165610-55bb467a0603c2b3.webp)
 
 ```
@@ -252,4 +252,31 @@ Cache:
 - Host: redis:6379
   KV:
 - Host: redis:6379
+```
+
+## 5、teamgram在主机部署
+```
+# 将teamgram容器注释
+#  teamgram:
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    image: teamgram:0.86.2
+#    container_name: teamgram
+#    restart: always
+#    ports:
+#      - 10443:10443
+#      - 5222:5222
+#      - 8801:8801
+#    networks:
+#      - teamgram-net
+#    volumes:
+#      - ./docker/etc:/teamgram/teamgramd/etc
+#      - /Volumes/data/teamgram/volumes/logs:/teamgram/teamgramd/logs
+#    depends_on:
+#      - mysql
+#      - redis
+#      - minio
+#      - kafka
+#      - etcd
 ```
