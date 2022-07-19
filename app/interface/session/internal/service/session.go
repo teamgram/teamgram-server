@@ -102,6 +102,8 @@ type sessionCallback interface {
 
 	getAuthKeyId() int64
 	getTempAuthKeyId() int64
+	getPermAuthKeyId() int64
+	setPermAuthKeyId(kId int64)
 
 	getUserId() int64
 	setUserId(userId int64)
@@ -109,11 +111,11 @@ type sessionCallback interface {
 	getLayer() int32
 	setLayer(layer int32)
 
-	setClient(c string)
 	getClient() string
+	setClient(c string)
 
-	setLangpack(c string)
 	getLangpack() string
+	setLangpack(c string)
 
 	destroySession(sessionId int64) bool
 

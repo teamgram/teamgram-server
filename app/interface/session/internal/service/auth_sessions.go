@@ -140,6 +140,7 @@ type authSessionsCallback interface {
 
 type authSessions struct {
 	authKeyId       int64
+	permAuthKeyId   int64
 	Layer           int32
 	Client          string
 	Langpack        string
@@ -209,6 +210,22 @@ func (s *authSessions) getAuthKeyId() int64 {
 
 func (s *authSessions) getTempAuthKeyId() int64 {
 	return s.authKeyId
+}
+
+func (s *authSessions) getPermAuthKeyId() int64 {
+	if s.permAuthKeyId != 0 {
+		return s.permAuthKeyId
+	}
+	s.permAuthKeyId = s.Dao.GetCachePermAuthKeyId(context.Background(), s.authKeyId)
+	return s.permAuthKeyId
+}
+
+func (s *authSessions) setPermAuthKeyId(kId int64) {
+	s.permAuthKeyId = kId
+	if kId != 0 {
+		s.permAuthKeyId = kId
+		s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, kId)
+	}
 }
 
 func (s *authSessions) getUserId() int64 {
@@ -730,16 +747,17 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 
 	// 初始化metadata
 	rpcMetadata := &metadata.RpcMetadata{
-		ServerId:    s.serverId,
-		ClientAddr:  request.clientIp,
-		AuthId:      s.authKeyId,
-		SessionId:   request.sessionId,
-		ReceiveTime: time.Now().Unix(),
-		UserId:      s.AuthUserId,
-		ClientMsgId: request.reqMsgId,
-		Layer:       s.Layer,
-		Client:      s.getClient(),
-		Langpack:    s.getLangpack(),
+		ServerId:      s.serverId,
+		ClientAddr:    request.clientIp,
+		AuthId:        s.authKeyId,
+		SessionId:     request.sessionId,
+		ReceiveTime:   time.Now().Unix(),
+		UserId:        s.AuthUserId,
+		ClientMsgId:   request.reqMsgId,
+		Layer:         s.Layer,
+		Client:        s.getClient(),
+		Langpack:      s.getLangpack(),
+		PermAuthKeyId: s.getPermAuthKeyId(),
 	}
 
 	// TODO(@benqi): change state.
@@ -752,7 +770,7 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 			ExpiresAt:        r.ExpiresAt,
 			EncryptedMessage: r.EncryptedMessage,
 		})
-		// request.reqMsg.(*mtproto.TLAuthBindTempAuthKey))
+		s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
 	default:
 		rpcResult, err = s.Service.Dao.Invoke(rpcMetadata, request.reqMsg)
 	}

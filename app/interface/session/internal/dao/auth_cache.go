@@ -38,9 +38,10 @@ type cacheAuthValue struct {
 	client        string
 	langpack      string
 	SaltList      []*mtproto.TLFutureSalt
+	PermAuthKeyId int64
 }
 
-// Impl cache.Value interface
+// Size Impl cache.Value interface
 func (cv *cacheAuthValue) Size() int {
 	return 1
 }
@@ -152,6 +153,24 @@ func (d *Dao) GetCacheLangpack(ctx context.Context, authKeyId int64) string {
 	return cv.langpack
 }
 
+func (d *Dao) GetCachePermAuthKeyId(ctx context.Context, authKeyId int64) int64 {
+	cv := d.getCacheValue(authKeyId)
+	if cv.PermAuthKeyId == 0 {
+		r, err := d.AuthsessionClient.AuthsessionGetPermAuthKeyId(ctx, &authsession.TLAuthsessionGetPermAuthKeyId{
+			AuthKeyId: authKeyId,
+		})
+		if err != nil {
+			logx.WithContext(ctx).Errorf(err.Error())
+			return 0
+		}
+
+		// update to cache
+		cv.PermAuthKeyId = r.GetV()
+	}
+
+	return cv.PermAuthKeyId
+}
+
 func (d *Dao) PutCacheApiLayer(ctx context.Context, authKeyId int64, layer int32) {
 	cv := d.getCacheValue(authKeyId)
 	cv.Layer = layer
@@ -175,6 +194,11 @@ func (d *Dao) PutCacheUserId(ctx context.Context, authKeyId int64, userId int64)
 func (d *Dao) PutCachePushSessionId(ctx context.Context, authKeyId, sessionId int64) {
 	cv := d.getCacheValue(authKeyId)
 	cv.pushSessionId = sessionId
+}
+
+func (d *Dao) PutCachePermAuthKeyId(ctx context.Context, authKeyId, kId int64) {
+	cv := d.getCacheValue(authKeyId)
+	cv.PermAuthKeyId = kId
 }
 
 func (d *Dao) getFutureSaltList(ctx context.Context, authKeyId int64) ([]*mtproto.TLFutureSalt, bool) {
