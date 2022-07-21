@@ -1,0 +1,1 @@
+ALTER TABLE `auth_key_infos` CHANGE `id` `id` BIGINT(20) NOT NULL AUTO_INCREMENT;
