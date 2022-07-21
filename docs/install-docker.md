@@ -227,7 +227,7 @@ localhost:9000
 =>minio:9000
 ```
 
-### 例如authsession.yaml
+### 例如 authsession.yaml
 
 ```
 Name: service.authsession
