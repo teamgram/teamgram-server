@@ -10,9 +10,6 @@
 package core
 
 import (
-	"encoding/base64"
-	"fmt"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
@@ -104,32 +101,10 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	// -503	Timeout	Timeout while fetching data
 	//
 
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetPermAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetPermAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("auth.bindTempAuthKey - error: %v", err)
-		// return nil, err
-		// s.AuthKeysDAO.SelectByAuthKeyId(ctx, request.GetPermAuthKeyId())
-		do, _ := c.svcCtx.Dao.AuthKeysDAO.SelectByAuthKeyId(c.ctx, in.GetPermAuthKeyId())
-		if do == nil {
-			err := fmt.Errorf("not find key - keyId = %d", in.GetPermAuthKeyId())
-			return nil, err
-		}
-		authKey, err := base64.RawStdEncoding.DecodeString(do.Body)
-		if err != nil {
-			c.Logger.Errorf("read keyData error - keyId = %d, %v", in.GetPermAuthKeyId(), err)
-			return nil, err
-		}
-		keyInfo := &mtproto.AuthKeyInfo{
-			AuthKeyId:          in.GetPermAuthKeyId(),
-			AuthKey:            authKey,
-			AuthKeyType:        mtproto.AuthKeyTypePerm,
-			PermAuthKeyId:      in.GetPermAuthKeyId(),
-			TempAuthKeyId:      0,
-			MediaTempAuthKeyId: 0,
-		}
-
-		// TODO(@benqi): add expiredIn
-		c.svcCtx.Dao.PutAuthKey(c.ctx, in.GetPermAuthKeyId(), keyInfo, 0)
+		return nil, err
 	}
 
 	permAuthKey := crypto.NewAuthKey(in.PermAuthKeyId, keyData.AuthKey)
@@ -154,21 +129,22 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 		// bind_auth_key_inner#75a3f765 nonce:long temp_auth_key_id:long perm_auth_key_id:long temp_session_id:long expires_at:int = BindAuthKeyInner;
 		// bind
 		c.Logger.Infof("auth.bindTempAuthKey - bind_auth_key_inner: %s", bindAuthKeyInner.DebugString())
-		tempKeyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, bindAuthKeyInner.GetTempAuthKeyId())
-		if err != nil {
+		tempKeyData, err2 := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, bindAuthKeyInner.GetTempAuthKeyId())
+		if err2 != nil {
 			c.Logger.Errorf("auth.bindTempAuthKey - invalid innerData")
 			return nil, mtproto.ErrInternelServerError
 		}
 
+		// TODO: tx wrapper
 		// bindTemp
-		c.svcCtx.Dao.UnsafeBindKeyId(c.ctx,
+		c.svcCtx.Dao.UnsafeBindKeyIdV2(c.ctx,
 			bindAuthKeyInner.GetPermAuthKeyId(),
 			tempKeyData.AuthKeyType,
 			bindAuthKeyInner.GetTempAuthKeyId())
 
 		// TODO: expiredIn int32
 		// bindPerm
-		c.svcCtx.Dao.UnsafeBindKeyId(c.ctx,
+		c.svcCtx.Dao.UnsafeBindKeyIdV2(c.ctx,
 			bindAuthKeyInner.GetTempAuthKeyId(),
 			mtproto.AuthKeyTypePerm,
 			bindAuthKeyInner.GetPermAuthKeyId())

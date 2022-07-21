@@ -98,11 +98,63 @@ package dao
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"math/rand"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/proto/mtproto"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
+const (
+	cacheSaltPrefix = "salts"
+)
+
+func genCacheSaltKey(id int64) string {
+	return fmt.Sprintf("%s_%d", cacheSaltPrefix, id)
+}
+
+func (d *Dao) PutSalts(ctx context.Context, keyId int64, salts []*mtproto.TLFutureSalt) (err error) {
+	var (
+		b   []byte
+		key = genCacheSaltKey(keyId)
+	)
+
+	if b, err = json.Marshal(salts); err != nil {
+		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", key, err)
+		return
+	}
+
+	// 误差 500
+	if err = d.kv.Setex(key, string(b), len(salts)*saltTimeout); err != nil {
+		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", key, err)
+	}
+	return
+}
+
+func (d *Dao) GetSalts(ctx context.Context, keyId int64) (salts []*mtproto.TLFutureSalt, err error) {
+	var (
+		key  = genCacheSaltKey(keyId)
+		bBuf string
+	)
+
+	bBuf, err = d.kv.Get(key)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("conn.Do(GET %s) error(%v)", key, err)
+		return
+	} else if bBuf == "" {
+		return nil, nil
+	}
+
+	if err = json.Unmarshal(hack.Bytes(bBuf), &salts); err != nil {
+		logx.WithContext(ctx).Errorf("getSalts json.Unmarshal(%s) error(%v)", bBuf, err)
+		return nil, nil
+	}
+	return
+}
 
 func (d *Dao) getOrNotInsertSaltList(ctx context.Context, keyId int64, size int32) ([]*mtproto.TLFutureSalt, error) {
 	var (
@@ -184,6 +236,19 @@ func (d *Dao) getOrNotInsertSaltList(ctx context.Context, keyId int64, size int3
 	return salts2, nil
 }
 
-func (d *Dao) putSaltCache(ctx context.Context, keyId int64, salt *mtproto.TLFutureSalt) error {
+func (d *Dao) PutSaltCache(ctx context.Context, keyId int64, salt *mtproto.TLFutureSalt) error {
 	return d.PutSalts(ctx, keyId, []*mtproto.TLFutureSalt{salt})
+}
+
+func (d *Dao) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*mtproto.TLFutureSalts, error) {
+	pSalts, err := d.getOrNotInsertSaltList(ctx, authKeyId, num)
+	if err != nil {
+		return nil, err
+	}
+	salts := &mtproto.TLFutureSalts{Data2: &mtproto.FutureSalts{
+		ReqMsgId: 0,
+		Now:      0,
+		Salts:    pSalts,
+	}}
+	return salts, nil
 }

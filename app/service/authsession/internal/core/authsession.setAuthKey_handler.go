@@ -12,6 +12,7 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // AuthsessionSetAuthKey
@@ -20,27 +21,26 @@ func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSet
 	var (
 		keyInfo = in.GetAuthKey()
 		salt    *mtproto.TLFutureSalt
+		err     error
 	)
 
 	if in.FutureSalt != nil {
 		salt = in.FutureSalt.To_FutureSalt()
 	}
+	if salt == nil {
+		err = c.svcCtx.Dao.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+	} else {
+		err = mr.Finish(
+			func() error {
+				return c.svcCtx.Dao.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)
+			},
+			func() error {
+				return c.svcCtx.Dao.PutSaltCache(c.ctx, keyInfo.AuthKeyId, salt)
+			})
+	}
 
-	// TODO(@benqi): add key type
-	err := c.svcCtx.Dao.InsertAuthKey(
-		c.ctx,
-		&mtproto.AuthKeyInfo{
-			AuthKeyId:          keyInfo.AuthKeyId,
-			AuthKeyType:        keyInfo.AuthKeyType,
-			AuthKey:            keyInfo.AuthKey,
-			PermAuthKeyId:      keyInfo.PermAuthKeyId,
-			TempAuthKeyId:      keyInfo.TempAuthKeyId,
-			MediaTempAuthKeyId: keyInfo.MediaTempAuthKeyId,
-		},
-		salt,
-		in.ExpiresIn)
 	if err != nil {
-		c.Logger.Errorf("session.setAuthKey - error: %v", err)
+		c.Logger.Errorf("authsession.setAuthKey - error: %v", err)
 		return mtproto.BoolFalse, nil
 	}
 

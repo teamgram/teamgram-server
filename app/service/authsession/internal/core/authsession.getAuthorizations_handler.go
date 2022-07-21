@@ -19,7 +19,7 @@ import (
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 func (c *AuthsessionCore) AuthsessionGetAuthorizations(in *authsession.TLAuthsessionGetAuthorizations) (*mtproto.Account_Authorizations, error) {
-	myKeyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetExcludeAuthKeyId())
+	myKeyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetExcludeAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.getAuthorizations - error: %v", err)
 		return nil, err

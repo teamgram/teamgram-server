@@ -18,7 +18,7 @@ import (
 // AuthsessionGetLangCode
 // authsession.getLangCode auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetLangCode(in *authsession.TLAuthsessionGetLangCode) (*mtproto.String, error) {
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.getLangCode - error: %v", err)
 		return nil, err

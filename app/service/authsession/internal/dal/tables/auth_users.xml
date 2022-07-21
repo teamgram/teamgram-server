@@ -27,7 +27,7 @@
     <operation name="SelectAuthKeyIds" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash
+                id, auth_key_id, user_id, hash, date_created, date_actived
             FROM
                 auth_users
             WHERE
@@ -52,7 +52,7 @@
     <operation name="SelectListByUserId" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash
+                id, auth_key_id, user_id, hash, date_created, date_actived
             FROM
                 auth_users
             WHERE

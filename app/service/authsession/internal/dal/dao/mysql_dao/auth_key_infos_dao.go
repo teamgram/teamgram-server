@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
@@ -105,6 +107,72 @@ func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id i
 		}
 	} else {
 		rValue = do
+	}
+
+	return
+}
+
+// UpdateCustomMap
+// update auth_key_infos set %s where auth_key_id = :auth_key_id
+// TODO(@benqi): sqlmap
+func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, auth_key_id int64) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, auth_key_id)
+
+	rResult, err = dao.db.Exec(ctx, query, aValues...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateCustomMapTx
+// update auth_key_infos set %s where auth_key_id = :auth_key_id
+// TODO(@benqi): sqlmap
+func (dao *AuthKeyInfosDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, auth_key_id int64) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update auth_key_infos set %s where auth_key_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, auth_key_id)
+
+	rResult, err = tx.Exec(query, aValues...)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateCustomMap(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateCustomMap(_), error: %v", err)
 	}
 
 	return

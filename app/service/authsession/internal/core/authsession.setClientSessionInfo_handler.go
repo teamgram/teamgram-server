@@ -11,7 +11,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -26,7 +25,7 @@ func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuth
 		return nil, err
 	}
 
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, clientSession.GetAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, clientSession.GetAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.setClientSessionInfo - error: %v", err)
 		return nil, err
@@ -36,6 +35,14 @@ func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuth
 
 	clientSession.AuthKeyId = keyData.PermAuthKeyId
 	r := c.svcCtx.Dao.SetClientSessionInfo(c.ctx, clientSession)
+
+	//c.svcCtx.Dao.CachedConn.Exec(
+	//	c.ctx,
+	//	func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+	//
+	//		return 0, 0, nil
+	//	},
+	//	"")
 
 	return mtproto.ToBool(r), nil
 }

@@ -18,7 +18,7 @@ import (
 // AuthsessionGetLayer
 // authsession.getLayer auth_key_id:long = Int32;
 func (c *AuthsessionCore) AuthsessionGetLayer(in *authsession.TLAuthsessionGetLayer) (*mtproto.Int32, error) {
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.getUserId - error: %v", err)
 		return nil, err

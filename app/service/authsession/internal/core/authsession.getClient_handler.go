@@ -19,7 +19,7 @@ import (
 // AuthsessionGetClient
 // authsession.getClient auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetClient(in *authsession.TLAuthsessionGetClient) (*mtproto.String, error) {
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.getClient - error: %v", err)
 		return nil, err

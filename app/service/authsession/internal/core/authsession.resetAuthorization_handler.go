@@ -22,7 +22,7 @@ func (c *AuthsessionCore) AuthsessionResetAuthorization(in *authsession.TLAuthse
 	)
 
 	if excludeKeyId != 0 {
-		myKeyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.AuthKeyId)
+		myKeyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.AuthKeyId)
 		if err != nil {
 			c.Logger.Errorf("session.getAuthorizations - error: %v", err)
 			return nil, err
@@ -40,7 +40,7 @@ func (c *AuthsessionCore) AuthsessionResetAuthorization(in *authsession.TLAuthse
 
 	keyIdL2ist := make([]int64, 0, len(keyIdList))
 	for _, keyId := range keyIdList {
-		keyData, _ := c.svcCtx.Dao.GetAuthKey(c.ctx, keyId)
+		keyData, _ := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, keyId)
 		if keyData != nil {
 			if keyData.TempAuthKeyId != 0 {
 				keyIdL2ist = append(keyIdL2ist, keyData.TempAuthKeyId)

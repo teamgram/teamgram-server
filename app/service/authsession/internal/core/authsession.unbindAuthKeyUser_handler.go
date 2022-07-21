@@ -22,7 +22,7 @@ func (c *AuthsessionCore) AuthsessionUnbindAuthKeyUser(in *authsession.TLAuthses
 	)
 
 	if unBindKeyId != 0 {
-		keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, unBindKeyId)
+		keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, unBindKeyId)
 		if err != nil {
 			c.Logger.Errorf("session.unbindAuthKeyUser - error: %v", err)
 			return nil, err

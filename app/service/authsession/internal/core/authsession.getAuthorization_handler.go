@@ -19,7 +19,7 @@ import (
 // AuthsessionGetAuthorization
 // authsession.getAuthorization auth_key_id:long = Authorization;
 func (c *AuthsessionCore) AuthsessionGetAuthorization(in *authsession.TLAuthsessionGetAuthorization) (*mtproto.Authorization, error) {
-	myKeyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.AuthKeyId)
+	myKeyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.AuthKeyId)
 	if err != nil {
 		c.Logger.Errorf("session.getAuthorization - error: %v", err)
 		return nil, err

@@ -19,7 +19,7 @@ import (
 // AuthsessionBindAuthKeyUser
 // authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 func (c *AuthsessionCore) AuthsessionBindAuthKeyUser(in *authsession.TLAuthsessionBindAuthKeyUser) (*mtproto.Int64, error) {
-	keyData, err := c.svcCtx.Dao.GetAuthKey(c.ctx, in.GetAuthKeyId())
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("session.bindAuthKeyUser - error: %v", err)
 		return nil, err

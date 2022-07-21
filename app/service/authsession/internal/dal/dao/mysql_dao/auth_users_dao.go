@@ -111,11 +111,11 @@ func (dao *AuthUsersDAO) Select(ctx context.Context, auth_key_id int64) (rValue 
 }
 
 // SelectAuthKeyIds
-// select id, auth_key_id, user_id, hash from auth_users where user_id = :user_id and deleted = 0
+// select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = :user_id and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectAuthKeyIds(ctx context.Context, user_id int64) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		query  = "select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = ? and deleted = 0"
 		values []dataobject.AuthUsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
@@ -131,11 +131,11 @@ func (dao *AuthUsersDAO) SelectAuthKeyIds(ctx context.Context, user_id int64) (r
 }
 
 // SelectAuthKeyIdsWithCB
-// select id, auth_key_id, user_id, hash from auth_users where user_id = :user_id and deleted = 0
+// select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = :user_id and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectAuthKeyIdsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.AuthUsersDO)) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		query  = "select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = ? and deleted = 0"
 		values []dataobject.AuthUsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
@@ -227,11 +227,11 @@ func (dao *AuthUsersDAO) DeleteByHashListTx(tx *sqlx.Tx, idList []int64) (rowsAf
 }
 
 // SelectListByUserId
-// select id, auth_key_id, user_id, hash from auth_users where user_id = :user_id and deleted = 0
+// select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = :user_id and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectListByUserId(ctx context.Context, user_id int64) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		query  = "select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = ? and deleted = 0"
 		values []dataobject.AuthUsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
@@ -247,11 +247,11 @@ func (dao *AuthUsersDAO) SelectListByUserId(ctx context.Context, user_id int64) 
 }
 
 // SelectListByUserIdWithCB
-// select id, auth_key_id, user_id, hash from auth_users where user_id = :user_id and deleted = 0
+// select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = :user_id and deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) SelectListByUserIdWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.AuthUsersDO)) (rList []dataobject.AuthUsersDO, err error) {
 	var (
-		query  = "select id, auth_key_id, user_id, hash from auth_users where user_id = ? and deleted = 0"
+		query  = "select id, auth_key_id, user_id, hash, date_created, date_actived from auth_users where user_id = ? and deleted = 0"
 		values []dataobject.AuthUsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
