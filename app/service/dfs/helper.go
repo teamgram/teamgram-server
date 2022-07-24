@@ -15,6 +15,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server"
+
 	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -40,6 +41,10 @@ var (
 
 	EncodeStripped = imaging.EncodeStripped
 )
+
+func init() {
+	zrpc.DontLogContentForMethod("/dfs.RPCDfs/DfsWriteFilePartData")
+}
 
 func NewDFSHelper(minio *MinioConfig, idgen zrpc.RpcClientConf, ssdb kv.KvConf) *DFSHelper {
 	return dao.NewDFSHelper(minio, idgen, ssdb)

@@ -15,11 +15,17 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/files/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/files/internal/svc"
 	"github.com/teamgram/teamgram-server/app/bff/files/plugin"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type (
 	Config = config.Config
 )
+
+func init() {
+	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveFilePart")
+	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveBigFilePart")
+}
 
 func New(c Config, plugin plugin.FilesPlugin) *service.Service {
 	return service.New(svc.NewServiceContext(c, plugin))
