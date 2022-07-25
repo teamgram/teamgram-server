@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package status
@@ -21,7 +21,7 @@ const (
 
 var clazzNameRegisters2 = map[string]map[int]int32{
 	Predicate_sessionEntry: {
-		0: -1409734405, // 0xabf928fb
+		0: 392473649, // 0x1764ac31
 
 	},
 	Predicate_userSessionEntryList: {
@@ -29,7 +29,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_status_setSessionOnline: {
-		0: -535445567, // 0xe015bfc1
+		0: 1381075919, // 0x52518bcf
 
 	},
 	Predicate_status_setSessionOffline: {
@@ -47,9 +47,9 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	-1409734405: Predicate_sessionEntry,                      // 0xabf928fb
+	392473649:   Predicate_sessionEntry,                      // 0x1764ac31
 	-269700200:  Predicate_userSessionEntryList,              // 0xefecb398
-	-535445567:  Predicate_status_setSessionOnline,           // 0xe015bfc1
+	1381075919:  Predicate_status_setSessionOnline,           // 0x52518bcf
 	631663196:   Predicate_status_setSessionOffline,          // 0x25a66a5c
 	-406788659:  Predicate_status_getUserOnlineSessions,      // 0xe7c0e5cd
 	-2009385532: Predicate_status_getUsersOnlineSessionsList, // 0x883b35c4

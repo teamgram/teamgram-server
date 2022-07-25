@@ -10,9 +10,9 @@
 package core
 
 import (
-	"strconv"
-
 	"github.com/teamgram/teamgram-server/app/service/status/status"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 // StatusGetUsersOnlineSessionsList
@@ -30,7 +30,6 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 		}
 
 		var (
-			// i        = 0
 			sessions = status.MakeTLUserSessionEntryList(&status.UserSessionEntryList{
 				UserId:       id,
 				UserSessions: make([]*status.SessionEntry, len(rMap)),
@@ -38,16 +37,12 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 		)
 
 		sessions.UserSessions = make([]*status.SessionEntry, 0, len(rMap))
-		for k, v := range rMap {
-			keyId, _ := strconv.ParseInt(k, 10, 64)
-
-			sessions.UserSessions = append(sessions.UserSessions, &status.SessionEntry{
-				UserId:    id,
-				AuthKeyId: keyId,
-				Gateway:   v,
-				Expired:   0,
-				Layer:     0,
-			})
+		for _, v := range rMap {
+			// keyId, _ := strconv.ParseInt(k, 10, 64)
+			sess := new(status.SessionEntry)
+			if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
+				sessions.UserSessions = append(sessions.UserSessions, sess)
+			}
 		}
 
 		rValues.Datas = append(rValues.Datas, sessions)

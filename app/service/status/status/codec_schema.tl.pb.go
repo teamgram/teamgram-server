@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -23,15 +23,16 @@ import (
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
 var _ *types.Int32Value
 var _ *mtproto.Bool
 var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	-1409734405: func() mtproto.TLObject { // 0xabf928fb
+	392473649: func() mtproto.TLObject { // 0x1764ac31
 		o := MakeTLSessionEntry(nil)
-		o.Data2.Constructor = -1409734405
+		o.Data2.Constructor = 392473649
 		return o
 	},
 	-269700200: func() mtproto.TLObject { // 0xefecb398
@@ -41,9 +42,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	},
 
 	// Method
-	-535445567: func() mtproto.TLObject { // 0xe015bfc1
+	1381075919: func() mtproto.TLObject { // 0x52518bcf
 		return &TLStatusSetSessionOnline{
-			Constructor: -535445567,
+			Constructor: 1381075919,
 		}
 	},
 	631663196: func() mtproto.TLObject { // 0x25a66a5c
@@ -82,6 +83,7 @@ func CheckClassID(classId int32) (ok bool) {
 // SessionEntry <--
 //  + TL_SessionEntry
 //
+
 func (m *SessionEntry) Encode(layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
@@ -114,7 +116,7 @@ func (m *SessionEntry) CalcByteSize(layer int32) int {
 func (m *SessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xabf928fb:
+	case 0x1764ac31:
 		m2 := MakeTLSessionEntry(m)
 		m2.Decode(dBuf)
 
@@ -135,7 +137,7 @@ func (m *SessionEntry) DebugString() string {
 	}
 }
 
-// sessionEntry user_id:long auth_key_id:long gateway:string expired:long layer:int = SessionEntry;
+// To_SessionEntry
 func (m *SessionEntry) To_SessionEntry() *TLSessionEntry {
 	m.PredicateName = Predicate_sessionEntry
 	return &TLSessionEntry{
@@ -143,7 +145,7 @@ func (m *SessionEntry) To_SessionEntry() *TLSessionEntry {
 	}
 }
 
-// sessionEntry user_id:long auth_key_id:long gateway:string expired:long layer:int = SessionEntry;
+// MakeTLSessionEntry
 func MakeTLSessionEntry(data2 *SessionEntry) *TLSessionEntry {
 	if data2 == nil {
 		return &TLSessionEntry{Data2: &SessionEntry{
@@ -175,6 +177,12 @@ func (m *TLSessionEntry) GetExpired() int64  { return m.Data2.Expired }
 func (m *TLSessionEntry) SetLayer(v int32) { m.Data2.Layer = v }
 func (m *TLSessionEntry) GetLayer() int32  { return m.Data2.Layer }
 
+func (m *TLSessionEntry) SetPermAuthKeyId(v int64) { m.Data2.PermAuthKeyId = v }
+func (m *TLSessionEntry) GetPermAuthKeyId() int64  { return m.Data2.PermAuthKeyId }
+
+func (m *TLSessionEntry) SetClient(v string) { m.Data2.Client = v }
+func (m *TLSessionEntry) GetClient() string  { return m.Data2.Client }
+
 func (m *TLSessionEntry) GetPredicateName() string {
 	return Predicate_sessionEntry
 }
@@ -183,15 +191,16 @@ func (m *TLSessionEntry) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0xabf928fb: func() []byte {
-			// sessionEntry user_id:long auth_key_id:long gateway:string expired:long layer:int = SessionEntry;
-			x.UInt(0xabf928fb)
+		0x1764ac31: func() []byte {
+			x.UInt(0x1764ac31)
 
 			x.Long(m.GetUserId())
 			x.Long(m.GetAuthKeyId())
 			x.String(m.GetGateway())
 			x.Long(m.GetExpired())
 			x.Int(m.GetLayer())
+			x.Long(m.GetPermAuthKeyId())
+			x.String(m.GetClient())
 			return x.GetBuf()
 		},
 	}
@@ -214,13 +223,14 @@ func (m *TLSessionEntry) CalcByteSize(layer int32) int {
 
 func (m *TLSessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xabf928fb: func() error {
-			// sessionEntry user_id:long auth_key_id:long gateway:string expired:long layer:int = SessionEntry;
+		0x1764ac31: func() error {
 			m.SetUserId(dBuf.Long())
 			m.SetAuthKeyId(dBuf.Long())
 			m.SetGateway(dBuf.String())
 			m.SetExpired(dBuf.Long())
 			m.SetLayer(dBuf.Int())
+			m.SetPermAuthKeyId(dBuf.Long())
+			m.SetClient(dBuf.String())
 			return dBuf.GetError()
 		},
 	}
@@ -242,6 +252,7 @@ func (m *TLSessionEntry) DebugString() string {
 // UserSessionEntryList <--
 //  + TL_UserSessionEntryList
 //
+
 func (m *UserSessionEntryList) Encode(layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
@@ -295,7 +306,7 @@ func (m *UserSessionEntryList) DebugString() string {
 	}
 }
 
-// userSessionEntryList user_id:long user_sessions:Vector<SessionEntry> = UserSessionEntryList;
+// To_UserSessionEntryList
 func (m *UserSessionEntryList) To_UserSessionEntryList() *TLUserSessionEntryList {
 	m.PredicateName = Predicate_userSessionEntryList
 	return &TLUserSessionEntryList{
@@ -303,7 +314,7 @@ func (m *UserSessionEntryList) To_UserSessionEntryList() *TLUserSessionEntryList
 	}
 }
 
-// userSessionEntryList user_id:long user_sessions:Vector<SessionEntry> = UserSessionEntryList;
+// MakeTLUserSessionEntryList
 func MakeTLUserSessionEntryList(data2 *UserSessionEntryList) *TLUserSessionEntryList {
 	if data2 == nil {
 		return &TLUserSessionEntryList{Data2: &UserSessionEntryList{
@@ -335,7 +346,6 @@ func (m *TLUserSessionEntryList) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0xefecb398: func() []byte {
-			// userSessionEntryList user_id:long user_sessions:Vector<SessionEntry> = UserSessionEntryList;
 			x.UInt(0xefecb398)
 
 			x.Long(m.GetUserId())
@@ -369,7 +379,6 @@ func (m *TLUserSessionEntryList) CalcByteSize(layer int32) int {
 func (m *TLUserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0xefecb398: func() error {
-			// userSessionEntryList user_id:long user_sessions:Vector<SessionEntry> = UserSessionEntryList;
 			m.SetUserId(dBuf.Long())
 			c1 := dBuf.Int()
 			if c1 != int32(mtproto.CRC32_vector) {
@@ -404,22 +413,19 @@ func (m *TLUserSessionEntryList) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // TLStatusSetSessionOnline
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLStatusSetSessionOnline) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_status_setSessionOnline))
 
 	switch uint32(m.Constructor) {
-	case 0xe015bfc1:
-		// status.setSessionOnline user_id:long auth_key_id:long gateway:string expired:long layer:int = Bool;
-		x.UInt(0xe015bfc1)
+	case 0x52518bcf:
+		x.UInt(0x52518bcf)
 
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.String(m.GetGateway())
-		x.Long(m.GetExpired())
-		x.Int(m.GetLayer())
+		x.Bytes(m.GetSession().Encode(layer))
 
 	default:
 		// log.Errorf("")
@@ -434,16 +440,16 @@ func (m *TLStatusSetSessionOnline) CalcByteSize(layer int32) int {
 
 func (m *TLStatusSetSessionOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xe015bfc1:
-		// status.setSessionOnline user_id:long auth_key_id:long gateway:string expired:long layer:int = Bool;
+	case 0x52518bcf:
 
 		// not has flags
 
 		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.Gateway = dBuf.String()
-		m.Expired = dBuf.Long()
-		m.Layer = dBuf.Int()
+
+		m2 := &SessionEntry{}
+		m2.Decode(dBuf)
+		m.Session = m2
+
 		return dBuf.GetError()
 
 	default:
@@ -460,13 +466,13 @@ func (m *TLStatusSetSessionOnline) DebugString() string {
 
 // TLStatusSetSessionOffline
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLStatusSetSessionOffline) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_status_setSessionOffline))
 
 	switch uint32(m.Constructor) {
 	case 0x25a66a5c:
-		// status.setSessionOffline user_id:long auth_key_id:long = Bool;
 		x.UInt(0x25a66a5c)
 
 		// no flags
@@ -488,7 +494,6 @@ func (m *TLStatusSetSessionOffline) CalcByteSize(layer int32) int {
 func (m *TLStatusSetSessionOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x25a66a5c:
-		// status.setSessionOffline user_id:long auth_key_id:long = Bool;
 
 		// not has flags
 
@@ -510,13 +515,13 @@ func (m *TLStatusSetSessionOffline) DebugString() string {
 
 // TLStatusGetUserOnlineSessions
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLStatusGetUserOnlineSessions) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_status_getUserOnlineSessions))
 
 	switch uint32(m.Constructor) {
 	case 0xe7c0e5cd:
-		// status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 		x.UInt(0xe7c0e5cd)
 
 		// no flags
@@ -537,7 +542,6 @@ func (m *TLStatusGetUserOnlineSessions) CalcByteSize(layer int32) int {
 func (m *TLStatusGetUserOnlineSessions) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe7c0e5cd:
-		// status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 
 		// not has flags
 
@@ -558,13 +562,13 @@ func (m *TLStatusGetUserOnlineSessions) DebugString() string {
 
 // TLStatusGetUsersOnlineSessionsList
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLStatusGetUsersOnlineSessionsList) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_status_getUsersOnlineSessionsList))
 
 	switch uint32(m.Constructor) {
 	case 0x883b35c4:
-		// status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 		x.UInt(0x883b35c4)
 
 		// no flags
@@ -585,7 +589,6 @@ func (m *TLStatusGetUsersOnlineSessionsList) CalcByteSize(layer int32) int {
 func (m *TLStatusGetUsersOnlineSessionsList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x883b35c4:
-		// status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 
 		// not has flags
 

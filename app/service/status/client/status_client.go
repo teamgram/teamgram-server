@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -39,7 +39,7 @@ func NewStatusClient(cli zrpc.Client) StatusClient {
 }
 
 // StatusSetSessionOnline
-// status.setSessionOnline user_id:long auth_key_id:long gateway:string expired:long layer:int = Bool;
+// status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (m *defaultStatusClient) StatusSetSessionOnline(ctx context.Context, in *status.TLStatusSetSessionOnline) (*mtproto.Bool, error) {
 	client := status.NewRPCStatusClient(m.cli.Conn())
 	return client.StatusSetSessionOnline(ctx, in)
@@ -60,7 +60,7 @@ func (m *defaultStatusClient) StatusGetUserOnlineSessions(ctx context.Context, i
 }
 
 // StatusGetUsersOnlineSessionsList
-// status.getUsersOnlineSessionsList Vector<long> = Vector<UserSessionEntryList>;
+// status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 func (m *defaultStatusClient) StatusGetUsersOnlineSessionsList(ctx context.Context, in *status.TLStatusGetUsersOnlineSessionsList) (*status.Vector_UserSessionEntryList, error) {
 	client := status.NewRPCStatusClient(m.cli.Conn())
 	return client.StatusGetUsersOnlineSessionsList(ctx, in)

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -19,7 +19,7 @@ import (
 )
 
 // StatusSetSessionOnline
-// status.setSessionOnline user_id:long auth_key_id:long gateway:string expired:long layer:int = Bool;
+// status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (s *Service) StatusSetSessionOnline(ctx context.Context, request *status.TLStatusSetSessionOnline) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("status.setSessionOnline - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -64,7 +64,7 @@ func (s *Service) StatusGetUserOnlineSessions(ctx context.Context, request *stat
 }
 
 // StatusGetUsersOnlineSessionsList
-// status.getUsersOnlineSessionsList Vector<long> = Vector<UserSessionEntryList>;
+// status.getUsersOnlineSessionsList users:Vector<long> = Vector<UserSessionEntryList>;
 func (s *Service) StatusGetUsersOnlineSessionsList(ctx context.Context, request *status.TLStatusGetUsersOnlineSessionsList) (*status.Vector_UserSessionEntryList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("status.getUsersOnlineSessionsList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())

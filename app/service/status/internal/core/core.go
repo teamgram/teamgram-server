@@ -13,15 +13,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/status/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
-	onlineKeyPrefix  = "online"    //
-	userKeyIdsPrefix = "user_keys" //
+	onlineKeyPrefix  = "online"           //
+	userKeyIdsPrefix = "user_online_keys" //
 )
 
 type StatusCore struct {

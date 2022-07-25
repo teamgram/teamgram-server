@@ -346,15 +346,21 @@ func (s *authSessions) setOnline() {
 			s.authKeyId)
 
 		// s.setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
-		s.Dao.StatusClient.StatusSetSessionOnline(context.Background(), &status.TLStatusSetSessionOnline{
-			UserId:    s.AuthUserId,
-			AuthKeyId: s.authKeyId,
-			Gateway:   s.serverId,
-			Expired:   0,
-			Layer:     0,
-		})
-		//s.AuthUserId, s.authKeyId, env.Hostname)
-		s.onlineExpired = int64(date + 60)
+		s.Dao.StatusClient.StatusSetSessionOnline(
+			context.Background(),
+			&status.TLStatusSetSessionOnline{
+				UserId: s.AuthUserId,
+				Session: &status.SessionEntry{
+					UserId:        s.AuthUserId,
+					AuthKeyId:     s.authKeyId,
+					Gateway:       s.serverId,
+					Expired:       date + 60,
+					Layer:         s.getLayer(),
+					PermAuthKeyId: s.getPermAuthKeyId(),
+					Client:        s.getClient(),
+				},
+			})
+		s.onlineExpired = date + 60
 	} else {
 		//log.Infof("DEBUG] setOnline - not set online: (date: %d, onlineExpired: %d, AuthUserId: %d)",
 		//	date,
