@@ -5,14 +5,14 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.dfs
 Timeout: 0
-Log:
-  Mode: file
-  Path: ../logs/dfs
 MiniHttp:
   Name: service.dfs.minihttp
   Host: 0.0.0.0
   Port: 11701
   Timeout: 0
+  Log:
+    Mode: file
+    Path: ../logs/dfs
 Cache:
   - Host: 127.0.0.1:6379
 Minio:
