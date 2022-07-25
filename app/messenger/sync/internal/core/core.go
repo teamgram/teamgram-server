@@ -202,7 +202,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, cl
 			if syncType == syncTypeUserNotMe && sess.AuthKeyId == authKeyId {
 				continue
 			}
-			pushExcludeList = append(pushExcludeList, sess.AuthKeyId)
+			pushExcludeList = append(pushExcludeList, sess.PermAuthKeyId)
 			if keyIdList, ok := serverIdKeyIdList[sess.Gateway]; ok {
 				keyIdList = append(keyIdList, sess.AuthKeyId)
 				serverIdKeyIdList[sess.Gateway] = keyIdList
