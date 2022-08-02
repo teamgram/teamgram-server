@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/teamgram/marmota v0.1.7
 	github.com/teamgram/proto v0.141.6
-	github.com/zeromicro/go-zero v1.3.6-0.20220724061557-9b334b54283e
+	github.com/zeromicro/go-zero v1.3.6-0.20220731160124-49367f1713c0
 	google.golang.org/grpc v1.48.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	mvdan.cc/xurls/v2 v2.3.0
@@ -106,7 +106,7 @@ require (
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220628213854-d9e0b6570c03 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
