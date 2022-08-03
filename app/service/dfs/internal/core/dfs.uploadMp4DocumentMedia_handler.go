@@ -77,6 +77,18 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 		//c.Logger.Errorf("getFirstFrameByPipe - error: %v", err)
 		//return nil, err
 
+		attributes := make([]*mtproto.DocumentAttribute, 0, 2)
+		attrVideo := mtproto.GetDocumentAttribute(media.GetAttributes(), mtproto.Predicate_documentAttributeVideo)
+		if attrVideo != nil {
+			attrVideo.SupportsStreaming = true
+			attributes = append(attributes, attrVideo)
+		}
+
+		attrFileName := mtproto.GetDocumentAttribute(media.GetAttributes(), mtproto.Predicate_documentAttributeFilename)
+		if attrFileName != nil {
+			attributes = append(attributes, attrFileName)
+		}
+
 		// build document
 		document := mtproto.MakeTLDocument(&mtproto.Document{
 			Id:            documentId,
@@ -88,9 +100,7 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 			Thumbs:        nil,
 			VideoThumbs:   nil,
 			DcId:          1,
-			Attributes: []*mtproto.DocumentAttribute{
-				mtproto.GetDocumentAttribute(media.GetAttributes(), mtproto.Predicate_documentAttributeFilename),
-			},
+			Attributes:    attributes,
 		}).To_Document()
 		return document, nil
 	} else {
