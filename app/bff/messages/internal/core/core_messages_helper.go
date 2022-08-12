@@ -225,11 +225,9 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 		}).To_MessageMedia()
 	case mtproto.Predicate_inputMediaPoll:
 		// inputMediaPoll#f94e5f1 flags:# poll:Poll correct_answers:flags.0?Vector<bytes> solution:flags.1?string solution_entities:flags.1?Vector<MessageEntity> = InputMedia;
-		messageMedia = mtproto.MakeTLMessageMediaPoll(&mtproto.MessageMedia{
-			Poll:    media.Poll,
-			Results: nil,
-		}).To_MessageMedia()
 
+		// TODO(@benqi): Not impl inputMediaPoll
+		messageMedia = mtproto.MakeTLMessageMediaUnsupported(nil).To_MessageMedia()
 	case mtproto.Predicate_inputMediaDice:
 		// inputMediaDice#e66fbf7b emoticon:string = InputMedia;
 
