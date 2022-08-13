@@ -465,7 +465,6 @@ func (d *Dao) EditUserOutboxMessage(ctx context.Context, fromId, toId int64, mes
 
 func (d *Dao) EditChatOutboxMessage(ctx context.Context, fromId, toId int64, message *mtproto.Message) (*mtproto.MessageBox, error) {
 	return d.editOutboxMessage(ctx, fromId, mtproto.PEER_CHAT, toId, message)
-	return nil, nil
 }
 
 func (d *Dao) editOutboxMessage(ctx context.Context, fromId int64, peerType int32, peerId int64, message *mtproto.Message) (*mtproto.MessageBox, error) {
