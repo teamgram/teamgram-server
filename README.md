@@ -137,10 +137,10 @@ If you have the above components, it is recommended to use them directly. If not
 			mc mb minio/encryptedfiles
 			mc mb minio/photos
 			mc mb minio/videos
-```
+			```
 
 - install and run teamgram
-		 
+
 	```  
 	# run docker-compose
 	docker-compose -f docker-compose-env.yml up -d
