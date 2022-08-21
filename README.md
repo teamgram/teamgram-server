@@ -31,120 +31,105 @@ Privatization deployment Before `Teamgram`, please make sure that the above five
 - [Centos9 Stream Build and Install](docs/install-centos-9.md) [@A Feel]
 - [CentOS7 teamgram-server环境搭建](docs/install-centos-7.md) [@saeipi]
 
-If you have the above components, it is recommended to use them directly. If not, it is recommended to use `docker-compose-env.yml`.
+If you have the above components, it is recommended to use them directly. If not, it is recommended to use `docker-compose-env.yaml`.
 
 
 ### Source code deployment
-- Get source code　
+#### Get source code　
+
+```
+git clone https://github.com/teamgram/teamgram-server.git
+cd teamgram-server
+```
+
+#### Init data
+- init database
 
 	```
-	git clone https://github.com/teamgram/teamgram-server.git
-	cd teamgram-server
+	1. create database teamgram
+	2. init teamgram database
+	   mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
+	   mysql -uroot teamgram < teamgramd/sql/migrate-*.sql
 	```
 
-- init data
-	- init database
-
-		```
-		1. create database teamgram
-		2. init teamgram database
-		   mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-*.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220326.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220328.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220401.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220412.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220419.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220423.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220504.sql
-		   mysql -uroot teamgram < teamgramd/sql/migrate-20220721.sql
-		```
-
-	- init minio buckets
-		- bucket names
-		  - `documents`
-		  - `encryptedfiles`
-		  - `photos`
-		  - `videos`
-		- Access `http://ip:xxxxx` and cerate
+- init minio buckets
+	- bucket names
+	  - `documents`
+	  - `encryptedfiles`
+	  - `photos`
+	  - `videos`
+	- Access `http://ip:xxxxx` and cerate
 
 
-- Build
+#### Build
 	
-	```
-	make
-	```
+```
+make
+```
 
-- Run
+#### Run
 
-	```
-	cd ../teamgramd/bin
-	./runall2.sh
-	```
+```
+cd ../teamgramd/bin
+./runall2.sh
+```
 
 ### Docker deployment
-- Get source code
+#### Get source code
 
-  ```
-  git clone https://github.com/teamgram/teamgram-server.git
-  cd teamgram-server
-  ```
+```
+git clone https://github.com/teamgram/teamgram-server.git
+cd teamgram-server
+```
 
+#### Install depends
+- **change `192.168.1.150` to your ip in `docker-compose-env.yaml`**
 - install depends
-	- **change `192.168.1.150` to your ip in docker-compose-env.yml**
-	- install depends
 	
-	  ```
-	  # pull docker images
-	  docker-compose -f docker-compose-env.yml pull
+  ```
+  # pull docker images
+  docker-compose -f docker-compose-env.yaml pull
+  
+  # run docker-compose
+  docker-compose -f docker-compose-env.yaml up -d
+  ```
 	  
-	  # run docker-compose
-	  docker-compose -f docker-compose-env.yml up -d
-	  ```
-- init data
-	- init database
+#### Init data
+- init database
 
-		```
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220326.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220328.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220401.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220412.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220419.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220423.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220504.sql
-	   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220721.sql
-		```
-
-	- init minio buckets
-		- bucket names:
-		  - `documents`
-		  - `encryptedfiles`
-		  - `photos`
-		  - `videos`
-		- create buckets
-			
-			```
-			# get mc
-			docker run -it --entrypoint=/bin/bash minio/mc
-			   
-			# change 192.168.1.150 to your ip    
-			mc alias set minio http://192.168.1.150:9000 minio miniostorage
-			
-			# create buckets
-			mc mb minio/documents
-			mc mb minio/encryptedfiles
-			mc mb minio/photos
-			mc mb minio/videos
-			```
-
-- install and run teamgram
-
-	```  
-	# run docker-compose
-	docker-compose -f docker-compose-env.yml up -d
 	```
+   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
+   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
+	```
+
+- init minio buckets
+	- bucket names:
+	  - `documents`
+	  - `encryptedfiles`
+	  - `photos`
+	  - `videos`
+	- create buckets
+		
+		```
+		# get mc
+		docker run -it --entrypoint=/bin/bash minio/mc
+		   
+		# change 192.168.1.150 to your ip    
+		mc alias set minio http://192.168.1.150:9000 minio miniostorage
+		
+		# create buckets
+		mc mb minio/documents
+		mc mb minio/encryptedfiles
+		mc mb minio/photos
+		mc mb minio/videos
+		```
+
+#### Run
+
+```  
+# run docker-compose
+docker-compose up -d
+```
 	
 ## Compatible clients
 **Important**: default signIn verify code is **12345**
