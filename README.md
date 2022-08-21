@@ -61,7 +61,7 @@ cd teamgram-server
 	  - `encryptedfiles`
 	  - `photos`
 	  - `videos`
-	- Access `http://ip:xxxxx` and cerate
+	- Access `http://ip:xxxxx` and create
 
 
 #### Build
@@ -92,7 +92,7 @@ cd teamgram-server
 #### Install depends
 - **change `192.168.1.150` to your ip in `docker-compose-env.yaml`**
 - install depends
-	
+
   ```
   # pull docker images
   docker-compose -f docker-compose-env.yaml pull
@@ -100,13 +100,13 @@ cd teamgram-server
   # run docker-compose
   docker-compose -f docker-compose-env.yaml up -d
   ```
-	  
+  
 #### Init data
 - init database
-
+	
 	```
-   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
-   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
+	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
+	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
 	```
 
 - init minio buckets
@@ -129,6 +129,9 @@ cd teamgram-server
 		mc mb minio/encryptedfiles
 		mc mb minio/photos
 		mc mb minio/videos
+  
+  		# quit docker minio/mc
+  		exit
 		```
 
 #### Run

@@ -11,7 +11,7 @@ services:
     volumes:
       - ./data/zookeeper/data:/data
       - /etc/localtime:/etc/localtime
-     restart: always
+    restart: always
     ports:
       - 2181:2181
     networks:
