@@ -20,14 +20,10 @@ Routine:
   Size: 100
 
 Mysql:
-  Addr: 127.0.0.1:3306
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true
   Active: 64
   Idle: 64
   IdleTimeout: 4h
-  QueryTimeout: 5s
-  ExecTimeout: 5s
-  TranTimeout: 5s
 Cache:
   - Host: 127.0.0.1:6379
 KV:

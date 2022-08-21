@@ -1,0 +1,136 @@
+version: "3"
+
+######## 项目依赖的环境，启动项目之前要先启动此环境 #######
+######## The environment that the project depends on, starting this environment before starting the project #######
+
+services:
+  #zookeeper是kafka的依赖 - Zookeeper is the dependencies of Kafka
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    volumes:
+      - ./data/zookeeper/data:/data
+      - /etc/localtime:/etc/localtime
+     restart: always
+    ports:
+      - 2181:2181
+    networks:
+      - teamgram_net
+
+  #消息队列 - Message queue
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - 9092:9092
+    environment:
+      #TZ: Asia/Shanghai
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "Inbox-T:1:0,Sync-T:1:0"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.150:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    restart: always
+    volumes:
+      - ./data/kafka/data:/data
+    networks:
+      - teamgram_net
+    depends_on:
+      - zookeeper
+
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.2
+    ports:
+      - 2379:2379
+      - 2380:2380
+    container_name: etcd
+    volumes:
+      - ./data/etcd/data:/data
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      ETCDCTL_API: 3
+      ETCD_DATA_DIR: /data
+      ETCD_NAME: node1
+      INITIAL_CLUSTER_TOKEN: etcd-test-cluster
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://192.168.1.150:2380
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_ADVERTISE_CLIENT_URLS: http://192.168.1.150:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_INITIAL_CLUSTER: node1=http://192.168.1.150:2380
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_AUTO_COMPACTION_RETENTION: 1
+    restart: always
+    command: /usr/local/bin/etcd
+    networks:
+      - teamgram_net
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis/data:/data:rw
+      #redis config file
+      #- ./deploy/redis/config/redis.conf:/usr/local/redis/config/redis.conf
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    privileged: true
+    command: redis-server --appendonly yes
+    networks:
+      - teamgram_net
+
+  mysql:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: mysql
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      #TZ: Asia/Shanghai
+      # root 密码 - root password
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-my_root_secret}
+      MYSQL_DATABASE: teamgram
+      MYSQL_USER: teamgram
+      MYSQL_PASSWORD: ${DB_PASSWORD:-teamgram}
+      # MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    ports:
+      - 3306:3306
+    volumes:
+      # 数据挂载 - Data mounting
+      - ./data/mysql/data:/var/lib/mysql
+      #- /etc/localtime:/etc/localtime
+      # 日志
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    privileged: true
+    restart: always
+    networks:
+      - teamgram_net
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./data/minio/data:/data
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: miniostorage
+    command: server /data --console-address ":9001"
+    networks:
+      - teamgram_net
+
+networks:
+  teamgram_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
