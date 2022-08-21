@@ -35,6 +35,9 @@ If you have the above components, it is recommended to use them directly. If not
 
 
 ### Source code deployment
+#### Install [Go environment](https://go.dev/doc/install). Make sure Go version is at least 1.17.
+
+
 #### Get source code　
 
 ```
@@ -75,6 +78,10 @@ cd ../teamgramd/bin
 ```
 
 ### Docker deployment
+#### Install [Docker](https://docs.docker.com/get-docker/)
+
+#### Install [Docker Compose](https://docs.docker.com/compose/install/)
+
 #### Get source code
 
 ```
