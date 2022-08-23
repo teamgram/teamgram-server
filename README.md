@@ -130,8 +130,8 @@ cd teamgram-server
 		mc mb minio/photos
 		mc mb minio/videos
   
-  		# quit docker minio/mc
-  		exit
+		# quit docker minio/mc
+		exit
 		```
 
 #### Run
