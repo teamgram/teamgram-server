@@ -73,7 +73,7 @@ make
 #### Run
 
 ```
-cd ../teamgramd/bin
+cd teamgramd/bin
 ./runall2.sh
 ```
 
