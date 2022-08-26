@@ -133,7 +133,7 @@ func (c *UpdatesCore) addPtsUpdate(updates []*mtproto.Update, do *dataobject.Use
 		c.Logger.Errorf("update data error.")
 		return updates
 	}
-	updates = append(updates, update)
+	updates = append(updates, update.FixData())
 	return updates
 }
 
@@ -144,7 +144,7 @@ func (c *UpdatesCore) addSeqUpdate(updates []*mtproto.Update, do *dataobject.Aut
 		c.Logger.Errorf("unmarshal pts's update(%d)error: %v", do.Id, err)
 		return updates
 	}
-	updates = append(updates, update)
+	updates = append(updates, update.FixData())
 	return updates
 }
 

@@ -32,8 +32,10 @@ func (c *AutoDownloadCore) AccountGetAutoDownloadSettings(in *mtproto.TLAccountG
 			AudioPreloadNext:   audioPreloadNext,
 			PhonecallsLessData: phonecallsLessData,
 			PhotoSizeMax:       photoSizeMax,
-			VideoSizeMax:       videoSizeMax,
-			FileSizeMax:        fileSizeMax,
+			VideoSizeMax_INT32: videoSizeMax,
+			VideoSizeMax_INT64: int64(videoSizeMax),
+			FileSizeMax_INT32:  fileSizeMax,
+			FileSizeMax_INT64:  int64(fileSizeMax),
 		}).To_AutoDownloadSettings()
 	}
 

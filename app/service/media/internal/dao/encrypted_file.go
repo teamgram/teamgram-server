@@ -33,7 +33,7 @@ func (m *Dao) SaveEncryptedFileV2(ctx context.Context, eF *mtproto.EncryptedFile
 		AccessHash:      eF.AccessHash,
 		DcId:            eF.DcId,
 		FilePath:        "",
-		FileSize:        eF.Size2,
+		FileSize:        eF.GetFixedSize(),
 		KeyFingerprint:  eF.KeyFingerprint,
 		Md5Checksum:     "",
 	}
@@ -59,7 +59,8 @@ func (m *Dao) GetEncryptedFile(ctx context.Context, id, accessHash int64) (*mtpr
 		encryptedFile := mtproto.MakeTLEncryptedFile(&mtproto.EncryptedFile{
 			Id:             do.EncryptedFileId,
 			AccessHash:     do.AccessHash,
-			Size2:          do.FileSize,
+			Size2_INT32:    int32(do.FileSize),
+			Size2_INT64:    do.FileSize,
 			DcId:           do.DcId,
 			KeyFingerprint: do.KeyFingerprint,
 		})

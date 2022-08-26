@@ -2028,8 +2028,8 @@ github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2/go.mod h1:yHp0
 github.com/tdakkota/asciicheck v0.0.0-20200416200610-e657995f937b/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
 github.com/teamgram/marmota v0.1.8 h1:vmln/E3MNBb0d1aq7iz9WEATbg80A+v6n2Tu1VEFUtg=
 github.com/teamgram/marmota v0.1.8/go.mod h1:fbT0a/+izWX6XPYpAEjVJ9vRJGZqVBLDZvXczNAEPCs=
-github.com/teamgram/proto v0.141.6 h1:AWaJyvzUnbvZ2WidONHs2Ui639HTSBZ8ym26UqAw/n4=
-github.com/teamgram/proto v0.141.6/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.144.2 h1:OSzWqF8zJZm0bNjk9AMloMqPify+2iXDxtYjqBPUMP0=
+github.com/teamgram/proto v0.144.2/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=
 github.com/tenntenn/text/transform v0.0.0-20200319021203-7eef512accb3/go.mod h1:ON8b8w4BN/kE1EOhwT0o+d62W65a6aPw1nouo9LMgyY=
 github.com/tetafro/godot v0.3.7/go.mod h1:/7NLHhv08H1+8DNj0MElpAACw1ajsCuf3TKNQxA5S+0=

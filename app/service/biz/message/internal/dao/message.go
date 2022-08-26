@@ -34,6 +34,7 @@ func (d *Dao) MakeMessageBox(ctx context.Context, selfUserId int64, do *dataobje
 	}).To_MessageBox()
 	// Message
 	_ = jsonx.UnmarshalFromString(do.MessageData, &box.Message)
+	box.Message = box.Message.FixData()
 
 	//// poll
 	//pollId, _ := mtproto.GetPollIdByMessage(box.Message.Media)

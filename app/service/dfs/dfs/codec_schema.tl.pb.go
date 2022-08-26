@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -23,6 +23,7 @@ import (
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
 var _ *types.Int32Value
 var _ *mtproto.Bool
 var _ fmt.GoStringer
@@ -51,9 +52,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2043921699,
 		}
 	},
-	-2144148946: func() mtproto.TLObject { // 0x8032e22e
+	-692064706: func() mtproto.TLObject { // 0xd6bfee3e
 		return &TLDfsDownloadFile{
-			Constructor: -2144148946,
+			Constructor: -692064706,
 		}
 	},
 	1983081911: func() mtproto.TLObject { // 0x76336db7
@@ -101,13 +102,13 @@ func CheckClassID(classId int32) (ok bool) {
 //----------------------------------------------------------------------------------------------------------------
 // TLDfsWriteFilePartData
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsWriteFilePartData) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_writeFilePartData))
 
 	switch uint32(m.Constructor) {
 	case 0x1a484107:
-		// dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 		x.UInt(0x1a484107)
 
 		// set flags
@@ -145,7 +146,6 @@ func (m *TLDfsWriteFilePartData) CalcByteSize(layer int32) int {
 func (m *TLDfsWriteFilePartData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1a484107:
-		// dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -178,13 +178,13 @@ func (m *TLDfsWriteFilePartData) DebugString() string {
 
 // TLDfsUploadPhotoFileV2
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadPhotoFileV2) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadPhotoFileV2))
 
 	switch uint32(m.Constructor) {
 	case 0x2410d1a2:
-		// dfs.uploadPhotoFileV2 creator:long file:InputFile = Photo;
 		x.UInt(0x2410d1a2)
 
 		// no flags
@@ -206,7 +206,6 @@ func (m *TLDfsUploadPhotoFileV2) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadPhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x2410d1a2:
-		// dfs.uploadPhotoFileV2 creator:long file:InputFile = Photo;
 
 		// not has flags
 
@@ -232,13 +231,13 @@ func (m *TLDfsUploadPhotoFileV2) DebugString() string {
 
 // TLDfsUploadProfilePhotoFileV2
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadProfilePhotoFileV2) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadProfilePhotoFileV2))
 
 	switch uint32(m.Constructor) {
 	case 0xcc1da2b2:
-		// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 		x.UInt(0xcc1da2b2)
 
 		// set flags
@@ -284,7 +283,6 @@ func (m *TLDfsUploadProfilePhotoFileV2) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadProfilePhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xcc1da2b2:
-		// dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -321,13 +319,13 @@ func (m *TLDfsUploadProfilePhotoFileV2) DebugString() string {
 
 // TLDfsUploadEncryptedFileV2
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadEncryptedFileV2) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadEncryptedFileV2))
 
 	switch uint32(m.Constructor) {
 	case 0x79d3c523:
-		// dfs.uploadEncryptedFileV2 creator:long file:InputEncryptedFile = EncryptedFile;
 		x.UInt(0x79d3c523)
 
 		// no flags
@@ -349,7 +347,6 @@ func (m *TLDfsUploadEncryptedFileV2) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadEncryptedFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x79d3c523:
-		// dfs.uploadEncryptedFileV2 creator:long file:InputEncryptedFile = EncryptedFile;
 
 		// not has flags
 
@@ -375,19 +372,19 @@ func (m *TLDfsUploadEncryptedFileV2) DebugString() string {
 
 // TLDfsDownloadFile
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsDownloadFile) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_downloadFile))
 
 	switch uint32(m.Constructor) {
-	case 0x8032e22e:
-		// dfs.downloadFile location:InputFileLocation offset:int limit:int = upload.File;
-		x.UInt(0x8032e22e)
+	case 0xd6bfee3e:
+		x.UInt(0xd6bfee3e)
 
 		// no flags
 
 		x.Bytes(m.GetLocation().Encode(layer))
-		x.Int(m.GetOffset())
+		x.Long(m.GetOffset())
 		x.Int(m.GetLimit())
 
 	default:
@@ -403,8 +400,7 @@ func (m *TLDfsDownloadFile) CalcByteSize(layer int32) int {
 
 func (m *TLDfsDownloadFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x8032e22e:
-		// dfs.downloadFile location:InputFileLocation offset:int limit:int = upload.File;
+	case 0xd6bfee3e:
 
 		// not has flags
 
@@ -412,7 +408,7 @@ func (m *TLDfsDownloadFile) Decode(dBuf *mtproto.DecodeBuf) error {
 		m1.Decode(dBuf)
 		m.Location = m1
 
-		m.Offset = dBuf.Int()
+		m.Offset = dBuf.Long()
 		m.Limit = dBuf.Int()
 		return dBuf.GetError()
 
@@ -430,13 +426,13 @@ func (m *TLDfsDownloadFile) DebugString() string {
 
 // TLDfsUploadDocumentFileV2
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadDocumentFileV2) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadDocumentFileV2))
 
 	switch uint32(m.Constructor) {
 	case 0x76336db7:
-		// dfs.uploadDocumentFileV2 creator:long media:InputMedia = Document;
 		x.UInt(0x76336db7)
 
 		// no flags
@@ -458,7 +454,6 @@ func (m *TLDfsUploadDocumentFileV2) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadDocumentFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x76336db7:
-		// dfs.uploadDocumentFileV2 creator:long media:InputMedia = Document;
 
 		// not has flags
 
@@ -484,13 +479,13 @@ func (m *TLDfsUploadDocumentFileV2) DebugString() string {
 
 // TLDfsUploadGifDocumentMedia
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadGifDocumentMedia) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadGifDocumentMedia))
 
 	switch uint32(m.Constructor) {
 	case 0x41c4cd00:
-		// dfs.uploadGifDocumentMedia creator:long media:InputMedia = Document;
 		x.UInt(0x41c4cd00)
 
 		// no flags
@@ -512,7 +507,6 @@ func (m *TLDfsUploadGifDocumentMedia) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadGifDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x41c4cd00:
-		// dfs.uploadGifDocumentMedia creator:long media:InputMedia = Document;
 
 		// not has flags
 
@@ -538,13 +532,13 @@ func (m *TLDfsUploadGifDocumentMedia) DebugString() string {
 
 // TLDfsUploadMp4DocumentMedia
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadMp4DocumentMedia) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadMp4DocumentMedia))
 
 	switch uint32(m.Constructor) {
 	case 0xa2a4f818:
-		// dfs.uploadMp4DocumentMedia creator:long media:InputMedia = Document;
 		x.UInt(0xa2a4f818)
 
 		// no flags
@@ -566,7 +560,6 @@ func (m *TLDfsUploadMp4DocumentMedia) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadMp4DocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa2a4f818:
-		// dfs.uploadMp4DocumentMedia creator:long media:InputMedia = Document;
 
 		// not has flags
 
@@ -592,13 +585,13 @@ func (m *TLDfsUploadMp4DocumentMedia) DebugString() string {
 
 // TLDfsUploadWallPaperFile
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadWallPaperFile) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadWallPaperFile))
 
 	switch uint32(m.Constructor) {
 	case 0xc1a61056:
-		// dfs.uploadWallPaperFile creator:long file:InputFile mime_type:string admin:Bool = Document;
 		x.UInt(0xc1a61056)
 
 		// no flags
@@ -622,7 +615,6 @@ func (m *TLDfsUploadWallPaperFile) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc1a61056:
-		// dfs.uploadWallPaperFile creator:long file:InputFile mime_type:string admin:Bool = Document;
 
 		// not has flags
 
@@ -654,13 +646,13 @@ func (m *TLDfsUploadWallPaperFile) DebugString() string {
 
 // TLDfsUploadThemeFile
 ///////////////////////////////////////////////////////////////////////////////
+
 func (m *TLDfsUploadThemeFile) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 	// x.Int(int32(CRC32_dfs_uploadThemeFile))
 
 	switch uint32(m.Constructor) {
 	case 0xdea64f97:
-		// dfs.uploadThemeFile flags:# creator:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 		x.UInt(0xdea64f97)
 
 		// set flags
@@ -696,7 +688,6 @@ func (m *TLDfsUploadThemeFile) CalcByteSize(layer int32) int {
 func (m *TLDfsUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xdea64f97:
-		// dfs.uploadThemeFile flags:# creator:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 
 		flags := dBuf.UInt()
 		_ = flags

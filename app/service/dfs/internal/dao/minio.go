@@ -45,7 +45,7 @@ func s3PutOptions(encrypted bool, contentType string) minio.PutObjectOptions {
 	return options
 }
 
-func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset, limit int32) (bytes []byte, err error) {
+func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset int64, limit int32) (bytes []byte, err error) {
 	_ = ctx
 
 	var (
@@ -60,7 +60,7 @@ func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset, limit in
 	}
 
 	bytes = make([]byte, limit)
-	n, err = object.ReadAt(bytes, int64(offset))
+	n, err = object.ReadAt(bytes, offset)
 	//if err != nil {
 	//	// return
 	//}

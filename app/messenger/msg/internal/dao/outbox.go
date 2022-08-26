@@ -55,7 +55,7 @@ func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
 		Message:           nil,
 	}
 	jsonx.UnmarshalFromString(boxDO.MessageData, &box.Message)
-
+	box.Message = box.Message.FixData()
 	return box
 }
 

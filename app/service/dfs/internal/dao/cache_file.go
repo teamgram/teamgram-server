@@ -92,7 +92,7 @@ func (d *Dao) getCacheFileInfo(ctx context.Context, id int64) (ownerId, fileId i
 	return
 }
 
-func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset int32, limit int32) (bytes []byte, err error) {
+func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset int64, limit int32) (bytes []byte, err error) {
 	var (
 		cacheFile *model.DfsFileInfo
 		n         int

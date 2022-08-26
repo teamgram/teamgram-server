@@ -16,7 +16,7 @@ type DocumentsDO struct {
 	AccessHash       int64  `db:"access_hash"`
 	DcId             int32  `db:"dc_id"`
 	FilePath         string `db:"file_path"`
-	FileSize         int32  `db:"file_size"`
+	FileSize         int64  `db:"file_size"`
 	UploadedFileName string `db:"uploaded_file_name"`
 	Ext              string `db:"ext"`
 	MimeType         string `db:"mime_type"`

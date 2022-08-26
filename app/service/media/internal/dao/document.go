@@ -81,7 +81,8 @@ func (m *Dao) makeDocumentByDO(
 		document.Date = int32(time.Now().Unix())
 	}
 	document.MimeType = do.MimeType
-	document.Size2 = do.FileSize
+	document.Size2_INT32 = int32(do.FileSize)
+	document.Size2_INT64 = do.FileSize
 
 	if do.ThumbId != 0 && do.VideoThumbId != 0 {
 		if len(thumbs) > 0 && len(videoThumbs) > 0 {
@@ -138,7 +139,7 @@ func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {
 		return nil
 	})
 
-	return document
+	return document.FixData()
 }
 
 func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mtproto.Document {
@@ -160,7 +161,7 @@ func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mt
 					//
 				}
 			} else if document != nil {
-				writer.Write(document)
+				writer.Write(document.FixData())
 			}
 			// logx.WithDuration(timex.Since(since2)).Infof("getCache: %v", do)
 		},
@@ -276,7 +277,7 @@ func (m *Dao) SaveDocumentV2(ctx context.Context, fileName string, document *mtp
 		AccessHash:       document.AccessHash,
 		DcId:             document.DcId,
 		FilePath:         fmt.Sprintf("%d.dat", document.Id),
-		FileSize:         document.Size2,
+		FileSize:         document.GetFixedSize(), // TODO: check
 		UploadedFileName: fileName,
 		Ext:              getFileExtName(fileName),
 		MimeType:         document.MimeType,

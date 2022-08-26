@@ -45,7 +45,8 @@ func (c *DfsCore) DfsUploadEncryptedFileV2(in *dfs.TLDfsUploadEncryptedFileV2) (
 	encryptedFile := mtproto.MakeTLEncryptedFile(&mtproto.EncryptedFile{
 		Id:             encryptedFileId,
 		AccessHash:     accessHash,
-		Size2:          int32(fileInfo.GetFileSize()),
+		Size2_INT32:    int32(fileInfo.GetFileSize()),
+		Size2_INT64:    fileInfo.GetFileSize(),
 		DcId:           1,
 		KeyFingerprint: 0,
 	}).To_EncryptedFile()

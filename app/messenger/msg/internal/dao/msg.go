@@ -51,7 +51,7 @@ func (d *Dao) GetLastMessageAndIdListByDialog(ctx context.Context, userId int64,
 				if err != nil {
 					logx.WithContext(ctx).Errorf("error: %v, do: %v", err, v)
 				} else {
-					lastMessage = m
+					lastMessage = m.FixData()
 				}
 			}
 
