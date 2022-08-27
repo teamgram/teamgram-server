@@ -2,7 +2,18 @@
 > open source mtproto server implemented in golang with compatible telegram client.
 
 ## Introduce
-Open source [mtproto](https://core.telegram.org/mtproto) server written in golang
+Open source [mtproto](https://core.telegram.org/mtproto) server implementation written in golang, support private deployment.
+
+## Features
+- MTProto 2.0
+  - Abridged
+  - Intermediate
+  - Padded intermediate
+  - Full
+- API Layer: 144
+- private chat
+- basic group
+- contacts
 
 ## Architecture
 ![Architecture](docs/image/architecture-001.png)
@@ -154,7 +165,14 @@ docker-compose up -d
 Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/+S1_22-6EM1BaffXS) Or [Teamgram](https://t.me/+TjD5LZJ5XLRlCYLF) to discuss problems around source code.
 
 ## Notes
-If need enterprise edition, please PM the **[author](https://t.me/benqi)**
+If need enterprise edition:
+
+- sticker/theme/wallpaper/reactions/2fa/secretchat/sms/push(apns/web/fcm)/web...
+- channel/megagroup
+- audiocall/videocall/groupcall/`rtmp live stream`
+- bots
+
+please PM the **[author](https://t.me/benqi)**
 
 ## Give a Star! ⭐
 
