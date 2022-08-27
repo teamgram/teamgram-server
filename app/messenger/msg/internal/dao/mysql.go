@@ -35,7 +35,7 @@ type Mysql struct {
 func NewMysqlDao(db *sqlx.DB) *Mysql {
 	return &Mysql{
 		DB:                  db,
-		MessagesDAO:         mysql_dao.NewMessagesDAO(db),
+		MessagesDAO:         mysql_dao.NewMessagesDAO(db, 0),
 		ChatParticipantsDAO: mysql_dao.NewChatParticipantsDAO(db),
 		HashTagsDAO:         mysql_dao.NewHashTagsDAO(db),
 		DialogsDAO:          mysql_dao.NewDialogsDAO(db),

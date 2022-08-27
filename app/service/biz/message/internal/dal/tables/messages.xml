@@ -146,7 +146,7 @@
 
     <operation name="SelectPeerUserMessageId">
         <params>
-            <param name="peerId" type="int32" />
+            <param name="peerId" type="int64" />
         </params>
         <sql>
             SELECT
