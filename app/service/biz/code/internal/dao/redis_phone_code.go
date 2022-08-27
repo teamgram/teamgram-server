@@ -23,9 +23,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/teamgram-server/app/service/biz/code/code"
 
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -48,7 +48,7 @@ func (d *Dao) GetCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumbe
 	}
 
 	codeData := &code.PhoneCodeTransaction{}
-	err = json.Unmarshal(hack.Bytes(v), codeData)
+	err = jsonx.UnmarshalFromString(v, codeData)
 	return codeData, err
 }
 

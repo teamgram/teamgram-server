@@ -26,7 +26,7 @@ import (
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
-// UsersGetFullUserB60F5918
+// UsersGetFullUser
 // users.getFullUser#b60f5918 id:InputUser = users.UserFull;
 func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	var (

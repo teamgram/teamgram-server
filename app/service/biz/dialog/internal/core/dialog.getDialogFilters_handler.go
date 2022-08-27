@@ -35,7 +35,7 @@ func (c *DialogCore) DialogGetDialogFilters(in *dialog.TLDialogGetDialogFilters)
 			}
 
 			if err := jsonx.UnmarshalFromString(v.DialogFilter, &dialogFilter.DialogFilter); err != nil {
-				c.Logger.Errorf("json.Unmarshal(%v) - error: %v", v, err)
+				c.Logger.Errorf("jsonx.UnmarshalFromString(%v) - error: %v", v, err)
 				// continue
 				return
 			}

@@ -103,9 +103,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/proto/mtproto"
 
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -149,8 +149,8 @@ func (d *Dao) GetSalts(ctx context.Context, keyId int64) (salts []*mtproto.TLFut
 		return nil, nil
 	}
 
-	if err = json.Unmarshal(hack.Bytes(bBuf), &salts); err != nil {
-		logx.WithContext(ctx).Errorf("getSalts json.Unmarshal(%s) error(%v)", bBuf, err)
+	if err = jsonx.UnmarshalFromString(bBuf, &salts); err != nil {
+		logx.WithContext(ctx).Errorf("getSalts jsonx.UnmarshalFromString(%s) error(%v)", bBuf, err)
 		return nil, nil
 	}
 	return

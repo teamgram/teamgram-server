@@ -20,7 +20,6 @@ package dao
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -118,7 +117,7 @@ func (m *Dao) makeDocumentByDO(
 	}
 
 	document.DcId = 1
-	err := json.Unmarshal([]byte(do.Attributes), &document.Attributes)
+	err := jsonx.UnmarshalFromString(do.Attributes, &document.Attributes)
 	if err != nil {
 		document.Attributes = []*mtproto.DocumentAttribute{}
 	}
