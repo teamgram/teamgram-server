@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -30,11 +30,6 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	1988948676: func() mtproto.TLObject { // 0x768cf2c4
-		o := MakeTLPeerMessageId(nil)
-		o.Data2.Constructor = 1988948676
-		return o
-	},
 
 	// Method
 	2060235208: func() mtproto.TLObject { // 0x7accb1c8
@@ -50,6 +45,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	290824571: func() mtproto.TLObject { // 0x1155a17b
 		return &TLMessageGetUserMessageListByDataIdList{
 			Constructor: 290824571,
+		}
+	},
+	749890097: func() mtproto.TLObject { // 0x2cb26a31
+		return &TLMessageGetUserMessageListByDataIdUserIdList{
+			Constructor: 749890097,
 		}
 	},
 	50897728: func() mtproto.TLObject { // 0x308a340
@@ -70,16 +70,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	1662161426: func() mtproto.TLObject { // 0x63129212
 		return &TLMessageGetPeerUserMessage{
 			Constructor: 1662161426,
-		}
-	},
-	-917982612: func() mtproto.TLObject { // 0xc948b26c
-		return &TLMessageGetPeerChatMessageIdList{
-			Constructor: -917982612,
-		}
-	},
-	-1442816248: func() mtproto.TLObject { // 0xaa005f08
-		return &TLMessageGetPeerChatMessageList{
-			Constructor: -1442816248,
 		}
 	},
 	287058243: func() mtproto.TLObject { // 0x111c2943
@@ -158,150 +148,6 @@ func CheckClassID(classId int32) (ok bool) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-
-///////////////////////////////////////////////////////////////////////////////
-// PeerMessageId <--
-//  + TL_PeerMessageId
-//
-
-func (m *PeerMessageId) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_peerMessageId:
-		t := m.To_PeerMessageId()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *PeerMessageId) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *PeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x768cf2c4:
-		m2 := MakeTLPeerMessageId(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *PeerMessageId) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_peerMessageId:
-		t := m.To_PeerMessageId()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_PeerMessageId
-func (m *PeerMessageId) To_PeerMessageId() *TLPeerMessageId {
-	m.PredicateName = Predicate_peerMessageId
-	return &TLPeerMessageId{
-		Data2: m,
-	}
-}
-
-// MakeTLPeerMessageId
-func MakeTLPeerMessageId(data2 *PeerMessageId) *TLPeerMessageId {
-	if data2 == nil {
-		return &TLPeerMessageId{Data2: &PeerMessageId{
-			PredicateName: Predicate_peerMessageId,
-		}}
-	} else {
-		data2.PredicateName = Predicate_peerMessageId
-		return &TLPeerMessageId{Data2: data2}
-	}
-}
-
-func (m *TLPeerMessageId) To_PeerMessageId() *PeerMessageId {
-	m.Data2.PredicateName = Predicate_peerMessageId
-	return m.Data2
-}
-
-func (m *TLPeerMessageId) SetUserId(v int64) { m.Data2.UserId = v }
-func (m *TLPeerMessageId) GetUserId() int64  { return m.Data2.UserId }
-
-func (m *TLPeerMessageId) SetMsgId(v int32) { m.Data2.MsgId = v }
-func (m *TLPeerMessageId) GetMsgId() int32  { return m.Data2.MsgId }
-
-func (m *TLPeerMessageId) GetPredicateName() string {
-	return Predicate_peerMessageId
-}
-
-func (m *TLPeerMessageId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x768cf2c4: func() []byte {
-			x.UInt(0x768cf2c4)
-
-			x.Long(m.GetUserId())
-			x.Int(m.GetMsgId())
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_peerMessageId, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_peerMessageId, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLPeerMessageId) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLPeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x768cf2c4: func() error {
-			m.SetUserId(dBuf.Long())
-			m.SetMsgId(dBuf.Int())
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLPeerMessageId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
 
 //----------------------------------------------------------------------------------------------------------------
 // TLMessageGetUserMessage
@@ -452,6 +298,58 @@ func (m *TLMessageGetUserMessageListByDataIdList) Decode(dBuf *mtproto.DecodeBuf
 }
 
 func (m *TLMessageGetUserMessageListByDataIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetUserMessageListByDataIdUserIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_message_getUserMessageListByDataIdUserIdList))
+
+	switch uint32(m.Constructor) {
+	case 0x2cb26a31:
+		x.UInt(0x2cb26a31)
+
+		// no flags
+
+		x.Long(m.GetId())
+
+		x.VectorLong(m.GetUserIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x2cb26a31:
+
+		// not has flags
+
+		m.Id = dBuf.Long()
+
+		m.UserIdList = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -670,108 +568,6 @@ func (m *TLMessageGetPeerUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMessageGetPeerUserMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLMessageGetPeerChatMessageIdList
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMessageGetPeerChatMessageIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getPeerChatMessageIdList))
-
-	switch uint32(m.Constructor) {
-	case 0xc948b26c:
-		x.UInt(0xc948b26c)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetPeerChatId())
-		x.Int(m.GetMsgId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLMessageGetPeerChatMessageIdList) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMessageGetPeerChatMessageIdList) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xc948b26c:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.PeerChatId = dBuf.Long()
-		m.MsgId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLMessageGetPeerChatMessageIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// TLMessageGetPeerChatMessageList
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMessageGetPeerChatMessageList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getPeerChatMessageList))
-
-	switch uint32(m.Constructor) {
-	case 0xaa005f08:
-		x.UInt(0xaa005f08)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetPeerChatId())
-		x.Int(m.GetMsgId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLMessageGetPeerChatMessageList) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMessageGetPeerChatMessageList) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xaa005f08:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.PeerChatId = dBuf.Long()
-		m.MsgId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-func (m *TLMessageGetPeerChatMessageList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -1474,41 +1270,6 @@ func (m *Vector_MessageBox) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_MessageBox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-// Vector_PeerMessageId
-///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PeerMessageId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	x.Int(int32(mtproto.CRC32_vector))
-	x.Int(int32(len(m.Datas)))
-	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
-	}
-
-	return x.GetBuf()
-}
-
-func (m *Vector_PeerMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
-	dBuf.Int() // TODO(@benqi): Check crc32 invalid
-	l1 := dBuf.Int()
-	m.Datas = make([]*PeerMessageId, l1)
-	for i := int32(0); i < l1; i++ {
-		m.Datas[i] = new(PeerMessageId)
-		(*m.Datas[i]).Decode(dBuf)
-	}
-
-	return dBuf.GetError()
-}
-
-func (m *Vector_PeerMessageId) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *Vector_PeerMessageId) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

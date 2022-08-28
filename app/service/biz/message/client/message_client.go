@@ -25,12 +25,11 @@ type MessageClient interface {
 	MessageGetUserMessage(ctx context.Context, in *message.TLMessageGetUserMessage) (*mtproto.MessageBox, error)
 	MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.Vector_MessageBox, error)
 	MessageGetUserMessageListByDataIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdList) (*message.Vector_MessageBox, error)
+	MessageGetUserMessageListByDataIdUserIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdUserIdList) (*message.Vector_MessageBox, error)
 	MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error)
 	MessageGetHistoryMessagesCount(ctx context.Context, in *message.TLMessageGetHistoryMessagesCount) (*mtproto.Int32, error)
 	MessageGetPeerUserMessageId(ctx context.Context, in *message.TLMessageGetPeerUserMessageId) (*mtproto.Int32, error)
 	MessageGetPeerUserMessage(ctx context.Context, in *message.TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error)
-	MessageGetPeerChatMessageIdList(ctx context.Context, in *message.TLMessageGetPeerChatMessageIdList) (*message.Vector_PeerMessageId, error)
-	MessageGetPeerChatMessageList(ctx context.Context, in *message.TLMessageGetPeerChatMessageList) (*message.Vector_MessageBox, error)
 	MessageSearchByMediaType(ctx context.Context, in *message.TLMessageSearchByMediaType) (*message.Vector_MessageBox, error)
 	MessageSearch(ctx context.Context, in *message.TLMessageSearch) (*message.Vector_MessageBox, error)
 	MessageSearchGlobal(ctx context.Context, in *message.TLMessageSearchGlobal) (*message.Vector_MessageBox, error)
@@ -76,6 +75,13 @@ func (m *defaultMessageClient) MessageGetUserMessageListByDataIdList(ctx context
 	return client.MessageGetUserMessageListByDataIdList(ctx, in)
 }
 
+// MessageGetUserMessageListByDataIdUserIdList
+// message.getUserMessageListByDataIdUserIdList id:long user_id_list:Vector<long> = Vector<MessageBox>;
+func (m *defaultMessageClient) MessageGetUserMessageListByDataIdUserIdList(ctx context.Context, in *message.TLMessageGetUserMessageListByDataIdUserIdList) (*message.Vector_MessageBox, error) {
+	client := message.NewRPCMessageClient(m.cli.Conn())
+	return client.MessageGetUserMessageListByDataIdUserIdList(ctx, in)
+}
+
 // MessageGetHistoryMessages
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (m *defaultMessageClient) MessageGetHistoryMessages(ctx context.Context, in *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error) {
@@ -102,20 +108,6 @@ func (m *defaultMessageClient) MessageGetPeerUserMessageId(ctx context.Context, 
 func (m *defaultMessageClient) MessageGetPeerUserMessage(ctx context.Context, in *message.TLMessageGetPeerUserMessage) (*mtproto.MessageBox, error) {
 	client := message.NewRPCMessageClient(m.cli.Conn())
 	return client.MessageGetPeerUserMessage(ctx, in)
-}
-
-// MessageGetPeerChatMessageIdList
-// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
-func (m *defaultMessageClient) MessageGetPeerChatMessageIdList(ctx context.Context, in *message.TLMessageGetPeerChatMessageIdList) (*message.Vector_PeerMessageId, error) {
-	client := message.NewRPCMessageClient(m.cli.Conn())
-	return client.MessageGetPeerChatMessageIdList(ctx, in)
-}
-
-// MessageGetPeerChatMessageList
-// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
-func (m *defaultMessageClient) MessageGetPeerChatMessageList(ctx context.Context, in *message.TLMessageGetPeerChatMessageList) (*message.Vector_MessageBox, error) {
-	client := message.NewRPCMessageClient(m.cli.Conn())
-	return client.MessageGetPeerChatMessageList(ctx, in)
 }
 
 // MessageSearchByMediaType

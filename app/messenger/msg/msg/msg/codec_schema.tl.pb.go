@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -30,14 +30,14 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
+	-1301595468: func() mtproto.TLObject { // 0xb26b3ab4
+		o := MakeTLContentMessage(nil)
+		o.Data2.Constructor = -1301595468
+		return o
+	},
 	1402283185: func() mtproto.TLObject { // 0x539524b1
 		o := MakeTLOutboxMessage(nil)
 		o.Data2.Constructor = 1402283185
-		return o
-	},
-	295822890: func() mtproto.TLObject { // 0x11a1e62a
-		o := MakeTLContentMessage(nil)
-		o.Data2.Constructor = 295822890
 		return o
 	},
 	1513645242: func() mtproto.TLObject { // 0x5a3864ba
@@ -72,9 +72,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 770211174,
 		}
 	},
-	-1770495214: func() mtproto.TLObject { // 0x96786312
+	-2129725231: func() mtproto.TLObject { // 0x810ef8d1
 		return &TLMsgEditMessage{
-			Constructor: -1770495214,
+			Constructor: -2129725231,
 		}
 	},
 	568855069: func() mtproto.TLObject { // 0x21e80a1d
@@ -128,6 +128,191 @@ func CheckClassID(classId int32) (ok bool) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
+
+///////////////////////////////////////////////////////////////////////////////
+// ContentMessage <--
+//  + TL_ContentMessage
+//
+
+func (m *ContentMessage) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_contentMessage:
+		t := m.To_ContentMessage()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *ContentMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *ContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0xb26b3ab4:
+		m2 := MakeTLContentMessage(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *ContentMessage) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_contentMessage:
+		t := m.To_ContentMessage()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_ContentMessage
+func (m *ContentMessage) To_ContentMessage() *TLContentMessage {
+	m.PredicateName = Predicate_contentMessage
+	return &TLContentMessage{
+		Data2: m,
+	}
+}
+
+// MakeTLContentMessage
+func MakeTLContentMessage(data2 *ContentMessage) *TLContentMessage {
+	if data2 == nil {
+		return &TLContentMessage{Data2: &ContentMessage{
+			PredicateName: Predicate_contentMessage,
+		}}
+	} else {
+		data2.PredicateName = Predicate_contentMessage
+		return &TLContentMessage{Data2: data2}
+	}
+}
+
+func (m *TLContentMessage) To_ContentMessage() *ContentMessage {
+	m.Data2.PredicateName = Predicate_contentMessage
+	return m.Data2
+}
+
+//// flags
+func (m *TLContentMessage) SetId(v int32) { m.Data2.Id = v }
+func (m *TLContentMessage) GetId() int32  { return m.Data2.Id }
+
+func (m *TLContentMessage) SetDialogMessageId(v int64) { m.Data2.DialogMessageId = v }
+func (m *TLContentMessage) GetDialogMessageId() int64  { return m.Data2.DialogMessageId }
+
+func (m *TLContentMessage) SetMentioned(v bool) { m.Data2.Mentioned = v }
+func (m *TLContentMessage) GetMentioned() bool  { return m.Data2.Mentioned }
+
+func (m *TLContentMessage) SetMediaUnread(v bool) { m.Data2.MediaUnread = v }
+func (m *TLContentMessage) GetMediaUnread() bool  { return m.Data2.MediaUnread }
+
+func (m *TLContentMessage) SetReaction(v bool) { m.Data2.Reaction = v }
+func (m *TLContentMessage) GetReaction() bool  { return m.Data2.Reaction }
+
+func (m *TLContentMessage) GetPredicateName() string {
+	return Predicate_contentMessage
+}
+
+func (m *TLContentMessage) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0xb26b3ab4: func() []byte {
+			x.UInt(0xb26b3ab4)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetMentioned() == true {
+					flags |= 1 << 0
+				}
+				if m.GetMediaUnread() == true {
+					flags |= 1 << 1
+				}
+				if m.GetReaction() == true {
+					flags |= 1 << 2
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			x.Int(m.GetId())
+			x.Long(m.GetDialogMessageId())
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_contentMessage, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_contentMessage, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLContentMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0xb26b3ab4: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+			m.SetId(dBuf.Int())
+			m.SetDialogMessageId(dBuf.Long())
+			if (flags & (1 << 0)) != 0 {
+				m.SetMentioned(true)
+			}
+			if (flags & (1 << 1)) != 0 {
+				m.SetMediaUnread(true)
+			}
+			if (flags & (1 << 2)) != 0 {
+				m.SetReaction(true)
+			}
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLContentMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // OutboxMessage <--
@@ -319,186 +504,6 @@ func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLOutboxMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ContentMessage <--
-//  + TL_ContentMessage
-//
-
-func (m *ContentMessage) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_contentMessage:
-		t := m.To_ContentMessage()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *ContentMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *ContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x11a1e62a:
-		m2 := MakeTLContentMessage(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *ContentMessage) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_contentMessage:
-		t := m.To_ContentMessage()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_ContentMessage
-func (m *ContentMessage) To_ContentMessage() *TLContentMessage {
-	m.PredicateName = Predicate_contentMessage
-	return &TLContentMessage{
-		Data2: m,
-	}
-}
-
-// MakeTLContentMessage
-func MakeTLContentMessage(data2 *ContentMessage) *TLContentMessage {
-	if data2 == nil {
-		return &TLContentMessage{Data2: &ContentMessage{
-			PredicateName: Predicate_contentMessage,
-		}}
-	} else {
-		data2.PredicateName = Predicate_contentMessage
-		return &TLContentMessage{Data2: data2}
-	}
-}
-
-func (m *TLContentMessage) To_ContentMessage() *ContentMessage {
-	m.Data2.PredicateName = Predicate_contentMessage
-	return m.Data2
-}
-
-//// flags
-func (m *TLContentMessage) SetId(v int32) { m.Data2.Id = v }
-func (m *TLContentMessage) GetId() int32  { return m.Data2.Id }
-
-func (m *TLContentMessage) SetMentioned(v bool) { m.Data2.Mentioned = v }
-func (m *TLContentMessage) GetMentioned() bool  { return m.Data2.Mentioned }
-
-func (m *TLContentMessage) SetMediaUnread(v bool) { m.Data2.MediaUnread = v }
-func (m *TLContentMessage) GetMediaUnread() bool  { return m.Data2.MediaUnread }
-
-func (m *TLContentMessage) SetReaction(v bool) { m.Data2.Reaction = v }
-func (m *TLContentMessage) GetReaction() bool  { return m.Data2.Reaction }
-
-func (m *TLContentMessage) GetPredicateName() string {
-	return Predicate_contentMessage
-}
-
-func (m *TLContentMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x11a1e62a: func() []byte {
-			x.UInt(0x11a1e62a)
-
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
-
-				if m.GetMentioned() == true {
-					flags |= 1 << 0
-				}
-				if m.GetMediaUnread() == true {
-					flags |= 1 << 1
-				}
-				if m.GetReaction() == true {
-					flags |= 1 << 2
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.UInt(flags)
-			x.Int(m.GetId())
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_contentMessage, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_contentMessage, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLContentMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x11a1e62a: func() error {
-			var flags = dBuf.UInt()
-			_ = flags
-			m.SetId(dBuf.Int())
-			if (flags & (1 << 0)) != 0 {
-				m.SetMentioned(true)
-			}
-			if (flags & (1 << 1)) != 0 {
-				m.SetMediaUnread(true)
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.SetReaction(true)
-			}
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLContentMessage) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -998,8 +1003,8 @@ func (m *TLMsgEditMessage) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_msg_editMessage))
 
 	switch uint32(m.Constructor) {
-	case 0x96786312:
-		x.UInt(0x96786312)
+	case 0x810ef8d1:
+		x.UInt(0x810ef8d1)
 
 		// no flags
 
@@ -1007,6 +1012,7 @@ func (m *TLMsgEditMessage) Encode(layer int32) []byte {
 		x.Long(m.GetAuthKeyId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
+		x.Int(m.GetEditType())
 		x.Bytes(m.GetMessage().Encode(layer))
 
 	default:
@@ -1022,7 +1028,7 @@ func (m *TLMsgEditMessage) CalcByteSize(layer int32) int {
 
 func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x96786312:
+	case 0x810ef8d1:
 
 		// not has flags
 
@@ -1030,10 +1036,11 @@ func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.AuthKeyId = dBuf.Long()
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
+		m.EditType = dBuf.Int()
 
-		m5 := &OutboxMessage{}
-		m5.Decode(dBuf)
-		m.Message = m5
+		m6 := &OutboxMessage{}
+		m6.Decode(dBuf)
+		m.Message = m6
 
 		return dBuf.GetError()
 

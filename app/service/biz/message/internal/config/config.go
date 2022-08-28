@@ -26,7 +26,8 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql      sqlx.Config
-	Cache      cache.CacheConf
-	PollClient zrpc.RpcClientConf
+	Mysql           sqlx.Config
+	Cache           cache.CacheConf
+	PollClient      zrpc.RpcClientConf
+	MessageSharding int `json:",default=1"`
 }

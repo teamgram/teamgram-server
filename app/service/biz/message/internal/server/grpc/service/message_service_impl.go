@@ -63,6 +63,21 @@ func (s *Service) MessageGetUserMessageListByDataIdList(ctx context.Context, req
 	return r, err
 }
 
+// MessageGetUserMessageListByDataIdUserIdList
+// message.getUserMessageListByDataIdUserIdList id:long user_id_list:Vector<long> = Vector<MessageBox>;
+func (s *Service) MessageGetUserMessageListByDataIdUserIdList(ctx context.Context, request *message.TLMessageGetUserMessageListByDataIdUserIdList) (*message.Vector_MessageBox, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("message.getUserMessageListByDataIdUserIdList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessageGetUserMessageListByDataIdUserIdList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("message.getUserMessageListByDataIdUserIdList - reply: %s", r.DebugString())
+	return r, err
+}
+
 // MessageGetHistoryMessages
 // message.getHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
 func (s *Service) MessageGetHistoryMessages(ctx context.Context, request *message.TLMessageGetHistoryMessages) (*message.Vector_MessageBox, error) {
@@ -120,36 +135,6 @@ func (s *Service) MessageGetPeerUserMessage(ctx context.Context, request *messag
 	}
 
 	c.Infof("message.getPeerUserMessage - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessageGetPeerChatMessageIdList
-// message.getPeerChatMessageIdList user_id:long peer_chat_id:long msg_id:int = Vector<PeerMessageId>;
-func (s *Service) MessageGetPeerChatMessageIdList(ctx context.Context, request *message.TLMessageGetPeerChatMessageIdList) (*message.Vector_PeerMessageId, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("message.getPeerChatMessageIdList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessageGetPeerChatMessageIdList(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("message.getPeerChatMessageIdList - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessageGetPeerChatMessageList
-// message.getPeerChatMessageList user_id:long peer_chat_id:long msg_id:int = Vector<MessageBox>;
-func (s *Service) MessageGetPeerChatMessageList(ctx context.Context, request *message.TLMessageGetPeerChatMessageList) (*message.Vector_MessageBox, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("message.getPeerChatMessageList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessageGetPeerChatMessageList(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("message.getPeerChatMessageList - reply: %s", r.DebugString())
 	return r, err
 }
 

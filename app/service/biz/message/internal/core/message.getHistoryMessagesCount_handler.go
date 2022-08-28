@@ -24,12 +24,15 @@ func (c *MessageCore) MessageGetHistoryMessagesCount(in *message.TLMessageGetHis
 
 	switch in.PeerType {
 	case mtproto.PEER_SELF, mtproto.PEER_USER, mtproto.PEER_CHAT:
-		count = c.svcCtx.CommonDAO.CalcSize(c.ctx, "messages", map[string]interface{}{
-			"user_id":    in.UserId,
-			"dialog_id1": dialogId.A,
-			"dialog_id2": dialogId.B,
-			"deleted":    0,
-		})
+		count = c.svcCtx.CommonDAO.CalcSize(
+			c.ctx,
+			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),
+			map[string]interface{}{
+				"user_id":    in.UserId,
+				"dialog_id1": dialogId.A,
+				"dialog_id2": dialogId.B,
+				"deleted":    0,
+			})
 	case mtproto.PEER_CHANNEL:
 		count = c.svcCtx.Dao.CommonDAO.CalcSize(c.ctx, "channel_messages", map[string]interface{}{
 			"channel_id": in.PeerId,

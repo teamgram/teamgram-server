@@ -47,6 +47,17 @@
         </sql>
     </operation>
 
+    <operation name="SelectByMessageDataId">
+        <sql>
+            SELECT
+                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
+            FROM
+                messages
+            WHERE
+                user_id = :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
     <operation name="SelectByMessageDataIdList" result_set="list">
         <params>
             <param name="idList" type="[]int64" />
@@ -61,14 +72,17 @@
         </sql>
     </operation>
 
-    <operation name="SelectByMessageDataId">
+    <operation name="SelectByMessageDataIdUserIdList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
         <sql>
             SELECT
                 user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
             FROM
                 messages
             WHERE
-                user_id = :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0 LIMIT 1
+                dialog_message_id = :dialog_message_id AND user_id IN (:idList) AND deleted = 0
         </sql>
     </operation>
 
@@ -174,6 +188,7 @@
         </sql>
     </operation>
 
+    <!-- //
     <operation name="SelectPeerDialogMessageIdList" result_set="list">
         <params>
             <param name="idList" type="[]int32" />
@@ -200,6 +215,7 @@
                 dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
         </sql>
     </operation>
+    -->
 
     <operation name="SelectDialogLastMessageId" result_set="single">
         <sql>

@@ -32,10 +32,10 @@ type Mysql struct {
 	*sqlx.CommonDAO
 }
 
-func NewMysqlDao(db *sqlx.DB) *Mysql {
+func NewMysqlDao(db *sqlx.DB, shardingSize int) *Mysql {
 	return &Mysql{
 		DB:                  db,
-		MessagesDAO:         mysql_dao.NewMessagesDAO(db, 0),
+		MessagesDAO:         mysql_dao.NewMessagesDAO(db, shardingSize),
 		ChatParticipantsDAO: mysql_dao.NewChatParticipantsDAO(db),
 		HashTagsDAO:         mysql_dao.NewHashTagsDAO(db),
 		DialogsDAO:          mysql_dao.NewDialogsDAO(db),

@@ -23,10 +23,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/container2/sets"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/jsonx"
@@ -278,25 +280,56 @@ func (d *Dao) SendChatMultiMessageToInbox(ctx context.Context, fromId, chatId, t
 	return boxList, nil
 }
 
-func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, deleteMsgDataIds []int64, cb func(ctx context.Context, userId int64, idList []int32)) error {
+func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, peer *mtproto.PeerUtil, deleteMsgDataIds []int64, cb func(ctx context.Context, userId int64, idList []int32)) error {
 	var (
 		deletedDialogsMap = map[int64][]*dataobject.MessagesDO{}
 	)
 
-	mDOList, err := d.MessagesDAO.SelectByMessageDataIdList(ctx, deleteMsgDataIds)
-	if err != nil {
-		return err
-	}
-
-	for i := 0; i < len(mDOList); i++ {
-		if mDOList[i].UserId == deleteUserId {
-			continue
+	doDeleteMessageF := func(v *dataobject.MessagesDO) {
+		if v.UserId == deleteUserId {
+			return
 		}
 
-		if v, ok := deletedDialogsMap[mDOList[i].UserId]; !ok {
-			deletedDialogsMap[mDOList[i].UserId] = []*dataobject.MessagesDO{&mDOList[i]}
+		if v2, ok := deletedDialogsMap[v.UserId]; !ok {
+			deletedDialogsMap[v.UserId] = []*dataobject.MessagesDO{v}
 		} else {
-			deletedDialogsMap[mDOList[i].UserId] = append(v, &mDOList[i])
+			deletedDialogsMap[v.UserId] = append(v2, v)
+		}
+	}
+
+	switch peer.PeerType {
+	case mtproto.PEER_USER:
+		_, err := d.MessagesDAO.SelectByMessageDataIdListWithCB(
+			ctx,
+			d.MessagesDAO.CalcTableName(peer.PeerId),
+			deleteMsgDataIds,
+			func(i int, v *dataobject.MessagesDO) {
+				doDeleteMessageF(v)
+			})
+		if err != nil {
+			return err
+		}
+	case mtproto.PEER_CHAT:
+		var (
+			tables = sets.NewWithLength(1)
+		)
+
+		pUserIdList, _ := d.ChatClient.ChatGetChatParticipantIdList(ctx, &chatpb.TLChatGetChatParticipantIdList{
+			ChatId: peer.PeerId,
+		})
+
+		for _, uId := range pUserIdList.GetDatas() {
+			tables.Insert(d.MessagesDAO.CalcTableName(uId))
+		}
+
+		for tableName, _ := range tables {
+			d.MessagesDAO.SelectByMessageDataIdListWithCB(
+				ctx,
+				tableName,
+				deleteMsgDataIds,
+				func(i int, v *dataobject.MessagesDO) {
+					doDeleteMessageF(v)
+				})
 		}
 	}
 
@@ -327,7 +360,7 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, delet
 			// check conversation peer_id
 			if dialogId.A != msgDOList[i].DialogId1 && dialogId.B != msgDOList[i].DialogId2 {
 				// dialogId
-				err = mtproto.ErrMessageIdInvalid
+				err := mtproto.ErrMessageIdInvalid
 				logx.WithContext(ctx).Errorf("deleteInboxMessages error: %v", err)
 				// continue
 				return err

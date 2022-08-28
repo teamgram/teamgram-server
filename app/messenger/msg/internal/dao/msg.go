@@ -68,21 +68,21 @@ func (d *Dao) GetLastMessageAndIdListByDialog(ctx context.Context, userId int64,
 //	//	return do.UserMessageBoxId
 //	//}
 //}
-
-func (d *Dao) GetPeerDialogMessageIdList(ctx context.Context, userId int64, idList []int32) map[int64][]int32 {
-	doList, _ := d.MessagesDAO.SelectPeerDialogMessageIdList(ctx, userId, idList)
-	peerMessageIdListMap := make(map[int64][]int32)
-
-	for _, do := range doList {
-		if messageIdList, ok := peerMessageIdListMap[do.UserId]; !ok {
-			peerMessageIdListMap[do.UserId] = []int32{do.UserMessageBoxId}
-		} else {
-			peerMessageIdListMap[do.UserId] = append(messageIdList, do.UserMessageBoxId)
-		}
-	}
-
-	return peerMessageIdListMap
-}
+//
+//func (d *Dao) GetPeerDialogMessageIdList(ctx context.Context, userId int64, idList []int32) map[int64][]int32 {
+//	doList, _ := d.MessagesDAO.SelectPeerDialogMessageIdList(ctx, userId, idList)
+//	peerMessageIdListMap := make(map[int64][]int32)
+//
+//	for _, do := range doList {
+//		if messageIdList, ok := peerMessageIdListMap[do.UserId]; !ok {
+//			peerMessageIdListMap[do.UserId] = []int32{do.UserMessageBoxId}
+//		} else {
+//			peerMessageIdListMap[do.UserId] = append(messageIdList, do.UserMessageBoxId)
+//		}
+//	}
+//
+//	return peerMessageIdListMap
+//}
 
 func (d *Dao) GetMessageIdListByDialog(ctx context.Context, userId int64, peer *mtproto.PeerUtil) []int32 {
 	var (

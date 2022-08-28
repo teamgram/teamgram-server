@@ -23,14 +23,17 @@ func (c *MessageCore) MessageGetUnreadMentionsCount(in *message.TLMessageGetUnre
 
 	switch in.PeerType {
 	case mtproto.PEER_CHAT:
-		sz = c.svcCtx.Dao.CommonDAO.CalcSize(c.ctx, "messages", map[string]interface{}{
-			"user_id":      in.UserId,
-			"peer_type":    mtproto.PEER_CHAT,
-			"peer_id":      in.PeerId,
-			"mentioned":    1,
-			"media_unread": 1,
-			"deleted":      0,
-		})
+		sz = c.svcCtx.Dao.CommonDAO.CalcSize(
+			c.ctx,
+			c.svcCtx.Dao.CalcTableName(in.UserId),
+			map[string]interface{}{
+				"user_id":      in.UserId,
+				"peer_type":    mtproto.PEER_CHAT,
+				"peer_id":      in.PeerId,
+				"mentioned":    1,
+				"media_unread": 1,
+				"deleted":      0,
+			})
 	case mtproto.PEER_CHANNEL:
 		sz = c.svcCtx.Dao.CommonDAO.CalcSize(c.ctx, "channel_unread_mentions", map[string]interface{}{
 			"user_id":    in.UserId,

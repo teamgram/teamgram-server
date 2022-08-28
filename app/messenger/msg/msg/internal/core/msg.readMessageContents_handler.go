@@ -63,28 +63,35 @@ func (c *MsgCore) readMentionedMessageContents(in *msg.TLMsgReadMessageContents)
 func (c *MsgCore) readMediaUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
 	switch in.PeerType {
 	case mtproto.PEER_USER:
-		id := make([]int32, 0, len(in.Id))
+		id := make([]*inbox.InboxMessageId, 0, len(in.Id))
 		for _, m := range in.Id {
 			if m.MediaUnread {
 				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-				id = append(id, m.Id)
+				id = append(id, &inbox.InboxMessageId{
+					Id:              m.GetId(),
+					DialogMessageId: m.GetDialogMessageId(),
+				})
 			}
 		}
 
 		if in.UserId != in.PeerId {
 			c.svcCtx.Dao.InboxClient.InboxReadUserMediaUnreadToInbox(c.ctx, &inbox.TLInboxReadUserMediaUnreadToInbox{
-				FromId: in.UserId,
-				Id:     id,
+				FromId:     in.UserId,
+				PeerUserId: in.PeerId,
+				Id:         id,
 			})
 		}
 
 		return int32(len(id)), nil
 	case mtproto.PEER_CHAT:
 		// TODO: update sender
-		id := make([]int32, 0, len(in.Id))
+		id := make([]*inbox.InboxMessageId, 0, len(in.Id))
 		for _, m := range in.Id {
 			c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-			id = append(id, m.Id)
+			id = append(id, &inbox.InboxMessageId{
+				Id:              m.GetId(),
+				DialogMessageId: m.GetDialogMessageId(),
+			})
 		}
 		if len(id) > 0 {
 			c.svcCtx.Dao.InboxClient.InboxReadChatMediaUnreadToInbox(c.ctx, &inbox.TLInboxReadChatMediaUnreadToInbox{

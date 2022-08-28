@@ -58,15 +58,16 @@ func (s *Server) Initialize() error {
 			grpcServer,
 			msg_helper.New(
 				msg_helper.Config{
-					RpcServerConf: c.RpcServerConf,
-					Mysql:         c.Mysql,
-					KV:            c.KV,
-					IdgenClient:   c.IdgenClient,
-					UserClient:    c.BizServiceClient,
-					ChatClient:    c.BizServiceClient,
-					SyncClient:    c.SyncClient,
-					InboxClient:   c.InboxClient,
-					DialogClient:  c.BizServiceClient,
+					RpcServerConf:   c.RpcServerConf,
+					Mysql:           c.Mysql,
+					KV:              c.KV,
+					IdgenClient:     c.IdgenClient,
+					UserClient:      c.BizServiceClient,
+					ChatClient:      c.BizServiceClient,
+					SyncClient:      c.SyncClient,
+					InboxClient:     c.InboxClient,
+					DialogClient:    c.BizServiceClient,
+					MessageSharding: c.MessageSharding,
 				}, nil))
 	})
 
@@ -75,16 +76,17 @@ func (s *Server) Initialize() error {
 	}()
 
 	s.mq = inbox_helper.New(inbox_helper.Config{
-		RpcServerConf: c.RpcServerConf,
-		InboxConsumer: c.InboxConsumer,
-		Mysql:         c.Mysql,
-		KV:            c.KV,
-		IdgenClient:   c.IdgenClient,
-		UserClient:    c.BizServiceClient,
-		ChatClient:    c.BizServiceClient,
-		SyncClient:    c.SyncClient,
-		BotSyncClient: c.BotSyncClient,
-		DialogClient:  c.BizServiceClient,
+		RpcServerConf:   c.RpcServerConf,
+		InboxConsumer:   c.InboxConsumer,
+		Mysql:           c.Mysql,
+		KV:              c.KV,
+		IdgenClient:     c.IdgenClient,
+		UserClient:      c.BizServiceClient,
+		ChatClient:      c.BizServiceClient,
+		SyncClient:      c.SyncClient,
+		BotSyncClient:   c.BotSyncClient,
+		DialogClient:    c.BizServiceClient,
+		MessageSharding: c.MessageSharding,
 	})
 
 	go func() {

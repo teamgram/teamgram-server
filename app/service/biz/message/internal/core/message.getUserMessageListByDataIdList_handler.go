@@ -24,6 +24,7 @@ func (c *MessageCore) MessageGetUserMessageListByDataIdList(in *message.TLMessag
 
 	c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 		c.ctx,
+		c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),
 		in.IdList,
 		func(i int, v *dataobject.MessagesDO) {
 			rValueList.Datas = append(rValueList.GetDatas(), c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))

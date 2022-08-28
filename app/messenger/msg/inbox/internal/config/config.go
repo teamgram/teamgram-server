@@ -18,13 +18,14 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	InboxConsumer kafka.KafkaConsumerConf
-	Mysql         sqlx.Config
-	KV            kv.KvConf
-	IdgenClient   zrpc.RpcClientConf
-	UserClient    zrpc.RpcClientConf
-	ChatClient    zrpc.RpcClientConf
-	DialogClient  zrpc.RpcClientConf
-	SyncClient    *kafka.KafkaProducerConf
-	BotSyncClient *kafka.KafkaProducerConf `json:",optional"`
+	InboxConsumer   kafka.KafkaConsumerConf
+	Mysql           sqlx.Config
+	KV              kv.KvConf
+	IdgenClient     zrpc.RpcClientConf
+	UserClient      zrpc.RpcClientConf
+	ChatClient      zrpc.RpcClientConf
+	DialogClient    zrpc.RpcClientConf
+	SyncClient      *kafka.KafkaProducerConf
+	BotSyncClient   *kafka.KafkaProducerConf `json:",optional"`
+	MessageSharding int                      `json:",default=1"`
 }

@@ -27,13 +27,14 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql         sqlx.Config
-	KV            kv.KvConf
-	IdgenClient   zrpc.RpcClientConf
-	UserClient    zrpc.RpcClientConf
-	InboxClient   *kafka.KafkaProducerConf
-	ChatClient    zrpc.RpcClientConf
-	SyncClient    *kafka.KafkaProducerConf
-	ChannelClient zrpc.RpcClientConf
-	DialogClient  zrpc.RpcClientConf
+	Mysql           sqlx.Config
+	KV              kv.KvConf
+	IdgenClient     zrpc.RpcClientConf
+	UserClient      zrpc.RpcClientConf
+	InboxClient     *kafka.KafkaProducerConf
+	ChatClient      zrpc.RpcClientConf
+	SyncClient      *kafka.KafkaProducerConf
+	ChannelClient   zrpc.RpcClientConf
+	DialogClient    zrpc.RpcClientConf
+	MessageSharding int `json:",default=1"`
 }

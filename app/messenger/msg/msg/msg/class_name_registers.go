@@ -1,8 +1,12 @@
-// Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
-//  All rights reserved.
-//
-// Author: Benqi (wubenqi@gmail.com)
-//
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2022-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
 
 package msg
 
@@ -35,7 +39,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_contentMessage: {
-		0: 295822890, // 0x11a1e62a
+		0: -1301595468, // 0xb26b3ab4
 
 	},
 	Predicate_msg_sendMessage: {
@@ -59,7 +63,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_msg_editMessage: {
-		0: -1770495214, // 0x96786312
+		0: -2129725231, // 0x810ef8d1
 
 	},
 	Predicate_msg_deleteMessages: {
@@ -95,13 +99,13 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 var clazzIdNameRegisters2 = map[int32]string{
 	1513645242:  Predicate_sender,                     // 0x5a3864ba
 	1402283185:  Predicate_outboxMessage,              // 0x539524b1
-	295822890:   Predicate_contentMessage,             // 0x11a1e62a
+	-1301595468: Predicate_contentMessage,             // 0xb26b3ab4
 	1218652155:  Predicate_msg_sendMessage,            // 0x48a327fb
 	-1727589428: Predicate_msg_sendMultiMessage,       // 0x990713cc
 	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
 	673481940:   Predicate_msg_readMessageContents,    // 0x282484d4
 	770211174:   Predicate_msg_sendMessageV2,          // 0x2de87d66
-	-1770495214: Predicate_msg_editMessage,            // 0x96786312
+	-2129725231: Predicate_msg_editMessage,            // 0x810ef8d1
 	568855069:   Predicate_msg_deleteMessages,         // 0x21e80a1d
 	1975576778:  Predicate_msg_deleteHistory,          // 0x75c0e8ca
 	649568574:   Predicate_msg_deletePhoneCallHistory, // 0x26b7a13e

@@ -57,18 +57,21 @@ func (c *MessagesCore) MessagesReadMessageContents(in *mtproto.TLMessagesReadMes
 		// peer := model.FromPeer(m.Message.ToId)
 		if m.Message.GetMentioned() {
 			contents = append(contents, &msgpb.ContentMessage{
-				Id:        m.MessageId,
-				Mentioned: true,
+				Id:              m.MessageId,
+				DialogMessageId: m.DialogMessageId,
+				Mentioned:       true,
 			})
 		} else if m.Message.GetMediaUnread() {
 			contents = append(contents, &msgpb.ContentMessage{
-				Id:          m.MessageId,
-				MediaUnread: true,
+				Id:              m.MessageId,
+				DialogMessageId: m.DialogMessageId,
+				MediaUnread:     true,
 			})
 		} else if m.GetMessage().GetReactions() != nil {
 			contents = append(contents, &msgpb.ContentMessage{
-				Id:       m.MessageId,
-				Reaction: true,
+				Id:              m.MessageId,
+				DialogMessageId: m.DialogMessageId,
+				Reaction:        true,
 			})
 		} else {
 			c.Logger.Infof("content has readed")

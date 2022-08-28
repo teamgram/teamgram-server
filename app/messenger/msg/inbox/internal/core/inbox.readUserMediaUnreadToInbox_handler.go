@@ -28,10 +28,15 @@ import (
 // InboxReadUserMediaUnreadToInbox
 // inbox.readUserMediaUnreadToInbox from_id:long id:Vector<int> = Void;
 func (c *InboxCore) InboxReadUserMediaUnreadToInbox(in *inbox.TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error) {
-	c.svcCtx.Dao.MessagesDAO.SelectPeerDialogMessageIdListWithCB(
+	idList := make([]int64, 0, len(in.GetId()))
+	for _, id := range in.GetId() {
+		idList = append(idList, id.DialogMessageId)
+	}
+
+	c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 		c.ctx,
-		in.FromId,
-		in.Id,
+		c.svcCtx.Dao.MessagesDAO.CalcTableName(in.PeerUserId),
+		idList,
 		func(i int, v *dataobject.MessagesDO) {
 			c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, v.UserId, v.UserMessageBoxId)
 

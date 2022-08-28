@@ -44,7 +44,7 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 	return &ServiceContext{
 		Config: c,
 		Dao: &dao.Dao{
-			Mysql:        dao.NewMysqlDao(db),
+			Mysql:        dao.NewMysqlDao(db, c.MessageSharding),
 			KV:           kv.NewStore(c.KV),
 			IDGenClient2: idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
 			UserClient:   user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),

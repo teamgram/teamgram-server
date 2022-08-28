@@ -346,7 +346,7 @@ func (d *Dao) SendChatMultiMessage(ctx context.Context, fromId, chatId int64, ou
 	return boxList, nil
 }
 
-func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) ([]int64, error) {
+func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) (*mtproto.PeerUtil, []int64, error) {
 
 	var (
 		topMessageIndex      int32
@@ -373,15 +373,15 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 		})
 	if err != nil {
 		// mtproto.ErrMsgIdInvalid
-		return nil, err
+		return nil, nil, err
 	} else if dialogId.IsZero() {
-		return []int64{}, nil
+		return mtproto.MakePeerUtil(mtproto.PEER_EMPTY, 0), []int64{}, nil
 	}
 
 	// 会话里最后n条消息，检查是否需要修改会话信息
 	topMessageDOList, err := d.MessagesDAO.SelectDialogLastMessageList(ctx, userId, dialogId.A, dialogId.B, int32(len(msgIds)+1))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	} else if len(topMessageDOList) == 0 {
 		// return []int64{}, nil
 	} else {
@@ -426,13 +426,13 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 			peer.PeerId)
 	})
 	if tR.Err != nil {
-		return nil, tR.Err
+		return nil, nil, tR.Err
 	}
 
 	for i := 0; i < len(msgDOList); i++ {
 		deletedMsgDataIdList = append(deletedMsgDataIdList, msgDOList[i].DialogMessageId)
 	}
-	return deletedMsgDataIdList, nil
+	return peer, deletedMsgDataIdList, nil
 }
 
 //func (d *Dao) editOutboxMessage(ctx context.Context, fromId int32, peer *model.PeerUtil, toId int32, message *mtproto.Message) (box *model.MessageBox, err error) {

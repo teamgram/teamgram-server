@@ -20,6 +20,7 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 )
@@ -34,10 +35,26 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants(in *mtproto.TLMessagesGet
 
 	switch peer.PeerType {
 	case mtproto.PEER_CHAT:
-		idList, err := c.svcCtx.Dao.MessageClient.MessageGetPeerChatMessageIdList(c.ctx, &message.TLMessageGetPeerChatMessageIdList{
-			UserId:     c.MD.UserId,
-			PeerChatId: peer.PeerId,
-			MsgId:      in.MsgId,
+		msgBox, err := c.svcCtx.Dao.MessageClient.MessageGetUserMessage(c.ctx, &message.TLMessageGetUserMessage{
+			UserId: c.MD.UserId,
+			Id:     in.MsgId,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.getMessageReadParticipants - error: %v", err)
+			return nil, err
+		}
+
+		pIdList, err := c.svcCtx.Dao.ChatClient.Client().ChatGetChatParticipantIdList(c.ctx, &chatpb.TLChatGetChatParticipantIdList{
+			ChatId: peer.PeerId,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.getMessageReadParticipants - error: %v", err)
+			return nil, err
+		}
+
+		boxList, err := c.svcCtx.Dao.MessageGetUserMessageListByDataIdUserIdList(c.ctx, &message.TLMessageGetUserMessageListByDataIdUserIdList{
+			Id:         msgBox.DialogMessageId,
+			UserIdList: pIdList.GetDatas(),
 		})
 		if err != nil {
 			c.Logger.Errorf("messages.getMessageReadParticipants - error: %v", err)
@@ -45,18 +62,22 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants(in *mtproto.TLMessagesGet
 		}
 
 		// TODO: 性能优化
-		for _, v := range idList.GetDatas() {
+		boxList.Walk(func(idx int, v *mtproto.MessageBox) {
+			if v.UserId == c.MD.UserId {
+				return
+			}
+
 			dialogList, _ := c.svcCtx.Dao.DialogClient.DialogGetDialogsByIdList(c.ctx, &dialog.TLDialogGetDialogsByIdList{
 				UserId: v.UserId,
 				IdList: []int64{mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)},
 			})
 			for _, d := range dialogList.GetDatas() {
 				// c.Logger.Infof("messages.getMessageReadParticipants - dialog: %s", d.DebugString())
-				if d.GetDialog().GetReadInboxMaxId() >= v.MsgId {
+				if d.GetDialog().GetReadInboxMaxId() >= v.MessageId {
 					rValueList = append(rValueList, v.UserId)
 				}
 			}
-		}
+		})
 	case mtproto.PEER_CHANNEL:
 		c.Logger.Errorf("messages.getMessageReadParticipants blocked, License key from https://teamgram.net required to unlock enterprise features.")
 

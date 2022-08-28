@@ -60,7 +60,7 @@ func (c *MsgCore) deleteUserMessages(in *msg.TLMsgDeleteMessages) (*mtproto.Mess
 		msgDataIdList []int64
 	)
 
-	msgDataIdList, err := c.svcCtx.Dao.DeleteMessages(c.ctx, in.UserId, in.Id)
+	peer, msgDataIdList, err := c.svcCtx.Dao.DeleteMessages(c.ctx, in.UserId, in.Id)
 	if err != nil {
 		c.Logger.Errorf("DeleteMessages - %v", err)
 		return nil, err
@@ -86,10 +86,14 @@ func (c *MsgCore) deleteUserMessages(in *msg.TLMsgDeleteMessages) (*mtproto.Mess
 	})
 
 	if in.Revoke {
-		c.svcCtx.Dao.InboxClient.InboxDeleteMessagesToInbox(c.ctx, &inbox.TLInboxDeleteMessagesToInbox{
-			FromId: in.UserId,
-			Id:     msgDataIdList,
-		})
+		c.svcCtx.Dao.InboxClient.InboxDeleteMessagesToInbox(
+			c.ctx,
+			&inbox.TLInboxDeleteMessagesToInbox{
+				FromId:   in.UserId,
+				PeerType: peer.PeerType,
+				PeerId:   peer.PeerId,
+				Id:       msgDataIdList,
+			})
 	}
 
 	return mtproto.MakeTLMessagesAffectedMessages(&mtproto.Messages_AffectedMessages{

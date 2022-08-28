@@ -97,10 +97,11 @@ func (s *Server) Initialize() error {
 		message.RegisterRPCMessageServer(
 			grpcServer,
 			message_helper.New(message_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
-				PollClient:    c.PollClient,
+				RpcServerConf:   c.RpcServerConf,
+				Mysql:           c.Mysql,
+				Cache:           c.Cache,
+				PollClient:      c.PollClient,
+				MessageSharding: c.MessageSharding,
 			}))
 
 		// updates_helper

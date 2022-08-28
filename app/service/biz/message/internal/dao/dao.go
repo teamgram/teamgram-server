@@ -28,7 +28,7 @@ type Dao struct {
 func New(c config.Config) (dao *Dao) {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Dao{
-		Mysql:      newMysqlDao(db),
+		Mysql:      newMysqlDao(db, c.MessageSharding),
 		CachedConn: sqlc.NewConn(db, c.Cache),
 		// PollClient: poll_client.NewPollClient(rpcx.GetCachedRpcClient(c.PollClient)),
 	}

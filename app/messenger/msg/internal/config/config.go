@@ -35,4 +35,5 @@ type Config struct {
 	InboxClient      *kafka.KafkaProducerConf
 	SyncClient       *kafka.KafkaProducerConf
 	BotSyncClient    *kafka.KafkaProducerConf `json:",optional"`
+	MessageSharding  int                      `json:",default=1"`
 }

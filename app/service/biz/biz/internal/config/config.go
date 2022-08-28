@@ -27,10 +27,11 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql       sqlx.Config
-	Cache       cache.CacheConf
-	KV          kv.KvConf
-	MediaClient zrpc.RpcClientConf
-	IdgenClient zrpc.RpcClientConf
-	PollClient  zrpc.RpcClientConf
+	Mysql           sqlx.Config
+	Cache           cache.CacheConf
+	KV              kv.KvConf
+	MediaClient     zrpc.RpcClientConf
+	IdgenClient     zrpc.RpcClientConf
+	PollClient      zrpc.RpcClientConf
+	MessageSharding int `json:",default=1"`
 }
