@@ -16,17 +16,11 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package core
+package dao
 
-import (
-	"github.com/teamgram/proto/mtproto"
-)
+type Dao struct {
+}
 
-// MessagesTranscribeAudio
-// messages.transcribeAudio#269e9a49 peer:InputPeer msg_id:int = messages.TranscribedAudio;
-func (c *MessagesCore) MessagesTranscribeAudio(in *mtproto.TLMessagesTranscribeAudio) (*mtproto.Messages_TranscribedAudio, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.transcribeAudio blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-	return nil, mtproto.ErrEnterpriseIsBlocked
+func New() *Dao {
+	return new(Dao)
 }

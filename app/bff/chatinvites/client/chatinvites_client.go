@@ -33,6 +33,8 @@ type ChatInvitesClient interface {
 	MessagesGetChatInviteImporters(ctx context.Context, in *mtproto.TLMessagesGetChatInviteImporters) (*mtproto.Messages_ChatInviteImporters, error)
 	MessagesHideChatJoinRequest(ctx context.Context, in *mtproto.TLMessagesHideChatJoinRequest) (*mtproto.Updates, error)
 	MessagesHideAllChatJoinRequests(ctx context.Context, in *mtproto.TLMessagesHideAllChatJoinRequests) (*mtproto.Updates, error)
+	ChannelsToggleJoinToSend(ctx context.Context, in *mtproto.TLChannelsToggleJoinToSend) (*mtproto.Updates, error)
+	ChannelsToggleJoinRequest(ctx context.Context, in *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error)
 }
 
 type defaultChatInvitesClient struct {
@@ -127,4 +129,18 @@ func (m *defaultChatInvitesClient) MessagesHideChatJoinRequest(ctx context.Conte
 func (m *defaultChatInvitesClient) MessagesHideAllChatJoinRequests(ctx context.Context, in *mtproto.TLMessagesHideAllChatJoinRequests) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
 	return client.MessagesHideAllChatJoinRequests(ctx, in)
+}
+
+// ChannelsToggleJoinToSend
+// channels.toggleJoinToSend#e4cb9580 channel:InputChannel enabled:Bool = Updates;
+func (m *defaultChatInvitesClient) ChannelsToggleJoinToSend(ctx context.Context, in *mtproto.TLChannelsToggleJoinToSend) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
+	return client.ChannelsToggleJoinToSend(ctx, in)
+}
+
+// ChannelsToggleJoinRequest
+// channels.toggleJoinRequest#4c2985b6 channel:InputChannel enabled:Bool = Updates;
+func (m *defaultChatInvitesClient) ChannelsToggleJoinRequest(ctx context.Context, in *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
+	return client.ChannelsToggleJoinRequest(ctx, in)
 }

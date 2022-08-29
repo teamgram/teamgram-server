@@ -196,3 +196,33 @@ func (s *Service) MessagesHideAllChatJoinRequests(ctx context.Context, request *
 	c.Infof("messages.hideAllChatJoinRequests - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ChannelsToggleJoinToSend
+// channels.toggleJoinToSend#e4cb9580 channel:InputChannel enabled:Bool = Updates;
+func (s *Service) ChannelsToggleJoinToSend(ctx context.Context, request *mtproto.TLChannelsToggleJoinToSend) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("channels.toggleJoinToSend - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChannelsToggleJoinToSend(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("channels.toggleJoinToSend - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ChannelsToggleJoinRequest
+// channels.toggleJoinRequest#4c2985b6 channel:InputChannel enabled:Bool = Updates;
+func (s *Service) ChannelsToggleJoinRequest(ctx context.Context, request *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("channels.toggleJoinRequest - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChannelsToggleJoinRequest(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("channels.toggleJoinRequest - reply: %s", r.DebugString())
+	return r, err
+}

@@ -437,36 +437,6 @@ func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *mtproto.
 	return r, err
 }
 
-// MessagesTranscribeAudio
-// messages.transcribeAudio#269e9a49 peer:InputPeer msg_id:int = messages.TranscribedAudio;
-func (s *Service) MessagesTranscribeAudio(ctx context.Context, request *mtproto.TLMessagesTranscribeAudio) (*mtproto.Messages_TranscribedAudio, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("messages.transcribeAudio - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesTranscribeAudio(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("messages.transcribeAudio - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesRateTranscribedAudio
-// messages.rateTranscribedAudio#7f1d072f peer:InputPeer msg_id:int transcription_id:long good:Bool = Bool;
-func (s *Service) MessagesRateTranscribedAudio(ctx context.Context, request *mtproto.TLMessagesRateTranscribedAudio) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Infof("messages.rateTranscribedAudio - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesRateTranscribedAudio(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Infof("messages.rateTranscribedAudio - reply: %s", r.DebugString())
-	return r, err
-}
-
 // ChannelsGetSendAs
 // channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
 func (s *Service) ChannelsGetSendAs(ctx context.Context, request *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {

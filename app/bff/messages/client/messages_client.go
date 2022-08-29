@@ -49,8 +49,6 @@ type MessagesClient interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
 	MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
-	MessagesTranscribeAudio(ctx context.Context, in *mtproto.TLMessagesTranscribeAudio) (*mtproto.Messages_TranscribedAudio, error)
-	MessagesRateTranscribedAudio(ctx context.Context, in *mtproto.TLMessagesRateTranscribedAudio) (*mtproto.Bool, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 }
 
@@ -258,20 +256,6 @@ func (m *defaultMessagesClient) MessagesTranslateText(ctx context.Context, in *m
 func (m *defaultMessagesClient) MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSearchSentMedia(ctx, in)
-}
-
-// MessagesTranscribeAudio
-// messages.transcribeAudio#269e9a49 peer:InputPeer msg_id:int = messages.TranscribedAudio;
-func (m *defaultMessagesClient) MessagesTranscribeAudio(ctx context.Context, in *mtproto.TLMessagesTranscribeAudio) (*mtproto.Messages_TranscribedAudio, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesTranscribeAudio(ctx, in)
-}
-
-// MessagesRateTranscribedAudio
-// messages.rateTranscribedAudio#7f1d072f peer:InputPeer msg_id:int transcription_id:long good:Bool = Bool;
-func (m *defaultMessagesClient) MessagesRateTranscribedAudio(ctx context.Context, in *mtproto.TLMessagesRateTranscribedAudio) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesRateTranscribedAudio(ctx, in)
 }
 
 // ChannelsGetSendAs

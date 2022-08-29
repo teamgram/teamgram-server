@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesRateTranscribedAudio
-// messages.rateTranscribedAudio#7f1d072f peer:InputPeer msg_id:int transcription_id:long good:Bool = Bool;
-func (c *MessagesCore) MessagesRateTranscribedAudio(in *mtproto.TLMessagesRateTranscribedAudio) (*mtproto.Bool, error) {
+// PaymentsRestorePlayMarketReceipt
+// payments.restorePlayMarketReceipt#d164e36a receipt:bytes = Updates;
+func (c *PremiumCore) PaymentsRestorePlayMarketReceipt(in *mtproto.TLPaymentsRestorePlayMarketReceipt) (*mtproto.Updates, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.rateTranscribedAudio blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("payments.restorePlayMarketReceipt blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

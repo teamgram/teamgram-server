@@ -37,6 +37,7 @@ import (
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
 	photos_helper "github.com/teamgram/teamgram-server/app/bff/photos"
+	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
@@ -115,6 +116,13 @@ func (s *Server) Initialize() error {
 				SyncClient:        c.SyncClient,
 				MsgClient:         c.MsgClient,
 			}, nil))
+
+		// premium_helper
+		mtproto.RegisterRPCPremiumServer(
+			grpcServer,
+			premium_helper.New(premium_helper.Config{
+				RpcServerConf: c.RpcServerConf,
+			}))
 
 		// chatinvites_helper
 		mtproto.RegisterRPCChatInvitesServer(
