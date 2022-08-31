@@ -51,7 +51,8 @@ func (c *DialogCore) DialogClearDraftMessage(in *dialog.TLDialogClearDraftMessag
 			c.Logger.Errorf("dialog.clearDraftMessage - error: %v", err)
 			return nil, err
 		}
+		return mtproto.BoolTrue, nil
+	} else {
+		return mtproto.BoolFalse, nil
 	}
-
-	return mtproto.BoolTrue, nil
 }

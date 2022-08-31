@@ -27,18 +27,14 @@ import (
 
 // draft
 func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId int64, peer *mtproto.PeerUtil) {
-	var (
-		hasClearDraft bool
-	)
-
-	c.svcCtx.Dao.DialogClient.DialogClearDraftMessage(ctx, &dialog.TLDialogClearDraftMessage{
+	rV, _ := c.svcCtx.Dao.DialogClient.DialogClearDraftMessage(ctx, &dialog.TLDialogClearDraftMessage{
 		UserId:   c.MD.UserId,
 		PeerType: peer.PeerType,
 		PeerId:   peer.PeerId,
 	})
 
 	// ClearDraft
-	if hasClearDraft {
+	if mtproto.FromBool(rV) {
 		updateDraftMessage := mtproto.MakeTLUpdateDraftMessage(&mtproto.Update{
 			Peer_PEER: peer.ToPeer(),
 			Draft:     mtproto.MakeTLDraftMessageEmpty(nil).To_DraftMessage(),
