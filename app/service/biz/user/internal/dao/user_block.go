@@ -21,13 +21,12 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
-
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 )
 
 var (

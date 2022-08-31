@@ -17,8 +17,11 @@ import (
 // UserIsBot
 // user.isBot id:long = Bool;
 func (c *UserCore) UserIsBot(in *user.TLUserIsBot) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.isBot - error: method UserIsBot not impl")
+	userData := c.svcCtx.Dao.GetUserData(c.ctx, in.GetId())
+	if userData == nil {
+		c.Logger.Errorf("user.isBot - error: invalid user(%d)", in.GetId())
+		return nil, mtproto.ErrUserIdInvalid
+	}
 
-	return nil, mtproto.ErrMethodNotImpl
+	return mtproto.ToBool(userData.GetBot() == nil), nil
 }

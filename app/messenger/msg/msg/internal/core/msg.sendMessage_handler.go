@@ -64,44 +64,11 @@ func (c *MsgCore) MsgSendMessage(in *msg.TLMsgSendMessage) (*mtproto.Updates, er
 }
 
 func (c *MsgCore) sendUserOutgoingMessage(userId, authKeyId, peerUserId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
-	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: []int64{userId, peerUserId},
-	})
-	if err != nil {
-		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
-		return nil, err
-	}
-
-	sender, _ := users.GetImmutableUser(userId)
-	if sender == nil || sender.Deleted() {
-		err = mtproto.ErrInputUserDeactivated
-		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
-		return nil, err
-	}
-
-	// TODO(@benqi): check
-	// if sender.Restricted() {
-	//	err = mtproto.ErrUserRestricted
-	//	return
-	// }
-
-	peerUser, _ := users.GetImmutableUser(peerUserId)
-	if peerUser == nil || peerUser.Deleted() {
-		err = mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
-		return nil, err
-	}
-
-	sendMe := userId == peerUserId
-	if !sendMe {
-		// TODO(@benqi)
-		// 1. check blocked
-		// 2. span
-	}
-
 	var (
+		err      error
 		rUpdates *mtproto.Updates
 	)
+
 	rUpdates, err = c.sendUserMessage(
 		userId,
 		authKeyId,
@@ -155,6 +122,33 @@ func (c *MsgCore) sendUserMessage(
 	toUserId int64,
 	outBox *msg.OutboxMessage,
 	cb func(did int64, inboxMsg *mtproto.Message) error) (*mtproto.Updates, error) {
+	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+		Id: []int64{fromUserId, toUserId},
+	})
+	if err != nil {
+		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
+		return nil, err
+	}
+
+	sender, _ := users.GetImmutableUser(fromUserId)
+	if sender == nil || sender.Deleted() {
+		err = mtproto.ErrInputUserDeactivated
+		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
+		return nil, err
+	}
+
+	// TODO(@benqi): check
+	// if sender.Restricted() {
+	//	err = mtproto.ErrUserRestricted
+	//	return
+	// }
+
+	peerUser, _ := users.GetImmutableUser(toUserId)
+	if peerUser == nil || peerUser.Deleted() {
+		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
+		return nil, err
+	}
 
 	sendMe := fromUserId == toUserId
 	if !sendMe {
@@ -201,18 +195,23 @@ func (c *MsgCore) sendUserMessage(
 
 	rUpdates := mtproto.MakeReplyUpdates(
 		func(idList []int64) []*mtproto.User {
-			users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
-				&userpb.TLUserGetMutableUsers{
-					Id: idList,
-				})
+			// TODO: check
+			//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
+			//	&userpb.TLUserGetMutableUsers{
+			//		Id: idList,
+			//	})
 			return users.GetUserListByIdList(fromUserId, idList...)
 		},
 		func(idList []int64) []*mtproto.Chat {
-			chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
-				&chatpb.TLChatGetChatListByIdList{
-					IdList: idList,
-				})
-			return chats.GetChatListByIdList(fromUserId, idList...)
+			if len(idList) > 0 {
+				chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+					&chatpb.TLChatGetChatListByIdList{
+						IdList: idList,
+					})
+				return chats.GetChatListByIdList(fromUserId, idList...)
+			} else {
+				return []*mtproto.Chat{}
+			}
 		},
 		func(idList []int64) []*mtproto.Chat {
 			// TODO

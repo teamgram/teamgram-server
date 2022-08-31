@@ -159,6 +159,10 @@ func (m *ImmutableUser) CheckPrivacy(keyType int, id int64) bool {
 		rules *PrivacyKeyRules
 	)
 
+	if m.Id() == id {
+		return true
+	}
+
 	for _, v := range m.KeysPrivacyRules {
 		if v.Key == int32(keyType) {
 			rules = v

@@ -96,7 +96,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			MessageId:       outBoxMsgId,
 			DialogId1:       dialogId.A,
 			DialogId2:       dialogId.B,
-			DialogMessageId: d.IDGenClient2.NextId(ctx),
+			DialogMessageId: dialogMessageId,
 			// MessageDataId:     d.IDGenClient2.NextId(ctx),
 			RandomId:          outboxMessage.RandomId,
 			Pts:               0,
@@ -143,8 +143,8 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			}
 		}
 
-		outMsgBox.Pts = d.IDGenClient2.NextPtsId(ctx, fromId)
-		outMsgBox.PtsCount = 1
+		//outMsgBox.Pts = d.IDGenClient2.NextPtsId(ctx, fromId)
+		//outMsgBox.PtsCount = 1
 		// logx.WithContext(ctx).Infof("sendMessage - (pts: %d, pts_count: %d)", outMsgBox.Pts, outMsgBox.PtsCount)
 
 		switch peer.PeerType {
@@ -280,6 +280,8 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	switch tR.Data.(type) {
 	case *mtproto.MessageBox:
 		outBox = tR.Data.(*mtproto.MessageBox)
+		outBox.Pts = d.IDGenClient2.NextPtsId(ctx, fromId)
+		outBox.PtsCount = 1
 
 	case int64:
 		if tR.Data.(int64) <= 0 {

@@ -19,12 +19,11 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/threading"
 )
@@ -48,15 +47,10 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 			peer.PeerType = mtproto.PEER_USER
 		} else {
 			if !c.MD.IsBot {
-				mUsers, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-					Id: []int64{c.MD.UserId, peer.PeerId},
+				isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+					Id: peer.PeerId,
 				})
-				peerUser, _ := mUsers.GetImmutableUser(peer.PeerId)
-				if peerUser == nil {
-					err := mtproto.ErrPeerIdInvalid
-					return nil, err
-				}
-				hasBot = peerUser.IsBot()
+				hasBot = mtproto.FromBool(isBot)
 			}
 		}
 	}

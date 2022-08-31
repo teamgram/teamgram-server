@@ -6,11 +6,20 @@
 
 package dialog
 
+import "github.com/teamgram/proto/mtproto"
+
 type (
 	DialogExtList []*DialogExt
 )
 
-// sort
+func (m *DialogExt) HasDialog() bool {
+	name := m.GetDialog().GetDraft().GetPredicateName()
+	if name != mtproto.Predicate_draftMessage {
+		return false
+	}
+	return true
+}
+
 func (m DialogExtList) Len() int {
 	return len(m)
 }

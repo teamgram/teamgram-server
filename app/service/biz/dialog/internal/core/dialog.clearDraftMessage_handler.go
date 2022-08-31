@@ -29,15 +29,28 @@ func getEmptyDraftMessage() string {
 // DialogClearDraftMessage
 // dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 func (c *DialogCore) DialogClearDraftMessage(in *dialog.TLDialogClearDraftMessage) (*mtproto.Bool, error) {
-	_, err := c.svcCtx.Dao.DialogsDAO.SaveDraft(c.ctx,
-		1,
-		getEmptyDraftMessage(),
+	dlgDO, err := c.svcCtx.Dao.DialogsDAO.SelectDialog(
+		c.ctx,
 		in.UserId,
 		in.PeerType,
 		in.PeerId)
 	if err != nil {
 		c.Logger.Errorf("dialog.clearDraftMessage - error: %v", err)
 		return nil, err
+	}
+
+	if dlgDO != nil && dlgDO.DraftType == 2 {
+		_, err = c.svcCtx.Dao.DialogsDAO.SaveDraft(
+			c.ctx,
+			1,
+			getEmptyDraftMessage(),
+			in.UserId,
+			in.PeerType,
+			in.PeerId)
+		if err != nil {
+			c.Logger.Errorf("dialog.clearDraftMessage - error: %v", err)
+			return nil, err
+		}
 	}
 
 	return mtproto.BoolTrue, nil
