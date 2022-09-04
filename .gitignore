@@ -34,6 +34,7 @@ teamgramd/bin/*
 !teamgramd/bin/config.json
 !teamgramd/bin/killall.sh
 !teamgramd/bin/runall2.sh
+!teamgramd/bin/runall-docker.sh
 !teamgramd/bin/server_pkcs1.key
 
 teamgramd/logs/*
