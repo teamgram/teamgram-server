@@ -114,11 +114,10 @@ cd teamgram-server
   
 #### Init data
 - init database
-	> **change `192.168.1.150` to your ip**
-  
+	
 	```
-	mysql -uteamgram -h192.168.1.150 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
-	mysql -uteamgram -h192.168.1.150 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
+	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
+	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
 	```
 
 - init minio buckets
