@@ -89,22 +89,19 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 		// mType, mData := mtproto.EncodeMessage(message)
 		mData, _ := jsonx.Marshal(message)
 		outMsgBox := &mtproto.MessageBox{
-			UserId:          fromId,
-			SenderUserId:    fromId,
-			PeerType:        peer.PeerType,
-			PeerId:          peer.PeerId,
-			MessageId:       outBoxMsgId,
-			DialogId1:       dialogId.A,
-			DialogId2:       dialogId.B,
-			DialogMessageId: dialogMessageId,
-			// MessageDataId:     d.IDGenClient2.NextId(ctx),
+			UserId:            fromId,
+			SenderUserId:      fromId,
+			PeerType:          peer.PeerType,
+			PeerId:            peer.PeerId,
+			MessageId:         outBoxMsgId,
+			DialogId1:         dialogId.A,
+			DialogId2:         dialogId.B,
+			DialogMessageId:   dialogMessageId,
 			RandomId:          outboxMessage.RandomId,
 			Pts:               0,
 			PtsCount:          0,
-			MessageFilterType: int32(mtproto.GetMediaType(message)),
-			// MessageBoxType:    mtproto.MESSAGE_BOX_TYPE_OUTGOING,
-			// MessageType:       int32(mType),
-			Message: message,
+			MessageFilterType: mtproto.GetMediaType(message),
+			Message:           message,
 		}
 
 		outBoxDO := &dataobject.MessagesDO{

@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package user
@@ -119,7 +119,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_user_updateLastSeen: {
-		0: 1314677789, // 0x4e5c641d
+		0: -46114259, // 0xfd405a2d
 
 	},
 	Predicate_user_getLastSeen: {
@@ -366,7 +366,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	361114766:   Predicate_immutableUser,                         // 0x15862c8e
 	1256160192:  Predicate_userImportedContacts,                  // 0x4adf7bc0
 	2090958337:  Predicate_user_getLastSeens,                     // 0x7ca17e01
-	1314677789:  Predicate_user_updateLastSeen,                   // 0x4e5c641d
+	-46114259:   Predicate_user_updateLastSeen,                   // 0xfd405a2d
 	-1860581154: Predicate_user_getLastSeen,                      // 0x9119c8de
 	-47047585:   Predicate_user_getImmutableUser,                 // 0xfd321c5f
 	187684863:   Predicate_user_getMutableUsers,                  // 0xb2fd7ff

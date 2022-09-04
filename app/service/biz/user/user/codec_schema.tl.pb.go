@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -30,9 +30,14 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	2138633749: func() mtproto.TLObject { // 0x7f78f615
-		o := MakeTLUserData(nil)
-		o.Data2.Constructor = 2138633749
+	23110840: func() mtproto.TLObject { // 0x160a4b8
+		o := MakeTLBotData(nil)
+		o.Data2.Constructor = 23110840
+		return o
+	},
+	722018346: func() mtproto.TLObject { // 0x2b09202a
+		o := MakeTLContactData(nil)
+		o.Data2.Constructor = 722018346
 		return o
 	},
 	361114766: func() mtproto.TLObject { // 0x15862c8e
@@ -40,9 +45,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 361114766
 		return o
 	},
-	1256160192: func() mtproto.TLObject { // 0x4adf7bc0
-		o := MakeTLUserImportedContacts(nil)
-		o.Data2.Constructor = 1256160192
+	-313287543: func() mtproto.TLObject { // 0xed539c89
+		o := MakeTLLastSeenData(nil)
+		o.Data2.Constructor = -313287543
 		return o
 	},
 	1894399913: func() mtproto.TLObject { // 0x70ea3fa9
@@ -55,19 +60,14 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -1810715178
 		return o
 	},
-	-313287543: func() mtproto.TLObject { // 0xed539c89
-		o := MakeTLLastSeenData(nil)
-		o.Data2.Constructor = -313287543
+	2138633749: func() mtproto.TLObject { // 0x7f78f615
+		o := MakeTLUserData(nil)
+		o.Data2.Constructor = 2138633749
 		return o
 	},
-	722018346: func() mtproto.TLObject { // 0x2b09202a
-		o := MakeTLContactData(nil)
-		o.Data2.Constructor = 722018346
-		return o
-	},
-	23110840: func() mtproto.TLObject { // 0x160a4b8
-		o := MakeTLBotData(nil)
-		o.Data2.Constructor = 23110840
+	1256160192: func() mtproto.TLObject { // 0x4adf7bc0
+		o := MakeTLUserImportedContacts(nil)
+		o.Data2.Constructor = 1256160192
 		return o
 	},
 
@@ -77,9 +77,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2090958337,
 		}
 	},
-	1314677789: func() mtproto.TLObject { // 0x4e5c641d
+	-46114259: func() mtproto.TLObject { // 0xfd405a2d
 		return &TLUserUpdateLastSeen{
-			Constructor: 1314677789,
+			Constructor: -46114259,
 		}
 	},
 	-1860581154: func() mtproto.TLObject { // 0x9119c8de
@@ -390,6 +390,1097 @@ func CheckClassID(classId int32) (ok bool) {
 //----------------------------------------------------------------------------------------------------------------
 
 ///////////////////////////////////////////////////////////////////////////////
+// BotData <--
+//  + TL_BotData
+//
+
+func (m *BotData) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_botData:
+		t := m.To_BotData()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *BotData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *BotData) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x160a4b8:
+		m2 := MakeTLBotData(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *BotData) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_botData:
+		t := m.To_BotData()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_BotData
+func (m *BotData) To_BotData() *TLBotData {
+	m.PredicateName = Predicate_botData
+	return &TLBotData{
+		Data2: m,
+	}
+}
+
+// MakeTLBotData
+func MakeTLBotData(data2 *BotData) *TLBotData {
+	if data2 == nil {
+		return &TLBotData{Data2: &BotData{
+			PredicateName: Predicate_botData,
+		}}
+	} else {
+		data2.PredicateName = Predicate_botData
+		return &TLBotData{Data2: data2}
+	}
+}
+
+func (m *TLBotData) To_BotData() *BotData {
+	m.Data2.PredicateName = Predicate_botData
+	return m.Data2
+}
+
+//// flags
+func (m *TLBotData) SetId(v int64) { m.Data2.Id = v }
+func (m *TLBotData) GetId() int64  { return m.Data2.Id }
+
+func (m *TLBotData) SetBotType(v int32) { m.Data2.BotType = v }
+func (m *TLBotData) GetBotType() int32  { return m.Data2.BotType }
+
+func (m *TLBotData) SetCreator(v int64) { m.Data2.Creator = v }
+func (m *TLBotData) GetCreator() int64  { return m.Data2.Creator }
+
+func (m *TLBotData) SetToken(v string) { m.Data2.Token = v }
+func (m *TLBotData) GetToken() string  { return m.Data2.Token }
+
+func (m *TLBotData) SetDescription(v string) { m.Data2.Description = v }
+func (m *TLBotData) GetDescription() string  { return m.Data2.Description }
+
+func (m *TLBotData) SetBotChatHistory(v bool) { m.Data2.BotChatHistory = v }
+func (m *TLBotData) GetBotChatHistory() bool  { return m.Data2.BotChatHistory }
+
+func (m *TLBotData) SetBotNochats(v bool) { m.Data2.BotNochats = v }
+func (m *TLBotData) GetBotNochats() bool  { return m.Data2.BotNochats }
+
+func (m *TLBotData) SetBotInlineGeo(v bool) { m.Data2.BotInlineGeo = v }
+func (m *TLBotData) GetBotInlineGeo() bool  { return m.Data2.BotInlineGeo }
+
+func (m *TLBotData) SetBotInfoVersion(v int32) { m.Data2.BotInfoVersion = v }
+func (m *TLBotData) GetBotInfoVersion() int32  { return m.Data2.BotInfoVersion }
+
+func (m *TLBotData) SetBotInlinePlaceholder(v *types.StringValue) { m.Data2.BotInlinePlaceholder = v }
+func (m *TLBotData) GetBotInlinePlaceholder() *types.StringValue  { return m.Data2.BotInlinePlaceholder }
+
+func (m *TLBotData) GetPredicateName() string {
+	return Predicate_botData
+}
+
+func (m *TLBotData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x160a4b8: func() []byte {
+			x.UInt(0x160a4b8)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetBotChatHistory() == true {
+					flags |= 1 << 1
+				}
+				if m.GetBotNochats() == true {
+					flags |= 1 << 2
+				}
+				if m.GetBotInlineGeo() == true {
+					flags |= 1 << 3
+				}
+
+				if m.GetBotInlinePlaceholder() != nil {
+					flags |= 1 << 4
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			x.Long(m.GetId())
+			x.Int(m.GetBotType())
+			x.Long(m.GetCreator())
+			x.String(m.GetToken())
+			x.String(m.GetDescription())
+			x.Int(m.GetBotInfoVersion())
+			if m.GetBotInlinePlaceholder() != nil {
+				x.String(m.GetBotInlinePlaceholder().Value)
+			}
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_botData, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_botData, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLBotData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLBotData) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x160a4b8: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+			m.SetId(dBuf.Long())
+			m.SetBotType(dBuf.Int())
+			m.SetCreator(dBuf.Long())
+			m.SetToken(dBuf.String())
+			m.SetDescription(dBuf.String())
+			if (flags & (1 << 1)) != 0 {
+				m.SetBotChatHistory(true)
+			}
+			if (flags & (1 << 2)) != 0 {
+				m.SetBotNochats(true)
+			}
+			if (flags & (1 << 3)) != 0 {
+				m.SetBotInlineGeo(true)
+			}
+			m.SetBotInfoVersion(dBuf.Int())
+			if (flags & (1 << 4)) != 0 {
+				m.SetBotInlinePlaceholder(&types.StringValue{Value: dBuf.String()})
+			}
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLBotData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ContactData <--
+//  + TL_ContactData
+//
+
+func (m *ContactData) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_contactData:
+		t := m.To_ContactData()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *ContactData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *ContactData) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x2b09202a:
+		m2 := MakeTLContactData(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *ContactData) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_contactData:
+		t := m.To_ContactData()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_ContactData
+func (m *ContactData) To_ContactData() *TLContactData {
+	m.PredicateName = Predicate_contactData
+	return &TLContactData{
+		Data2: m,
+	}
+}
+
+// MakeTLContactData
+func MakeTLContactData(data2 *ContactData) *TLContactData {
+	if data2 == nil {
+		return &TLContactData{Data2: &ContactData{
+			PredicateName: Predicate_contactData,
+		}}
+	} else {
+		data2.PredicateName = Predicate_contactData
+		return &TLContactData{Data2: data2}
+	}
+}
+
+func (m *TLContactData) To_ContactData() *ContactData {
+	m.Data2.PredicateName = Predicate_contactData
+	return m.Data2
+}
+
+//// flags
+func (m *TLContactData) SetUserId(v int64) { m.Data2.UserId = v }
+func (m *TLContactData) GetUserId() int64  { return m.Data2.UserId }
+
+func (m *TLContactData) SetContactUserId(v int64) { m.Data2.ContactUserId = v }
+func (m *TLContactData) GetContactUserId() int64  { return m.Data2.ContactUserId }
+
+func (m *TLContactData) SetFirstName(v *types.StringValue) { m.Data2.FirstName = v }
+func (m *TLContactData) GetFirstName() *types.StringValue  { return m.Data2.FirstName }
+
+func (m *TLContactData) SetLastName(v *types.StringValue) { m.Data2.LastName = v }
+func (m *TLContactData) GetLastName() *types.StringValue  { return m.Data2.LastName }
+
+func (m *TLContactData) SetMutualContact(v bool) { m.Data2.MutualContact = v }
+func (m *TLContactData) GetMutualContact() bool  { return m.Data2.MutualContact }
+
+func (m *TLContactData) GetPredicateName() string {
+	return Predicate_contactData
+}
+
+func (m *TLContactData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x2b09202a: func() []byte {
+			x.UInt(0x2b09202a)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetFirstName() != nil {
+					flags |= 1 << 0
+				}
+				if m.GetLastName() != nil {
+					flags |= 1 << 1
+				}
+				if m.GetMutualContact() == true {
+					flags |= 1 << 2
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			x.Long(m.GetUserId())
+			x.Long(m.GetContactUserId())
+			if m.GetFirstName() != nil {
+				x.String(m.GetFirstName().Value)
+			}
+
+			if m.GetLastName() != nil {
+				x.String(m.GetLastName().Value)
+			}
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_contactData, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_contactData, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLContactData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLContactData) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x2b09202a: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+			m.SetUserId(dBuf.Long())
+			m.SetContactUserId(dBuf.Long())
+			if (flags & (1 << 0)) != 0 {
+				m.SetFirstName(&types.StringValue{Value: dBuf.String()})
+			}
+
+			if (flags & (1 << 1)) != 0 {
+				m.SetLastName(&types.StringValue{Value: dBuf.String()})
+			}
+
+			if (flags & (1 << 2)) != 0 {
+				m.SetMutualContact(true)
+			}
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLContactData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ImmutableUser <--
+//  + TL_ImmutableUser
+//
+
+func (m *ImmutableUser) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_immutableUser:
+		t := m.To_ImmutableUser()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *ImmutableUser) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *ImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x15862c8e:
+		m2 := MakeTLImmutableUser(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *ImmutableUser) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_immutableUser:
+		t := m.To_ImmutableUser()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_ImmutableUser
+func (m *ImmutableUser) To_ImmutableUser() *TLImmutableUser {
+	m.PredicateName = Predicate_immutableUser
+	return &TLImmutableUser{
+		Data2: m,
+	}
+}
+
+// MakeTLImmutableUser
+func MakeTLImmutableUser(data2 *ImmutableUser) *TLImmutableUser {
+	if data2 == nil {
+		return &TLImmutableUser{Data2: &ImmutableUser{
+			PredicateName: Predicate_immutableUser,
+		}}
+	} else {
+		data2.PredicateName = Predicate_immutableUser
+		return &TLImmutableUser{Data2: data2}
+	}
+}
+
+func (m *TLImmutableUser) To_ImmutableUser() *ImmutableUser {
+	m.Data2.PredicateName = Predicate_immutableUser
+	return m.Data2
+}
+
+//// flags
+func (m *TLImmutableUser) SetUser(v *UserData) { m.Data2.User = v }
+func (m *TLImmutableUser) GetUser() *UserData  { return m.Data2.User }
+
+func (m *TLImmutableUser) SetLastSeenAt(v int64) { m.Data2.LastSeenAt = v }
+func (m *TLImmutableUser) GetLastSeenAt() int64  { return m.Data2.LastSeenAt }
+
+func (m *TLImmutableUser) SetContacts(v []*ContactData) { m.Data2.Contacts = v }
+func (m *TLImmutableUser) GetContacts() []*ContactData  { return m.Data2.Contacts }
+
+func (m *TLImmutableUser) SetKeysPrivacyRules(v []*PrivacyKeyRules) { m.Data2.KeysPrivacyRules = v }
+func (m *TLImmutableUser) GetKeysPrivacyRules() []*PrivacyKeyRules  { return m.Data2.KeysPrivacyRules }
+
+func (m *TLImmutableUser) GetPredicateName() string {
+	return Predicate_immutableUser
+}
+
+func (m *TLImmutableUser) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x15862c8e: func() []byte {
+			x.UInt(0x15862c8e)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetContacts() != nil {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			x.Bytes(m.GetUser().Encode(layer))
+			x.Long(m.GetLastSeenAt())
+			if m.GetContacts() != nil {
+				x.Int(int32(mtproto.CRC32_vector))
+				x.Int(int32(len(m.GetContacts())))
+				for _, v := range m.GetContacts() {
+					x.Bytes((*v).Encode(layer))
+				}
+			}
+
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetKeysPrivacyRules())))
+			for _, v := range m.GetKeysPrivacyRules() {
+				x.Bytes((*v).Encode(layer))
+			}
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_immutableUser, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_immutableUser, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLImmutableUser) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x15862c8e: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+
+			m1 := &UserData{}
+			m1.Decode(dBuf)
+			m.SetUser(m1)
+
+			m.SetLastSeenAt(dBuf.Long())
+			if (flags & (1 << 0)) != 0 {
+				c3 := dBuf.Int()
+				if c3 != int32(mtproto.CRC32_vector) {
+					// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
+					return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
+				}
+				l3 := dBuf.Int()
+				v3 := make([]*ContactData, l3)
+				for i := int32(0); i < l3; i++ {
+					v3[i] = &ContactData{}
+					v3[i].Decode(dBuf)
+				}
+				m.SetContacts(v3)
+			}
+			c4 := dBuf.Int()
+			if c4 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 4, c4)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 4, c4)
+			}
+			l4 := dBuf.Int()
+			v4 := make([]*PrivacyKeyRules, l4)
+			for i := int32(0); i < l4; i++ {
+				v4[i] = &PrivacyKeyRules{}
+				v4[i].Decode(dBuf)
+			}
+			m.SetKeysPrivacyRules(v4)
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLImmutableUser) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// LastSeenData <--
+//  + TL_LastSeenData
+//
+
+func (m *LastSeenData) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_lastSeenData:
+		t := m.To_LastSeenData()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *LastSeenData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0xed539c89:
+		m2 := MakeTLLastSeenData(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *LastSeenData) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_lastSeenData:
+		t := m.To_LastSeenData()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_LastSeenData
+func (m *LastSeenData) To_LastSeenData() *TLLastSeenData {
+	m.PredicateName = Predicate_lastSeenData
+	return &TLLastSeenData{
+		Data2: m,
+	}
+}
+
+// MakeTLLastSeenData
+func MakeTLLastSeenData(data2 *LastSeenData) *TLLastSeenData {
+	if data2 == nil {
+		return &TLLastSeenData{Data2: &LastSeenData{
+			PredicateName: Predicate_lastSeenData,
+		}}
+	} else {
+		data2.PredicateName = Predicate_lastSeenData
+		return &TLLastSeenData{Data2: data2}
+	}
+}
+
+func (m *TLLastSeenData) To_LastSeenData() *LastSeenData {
+	m.Data2.PredicateName = Predicate_lastSeenData
+	return m.Data2
+}
+
+func (m *TLLastSeenData) SetUserId(v int64) { m.Data2.UserId = v }
+func (m *TLLastSeenData) GetUserId() int64  { return m.Data2.UserId }
+
+func (m *TLLastSeenData) SetLastSeenAt(v int64) { m.Data2.LastSeenAt = v }
+func (m *TLLastSeenData) GetLastSeenAt() int64  { return m.Data2.LastSeenAt }
+
+func (m *TLLastSeenData) SetExpries(v int32) { m.Data2.Expries = v }
+func (m *TLLastSeenData) GetExpries() int32  { return m.Data2.Expries }
+
+func (m *TLLastSeenData) GetPredicateName() string {
+	return Predicate_lastSeenData
+}
+
+func (m *TLLastSeenData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0xed539c89: func() []byte {
+			x.UInt(0xed539c89)
+
+			x.Long(m.GetUserId())
+			x.Long(m.GetLastSeenAt())
+			x.Int(m.GetExpries())
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_lastSeenData, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_lastSeenData, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLLastSeenData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLLastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0xed539c89: func() error {
+			m.SetUserId(dBuf.Long())
+			m.SetLastSeenAt(dBuf.Long())
+			m.SetExpries(dBuf.Int())
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLLastSeenData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// PeerPeerNotifySettings <--
+//  + TL_PeerPeerNotifySettings
+//
+
+func (m *PeerPeerNotifySettings) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_peerPeerNotifySettings:
+		t := m.To_PeerPeerNotifySettings()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *PeerPeerNotifySettings) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *PeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x70ea3fa9:
+		m2 := MakeTLPeerPeerNotifySettings(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *PeerPeerNotifySettings) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_peerPeerNotifySettings:
+		t := m.To_PeerPeerNotifySettings()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_PeerPeerNotifySettings
+func (m *PeerPeerNotifySettings) To_PeerPeerNotifySettings() *TLPeerPeerNotifySettings {
+	m.PredicateName = Predicate_peerPeerNotifySettings
+	return &TLPeerPeerNotifySettings{
+		Data2: m,
+	}
+}
+
+// MakeTLPeerPeerNotifySettings
+func MakeTLPeerPeerNotifySettings(data2 *PeerPeerNotifySettings) *TLPeerPeerNotifySettings {
+	if data2 == nil {
+		return &TLPeerPeerNotifySettings{Data2: &PeerPeerNotifySettings{
+			PredicateName: Predicate_peerPeerNotifySettings,
+		}}
+	} else {
+		data2.PredicateName = Predicate_peerPeerNotifySettings
+		return &TLPeerPeerNotifySettings{Data2: data2}
+	}
+}
+
+func (m *TLPeerPeerNotifySettings) To_PeerPeerNotifySettings() *PeerPeerNotifySettings {
+	m.Data2.PredicateName = Predicate_peerPeerNotifySettings
+	return m.Data2
+}
+
+func (m *TLPeerPeerNotifySettings) SetPeerType(v int32) { m.Data2.PeerType = v }
+func (m *TLPeerPeerNotifySettings) GetPeerType() int32  { return m.Data2.PeerType }
+
+func (m *TLPeerPeerNotifySettings) SetPeerId(v int64) { m.Data2.PeerId = v }
+func (m *TLPeerPeerNotifySettings) GetPeerId() int64  { return m.Data2.PeerId }
+
+func (m *TLPeerPeerNotifySettings) SetSettings(v *mtproto.PeerNotifySettings) { m.Data2.Settings = v }
+func (m *TLPeerPeerNotifySettings) GetSettings() *mtproto.PeerNotifySettings  { return m.Data2.Settings }
+
+func (m *TLPeerPeerNotifySettings) GetPredicateName() string {
+	return Predicate_peerPeerNotifySettings
+}
+
+func (m *TLPeerPeerNotifySettings) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x70ea3fa9: func() []byte {
+			x.UInt(0x70ea3fa9)
+
+			x.Int(m.GetPeerType())
+			x.Long(m.GetPeerId())
+			x.Bytes(m.GetSettings().Encode(layer))
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_peerPeerNotifySettings, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_peerPeerNotifySettings, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLPeerPeerNotifySettings) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLPeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x70ea3fa9: func() error {
+			m.SetPeerType(dBuf.Int())
+			m.SetPeerId(dBuf.Long())
+
+			m2 := &mtproto.PeerNotifySettings{}
+			m2.Decode(dBuf)
+			m.SetSettings(m2)
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLPeerPeerNotifySettings) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// PrivacyKeyRules <--
+//  + TL_PrivacyKeyRules
+//
+
+func (m *PrivacyKeyRules) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_privacyKeyRules:
+		t := m.To_PrivacyKeyRules()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *PrivacyKeyRules) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *PrivacyKeyRules) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x9412add6:
+		m2 := MakeTLPrivacyKeyRules(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *PrivacyKeyRules) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_privacyKeyRules:
+		t := m.To_PrivacyKeyRules()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_PrivacyKeyRules
+func (m *PrivacyKeyRules) To_PrivacyKeyRules() *TLPrivacyKeyRules {
+	m.PredicateName = Predicate_privacyKeyRules
+	return &TLPrivacyKeyRules{
+		Data2: m,
+	}
+}
+
+// MakeTLPrivacyKeyRules
+func MakeTLPrivacyKeyRules(data2 *PrivacyKeyRules) *TLPrivacyKeyRules {
+	if data2 == nil {
+		return &TLPrivacyKeyRules{Data2: &PrivacyKeyRules{
+			PredicateName: Predicate_privacyKeyRules,
+		}}
+	} else {
+		data2.PredicateName = Predicate_privacyKeyRules
+		return &TLPrivacyKeyRules{Data2: data2}
+	}
+}
+
+func (m *TLPrivacyKeyRules) To_PrivacyKeyRules() *PrivacyKeyRules {
+	m.Data2.PredicateName = Predicate_privacyKeyRules
+	return m.Data2
+}
+
+func (m *TLPrivacyKeyRules) SetKey(v int32) { m.Data2.Key = v }
+func (m *TLPrivacyKeyRules) GetKey() int32  { return m.Data2.Key }
+
+func (m *TLPrivacyKeyRules) SetRules(v []*mtproto.PrivacyRule) { m.Data2.Rules = v }
+func (m *TLPrivacyKeyRules) GetRules() []*mtproto.PrivacyRule  { return m.Data2.Rules }
+
+func (m *TLPrivacyKeyRules) GetPredicateName() string {
+	return Predicate_privacyKeyRules
+}
+
+func (m *TLPrivacyKeyRules) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x9412add6: func() []byte {
+			x.UInt(0x9412add6)
+
+			x.Int(m.GetKey())
+
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetRules())))
+			for _, v := range m.GetRules() {
+				x.Bytes((*v).Encode(layer))
+			}
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_privacyKeyRules, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_privacyKeyRules, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLPrivacyKeyRules) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLPrivacyKeyRules) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x9412add6: func() error {
+			m.SetKey(dBuf.Int())
+			c1 := dBuf.Int()
+			if c1 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+			}
+			l1 := dBuf.Int()
+			v1 := make([]*mtproto.PrivacyRule, l1)
+			for i := int32(0); i < l1; i++ {
+				v1[i] = &mtproto.PrivacyRule{}
+				v1[i].Decode(dBuf)
+			}
+			m.SetRules(v1)
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLPrivacyKeyRules) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // UserData <--
 //  + TL_UserData
 //
@@ -448,7 +1539,6 @@ func (m *UserData) DebugString() string {
 }
 
 // To_UserData
-// userData flags:# id:long access_hash:long user_type:int sceret_key_id:long first_name:string last_name:string username:string phone:string profile_photo:flags.0?Photo bot:flags.8?BotData country_code:string verified:flags.1?true support:flags.2?true scam:flags.3?true fake:flags.4?true about:flags.5?string restricted:flags.7?true restriction_reason:flags.7?Vector<RestrictionReason> contacts_version:int privacies_version:int deleted:flags.9?true = UserData;
 func (m *UserData) To_UserData() *TLUserData {
 	m.PredicateName = Predicate_userData
 	return &TLUserData{
@@ -457,7 +1547,6 @@ func (m *UserData) To_UserData() *TLUserData {
 }
 
 // MakeTLUserData
-// userData flags:# id:long access_hash:long user_type:int sceret_key_id:long first_name:string last_name:string username:string phone:string profile_photo:flags.0?Photo bot:flags.8?BotData country_code:string verified:flags.1?true support:flags.2?true scam:flags.3?true fake:flags.4?true about:flags.5?string restricted:flags.7?true restriction_reason:flags.7?Vector<RestrictionReason> contacts_version:int privacies_version:int deleted:flags.9?true = UserData;
 func MakeTLUserData(data2 *UserData) *TLUserData {
 	if data2 == nil {
 		return &TLUserData{Data2: &UserData{
@@ -551,7 +1640,6 @@ func (m *TLUserData) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x7f78f615: func() []byte {
-			// userData flags:# id:long access_hash:long user_type:int sceret_key_id:long first_name:string last_name:string username:string phone:string profile_photo:flags.0?Photo bot:flags.8?BotData country_code:string verified:flags.1?true support:flags.2?true scam:flags.3?true fake:flags.4?true about:flags.5?string restricted:flags.7?true restriction_reason:flags.7?Vector<RestrictionReason> contacts_version:int privacies_version:int deleted:flags.9?true = UserData;
 			x.UInt(0x7f78f615)
 
 			// set flags
@@ -650,7 +1738,6 @@ func (m *TLUserData) CalcByteSize(layer int32) int {
 func (m *TLUserData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x7f78f615: func() error {
-			// userData flags:# id:long access_hash:long user_type:int sceret_key_id:long first_name:string last_name:string username:string phone:string profile_photo:flags.0?Photo bot:flags.8?BotData country_code:string verified:flags.1?true support:flags.2?true scam:flags.3?true fake:flags.4?true about:flags.5?string restricted:flags.7?true restriction_reason:flags.7?Vector<RestrictionReason> contacts_version:int privacies_version:int deleted:flags.9?true = UserData;
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Long())
@@ -728,222 +1815,6 @@ func (m *TLUserData) DebugString() string {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ImmutableUser <--
-//  + TL_ImmutableUser
-//
-
-func (m *ImmutableUser) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_immutableUser:
-		t := m.To_ImmutableUser()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *ImmutableUser) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *ImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x15862c8e:
-		m2 := MakeTLImmutableUser(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *ImmutableUser) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_immutableUser:
-		t := m.To_ImmutableUser()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_ImmutableUser
-// immutableUser flags:# user:UserData last_seen_at:long contacts:flags.0?Vector<ContactData> keys_privacy_rules:Vector<PrivacyKeyRules> = ImmutableUser;
-func (m *ImmutableUser) To_ImmutableUser() *TLImmutableUser {
-	m.PredicateName = Predicate_immutableUser
-	return &TLImmutableUser{
-		Data2: m,
-	}
-}
-
-// MakeTLImmutableUser
-// immutableUser flags:# user:UserData last_seen_at:long contacts:flags.0?Vector<ContactData> keys_privacy_rules:Vector<PrivacyKeyRules> = ImmutableUser;
-func MakeTLImmutableUser(data2 *ImmutableUser) *TLImmutableUser {
-	if data2 == nil {
-		return &TLImmutableUser{Data2: &ImmutableUser{
-			PredicateName: Predicate_immutableUser,
-		}}
-	} else {
-		data2.PredicateName = Predicate_immutableUser
-		return &TLImmutableUser{Data2: data2}
-	}
-}
-
-func (m *TLImmutableUser) To_ImmutableUser() *ImmutableUser {
-	m.Data2.PredicateName = Predicate_immutableUser
-	return m.Data2
-}
-
-//// flags
-func (m *TLImmutableUser) SetUser(v *UserData) { m.Data2.User = v }
-func (m *TLImmutableUser) GetUser() *UserData  { return m.Data2.User }
-
-func (m *TLImmutableUser) SetLastSeenAt(v int64) { m.Data2.LastSeenAt = v }
-func (m *TLImmutableUser) GetLastSeenAt() int64  { return m.Data2.LastSeenAt }
-
-func (m *TLImmutableUser) SetContacts(v []*ContactData) { m.Data2.Contacts = v }
-func (m *TLImmutableUser) GetContacts() []*ContactData  { return m.Data2.Contacts }
-
-func (m *TLImmutableUser) SetKeysPrivacyRules(v []*PrivacyKeyRules) { m.Data2.KeysPrivacyRules = v }
-func (m *TLImmutableUser) GetKeysPrivacyRules() []*PrivacyKeyRules  { return m.Data2.KeysPrivacyRules }
-
-func (m *TLImmutableUser) GetPredicateName() string {
-	return Predicate_immutableUser
-}
-
-func (m *TLImmutableUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x15862c8e: func() []byte {
-			// immutableUser flags:# user:UserData last_seen_at:long contacts:flags.0?Vector<ContactData> keys_privacy_rules:Vector<PrivacyKeyRules> = ImmutableUser;
-			x.UInt(0x15862c8e)
-
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
-
-				if m.GetContacts() != nil {
-					flags |= 1 << 0
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.UInt(flags)
-			x.Bytes(m.GetUser().Encode(layer))
-			x.Long(m.GetLastSeenAt())
-			if m.GetContacts() != nil {
-				x.Int(int32(mtproto.CRC32_vector))
-				x.Int(int32(len(m.GetContacts())))
-				for _, v := range m.GetContacts() {
-					x.Bytes((*v).Encode(layer))
-				}
-			}
-
-			x.Int(int32(mtproto.CRC32_vector))
-			x.Int(int32(len(m.GetKeysPrivacyRules())))
-			for _, v := range m.GetKeysPrivacyRules() {
-				x.Bytes((*v).Encode(layer))
-			}
-
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_immutableUser, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_immutableUser, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLImmutableUser) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x15862c8e: func() error {
-			// immutableUser flags:# user:UserData last_seen_at:long contacts:flags.0?Vector<ContactData> keys_privacy_rules:Vector<PrivacyKeyRules> = ImmutableUser;
-			var flags = dBuf.UInt()
-			_ = flags
-
-			m1 := &UserData{}
-			m1.Decode(dBuf)
-			m.SetUser(m1)
-
-			m.SetLastSeenAt(dBuf.Long())
-			if (flags & (1 << 0)) != 0 {
-				c3 := dBuf.Int()
-				if c3 != int32(mtproto.CRC32_vector) {
-					// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
-					return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
-				}
-				l3 := dBuf.Int()
-				v3 := make([]*ContactData, l3)
-				for i := int32(0); i < l3; i++ {
-					v3[i] = &ContactData{}
-					v3[i].Decode(dBuf)
-				}
-				m.SetContacts(v3)
-			}
-			c4 := dBuf.Int()
-			if c4 != int32(mtproto.CRC32_vector) {
-				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 4, c4)
-				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 4, c4)
-			}
-			l4 := dBuf.Int()
-			v4 := make([]*PrivacyKeyRules, l4)
-			for i := int32(0); i < l4; i++ {
-				v4[i] = &PrivacyKeyRules{}
-				v4[i].Decode(dBuf)
-			}
-			m.SetKeysPrivacyRules(v4)
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLImmutableUser) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // UserImportedContacts <--
 //  + TL_UserImportedContacts
 //
@@ -1002,7 +1873,6 @@ func (m *UserImportedContacts) DebugString() string {
 }
 
 // To_UserImportedContacts
-// userImportedContacts imported:Vector<ImportedContact> popular_invites:Vector<PopularContact> retry_contacts:Vector<long> users:Vector<User> update_id_list:Vector<long> = UserImportedContacts;
 func (m *UserImportedContacts) To_UserImportedContacts() *TLUserImportedContacts {
 	m.PredicateName = Predicate_userImportedContacts
 	return &TLUserImportedContacts{
@@ -1011,7 +1881,6 @@ func (m *UserImportedContacts) To_UserImportedContacts() *TLUserImportedContacts
 }
 
 // MakeTLUserImportedContacts
-// userImportedContacts imported:Vector<ImportedContact> popular_invites:Vector<PopularContact> retry_contacts:Vector<long> users:Vector<User> update_id_list:Vector<long> = UserImportedContacts;
 func MakeTLUserImportedContacts(data2 *UserImportedContacts) *TLUserImportedContacts {
 	if data2 == nil {
 		return &TLUserImportedContacts{Data2: &UserImportedContacts{
@@ -1056,7 +1925,6 @@ func (m *TLUserImportedContacts) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x4adf7bc0: func() []byte {
-			// userImportedContacts imported:Vector<ImportedContact> popular_invites:Vector<PopularContact> retry_contacts:Vector<long> users:Vector<User> update_id_list:Vector<long> = UserImportedContacts;
 			x.UInt(0x4adf7bc0)
 
 			x.Int(int32(mtproto.CRC32_vector))
@@ -1104,7 +1972,6 @@ func (m *TLUserImportedContacts) CalcByteSize(layer int32) int {
 func (m *TLUserImportedContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x4adf7bc0: func() error {
-			// userImportedContacts imported:Vector<ImportedContact> popular_invites:Vector<PopularContact> retry_contacts:Vector<long> users:Vector<User> update_id_list:Vector<long> = UserImportedContacts;
 			c0 := dBuf.Int()
 			if c0 != int32(mtproto.CRC32_vector) {
 				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 0, c0)
@@ -1165,905 +2032,6 @@ func (m *TLUserImportedContacts) DebugString() string {
 	return dbgString
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// PeerPeerNotifySettings <--
-//  + TL_PeerPeerNotifySettings
-//
-
-func (m *PeerPeerNotifySettings) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_peerPeerNotifySettings:
-		t := m.To_PeerPeerNotifySettings()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *PeerPeerNotifySettings) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *PeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x70ea3fa9:
-		m2 := MakeTLPeerPeerNotifySettings(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *PeerPeerNotifySettings) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_peerPeerNotifySettings:
-		t := m.To_PeerPeerNotifySettings()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_PeerPeerNotifySettings
-// peerPeerNotifySettings peer_type:int peer_id:long settings:PeerNotifySettings = PeerPeerNotifySettings;
-func (m *PeerPeerNotifySettings) To_PeerPeerNotifySettings() *TLPeerPeerNotifySettings {
-	m.PredicateName = Predicate_peerPeerNotifySettings
-	return &TLPeerPeerNotifySettings{
-		Data2: m,
-	}
-}
-
-// MakeTLPeerPeerNotifySettings
-// peerPeerNotifySettings peer_type:int peer_id:long settings:PeerNotifySettings = PeerPeerNotifySettings;
-func MakeTLPeerPeerNotifySettings(data2 *PeerPeerNotifySettings) *TLPeerPeerNotifySettings {
-	if data2 == nil {
-		return &TLPeerPeerNotifySettings{Data2: &PeerPeerNotifySettings{
-			PredicateName: Predicate_peerPeerNotifySettings,
-		}}
-	} else {
-		data2.PredicateName = Predicate_peerPeerNotifySettings
-		return &TLPeerPeerNotifySettings{Data2: data2}
-	}
-}
-
-func (m *TLPeerPeerNotifySettings) To_PeerPeerNotifySettings() *PeerPeerNotifySettings {
-	m.Data2.PredicateName = Predicate_peerPeerNotifySettings
-	return m.Data2
-}
-
-func (m *TLPeerPeerNotifySettings) SetPeerType(v int32) { m.Data2.PeerType = v }
-func (m *TLPeerPeerNotifySettings) GetPeerType() int32  { return m.Data2.PeerType }
-
-func (m *TLPeerPeerNotifySettings) SetPeerId(v int64) { m.Data2.PeerId = v }
-func (m *TLPeerPeerNotifySettings) GetPeerId() int64  { return m.Data2.PeerId }
-
-func (m *TLPeerPeerNotifySettings) SetSettings(v *mtproto.PeerNotifySettings) { m.Data2.Settings = v }
-func (m *TLPeerPeerNotifySettings) GetSettings() *mtproto.PeerNotifySettings  { return m.Data2.Settings }
-
-func (m *TLPeerPeerNotifySettings) GetPredicateName() string {
-	return Predicate_peerPeerNotifySettings
-}
-
-func (m *TLPeerPeerNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x70ea3fa9: func() []byte {
-			// peerPeerNotifySettings peer_type:int peer_id:long settings:PeerNotifySettings = PeerPeerNotifySettings;
-			x.UInt(0x70ea3fa9)
-
-			x.Int(m.GetPeerType())
-			x.Long(m.GetPeerId())
-			x.Bytes(m.GetSettings().Encode(layer))
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_peerPeerNotifySettings, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_peerPeerNotifySettings, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLPeerPeerNotifySettings) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLPeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x70ea3fa9: func() error {
-			// peerPeerNotifySettings peer_type:int peer_id:long settings:PeerNotifySettings = PeerPeerNotifySettings;
-			m.SetPeerType(dBuf.Int())
-			m.SetPeerId(dBuf.Long())
-
-			m2 := &mtproto.PeerNotifySettings{}
-			m2.Decode(dBuf)
-			m.SetSettings(m2)
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLPeerPeerNotifySettings) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// PrivacyKeyRules <--
-//  + TL_PrivacyKeyRules
-//
-
-func (m *PrivacyKeyRules) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_privacyKeyRules:
-		t := m.To_PrivacyKeyRules()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *PrivacyKeyRules) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *PrivacyKeyRules) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x9412add6:
-		m2 := MakeTLPrivacyKeyRules(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *PrivacyKeyRules) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_privacyKeyRules:
-		t := m.To_PrivacyKeyRules()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_PrivacyKeyRules
-// privacyKeyRules key:int rules:Vector<PrivacyRule> = PrivacyKeyRules;
-func (m *PrivacyKeyRules) To_PrivacyKeyRules() *TLPrivacyKeyRules {
-	m.PredicateName = Predicate_privacyKeyRules
-	return &TLPrivacyKeyRules{
-		Data2: m,
-	}
-}
-
-// MakeTLPrivacyKeyRules
-// privacyKeyRules key:int rules:Vector<PrivacyRule> = PrivacyKeyRules;
-func MakeTLPrivacyKeyRules(data2 *PrivacyKeyRules) *TLPrivacyKeyRules {
-	if data2 == nil {
-		return &TLPrivacyKeyRules{Data2: &PrivacyKeyRules{
-			PredicateName: Predicate_privacyKeyRules,
-		}}
-	} else {
-		data2.PredicateName = Predicate_privacyKeyRules
-		return &TLPrivacyKeyRules{Data2: data2}
-	}
-}
-
-func (m *TLPrivacyKeyRules) To_PrivacyKeyRules() *PrivacyKeyRules {
-	m.Data2.PredicateName = Predicate_privacyKeyRules
-	return m.Data2
-}
-
-func (m *TLPrivacyKeyRules) SetKey(v int32) { m.Data2.Key = v }
-func (m *TLPrivacyKeyRules) GetKey() int32  { return m.Data2.Key }
-
-func (m *TLPrivacyKeyRules) SetRules(v []*mtproto.PrivacyRule) { m.Data2.Rules = v }
-func (m *TLPrivacyKeyRules) GetRules() []*mtproto.PrivacyRule  { return m.Data2.Rules }
-
-func (m *TLPrivacyKeyRules) GetPredicateName() string {
-	return Predicate_privacyKeyRules
-}
-
-func (m *TLPrivacyKeyRules) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x9412add6: func() []byte {
-			// privacyKeyRules key:int rules:Vector<PrivacyRule> = PrivacyKeyRules;
-			x.UInt(0x9412add6)
-
-			x.Int(m.GetKey())
-
-			x.Int(int32(mtproto.CRC32_vector))
-			x.Int(int32(len(m.GetRules())))
-			for _, v := range m.GetRules() {
-				x.Bytes((*v).Encode(layer))
-			}
-
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_privacyKeyRules, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_privacyKeyRules, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLPrivacyKeyRules) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLPrivacyKeyRules) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x9412add6: func() error {
-			// privacyKeyRules key:int rules:Vector<PrivacyRule> = PrivacyKeyRules;
-			m.SetKey(dBuf.Int())
-			c1 := dBuf.Int()
-			if c1 != int32(mtproto.CRC32_vector) {
-				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
-				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
-			}
-			l1 := dBuf.Int()
-			v1 := make([]*mtproto.PrivacyRule, l1)
-			for i := int32(0); i < l1; i++ {
-				v1[i] = &mtproto.PrivacyRule{}
-				v1[i].Decode(dBuf)
-			}
-			m.SetRules(v1)
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLPrivacyKeyRules) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// LastSeenData <--
-//  + TL_LastSeenData
-//
-
-func (m *LastSeenData) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_lastSeenData:
-		t := m.To_LastSeenData()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *LastSeenData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0xed539c89:
-		m2 := MakeTLLastSeenData(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *LastSeenData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_lastSeenData:
-		t := m.To_LastSeenData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_LastSeenData
-// lastSeenData user_id:long last_seen_at:long expries:int = LastSeenData;
-func (m *LastSeenData) To_LastSeenData() *TLLastSeenData {
-	m.PredicateName = Predicate_lastSeenData
-	return &TLLastSeenData{
-		Data2: m,
-	}
-}
-
-// MakeTLLastSeenData
-// lastSeenData user_id:long last_seen_at:long expries:int = LastSeenData;
-func MakeTLLastSeenData(data2 *LastSeenData) *TLLastSeenData {
-	if data2 == nil {
-		return &TLLastSeenData{Data2: &LastSeenData{
-			PredicateName: Predicate_lastSeenData,
-		}}
-	} else {
-		data2.PredicateName = Predicate_lastSeenData
-		return &TLLastSeenData{Data2: data2}
-	}
-}
-
-func (m *TLLastSeenData) To_LastSeenData() *LastSeenData {
-	m.Data2.PredicateName = Predicate_lastSeenData
-	return m.Data2
-}
-
-func (m *TLLastSeenData) SetUserId(v int64) { m.Data2.UserId = v }
-func (m *TLLastSeenData) GetUserId() int64  { return m.Data2.UserId }
-
-func (m *TLLastSeenData) SetLastSeenAt(v int64) { m.Data2.LastSeenAt = v }
-func (m *TLLastSeenData) GetLastSeenAt() int64  { return m.Data2.LastSeenAt }
-
-func (m *TLLastSeenData) SetExpries(v int32) { m.Data2.Expries = v }
-func (m *TLLastSeenData) GetExpries() int32  { return m.Data2.Expries }
-
-func (m *TLLastSeenData) GetPredicateName() string {
-	return Predicate_lastSeenData
-}
-
-func (m *TLLastSeenData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xed539c89: func() []byte {
-			// lastSeenData user_id:long last_seen_at:long expries:int = LastSeenData;
-			x.UInt(0xed539c89)
-
-			x.Long(m.GetUserId())
-			x.Long(m.GetLastSeenAt())
-			x.Int(m.GetExpries())
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_lastSeenData, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_lastSeenData, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLLastSeenData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLLastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0xed539c89: func() error {
-			// lastSeenData user_id:long last_seen_at:long expries:int = LastSeenData;
-			m.SetUserId(dBuf.Long())
-			m.SetLastSeenAt(dBuf.Long())
-			m.SetExpries(dBuf.Int())
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLLastSeenData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ContactData <--
-//  + TL_ContactData
-//
-
-func (m *ContactData) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_contactData:
-		t := m.To_ContactData()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *ContactData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *ContactData) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x2b09202a:
-		m2 := MakeTLContactData(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *ContactData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_contactData:
-		t := m.To_ContactData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_ContactData
-// contactData flags:# user_id:long contact_user_id:long first_name:flags.0?string last_name:flags.1?string mutual_contact:flags.2?true = ContactData;
-func (m *ContactData) To_ContactData() *TLContactData {
-	m.PredicateName = Predicate_contactData
-	return &TLContactData{
-		Data2: m,
-	}
-}
-
-// MakeTLContactData
-// contactData flags:# user_id:long contact_user_id:long first_name:flags.0?string last_name:flags.1?string mutual_contact:flags.2?true = ContactData;
-func MakeTLContactData(data2 *ContactData) *TLContactData {
-	if data2 == nil {
-		return &TLContactData{Data2: &ContactData{
-			PredicateName: Predicate_contactData,
-		}}
-	} else {
-		data2.PredicateName = Predicate_contactData
-		return &TLContactData{Data2: data2}
-	}
-}
-
-func (m *TLContactData) To_ContactData() *ContactData {
-	m.Data2.PredicateName = Predicate_contactData
-	return m.Data2
-}
-
-//// flags
-func (m *TLContactData) SetUserId(v int64) { m.Data2.UserId = v }
-func (m *TLContactData) GetUserId() int64  { return m.Data2.UserId }
-
-func (m *TLContactData) SetContactUserId(v int64) { m.Data2.ContactUserId = v }
-func (m *TLContactData) GetContactUserId() int64  { return m.Data2.ContactUserId }
-
-func (m *TLContactData) SetFirstName(v *types.StringValue) { m.Data2.FirstName = v }
-func (m *TLContactData) GetFirstName() *types.StringValue  { return m.Data2.FirstName }
-
-func (m *TLContactData) SetLastName(v *types.StringValue) { m.Data2.LastName = v }
-func (m *TLContactData) GetLastName() *types.StringValue  { return m.Data2.LastName }
-
-func (m *TLContactData) SetMutualContact(v bool) { m.Data2.MutualContact = v }
-func (m *TLContactData) GetMutualContact() bool  { return m.Data2.MutualContact }
-
-func (m *TLContactData) GetPredicateName() string {
-	return Predicate_contactData
-}
-
-func (m *TLContactData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x2b09202a: func() []byte {
-			// contactData flags:# user_id:long contact_user_id:long first_name:flags.0?string last_name:flags.1?string mutual_contact:flags.2?true = ContactData;
-			x.UInt(0x2b09202a)
-
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
-
-				if m.GetFirstName() != nil {
-					flags |= 1 << 0
-				}
-				if m.GetLastName() != nil {
-					flags |= 1 << 1
-				}
-				if m.GetMutualContact() == true {
-					flags |= 1 << 2
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.UInt(flags)
-			x.Long(m.GetUserId())
-			x.Long(m.GetContactUserId())
-			if m.GetFirstName() != nil {
-				x.String(m.GetFirstName().Value)
-			}
-
-			if m.GetLastName() != nil {
-				x.String(m.GetLastName().Value)
-			}
-
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_contactData, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_contactData, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLContactData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLContactData) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x2b09202a: func() error {
-			// contactData flags:# user_id:long contact_user_id:long first_name:flags.0?string last_name:flags.1?string mutual_contact:flags.2?true = ContactData;
-			var flags = dBuf.UInt()
-			_ = flags
-			m.SetUserId(dBuf.Long())
-			m.SetContactUserId(dBuf.Long())
-			if (flags & (1 << 0)) != 0 {
-				m.SetFirstName(&types.StringValue{Value: dBuf.String()})
-			}
-
-			if (flags & (1 << 1)) != 0 {
-				m.SetLastName(&types.StringValue{Value: dBuf.String()})
-			}
-
-			if (flags & (1 << 2)) != 0 {
-				m.SetMutualContact(true)
-			}
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLContactData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// BotData <--
-//  + TL_BotData
-//
-
-func (m *BotData) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_botData:
-		t := m.To_BotData()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *BotData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *BotData) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0x160a4b8:
-		m2 := MakeTLBotData(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *BotData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_botData:
-		t := m.To_BotData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_BotData
-// botData flags:# id:long bot_type:int creator:long token:string description:string bot_chat_history:flags.1?true bot_nochats:flags.2?true bot_inline_geo:flags.3?true bot_info_version:int bot_inline_placeholder:flags.4?string= BotData;
-func (m *BotData) To_BotData() *TLBotData {
-	m.PredicateName = Predicate_botData
-	return &TLBotData{
-		Data2: m,
-	}
-}
-
-// MakeTLBotData
-// botData flags:# id:long bot_type:int creator:long token:string description:string bot_chat_history:flags.1?true bot_nochats:flags.2?true bot_inline_geo:flags.3?true bot_info_version:int bot_inline_placeholder:flags.4?string= BotData;
-func MakeTLBotData(data2 *BotData) *TLBotData {
-	if data2 == nil {
-		return &TLBotData{Data2: &BotData{
-			PredicateName: Predicate_botData,
-		}}
-	} else {
-		data2.PredicateName = Predicate_botData
-		return &TLBotData{Data2: data2}
-	}
-}
-
-func (m *TLBotData) To_BotData() *BotData {
-	m.Data2.PredicateName = Predicate_botData
-	return m.Data2
-}
-
-//// flags
-func (m *TLBotData) SetId(v int64) { m.Data2.Id = v }
-func (m *TLBotData) GetId() int64  { return m.Data2.Id }
-
-func (m *TLBotData) SetBotType(v int32) { m.Data2.BotType = v }
-func (m *TLBotData) GetBotType() int32  { return m.Data2.BotType }
-
-func (m *TLBotData) SetCreator(v int64) { m.Data2.Creator = v }
-func (m *TLBotData) GetCreator() int64  { return m.Data2.Creator }
-
-func (m *TLBotData) SetToken(v string) { m.Data2.Token = v }
-func (m *TLBotData) GetToken() string  { return m.Data2.Token }
-
-func (m *TLBotData) SetDescription(v string) { m.Data2.Description = v }
-func (m *TLBotData) GetDescription() string  { return m.Data2.Description }
-
-func (m *TLBotData) SetBotChatHistory(v bool) { m.Data2.BotChatHistory = v }
-func (m *TLBotData) GetBotChatHistory() bool  { return m.Data2.BotChatHistory }
-
-func (m *TLBotData) SetBotNochats(v bool) { m.Data2.BotNochats = v }
-func (m *TLBotData) GetBotNochats() bool  { return m.Data2.BotNochats }
-
-func (m *TLBotData) SetBotInlineGeo(v bool) { m.Data2.BotInlineGeo = v }
-func (m *TLBotData) GetBotInlineGeo() bool  { return m.Data2.BotInlineGeo }
-
-func (m *TLBotData) SetBotInfoVersion(v int32) { m.Data2.BotInfoVersion = v }
-func (m *TLBotData) GetBotInfoVersion() int32  { return m.Data2.BotInfoVersion }
-
-func (m *TLBotData) SetBotInlinePlaceholder(v *types.StringValue) { m.Data2.BotInlinePlaceholder = v }
-func (m *TLBotData) GetBotInlinePlaceholder() *types.StringValue  { return m.Data2.BotInlinePlaceholder }
-
-func (m *TLBotData) GetPredicateName() string {
-	return Predicate_botData
-}
-
-func (m *TLBotData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x160a4b8: func() []byte {
-			// botData flags:# id:long bot_type:int creator:long token:string description:string bot_chat_history:flags.1?true bot_nochats:flags.2?true bot_inline_geo:flags.3?true bot_info_version:int bot_inline_placeholder:flags.4?string= BotData;
-			x.UInt(0x160a4b8)
-
-			// set flags
-			var getFlags = func() uint32 {
-				var flags uint32 = 0
-
-				if m.GetBotChatHistory() == true {
-					flags |= 1 << 1
-				}
-				if m.GetBotNochats() == true {
-					flags |= 1 << 2
-				}
-				if m.GetBotInlineGeo() == true {
-					flags |= 1 << 3
-				}
-
-				if m.GetBotInlinePlaceholder() != nil {
-					flags |= 1 << 4
-				}
-
-				return flags
-			}
-
-			// set flags
-			var flags = getFlags()
-			x.UInt(flags)
-			x.Long(m.GetId())
-			x.Int(m.GetBotType())
-			x.Long(m.GetCreator())
-			x.String(m.GetToken())
-			x.String(m.GetDescription())
-			x.Int(m.GetBotInfoVersion())
-			if m.GetBotInlinePlaceholder() != nil {
-				x.String(m.GetBotInlinePlaceholder().Value)
-			}
-
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_botData, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_botData, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLBotData) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLBotData) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0x160a4b8: func() error {
-			// botData flags:# id:long bot_type:int creator:long token:string description:string bot_chat_history:flags.1?true bot_nochats:flags.2?true bot_inline_geo:flags.3?true bot_info_version:int bot_inline_placeholder:flags.4?string= BotData;
-			var flags = dBuf.UInt()
-			_ = flags
-			m.SetId(dBuf.Long())
-			m.SetBotType(dBuf.Int())
-			m.SetCreator(dBuf.Long())
-			m.SetToken(dBuf.String())
-			m.SetDescription(dBuf.String())
-			if (flags & (1 << 1)) != 0 {
-				m.SetBotChatHistory(true)
-			}
-			if (flags & (1 << 2)) != 0 {
-				m.SetBotNochats(true)
-			}
-			if (flags & (1 << 3)) != 0 {
-				m.SetBotInlineGeo(true)
-			}
-			m.SetBotInfoVersion(dBuf.Int())
-			if (flags & (1 << 4)) != 0 {
-				m.SetBotInlinePlaceholder(&types.StringValue{Value: dBuf.String()})
-			}
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLBotData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLUserGetLastSeens
 ///////////////////////////////////////////////////////////////////////////////
@@ -2074,7 +2042,6 @@ func (m *TLUserGetLastSeens) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x7ca17e01:
-		// user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
 		x.UInt(0x7ca17e01)
 
 		// no flags
@@ -2095,7 +2062,6 @@ func (m *TLUserGetLastSeens) CalcByteSize(layer int32) int {
 func (m *TLUserGetLastSeens) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x7ca17e01:
-		// user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
 
 		// not has flags
 
@@ -2123,15 +2089,14 @@ func (m *TLUserUpdateLastSeen) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_user_updateLastSeen))
 
 	switch uint32(m.Constructor) {
-	case 0x4e5c641d:
-		// user.updateLastSeen id:long last_seen_at:long expries:int = Bool;
-		x.UInt(0x4e5c641d)
+	case 0xfd405a2d:
+		x.UInt(0xfd405a2d)
 
 		// no flags
 
 		x.Long(m.GetId())
 		x.Long(m.GetLastSeenAt())
-		x.Int(m.GetExpries())
+		x.Int(m.GetExpires())
 
 	default:
 		// log.Errorf("")
@@ -2146,14 +2111,13 @@ func (m *TLUserUpdateLastSeen) CalcByteSize(layer int32) int {
 
 func (m *TLUserUpdateLastSeen) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x4e5c641d:
-		// user.updateLastSeen id:long last_seen_at:long expries:int = Bool;
+	case 0xfd405a2d:
 
 		// not has flags
 
 		m.Id = dBuf.Long()
 		m.LastSeenAt = dBuf.Long()
-		m.Expries = dBuf.Int()
+		m.Expires = dBuf.Int()
 		return dBuf.GetError()
 
 	default:
@@ -2177,7 +2141,6 @@ func (m *TLUserGetLastSeen) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9119c8de:
-		// user.getLastSeen id:long = LastSeenData;
 		x.UInt(0x9119c8de)
 
 		// no flags
@@ -2198,7 +2161,6 @@ func (m *TLUserGetLastSeen) CalcByteSize(layer int32) int {
 func (m *TLUserGetLastSeen) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9119c8de:
-		// user.getLastSeen id:long = LastSeenData;
 
 		// not has flags
 
@@ -2226,7 +2188,6 @@ func (m *TLUserGetImmutableUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfd321c5f:
-		// user.getImmutableUser id:long = ImmutableUser;
 		x.UInt(0xfd321c5f)
 
 		// no flags
@@ -2247,7 +2208,6 @@ func (m *TLUserGetImmutableUser) CalcByteSize(layer int32) int {
 func (m *TLUserGetImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfd321c5f:
-		// user.getImmutableUser id:long = ImmutableUser;
 
 		// not has flags
 
@@ -2275,7 +2235,6 @@ func (m *TLUserGetMutableUsers) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb2fd7ff:
-		// user.getMutableUsers id:Vector<long> = Vector<ImmutableUser>;
 		x.UInt(0xb2fd7ff)
 
 		// no flags
@@ -2296,7 +2255,6 @@ func (m *TLUserGetMutableUsers) CalcByteSize(layer int32) int {
 func (m *TLUserGetMutableUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb2fd7ff:
-		// user.getMutableUsers id:Vector<long> = Vector<ImmutableUser>;
 
 		// not has flags
 
@@ -2325,7 +2283,6 @@ func (m *TLUserGetImmutableUserByPhone) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe9c36fe4:
-		// user.getImmutableUserByPhone phone:string = ImmutableUser;
 		x.UInt(0xe9c36fe4)
 
 		// no flags
@@ -2346,7 +2303,6 @@ func (m *TLUserGetImmutableUserByPhone) CalcByteSize(layer int32) int {
 func (m *TLUserGetImmutableUserByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe9c36fe4:
-		// user.getImmutableUserByPhone phone:string = ImmutableUser;
 
 		// not has flags
 
@@ -2374,7 +2330,6 @@ func (m *TLUserGetImmutableUserByToken) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xff3e1373:
-		// user.getImmutableUserByToken token:string = ImmutableUser;
 		x.UInt(0xff3e1373)
 
 		// no flags
@@ -2395,7 +2350,6 @@ func (m *TLUserGetImmutableUserByToken) CalcByteSize(layer int32) int {
 func (m *TLUserGetImmutableUserByToken) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xff3e1373:
-		// user.getImmutableUserByToken token:string = ImmutableUser;
 
 		// not has flags
 
@@ -2423,7 +2377,6 @@ func (m *TLUserSetAccountDaysTTL) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xd2550b4c:
-		// user.setAccountDaysTTL user_id:long ttl:int = Bool;
 		x.UInt(0xd2550b4c)
 
 		// no flags
@@ -2445,7 +2398,6 @@ func (m *TLUserSetAccountDaysTTL) CalcByteSize(layer int32) int {
 func (m *TLUserSetAccountDaysTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xd2550b4c:
-		// user.setAccountDaysTTL user_id:long ttl:int = Bool;
 
 		// not has flags
 
@@ -2474,7 +2426,6 @@ func (m *TLUserGetAccountDaysTTL) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb2843ee0:
-		// user.getAccountDaysTTL user_id:long = AccountDaysTTL;
 		x.UInt(0xb2843ee0)
 
 		// no flags
@@ -2495,7 +2446,6 @@ func (m *TLUserGetAccountDaysTTL) CalcByteSize(layer int32) int {
 func (m *TLUserGetAccountDaysTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb2843ee0:
-		// user.getAccountDaysTTL user_id:long = AccountDaysTTL;
 
 		// not has flags
 
@@ -2523,7 +2473,6 @@ func (m *TLUserGetNotifySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x40ac3766:
-		// user.getNotifySettings user_id:long peer_type:int peer_id:long = PeerNotifySettings;
 		x.UInt(0x40ac3766)
 
 		// no flags
@@ -2546,7 +2495,6 @@ func (m *TLUserGetNotifySettings) CalcByteSize(layer int32) int {
 func (m *TLUserGetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x40ac3766:
-		// user.getNotifySettings user_id:long peer_type:int peer_id:long = PeerNotifySettings;
 
 		// not has flags
 
@@ -2576,7 +2524,6 @@ func (m *TLUserSetNotifySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc9ed65e5:
-		// user.setNotifySettings user_id:long peer_type:int peer_id:long settings:PeerNotifySettings = Bool;
 		x.UInt(0xc9ed65e5)
 
 		// no flags
@@ -2600,7 +2547,6 @@ func (m *TLUserSetNotifySettings) CalcByteSize(layer int32) int {
 func (m *TLUserSetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc9ed65e5:
-		// user.setNotifySettings user_id:long peer_type:int peer_id:long settings:PeerNotifySettings = Bool;
 
 		// not has flags
 
@@ -2635,7 +2581,6 @@ func (m *TLUserResetNotifySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe079d74:
-		// user.resetNotifySettings user_id:long = Bool;
 		x.UInt(0xe079d74)
 
 		// no flags
@@ -2656,7 +2601,6 @@ func (m *TLUserResetNotifySettings) CalcByteSize(layer int32) int {
 func (m *TLUserResetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe079d74:
-		// user.resetNotifySettings user_id:long = Bool;
 
 		// not has flags
 
@@ -2684,7 +2628,6 @@ func (m *TLUserGetAllNotifySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x55926875:
-		// user.getAllNotifySettings user_id:long = Vector<PeerPeerNotifySettings>;
 		x.UInt(0x55926875)
 
 		// no flags
@@ -2705,7 +2648,6 @@ func (m *TLUserGetAllNotifySettings) CalcByteSize(layer int32) int {
 func (m *TLUserGetAllNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x55926875:
-		// user.getAllNotifySettings user_id:long = Vector<PeerPeerNotifySettings>;
 
 		// not has flags
 
@@ -2733,7 +2675,6 @@ func (m *TLUserGetGlobalPrivacySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x77f6f112:
-		// user.getGlobalPrivacySettings user_id:long = GlobalPrivacySettings;
 		x.UInt(0x77f6f112)
 
 		// no flags
@@ -2754,7 +2695,6 @@ func (m *TLUserGetGlobalPrivacySettings) CalcByteSize(layer int32) int {
 func (m *TLUserGetGlobalPrivacySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x77f6f112:
-		// user.getGlobalPrivacySettings user_id:long = GlobalPrivacySettings;
 
 		// not has flags
 
@@ -2782,7 +2722,6 @@ func (m *TLUserSetGlobalPrivacySettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x8cb592ae:
-		// user.setGlobalPrivacySettings user_id:long settings:GlobalPrivacySettings = Bool;
 		x.UInt(0x8cb592ae)
 
 		// no flags
@@ -2804,7 +2743,6 @@ func (m *TLUserSetGlobalPrivacySettings) CalcByteSize(layer int32) int {
 func (m *TLUserSetGlobalPrivacySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8cb592ae:
-		// user.setGlobalPrivacySettings user_id:long settings:GlobalPrivacySettings = Bool;
 
 		// not has flags
 
@@ -2837,7 +2775,6 @@ func (m *TLUserGetPrivacy) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9d40a3b4:
-		// user.getPrivacy user_id:long key_type:int = Vector<PrivacyRule>;
 		x.UInt(0x9d40a3b4)
 
 		// no flags
@@ -2859,7 +2796,6 @@ func (m *TLUserGetPrivacy) CalcByteSize(layer int32) int {
 func (m *TLUserGetPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9d40a3b4:
-		// user.getPrivacy user_id:long key_type:int = Vector<PrivacyRule>;
 
 		// not has flags
 
@@ -2888,7 +2824,6 @@ func (m *TLUserSetPrivacy) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x8855ad8f:
-		// user.setPrivacy user_id:long key_type:int rules:Vector<PrivacyRule> = Bool;
 		x.UInt(0x8855ad8f)
 
 		// no flags
@@ -2916,7 +2851,6 @@ func (m *TLUserSetPrivacy) CalcByteSize(layer int32) int {
 func (m *TLUserSetPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8855ad8f:
-		// user.setPrivacy user_id:long key_type:int rules:Vector<PrivacyRule> = Bool;
 
 		// not has flags
 
@@ -2958,7 +2892,6 @@ func (m *TLUserCheckPrivacy) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc56e1eaa:
-		// user.checkPrivacy flags:# user_id:long key_type:int peer_id:long = Bool;
 		x.UInt(0xc56e1eaa)
 
 		// set flags
@@ -2985,7 +2918,6 @@ func (m *TLUserCheckPrivacy) CalcByteSize(layer int32) int {
 func (m *TLUserCheckPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc56e1eaa:
-		// user.checkPrivacy flags:# user_id:long key_type:int peer_id:long = Bool;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3017,7 +2949,6 @@ func (m *TLUserAddPeerSettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xcae22763:
-		// user.addPeerSettings user_id:long peer_type:int peer_id:long settings:PeerSettings = Bool;
 		x.UInt(0xcae22763)
 
 		// no flags
@@ -3041,7 +2972,6 @@ func (m *TLUserAddPeerSettings) CalcByteSize(layer int32) int {
 func (m *TLUserAddPeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xcae22763:
-		// user.addPeerSettings user_id:long peer_type:int peer_id:long settings:PeerSettings = Bool;
 
 		// not has flags
 
@@ -3076,7 +3006,6 @@ func (m *TLUserGetPeerSettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xd02ef67:
-		// user.getPeerSettings user_id:long peer_type:int peer_id:long = PeerSettings;
 		x.UInt(0xd02ef67)
 
 		// no flags
@@ -3099,7 +3028,6 @@ func (m *TLUserGetPeerSettings) CalcByteSize(layer int32) int {
 func (m *TLUserGetPeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xd02ef67:
-		// user.getPeerSettings user_id:long peer_type:int peer_id:long = PeerSettings;
 
 		// not has flags
 
@@ -3129,7 +3057,6 @@ func (m *TLUserDeletePeerSettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x5e891967:
-		// user.deletePeerSettings user_id:long peer_type:int peer_id:long = Bool;
 		x.UInt(0x5e891967)
 
 		// no flags
@@ -3152,7 +3079,6 @@ func (m *TLUserDeletePeerSettings) CalcByteSize(layer int32) int {
 func (m *TLUserDeletePeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x5e891967:
-		// user.deletePeerSettings user_id:long peer_type:int peer_id:long = Bool;
 
 		// not has flags
 
@@ -3182,7 +3108,6 @@ func (m *TLUserChangePhone) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xff7a575b:
-		// user.changePhone user_id:long phone:string = Bool;
 		x.UInt(0xff7a575b)
 
 		// no flags
@@ -3204,7 +3129,6 @@ func (m *TLUserChangePhone) CalcByteSize(layer int32) int {
 func (m *TLUserChangePhone) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xff7a575b:
-		// user.changePhone user_id:long phone:string = Bool;
 
 		// not has flags
 
@@ -3233,7 +3157,6 @@ func (m *TLUserCreateNewPredefinedUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x57493241:
-		// user.createNewPredefinedUser flags:# phone:string first_name:string last_name:flags.0?string username:string code:string verified:flags.1?true = PredefinedUser;
 		x.UInt(0x57493241)
 
 		// set flags
@@ -3273,7 +3196,6 @@ func (m *TLUserCreateNewPredefinedUser) CalcByteSize(layer int32) int {
 func (m *TLUserCreateNewPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x57493241:
-		// user.createNewPredefinedUser flags:# phone:string first_name:string last_name:flags.0?string username:string code:string verified:flags.1?true = PredefinedUser;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3313,7 +3235,6 @@ func (m *TLUserGetPredefinedUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x34376b25:
-		// user.getPredefinedUser phone:string = PredefinedUser;
 		x.UInt(0x34376b25)
 
 		// no flags
@@ -3334,7 +3255,6 @@ func (m *TLUserGetPredefinedUser) CalcByteSize(layer int32) int {
 func (m *TLUserGetPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x34376b25:
-		// user.getPredefinedUser phone:string = PredefinedUser;
 
 		// not has flags
 
@@ -3362,7 +3282,6 @@ func (m *TLUserGetAllPredefinedUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc1353fe5:
-		// user.getAllPredefinedUser = Vector<PredefinedUser>;
 		x.UInt(0xc1353fe5)
 
 		// no flags
@@ -3381,7 +3300,6 @@ func (m *TLUserGetAllPredefinedUser) CalcByteSize(layer int32) int {
 func (m *TLUserGetAllPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc1353fe5:
-		// user.getAllPredefinedUser = Vector<PredefinedUser>;
 
 		// not has flags
 
@@ -3408,7 +3326,6 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x3a3aa596:
-		// user.updatePredefinedFirstAndLastName flags:# phone:string first_name:string last_name:flags.0?string = PredefinedUser;
 		x.UInt(0x3a3aa596)
 
 		// set flags
@@ -3441,7 +3358,6 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) CalcByteSize(layer int32) int {
 func (m *TLUserUpdatePredefinedFirstAndLastName) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x3a3aa596:
-		// user.updatePredefinedFirstAndLastName flags:# phone:string first_name:string last_name:flags.0?string = PredefinedUser;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3476,7 +3392,6 @@ func (m *TLUserUpdatePredefinedVerified) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xbaf5b249:
-		// user.updatePredefinedVerified flags:# phone:string verified:flags.1?true = PredefinedUser;
 		x.UInt(0xbaf5b249)
 
 		// set flags
@@ -3505,7 +3420,6 @@ func (m *TLUserUpdatePredefinedVerified) CalcByteSize(layer int32) int {
 func (m *TLUserUpdatePredefinedVerified) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xbaf5b249:
-		// user.updatePredefinedVerified flags:# phone:string verified:flags.1?true = PredefinedUser;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3538,7 +3452,6 @@ func (m *TLUserUpdatePredefinedUsername) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x4ba7bed2:
-		// user.updatePredefinedUsername flags:# phone:string username:flags.1?string = PredefinedUser;
 		x.UInt(0x4ba7bed2)
 
 		// set flags
@@ -3570,7 +3483,6 @@ func (m *TLUserUpdatePredefinedUsername) CalcByteSize(layer int32) int {
 func (m *TLUserUpdatePredefinedUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4ba7bed2:
-		// user.updatePredefinedUsername flags:# phone:string username:flags.1?string = PredefinedUser;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3604,7 +3516,6 @@ func (m *TLUserUpdatePredefinedCode) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x60f68f67:
-		// user.updatePredefinedCode phone:string code:string = PredefinedUser;
 		x.UInt(0x60f68f67)
 
 		// no flags
@@ -3626,7 +3537,6 @@ func (m *TLUserUpdatePredefinedCode) CalcByteSize(layer int32) int {
 func (m *TLUserUpdatePredefinedCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x60f68f67:
-		// user.updatePredefinedCode phone:string code:string = PredefinedUser;
 
 		// not has flags
 
@@ -3655,7 +3565,6 @@ func (m *TLUserPredefinedBindRegisteredUserId) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x40f37a9:
-		// user.predefinedBindRegisteredUserId phone:string registered_userId:long = Bool;
 		x.UInt(0x40f37a9)
 
 		// no flags
@@ -3677,7 +3586,6 @@ func (m *TLUserPredefinedBindRegisteredUserId) CalcByteSize(layer int32) int {
 func (m *TLUserPredefinedBindRegisteredUserId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x40f37a9:
-		// user.predefinedBindRegisteredUserId phone:string registered_userId:long = Bool;
 
 		// not has flags
 
@@ -3706,7 +3614,6 @@ func (m *TLUserCreateNewUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x79e01881:
-		// user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
 		x.UInt(0x79e01881)
 
 		// no flags
@@ -3731,7 +3638,6 @@ func (m *TLUserCreateNewUser) CalcByteSize(layer int32) int {
 func (m *TLUserCreateNewUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x79e01881:
-		// user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
 
 		// not has flags
 
@@ -3763,7 +3669,6 @@ func (m *TLUserBlockPeer) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x81062eb0:
-		// user.blockPeer user_id:long peer_type:int peer_id:long = Bool;
 		x.UInt(0x81062eb0)
 
 		// no flags
@@ -3786,7 +3691,6 @@ func (m *TLUserBlockPeer) CalcByteSize(layer int32) int {
 func (m *TLUserBlockPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x81062eb0:
-		// user.blockPeer user_id:long peer_type:int peer_id:long = Bool;
 
 		// not has flags
 
@@ -3816,7 +3720,6 @@ func (m *TLUserUnBlockPeer) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xdee7160d:
-		// user.unBlockPeer user_id:long peer_type:int peer_id:long = Bool;
 		x.UInt(0xdee7160d)
 
 		// no flags
@@ -3839,7 +3742,6 @@ func (m *TLUserUnBlockPeer) CalcByteSize(layer int32) int {
 func (m *TLUserUnBlockPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xdee7160d:
-		// user.unBlockPeer user_id:long peer_type:int peer_id:long = Bool;
 
 		// not has flags
 
@@ -3869,7 +3771,6 @@ func (m *TLUserBlockedByUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xbba0058e:
-		// user.blockedByUser user_id:long peer_user_id:long = Bool;
 		x.UInt(0xbba0058e)
 
 		// no flags
@@ -3891,7 +3792,6 @@ func (m *TLUserBlockedByUser) CalcByteSize(layer int32) int {
 func (m *TLUserBlockedByUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xbba0058e:
-		// user.blockedByUser user_id:long peer_user_id:long = Bool;
 
 		// not has flags
 
@@ -3920,7 +3820,6 @@ func (m *TLUserIsBlockedByUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x8caeb1df:
-		// user.isBlockedByUser user_id:long peer_user_id:long = Bool;
 		x.UInt(0x8caeb1df)
 
 		// no flags
@@ -3942,7 +3841,6 @@ func (m *TLUserIsBlockedByUser) CalcByteSize(layer int32) int {
 func (m *TLUserIsBlockedByUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8caeb1df:
-		// user.isBlockedByUser user_id:long peer_user_id:long = Bool;
 
 		// not has flags
 
@@ -3971,7 +3869,6 @@ func (m *TLUserCheckBlockUserList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc3fd70f0:
-		// user.checkBlockUserList user_id:long id:Vector<long> = Vector<long>;
 		x.UInt(0xc3fd70f0)
 
 		// no flags
@@ -3994,7 +3891,6 @@ func (m *TLUserCheckBlockUserList) CalcByteSize(layer int32) int {
 func (m *TLUserCheckBlockUserList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc3fd70f0:
-		// user.checkBlockUserList user_id:long id:Vector<long> = Vector<long>;
 
 		// not has flags
 
@@ -4025,7 +3921,6 @@ func (m *TLUserGetBlockedList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x23ffc348:
-		// user.getBlockedList user_id:long offset:int limit:int = Vector<PeerBlocked>;
 		x.UInt(0x23ffc348)
 
 		// no flags
@@ -4048,7 +3943,6 @@ func (m *TLUserGetBlockedList) CalcByteSize(layer int32) int {
 func (m *TLUserGetBlockedList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x23ffc348:
-		// user.getBlockedList user_id:long offset:int limit:int = Vector<PeerBlocked>;
 
 		// not has flags
 
@@ -4078,7 +3972,6 @@ func (m *TLUserGetContactSignUpNotification) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe4d1d3d6:
-		// user.getContactSignUpNotification user_id:long = Bool;
 		x.UInt(0xe4d1d3d6)
 
 		// no flags
@@ -4099,7 +3992,6 @@ func (m *TLUserGetContactSignUpNotification) CalcByteSize(layer int32) int {
 func (m *TLUserGetContactSignUpNotification) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe4d1d3d6:
-		// user.getContactSignUpNotification user_id:long = Bool;
 
 		// not has flags
 
@@ -4127,7 +4019,6 @@ func (m *TLUserSetContactSignUpNotification) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x85a17361:
-		// user.setContactSignUpNotification user_id:long silent:Bool = Bool;
 		x.UInt(0x85a17361)
 
 		// no flags
@@ -4149,7 +4040,6 @@ func (m *TLUserSetContactSignUpNotification) CalcByteSize(layer int32) int {
 func (m *TLUserSetContactSignUpNotification) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x85a17361:
-		// user.setContactSignUpNotification user_id:long silent:Bool = Bool;
 
 		// not has flags
 
@@ -4182,7 +4072,6 @@ func (m *TLUserGetContentSettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x94c3ad9f:
-		// user.getContentSettings user_id:long = account.ContentSettings;
 		x.UInt(0x94c3ad9f)
 
 		// no flags
@@ -4203,7 +4092,6 @@ func (m *TLUserGetContentSettings) CalcByteSize(layer int32) int {
 func (m *TLUserGetContentSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x94c3ad9f:
-		// user.getContentSettings user_id:long = account.ContentSettings;
 
 		// not has flags
 
@@ -4231,7 +4119,6 @@ func (m *TLUserSetContentSettings) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9d63fe6b:
-		// user.setContentSettings flags:# user_id:long sensitive_enabled:flags.0?true = Bool;
 		x.UInt(0x9d63fe6b)
 
 		// set flags
@@ -4260,7 +4147,6 @@ func (m *TLUserSetContentSettings) CalcByteSize(layer int32) int {
 func (m *TLUserSetContentSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9d63fe6b:
-		// user.setContentSettings flags:# user_id:long sensitive_enabled:flags.0?true = Bool;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -4293,7 +4179,6 @@ func (m *TLUserDeleteContact) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc6018219:
-		// user.deleteContact user_id:long id:long = Bool;
 		x.UInt(0xc6018219)
 
 		// no flags
@@ -4315,7 +4200,6 @@ func (m *TLUserDeleteContact) CalcByteSize(layer int32) int {
 func (m *TLUserDeleteContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc6018219:
-		// user.deleteContact user_id:long id:long = Bool;
 
 		// not has flags
 
@@ -4344,7 +4228,6 @@ func (m *TLUserGetContactList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc74bd161:
-		// user.getContactList user_id:long = Vector<ContactData>;
 		x.UInt(0xc74bd161)
 
 		// no flags
@@ -4365,7 +4248,6 @@ func (m *TLUserGetContactList) CalcByteSize(layer int32) int {
 func (m *TLUserGetContactList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc74bd161:
-		// user.getContactList user_id:long = Vector<ContactData>;
 
 		// not has flags
 
@@ -4393,7 +4275,6 @@ func (m *TLUserGetContactIdList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xf1dd983e:
-		// user.getContactIdList user_id:long = Vector<long>;
 		x.UInt(0xf1dd983e)
 
 		// no flags
@@ -4414,7 +4295,6 @@ func (m *TLUserGetContactIdList) CalcByteSize(layer int32) int {
 func (m *TLUserGetContactIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xf1dd983e:
-		// user.getContactIdList user_id:long = Vector<long>;
 
 		// not has flags
 
@@ -4442,7 +4322,6 @@ func (m *TLUserGetContact) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xdb728be3:
-		// user.getContact user_id:long id:long = ContactData;
 		x.UInt(0xdb728be3)
 
 		// no flags
@@ -4464,7 +4343,6 @@ func (m *TLUserGetContact) CalcByteSize(layer int32) int {
 func (m *TLUserGetContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xdb728be3:
-		// user.getContact user_id:long id:long = ContactData;
 
 		// not has flags
 
@@ -4493,7 +4371,6 @@ func (m *TLUserAddContact) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x79c4bd0e:
-		// user.addContact user_id:long add_phone_privacy_exception:Bool id:long first_name:string last_name:string phone:string = Bool;
 		x.UInt(0x79c4bd0e)
 
 		// no flags
@@ -4519,7 +4396,6 @@ func (m *TLUserAddContact) CalcByteSize(layer int32) int {
 func (m *TLUserAddContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x79c4bd0e:
-		// user.addContact user_id:long add_phone_privacy_exception:Bool id:long first_name:string last_name:string phone:string = Bool;
 
 		// not has flags
 
@@ -4556,7 +4432,6 @@ func (m *TLUserCheckContact) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x82a758a4:
-		// user.checkContact user_id:long id:long = Bool;
 		x.UInt(0x82a758a4)
 
 		// no flags
@@ -4578,7 +4453,6 @@ func (m *TLUserCheckContact) CalcByteSize(layer int32) int {
 func (m *TLUserCheckContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x82a758a4:
-		// user.checkContact user_id:long id:long = Bool;
 
 		// not has flags
 
@@ -4607,7 +4481,6 @@ func (m *TLUserImportContacts) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9a00f792:
-		// user.importContacts user_id:long contacts:Vector<InputContact> = UserImportedContacts;
 		x.UInt(0x9a00f792)
 
 		// no flags
@@ -4634,7 +4507,6 @@ func (m *TLUserImportContacts) CalcByteSize(layer int32) int {
 func (m *TLUserImportContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9a00f792:
-		// user.importContacts user_id:long contacts:Vector<InputContact> = UserImportedContacts;
 
 		// not has flags
 
@@ -4675,7 +4547,6 @@ func (m *TLUserGetCountryCode) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x12006832:
-		// user.getCountryCode user_id:long = String;
 		x.UInt(0x12006832)
 
 		// no flags
@@ -4696,7 +4567,6 @@ func (m *TLUserGetCountryCode) CalcByteSize(layer int32) int {
 func (m *TLUserGetCountryCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x12006832:
-		// user.getCountryCode user_id:long = String;
 
 		// not has flags
 
@@ -4724,7 +4594,6 @@ func (m *TLUserUpdateAbout) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xdb00f187:
-		// user.updateAbout user_id:long about:string = Bool;
 		x.UInt(0xdb00f187)
 
 		// no flags
@@ -4746,7 +4615,6 @@ func (m *TLUserUpdateAbout) CalcByteSize(layer int32) int {
 func (m *TLUserUpdateAbout) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xdb00f187:
-		// user.updateAbout user_id:long about:string = Bool;
 
 		// not has flags
 
@@ -4775,7 +4643,6 @@ func (m *TLUserUpdateFirstAndLastName) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xcb6685ec:
-		// user.updateFirstAndLastName user_id:long first_name:string last_name:string = Bool;
 		x.UInt(0xcb6685ec)
 
 		// no flags
@@ -4798,7 +4665,6 @@ func (m *TLUserUpdateFirstAndLastName) CalcByteSize(layer int32) int {
 func (m *TLUserUpdateFirstAndLastName) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xcb6685ec:
-		// user.updateFirstAndLastName user_id:long first_name:string last_name:string = Bool;
 
 		// not has flags
 
@@ -4828,7 +4694,6 @@ func (m *TLUserUpdateVerified) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x24c92963:
-		// user.updateVerified user_id:long verified:Bool = Bool;
 		x.UInt(0x24c92963)
 
 		// no flags
@@ -4850,7 +4715,6 @@ func (m *TLUserUpdateVerified) CalcByteSize(layer int32) int {
 func (m *TLUserUpdateVerified) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x24c92963:
-		// user.updateVerified user_id:long verified:Bool = Bool;
 
 		// not has flags
 
@@ -4883,7 +4747,6 @@ func (m *TLUserUpdateUsername) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xf54d1e71:
-		// user.updateUsername user_id:long username:string = Bool;
 		x.UInt(0xf54d1e71)
 
 		// no flags
@@ -4905,7 +4768,6 @@ func (m *TLUserUpdateUsername) CalcByteSize(layer int32) int {
 func (m *TLUserUpdateUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xf54d1e71:
-		// user.updateUsername user_id:long username:string = Bool;
 
 		// not has flags
 
@@ -4934,7 +4796,6 @@ func (m *TLUserUpdateProfilePhoto) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x3b740f87:
-		// user.updateProfilePhoto user_id:long id:long = Int64;
 		x.UInt(0x3b740f87)
 
 		// no flags
@@ -4956,7 +4817,6 @@ func (m *TLUserUpdateProfilePhoto) CalcByteSize(layer int32) int {
 func (m *TLUserUpdateProfilePhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x3b740f87:
-		// user.updateProfilePhoto user_id:long id:long = Int64;
 
 		// not has flags
 
@@ -4985,7 +4845,6 @@ func (m *TLUserDeleteProfilePhotos) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x2be3620e:
-		// user.deleteProfilePhotos user_id:long id:Vector<long> = Int64;
 		x.UInt(0x2be3620e)
 
 		// no flags
@@ -5008,7 +4867,6 @@ func (m *TLUserDeleteProfilePhotos) CalcByteSize(layer int32) int {
 func (m *TLUserDeleteProfilePhotos) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x2be3620e:
-		// user.deleteProfilePhotos user_id:long id:Vector<long> = Int64;
 
 		// not has flags
 
@@ -5039,7 +4897,6 @@ func (m *TLUserGetProfilePhotos) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xdc66c146:
-		// user.getProfilePhotos user_id:long = Vector<long>;
 		x.UInt(0xdc66c146)
 
 		// no flags
@@ -5060,7 +4917,6 @@ func (m *TLUserGetProfilePhotos) CalcByteSize(layer int32) int {
 func (m *TLUserGetProfilePhotos) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xdc66c146:
-		// user.getProfilePhotos user_id:long = Vector<long>;
 
 		// not has flags
 
@@ -5088,7 +4944,6 @@ func (m *TLUserSetBotCommands) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x753ba916:
-		// user.setBotCommands user_id:long bot_id:long commands:Vector<BotCommand> = Bool;
 		x.UInt(0x753ba916)
 
 		// no flags
@@ -5116,7 +4971,6 @@ func (m *TLUserSetBotCommands) CalcByteSize(layer int32) int {
 func (m *TLUserSetBotCommands) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x753ba916:
-		// user.setBotCommands user_id:long bot_id:long commands:Vector<BotCommand> = Bool;
 
 		// not has flags
 
@@ -5158,7 +5012,6 @@ func (m *TLUserIsBot) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc772c7ee:
-		// user.isBot id:long = Bool;
 		x.UInt(0xc772c7ee)
 
 		// no flags
@@ -5179,7 +5032,6 @@ func (m *TLUserIsBot) CalcByteSize(layer int32) int {
 func (m *TLUserIsBot) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc772c7ee:
-		// user.isBot id:long = Bool;
 
 		// not has flags
 
@@ -5207,7 +5059,6 @@ func (m *TLUserGetBotInfo) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x34663710:
-		// user.getBotInfo bot_id:long = BotInfo;
 		x.UInt(0x34663710)
 
 		// no flags
@@ -5228,7 +5079,6 @@ func (m *TLUserGetBotInfo) CalcByteSize(layer int32) int {
 func (m *TLUserGetBotInfo) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x34663710:
-		// user.getBotInfo bot_id:long = BotInfo;
 
 		// not has flags
 
@@ -5256,7 +5106,6 @@ func (m *TLUserGetFullUser) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfd10e13a:
-		// user.getFullUser self_user_id:long id:long = users.UserFull;
 		x.UInt(0xfd10e13a)
 
 		// no flags
@@ -5278,7 +5127,6 @@ func (m *TLUserGetFullUser) CalcByteSize(layer int32) int {
 func (m *TLUserGetFullUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfd10e13a:
-		// user.getFullUser self_user_id:long id:long = users.UserFull;
 
 		// not has flags
 

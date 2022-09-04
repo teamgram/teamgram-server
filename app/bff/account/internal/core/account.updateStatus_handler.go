@@ -32,7 +32,7 @@ func (c *AccountCore) AccountUpdateStatus(in *mtproto.TLAccountUpdateStatus) (*m
 	var (
 		offline     = mtproto.FromBool(in.GetOffline())
 		now         = time.Now().Unix()
-		expries     = int32(0)
+		expires     = int32(0)
 		pushUpdates = mtproto.MakeTLUpdateShort(&mtproto.Updates{
 			Update: mtproto.MakeTLUpdateUserStatus(&mtproto.Update{
 				UserId: c.MD.UserId,
@@ -43,9 +43,9 @@ func (c *AccountCore) AccountUpdateStatus(in *mtproto.TLAccountUpdateStatus) (*m
 	)
 
 	if !offline {
-		expries = 300
+		expires = 300
 		pushUpdates.Update.Status = mtproto.MakeTLUserStatusOnline(&mtproto.UserStatus{
-			Expires: int32(now) + expries,
+			Expires: int32(now) + expires,
 		}).To_UserStatus()
 
 		// online
@@ -64,7 +64,7 @@ func (c *AccountCore) AccountUpdateStatus(in *mtproto.TLAccountUpdateStatus) (*m
 			&userpb.TLUserUpdateLastSeen{
 				Id:         c.MD.UserId,
 				LastSeenAt: now,
-				Expries:    expries,
+				Expries:    expires,
 			})
 	})
 
