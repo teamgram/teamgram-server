@@ -22,7 +22,7 @@ func (c *UserCore) UserUpdateLastSeen(in *user.TLUserUpdateLastSeen) (*mtproto.B
 			c.ctx,
 			in.GetId(),
 			in.GetLastSeenAt(),
-			in.GetExpries())
+			in.GetExpires())
 	}
 
 	return mtproto.BoolTrue, nil

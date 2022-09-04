@@ -27,6 +27,6 @@ func (c *UserCore) UserGetLastSeen(in *user.TLUserGetLastSeen) (*user.LastSeenDa
 	return user.MakeTLLastSeenData(&user.LastSeenData{
 		UserId:     in.Id,
 		LastSeenAt: do.LastSeenAt,
-		Expries:    do.Expires,
+		Expires:    do.Expires,
 	}).To_LastSeenData(), nil
 }

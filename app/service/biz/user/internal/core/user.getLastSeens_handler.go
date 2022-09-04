@@ -50,7 +50,7 @@ func (c *UserCore) UserGetLastSeens(in *user.TLUserGetLastSeens) (*user.Vector_L
 		rValues.Datas = append(rValues.Datas, user.MakeTLLastSeenData(&user.LastSeenData{
 			UserId:     doList[i].UserId,
 			LastSeenAt: doList[i].LastSeenAt,
-			Expries:    doList[i].Expires,
+			Expires:    doList[i].Expires,
 		}).To_LastSeenData())
 	}
 

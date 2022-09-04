@@ -45,9 +45,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 361114766
 		return o
 	},
-	-313287543: func() mtproto.TLObject { // 0xed539c89
+	-1280204321: func() mtproto.TLObject { // 0xb3b1a1df
 		o := MakeTLLastSeenData(nil)
-		o.Data2.Constructor = -313287543
+		o.Data2.Constructor = -1280204321
 		return o
 	},
 	1894399913: func() mtproto.TLObject { // 0x70ea3fa9
@@ -1053,7 +1053,7 @@ func (m *LastSeenData) CalcByteSize(layer int32) int {
 func (m *LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xed539c89:
+	case 0xb3b1a1df:
 		m2 := MakeTLLastSeenData(m)
 		m2.Decode(dBuf)
 
@@ -1105,8 +1105,8 @@ func (m *TLLastSeenData) GetUserId() int64  { return m.Data2.UserId }
 func (m *TLLastSeenData) SetLastSeenAt(v int64) { m.Data2.LastSeenAt = v }
 func (m *TLLastSeenData) GetLastSeenAt() int64  { return m.Data2.LastSeenAt }
 
-func (m *TLLastSeenData) SetExpries(v int32) { m.Data2.Expries = v }
-func (m *TLLastSeenData) GetExpries() int32  { return m.Data2.Expries }
+func (m *TLLastSeenData) SetExpires(v int32) { m.Data2.Expires = v }
+func (m *TLLastSeenData) GetExpires() int32  { return m.Data2.Expires }
 
 func (m *TLLastSeenData) GetPredicateName() string {
 	return Predicate_lastSeenData
@@ -1116,12 +1116,12 @@ func (m *TLLastSeenData) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0xed539c89: func() []byte {
-			x.UInt(0xed539c89)
+		0xb3b1a1df: func() []byte {
+			x.UInt(0xb3b1a1df)
 
 			x.Long(m.GetUserId())
 			x.Long(m.GetLastSeenAt())
-			x.Int(m.GetExpries())
+			x.Int(m.GetExpires())
 			return x.GetBuf()
 		},
 	}
@@ -1144,10 +1144,10 @@ func (m *TLLastSeenData) CalcByteSize(layer int32) int {
 
 func (m *TLLastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xed539c89: func() error {
+		0xb3b1a1df: func() error {
 			m.SetUserId(dBuf.Long())
 			m.SetLastSeenAt(dBuf.Long())
-			m.SetExpries(dBuf.Int())
+			m.SetExpires(dBuf.Int())
 			return dBuf.GetError()
 		},
 	}
