@@ -64,7 +64,7 @@ func (c *AccountCore) AccountUpdateStatus(in *mtproto.TLAccountUpdateStatus) (*m
 			&userpb.TLUserUpdateLastSeen{
 				Id:         c.MD.UserId,
 				LastSeenAt: now,
-				Expries:    expires,
+				Expires:    expires,
 			})
 	})
 
