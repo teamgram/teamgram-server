@@ -18,7 +18,7 @@ import (
 // UserGetImmutableUser
 // user.getImmutableUser id:long = ImmutableUser;
 func (c *UserCore) UserGetImmutableUser(in *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
-	imUser, err := c.getImmutableUser(in.GetId(), false, false)
+	imUser, err := c.getImmutableUser(in.GetId(), false)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (c *UserCore) UserGetImmutableUser(in *user.TLUserGetImmutableUser) (*user.
 	return imUser, nil
 }
 
-func (c *UserCore) getImmutableUser(id int64, contacts, privacy bool) (*user.ImmutableUser, error) {
+func (c *UserCore) getImmutableUser(id int64, privacy bool, contacts ...int64) (*user.ImmutableUser, error) {
 	userData := c.svcCtx.Dao.GetUserData(c.ctx, id)
 
 	// userDO, _ := c.svcCtx.Dao.UsersDAO.SelectById(c.ctx, in.Id)
@@ -53,10 +53,8 @@ func (c *UserCore) getImmutableUser(id int64, contacts, privacy bool) (*user.Imm
 					}
 				},
 				func() {
-					if contacts {
-						// TODO: aaa
-						immutableUser.Contacts = c.svcCtx.Dao.GetUserContactList(c.ctx, id)
-					}
+					// TODO: aaa
+					immutableUser.Contacts = c.svcCtx.Dao.GetUserContactListByIdList(c.ctx, id, contacts...)
 				},
 				func() {
 					if privacy {
