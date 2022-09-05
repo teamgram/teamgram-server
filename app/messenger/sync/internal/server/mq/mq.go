@@ -10,6 +10,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/core"
@@ -28,7 +29,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 		func(ctx context.Context, key string, value []byte) {
 			logx.WithContext(ctx).Infof("key: %s, value: %s", key, value)
 
-			switch key {
+			switch strings.Split(key, "#")[0] {
 			case proto.MessageName((*sync.TLSyncUpdatesMe)(nil)):
 				c := core.New(ctx, svcCtx)
 
