@@ -125,6 +125,7 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: miniostorage
     command: server /data --console-address ":9001"
+    restart: always
     networks:
       - teamgram_net
 
