@@ -3,6 +3,7 @@ version: "3"
 services:
   teamgram:
     build: .
+    restart: always
     ports:
       - "10443:10443"
       - "20450:20450"
