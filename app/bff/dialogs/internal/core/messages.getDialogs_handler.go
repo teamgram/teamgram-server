@@ -19,34 +19,58 @@
 package core
 
 import (
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
-	"math"
+	"context"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	"sort"
+
+	"github.com/teamgram/proto/mtproto"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // MessagesGetDialogs
 // messages.getDialogs#a0f4cb4f flags:# exclude_pinned:flags.0?true folder_id:flags.1?int offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.Dialogs;
 func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtproto.Messages_Dialogs, error) {
 	var (
-		peer     = mtproto.FromInputPeer2(c.MD.UserId, in.OffsetPeer)
-		folderId = in.GetFolderId().GetValue()
-		limit    = in.Limit
+		offsetPeer         = mtproto.FromInputPeer2(c.MD.UserId, in.OffsetPeer)
+		folderId           = in.GetFolderId().GetValue()
+		limit              = in.Limit
+		dialogExtList      dialog.DialogExtList
+		notifySettingsList []*userpb.PeerPeerNotifySettings
 	)
 
 	if limit > 500 {
 		limit = 500
 	}
 
-	dialogs, err := c.svcCtx.Dao.DialogClient.DialogGetDialogs(c.ctx, &dialog.TLDialogGetDialogs{
-		UserId:        c.MD.UserId,
-		ExcludePinned: mtproto.ToBool(in.ExcludePinned),
-		FolderId:      folderId,
-	})
-	if err != nil {
-		c.Logger.Errorf("messages.getDialogs - error: %v", err)
-		return nil, err
-	} else if len(dialogs.Datas) == 0 {
+	mr.FinishVoid(
+		func() {
+			dialogs, err := c.svcCtx.Dao.DialogClient.DialogGetDialogs(c.ctx, &dialog.TLDialogGetDialogs{
+				UserId:        c.MD.UserId,
+				ExcludePinned: mtproto.ToBool(in.ExcludePinned),
+				FolderId:      folderId,
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.getDialogs - error: %v", err)
+			} else {
+				dialogExtList = dialogs.GetDatas()
+			}
+		},
+		func() {
+			settingsList, err := c.svcCtx.Dao.UserClient.UserGetAllNotifySettings(c.ctx, &userpb.TLUserGetAllNotifySettings{
+				UserId: c.MD.UserId,
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.getDialogs - error: %v", err)
+			} else {
+				notifySettingsList = settingsList.GetDatas()
+			}
+		})
+
+	if len(dialogExtList) == 0 {
 		return mtproto.MakeTLMessagesDialogsSlice(&mtproto.Messages_Dialogs{
 			Dialogs:  []*mtproto.Dialog{},
 			Messages: []*mtproto.Message{},
@@ -57,16 +81,25 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 	}
 
 	var (
-		dialogCount                        = int32(len(dialogs.Datas))
-		dialogExtList dialog.DialogExtList = dialogs.Datas
+		dialogCount = int32(dialogExtList.Len())
 	)
 
-	for _, dialogEx := range dialogExtList {
-		peer2 := dialogEx.GetDialog().GetPeer()
+	foundF := func(settingsList []*userpb.PeerPeerNotifySettings, peer *mtproto.PeerUtil) *mtproto.PeerNotifySettings {
+		for _, s := range settingsList {
+			if s.PeerType == peer.PeerType && s.PeerId == peer.PeerId {
+				return s.Settings
+			}
+		}
 
-		if peer2.GetPredicateName() == mtproto.Predicate_peerChannel {
+		return mtproto.MakeTLPeerNotifySettings(nil).To_PeerNotifySettings()
+	}
+
+	for _, dialogEx := range dialogExtList {
+		peer2 := mtproto.FromPeer(dialogEx.GetDialog().GetPeer())
+
+		if peer2.IsChannel() {
 			if c.svcCtx.Plugin != nil {
-				dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.ChannelId)
+				dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.PeerId)
 				if dialog != nil {
 					dialogEx.Dialog.TopMessage = dialog.Dialog.TopMessage
 					dialogEx.Dialog.Pts = dialog.Dialog.Pts
@@ -75,92 +108,86 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 					dialogEx.Order = dialog.Order
 					// TODO:
 					// dialogEx.AvailableMinId = megagroup2.GetParticipants()[0].AvailableMinId
+					dialogEx.Dialog.UnreadCount = dialog.Dialog.TopMessage - dialogEx.Dialog.ReadInboxMaxId
+					if dialog.Dialog.UnreadCount < 0 {
+						dialog.Dialog.UnreadCount = 0
+					}
 				}
 			} else {
 				c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
 			}
 		}
+
+		dialogEx.Dialog.NotifySettings = foundF(notifySettingsList, peer2)
 	}
 
 	r2 := sort.Reverse(dialogExtList)
 	sort.Sort(r2)
 
-	//for _, dialog := range dialogs {
-	switch peer.PeerType {
-	case mtproto.PEER_EMPTY:
-		if (in.OffsetId == 0 || in.OffsetId == 2147483647) && (in.OffsetDate == 0 || in.OffsetDate == 2147483647) {
-			if len(dialogExtList) >= int(limit) {
-				dialogExtList = dialogExtList[:limit]
-			}
-		} else {
-			idx := -1
-			if in.OffsetId > 0 && in.OffsetId < math.MaxInt32 {
-				for i, dialog := range dialogExtList {
-					if dialog.Dialog.TopMessage == in.OffsetId {
-						idx = i
-						break
+	dialogExtList = dialogExtList.GetDialogsByOffsetLimit(
+		in.OffsetDate,
+		in.OffsetId,
+		offsetPeer,
+		in.Limit)
+
+	messageDialogs := dialogExtList.DoGetMessagesDialogs(
+		c.ctx,
+		c.MD.UserId,
+		func(ctx context.Context, selfUserId int64, id ...dialog.TopMessageId) []*mtproto.Message {
+			var (
+				msgList   = make([]*mtproto.Message, 0, len(id))
+				msgIdList = make([]int32, 0, len(id))
+			)
+			for _, id2 := range id {
+				if id2.Peer.IsChannel() {
+					box, _ := c.svcCtx.Plugin.GetChannelMessage(c.ctx, c.MD.UserId, id2.Peer.PeerId, id2.TopMessage)
+					if box != nil {
+						msgList = append(msgList, box.ToMessage(c.MD.UserId))
 					}
-				}
-			} else if in.OffsetDate > 0 && in.OffsetDate < math.MaxInt32 {
-				for i, dialog := range dialogExtList {
-					if int32(dialog.Order) == in.OffsetDate {
-						idx = i
-						break
-					}
-				}
-			}
-			if idx > 0 {
-				if idx+1+int(limit) > len(dialogExtList) {
-					dialogExtList = dialogExtList[idx+1:]
 				} else {
-					dialogExtList = dialogExtList[idx+1 : idx+1+int(limit)]
+					msgIdList = append(msgIdList, id2.TopMessage)
 				}
-			} else {
-				dialogExtList = dialogExtList[:0]
 			}
-		}
-	default:
-		idx := -1
+			if len(msgIdList) > 0 {
+				boxList, _ := c.svcCtx.Dao.MessageClient.MessageGetUserMessageList(c.ctx, &message.TLMessageGetUserMessageList{
+					UserId: c.MD.UserId,
+					IdList: msgIdList,
+				})
+				boxList.Walk(func(idx int, v *mtproto.MessageBox) {
+					msgList = append(msgList, v.ToMessage(c.MD.UserId))
+				})
+			}
 
-		switch peer.PeerType {
-		case mtproto.PEER_SELF, mtproto.PEER_USER:
-			for i, dialog := range dialogExtList {
-				if dialog.Dialog.TopMessage == in.OffsetId &&
-					int32(dialog.Order) == in.OffsetDate &&
-					dialog.Dialog.Peer.UserId == peer.PeerId {
-					idx = i
-					break
-				}
-			}
-		case mtproto.PEER_CHAT:
-			for i, dialog := range dialogExtList {
-				if dialog.Dialog.TopMessage == in.OffsetId &&
-					int32(dialog.Order) == in.OffsetDate &&
-					dialog.Dialog.Peer.ChatId == peer.PeerId {
-					idx = i
-					break
-				}
-			}
-		case mtproto.PEER_CHANNEL:
-			for i, dialog := range dialogExtList {
-				if dialog.Dialog.TopMessage == in.OffsetId &&
-					int32(dialog.Order) == in.OffsetDate &&
-					dialog.Dialog.Peer.ChannelId == peer.PeerId {
-					idx = i
-					break
-				}
-			}
-		}
-		if idx > 0 {
-			if idx+int(limit) > len(dialogExtList)-2 {
-				dialogExtList = dialogExtList[idx+1:]
-			} else {
-				dialogExtList = dialogExtList[idx+1 : idx+1+int(limit)]
-			}
-		} else {
-			dialogExtList = dialogExtList[:0]
-		}
-	}
+			return msgList
+		},
+		func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.User {
+			users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
+				&userpb.TLUserGetMutableUsers{
+					Id: id,
+				})
 
-	return c.makeMessagesDialogs(dialogExtList).ToMessagesDialogs(dialogCount), nil
+			return users.GetUserListByIdList(c.MD.UserId, id...)
+		},
+		func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat {
+			chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+				&chatpb.TLChatGetChatListByIdList{
+					IdList: id,
+				})
+
+			return chats.GetChatListByIdList(c.MD.UserId, id...)
+		},
+		func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat {
+			var (
+				chats []*mtproto.Chat
+			)
+			if c.svcCtx.Plugin != nil {
+				chats = c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, id...)
+			} else {
+				c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
+
+			return chats
+		})
+
+	return messageDialogs.ToMessagesDialogs(dialogCount), nil
 }

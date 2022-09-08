@@ -6,7 +6,15 @@
 
 package dialog
 
-import "github.com/teamgram/proto/mtproto"
+import (
+	"context"
+	"math"
+	"sync"
+
+	"github.com/teamgram/proto/mtproto"
+
+	"github.com/zeromicro/go-zero/core/mr"
+)
 
 type (
 	DialogExtList []*DialogExt
@@ -23,33 +31,221 @@ func (m *DialogExt) HasDialog() bool {
 func (m DialogExtList) Len() int {
 	return len(m)
 }
+
 func (m DialogExtList) Swap(i, j int) {
 	m[j], m[i] = m[i], m[j]
 }
+
 func (m DialogExtList) Less(i, j int) bool {
 	// TODO(@benqi): if date[i] == date[j]
 	return m[i].Order < m[j].Order
 }
 
-type (
-	DialogPinnedExtList []*DialogPinnedExt
-)
+func (m DialogExtList) ChannelIdList() (idList []int64) {
+	for _, dlgExt := range m {
+		peer := dlgExt.GetDialog().GetPeer()
+		if mtproto.PeerIsChannel(peer) {
+			idList = append(idList, peer.ChannelId)
+		}
+	}
 
-func (m DialogPinnedExtList) Add(peerType int32, peerId int64, order int64) DialogPinnedExtList {
-	return append(m, &DialogPinnedExt{
-		Order:    order,
-		PeerType: peerType,
-		PeerId:   peerId,
-	})
+	return
 }
 
-func (m DialogPinnedExtList) Len() int {
-	return len(m)
+func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32, offsetPeer *mtproto.PeerUtil, limit int32) DialogExtList {
+	var (
+		dialogExtList2 DialogExtList
+	)
+
+	if offsetPeer.IsEmpty() {
+		if (offsetId == 0 || offsetId == 2147483647) && (offsetDate == 0 || offsetDate == 2147483647) {
+			if m.Len() >= int(limit) {
+				dialogExtList2 = m[:limit]
+			}
+		} else {
+			idx := -1
+			if offsetId > 0 && offsetId < math.MaxInt32 {
+				for i, dialog := range m {
+					if dialog.Dialog.TopMessage == offsetId {
+						idx = i
+						break
+					}
+				}
+			} else if offsetDate > 0 && offsetDate < math.MaxInt32 {
+				for i, dialog := range m {
+					if int32(dialog.Order) == offsetDate {
+						idx = i
+						break
+					}
+				}
+			}
+			if idx > 0 {
+				if idx+1+int(limit) > m.Len() {
+					dialogExtList2 = m[idx+1:]
+				} else {
+					dialogExtList2 = m[idx+1 : idx+1+int(limit)]
+				}
+			} else {
+				dialogExtList2 = m[:0]
+			}
+		}
+	} else {
+		idx := -1
+
+		switch offsetPeer.PeerType {
+		case mtproto.PEER_SELF, mtproto.PEER_USER:
+			for i, dialog := range m {
+				if dialog.Dialog.TopMessage == offsetId &&
+					int32(dialog.Order) == offsetDate &&
+					dialog.Dialog.Peer.UserId == offsetPeer.PeerId {
+					idx = i
+					break
+				}
+			}
+		case mtproto.PEER_CHAT:
+			for i, dialog := range m {
+				if dialog.Dialog.TopMessage == offsetId &&
+					int32(dialog.Order) == offsetDate &&
+					dialog.Dialog.Peer.ChatId == offsetPeer.PeerId {
+					idx = i
+					break
+				}
+			}
+		case mtproto.PEER_CHANNEL:
+			for i, dialog := range m {
+				if dialog.Dialog.TopMessage == offsetId &&
+					int32(dialog.Order) == offsetDate &&
+					dialog.Dialog.Peer.ChannelId == offsetPeer.PeerId {
+					idx = i
+					break
+				}
+			}
+		}
+		if idx > 0 {
+			if idx+int(limit) > m.Len()-2 {
+				dialogExtList2 = m[idx+1:]
+			} else {
+				dialogExtList2 = m[idx+1 : idx+1+int(limit)]
+			}
+		} else {
+			dialogExtList2 = m[:0]
+		}
+	}
+
+	return dialogExtList2
 }
-func (m DialogPinnedExtList) Swap(i, j int) {
-	m[j], m[i] = m[i], m[j]
+
+type TopMessageId struct {
+	Peer       *mtproto.PeerUtil
+	TopMessage int32
 }
-func (m DialogPinnedExtList) Less(i, j int) bool {
-	// TODO(@benqi): if date[i] == date[j]
-	return m[i].Order < m[j].Order
+
+type PeerIdList struct {
+	PeerType int
+	IdList   []int64
+}
+
+func (m DialogExtList) DoGetMessagesDialogs(
+	ctx context.Context,
+	selfUserId int64,
+	// cbNotifySettings func(ctx context.Context, selfUserId int64, peers ...mtproto.PeerUtil) []*mtproto.PeerNotifySettings,
+	cbMsgF func(ctx context.Context, selfUserId int64, id ...TopMessageId) []*mtproto.Message,
+	cbUserF func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.User,
+	cbChatF func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat,
+	cbChannelF func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat) *DialogsDataHelper {
+
+	dialogsData := &DialogsDataHelper{
+		Dialogs:  []*mtproto.Dialog{},
+		Messages: []*mtproto.Message{},
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{},
+	}
+
+	if len(m) == 0 {
+		return dialogsData
+	}
+
+	var (
+		idHelper = mtproto.NewIDListHelper(selfUserId)
+		mu       sync.Mutex
+	)
+
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			var idList []TopMessageId
+			for _, dialogExt := range m {
+				peer2 := mtproto.FromPeer(dialogExt.Dialog.Peer)
+				if peer2.IsChannel() {
+					source <- []TopMessageId{{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage}}
+				} else {
+					idList = append(idList, TopMessageId{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage})
+				}
+			}
+			if len(idList) > 0 {
+				source <- idList
+			}
+		},
+		func(item interface{}) {
+			idList := item.([]TopMessageId)
+			mList := cbMsgF(ctx, selfUserId, idList...)
+			for _, msg := range mList {
+				mu.Lock()
+				idHelper.PickByMessage(msg)
+				dialogsData.Messages = append(dialogsData.Messages, msg)
+				mu.Unlock()
+			}
+		})
+
+	for _, dialogExt := range m {
+		dialogsData.Dialogs = append(dialogsData.Dialogs, dialogExt.Dialog)
+	}
+
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			idHelper.Visit(
+				func(userIdList []int64) {
+					if cbUserF != nil {
+						source <- PeerIdList{mtproto.PEER_USER, userIdList}
+					}
+				},
+				func(chatIdList []int64) {
+					if cbChatF != nil {
+						source <- PeerIdList{mtproto.PEER_CHAT, chatIdList}
+					}
+				},
+				func(channelIdList []int64) {
+					if cbChatF != nil {
+						source <- PeerIdList{mtproto.PEER_CHANNEL, channelIdList}
+					}
+				})
+
+		},
+		func(item interface{}) {
+			idList := item.(PeerIdList)
+			switch idList.PeerType {
+			case mtproto.PEER_USER:
+				users := cbUserF(ctx, selfUserId, idList.IdList...)
+				if len(users) > 0 {
+					mu.Lock()
+					dialogsData.Users = append(dialogsData.Users, users...)
+					mu.Unlock()
+				}
+			case mtproto.PEER_CHAT:
+				chats := cbChatF(ctx, selfUserId, idList.IdList...)
+				if len(chats) > 0 {
+					mu.Lock()
+					dialogsData.Chats = append(dialogsData.Chats, chats...)
+					mu.Unlock()
+				}
+			case mtproto.PEER_CHANNEL:
+				chats := cbChannelF(ctx, selfUserId, idList.IdList...)
+				if len(chats) > 0 {
+					mu.Lock()
+					dialogsData.Chats = append(dialogsData.Chats, chats...)
+					mu.Unlock()
+				}
+			}
+		})
+
+	return dialogsData
 }
