@@ -20,9 +20,9 @@ func (c *UserCore) UserGetContactIdList(in *user.TLUserGetContactIdList) (*user.
 		Datas: []int64{},
 	}
 
-	_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
-	if len(idList) > 0 {
-		rValList.Datas = idList
+	cacheUserData := c.svcCtx.Dao.GetCacheUserData(c.ctx, in.GetUserId())
+	if len(cacheUserData.GetContactIdList()) > 0 {
+		rValList.Datas = cacheUserData.GetContactIdList()
 	}
 
 	return rValList, nil

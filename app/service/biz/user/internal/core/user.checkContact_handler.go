@@ -18,8 +18,9 @@ import (
 // UserCheckContact
 // user.checkContact user_id:long id:long = Bool;
 func (c *UserCore) UserCheckContact(in *user.TLUserCheckContact) (*mtproto.Bool, error) {
-	_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
-	isContact, _ := container2.Contains(in.GetId(), idList)
+	cacheUserData := c.svcCtx.Dao.GetCacheUserData(c.ctx, in.GetUserId())
+	//_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
+	isContact, _ := container2.Contains(in.GetId(), cacheUserData.GetContactIdList())
 
 	return mtproto.ToBool(isContact), nil
 }

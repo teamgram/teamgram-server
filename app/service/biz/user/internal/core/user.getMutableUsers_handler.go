@@ -25,7 +25,7 @@ func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.Ve
 	if len(in.Id) == 0 {
 		return vUser, nil
 	} else if len(in.Id) == 1 {
-		immutableUser, _ := c.getImmutableUser(in.Id[0], false)
+		immutableUser, _ := c.svcCtx.Dao.GetImmutableUser(c.ctx, in.Id[0], false)
 		if immutableUser != nil {
 			vUser.Datas = append(vUser.Datas, immutableUser)
 		}
@@ -42,7 +42,7 @@ func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.Ve
 		},
 		func(item interface{}) {
 			idx := item.(int)
-			immutableUser, _ := c.getImmutableUser(in.Id[idx], true, in.Id...)
+			immutableUser, _ := c.svcCtx.Dao.GetImmutableUser(c.ctx, in.Id[idx], true, in.Id...)
 			mutableUsers[idx] = immutableUser
 		})
 

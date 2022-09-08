@@ -186,6 +186,14 @@ func (d *Dao) SetUserPrivacyRules(ctx context.Context, id int64, key int32, rule
 		return false
 	}
 
+	cacheKeys := []string{cacheKey}
+	switch key {
+	case user.STATUS_TIMESTAMP,
+		user.PROFILE_PHOTO,
+		user.PHONE_NUMBER:
+		cacheKeys = append(cacheKeys, genCacheUserDataCacheKey(id))
+	}
+
 	d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
@@ -196,7 +204,7 @@ func (d *Dao) SetUserPrivacyRules(ctx context.Context, id int64, key int32, rule
 				Rules:   hack.String(rulesData),
 			})
 		},
-		genUserPrivacyKeyPrefix(id, key))
+		cacheKeys...)
 
 	return true
 }

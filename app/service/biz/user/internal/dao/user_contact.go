@@ -45,39 +45,39 @@ func genContactCacheKey(selfId, contactId int64) string {
 	return fmt.Sprintf("%s_%d_%d", contactKeyPrefix, selfId, contactId)
 }
 
-func (d *Dao) GetUserContactIdList(ctx context.Context, id int64) (bool, []int64) {
-	var (
-		contactIdList []int64
-		keyMiss       bool
-	)
-
-	err := d.CachedConn.QueryRow(
-		ctx,
-		&contactIdList,
-		genContactListCacheKey(id),
-		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-			idList, err := d.UserContactsDAO.SelectUserContactIdList(ctx, id)
-			if err != nil {
-				return err
-			}
-			*v.(*[]int64) = idList
-			keyMiss = true
-			return nil
-		})
-	if err != nil {
-		// return []int64{}
-	}
-
-	return keyMiss, contactIdList
-}
+//func (d *Dao) GetUserContactIdList(ctx context.Context, id int64) (bool, []int64) {
+//	var (
+//		contactIdList []int64
+//		keyMiss       bool
+//	)
+//
+//	err := d.CachedConn.QueryRow(
+//		ctx,
+//		&contactIdList,
+//		genContactListCacheKey(id),
+//		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+//			idList, err := d.UserContactsDAO.SelectUserContactIdList(ctx, id)
+//			if err != nil {
+//				return err
+//			}
+//			*v.(*[]int64) = idList
+//			keyMiss = true
+//			return nil
+//		})
+//	if err != nil {
+//		// return []int64{}
+//	}
+//
+//	return keyMiss, contactIdList
+//}
 
 func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*user.ContactData {
-	_, idList := d.GetUserContactIdList(ctx, id)
-	if len(idList) == 0 {
+	cacheUserData := d.GetCacheUserData(ctx, id)
+	if len(cacheUserData.GetContactIdList()) == 0 {
 		return nil
 	}
 
-	return d.getContactListByIdList(ctx, id, idList)
+	return d.getContactListByIdList(ctx, id, cacheUserData.GetContactIdList())
 }
 
 func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *user.ContactData {
@@ -90,7 +90,8 @@ func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *user.Con
 }
 
 func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactId ...int64) []*user.ContactData {
-	_, idList := d.GetUserContactIdList(ctx, id)
+	cacheUserData := d.GetCacheUserData(ctx, id)
+	idList := cacheUserData.GetContactIdList()
 	if len(idList) == 0 {
 		return nil
 	}
@@ -172,7 +173,7 @@ func (d *Dao) DeleteUserContact(ctx context.Context, id int64, contactId int64) 
 				})
 			return 0, tR.Data.(int64), tR.Err
 		},
-		genContactListCacheKey(id))
+		genCacheUserDataCacheKey(id))
 
 	if affected != 0 {
 		d.CachedConn.DelCache(ctx, genContactCacheKey(contactId, id))
@@ -181,7 +182,7 @@ func (d *Dao) DeleteUserContact(ctx context.Context, id int64, contactId int64) 
 
 func (d *Dao) PutUserContact(ctx context.Context, changeMutual bool, do *dataobject.UserContactsDO) error {
 	keys := []string{
-		genContactListCacheKey(do.OwnerUserId),
+		genCacheUserDataCacheKey(do.OwnerUserId),
 		genContactCacheKey(do.OwnerUserId, do.ContactUserId),
 	}
 	if changeMutual {
