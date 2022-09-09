@@ -297,7 +297,7 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 
 					idList2 := make([]int64, 0, len(idList))
 					for _, id2 := range contacts {
-						if ok, _ := container2.Contains(id2, idList); !ok && id2 != id {
+						if ok, _ := container2.Contains(id2, idList); ok && id2 != id {
 							idList2 = append(idList2, id2)
 						}
 					}
