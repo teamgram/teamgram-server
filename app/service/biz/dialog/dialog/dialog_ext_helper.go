@@ -61,6 +61,8 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 		if (offsetId == 0 || offsetId == 2147483647) && (offsetDate == 0 || offsetDate == 2147483647) {
 			if m.Len() >= int(limit) {
 				dialogExtList2 = m[:limit]
+			} else {
+				dialogExtList2 = m
 			}
 		} else {
 			idx := -1

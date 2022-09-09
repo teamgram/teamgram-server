@@ -61,31 +61,31 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 		// idHelper.PickByPeer(peer2)
 		switch peer2.PeerType {
 		case mtproto.PEER_CHANNEL:
-			//if c.svcCtx.Plugin != nil {
-			//	dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.PeerId)
-			//	if dialog != nil {
-			//		dialogExt.Dialog.TopMessage = dialog.Dialog.TopMessage
-			//		dialogExt.Dialog.Pts = dialog.Dialog.Pts
-			//		dialogExt.Dialog.UnreadCount = dialog.Dialog.TopMessage - dialogExt.Dialog.ReadInboxMaxId
-			//		if dialog.Dialog.UnreadCount < 0 {
-			//			dialog.Dialog.UnreadCount = 0
-			//		}
-			//		msgBox, _ := c.svcCtx.Plugin.GetChannelMessage(c.ctx, c.MD.UserId, peer2.PeerId, dialogExt.Dialog.TopMessage)
-			//		if msgBox != nil {
-			//			m := msgBox.ToMessage(c.MD.UserId)
-			//			idHelper.PickByMessage(m)
-			//			dialogsData.Messages = append(dialogsData.Messages, m)
-			//			mentionsCount, _ := c.svcCtx.Dao.MessageClient.MessageGetUnreadMentionsCount(c.ctx, &message.TLMessageGetUnreadMentionsCount{
-			//				UserId:   c.MD.UserId,
-			//				PeerType: mtproto.PEER_CHANNEL,
-			//				PeerId:   peer2.PeerId,
-			//			})
-			//			dialogExt.Dialog.UnreadMentionsCount = mentionsCount.GetV()
-			//		}
-			//	}
-			//} else {
-			//	c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
-			//}
+			if c.svcCtx.Plugin != nil {
+				dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.PeerId)
+				if dialog != nil {
+					dialogExt.Dialog.TopMessage = dialog.Dialog.TopMessage
+					dialogExt.Dialog.Pts = dialog.Dialog.Pts
+					dialogExt.Dialog.UnreadCount = dialog.Dialog.TopMessage - dialogExt.Dialog.ReadInboxMaxId
+					if dialog.Dialog.UnreadCount < 0 {
+						dialog.Dialog.UnreadCount = 0
+					}
+					msgBox, _ := c.svcCtx.Plugin.GetChannelMessage(c.ctx, c.MD.UserId, peer2.PeerId, dialogExt.Dialog.TopMessage)
+					if msgBox != nil {
+						m := msgBox.ToMessage(c.MD.UserId)
+						idHelper.PickByMessage(m)
+						dialogsData.Messages = append(dialogsData.Messages, m)
+						mentionsCount, _ := c.svcCtx.Dao.MessageClient.MessageGetUnreadMentionsCount(c.ctx, &message.TLMessageGetUnreadMentionsCount{
+							UserId:   c.MD.UserId,
+							PeerType: mtproto.PEER_CHANNEL,
+							PeerId:   peer2.PeerId,
+						})
+						dialogExt.Dialog.UnreadMentionsCount = mentionsCount.GetV()
+					}
+				}
+			} else {
+				c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		default:
 			msgBox, _ := c.svcCtx.Dao.MessageClient.MessageGetUserMessage(c.ctx, &message.TLMessageGetUserMessage{
 				UserId: c.MD.UserId,
@@ -129,12 +129,12 @@ func (c *DialogsCore) makeMessagesDialogs(dialogExtList dialog.DialogExtList) *d
 			dialogsData.Chats = append(dialogsData.Chats, chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
 		},
 		func(channelIdList []int64) {
-			//if c.svcCtx.Plugin != nil {
-			//	chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, channelIdList...)
-			//	dialogsData.Chats = append(dialogsData.Chats, chats...)
-			//} else {
-			//	c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
-			//}
+			if c.svcCtx.Plugin != nil {
+				chats := c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, channelIdList...)
+				dialogsData.Chats = append(dialogsData.Chats, chats...)
+			} else {
+				c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			}
 		})
 
 	return dialogsData

@@ -50,8 +50,8 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 
 	if folderId == 0 {
 		if dialogFolder, err := c.svcCtx.Dao.DialogClient.DialogGetDialogFolder(c.ctx, &dialog.TLDialogGetDialogFolder{
-			UserId:   0,
-			FolderId: 0,
+			UserId:   c.MD.UserId,
+			FolderId: 1,
 		}); err != nil {
 			c.Logger.Errorf("messages.getPinnedDialogs - error: %v", err)
 			return nil, err
