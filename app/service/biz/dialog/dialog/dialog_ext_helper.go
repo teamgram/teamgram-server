@@ -172,17 +172,24 @@ func (m DialogExtList) DoGetMessagesDialogs(
 
 	mr.ForEach(
 		func(source chan<- interface{}) {
-			var idList []TopMessageId
+			var (
+				idList   []TopMessageId
+				chIdList []TopMessageId
+			)
+
 			for _, dialogExt := range m {
 				peer2 := mtproto.FromPeer(dialogExt.Dialog.Peer)
 				if peer2.IsChannel() {
-					source <- []TopMessageId{{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage}}
+					chIdList = append(chIdList, TopMessageId{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage})
 				} else {
 					idList = append(idList, TopMessageId{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage})
 				}
 			}
 			if len(idList) > 0 {
 				source <- idList
+			}
+			if len(chIdList) > 0 {
+				source <- chIdList
 			}
 		},
 		func(item interface{}) {

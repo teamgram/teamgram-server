@@ -98,24 +98,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 		peer2 := mtproto.FromPeer(dialogEx.GetDialog().GetPeer())
 
 		if peer2.IsChannel() {
-			if c.svcCtx.Plugin != nil {
-				dialog, _ := c.svcCtx.Plugin.GetChannelDialogById(c.ctx, c.MD.UserId, peer2.PeerId)
-				if dialog != nil {
-					dialogEx.Dialog.TopMessage = dialog.Dialog.TopMessage
-					dialogEx.Dialog.Pts = dialog.Dialog.Pts
-					// dialogEx.Dialog.ReadOutboxMaxId = channel2.Megagroup.ReadInboxMaxId
-					dialogEx.Date = dialog.Date
-					dialogEx.Order = dialog.Order
-					// TODO:
-					// dialogEx.AvailableMinId = megagroup2.GetParticipants()[0].AvailableMinId
-					dialogEx.Dialog.UnreadCount = dialog.Dialog.TopMessage - dialogEx.Dialog.ReadInboxMaxId
-					if dialog.Dialog.UnreadCount < 0 {
-						dialog.Dialog.UnreadCount = 0
-					}
-				}
-			} else {
-				c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
-			}
+			c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
 		}
 
 		dialogEx.Dialog.NotifySettings = foundF(notifySettingsList, peer2)
@@ -139,13 +122,10 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 				msgIdList = make([]int32, 0, len(id))
 			)
 			for _, id2 := range id {
-				if id2.Peer.IsChannel() {
-					box, _ := c.svcCtx.Plugin.GetChannelMessage(c.ctx, c.MD.UserId, id2.Peer.PeerId, id2.TopMessage)
-					if box != nil {
-						msgList = append(msgList, box.ToMessage(c.MD.UserId))
-					}
-				} else {
+				if !id2.Peer.IsChannel() {
 					msgIdList = append(msgIdList, id2.TopMessage)
+				} else {
+					c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
 				}
 			}
 			if len(msgIdList) > 0 {
@@ -177,16 +157,8 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 			return chats.GetChatListByIdList(c.MD.UserId, id...)
 		},
 		func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat {
-			var (
-				chats []*mtproto.Chat
-			)
-			if c.svcCtx.Plugin != nil {
-				chats = c.svcCtx.Plugin.GetChannelListByIdList(c.ctx, c.MD.UserId, id...)
-			} else {
-				c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
-			}
-
-			return chats
+			c.Logger.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
+			return []*mtproto.Chat{}
 		})
 
 	return messageDialogs.ToMessagesDialogs(dialogCount), nil
