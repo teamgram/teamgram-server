@@ -33,7 +33,8 @@ func (d *Dao) GetOffsetIdBackwardHistoryMessages(ctx context.Context, userId int
 			func(i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
-		logx.WithContext(ctx).Infof("GetOffsetIdBackwardHistoryMessages: %v", rList)
+		_ = rList
+		// logx.WithContext(ctx).Infof("GetOffsetIdBackwardHistoryMessages: %v", rList)
 	case mtproto.PEER_CHANNEL:
 		logx.Errorf("blocked, License key from https://teamgram.net required to unlock enterprise features.")
 	}

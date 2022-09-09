@@ -89,7 +89,7 @@ func (s *Service) MessageGetHistoryMessages(ctx context.Context, request *messag
 		return nil, err
 	}
 
-	c.Infof("message.getHistoryMessages - reply: %s", r.DebugString())
+	c.Infof("message.getHistoryMessages - reply: %d", r.Length())
 	return r, err
 }
 
