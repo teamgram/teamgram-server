@@ -23,6 +23,7 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // MessagesGetHistory
@@ -84,29 +85,48 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 		return nil, err
 	}
 
-	boxList, err := c.svcCtx.Dao.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
-		UserId:     c.MD.UserId,
-		PeerType:   peer.PeerType,
-		PeerId:     peer.PeerId,
-		OffsetId:   in.OffsetId,
-		OffsetDate: in.OffsetDate,
-		AddOffset:  in.AddOffset,
-		Limit:      limit,
-		MaxId:      in.MaxId,
-		MinId:      in.MinId,
-		Hash:       in.Hash,
-	})
-	if err != nil {
-		c.Logger.Errorf("messages.getHistory - error: %v", err)
-	}
+	var (
+		boxList *message.Vector_MessageBox
+		count   *mtproto.Int32
+	)
 
-	count, _ := c.svcCtx.Dao.MessageClient.MessageGetHistoryMessagesCount(
-		c.ctx,
-		&message.TLMessageGetHistoryMessagesCount{
-			UserId:   c.MD.UserId,
-			PeerType: peer.PeerType,
-			PeerId:   peer.PeerId,
+	err = mr.Finish(
+		func() error {
+			boxList, err = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
+				UserId:     c.MD.UserId,
+				PeerType:   peer.PeerType,
+				PeerId:     peer.PeerId,
+				OffsetId:   in.OffsetId,
+				OffsetDate: in.OffsetDate,
+				AddOffset:  in.AddOffset,
+				Limit:      limit,
+				MaxId:      in.MaxId,
+				MinId:      in.MinId,
+				Hash:       in.Hash,
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.getHistory - error: %v", err)
+			}
+
+			return err
+		},
+		func() error {
+			count, err = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessagesCount(
+				c.ctx,
+				&message.TLMessageGetHistoryMessagesCount{
+					UserId:   c.MD.UserId,
+					PeerType: peer.PeerType,
+					PeerId:   peer.PeerId,
+				})
+			if err != nil {
+				c.Logger.Errorf("messages.getHistory - error: %v", err)
+			}
+
+			return err
 		})
+	if err != nil {
+		return nil, err
+	}
 
 	var (
 		messages []*mtproto.Message
