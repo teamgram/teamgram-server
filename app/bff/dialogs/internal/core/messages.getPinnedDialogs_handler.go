@@ -127,8 +127,7 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 		}
 	}
 
-	r2 := sort.Reverse(dialogExtList)
-	sort.Sort(r2)
+	sort.Sort(sort.Reverse(dialogExtList))
 
 	messageDialogs := dialogExtList.DoGetMessagesDialogs(
 		c.ctx,

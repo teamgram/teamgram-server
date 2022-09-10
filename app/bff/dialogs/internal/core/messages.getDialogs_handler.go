@@ -94,8 +94,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 		dialogEx.Dialog.NotifySettings = userpb.FindPeerPeerNotifySettings(notifySettingsList, peer2)
 	}
 
-	r2 := sort.Reverse(dialogExtList)
-	sort.Sort(r2)
+	sort.Sort(sort.Reverse(dialogExtList))
 
 	dialogExtList = dialogExtList.GetDialogsByOffsetLimit(
 		in.OffsetDate,

@@ -32,6 +32,7 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 		[]int64{peerDialogId},
 		func(i int, v *dataobject.DialogsDO) {
 			dialogDO = v
+			folderId = v.FolderId
 		})
 	if err != nil {
 		c.Logger.Errorf("dialog.toggleDialogPin - error: %v", err)

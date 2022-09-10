@@ -55,11 +55,18 @@ func makeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		FolderId:            mtproto.MakeFlagsInt32(dialogDO.FolderId),
 	}).To_Dialog()
 
+	order := dialogDO.Date2
 	// pinned
 	if dialogDO.FolderId == 0 {
 		dialog2.Pinned = dialogDO.Pinned > 0
+		if dialog2.Pinned {
+			order = dialogDO.Pinned
+		}
 	} else {
 		dialog2.Pinned = dialogDO.FolderPinned > 0
+		if dialog2.Pinned {
+			order = dialogDO.FolderPinned
+		}
 	}
 
 	// draft message.
@@ -81,7 +88,7 @@ func makeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	}).To_PeerNotifySettings()
 
 	return &dialog.DialogExt{
-		Order:          dialogDO.Date2,
+		Order:          order,
 		Dialog:         dialog2,
 		AvailableMinId: 0,
 		Date:           dialogDO.Date2,

@@ -13,20 +13,13 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type (
 	DialogExtList []*DialogExt
 )
-
-func (m *DialogExt) HasDialog() bool {
-	name := m.GetDialog().GetDraft().GetPredicateName()
-	if name != mtproto.Predicate_draftMessage {
-		return false
-	}
-	return true
-}
 
 func (m DialogExtList) Len() int {
 	return len(m)
@@ -135,6 +128,11 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 	}
 
 	return dialogExtList2
+}
+
+func (m DialogExtList) DebugString() string {
+	s, _ := jsonx.MarshalToString(m)
+	return s
 }
 
 type TopMessageId struct {
@@ -257,4 +255,12 @@ func (m DialogExtList) DoGetMessagesDialogs(
 		})
 
 	return dialogsData
+}
+
+func (m *DialogExt) HasDialog() bool {
+	name := m.GetDialog().GetDraft().GetPredicateName()
+	if name != mtproto.Predicate_draftMessage {
+		return false
+	}
+	return true
 }
