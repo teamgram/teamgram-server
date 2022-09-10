@@ -36,7 +36,6 @@ func makePeerNotifySettingsByDO(do *dataobject.UserNotifySettingsDO) (settings *
 // UserGetAllNotifySettings
 // user.getAllNotifySettings user_id:int = Vector<PeerNotifySettings>;
 func (c *UserCore) UserGetAllNotifySettings(in *user.TLUserGetAllNotifySettings) (*user.Vector_PeerPeerNotifySettings, error) {
-	// TODO(@benqi): GetAll settings?
 	var (
 		settings = &user.Vector_PeerPeerNotifySettings{
 			Datas: []*user.PeerPeerNotifySettings{},

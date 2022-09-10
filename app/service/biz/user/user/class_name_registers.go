@@ -29,6 +29,7 @@ const (
 	Predicate_user_setAccountDaysTTL                = "user_setAccountDaysTTL"
 	Predicate_user_getAccountDaysTTL                = "user_getAccountDaysTTL"
 	Predicate_user_getNotifySettings                = "user_getNotifySettings"
+	Predicate_user_getNotifySettingsList            = "user_getNotifySettingsList"
 	Predicate_user_setNotifySettings                = "user_setNotifySettings"
 	Predicate_user_resetNotifySettings              = "user_resetNotifySettings"
 	Predicate_user_getAllNotifySettings             = "user_getAllNotifySettings"
@@ -152,6 +153,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_user_getNotifySettings: {
 		0: 1085028198, // 0x40ac3766
+
+	},
+	Predicate_user_getNotifySettingsList: {
+		0: -463137380, // 0xe465159c
 
 	},
 	Predicate_user_setNotifySettings: {
@@ -375,6 +380,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-766178484:  Predicate_user_setAccountDaysTTL,                // 0xd2550b4c
 	-1299956000: Predicate_user_getAccountDaysTTL,                // 0xb2843ee0
 	1085028198:  Predicate_user_getNotifySettings,                // 0x40ac3766
+	-463137380:  Predicate_user_getNotifySettingsList,            // 0xe465159c
 	-907188763:  Predicate_user_setNotifySettings,                // 0xc9ed65e5
 	235380084:   Predicate_user_resetNotifySettings,              // 0xe079d74
 	1435658357:  Predicate_user_getAllNotifySettings,             // 0x55926875

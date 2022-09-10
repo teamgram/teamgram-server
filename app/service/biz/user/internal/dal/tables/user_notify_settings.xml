@@ -37,10 +37,25 @@
         </sql>
     </operation>
 
+    <!--
+    <operation name="SelectList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound
+            FROM
+                user_notify_settings
+            WHERE
+                user_id = :user_id AND peer_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+    -->
+
     <operation name="DeleteAll">
         <sql>
             UPDATE user_notify_settings SET deleted = 1 WHERE user_id = :user_id
         </sql>
     </operation>
-
 </table>

@@ -122,6 +122,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1085028198,
 		}
 	},
+	-463137380: func() mtproto.TLObject { // 0xe465159c
+		return &TLUserGetNotifySettingsList{
+			Constructor: -463137380,
+		}
+	},
 	-907188763: func() mtproto.TLObject { // 0xc9ed65e5
 		return &TLUserSetNotifySettings{
 			Constructor: -907188763,
@@ -2510,6 +2515,72 @@ func (m *TLUserGetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserGetNotifySettings) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserGetNotifySettingsList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetNotifySettingsList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_getNotifySettingsList))
+
+	switch uint32(m.Constructor) {
+	case 0xe465159c:
+		x.UInt(0xe465159c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.Int(int32(mtproto.CRC32_vector))
+		x.Int(int32(len(m.GetPeers())))
+		for _, v := range m.GetPeers() {
+			x.Bytes((*v).Encode(layer))
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserGetNotifySettingsList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetNotifySettingsList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xe465159c:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		c2 := dBuf.Int()
+		if c2 != int32(mtproto.CRC32_vector) {
+			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 2, c2)
+			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 2, c2)
+		}
+		l2 := dBuf.Int()
+		v2 := make([]*mtproto.PeerUtil, l2)
+		for i := int32(0); i < l2; i++ {
+			v2[i] = &mtproto.PeerUtil{}
+			v2[i].Decode(dBuf)
+		}
+		m.Peers = v2
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetNotifySettingsList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

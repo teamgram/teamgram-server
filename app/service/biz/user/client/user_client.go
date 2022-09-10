@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ type UserClient interface {
 	UserSetAccountDaysTTL(ctx context.Context, in *user.TLUserSetAccountDaysTTL) (*mtproto.Bool, error)
 	UserGetAccountDaysTTL(ctx context.Context, in *user.TLUserGetAccountDaysTTL) (*mtproto.AccountDaysTTL, error)
 	UserGetNotifySettings(ctx context.Context, in *user.TLUserGetNotifySettings) (*mtproto.PeerNotifySettings, error)
+	UserGetNotifySettingsList(ctx context.Context, in *user.TLUserGetNotifySettingsList) (*user.Vector_PeerPeerNotifySettings, error)
 	UserSetNotifySettings(ctx context.Context, in *user.TLUserSetNotifySettings) (*mtproto.Bool, error)
 	UserResetNotifySettings(ctx context.Context, in *user.TLUserResetNotifySettings) (*mtproto.Bool, error)
 	UserGetAllNotifySettings(ctx context.Context, in *user.TLUserGetAllNotifySettings) (*user.Vector_PeerPeerNotifySettings, error)
@@ -102,7 +103,7 @@ func (m *defaultUserClient) UserGetLastSeens(ctx context.Context, in *user.TLUse
 }
 
 // UserUpdateLastSeen
-// user.updateLastSeen id:long last_seen_at:long expries:int = Bool;
+// user.updateLastSeen id:long last_seen_at:long expires:int = Bool;
 func (m *defaultUserClient) UserUpdateLastSeen(ctx context.Context, in *user.TLUserUpdateLastSeen) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserUpdateLastSeen(ctx, in)
@@ -162,6 +163,13 @@ func (m *defaultUserClient) UserGetAccountDaysTTL(ctx context.Context, in *user.
 func (m *defaultUserClient) UserGetNotifySettings(ctx context.Context, in *user.TLUserGetNotifySettings) (*mtproto.PeerNotifySettings, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetNotifySettings(ctx, in)
+}
+
+// UserGetNotifySettingsList
+// user.getNotifySettingsList user_id:long peers:Vector<PeerUtil> = Vector<PeerPeerNotifySettings>;
+func (m *defaultUserClient) UserGetNotifySettingsList(ctx context.Context, in *user.TLUserGetNotifySettingsList) (*user.Vector_PeerPeerNotifySettings, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetNotifySettingsList(ctx, in)
 }
 
 // UserSetNotifySettings

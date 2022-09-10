@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -34,7 +34,7 @@ func (s *Service) UserGetLastSeens(ctx context.Context, request *user.TLUserGetL
 }
 
 // UserUpdateLastSeen
-// user.updateLastSeen id:long last_seen_at:long expries:int = Bool;
+// user.updateLastSeen id:long last_seen_at:long expires:int = Bool;
 func (s *Service) UserUpdateLastSeen(ctx context.Context, request *user.TLUserUpdateLastSeen) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("user.updateLastSeen - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -165,6 +165,21 @@ func (s *Service) UserGetNotifySettings(ctx context.Context, request *user.TLUse
 	}
 
 	c.Infof("user.getNotifySettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetNotifySettingsList
+// user.getNotifySettingsList user_id:long peers:Vector<PeerUtil> = Vector<PeerPeerNotifySettings>;
+func (s *Service) UserGetNotifySettingsList(ctx context.Context, request *user.TLUserGetNotifySettingsList) (*user.Vector_PeerPeerNotifySettings, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("user.getNotifySettingsList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetNotifySettingsList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("user.getNotifySettingsList - reply: %s", r.DebugString())
 	return r, err
 }
 

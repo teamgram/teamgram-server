@@ -14,6 +14,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/teamgram/proto/mtproto"
 	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -118,20 +119,32 @@ func (dao *UserNotifySettingsDAO) InsertOrUpdateExtTx(tx *sqlx.Tx, userId int64,
 	return
 }
 
-// SelectList
+// SelectListWithCB
 // select id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound from user_notify_settings where user_id = :user_id and deleted = 0
 // TODO(@benqi): sqlmap
-func (dao *UserNotifySettingsDAO) SelectList(ctx context.Context, userId int64, userIdList, chatIdList, channelIdList []int64) (rList []dataobject.UserNotifySettingsDO, err error) {
+func (dao *UserNotifySettingsDAO) SelectListWithCB(ctx context.Context, userId int64, peers []*mtproto.PeerUtil, cb func(i int, v *dataobject.UserNotifySettingsDO)) (rList []dataobject.UserNotifySettingsDO, err error) {
 	var (
-		qVs    []string
-		args   []interface{}
-		a      []interface{}
-		values []dataobject.UserNotifySettingsDO
+		qVs                                   []string
+		args                                  []interface{}
+		a                                     []interface{}
+		values                                []dataobject.UserNotifySettingsDO
+		userIdList, chatIdList, channelIdList []int64
 	)
 
-	if len(userIdList) == 0 && len(chatIdList) == 0 && len(channelIdList) == 0 {
+	if len(peers) == 0 {
 		logx.WithContext(ctx).Errorf("idList empty")
 		return
+	}
+
+	for _, peer := range peers {
+		switch peer.PeerType {
+		case mtproto.PEER_SELF, mtproto.PEER_USER:
+			userIdList = append(userIdList, peer.PeerId)
+		case mtproto.PEER_CHAT:
+			chatIdList = append(chatIdList, peer.PeerId)
+		case mtproto.PEER_CHANNEL:
+			channelIdList = append(channelIdList, peer.PeerId)
+		}
 	}
 
 	query := `
@@ -171,6 +184,12 @@ func (dao *UserNotifySettingsDAO) SelectList(ctx context.Context, userId int64, 
 		return
 	}
 	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
 
 	return
 }
