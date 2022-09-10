@@ -84,16 +84,6 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 		dialogCount = int32(dialogExtList.Len())
 	)
 
-	foundF := func(settingsList []*userpb.PeerPeerNotifySettings, peer *mtproto.PeerUtil) *mtproto.PeerNotifySettings {
-		for _, s := range settingsList {
-			if s.PeerType == peer.PeerType && s.PeerId == peer.PeerId {
-				return s.Settings
-			}
-		}
-
-		return mtproto.MakeTLPeerNotifySettings(nil).To_PeerNotifySettings()
-	}
-
 	for _, dialogEx := range dialogExtList {
 		peer2 := mtproto.FromPeer(dialogEx.GetDialog().GetPeer())
 
@@ -101,7 +91,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 			c.Logger.Errorf("messages.getDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
 		}
 
-		dialogEx.Dialog.NotifySettings = foundF(notifySettingsList, peer2)
+		dialogEx.Dialog.NotifySettings = userpb.FindPeerPeerNotifySettings(notifySettingsList, peer2)
 	}
 
 	r2 := sort.Reverse(dialogExtList)
