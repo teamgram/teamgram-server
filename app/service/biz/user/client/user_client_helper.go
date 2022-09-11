@@ -55,6 +55,7 @@ func (m *UserClientHelper) GetUserById(ctx context.Context, selfId, id int64) (*
 func (m *UserClientHelper) GetUserListByIdList(ctx context.Context, selfId int64, id ...int64) []*mtproto.User {
 	users, err := m.cli.UserGetMutableUsers(ctx, &user.TLUserGetMutableUsers{
 		Id: append(id, selfId),
+		To: []int64{selfId},
 	})
 	if err != nil {
 		return []*mtproto.User{}

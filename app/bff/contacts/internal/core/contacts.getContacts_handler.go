@@ -70,6 +70,7 @@ func (c *ContactsCore) ContactsGetContacts(in *mtproto.TLContactsGetContacts) (*
 
 		users, _ := c.svcCtx.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
 			Id: append([]int64{c.MD.UserId}, idList...),
+			To: []int64{c.MD.UserId},
 		})
 		contacts = mtproto.MakeTLContactsContacts(&mtproto.Contacts_Contacts{
 			Contacts:   contactList.ToContacts(),

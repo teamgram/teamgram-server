@@ -92,9 +92,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -47047585,
 		}
 	},
-	187684863: func() mtproto.TLObject { // 0xb2fd7ff
+	-1657068585: func() mtproto.TLObject { // 0x9d3b23d7
 		return &TLUserGetMutableUsers{
-			Constructor: 187684863,
+			Constructor: -1657068585,
 		}
 	},
 	-373067804: func() mtproto.TLObject { // 0xe9c36fe4
@@ -2239,12 +2239,14 @@ func (m *TLUserGetMutableUsers) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_user_getMutableUsers))
 
 	switch uint32(m.Constructor) {
-	case 0xb2fd7ff:
-		x.UInt(0xb2fd7ff)
+	case 0x9d3b23d7:
+		x.UInt(0x9d3b23d7)
 
 		// no flags
 
 		x.VectorLong(m.GetId())
+
+		x.VectorLong(m.GetTo())
 
 	default:
 		// log.Errorf("")
@@ -2259,11 +2261,13 @@ func (m *TLUserGetMutableUsers) CalcByteSize(layer int32) int {
 
 func (m *TLUserGetMutableUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xb2fd7ff:
+	case 0x9d3b23d7:
 
 		// not has flags
 
 		m.Id = dBuf.VectorLong()
+
+		m.To = dBuf.VectorLong()
 
 		return dBuf.GetError()
 
