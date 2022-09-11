@@ -58,7 +58,11 @@ func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.Ve
 			if ok, _ := container2.Contains(id[idx], in.To); ok {
 				mutableUsers[idx], _ = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
 			} else {
-				mutableUsers[idx], _ = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
+				if len(in.To) == 0 {
+					mutableUsers[idx], _ = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
+				} else {
+					mutableUsers[idx], _ = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.To...)
+				}
 			}
 		})
 
