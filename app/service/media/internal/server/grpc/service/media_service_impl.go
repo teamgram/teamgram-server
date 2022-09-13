@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -149,7 +149,7 @@ func (s *Service) MediaGetDocumentList(ctx context.Context, request *media.TLMed
 		return nil, err
 	}
 
-	// c.Infof("media.getDocumentList - reply: %s", r.DebugString())
+	c.Infof("media.getDocumentList - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -225,5 +225,20 @@ func (s *Service) MediaUploadStickerFile(ctx context.Context, request *media.TLM
 	}
 
 	c.Infof("media.uploadStickerFile - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MediaUploadRingtoneFile
+// media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
+func (s *Service) MediaUploadRingtoneFile(ctx context.Context, request *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("media.uploadRingtoneFile - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MediaUploadRingtoneFile(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("media.uploadRingtoneFile - reply: %s", r.DebugString())
 	return r, err
 }

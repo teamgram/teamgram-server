@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -36,6 +36,7 @@ type MediaClient interface {
 	MediaUploadWallPaperFile(ctx context.Context, in *media.TLMediaUploadWallPaperFile) (*mtproto.Document, error)
 	MediaUploadThemeFile(ctx context.Context, in *media.TLMediaUploadThemeFile) (*mtproto.Document, error)
 	MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*mtproto.Document, error)
+	MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error)
 }
 
 type defaultMediaClient struct {
@@ -144,4 +145,11 @@ func (m *defaultMediaClient) MediaUploadThemeFile(ctx context.Context, in *media
 func (m *defaultMediaClient) MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*mtproto.Document, error) {
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadStickerFile(ctx, in)
+}
+
+// MediaUploadRingtoneFile
+// media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
+func (m *defaultMediaClient) MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error) {
+	client := media.NewRPCMediaClient(m.cli.Conn())
+	return client.MediaUploadRingtoneFile(ctx, in)
 }

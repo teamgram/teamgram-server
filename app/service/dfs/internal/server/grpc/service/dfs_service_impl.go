@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -12,13 +12,14 @@ package service
 
 import (
 	"context"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/core"
 )
 
 // DfsWriteFilePartData
-// dfs.writeFilePartData flags:# creator:long file_id:long bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
+// dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWriteFilePartData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("dfs.writeFilePartData - request: {creator: %d, file_id: %d, file_part: %d, file_total_parts: %d, bytes: %d}",
@@ -83,7 +84,7 @@ func (s *Service) DfsUploadEncryptedFileV2(ctx context.Context, request *dfs.TLD
 }
 
 // DfsDownloadFile
-// dfs.downloadFile location:InputFileLocation offset:int limit:int = upload.File;
+// dfs.downloadFile location:InputFileLocation offset:long limit:int = upload.File;
 func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloadFile) (*mtproto.Upload_File, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("dfs.downloadFile - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -173,5 +174,20 @@ func (s *Service) DfsUploadThemeFile(ctx context.Context, request *dfs.TLDfsUplo
 	}
 
 	c.Infof("dfs.uploadThemeFile - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DfsUploadRingtoneFile
+// dfs.uploadRingtoneFile creator:long file:InputFile mime_type:string file_name:string = Document;
+func (s *Service) DfsUploadRingtoneFile(ctx context.Context, request *dfs.TLDfsUploadRingtoneFile) (*mtproto.Document, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("dfs.uploadRingtoneFile - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DfsUploadRingtoneFile(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("dfs.uploadRingtoneFile - reply: %s", r.DebugString())
 	return r, err
 }

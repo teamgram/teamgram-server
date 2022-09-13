@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package media
@@ -40,6 +40,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLMediaUploadWallPaperFile":    RPCContextTuple{"/mtproto.RPCMedia/media_uploadWallPaperFile", func() interface{} { return new(mtproto.Document) }},
 	"TLMediaUploadThemeFile":        RPCContextTuple{"/mtproto.RPCMedia/media_uploadThemeFile", func() interface{} { return new(mtproto.Document) }},
 	"TLMediaUploadStickerFile":      RPCContextTuple{"/mtproto.RPCMedia/media_uploadStickerFile", func() interface{} { return new(mtproto.Document) }},
+	"TLMediaUploadRingtoneFile":     RPCContextTuple{"/mtproto.RPCMedia/media_uploadRingtoneFile", func() interface{} { return new(mtproto.Document) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

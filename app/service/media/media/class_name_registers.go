@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package media
@@ -27,6 +27,7 @@ const (
 	Predicate_media_uploadWallPaperFile    = "media_uploadWallPaperFile"
 	Predicate_media_uploadThemeFile        = "media_uploadThemeFile"
 	Predicate_media_uploadStickerFile      = "media_uploadStickerFile"
+	Predicate_media_uploadRingtoneFile     = "media_uploadRingtoneFile"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -94,6 +95,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1397349139, // 0xacb624ed
 
 	},
+	Predicate_media_uploadRingtoneFile: {
+		0: 1035645449, // 0x3dbab209
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -113,6 +118,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1661293058: Predicate_media_uploadWallPaperFile,    // 0x9cfaadfe
 	1122416736:  Predicate_media_uploadThemeFile,        // 0x42e6b860
 	-1397349139: Predicate_media_uploadStickerFile,      // 0xacb624ed
+	1035645449:  Predicate_media_uploadRingtoneFile,     // 0x3dbab209
 
 }
 

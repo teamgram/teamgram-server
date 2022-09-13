@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,6 +32,7 @@ type DfsClient interface {
 	DfsUploadMp4DocumentMedia(ctx context.Context, in *dfs.TLDfsUploadMp4DocumentMedia) (*mtproto.Document, error)
 	DfsUploadWallPaperFile(ctx context.Context, in *dfs.TLDfsUploadWallPaperFile) (*mtproto.Document, error)
 	DfsUploadThemeFile(ctx context.Context, in *dfs.TLDfsUploadThemeFile) (*mtproto.Document, error)
+	DfsUploadRingtoneFile(ctx context.Context, in *dfs.TLDfsUploadRingtoneFile) (*mtproto.Document, error)
 }
 
 type defaultDfsClient struct {
@@ -45,7 +46,7 @@ func NewDfsClient(cli zrpc.Client) DfsClient {
 }
 
 // DfsWriteFilePartData
-// dfs.writeFilePartData flags:# creator:long file_id:long bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
+// dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (m *defaultDfsClient) DfsWriteFilePartData(ctx context.Context, in *dfs.TLDfsWriteFilePartData) (*mtproto.Bool, error) {
 	client := dfs.NewRPCDfsClient(m.cli.Conn())
 	return client.DfsWriteFilePartData(ctx, in)
@@ -73,7 +74,7 @@ func (m *defaultDfsClient) DfsUploadEncryptedFileV2(ctx context.Context, in *dfs
 }
 
 // DfsDownloadFile
-// dfs.downloadFile location:InputFileLocation offset:int limit:int = upload.File;
+// dfs.downloadFile location:InputFileLocation offset:long limit:int = upload.File;
 func (m *defaultDfsClient) DfsDownloadFile(ctx context.Context, in *dfs.TLDfsDownloadFile) (*mtproto.Upload_File, error) {
 	client := dfs.NewRPCDfsClient(m.cli.Conn())
 	return client.DfsDownloadFile(ctx, in)
@@ -112,4 +113,11 @@ func (m *defaultDfsClient) DfsUploadWallPaperFile(ctx context.Context, in *dfs.T
 func (m *defaultDfsClient) DfsUploadThemeFile(ctx context.Context, in *dfs.TLDfsUploadThemeFile) (*mtproto.Document, error) {
 	client := dfs.NewRPCDfsClient(m.cli.Conn())
 	return client.DfsUploadThemeFile(ctx, in)
+}
+
+// DfsUploadRingtoneFile
+// dfs.uploadRingtoneFile creator:long file:InputFile mime_type:string file_name:string = Document;
+func (m *defaultDfsClient) DfsUploadRingtoneFile(ctx context.Context, in *dfs.TLDfsUploadRingtoneFile) (*mtproto.Document, error) {
+	client := dfs.NewRPCDfsClient(m.cli.Conn())
+	return client.DfsUploadRingtoneFile(ctx, in)
 }

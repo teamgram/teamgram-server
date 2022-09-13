@@ -82,6 +82,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -559525993,
 		}
 	},
+	45335985: func() mtproto.TLObject { // 0x2b3c5b1
+		return &TLDfsUploadRingtoneFile{
+			Constructor: 45335985,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -715,6 +720,63 @@ func (m *TLDfsUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadThemeFile) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDfsUploadRingtoneFile
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDfsUploadRingtoneFile) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_dfs_uploadRingtoneFile))
+
+	switch uint32(m.Constructor) {
+	case 0x2b3c5b1:
+		x.UInt(0x2b3c5b1)
+
+		// no flags
+
+		x.Long(m.GetCreator())
+		x.Bytes(m.GetFile().Encode(layer))
+		x.String(m.GetMimeType())
+		x.String(m.GetFileName())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLDfsUploadRingtoneFile) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDfsUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x2b3c5b1:
+
+		// not has flags
+
+		m.Creator = dBuf.Long()
+
+		m2 := &mtproto.InputFile{}
+		m2.Decode(dBuf)
+		m.File = m2
+
+		m.MimeType = dBuf.String()
+		m.FileName = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDfsUploadRingtoneFile) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

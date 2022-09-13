@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -112,6 +112,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1397349139,
 		}
 	},
+	1035645449: func() mtproto.TLObject { // 0x3dbab209
+		return &TLMediaUploadRingtoneFile{
+			Constructor: 1035645449,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -188,7 +193,6 @@ func (m *PhotoSizeList) DebugString() string {
 }
 
 // To_PhotoSizeList
-// photoSizeList size_id:long sizes:Vector<PhotoSize> dc_id:int = PhotoSizeList;
 func (m *PhotoSizeList) To_PhotoSizeList() *TLPhotoSizeList {
 	m.PredicateName = Predicate_photoSizeList
 	return &TLPhotoSizeList{
@@ -197,7 +201,6 @@ func (m *PhotoSizeList) To_PhotoSizeList() *TLPhotoSizeList {
 }
 
 // MakeTLPhotoSizeList
-// photoSizeList size_id:long sizes:Vector<PhotoSize> dc_id:int = PhotoSizeList;
 func MakeTLPhotoSizeList(data2 *PhotoSizeList) *TLPhotoSizeList {
 	if data2 == nil {
 		return &TLPhotoSizeList{Data2: &PhotoSizeList{
@@ -232,7 +235,6 @@ func (m *TLPhotoSizeList) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x67139b3: func() []byte {
-			// photoSizeList size_id:long sizes:Vector<PhotoSize> dc_id:int = PhotoSizeList;
 			x.UInt(0x67139b3)
 
 			x.Long(m.GetSizeId())
@@ -267,7 +269,6 @@ func (m *TLPhotoSizeList) CalcByteSize(layer int32) int {
 func (m *TLPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x67139b3: func() error {
-			// photoSizeList size_id:long sizes:Vector<PhotoSize> dc_id:int = PhotoSizeList;
 			m.SetSizeId(dBuf.Long())
 			c1 := dBuf.Int()
 			if c1 != int32(mtproto.CRC32_vector) {
@@ -359,7 +360,6 @@ func (m *VideoSizeList) DebugString() string {
 }
 
 // To_VideoSizeList
-// videoSizeList size_id:long sizes:Vector<VideoSize> dc_id:int = VideoSizeList;
 func (m *VideoSizeList) To_VideoSizeList() *TLVideoSizeList {
 	m.PredicateName = Predicate_videoSizeList
 	return &TLVideoSizeList{
@@ -368,7 +368,6 @@ func (m *VideoSizeList) To_VideoSizeList() *TLVideoSizeList {
 }
 
 // MakeTLVideoSizeList
-// videoSizeList size_id:long sizes:Vector<VideoSize> dc_id:int = VideoSizeList;
 func MakeTLVideoSizeList(data2 *VideoSizeList) *TLVideoSizeList {
 	if data2 == nil {
 		return &TLVideoSizeList{Data2: &VideoSizeList{
@@ -403,7 +402,6 @@ func (m *TLVideoSizeList) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x38d19bf2: func() []byte {
-			// videoSizeList size_id:long sizes:Vector<VideoSize> dc_id:int = VideoSizeList;
 			x.UInt(0x38d19bf2)
 
 			x.Long(m.GetSizeId())
@@ -438,7 +436,6 @@ func (m *TLVideoSizeList) CalcByteSize(layer int32) int {
 func (m *TLVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x38d19bf2: func() error {
-			// videoSizeList size_id:long sizes:Vector<VideoSize> dc_id:int = VideoSizeList;
 			m.SetSizeId(dBuf.Long())
 			c1 := dBuf.Int()
 			if c1 != int32(mtproto.CRC32_vector) {
@@ -481,7 +478,6 @@ func (m *TLMediaUploadPhotoFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x3c2b0b17:
-		// media.uploadPhotoFile flags:# owner_id:long file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = Photo;
 		x.UInt(0x3c2b0b17)
 
 		// set flags
@@ -524,7 +520,6 @@ func (m *TLMediaUploadPhotoFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadPhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x3c2b0b17:
-		// media.uploadPhotoFile flags:# owner_id:long file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = Photo;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -577,7 +572,6 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x973f2f24:
-		// media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 		x.UInt(0x973f2f24)
 
 		// set flags
@@ -623,7 +617,6 @@ func (m *TLMediaUploadProfilePhotoFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x973f2f24:
-		// media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -667,7 +660,6 @@ func (m *TLMediaGetPhoto) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x657eb86b:
-		// media.getPhoto photo_id:long = Photo;
 		x.UInt(0x657eb86b)
 
 		// no flags
@@ -688,7 +680,6 @@ func (m *TLMediaGetPhoto) CalcByteSize(layer int32) int {
 func (m *TLMediaGetPhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x657eb86b:
-		// media.getPhoto photo_id:long = Photo;
 
 		// not has flags
 
@@ -716,7 +707,6 @@ func (m *TLMediaGetPhotoSizeList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xa1eb7f45:
-		// media.getPhotoSizeList size_id:long = PhotoSizeList;
 		x.UInt(0xa1eb7f45)
 
 		// no flags
@@ -737,7 +727,6 @@ func (m *TLMediaGetPhotoSizeList) CalcByteSize(layer int32) int {
 func (m *TLMediaGetPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa1eb7f45:
-		// media.getPhotoSizeList size_id:long = PhotoSizeList;
 
 		// not has flags
 
@@ -765,7 +754,6 @@ func (m *TLMediaGetPhotoSizeListList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfb5c80e0:
-		// media.getPhotoSizeListList id_list:Vector<long> = Vector<PhotoSizeList>;
 		x.UInt(0xfb5c80e0)
 
 		// no flags
@@ -786,7 +774,6 @@ func (m *TLMediaGetPhotoSizeListList) CalcByteSize(layer int32) int {
 func (m *TLMediaGetPhotoSizeListList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfb5c80e0:
-		// media.getPhotoSizeListList id_list:Vector<long> = Vector<PhotoSizeList>;
 
 		// not has flags
 
@@ -815,7 +802,6 @@ func (m *TLMediaGetVideoSizeList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc47692ea:
-		// media.getVideoSizeList size_id:long = VideoSizeList;
 		x.UInt(0xc47692ea)
 
 		// no flags
@@ -836,7 +822,6 @@ func (m *TLMediaGetVideoSizeList) CalcByteSize(layer int32) int {
 func (m *TLMediaGetVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc47692ea:
-		// media.getVideoSizeList size_id:long = VideoSizeList;
 
 		// not has flags
 
@@ -864,7 +849,6 @@ func (m *TLMediaUploadedDocumentMedia) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x4f5fb06c:
-		// media.uploadedDocumentMedia owner_id:long media:InputMedia = MessageMedia;
 		x.UInt(0x4f5fb06c)
 
 		// no flags
@@ -886,7 +870,6 @@ func (m *TLMediaUploadedDocumentMedia) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadedDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4f5fb06c:
-		// media.uploadedDocumentMedia owner_id:long media:InputMedia = MessageMedia;
 
 		// not has flags
 
@@ -919,7 +902,6 @@ func (m *TLMediaGetDocument) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x3fe5974d:
-		// media.getDocument id:long = Document;
 		x.UInt(0x3fe5974d)
 
 		// no flags
@@ -940,7 +922,6 @@ func (m *TLMediaGetDocument) CalcByteSize(layer int32) int {
 func (m *TLMediaGetDocument) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x3fe5974d:
-		// media.getDocument id:long = Document;
 
 		// not has flags
 
@@ -968,7 +949,6 @@ func (m *TLMediaGetDocumentList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xc52fd26f:
-		// media.getDocumentList id_list:Vector<long> = Vector<Document>;
 		x.UInt(0xc52fd26f)
 
 		// no flags
@@ -989,7 +969,6 @@ func (m *TLMediaGetDocumentList) CalcByteSize(layer int32) int {
 func (m *TLMediaGetDocumentList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xc52fd26f:
-		// media.getDocumentList id_list:Vector<long> = Vector<Document>;
 
 		// not has flags
 
@@ -1018,7 +997,6 @@ func (m *TLMediaUploadEncryptedFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xab00c69b:
-		// media.uploadEncryptedFile owner_id:long file:InputEncryptedFile = EncryptedFile;
 		x.UInt(0xab00c69b)
 
 		// no flags
@@ -1040,7 +1018,6 @@ func (m *TLMediaUploadEncryptedFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xab00c69b:
-		// media.uploadEncryptedFile owner_id:long file:InputEncryptedFile = EncryptedFile;
 
 		// not has flags
 
@@ -1073,7 +1050,6 @@ func (m *TLMediaGetEncryptedFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfc6080d1:
-		// media.getEncryptedFile id:long access_hash:long = EncryptedFile;
 		x.UInt(0xfc6080d1)
 
 		// no flags
@@ -1095,7 +1071,6 @@ func (m *TLMediaGetEncryptedFile) CalcByteSize(layer int32) int {
 func (m *TLMediaGetEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfc6080d1:
-		// media.getEncryptedFile id:long access_hash:long = EncryptedFile;
 
 		// not has flags
 
@@ -1124,7 +1099,6 @@ func (m *TLMediaUploadWallPaperFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9cfaadfe:
-		// media.uploadWallPaperFile owner_id:long file:InputFile mime_type:string admin:Bool = Document;
 		x.UInt(0x9cfaadfe)
 
 		// no flags
@@ -1148,7 +1122,6 @@ func (m *TLMediaUploadWallPaperFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9cfaadfe:
-		// media.uploadWallPaperFile owner_id:long file:InputFile mime_type:string admin:Bool = Document;
 
 		// not has flags
 
@@ -1187,7 +1160,6 @@ func (m *TLMediaUploadThemeFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x42e6b860:
-		// media.uploadThemeFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 		x.UInt(0x42e6b860)
 
 		// set flags
@@ -1223,7 +1195,6 @@ func (m *TLMediaUploadThemeFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x42e6b860:
-		// media.uploadThemeFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1265,7 +1236,6 @@ func (m *TLMediaUploadStickerFile) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xacb624ed:
-		// media.uploadStickerFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string document_attribute_sticker:DocumentAttribute = Document;
 		x.UInt(0xacb624ed)
 
 		// set flags
@@ -1302,7 +1272,6 @@ func (m *TLMediaUploadStickerFile) CalcByteSize(layer int32) int {
 func (m *TLMediaUploadStickerFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xacb624ed:
-		// media.uploadStickerFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string document_attribute_sticker:DocumentAttribute = Document;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1335,6 +1304,69 @@ func (m *TLMediaUploadStickerFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadStickerFile) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMediaUploadRingtoneFile
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMediaUploadRingtoneFile) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_media_uploadRingtoneFile))
+
+	switch uint32(m.Constructor) {
+	case 0x3dbab209:
+		x.UInt(0x3dbab209)
+
+		// set flags
+		var flags uint32 = 0
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetOwnerId())
+		x.Bytes(m.GetFile().Encode(layer))
+		x.String(m.GetMimeType())
+		x.String(m.GetFileName())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLMediaUploadRingtoneFile) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMediaUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x3dbab209:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.OwnerId = dBuf.Long()
+
+		m3 := &mtproto.InputFile{}
+		m3.Decode(dBuf)
+		m.File = m3
+
+		m.MimeType = dBuf.String()
+		m.FileName = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMediaUploadRingtoneFile) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
