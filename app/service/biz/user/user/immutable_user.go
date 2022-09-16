@@ -212,7 +212,7 @@ func (m *ImmutableUser) ToUnsafeUser(selfUser *ImmutableUser) *mtproto.User {
 		LastName:             mtproto.MakeFlagsString(m.LastName()),
 		Username:             mtproto.MakeFlagsString(m.Username()),
 		Phone:                nil,
-		Photo:                m.ProfilePhoto(),
+		Photo:                nil,
 		Status:               MakeUserStatus(m.LastSeenAt, true),
 		BotInfoVersion:       mtproto.MakeFlagsInt32(m.BotInfoVersion()),
 		RestrictionReason:    m.RestrictionReason(),
