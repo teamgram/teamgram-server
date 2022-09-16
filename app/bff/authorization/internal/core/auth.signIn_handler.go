@@ -217,7 +217,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	// Check SESSION_PASSWORD_NEEDED
 	if c.svcCtx.Plugin != nil {
-		if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, c.MD.UserId) {
+		if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, user.User.Id) {
 			err = mtproto.ErrSessionPasswordNeeded
 			c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
 			return nil, err
