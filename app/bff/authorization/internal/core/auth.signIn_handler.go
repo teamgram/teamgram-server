@@ -52,7 +52,7 @@ import (
 // AuthSignIn
 // auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
 func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error) {
-	if in.PhoneCode == "" || in.PhoneCodeHash == "" {
+	if in.PhoneCode_STRING == "" || in.PhoneCodeHash == "" {
 		err := mtproto.ErrPhoneCodeEmpty
 		c.Logger.Errorf("auth.sendCode - error: %v", err)
 		return nil, err
@@ -77,12 +77,12 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	codeData, err2 := c.svcCtx.AuthLogic.DoAuthSignIn(c.ctx,
 		c.MD.AuthId,
 		phoneNumber,
-		in.PhoneCode,
+		in.PhoneCode_STRING,
 		in.PhoneCodeHash,
 		func(codeData2 *model.PhoneCodeTransaction) error {
 			return c.svcCtx.AuthLogic.VerifyCodeInterface.VerifySmsCode(c.ctx,
 				codeData2.PhoneCodeHash,
-				in.PhoneCode,
+				in.PhoneCode_STRING,
 				codeData2.PhoneCodeExtraData)
 
 			//log.Debugf("111")
