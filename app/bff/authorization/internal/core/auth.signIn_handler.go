@@ -52,7 +52,16 @@ import (
 // AuthSignIn
 // auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
 func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error) {
-	if in.PhoneCode_STRING == "" || in.PhoneCodeHash == "" {
+	var (
+		phoneCode     = in.GetPhoneCode_STRING()
+		phoneCodeHash = in.PhoneCodeHash
+	)
+
+	if phoneCode == "" {
+		phoneCode = in.GetPhoneCode_FLAGSTRING().GetValue()
+	}
+
+	if phoneCode == "" || phoneCodeHash == "" {
 		err := mtproto.ErrPhoneCodeEmpty
 		c.Logger.Errorf("auth.sendCode - error: %v", err)
 		return nil, err
@@ -77,12 +86,12 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	codeData, err2 := c.svcCtx.AuthLogic.DoAuthSignIn(c.ctx,
 		c.MD.AuthId,
 		phoneNumber,
-		in.PhoneCode_STRING,
-		in.PhoneCodeHash,
+		phoneCode,
+		phoneCodeHash,
 		func(codeData2 *model.PhoneCodeTransaction) error {
 			return c.svcCtx.AuthLogic.VerifyCodeInterface.VerifySmsCode(c.ctx,
 				codeData2.PhoneCodeHash,
-				in.PhoneCode_STRING,
+				phoneCode,
 				codeData2.PhoneCodeExtraData)
 
 			//log.Debugf("111")
@@ -226,7 +235,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	selfUser := user.ToSelfUser()
 
-	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, in.PhoneNumber, in.PhoneCodeHash)
+	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, in.PhoneNumber, phoneCodeHash)
 	region, _ := c.svcCtx.Dao.GetCountryAndRegionByIp(c.MD.ClientAddr)
 	signInN := mtproto.MakeSignInServiceNotification(selfUser, c.MD.AuthId, c.MD.Client, region, c.MD.ClientAddr)
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
