@@ -89,11 +89,11 @@ func (dao *UsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId
 }
 
 // SelectByPhoneNumber
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone = :phone limit 1
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone = :phone limit 1
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone = ? limit 1"
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone = ? limit 1"
 		do    = &dataobject.UsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
@@ -113,11 +113,11 @@ func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rVa
 }
 
 // SelectById
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id = :id limit 1
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id = :id limit 1
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id = ? limit 1"
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id = ? limit 1"
 		do    = &dataobject.UsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
@@ -137,11 +137,11 @@ func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobje
 }
 
 // SelectUsersByIdList
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (:id_list)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (:id_list)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -169,11 +169,11 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (
 }
 
 // SelectUsersByIdListWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (:id_list)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (:id_list)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []int64, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -207,11 +207,11 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []in
 }
 
 // SelectUsersByPhoneList
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (:phoneList)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone in (:phoneList)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -239,11 +239,11 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 }
 
 // SelectUsersByPhoneListWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (:phoneList)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone in (:phoneList)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList []string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where phone in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where phone in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -277,11 +277,11 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 }
 
 // SelectByQueryString
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByQueryString(ctx context.Context, username string, first_name string, last_name string, phone string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
@@ -297,11 +297,11 @@ func (dao *UsersDAO) SelectByQueryString(ctx context.Context, username string, f
 }
 
 // SelectByQueryStringWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByQueryStringWithCB(ctx context.Context, username string, first_name string, last_name string, phone string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
@@ -874,11 +874,11 @@ func (dao *UsersDAO) UpdateUserTx(tx *sqlx.Tx, cMap map[string]interface{}, id i
 }
 
 // QueryChannelParticipants
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int64, q1 string, q2 string, q3 string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
@@ -894,11 +894,11 @@ func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int
 }
 
 // QueryChannelParticipantsWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipantsWithCB(ctx context.Context, channelId int64, q1 string, q2 string, q3 string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)

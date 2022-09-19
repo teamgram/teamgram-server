@@ -1636,6 +1636,12 @@ func (m *TLUserData) GetPrivaciesVersion() int32  { return m.Data2.PrivaciesVers
 func (m *TLUserData) SetDeleted(v bool) { m.Data2.Deleted = v }
 func (m *TLUserData) GetDeleted() bool  { return m.Data2.Deleted }
 
+func (m *TLUserData) SetBotAttachMenu(v bool) { m.Data2.BotAttachMenu = v }
+func (m *TLUserData) GetBotAttachMenu() bool  { return m.Data2.BotAttachMenu }
+
+func (m *TLUserData) SetPremium(v bool) { m.Data2.Premium = v }
+func (m *TLUserData) GetPremium() bool  { return m.Data2.Premium }
+
 func (m *TLUserData) GetPredicateName() string {
 	return Predicate_userData
 }
@@ -1682,6 +1688,12 @@ func (m *TLUserData) Encode(layer int32) []byte {
 
 				if m.GetDeleted() == true {
 					flags |= 1 << 9
+				}
+				if m.GetBotAttachMenu() == true {
+					flags |= 1 << 10
+				}
+				if m.GetPremium() == true {
+					flags |= 1 << 11
 				}
 
 				return flags
@@ -1801,6 +1813,12 @@ func (m *TLUserData) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.SetPrivaciesVersion(dBuf.Int())
 			if (flags & (1 << 9)) != 0 {
 				m.SetDeleted(true)
+			}
+			if (flags & (1 << 10)) != 0 {
+				m.SetBotAttachMenu(true)
+			}
+			if (flags & (1 << 11)) != 0 {
+				m.SetPremium(true)
 			}
 			return dBuf.GetError()
 		},

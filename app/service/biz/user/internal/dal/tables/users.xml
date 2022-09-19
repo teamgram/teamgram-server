@@ -8,10 +8,11 @@
                 (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
         </sql>
     </operation>
+
     <operation name="SelectByPhoneNumber">
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -21,7 +22,7 @@
     <operation name="SelectById">
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -34,7 +35,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -47,7 +48,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -57,7 +58,7 @@
     <operation name="SelectByQueryString" result_set="list">
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -234,7 +235,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, photo_id, country_code, verified, about, is_bot, deleted
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, deleted, delete_reason
             FROM
                 users
             WHERE

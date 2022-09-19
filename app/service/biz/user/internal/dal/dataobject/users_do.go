@@ -24,6 +24,7 @@ type UsersDO struct {
 	Support                          bool   `db:"support"`
 	Scam                             bool   `db:"scam"`
 	Fake                             bool   `db:"fake"`
+	Premium                          bool   `db:"premium"`
 	About                            string `db:"about"`
 	State                            int32  `db:"state"`
 	IsBot                            bool   `db:"is_bot"`

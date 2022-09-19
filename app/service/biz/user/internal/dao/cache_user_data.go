@@ -175,6 +175,8 @@ func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *user.UserData {
 		RestrictionReason: nil,
 		ContactsVersion:   1,
 		PrivaciesVersion:  1,
+		BotAttachMenu:     false,
+		Premium:           userDO.Premium,
 	}).To_UserData()
 
 	return userData
