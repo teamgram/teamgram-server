@@ -389,7 +389,7 @@ func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, 
 
 	var (
 		sessionId = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
-		isNew     = ctx.sessionId == 0
+		isNew     = ctx.sessionId != sessionId
 		authKeyId = mmsg.AuthKeyId()
 	)
 	if isNew {
