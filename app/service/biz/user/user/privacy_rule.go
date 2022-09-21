@@ -44,6 +44,7 @@ inputPrivacyKeyForwards#a4dd4c08 = InputPrivacyKey;
 inputPrivacyKeyProfilePhoto#5719bacc = InputPrivacyKey;
 inputPrivacyKeyPhoneNumber#352dafa = InputPrivacyKey;
 inputPrivacyKeyAddedByPhone#d1219bdd = InputPrivacyKey;
+inputPrivacyKeyVoiceMessages#aee69d68 = InputPrivacyKey;
 ```
 */
 const (
@@ -56,7 +57,8 @@ const (
 	PROFILE_PHOTO    = 6
 	PHONE_NUMBER     = 7
 	ADDED_BY_PHONE   = 8
-	MAX_KEY_TYPE     = 8
+	VOICE_MESSAGES   = 9
+	MAX_KEY_TYPE     = 9
 )
 
 func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
@@ -77,6 +79,8 @@ func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
 		return PHONE_NUMBER
 	case mtproto.Predicate_inputPrivacyKeyAddedByPhone:
 		return ADDED_BY_PHONE
+	case mtproto.Predicate_inputPrivacyKeyVoiceMessages:
+		return VOICE_MESSAGES
 	}
 	return KEY_TYPE_INVALID
 }
@@ -99,6 +103,8 @@ func ToPrivacyKey(keyType int) (key *mtproto.PrivacyKey) {
 		key = mtproto.MakeTLPrivacyKeyPhoneNumber(nil).To_PrivacyKey()
 	case ADDED_BY_PHONE:
 		key = mtproto.MakeTLPrivacyKeyAddedByPhone(nil).To_PrivacyKey()
+	case VOICE_MESSAGES:
+		key = mtproto.MakeTLPrivacyKeyVoiceMessages(nil).To_PrivacyKey()
 	default:
 		panic("type is invalid")
 	}
