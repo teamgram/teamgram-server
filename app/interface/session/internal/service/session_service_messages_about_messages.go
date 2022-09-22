@@ -365,9 +365,9 @@ func (c *session) checkBadMsgNotification(gatewayId string, excludeMsgIdToo bool
 			BadMsgSeqno: msg.Seqno,
 			ErrorCode:   errorCode,
 		}).To_BadMsgNotification()
-		logx.Errorf("errorCode - ", errorCode, ", msg: ", reflect.TypeOf(msg.Object))
+		logx.Error("errorCode - ", errorCode, ", msg: ", reflect.TypeOf(msg.Object))
 		c.sendDirectToGateway(gatewayId, false, badMsgNotification, func(sentRaw *mtproto.TLMessageRawData) {
-
+			//
 		})
 		return false
 	}
