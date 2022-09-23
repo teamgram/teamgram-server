@@ -19,11 +19,10 @@
 package main
 
 import (
-	"github.com/teamgram/teamgram-server/app/interface/gateway/internal/server/server"
-
 	"github.com/teamgram/marmota/pkg/commands"
+	gateway_helper "github.com/teamgram/teamgram-server/app/interface/gateway"
 )
 
 func main() {
-	commands.Run(new(server.Server))
+	commands.Run(new(gateway_helper.Server))
 }

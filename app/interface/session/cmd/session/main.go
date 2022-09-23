@@ -12,10 +12,9 @@ package main
 
 import (
 	"github.com/teamgram/marmota/pkg/commands"
-
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/server"
+	session_helper "github.com/teamgram/teamgram-server/app/interface/session"
 )
 
 func main() {
-	commands.Run(server.New())
+	commands.Run(session_helper.New())
 }

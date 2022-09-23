@@ -12,7 +12,12 @@ package gateway_helper
 
 import (
 	"github.com/teamgram/teamgram-server/app/interface/gateway/internal/server/server"
+	"github.com/zeromicro/go-zero/zrpc"
 )
+
+func init() {
+	zrpc.DontLogContentForMethod("/gateway.RPCGateway/GatewaySendDataToGateway")
+}
 
 type (
 	Server = server.Server

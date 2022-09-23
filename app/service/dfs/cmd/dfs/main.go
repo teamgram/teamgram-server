@@ -12,10 +12,9 @@ package main
 
 import (
 	"github.com/teamgram/marmota/pkg/commands"
-
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server"
+	dfs_helper "github.com/teamgram/teamgram-server/app/service/dfs"
 )
 
 func main() {
-	commands.Run(server.New())
+	commands.Run(dfs_helper.New())
 }
