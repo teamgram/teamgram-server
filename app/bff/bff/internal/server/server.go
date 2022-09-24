@@ -296,13 +296,6 @@ func (s *Server) Initialize() error {
 				ChatClient:     c.BizServiceClient,
 				SyncClient:     c.SyncClient,
 			}, nil))
-
-		// premium_helper
-		mtproto.RegisterRPCPremiumServer(
-			grpcServer,
-			premium_helper.New(premium_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-			}))
 	})
 
 	// logx.Must(err)
