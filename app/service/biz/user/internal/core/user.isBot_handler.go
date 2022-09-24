@@ -23,5 +23,5 @@ func (c *UserCore) UserIsBot(in *user.TLUserIsBot) (*mtproto.Bool, error) {
 		return nil, mtproto.ErrUserIdInvalid
 	}
 
-	return mtproto.ToBool(userData.GetUserData().GetBot() == nil), nil
+	return mtproto.ToBool(userData.GetUserData().GetBot() != nil), nil
 }

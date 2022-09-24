@@ -22,6 +22,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
@@ -50,7 +51,11 @@ func (d *Dao) GetLastSeenAt(ctx context.Context, id int64) (*dataobject.UserPres
 			if err != nil {
 				return err
 			}
-			*v.(*dataobject.UserPresencesDO) = *do2
+			if do2 != nil {
+				*v.(*dataobject.UserPresencesDO) = *do2
+			} else {
+				return sqlc.ErrNotFound
+			}
 			return nil
 		})
 	if err != nil {
