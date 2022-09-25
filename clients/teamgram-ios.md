@@ -21,10 +21,10 @@ sh r.sh
 
 If you want to connect to your own server, you can modify the following code:
 
-[Network.swift#L473](https://github.com/teamgram/teamgram-ios/blob/f95521c8ca1383126645b6730dec156e7f2427e3/submodules/TelegramCore/Sources/Network/Network.swift#L473)
+[Network.swift#L473](https://github.com/teamgram/teamgram-ios/blob/teamgram/submodules/TelegramCore/Sources/Network/Network.swift#L473)
 
 ```
-https://github.com/teamgram/teamgram-ios/blob/f95521c8ca1383126645b6730dec156e7f2427e3/submodules/TelegramCore/Sources/Network/Network.swift#L473
+https://github.com/teamgram/teamgram-ios/blob/teamgram/submodules/TelegramCore/Sources/Network/Network.swift#L473
 if testingEnvironment {
     seedAddressList = [
         1: ["XXX.XXX.XXX.XXX"]

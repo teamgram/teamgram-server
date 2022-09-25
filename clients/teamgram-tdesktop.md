@@ -12,10 +12,10 @@
 
 If you want to connect to your own server, you can modify the following code:
 
-[mtproto_dc_options.cpp#L31](https://github.com/teamgram/teamgram-tdesktop/blob/cf0b6c9ece9d915991901e894c6bbc0db2883436/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp#L31)
+[mtproto_dc_options.cpp#L31](https://github.com/teamgram/teamgram-tdesktop/blob/teamgram2/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp#L31)
 
 ```
-https://github.com/teamgram/teamgram-tdesktop/blob/cf0b6c9ece9d915991901e894c6bbc0db2883436/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp#L31
+https://github.com/teamgram/teamgram-tdesktop/blob/teamgram2/Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp#L31
 
 const BuiltInDc kBuiltInDcs[] = {
     { 1, "XXX.XXX.XXX.XXX" , 10443 },
