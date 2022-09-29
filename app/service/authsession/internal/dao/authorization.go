@@ -144,12 +144,12 @@ func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, h
 		func(i int, v *dataobject.AuthUsersDO) {
 			if hash == 0 {
 				cacheKeyIdList = append(cacheKeyIdList, genAuthDataCacheKey(v.AuthKeyId))
-				hashList = append(hashList, v.Hash)
+				hashList = append(hashList, v.Id)
 				keyIdList = append(keyIdList, v.AuthKeyId)
 			} else {
 				if hash == v.Hash && authKeyId != v.AuthKeyId {
 					cacheKeyIdList = append(cacheKeyIdList, genAuthDataCacheKey(v.AuthKeyId))
-					hashList = append(hashList, v.Hash)
+					hashList = append(hashList, v.Id)
 					keyIdList = append(keyIdList, v.AuthKeyId)
 				}
 			}
