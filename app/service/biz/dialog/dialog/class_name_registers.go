@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package dialog
@@ -43,6 +43,8 @@ const (
 	Predicate_dialog_getDialogFolder                   = "dialog_getDialogFolder"
 	Predicate_dialog_editPeerFolders                   = "dialog_editPeerFolders"
 	Predicate_dialog_getChannelMessageReadParticipants = "dialog_getChannelMessageReadParticipants"
+	Predicate_dialog_setChatTheme                      = "dialog_setChatTheme"
+	Predicate_dialog_setHistoryTTL                     = "dialog_setHistoryTTL"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -51,7 +53,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dialogExt: {
-		0: 722420824, // 0x2b0f4458
+		0: -1109809056, // 0xbdd9a860
 
 	},
 	Predicate_dialogPinnedExt: {
@@ -174,11 +176,19 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 683494715, // 0x28bd4d3b
 
 	},
+	Predicate_dialog_setChatTheme: {
+		0: -374431190, // 0xe9aea22a
+
+	},
+	Predicate_dialog_setHistoryTTL: {
+		0: 165263532, // 0x9d9b8ac
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
 	-155335502:  Predicate_updateDraftMessage,                       // 0xf6bdc4b2
-	722420824:   Predicate_dialogExt,                                // 0x2b0f4458
+	-1109809056: Predicate_dialogExt,                                // 0xbdd9a860
 	245834284:   Predicate_dialogPinnedExt,                          // 0xea7222c
 	-1891683854: Predicate_dialogFilterExt,                          // 0x8f3f31f2
 	1321916826:  Predicate_dialog_saveDraftMessage,                  // 0x4ecad99a
@@ -209,6 +219,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1092325045:  Predicate_dialog_getDialogFolder,                   // 0x411b8eb5
 	608601754:   Predicate_dialog_editPeerFolders,                   // 0x2446869a
 	683494715:   Predicate_dialog_getChannelMessageReadParticipants, // 0x28bd4d3b
+	-374431190:  Predicate_dialog_setChatTheme,                      // 0xe9aea22a
+	165263532:   Predicate_dialog_setHistoryTTL,                     // 0x9d9b8ac
 
 }
 

@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package dialog
@@ -54,6 +54,8 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLDialogGetDialogFolder":                   RPCContextTuple{"/mtproto.RPCDialog/dialog_getDialogFolder", func() interface{} { return new(Vector_DialogExt) }},
 	"TLDialogEditPeerFolders":                   RPCContextTuple{"/mtproto.RPCDialog/dialog_editPeerFolders", func() interface{} { return new(Vector_DialogPinnedExt) }},
 	"TLDialogGetChannelMessageReadParticipants": RPCContextTuple{"/mtproto.RPCDialog/dialog_getChannelMessageReadParticipants", func() interface{} { return new(Vector_Long) }},
+	"TLDialogSetChatTheme":                      RPCContextTuple{"/mtproto.RPCDialog/dialog_setChatTheme", func() interface{} { return new(mtproto.Bool) }},
+	"TLDialogSetHistoryTTL":                     RPCContextTuple{"/mtproto.RPCDialog/dialog_setHistoryTTL", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

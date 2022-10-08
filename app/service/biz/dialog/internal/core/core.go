@@ -87,10 +87,12 @@ func makeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		//
 	}).To_PeerNotifySettings()
 
-	return &dialog.DialogExt{
+	return dialog.MakeTLDialogExt(&dialog.DialogExt{
 		Order:          order,
 		Dialog:         dialog2,
 		AvailableMinId: 0,
 		Date:           dialogDO.Date2,
-	}
+		ThemeEmoticon:  dialogDO.ThemeEmoticon,
+		TtlPeriod:      dialogDO.TtlPeriod,
+	}).To_DialogExt()
 }

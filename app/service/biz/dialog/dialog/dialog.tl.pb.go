@@ -36,7 +36,7 @@ type TLConstructor int32
 const (
 	CRC32_UNKNOWN                                  TLConstructor = 0
 	CRC32_updateDraftMessage                       TLConstructor = -155335502
-	CRC32_dialogExt                                TLConstructor = 722420824
+	CRC32_dialogExt                                TLConstructor = -1109809056
 	CRC32_dialogPinnedExt                          TLConstructor = 245834284
 	CRC32_dialogFilterExt                          TLConstructor = -1891683854
 	CRC32_dialog_saveDraftMessage                  TLConstructor = 1321916826
@@ -67,12 +67,14 @@ const (
 	CRC32_dialog_getDialogFolder                   TLConstructor = 1092325045
 	CRC32_dialog_editPeerFolders                   TLConstructor = 608601754
 	CRC32_dialog_getChannelMessageReadParticipants TLConstructor = 683494715
+	CRC32_dialog_setChatTheme                      TLConstructor = -374431190
+	CRC32_dialog_setHistoryTTL                     TLConstructor = 165263532
 )
 
 var TLConstructor_name = map[int32]string{
 	0:           "CRC32_UNKNOWN",
 	-155335502:  "CRC32_updateDraftMessage",
-	722420824:   "CRC32_dialogExt",
+	-1109809056: "CRC32_dialogExt",
 	245834284:   "CRC32_dialogPinnedExt",
 	-1891683854: "CRC32_dialogFilterExt",
 	1321916826:  "CRC32_dialog_saveDraftMessage",
@@ -103,12 +105,14 @@ var TLConstructor_name = map[int32]string{
 	1092325045:  "CRC32_dialog_getDialogFolder",
 	608601754:   "CRC32_dialog_editPeerFolders",
 	683494715:   "CRC32_dialog_getChannelMessageReadParticipants",
+	-374431190:  "CRC32_dialog_setChatTheme",
+	165263532:   "CRC32_dialog_setHistoryTTL",
 }
 
 var TLConstructor_value = map[string]int32{
 	"CRC32_UNKNOWN":                                  0,
 	"CRC32_updateDraftMessage":                       -155335502,
-	"CRC32_dialogExt":                                722420824,
+	"CRC32_dialogExt":                                -1109809056,
 	"CRC32_dialogPinnedExt":                          245834284,
 	"CRC32_dialogFilterExt":                          -1891683854,
 	"CRC32_dialog_saveDraftMessage":                  1321916826,
@@ -139,6 +143,8 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_dialog_getDialogFolder":                   1092325045,
 	"CRC32_dialog_editPeerFolders":                   608601754,
 	"CRC32_dialog_getChannelMessageReadParticipants": 683494715,
+	"CRC32_dialog_setChatTheme":                      -374431190,
+	"CRC32_dialog_setHistoryTTL":                     165263532,
 }
 
 func (x TLConstructor) String() string {
@@ -149,134 +155,6 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_0afe6dcb8d4fc860, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
-// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-//
-// PeerWithDraftMessage <--
-//  + TL_updateDraftMessage
-//
-type PeerWithDraftMessage struct {
-	PredicateName        string                `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
-	Constructor          TLConstructor         `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
-	Peer                 *mtproto.Peer         `protobuf:"bytes,3,opt,name=peer,proto3" json:"peer,omitempty"`
-	Draft                *mtproto.DraftMessage `protobuf:"bytes,4,opt,name=draft,proto3" json:"draft,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *PeerWithDraftMessage) Reset()         { *m = PeerWithDraftMessage{} }
-func (m *PeerWithDraftMessage) String() string { return proto.CompactTextString(m) }
-func (*PeerWithDraftMessage) ProtoMessage()    {}
-func (*PeerWithDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{0}
-}
-func (m *PeerWithDraftMessage) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PeerWithDraftMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PeerWithDraftMessage.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PeerWithDraftMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PeerWithDraftMessage.Merge(m, src)
-}
-func (m *PeerWithDraftMessage) XXX_Size() int {
-	return m.Size()
-}
-func (m *PeerWithDraftMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_PeerWithDraftMessage.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PeerWithDraftMessage proto.InternalMessageInfo
-
-func (m *PeerWithDraftMessage) GetPredicateName() string {
-	if m != nil {
-		return m.PredicateName
-	}
-	return ""
-}
-
-func (m *PeerWithDraftMessage) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *PeerWithDraftMessage) GetPeer() *mtproto.Peer {
-	if m != nil {
-		return m.Peer
-	}
-	return nil
-}
-
-func (m *PeerWithDraftMessage) GetDraft() *mtproto.DraftMessage {
-	if m != nil {
-		return m.Draft
-	}
-	return nil
-}
-
-// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-type TLUpdateDraftMessage struct {
-	Data2                *PeerWithDraftMessage `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *TLUpdateDraftMessage) Reset()         { *m = TLUpdateDraftMessage{} }
-func (m *TLUpdateDraftMessage) String() string { return proto.CompactTextString(m) }
-func (*TLUpdateDraftMessage) ProtoMessage()    {}
-func (*TLUpdateDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{1}
-}
-func (m *TLUpdateDraftMessage) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLUpdateDraftMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLUpdateDraftMessage.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLUpdateDraftMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLUpdateDraftMessage.Merge(m, src)
-}
-func (m *TLUpdateDraftMessage) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLUpdateDraftMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLUpdateDraftMessage.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLUpdateDraftMessage proto.InternalMessageInfo
-
-func (m *TLUpdateDraftMessage) GetData2() *PeerWithDraftMessage {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
-//
 // DialogExt <--
 //  + TL_dialogExt
 //
@@ -287,6 +165,8 @@ type DialogExt struct {
 	Dialog               *mtproto.Dialog `protobuf:"bytes,4,opt,name=dialog,proto3" json:"dialog,omitempty"`
 	AvailableMinId       int32           `protobuf:"varint,5,opt,name=available_min_id,json=availableMinId,proto3" json:"available_min_id,omitempty"`
 	Date                 int64           `protobuf:"varint,6,opt,name=date,proto3" json:"date,omitempty"`
+	ThemeEmoticon        string          `protobuf:"bytes,7,opt,name=theme_emoticon,json=themeEmoticon,proto3" json:"theme_emoticon,omitempty"`
+	TtlPeriod            int32           `protobuf:"varint,8,opt,name=ttl_period,json=ttlPeriod,proto3" json:"ttl_period,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
@@ -296,7 +176,7 @@ func (m *DialogExt) Reset()         { *m = DialogExt{} }
 func (m *DialogExt) String() string { return proto.CompactTextString(m) }
 func (*DialogExt) ProtoMessage()    {}
 func (*DialogExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{2}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{0}
 }
 func (m *DialogExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -367,7 +247,20 @@ func (m *DialogExt) GetDate() int64 {
 	return 0
 }
 
-// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
+func (m *DialogExt) GetThemeEmoticon() string {
+	if m != nil {
+		return m.ThemeEmoticon
+	}
+	return ""
+}
+
+func (m *DialogExt) GetTtlPeriod() int32 {
+	if m != nil {
+		return m.TtlPeriod
+	}
+	return 0
+}
+
 type TLDialogExt struct {
 	Data2                *DialogExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
@@ -379,7 +272,7 @@ func (m *TLDialogExt) Reset()         { *m = TLDialogExt{} }
 func (m *TLDialogExt) String() string { return proto.CompactTextString(m) }
 func (*TLDialogExt) ProtoMessage()    {}
 func (*TLDialogExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{3}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{1}
 }
 func (m *TLDialogExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -415,9 +308,135 @@ func (m *TLDialogExt) GetData2() *DialogExt {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
+// DialogFilterExt <--
+//  + TL_dialogFilterExt
 //
+type DialogFilterExt struct {
+	PredicateName        string                `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor         `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	Id                   int32                 `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	DialogFilter         *mtproto.DialogFilter `protobuf:"bytes,4,opt,name=dialog_filter,json=dialogFilter,proto3" json:"dialog_filter,omitempty"`
+	Order                int64                 `protobuf:"varint,5,opt,name=order,proto3" json:"order,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DialogFilterExt) Reset()         { *m = DialogFilterExt{} }
+func (m *DialogFilterExt) String() string { return proto.CompactTextString(m) }
+func (*DialogFilterExt) ProtoMessage()    {}
+func (*DialogFilterExt) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{2}
+}
+func (m *DialogFilterExt) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DialogFilterExt.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DialogFilterExt) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DialogFilterExt.Merge(m, src)
+}
+func (m *DialogFilterExt) XXX_Size() int {
+	return m.Size()
+}
+func (m *DialogFilterExt) XXX_DiscardUnknown() {
+	xxx_messageInfo_DialogFilterExt.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DialogFilterExt proto.InternalMessageInfo
+
+func (m *DialogFilterExt) GetPredicateName() string {
+	if m != nil {
+		return m.PredicateName
+	}
+	return ""
+}
+
+func (m *DialogFilterExt) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *DialogFilterExt) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *DialogFilterExt) GetDialogFilter() *mtproto.DialogFilter {
+	if m != nil {
+		return m.DialogFilter
+	}
+	return nil
+}
+
+func (m *DialogFilterExt) GetOrder() int64 {
+	if m != nil {
+		return m.Order
+	}
+	return 0
+}
+
+type TLDialogFilterExt struct {
+	Data2                *DialogFilterExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *TLDialogFilterExt) Reset()         { *m = TLDialogFilterExt{} }
+func (m *TLDialogFilterExt) String() string { return proto.CompactTextString(m) }
+func (*TLDialogFilterExt) ProtoMessage()    {}
+func (*TLDialogFilterExt) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{3}
+}
+func (m *TLDialogFilterExt) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogFilterExt.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogFilterExt) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogFilterExt.Merge(m, src)
+}
+func (m *TLDialogFilterExt) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogFilterExt) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogFilterExt.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogFilterExt proto.InternalMessageInfo
+
+func (m *TLDialogFilterExt) GetData2() *DialogFilterExt {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
 // DialogPinnedExt <--
 //  + TL_dialogPinnedExt
 //
@@ -500,7 +519,6 @@ func (m *DialogPinnedExt) GetPeerId() int64 {
 	return 0
 }
 
-// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
 type TLDialogPinnedExt struct {
 	Data2                *DialogPinnedExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
@@ -548,35 +566,31 @@ func (m *TLDialogPinnedExt) GetData2() *DialogPinnedExt {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
+// PeerWithDraftMessage <--
+//  + TL_updateDraftMessage
 //
-// DialogFilterExt <--
-//  + TL_dialogFilterExt
-//
-type DialogFilterExt struct {
+type PeerWithDraftMessage struct {
 	PredicateName        string                `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor         `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
-	Id                   int32                 `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
-	DialogFilter         *mtproto.DialogFilter `protobuf:"bytes,4,opt,name=dialog_filter,json=dialogFilter,proto3" json:"dialog_filter,omitempty"`
-	Order                int64                 `protobuf:"varint,5,opt,name=order,proto3" json:"order,omitempty"`
+	Peer                 *mtproto.Peer         `protobuf:"bytes,3,opt,name=peer,proto3" json:"peer,omitempty"`
+	Draft                *mtproto.DraftMessage `protobuf:"bytes,4,opt,name=draft,proto3" json:"draft,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DialogFilterExt) Reset()         { *m = DialogFilterExt{} }
-func (m *DialogFilterExt) String() string { return proto.CompactTextString(m) }
-func (*DialogFilterExt) ProtoMessage()    {}
-func (*DialogFilterExt) Descriptor() ([]byte, []int) {
+func (m *PeerWithDraftMessage) Reset()         { *m = PeerWithDraftMessage{} }
+func (m *PeerWithDraftMessage) String() string { return proto.CompactTextString(m) }
+func (*PeerWithDraftMessage) ProtoMessage()    {}
+func (*PeerWithDraftMessage) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0afe6dcb8d4fc860, []int{6}
 }
-func (m *DialogFilterExt) XXX_Unmarshal(b []byte) error {
+func (m *PeerWithDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *DialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *PeerWithDraftMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_DialogFilterExt.Marshal(b, m, deterministic)
+		return xxx_messageInfo_PeerWithDraftMessage.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -586,73 +600,65 @@ func (m *DialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *DialogFilterExt) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DialogFilterExt.Merge(m, src)
+func (m *PeerWithDraftMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PeerWithDraftMessage.Merge(m, src)
 }
-func (m *DialogFilterExt) XXX_Size() int {
+func (m *PeerWithDraftMessage) XXX_Size() int {
 	return m.Size()
 }
-func (m *DialogFilterExt) XXX_DiscardUnknown() {
-	xxx_messageInfo_DialogFilterExt.DiscardUnknown(m)
+func (m *PeerWithDraftMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_PeerWithDraftMessage.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DialogFilterExt proto.InternalMessageInfo
+var xxx_messageInfo_PeerWithDraftMessage proto.InternalMessageInfo
 
-func (m *DialogFilterExt) GetPredicateName() string {
+func (m *PeerWithDraftMessage) GetPredicateName() string {
 	if m != nil {
 		return m.PredicateName
 	}
 	return ""
 }
 
-func (m *DialogFilterExt) GetConstructor() TLConstructor {
+func (m *PeerWithDraftMessage) GetConstructor() TLConstructor {
 	if m != nil {
 		return m.Constructor
 	}
 	return CRC32_UNKNOWN
 }
 
-func (m *DialogFilterExt) GetId() int32 {
+func (m *PeerWithDraftMessage) GetPeer() *mtproto.Peer {
 	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *DialogFilterExt) GetDialogFilter() *mtproto.DialogFilter {
-	if m != nil {
-		return m.DialogFilter
+		return m.Peer
 	}
 	return nil
 }
 
-func (m *DialogFilterExt) GetOrder() int64 {
+func (m *PeerWithDraftMessage) GetDraft() *mtproto.DraftMessage {
 	if m != nil {
-		return m.Order
+		return m.Draft
 	}
-	return 0
+	return nil
 }
 
-// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
-type TLDialogFilterExt struct {
-	Data2                *DialogFilterExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+type TLUpdateDraftMessage struct {
+	Data2                *PeerWithDraftMessage `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *TLDialogFilterExt) Reset()         { *m = TLDialogFilterExt{} }
-func (m *TLDialogFilterExt) String() string { return proto.CompactTextString(m) }
-func (*TLDialogFilterExt) ProtoMessage()    {}
-func (*TLDialogFilterExt) Descriptor() ([]byte, []int) {
+func (m *TLUpdateDraftMessage) Reset()         { *m = TLUpdateDraftMessage{} }
+func (m *TLUpdateDraftMessage) String() string { return proto.CompactTextString(m) }
+func (*TLUpdateDraftMessage) ProtoMessage()    {}
+func (*TLUpdateDraftMessage) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0afe6dcb8d4fc860, []int{7}
 }
-func (m *TLDialogFilterExt) XXX_Unmarshal(b []byte) error {
+func (m *TLUpdateDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *TLDialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TLUpdateDraftMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_TLDialogFilterExt.Marshal(b, m, deterministic)
+		return xxx_messageInfo_TLUpdateDraftMessage.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -662,19 +668,19 @@ func (m *TLDialogFilterExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (m *TLDialogFilterExt) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLDialogFilterExt.Merge(m, src)
+func (m *TLUpdateDraftMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLUpdateDraftMessage.Merge(m, src)
 }
-func (m *TLDialogFilterExt) XXX_Size() int {
+func (m *TLUpdateDraftMessage) XXX_Size() int {
 	return m.Size()
 }
-func (m *TLDialogFilterExt) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLDialogFilterExt.DiscardUnknown(m)
+func (m *TLUpdateDraftMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLUpdateDraftMessage.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TLDialogFilterExt proto.InternalMessageInfo
+var xxx_messageInfo_TLUpdateDraftMessage proto.InternalMessageInfo
 
-func (m *TLDialogFilterExt) GetData2() *DialogFilterExt {
+func (m *TLUpdateDraftMessage) GetData2() *PeerWithDraftMessage {
 	if m != nil {
 		return m.Data2
 	}
@@ -682,7 +688,6 @@ func (m *TLDialogFilterExt) GetData2() *DialogFilterExt {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 type TLDialogSaveDraftMessage struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -763,7 +768,6 @@ func (m *TLDialogSaveDraftMessage) GetMessage() *mtproto.DraftMessage {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 type TLDialogClearDraftMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -836,7 +840,6 @@ func (m *TLDialogClearDraftMessage) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 type TLDialogGetAllDrafts struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -893,7 +896,6 @@ func (m *TLDialogGetAllDrafts) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 type TLDialogClearAllDrafts struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -950,7 +952,6 @@ func (m *TLDialogClearAllDrafts) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 type TLDialogMarkDialogUnread struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1031,7 +1032,6 @@ func (m *TLDialogMarkDialogUnread) GetUnreadMark() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 type TLDialogToggleDialogPin struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1112,7 +1112,6 @@ func (m *TLDialogToggleDialogPin) GetPinned() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 type TLDialogGetDialogUnreadMarkList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1169,7 +1168,6 @@ func (m *TLDialogGetDialogUnreadMarkList) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 type TLDialogGetDialogsByOffsetDate struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1250,7 +1248,6 @@ func (m *TLDialogGetDialogsByOffsetDate) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 type TLDialogGetDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1323,7 +1320,6 @@ func (m *TLDialogGetDialogs) GetFolderId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 type TLDialogGetDialogsByIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1388,7 +1384,6 @@ func (m *TLDialogGetDialogsByIdList) GetIdList() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 type TLDialogGetDialogsCount struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1461,7 +1456,6 @@ func (m *TLDialogGetDialogsCount) GetFolderId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 type TLDialogGetPinnedDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1526,7 +1520,6 @@ func (m *TLDialogGetPinnedDialogs) GetFolderId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 type TLDialogReorderPinnedDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1607,7 +1600,6 @@ func (m *TLDialogReorderPinnedDialogs) GetIdList() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 type TLDialogGetDialogById struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1680,7 +1672,6 @@ func (m *TLDialogGetDialogById) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 type TLDialogGetTopMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1753,7 +1744,6 @@ func (m *TLDialogGetTopMessage) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
 type TLDialogUpdateReadInbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1834,7 +1824,6 @@ func (m *TLDialogUpdateReadInbox) GetReadInboxId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
 type TLDialogUpdateReadOutbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1915,7 +1904,6 @@ func (m *TLDialogUpdateReadOutbox) GetReadOutboxId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
 type TLDialogInsertOrUpdateDialog struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64             `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2028,7 +2016,6 @@ func (m *TLDialogInsertOrUpdateDialog) GetUnreadMark() bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 type TLDialogDeleteDialog struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2101,7 +2088,6 @@ func (m *TLDialogDeleteDialog) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 type TLDialogGetUserPinnedMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2174,7 +2160,6 @@ func (m *TLDialogGetUserPinnedMessage) GetPeerId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 type TLDialogUpdateUserPinnedMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2255,7 +2240,6 @@ func (m *TLDialogUpdateUserPinnedMessage) GetPinnedMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 type TLDialogInsertOrUpdateDialogFilter struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2328,7 +2312,6 @@ func (m *TLDialogInsertOrUpdateDialogFilter) GetDialogFilter() *mtproto.DialogFi
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.deleteDialogFilter user_id:long id:int = Bool;
 type TLDialogDeleteDialogFilter struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2393,7 +2376,6 @@ func (m *TLDialogDeleteDialogFilter) GetId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 type TLDialogUpdateDialogFiltersOrder struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2458,7 +2440,6 @@ func (m *TLDialogUpdateDialogFiltersOrder) GetOrder() []int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 type TLDialogGetDialogFilters struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2515,7 +2496,6 @@ func (m *TLDialogGetDialogFilters) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 type TLDialogGetDialogFolder struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2580,7 +2560,6 @@ func (m *TLDialogGetDialogFolder) GetFolderId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 type TLDialogEditPeerFolders struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2653,7 +2632,6 @@ func (m *TLDialogEditPeerFolders) GetFolderId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 type TLDialogGetChannelMessageReadParticipants struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2730,6 +2708,166 @@ func (m *TLDialogGetChannelMessageReadParticipants) GetMsgId() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
+type TLDialogSetChatTheme struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
+	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
+	ThemeEmoticon        string        `protobuf:"bytes,6,opt,name=theme_emoticon,json=themeEmoticon,proto3" json:"theme_emoticon,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLDialogSetChatTheme) Reset()         { *m = TLDialogSetChatTheme{} }
+func (m *TLDialogSetChatTheme) String() string { return proto.CompactTextString(m) }
+func (*TLDialogSetChatTheme) ProtoMessage()    {}
+func (*TLDialogSetChatTheme) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{36}
+}
+func (m *TLDialogSetChatTheme) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogSetChatTheme) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogSetChatTheme.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogSetChatTheme) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogSetChatTheme.Merge(m, src)
+}
+func (m *TLDialogSetChatTheme) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogSetChatTheme) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogSetChatTheme.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogSetChatTheme proto.InternalMessageInfo
+
+func (m *TLDialogSetChatTheme) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogSetChatTheme) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLDialogSetChatTheme) GetPeerType() int32 {
+	if m != nil {
+		return m.PeerType
+	}
+	return 0
+}
+
+func (m *TLDialogSetChatTheme) GetPeerId() int64 {
+	if m != nil {
+		return m.PeerId
+	}
+	return 0
+}
+
+func (m *TLDialogSetChatTheme) GetThemeEmoticon() string {
+	if m != nil {
+		return m.ThemeEmoticon
+	}
+	return ""
+}
+
+//--------------------------------------------------------------------------------------------
+type TLDialogSetHistoryTTL struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PeerType             int32         `protobuf:"varint,4,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
+	PeerId               int64         `protobuf:"varint,5,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
+	TtlPeriod            int32         `protobuf:"varint,6,opt,name=ttl_period,json=ttlPeriod,proto3" json:"ttl_period,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLDialogSetHistoryTTL) Reset()         { *m = TLDialogSetHistoryTTL{} }
+func (m *TLDialogSetHistoryTTL) String() string { return proto.CompactTextString(m) }
+func (*TLDialogSetHistoryTTL) ProtoMessage()    {}
+func (*TLDialogSetHistoryTTL) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{37}
+}
+func (m *TLDialogSetHistoryTTL) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogSetHistoryTTL) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogSetHistoryTTL.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogSetHistoryTTL) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogSetHistoryTTL.Merge(m, src)
+}
+func (m *TLDialogSetHistoryTTL) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogSetHistoryTTL) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogSetHistoryTTL.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogSetHistoryTTL proto.InternalMessageInfo
+
+func (m *TLDialogSetHistoryTTL) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogSetHistoryTTL) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLDialogSetHistoryTTL) GetPeerType() int32 {
+	if m != nil {
+		return m.PeerType
+	}
+	return 0
+}
+
+func (m *TLDialogSetHistoryTTL) GetPeerId() int64 {
+	if m != nil {
+		return m.PeerId
+	}
+	return 0
+}
+
+func (m *TLDialogSetHistoryTTL) GetTtlPeriod() int32 {
+	if m != nil {
+		return m.TtlPeriod
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_PeerWithDraftMessage struct {
 	Datas                []*PeerWithDraftMessage `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`
@@ -2742,7 +2880,7 @@ func (m *Vector_PeerWithDraftMessage) Reset()         { *m = Vector_PeerWithDraf
 func (m *Vector_PeerWithDraftMessage) String() string { return proto.CompactTextString(m) }
 func (*Vector_PeerWithDraftMessage) ProtoMessage()    {}
 func (*Vector_PeerWithDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{36}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{38}
 }
 func (m *Vector_PeerWithDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2789,7 +2927,7 @@ func (m *Vector_DialogPeer) Reset()         { *m = Vector_DialogPeer{} }
 func (m *Vector_DialogPeer) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogPeer) ProtoMessage()    {}
 func (*Vector_DialogPeer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{37}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{39}
 }
 func (m *Vector_DialogPeer) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2836,7 +2974,7 @@ func (m *Vector_DialogExt) Reset()         { *m = Vector_DialogExt{} }
 func (m *Vector_DialogExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogExt) ProtoMessage()    {}
 func (*Vector_DialogExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{38}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{40}
 }
 func (m *Vector_DialogExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2883,7 +3021,7 @@ func (m *Vector_DialogFilterExt) Reset()         { *m = Vector_DialogFilterExt{}
 func (m *Vector_DialogFilterExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogFilterExt) ProtoMessage()    {}
 func (*Vector_DialogFilterExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{39}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{41}
 }
 func (m *Vector_DialogFilterExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2930,7 +3068,7 @@ func (m *Vector_DialogPinnedExt) Reset()         { *m = Vector_DialogPinnedExt{}
 func (m *Vector_DialogPinnedExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogPinnedExt) ProtoMessage()    {}
 func (*Vector_DialogPinnedExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{40}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{42}
 }
 func (m *Vector_DialogPinnedExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2977,7 +3115,7 @@ func (m *Vector_Long) Reset()         { *m = Vector_Long{} }
 func (m *Vector_Long) String() string { return proto.CompactTextString(m) }
 func (*Vector_Long) ProtoMessage()    {}
 func (*Vector_Long) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{41}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{43}
 }
 func (m *Vector_Long) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3015,14 +3153,14 @@ func (m *Vector_Long) GetDatas() []int64 {
 
 func init() {
 	proto.RegisterEnum("dialog.TLConstructor", TLConstructor_name, TLConstructor_value)
-	proto.RegisterType((*PeerWithDraftMessage)(nil), "dialog.PeerWithDraftMessage")
-	proto.RegisterType((*TLUpdateDraftMessage)(nil), "dialog.TL_updateDraftMessage")
 	proto.RegisterType((*DialogExt)(nil), "dialog.DialogExt")
 	proto.RegisterType((*TLDialogExt)(nil), "dialog.TL_dialogExt")
-	proto.RegisterType((*DialogPinnedExt)(nil), "dialog.DialogPinnedExt")
-	proto.RegisterType((*TLDialogPinnedExt)(nil), "dialog.TL_dialogPinnedExt")
 	proto.RegisterType((*DialogFilterExt)(nil), "dialog.DialogFilterExt")
 	proto.RegisterType((*TLDialogFilterExt)(nil), "dialog.TL_dialogFilterExt")
+	proto.RegisterType((*DialogPinnedExt)(nil), "dialog.DialogPinnedExt")
+	proto.RegisterType((*TLDialogPinnedExt)(nil), "dialog.TL_dialogPinnedExt")
+	proto.RegisterType((*PeerWithDraftMessage)(nil), "dialog.PeerWithDraftMessage")
+	proto.RegisterType((*TLUpdateDraftMessage)(nil), "dialog.TL_updateDraftMessage")
 	proto.RegisterType((*TLDialogSaveDraftMessage)(nil), "dialog.TL_dialog_saveDraftMessage")
 	proto.RegisterType((*TLDialogClearDraftMessage)(nil), "dialog.TL_dialog_clearDraftMessage")
 	proto.RegisterType((*TLDialogGetAllDrafts)(nil), "dialog.TL_dialog_getAllDrafts")
@@ -3051,6 +3189,8 @@ func init() {
 	proto.RegisterType((*TLDialogGetDialogFolder)(nil), "dialog.TL_dialog_getDialogFolder")
 	proto.RegisterType((*TLDialogEditPeerFolders)(nil), "dialog.TL_dialog_editPeerFolders")
 	proto.RegisterType((*TLDialogGetChannelMessageReadParticipants)(nil), "dialog.TL_dialog_getChannelMessageReadParticipants")
+	proto.RegisterType((*TLDialogSetChatTheme)(nil), "dialog.TL_dialog_setChatTheme")
+	proto.RegisterType((*TLDialogSetHistoryTTL)(nil), "dialog.TL_dialog_setHistoryTTL")
 	proto.RegisterType((*Vector_PeerWithDraftMessage)(nil), "dialog.Vector_PeerWithDraftMessage")
 	proto.RegisterType((*Vector_DialogPeer)(nil), "dialog.Vector_DialogPeer")
 	proto.RegisterType((*Vector_DialogExt)(nil), "dialog.Vector_DialogExt")
@@ -3062,197 +3202,171 @@ func init() {
 func init() { proto.RegisterFile("dialog.tl.proto", fileDescriptor_0afe6dcb8d4fc860) }
 
 var fileDescriptor_0afe6dcb8d4fc860 = []byte{
-	// 2357 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x6d, 0x6c, 0x1c, 0x47,
-	0x19, 0xf6, 0xda, 0x77, 0x4e, 0xfc, 0x3a, 0xbe, 0xac, 0x37, 0xfe, 0x38, 0x9f, 0x9d, 0xb3, 0xbd,
-	0xb6, 0x13, 0x27, 0x69, 0xce, 0xe0, 0x20, 0x2a, 0x01, 0xaa, 0xd4, 0x38, 0x0d, 0x9c, 0xea, 0x2f,
-	0x16, 0x3b, 0x11, 0xa8, 0x70, 0xac, 0x6f, 0xc7, 0xe7, 0xa5, 0x77, 0xb7, 0xa7, 0xdd, 0xbd, 0xe0,
-	0xf0, 0x0b, 0xa4, 0x22, 0x25, 0x6d, 0x8a, 0xf8, 0x15, 0x24, 0x8b, 0xaa, 0x34, 0x08, 0x89, 0x8f,
-	0x4a, 0x50, 0x4a, 0x04, 0x52, 0x5a, 0x15, 0xd1, 0xd0, 0xa2, 0x08, 0x04, 0x52, 0xa9, 0x14, 0xe0,
-	0x0f, 0x4d, 0xda, 0x90, 0x82, 0x44, 0x93, 0xaa, 0x6d, 0x48, 0x6a, 0x5a, 0xb4, 0x33, 0x7b, 0xfb,
-	0x35, 0xb3, 0x6b, 0x83, 0x72, 0xe1, 0xea, 0x3f, 0xbe, 0xdd, 0x79, 0xe7, 0xdd, 0xe7, 0x7d, 0xe6,
-	0x9d, 0x99, 0x77, 0x9e, 0x81, 0xed, 0x8a, 0x2a, 0x17, 0xb5, 0x42, 0xc6, 0x2c, 0x66, 0x2a, 0xba,
-	0x66, 0x6a, 0x42, 0x2b, 0x79, 0x91, 0xda, 0x5f, 0x50, 0xcd, 0x95, 0xea, 0x52, 0x26, 0xaf, 0x95,
-	0x26, 0x0a, 0x5a, 0x41, 0x9b, 0xc0, 0xcd, 0x4b, 0xd5, 0x65, 0xfc, 0x84, 0x1f, 0xf0, 0x2f, 0xd2,
-	0x2d, 0x95, 0x2e, 0x68, 0x5a, 0xa1, 0x88, 0x5c, 0xab, 0x2f, 0xeb, 0x72, 0xa5, 0x82, 0x74, 0xc3,
-	0x6e, 0x4f, 0x19, 0xf9, 0x15, 0x54, 0x92, 0xad, 0xef, 0xe4, 0x35, 0x1d, 0xe5, 0xcc, 0xe3, 0x15,
-	0x54, 0x6b, 0xeb, 0x73, 0xdb, 0x4c, 0x5d, 0x2e, 0x1b, 0x15, 0x4d, 0x37, 0xed, 0xa6, 0x2e, 0xb7,
-	0xc9, 0x38, 0x5e, 0xce, 0x93, 0xb7, 0xe2, 0x0b, 0x1c, 0x74, 0xcd, 0x23, 0xa4, 0x1f, 0x55, 0xcd,
-	0x95, 0x43, 0xba, 0xbc, 0x6c, 0xce, 0x20, 0xc3, 0x90, 0x0b, 0x48, 0x18, 0x83, 0x44, 0x45, 0x47,
-	0x8a, 0x9a, 0x97, 0x4d, 0x94, 0x2b, 0xcb, 0x25, 0x94, 0xe4, 0x86, 0xb8, 0xf1, 0x36, 0xa9, 0xc3,
-	0x79, 0x3b, 0x2b, 0x97, 0x90, 0x70, 0x37, 0xb4, 0xe7, 0xb5, 0xb2, 0x61, 0xea, 0xd5, 0xbc, 0xa9,
-	0xe9, 0xc9, 0xe6, 0x21, 0x6e, 0x3c, 0x31, 0xd9, 0x9d, 0xb1, 0xa9, 0x58, 0x98, 0x9e, 0x72, 0x1b,
-	0x25, 0xaf, 0xa5, 0x30, 0x0c, 0xb1, 0x0a, 0x42, 0x7a, 0xb2, 0x65, 0x88, 0x1b, 0x6f, 0x9f, 0xec,
-	0xc8, 0x94, 0x4c, 0x0c, 0x28, 0x63, 0x81, 0x91, 0x70, 0x93, 0xb0, 0x0f, 0xe2, 0x8a, 0x05, 0x29,
-	0x19, 0xc3, 0x36, 0xdd, 0x8e, 0x8d, 0x17, 0xa8, 0x44, 0x6c, 0xc4, 0xfb, 0xa1, 0x7b, 0x61, 0x3a,
-	0x57, 0xad, 0x28, 0xb2, 0x89, 0x7c, 0x81, 0x4c, 0x42, 0x5c, 0x91, 0x4d, 0x79, 0x12, 0xe3, 0x6f,
-	0x9f, 0x1c, 0xa8, 0x61, 0x63, 0x45, 0x2d, 0x11, 0x53, 0xf1, 0x2a, 0x07, 0x6d, 0x87, 0xb0, 0xd9,
-	0x7d, 0xab, 0x66, 0xdd, 0xa9, 0xe8, 0x82, 0xb8, 0xa6, 0x2b, 0x36, 0x17, 0x2d, 0x12, 0x79, 0x10,
-	0x76, 0x83, 0x9d, 0x3f, 0x76, 0xf8, 0xdb, 0xdd, 0xf0, 0xf1, 0x6b, 0xc9, 0x6e, 0x16, 0xc6, 0x81,
-	0x97, 0x8f, 0xc9, 0x6a, 0x51, 0x5e, 0x2a, 0xa2, 0x5c, 0x49, 0x2d, 0xe7, 0x54, 0x25, 0x19, 0x1f,
-	0xe2, 0xc6, 0xe3, 0x52, 0xc2, 0x79, 0x3f, 0xa3, 0x96, 0xb3, 0x8a, 0x20, 0x40, 0xcc, 0xa2, 0x27,
-	0xd9, 0x8a, 0xbf, 0x83, 0x7f, 0x8b, 0x77, 0xc3, 0xb6, 0x85, 0xe9, 0x9c, 0xe2, 0x04, 0xbb, 0xdb,
-	0x4f, 0x57, 0x67, 0x0d, 0xbf, 0x43, 0x47, 0x8d, 0xa3, 0x67, 0x39, 0xd8, 0x4e, 0x5e, 0xce, 0xab,
-	0xe5, 0x32, 0x52, 0xfe, 0x7f, 0x4c, 0xf5, 0x43, 0x9b, 0x95, 0x2f, 0x78, 0x22, 0x60, 0xb2, 0xe2,
-	0xd2, 0x56, 0xeb, 0xc5, 0xc2, 0xf1, 0x0a, 0x12, 0x7a, 0x61, 0x0b, 0x6e, 0xb4, 0x49, 0x69, 0x91,
-	0x5a, 0xad, 0xc7, 0xac, 0x22, 0x4e, 0x81, 0xe0, 0x04, 0xee, 0x46, 0xb0, 0xdf, 0x1f, 0x7e, 0xaf,
-	0x3f, 0x7c, 0xc7, 0xae, 0x46, 0xc2, 0x4b, 0x0e, 0x09, 0x87, 0xd5, 0xa2, 0x89, 0xf4, 0x3b, 0x41,
-	0x42, 0x02, 0x9a, 0x55, 0x05, 0x33, 0x10, 0x97, 0x9a, 0x55, 0x45, 0xf8, 0x18, 0x74, 0x90, 0x4e,
-	0xb9, 0x65, 0x8c, 0x81, 0x9e, 0x2e, 0x1e, 0x80, 0xd2, 0x36, 0xc5, 0xf3, 0xe4, 0x12, 0x1a, 0xf7,
-	0x10, 0xea, 0xa3, 0xc6, 0x8d, 0x2b, 0x9a, 0x1a, 0xc7, 0xae, 0x46, 0xcd, 0xcb, 0x1c, 0xa4, 0x1c,
-	0x2f, 0x39, 0x43, 0x3e, 0xe6, 0x9f, 0x96, 0x81, 0xf0, 0xb9, 0x4d, 0x87, 0xdf, 0x0b, 0x5b, 0xaa,
-	0x06, 0x19, 0x50, 0x92, 0x05, 0xad, 0xd6, 0x63, 0x56, 0xf9, 0xdf, 0xd2, 0x40, 0x98, 0x80, 0x2d,
-	0x25, 0x02, 0x09, 0x4f, 0x8b, 0xd0, 0x65, 0xa6, 0x66, 0x25, 0x7e, 0x8f, 0x83, 0x7e, 0x37, 0xae,
-	0x7c, 0x11, 0xc9, 0x7a, 0x23, 0x06, 0x26, 0x7e, 0x09, 0x7a, 0x5c, 0x98, 0x05, 0x64, 0xde, 0x5b,
-	0x2c, 0x62, 0x9c, 0xc6, 0xed, 0x47, 0x28, 0x16, 0x21, 0x19, 0xa0, 0xa4, 0x9e, 0x5f, 0xfb, 0xa3,
-	0x2f, 0xb3, 0x4a, 0xb2, 0xfe, 0x20, 0x49, 0xc1, 0xc5, 0xb2, 0x8e, 0x64, 0xa5, 0x61, 0x32, 0x2b,
-	0x03, 0xed, 0x55, 0x8c, 0x08, 0x43, 0xb4, 0xb3, 0xcb, 0xdd, 0xe8, 0x0e, 0x6a, 0x5a, 0x51, 0x02,
-	0x62, 0x31, 0x23, 0xeb, 0x0f, 0x8a, 0x17, 0x38, 0xe8, 0x73, 0xc3, 0x32, 0xb5, 0x42, 0xa1, 0x88,
-	0x9c, 0x65, 0xa7, 0x61, 0xa2, 0x1a, 0x83, 0xd6, 0x0a, 0x5e, 0x05, 0xd9, 0x01, 0xd9, 0x8d, 0x62,
-	0x15, 0x86, 0x7d, 0xd9, 0xe7, 0x1d, 0x21, 0x2b, 0xda, 0x69, 0xd5, 0x30, 0xeb, 0x90, 0x1a, 0xaf,
-	0x70, 0x30, 0xc4, 0xf8, 0xae, 0x71, 0xf0, 0xf8, 0xdc, 0xf2, 0xb2, 0x81, 0xcc, 0x43, 0xb2, 0x59,
-	0x8f, 0x19, 0xfa, 0x11, 0x48, 0xa0, 0xd5, 0x7c, 0xb1, 0xaa, 0xa0, 0x9c, 0x4d, 0x4e, 0x8c, 0x45,
-	0x4e, 0x87, 0x6d, 0x44, 0xb6, 0x11, 0x61, 0x10, 0xda, 0x35, 0x8c, 0x2a, 0x87, 0x77, 0x65, 0xb2,
-	0x67, 0x83, 0xe6, 0x02, 0xed, 0x82, 0x78, 0x51, 0x2d, 0xa9, 0x26, 0xa6, 0x3a, 0x2e, 0x91, 0x07,
-	0xf1, 0x1c, 0x07, 0x5d, 0xac, 0x18, 0x1b, 0x26, 0xae, 0x7e, 0x68, 0x5b, 0xd6, 0x8a, 0x8a, 0x9b,
-	0x3d, 0x71, 0x69, 0x2b, 0x79, 0x91, 0x55, 0xc4, 0x93, 0x1c, 0x0c, 0xb0, 0x47, 0x28, 0xab, 0xd4,
-	0x27, 0x29, 0xac, 0x06, 0x55, 0xc9, 0x15, 0x55, 0xc3, 0xaa, 0x24, 0x5b, 0xac, 0x06, 0x15, 0x7f,
-	0x4a, 0xfc, 0xa5, 0x6f, 0xc6, 0xb9, 0x58, 0xa6, 0xb4, 0x6a, 0xd9, 0xfc, 0x60, 0xd0, 0xf9, 0x88,
-	0x6f, 0x2d, 0x2c, 0x20, 0x93, 0x74, 0xaa, 0x5f, 0x4a, 0xf8, 0xd0, 0xc4, 0x02, 0x68, 0x7e, 0xc7,
-	0x41, 0xda, 0x45, 0xa3, 0x23, 0x5c, 0x4e, 0xd4, 0x1b, 0xd1, 0x08, 0xc4, 0x97, 0x35, 0x3d, 0x8f,
-	0xd8, 0x64, 0x92, 0xb6, 0x48, 0x12, 0xbd, 0x09, 0xd2, 0xea, 0x4b, 0x90, 0x27, 0x38, 0xe8, 0x65,
-	0x24, 0x88, 0x95, 0xab, 0x0d, 0xb3, 0xcf, 0x53, 0x18, 0x17, 0xb4, 0x4a, 0xa3, 0xd5, 0x22, 0x2f,
-	0xfa, 0x26, 0x1a, 0x39, 0xa4, 0x49, 0x48, 0x56, 0xb2, 0xe5, 0x25, 0x6d, 0xb5, 0x61, 0xb6, 0x36,
-	0x11, 0x3a, 0xf0, 0x76, 0xad, 0x5a, 0xa8, 0xac, 0x66, 0xb2, 0xec, 0xb6, 0xeb, 0x35, 0xa4, 0x59,
-	0xc5, 0xda, 0xa4, 0x53, 0xac, 0x48, 0xe6, 0xaa, 0x66, 0x23, 0x85, 0x32, 0x0a, 0x09, 0x1c, 0x8a,
-	0x86, 0x61, 0xb9, 0xb1, 0x6c, 0xd3, 0x1d, 0xac, 0x59, 0x45, 0xfc, 0x53, 0x8b, 0x77, 0xba, 0xaa,
-	0x65, 0x03, 0xe9, 0xe6, 0x9c, 0xbe, 0x48, 0xce, 0xd0, 0xe4, 0x70, 0xd9, 0x28, 0x01, 0x7d, 0x02,
-	0xda, 0x4d, 0xad, 0x92, 0xf3, 0x97, 0xea, 0xfd, 0x19, 0x22, 0x95, 0x64, 0x6a, 0x52, 0x49, 0x26,
-	0x5b, 0x36, 0x0f, 0x4c, 0x1e, 0x91, 0x8b, 0x55, 0x24, 0x81, 0xe9, 0xce, 0x83, 0x4f, 0x81, 0xe0,
-	0xa5, 0xa3, 0x24, 0x63, 0x4a, 0xb6, 0x6c, 0xec, 0x64, 0xbb, 0xcb, 0xd7, 0x8c, 0xbc, 0x9a, 0x55,
-	0x84, 0xc3, 0xd0, 0xe9, 0xc9, 0x11, 0xdb, 0xd1, 0xd6, 0x8d, 0x1d, 0x25, 0x9c, 0x24, 0x22, 0x7e,
-	0xee, 0x81, 0x6d, 0x76, 0x71, 0x98, 0xb7, 0x36, 0x9b, 0x64, 0xdb, 0xc6, 0x2e, 0xec, 0x6a, 0x92,
-	0x6c, 0x4e, 0x83, 0xfe, 0xe2, 0x12, 0x86, 0xb8, 0xf1, 0xad, 0xbe, 0x6a, 0xf2, 0x3b, 0x9c, 0xb7,
-	0xfe, 0x57, 0x50, 0x11, 0x35, 0xda, 0x98, 0x8a, 0xdf, 0xf7, 0xed, 0x16, 0x05, 0x64, 0x2e, 0x1a,
-	0xb5, 0xdd, 0xa2, 0xd1, 0x16, 0xb0, 0xdf, 0x73, 0xde, 0x7a, 0x96, 0x4c, 0xfb, 0x86, 0x45, 0x6b,
-	0x2d, 0x64, 0xa4, 0xbe, 0xc8, 0x95, 0x8c, 0x82, 0x67, 0x21, 0x23, 0x2f, 0x67, 0x8c, 0x42, 0x56,
-	0x11, 0xcf, 0x73, 0x30, 0x1a, 0x3d, 0xf7, 0x6d, 0x89, 0xe0, 0xf6, 0x07, 0x45, 0x04, 0x8c, 0x58,
-	0xb8, 0x80, 0x11, 0xdf, 0xb4, 0x80, 0x21, 0x7e, 0xd5, 0x57, 0x4e, 0x7a, 0xd3, 0xfc, 0x4e, 0xc1,
-	0x17, 0x4f, 0x71, 0x20, 0x06, 0x73, 0xc3, 0x0b, 0xc1, 0x98, 0xc3, 0x2a, 0xd5, 0xed, 0x07, 0xe2,
-	0x88, 0x37, 0x56, 0x55, 0x1b, 0xaf, 0x89, 0x37, 0xe5, 0x40, 0x41, 0xe8, 0x83, 0x52, 0x87, 0x23,
-	0xd7, 0xc3, 0xec, 0x22, 0xfa, 0x30, 0x2e, 0xae, 0xee, 0x74, 0x01, 0xfa, 0x33, 0x1f, 0x18, 0xa4,
-	0xa8, 0xe6, 0x3c, 0x42, 0x3a, 0xc1, 0x52, 0x8f, 0xda, 0x73, 0x1c, 0x78, 0x3c, 0x05, 0xed, 0x0f,
-	0x7a, 0xce, 0x18, 0x09, 0xeb, 0x3d, 0xa1, 0x02, 0x1f, 0x6b, 0x22, 0xab, 0xf8, 0xb3, 0x1c, 0xec,
-	0xf3, 0x71, 0x38, 0xb5, 0x22, 0x97, 0xcb, 0xa8, 0x58, 0x13, 0x9f, 0x90, 0xac, 0xcc, 0xcb, 0xba,
-	0xa9, 0xe6, 0xd5, 0x8a, 0x5c, 0xae, 0x87, 0xa6, 0x22, 0xec, 0x04, 0xc8, 0x93, 0x6f, 0xd6, 0x68,
-	0x6d, 0x91, 0xda, 0xec, 0x37, 0x59, 0x45, 0xe8, 0x86, 0x56, 0x7b, 0x29, 0x21, 0xd0, 0xe3, 0x25,
-	0xbc, 0x88, 0x7c, 0x1a, 0xfa, 0x8f, 0x20, 0xcb, 0x71, 0x8e, 0x79, 0x87, 0x60, 0x4b, 0xef, 0x46,
-	0x92, 0x1b, 0x6a, 0xd9, 0x9c, 0xf4, 0x6e, 0x88, 0xf7, 0x40, 0xa7, 0xed, 0xd2, 0xd6, 0x3e, 0x10,
-	0xd2, 0x85, 0x3d, 0x7e, 0x47, 0x3b, 0x02, 0x2b, 0x03, 0xbe, 0x33, 0xb0, 0xfb, 0x7f, 0x1c, 0x78,
-	0x5f, 0x7f, 0x8f, 0xa6, 0x5d, 0xeb, 0x1e, 0xa6, 0x69, 0x1b, 0xe2, 0x27, 0xa1, 0xc7, 0xd7, 0x99,
-	0x12, 0x3f, 0x6b, 0x2e, 0xa2, 0xc5, 0x4f, 0xda, 0x11, 0x25, 0x30, 0x87, 0x38, 0x0a, 0x08, 0xcc,
-	0x86, 0x38, 0x02, 0xed, 0xb6, 0xa3, 0x69, 0xad, 0x5c, 0xb0, 0xa6, 0xbc, 0xdb, 0xbb, 0xc5, 0x36,
-	0xda, 0x7b, 0x19, 0xa0, 0xc3, 0x37, 0xe8, 0x42, 0x27, 0x74, 0x4c, 0x49, 0x53, 0x07, 0x26, 0x73,
-	0x8b, 0xb3, 0xf7, 0xcf, 0xce, 0x1d, 0x9d, 0xe5, 0x9b, 0x84, 0x31, 0x48, 0x92, 0x57, 0xf4, 0x1d,
-	0x09, 0xff, 0xd3, 0x93, 0x37, 0xce, 0xbe, 0x6f, 0xfd, 0x71, 0x42, 0x2f, 0x6c, 0x27, 0x66, 0xce,
-	0x95, 0x00, 0x7f, 0xf1, 0xc4, 0xb3, 0x17, 0x9b, 0x85, 0x01, 0xe8, 0xf6, 0x36, 0x38, 0x48, 0xf9,
-	0x27, 0xcf, 0x7f, 0xbb, 0x2a, 0x88, 0xfe, 0x56, 0x87, 0x10, 0xfe, 0xcd, 0xcb, 0xeb, 0x37, 0xff,
-	0x45, 0x5c, 0x8f, 0xc1, 0x4e, 0xaf, 0x0d, 0xa5, 0x09, 0xf3, 0x6b, 0x4f, 0xff, 0xe8, 0x9d, 0x98,
-	0xb0, 0x0f, 0xd2, 0x3e, 0x33, 0x4a, 0x62, 0xe5, 0xd7, 0x5e, 0xfb, 0xd5, 0x5f, 0x6c, 0xb8, 0xbb,
-	0xa0, 0xcf, 0x67, 0xec, 0x15, 0x3a, 0xf9, 0x2b, 0x8f, 0xdf, 0xbc, 0x72, 0x8b, 0xd8, 0x8d, 0x40,
-	0x3f, 0xed, 0xd4, 0xb5, 0x5c, 0x7f, 0xe2, 0xd2, 0xa3, 0x31, 0x0a, 0x60, 0x50, 0x5a, 0xe4, 0xbf,
-	0x71, 0xe6, 0xc2, 0x0f, 0x62, 0xc2, 0x1e, 0x18, 0xf0, 0x99, 0x05, 0xa4, 0x3a, 0xfe, 0xc7, 0x17,
-	0xde, 0x7d, 0xda, 0x0e, 0xf9, 0xc3, 0x30, 0x1a, 0x84, 0xc7, 0x52, 0xc2, 0xf8, 0xb7, 0xae, 0x5f,
-	0x7b, 0x79, 0x9d, 0x74, 0xf9, 0x10, 0x8c, 0xb0, 0xbb, 0xf8, 0x44, 0x2c, 0xfe, 0xa1, 0x53, 0xb7,
-	0xfe, 0x71, 0x93, 0xf4, 0x18, 0x85, 0xde, 0x90, 0x1e, 0xfc, 0xe9, 0x67, 0x9e, 0xfc, 0x89, 0x0d,
-	0xe5, 0x2e, 0x18, 0x0c, 0xf5, 0x4b, 0xa4, 0x17, 0xfe, 0xfa, 0x37, 0x4f, 0xbf, 0x6e, 0xf3, 0x15,
-	0x8c, 0x31, 0x20, 0x8e, 0xf0, 0xaf, 0x5d, 0xbd, 0xf2, 0xb5, 0xf7, 0x88, 0xe9, 0xde, 0x00, 0x6b,
-	0x41, 0x11, 0x82, 0x3f, 0xfb, 0xf3, 0x13, 0x2f, 0xd8, 0x6e, 0x33, 0x30, 0xec, 0xb3, 0x65, 0x49,
-	0x04, 0xfc, 0xdf, 0xfe, 0x7e, 0xea, 0x86, 0x3d, 0xbc, 0xbb, 0x21, 0xc5, 0x86, 0x61, 0x61, 0xe6,
-	0xdf, 0xbe, 0xb1, 0xfe, 0xf0, 0xad, 0x50, 0x43, 0xf7, 0x1c, 0xcc, 0xbf, 0xf9, 0xea, 0x3b, 0x2f,
-	0xbd, 0x5f, 0x23, 0xcb, 0x1f, 0x58, 0xe0, 0x30, 0xca, 0xff, 0xe2, 0xfa, 0xe3, 0xaf, 0xd3, 0xa9,
-	0x1a, 0x3c, 0xe8, 0xf1, 0xef, 0xdd, 0x7a, 0xfe, 0xf9, 0x38, 0x15, 0x0e, 0xab, 0x8c, 0xe2, 0xdf,
-	0xf8, 0xf3, 0x73, 0x57, 0x6d, 0xaa, 0x86, 0x02, 0xd9, 0xea, 0xad, 0x57, 0xf8, 0xcb, 0xe7, 0x7e,
-	0xdb, 0x41, 0x79, 0x64, 0x55, 0xc5, 0xfc, 0x53, 0x5f, 0x7f, 0x63, 0xdd, 0x19, 0xd5, 0x51, 0x06,
-	0x50, 0xba, 0xcb, 0x0f, 0x5f, 0x7d, 0xe4, 0x29, 0x8b, 0xfe, 0xdd, 0x1b, 0xe2, 0x25, 0x53, 0x97,
-	0x7f, 0xe8, 0xc5, 0x33, 0x8b, 0xc2, 0xae, 0x40, 0xce, 0xd0, 0xf5, 0x15, 0xff, 0xad, 0x7f, 0xbf,
-	0x95, 0x10, 0x26, 0x61, 0x8c, 0x81, 0x82, 0x2e, 0x82, 0xf8, 0xe7, 0x4e, 0x5f, 0x3b, 0xf9, 0x2e,
-	0x7b, 0x35, 0x08, 0x96, 0x2a, 0xfc, 0x33, 0x17, 0x1f, 0xbb, 0xdc, 0x4a, 0x8d, 0x57, 0xa0, 0xc0,
-	0xe0, 0xcf, 0x3e, 0xf6, 0xcf, 0x13, 0x31, 0xca, 0x2a, 0xb0, 0xf3, 0xf3, 0x6b, 0x8f, 0xae, 0x9d,
-	0x69, 0x16, 0x3e, 0x0a, 0x99, 0xa0, 0xaf, 0xe8, 0x8d, 0x96, 0x3f, 0xb7, 0xf6, 0xf6, 0xaf, 0x9b,
-	0x53, 0xb1, 0x13, 0xdf, 0x4d, 0x37, 0x4d, 0x9e, 0xdf, 0x01, 0x6d, 0xd2, 0xfc, 0x94, 0x7d, 0x88,
-	0x9a, 0x85, 0xde, 0xb0, 0xab, 0x2d, 0xd1, 0xdd, 0x88, 0xc3, 0x96, 0xba, 0x94, 0x5f, 0xa5, 0x12,
-	0x9b, 0x84, 0x79, 0x48, 0x86, 0x5e, 0x29, 0x8d, 0xd0, 0x0e, 0x29, 0x23, 0xda, 0xe3, 0x03, 0xb0,
-	0x83, 0x75, 0xfb, 0x93, 0xa6, 0x9d, 0x79, 0xdb, 0x53, 0xce, 0xc7, 0x22, 0x76, 0x76, 0xb1, 0x49,
-	0xf8, 0x22, 0x74, 0xb3, 0xef, 0x7b, 0x86, 0x42, 0xc0, 0xfe, 0xd7, 0x5f, 0x70, 0x19, 0xa6, 0xae,
-	0x78, 0x18, 0x0c, 0x07, 0x6d, 0x68, 0x3e, 0x66, 0xa0, 0x27, 0xe4, 0x6e, 0x65, 0x98, 0x76, 0x17,
-	0x30, 0x49, 0x25, 0x1c, 0x6f, 0xf8, 0x44, 0x2e, 0x36, 0x09, 0x2b, 0x90, 0xde, 0xe0, 0x7a, 0x63,
-	0x0f, 0x93, 0x69, 0x96, 0x69, 0xaa, 0x2f, 0x40, 0x89, 0x5b, 0xd7, 0x88, 0x4d, 0x02, 0x82, 0x9d,
-	0xd1, 0x17, 0x1a, 0xe3, 0x11, 0x1f, 0xf2, 0x59, 0xa6, 0x92, 0xcc, 0xef, 0xdc, 0xb7, 0x6a, 0x62,
-	0x7e, 0x3a, 0xe9, 0x3b, 0x85, 0x81, 0x28, 0xd7, 0x91, 0xee, 0x3e, 0x0f, 0x7d, 0xe1, 0x22, 0xff,
-	0x68, 0x34, 0x62, 0x62, 0xb5, 0x01, 0xda, 0x9e, 0x10, 0xdd, 0x7e, 0x38, 0xca, 0x37, 0x36, 0x61,
-	0x8c, 0xe6, 0x67, 0x9d, 0x64, 0xa3, 0x34, 0x74, 0x91, 0xe9, 0xcf, 0x67, 0x13, 0x89, 0xf4, 0x08,
-	0xf4, 0x47, 0x09, 0xe2, 0xbb, 0x68, 0xf7, 0x2c, 0x3b, 0x3a, 0x9f, 0xa7, 0xa1, 0x8b, 0x29, 0x4c,
-	0x0f, 0x46, 0xc4, 0x6f, 0x19, 0xa4, 0xe8, 0xfa, 0x57, 0x6c, 0x12, 0xb2, 0x5e, 0x6f, 0x1e, 0x09,
-	0x99, 0xed, 0xcd, 0x35, 0x60, 0x70, 0x39, 0xed, 0x0c, 0x4d, 0x50, 0xe9, 0x65, 0x0c, 0x4d, 0xc0,
-	0x84, 0x0e, 0xd3, 0x5d, 0x06, 0x28, 0xb5, 0x55, 0x8c, 0x72, 0x47, 0x6c, 0x68, 0x7f, 0xee, 0x70,
-	0x30, 0x05, 0x4f, 0xc6, 0x70, 0xb0, 0xec, 0x68, 0xbf, 0x87, 0x9d, 0xe5, 0xd6, 0x27, 0xb6, 0x31,
-	0x96, 0x5b, 0x6f, 0x3b, 0xed, 0xe7, 0xa8, 0x83, 0x8f, 0xa9, 0x88, 0xed, 0x62, 0x8e, 0x07, 0x65,
-	0xc7, 0x18, 0x96, 0x07, 0x9c, 0x05, 0x2b, 0x4c, 0xbf, 0xda, 0x13, 0xc6, 0x27, 0xed, 0x9e, 0x82,
-	0xbd, 0x04, 0xc3, 0x1b, 0x6b, 0x49, 0x77, 0x6d, 0x8e, 0x5c, 0x62, 0x4d, 0x7f, 0x43, 0x72, 0x96,
-	0x14, 0x86, 0xd0, 0x33, 0x1a, 0x4d, 0x74, 0x98, 0xcf, 0x2f, 0xc0, 0xe0, 0x46, 0xca, 0xcd, 0xde,
-	0x30, 0x5a, 0x68, 0x5b, 0xda, 0x7f, 0xce, 0xbb, 0xb0, 0xf8, 0xb5, 0x18, 0x31, 0x62, 0xa2, 0xda,
-	0x36, 0xa9, 0x34, 0x73, 0x61, 0x71, 0x8e, 0x57, 0x38, 0x5f, 0x7a, 0x42, 0xb4, 0x97, 0xa8, 0x85,
-	0x90, 0x98, 0x6c, 0xb0, 0x80, 0xf7, 0x84, 0xe8, 0x28, 0x0c, 0xc7, 0x01, 0x93, 0x10, 0xdc, 0xce,
-	0xa1, 0x51, 0x6c, 0x12, 0x8e, 0xc1, 0xf8, 0xa6, 0xf5, 0x8e, 0x03, 0xcc, 0x48, 0xa2, 0x3b, 0xa5,
-	0x76, 0x04, 0x20, 0x58, 0x07, 0x68, 0xb1, 0xe9, 0xe0, 0x67, 0xae, 0xbd, 0x92, 0xe6, 0x7e, 0x73,
-	0x29, 0xcd, 0xfd, 0xe1, 0x52, 0x9a, 0xfb, 0xeb, 0xa5, 0x34, 0xf7, 0xb9, 0x7b, 0x4d, 0x24, 0x97,
-	0x0a, 0xba, 0x5c, 0xca, 0xa8, 0xda, 0x44, 0xed, 0xf7, 0x7e, 0x03, 0xe9, 0xc7, 0x90, 0x3e, 0x21,
-	0x57, 0x2a, 0x13, 0xd6, 0x4f, 0x35, 0x8f, 0x26, 0x96, 0xd4, 0xaf, 0xe4, 0x6a, 0xbf, 0x89, 0x6f,
-	0xfb, 0xdf, 0x52, 0x2b, 0x1e, 0xf3, 0x03, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0x6f, 0x79, 0x7b,
-	0x87, 0x04, 0x2a, 0x00, 0x00,
+	// 2499 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5a, 0x6f, 0x6c, 0x1c, 0x47,
+	0x15, 0xf7, 0xda, 0xbe, 0x4b, 0xfc, 0x1c, 0x3b, 0x9b, 0xad, 0xff, 0x5c, 0xce, 0xc9, 0xd9, 0xde,
+	0x38, 0x89, 0x93, 0x34, 0x67, 0x70, 0x10, 0x95, 0x00, 0x55, 0x6a, 0x9c, 0x84, 0x9c, 0x6a, 0x3b,
+	0x66, 0x71, 0x12, 0x81, 0x0a, 0xc7, 0xfa, 0x76, 0x7c, 0x5e, 0xba, 0x77, 0x7b, 0xda, 0xdd, 0x0b,
+	0x09, 0x9f, 0x40, 0x2a, 0x52, 0xd2, 0xa6, 0x88, 0x4f, 0x41, 0x8a, 0xa8, 0x4a, 0x83, 0x90, 0xa0,
+	0x44, 0x40, 0x09, 0x11, 0x88, 0x14, 0x15, 0xd1, 0xd0, 0xa0, 0x88, 0x8a, 0x4a, 0xa5, 0x88, 0x3f,
+	0x5f, 0xda, 0xa4, 0x0d, 0x2d, 0x48, 0x6d, 0x52, 0xb5, 0x0d, 0xf9, 0x43, 0x8b, 0x76, 0x66, 0x6f,
+	0x77, 0x67, 0x67, 0x76, 0x1d, 0x50, 0x1c, 0x8e, 0x7c, 0xc9, 0xed, 0xcc, 0x9b, 0x37, 0xbf, 0xf7,
+	0x9b, 0x37, 0xb3, 0x6f, 0x7f, 0x63, 0x58, 0xa9, 0xe9, 0xaa, 0x61, 0x96, 0xf3, 0x8e, 0x91, 0xaf,
+	0x59, 0xa6, 0x63, 0x4a, 0x69, 0xd2, 0x90, 0xdd, 0x5a, 0xd6, 0x9d, 0x85, 0xfa, 0x5c, 0xbe, 0x64,
+	0x56, 0xc6, 0xca, 0x66, 0xd9, 0x1c, 0xc3, 0xdd, 0x73, 0xf5, 0x79, 0xfc, 0x84, 0x1f, 0xf0, 0x2f,
+	0x32, 0x2c, 0x9b, 0x2b, 0x9b, 0x66, 0xd9, 0x40, 0x81, 0xd5, 0x97, 0x2c, 0xb5, 0x56, 0x43, 0x96,
+	0xed, 0xf5, 0x67, 0xed, 0xd2, 0x02, 0xaa, 0xa8, 0xee, 0x3c, 0x25, 0xd3, 0x42, 0x45, 0xe7, 0x50,
+	0x0d, 0x35, 0xfa, 0x56, 0x07, 0x7d, 0x8e, 0xa5, 0x56, 0xed, 0x9a, 0x69, 0x39, 0x5e, 0x57, 0x4f,
+	0xd0, 0x65, 0x1f, 0xaa, 0x96, 0x48, 0xab, 0xfc, 0xc3, 0x56, 0xe8, 0xd8, 0x81, 0x61, 0xee, 0x3c,
+	0xe8, 0x48, 0xeb, 0xa1, 0xbb, 0x66, 0x21, 0x4d, 0x2f, 0xa9, 0x0e, 0x2a, 0x56, 0xd5, 0x0a, 0xca,
+	0x08, 0x43, 0xc2, 0x68, 0x87, 0xd2, 0xe5, 0xb7, 0x4e, 0xab, 0x15, 0x24, 0xdd, 0x03, 0x9d, 0x25,
+	0xb3, 0x6a, 0x3b, 0x56, 0xbd, 0xe4, 0x98, 0x56, 0xa6, 0x75, 0x48, 0x18, 0xed, 0x1e, 0xef, 0xcd,
+	0x7b, 0xf1, 0xcf, 0x4e, 0x4e, 0x04, 0x9d, 0x4a, 0xd8, 0x52, 0xea, 0x81, 0x94, 0x69, 0x69, 0xc8,
+	0xca, 0xb4, 0x0d, 0x09, 0xa3, 0x6d, 0x0a, 0x79, 0x90, 0x36, 0x82, 0xc7, 0x54, 0xa6, 0x7d, 0x48,
+	0x18, 0xed, 0x1c, 0x5f, 0x99, 0xaf, 0x38, 0x18, 0x5d, 0x9e, 0x20, 0x53, 0xbc, 0x6e, 0x69, 0x14,
+	0x44, 0xf5, 0x80, 0xaa, 0x1b, 0xea, 0x9c, 0x81, 0x8a, 0x15, 0xbd, 0x5a, 0xd4, 0xb5, 0x4c, 0x6a,
+	0x48, 0x18, 0x4d, 0x29, 0xdd, 0x7e, 0xfb, 0x94, 0x5e, 0x2d, 0x68, 0x92, 0x04, 0xed, 0x9a, 0xea,
+	0xa0, 0x4c, 0x1a, 0xcf, 0x83, 0x7f, 0xbb, 0xc1, 0x39, 0x0b, 0xa8, 0x82, 0x8a, 0xa8, 0x62, 0x3a,
+	0x7a, 0xc9, 0xac, 0x66, 0x96, 0x91, 0xe0, 0x70, 0xeb, 0x4e, 0xaf, 0x51, 0x5a, 0x0b, 0xe0, 0x38,
+	0x46, 0xb1, 0x86, 0x2c, 0xdd, 0xd4, 0x32, 0xcb, 0xb1, 0xfb, 0x0e, 0xc7, 0x31, 0x66, 0x70, 0x83,
+	0x7c, 0x0f, 0xac, 0x98, 0x9d, 0x2c, 0x6a, 0x3e, 0x65, 0x1b, 0x21, 0xa5, 0xa9, 0x8e, 0x3a, 0x8e,
+	0x99, 0xea, 0x1c, 0x5f, 0xd5, 0x60, 0xc1, 0x27, 0x55, 0x21, 0xfd, 0xf2, 0x8b, 0x02, 0xac, 0x24,
+	0x8d, 0xbb, 0x74, 0xc3, 0x41, 0xd6, 0x9d, 0xe0, 0xbb, 0x1b, 0x5a, 0x75, 0x0d, 0x93, 0x9d, 0x52,
+	0x5a, 0x75, 0x4d, 0xfa, 0x18, 0x74, 0x91, 0x41, 0xc5, 0x79, 0x8c, 0xc1, 0x23, 0xbc, 0x37, 0x42,
+	0x38, 0x01, 0xa8, 0xac, 0xd0, 0x42, 0x4f, 0xc1, 0xda, 0xa5, 0x42, 0x6b, 0x27, 0x4f, 0x80, 0xe4,
+	0xd3, 0x11, 0xc4, 0xb5, 0x95, 0x26, 0xa5, 0x9f, 0x26, 0xc5, 0xb7, 0x6b, 0x50, 0xf3, 0x4b, 0x9f,
+	0x9a, 0x19, 0xbd, 0x5a, 0x45, 0xda, 0xff, 0x2e, 0x15, 0x07, 0xa0, 0xa3, 0x86, 0x90, 0x85, 0xf7,
+	0x14, 0x26, 0x27, 0xa5, 0x2c, 0x77, 0x1b, 0x66, 0x0f, 0xd5, 0x90, 0xd4, 0x0f, 0xcb, 0x70, 0xa7,
+	0x97, 0x75, 0x6d, 0x4a, 0xda, 0x7d, 0x2c, 0x68, 0x14, 0x09, 0x41, 0x04, 0xc9, 0x24, 0xf8, 0x76,
+	0x0d, 0x12, 0x9e, 0x13, 0xa0, 0x67, 0x06, 0x21, 0x6b, 0xbf, 0xee, 0x2c, 0xec, 0xb0, 0xd4, 0x79,
+	0x67, 0x0a, 0xd9, 0xb6, 0x5a, 0x46, 0x4b, 0xce, 0xc4, 0x30, 0xb4, 0xbb, 0x71, 0x60, 0x22, 0x3a,
+	0xc7, 0xbb, 0xfc, 0x5c, 0x70, 0xc1, 0x28, 0xb8, 0x4b, 0xda, 0x02, 0x29, 0xcd, 0x85, 0xc4, 0xe6,
+	0x4b, 0x08, 0xa8, 0x42, 0x6c, 0xe4, 0xfb, 0xa1, 0x77, 0x76, 0xb2, 0x58, 0xaf, 0xb9, 0x9b, 0x8e,
+	0x0a, 0x64, 0x9c, 0x26, 0x64, 0x4d, 0x03, 0x1b, 0x2f, 0xea, 0x06, 0x2b, 0x2f, 0x09, 0x90, 0xf5,
+	0xb9, 0x2d, 0xda, 0xea, 0x01, 0xda, 0x65, 0x24, 0x68, 0xe1, 0x96, 0x83, 0xee, 0x87, 0x65, 0x75,
+	0x9b, 0xac, 0x25, 0x49, 0x80, 0xb4, 0xfb, 0x58, 0xd0, 0xfe, 0xbb, 0x0c, 0x90, 0xc6, 0x60, 0x59,
+	0x85, 0x40, 0xc2, 0x47, 0x4e, 0x2c, 0x45, 0x0d, 0x2b, 0xf9, 0xbb, 0x02, 0x0c, 0x04, 0x71, 0x95,
+	0x0c, 0xa4, 0x5a, 0xcd, 0x18, 0x98, 0xfc, 0x45, 0xe8, 0x0b, 0x60, 0x96, 0x91, 0x73, 0x9f, 0x61,
+	0x60, 0x9c, 0xf6, 0xed, 0x47, 0x28, 0x1b, 0x90, 0x89, 0x50, 0xb2, 0x94, 0xb3, 0xfd, 0x81, 0xca,
+	0xac, 0x8a, 0x6a, 0x3d, 0x48, 0x36, 0xe6, 0xde, 0xaa, 0x85, 0x54, 0xad, 0x69, 0x32, 0x2b, 0x0f,
+	0x9d, 0x75, 0x8c, 0x08, 0x43, 0xf4, 0xb2, 0x2b, 0xd8, 0xa4, 0xdb, 0x4d, 0xd3, 0x50, 0x80, 0x58,
+	0x4c, 0xa9, 0xd6, 0x83, 0xf2, 0x79, 0x01, 0x56, 0x07, 0x61, 0x39, 0x66, 0xb9, 0x6c, 0x20, 0xff,
+	0xc4, 0x69, 0x9a, 0xa8, 0xd6, 0x43, 0xba, 0x86, 0x0f, 0x40, 0x7e, 0x40, 0x5e, 0xa7, 0x5c, 0x87,
+	0x61, 0x2a, 0xfb, 0xc2, 0x2b, 0xe4, 0x46, 0x3b, 0xa9, 0xdb, 0xce, 0x12, 0xa4, 0xc6, 0x2b, 0x02,
+	0x0c, 0x71, 0xe6, 0xb5, 0xb7, 0x1f, 0xda, 0x33, 0x3f, 0x6f, 0x23, 0x67, 0x87, 0x5b, 0x4e, 0xdc,
+	0x7e, 0x2a, 0x3f, 0x02, 0xdd, 0xe8, 0x60, 0xc9, 0xa8, 0x6b, 0xa8, 0xe8, 0x91, 0xd3, 0xce, 0x23,
+	0xa7, 0xcb, 0x33, 0x22, 0x6f, 0x10, 0x69, 0x10, 0x3a, 0x4d, 0x8c, 0xaa, 0x88, 0x2b, 0x1e, 0x52,
+	0x0f, 0x81, 0x19, 0x00, 0xed, 0x81, 0x94, 0xa1, 0x57, 0x74, 0x07, 0x53, 0x9d, 0x52, 0xc8, 0x83,
+	0x7c, 0x46, 0x80, 0x1e, 0x5e, 0x8c, 0x4d, 0x13, 0xd7, 0x00, 0x74, 0xcc, 0x9b, 0x86, 0x16, 0x64,
+	0x4f, 0x4a, 0x59, 0x4e, 0x1a, 0x0a, 0x9a, 0x7c, 0x44, 0x80, 0x35, 0xfc, 0x15, 0x2a, 0x68, 0x4b,
+	0x93, 0x14, 0x6e, 0x87, 0xae, 0x15, 0x0d, 0xdd, 0x76, 0xdf, 0x82, 0x6d, 0x6e, 0x87, 0x8e, 0xa7,
+	0x92, 0x7f, 0x45, 0xed, 0xb8, 0x00, 0xcb, 0x84, 0x59, 0xaf, 0x3a, 0xff, 0x1f, 0x74, 0x3e, 0x42,
+	0x9d, 0x85, 0x65, 0xe4, 0x90, 0x41, 0x4b, 0x97, 0x12, 0x14, 0x9a, 0xf6, 0x08, 0x9a, 0xe7, 0x05,
+	0xc8, 0x05, 0x68, 0x2c, 0x84, 0x4b, 0xb3, 0xa5, 0x46, 0xb4, 0x0e, 0x52, 0xf3, 0xa6, 0x55, 0x42,
+	0x7c, 0x32, 0x49, 0x5f, 0x22, 0x89, 0xe1, 0x04, 0x49, 0x53, 0x09, 0xf2, 0x84, 0x00, 0xfd, 0x9c,
+	0x04, 0x71, 0x73, 0xb5, 0x69, 0xde, 0xf3, 0x0c, 0xc6, 0x59, 0xb3, 0xd6, 0x6c, 0xb5, 0xc8, 0x39,
+	0x6a, 0xa3, 0x91, 0x02, 0x53, 0x41, 0xaa, 0x56, 0xa8, 0xce, 0x99, 0x07, 0x9b, 0xe6, 0xd5, 0x26,
+	0x43, 0x17, 0x7e, 0x5d, 0xeb, 0x2e, 0x2a, 0xb7, 0x9b, 0x1c, 0xbb, 0x9d, 0x56, 0x03, 0x69, 0x41,
+	0x73, 0x5f, 0xd2, 0x59, 0x5e, 0x24, 0x7b, 0xea, 0x4e, 0x33, 0x85, 0x32, 0x02, 0xdd, 0x38, 0x14,
+	0x13, 0xc3, 0x0a, 0x62, 0x59, 0x61, 0xf9, 0x58, 0x0b, 0x9a, 0xfc, 0xe7, 0xb6, 0xf0, 0x76, 0xd5,
+	0xab, 0x36, 0xb2, 0x9c, 0x3d, 0xd6, 0x5e, 0x52, 0xff, 0x93, 0x0f, 0xf7, 0x66, 0x09, 0xe8, 0x13,
+	0xd0, 0xe9, 0x98, 0xb5, 0x22, 0x5d, 0xaa, 0x0f, 0xe4, 0x89, 0xe0, 0x92, 0x6f, 0x08, 0x2e, 0xf9,
+	0x42, 0xd5, 0xd9, 0x36, 0xbe, 0x4f, 0x35, 0xea, 0x48, 0x01, 0x27, 0xd8, 0x07, 0xbb, 0x41, 0x0a,
+	0xd3, 0x51, 0x51, 0x31, 0x25, 0xcb, 0x16, 0x77, 0xb2, 0x32, 0xe0, 0x6b, 0x4a, 0x3d, 0x58, 0xd0,
+	0xa4, 0x5d, 0xb0, 0x2a, 0x94, 0x23, 0x9e, 0xa3, 0xe5, 0x8b, 0x3b, 0xea, 0xf6, 0x93, 0x88, 0xf8,
+	0xb9, 0x17, 0x56, 0x78, 0xc5, 0x61, 0xc9, 0x7d, 0xd9, 0x64, 0x3a, 0x16, 0x77, 0xe1, 0x55, 0x93,
+	0xe4, 0xe5, 0x34, 0x48, 0x17, 0x97, 0x30, 0x24, 0x8c, 0x2e, 0xa7, 0xaa, 0xc9, 0x6f, 0x0b, 0xe1,
+	0xfa, 0x5f, 0x43, 0x06, 0x6a, 0xb6, 0x35, 0x95, 0xbf, 0x47, 0xbd, 0x2d, 0xca, 0xc8, 0xd9, 0x6b,
+	0x37, 0xde, 0x16, 0xcd, 0x76, 0x80, 0xfd, 0x5e, 0x08, 0xd7, 0xb3, 0x64, 0xdb, 0x37, 0x2d, 0x5a,
+	0xf7, 0x20, 0x23, 0xf5, 0x45, 0xb1, 0x62, 0x97, 0x43, 0x07, 0x19, 0x69, 0x9c, 0xb2, 0xcb, 0x05,
+	0x4d, 0x3e, 0x2b, 0xc0, 0x48, 0xf2, 0xde, 0xf7, 0xd4, 0xa3, 0xdb, 0x1f, 0x14, 0xd1, 0xb6, 0xda,
+	0xe3, 0xb5, 0xad, 0xd4, 0x2d, 0x6b, 0x5b, 0xf2, 0x57, 0xa8, 0x72, 0x32, 0x9c, 0xe6, 0x77, 0x0a,
+	0xbe, 0x7c, 0x54, 0x00, 0x39, 0x9a, 0x1b, 0x61, 0x08, 0xf6, 0x1e, 0x2c, 0x50, 0xdd, 0x7e, 0x20,
+	0xbe, 0x10, 0xe6, 0x56, 0xb5, 0xa9, 0x86, 0xae, 0x57, 0x8d, 0x14, 0x84, 0x14, 0x94, 0x25, 0xf8,
+	0xe4, 0x7a, 0x98, 0x5f, 0x44, 0xef, 0xc2, 0xc5, 0xd5, 0x9d, 0x2e, 0x40, 0x7f, 0x4a, 0x81, 0x41,
+	0x9a, 0xee, 0xcc, 0x20, 0x64, 0x11, 0x2c, 0x4b, 0x51, 0x7b, 0x8e, 0x82, 0x88, 0xb7, 0xa0, 0x37,
+	0x61, 0xe8, 0x1b, 0xa3, 0xdb, 0x6d, 0x27, 0x54, 0xe0, 0xcf, 0x9a, 0xc4, 0x2a, 0xfe, 0xb4, 0x00,
+	0x5b, 0x28, 0x0e, 0x27, 0x16, 0xd4, 0x6a, 0x15, 0x19, 0x0d, 0xf1, 0x09, 0xa9, 0xda, 0x8c, 0x6a,
+	0x39, 0x7a, 0x49, 0xaf, 0xa9, 0xd5, 0xa5, 0xd0, 0x54, 0xa4, 0xb5, 0x00, 0x25, 0x32, 0x67, 0x83,
+	0xd6, 0x36, 0xa5, 0xc3, 0x6b, 0x29, 0x68, 0x52, 0x2f, 0xa4, 0xbd, 0xa3, 0x84, 0x40, 0x4f, 0x55,
+	0xf0, 0x21, 0x72, 0x8e, 0x7a, 0xc9, 0xd8, 0x18, 0xb7, 0x33, 0xbb, 0x80, 0x2a, 0xa8, 0x89, 0xf4,
+	0x8a, 0xe8, 0xdd, 0x41, 0x9a, 0x73, 0x77, 0xe0, 0x7e, 0x0a, 0xf6, 0x53, 0x91, 0xec, 0xd6, 0x6d,
+	0xc7, 0xb4, 0x0e, 0xcd, 0xce, 0x4e, 0x36, 0x4d, 0x28, 0xf4, 0xfd, 0x46, 0x3a, 0x7a, 0xbf, 0xf1,
+	0x29, 0x18, 0xd8, 0x87, 0xdc, 0x79, 0x8b, 0x5c, 0x31, 0xda, 0xd3, 0x70, 0xed, 0x8c, 0x30, 0xd4,
+	0x76, 0x6b, 0x1a, 0xae, 0x2d, 0xdf, 0x0b, 0xab, 0x3c, 0x97, 0x9e, 0x10, 0x85, 0x90, 0x25, 0x6d,
+	0xa2, 0x1d, 0xdd, 0x15, 0x39, 0xa6, 0xb1, 0xf8, 0xec, 0x8d, 0xff, 0x38, 0x88, 0xd4, 0xf8, 0xd0,
+	0xb5, 0x4b, 0x63, 0x78, 0xdc, 0xb5, 0x8b, 0x2d, 0x7f, 0x12, 0xfa, 0xa8, 0xc1, 0xcc, 0x25, 0x45,
+	0xc3, 0x45, 0xf2, 0x25, 0x05, 0xeb, 0x88, 0x11, 0xfa, 0x63, 0x1c, 0x45, 0x84, 0x7e, 0x5b, 0x5e,
+	0x07, 0x9d, 0x9e, 0xa3, 0x49, 0xb3, 0x5a, 0x76, 0xcf, 0xdf, 0x60, 0x74, 0x9b, 0x67, 0xb4, 0xf9,
+	0x54, 0x27, 0x74, 0x51, 0x39, 0x21, 0xad, 0x82, 0xae, 0x09, 0x65, 0x62, 0xdb, 0x78, 0x71, 0xef,
+	0xf4, 0xfd, 0xd3, 0x7b, 0xf6, 0x4f, 0x8b, 0x2d, 0xd2, 0x7a, 0xc8, 0x90, 0x26, 0x56, 0x6c, 0x17,
+	0x7f, 0x72, 0xe4, 0xea, 0xe9, 0x0f, 0xdc, 0x7f, 0x82, 0xb4, 0x06, 0x56, 0x12, 0x33, 0xff, 0xd6,
+	0x4a, 0x7c, 0xf9, 0x85, 0x4b, 0x6f, 0xde, 0x68, 0xf4, 0xf6, 0x86, 0x7b, 0x7d, 0xb8, 0xe2, 0xc9,
+	0xb3, 0xdf, 0xaa, 0x4b, 0x32, 0xdd, 0xeb, 0xb3, 0x22, 0xbe, 0x7d, 0xf1, 0xe6, 0xb5, 0x7f, 0x12,
+	0x0f, 0xeb, 0x61, 0x6d, 0xd8, 0x86, 0x51, 0xe9, 0xc5, 0xe3, 0xa7, 0x7e, 0xf0, 0x5e, 0xbb, 0xb4,
+	0x05, 0x72, 0x94, 0x19, 0x23, 0x7a, 0x8b, 0xc7, 0x5f, 0xfb, 0xf5, 0x5f, 0x3d, 0xcc, 0x1b, 0x60,
+	0x35, 0x65, 0x1c, 0x96, 0x9e, 0xc5, 0x4b, 0x8f, 0x5f, 0xbb, 0x74, 0x9d, 0xd8, 0xad, 0x83, 0x01,
+	0xd6, 0x69, 0x60, 0x79, 0xf3, 0x89, 0x0b, 0x8f, 0xb6, 0x33, 0x00, 0xa3, 0x62, 0xaf, 0xf8, 0xf5,
+	0x13, 0xe7, 0xbf, 0xdf, 0x2e, 0x6d, 0x82, 0x35, 0x94, 0x59, 0x44, 0x3c, 0x15, 0x7f, 0x74, 0xfe,
+	0xc6, 0x29, 0x2f, 0xe4, 0x0f, 0xc3, 0x48, 0x14, 0x1e, 0x4f, 0x9b, 0x14, 0xdf, 0xb9, 0x72, 0xf9,
+	0xa5, 0x9b, 0x64, 0xc8, 0x87, 0x60, 0x1d, 0x7f, 0x08, 0x25, 0x2b, 0x8a, 0x0f, 0x1d, 0xbd, 0xfe,
+	0x8f, 0x6b, 0x64, 0xc4, 0x08, 0xf4, 0xc7, 0x8c, 0x10, 0x8f, 0x3d, 0x7d, 0xf2, 0xc7, 0x1e, 0x94,
+	0xbb, 0x61, 0x30, 0xd6, 0x2f, 0x11, 0xc3, 0xc4, 0x2b, 0xdf, 0x38, 0xf6, 0x86, 0xc7, 0x57, 0x34,
+	0xc6, 0x88, 0x5c, 0x25, 0xbe, 0xf6, 0xfa, 0xa5, 0xaf, 0xbe, 0x4f, 0x4c, 0x37, 0x47, 0x58, 0x8b,
+	0xca, 0x42, 0xe2, 0xe9, 0x9f, 0x1d, 0x7e, 0xce, 0x73, 0x9b, 0x87, 0x61, 0xca, 0x96, 0x27, 0xda,
+	0x88, 0x7f, 0xfb, 0xfb, 0xd1, 0xab, 0xde, 0xf2, 0x6e, 0x84, 0x2c, 0x1f, 0x86, 0x8b, 0x59, 0x7c,
+	0xf7, 0xea, 0xcd, 0x87, 0xaf, 0xc7, 0x1a, 0x06, 0xca, 0x84, 0xf8, 0xf6, 0xab, 0xef, 0xbd, 0xf8,
+	0x41, 0x83, 0x2c, 0x3a, 0xb0, 0x88, 0x3c, 0x20, 0xfe, 0xfc, 0xca, 0xe3, 0x6f, 0xb0, 0xa9, 0x1a,
+	0xfd, 0xf4, 0x16, 0xdf, 0xbf, 0xfe, 0xec, 0xb3, 0x29, 0x26, 0x1c, 0x5e, 0x61, 0x2b, 0xbe, 0xf5,
+	0x97, 0x67, 0x5e, 0xf7, 0xa8, 0x1a, 0x8a, 0x64, 0x6b, 0xb8, 0x82, 0x14, 0x2f, 0x9e, 0xf9, 0x5d,
+	0x17, 0xe3, 0x91, 0xf7, 0x9d, 0x22, 0x3e, 0xf5, 0xb5, 0xb7, 0x6e, 0xfa, 0xab, 0x3a, 0xc2, 0x01,
+	0xca, 0x0e, 0x79, 0xf2, 0xd5, 0x47, 0x9e, 0x72, 0xe9, 0xdf, 0xb8, 0x28, 0x5e, 0xb2, 0x75, 0xc5,
+	0x87, 0xce, 0x9d, 0xd8, 0x2b, 0x6d, 0x88, 0xe4, 0x0c, 0x5b, 0xf1, 0x8a, 0xdf, 0xfc, 0xd7, 0x3b,
+	0xdd, 0xd2, 0x38, 0xac, 0xe7, 0xa0, 0x60, 0xcb, 0x52, 0xf1, 0x99, 0x63, 0x97, 0x8f, 0xdc, 0xe0,
+	0x9f, 0x06, 0xd1, 0xe2, 0x51, 0x7c, 0xfa, 0x4f, 0x8f, 0x5d, 0x4c, 0x33, 0xeb, 0x15, 0x29, 0xf9,
+	0xc4, 0xd3, 0x8f, 0xbd, 0x79, 0xb8, 0x9d, 0xb1, 0x8a, 0xd4, 0x62, 0xe2, 0xf1, 0x47, 0x8f, 0x9f,
+	0x68, 0x95, 0x3e, 0x0a, 0xf9, 0xa8, 0xaf, 0xe4, 0xd2, 0x47, 0x3c, 0x73, 0xfc, 0xdd, 0xdf, 0xb4,
+	0x32, 0x87, 0x4c, 0xb8, 0xf4, 0x10, 0x9f, 0x3c, 0xfb, 0x8b, 0xe7, 0xbd, 0xe5, 0x1d, 0x8e, 0x24,
+	0x21, 0xf5, 0x62, 0x17, 0x4f, 0x5e, 0xb9, 0x34, 0x9d, 0x6d, 0x3f, 0xfc, 0x9d, 0x5c, 0xcb, 0xf8,
+	0x1f, 0x7b, 0xa0, 0x43, 0x99, 0x99, 0xf0, 0xbe, 0x90, 0xa7, 0xa1, 0x3f, 0xee, 0xde, 0x52, 0x0e,
+	0xde, 0xfb, 0x71, 0xa7, 0x66, 0x96, 0x96, 0x20, 0xe5, 0x16, 0x69, 0x06, 0x32, 0xb1, 0xf7, 0x85,
+	0xeb, 0x58, 0x87, 0x8c, 0x11, 0xeb, 0xf1, 0x01, 0xb8, 0x8b, 0x77, 0xb5, 0x97, 0x63, 0x9d, 0x85,
+	0xfb, 0xb3, 0xfe, 0x64, 0x09, 0x95, 0x82, 0xdc, 0x22, 0x7d, 0x01, 0x7a, 0xf9, 0x97, 0x79, 0x43,
+	0x31, 0x60, 0xff, 0xe3, 0x19, 0x02, 0x86, 0x99, 0xfb, 0x3b, 0x0e, 0xc3, 0x51, 0x1b, 0x96, 0x8f,
+	0x29, 0xe8, 0x8b, 0xb9, 0x38, 0x1b, 0x66, 0xdd, 0x45, 0x4c, 0xb2, 0xdd, 0xbe, 0x37, 0x2c, 0xb7,
+	0xc8, 0x2d, 0xd2, 0x02, 0xe4, 0x16, 0xb9, 0xbb, 0xda, 0xc4, 0x65, 0x9a, 0x67, 0x9a, 0x5d, 0x1d,
+	0xa1, 0x24, 0xa8, 0x93, 0xe4, 0x16, 0x09, 0xc1, 0xda, 0xe4, 0xdb, 0xaa, 0xd1, 0x84, 0x89, 0x28,
+	0xcb, 0x6c, 0x86, 0x3b, 0xcf, 0xce, 0x83, 0x0e, 0xe6, 0x67, 0x15, 0x7b, 0x61, 0xb4, 0x26, 0xc9,
+	0x75, 0xa2, 0xbb, 0xcf, 0xc1, 0xea, 0xf8, 0x1b, 0x9c, 0x91, 0x64, 0xc4, 0xc4, 0x6a, 0x11, 0xb4,
+	0x7d, 0x31, 0x97, 0x32, 0xc3, 0x49, 0xbe, 0xb1, 0x09, 0x67, 0x35, 0x3f, 0xe3, 0x27, 0x1b, 0x73,
+	0x41, 0x22, 0x73, 0xfd, 0x51, 0x36, 0x89, 0x48, 0xf7, 0xc1, 0x40, 0xd2, 0x6d, 0xc7, 0x06, 0xd6,
+	0x3d, 0xcf, 0x8e, 0xcd, 0xe7, 0x49, 0xe8, 0xe1, 0xde, 0x3a, 0x0c, 0x26, 0xc4, 0xef, 0x1a, 0x64,
+	0xd9, 0x7a, 0x5a, 0x6e, 0x91, 0x0a, 0x61, 0x6f, 0xa1, 0xfb, 0x01, 0xbe, 0xb7, 0xc0, 0x80, 0xc3,
+	0xe5, 0xa4, 0xbf, 0x34, 0x51, 0x19, 0x9f, 0xb3, 0x34, 0x11, 0x13, 0x36, 0xcc, 0xe0, 0x18, 0x60,
+	0xa4, 0x74, 0x39, 0xc9, 0x1d, 0xb1, 0x61, 0xfd, 0x05, 0xcb, 0xc1, 0x55, 0xb3, 0x39, 0xcb, 0xc1,
+	0xb3, 0x63, 0xfd, 0xee, 0xf2, 0x8f, 0x5b, 0x4a, 0x49, 0xe5, 0x1c, 0xb7, 0xe1, 0x7e, 0xd6, 0xcf,
+	0x7e, 0x1f, 0x1f, 0x57, 0xee, 0xdc, 0xc0, 0x5d, 0x0f, 0xc6, 0x8e, 0xb3, 0x2c, 0x0f, 0xf8, 0x07,
+	0x56, 0x9c, 0x38, 0xb9, 0x29, 0x8e, 0x4f, 0xd6, 0x3d, 0x03, 0x7b, 0x0e, 0x86, 0x17, 0x17, 0x0a,
+	0xef, 0xbe, 0x35, 0x72, 0x89, 0x35, 0x3b, 0x87, 0xe2, 0x1f, 0x29, 0x1c, 0x15, 0x6f, 0x24, 0x99,
+	0xe8, 0x38, 0x9f, 0x9f, 0x87, 0xc1, 0xc5, 0x64, 0xb9, 0xcd, 0x71, 0xb4, 0xb0, 0xb6, 0xac, 0xff,
+	0x62, 0xf8, 0x60, 0xa1, 0x85, 0x36, 0x39, 0x61, 0xa3, 0x7a, 0x36, 0xd9, 0x1c, 0xf7, 0x60, 0xf1,
+	0xbf, 0xd4, 0x70, 0xbe, 0xf4, 0xc5, 0x08, 0x6b, 0x49, 0x07, 0x21, 0x31, 0x59, 0xe4, 0x00, 0xef,
+	0x8b, 0x11, 0xc9, 0x38, 0x8e, 0x23, 0x26, 0x31, 0xb8, 0xfd, 0xef, 0x4f, 0xb9, 0x45, 0x3a, 0x00,
+	0xa3, 0xb7, 0x2c, 0x66, 0x6d, 0xe3, 0x46, 0x92, 0x3c, 0x28, 0x7b, 0x57, 0x04, 0x82, 0xfb, 0x41,
+	0x4e, 0xed, 0x53, 0x4a, 0x8c, 0xe2, 0xec, 0xd3, 0x70, 0x3f, 0xbb, 0xb0, 0xbb, 0xfd, 0x03, 0x93,
+	0x96, 0x82, 0x06, 0xb9, 0x8e, 0x02, 0x03, 0xc6, 0xd3, 0xf6, 0x4f, 0x5f, 0x7e, 0x25, 0x27, 0xfc,
+	0xf6, 0x42, 0x4e, 0x78, 0xe1, 0x42, 0x4e, 0x78, 0xf9, 0x42, 0x4e, 0xf8, 0xec, 0x7d, 0xa1, 0x3f,
+	0x2a, 0x76, 0x90, 0x5a, 0x29, 0x5b, 0x6a, 0xf0, 0x63, 0xab, 0x8d, 0xac, 0x03, 0xc8, 0x1a, 0x53,
+	0x6b, 0xb5, 0x31, 0xf7, 0xa7, 0x5e, 0x42, 0x63, 0x73, 0xfa, 0x97, 0xc7, 0xc8, 0x64, 0xde, 0x7f,
+	0x73, 0x69, 0x3c, 0xc5, 0xb6, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0x49, 0xd4, 0x64, 0x72, 0xb9,
+	0x2c, 0x00, 0x00,
 }
 
-func (this *PeerWithDraftMessage) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&dialog.PeerWithDraftMessage{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	if this.Peer != nil {
-		s = append(s, "Peer: "+fmt.Sprintf("%#v", this.Peer)+",\n")
-	}
-	if this.Draft != nil {
-		s = append(s, "Draft: "+fmt.Sprintf("%#v", this.Draft)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLUpdateDraftMessage) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&dialog.TLUpdateDraftMessage{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *DialogExt) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 10)
+	s := make([]string, 0, 12)
 	s = append(s, "&dialog.DialogExt{")
 	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
 	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
@@ -3262,6 +3376,8 @@ func (this *DialogExt) GoString() string {
 	}
 	s = append(s, "AvailableMinId: "+fmt.Sprintf("%#v", this.AvailableMinId)+",\n")
 	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
+	s = append(s, "ThemeEmoticon: "+fmt.Sprintf("%#v", this.ThemeEmoticon)+",\n")
+	s = append(s, "TtlPeriod: "+fmt.Sprintf("%#v", this.TtlPeriod)+",\n")
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
@@ -3274,6 +3390,40 @@ func (this *TLDialogExt) GoString() string {
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&dialog.TLDialogExt{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *DialogFilterExt) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&dialog.DialogFilterExt{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	if this.DialogFilter != nil {
+		s = append(s, "DialogFilter: "+fmt.Sprintf("%#v", this.DialogFilter)+",\n")
+	}
+	s = append(s, "Order: "+fmt.Sprintf("%#v", this.Order)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLDialogFilterExt) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.TLDialogFilterExt{")
 	if this.Data2 != nil {
 		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
 	}
@@ -3315,31 +3465,32 @@ func (this *TLDialogPinnedExt) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *DialogFilterExt) GoString() string {
+func (this *PeerWithDraftMessage) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 9)
-	s = append(s, "&dialog.DialogFilterExt{")
+	s := make([]string, 0, 8)
+	s = append(s, "&dialog.PeerWithDraftMessage{")
 	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
 	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	if this.DialogFilter != nil {
-		s = append(s, "DialogFilter: "+fmt.Sprintf("%#v", this.DialogFilter)+",\n")
+	if this.Peer != nil {
+		s = append(s, "Peer: "+fmt.Sprintf("%#v", this.Peer)+",\n")
 	}
-	s = append(s, "Order: "+fmt.Sprintf("%#v", this.Order)+",\n")
+	if this.Draft != nil {
+		s = append(s, "Draft: "+fmt.Sprintf("%#v", this.Draft)+",\n")
+	}
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *TLDialogFilterExt) GoString() string {
+func (this *TLUpdateDraftMessage) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 5)
-	s = append(s, "&dialog.TLDialogFilterExt{")
+	s = append(s, "&dialog.TLUpdateDraftMessage{")
 	if this.Data2 != nil {
 		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
 	}
@@ -3821,6 +3972,40 @@ func (this *TLDialogGetChannelMessageReadParticipants) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLDialogSetChatTheme) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&dialog.TLDialogSetChatTheme{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
+	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
+	s = append(s, "ThemeEmoticon: "+fmt.Sprintf("%#v", this.ThemeEmoticon)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLDialogSetHistoryTTL) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&dialog.TLDialogSetHistoryTTL{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
+	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
+	s = append(s, "TtlPeriod: "+fmt.Sprintf("%#v", this.TtlPeriod)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Vector_PeerWithDraftMessage) GoString() string {
 	if this == nil {
 		return "nil"
@@ -3930,62 +4115,36 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RPCDialogClient interface {
-	// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 	DialogSaveDraftMessage(ctx context.Context, in *TLDialogSaveDraftMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 	DialogClearDraftMessage(ctx context.Context, in *TLDialogClearDraftMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 	DialogGetAllDrafts(ctx context.Context, in *TLDialogGetAllDrafts, opts ...grpc.CallOption) (*Vector_PeerWithDraftMessage, error)
-	// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 	DialogClearAllDrafts(ctx context.Context, in *TLDialogClearAllDrafts, opts ...grpc.CallOption) (*Vector_PeerWithDraftMessage, error)
-	// dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 	DialogMarkDialogUnread(ctx context.Context, in *TLDialogMarkDialogUnread, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 	DialogToggleDialogPin(ctx context.Context, in *TLDialogToggleDialogPin, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 	DialogGetDialogUnreadMarkList(ctx context.Context, in *TLDialogGetDialogUnreadMarkList, opts ...grpc.CallOption) (*Vector_DialogPeer, error)
-	// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 	DialogGetDialogsByOffsetDate(ctx context.Context, in *TLDialogGetDialogsByOffsetDate, opts ...grpc.CallOption) (*Vector_DialogExt, error)
-	// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 	DialogGetDialogs(ctx context.Context, in *TLDialogGetDialogs, opts ...grpc.CallOption) (*Vector_DialogExt, error)
-	// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 	DialogGetDialogsByIdList(ctx context.Context, in *TLDialogGetDialogsByIdList, opts ...grpc.CallOption) (*Vector_DialogExt, error)
-	// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 	DialogGetDialogsCount(ctx context.Context, in *TLDialogGetDialogsCount, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 	DialogGetPinnedDialogs(ctx context.Context, in *TLDialogGetPinnedDialogs, opts ...grpc.CallOption) (*Vector_DialogExt, error)
-	// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 	DialogReorderPinnedDialogs(ctx context.Context, in *TLDialogReorderPinnedDialogs, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 	DialogGetDialogById(ctx context.Context, in *TLDialogGetDialogById, opts ...grpc.CallOption) (*DialogExt, error)
-	// dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 	DialogGetTopMessage(ctx context.Context, in *TLDialogGetTopMessage, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
 	DialogUpdateReadInbox(ctx context.Context, in *TLDialogUpdateReadInbox, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
 	DialogUpdateReadOutbox(ctx context.Context, in *TLDialogUpdateReadOutbox, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
 	DialogInsertOrUpdateDialog(ctx context.Context, in *TLDialogInsertOrUpdateDialog, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 	DialogDeleteDialog(ctx context.Context, in *TLDialogDeleteDialog, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 	DialogGetUserPinnedMessage(ctx context.Context, in *TLDialogGetUserPinnedMessage, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 	DialogUpdateUserPinnedMessage(ctx context.Context, in *TLDialogUpdateUserPinnedMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 	DialogInsertOrUpdateDialogFilter(ctx context.Context, in *TLDialogInsertOrUpdateDialogFilter, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.deleteDialogFilter user_id:long id:int = Bool;
 	DialogDeleteDialogFilter(ctx context.Context, in *TLDialogDeleteDialogFilter, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 	DialogUpdateDialogFiltersOrder(ctx context.Context, in *TLDialogUpdateDialogFiltersOrder, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 	DialogGetDialogFilters(ctx context.Context, in *TLDialogGetDialogFilters, opts ...grpc.CallOption) (*Vector_DialogFilterExt, error)
-	// dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 	DialogGetDialogFolder(ctx context.Context, in *TLDialogGetDialogFolder, opts ...grpc.CallOption) (*Vector_DialogExt, error)
-	// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 	DialogEditPeerFolders(ctx context.Context, in *TLDialogEditPeerFolders, opts ...grpc.CallOption) (*Vector_DialogPinnedExt, error)
-	// dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *TLDialogGetChannelMessageReadParticipants, opts ...grpc.CallOption) (*Vector_Long, error)
+	DialogSetChatTheme(ctx context.Context, in *TLDialogSetChatTheme, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	DialogSetHistoryTTL(ctx context.Context, in *TLDialogSetHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCDialogClient struct {
@@ -4248,64 +4407,56 @@ func (c *rPCDialogClient) DialogGetChannelMessageReadParticipants(ctx context.Co
 	return out, nil
 }
 
+func (c *rPCDialogClient) DialogSetChatTheme(ctx context.Context, in *TLDialogSetChatTheme, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_setChatTheme", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCDialogClient) DialogSetHistoryTTL(ctx context.Context, in *TLDialogSetHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_setHistoryTTL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCDialogServer is the server API for RPCDialog service.
 type RPCDialogServer interface {
-	// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 	DialogSaveDraftMessage(context.Context, *TLDialogSaveDraftMessage) (*mtproto.Bool, error)
-	// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 	DialogClearDraftMessage(context.Context, *TLDialogClearDraftMessage) (*mtproto.Bool, error)
-	// dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 	DialogGetAllDrafts(context.Context, *TLDialogGetAllDrafts) (*Vector_PeerWithDraftMessage, error)
-	// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 	DialogClearAllDrafts(context.Context, *TLDialogClearAllDrafts) (*Vector_PeerWithDraftMessage, error)
-	// dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 	DialogMarkDialogUnread(context.Context, *TLDialogMarkDialogUnread) (*mtproto.Bool, error)
-	// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 	DialogToggleDialogPin(context.Context, *TLDialogToggleDialogPin) (*mtproto.Int32, error)
-	// dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 	DialogGetDialogUnreadMarkList(context.Context, *TLDialogGetDialogUnreadMarkList) (*Vector_DialogPeer, error)
-	// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 	DialogGetDialogsByOffsetDate(context.Context, *TLDialogGetDialogsByOffsetDate) (*Vector_DialogExt, error)
-	// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 	DialogGetDialogs(context.Context, *TLDialogGetDialogs) (*Vector_DialogExt, error)
-	// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 	DialogGetDialogsByIdList(context.Context, *TLDialogGetDialogsByIdList) (*Vector_DialogExt, error)
-	// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 	DialogGetDialogsCount(context.Context, *TLDialogGetDialogsCount) (*mtproto.Int32, error)
-	// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 	DialogGetPinnedDialogs(context.Context, *TLDialogGetPinnedDialogs) (*Vector_DialogExt, error)
-	// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 	DialogReorderPinnedDialogs(context.Context, *TLDialogReorderPinnedDialogs) (*mtproto.Bool, error)
-	// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 	DialogGetDialogById(context.Context, *TLDialogGetDialogById) (*DialogExt, error)
-	// dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 	DialogGetTopMessage(context.Context, *TLDialogGetTopMessage) (*mtproto.Int32, error)
-	// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
 	DialogUpdateReadInbox(context.Context, *TLDialogUpdateReadInbox) (*mtproto.Bool, error)
-	// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
 	DialogUpdateReadOutbox(context.Context, *TLDialogUpdateReadOutbox) (*mtproto.Bool, error)
-	// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
 	DialogInsertOrUpdateDialog(context.Context, *TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error)
-	// dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 	DialogDeleteDialog(context.Context, *TLDialogDeleteDialog) (*mtproto.Bool, error)
-	// dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 	DialogGetUserPinnedMessage(context.Context, *TLDialogGetUserPinnedMessage) (*mtproto.Int32, error)
-	// dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 	DialogUpdateUserPinnedMessage(context.Context, *TLDialogUpdateUserPinnedMessage) (*mtproto.Bool, error)
-	// dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 	DialogInsertOrUpdateDialogFilter(context.Context, *TLDialogInsertOrUpdateDialogFilter) (*mtproto.Bool, error)
-	// dialog.deleteDialogFilter user_id:long id:int = Bool;
 	DialogDeleteDialogFilter(context.Context, *TLDialogDeleteDialogFilter) (*mtproto.Bool, error)
-	// dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 	DialogUpdateDialogFiltersOrder(context.Context, *TLDialogUpdateDialogFiltersOrder) (*mtproto.Bool, error)
-	// dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 	DialogGetDialogFilters(context.Context, *TLDialogGetDialogFilters) (*Vector_DialogFilterExt, error)
-	// dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 	DialogGetDialogFolder(context.Context, *TLDialogGetDialogFolder) (*Vector_DialogExt, error)
-	// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 	DialogEditPeerFolders(context.Context, *TLDialogEditPeerFolders) (*Vector_DialogPinnedExt, error)
-	// dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 	DialogGetChannelMessageReadParticipants(context.Context, *TLDialogGetChannelMessageReadParticipants) (*Vector_Long, error)
+	DialogSetChatTheme(context.Context, *TLDialogSetChatTheme) (*mtproto.Bool, error)
+	DialogSetHistoryTTL(context.Context, *TLDialogSetHistoryTTL) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCDialogServer can be embedded to have forward compatible implementations.
@@ -4395,6 +4546,12 @@ func (*UnimplementedRPCDialogServer) DialogEditPeerFolders(ctx context.Context, 
 }
 func (*UnimplementedRPCDialogServer) DialogGetChannelMessageReadParticipants(ctx context.Context, req *TLDialogGetChannelMessageReadParticipants) (*Vector_Long, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DialogGetChannelMessageReadParticipants not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogSetChatTheme(ctx context.Context, req *TLDialogSetChatTheme) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogSetChatTheme not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogSetHistoryTTL(ctx context.Context, req *TLDialogSetHistoryTTL) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogSetHistoryTTL not implemented")
 }
 
 func RegisterRPCDialogServer(s *grpc.Server, srv RPCDialogServer) {
@@ -4905,6 +5062,42 @@ func _RPCDialog_DialogGetChannelMessageReadParticipants_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCDialog_DialogSetChatTheme_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogSetChatTheme)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogSetChatTheme(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogSetChatTheme",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogSetChatTheme(ctx, req.(*TLDialogSetChatTheme))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCDialog_DialogSetHistoryTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogSetHistoryTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogSetHistoryTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogSetHistoryTTL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogSetHistoryTTL(ctx, req.(*TLDialogSetHistoryTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RPCDialog_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dialog.RPCDialog",
 	HandlerType: (*RPCDialogServer)(nil),
@@ -5021,111 +5214,17 @@ var _RPCDialog_serviceDesc = grpc.ServiceDesc{
 			MethodName: "dialog_getChannelMessageReadParticipants",
 			Handler:    _RPCDialog_DialogGetChannelMessageReadParticipants_Handler,
 		},
+		{
+			MethodName: "dialog_setChatTheme",
+			Handler:    _RPCDialog_DialogSetChatTheme_Handler,
+		},
+		{
+			MethodName: "dialog_setHistoryTTL",
+			Handler:    _RPCDialog_DialogSetHistoryTTL_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "dialog.tl.proto",
-}
-
-func (m *PeerWithDraftMessage) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PeerWithDraftMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PeerWithDraftMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Draft != nil {
-		{
-			size, err := m.Draft.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintDialogTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.Peer != nil {
-		{
-			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintDialogTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.PredicateName) > 0 {
-		i -= len(m.PredicateName)
-		copy(dAtA[i:], m.PredicateName)
-		i = encodeVarintDialogTl(dAtA, i, uint64(len(m.PredicateName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLUpdateDraftMessage) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLUpdateDraftMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLUpdateDraftMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data2 != nil {
-		{
-			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintDialogTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
 }
 
 func (m *DialogExt) Marshal() (dAtA []byte, err error) {
@@ -5151,6 +5250,18 @@ func (m *DialogExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.TtlPeriod != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.TtlPeriod))
+		i--
+		dAtA[i] = 0x40
+	}
+	if len(m.ThemeEmoticon) > 0 {
+		i -= len(m.ThemeEmoticon)
+		copy(dAtA[i:], m.ThemeEmoticon)
+		i = encodeVarintDialogTl(dAtA, i, uint64(len(m.ThemeEmoticon)))
+		i--
+		dAtA[i] = 0x3a
 	}
 	if m.Date != 0 {
 		i = encodeVarintDialogTl(dAtA, i, uint64(m.Date))
@@ -5210,6 +5321,106 @@ func (m *TLDialogExt) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *TLDialogExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Data2 != nil {
+		{
+			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DialogFilterExt) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DialogFilterExt) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Order != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Order))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.DialogFilter != nil {
+		{
+			size, err := m.DialogFilter.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Id != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.PredicateName) > 0 {
+		i -= len(m.PredicateName)
+		copy(dAtA[i:], m.PredicateName)
+		i = encodeVarintDialogTl(dAtA, i, uint64(len(m.PredicateName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogFilterExt) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogFilterExt) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5326,7 +5537,7 @@ func (m *TLDialogPinnedExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *DialogFilterExt) Marshal() (dAtA []byte, err error) {
+func (m *PeerWithDraftMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5336,12 +5547,12 @@ func (m *DialogFilterExt) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *DialogFilterExt) MarshalTo(dAtA []byte) (int, error) {
+func (m *PeerWithDraftMessage) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *DialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *PeerWithDraftMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5350,14 +5561,9 @@ func (m *DialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Order != 0 {
-		i = encodeVarintDialogTl(dAtA, i, uint64(m.Order))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.DialogFilter != nil {
+	if m.Draft != nil {
 		{
-			size, err := m.DialogFilter.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Draft.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -5367,10 +5573,17 @@ func (m *DialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if m.Id != 0 {
-		i = encodeVarintDialogTl(dAtA, i, uint64(m.Id))
+	if m.Peer != nil {
+		{
+			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x1a
 	}
 	if m.Constructor != 0 {
 		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
@@ -5387,7 +5600,7 @@ func (m *DialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *TLDialogFilterExt) Marshal() (dAtA []byte, err error) {
+func (m *TLUpdateDraftMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5397,12 +5610,12 @@ func (m *TLDialogFilterExt) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TLDialogFilterExt) MarshalTo(dAtA []byte) (int, error) {
+func (m *TLUpdateDraftMessage) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *TLDialogFilterExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TLUpdateDraftMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -6887,6 +7100,112 @@ func (m *TLDialogGetChannelMessageReadParticipants) MarshalToSizedBuffer(dAtA []
 	return len(dAtA) - i, nil
 }
 
+func (m *TLDialogSetChatTheme) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogSetChatTheme) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogSetChatTheme) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.ThemeEmoticon) > 0 {
+		i -= len(m.ThemeEmoticon)
+		copy(dAtA[i:], m.ThemeEmoticon)
+		i = encodeVarintDialogTl(dAtA, i, uint64(len(m.ThemeEmoticon)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.PeerId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.PeerId))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.PeerType != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.PeerType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogSetHistoryTTL) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogSetHistoryTTL) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogSetHistoryTTL) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.TtlPeriod != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.TtlPeriod))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.PeerId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.PeerId))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.PeerType != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.PeerType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Vector_PeerWithDraftMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -7149,49 +7468,6 @@ func encodeVarintDialogTl(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *PeerWithDraftMessage) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.PredicateName)
-	if l > 0 {
-		n += 1 + l + sovDialogTl(uint64(l))
-	}
-	if m.Constructor != 0 {
-		n += 1 + sovDialogTl(uint64(m.Constructor))
-	}
-	if m.Peer != nil {
-		l = m.Peer.Size()
-		n += 1 + l + sovDialogTl(uint64(l))
-	}
-	if m.Draft != nil {
-		l = m.Draft.Size()
-		n += 1 + l + sovDialogTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLUpdateDraftMessage) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Data2 != nil {
-		l = m.Data2.Size()
-		n += 1 + l + sovDialogTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *DialogExt) Size() (n int) {
 	if m == nil {
 		return 0
@@ -7218,6 +7494,13 @@ func (m *DialogExt) Size() (n int) {
 	if m.Date != 0 {
 		n += 1 + sovDialogTl(uint64(m.Date))
 	}
+	l = len(m.ThemeEmoticon)
+	if l > 0 {
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.TtlPeriod != 0 {
+		n += 1 + sovDialogTl(uint64(m.TtlPeriod))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -7225,6 +7508,51 @@ func (m *DialogExt) Size() (n int) {
 }
 
 func (m *TLDialogExt) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Data2 != nil {
+		l = m.Data2.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DialogFilterExt) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PredicateName)
+	if l > 0 {
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.Id != 0 {
+		n += 1 + sovDialogTl(uint64(m.Id))
+	}
+	if m.DialogFilter != nil {
+		l = m.DialogFilter.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.Order != 0 {
+		n += 1 + sovDialogTl(uint64(m.Order))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogFilterExt) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -7284,7 +7612,7 @@ func (m *TLDialogPinnedExt) Size() (n int) {
 	return n
 }
 
-func (m *DialogFilterExt) Size() (n int) {
+func (m *PeerWithDraftMessage) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -7297,15 +7625,13 @@ func (m *DialogFilterExt) Size() (n int) {
 	if m.Constructor != 0 {
 		n += 1 + sovDialogTl(uint64(m.Constructor))
 	}
-	if m.Id != 0 {
-		n += 1 + sovDialogTl(uint64(m.Id))
-	}
-	if m.DialogFilter != nil {
-		l = m.DialogFilter.Size()
+	if m.Peer != nil {
+		l = m.Peer.Size()
 		n += 1 + l + sovDialogTl(uint64(l))
 	}
-	if m.Order != 0 {
-		n += 1 + sovDialogTl(uint64(m.Order))
+	if m.Draft != nil {
+		l = m.Draft.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -7313,7 +7639,7 @@ func (m *DialogFilterExt) Size() (n int) {
 	return n
 }
 
-func (m *TLDialogFilterExt) Size() (n int) {
+func (m *TLUpdateDraftMessage) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8029,6 +8355,61 @@ func (m *TLDialogGetChannelMessageReadParticipants) Size() (n int) {
 	return n
 }
 
+func (m *TLDialogSetChatTheme) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.PeerType != 0 {
+		n += 1 + sovDialogTl(uint64(m.PeerType))
+	}
+	if m.PeerId != 0 {
+		n += 1 + sovDialogTl(uint64(m.PeerId))
+	}
+	l = len(m.ThemeEmoticon)
+	if l > 0 {
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogSetHistoryTTL) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.PeerType != 0 {
+		n += 1 + sovDialogTl(uint64(m.PeerType))
+	}
+	if m.PeerId != 0 {
+		n += 1 + sovDialogTl(uint64(m.PeerId))
+	}
+	if m.TtlPeriod != 0 {
+		n += 1 + sovDialogTl(uint64(m.TtlPeriod))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *Vector_PeerWithDraftMessage) Size() (n int) {
 	if m == nil {
 		return 0
@@ -8143,267 +8524,6 @@ func sovDialogTl(x uint64) (n int) {
 }
 func sozDialogTl(x uint64) (n int) {
 	return sovDialogTl(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *PeerWithDraftMessage) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowDialogTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PeerWithDraftMessage: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PeerWithDraftMessage: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PredicateName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Peer == nil {
-				m.Peer = &mtproto.Peer{}
-			}
-			if err := m.Peer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Draft", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Draft == nil {
-				m.Draft = &mtproto.DraftMessage{}
-			}
-			if err := m.Draft.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipDialogTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLUpdateDraftMessage) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowDialogTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_updateDraftMessage: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_updateDraftMessage: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Data2 == nil {
-				m.Data2 = &PeerWithDraftMessage{}
-			}
-			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipDialogTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthDialogTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *DialogExt) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -8578,6 +8698,57 @@ func (m *DialogExt) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThemeEmoticon", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThemeEmoticon = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TtlPeriod", wireType)
+			}
+			m.TtlPeriod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TtlPeriod |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDialogTl(dAtA[iNdEx:])
@@ -8660,6 +8831,269 @@ func (m *TLDialogExt) Unmarshal(dAtA []byte) error {
 			}
 			if m.Data2 == nil {
 				m.Data2 = &DialogExt{}
+			}
+			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DialogFilterExt: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DialogFilterExt: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PredicateName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DialogFilter", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.DialogFilter == nil {
+				m.DialogFilter = &mtproto.DialogFilter{}
+			}
+			if err := m.DialogFilter.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Order", wireType)
+			}
+			m.Order = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Order |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogFilterExt) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialogFilterExt: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialogFilterExt: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data2 == nil {
+				m.Data2 = &DialogFilterExt{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -8933,7 +9367,7 @@ func (m *TLDialogPinnedExt) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
+func (m *PeerWithDraftMessage) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8956,10 +9390,10 @@ func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: DialogFilterExt: wiretype end group for non-group")
+			return fmt.Errorf("proto: PeerWithDraftMessage: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DialogFilterExt: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: PeerWithDraftMessage: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -9014,27 +9448,8 @@ func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDialogTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DialogFilter", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -9061,18 +9476,18 @@ func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.DialogFilter == nil {
-				m.DialogFilter = &mtproto.DialogFilter{}
+			if m.Peer == nil {
+				m.Peer = &mtproto.Peer{}
 			}
-			if err := m.DialogFilter.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Peer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Order", wireType)
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Draft", wireType)
 			}
-			m.Order = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowDialogTl
@@ -9082,11 +9497,28 @@ func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Order |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Draft == nil {
+				m.Draft = &mtproto.DraftMessage{}
+			}
+			if err := m.Draft.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDialogTl(dAtA[iNdEx:])
@@ -9109,7 +9541,7 @@ func (m *DialogFilterExt) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLDialogFilterExt) Unmarshal(dAtA []byte) error {
+func (m *TLUpdateDraftMessage) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9132,10 +9564,10 @@ func (m *TLDialogFilterExt) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: TL_dialogFilterExt: wiretype end group for non-group")
+			return fmt.Errorf("proto: TL_updateDraftMessage: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_dialogFilterExt: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TL_updateDraftMessage: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -9168,7 +9600,7 @@ func (m *TLDialogFilterExt) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Data2 == nil {
-				m.Data2 = &DialogFilterExt{}
+				m.Data2 = &PeerWithDraftMessage{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -13159,6 +13591,311 @@ func (m *TLDialogGetChannelMessageReadParticipants) Unmarshal(dAtA []byte) error
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.MsgId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogSetChatTheme) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_setChatTheme: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_setChatTheme: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
+			}
+			m.PeerType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
+			}
+			m.PeerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ThemeEmoticon", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ThemeEmoticon = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogSetHistoryTTL) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_setHistoryTTL: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_setHistoryTTL: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerType", wireType)
+			}
+			m.PeerType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PeerId", wireType)
+			}
+			m.PeerId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PeerId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TtlPeriod", wireType)
+			}
+			m.TtlPeriod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TtlPeriod |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

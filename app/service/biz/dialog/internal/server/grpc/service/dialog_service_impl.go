@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -435,5 +435,35 @@ func (s *Service) DialogGetChannelMessageReadParticipants(ctx context.Context, r
 	}
 
 	c.Infof("dialog.getChannelMessageReadParticipants - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DialogSetChatTheme
+// dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
+func (s *Service) DialogSetChatTheme(ctx context.Context, request *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("dialog.setChatTheme - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogSetChatTheme(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("dialog.setChatTheme - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DialogSetHistoryTTL
+// dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
+func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("dialog.setHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogSetHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("dialog.setHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }

@@ -29,6 +29,7 @@ type DialogsDO struct {
 	FolderId            int32  `db:"folder_id"`
 	FolderPinned        int64  `db:"folder_pinned"`
 	HasScheduled        bool   `db:"has_scheduled"`
+	TtlPeriod           int32  `db:"ttl_period"`
 	ThemeEmoticon       string `db:"theme_emoticon"`
 	Date2               int64  `db:"date2"`
 	Deleted             bool   `db:"deleted"`

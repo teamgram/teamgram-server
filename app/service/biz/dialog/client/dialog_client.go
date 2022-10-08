@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -50,6 +50,8 @@ type DialogClient interface {
 	DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.Vector_DialogExt, error)
 	DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.Vector_DialogPinnedExt, error)
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.Vector_Long, error)
+	DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error)
+	DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error)
 }
 
 type defaultDialogClient struct {
@@ -256,4 +258,18 @@ func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dia
 func (m *defaultDialogClient) DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.Vector_Long, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetChannelMessageReadParticipants(ctx, in)
+}
+
+// DialogSetChatTheme
+// dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
+func (m *defaultDialogClient) DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogSetChatTheme(ctx, in)
+}
+
+// DialogSetHistoryTTL
+// dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
+func (m *defaultDialogClient) DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogSetHistoryTTL(ctx, in)
 }

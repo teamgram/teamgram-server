@@ -248,6 +248,7 @@ func (s *Server) Initialize() error {
 				RpcServerConf: c.RpcServerConf,
 				UserClient:    c.BizServiceClient,
 				ChatClient:    c.BizServiceClient,
+				DialogClient:  c.BizServiceClient,
 			}))
 
 		// nsfw_helper

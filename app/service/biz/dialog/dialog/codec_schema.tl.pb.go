@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -30,14 +30,14 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	-155335502: func() mtproto.TLObject { // 0xf6bdc4b2
-		o := MakeTLUpdateDraftMessage(nil)
-		o.Data2.Constructor = -155335502
+	-1109809056: func() mtproto.TLObject { // 0xbdd9a860
+		o := MakeTLDialogExt(nil)
+		o.Data2.Constructor = -1109809056
 		return o
 	},
-	722420824: func() mtproto.TLObject { // 0x2b0f4458
-		o := MakeTLDialogExt(nil)
-		o.Data2.Constructor = 722420824
+	-1891683854: func() mtproto.TLObject { // 0x8f3f31f2
+		o := MakeTLDialogFilterExt(nil)
+		o.Data2.Constructor = -1891683854
 		return o
 	},
 	245834284: func() mtproto.TLObject { // 0xea7222c
@@ -45,9 +45,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 245834284
 		return o
 	},
-	-1891683854: func() mtproto.TLObject { // 0x8f3f31f2
-		o := MakeTLDialogFilterExt(nil)
-		o.Data2.Constructor = -1891683854
+	-155335502: func() mtproto.TLObject { // 0xf6bdc4b2
+		o := MakeTLUpdateDraftMessage(nil)
+		o.Data2.Constructor = -155335502
 		return o
 	},
 
@@ -192,6 +192,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 683494715,
 		}
 	},
+	-374431190: func() mtproto.TLObject { // 0xe9aea22a
+		return &TLDialogSetChatTheme{
+			Constructor: -374431190,
+		}
+	},
+	165263532: func() mtproto.TLObject { // 0x9d9b8ac
+		return &TLDialogSetHistoryTTL{
+			Constructor: 165263532,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -208,161 +218,6 @@ func CheckClassID(classId int32) (ok bool) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-
-///////////////////////////////////////////////////////////////////////////////
-// PeerWithDraftMessage <--
-//  + TL_UpdateDraftMessage
-//
-
-func (m *PeerWithDraftMessage) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_updateDraftMessage:
-		t := m.To_UpdateDraftMessage()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *PeerWithDraftMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *PeerWithDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0xf6bdc4b2:
-		m2 := MakeTLUpdateDraftMessage(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *PeerWithDraftMessage) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_updateDraftMessage:
-		t := m.To_UpdateDraftMessage()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_UpdateDraftMessage
-// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-func (m *PeerWithDraftMessage) To_UpdateDraftMessage() *TLUpdateDraftMessage {
-	m.PredicateName = Predicate_updateDraftMessage
-	return &TLUpdateDraftMessage{
-		Data2: m,
-	}
-}
-
-// MakeTLUpdateDraftMessage
-// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-func MakeTLUpdateDraftMessage(data2 *PeerWithDraftMessage) *TLUpdateDraftMessage {
-	if data2 == nil {
-		return &TLUpdateDraftMessage{Data2: &PeerWithDraftMessage{
-			PredicateName: Predicate_updateDraftMessage,
-		}}
-	} else {
-		data2.PredicateName = Predicate_updateDraftMessage
-		return &TLUpdateDraftMessage{Data2: data2}
-	}
-}
-
-func (m *TLUpdateDraftMessage) To_PeerWithDraftMessage() *PeerWithDraftMessage {
-	m.Data2.PredicateName = Predicate_updateDraftMessage
-	return m.Data2
-}
-
-func (m *TLUpdateDraftMessage) SetPeer(v *mtproto.Peer) { m.Data2.Peer = v }
-func (m *TLUpdateDraftMessage) GetPeer() *mtproto.Peer  { return m.Data2.Peer }
-
-func (m *TLUpdateDraftMessage) SetDraft(v *mtproto.DraftMessage) { m.Data2.Draft = v }
-func (m *TLUpdateDraftMessage) GetDraft() *mtproto.DraftMessage  { return m.Data2.Draft }
-
-func (m *TLUpdateDraftMessage) GetPredicateName() string {
-	return Predicate_updateDraftMessage
-}
-
-func (m *TLUpdateDraftMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xf6bdc4b2: func() []byte {
-			// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-			x.UInt(0xf6bdc4b2)
-
-			x.Bytes(m.GetPeer().Encode(layer))
-			x.Bytes(m.GetDraft().Encode(layer))
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_updateDraftMessage, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_updateDraftMessage, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLUpdateDraftMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLUpdateDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0xf6bdc4b2: func() error {
-			// updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
-
-			m0 := &mtproto.Peer{}
-			m0.Decode(dBuf)
-			m.SetPeer(m0)
-
-			m1 := &mtproto.DraftMessage{}
-			m1.Decode(dBuf)
-			m.SetDraft(m1)
-
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLUpdateDraftMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // DialogExt <--
@@ -401,7 +256,7 @@ func (m *DialogExt) CalcByteSize(layer int32) int {
 func (m *DialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x2b0f4458:
+	case 0xbdd9a860:
 		m2 := MakeTLDialogExt(m)
 		m2.Decode(dBuf)
 
@@ -423,7 +278,6 @@ func (m *DialogExt) DebugString() string {
 }
 
 // To_DialogExt
-// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
 func (m *DialogExt) To_DialogExt() *TLDialogExt {
 	m.PredicateName = Predicate_dialogExt
 	return &TLDialogExt{
@@ -432,7 +286,6 @@ func (m *DialogExt) To_DialogExt() *TLDialogExt {
 }
 
 // MakeTLDialogExt
-// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
 func MakeTLDialogExt(data2 *DialogExt) *TLDialogExt {
 	if data2 == nil {
 		return &TLDialogExt{Data2: &DialogExt{
@@ -461,6 +314,12 @@ func (m *TLDialogExt) GetAvailableMinId() int32  { return m.Data2.AvailableMinId
 func (m *TLDialogExt) SetDate(v int64) { m.Data2.Date = v }
 func (m *TLDialogExt) GetDate() int64  { return m.Data2.Date }
 
+func (m *TLDialogExt) SetThemeEmoticon(v string) { m.Data2.ThemeEmoticon = v }
+func (m *TLDialogExt) GetThemeEmoticon() string  { return m.Data2.ThemeEmoticon }
+
+func (m *TLDialogExt) SetTtlPeriod(v int32) { m.Data2.TtlPeriod = v }
+func (m *TLDialogExt) GetTtlPeriod() int32  { return m.Data2.TtlPeriod }
+
 func (m *TLDialogExt) GetPredicateName() string {
 	return Predicate_dialogExt
 }
@@ -469,14 +328,15 @@ func (m *TLDialogExt) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0x2b0f4458: func() []byte {
-			// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
-			x.UInt(0x2b0f4458)
+		0xbdd9a860: func() []byte {
+			x.UInt(0xbdd9a860)
 
 			x.Long(m.GetOrder())
 			x.Bytes(m.GetDialog().Encode(layer))
 			x.Int(m.GetAvailableMinId())
 			x.Long(m.GetDate())
+			x.String(m.GetThemeEmoticon())
+			x.Int(m.GetTtlPeriod())
 			return x.GetBuf()
 		},
 	}
@@ -499,8 +359,7 @@ func (m *TLDialogExt) CalcByteSize(layer int32) int {
 
 func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x2b0f4458: func() error {
-			// dialogExt order:long dialog:Dialog available_min_id:int date:long = DialogExt;
+		0xbdd9a860: func() error {
 			m.SetOrder(dBuf.Long())
 
 			m1 := &mtproto.Dialog{}
@@ -509,6 +368,8 @@ func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 
 			m.SetAvailableMinId(dBuf.Int())
 			m.SetDate(dBuf.Long())
+			m.SetThemeEmoticon(dBuf.String())
+			m.SetTtlPeriod(dBuf.Int())
 			return dBuf.GetError()
 		},
 	}
@@ -521,159 +382,6 @@ func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// DialogPinnedExt <--
-//  + TL_DialogPinnedExt
-//
-
-func (m *DialogPinnedExt) Encode(layer int32) []byte {
-	predicateName := m.PredicateName
-	if predicateName == "" {
-		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
-			predicateName = n
-		}
-	}
-
-	var (
-		xBuf []byte
-	)
-
-	switch predicateName {
-	case Predicate_dialogPinnedExt:
-		t := m.To_DialogPinnedExt()
-		xBuf = t.Encode(layer)
-
-	default:
-		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
-	}
-
-	return xBuf
-}
-
-func (m *DialogPinnedExt) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *DialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
-	m.Constructor = TLConstructor(dBuf.Int())
-	switch uint32(m.Constructor) {
-	case 0xea7222c:
-		m2 := MakeTLDialogPinnedExt(m)
-		m2.Decode(dBuf)
-
-	default:
-		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
-	}
-	return dBuf.GetError()
-}
-
-func (m *DialogPinnedExt) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_dialogPinnedExt:
-		t := m.To_DialogPinnedExt()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
-// To_DialogPinnedExt
-// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
-func (m *DialogPinnedExt) To_DialogPinnedExt() *TLDialogPinnedExt {
-	m.PredicateName = Predicate_dialogPinnedExt
-	return &TLDialogPinnedExt{
-		Data2: m,
-	}
-}
-
-// MakeTLDialogPinnedExt
-// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
-func MakeTLDialogPinnedExt(data2 *DialogPinnedExt) *TLDialogPinnedExt {
-	if data2 == nil {
-		return &TLDialogPinnedExt{Data2: &DialogPinnedExt{
-			PredicateName: Predicate_dialogPinnedExt,
-		}}
-	} else {
-		data2.PredicateName = Predicate_dialogPinnedExt
-		return &TLDialogPinnedExt{Data2: data2}
-	}
-}
-
-func (m *TLDialogPinnedExt) To_DialogPinnedExt() *DialogPinnedExt {
-	m.Data2.PredicateName = Predicate_dialogPinnedExt
-	return m.Data2
-}
-
-func (m *TLDialogPinnedExt) SetOrder(v int64) { m.Data2.Order = v }
-func (m *TLDialogPinnedExt) GetOrder() int64  { return m.Data2.Order }
-
-func (m *TLDialogPinnedExt) SetPeerType(v int32) { m.Data2.PeerType = v }
-func (m *TLDialogPinnedExt) GetPeerType() int32  { return m.Data2.PeerType }
-
-func (m *TLDialogPinnedExt) SetPeerId(v int64) { m.Data2.PeerId = v }
-func (m *TLDialogPinnedExt) GetPeerId() int64  { return m.Data2.PeerId }
-
-func (m *TLDialogPinnedExt) GetPredicateName() string {
-	return Predicate_dialogPinnedExt
-}
-
-func (m *TLDialogPinnedExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xea7222c: func() []byte {
-			// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
-			x.UInt(0xea7222c)
-
-			x.Long(m.GetOrder())
-			x.Int(m.GetPeerType())
-			x.Long(m.GetPeerId())
-			return x.GetBuf()
-		},
-	}
-
-	clazzId := GetClazzID(Predicate_dialogPinnedExt, int(layer))
-	if f, ok := encodeF[uint32(clazzId)]; ok {
-		return f()
-	} else {
-		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_dialogPinnedExt, layer)
-		return x.GetBuf()
-	}
-
-	return x.GetBuf()
-}
-
-func (m *TLDialogPinnedExt) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLDialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
-	var decodeF = map[uint32]func() error{
-		0xea7222c: func() error {
-			// dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
-			m.SetOrder(dBuf.Long())
-			m.SetPeerType(dBuf.Int())
-			m.SetPeerId(dBuf.Long())
-			return dBuf.GetError()
-		},
-	}
-
-	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
-		return f()
-	} else {
-		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLDialogPinnedExt) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -738,7 +446,6 @@ func (m *DialogFilterExt) DebugString() string {
 }
 
 // To_DialogFilterExt
-// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
 func (m *DialogFilterExt) To_DialogFilterExt() *TLDialogFilterExt {
 	m.PredicateName = Predicate_dialogFilterExt
 	return &TLDialogFilterExt{
@@ -747,7 +454,6 @@ func (m *DialogFilterExt) To_DialogFilterExt() *TLDialogFilterExt {
 }
 
 // MakeTLDialogFilterExt
-// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
 func MakeTLDialogFilterExt(data2 *DialogFilterExt) *TLDialogFilterExt {
 	if data2 == nil {
 		return &TLDialogFilterExt{Data2: &DialogFilterExt{
@@ -782,7 +488,6 @@ func (m *TLDialogFilterExt) Encode(layer int32) []byte {
 
 	var encodeF = map[uint32]func() []byte{
 		0x8f3f31f2: func() []byte {
-			// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
 			x.UInt(0x8f3f31f2)
 
 			x.Int(m.GetId())
@@ -811,7 +516,6 @@ func (m *TLDialogFilterExt) CalcByteSize(layer int32) int {
 func (m *TLDialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x8f3f31f2: func() error {
-			// dialogFilterExt id:int dialog_filter:DialogFilter order:long = DialogFilterExt;
 			m.SetId(dBuf.Int())
 
 			m1 := &mtproto.DialogFilter{}
@@ -836,6 +540,306 @@ func (m *TLDialogFilterExt) DebugString() string {
 	return dbgString
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// DialogPinnedExt <--
+//  + TL_DialogPinnedExt
+//
+
+func (m *DialogPinnedExt) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_dialogPinnedExt:
+		t := m.To_DialogPinnedExt()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *DialogPinnedExt) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *DialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0xea7222c:
+		m2 := MakeTLDialogPinnedExt(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *DialogPinnedExt) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_dialogPinnedExt:
+		t := m.To_DialogPinnedExt()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_DialogPinnedExt
+func (m *DialogPinnedExt) To_DialogPinnedExt() *TLDialogPinnedExt {
+	m.PredicateName = Predicate_dialogPinnedExt
+	return &TLDialogPinnedExt{
+		Data2: m,
+	}
+}
+
+// MakeTLDialogPinnedExt
+func MakeTLDialogPinnedExt(data2 *DialogPinnedExt) *TLDialogPinnedExt {
+	if data2 == nil {
+		return &TLDialogPinnedExt{Data2: &DialogPinnedExt{
+			PredicateName: Predicate_dialogPinnedExt,
+		}}
+	} else {
+		data2.PredicateName = Predicate_dialogPinnedExt
+		return &TLDialogPinnedExt{Data2: data2}
+	}
+}
+
+func (m *TLDialogPinnedExt) To_DialogPinnedExt() *DialogPinnedExt {
+	m.Data2.PredicateName = Predicate_dialogPinnedExt
+	return m.Data2
+}
+
+func (m *TLDialogPinnedExt) SetOrder(v int64) { m.Data2.Order = v }
+func (m *TLDialogPinnedExt) GetOrder() int64  { return m.Data2.Order }
+
+func (m *TLDialogPinnedExt) SetPeerType(v int32) { m.Data2.PeerType = v }
+func (m *TLDialogPinnedExt) GetPeerType() int32  { return m.Data2.PeerType }
+
+func (m *TLDialogPinnedExt) SetPeerId(v int64) { m.Data2.PeerId = v }
+func (m *TLDialogPinnedExt) GetPeerId() int64  { return m.Data2.PeerId }
+
+func (m *TLDialogPinnedExt) GetPredicateName() string {
+	return Predicate_dialogPinnedExt
+}
+
+func (m *TLDialogPinnedExt) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0xea7222c: func() []byte {
+			x.UInt(0xea7222c)
+
+			x.Long(m.GetOrder())
+			x.Int(m.GetPeerType())
+			x.Long(m.GetPeerId())
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_dialogPinnedExt, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_dialogPinnedExt, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLDialogPinnedExt) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0xea7222c: func() error {
+			m.SetOrder(dBuf.Long())
+			m.SetPeerType(dBuf.Int())
+			m.SetPeerId(dBuf.Long())
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLDialogPinnedExt) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// PeerWithDraftMessage <--
+//  + TL_UpdateDraftMessage
+//
+
+func (m *PeerWithDraftMessage) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_updateDraftMessage:
+		t := m.To_UpdateDraftMessage()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *PeerWithDraftMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *PeerWithDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0xf6bdc4b2:
+		m2 := MakeTLUpdateDraftMessage(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *PeerWithDraftMessage) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_updateDraftMessage:
+		t := m.To_UpdateDraftMessage()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_UpdateDraftMessage
+func (m *PeerWithDraftMessage) To_UpdateDraftMessage() *TLUpdateDraftMessage {
+	m.PredicateName = Predicate_updateDraftMessage
+	return &TLUpdateDraftMessage{
+		Data2: m,
+	}
+}
+
+// MakeTLUpdateDraftMessage
+func MakeTLUpdateDraftMessage(data2 *PeerWithDraftMessage) *TLUpdateDraftMessage {
+	if data2 == nil {
+		return &TLUpdateDraftMessage{Data2: &PeerWithDraftMessage{
+			PredicateName: Predicate_updateDraftMessage,
+		}}
+	} else {
+		data2.PredicateName = Predicate_updateDraftMessage
+		return &TLUpdateDraftMessage{Data2: data2}
+	}
+}
+
+func (m *TLUpdateDraftMessage) To_PeerWithDraftMessage() *PeerWithDraftMessage {
+	m.Data2.PredicateName = Predicate_updateDraftMessage
+	return m.Data2
+}
+
+func (m *TLUpdateDraftMessage) SetPeer(v *mtproto.Peer) { m.Data2.Peer = v }
+func (m *TLUpdateDraftMessage) GetPeer() *mtproto.Peer  { return m.Data2.Peer }
+
+func (m *TLUpdateDraftMessage) SetDraft(v *mtproto.DraftMessage) { m.Data2.Draft = v }
+func (m *TLUpdateDraftMessage) GetDraft() *mtproto.DraftMessage  { return m.Data2.Draft }
+
+func (m *TLUpdateDraftMessage) GetPredicateName() string {
+	return Predicate_updateDraftMessage
+}
+
+func (m *TLUpdateDraftMessage) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0xf6bdc4b2: func() []byte {
+			x.UInt(0xf6bdc4b2)
+
+			x.Bytes(m.GetPeer().Encode(layer))
+			x.Bytes(m.GetDraft().Encode(layer))
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_updateDraftMessage, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_updateDraftMessage, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUpdateDraftMessage) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUpdateDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0xf6bdc4b2: func() error {
+
+			m0 := &mtproto.Peer{}
+			m0.Decode(dBuf)
+			m.SetPeer(m0)
+
+			m1 := &mtproto.DraftMessage{}
+			m1.Decode(dBuf)
+			m.SetDraft(m1)
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLUpdateDraftMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 //----------------------------------------------------------------------------------------------------------------
 // TLDialogSaveDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
@@ -846,7 +850,6 @@ func (m *TLDialogSaveDraftMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x4ecad99a:
-		// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 		x.UInt(0x4ecad99a)
 
 		// no flags
@@ -870,7 +873,6 @@ func (m *TLDialogSaveDraftMessage) CalcByteSize(layer int32) int {
 func (m *TLDialogSaveDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4ecad99a:
-		// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 
 		// not has flags
 
@@ -905,7 +907,6 @@ func (m *TLDialogClearDraftMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfb70b29a:
-		// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 		x.UInt(0xfb70b29a)
 
 		// no flags
@@ -928,7 +929,6 @@ func (m *TLDialogClearDraftMessage) CalcByteSize(layer int32) int {
 func (m *TLDialogClearDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfb70b29a:
-		// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 
 		// not has flags
 
@@ -958,7 +958,6 @@ func (m *TLDialogGetAllDrafts) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xacde4fe6:
-		// dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 		x.UInt(0xacde4fe6)
 
 		// no flags
@@ -979,7 +978,6 @@ func (m *TLDialogGetAllDrafts) CalcByteSize(layer int32) int {
 func (m *TLDialogGetAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xacde4fe6:
-		// dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 
 		// not has flags
 
@@ -1007,7 +1005,6 @@ func (m *TLDialogClearAllDrafts) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x41b890fc:
-		// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 		x.UInt(0x41b890fc)
 
 		// no flags
@@ -1028,7 +1025,6 @@ func (m *TLDialogClearAllDrafts) CalcByteSize(layer int32) int {
 func (m *TLDialogClearAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x41b890fc:
-		// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 
 		// not has flags
 
@@ -1056,7 +1052,6 @@ func (m *TLDialogMarkDialogUnread) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x4532910e:
-		// dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 		x.UInt(0x4532910e)
 
 		// no flags
@@ -1080,7 +1075,6 @@ func (m *TLDialogMarkDialogUnread) CalcByteSize(layer int32) int {
 func (m *TLDialogMarkDialogUnread) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4532910e:
-		// dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 
 		// not has flags
 
@@ -1115,7 +1109,6 @@ func (m *TLDialogToggleDialogPin) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x867ee52f:
-		// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 		x.UInt(0x867ee52f)
 
 		// no flags
@@ -1139,7 +1132,6 @@ func (m *TLDialogToggleDialogPin) CalcByteSize(layer int32) int {
 func (m *TLDialogToggleDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x867ee52f:
-		// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 
 		// not has flags
 
@@ -1174,7 +1166,6 @@ func (m *TLDialogGetDialogUnreadMarkList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xcabc38f4:
-		// dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 		x.UInt(0xcabc38f4)
 
 		// no flags
@@ -1195,7 +1186,6 @@ func (m *TLDialogGetDialogUnreadMarkList) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogUnreadMarkList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xcabc38f4:
-		// dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 
 		// not has flags
 
@@ -1223,7 +1213,6 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x9d7e8604:
-		// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 		x.UInt(0x9d7e8604)
 
 		// no flags
@@ -1247,7 +1236,6 @@ func (m *TLDialogGetDialogsByOffsetDate) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogsByOffsetDate) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x9d7e8604:
-		// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 
 		// not has flags
 
@@ -1282,7 +1270,6 @@ func (m *TLDialogGetDialogs) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x860b1e16:
-		// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 		x.UInt(0x860b1e16)
 
 		// no flags
@@ -1305,7 +1292,6 @@ func (m *TLDialogGetDialogs) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x860b1e16:
-		// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 
 		// not has flags
 
@@ -1339,7 +1325,6 @@ func (m *TLDialogGetDialogsByIdList) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xad258871:
-		// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 		x.UInt(0xad258871)
 
 		// no flags
@@ -1362,7 +1347,6 @@ func (m *TLDialogGetDialogsByIdList) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogsByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xad258871:
-		// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 
 		// not has flags
 
@@ -1393,7 +1377,6 @@ func (m *TLDialogGetDialogsCount) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xe039b465:
-		// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 		x.UInt(0xe039b465)
 
 		// no flags
@@ -1416,7 +1399,6 @@ func (m *TLDialogGetDialogsCount) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogsCount) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xe039b465:
-		// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 
 		// not has flags
 
@@ -1450,7 +1432,6 @@ func (m *TLDialogGetPinnedDialogs) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xa8c21bb5:
-		// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 		x.UInt(0xa8c21bb5)
 
 		// no flags
@@ -1472,7 +1453,6 @@ func (m *TLDialogGetPinnedDialogs) CalcByteSize(layer int32) int {
 func (m *TLDialogGetPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa8c21bb5:
-		// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 
 		// not has flags
 
@@ -1501,7 +1481,6 @@ func (m *TLDialogReorderPinnedDialogs) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfee33567:
-		// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 		x.UInt(0xfee33567)
 
 		// no flags
@@ -1526,7 +1505,6 @@ func (m *TLDialogReorderPinnedDialogs) CalcByteSize(layer int32) int {
 func (m *TLDialogReorderPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfee33567:
-		// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 
 		// not has flags
 
@@ -1563,7 +1541,6 @@ func (m *TLDialogGetDialogById) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xa15f3bf5:
-		// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 		x.UInt(0xa15f3bf5)
 
 		// no flags
@@ -1586,7 +1563,6 @@ func (m *TLDialogGetDialogById) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogById) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa15f3bf5:
-		// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 
 		// not has flags
 
@@ -1616,7 +1592,6 @@ func (m *TLDialogGetTopMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xfa7db272:
-		// dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 		x.UInt(0xfa7db272)
 
 		// no flags
@@ -1639,7 +1614,6 @@ func (m *TLDialogGetTopMessage) CalcByteSize(layer int32) int {
 func (m *TLDialogGetTopMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfa7db272:
-		// dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 
 		// not has flags
 
@@ -1669,7 +1643,6 @@ func (m *TLDialogUpdateReadInbox) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x1d27f8b8:
-		// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
 		x.UInt(0x1d27f8b8)
 
 		// no flags
@@ -1693,7 +1666,6 @@ func (m *TLDialogUpdateReadInbox) CalcByteSize(layer int32) int {
 func (m *TLDialogUpdateReadInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1d27f8b8:
-		// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
 
 		// not has flags
 
@@ -1724,7 +1696,6 @@ func (m *TLDialogUpdateReadOutbox) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x5870fd7e:
-		// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
 		x.UInt(0x5870fd7e)
 
 		// no flags
@@ -1748,7 +1719,6 @@ func (m *TLDialogUpdateReadOutbox) CalcByteSize(layer int32) int {
 func (m *TLDialogUpdateReadOutbox) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x5870fd7e:
-		// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
 
 		// not has flags
 
@@ -1779,7 +1749,6 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xed0fed6f:
-		// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
 		x.UInt(0xed0fed6f)
 
 		// set flags
@@ -1837,7 +1806,6 @@ func (m *TLDialogInsertOrUpdateDialog) CalcByteSize(layer int32) int {
 func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xed0fed6f:
-		// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1888,7 +1856,6 @@ func (m *TLDialogDeleteDialog) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x1b31de3:
-		// dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 		x.UInt(0x1b31de3)
 
 		// no flags
@@ -1911,7 +1878,6 @@ func (m *TLDialogDeleteDialog) CalcByteSize(layer int32) int {
 func (m *TLDialogDeleteDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1b31de3:
-		// dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 
 		// not has flags
 
@@ -1941,7 +1907,6 @@ func (m *TLDialogGetUserPinnedMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x8f9bc2b1:
-		// dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 		x.UInt(0x8f9bc2b1)
 
 		// no flags
@@ -1964,7 +1929,6 @@ func (m *TLDialogGetUserPinnedMessage) CalcByteSize(layer int32) int {
 func (m *TLDialogGetUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8f9bc2b1:
-		// dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 
 		// not has flags
 
@@ -1994,7 +1958,6 @@ func (m *TLDialogUpdateUserPinnedMessage) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x1622f22a:
-		// dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 		x.UInt(0x1622f22a)
 
 		// no flags
@@ -2018,7 +1981,6 @@ func (m *TLDialogUpdateUserPinnedMessage) CalcByteSize(layer int32) int {
 func (m *TLDialogUpdateUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1622f22a:
-		// dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 
 		// not has flags
 
@@ -2049,7 +2011,6 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xaa8a384:
-		// dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 		x.UInt(0xaa8a384)
 
 		// no flags
@@ -2072,7 +2033,6 @@ func (m *TLDialogInsertOrUpdateDialogFilter) CalcByteSize(layer int32) int {
 func (m *TLDialogInsertOrUpdateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xaa8a384:
-		// dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 
 		// not has flags
 
@@ -2106,7 +2066,6 @@ func (m *TLDialogDeleteDialogFilter) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x1dd3e97:
-		// dialog.deleteDialogFilter user_id:long id:int = Bool;
 		x.UInt(0x1dd3e97)
 
 		// no flags
@@ -2128,7 +2087,6 @@ func (m *TLDialogDeleteDialogFilter) CalcByteSize(layer int32) int {
 func (m *TLDialogDeleteDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1dd3e97:
-		// dialog.deleteDialogFilter user_id:long id:int = Bool;
 
 		// not has flags
 
@@ -2157,7 +2115,6 @@ func (m *TLDialogUpdateDialogFiltersOrder) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0xb13c0b3f:
-		// dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 		x.UInt(0xb13c0b3f)
 
 		// no flags
@@ -2180,7 +2137,6 @@ func (m *TLDialogUpdateDialogFiltersOrder) CalcByteSize(layer int32) int {
 func (m *TLDialogUpdateDialogFiltersOrder) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb13c0b3f:
-		// dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 
 		// not has flags
 
@@ -2211,7 +2167,6 @@ func (m *TLDialogGetDialogFilters) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x6c676c3c:
-		// dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 		x.UInt(0x6c676c3c)
 
 		// no flags
@@ -2232,7 +2187,6 @@ func (m *TLDialogGetDialogFilters) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogFilters) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6c676c3c:
-		// dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 
 		// not has flags
 
@@ -2260,7 +2214,6 @@ func (m *TLDialogGetDialogFolder) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x411b8eb5:
-		// dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 		x.UInt(0x411b8eb5)
 
 		// no flags
@@ -2282,7 +2235,6 @@ func (m *TLDialogGetDialogFolder) CalcByteSize(layer int32) int {
 func (m *TLDialogGetDialogFolder) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x411b8eb5:
-		// dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 
 		// not has flags
 
@@ -2311,7 +2263,6 @@ func (m *TLDialogEditPeerFolders) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x2446869a:
-		// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 		x.UInt(0x2446869a)
 
 		// no flags
@@ -2336,7 +2287,6 @@ func (m *TLDialogEditPeerFolders) CalcByteSize(layer int32) int {
 func (m *TLDialogEditPeerFolders) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x2446869a:
-		// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 
 		// not has flags
 
@@ -2368,7 +2318,6 @@ func (m *TLDialogGetChannelMessageReadParticipants) Encode(layer int32) []byte {
 
 	switch uint32(m.Constructor) {
 	case 0x28bd4d3b:
-		// dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 		x.UInt(0x28bd4d3b)
 
 		// no flags
@@ -2391,7 +2340,6 @@ func (m *TLDialogGetChannelMessageReadParticipants) CalcByteSize(layer int32) in
 func (m *TLDialogGetChannelMessageReadParticipants) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x28bd4d3b:
-		// dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 
 		// not has flags
 
@@ -2407,6 +2355,112 @@ func (m *TLDialogGetChannelMessageReadParticipants) Decode(dBuf *mtproto.DecodeB
 }
 
 func (m *TLDialogGetChannelMessageReadParticipants) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogSetChatTheme
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogSetChatTheme) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_dialog_setChatTheme))
+
+	switch uint32(m.Constructor) {
+	case 0xe9aea22a:
+		x.UInt(0xe9aea22a)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.String(m.GetThemeEmoticon())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLDialogSetChatTheme) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogSetChatTheme) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xe9aea22a:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.ThemeEmoticon = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogSetChatTheme) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogSetHistoryTTL
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogSetHistoryTTL) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_dialog_setHistoryTTL))
+
+	switch uint32(m.Constructor) {
+	case 0x9d9b8ac:
+		x.UInt(0x9d9b8ac)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetTtlPeriod())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLDialogSetHistoryTTL) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x9d9b8ac:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.TtlPeriod = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogSetHistoryTTL) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
