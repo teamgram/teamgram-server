@@ -8,9 +8,9 @@ package dao
 
 import (
 	"context"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dal/dataobject"
-	// pollpb "github.com/teamgram/teamgram-server/app/service/poll/poll"
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
@@ -36,14 +36,13 @@ func (d *Dao) MakeMessageBox(ctx context.Context, selfUserId int64, do *dataobje
 	_ = jsonx.UnmarshalFromString(do.MessageData, &box.Message)
 	box.Message = box.Message.FixData()
 
-	//// poll
-	//pollId, _ := mtproto.GetPollIdByMessage(box.Message.Media)
-	//if pollId != 0 {
-	//	box.Message.Media, _ = d.PollClient.PollGetMediaPoll(ctx, &pollpb.TLPollGetMediaPoll{
-	//		UserId: selfUserId,
-	//		PollId: pollId,
-	//	})
-	//}
+	// poll
+	if d.Plugin != nil {
+		pollId, _ := mtproto.GetPollIdByMessage(box.Message.Media)
+		if pollId != 0 {
+			box.Message.Media, _ = d.Plugin.GetMessageMediaPoll(ctx, selfUserId, pollId)
+		}
+	}
 
 	return
 }

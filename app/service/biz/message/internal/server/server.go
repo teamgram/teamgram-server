@@ -36,7 +36,7 @@ func (s *Server) Initialize() error {
 	conf.MustLoad(*configFile, &c)
 
 	logx.Infov(c)
-	ctx := svc.NewServiceContext(c)
+	ctx := svc.NewServiceContext(c, nil)
 	s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 
 	go func() {

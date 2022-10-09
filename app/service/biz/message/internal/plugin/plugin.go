@@ -16,22 +16,13 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
+package plugin
 
 import (
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/config"
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dao"
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/plugin"
+	"context"
+	"github.com/teamgram/proto/mtproto"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-}
-
-func NewServiceContext(c config.Config, plugin plugin.MessagePlugin) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c, plugin),
-	}
+type MessagePlugin interface {
+	GetMessageMediaPoll(ctx context.Context, userId int64, pollId int64) (*mtproto.MessageMedia, error)
 }

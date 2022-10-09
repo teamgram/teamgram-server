@@ -10,26 +10,25 @@
 package dao
 
 import (
-	// "github.com/teamgram/marmota/pkg/net/rpcx"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/config"
-	// poll_client "github.com/teamgram/teamgram-server/app/service/poll/client"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/plugin"
 )
 
 // Dao dao.
 type Dao struct {
 	*Mysql
 	sqlc.CachedConn
-	// poll_client.PollClient
+	Plugin plugin.MessagePlugin
 }
 
 // New new a dao and return.
-func New(c config.Config) (dao *Dao) {
+func New(c config.Config, plugin plugin.MessagePlugin) *Dao {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Dao{
 		Mysql:      newMysqlDao(db, c.MessageSharding),
 		CachedConn: sqlc.NewConn(db, c.Cache),
-		// PollClient: poll_client.NewPollClient(rpcx.GetCachedRpcClient(c.PollClient)),
+		Plugin:     plugin,
 	}
 }
