@@ -32,5 +32,6 @@ type MessagesDO struct {
 	ReactionDate      int64  `db:"reaction_date"`
 	ReactionUnread    bool   `db:"reaction_unread"`
 	Date2             int64  `db:"date2"`
+	TtlPeriod         int32  `db:"ttl_period"`
 	Deleted           bool   `db:"deleted"`
 }
