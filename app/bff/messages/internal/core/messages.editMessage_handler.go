@@ -31,7 +31,6 @@ import (
 func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	var (
 		hasBot       = c.MD.IsBot
-		isPoll       bool
 		peer         = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		editMessages *message.Vector_MessageBox
 		err          error
