@@ -101,7 +101,6 @@ func (s *Server) Initialize() error {
 					RpcServerConf:   c.RpcServerConf,
 					Mysql:           c.Mysql,
 					Cache:           c.Cache,
-					PollClient:      c.PollClient,
 					MessageSharding: c.MessageSharding,
 				},
 				nil))

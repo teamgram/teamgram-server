@@ -141,35 +141,6 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		return nil, err
 	}
 
-	//// poll
-	//poll, _ := mtproto.GetPollByMessage(outMessage.Media)
-	//if poll != nil {
-	//	var correctAnswers []int32
-	//	for _, v := range in.Media.CorrectAnswers {
-	//		if iV, err := strconv.ParseInt(hack.String(v), 10, 64); err == nil {
-	//			correctAnswers = append(correctAnswers, int32(iV))
-	//		}
-	//	}
-	//
-	//	// TODO(@benqi): 112
-	//	// solution:flags.1?string solution_entities:flags.1?Vector<MessageEntity>
-	//
-	//	// outMessage.Media,
-	//	pollMedia, err := c.svcCtx.Dao.PollClient.PollCreateMediaPoll(c.ctx, &pollpb.TLPollCreateMediaPoll{
-	//		UserId:         c.MD.UserId,
-	//		CorrectAnswers: correctAnswers,
-	//		Poll:           poll,
-	//	})
-	//	if err != nil {
-	//		c.Logger.Errorf("createMediaPoll error - %v", err)
-	//		return nil, err
-	//	}
-	//	outMessage.Media = pollMedia
-	//
-	//	// TODO(@benqi): poll2.0 disable, debug it.
-	//	// outMessage.Media.Results.Results = nil
-	//}
-
 	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, hasBot)
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,

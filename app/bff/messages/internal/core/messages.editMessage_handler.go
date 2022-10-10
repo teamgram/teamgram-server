@@ -97,9 +97,6 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 			c.Logger.Errorf("messages.editMessage - media error: %v", err)
 			return nil, err
 		}
-		if outMessage.Media.PredicateName == mtproto.Predicate_messageMediaPoll {
-			isPoll = true
-		}
 	}
 	// message
 	if in.Message != nil {
@@ -113,92 +110,23 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, hasBot)
 	}
 
-	if isPoll {
-		//var (
-		//	pollId    int64
-		//	mediaPoll *mtproto.MessageMedia
-		//	// MediaPoll
-		//)
-		//pollId, err = mtproto.GetPollIdByMessage(outMessage.GetMedia())
-		//if err != nil {
-		//	c.Logger.Errorf("messages.editMessage - media error: %v", err)
-		//	return nil, err
-		//}
-		//mediaPoll, err = c.svcCtx.PollClient.PollCloseMediaPoll(c.ctx, &pollpb.TLPollCloseMediaPoll{
-		//	UserId: c.MD.UserId,
-		//	PollId: pollId,
-		//})
-		//if err != nil {
-		//	c.Logger.Errorf("messages.editMessage - media error: %v", err)
-		//	return nil, err
-		//}
-		//_ = mediaPoll
-		//
-		//// TODO(@benqi): sendTo editMessage???
-		//// rUpdate := mtproto.MakeUpdatesByUpdates(mediaPoll.ToUpdateMessagePoll())
-		//rUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateMessagePoll(&mtproto.Update{
-		//	PollId:  pollId,
-		//	Poll:    mediaPoll.GetPoll(),
-		//	Results: mediaPoll.GetResults(),
-		//}).To_Update())
-		//
-		//c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
-		//	c.ctx, &sync.TLSyncUpdatesNotMe{
-		//		UserId:    c.MD.UserId,
-		//		AuthKeyId: c.MD.AuthId,
-		//		Updates:   rUpdates,
-		//	})
-		//switch peer.PeerType {
-		//case mtproto.PEER_USER:
-		//	c.svcCtx.Dao.SyncClient.SyncPushUpdates(
-		//		c.ctx,
-		//		&sync.TLSyncPushUpdates{
-		//			UserId:  peer.PeerId,
-		//			Updates: rUpdates,
-		//		})
-		//case mtproto.PEER_CHAT:
-		//	var (
-		//		broadcastType int32 = sync.BroadcastTypeChat
-		//	)
-		//	if peer.PeerType == mtproto.PEER_CHANNEL {
-		//		broadcastType = sync.BroadcastTypeChannel
-		//	}
-		//	c.svcCtx.Dao.SyncClient.SyncBroadcastUpdates(
-		//		c.ctx,
-		//		&sync.TLSyncBroadcastUpdates{
-		//			BroadcastType: broadcastType,
-		//			ChatId:        peer.PeerId,
-		//			ExcludeIdList: []int64{c.MD.UserId},
-		//			Updates:       rUpdates,
-		//		})
-		//case mtproto.PEER_CHANNEL:
-		//	c.Logger.Errorf("messages.forwardMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
-		//
-		//	return nil, mtproto.ErrEnterpriseIsBlocked
-		//}
-		//return rUpdates, nil
-		c.Logger.Errorf("messages.editMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	} else {
-		rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessage(c.ctx, &msgpb.TLMsgEditMessage{
-			UserId:    c.MD.UserId,
-			AuthKeyId: c.MD.AuthId,
-			PeerType:  peer.PeerType,
-			PeerId:    peer.PeerId,
-			Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-				NoWebpage:    in.NoWebpage,
-				Background:   false,
-				RandomId:     0,
-				Message:      outMessage,
-				ScheduleDate: in.ScheduleDate,
-			}).To_OutboxMessage(),
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.editMessage - error: %v", err)
-			return nil, err
-		}
-
-		return rUpdates, nil
+	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessage(c.ctx, &msgpb.TLMsgEditMessage{
+		UserId:    c.MD.UserId,
+		AuthKeyId: c.MD.AuthId,
+		PeerType:  peer.PeerType,
+		PeerId:    peer.PeerId,
+		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+			NoWebpage:    in.NoWebpage,
+			Background:   false,
+			RandomId:     0,
+			Message:      outMessage,
+			ScheduleDate: in.ScheduleDate,
+		}).To_OutboxMessage(),
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.editMessage - error: %v", err)
+		return nil, err
 	}
+
+	return rUpdates, nil
 }

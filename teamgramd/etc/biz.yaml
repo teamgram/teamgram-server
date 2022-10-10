@@ -27,8 +27,3 @@ IdgenClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.idgen
-PollClient:
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.poll

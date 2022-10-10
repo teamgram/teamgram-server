@@ -32,6 +32,5 @@ type Config struct {
 	KV              kv.KvConf
 	MediaClient     zrpc.RpcClientConf
 	IdgenClient     zrpc.RpcClientConf
-	PollClient      zrpc.RpcClientConf
 	MessageSharding int `json:",default=1"`
 }
