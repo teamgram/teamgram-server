@@ -87,11 +87,11 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 }
 
 // Select
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id = :id
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id = ?"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id = ?"
 		do    = &dataobject.ChatsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
@@ -111,11 +111,11 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 }
 
 // SelectLastCreator
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creator_user_id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
 		do    = &dataobject.ChatsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, creator_user_id)
@@ -227,11 +227,11 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 }
 
 // SelectByIdList
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (?)"
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
 		a      []interface{}
 		values []dataobject.ChatsDO
 	)
@@ -259,11 +259,11 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 }
 
 // SelectByIdListWithCB
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(i int, v *dataobject.ChatsDO)) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, `date` from chats where id in (?)"
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
 		a      []interface{}
 		values []dataobject.ChatsDO
 	)
@@ -659,6 +659,52 @@ func (dao *ChatsDAO) UpdateNoforwardsTx(tx *sqlx.Tx, noforwards bool, id int64) 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateNoforwards(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateTTLPeriod
+// update chats set ttl_period = :ttl_period where id = :id
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) UpdateTTLPeriod(ctx context.Context, ttl_period int32, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chats set ttl_period = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, ttl_period, id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateTTLPeriod(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateTTLPeriod(_), error: %v", err)
+	}
+
+	return
+}
+
+// update chats set ttl_period = :ttl_period where id = :id
+// UpdateTTLPeriodTx
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) UpdateTTLPeriodTx(tx *sqlx.Tx, ttl_period int32, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chats set ttl_period = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, ttl_period, id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateTTLPeriod(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateTTLPeriod(_), error: %v", err)
 	}
 
 	return

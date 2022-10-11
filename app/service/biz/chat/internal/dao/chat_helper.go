@@ -33,6 +33,8 @@ func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.I
 		ExportedInvite:      nil,
 		BotInfo:             nil,
 		Call:                nil,
+		AvailableReactions:  nil,
+		TtlPeriod:           chatsDO.TtlPeriod,
 	}
 
 	if chatsDO.MigratedToId != 0 && chatsDO.MigratedToAccessHash != 0 {

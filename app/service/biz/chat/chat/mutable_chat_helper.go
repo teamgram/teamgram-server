@@ -100,6 +100,10 @@ func (m *MutableChat) ParticipantIdList() []int64 {
 	return idList
 }
 
+func (m *MutableChat) TTLPeriod() int32 {
+	return m.GetChat().GetTtlPeriod()
+}
+
 func (m *MutableChat) MakeMessageService(fromId int64, action *mtproto.MessageAction) *mtproto.Message {
 	// messageService#2b085862 flags:#
 	//	out:flags.1?true

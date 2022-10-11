@@ -25,6 +25,7 @@ type ChatsDO struct {
 	AvailableReactions   string `db:"available_reactions"`
 	Deactivated          bool   `db:"deactivated"`
 	Noforwards           bool   `db:"noforwards"`
+	TtlPeriod            int32  `db:"ttl_period"`
 	Version              int32  `db:"version"`
 	Date                 int64  `db:"date"`
 }

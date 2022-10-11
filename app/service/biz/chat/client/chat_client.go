@@ -51,6 +51,7 @@ type ChatClient interface {
 	ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *chat.TLChatDeleteRevokedExportedChatInvites) (*mtproto.Bool, error)
 	ChatEditExportedChatInvite(ctx context.Context, in *chat.TLChatEditExportedChatInvite) (*chat.Vector_ExportedChatInvite, error)
 	ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error)
+	ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error)
 }
 
 type defaultChatClient struct {
@@ -264,4 +265,11 @@ func (m *defaultChatClient) ChatEditExportedChatInvite(ctx context.Context, in *
 func (m *defaultChatClient) ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatSetChatAvailableReactions(ctx, in)
+}
+
+// ChatSetHistoryTTL
+// chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
+func (m *defaultChatClient) ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error) {
+	client := chat.NewRPCChatClient(m.cli.Conn())
+	return client.ChatSetHistoryTTL(ctx, in)
 }

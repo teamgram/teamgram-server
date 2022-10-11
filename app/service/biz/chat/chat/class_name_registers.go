@@ -1,8 +1,12 @@
-// Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
-//  All rights reserved.
-//
-// Author: Benqi (wubenqi@gmail.com)
-//
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2022-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
 
 package chat
 
@@ -43,6 +47,7 @@ const (
 	Predicate_chat_deleteRevokedExportedChatInvites = "chat_deleteRevokedExportedChatInvites"
 	Predicate_chat_editExportedChatInvite           = "chat_editExportedChatInvite"
 	Predicate_chat_setChatAvailableReactions        = "chat_setChatAvailableReactions"
+	Predicate_chat_setHistoryTTL                    = "chat_setHistoryTTL"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -51,7 +56,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_immutableChat: {
-		0: -771834191, // 0xd1febeb1
+		0: 242024901, // 0xe6d01c5
 
 	},
 	Predicate_mutableChat: {
@@ -190,11 +195,15 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1372233637, // 0x51ca9fa5
 
 	},
+	Predicate_chat_setHistoryTTL: {
+		0: 1023107972, // 0x3cfb6384
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
 	650553001:   Predicate_immutableChatParticipant,              // 0x26c6a6a9
-	-771834191:  Predicate_immutableChat,                         // 0xd1febeb1
+	242024901:   Predicate_immutableChat,                         // 0xe6d01c5
 	-34609042:   Predicate_mutableChat,                           // 0xfdefe86e
 	-1542554274: Predicate_chatInviteAlready,                     // 0xa40e7d5e
 	-613035609:  Predicate_chatInvite,                            // 0xdb75d1a7
@@ -229,6 +238,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-804101527:  Predicate_chat_deleteRevokedExportedChatInvites, // 0xd0126269
 	-1348907914: Predicate_chat_editExportedChatInvite,           // 0xaf994c76
 	1372233637:  Predicate_chat_setChatAvailableReactions,        // 0x51ca9fa5
+	1023107972:  Predicate_chat_setHistoryTTL,                    // 0x3cfb6384
 
 }
 

@@ -452,3 +452,18 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 	c.Infof("chat.setChatAvailableReactions - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ChatSetHistoryTTL
+// chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
+func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("chat.setHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatSetHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("chat.setHistoryTTL - reply: %s", r.DebugString())
+	return r, err
+}

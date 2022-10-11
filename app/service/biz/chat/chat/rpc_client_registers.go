@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  NebulaChat Studio (https://nebula.chat).
+ * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -55,6 +55,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLChatDeleteRevokedExportedChatInvites": RPCContextTuple{"/mtproto.RPCChat/chat_deleteRevokedExportedChatInvites", func() interface{} { return new(mtproto.Bool) }},
 	"TLChatEditExportedChatInvite":           RPCContextTuple{"/mtproto.RPCChat/chat_editExportedChatInvite", func() interface{} { return new(Vector_ExportedChatInvite) }},
 	"TLChatSetChatAvailableReactions":        RPCContextTuple{"/mtproto.RPCChat/chat_setChatAvailableReactions", func() interface{} { return new(MutableChat) }},
+	"TLChatSetHistoryTTL":                    RPCContextTuple{"/mtproto.RPCChat/chat_setHistoryTTL", func() interface{} { return new(MutableChat) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

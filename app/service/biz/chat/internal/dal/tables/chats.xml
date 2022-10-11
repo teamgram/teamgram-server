@@ -11,7 +11,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, date
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, date
             FROM
                 chats
             WHERE
@@ -22,7 +22,7 @@
     <operation name="SelectLastCreator">
         <sql>
             SELECT
-                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, date
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, date
             FROM
                 chats
             WHERE
@@ -58,7 +58,7 @@
         </params>
         <sql>
             SELECT
-                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, version, date
+                id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, date
             FROM
                 chats
             WHERE
@@ -148,6 +148,17 @@
                 chats
             SET
                 noforwards=:noforwards, version=version+1
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateTTLPeriod">
+        <sql>
+            UPDATE
+                chats
+            SET
+                ttl_period=:ttl_period
             WHERE
                 id=:id
         </sql>

@@ -71,11 +71,11 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		PinnedMsgId:                          nil, // TODO
 		FolderId:                             dlg.FolderId,
 		Call:                                 chat.Call(),
-		TtlPeriod:                            nil, // TODO
-		GroupcallDefaultJoinAs:               nil, // TODO
-		ThemeEmoticon:                        nil, // TODO
-		RequestsPending:                      nil, // TODO
-		RecentRequesters:                     nil, // TODO
+		TtlPeriod:                            mtproto.MakeFlagsInt32(chat.TTLPeriod()), // TODO
+		GroupcallDefaultJoinAs:               nil,                                      // TODO
+		ThemeEmoticon:                        nil,                                      // TODO
+		RequestsPending:                      nil,                                      // TODO
+		RecentRequesters:                     nil,                                      // TODO
 		AvailableReactions_FLAGVECTORSTRING:  chat.AvailableReactions(),
 		AvailableReactions_FLAGCHATREACTIONS: nil,
 	}).To_ChatFull()

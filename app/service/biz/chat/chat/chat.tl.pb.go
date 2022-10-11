@@ -36,7 +36,7 @@ type TLConstructor int32
 const (
 	CRC32_UNKNOWN                               TLConstructor = 0
 	CRC32_immutableChatParticipant              TLConstructor = 650553001
-	CRC32_immutableChat                         TLConstructor = -771834191
+	CRC32_immutableChat                         TLConstructor = 242024901
 	CRC32_mutableChat                           TLConstructor = -34609042
 	CRC32_chatInviteAlready                     TLConstructor = -1542554274
 	CRC32_chatInvite                            TLConstructor = -613035609
@@ -71,12 +71,13 @@ const (
 	CRC32_chat_deleteRevokedExportedChatInvites TLConstructor = -804101527
 	CRC32_chat_editExportedChatInvite           TLConstructor = -1348907914
 	CRC32_chat_setChatAvailableReactions        TLConstructor = 1372233637
+	CRC32_chat_setHistoryTTL                    TLConstructor = 1023107972
 )
 
 var TLConstructor_name = map[int32]string{
 	0:           "CRC32_UNKNOWN",
 	650553001:   "CRC32_immutableChatParticipant",
-	-771834191:  "CRC32_immutableChat",
+	242024901:   "CRC32_immutableChat",
 	-34609042:   "CRC32_mutableChat",
 	-1542554274: "CRC32_chatInviteAlready",
 	-613035609:  "CRC32_chatInvite",
@@ -111,12 +112,13 @@ var TLConstructor_name = map[int32]string{
 	-804101527:  "CRC32_chat_deleteRevokedExportedChatInvites",
 	-1348907914: "CRC32_chat_editExportedChatInvite",
 	1372233637:  "CRC32_chat_setChatAvailableReactions",
+	1023107972:  "CRC32_chat_setHistoryTTL",
 }
 
 var TLConstructor_value = map[string]int32{
 	"CRC32_UNKNOWN":                               0,
 	"CRC32_immutableChatParticipant":              650553001,
-	"CRC32_immutableChat":                         -771834191,
+	"CRC32_immutableChat":                         242024901,
 	"CRC32_mutableChat":                           -34609042,
 	"CRC32_chatInviteAlready":                     -1542554274,
 	"CRC32_chatInvite":                            -613035609,
@@ -151,6 +153,7 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_chat_deleteRevokedExportedChatInvites": -804101527,
 	"CRC32_chat_editExportedChatInvite":           -1348907914,
 	"CRC32_chat_setChatAvailableReactions":        1372233637,
+	"CRC32_chat_setHistoryTTL":                    1023107972,
 }
 
 func (x TLConstructor) String() string {
@@ -161,34 +164,39 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_62195c864f87b9a0, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
-// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
+// ChatInviteExt <--
+//  + TL_chatInviteAlready
+//  + TL_chatInvite
+//  + TL_chatInvitePeek
 //
-// UserChatIdList <--
-//  + TL_userChatIdList
-//
-type UserChatIdList struct {
-	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
-	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
-	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ChatIdList           []int64       `protobuf:"varint,4,rep,packed,name=chat_id_list,json=chatIdList,proto3" json:"chat_id_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+type ChatInviteExt struct {
+	PredicateName        string             `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor      `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
+	Chat                 *MutableChat       `protobuf:"bytes,3,opt,name=chat,proto3" json:"chat,omitempty"`
+	RequestNeeded        bool               `protobuf:"varint,4,opt,name=request_needed,json=requestNeeded,proto3" json:"request_needed,omitempty"`
+	Title                string             `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	About                *types.StringValue `protobuf:"bytes,6,opt,name=about,proto3" json:"about,omitempty"`
+	Photo                *mtproto.Photo     `protobuf:"bytes,7,opt,name=photo,proto3" json:"photo,omitempty"`
+	ParticipantsCount    int32              `protobuf:"varint,8,opt,name=participants_count,json=participantsCount,proto3" json:"participants_count,omitempty"`
+	Participants         []int64            `protobuf:"varint,9,rep,packed,name=participants,proto3" json:"participants,omitempty"`
+	Expires              int32              `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
+	XXX_unrecognized     []byte             `json:"-"`
+	XXX_sizecache        int32              `json:"-"`
 }
 
-func (m *UserChatIdList) Reset()         { *m = UserChatIdList{} }
-func (m *UserChatIdList) String() string { return proto.CompactTextString(m) }
-func (*UserChatIdList) ProtoMessage()    {}
-func (*UserChatIdList) Descriptor() ([]byte, []int) {
+func (m *ChatInviteExt) Reset()         { *m = ChatInviteExt{} }
+func (m *ChatInviteExt) String() string { return proto.CompactTextString(m) }
+func (*ChatInviteExt) ProtoMessage()    {}
+func (*ChatInviteExt) Descriptor() ([]byte, []int) {
 	return fileDescriptor_62195c864f87b9a0, []int{0}
 }
-func (m *UserChatIdList) XXX_Unmarshal(b []byte) error {
+func (m *ChatInviteExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *ChatInviteExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UserChatIdList.Marshal(b, m, deterministic)
+		return xxx_messageInfo_ChatInviteExt.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -198,66 +206,107 @@ func (m *UserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *UserChatIdList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserChatIdList.Merge(m, src)
+func (m *ChatInviteExt) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChatInviteExt.Merge(m, src)
 }
-func (m *UserChatIdList) XXX_Size() int {
+func (m *ChatInviteExt) XXX_Size() int {
 	return m.Size()
 }
-func (m *UserChatIdList) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserChatIdList.DiscardUnknown(m)
+func (m *ChatInviteExt) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChatInviteExt.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UserChatIdList proto.InternalMessageInfo
+var xxx_messageInfo_ChatInviteExt proto.InternalMessageInfo
 
-func (m *UserChatIdList) GetPredicateName() string {
+func (m *ChatInviteExt) GetPredicateName() string {
 	if m != nil {
 		return m.PredicateName
 	}
 	return ""
 }
 
-func (m *UserChatIdList) GetConstructor() TLConstructor {
+func (m *ChatInviteExt) GetConstructor() TLConstructor {
 	if m != nil {
 		return m.Constructor
 	}
 	return CRC32_UNKNOWN
 }
 
-func (m *UserChatIdList) GetUserId() int64 {
+func (m *ChatInviteExt) GetChat() *MutableChat {
 	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *UserChatIdList) GetChatIdList() []int64 {
-	if m != nil {
-		return m.ChatIdList
+		return m.Chat
 	}
 	return nil
 }
 
-// userChatIdList user_id:long chat_id_list:Vector<long> = UserChatIdList;
-type TLUserChatIdList struct {
-	Data2                *UserChatIdList `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
+func (m *ChatInviteExt) GetRequestNeeded() bool {
+	if m != nil {
+		return m.RequestNeeded
+	}
+	return false
 }
 
-func (m *TLUserChatIdList) Reset()         { *m = TLUserChatIdList{} }
-func (m *TLUserChatIdList) String() string { return proto.CompactTextString(m) }
-func (*TLUserChatIdList) ProtoMessage()    {}
-func (*TLUserChatIdList) Descriptor() ([]byte, []int) {
+func (m *ChatInviteExt) GetTitle() string {
+	if m != nil {
+		return m.Title
+	}
+	return ""
+}
+
+func (m *ChatInviteExt) GetAbout() *types.StringValue {
+	if m != nil {
+		return m.About
+	}
+	return nil
+}
+
+func (m *ChatInviteExt) GetPhoto() *mtproto.Photo {
+	if m != nil {
+		return m.Photo
+	}
+	return nil
+}
+
+func (m *ChatInviteExt) GetParticipantsCount() int32 {
+	if m != nil {
+		return m.ParticipantsCount
+	}
+	return 0
+}
+
+func (m *ChatInviteExt) GetParticipants() []int64 {
+	if m != nil {
+		return m.Participants
+	}
+	return nil
+}
+
+func (m *ChatInviteExt) GetExpires() int32 {
+	if m != nil {
+		return m.Expires
+	}
+	return 0
+}
+
+type TLChatInviteAlready struct {
+	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *TLChatInviteAlready) Reset()         { *m = TLChatInviteAlready{} }
+func (m *TLChatInviteAlready) String() string { return proto.CompactTextString(m) }
+func (*TLChatInviteAlready) ProtoMessage()    {}
+func (*TLChatInviteAlready) Descriptor() ([]byte, []int) {
 	return fileDescriptor_62195c864f87b9a0, []int{1}
 }
-func (m *TLUserChatIdList) XXX_Unmarshal(b []byte) error {
+func (m *TLChatInviteAlready) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *TLUserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TLChatInviteAlready) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_TLUserChatIdList.Marshal(b, m, deterministic)
+		return xxx_messageInfo_TLChatInviteAlready.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -267,64 +316,44 @@ func (m *TLUserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *TLUserChatIdList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLUserChatIdList.Merge(m, src)
+func (m *TLChatInviteAlready) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLChatInviteAlready.Merge(m, src)
 }
-func (m *TLUserChatIdList) XXX_Size() int {
+func (m *TLChatInviteAlready) XXX_Size() int {
 	return m.Size()
 }
-func (m *TLUserChatIdList) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLUserChatIdList.DiscardUnknown(m)
+func (m *TLChatInviteAlready) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLChatInviteAlready.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TLUserChatIdList proto.InternalMessageInfo
+var xxx_messageInfo_TLChatInviteAlready proto.InternalMessageInfo
 
-func (m *TLUserChatIdList) GetData2() *UserChatIdList {
+func (m *TLChatInviteAlready) GetData2() *ChatInviteExt {
 	if m != nil {
 		return m.Data2
 	}
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// immutableChatParticipant id:long chat_id:long user_id:long state:int participant_type:int link:string useage:int inviter_user_id:long invited_at:long kicked_at:long left_at:long admin_rights:ChatAdminRights date:long = ImmutableChatParticipant;
-//
-// ImmutableChatParticipant <--
-//  + TL_immutableChatParticipant
-//
-type ImmutableChatParticipant struct {
-	PredicateName        string                   `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
-	Constructor          TLConstructor            `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
-	Id                   int64                    `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
-	ChatId               int64                    `protobuf:"varint,4,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	UserId               int64                    `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	State                int32                    `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
-	ParticipantType      int32                    `protobuf:"varint,7,opt,name=participant_type,json=participantType,proto3" json:"participant_type,omitempty"`
-	Link                 string                   `protobuf:"bytes,8,opt,name=link,proto3" json:"link,omitempty"`
-	Useage               int32                    `protobuf:"varint,9,opt,name=useage,proto3" json:"useage,omitempty"`
-	InviterUserId        int64                    `protobuf:"varint,10,opt,name=inviter_user_id,json=inviterUserId,proto3" json:"inviter_user_id,omitempty"`
-	InvitedAt            int64                    `protobuf:"varint,11,opt,name=invited_at,json=invitedAt,proto3" json:"invited_at,omitempty"`
-	KickedAt             int64                    `protobuf:"varint,12,opt,name=kicked_at,json=kickedAt,proto3" json:"kicked_at,omitempty"`
-	LeftAt               int64                    `protobuf:"varint,13,opt,name=left_at,json=leftAt,proto3" json:"left_at,omitempty"`
-	AdminRights          *mtproto.ChatAdminRights `protobuf:"bytes,14,opt,name=admin_rights,json=adminRights,proto3" json:"admin_rights,omitempty"`
-	Date                 int64                    `protobuf:"varint,15,opt,name=date,proto3" json:"date,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
+type TLChatInvite struct {
+	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *ImmutableChatParticipant) Reset()         { *m = ImmutableChatParticipant{} }
-func (m *ImmutableChatParticipant) String() string { return proto.CompactTextString(m) }
-func (*ImmutableChatParticipant) ProtoMessage()    {}
-func (*ImmutableChatParticipant) Descriptor() ([]byte, []int) {
+func (m *TLChatInvite) Reset()         { *m = TLChatInvite{} }
+func (m *TLChatInvite) String() string { return proto.CompactTextString(m) }
+func (*TLChatInvite) ProtoMessage()    {}
+func (*TLChatInvite) Descriptor() ([]byte, []int) {
 	return fileDescriptor_62195c864f87b9a0, []int{2}
 }
-func (m *ImmutableChatParticipant) XXX_Unmarshal(b []byte) error {
+func (m *TLChatInvite) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ImmutableChatParticipant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TLChatInvite) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ImmutableChatParticipant.Marshal(b, m, deterministic)
+		return xxx_messageInfo_TLChatInvite.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -334,174 +363,72 @@ func (m *ImmutableChatParticipant) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *ImmutableChatParticipant) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ImmutableChatParticipant.Merge(m, src)
+func (m *TLChatInvite) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLChatInvite.Merge(m, src)
 }
-func (m *ImmutableChatParticipant) XXX_Size() int {
+func (m *TLChatInvite) XXX_Size() int {
 	return m.Size()
 }
-func (m *ImmutableChatParticipant) XXX_DiscardUnknown() {
-	xxx_messageInfo_ImmutableChatParticipant.DiscardUnknown(m)
+func (m *TLChatInvite) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLChatInvite.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ImmutableChatParticipant proto.InternalMessageInfo
+var xxx_messageInfo_TLChatInvite proto.InternalMessageInfo
 
-func (m *ImmutableChatParticipant) GetPredicateName() string {
-	if m != nil {
-		return m.PredicateName
-	}
-	return ""
-}
-
-func (m *ImmutableChatParticipant) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *ImmutableChatParticipant) GetId() int64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetChatId() int64 {
-	if m != nil {
-		return m.ChatId
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetState() int32 {
-	if m != nil {
-		return m.State
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetParticipantType() int32 {
-	if m != nil {
-		return m.ParticipantType
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetLink() string {
-	if m != nil {
-		return m.Link
-	}
-	return ""
-}
-
-func (m *ImmutableChatParticipant) GetUseage() int32 {
-	if m != nil {
-		return m.Useage
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetInviterUserId() int64 {
-	if m != nil {
-		return m.InviterUserId
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetInvitedAt() int64 {
-	if m != nil {
-		return m.InvitedAt
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetKickedAt() int64 {
-	if m != nil {
-		return m.KickedAt
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetLeftAt() int64 {
-	if m != nil {
-		return m.LeftAt
-	}
-	return 0
-}
-
-func (m *ImmutableChatParticipant) GetAdminRights() *mtproto.ChatAdminRights {
-	if m != nil {
-		return m.AdminRights
-	}
-	return nil
-}
-
-func (m *ImmutableChatParticipant) GetDate() int64 {
-	if m != nil {
-		return m.Date
-	}
-	return 0
-}
-
-// immutableChatParticipant id:long chat_id:long user_id:long state:int participant_type:int link:string useage:int inviter_user_id:long invited_at:long kicked_at:long left_at:long admin_rights:ChatAdminRights date:long = ImmutableChatParticipant;
-type TLImmutableChatParticipant struct {
-	Data2                *ImmutableChatParticipant `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
-	XXX_unrecognized     []byte                    `json:"-"`
-	XXX_sizecache        int32                     `json:"-"`
-}
-
-func (m *TLImmutableChatParticipant) Reset()         { *m = TLImmutableChatParticipant{} }
-func (m *TLImmutableChatParticipant) String() string { return proto.CompactTextString(m) }
-func (*TLImmutableChatParticipant) ProtoMessage()    {}
-func (*TLImmutableChatParticipant) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{3}
-}
-func (m *TLImmutableChatParticipant) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLImmutableChatParticipant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLImmutableChatParticipant.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLImmutableChatParticipant) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLImmutableChatParticipant.Merge(m, src)
-}
-func (m *TLImmutableChatParticipant) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLImmutableChatParticipant) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLImmutableChatParticipant.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLImmutableChatParticipant proto.InternalMessageInfo
-
-func (m *TLImmutableChatParticipant) GetData2() *ImmutableChatParticipant {
+func (m *TLChatInvite) GetData2() *ChatInviteExt {
 	if m != nil {
 		return m.Data2
 	}
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
-//
+type TLChatInvitePeek struct {
+	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *TLChatInvitePeek) Reset()         { *m = TLChatInvitePeek{} }
+func (m *TLChatInvitePeek) String() string { return proto.CompactTextString(m) }
+func (*TLChatInvitePeek) ProtoMessage()    {}
+func (*TLChatInvitePeek) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62195c864f87b9a0, []int{3}
+}
+func (m *TLChatInvitePeek) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLChatInvitePeek) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLChatInvitePeek.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLChatInvitePeek) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLChatInvitePeek.Merge(m, src)
+}
+func (m *TLChatInvitePeek) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLChatInvitePeek) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLChatInvitePeek.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLChatInvitePeek proto.InternalMessageInfo
+
+func (m *TLChatInvitePeek) GetData2() *ChatInviteExt {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
 // ImmutableChat <--
 //  + TL_immutableChat
 //
@@ -527,6 +454,7 @@ type ImmutableChat struct {
 	BotInfo              []*mtproto.BotInfo          `protobuf:"bytes,19,rep,name=bot_info,json=botInfo,proto3" json:"bot_info,omitempty"`
 	Call                 *mtproto.InputGroupCall     `protobuf:"bytes,20,opt,name=call,proto3" json:"call,omitempty"`
 	AvailableReactions   []string                    `protobuf:"bytes,21,rep,name=available_reactions,json=availableReactions,proto3" json:"available_reactions,omitempty"`
+	TtlPeriod            int32                       `protobuf:"varint,22,opt,name=ttl_period,json=ttlPeriod,proto3" json:"ttl_period,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
 	XXX_unrecognized     []byte                      `json:"-"`
 	XXX_sizecache        int32                       `json:"-"`
@@ -712,7 +640,13 @@ func (m *ImmutableChat) GetAvailableReactions() []string {
 	return nil
 }
 
-// immutableChat flags:# id:long creator:long title:string photo:Photo deactivated:flags.0?true call_active:flags.1?true call_not_empty:flags.2?true noforwards:flags.25?true participants_count:int date:long version:int migrated_to:flags.3?InputChannel default_banned_rights:ChatBannedRights can_set_username:flags.4?true about:string exported_invite:flags.5?ExportedChatInvite bot_info:flags.6?Vector<BotInfo> call:flags.7?InputGroupCall available_reactions:Vector<string> = ImmutableChat;
+func (m *ImmutableChat) GetTtlPeriod() int32 {
+	if m != nil {
+		return m.TtlPeriod
+	}
+	return 0
+}
+
 type TLImmutableChat struct {
 	Data2                *ImmutableChat `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
@@ -760,9 +694,215 @@ func (m *TLImmutableChat) GetData2() *ImmutableChat {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// mutableChat chat:ImmutableChat chat_participants:Vector<ImmutableChatParticipant> = MutableChat;
+// ImmutableChatParticipant <--
+//  + TL_immutableChatParticipant
 //
+type ImmutableChatParticipant struct {
+	PredicateName        string                   `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor            `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
+	Id                   int64                    `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	ChatId               int64                    `protobuf:"varint,4,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	UserId               int64                    `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	State                int32                    `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
+	ParticipantType      int32                    `protobuf:"varint,7,opt,name=participant_type,json=participantType,proto3" json:"participant_type,omitempty"`
+	Link                 string                   `protobuf:"bytes,8,opt,name=link,proto3" json:"link,omitempty"`
+	Useage               int32                    `protobuf:"varint,9,opt,name=useage,proto3" json:"useage,omitempty"`
+	InviterUserId        int64                    `protobuf:"varint,10,opt,name=inviter_user_id,json=inviterUserId,proto3" json:"inviter_user_id,omitempty"`
+	InvitedAt            int64                    `protobuf:"varint,11,opt,name=invited_at,json=invitedAt,proto3" json:"invited_at,omitempty"`
+	KickedAt             int64                    `protobuf:"varint,12,opt,name=kicked_at,json=kickedAt,proto3" json:"kicked_at,omitempty"`
+	LeftAt               int64                    `protobuf:"varint,13,opt,name=left_at,json=leftAt,proto3" json:"left_at,omitempty"`
+	AdminRights          *mtproto.ChatAdminRights `protobuf:"bytes,14,opt,name=admin_rights,json=adminRights,proto3" json:"admin_rights,omitempty"`
+	Date                 int64                    `protobuf:"varint,15,opt,name=date,proto3" json:"date,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *ImmutableChatParticipant) Reset()         { *m = ImmutableChatParticipant{} }
+func (m *ImmutableChatParticipant) String() string { return proto.CompactTextString(m) }
+func (*ImmutableChatParticipant) ProtoMessage()    {}
+func (*ImmutableChatParticipant) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62195c864f87b9a0, []int{6}
+}
+func (m *ImmutableChatParticipant) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ImmutableChatParticipant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ImmutableChatParticipant.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ImmutableChatParticipant) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImmutableChatParticipant.Merge(m, src)
+}
+func (m *ImmutableChatParticipant) XXX_Size() int {
+	return m.Size()
+}
+func (m *ImmutableChatParticipant) XXX_DiscardUnknown() {
+	xxx_messageInfo_ImmutableChatParticipant.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ImmutableChatParticipant proto.InternalMessageInfo
+
+func (m *ImmutableChatParticipant) GetPredicateName() string {
+	if m != nil {
+		return m.PredicateName
+	}
+	return ""
+}
+
+func (m *ImmutableChatParticipant) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *ImmutableChatParticipant) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetChatId() int64 {
+	if m != nil {
+		return m.ChatId
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetState() int32 {
+	if m != nil {
+		return m.State
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetParticipantType() int32 {
+	if m != nil {
+		return m.ParticipantType
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetLink() string {
+	if m != nil {
+		return m.Link
+	}
+	return ""
+}
+
+func (m *ImmutableChatParticipant) GetUseage() int32 {
+	if m != nil {
+		return m.Useage
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetInviterUserId() int64 {
+	if m != nil {
+		return m.InviterUserId
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetInvitedAt() int64 {
+	if m != nil {
+		return m.InvitedAt
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetKickedAt() int64 {
+	if m != nil {
+		return m.KickedAt
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetLeftAt() int64 {
+	if m != nil {
+		return m.LeftAt
+	}
+	return 0
+}
+
+func (m *ImmutableChatParticipant) GetAdminRights() *mtproto.ChatAdminRights {
+	if m != nil {
+		return m.AdminRights
+	}
+	return nil
+}
+
+func (m *ImmutableChatParticipant) GetDate() int64 {
+	if m != nil {
+		return m.Date
+	}
+	return 0
+}
+
+type TLImmutableChatParticipant struct {
+	Data2                *ImmutableChatParticipant `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
+}
+
+func (m *TLImmutableChatParticipant) Reset()         { *m = TLImmutableChatParticipant{} }
+func (m *TLImmutableChatParticipant) String() string { return proto.CompactTextString(m) }
+func (*TLImmutableChatParticipant) ProtoMessage()    {}
+func (*TLImmutableChatParticipant) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62195c864f87b9a0, []int{7}
+}
+func (m *TLImmutableChatParticipant) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLImmutableChatParticipant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLImmutableChatParticipant.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLImmutableChatParticipant) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLImmutableChatParticipant.Merge(m, src)
+}
+func (m *TLImmutableChatParticipant) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLImmutableChatParticipant) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLImmutableChatParticipant.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLImmutableChatParticipant proto.InternalMessageInfo
+
+func (m *TLImmutableChatParticipant) GetData2() *ImmutableChatParticipant {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
 // MutableChat <--
 //  + TL_mutableChat
 //
@@ -780,7 +920,7 @@ func (m *MutableChat) Reset()         { *m = MutableChat{} }
 func (m *MutableChat) String() string { return proto.CompactTextString(m) }
 func (*MutableChat) ProtoMessage()    {}
 func (*MutableChat) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{6}
+	return fileDescriptor_62195c864f87b9a0, []int{8}
 }
 func (m *MutableChat) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -837,7 +977,6 @@ func (m *MutableChat) GetChatParticipants() []*ImmutableChatParticipant {
 	return nil
 }
 
-// mutableChat chat:ImmutableChat chat_participants:Vector<ImmutableChatParticipant> = MutableChat;
 type TLMutableChat struct {
 	Data2                *MutableChat `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
@@ -849,7 +988,7 @@ func (m *TLMutableChat) Reset()         { *m = TLMutableChat{} }
 func (m *TLMutableChat) String() string { return proto.CompactTextString(m) }
 func (*TLMutableChat) ProtoMessage()    {}
 func (*TLMutableChat) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{7}
+	return fileDescriptor_62195c864f87b9a0, []int{9}
 }
 func (m *TLMutableChat) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -885,44 +1024,31 @@ func (m *TLMutableChat) GetData2() *MutableChat {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
-// chatInviteAlready chat:MutableChat = ChatInviteExt;
-// chatInvite flags:# request_needed:flags.6?true title:string about:flags.5?string photo:Photo participants_count:int participants:flags.4?Vector<long> = ChatInviteExt;
-// chatInvitePeek chat:MutableChat expires:int = ChatInviteExt;
+// UserChatIdList <--
+//  + TL_userChatIdList
 //
-// ChatInviteExt <--
-//  + TL_chatInviteAlready
-//  + TL_chatInvite
-//  + TL_chatInvitePeek
-//
-type ChatInviteExt struct {
-	PredicateName        string             `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
-	Constructor          TLConstructor      `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
-	Chat                 *MutableChat       `protobuf:"bytes,3,opt,name=chat,proto3" json:"chat,omitempty"`
-	RequestNeeded        bool               `protobuf:"varint,4,opt,name=request_needed,json=requestNeeded,proto3" json:"request_needed,omitempty"`
-	Title                string             `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	About                *types.StringValue `protobuf:"bytes,6,opt,name=about,proto3" json:"about,omitempty"`
-	Photo                *mtproto.Photo     `protobuf:"bytes,7,opt,name=photo,proto3" json:"photo,omitempty"`
-	ParticipantsCount    int32              `protobuf:"varint,8,opt,name=participants_count,json=participantsCount,proto3" json:"participants_count,omitempty"`
-	Participants         []int64            `protobuf:"varint,9,rep,packed,name=participants,proto3" json:"participants,omitempty"`
-	Expires              int32              `protobuf:"varint,10,opt,name=expires,proto3" json:"expires,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
-	XXX_unrecognized     []byte             `json:"-"`
-	XXX_sizecache        int32              `json:"-"`
+type UserChatIdList struct {
+	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ChatIdList           []int64       `protobuf:"varint,4,rep,packed,name=chat_id_list,json=chatIdList,proto3" json:"chat_id_list,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
-func (m *ChatInviteExt) Reset()         { *m = ChatInviteExt{} }
-func (m *ChatInviteExt) String() string { return proto.CompactTextString(m) }
-func (*ChatInviteExt) ProtoMessage()    {}
-func (*ChatInviteExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{8}
+func (m *UserChatIdList) Reset()         { *m = UserChatIdList{} }
+func (m *UserChatIdList) String() string { return proto.CompactTextString(m) }
+func (*UserChatIdList) ProtoMessage()    {}
+func (*UserChatIdList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62195c864f87b9a0, []int{10}
 }
-func (m *ChatInviteExt) XXX_Unmarshal(b []byte) error {
+func (m *UserChatIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *ChatInviteExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_ChatInviteExt.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UserChatIdList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -932,204 +1058,65 @@ func (m *ChatInviteExt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return b[:n], nil
 	}
 }
-func (m *ChatInviteExt) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ChatInviteExt.Merge(m, src)
+func (m *UserChatIdList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserChatIdList.Merge(m, src)
 }
-func (m *ChatInviteExt) XXX_Size() int {
+func (m *UserChatIdList) XXX_Size() int {
 	return m.Size()
 }
-func (m *ChatInviteExt) XXX_DiscardUnknown() {
-	xxx_messageInfo_ChatInviteExt.DiscardUnknown(m)
+func (m *UserChatIdList) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserChatIdList.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ChatInviteExt proto.InternalMessageInfo
+var xxx_messageInfo_UserChatIdList proto.InternalMessageInfo
 
-func (m *ChatInviteExt) GetPredicateName() string {
+func (m *UserChatIdList) GetPredicateName() string {
 	if m != nil {
 		return m.PredicateName
 	}
 	return ""
 }
 
-func (m *ChatInviteExt) GetConstructor() TLConstructor {
+func (m *UserChatIdList) GetConstructor() TLConstructor {
 	if m != nil {
 		return m.Constructor
 	}
 	return CRC32_UNKNOWN
 }
 
-func (m *ChatInviteExt) GetChat() *MutableChat {
+func (m *UserChatIdList) GetUserId() int64 {
 	if m != nil {
-		return m.Chat
-	}
-	return nil
-}
-
-func (m *ChatInviteExt) GetRequestNeeded() bool {
-	if m != nil {
-		return m.RequestNeeded
-	}
-	return false
-}
-
-func (m *ChatInviteExt) GetTitle() string {
-	if m != nil {
-		return m.Title
-	}
-	return ""
-}
-
-func (m *ChatInviteExt) GetAbout() *types.StringValue {
-	if m != nil {
-		return m.About
-	}
-	return nil
-}
-
-func (m *ChatInviteExt) GetPhoto() *mtproto.Photo {
-	if m != nil {
-		return m.Photo
-	}
-	return nil
-}
-
-func (m *ChatInviteExt) GetParticipantsCount() int32 {
-	if m != nil {
-		return m.ParticipantsCount
+		return m.UserId
 	}
 	return 0
 }
 
-func (m *ChatInviteExt) GetParticipants() []int64 {
+func (m *UserChatIdList) GetChatIdList() []int64 {
 	if m != nil {
-		return m.Participants
+		return m.ChatIdList
 	}
 	return nil
 }
 
-func (m *ChatInviteExt) GetExpires() int32 {
-	if m != nil {
-		return m.Expires
-	}
-	return 0
+type TLUserChatIdList struct {
+	Data2                *UserChatIdList `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
 }
 
-// chatInviteAlready chat:MutableChat = ChatInviteExt;
-type TLChatInviteAlready struct {
-	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *TLChatInviteAlready) Reset()         { *m = TLChatInviteAlready{} }
-func (m *TLChatInviteAlready) String() string { return proto.CompactTextString(m) }
-func (*TLChatInviteAlready) ProtoMessage()    {}
-func (*TLChatInviteAlready) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{9}
-}
-func (m *TLChatInviteAlready) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLChatInviteAlready) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLChatInviteAlready.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLChatInviteAlready) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLChatInviteAlready.Merge(m, src)
-}
-func (m *TLChatInviteAlready) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLChatInviteAlready) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLChatInviteAlready.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLChatInviteAlready proto.InternalMessageInfo
-
-func (m *TLChatInviteAlready) GetData2() *ChatInviteExt {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// chatInvite flags:# request_needed:flags.6?true title:string about:flags.5?string photo:Photo participants_count:int participants:flags.4?Vector<long> = ChatInviteExt;
-type TLChatInvite struct {
-	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *TLChatInvite) Reset()         { *m = TLChatInvite{} }
-func (m *TLChatInvite) String() string { return proto.CompactTextString(m) }
-func (*TLChatInvite) ProtoMessage()    {}
-func (*TLChatInvite) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{10}
-}
-func (m *TLChatInvite) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLChatInvite) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLChatInvite.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLChatInvite) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLChatInvite.Merge(m, src)
-}
-func (m *TLChatInvite) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLChatInvite) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLChatInvite.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLChatInvite proto.InternalMessageInfo
-
-func (m *TLChatInvite) GetData2() *ChatInviteExt {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-// chatInvitePeek chat:MutableChat expires:int = ChatInviteExt;
-type TLChatInvitePeek struct {
-	Data2                *ChatInviteExt `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *TLChatInvitePeek) Reset()         { *m = TLChatInvitePeek{} }
-func (m *TLChatInvitePeek) String() string { return proto.CompactTextString(m) }
-func (*TLChatInvitePeek) ProtoMessage()    {}
-func (*TLChatInvitePeek) Descriptor() ([]byte, []int) {
+func (m *TLUserChatIdList) Reset()         { *m = TLUserChatIdList{} }
+func (m *TLUserChatIdList) String() string { return proto.CompactTextString(m) }
+func (*TLUserChatIdList) ProtoMessage()    {}
+func (*TLUserChatIdList) Descriptor() ([]byte, []int) {
 	return fileDescriptor_62195c864f87b9a0, []int{11}
 }
-func (m *TLChatInvitePeek) XXX_Unmarshal(b []byte) error {
+func (m *TLUserChatIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *TLChatInvitePeek) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TLUserChatIdList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_TLChatInvitePeek.Marshal(b, m, deterministic)
+		return xxx_messageInfo_TLUserChatIdList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1139,19 +1126,19 @@ func (m *TLChatInvitePeek) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *TLChatInvitePeek) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLChatInvitePeek.Merge(m, src)
+func (m *TLUserChatIdList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLUserChatIdList.Merge(m, src)
 }
-func (m *TLChatInvitePeek) XXX_Size() int {
+func (m *TLUserChatIdList) XXX_Size() int {
 	return m.Size()
 }
-func (m *TLChatInvitePeek) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLChatInvitePeek.DiscardUnknown(m)
+func (m *TLUserChatIdList) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLUserChatIdList.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TLChatInvitePeek proto.InternalMessageInfo
+var xxx_messageInfo_TLUserChatIdList proto.InternalMessageInfo
 
-func (m *TLChatInvitePeek) GetData2() *ChatInviteExt {
+func (m *TLUserChatIdList) GetData2() *UserChatIdList {
 	if m != nil {
 		return m.Data2
 	}
@@ -1159,7 +1146,6 @@ func (m *TLChatInvitePeek) GetData2() *ChatInviteExt {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getMutableChat chat_id:long = MutableChat;
 type TLChatGetMutableChat struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1216,7 +1202,6 @@ func (m *TLChatGetMutableChat) GetChatId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 type TLChatGetChatListByIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -1281,7 +1266,6 @@ func (m *TLChatGetChatListByIdList) GetIdList() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 type TLChatGetChatBySelfId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -1346,7 +1330,6 @@ func (m *TLChatGetChatBySelfId) GetChatId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
 type TLChatCreateChat2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	CreatorId            int64         `protobuf:"varint,3,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
@@ -1419,7 +1402,6 @@ func (m *TLChatCreateChat2) GetTitle() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.deleteChat chat_id:long operator_id:long = MutableChat;
 type TLChatDeleteChat struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1484,7 +1466,6 @@ func (m *TLChatDeleteChat) GetOperatorId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 type TLChatDeleteChatUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1557,7 +1538,6 @@ func (m *TLChatDeleteChatUser) GetDeleteUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 type TLChatEditChatTitle struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1630,7 +1610,6 @@ func (m *TLChatEditChatTitle) GetTitle() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
 type TLChatEditChatAbout struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1703,7 +1682,6 @@ func (m *TLChatEditChatAbout) GetAbout() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 type TLChatEditChatPhoto struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64          `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1776,7 +1754,6 @@ func (m *TLChatEditChatPhoto) GetChatPhoto() *mtproto.Photo {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 type TLChatEditChatAdmin struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1857,7 +1834,6 @@ func (m *TLChatEditChatAdmin) GetIsAdmin() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 type TLChatEditChatDefaultBannedRights struct {
 	Constructor          TLConstructor             `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64                     `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1930,7 +1906,6 @@ func (m *TLChatEditChatDefaultBannedRights) GetBannedRights() *mtproto.ChatBanne
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
 type TLChatAddChatUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2003,7 +1978,6 @@ func (m *TLChatAddChatUser) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getMutableChatByLink link:string = MutableChat;
 type TLChatGetMutableChatByLink struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Link                 string        `protobuf:"bytes,3,opt,name=link,proto3" json:"link,omitempty"`
@@ -2060,7 +2034,6 @@ func (m *TLChatGetMutableChatByLink) GetLink() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 type TLChatToggleNoForwards struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2133,7 +2106,6 @@ func (m *TLChatToggleNoForwards) GetEnabled() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 type TLChatMigratedToChannel struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Chat                 *MutableChat  `protobuf:"bytes,3,opt,name=chat,proto3" json:"chat,omitempty"`
@@ -2206,7 +2178,6 @@ func (m *TLChatMigratedToChannel) GetAccessHash() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getChatParticipantIdList chat_id:long = Vector<long>;
 type TLChatGetChatParticipantIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2263,7 +2234,6 @@ func (m *TLChatGetChatParticipantIdList) GetChatId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 type TLChatGetUsersChatIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -2320,7 +2290,6 @@ func (m *TLChatGetUsersChatIdList) GetId() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 type TLChatGetMyChatList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2385,7 +2354,6 @@ func (m *TLChatGetMyChatList) GetIsCreator() *mtproto.Bool {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 type TLChatExportChatInvite struct {
 	Constructor           TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId                int64              `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2490,7 +2458,6 @@ func (m *TLChatExportChatInvite) GetTitle() *types.StringValue {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 type TLChatGetAdminsWithInvites struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2555,7 +2522,6 @@ func (m *TLChatGetAdminsWithInvites) GetChatId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 type TLChatGetExportedChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2620,7 +2586,6 @@ func (m *TLChatGetExportedChatInvite) GetLink() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 type TLChatGetExportedChatInvites struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64              `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2717,7 +2682,6 @@ func (m *TLChatGetExportedChatInvites) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
 type TLChatCheckChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2782,7 +2746,6 @@ func (m *TLChatCheckChatInvite) GetHash() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.importChatInvite self_id:long hash:string = MutableChat;
 type TLChatImportChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2847,7 +2810,6 @@ func (m *TLChatImportChatInvite) GetHash() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 type TLChatGetChatInviteImporters struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64              `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2960,7 +2922,6 @@ func (m *TLChatGetChatInviteImporters) GetLimit() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
 type TLChatDeleteExportedChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3033,7 +2994,6 @@ func (m *TLChatDeleteExportedChatInvite) GetLink() string {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 type TLChatDeleteRevokedExportedChatInvites struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3108,7 +3068,6 @@ func (m *TLChatDeleteRevokedExportedChatInvites) GetAdminId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 type TLChatEditExportedChatInvite struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64              `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3221,7 +3180,6 @@ func (m *TLChatEditExportedChatInvite) GetTitle() *types.StringValue {
 }
 
 //--------------------------------------------------------------------------------------------
-// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = MutableChat;
 type TLChatSetChatAvailableReactions struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3294,6 +3252,78 @@ func (m *TLChatSetChatAvailableReactions) GetAvailableReactions() []string {
 }
 
 //--------------------------------------------------------------------------------------------
+type TLChatSetHistoryTTL struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
+	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
+	ChatId               int64         `protobuf:"varint,4,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	TtlPeriod            int32         `protobuf:"varint,5,opt,name=ttl_period,json=ttlPeriod,proto3" json:"ttl_period,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLChatSetHistoryTTL) Reset()         { *m = TLChatSetHistoryTTL{} }
+func (m *TLChatSetHistoryTTL) String() string { return proto.CompactTextString(m) }
+func (*TLChatSetHistoryTTL) ProtoMessage()    {}
+func (*TLChatSetHistoryTTL) Descriptor() ([]byte, []int) {
+	return fileDescriptor_62195c864f87b9a0, []int{41}
+}
+func (m *TLChatSetHistoryTTL) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLChatSetHistoryTTL) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLChatSetHistoryTTL.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLChatSetHistoryTTL) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLChatSetHistoryTTL.Merge(m, src)
+}
+func (m *TLChatSetHistoryTTL) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLChatSetHistoryTTL) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLChatSetHistoryTTL.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLChatSetHistoryTTL proto.InternalMessageInfo
+
+func (m *TLChatSetHistoryTTL) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLChatSetHistoryTTL) GetSelfId() int64 {
+	if m != nil {
+		return m.SelfId
+	}
+	return 0
+}
+
+func (m *TLChatSetHistoryTTL) GetChatId() int64 {
+	if m != nil {
+		return m.ChatId
+	}
+	return 0
+}
+
+func (m *TLChatSetHistoryTTL) GetTtlPeriod() int32 {
+	if m != nil {
+		return m.TtlPeriod
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_MutableChat struct {
 	Datas                []*MutableChat `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`
@@ -3306,7 +3336,7 @@ func (m *Vector_MutableChat) Reset()         { *m = Vector_MutableChat{} }
 func (m *Vector_MutableChat) String() string { return proto.CompactTextString(m) }
 func (*Vector_MutableChat) ProtoMessage()    {}
 func (*Vector_MutableChat) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{41}
+	return fileDescriptor_62195c864f87b9a0, []int{42}
 }
 func (m *Vector_MutableChat) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3353,7 +3383,7 @@ func (m *Vector_Long) Reset()         { *m = Vector_Long{} }
 func (m *Vector_Long) String() string { return proto.CompactTextString(m) }
 func (*Vector_Long) ProtoMessage()    {}
 func (*Vector_Long) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{42}
+	return fileDescriptor_62195c864f87b9a0, []int{43}
 }
 func (m *Vector_Long) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3400,7 +3430,7 @@ func (m *Vector_UserChatIdList) Reset()         { *m = Vector_UserChatIdList{} }
 func (m *Vector_UserChatIdList) String() string { return proto.CompactTextString(m) }
 func (*Vector_UserChatIdList) ProtoMessage()    {}
 func (*Vector_UserChatIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{43}
+	return fileDescriptor_62195c864f87b9a0, []int{44}
 }
 func (m *Vector_UserChatIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3447,7 +3477,7 @@ func (m *Vector_ChatAdminWithInvites) Reset()         { *m = Vector_ChatAdminWit
 func (m *Vector_ChatAdminWithInvites) String() string { return proto.CompactTextString(m) }
 func (*Vector_ChatAdminWithInvites) ProtoMessage()    {}
 func (*Vector_ChatAdminWithInvites) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{44}
+	return fileDescriptor_62195c864f87b9a0, []int{45}
 }
 func (m *Vector_ChatAdminWithInvites) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3494,7 +3524,7 @@ func (m *Vector_ExportedChatInvite) Reset()         { *m = Vector_ExportedChatIn
 func (m *Vector_ExportedChatInvite) String() string { return proto.CompactTextString(m) }
 func (*Vector_ExportedChatInvite) ProtoMessage()    {}
 func (*Vector_ExportedChatInvite) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{45}
+	return fileDescriptor_62195c864f87b9a0, []int{46}
 }
 func (m *Vector_ExportedChatInvite) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3541,7 +3571,7 @@ func (m *Vector_ChatInviteImporter) Reset()         { *m = Vector_ChatInviteImpo
 func (m *Vector_ChatInviteImporter) String() string { return proto.CompactTextString(m) }
 func (*Vector_ChatInviteImporter) ProtoMessage()    {}
 func (*Vector_ChatInviteImporter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62195c864f87b9a0, []int{46}
+	return fileDescriptor_62195c864f87b9a0, []int{47}
 }
 func (m *Vector_ChatInviteImporter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3579,18 +3609,18 @@ func (m *Vector_ChatInviteImporter) GetDatas() []*mtproto.ChatInviteImporter {
 
 func init() {
 	proto.RegisterEnum("chat.TLConstructor", TLConstructor_name, TLConstructor_value)
-	proto.RegisterType((*UserChatIdList)(nil), "chat.UserChatIdList")
-	proto.RegisterType((*TLUserChatIdList)(nil), "chat.TL_userChatIdList")
-	proto.RegisterType((*ImmutableChatParticipant)(nil), "chat.ImmutableChatParticipant")
-	proto.RegisterType((*TLImmutableChatParticipant)(nil), "chat.TL_immutableChatParticipant")
-	proto.RegisterType((*ImmutableChat)(nil), "chat.ImmutableChat")
-	proto.RegisterType((*TLImmutableChat)(nil), "chat.TL_immutableChat")
-	proto.RegisterType((*MutableChat)(nil), "chat.MutableChat")
-	proto.RegisterType((*TLMutableChat)(nil), "chat.TL_mutableChat")
 	proto.RegisterType((*ChatInviteExt)(nil), "chat.ChatInviteExt")
 	proto.RegisterType((*TLChatInviteAlready)(nil), "chat.TL_chatInviteAlready")
 	proto.RegisterType((*TLChatInvite)(nil), "chat.TL_chatInvite")
 	proto.RegisterType((*TLChatInvitePeek)(nil), "chat.TL_chatInvitePeek")
+	proto.RegisterType((*ImmutableChat)(nil), "chat.ImmutableChat")
+	proto.RegisterType((*TLImmutableChat)(nil), "chat.TL_immutableChat")
+	proto.RegisterType((*ImmutableChatParticipant)(nil), "chat.ImmutableChatParticipant")
+	proto.RegisterType((*TLImmutableChatParticipant)(nil), "chat.TL_immutableChatParticipant")
+	proto.RegisterType((*MutableChat)(nil), "chat.MutableChat")
+	proto.RegisterType((*TLMutableChat)(nil), "chat.TL_mutableChat")
+	proto.RegisterType((*UserChatIdList)(nil), "chat.UserChatIdList")
+	proto.RegisterType((*TLUserChatIdList)(nil), "chat.TL_userChatIdList")
 	proto.RegisterType((*TLChatGetMutableChat)(nil), "chat.TL_chat_getMutableChat")
 	proto.RegisterType((*TLChatGetChatListByIdList)(nil), "chat.TL_chat_getChatListByIdList")
 	proto.RegisterType((*TLChatGetChatBySelfId)(nil), "chat.TL_chat_getChatBySelfId")
@@ -3620,6 +3650,7 @@ func init() {
 	proto.RegisterType((*TLChatDeleteRevokedExportedChatInvites)(nil), "chat.TL_chat_deleteRevokedExportedChatInvites")
 	proto.RegisterType((*TLChatEditExportedChatInvite)(nil), "chat.TL_chat_editExportedChatInvite")
 	proto.RegisterType((*TLChatSetChatAvailableReactions)(nil), "chat.TL_chat_setChatAvailableReactions")
+	proto.RegisterType((*TLChatSetHistoryTTL)(nil), "chat.TL_chat_setHistoryTTL")
 	proto.RegisterType((*Vector_MutableChat)(nil), "chat.Vector_MutableChat")
 	proto.RegisterType((*Vector_Long)(nil), "chat.Vector_Long")
 	proto.RegisterType((*Vector_UserChatIdList)(nil), "chat.Vector_UserChatIdList")
@@ -3631,378 +3662,212 @@ func init() {
 func init() { proto.RegisterFile("chat.tl.proto", fileDescriptor_62195c864f87b9a0) }
 
 var fileDescriptor_62195c864f87b9a0 = []byte{
-	// 3171 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5b, 0x6b, 0x6c, 0x1c, 0xd5,
-	0xf5, 0xf7, 0x78, 0xbd, 0x7e, 0x9c, 0xf5, 0x63, 0x7c, 0x6d, 0x27, 0xeb, 0xb5, 0xbd, 0xd9, 0x8c,
-	0x9d, 0xc4, 0x10, 0x62, 0xff, 0xff, 0x0e, 0x45, 0x7d, 0x41, 0x6b, 0x1b, 0x28, 0x06, 0xc7, 0x44,
-	0x13, 0x07, 0x0a, 0xaa, 0x3a, 0x1d, 0xef, 0x5c, 0xef, 0x8e, 0xbc, 0x3b, 0xb3, 0xcc, 0xcc, 0x06,
-	0x5c, 0xa9, 0x15, 0x2a, 0x6a, 0x41, 0xf4, 0x81, 0xaa, 0xd2, 0x02, 0x2d, 0x34, 0xad, 0x42, 0x45,
-	0x83, 0xaa, 0x50, 0x24, 0x54, 0x41, 0x05, 0x45, 0x6d, 0xa9, 0x00, 0x41, 0x54, 0x40, 0x84, 0xd2,
-	0x27, 0x25, 0x05, 0x95, 0x56, 0x15, 0xf4, 0x4b, 0x11, 0xa4, 0x10, 0x57, 0x73, 0xef, 0xcc, 0xce,
-	0xeb, 0x8e, 0xbd, 0x09, 0x8e, 0xf3, 0x25, 0xda, 0xb9, 0xe7, 0xdc, 0x73, 0xcf, 0x3d, 0xe7, 0x77,
-	0xcf, 0x3d, 0xe7, 0x5c, 0x07, 0x3a, 0xf2, 0x45, 0xd9, 0x1a, 0xb3, 0x4a, 0x63, 0x15, 0x43, 0xb7,
-	0x74, 0xd4, 0x64, 0x7f, 0x66, 0x76, 0x15, 0x54, 0xab, 0x58, 0x5d, 0x18, 0xcb, 0xeb, 0xe5, 0xf1,
-	0x82, 0x5e, 0xd0, 0xc7, 0x09, 0x71, 0xa1, 0xba, 0x48, 0xbe, 0xc8, 0x07, 0xf9, 0x45, 0x27, 0x65,
-	0xb2, 0x05, 0x5d, 0x2f, 0x94, 0xb0, 0xc7, 0x75, 0xbd, 0x21, 0x57, 0x2a, 0xd8, 0x30, 0x1d, 0x7a,
-	0xc6, 0xcc, 0x17, 0x71, 0x59, 0xb6, 0x57, 0xc9, 0xeb, 0x06, 0x96, 0xac, 0xe5, 0x0a, 0x76, 0x69,
-	0xfd, 0x1e, 0xcd, 0x32, 0x64, 0xcd, 0xac, 0xe8, 0x86, 0xe5, 0x90, 0x7a, 0x3d, 0x92, 0xb9, 0xac,
-	0xe5, 0xe9, 0xa8, 0x70, 0x98, 0x83, 0xce, 0xfd, 0x26, 0x36, 0xa6, 0x8b, 0xb2, 0x35, 0xa3, 0xcc,
-	0xaa, 0xa6, 0x85, 0xb6, 0x41, 0x67, 0xc5, 0xc0, 0x8a, 0x9a, 0x97, 0x2d, 0x2c, 0x69, 0x72, 0x19,
-	0xa7, 0xb9, 0x1c, 0x37, 0xda, 0x26, 0x76, 0xd4, 0x46, 0xe7, 0xe4, 0x32, 0x46, 0x1f, 0x82, 0x54,
-	0x5e, 0xd7, 0x4c, 0xcb, 0xa8, 0xe6, 0x2d, 0xdd, 0x48, 0x37, 0xe6, 0xb8, 0xd1, 0xce, 0x89, 0x9e,
-	0x31, 0x62, 0x80, 0xf9, 0xd9, 0x69, 0x8f, 0x24, 0xfa, 0xf9, 0xd0, 0x66, 0x68, 0xa9, 0x9a, 0xd8,
-	0x90, 0x54, 0x25, 0x9d, 0xc8, 0x71, 0xa3, 0x09, 0xb1, 0xd9, 0xfe, 0x9c, 0x51, 0x50, 0x0e, 0xda,
-	0xed, 0xb9, 0x92, 0xaa, 0x48, 0x25, 0xd5, 0xb4, 0xd2, 0x4d, 0xb9, 0xc4, 0x68, 0x42, 0x84, 0x7c,
-	0x4d, 0x31, 0xe1, 0x13, 0xd0, 0x3d, 0x3f, 0x2b, 0x55, 0x83, 0xda, 0x9e, 0x0b, 0x49, 0x45, 0xb6,
-	0xe4, 0x09, 0xa2, 0x64, 0x6a, 0xa2, 0x97, 0x2a, 0x10, 0xdc, 0x92, 0x48, 0x59, 0x84, 0xff, 0x24,
-	0x20, 0x3d, 0x53, 0x2e, 0x57, 0x2d, 0x79, 0xa1, 0x84, 0x6d, 0xf2, 0x5e, 0xd9, 0xb0, 0xd4, 0xbc,
-	0x5a, 0x91, 0xb5, 0x33, 0xbd, 0xed, 0x4e, 0x68, 0xac, 0xed, 0xb8, 0x51, 0x55, 0x6c, 0x33, 0x38,
-	0xbb, 0x4d, 0x37, 0x51, 0x33, 0xd0, 0x8d, 0xfa, 0xed, 0x93, 0x0c, 0xd8, 0xa7, 0x17, 0x92, 0xa6,
-	0x25, 0x5b, 0x38, 0xdd, 0x9c, 0xe3, 0x46, 0x93, 0x22, 0xfd, 0x40, 0xe7, 0x00, 0x5f, 0xf1, 0x36,
-	0x41, 0xb0, 0x90, 0x6e, 0x21, 0x0c, 0x5d, 0xbe, 0xf1, 0xf9, 0xe5, 0x0a, 0x46, 0x08, 0x9a, 0x4a,
-	0xaa, 0xb6, 0x94, 0x6e, 0x25, 0xdb, 0x22, 0xbf, 0xd1, 0x26, 0xb0, 0xc5, 0xcb, 0x05, 0x9c, 0x6e,
-	0x23, 0x93, 0x9c, 0x2f, 0xb4, 0x1d, 0xba, 0x54, 0xed, 0x80, 0x6a, 0x61, 0x43, 0x72, 0xb5, 0x01,
-	0xa2, 0x4d, 0x87, 0x33, 0xbc, 0x9f, 0x2a, 0x35, 0x04, 0x40, 0x07, 0x14, 0x49, 0xb6, 0xd2, 0x29,
-	0xc2, 0xd2, 0xe6, 0x8c, 0x4c, 0x5a, 0x68, 0x00, 0xda, 0x96, 0xd4, 0xfc, 0x12, 0xa5, 0xb6, 0x13,
-	0x6a, 0x2b, 0x1d, 0x98, 0xb4, 0xec, 0x9d, 0x96, 0xf0, 0xa2, 0x65, 0x93, 0x3a, 0xe8, 0x4e, 0xed,
-	0xcf, 0x49, 0x0b, 0x7d, 0x0c, 0xda, 0x65, 0xa5, 0xac, 0x6a, 0x92, 0xa1, 0x16, 0x8a, 0x96, 0x99,
-	0xee, 0x24, 0x9e, 0x4d, 0x8f, 0x95, 0x2d, 0x82, 0xd9, 0x31, 0xdb, 0x73, 0x93, 0x36, 0x83, 0x48,
-	0xe8, 0x62, 0x4a, 0xf6, 0x3e, 0xec, 0x5d, 0x2a, 0xb6, 0x95, 0xba, 0x88, 0x48, 0xf2, 0x5b, 0xd8,
-	0x07, 0x03, 0xf3, 0xb3, 0x92, 0x1a, 0xe7, 0xf9, 0xf3, 0x83, 0x10, 0xca, 0x52, 0x67, 0xc6, 0x01,
-	0xc5, 0x05, 0xd3, 0xf3, 0xcd, 0xd0, 0x11, 0xe0, 0xd9, 0x60, 0x04, 0xa5, 0xa1, 0x25, 0x6f, 0x60,
-	0xd9, 0x16, 0x41, 0x11, 0xe4, 0x7e, 0xda, 0x48, 0xb1, 0x54, 0xab, 0x84, 0x09, 0x80, 0xda, 0x44,
-	0xfa, 0x81, 0x46, 0x20, 0x59, 0x29, 0xea, 0x96, 0x4e, 0xf0, 0x93, 0x9a, 0xe8, 0xac, 0x99, 0x73,
-	0xaf, 0x3d, 0x2a, 0x52, 0x22, 0xca, 0x41, 0x4a, 0xc1, 0x72, 0xde, 0x52, 0x0f, 0xc8, 0x16, 0x56,
-	0x08, 0x94, 0x5a, 0x45, 0xff, 0x10, 0xda, 0x02, 0xa9, 0xbc, 0x5c, 0x2a, 0x49, 0x64, 0x04, 0x13,
-	0x34, 0xb5, 0x8a, 0x60, 0x0f, 0x4d, 0x92, 0x11, 0x34, 0x02, 0x9d, 0x84, 0x41, 0xd3, 0x2d, 0x09,
-	0x97, 0x2b, 0xd6, 0x32, 0xc1, 0x56, 0xab, 0xd8, 0x6e, 0x8f, 0xce, 0xe9, 0xd6, 0x25, 0xf6, 0x18,
-	0xca, 0x02, 0x68, 0xfa, 0xa2, 0x6e, 0x5c, 0x2f, 0x1b, 0x8a, 0x49, 0xc0, 0xd5, 0x2a, 0xfa, 0x46,
-	0xd0, 0x2e, 0x40, 0x3e, 0x00, 0x9b, 0x52, 0x5e, 0xaf, 0x6a, 0x14, 0x61, 0x49, 0xb1, 0xdb, 0x4f,
-	0x99, 0xb6, 0x09, 0x35, 0xb7, 0xb7, 0x7b, 0x6e, 0xb7, 0x2d, 0x74, 0x00, 0x1b, 0xa6, 0xaa, 0x6b,
-	0x04, 0x60, 0x49, 0xd1, 0xfd, 0x44, 0x17, 0x40, 0xaa, 0xac, 0x16, 0x0c, 0x7b, 0x3f, 0x92, 0xa5,
-	0x3b, 0x00, 0xeb, 0xab, 0x59, 0x64, 0x46, 0xab, 0x54, 0xad, 0xe9, 0xa2, 0xac, 0x69, 0xb8, 0x24,
-	0x82, 0xcb, 0x39, 0xaf, 0xa3, 0x3d, 0xd0, 0xa7, 0xe0, 0x45, 0xb9, 0x5a, 0xb2, 0xa4, 0x05, 0x9b,
-	0xaa, 0xb8, 0x10, 0xed, 0x22, 0x12, 0xfa, 0x03, 0x10, 0x9d, 0x22, 0x1c, 0x0e, 0x46, 0x7b, 0x9c,
-	0x79, 0xfe, 0x41, 0x34, 0x0a, 0x7c, 0x5e, 0xd6, 0x24, 0x13, 0x5b, 0xe4, 0x94, 0x11, 0xc8, 0xf0,
-	0xc4, 0x12, 0x9d, 0x79, 0x59, 0xdb, 0x87, 0xad, 0xfd, 0xce, 0xa8, 0xed, 0x52, 0x79, 0x41, 0xaf,
-	0x5a, 0xe9, 0x6e, 0xea, 0x52, 0xf2, 0x81, 0x2e, 0x86, 0x2e, 0x7c, 0x83, 0x1d, 0xe2, 0xb1, 0x22,
-	0xd1, 0x43, 0x97, 0x46, 0x44, 0x91, 0x81, 0x9a, 0x22, 0x97, 0x38, 0x74, 0x12, 0x0c, 0x09, 0x8b,
-	0xd8, 0xe9, 0xce, 0xa1, 0xdf, 0x68, 0x27, 0xb4, 0x2e, 0xe8, 0x96, 0xa4, 0x6a, 0x8b, 0x7a, 0xba,
-	0x27, 0x97, 0x18, 0x4d, 0x4d, 0xf0, 0xb5, 0xe9, 0x53, 0xba, 0x35, 0xa3, 0x2d, 0xea, 0x62, 0xcb,
-	0x02, 0xfd, 0x81, 0x76, 0x42, 0x93, 0xed, 0xc6, 0x74, 0x2f, 0x59, 0x67, 0x73, 0xd0, 0x64, 0x9f,
-	0x32, 0xf4, 0x6a, 0x65, 0x5a, 0x2e, 0x95, 0x44, 0xc2, 0x84, 0xc6, 0xa1, 0x47, 0x3e, 0x20, 0xab,
-	0x25, 0xfb, 0x84, 0x48, 0x06, 0xc1, 0x90, 0xae, 0x99, 0xe9, 0xbe, 0x5c, 0x62, 0xb4, 0x4d, 0x44,
-	0x35, 0x92, 0xe8, 0x52, 0x84, 0x0b, 0x81, 0x0f, 0x1f, 0x54, 0x74, 0x4e, 0xf0, 0x74, 0xf6, 0x30,
-	0x4e, 0xa7, 0x7b, 0x24, 0x5f, 0xe5, 0x20, 0xb5, 0x67, 0xc3, 0x0e, 0xe4, 0x0e, 0x20, 0xd7, 0x3b,
-	0x39, 0x92, 0x31, 0x7a, 0x11, 0x06, 0x74, 0x05, 0x74, 0x93, 0x58, 0xef, 0x47, 0x2d, 0xb9, 0xde,
-	0xd6, 0x8e, 0x35, 0x7c, 0x3e, 0x38, 0x60, 0x0a, 0x1f, 0x81, 0xce, 0xf9, 0x59, 0xc9, 0x6f, 0xa0,
-	0x1d, 0x41, 0x03, 0x75, 0x53, 0x91, 0x7b, 0xa2, 0xe6, 0xb9, 0x33, 0x01, 0x1d, 0x1e, 0x0e, 0x2e,
-	0xb9, 0xe1, 0x4c, 0x1b, 0x68, 0x5b, 0xc0, 0x40, 0x0c, 0xbd, 0xa8, 0x79, 0xb6, 0x41, 0xa7, 0x81,
-	0xaf, 0xab, 0x62, 0xd3, 0x92, 0x34, 0x8c, 0x15, 0x4c, 0x6f, 0xc4, 0x56, 0xb1, 0xc3, 0x19, 0x9d,
-	0x23, 0x83, 0x31, 0x51, 0x6d, 0xc2, 0x3d, 0x18, 0x34, 0xaa, 0x0d, 0x8e, 0xd1, 0xe4, 0x69, 0xcc,
-	0x4d, 0x9e, 0xc6, 0xf6, 0x59, 0x86, 0xaa, 0x15, 0xae, 0x92, 0x4b, 0x55, 0xec, 0x1e, 0x9b, 0x5a,
-	0x24, 0x6c, 0x59, 0x2d, 0x12, 0xb2, 0x03, 0x50, 0x6b, 0x5c, 0x00, 0x12, 0xa0, 0x3d, 0xe0, 0xdf,
-	0x36, 0x92, 0xbe, 0x04, 0xc6, 0xec, 0x80, 0x84, 0x6f, 0xa8, 0xa8, 0x06, 0xa6, 0x01, 0x2f, 0x29,
-	0xba, 0x9f, 0xc2, 0x24, 0xf4, 0xce, 0xcf, 0x4a, 0xf9, 0x9a, 0x73, 0x26, 0x4b, 0x06, 0x96, 0x95,
-	0xe5, 0x18, 0xf0, 0x07, 0x9c, 0xe8, 0x7a, 0xf7, 0xa3, 0xd0, 0x11, 0x10, 0x71, 0x2a, 0x73, 0x2f,
-	0x22, 0x99, 0x95, 0x37, 0x77, 0x2f, 0xc6, 0x4b, 0xa7, 0x32, 0xbf, 0x08, 0x9b, 0x9c, 0xf9, 0x52,
-	0x01, 0x5b, 0xfe, 0x23, 0x18, 0x82, 0x0e, 0x57, 0x7f, 0x96, 0xe8, 0xa6, 0x47, 0x09, 0x7f, 0x7a,
-	0x24, 0x7c, 0x85, 0x23, 0x77, 0xb9, 0xbb, 0x94, 0xbd, 0x86, 0x9d, 0xe1, 0x4d, 0x2d, 0x3b, 0xe9,
-	0xe0, 0xe9, 0xaf, 0x67, 0xe2, 0xd2, 0xa2, 0x6f, 0x3d, 0xfb, 0x93, 0xa6, 0x63, 0xc1, 0x84, 0xb4,
-	0x59, 0xa5, 0xc9, 0xe8, 0x97, 0x38, 0xd8, 0x1c, 0x52, 0x64, 0x6a, 0x79, 0x1f, 0x9d, 0x74, 0x06,
-	0x94, 0x60, 0x26, 0x8b, 0xc2, 0x21, 0x0e, 0x7a, 0x5c, 0x25, 0xc8, 0xed, 0x4f, 0x8c, 0x3e, 0x71,
-	0xba, 0x0a, 0x0c, 0x01, 0x38, 0x39, 0x84, 0xa7, 0x43, 0x9b, 0x33, 0x42, 0x33, 0x74, 0x27, 0x19,
-	0x0c, 0x64, 0xe8, 0x34, 0x3f, 0x25, 0xd6, 0x67, 0x9e, 0x51, 0xe1, 0xcb, 0x1c, 0x20, 0x57, 0x4b,
-	0x05, 0x97, 0xb0, 0x75, 0x46, 0xa0, 0x61, 0x27, 0x26, 0x7a, 0x05, 0x1b, 0xae, 0xfa, 0xd4, 0x52,
-	0xe0, 0x0e, 0xcd, 0x28, 0xc2, 0x03, 0x9c, 0x07, 0x53, 0x4f, 0x0f, 0xfb, 0x8e, 0xdd, 0x70, 0x5d,
-	0xec, 0x24, 0x89, 0xaa, 0x20, 0x05, 0xb3, 0xfd, 0x76, 0x3a, 0x4a, 0xd3, 0x6b, 0xe1, 0x20, 0x07,
-	0x7d, 0xae, 0xc6, 0x58, 0x51, 0x09, 0xca, 0xe6, 0x49, 0xdc, 0x5b, 0x6f, 0x85, 0x73, 0xd0, 0x6e,
-	0x2f, 0x50, 0xd3, 0xc6, 0xd1, 0xd8, 0x1e, 0xdb, 0x5f, 0xab, 0x3f, 0x18, 0xbe, 0x65, 0x69, 0x38,
-	0x49, 0xa2, 0xec, 0x59, 0xd1, 0x90, 0xde, 0x05, 0x49, 0x5f, 0x92, 0x24, 0x3c, 0xcc, 0xd0, 0x90,
-	0x04, 0xfa, 0xb3, 0xa0, 0xe1, 0x2e, 0x00, 0x9a, 0x09, 0x90, 0xeb, 0x27, 0xc9, 0xbc, 0x7e, 0xda,
-	0xf2, 0xae, 0x82, 0xc2, 0x2b, 0x2c, 0xe3, 0xda, 0xb5, 0xce, 0xc6, 0xe3, 0x75, 0x27, 0x20, 0xb2,
-	0x37, 0x32, 0x9d, 0x56, 0x67, 0x35, 0xcc, 0x76, 0x05, 0x74, 0x9b, 0x51, 0xd0, 0x28, 0xb4, 0xaa,
-	0x26, 0xe5, 0x72, 0xee, 0xe5, 0x0e, 0x5f, 0x46, 0xa9, 0x97, 0xc4, 0x16, 0xd5, 0x24, 0xbc, 0xc2,
-	0x4b, 0x1c, 0x0c, 0x87, 0x77, 0x78, 0x31, 0x23, 0x53, 0xde, 0xf0, 0xfd, 0x5e, 0x04, 0x1d, 0xc1,
-	0x0c, 0x3f, 0xb9, 0x56, 0x86, 0xdf, 0xbe, 0xe0, 0xfb, 0x12, 0xee, 0xf1, 0x45, 0x66, 0x59, 0x51,
-	0xce, 0x58, 0xa0, 0xa9, 0x15, 0xe0, 0xbe, 0x7d, 0x38, 0x05, 0xb8, 0xb1, 0x4a, 0x37, 0x41, 0x50,
-	0x61, 0x90, 0x7d, 0x63, 0x4f, 0x2d, 0xcf, 0xaa, 0xda, 0xd2, 0xe9, 0xea, 0xe9, 0xf6, 0x18, 0x12,
-	0x5e, 0x8f, 0x41, 0x78, 0x88, 0x83, 0xb4, 0xbb, 0x96, 0xa5, 0x17, 0x0a, 0x25, 0x3c, 0xa7, 0x5f,
-	0xea, 0x96, 0x79, 0x1b, 0xee, 0xd8, 0x1d, 0xd0, 0x82, 0x35, 0x7b, 0xb3, 0x8a, 0xe3, 0xd2, 0x30,
-	0x34, 0x1d, 0xaa, 0x70, 0x3f, 0x07, 0xfd, 0xae, 0xda, 0x5e, 0x09, 0xe8, 0x54, 0x85, 0xa7, 0xab,
-	0x77, 0x9d, 0x29, 0x31, 0xad, 0xf5, 0x9b, 0x6a, 0xb5, 0xfe, 0x16, 0x48, 0xc9, 0xf9, 0x3c, 0x36,
-	0x4d, 0xa9, 0x28, 0x9b, 0x45, 0xc7, 0x95, 0x40, 0x87, 0x2e, 0x93, 0xcd, 0xa2, 0x60, 0x40, 0x2e,
-	0x94, 0x8c, 0xf8, 0x8a, 0x86, 0x0f, 0x9c, 0x1a, 0xb1, 0x53, 0xb1, 0x3c, 0x64, 0x7c, 0x6b, 0xda,
-	0xe8, 0x36, 0x7d, 0x7d, 0xb9, 0xd3, 0x5c, 0xcd, 0xed, 0x72, 0x24, 0xe8, 0xce, 0x85, 0x6f, 0xfb,
-	0x42, 0xa0, 0x0d, 0xd4, 0x65, 0x37, 0xe3, 0xfb, 0x00, 0xdb, 0x61, 0xf7, 0x1f, 0xcf, 0x03, 0x50,
-	0x4d, 0xc9, 0xdf, 0x52, 0x89, 0x60, 0xa3, 0x4d, 0x35, 0xa7, 0x29, 0x5d, 0xb8, 0x3d, 0xe1, 0x81,
-	0x9a, 0xd6, 0xd3, 0x5e, 0x62, 0xbc, 0xee, 0xa0, 0xee, 0x87, 0xd6, 0x5a, 0xc8, 0x75, 0x7a, 0x3d,
-	0xb2, 0x13, 0x6a, 0x2f, 0x80, 0xcd, 0x25, 0x5c, 0x90, 0xf3, 0xcb, 0x92, 0x81, 0x0f, 0xe8, 0x4b,
-	0x58, 0xaa, 0x60, 0xa3, 0x2c, 0x6b, 0x58, 0xa3, 0xb7, 0x60, 0xab, 0xd8, 0x47, 0xc9, 0x22, 0xa1,
-	0xee, 0x75, 0x89, 0x8c, 0xa2, 0xab, 0x99, 0x55, 0x74, 0x7d, 0x1c, 0x52, 0xb4, 0x44, 0x91, 0x48,
-	0x77, 0xa5, 0xc5, 0xe9, 0x2e, 0x84, 0x8b, 0xac, 0x19, 0xcd, 0xda, 0x3d, 0x41, 0x6b, 0x2c, 0xa0,
-	0xfc, 0x17, 0xcb, 0x16, 0xb6, 0x67, 0x57, 0x4d, 0xb9, 0x80, 0xa5, 0x92, 0x5a, 0x56, 0x69, 0xed,
-	0xb4, 0xd6, 0x6c, 0xc2, 0x3f, 0x6b, 0xb3, 0xdb, 0xa5, 0x1d, 0x4d, 0x38, 0xda, 0xea, 0x29, 0xed,
-	0x68, 0x3a, 0x72, 0x33, 0x17, 0x88, 0x6b, 0xe4, 0x92, 0x31, 0xaf, 0x56, 0xad, 0x22, 0xf5, 0x8c,
-	0xb9, 0x71, 0xa9, 0xf9, 0x4d, 0x1c, 0x0c, 0xf9, 0x34, 0x89, 0xf6, 0x61, 0xd6, 0x1d, 0x25, 0x6e,
-	0xec, 0x6d, 0xf2, 0xc5, 0xde, 0x87, 0x1b, 0x21, 0xbb, 0xaa, 0x16, 0xe6, 0x46, 0x82, 0x35, 0x0d,
-	0x2d, 0x14, 0xa5, 0x8a, 0x03, 0x4e, 0xf7, 0xd3, 0x46, 0x8a, 0xbe, 0xb8, 0x68, 0x62, 0x8b, 0xe2,
-	0xac, 0xb9, 0x0e, 0xa4, 0x50, 0x7e, 0x82, 0xb3, 0x0b, 0x6b, 0xb3, 0x89, 0x01, 0x5a, 0xea, 0xc0,
-	0x8b, 0x33, 0x9d, 0xdc, 0x75, 0xbd, 0x90, 0xf4, 0x00, 0x9a, 0x14, 0xe9, 0x87, 0xf0, 0x05, 0xaf,
-	0xbe, 0xcb, 0x17, 0x71, 0x7e, 0x69, 0x5d, 0x3c, 0xc7, 0x06, 0x11, 0x82, 0x26, 0x12, 0xd7, 0x1d,
-	0xcf, 0xd9, 0xbf, 0x85, 0x2f, 0x7a, 0xf1, 0x45, 0x2d, 0xaf, 0x5b, 0x7c, 0xa9, 0x7f, 0xfd, 0x3f,
-	0x07, 0x91, 0xe3, 0xad, 0x3e, 0x43, 0xb4, 0xc1, 0xc6, 0xc6, 0x9d, 0x25, 0x34, 0x08, 0x6d, 0x4e,
-	0x58, 0xaa, 0x21, 0xc7, 0x1b, 0x40, 0xff, 0xe7, 0xe0, 0xbe, 0x9e, 0x0e, 0x10, 0x7d, 0xf5, 0x38,
-	0x17, 0xb8, 0xeb, 0xea, 0x42, 0x09, 0x77, 0x1d, 0x49, 0x28, 0x7c, 0xc8, 0xa4, 0x10, 0xf1, 0x83,
-	0xcf, 0x63, 0xb0, 0x2f, 0x12, 0x12, 0xac, 0x12, 0x2e, 0x03, 0x49, 0xf9, 0x6a, 0xf0, 0x02, 0x3f,
-	0xbc, 0x0e, 0x72, 0xde, 0x95, 0x4d, 0x6b, 0xbe, 0x75, 0x0d, 0x11, 0xa7, 0x68, 0x61, 0x37, 0x76,
-	0x24, 0x7d, 0xb1, 0xe3, 0x08, 0x07, 0xa3, 0x41, 0x0d, 0xe9, 0x25, 0xa2, 0xac, 0x6f, 0x14, 0x39,
-	0x45, 0x4d, 0xfd, 0xe1, 0x25, 0x19, 0x08, 0x2f, 0xc2, 0x3d, 0x09, 0x0f, 0xb2, 0x76, 0x31, 0x71,
-	0x36, 0x0d, 0x1a, 0x1f, 0xea, 0x90, 0x0f, 0xae, 0xee, 0x33, 0xdc, 0xd9, 0xbc, 0x66, 0xcf, 0x8f,
-	0x64, 0x02, 0x6d, 0xac, 0xdc, 0x27, 0x94, 0x18, 0xd4, 0x2e, 0x67, 0xa8, 0xff, 0x72, 0x7e, 0x8c,
-	0x83, 0xad, 0xae, 0x7f, 0x4c, 0x1a, 0x52, 0x26, 0x23, 0x6f, 0x00, 0x1b, 0xe7, 0xa2, 0x98, 0xd7,
-	0x89, 0xe4, 0x2a, 0xaf, 0x13, 0xe8, 0x2a, 0x6c, 0x2f, 0x26, 0xed, 0x89, 0xb6, 0xdf, 0xcd, 0x34,
-	0x47, 0x3a, 0xfa, 0x71, 0xed, 0x77, 0x53, 0x18, 0x86, 0x94, 0x33, 0x7d, 0x56, 0xd7, 0x0a, 0x76,
-	0x58, 0xf0, 0xe6, 0x25, 0x5c, 0xa6, 0x69, 0xe8, 0x73, 0x98, 0xf6, 0x33, 0xdf, 0xb9, 0xdd, 0x65,
-	0x56, 0x79, 0xe7, 0x36, 0x05, 0x11, 0x06, 0x1c, 0x21, 0xb5, 0xaa, 0xdc, 0x9f, 0x03, 0xed, 0x0e,
-	0x8a, 0x1a, 0x8a, 0x3e, 0xac, 0xfa, 0xb8, 0x5d, 0x99, 0x73, 0xd0, 0xef, 0xc8, 0x64, 0x1c, 0xab,
-	0xff, 0x0f, 0x4a, 0x5c, 0xf5, 0xf9, 0x29, 0x22, 0x2f, 0x7a, 0xb5, 0xc4, 0xcb, 0x8b, 0xf2, 0x3a,
-	0xf2, 0xce, 0x7d, 0x34, 0x05, 0x1d, 0x01, 0x78, 0xa0, 0x6e, 0xe8, 0x98, 0x16, 0xa7, 0x77, 0x4f,
-	0x48, 0xfb, 0xe7, 0xae, 0x98, 0xbb, 0xf2, 0xea, 0x39, 0xbe, 0x01, 0x6d, 0x87, 0x2c, 0x1d, 0x8a,
-	0x7b, 0x0b, 0xe6, 0x0f, 0x1f, 0xfd, 0xee, 0xcf, 0x1a, 0x51, 0x0e, 0x7a, 0x18, 0x7c, 0xfc, 0x83,
-	0xef, 0x9f, 0xb8, 0xed, 0xfd, 0x95, 0x95, 0x95, 0x15, 0x0e, 0x65, 0xa1, 0x9b, 0x72, 0xf8, 0xe9,
-	0x6f, 0x3e, 0xf7, 0xf8, 0x5b, 0x2b, 0x94, 0x3e, 0x02, 0x9b, 0x29, 0x3d, 0xd2, 0xd3, 0xe7, 0xff,
-	0x72, 0xe2, 0x91, 0x1f, 0x9c, 0xa0, 0x5c, 0x43, 0xc0, 0x87, 0xb9, 0xf8, 0xfb, 0x0e, 0xfd, 0xee,
-	0x8f, 0xce, 0x22, 0x5b, 0xa1, 0x37, 0x4c, 0xde, 0x8b, 0xf1, 0x12, 0xff, 0xe6, 0x13, 0xb7, 0xfd,
-	0xdd, 0x91, 0x30, 0xe8, 0xb2, 0x04, 0xff, 0x2c, 0x82, 0xbf, 0xf7, 0xb5, 0xbb, 0x6e, 0x4c, 0xa2,
-	0xad, 0xd0, 0xef, 0x09, 0x08, 0x15, 0xfa, 0xfc, 0x0b, 0xcf, 0xfc, 0xf4, 0xd5, 0x46, 0xb4, 0xd3,
-	0x35, 0x49, 0x5c, 0x4b, 0x9d, 0x7f, 0xe4, 0x9f, 0x37, 0xfd, 0xfc, 0x24, 0x5d, 0x4d, 0x80, 0x4c,
-	0x94, 0xd9, 0x6d, 0x7b, 0xf3, 0x4f, 0x3d, 0xf4, 0xa7, 0xa3, 0x4d, 0x68, 0x18, 0x36, 0xf9, 0x78,
-	0x7c, 0x5d, 0x69, 0xfe, 0x81, 0x5f, 0xbf, 0xff, 0xc3, 0x93, 0xee, 0xc6, 0xfb, 0x7c, 0x4c, 0x5e,
-	0x33, 0x96, 0xff, 0xfe, 0xcb, 0x4f, 0xbe, 0xd1, 0x8c, 0x72, 0x01, 0xbd, 0x83, 0xbd, 0x5a, 0xfe,
-	0xd8, 0xc1, 0xbb, 0xaf, 0x41, 0xdb, 0x20, 0xed, 0xe3, 0x08, 0xf4, 0x46, 0xf9, 0xfb, 0x1e, 0xfb,
-	0xce, 0x91, 0x77, 0xe9, 0x3a, 0x39, 0x26, 0x1b, 0x69, 0x50, 0xf2, 0xef, 0xbc, 0x73, 0xf4, 0x6f,
-	0xc9, 0x18, 0x0e, 0xd2, 0x7f, 0xe3, 0xdf, 0x78, 0xf6, 0xd6, 0x23, 0x4d, 0x71, 0x32, 0xec, 0x73,
-	0xc2, 0xff, 0xeb, 0x99, 0x3b, 0x9e, 0xe2, 0xd0, 0x18, 0x6c, 0x67, 0x70, 0x30, 0xfa, 0x58, 0xfc,
-	0xcd, 0x47, 0x5f, 0x78, 0x3e, 0x89, 0xb2, 0x01, 0x13, 0xf9, 0xda, 0x43, 0xfc, 0xd7, 0x9f, 0x7e,
-	0xfb, 0x78, 0x0b, 0x3a, 0x0f, 0xb6, 0xc4, 0xba, 0x8d, 0xf6, 0x67, 0xf8, 0xaf, 0xfe, 0xf6, 0xce,
-	0x6f, 0x39, 0x10, 0x18, 0x85, 0x01, 0x1f, 0x77, 0xb8, 0xc3, 0xc2, 0xbf, 0x7b, 0xec, 0xc5, 0x9f,
-	0x38, 0x78, 0x1a, 0x86, 0x41, 0x1f, 0x67, 0xa4, 0xa9, 0xc1, 0xbf, 0x72, 0xec, 0xe4, 0x24, 0xda,
-	0x09, 0xc3, 0x51, 0x1f, 0x47, 0xba, 0x09, 0xfc, 0xe1, 0xdf, 0xbc, 0x7c, 0x7b, 0x02, 0x6d, 0x83,
-	0xa1, 0x20, 0x73, 0xa8, 0x0d, 0xc0, 0x3f, 0xfb, 0xd2, 0x1f, 0xde, 0x6d, 0x0c, 0x79, 0x2b, 0x50,
-	0xc7, 0xf3, 0xb7, 0xfc, 0xfe, 0xd8, 0xf7, 0x56, 0x58, 0x3b, 0x09, 0x97, 0xd5, 0xfc, 0x33, 0x37,
-	0xfe, 0xe2, 0xc8, 0x7b, 0x94, 0x33, 0x62, 0xa1, 0x48, 0xa5, 0xc7, 0xbf, 0x70, 0xd3, 0xe1, 0x3b,
-	0x9c, 0x7d, 0xef, 0x82, 0x5c, 0x90, 0x3b, 0x1a, 0x96, 0xf8, 0xe7, 0x5e, 0xfb, 0xf1, 0x5b, 0x0e,
-	0xfb, 0x18, 0x6c, 0x5d, 0x8b, 0xdd, 0xe4, 0xdf, 0x7e, 0xf0, 0xd1, 0x7b, 0xff, 0xcb, 0x3a, 0x15,
-	0xa1, 0x62, 0x81, 0xff, 0xda, 0xeb, 0x07, 0xef, 0x6e, 0x41, 0xc3, 0x81, 0xad, 0x85, 0x33, 0x7a,
-	0xfe, 0xc5, 0x5f, 0xde, 0xf5, 0x64, 0x32, 0xba, 0x30, 0x23, 0xeb, 0xe6, 0x57, 0xee, 0xbf, 0xeb,
-	0x57, 0x0e, 0xba, 0x83, 0xae, 0x8a, 0xcb, 0x22, 0xf9, 0x87, 0xbf, 0x79, 0xeb, 0x83, 0x49, 0xf4,
-	0x61, 0xd8, 0x19, 0x61, 0x8e, 0x4f, 0xe8, 0xf8, 0x7f, 0x3c, 0xf1, 0xf4, 0x8d, 0x4c, 0x7b, 0xb0,
-	0x33, 0x2b, 0xfe, 0xed, 0x3b, 0x5f, 0x7f, 0xef, 0x84, 0xeb, 0x9c, 0x11, 0x1f, 0x7f, 0xec, 0x4d,
-	0xcf, 0xff, 0xe8, 0xf1, 0xfb, 0xbf, 0x91, 0xcc, 0x34, 0xdd, 0x72, 0x28, 0xdb, 0x30, 0x71, 0xa8,
-	0x07, 0x5a, 0xc4, 0xbd, 0xd3, 0xe4, 0x46, 0xbd, 0x0c, 0x7a, 0x58, 0x4f, 0x89, 0x83, 0x6e, 0x0e,
-	0xc0, 0x3a, 0x16, 0x99, 0xe8, 0xbd, 0x2b, 0x34, 0xa0, 0x6b, 0x20, 0x1d, 0xfb, 0x52, 0xb8, 0x35,
-	0x22, 0x2e, 0xcc, 0x92, 0x49, 0x53, 0x96, 0xe8, 0xa5, 0x2f, 0x34, 0xa0, 0xcb, 0xa1, 0x97, 0xf9,
-	0xf6, 0x37, 0xc4, 0x14, 0xeb, 0x92, 0xd9, 0x6a, 0x4e, 0x01, 0x1f, 0x79, 0xc2, 0xeb, 0x0f, 0xca,
-	0xf1, 0x91, 0xd8, 0x32, 0x3e, 0x09, 0x5d, 0xe1, 0x07, 0xb6, 0x74, 0x50, 0x84, 0x47, 0x61, 0x4b,
-	0x70, 0xcd, 0x1e, 0x7a, 0x1a, 0x1b, 0x8c, 0x93, 0x62, 0x53, 0xd9, 0x92, 0x2e, 0x05, 0xc4, 0x78,
-	0xb2, 0x1a, 0x08, 0x0a, 0x0a, 0x10, 0xeb, 0x93, 0x43, 0x1f, 0x96, 0x62, 0xe4, 0x10, 0x62, 0x7d,
-	0x72, 0xe8, 0xf3, 0x4f, 0x8c, 0x1c, 0x42, 0xac, 0x53, 0x1f, 0xf2, 0x16, 0x13, 0xa7, 0x8f, 0x4d,
-	0x64, 0xcb, 0x59, 0x80, 0xdc, 0x9a, 0x2f, 0x1e, 0xe7, 0xb0, 0xa5, 0x32, 0x58, 0x57, 0xc7, 0x94,
-	0xff, 0xf1, 0x21, 0x84, 0x29, 0x1f, 0x89, 0x2d, 0x63, 0x1e, 0xfa, 0xe3, 0x5f, 0x08, 0x84, 0xd5,
-	0x8e, 0x23, 0xe5, 0x61, 0x4b, 0x9d, 0x85, 0x3e, 0xf6, 0x5b, 0x40, 0x36, 0x28, 0x31, 0x4c, 0x67,
-	0x4b, 0xbb, 0x1c, 0x36, 0xc5, 0xb4, 0xe8, 0xb7, 0x04, 0xc5, 0x45, 0x18, 0x32, 0xc1, 0x0a, 0x47,
-	0x68, 0x40, 0x9f, 0x81, 0xa1, 0xd5, 0x5b, 0xe8, 0xdb, 0x99, 0x87, 0x3b, 0xc2, 0xe7, 0x6a, 0xea,
-	0x4b, 0xf7, 0x85, 0x06, 0x74, 0x2d, 0x6c, 0x8e, 0x6b, 0x96, 0xe7, 0x22, 0x72, 0x43, 0x1c, 0x99,
-	0x81, 0x80, 0xc4, 0x60, 0xda, 0x2f, 0x34, 0xa0, 0x3d, 0x0e, 0x32, 0x83, 0x2d, 0xf2, 0x81, 0xa8,
-	0x8b, 0x6a, 0xc4, 0x55, 0x83, 0xdb, 0x55, 0x8e, 0x8b, 0x22, 0x9d, 0xed, 0x90, 0x8b, 0xc2, 0xf4,
-	0xcc, 0x6a, 0x99, 0xbf, 0xd0, 0x80, 0x14, 0x0f, 0x50, 0xd1, 0xd6, 0x6c, 0x14, 0x50, 0x11, 0x9e,
-	0xcc, 0xd6, 0x80, 0xd2, 0xac, 0x7a, 0x45, 0x68, 0x40, 0x9f, 0x83, 0xcc, 0x2a, 0x6d, 0xd7, 0xe1,
-	0xc8, 0x32, 0x51, 0xa6, 0xb5, 0xf6, 0xb1, 0x08, 0x03, 0xab, 0xb5, 0x54, 0x47, 0xea, 0x58, 0xc2,
-	0xcc, 0x6c, 0x09, 0xec, 0x85, 0xb9, 0xce, 0xac, 0x73, 0xc9, 0x84, 0x1b, 0x90, 0xa1, 0x4b, 0x26,
-	0x44, 0xce, 0xb0, 0xfe, 0x54, 0xc7, 0x77, 0xf0, 0x22, 0xfd, 0xc4, 0x90, 0x57, 0xc3, 0x74, 0xf6,
-	0xc1, 0xf3, 0xd9, 0x80, 0xd5, 0x1c, 0x1c, 0x61, 0x1e, 0x95, 0x10, 0x57, 0xc8, 0x06, 0x51, 0x0e,
-	0xa1, 0x01, 0x7d, 0xda, 0x39, 0x94, 0xb1, 0x4d, 0xb2, 0xed, 0xac, 0x0b, 0x8a, 0xe1, 0xd3, 0xc8,
-	0x71, 0x2f, 0xc2, 0xb6, 0xfa, 0x9a, 0x5b, 0x63, 0xac, 0x15, 0xe2, 0xf9, 0xa3, 0x2b, 0xb9, 0xb6,
-	0x8a, 0xe9, 0x4a, 0x8d, 0x44, 0x63, 0x3d, 0x43, 0xff, 0x3a, 0xf0, 0xf2, 0x59, 0xc8, 0xae, 0xd1,
-	0x5d, 0xd9, 0x11, 0x5c, 0x2a, 0x96, 0x91, 0xe9, 0xf3, 0xa9, 0x2b, 0xff, 0xfd, 0x6a, 0x96, 0x7b,
-	0xea, 0x78, 0x96, 0x7b, 0xee, 0x78, 0x96, 0xfb, 0xeb, 0xf1, 0x2c, 0x77, 0xed, 0x85, 0xbe, 0xff,
-	0xdb, 0x60, 0x61, 0xb9, 0x5c, 0x30, 0x64, 0xef, 0xc7, 0x2e, 0x13, 0x1b, 0x07, 0xb0, 0x31, 0x2e,
-	0x57, 0x2a, 0xe3, 0xf6, 0x4f, 0x35, 0x8f, 0xc7, 0x17, 0xd4, 0xcf, 0x8f, 0xdb, 0x92, 0xc9, 0x3f,
-	0x0b, 0xcd, 0xc4, 0x4c, 0xbb, 0xff, 0x17, 0x00, 0x00, 0xff, 0xff, 0x29, 0x7f, 0xf2, 0xcb, 0x38,
-	0x31, 0x00, 0x00,
+	// 3239 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x5b, 0x7b, 0x6c, 0x1d, 0xc5,
+	0xd5, 0xf7, 0xe6, 0xfa, 0xfa, 0x71, 0xae, 0xed, 0x6c, 0xc6, 0x76, 0xb2, 0xbe, 0x8e, 0x9d, 0x9b,
+	0xcd, 0xcb, 0x10, 0xe2, 0x7c, 0x9f, 0xc3, 0x87, 0xbe, 0xef, 0x2b, 0xd0, 0x3a, 0x06, 0x8a, 0xc1,
+	0x31, 0xd1, 0xc6, 0x81, 0x82, 0xaa, 0x6e, 0xd7, 0x77, 0xc7, 0xd7, 0xab, 0x5c, 0xdf, 0xbd, 0xec,
+	0x8e, 0x03, 0xae, 0xd4, 0x0a, 0x35, 0x6d, 0x41, 0xf4, 0xa5, 0xaa, 0xb4, 0x40, 0x0b, 0x4d, 0x2b,
+	0xa8, 0x68, 0x50, 0x15, 0x8a, 0x84, 0x2a, 0xa8, 0x4a, 0x51, 0x5b, 0x10, 0x20, 0x88, 0x4a, 0x11,
+	0xa1, 0xf4, 0x49, 0x49, 0x41, 0xd0, 0x17, 0xf0, 0x4f, 0x11, 0x50, 0x1e, 0xd5, 0xcc, 0xec, 0xde,
+	0xdd, 0xd9, 0x9d, 0xeb, 0xdc, 0x04, 0xc7, 0xe1, 0x0f, 0x74, 0xf7, 0x9c, 0x33, 0x67, 0xce, 0x9c,
+	0xf9, 0x9d, 0x33, 0x67, 0xce, 0x38, 0xd0, 0x59, 0x9c, 0xb5, 0xc8, 0x30, 0x29, 0x0f, 0x57, 0x3d,
+	0x97, 0xb8, 0xa8, 0x99, 0x7e, 0xe6, 0xb7, 0x95, 0x1c, 0x32, 0x3b, 0x3f, 0x3d, 0x5c, 0x74, 0xe7,
+	0xb6, 0x97, 0xdc, 0x92, 0xbb, 0x9d, 0x31, 0xa7, 0xe7, 0x67, 0xd8, 0x17, 0xfb, 0x60, 0xbf, 0xf8,
+	0xa0, 0xfc, 0x60, 0xc9, 0x75, 0x4b, 0x65, 0x1c, 0x49, 0x5d, 0xe3, 0x59, 0xd5, 0x2a, 0xf6, 0xfc,
+	0x80, 0x9f, 0xf7, 0x8b, 0xb3, 0x78, 0xce, 0xa2, 0xb3, 0x14, 0x5d, 0x0f, 0x9b, 0x64, 0xa1, 0x8a,
+	0x43, 0x5e, 0x5f, 0xc4, 0x23, 0x9e, 0x55, 0xf1, 0xab, 0xae, 0x47, 0x02, 0x56, 0x4f, 0xc4, 0xf2,
+	0x17, 0x2a, 0x45, 0x4e, 0xd5, 0x6f, 0xc9, 0x40, 0xe7, 0xd8, 0xac, 0x45, 0xc6, 0x2b, 0xfb, 0x1d,
+	0x82, 0x2f, 0xbc, 0x96, 0xa0, 0x4d, 0xd0, 0x55, 0xf5, 0xb0, 0xed, 0x14, 0x2d, 0x82, 0xcd, 0x8a,
+	0x35, 0x87, 0x35, 0xa5, 0xa0, 0x0c, 0xb5, 0x1b, 0x9d, 0x35, 0xea, 0xa4, 0x35, 0x87, 0xd1, 0xff,
+	0x40, 0xae, 0xe8, 0x56, 0x7c, 0xe2, 0xcd, 0x17, 0x89, 0xeb, 0x69, 0x2b, 0x0a, 0xca, 0x50, 0xd7,
+	0x48, 0xf7, 0x30, 0x5b, 0xff, 0xd4, 0xc4, 0x58, 0xc4, 0x32, 0xe2, 0x72, 0x68, 0x13, 0x30, 0x9f,
+	0x68, 0x99, 0x82, 0x32, 0x94, 0x1b, 0x59, 0xc5, 0xe5, 0x77, 0xcd, 0x13, 0x6b, 0xba, 0x8c, 0xa9,
+	0x1d, 0x06, 0x63, 0x53, 0x23, 0x3c, 0x7c, 0xf5, 0x3c, 0xf6, 0x89, 0x59, 0xc1, 0xd8, 0xc6, 0xb6,
+	0xd6, 0x5c, 0x50, 0x86, 0xda, 0x8c, 0xce, 0x80, 0x3a, 0xc9, 0x88, 0xa8, 0x07, 0xb2, 0xc4, 0x21,
+	0x65, 0xac, 0x65, 0x99, 0x89, 0xfc, 0x03, 0x8d, 0x40, 0xd6, 0x9a, 0x76, 0xe7, 0x89, 0xd6, 0xc2,
+	0x26, 0x59, 0x3b, 0xcc, 0x1d, 0x3a, 0x1c, 0x3a, 0x74, 0x78, 0x0f, 0xf1, 0x9c, 0x4a, 0xe9, 0x72,
+	0xab, 0x3c, 0x8f, 0x0d, 0x2e, 0x8a, 0x36, 0x42, 0xb6, 0x3a, 0xeb, 0x12, 0x57, 0x6b, 0x65, 0x63,
+	0xba, 0x86, 0xe7, 0x08, 0x13, 0x1f, 0xde, 0x4d, 0xa9, 0x06, 0x67, 0xa2, 0x6d, 0x80, 0xaa, 0x96,
+	0x47, 0x9c, 0xa2, 0x53, 0xb5, 0x2a, 0xc4, 0x37, 0x8b, 0xee, 0x7c, 0x85, 0x68, 0x6d, 0x05, 0x65,
+	0x28, 0x6b, 0xac, 0x8a, 0x73, 0xc6, 0x28, 0x03, 0xe9, 0xd0, 0x11, 0x27, 0x6a, 0xed, 0x85, 0xcc,
+	0x50, 0xc6, 0x10, 0x68, 0x48, 0x83, 0x56, 0x7c, 0x6d, 0xd5, 0xf1, 0xb0, 0xaf, 0x01, 0xd3, 0x13,
+	0x7e, 0xea, 0xa3, 0xd0, 0x33, 0x35, 0x61, 0x16, 0x6b, 0x9b, 0x33, 0x5a, 0xf6, 0xb0, 0x65, 0x2f,
+	0xa0, 0x33, 0x20, 0x6b, 0x5b, 0xc4, 0x1a, 0x61, 0xfb, 0x92, 0x0b, 0x7d, 0x2e, 0x6c, 0xa2, 0xc1,
+	0x25, 0xf4, 0xff, 0x87, 0x4e, 0x41, 0xc5, 0x89, 0x8c, 0x3d, 0x1f, 0x56, 0x09, 0x63, 0x77, 0x63,
+	0xbc, 0xef, 0x44, 0xc6, 0xbf, 0xde, 0x02, 0x9d, 0xe3, 0x73, 0x73, 0xd1, 0xd6, 0x9e, 0x62, 0x64,
+	0x75, 0xc1, 0x0a, 0xc7, 0x66, 0xb8, 0xca, 0x18, 0x2b, 0x1c, 0x9b, 0x3a, 0xb6, 0xe8, 0x61, 0x8b,
+	0xaa, 0x68, 0x66, 0xc4, 0xf0, 0xb3, 0x0e, 0x6a, 0x6a, 0x08, 0x68, 0x59, 0x0c, 0x01, 0x05, 0xc8,
+	0xd9, 0xd8, 0x2a, 0x12, 0x67, 0xbf, 0x45, 0xb0, 0xcd, 0xd0, 0xd2, 0x66, 0xc4, 0x49, 0x68, 0x1d,
+	0xe4, 0x8a, 0x56, 0xb9, 0x6c, 0x32, 0x0a, 0x66, 0xe0, 0x68, 0x33, 0x80, 0x92, 0x46, 0x19, 0x05,
+	0x6d, 0x84, 0x2e, 0x26, 0x50, 0x71, 0x89, 0x89, 0xe7, 0xaa, 0x64, 0x41, 0x6b, 0x67, 0x32, 0x1d,
+	0x94, 0x3a, 0xe9, 0x92, 0x0b, 0x29, 0x0d, 0x0d, 0x02, 0x54, 0xdc, 0x19, 0xd7, 0xbb, 0xc6, 0xf2,
+	0x6c, 0x0e, 0x8d, 0x36, 0x23, 0x46, 0xa9, 0x03, 0xc5, 0x5c, 0x3d, 0x28, 0x22, 0x68, 0xb6, 0x2d,
+	0x82, 0xb5, 0x0e, 0xe6, 0x0a, 0xf6, 0x9b, 0x7a, 0x68, 0x3f, 0xf6, 0x7c, 0xc7, 0xad, 0x68, 0x9d,
+	0x1c, 0x7a, 0xc1, 0x27, 0x3a, 0x07, 0x72, 0x73, 0x4e, 0xc9, 0xa3, 0xeb, 0x31, 0x89, 0xab, 0x75,
+	0x31, 0x8f, 0xf4, 0xd6, 0x3c, 0x32, 0x5e, 0xa9, 0xce, 0x93, 0xb1, 0x59, 0xab, 0x52, 0xc1, 0x65,
+	0x03, 0x42, 0xc9, 0x29, 0x17, 0xed, 0x82, 0x5e, 0x1b, 0xcf, 0x58, 0xf3, 0x65, 0x62, 0x4e, 0x53,
+	0xae, 0x6d, 0x7a, 0x4e, 0x69, 0x96, 0xf8, 0xda, 0x4a, 0xa6, 0xa1, 0xaf, 0xa6, 0x81, 0xe2, 0x61,
+	0x27, 0x93, 0x30, 0x98, 0x80, 0xd1, 0x1d, 0x8c, 0x8b, 0x13, 0xd1, 0x10, 0xa8, 0x45, 0xab, 0x62,
+	0xfa, 0x98, 0x98, 0xf3, 0x3e, 0xf6, 0x18, 0x64, 0x54, 0xe6, 0x89, 0xae, 0xa2, 0x55, 0xd9, 0x83,
+	0xc9, 0xde, 0x80, 0x4a, 0xb7, 0x94, 0x87, 0xfc, 0x2a, 0xbe, 0xa5, 0x3c, 0xa8, 0x2f, 0x80, 0x95,
+	0xf8, 0x5a, 0x9a, 0x02, 0xb1, 0x6d, 0x3a, 0x0c, 0x9f, 0x1a, 0x62, 0x86, 0xf4, 0xd7, 0x0c, 0xb9,
+	0x30, 0xe0, 0x47, 0x10, 0x36, 0xba, 0xc2, 0x31, 0x41, 0xcc, 0x6c, 0x85, 0xb6, 0x69, 0x97, 0x98,
+	0x4e, 0x65, 0xc6, 0xd5, 0xba, 0x0b, 0x99, 0xa1, 0xdc, 0x88, 0x5a, 0x1b, 0xbe, 0xd3, 0x25, 0xe3,
+	0x95, 0x19, 0xd7, 0x68, 0x9d, 0xe6, 0x3f, 0xd0, 0x56, 0x68, 0xa6, 0xdb, 0xa8, 0xf5, 0xb0, 0x79,
+	0xd6, 0x88, 0x2e, 0xfb, 0xa8, 0xe7, 0xce, 0x57, 0xc7, 0xac, 0x72, 0xd9, 0x60, 0x42, 0x68, 0x3b,
+	0x74, 0x5b, 0xfb, 0x2d, 0xa7, 0x4c, 0x23, 0xc4, 0xf4, 0x18, 0x86, 0xdc, 0x8a, 0xaf, 0xf5, 0x16,
+	0x32, 0x43, 0xed, 0x06, 0xaa, 0xb1, 0x8c, 0x90, 0x83, 0x06, 0x00, 0x08, 0x29, 0x9b, 0x55, 0xec,
+	0x39, 0xae, 0xad, 0xad, 0x66, 0x9b, 0xd6, 0x4e, 0x48, 0x79, 0x37, 0x23, 0xe8, 0xe7, 0x81, 0x3a,
+	0x35, 0x61, 0x3a, 0x42, 0xd0, 0xc9, 0x23, 0x56, 0x08, 0xcc, 0x30, 0x62, 0xff, 0x95, 0x01, 0x4d,
+	0x60, 0xec, 0x8e, 0x60, 0xb4, 0xcc, 0xc1, 0xbb, 0x06, 0x5a, 0xe9, 0x10, 0xd3, 0xb1, 0x83, 0xe0,
+	0x6d, 0x61, 0x89, 0x88, 0x31, 0x28, 0x14, 0x28, 0x23, 0xcb, 0x19, 0xf4, 0x73, 0x9c, 0x1d, 0x05,
+	0x3e, 0xa1, 0x08, 0x6f, 0x61, 0x5e, 0xe1, 0x1f, 0xe8, 0x0c, 0x50, 0x63, 0xb1, 0xc0, 0x8e, 0x4a,
+	0x16, 0xb3, 0x59, 0x63, 0x65, 0x8c, 0x3e, 0xb5, 0x50, 0xc5, 0x34, 0x42, 0xca, 0x4e, 0x65, 0x1f,
+	0x0b, 0xd8, 0x76, 0x83, 0xfd, 0x46, 0xab, 0x81, 0xaa, 0xb7, 0x4a, 0x98, 0x85, 0x68, 0xd6, 0x08,
+	0xbe, 0xd0, 0x66, 0x58, 0xc9, 0xf1, 0xe4, 0x99, 0xa1, 0x35, 0xc0, 0xac, 0xe9, 0x0c, 0xc8, 0x7b,
+	0xb9, 0x51, 0x03, 0x00, 0x9c, 0x60, 0x9b, 0x16, 0x0f, 0xce, 0x8c, 0xd1, 0x1e, 0x50, 0x46, 0x09,
+	0xea, 0x87, 0xf6, 0x7d, 0x4e, 0x71, 0x1f, 0xe7, 0xf2, 0xc8, 0x6c, 0xe3, 0x84, 0x51, 0x42, 0x57,
+	0x5a, 0xc6, 0x33, 0x84, 0xb2, 0x3a, 0xf9, 0x4a, 0xe9, 0xe7, 0x28, 0x41, 0x1f, 0x82, 0x0e, 0xcb,
+	0x9e, 0x73, 0x2a, 0x61, 0x6c, 0xf1, 0xe8, 0xd4, 0x84, 0xd8, 0x1a, 0xa5, 0x02, 0x41, 0x68, 0xe5,
+	0xac, 0xe8, 0xa3, 0x96, 0x07, 0x56, 0x46, 0x79, 0x40, 0xdf, 0x03, 0xfd, 0x49, 0xd8, 0xc4, 0x77,
+	0xfe, 0x6c, 0x11, 0x41, 0x83, 0x12, 0x04, 0xc5, 0xc4, 0x43, 0x30, 0xbd, 0xa0, 0x40, 0x6e, 0xd7,
+	0xb2, 0x25, 0xff, 0x2d, 0x42, 0x59, 0x21, 0x05, 0x39, 0x2f, 0x2c, 0x2e, 0x85, 0x55, 0x0c, 0x58,
+	0xc2, 0xb9, 0xdc, 0xcc, 0xa2, 0xfa, 0x78, 0x0b, 0x53, 0x8b, 0x22, 0xc1, 0xd7, 0xff, 0x0f, 0xba,
+	0xa6, 0x26, 0xcc, 0x78, 0xb4, 0x6d, 0x11, 0x7d, 0x25, 0xa9, 0x6f, 0x02, 0xf7, 0x1c, 0x52, 0xa0,
+	0x8b, 0x82, 0x84, 0xe5, 0x1d, 0x7b, 0xc2, 0xf1, 0x4f, 0xb5, 0x87, 0x62, 0x81, 0x93, 0x11, 0x02,
+	0xa7, 0x00, 0x1d, 0x41, 0xa8, 0x99, 0x65, 0xc7, 0x27, 0xcc, 0x19, 0x19, 0x03, 0x8a, 0x35, 0xc3,
+	0xf4, 0x0f, 0xb3, 0x4a, 0x60, 0x5e, 0xb4, 0xf6, 0x4c, 0x71, 0xa5, 0x3d, 0xdc, 0x00, 0x71, 0x49,
+	0xe1, 0x62, 0x67, 0x61, 0x75, 0x50, 0x4a, 0x98, 0x25, 0x4c, 0xe2, 0xa8, 0x48, 0x2c, 0x46, 0x69,
+	0x7c, 0x31, 0x61, 0x7a, 0xc8, 0xc4, 0xd3, 0x83, 0xfe, 0x05, 0x85, 0x61, 0x39, 0x9c, 0x8a, 0xce,
+	0x41, 0x0d, 0xd9, 0xb9, 0x10, 0x58, 0x7d, 0xf2, 0xf3, 0xf9, 0xb8, 0x3c, 0x13, 0x9b, 0x8f, 0x7e,
+	0xf2, 0x74, 0x24, 0xfa, 0xad, 0xc5, 0xe1, 0x3e, 0xfb, 0xac, 0x02, 0x6b, 0x12, 0x86, 0xec, 0x5c,
+	0xd8, 0xc3, 0x07, 0x9d, 0x02, 0x23, 0xa4, 0xc9, 0x52, 0xbf, 0x43, 0x81, 0xee, 0xd0, 0x08, 0x56,
+	0xfc, 0x30, 0xa7, 0x8f, 0x9c, 0xac, 0x01, 0x03, 0x00, 0x41, 0x09, 0x15, 0xd9, 0xd0, 0x1e, 0x50,
+	0x38, 0x90, 0x02, 0x84, 0x09, 0x40, 0xe2, 0x30, 0x63, 0xde, 0x97, 0x16, 0x5e, 0xfa, 0xe7, 0x15,
+	0x40, 0xa1, 0x95, 0x36, 0x2e, 0x63, 0x72, 0x4a, 0xa0, 0x41, 0xeb, 0x32, 0xb7, 0x8a, 0xbd, 0xd0,
+	0x7c, 0xee, 0x29, 0x08, 0x49, 0xe3, 0xb6, 0x7e, 0x8f, 0x12, 0xc1, 0x34, 0xb2, 0x83, 0x22, 0x7a,
+	0xd9, 0x6d, 0xa1, 0x35, 0x22, 0x37, 0xc1, 0x14, 0x4f, 0xbb, 0x0e, 0x4e, 0xe5, 0xc7, 0x8b, 0x7e,
+	0x50, 0x81, 0xde, 0xd0, 0x62, 0x6c, 0x3b, 0x0c, 0x65, 0x53, 0xac, 0x98, 0x5d, 0x6a, 0x83, 0x0b,
+	0xd0, 0x41, 0x27, 0xa8, 0x59, 0x13, 0x58, 0x4c, 0x69, 0x7b, 0x6b, 0xe7, 0xaf, 0x64, 0x6f, 0x65,
+	0x16, 0x8e, 0xb2, 0xda, 0xec, 0xb4, 0x58, 0xc8, 0x6b, 0xc4, 0x6c, 0xac, 0x46, 0xd4, 0xef, 0x97,
+	0x58, 0xc8, 0x2a, 0xfe, 0xd3, 0x60, 0xe1, 0x36, 0x00, 0x7e, 0x38, 0xb1, 0x7b, 0x48, 0x56, 0x7a,
+	0x0f, 0x69, 0x2f, 0x86, 0x06, 0xea, 0xcf, 0xcb, 0x9c, 0x4b, 0xcf, 0xfa, 0xe5, 0xc7, 0xeb, 0x56,
+	0x40, 0x6c, 0x6d, 0x6c, 0x38, 0xaf, 0x4e, 0x6a, 0x98, 0x5d, 0x29, 0xd8, 0x36, 0x6e, 0xa3, 0x21,
+	0x68, 0x73, 0x7c, 0x2e, 0x15, 0x5c, 0xb6, 0x3a, 0x63, 0x05, 0xb5, 0x5b, 0x36, 0x5a, 0x1d, 0x9f,
+	0xc9, 0xea, 0xcf, 0x2a, 0xb0, 0x21, 0xb9, 0xc2, 0x0b, 0x24, 0x17, 0x85, 0x65, 0x5f, 0xef, 0xf9,
+	0xd0, 0x29, 0x5e, 0x70, 0xb2, 0xc7, 0xbb, 0xe0, 0x74, 0x4c, 0xc7, 0xbe, 0xf4, 0xdb, 0x63, 0x99,
+	0xd9, 0xb2, 0xed, 0x53, 0x96, 0x68, 0x6a, 0x05, 0x68, 0x6c, 0x1d, 0x41, 0x01, 0xea, 0x2d, 0x52,
+	0x4d, 0xeb, 0x0e, 0xac, 0x95, 0x9f, 0xd8, 0x3b, 0x17, 0x26, 0x68, 0x61, 0x7c, 0x92, 0x76, 0x86,
+	0x35, 0x76, 0x26, 0xaa, 0xb1, 0xf5, 0xfb, 0x14, 0xd0, 0xc2, 0xb9, 0x88, 0x5b, 0x2a, 0x95, 0xf1,
+	0xa4, 0x7b, 0x51, 0x78, 0xcb, 0x5d, 0xf6, 0x8d, 0xdd, 0x02, 0xad, 0xb8, 0x42, 0x17, 0x6b, 0x07,
+	0x5b, 0x9a, 0x84, 0x66, 0xc0, 0xd5, 0xef, 0x56, 0xa0, 0x2f, 0x34, 0x3b, 0xba, 0x01, 0x07, 0x97,
+	0xe2, 0x93, 0xb5, 0xbb, 0xc1, 0xee, 0x18, 0xbf, 0x2d, 0x35, 0xd7, 0x6e, 0x4b, 0xeb, 0x20, 0x67,
+	0x15, 0x8b, 0xd8, 0xf7, 0xcd, 0x59, 0xcb, 0x9f, 0x0d, 0xb6, 0x12, 0x38, 0xe9, 0x62, 0xcb, 0x9f,
+	0xd5, 0x3d, 0x28, 0x24, 0x8a, 0x91, 0x58, 0x1d, 0xfb, 0x81, 0x4b, 0x23, 0x79, 0x29, 0x56, 0x84,
+	0x7c, 0x6c, 0x4e, 0x8a, 0x6e, 0x3f, 0x56, 0x3e, 0x9e, 0xe4, 0x6c, 0xe1, 0x3d, 0x31, 0xc3, 0x57,
+	0xae, 0x7f, 0x23, 0x96, 0x02, 0x29, 0x50, 0x17, 0xc2, 0x8a, 0xef, 0x03, 0x2c, 0x47, 0x5e, 0x26,
+	0x9f, 0x05, 0xe0, 0xf8, 0x66, 0xbc, 0xa3, 0x94, 0xc2, 0x46, 0xbb, 0xe3, 0x8f, 0x71, 0xbe, 0x7e,
+	0x53, 0x26, 0x02, 0x35, 0x6f, 0x27, 0x44, 0x0d, 0x86, 0x25, 0x07, 0x75, 0x1f, 0xb4, 0xd5, 0x52,
+	0x6e, 0xd0, 0xea, 0xb2, 0x82, 0x54, 0x7b, 0x0e, 0xac, 0x29, 0xe3, 0x92, 0x55, 0x5c, 0x30, 0x3d,
+	0xbc, 0xdf, 0xdd, 0x87, 0xcd, 0x2a, 0xf6, 0xe6, 0xac, 0x0a, 0xae, 0xf0, 0x53, 0xb0, 0xcd, 0xe8,
+	0xe5, 0x6c, 0x83, 0x71, 0x77, 0x87, 0x4c, 0x49, 0xff, 0xb5, 0x45, 0xd6, 0x7f, 0x3d, 0x17, 0x72,
+	0xbc, 0x5b, 0x69, 0xb2, 0x4b, 0x65, 0x6b, 0xd0, 0x5c, 0x49, 0xf6, 0x5b, 0xc7, 0x2b, 0x64, 0xc7,
+	0x08, 0x6f, 0xb7, 0x02, 0x97, 0xbf, 0x80, 0x5e, 0xce, 0xcf, 0x85, 0xdc, 0xbc, 0x6f, 0x95, 0xb0,
+	0x59, 0x76, 0xe6, 0x1c, 0xde, 0x46, 0x3d, 0xde, 0x68, 0x26, 0x3f, 0x41, 0xc5, 0xd1, 0x48, 0x58,
+	0x70, 0xb4, 0x37, 0xd2, 0xe5, 0xe5, 0xe5, 0xc8, 0xf5, 0x8a, 0x90, 0xd7, 0xd8, 0x21, 0xe3, 0x5f,
+	0xe1, 0x90, 0x59, 0xbe, 0x33, 0xfe, 0xf2, 0x95, 0xe6, 0x07, 0x14, 0x18, 0x88, 0x59, 0x92, 0x6e,
+	0x43, 0x2d, 0x39, 0x4a, 0xc2, 0xdc, 0xdb, 0x1c, 0xcb, 0xbd, 0xf7, 0xaf, 0x80, 0xc1, 0x45, 0xad,
+	0xf0, 0x97, 0x13, 0xac, 0x1a, 0xb4, 0x72, 0x94, 0xda, 0x01, 0x38, 0xc3, 0x4f, 0x8a, 0x14, 0x77,
+	0x66, 0xc6, 0xc7, 0x84, 0xe3, 0xac, 0xa5, 0x01, 0xa4, 0x70, 0x79, 0x86, 0xb3, 0xf3, 0x6a, 0xa3,
+	0x99, 0x03, 0x5a, 0x1b, 0xc0, 0x4b, 0x30, 0x9c, 0x9d, 0x75, 0x3d, 0x90, 0x8d, 0x00, 0x9a, 0x35,
+	0xf8, 0x87, 0xfe, 0xe9, 0xe8, 0x7e, 0x57, 0x9c, 0xc5, 0xc5, 0x7d, 0x4b, 0xb2, 0x73, 0x72, 0x10,
+	0x21, 0x68, 0x66, 0x79, 0x3d, 0xd8, 0x39, 0xfa, 0x5b, 0xff, 0x4c, 0x94, 0x5f, 0x9c, 0xb9, 0x25,
+	0xcb, 0x2f, 0x8d, 0xcf, 0xff, 0x47, 0x11, 0x39, 0xd1, 0xec, 0xe3, 0xcc, 0x1a, 0xec, 0x2d, 0x5f,
+	0x2c, 0xa1, 0xb5, 0xd0, 0x1e, 0xa4, 0xa5, 0x1a, 0x72, 0x22, 0x02, 0xfa, 0xaf, 0x00, 0xf7, 0x8d,
+	0x3c, 0x06, 0xf1, 0xae, 0xdf, 0x99, 0xa0, 0x5c, 0xdd, 0x10, 0x4a, 0x94, 0xab, 0x59, 0x41, 0x11,
+	0x43, 0x26, 0x87, 0x48, 0x1c, 0x7c, 0x91, 0x00, 0x3d, 0x48, 0x58, 0xb2, 0xca, 0x84, 0x02, 0xac,
+	0xe4, 0xab, 0xc1, 0x0b, 0xe2, 0xf0, 0x3a, 0xa8, 0x44, 0x47, 0x36, 0xbf, 0xf3, 0x2d, 0x69, 0x8a,
+	0x38, 0x41, 0x0f, 0x87, 0xb9, 0x23, 0x1b, 0xcb, 0x1d, 0x87, 0x15, 0x18, 0x12, 0x2d, 0xe4, 0x87,
+	0x88, 0xbd, 0xb4, 0x59, 0xe4, 0x04, 0x2d, 0x8d, 0xa7, 0x97, 0xac, 0x90, 0x5e, 0xf4, 0xdb, 0x33,
+	0x11, 0x64, 0xe9, 0x65, 0xe2, 0x74, 0x3a, 0xb4, 0x7e, 0xaa, 0x43, 0x31, 0xb8, 0x86, 0x6d, 0xe8,
+	0xd3, 0x79, 0xcc, 0x9e, 0x9d, 0xaa, 0x04, 0xda, 0x65, 0xb5, 0x4f, 0xa2, 0x30, 0xa8, 0x1d, 0xce,
+	0xd0, 0xf8, 0xe1, 0xfc, 0xa0, 0x02, 0xeb, 0xc3, 0xfd, 0xf1, 0x79, 0x4a, 0x19, 0x4d, 0x3f, 0x81,
+	0x2c, 0xdb, 0x16, 0xd5, 0x79, 0x9c, 0xc9, 0xd6, 0x7b, 0x9c, 0x11, 0x7a, 0x1d, 0x3e, 0x26, 0x17,
+	0x3b, 0x3e, 0x71, 0xbd, 0x85, 0xa9, 0xa9, 0x89, 0xe5, 0xb3, 0x59, 0x7c, 0x1f, 0xca, 0xa6, 0xdf,
+	0x87, 0xd0, 0xe5, 0x98, 0xaa, 0x36, 0x77, 0xa5, 0x7b, 0xd6, 0xbe, 0xa6, 0xb0, 0x36, 0x78, 0xbd,
+	0x9e, 0xb5, 0xaf, 0x6f, 0x80, 0x5c, 0x30, 0x7c, 0xc2, 0xad, 0x94, 0x68, 0xe2, 0x8a, 0xc6, 0x65,
+	0x42, 0xa1, 0x31, 0xe8, 0x0d, 0x84, 0xf6, 0x4a, 0x1b, 0xc6, 0xe1, 0x34, 0x8b, 0x34, 0x8c, 0x7d,
+	0xdd, 0x80, 0xfe, 0x40, 0x49, 0xad, 0x6f, 0x10, 0xaf, 0xd2, 0x76, 0x88, 0xaa, 0x06, 0xd2, 0x4f,
+	0x1f, 0x31, 0xe9, 0x50, 0xe7, 0x24, 0xf4, 0x05, 0x3a, 0x25, 0x81, 0xff, 0xdf, 0xa2, 0xc6, 0x45,
+	0xdf, 0x07, 0x53, 0xfa, 0xd2, 0x87, 0x5f, 0x7d, 0x7d, 0x69, 0xd9, 0x40, 0xdf, 0x99, 0xcf, 0xe5,
+	0xa0, 0x53, 0x00, 0x03, 0x5a, 0x05, 0x9d, 0x63, 0xc6, 0xd8, 0x8e, 0x11, 0x73, 0xef, 0xe4, 0xa5,
+	0x93, 0x97, 0x5d, 0x31, 0xa9, 0x36, 0xa1, 0xcd, 0x30, 0xc8, 0x49, 0xf5, 0x5e, 0x6b, 0xd4, 0x43,
+	0x47, 0xbe, 0xf5, 0xe3, 0x15, 0x28, 0x0f, 0xdd, 0x12, 0x39, 0xf5, 0x91, 0x03, 0xf7, 0xf9, 0x68,
+	0x10, 0x56, 0x71, 0x5e, 0x9c, 0xf3, 0xea, 0x53, 0x0f, 0xbd, 0xf6, 0x3e, 0xfd, 0x4f, 0x41, 0x1b,
+	0x61, 0x0d, 0xe7, 0xa7, 0xfe, 0xf4, 0x40, 0xfd, 0xd3, 0xdb, 0x0f, 0x7c, 0xf7, 0x6d, 0x2e, 0x35,
+	0x00, 0x6a, 0x52, 0x4a, 0xbd, 0xeb, 0x8e, 0xdf, 0xfc, 0xfe, 0x5d, 0xce, 0x5e, 0x0f, 0x3d, 0x49,
+	0xf6, 0x6e, 0x8c, 0xf7, 0xa9, 0xaf, 0x3e, 0xfc, 0xd5, 0x97, 0x03, 0x0d, 0x6b, 0x43, 0x11, 0xf1,
+	0x65, 0x41, 0xbd, 0xf3, 0xc5, 0x5b, 0xaf, 0xcb, 0xa2, 0xf5, 0xd0, 0x17, 0x29, 0x48, 0x34, 0x21,
+	0xd4, 0xa7, 0x9f, 0xf8, 0xd1, 0x0b, 0x2b, 0xd0, 0xd6, 0xd0, 0x19, 0xf5, 0xda, 0xfd, 0xea, 0x03,
+	0x7f, 0x3b, 0xf0, 0x93, 0xf7, 0xf8, 0x6c, 0x3a, 0xe4, 0xd3, 0xc2, 0x61, 0x4b, 0x5e, 0x7d, 0xec,
+	0xbe, 0x3f, 0x1c, 0x69, 0x46, 0x1b, 0x60, 0x75, 0x4c, 0x26, 0xd6, 0x31, 0x57, 0xef, 0xf9, 0xe5,
+	0xbb, 0xdf, 0x7b, 0x2f, 0x5c, 0x78, 0x6f, 0x4c, 0x28, 0x6a, 0x14, 0xab, 0xdf, 0x79, 0xee, 0xd1,
+	0x57, 0x5a, 0x50, 0x41, 0xb0, 0x5b, 0xec, 0x23, 0xab, 0x47, 0x0f, 0xde, 0x76, 0x25, 0xda, 0x04,
+	0x5a, 0x4c, 0x42, 0xe8, 0xdb, 0xaa, 0x77, 0x3d, 0xf8, 0xcd, 0xc3, 0x6f, 0xf1, 0x79, 0x0a, 0x52,
+	0x31, 0xd6, 0x3c, 0x55, 0xdf, 0x7c, 0xf3, 0xc8, 0x5f, 0xb2, 0x75, 0x24, 0x58, 0x6f, 0x50, 0x7d,
+	0xe5, 0xc9, 0x1b, 0x0f, 0x37, 0xd7, 0xd3, 0x41, 0x23, 0x44, 0xfd, 0xc7, 0x13, 0x37, 0x3f, 0xa6,
+	0xa0, 0x61, 0xd8, 0x2c, 0x91, 0x90, 0xf4, 0xd8, 0xd4, 0xeb, 0x8f, 0x3c, 0xfd, 0xeb, 0x2c, 0x1a,
+	0x14, 0x5c, 0x14, 0x6b, 0x5d, 0xa9, 0x5f, 0x7e, 0xfc, 0x8d, 0x63, 0xad, 0xe8, 0x2c, 0x58, 0x57,
+	0x77, 0xdb, 0x78, 0xef, 0x48, 0xfd, 0xe2, 0xaf, 0x6e, 0xf9, 0x7a, 0x00, 0x81, 0x21, 0xe8, 0x8f,
+	0x49, 0x27, 0xbb, 0x3f, 0xea, 0x5b, 0x47, 0x9f, 0xf9, 0x61, 0x80, 0xa7, 0x0d, 0xb0, 0x36, 0x26,
+	0x99, 0x6a, 0xb8, 0xa8, 0xcf, 0x1f, 0x7d, 0x6f, 0x14, 0x6d, 0x85, 0x0d, 0xe9, 0x3d, 0x4e, 0x75,
+	0x3a, 0xd4, 0x43, 0x8f, 0x3c, 0x77, 0x53, 0x06, 0x6d, 0x82, 0x01, 0x51, 0x38, 0xd1, 0xa2, 0x50,
+	0x9f, 0x7c, 0xf6, 0x77, 0x6f, 0xad, 0x48, 0xec, 0x96, 0xd0, 0x63, 0x50, 0x6f, 0xf8, 0xed, 0xd1,
+	0x6f, 0xbf, 0x2f, 0x5b, 0x49, 0xf2, 0xca, 0xaf, 0x3e, 0x71, 0xdd, 0xcf, 0x0e, 0xbf, 0xc3, 0x25,
+	0x53, 0x1e, 0x4a, 0xdd, 0x42, 0xd5, 0xa7, 0x0f, 0x1c, 0xba, 0x39, 0x58, 0xf7, 0x36, 0x28, 0x88,
+	0xd2, 0xe9, 0x84, 0xa4, 0x3e, 0xf5, 0xe2, 0x0f, 0x5e, 0x0b, 0xc4, 0x87, 0x61, 0xfd, 0xf1, 0xc4,
+	0x7d, 0xf5, 0x8d, 0x7b, 0x7f, 0x7a, 0xe7, 0xbf, 0x65, 0x51, 0x91, 0xb8, 0xc8, 0xa8, 0x5f, 0x7a,
+	0xe9, 0xe0, 0x6d, 0xad, 0x68, 0x83, 0xb0, 0xb4, 0xe4, 0x6d, 0x43, 0x7d, 0xe6, 0xe7, 0xb7, 0x3e,
+	0x9a, 0x4d, 0x4f, 0x2c, 0xb9, 0x11, 0xa8, 0xef, 0xdf, 0x7d, 0xeb, 0x2f, 0x02, 0x74, 0x8b, 0x5b,
+	0x55, 0xaf, 0xc2, 0x55, 0xef, 0xff, 0xda, 0x8d, 0xf7, 0x66, 0xd1, 0xff, 0xc2, 0xd6, 0x94, 0x70,
+	0xfd, 0x62, 0x53, 0xfd, 0xeb, 0xc3, 0x8f, 0x5f, 0x27, 0xf5, 0x87, 0xbc, 0xea, 0x53, 0xdf, 0xb8,
+	0xe5, 0xa5, 0x77, 0xde, 0x0e, 0x37, 0x67, 0x63, 0x4c, 0xbe, 0x6e, 0x15, 0xa2, 0x7e, 0xff, 0xa1,
+	0xbb, 0xbf, 0x92, 0x0c, 0x40, 0xe1, 0xcc, 0x57, 0x3f, 0xf7, 0xe8, 0x3f, 0x5f, 0xce, 0xe4, 0x9b,
+	0x6f, 0xb8, 0x63, 0xb0, 0x69, 0xe4, 0xef, 0xdd, 0xd0, 0x6a, 0xec, 0x1e, 0x63, 0xa7, 0xed, 0xc5,
+	0xd0, 0x2d, 0x7b, 0x08, 0x5d, 0x1b, 0x56, 0x03, 0xb2, 0xc0, 0xc9, 0xa7, 0xcf, 0x64, 0xbd, 0x09,
+	0x5d, 0x09, 0x5a, 0xdd, 0x77, 0xce, 0xf5, 0x29, 0x75, 0x49, 0x91, 0xbc, 0xc6, 0x45, 0xd2, 0x05,
+	0x81, 0xde, 0x84, 0x2e, 0x81, 0x1e, 0xe9, 0xcb, 0xe5, 0x80, 0x54, 0x6d, 0xc8, 0x96, 0x9b, 0xb9,
+	0x13, 0xd4, 0xd4, 0x03, 0x64, 0x9f, 0xa8, 0x27, 0xc6, 0x92, 0xeb, 0xf8, 0x08, 0xac, 0x4c, 0x3e,
+	0x0f, 0x6a, 0xa2, 0x8a, 0x88, 0x23, 0xd7, 0x10, 0xba, 0x3d, 0xf1, 0xb0, 0xb7, 0xb6, 0x9e, 0x16,
+	0xca, 0x95, 0x6b, 0xba, 0x08, 0x90, 0xe4, 0xc1, 0xad, 0x5f, 0x54, 0x24, 0x30, 0x1b, 0xd3, 0xc3,
+	0x9f, 0xc5, 0xea, 0xe8, 0x61, 0xcc, 0xc6, 0xf4, 0xf0, 0xc7, 0xab, 0x3a, 0x7a, 0x18, 0xb3, 0x41,
+	0x7b, 0xd8, 0x4b, 0x52, 0x3d, 0x7b, 0x28, 0x53, 0xae, 0x67, 0x1a, 0x0a, 0xc7, 0x7d, 0xaf, 0x39,
+	0x43, 0xae, 0x55, 0x22, 0xba, 0x38, 0xa6, 0xe2, 0x4f, 0x27, 0x09, 0x4c, 0xc5, 0x58, 0x72, 0x1d,
+	0x53, 0xd0, 0x57, 0xff, 0x7d, 0x43, 0x5f, 0x2c, 0x1c, 0xb9, 0x8c, 0x5c, 0xeb, 0x04, 0xf4, 0xca,
+	0x5f, 0x32, 0x06, 0x45, 0x8d, 0x49, 0xbe, 0x5c, 0xdb, 0x25, 0xb0, 0xba, 0xce, 0x03, 0xc3, 0x3a,
+	0x51, 0x5d, 0x4a, 0x20, 0x2f, 0xde, 0xcf, 0xf4, 0x26, 0xf4, 0x71, 0x18, 0x58, 0xfc, 0x01, 0x60,
+	0xb3, 0x34, 0xb8, 0x53, 0x72, 0xa1, 0xa5, 0xb1, 0xab, 0x80, 0xde, 0x84, 0xae, 0x82, 0x35, 0xf5,
+	0x5a, 0xfd, 0x85, 0x94, 0xde, 0x84, 0x44, 0xbe, 0x5f, 0xd0, 0x28, 0x5e, 0x09, 0xf4, 0x26, 0xb4,
+	0x2b, 0x40, 0xa6, 0xd8, 0xe0, 0xef, 0x4f, 0x6f, 0x51, 0x8d, 0xb9, 0x68, 0x72, 0xbb, 0x3c, 0xd8,
+	0xa2, 0x54, 0x5f, 0x3e, 0xb1, 0x45, 0x49, 0x7e, 0x7e, 0xb1, 0x5b, 0x81, 0xde, 0x84, 0xec, 0x08,
+	0x50, 0xe9, 0xc6, 0x72, 0x1a, 0x50, 0x29, 0x99, 0xfc, 0x7a, 0xc1, 0x68, 0xd9, 0x5d, 0x46, 0x6f,
+	0x42, 0x9f, 0x84, 0xfc, 0x22, 0x4d, 0xe3, 0x0d, 0xa9, 0x69, 0xd2, 0x42, 0xc7, 0x5b, 0xc7, 0x0c,
+	0xf4, 0x2f, 0xd6, 0x10, 0xde, 0xd8, 0xc0, 0x14, 0x7e, 0x7e, 0x9d, 0xb0, 0x16, 0xe9, 0x3c, 0x13,
+	0xc1, 0x21, 0x93, 0x6c, 0x9f, 0x26, 0x0e, 0x99, 0x04, 0x3b, 0x2f, 0xfb, 0x9b, 0xe3, 0x58, 0xe0,
+	0xa5, 0xba, 0xa1, 0x89, 0x5d, 0x4d, 0xf2, 0xe5, 0x81, 0x17, 0xf3, 0x81, 0xac, 0xb5, 0xb9, 0x51,
+	0x1a, 0x2a, 0x09, 0xa9, 0x84, 0x0f, 0xd2, 0x12, 0x7a, 0x13, 0xfa, 0x58, 0x10, 0x94, 0x75, 0x5b,
+	0x7c, 0x9b, 0x65, 0x07, 0x94, 0x64, 0x4f, 0x53, 0xe1, 0x3e, 0x0b, 0x9b, 0x1a, 0x6b, 0xcd, 0x0d,
+	0xcb, 0x66, 0xa8, 0x2f, 0x9f, 0x9e, 0x29, 0xf4, 0x55, 0x9d, 0x9e, 0xda, 0xc6, 0x74, 0xae, 0x97,
+	0xd8, 0xdf, 0x00, 0x5e, 0x3e, 0x01, 0x83, 0xc7, 0xe9, 0x0d, 0x6d, 0x11, 0xa7, 0xaa, 0x2b, 0xb8,
+	0xf8, 0x01, 0x28, 0xf6, 0x6e, 0xfa, 0x53, 0x3a, 0x23, 0xa6, 0x54, 0xcf, 0xce, 0xcb, 0x5e, 0x7f,
+	0x61, 0x50, 0x79, 0xec, 0xd8, 0xa0, 0xf2, 0xd4, 0xb1, 0x41, 0xe5, 0xcf, 0xc7, 0x06, 0x95, 0xab,
+	0xce, 0x8b, 0xfd, 0x03, 0x10, 0x82, 0xad, 0xb9, 0x92, 0x67, 0x45, 0x3f, 0xb6, 0xf9, 0xd8, 0xdb,
+	0x8f, 0xbd, 0xed, 0x56, 0xb5, 0xba, 0x9d, 0xfe, 0x74, 0x8a, 0x78, 0xfb, 0xb4, 0xf3, 0xa9, 0xed,
+	0x54, 0x33, 0xfb, 0xdf, 0x74, 0x0b, 0x73, 0xf7, 0x8e, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x5d,
+	0x3c, 0xa3, 0xa8, 0x5d, 0x32, 0x00, 0x00,
 }
 
-func (this *UserChatIdList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&chat.UserChatIdList{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "ChatIdList: "+fmt.Sprintf("%#v", this.ChatIdList)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLUserChatIdList) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&chat.TLUserChatIdList{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ImmutableChatParticipant) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 19)
-	s = append(s, "&chat.ImmutableChatParticipant{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "ChatId: "+fmt.Sprintf("%#v", this.ChatId)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "State: "+fmt.Sprintf("%#v", this.State)+",\n")
-	s = append(s, "ParticipantType: "+fmt.Sprintf("%#v", this.ParticipantType)+",\n")
-	s = append(s, "Link: "+fmt.Sprintf("%#v", this.Link)+",\n")
-	s = append(s, "Useage: "+fmt.Sprintf("%#v", this.Useage)+",\n")
-	s = append(s, "InviterUserId: "+fmt.Sprintf("%#v", this.InviterUserId)+",\n")
-	s = append(s, "InvitedAt: "+fmt.Sprintf("%#v", this.InvitedAt)+",\n")
-	s = append(s, "KickedAt: "+fmt.Sprintf("%#v", this.KickedAt)+",\n")
-	s = append(s, "LeftAt: "+fmt.Sprintf("%#v", this.LeftAt)+",\n")
-	if this.AdminRights != nil {
-		s = append(s, "AdminRights: "+fmt.Sprintf("%#v", this.AdminRights)+",\n")
-	}
-	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLImmutableChatParticipant) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&chat.TLImmutableChatParticipant{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ImmutableChat) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 25)
-	s = append(s, "&chat.ImmutableChat{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "Creator: "+fmt.Sprintf("%#v", this.Creator)+",\n")
-	s = append(s, "Title: "+fmt.Sprintf("%#v", this.Title)+",\n")
-	if this.Photo != nil {
-		s = append(s, "Photo: "+fmt.Sprintf("%#v", this.Photo)+",\n")
-	}
-	s = append(s, "Deactivated: "+fmt.Sprintf("%#v", this.Deactivated)+",\n")
-	s = append(s, "CallActive: "+fmt.Sprintf("%#v", this.CallActive)+",\n")
-	s = append(s, "CallNotEmpty: "+fmt.Sprintf("%#v", this.CallNotEmpty)+",\n")
-	s = append(s, "Noforwards: "+fmt.Sprintf("%#v", this.Noforwards)+",\n")
-	s = append(s, "ParticipantsCount: "+fmt.Sprintf("%#v", this.ParticipantsCount)+",\n")
-	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
-	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
-	if this.MigratedTo != nil {
-		s = append(s, "MigratedTo: "+fmt.Sprintf("%#v", this.MigratedTo)+",\n")
-	}
-	if this.DefaultBannedRights != nil {
-		s = append(s, "DefaultBannedRights: "+fmt.Sprintf("%#v", this.DefaultBannedRights)+",\n")
-	}
-	s = append(s, "CanSetUsername: "+fmt.Sprintf("%#v", this.CanSetUsername)+",\n")
-	s = append(s, "About: "+fmt.Sprintf("%#v", this.About)+",\n")
-	if this.ExportedInvite != nil {
-		s = append(s, "ExportedInvite: "+fmt.Sprintf("%#v", this.ExportedInvite)+",\n")
-	}
-	if this.BotInfo != nil {
-		s = append(s, "BotInfo: "+fmt.Sprintf("%#v", this.BotInfo)+",\n")
-	}
-	if this.Call != nil {
-		s = append(s, "Call: "+fmt.Sprintf("%#v", this.Call)+",\n")
-	}
-	s = append(s, "AvailableReactions: "+fmt.Sprintf("%#v", this.AvailableReactions)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLImmutableChat) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&chat.TLImmutableChat{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *MutableChat) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&chat.MutableChat{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	if this.Chat != nil {
-		s = append(s, "Chat: "+fmt.Sprintf("%#v", this.Chat)+",\n")
-	}
-	if this.ChatParticipants != nil {
-		s = append(s, "ChatParticipants: "+fmt.Sprintf("%#v", this.ChatParticipants)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLMutableChat) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&chat.TLMutableChat{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *ChatInviteExt) GoString() string {
 	if this == nil {
 		return "nil"
@@ -4067,6 +3932,177 @@ func (this *TLChatInvitePeek) GoString() string {
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&chat.TLChatInvitePeek{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ImmutableChat) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 26)
+	s = append(s, "&chat.ImmutableChat{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "Creator: "+fmt.Sprintf("%#v", this.Creator)+",\n")
+	s = append(s, "Title: "+fmt.Sprintf("%#v", this.Title)+",\n")
+	if this.Photo != nil {
+		s = append(s, "Photo: "+fmt.Sprintf("%#v", this.Photo)+",\n")
+	}
+	s = append(s, "Deactivated: "+fmt.Sprintf("%#v", this.Deactivated)+",\n")
+	s = append(s, "CallActive: "+fmt.Sprintf("%#v", this.CallActive)+",\n")
+	s = append(s, "CallNotEmpty: "+fmt.Sprintf("%#v", this.CallNotEmpty)+",\n")
+	s = append(s, "Noforwards: "+fmt.Sprintf("%#v", this.Noforwards)+",\n")
+	s = append(s, "ParticipantsCount: "+fmt.Sprintf("%#v", this.ParticipantsCount)+",\n")
+	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
+	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
+	if this.MigratedTo != nil {
+		s = append(s, "MigratedTo: "+fmt.Sprintf("%#v", this.MigratedTo)+",\n")
+	}
+	if this.DefaultBannedRights != nil {
+		s = append(s, "DefaultBannedRights: "+fmt.Sprintf("%#v", this.DefaultBannedRights)+",\n")
+	}
+	s = append(s, "CanSetUsername: "+fmt.Sprintf("%#v", this.CanSetUsername)+",\n")
+	s = append(s, "About: "+fmt.Sprintf("%#v", this.About)+",\n")
+	if this.ExportedInvite != nil {
+		s = append(s, "ExportedInvite: "+fmt.Sprintf("%#v", this.ExportedInvite)+",\n")
+	}
+	if this.BotInfo != nil {
+		s = append(s, "BotInfo: "+fmt.Sprintf("%#v", this.BotInfo)+",\n")
+	}
+	if this.Call != nil {
+		s = append(s, "Call: "+fmt.Sprintf("%#v", this.Call)+",\n")
+	}
+	s = append(s, "AvailableReactions: "+fmt.Sprintf("%#v", this.AvailableReactions)+",\n")
+	s = append(s, "TtlPeriod: "+fmt.Sprintf("%#v", this.TtlPeriod)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLImmutableChat) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&chat.TLImmutableChat{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ImmutableChatParticipant) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 19)
+	s = append(s, "&chat.ImmutableChatParticipant{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "ChatId: "+fmt.Sprintf("%#v", this.ChatId)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "State: "+fmt.Sprintf("%#v", this.State)+",\n")
+	s = append(s, "ParticipantType: "+fmt.Sprintf("%#v", this.ParticipantType)+",\n")
+	s = append(s, "Link: "+fmt.Sprintf("%#v", this.Link)+",\n")
+	s = append(s, "Useage: "+fmt.Sprintf("%#v", this.Useage)+",\n")
+	s = append(s, "InviterUserId: "+fmt.Sprintf("%#v", this.InviterUserId)+",\n")
+	s = append(s, "InvitedAt: "+fmt.Sprintf("%#v", this.InvitedAt)+",\n")
+	s = append(s, "KickedAt: "+fmt.Sprintf("%#v", this.KickedAt)+",\n")
+	s = append(s, "LeftAt: "+fmt.Sprintf("%#v", this.LeftAt)+",\n")
+	if this.AdminRights != nil {
+		s = append(s, "AdminRights: "+fmt.Sprintf("%#v", this.AdminRights)+",\n")
+	}
+	s = append(s, "Date: "+fmt.Sprintf("%#v", this.Date)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLImmutableChatParticipant) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&chat.TLImmutableChatParticipant{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MutableChat) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&chat.MutableChat{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	if this.Chat != nil {
+		s = append(s, "Chat: "+fmt.Sprintf("%#v", this.Chat)+",\n")
+	}
+	if this.ChatParticipants != nil {
+		s = append(s, "ChatParticipants: "+fmt.Sprintf("%#v", this.ChatParticipants)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLMutableChat) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&chat.TLMutableChat{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *UserChatIdList) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&chat.UserChatIdList{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "ChatIdList: "+fmt.Sprintf("%#v", this.ChatIdList)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLUserChatIdList) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&chat.TLUserChatIdList{")
 	if this.Data2 != nil {
 		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
 	}
@@ -4576,6 +4612,22 @@ func (this *TLChatSetChatAvailableReactions) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLChatSetHistoryTTL) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&chat.TLChatSetHistoryTTL{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "SelfId: "+fmt.Sprintf("%#v", this.SelfId)+",\n")
+	s = append(s, "ChatId: "+fmt.Sprintf("%#v", this.ChatId)+",\n")
+	s = append(s, "TtlPeriod: "+fmt.Sprintf("%#v", this.TtlPeriod)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Vector_MutableChat) GoString() string {
 	if this == nil {
 		return "nil"
@@ -4685,64 +4737,36 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RPCChatClient interface {
-	// chat.getMutableChat chat_id:long = MutableChat;
 	ChatGetMutableChat(ctx context.Context, in *TLChatGetMutableChat, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 	ChatGetChatListByIdList(ctx context.Context, in *TLChatGetChatListByIdList, opts ...grpc.CallOption) (*Vector_MutableChat, error)
-	// chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 	ChatGetChatBySelfId(ctx context.Context, in *TLChatGetChatBySelfId, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
 	ChatCreateChat2(ctx context.Context, in *TLChatCreateChat2, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.deleteChat chat_id:long operator_id:long = MutableChat;
 	ChatDeleteChat(ctx context.Context, in *TLChatDeleteChat, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 	ChatDeleteChatUser(ctx context.Context, in *TLChatDeleteChatUser, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 	ChatEditChatTitle(ctx context.Context, in *TLChatEditChatTitle, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
 	ChatEditChatAbout(ctx context.Context, in *TLChatEditChatAbout, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 	ChatEditChatPhoto(ctx context.Context, in *TLChatEditChatPhoto, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 	ChatEditChatAdmin(ctx context.Context, in *TLChatEditChatAdmin, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 	ChatEditChatDefaultBannedRights(ctx context.Context, in *TLChatEditChatDefaultBannedRights, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
 	ChatAddChatUser(ctx context.Context, in *TLChatAddChatUser, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.getMutableChatByLink link:string = MutableChat;
 	ChatGetMutableChatByLink(ctx context.Context, in *TLChatGetMutableChatByLink, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 	ChatToggleNoForwards(ctx context.Context, in *TLChatToggleNoForwards, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 	ChatMigratedToChannel(ctx context.Context, in *TLChatMigratedToChannel, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// chat.getChatParticipantIdList chat_id:long = Vector<long>;
 	ChatGetChatParticipantIdList(ctx context.Context, in *TLChatGetChatParticipantIdList, opts ...grpc.CallOption) (*Vector_Long, error)
-	// chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 	ChatGetUsersChatIdList(ctx context.Context, in *TLChatGetUsersChatIdList, opts ...grpc.CallOption) (*Vector_UserChatIdList, error)
-	// chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 	ChatGetMyChatList(ctx context.Context, in *TLChatGetMyChatList, opts ...grpc.CallOption) (*Vector_MutableChat, error)
-	// chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 	ChatExportChatInvite(ctx context.Context, in *TLChatExportChatInvite, opts ...grpc.CallOption) (*mtproto.ExportedChatInvite, error)
-	// chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 	ChatGetAdminsWithInvites(ctx context.Context, in *TLChatGetAdminsWithInvites, opts ...grpc.CallOption) (*Vector_ChatAdminWithInvites, error)
-	// chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 	ChatGetExportedChatInvite(ctx context.Context, in *TLChatGetExportedChatInvite, opts ...grpc.CallOption) (*mtproto.ExportedChatInvite, error)
-	// chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 	ChatGetExportedChatInvites(ctx context.Context, in *TLChatGetExportedChatInvites, opts ...grpc.CallOption) (*Vector_ExportedChatInvite, error)
-	// chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
 	ChatCheckChatInvite(ctx context.Context, in *TLChatCheckChatInvite, opts ...grpc.CallOption) (*ChatInviteExt, error)
-	// chat.importChatInvite self_id:long hash:string = MutableChat;
 	ChatImportChatInvite(ctx context.Context, in *TLChatImportChatInvite, opts ...grpc.CallOption) (*MutableChat, error)
-	// chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 	ChatGetChatInviteImporters(ctx context.Context, in *TLChatGetChatInviteImporters, opts ...grpc.CallOption) (*Vector_ChatInviteImporter, error)
-	// chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
 	ChatDeleteExportedChatInvite(ctx context.Context, in *TLChatDeleteExportedChatInvite, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 	ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *TLChatDeleteRevokedExportedChatInvites, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 	ChatEditExportedChatInvite(ctx context.Context, in *TLChatEditExportedChatInvite, opts ...grpc.CallOption) (*Vector_ExportedChatInvite, error)
-	// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = MutableChat;
 	ChatSetChatAvailableReactions(ctx context.Context, in *TLChatSetChatAvailableReactions, opts ...grpc.CallOption) (*MutableChat, error)
+	ChatSetHistoryTTL(ctx context.Context, in *TLChatSetHistoryTTL, opts ...grpc.CallOption) (*MutableChat, error)
 }
 
 type rPCChatClient struct {
@@ -5014,66 +5038,47 @@ func (c *rPCChatClient) ChatSetChatAvailableReactions(ctx context.Context, in *T
 	return out, nil
 }
 
+func (c *rPCChatClient) ChatSetHistoryTTL(ctx context.Context, in *TLChatSetHistoryTTL, opts ...grpc.CallOption) (*MutableChat, error) {
+	out := new(MutableChat)
+	err := c.cc.Invoke(ctx, "/chat.RPCChat/chat_setHistoryTTL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCChatServer is the server API for RPCChat service.
 type RPCChatServer interface {
-	// chat.getMutableChat chat_id:long = MutableChat;
 	ChatGetMutableChat(context.Context, *TLChatGetMutableChat) (*MutableChat, error)
-	// chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 	ChatGetChatListByIdList(context.Context, *TLChatGetChatListByIdList) (*Vector_MutableChat, error)
-	// chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 	ChatGetChatBySelfId(context.Context, *TLChatGetChatBySelfId) (*MutableChat, error)
-	// chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
 	ChatCreateChat2(context.Context, *TLChatCreateChat2) (*MutableChat, error)
-	// chat.deleteChat chat_id:long operator_id:long = MutableChat;
 	ChatDeleteChat(context.Context, *TLChatDeleteChat) (*MutableChat, error)
-	// chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 	ChatDeleteChatUser(context.Context, *TLChatDeleteChatUser) (*MutableChat, error)
-	// chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 	ChatEditChatTitle(context.Context, *TLChatEditChatTitle) (*MutableChat, error)
-	// chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
 	ChatEditChatAbout(context.Context, *TLChatEditChatAbout) (*MutableChat, error)
-	// chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 	ChatEditChatPhoto(context.Context, *TLChatEditChatPhoto) (*MutableChat, error)
-	// chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 	ChatEditChatAdmin(context.Context, *TLChatEditChatAdmin) (*MutableChat, error)
-	// chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 	ChatEditChatDefaultBannedRights(context.Context, *TLChatEditChatDefaultBannedRights) (*MutableChat, error)
-	// chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
 	ChatAddChatUser(context.Context, *TLChatAddChatUser) (*MutableChat, error)
-	// chat.getMutableChatByLink link:string = MutableChat;
 	ChatGetMutableChatByLink(context.Context, *TLChatGetMutableChatByLink) (*MutableChat, error)
-	// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 	ChatToggleNoForwards(context.Context, *TLChatToggleNoForwards) (*MutableChat, error)
-	// chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 	ChatMigratedToChannel(context.Context, *TLChatMigratedToChannel) (*mtproto.Bool, error)
-	// chat.getChatParticipantIdList chat_id:long = Vector<long>;
 	ChatGetChatParticipantIdList(context.Context, *TLChatGetChatParticipantIdList) (*Vector_Long, error)
-	// chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 	ChatGetUsersChatIdList(context.Context, *TLChatGetUsersChatIdList) (*Vector_UserChatIdList, error)
-	// chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 	ChatGetMyChatList(context.Context, *TLChatGetMyChatList) (*Vector_MutableChat, error)
-	// chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 	ChatExportChatInvite(context.Context, *TLChatExportChatInvite) (*mtproto.ExportedChatInvite, error)
-	// chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 	ChatGetAdminsWithInvites(context.Context, *TLChatGetAdminsWithInvites) (*Vector_ChatAdminWithInvites, error)
-	// chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 	ChatGetExportedChatInvite(context.Context, *TLChatGetExportedChatInvite) (*mtproto.ExportedChatInvite, error)
-	// chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 	ChatGetExportedChatInvites(context.Context, *TLChatGetExportedChatInvites) (*Vector_ExportedChatInvite, error)
-	// chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
 	ChatCheckChatInvite(context.Context, *TLChatCheckChatInvite) (*ChatInviteExt, error)
-	// chat.importChatInvite self_id:long hash:string = MutableChat;
 	ChatImportChatInvite(context.Context, *TLChatImportChatInvite) (*MutableChat, error)
-	// chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 	ChatGetChatInviteImporters(context.Context, *TLChatGetChatInviteImporters) (*Vector_ChatInviteImporter, error)
-	// chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
 	ChatDeleteExportedChatInvite(context.Context, *TLChatDeleteExportedChatInvite) (*mtproto.Bool, error)
-	// chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 	ChatDeleteRevokedExportedChatInvites(context.Context, *TLChatDeleteRevokedExportedChatInvites) (*mtproto.Bool, error)
-	// chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 	ChatEditExportedChatInvite(context.Context, *TLChatEditExportedChatInvite) (*Vector_ExportedChatInvite, error)
-	// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = MutableChat;
 	ChatSetChatAvailableReactions(context.Context, *TLChatSetChatAvailableReactions) (*MutableChat, error)
+	ChatSetHistoryTTL(context.Context, *TLChatSetHistoryTTL) (*MutableChat, error)
 }
 
 // UnimplementedRPCChatServer can be embedded to have forward compatible implementations.
@@ -5166,6 +5171,9 @@ func (*UnimplementedRPCChatServer) ChatEditExportedChatInvite(ctx context.Contex
 }
 func (*UnimplementedRPCChatServer) ChatSetChatAvailableReactions(ctx context.Context, req *TLChatSetChatAvailableReactions) (*MutableChat, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChatSetChatAvailableReactions not implemented")
+}
+func (*UnimplementedRPCChatServer) ChatSetHistoryTTL(ctx context.Context, req *TLChatSetHistoryTTL) (*MutableChat, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChatSetHistoryTTL not implemented")
 }
 
 func RegisterRPCChatServer(s *grpc.Server, srv RPCChatServer) {
@@ -5694,6 +5702,24 @@ func _RPCChat_ChatSetChatAvailableReactions_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCChat_ChatSetHistoryTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLChatSetHistoryTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCChatServer).ChatSetHistoryTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.RPCChat/ChatSetHistoryTTL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCChatServer).ChatSetHistoryTTL(ctx, req.(*TLChatSetHistoryTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RPCChat_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.RPCChat",
 	HandlerType: (*RPCChatServer)(nil),
@@ -5814,12 +5840,16 @@ var _RPCChat_serviceDesc = grpc.ServiceDesc{
 			MethodName: "chat_setChatAvailableReactions",
 			Handler:    _RPCChat_ChatSetChatAvailableReactions_Handler,
 		},
+		{
+			MethodName: "chat_setHistoryTTL",
+			Handler:    _RPCChat_ChatSetHistoryTTL_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "chat.tl.proto",
 }
 
-func (m *UserChatIdList) Marshal() (dAtA []byte, err error) {
+func (m *ChatInviteExt) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5829,12 +5859,12 @@ func (m *UserChatIdList) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UserChatIdList) MarshalTo(dAtA []byte) (int, error) {
+func (m *ChatInviteExt) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *ChatInviteExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5843,10 +5873,15 @@ func (m *UserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if len(m.ChatIdList) > 0 {
-		dAtA2 := make([]byte, len(m.ChatIdList)*10)
+	if m.Expires != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Expires))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.Participants) > 0 {
+		dAtA2 := make([]byte, len(m.Participants)*10)
 		var j1 int
-		for _, num1 := range m.ChatIdList {
+		for _, num1 := range m.Participants {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
@@ -5860,12 +5895,65 @@ func (m *UserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintChatTl(dAtA, i, uint64(j1))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x4a
 	}
-	if m.UserId != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.UserId))
+	if m.ParticipantsCount != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.ParticipantsCount))
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x40
+	}
+	if m.Photo != nil {
+		{
+			size, err := m.Photo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintChatTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.About != nil {
+		{
+			size, err := m.About.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintChatTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Title) > 0 {
+		i -= len(m.Title)
+		copy(dAtA[i:], m.Title)
+		i = encodeVarintChatTl(dAtA, i, uint64(len(m.Title)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.RequestNeeded {
+		i--
+		if m.RequestNeeded {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Chat != nil {
+		{
+			size, err := m.Chat.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintChatTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.Constructor != 0 {
 		i = encodeVarintChatTl(dAtA, i, uint64(m.Constructor))
@@ -5882,7 +5970,7 @@ func (m *UserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *TLUserChatIdList) Marshal() (dAtA []byte, err error) {
+func (m *TLChatInviteAlready) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5892,12 +5980,12 @@ func (m *TLUserChatIdList) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TLUserChatIdList) MarshalTo(dAtA []byte) (int, error) {
+func (m *TLChatInviteAlready) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *TLUserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TLChatInviteAlready) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5921,7 +6009,7 @@ func (m *TLUserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *ImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
+func (m *TLChatInvite) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5931,12 +6019,12 @@ func (m *ImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ImmutableChatParticipant) MarshalTo(dAtA []byte) (int, error) {
+func (m *TLChatInvite) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TLChatInvite) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5945,14 +6033,9 @@ func (m *ImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Date != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.Date))
-		i--
-		dAtA[i] = 0x78
-	}
-	if m.AdminRights != nil {
+	if m.Data2 != nil {
 		{
-			size, err := m.AdminRights.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -5960,81 +6043,12 @@ func (m *ImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error
 			i = encodeVarintChatTl(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x72
-	}
-	if m.LeftAt != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.LeftAt))
-		i--
-		dAtA[i] = 0x68
-	}
-	if m.KickedAt != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.KickedAt))
-		i--
-		dAtA[i] = 0x60
-	}
-	if m.InvitedAt != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.InvitedAt))
-		i--
-		dAtA[i] = 0x58
-	}
-	if m.InviterUserId != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.InviterUserId))
-		i--
-		dAtA[i] = 0x50
-	}
-	if m.Useage != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.Useage))
-		i--
-		dAtA[i] = 0x48
-	}
-	if len(m.Link) > 0 {
-		i -= len(m.Link)
-		copy(dAtA[i:], m.Link)
-		i = encodeVarintChatTl(dAtA, i, uint64(len(m.Link)))
-		i--
-		dAtA[i] = 0x42
-	}
-	if m.ParticipantType != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.ParticipantType))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.State != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.State))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.UserId != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.ChatId != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.ChatId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.Id != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.PredicateName) > 0 {
-		i -= len(m.PredicateName)
-		copy(dAtA[i:], m.PredicateName)
-		i = encodeVarintChatTl(dAtA, i, uint64(len(m.PredicateName)))
-		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *TLImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
+func (m *TLChatInvitePeek) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -6044,12 +6058,12 @@ func (m *TLImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TLImmutableChatParticipant) MarshalTo(dAtA []byte) (int, error) {
+func (m *TLChatInvitePeek) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *TLImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TLChatInvitePeek) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -6096,6 +6110,13 @@ func (m *ImmutableChat) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.TtlPeriod != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.TtlPeriod))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb0
 	}
 	if len(m.AvailableReactions) > 0 {
 		for iNdEx := len(m.AvailableReactions) - 1; iNdEx >= 0; iNdEx-- {
@@ -6335,6 +6356,158 @@ func (m *TLImmutableChat) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *ImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ImmutableChatParticipant) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Date != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Date))
+		i--
+		dAtA[i] = 0x78
+	}
+	if m.AdminRights != nil {
+		{
+			size, err := m.AdminRights.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintChatTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x72
+	}
+	if m.LeftAt != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.LeftAt))
+		i--
+		dAtA[i] = 0x68
+	}
+	if m.KickedAt != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.KickedAt))
+		i--
+		dAtA[i] = 0x60
+	}
+	if m.InvitedAt != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.InvitedAt))
+		i--
+		dAtA[i] = 0x58
+	}
+	if m.InviterUserId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.InviterUserId))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.Useage != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Useage))
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.Link) > 0 {
+		i -= len(m.Link)
+		copy(dAtA[i:], m.Link)
+		i = encodeVarintChatTl(dAtA, i, uint64(len(m.Link)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.ParticipantType != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.ParticipantType))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.State != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.State))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.UserId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.ChatId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.ChatId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Id != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.PredicateName) > 0 {
+		i -= len(m.PredicateName)
+		copy(dAtA[i:], m.PredicateName)
+		i = encodeVarintChatTl(dAtA, i, uint64(len(m.PredicateName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLImmutableChatParticipant) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLImmutableChatParticipant) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLImmutableChatParticipant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Data2 != nil {
+		{
+			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintChatTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *MutableChat) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -6439,7 +6612,7 @@ func (m *TLMutableChat) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *ChatInviteExt) Marshal() (dAtA []byte, err error) {
+func (m *UserChatIdList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -6449,12 +6622,12 @@ func (m *ChatInviteExt) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ChatInviteExt) MarshalTo(dAtA []byte) (int, error) {
+func (m *UserChatIdList) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *ChatInviteExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -6463,87 +6636,29 @@ func (m *ChatInviteExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Expires != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.Expires))
-		i--
-		dAtA[i] = 0x50
-	}
-	if len(m.Participants) > 0 {
-		dAtA15 := make([]byte, len(m.Participants)*10)
-		var j14 int
-		for _, num1 := range m.Participants {
+	if len(m.ChatIdList) > 0 {
+		dAtA20 := make([]byte, len(m.ChatIdList)*10)
+		var j19 int
+		for _, num1 := range m.ChatIdList {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA20[j19] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j14++
+				j19++
 			}
-			dAtA15[j14] = uint8(num)
-			j14++
+			dAtA20[j19] = uint8(num)
+			j19++
 		}
-		i -= j14
-		copy(dAtA[i:], dAtA15[:j14])
-		i = encodeVarintChatTl(dAtA, i, uint64(j14))
+		i -= j19
+		copy(dAtA[i:], dAtA20[:j19])
+		i = encodeVarintChatTl(dAtA, i, uint64(j19))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x22
 	}
-	if m.ParticipantsCount != 0 {
-		i = encodeVarintChatTl(dAtA, i, uint64(m.ParticipantsCount))
+	if m.UserId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.UserId))
 		i--
-		dAtA[i] = 0x40
-	}
-	if m.Photo != nil {
-		{
-			size, err := m.Photo.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintChatTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x3a
-	}
-	if m.About != nil {
-		{
-			size, err := m.About.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintChatTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.Title) > 0 {
-		i -= len(m.Title)
-		copy(dAtA[i:], m.Title)
-		i = encodeVarintChatTl(dAtA, i, uint64(len(m.Title)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.RequestNeeded {
-		i--
-		if m.RequestNeeded {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.Chat != nil {
-		{
-			size, err := m.Chat.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintChatTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x18
 	}
 	if m.Constructor != 0 {
 		i = encodeVarintChatTl(dAtA, i, uint64(m.Constructor))
@@ -6560,7 +6675,7 @@ func (m *ChatInviteExt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *TLChatInviteAlready) Marshal() (dAtA []byte, err error) {
+func (m *TLUserChatIdList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -6570,90 +6685,12 @@ func (m *TLChatInviteAlready) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TLChatInviteAlready) MarshalTo(dAtA []byte) (int, error) {
+func (m *TLUserChatIdList) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *TLChatInviteAlready) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data2 != nil {
-		{
-			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintChatTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLChatInvite) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLChatInvite) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLChatInvite) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data2 != nil {
-		{
-			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintChatTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLChatInvitePeek) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLChatInvitePeek) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLChatInvitePeek) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TLUserChatIdList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -8258,6 +8295,53 @@ func (m *TLChatSetChatAvailableReactions) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
+func (m *TLChatSetHistoryTTL) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLChatSetHistoryTTL) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLChatSetHistoryTTL) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.TtlPeriod != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.TtlPeriod))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.ChatId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.ChatId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.SelfId != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.SelfId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintChatTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Vector_MutableChat) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -8520,7 +8604,7 @@ func encodeVarintChatTl(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *UserChatIdList) Size() (n int) {
+func (m *ChatInviteExt) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8533,15 +8617,37 @@ func (m *UserChatIdList) Size() (n int) {
 	if m.Constructor != 0 {
 		n += 1 + sovChatTl(uint64(m.Constructor))
 	}
-	if m.UserId != 0 {
-		n += 1 + sovChatTl(uint64(m.UserId))
+	if m.Chat != nil {
+		l = m.Chat.Size()
+		n += 1 + l + sovChatTl(uint64(l))
 	}
-	if len(m.ChatIdList) > 0 {
+	if m.RequestNeeded {
+		n += 2
+	}
+	l = len(m.Title)
+	if l > 0 {
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.About != nil {
+		l = m.About.Size()
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.Photo != nil {
+		l = m.Photo.Size()
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.ParticipantsCount != 0 {
+		n += 1 + sovChatTl(uint64(m.ParticipantsCount))
+	}
+	if len(m.Participants) > 0 {
 		l = 0
-		for _, e := range m.ChatIdList {
+		for _, e := range m.Participants {
 			l += sovChatTl(uint64(e))
 		}
 		n += 1 + sovChatTl(uint64(l)) + l
+	}
+	if m.Expires != 0 {
+		n += 1 + sovChatTl(uint64(m.Expires))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -8549,7 +8655,7 @@ func (m *UserChatIdList) Size() (n int) {
 	return n
 }
 
-func (m *TLUserChatIdList) Size() (n int) {
+func (m *TLChatInviteAlready) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8565,59 +8671,15 @@ func (m *TLUserChatIdList) Size() (n int) {
 	return n
 }
 
-func (m *ImmutableChatParticipant) Size() (n int) {
+func (m *TLChatInvite) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.PredicateName)
-	if l > 0 {
+	if m.Data2 != nil {
+		l = m.Data2.Size()
 		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.Constructor != 0 {
-		n += 1 + sovChatTl(uint64(m.Constructor))
-	}
-	if m.Id != 0 {
-		n += 1 + sovChatTl(uint64(m.Id))
-	}
-	if m.ChatId != 0 {
-		n += 1 + sovChatTl(uint64(m.ChatId))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovChatTl(uint64(m.UserId))
-	}
-	if m.State != 0 {
-		n += 1 + sovChatTl(uint64(m.State))
-	}
-	if m.ParticipantType != 0 {
-		n += 1 + sovChatTl(uint64(m.ParticipantType))
-	}
-	l = len(m.Link)
-	if l > 0 {
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.Useage != 0 {
-		n += 1 + sovChatTl(uint64(m.Useage))
-	}
-	if m.InviterUserId != 0 {
-		n += 1 + sovChatTl(uint64(m.InviterUserId))
-	}
-	if m.InvitedAt != 0 {
-		n += 1 + sovChatTl(uint64(m.InvitedAt))
-	}
-	if m.KickedAt != 0 {
-		n += 1 + sovChatTl(uint64(m.KickedAt))
-	}
-	if m.LeftAt != 0 {
-		n += 1 + sovChatTl(uint64(m.LeftAt))
-	}
-	if m.AdminRights != nil {
-		l = m.AdminRights.Size()
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.Date != 0 {
-		n += 1 + sovChatTl(uint64(m.Date))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -8625,7 +8687,7 @@ func (m *ImmutableChatParticipant) Size() (n int) {
 	return n
 }
 
-func (m *TLImmutableChatParticipant) Size() (n int) {
+func (m *TLChatInvitePeek) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8724,6 +8786,9 @@ func (m *ImmutableChat) Size() (n int) {
 			n += 2 + l + sovChatTl(uint64(l))
 		}
 	}
+	if m.TtlPeriod != 0 {
+		n += 2 + sovChatTl(uint64(m.TtlPeriod))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -8731,6 +8796,82 @@ func (m *ImmutableChat) Size() (n int) {
 }
 
 func (m *TLImmutableChat) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Data2 != nil {
+		l = m.Data2.Size()
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ImmutableChatParticipant) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PredicateName)
+	if l > 0 {
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.Constructor != 0 {
+		n += 1 + sovChatTl(uint64(m.Constructor))
+	}
+	if m.Id != 0 {
+		n += 1 + sovChatTl(uint64(m.Id))
+	}
+	if m.ChatId != 0 {
+		n += 1 + sovChatTl(uint64(m.ChatId))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovChatTl(uint64(m.UserId))
+	}
+	if m.State != 0 {
+		n += 1 + sovChatTl(uint64(m.State))
+	}
+	if m.ParticipantType != 0 {
+		n += 1 + sovChatTl(uint64(m.ParticipantType))
+	}
+	l = len(m.Link)
+	if l > 0 {
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.Useage != 0 {
+		n += 1 + sovChatTl(uint64(m.Useage))
+	}
+	if m.InviterUserId != 0 {
+		n += 1 + sovChatTl(uint64(m.InviterUserId))
+	}
+	if m.InvitedAt != 0 {
+		n += 1 + sovChatTl(uint64(m.InvitedAt))
+	}
+	if m.KickedAt != 0 {
+		n += 1 + sovChatTl(uint64(m.KickedAt))
+	}
+	if m.LeftAt != 0 {
+		n += 1 + sovChatTl(uint64(m.LeftAt))
+	}
+	if m.AdminRights != nil {
+		l = m.AdminRights.Size()
+		n += 1 + l + sovChatTl(uint64(l))
+	}
+	if m.Date != 0 {
+		n += 1 + sovChatTl(uint64(m.Date))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLImmutableChatParticipant) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8791,7 +8932,7 @@ func (m *TLMutableChat) Size() (n int) {
 	return n
 }
 
-func (m *ChatInviteExt) Size() (n int) {
+func (m *UserChatIdList) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8804,77 +8945,23 @@ func (m *ChatInviteExt) Size() (n int) {
 	if m.Constructor != 0 {
 		n += 1 + sovChatTl(uint64(m.Constructor))
 	}
-	if m.Chat != nil {
-		l = m.Chat.Size()
-		n += 1 + l + sovChatTl(uint64(l))
+	if m.UserId != 0 {
+		n += 1 + sovChatTl(uint64(m.UserId))
 	}
-	if m.RequestNeeded {
-		n += 2
-	}
-	l = len(m.Title)
-	if l > 0 {
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.About != nil {
-		l = m.About.Size()
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.Photo != nil {
-		l = m.Photo.Size()
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.ParticipantsCount != 0 {
-		n += 1 + sovChatTl(uint64(m.ParticipantsCount))
-	}
-	if len(m.Participants) > 0 {
+	if len(m.ChatIdList) > 0 {
 		l = 0
-		for _, e := range m.Participants {
+		for _, e := range m.ChatIdList {
 			l += sovChatTl(uint64(e))
 		}
 		n += 1 + sovChatTl(uint64(l)) + l
 	}
-	if m.Expires != 0 {
-		n += 1 + sovChatTl(uint64(m.Expires))
-	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
 
-func (m *TLChatInviteAlready) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Data2 != nil {
-		l = m.Data2.Size()
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLChatInvite) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Data2 != nil {
-		l = m.Data2.Size()
-		n += 1 + l + sovChatTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLChatInvitePeek) Size() (n int) {
+func (m *TLUserChatIdList) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -9633,6 +9720,30 @@ func (m *TLChatSetChatAvailableReactions) Size() (n int) {
 	return n
 }
 
+func (m *TLChatSetHistoryTTL) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovChatTl(uint64(m.Constructor))
+	}
+	if m.SelfId != 0 {
+		n += 1 + sovChatTl(uint64(m.SelfId))
+	}
+	if m.ChatId != 0 {
+		n += 1 + sovChatTl(uint64(m.ChatId))
+	}
+	if m.TtlPeriod != 0 {
+		n += 1 + sovChatTl(uint64(m.TtlPeriod))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *Vector_MutableChat) Size() (n int) {
 	if m == nil {
 		return 0
@@ -9748,7 +9859,7 @@ func sovChatTl(x uint64) (n int) {
 func sozChatTl(x uint64) (n int) {
 	return sovChatTl(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
+func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9771,10 +9882,10 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UserChatIdList: wiretype end group for non-group")
+			return fmt.Errorf("proto: ChatInviteExt: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UserChatIdList: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ChatInviteExt: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -9829,10 +9940,10 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chat", wireType)
 			}
-			m.UserId = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowChatTl
@@ -9842,12 +9953,172 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Chat == nil {
+				m.Chat = &MutableChat{}
+			}
+			if err := m.Chat.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestNeeded", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RequestNeeded = bool(v != 0)
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Title = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field About", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.About == nil {
+				m.About = &types.StringValue{}
+			}
+			if err := m.About.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Photo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Photo == nil {
+				m.Photo = &mtproto.Photo{}
+			}
+			if err := m.Photo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParticipantsCount", wireType)
+			}
+			m.ParticipantsCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ParticipantsCount |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
 			if wireType == 0 {
 				var v int64
 				for shift := uint(0); ; shift += 7 {
@@ -9864,7 +10135,7 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 						break
 					}
 				}
-				m.ChatIdList = append(m.ChatIdList, v)
+				m.Participants = append(m.Participants, v)
 			} else if wireType == 2 {
 				var packedLen int
 				for shift := uint(0); ; shift += 7 {
@@ -9899,8 +10170,8 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 					}
 				}
 				elementCount = count
-				if elementCount != 0 && len(m.ChatIdList) == 0 {
-					m.ChatIdList = make([]int64, 0, elementCount)
+				if elementCount != 0 && len(m.Participants) == 0 {
+					m.Participants = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -9918,10 +10189,29 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 							break
 						}
 					}
-					m.ChatIdList = append(m.ChatIdList, v)
+					m.Participants = append(m.Participants, v)
 				}
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChatIdList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Participants", wireType)
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Expires", wireType)
+			}
+			m.Expires = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Expires |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
 			}
 		default:
 			iNdEx = preIndex
@@ -9945,7 +10235,7 @@ func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLUserChatIdList) Unmarshal(dAtA []byte) error {
+func (m *TLChatInviteAlready) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9968,10 +10258,10 @@ func (m *TLUserChatIdList) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: TL_userChatIdList: wiretype end group for non-group")
+			return fmt.Errorf("proto: TL_chatInviteAlready: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_userChatIdList: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TL_chatInviteAlready: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10004,7 +10294,7 @@ func (m *TLUserChatIdList) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Data2 == nil {
-				m.Data2 = &UserChatIdList{}
+				m.Data2 = &ChatInviteExt{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -10032,7 +10322,7 @@ func (m *TLUserChatIdList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ImmutableChatParticipant) Unmarshal(dAtA []byte) error {
+func (m *TLChatInvite) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -10055,389 +10345,10 @@ func (m *ImmutableChatParticipant) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ImmutableChatParticipant: wiretype end group for non-group")
+			return fmt.Errorf("proto: TL_chatInvite: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ImmutableChatParticipant: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PredicateName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChatId", wireType)
-			}
-			m.ChatId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ChatId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
-			}
-			m.State = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.State |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ParticipantType", wireType)
-			}
-			m.ParticipantType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ParticipantType |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Link", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Link = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 9:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Useage", wireType)
-			}
-			m.Useage = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Useage |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field InviterUserId", wireType)
-			}
-			m.InviterUserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.InviterUserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 11:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field InvitedAt", wireType)
-			}
-			m.InvitedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.InvitedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 12:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KickedAt", wireType)
-			}
-			m.KickedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KickedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 13:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field LeftAt", wireType)
-			}
-			m.LeftAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.LeftAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 14:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AdminRights", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.AdminRights == nil {
-				m.AdminRights = &mtproto.ChatAdminRights{}
-			}
-			if err := m.AdminRights.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 15:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Date", wireType)
-			}
-			m.Date = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Date |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipChatTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLImmutableChatParticipant) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowChatTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_immutableChatParticipant: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_immutableChatParticipant: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TL_chatInvite: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10470,7 +10381,94 @@ func (m *TLImmutableChatParticipant) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Data2 == nil {
-				m.Data2 = &ImmutableChatParticipant{}
+				m.Data2 = &ChatInviteExt{}
+			}
+			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipChatTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLChatInvitePeek) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowChatTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_chatInvitePeek: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_chatInvitePeek: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data2 == nil {
+				m.Data2 = &ChatInviteExt{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -11083,6 +11081,25 @@ func (m *ImmutableChat) Unmarshal(dAtA []byte) error {
 			}
 			m.AvailableReactions = append(m.AvailableReactions, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
+		case 22:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TtlPeriod", wireType)
+			}
+			m.TtlPeriod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TtlPeriod |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipChatTl(dAtA[iNdEx:])
@@ -11165,6 +11182,472 @@ func (m *TLImmutableChat) Unmarshal(dAtA []byte) error {
 			}
 			if m.Data2 == nil {
 				m.Data2 = &ImmutableChat{}
+			}
+			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipChatTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ImmutableChatParticipant) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowChatTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ImmutableChatParticipant: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ImmutableChatParticipant: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PredicateName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChatId", wireType)
+			}
+			m.ChatId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChatId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
+			}
+			m.State = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.State |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParticipantType", wireType)
+			}
+			m.ParticipantType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ParticipantType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Link", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Link = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Useage", wireType)
+			}
+			m.Useage = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Useage |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field InviterUserId", wireType)
+			}
+			m.InviterUserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.InviterUserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field InvitedAt", wireType)
+			}
+			m.InvitedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.InvitedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KickedAt", wireType)
+			}
+			m.KickedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KickedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LeftAt", wireType)
+			}
+			m.LeftAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LeftAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdminRights", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AdminRights == nil {
+				m.AdminRights = &mtproto.ChatAdminRights{}
+			}
+			if err := m.AdminRights.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Date", wireType)
+			}
+			m.Date = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Date |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipChatTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLImmutableChatParticipant) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowChatTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_immutableChatParticipant: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_immutableChatParticipant: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data2 == nil {
+				m.Data2 = &ImmutableChatParticipant{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -11451,7 +11934,7 @@ func (m *TLMutableChat) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
+func (m *UserChatIdList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -11474,10 +11957,10 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ChatInviteExt: wiretype end group for non-group")
+			return fmt.Errorf("proto: UserChatIdList: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ChatInviteExt: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UserChatIdList: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -11532,10 +12015,10 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Chat", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
 			}
-			var msglen int
+			m.UserId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowChatTl
@@ -11545,172 +12028,12 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.UserId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Chat == nil {
-				m.Chat = &MutableChat{}
-			}
-			if err := m.Chat.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RequestNeeded", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.RequestNeeded = bool(v != 0)
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Title = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field About", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.About == nil {
-				m.About = &types.StringValue{}
-			}
-			if err := m.About.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Photo", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Photo == nil {
-				m.Photo = &mtproto.Photo{}
-			}
-			if err := m.Photo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 8:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ParticipantsCount", wireType)
-			}
-			m.ParticipantsCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ParticipantsCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 9:
 			if wireType == 0 {
 				var v int64
 				for shift := uint(0); ; shift += 7 {
@@ -11727,7 +12050,7 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 						break
 					}
 				}
-				m.Participants = append(m.Participants, v)
+				m.ChatIdList = append(m.ChatIdList, v)
 			} else if wireType == 2 {
 				var packedLen int
 				for shift := uint(0); ; shift += 7 {
@@ -11762,8 +12085,8 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 					}
 				}
 				elementCount = count
-				if elementCount != 0 && len(m.Participants) == 0 {
-					m.Participants = make([]int64, 0, elementCount)
+				if elementCount != 0 && len(m.ChatIdList) == 0 {
+					m.ChatIdList = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -11781,29 +12104,10 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 							break
 						}
 					}
-					m.Participants = append(m.Participants, v)
+					m.ChatIdList = append(m.ChatIdList, v)
 				}
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Participants", wireType)
-			}
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Expires", wireType)
-			}
-			m.Expires = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Expires |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+				return fmt.Errorf("proto: wrong wireType = %d for field ChatIdList", wireType)
 			}
 		default:
 			iNdEx = preIndex
@@ -11827,7 +12131,7 @@ func (m *ChatInviteExt) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLChatInviteAlready) Unmarshal(dAtA []byte) error {
+func (m *TLUserChatIdList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -11850,10 +12154,10 @@ func (m *TLChatInviteAlready) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: TL_chatInviteAlready: wiretype end group for non-group")
+			return fmt.Errorf("proto: TL_userChatIdList: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_chatInviteAlready: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TL_userChatIdList: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -11886,181 +12190,7 @@ func (m *TLChatInviteAlready) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Data2 == nil {
-				m.Data2 = &ChatInviteExt{}
-			}
-			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipChatTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLChatInvite) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowChatTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_chatInvite: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_chatInvite: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Data2 == nil {
-				m.Data2 = &ChatInviteExt{}
-			}
-			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipChatTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLChatInvitePeek) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowChatTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_chatInvitePeek: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_chatInvitePeek: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowChatTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthChatTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Data2 == nil {
-				m.Data2 = &ChatInviteExt{}
+				m.Data2 = &UserChatIdList{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -16382,6 +16512,133 @@ func (m *TLChatSetChatAvailableReactions) Unmarshal(dAtA []byte) error {
 			}
 			m.AvailableReactions = append(m.AvailableReactions, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipChatTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthChatTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLChatSetHistoryTTL) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowChatTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_chat_setHistoryTTL: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_chat_setHistoryTTL: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SelfId", wireType)
+			}
+			m.SelfId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SelfId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChatId", wireType)
+			}
+			m.ChatId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChatId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TtlPeriod", wireType)
+			}
+			m.TtlPeriod = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowChatTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TtlPeriod |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipChatTl(dAtA[iNdEx:])
