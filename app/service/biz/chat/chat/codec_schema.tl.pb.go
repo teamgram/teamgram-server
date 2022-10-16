@@ -45,9 +45,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -1394351506
 		return o
 	},
-	242024901: func() mtproto.TLObject { // 0xe6d01c5
+	-1557334680: func() mtproto.TLObject { // 0xa32cf568
 		o := MakeTLImmutableChat(nil)
-		o.Data2.Constructor = 242024901
+		o.Data2.Constructor = -1557334680
 		return o
 	},
 	650553001: func() mtproto.TLObject { // 0x26c6a6a9
@@ -207,9 +207,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1348907914,
 		}
 	},
-	1372233637: func() mtproto.TLObject { // 0x51ca9fa5
+	-992966286: func() mtproto.TLObject { // 0xc4d08972
 		return &TLChatSetChatAvailableReactions{
-			Constructor: 1372233637,
+			Constructor: -992966286,
 		}
 	},
 	1023107972: func() mtproto.TLObject { // 0x3cfb6384
@@ -669,7 +669,7 @@ func (m *ImmutableChat) CalcByteSize(layer int32) int {
 func (m *ImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xe6d01c5:
+	case 0xa32cf568:
 		m2 := MakeTLImmutableChat(m)
 		m2.Decode(dBuf)
 
@@ -778,6 +778,9 @@ func (m *TLImmutableChat) GetBotInfo() []*mtproto.BotInfo  { return m.Data2.BotI
 func (m *TLImmutableChat) SetCall(v *mtproto.InputGroupCall) { m.Data2.Call = v }
 func (m *TLImmutableChat) GetCall() *mtproto.InputGroupCall  { return m.Data2.Call }
 
+func (m *TLImmutableChat) SetAvailableReactionsType(v int32) { m.Data2.AvailableReactionsType = v }
+func (m *TLImmutableChat) GetAvailableReactionsType() int32  { return m.Data2.AvailableReactionsType }
+
 func (m *TLImmutableChat) SetAvailableReactions(v []string) { m.Data2.AvailableReactions = v }
 func (m *TLImmutableChat) GetAvailableReactions() []string  { return m.Data2.AvailableReactions }
 
@@ -792,8 +795,8 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0xe6d01c5: func() []byte {
-			x.UInt(0xe6d01c5)
+		0xa32cf568: func() []byte {
+			x.UInt(0xa32cf568)
 
 			// set flags
 			var getFlags = func() uint32 {
@@ -864,6 +867,8 @@ func (m *TLImmutableChat) Encode(layer int32) []byte {
 				x.Bytes(m.GetCall().Encode(layer))
 			}
 
+			x.Int(m.GetAvailableReactionsType())
+
 			x.VectorString(m.GetAvailableReactions())
 
 			x.Int(m.GetTtlPeriod())
@@ -889,7 +894,7 @@ func (m *TLImmutableChat) CalcByteSize(layer int32) int {
 
 func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xe6d01c5: func() error {
+		0xa32cf568: func() error {
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Long())
@@ -953,6 +958,7 @@ func (m *TLImmutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 				m18.Decode(dBuf)
 				m.SetCall(m18)
 			}
+			m.SetAvailableReactionsType(dBuf.Int())
 
 			m.SetAvailableReactions(dBuf.VectorString())
 
@@ -3118,13 +3124,14 @@ func (m *TLChatSetChatAvailableReactions) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_chat_setChatAvailableReactions))
 
 	switch uint32(m.Constructor) {
-	case 0x51ca9fa5:
-		x.UInt(0x51ca9fa5)
+	case 0xc4d08972:
+		x.UInt(0xc4d08972)
 
 		// no flags
 
 		x.Long(m.GetSelfId())
 		x.Long(m.GetChatId())
+		x.Int(m.GetAvailableReactionsType())
 
 		x.VectorString(m.GetAvailableReactions())
 
@@ -3141,12 +3148,13 @@ func (m *TLChatSetChatAvailableReactions) CalcByteSize(layer int32) int {
 
 func (m *TLChatSetChatAvailableReactions) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x51ca9fa5:
+	case 0xc4d08972:
 
 		// not has flags
 
 		m.SelfId = dBuf.Long()
 		m.ChatId = dBuf.Long()
+		m.AvailableReactionsType = dBuf.Int()
 
 		m.AvailableReactions = dBuf.VectorString()
 

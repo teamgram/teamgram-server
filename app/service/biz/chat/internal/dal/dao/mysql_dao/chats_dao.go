@@ -87,11 +87,11 @@ func (dao *ChatsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatsDO) (lastInsertId
 }
 
 // Select
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id = :id
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id = ?"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id = ?"
 		do    = &dataobject.ChatsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
@@ -111,11 +111,11 @@ func (dao *ChatsDAO) Select(ctx context.Context, id int64) (rValue *dataobject.C
 }
 
 // SelectLastCreator
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = :creator_user_id order by `date` desc limit 1
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectLastCreator(ctx context.Context, creator_user_id int64) (rValue *dataobject.ChatsDO, err error) {
 	var (
-		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
+		query = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where creator_user_id = ? order by `date` desc limit 1"
 		do    = &dataobject.ChatsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, creator_user_id)
@@ -227,11 +227,11 @@ func (dao *ChatsDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAff
 }
 
 // SelectByIdList
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
 		a      []interface{}
 		values []dataobject.ChatsDO
 	)
@@ -259,11 +259,11 @@ func (dao *ChatsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList 
 }
 
 // SelectByIdListWithCB
-// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
+// select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(i int, v *dataobject.ChatsDO)) (rList []dataobject.ChatsDO, err error) {
 	var (
-		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
+		query  = "select id, creator_user_id, access_hash, participant_count, title, about, photo_id, default_banned_rights, migrated_to_id, migrated_to_access_hash, noforwards, available_reactions_type, available_reactions, deactivated, ttl_period, version, `date` from chats where id in (?)"
 		a      []interface{}
 		values []dataobject.ChatsDO
 	)
@@ -573,14 +573,14 @@ func (dao *ChatsDAO) UpdateMigratedToTx(tx *sqlx.Tx, migrated_to_id int64, migra
 }
 
 // UpdateAvailableReactions
-// update chats set available_reactions = :available_reactions where id = :id
+// update chats set available_reactions_type = :available_reactions_type, available_reactions = :available_reactions where id = :id
 // TODO(@benqi): sqlmap
-func (dao *ChatsDAO) UpdateAvailableReactions(ctx context.Context, available_reactions string, id int64) (rowsAffected int64, err error) {
+func (dao *ChatsDAO) UpdateAvailableReactions(ctx context.Context, available_reactions_type int32, available_reactions string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set available_reactions = ? where id = ?"
+		query   = "update chats set available_reactions_type = ?, available_reactions = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, available_reactions, id)
+	rResult, err = dao.db.Exec(ctx, query, available_reactions_type, available_reactions, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateAvailableReactions(_), error: %v", err)
@@ -595,15 +595,15 @@ func (dao *ChatsDAO) UpdateAvailableReactions(ctx context.Context, available_rea
 	return
 }
 
-// update chats set available_reactions = :available_reactions where id = :id
+// update chats set available_reactions_type = :available_reactions_type, available_reactions = :available_reactions where id = :id
 // UpdateAvailableReactionsTx
 // TODO(@benqi): sqlmap
-func (dao *ChatsDAO) UpdateAvailableReactionsTx(tx *sqlx.Tx, available_reactions string, id int64) (rowsAffected int64, err error) {
+func (dao *ChatsDAO) UpdateAvailableReactionsTx(tx *sqlx.Tx, available_reactions_type int32, available_reactions string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chats set available_reactions = ? where id = ?"
+		query   = "update chats set available_reactions_type = ?, available_reactions = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, available_reactions, id)
+	rResult, err = tx.Exec(query, available_reactions_type, available_reactions, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateAvailableReactions(_), error: %v", err)

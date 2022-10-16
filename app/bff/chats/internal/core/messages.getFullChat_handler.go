@@ -76,8 +76,8 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		ThemeEmoticon:                        nil,                                      // TODO
 		RequestsPending:                      nil,                                      // TODO
 		RecentRequesters:                     nil,                                      // TODO
-		AvailableReactions_FLAGVECTORSTRING:  chat.AvailableReactions(),
-		AvailableReactions_FLAGCHATREACTIONS: nil,
+		AvailableReactions_FLAGVECTORSTRING:  chat.GetChat().GetAvailableReactions(),
+		AvailableReactions_FLAGCHATREACTIONS: chat.AvailableReactions(),
 	}).To_ChatFull()
 
 	var (

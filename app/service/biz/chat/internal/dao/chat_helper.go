@@ -15,26 +15,27 @@ import (
 
 func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.ImmutableChat) {
 	chat = &chatpb.ImmutableChat{
-		Id:                  chatsDO.Id,
-		Creator:             chatsDO.CreatorUserId,
-		Title:               chatsDO.Title,
-		Photo:               mtproto.MakeTLPhotoEmpty(nil).To_Photo(),
-		Deactivated:         chatsDO.Deactivated,
-		CallActive:          false,
-		CallNotEmpty:        false,
-		Noforwards:          chatsDO.Noforwards,
-		ParticipantsCount:   chatsDO.ParticipantCount,
-		Date:                chatsDO.Date,
-		Version:             chatsDO.Version,
-		MigratedTo:          nil,
-		DefaultBannedRights: mtproto.BannedRights(chatsDO.DefaultBannedRights).ToChatBannedRights(),
-		CanSetUsername:      false,
-		About:               chatsDO.About,
-		ExportedInvite:      nil,
-		BotInfo:             nil,
-		Call:                nil,
-		AvailableReactions:  nil,
-		TtlPeriod:           chatsDO.TtlPeriod,
+		Id:                     chatsDO.Id,
+		Creator:                chatsDO.CreatorUserId,
+		Title:                  chatsDO.Title,
+		Photo:                  mtproto.MakeTLPhotoEmpty(nil).To_Photo(),
+		Deactivated:            chatsDO.Deactivated,
+		CallActive:             false,
+		CallNotEmpty:           false,
+		Noforwards:             chatsDO.Noforwards,
+		ParticipantsCount:      chatsDO.ParticipantCount,
+		Date:                   chatsDO.Date,
+		Version:                chatsDO.Version,
+		MigratedTo:             nil,
+		DefaultBannedRights:    mtproto.BannedRights(chatsDO.DefaultBannedRights).ToChatBannedRights(),
+		CanSetUsername:         false,
+		About:                  chatsDO.About,
+		ExportedInvite:         nil,
+		BotInfo:                nil,
+		Call:                   nil,
+		AvailableReactionsType: chatsDO.AvailableReactionsType,
+		AvailableReactions:     nil,
+		TtlPeriod:              chatsDO.TtlPeriod,
 	}
 
 	if chatsDO.MigratedToId != 0 && chatsDO.MigratedToAccessHash != 0 {
@@ -56,7 +57,7 @@ func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.I
 
 	chat.ExportedInvite = nil // model.ExportedChatInviteEmpty
 
-	if chatsDO.AvailableReactions != "" {
+	if chatsDO.AvailableReactionsType == mtproto.ChatReactionsTypeSome {
 		jsonx.UnmarshalFromString(chatsDO.AvailableReactions, &chat.AvailableReactions)
 	}
 

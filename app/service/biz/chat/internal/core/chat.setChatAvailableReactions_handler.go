@@ -68,7 +68,7 @@ func (c *ChatCore) ChatSetChatAvailableReactions(in *chat.TLChatSetChatAvailable
 	_, _, err = c.svcCtx.Dao.CachedConn.Exec(
 		c.ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-			affected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateAvailableReactions(c.ctx, availableReactions, in.ChatId)
+			affected, err2 := c.svcCtx.Dao.ChatsDAO.UpdateAvailableReactions(c.ctx, in.AvailableReactionsType, availableReactions, in.ChatId)
 			return 0, affected, err2
 		},
 		c.svcCtx.Dao.GetChatCacheKey(in.ChatId))
