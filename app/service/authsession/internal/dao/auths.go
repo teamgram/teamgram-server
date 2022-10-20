@@ -173,7 +173,7 @@ func (d *Dao) GetLangPack(ctx context.Context, authKeyId int64) string {
 
 func (d *Dao) GetClient(ctx context.Context, authKeyId int64) string {
 	cData, err := d.GetCacheAuthData(ctx, authKeyId)
-	if err == nil {
+	if err != nil {
 		logx.WithContext(ctx).Errorf("not find client - keyId = %d", authKeyId)
 		return ""
 	}
