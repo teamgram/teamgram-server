@@ -145,7 +145,7 @@ func (c *MsgCore) sendUserMessage(
 
 	peerUser, _ := users.GetImmutableUser(toUserId)
 	if peerUser == nil || peerUser.Deleted() {
-		err = mtproto.ErrPeerIdInvalid
+		err = mtproto.ErrInputUserDeactivated
 		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
 		return nil, err
 	}

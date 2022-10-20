@@ -250,7 +250,7 @@
     <operation name="SelectAllDrafts" result_set="list">
         <sql>
             SELECT
-                user_id, peer_id, draft_message_data
+                id, user_id, peer_type, peer_id, draft_message_data
             FROM
                 dialogs
             WHERE

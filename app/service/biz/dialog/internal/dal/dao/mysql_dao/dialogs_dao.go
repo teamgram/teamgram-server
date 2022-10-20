@@ -1047,11 +1047,11 @@ func (dao *DialogsDAO) SaveDraftTx(tx *sqlx.Tx, draft_type int32, draft_message_
 }
 
 // SelectAllDrafts
-// select user_id, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
+// select id, user_id, peer_type, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectAllDrafts(ctx context.Context, user_id int64) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
+		query  = "select id, user_id, peer_type, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
 		values []dataobject.DialogsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
@@ -1067,11 +1067,11 @@ func (dao *DialogsDAO) SelectAllDrafts(ctx context.Context, user_id int64) (rLis
 }
 
 // SelectAllDraftsWithCB
-// select user_id, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
+// select id, user_id, peer_type, peer_id, draft_message_data from dialogs where user_id = :user_id and draft_type > 0
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SelectAllDraftsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.DialogsDO)) (rList []dataobject.DialogsDO, err error) {
 	var (
-		query  = "select user_id, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
+		query  = "select id, user_id, peer_type, peer_id, draft_message_data from dialogs where user_id = ? and draft_type > 0"
 		values []dataobject.DialogsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
