@@ -18,9 +18,7 @@ import (
 // user.checkBlockUserList user_id:long id:Vector<long> = Vector<long>;
 func (c *UserCore) UserCheckBlockUserList(in *user.TLUserCheckBlockUserList) (*user.Vector_Long, error) {
 	var (
-		rVal = &user.Vector_Long{
-			// Datas: []int64{},
-		}
+		rVal = &user.Vector_Long{}
 	)
 
 	// c.svcCtx.Dao

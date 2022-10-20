@@ -87,16 +87,17 @@ func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKe
 		return
 	}
 
-	authorizations = make([]*mtproto.Authorization, 0, len(doList))
+	authorizations = make([]*mtproto.Authorization, len(doList)+1)
 	mr.ForEach(
 		func(source chan<- interface{}) {
 			for i := 0; i < len(doList); i++ {
-				source <- doList[i].AuthKeyId
+				source <- idxId{i, doList[i].AuthKeyId}
 			}
 		},
 		func(item interface{}) {
-			kId := item.(int64)
-			cData, _ := d.GetCacheAuthData(ctx, kId)
+			idx := item.(idxId)
+			//kId := item.(int64)
+			cData, _ := d.GetCacheAuthData(ctx, idx.id)
 			if cData != nil {
 				country, region := d.getCountryAndRegionByIp(cData.ClientIp())
 				// TODO(@benqi): fill plat_form, app_name, (country, region)
@@ -118,17 +119,17 @@ func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKe
 					Region:          region,
 				}).To_Authorization()
 
-				if kId == excludeAuthKeyId {
+				if idx.id == excludeAuthKeyId {
 					authorization.Current = true
 					authorization.Hash = 0
-					authorizations = append([]*mtproto.Authorization{authorization}, authorizations...)
+					authorizations[0] = authorization
 				} else {
-					authorizations = append(authorizations, authorization)
+					authorizations[idx.idx+1] = authorization
 				}
 			}
 		})
 
-	return
+	return removeAllNil(authorizations)
 }
 
 func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, hash int64) []int64 {
