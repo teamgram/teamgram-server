@@ -12,7 +12,6 @@ package core
 import (
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // UserGetMutableUsers
@@ -37,54 +36,26 @@ func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.Ve
 	if len(id) == 0 {
 		return vUser, nil
 	} else if len(id) == 1 {
-		immutableUser, _ := c.svcCtx.Dao.GetImmutableUser(c.ctx, id[0], false)
+		immutableUser, err := c.svcCtx.Dao.GetImmutableUser(c.ctx, id[0], false)
+		if err != nil {
+			c.Logger.Errorf("getImmutableUser(%d) - error: %v", id[0], err)
+		}
 		if immutableUser != nil {
 			vUser.Datas = append(vUser.Datas, immutableUser)
 		}
 
 		return vUser, nil
-	}
-
-	mUsers := make([]*user.ImmutableUser, 0, len(id))
-	mr.ForEach(
-		func(source chan<- interface{}) {
-			for idx := 0; idx < len(id); idx++ {
-				source <- idx
+	} else {
+		for i := 0; i < len(id); i++ {
+			immutableUser, err := c.svcCtx.Dao.GetImmutableUser(c.ctx, id[i], true, id...)
+			if err != nil {
+				c.Logger.Errorf("getImmutableUser(%d) - error: %v", id[i], err)
+				continue
 			}
-		},
-		func(item interface{}) {
-			var (
-				idx = item.(int)
-				rU  *user.ImmutableUser
-				err error
-			)
 
-			if ok, _ := container2.Contains(id[idx], in.To); ok {
-				rU, err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
-				if err != nil {
-					c.Logger.Errorf("getImmutableUser - error: %v", err)
-				}
-			} else {
-				if len(in.To) == 0 {
-					rU, err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
-					if err != nil {
-						c.Logger.Errorf("getImmutableUser - error: %v", err)
-					}
-				} else {
-					rU, err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.To...)
-					if err != nil {
-						c.Logger.Errorf("getImmutableUser - error: %v", err)
-					}
-				}
+			if immutableUser != nil {
+				vUser.Datas = append(vUser.Datas, immutableUser)
 			}
-			if rU != nil {
-				mUsers = append(mUsers, rU)
-			}
-		})
-
-	for _, v := range mUsers {
-		if v != nil {
-			vUser.Datas = append(vUser.Datas, v)
 		}
 	}
 
