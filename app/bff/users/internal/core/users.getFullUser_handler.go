@@ -24,6 +24,7 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
@@ -161,15 +162,17 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 			}
 		},
 		func() {
-			// theme_emoticon
-			dialogExt, _ := c.svcCtx.Dao.DialogClient.DialogGetDialogById(c.ctx, &dialog.TLDialogGetDialogById{
-				UserId:   c.MD.UserId,
-				PeerType: mtproto.PEER_USER,
-				PeerId:   peerId,
-			})
-			if dialogExt != nil {
-				userFull.ThemeEmoticon = mtproto.MakeFlagsString(dialogExt.ThemeEmoticon)
-				userFull.TtlPeriod = mtproto.MakeFlagsInt32(dialogExt.TtlPeriod)
+			if peerId != c.MD.UserId {
+				// theme_emoticon
+				dialogExt, _ := c.svcCtx.Dao.DialogClient.DialogGetDialogById(c.ctx, &dialog.TLDialogGetDialogById{
+					UserId:   c.MD.UserId,
+					PeerType: mtproto.PEER_USER,
+					PeerId:   peerId,
+				})
+				if dialogExt != nil {
+					userFull.ThemeEmoticon = mtproto.MakeFlagsString(dialogExt.ThemeEmoticon)
+					userFull.TtlPeriod = mtproto.MakeFlagsInt32(dialogExt.TtlPeriod)
+				}
 			}
 		})
 
