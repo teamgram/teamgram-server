@@ -425,6 +425,7 @@ func (s *authSessions) runLoop() {
 		s.finish.Wait()
 	}()
 
+	lastTime := time.Now().Unix()
 	for s.running.Get() == 1 {
 		select {
 		case <-s.closeChan:
@@ -458,6 +459,12 @@ func (s *authSessions) runLoop() {
 		// case <-time.After(100 * time.Millisecond):
 		case <-time.After(time.Second):
 			s.onTimer()
+			lastTime = time.Now().Unix()
+		}
+		now := time.Now().Unix()
+		if now-lastTime > 2 {
+			s.onTimer()
+			lastTime = now
 		}
 	}
 
