@@ -362,7 +362,7 @@ func (s *authSessions) setOnline() {
 			})
 		s.onlineExpired = date + 60
 	} else {
-		//log.Infof("DEBUG] setOnline - not set online: (date: %d, onlineExpired: %d, AuthUserId: %d)",
+		//logx.Infof("DEBUG] setOnline - not set online: (date: %d, onlineExpired: %d, AuthUserId: %d)",
 		//	date,
 		//	s.onlineExpired,
 		//	s.AuthUserId)
@@ -425,7 +425,9 @@ func (s *authSessions) runLoop() {
 		s.finish.Wait()
 	}()
 
-	lastTime := time.Now().Unix()
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
 	for s.running.Get() == 1 {
 		select {
 		case <-s.closeChan:
@@ -457,14 +459,8 @@ func (s *authSessions) runLoop() {
 			result, _ := rpcMessages.(*rpcApiMessage)
 			s.onRpcResult(result)
 		// case <-time.After(100 * time.Millisecond):
-		case <-time.After(time.Second):
+		case <-ticker.C:
 			s.onTimer()
-			lastTime = time.Now().Unix()
-		}
-		now := time.Now().Unix()
-		if now-lastTime > 2 {
-			s.onTimer()
-			lastTime = now
 		}
 	}
 
