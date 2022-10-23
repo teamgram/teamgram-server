@@ -152,6 +152,22 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 	return cacheUserData
 }
 
+func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
+	if documentId == 0 {
+		return nil
+	}
+	if until > 0 {
+		return mtproto.MakeTLEmojiStatus(&mtproto.EmojiStatus{
+			DocumentId: documentId,
+		}).To_EmojiStatus()
+	} else {
+		return mtproto.MakeTLEmojiStatusUntil(&mtproto.EmojiStatus{
+			DocumentId: documentId,
+			Until:      until,
+		}).To_EmojiStatus()
+	}
+}
+
 func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *user.UserData {
 	userData := user.MakeTLUserData(&user.UserData{
 		Id:                userDO.Id,
@@ -177,6 +193,7 @@ func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *user.UserData {
 		PrivaciesVersion:  1,
 		BotAttachMenu:     false,
 		Premium:           userDO.Premium,
+		EmojiStatus:       makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
 	}).To_UserData()
 
 	return userData

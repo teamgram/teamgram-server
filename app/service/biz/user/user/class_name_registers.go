@@ -80,6 +80,7 @@ const (
 	Predicate_user_isBot                            = "user_isBot"
 	Predicate_user_getBotInfo                       = "user_getBotInfo"
 	Predicate_user_getFullUser                      = "user_getFullUser"
+	Predicate_user_updateEmojiStatus                = "user_updateEmojiStatus"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -104,7 +105,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_userData: {
-		0: 2138633749, // 0x7f78f615
+		0: 478939154, // 0x1c8c0812
 
 	},
 	Predicate_immutableUser: {
@@ -359,6 +360,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -49225414, // 0xfd10e13a
 
 	},
+	Predicate_user_updateEmojiStatus: {
+		0: -121062696, // 0xf8c8bad8
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -367,7 +372,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1280204321: Predicate_lastSeenData,                          // 0xb3b1a1df
 	722018346:   Predicate_contactData,                           // 0x2b09202a
 	23110840:    Predicate_botData,                               // 0x160a4b8
-	2138633749:  Predicate_userData,                              // 0x7f78f615
+	478939154:   Predicate_userData,                              // 0x1c8c0812
 	361114766:   Predicate_immutableUser,                         // 0x15862c8e
 	1256160192:  Predicate_userImportedContacts,                  // 0x4adf7bc0
 	2090958337:  Predicate_user_getLastSeens,                     // 0x7ca17e01
@@ -431,6 +436,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-948779026:  Predicate_user_isBot,                            // 0xc772c7ee
 	879114000:   Predicate_user_getBotInfo,                       // 0x34663710
 	-49225414:   Predicate_user_getFullUser,                      // 0xfd10e13a
+	-121062696:  Predicate_user_updateEmojiStatus,                // 0xf8c8bad8
 
 }
 

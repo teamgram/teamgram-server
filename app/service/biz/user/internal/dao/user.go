@@ -20,106 +20,17 @@ package dao
 
 import (
 	"context"
-	"github.com/teamgram/marmota/pkg/container2"
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/mr"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-)
 
-//const (
-//	userDataKeyPrefix = "user_data"
-//)
-//
-//func genUserDataCacheKey(id int64) string {
-//	return fmt.Sprintf("%s_%d", userDataKeyPrefix, id)
-//}
-//
-//func (d *Dao) GetUserData(ctx context.Context, id int64) *user.UserData {
-//	userData := user.MakeTLUserData(nil).To_UserData()
-//
-//	err := d.CachedConn.QueryRow(
-//		ctx,
-//		userData,
-//		genUserDataCacheKey(id),
-//		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-//			do, err := d.UsersDAO.SelectById(ctx, id)
-//			if err != nil {
-//				return err
-//			}
-//			if do == nil {
-//				return sqlc.ErrNotFound
-//			}
-//			userData2 := v.(*user.UserData)
-//			d.setUserDataByDO(userData2, do)
-//
-//			if do.IsBot && do.PhotoId != 0 {
-//				mr.FinishVoid(
-//					func() {
-//						userData2.Bot = d.getBotData(ctx, do.Id)
-//					},
-//					func() {
-//						userData2.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
-//							PhotoId: do.PhotoId,
-//						})
-//					})
-//			} else {
-//				if do.IsBot {
-//					userData2.Bot = d.getBotData(ctx, do.Id)
-//				}
-//				if do.PhotoId != 0 {
-//					userData2.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
-//						PhotoId: do.PhotoId,
-//					})
-//				}
-//			}
-//
-//			if do.Restricted {
-//				jsonx.UnmarshalFromString(do.RestrictionReason, &userData2.RestrictionReason)
-//			}
-//			return nil
-//		})
-//	if err != nil {
-//		return nil
-//	}
-//
-//	return userData
-//}
-//
-//func (d *Dao) setUserDataByDO(userData *user.UserData, userDO *dataobject.UsersDO) {
-//	// deleted
-//	if userDO.Deleted {
-//		userData.Id = userDO.Id
-//		userData.AccessHash = userDO.AccessHash
-//		userData.Deleted = true
-//	} else {
-//		userData.Id = userDO.Id
-//		userData.AccessHash = userDO.AccessHash
-//		userData.UserType = userDO.UserType
-//		userData.SceretKeyId = userDO.SecretKeyId
-//		userData.FirstName = userDO.FirstName
-//		userData.LastName = userDO.LastName
-//		userData.Username = userDO.Username
-//		userData.Phone = userDO.Phone
-//		userData.ProfilePhoto = nil //
-//		userData.Bot = nil
-//		userData.CountryCode = userDO.CountryCode
-//		userData.Verified = userDO.Verified
-//		userData.Support = userDO.Support
-//		userData.Scam = userDO.Scam
-//		userData.Fake = userDO.Fake
-//		userData.About = mtproto.MakeFlagsString(userDO.About)
-//		userData.Restricted = userDO.Restricted
-//		userData.RestrictionReason = nil
-//		userData.ContactsVersion = 1
-//		userData.PrivaciesVersion = 1
-//		userData.Deleted = false
-//	}
-//}
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
+)
 
 func (d *Dao) getBotData(ctx context.Context, botId int64) *user.BotData {
 	var (
@@ -163,6 +74,7 @@ func (d *Dao) UpdateUserFirstAndLastName(ctx context.Context, id int64, firstNam
 		},
 		genCacheUserDataCacheKey(id))
 	if err != nil {
+		logx.WithContext(ctx).Errorf("updateUserFirstAndLastName - error: %v", err)
 		return false
 	}
 
@@ -185,6 +97,7 @@ func (d *Dao) UpdateUserAbout(ctx context.Context, id int64, about string) bool 
 		},
 		genCacheUserDataCacheKey(id))
 	if err != nil {
+		logx.WithContext(ctx).Errorf("updateUserAbout - error: %v", err)
 		return false
 	}
 
@@ -207,6 +120,7 @@ func (d *Dao) UpdateUserUsername(ctx context.Context, id int64, username string)
 		},
 		genCacheUserDataCacheKey(id))
 	if err != nil {
+		logx.WithContext(ctx).Errorf("updateUserUsername - error: %v", err)
 		return false
 	}
 
@@ -254,6 +168,7 @@ func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int
 		},
 		genCacheUserDataCacheKey(userId))
 	if err != nil {
+		logx.WithContext(ctx).Errorf("updateProfilePhoto - error: %v", err)
 		return 0
 	}
 
@@ -324,4 +239,29 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 	}
 
 	return immutableUser, nil
+}
+
+func (d *Dao) UpdateUserEmojiStatus(ctx context.Context, id int64, emojiStatusDocumentId int64, emojiStatusUntil int32) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.UsersDAO.UpdateEmojiStatus(
+				ctx,
+				emojiStatusDocumentId,
+				emojiStatusUntil,
+				id)
+
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updateUserEmojiStatus - error: %v", err)
+		return false
+	}
+
+	return true
 }

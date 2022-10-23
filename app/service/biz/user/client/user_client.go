@@ -83,6 +83,7 @@ type UserClient interface {
 	UserIsBot(ctx context.Context, in *user.TLUserIsBot) (*mtproto.Bool, error)
 	UserGetBotInfo(ctx context.Context, in *user.TLUserGetBotInfo) (*mtproto.BotInfo, error)
 	UserGetFullUser(ctx context.Context, in *user.TLUserGetFullUser) (*mtproto.Users_UserFull, error)
+	UserUpdateEmojiStatus(ctx context.Context, in *user.TLUserUpdateEmojiStatus) (*mtproto.Bool, error)
 }
 
 type defaultUserClient struct {
@@ -124,7 +125,7 @@ func (m *defaultUserClient) UserGetImmutableUser(ctx context.Context, in *user.T
 }
 
 // UserGetMutableUsers
-// user.getMutableUsers id:Vector<long> = Vector<ImmutableUser>;
+// user.getMutableUsers id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
 func (m *defaultUserClient) UserGetMutableUsers(ctx context.Context, in *user.TLUserGetMutableUsers) (*user.Vector_ImmutableUser, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetMutableUsers(ctx, in)
@@ -520,4 +521,11 @@ func (m *defaultUserClient) UserGetBotInfo(ctx context.Context, in *user.TLUserG
 func (m *defaultUserClient) UserGetFullUser(ctx context.Context, in *user.TLUserGetFullUser) (*mtproto.Users_UserFull, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetFullUser(ctx, in)
+}
+
+// UserUpdateEmojiStatus
+// user.updateEmojiStatus user_id:long emoji_status_document_id:long emoji_status_until:int = Bool;
+func (m *defaultUserClient) UserUpdateEmojiStatus(ctx context.Context, in *user.TLUserUpdateEmojiStatus) (*mtproto.Bool, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdateEmojiStatus(ctx, in)
 }

@@ -60,9 +60,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -1810715178
 		return o
 	},
-	2138633749: func() mtproto.TLObject { // 0x7f78f615
+	478939154: func() mtproto.TLObject { // 0x1c8c0812
 		o := MakeTLUserData(nil)
-		o.Data2.Constructor = 2138633749
+		o.Data2.Constructor = 478939154
 		return o
 	},
 	1256160192: func() mtproto.TLObject { // 0x4adf7bc0
@@ -375,6 +375,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-49225414: func() mtproto.TLObject { // 0xfd10e13a
 		return &TLUserGetFullUser{
 			Constructor: -49225414,
+		}
+	},
+	-121062696: func() mtproto.TLObject { // 0xf8c8bad8
+		return &TLUserUpdateEmojiStatus{
+			Constructor: -121062696,
 		}
 	},
 }
@@ -1522,7 +1527,7 @@ func (m *UserData) CalcByteSize(layer int32) int {
 func (m *UserData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x7f78f615:
+	case 0x1c8c0812:
 		m2 := MakeTLUserData(m)
 		m2.Decode(dBuf)
 
@@ -1642,6 +1647,9 @@ func (m *TLUserData) GetBotAttachMenu() bool  { return m.Data2.BotAttachMenu }
 func (m *TLUserData) SetPremium(v bool) { m.Data2.Premium = v }
 func (m *TLUserData) GetPremium() bool  { return m.Data2.Premium }
 
+func (m *TLUserData) SetEmojiStatus(v *mtproto.EmojiStatus) { m.Data2.EmojiStatus = v }
+func (m *TLUserData) GetEmojiStatus() *mtproto.EmojiStatus  { return m.Data2.EmojiStatus }
+
 func (m *TLUserData) GetPredicateName() string {
 	return Predicate_userData
 }
@@ -1650,8 +1658,8 @@ func (m *TLUserData) Encode(layer int32) []byte {
 	x := mtproto.NewEncodeBuf(512)
 
 	var encodeF = map[uint32]func() []byte{
-		0x7f78f615: func() []byte {
-			x.UInt(0x7f78f615)
+		0x1c8c0812: func() []byte {
+			x.UInt(0x1c8c0812)
 
 			// set flags
 			var getFlags = func() uint32 {
@@ -1695,6 +1703,9 @@ func (m *TLUserData) Encode(layer int32) []byte {
 				if m.GetPremium() == true {
 					flags |= 1 << 11
 				}
+				if m.GetEmojiStatus() != nil {
+					flags |= 1 << 12
+				}
 
 				return flags
 			}
@@ -1732,6 +1743,10 @@ func (m *TLUserData) Encode(layer int32) []byte {
 			}
 			x.Int(m.GetContactsVersion())
 			x.Int(m.GetPrivaciesVersion())
+			if m.GetEmojiStatus() != nil {
+				x.Bytes(m.GetEmojiStatus().Encode(layer))
+			}
+
 			return x.GetBuf()
 		},
 	}
@@ -1754,7 +1769,7 @@ func (m *TLUserData) CalcByteSize(layer int32) int {
 
 func (m *TLUserData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x7f78f615: func() error {
+		0x1c8c0812: func() error {
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Long())
@@ -1819,6 +1834,11 @@ func (m *TLUserData) Decode(dBuf *mtproto.DecodeBuf) error {
 			}
 			if (flags & (1 << 11)) != 0 {
 				m.SetPremium(true)
+			}
+			if (flags & (1 << 12)) != 0 {
+				m24 := &mtproto.EmojiStatus{}
+				m24.Decode(dBuf)
+				m.SetEmojiStatus(m24)
 			}
 			return dBuf.GetError()
 		},
@@ -5234,6 +5254,57 @@ func (m *TLUserGetFullUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserGetFullUser) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserUpdateEmojiStatus
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserUpdateEmojiStatus) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_updateEmojiStatus))
+
+	switch uint32(m.Constructor) {
+	case 0xf8c8bad8:
+		x.UInt(0xf8c8bad8)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetEmojiStatusDocumentId())
+		x.Int(m.GetEmojiStatusUntil())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserUpdateEmojiStatus) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserUpdateEmojiStatus) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xf8c8bad8:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.EmojiStatusDocumentId = dBuf.Long()
+		m.EmojiStatusUntil = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserUpdateEmojiStatus) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

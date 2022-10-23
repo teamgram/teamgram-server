@@ -79,7 +79,7 @@ func (s *Service) UserGetImmutableUser(ctx context.Context, request *user.TLUser
 }
 
 // UserGetMutableUsers
-// user.getMutableUsers id:Vector<long> = Vector<ImmutableUser>;
+// user.getMutableUsers id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
 func (s *Service) UserGetMutableUsers(ctx context.Context, request *user.TLUserGetMutableUsers) (*user.Vector_ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Infof("user.getMutableUsers - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -930,5 +930,20 @@ func (s *Service) UserGetFullUser(ctx context.Context, request *user.TLUserGetFu
 	}
 
 	c.Infof("user.getFullUser - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserUpdateEmojiStatus
+// user.updateEmojiStatus user_id:long emoji_status_document_id:long emoji_status_until:int = Bool;
+func (s *Service) UserUpdateEmojiStatus(ctx context.Context, request *user.TLUserUpdateEmojiStatus) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Infof("user.updateEmojiStatus - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserUpdateEmojiStatus(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Infof("user.updateEmojiStatus - reply: %s", r.DebugString())
 	return r, err
 }

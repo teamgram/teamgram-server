@@ -138,6 +138,10 @@ func (m *ImmutableUser) Premium() bool {
 	return m.User.Premium
 }
 
+func (m *ImmutableUser) EmojiStatus() *mtproto.EmojiStatus {
+	return m.User.EmojiStatus
+}
+
 func (m *ImmutableUser) CheckContact(cId int64) (bool, bool) {
 	i := sort.Search(len(m.Contacts), func(i int) bool {
 		return m.Contacts[i].ContactUserId >= cId
@@ -228,6 +232,7 @@ func (m *ImmutableUser) ToUnsafeUser(selfUser *ImmutableUser) *mtproto.User {
 		RestrictionReason:    m.RestrictionReason(),
 		BotInlinePlaceholder: m.BotInlinePlaceholder(),
 		LangCode:             nil,
+		EmojiStatus:          m.EmojiStatus(),
 	}).To_User()
 
 	contact := selfUser.GetContactData(m.Id())
@@ -286,6 +291,7 @@ func (m *ImmutableUser) ToSelfUser() *mtproto.User {
 		RestrictionReason:    m.RestrictionReason(),
 		BotInlinePlaceholder: m.BotInlinePlaceholder(),
 		LangCode:             nil,
+		EmojiStatus:          m.EmojiStatus(),
 	}).To_User()
 }
 
@@ -320,5 +326,6 @@ func (m *ImmutableUser) ToDeletedUser() *mtproto.User {
 		RestrictionReason:    nil,
 		BotInlinePlaceholder: nil,
 		LangCode:             nil,
+		EmojiStatus:          nil,
 	}).To_User()
 }

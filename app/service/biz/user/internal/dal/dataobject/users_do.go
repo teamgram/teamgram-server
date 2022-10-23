@@ -33,6 +33,8 @@ type UsersDO struct {
 	Restricted                       bool   `db:"restricted"`
 	RestrictionReason                string `db:"restriction_reason"`
 	ArchiveAndMuteNewNoncontactPeers bool   `db:"archive_and_mute_new_noncontact_peers"`
+	EmojiStatusDocumentId            int64  `db:"emoji_status_document_id"`
+	EmojiStatusUntil                 int32  `db:"emoji_status_until"`
 	Deleted                          bool   `db:"deleted"`
 	DeleteReason                     string `db:"delete_reason"`
 }

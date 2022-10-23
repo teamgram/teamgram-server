@@ -87,6 +87,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserIsBot":                            RPCContextTuple{"/mtproto.RPCUser/user_isBot", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetBotInfo":                       RPCContextTuple{"/mtproto.RPCUser/user_getBotInfo", func() interface{} { return new(mtproto.BotInfo) }},
 	"TLUserGetFullUser":                      RPCContextTuple{"/mtproto.RPCUser/user_getFullUser", func() interface{} { return new(mtproto.Users_UserFull) }},
+	"TLUserUpdateEmojiStatus":                RPCContextTuple{"/mtproto.RPCUser/user_updateEmojiStatus", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {
