@@ -101,7 +101,7 @@ func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) err
 	if from != "" {
 		// delete username
 		_, err := c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
-			Username: username2,
+			Username: from,
 		})
 		if err != nil {
 			c.Logger.Errorf("account.updateUsername - format error: %v", err)
