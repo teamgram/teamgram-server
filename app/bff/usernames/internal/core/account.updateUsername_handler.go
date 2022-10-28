@@ -34,7 +34,7 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 		Id: c.MD.UserId,
 	})
 	if err != nil {
-		c.Logger.Errorf("account.updateVerified - error: %v", err)
+		c.Logger.Errorf("account.updateUsername - error: %v", err)
 		return nil, err
 	}
 
@@ -44,13 +44,13 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 
 	if username2 != me.Username() {
 		// TODO: 分布式事物
-		if err = c.updateUsername(c.MD.UserId, username2); err != nil {
-			c.Logger.Errorf("account.updateVerified - error: %v", err)
+		if err = c.updateUsername(c.MD.UserId, me.Username(), username2); err != nil {
+			c.Logger.Errorf("account.updateUsername - error: %v", err)
 		} else if _, err = c.svcCtx.Dao.UserClient.UserUpdateUsername(c.ctx, &userpb.TLUserUpdateUsername{
 			UserId:   c.MD.UserId,
 			Username: username2,
 		}); err != nil {
-			c.Logger.Errorf("account.updateVerified - error: %v", err)
+			c.Logger.Errorf("account.updateUsername - error: %v", err)
 		} else {
 			me.SetUsername(username2)
 
@@ -70,7 +70,7 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 	return me.ToSelfUser(), nil
 }
 
-func (c *UsernamesCore) updateUsername(userId int64, username2 string) error {
+func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) error {
 	if username2 != "" {
 		if len(username2) < username.MinUsernameLen ||
 			!strings2.IsAlNumString(username2) ||
@@ -96,7 +96,9 @@ func (c *UsernamesCore) updateUsername(userId int64, username2 string) error {
 				return err
 			}
 		}
-	} else {
+	}
+
+	if from != "" {
 		// delete username
 		_, err := c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
 			Username: username2,
