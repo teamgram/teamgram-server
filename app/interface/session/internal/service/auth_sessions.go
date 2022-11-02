@@ -37,18 +37,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// import "container/list"
-
-const (
-	clientUnknown  = 0
-	clientAndroid  = 1
-	clientiOS      = 2
-	clientTdesktop = 3
-	clientMacSwift = 4
-	clientWebogram = 5
-	clientReact    = 6
-)
-
 type rpcApiMessage struct {
 	sessionId int64
 	clientIp  string

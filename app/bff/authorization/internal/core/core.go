@@ -29,6 +29,7 @@ import (
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/svc"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/pkg/env2"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
 
@@ -78,11 +79,13 @@ func checkPhoneNumberInvalid(phone string) (string, error) {
 	return pNumber.GetNormalizeDigits(), nil
 }
 
-const signInMessageTpl = `Login code: %s. Do not give this code to anyone, even if they say they are from %s!
+const (
+	signInMessageTpl = `Login code: %s. Do not give this code to anyone, even if they say they are from %s!
 
 This code can be used to log in to your %s account. We never ask it for anything else.
 
 If you didn't request this code by trying to log in on another device, simply ignore this message.`
+)
 
 func (c *AuthorizationCore) pushSignInMessage(ctx context.Context, signInUserId int64, code string) {
 	time.AfterFunc(2*time.Second, func() {
@@ -103,6 +106,16 @@ func (c *AuthorizationCore) pushSignInMessage(ctx context.Context, signInUserId 
 				}).To_MessageEntity(),
 			},
 		}).To_Message()
+
+		if len(c.svcCtx.Config.SignInMessage) > 0 {
+			builder := conf.ToMessageBuildHelper(
+				c.svcCtx.Config.SignInMessage,
+				map[string]interface{}{
+					"code":     code,
+					"app_name": env2.MyAppName,
+				})
+			message.Message, message.Entities = mtproto.MakeTextAndMessageEntities(builder)
+		}
 
 		_ = ctx
 		c.svcCtx.Dao.MsgClient.MsgPushUserMessage(

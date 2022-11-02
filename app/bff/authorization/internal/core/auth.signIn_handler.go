@@ -19,6 +19,9 @@
 package core
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
@@ -26,6 +29,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/pkg/env2"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
 )
@@ -237,7 +241,36 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, in.PhoneNumber, phoneCodeHash)
 	region, _ := c.svcCtx.Dao.GetCountryAndRegionByIp(c.MD.ClientAddr)
-	signInN := mtproto.MakeSignInServiceNotification(selfUser, c.MD.AuthId, c.MD.Client, region, c.MD.ClientAddr)
+
+	var (
+		now     = time.Now()
+		signInN *mtproto.Update
+	)
+
+	if len(c.svcCtx.Config.SignInServiceNotification) == 0 {
+		signInN = mtproto.MakeSignInServiceNotification(selfUser, c.MD.AuthId, c.MD.Client, region, c.MD.ClientAddr)
+	} else {
+		signInN = mtproto.MakeTLUpdateServiceNotification(&mtproto.Update{
+			Popup:          false,
+			InboxDate:      mtproto.MakeFlagsInt32(int32(now.Unix())),
+			Type:           fmt.Sprintf("auth%d_%d", c.MD.AuthId, now.Unix()),
+			Message_STRING: "",
+			Media:          mtproto.MakeTLMessageMediaEmpty(nil).To_MessageMedia(),
+			Entities:       nil,
+		}).To_Update()
+
+		builder := conf.ToMessageBuildHelper(
+			c.svcCtx.Config.SignInServiceNotification,
+			map[string]interface{}{
+				"name":     mtproto.GetUserName(selfUser),
+				"now":      now.UTC(),
+				"client":   c.MD.Client,
+				"region":   region,
+				"clientIp": c.MD.ClientAddr,
+			})
+		signInN.Message_STRING, signInN.Entities = mtproto.MakeTextAndMessageEntities(builder)
+	}
+
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
