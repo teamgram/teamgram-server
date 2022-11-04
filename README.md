@@ -118,6 +118,7 @@ cd teamgram-server
 	```
 	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
 	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
+	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/init.sql
 	```
 
 - init minio buckets
