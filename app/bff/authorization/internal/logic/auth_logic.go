@@ -26,8 +26,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/dao"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
 	"github.com/teamgram/teamgram-server/pkg/code"
-	"github.com/teamgram/teamgram-server/pkg/code/conf"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -36,10 +34,10 @@ type AuthLogic struct {
 	code.VerifyCodeInterface
 }
 
-func NewAuthSignLogic(dao *dao.Dao, code2 *conf.SmsVerifyCodeConfig) *AuthLogic {
+func NewAuthSignLogic(dao *dao.Dao, code2 code.VerifyCodeInterface) *AuthLogic {
 	return &AuthLogic{
 		Dao:                 dao,
-		VerifyCodeInterface: code.NewVerifyCode(code2),
+		VerifyCodeInterface: code2,
 	}
 }
 

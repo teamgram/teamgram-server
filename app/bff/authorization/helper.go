@@ -15,6 +15,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/svc"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/plugin"
+	"github.com/teamgram/teamgram-server/pkg/code"
 )
 
 type (
@@ -22,6 +23,6 @@ type (
 	AuthorizationService = service.Service
 )
 
-func New(c Config, plugin plugin.AuthorizationPlugin) *service.Service {
-	return service.New(svc.NewServiceContext(c, plugin))
+func New(c Config, code2 code.VerifyCodeInterface, plugin plugin.AuthorizationPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, code2, plugin))
 }

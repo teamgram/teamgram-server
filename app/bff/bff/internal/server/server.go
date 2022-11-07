@@ -105,17 +105,20 @@ func (s *Server) Initialize() error {
 		// authorization_helper
 		mtproto.RegisterRPCAuthorizationServer(
 			grpcServer,
-			authorization_helper.New(authorization_helper.Config{
-				RpcServerConf:     c.RpcServerConf,
-				KV:                c.KV,
-				Code:              c.Code,
-				UserClient:        c.BizServiceClient,
-				AuthsessionClient: c.AuthSessionClient,
-				ChatClient:        c.BizServiceClient,
-				StatusClient:      c.StatusClient,
-				SyncClient:        c.SyncClient,
-				MsgClient:         c.MsgClient,
-			}, nil))
+			authorization_helper.New(
+				authorization_helper.Config{
+					RpcServerConf:     c.RpcServerConf,
+					KV:                c.KV,
+					Code:              c.Code,
+					UserClient:        c.BizServiceClient,
+					AuthsessionClient: c.AuthSessionClient,
+					ChatClient:        c.BizServiceClient,
+					StatusClient:      c.StatusClient,
+					SyncClient:        c.SyncClient,
+					MsgClient:         c.MsgClient,
+				},
+				nil,
+				nil))
 
 		// premium_helper
 		mtproto.RegisterRPCPremiumServer(
