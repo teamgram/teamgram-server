@@ -7,6 +7,7 @@ Etcd:
 Log:
   Mode: file
   Path: ../logs/gateway
+  Level: debug
 KeyFile: "./server_pkcs1.key"
 KeyFingerprint: "12240908862933197005"
 MaxProc: 4

@@ -7,6 +7,7 @@ Etcd:
 Log:
   Mode: file
   Path: ../logs/session
+  Level: debug
 Cache:
   - Host: 127.0.0.1:6379
 AuthSession:

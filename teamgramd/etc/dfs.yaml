@@ -13,6 +13,7 @@ MiniHttp:
   Log:
     Mode: file
     Path: ../logs/dfs
+    Level: debug
 Cache:
   - Host: 127.0.0.1:6379
 Minio:

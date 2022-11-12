@@ -8,6 +8,7 @@ Timeout: 0
 Log:
   Mode: file
   Path: ../logs/bff
+  Level: debug
 KV:
   - Host: localhost:6379
 
