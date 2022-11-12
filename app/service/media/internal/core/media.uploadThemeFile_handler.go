@@ -34,8 +34,8 @@ func (c *MediaCore) MediaUploadThemeFile(in *media.TLMediaUploadThemeFile) (*mtp
 		Creator:  in.OwnerId,
 		File:     file,
 		Thumb:    thumb,
-		MimeType: in.GetFileName(),
-		FileName: in.GetMimeType(),
+		MimeType: in.GetMimeType(),
+		FileName: in.GetFileName(),
 	})
 	if err != nil {
 		c.Logger.Errorf("media.uploadThemeFile - error: %v", err)
