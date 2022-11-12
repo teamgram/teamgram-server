@@ -61,7 +61,8 @@ import (
 // GatewaySendDataToGateway
 // gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGatewaySendDataToGateway) (reply *mtproto.Bool, err error) {
-	logx.Infof("ReceiveData - request: {kId: %d, sessionId: %d, payloadLen: %d}", in.AuthKeyId, in.SessionId, len(in.Payload))
+	logger := logx.WithContext(ctx)
+	logger.Debugf("ReceiveData - request: {kId: %d, sessionId: %d, payloadLen: %d}", in.AuthKeyId, in.SessionId, len(in.Payload))
 
 	var (
 		authKey *authKeyUtil
@@ -70,7 +71,7 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 	// TODO(@benqi): 并发问题
 	authKey, connIdList := s.authSessionMgr.FoundSessionConnIdList(in.AuthKeyId, in.SessionId)
 	if connIdList == nil {
-		logx.Errorf("ReceiveData - not found connIdList - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
+		logger.Errorf("ReceiveData - not found connIdList - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
 		return mtproto.BoolFalse, nil
 	}
 
@@ -90,35 +91,35 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 	//}
 
 	for _, connId := range connIdList {
-		logx.Infof("[keyId: %d, sessionId: %d]: %v", in.AuthKeyId, in.SessionId, connId)
+		logger.Debugf("[keyId: %d, sessionId: %d]: %v", in.AuthKeyId, in.SessionId, connId)
 		conn2 := s.server.GetConnection(connId)
 		if conn2 != nil {
-			ctx, _ := conn2.Context.(*connContext)
-			authKey = ctx.getAuthKey(in.AuthKeyId)
+			ctx2, _ := conn2.Context.(*connContext)
+			authKey = ctx2.getAuthKey(in.AuthKeyId)
 			if authKey == nil {
-				logx.Errorf("invalid authKeyId, authKeyId = %d", in.AuthKeyId)
+				logger.Errorf("invalid authKeyId, authKeyId = %d", in.AuthKeyId)
 				continue
 			}
-			if ctx.isHttp {
+			if ctx2.isHttp {
 				// isHttp = true
-				if !ctx.canSend {
+				if !ctx2.canSend {
 					continue
 				}
 			}
 			// conn = conn2
 			// break
 			if err = s.SendToClient(conn2, authKey, in.Payload); err == nil {
-				logx.Infof("ReceiveData -  result: {auth_key_id = %d, session_id = %d, conn = %s}",
+				logger.Infof("ReceiveData -  result: {auth_key_id = %d, session_id = %d, conn = %s}",
 					in.AuthKeyId,
 					in.SessionId,
 					conn2)
 
-				if ctx.isHttp {
+				if ctx2.isHttp {
 					s.authSessionMgr.PushBackHttpData(in.AuthKeyId, in.SessionId, in.Payload)
 				}
 				return mtproto.ToBool(true), nil
 			} else {
-				logx.Errorf("ReceiveData - sendToClient error (%v), auth_key_id = %d, session_id = %d, conn_id_list = %v",
+				logger.Errorf("ReceiveData - sendToClient error (%v), auth_key_id = %d, session_id = %d, conn_id_list = %v",
 					err,
 					in.AuthKeyId,
 					in.SessionId,

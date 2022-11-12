@@ -21,14 +21,14 @@ import (
 // help.getTermsOfServiceUpdate#2ca51fd1 = help.TermsOfServiceUpdate;
 func (s *Service) HelpGetTermsOfServiceUpdate(ctx context.Context, request *mtproto.TLHelpGetTermsOfServiceUpdate) (*mtproto.Help_TermsOfServiceUpdate, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("help.getTermsOfServiceUpdate - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("help.getTermsOfServiceUpdate - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
 	r, err := c.HelpGetTermsOfServiceUpdate(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Infof("help.getTermsOfServiceUpdate - reply: %s", r.DebugString())
+	c.Logger.Debugf("help.getTermsOfServiceUpdate - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -36,13 +36,13 @@ func (s *Service) HelpGetTermsOfServiceUpdate(ctx context.Context, request *mtpr
 // help.acceptTermsOfService#ee72f79a id:DataJSON = Bool;
 func (s *Service) HelpAcceptTermsOfService(ctx context.Context, request *mtproto.TLHelpAcceptTermsOfService) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Infof("help.acceptTermsOfService - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("help.acceptTermsOfService - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
 	r, err := c.HelpAcceptTermsOfService(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Infof("help.acceptTermsOfService - reply: %s", r.DebugString())
+	c.Logger.Debugf("help.acceptTermsOfService - reply: %s", r.DebugString())
 	return r, err
 }
