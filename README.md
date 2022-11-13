@@ -114,12 +114,37 @@ cd teamgram-server
   
 #### Init data
 - init database
-	
-	```
-	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
-	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-*.sql
-	mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/init.sql
-	```
+
+  ```
+
+  # Copy some files to container
+  docker cp ./teamgramd/sql/ mysql:/teamgramd/sql/
+
+  # get mysql
+  docker exec -it mysql /bin/bash
+  
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220321.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220326.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220328.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220401.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220412.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220419.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220423.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220504.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220721.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220826.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220919.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221008.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221011.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221016.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221023.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221101.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/init.sql
+  
+  # quit docker mysql
+  exit
+  ```
 
 - init minio buckets
 	- bucket names:
