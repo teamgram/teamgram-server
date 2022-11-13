@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/chai2010/webp v1.1.1
+	github.com/chai2010/webp v1.1.2-0.20220219151144-e81c7511b15a
 	github.com/disintegration/imaging v1.6.2
 	github.com/gogo/protobuf v1.3.2
 	github.com/minio/minio-go v6.0.14+incompatible
