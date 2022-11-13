@@ -27,7 +27,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 	s.RegisterHandlers(
 		conf.Topics[0],
 		func(ctx context.Context, key string, value []byte) {
-			logx.WithContext(ctx).Infof("key: %s, value: %s", key, value)
+			logx.WithContext(ctx).Debugf("key: %s, value: %s", key, value)
 
 			switch strings.Split(key, "#")[0] {
 			case proto.MessageName((*sync.TLSyncUpdatesMe)(nil)):
