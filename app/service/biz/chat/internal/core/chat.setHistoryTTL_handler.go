@@ -48,7 +48,7 @@ func (c *ChatCore) ChatSetHistoryTTL(in *chat.TLChatSetHistoryTTL) (*chat.Mutabl
 		c.svcCtx.Dao.GetChatCacheKey(in.ChatId))
 
 	if err != nil {
-		c.Logger.Errorf("chat.editChatAdmin - error: %v", err)
+		c.Logger.Errorf("chat.setHistoryTTL - error: %v", err)
 		return nil, err
 	}
 
