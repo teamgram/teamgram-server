@@ -118,10 +118,9 @@ cd teamgram-server
   ```
 
   # Copy some files to container
-  docker cp ./teamgramd/sql/ mysql:/teamgramd/sql/
-
-  # get mysql
   docker exec -it mysql /bin/bash
+  mkdir teamgramd
+  docker cp ./teamgramd/sql/ mysql:/teamgramd/sql/
   
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/teamgram2.sql
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20220321.sql
