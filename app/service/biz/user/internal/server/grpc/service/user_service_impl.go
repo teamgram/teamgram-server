@@ -498,6 +498,21 @@ func (s *Service) UserCreateNewUser(ctx context.Context, request *user.TLUserCre
 	return r, err
 }
 
+// UserDeleteUser
+// user.deleteUser user_id:long reason:string = Bool;
+func (s *Service) UserDeleteUser(ctx context.Context, request *user.TLUserDeleteUser) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.deleteUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserDeleteUser(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.deleteUser - reply: %s", r.DebugString())
+	return r, err
+}
+
 // UserBlockPeer
 // user.blockPeer user_id:long peer_type:int peer_id:long = Bool;
 func (s *Service) UserBlockPeer(ctx context.Context, request *user.TLUserBlockPeer) (*mtproto.Bool, error) {

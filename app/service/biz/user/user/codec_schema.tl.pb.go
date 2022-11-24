@@ -232,6 +232,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2044729473,
 		}
 	},
+	2132777160: func() mtproto.TLObject { // 0x7f1f98c8
+		return &TLUserDeleteUser{
+			Constructor: 2132777160,
+		}
+	},
 	-2130301264: func() mtproto.TLObject { // 0x81062eb0
 		return &TLUserBlockPeer{
 			Constructor: -2130301264,
@@ -3768,6 +3773,55 @@ func (m *TLUserCreateNewUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserCreateNewUser) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserDeleteUser
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserDeleteUser) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_deleteUser))
+
+	switch uint32(m.Constructor) {
+	case 0x7f1f98c8:
+		x.UInt(0x7f1f98c8)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.String(m.GetReason())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserDeleteUser) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserDeleteUser) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7f1f98c8:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Reason = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserDeleteUser) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

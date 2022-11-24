@@ -51,6 +51,7 @@ const (
 	Predicate_user_updatePredefinedCode             = "user_updatePredefinedCode"
 	Predicate_user_predefinedBindRegisteredUserId   = "user_predefinedBindRegisteredUserId"
 	Predicate_user_createNewUser                    = "user_createNewUser"
+	Predicate_user_deleteUser                       = "user_deleteUser"
 	Predicate_user_blockPeer                        = "user_blockPeer"
 	Predicate_user_unBlockPeer                      = "user_unBlockPeer"
 	Predicate_user_blockedByUser                    = "user_blockedByUser"
@@ -244,6 +245,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 2044729473, // 0x79e01881
 
 	},
+	Predicate_user_deleteUser: {
+		0: 2132777160, // 0x7f1f98c8
+
+	},
 	Predicate_user_blockPeer: {
 		0: -2130301264, // 0x81062eb0
 
@@ -407,6 +412,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1626771303:  Predicate_user_updatePredefinedCode,             // 0x60f68f67
 	68106153:    Predicate_user_predefinedBindRegisteredUserId,   // 0x40f37a9
 	2044729473:  Predicate_user_createNewUser,                    // 0x79e01881
+	2132777160:  Predicate_user_deleteUser,                       // 0x7f1f98c8
 	-2130301264: Predicate_user_blockPeer,                        // 0x81062eb0
 	-555280883:  Predicate_user_unBlockPeer,                      // 0xdee7160d
 	-1147140722: Predicate_user_blockedByUser,                    // 0xbba0058e

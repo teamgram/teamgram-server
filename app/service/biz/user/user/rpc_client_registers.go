@@ -58,6 +58,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserUpdatePredefinedCode":             RPCContextTuple{"/mtproto.RPCUser/user_updatePredefinedCode", func() interface{} { return new(mtproto.PredefinedUser) }},
 	"TLUserPredefinedBindRegisteredUserId":   RPCContextTuple{"/mtproto.RPCUser/user_predefinedBindRegisteredUserId", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserCreateNewUser":                    RPCContextTuple{"/mtproto.RPCUser/user_createNewUser", func() interface{} { return new(ImmutableUser) }},
+	"TLUserDeleteUser":                       RPCContextTuple{"/mtproto.RPCUser/user_deleteUser", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserBlockPeer":                        RPCContextTuple{"/mtproto.RPCUser/user_blockPeer", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserUnBlockPeer":                      RPCContextTuple{"/mtproto.RPCUser/user_unBlockPeer", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserBlockedByUser":                    RPCContextTuple{"/mtproto.RPCUser/user_blockedByUser", func() interface{} { return new(mtproto.Bool) }},
