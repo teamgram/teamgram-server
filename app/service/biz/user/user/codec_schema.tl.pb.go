@@ -70,6 +70,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 1256160192
 		return o
 	},
+	1067703239: func() mtproto.TLObject { // 0x3fa3dbc7
+		o := MakeTLUsersDataFound(nil)
+		o.Data2.Constructor = 1067703239
+		return o
+	},
+	-2134594054: func() mtproto.TLObject { // 0x80c4adfa
+		o := MakeTLUsersIdFound(nil)
+		o.Data2.Constructor = -2134594054
+		return o
+	},
 
 	// Method
 	2090958337: func() mtproto.TLObject { // 0x7ca17e01
@@ -385,6 +395,26 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-121062696: func() mtproto.TLObject { // 0xf8c8bad8
 		return &TLUserUpdateEmojiStatus{
 			Constructor: -121062696,
+		}
+	},
+	62615811: func() mtproto.TLObject { // 0x3bb7103
+		return &TLUserGetUserDataById{
+			Constructor: 62615811,
+		}
+	},
+	-2121142279: func() mtproto.TLObject { // 0x8191eff9
+		return &TLUserGetUserDataListByIdList{
+			Constructor: -2121142279,
+		}
+	},
+	1057580446: func() mtproto.TLObject { // 0x3f09659e
+		return &TLUserGetUserDataByToken{
+			Constructor: 1057580446,
+		}
+	},
+	1882568397: func() mtproto.TLObject { // 0x7035b6cd
+		return &TLUserSearch{
+			Constructor: 1882568397,
 		}
 	},
 }
@@ -2075,6 +2105,267 @@ func (m *TLUserImportedContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserImportedContacts) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// UsersFound <--
+//  + TL_UsersDataFound
+//  + TL_UsersIdFound
+//
+
+func (m *UsersFound) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_usersDataFound:
+		t := m.To_UsersDataFound()
+		xBuf = t.Encode(layer)
+	case Predicate_usersIdFound:
+		t := m.To_UsersIdFound()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *UsersFound) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *UsersFound) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x3fa3dbc7:
+		m2 := MakeTLUsersDataFound(m)
+		m2.Decode(dBuf)
+	case 0x80c4adfa:
+		m2 := MakeTLUsersIdFound(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *UsersFound) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_usersDataFound:
+		t := m.To_UsersDataFound()
+		return t.DebugString()
+	case Predicate_usersIdFound:
+		t := m.To_UsersIdFound()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_UsersDataFound
+func (m *UsersFound) To_UsersDataFound() *TLUsersDataFound {
+	m.PredicateName = Predicate_usersDataFound
+	return &TLUsersDataFound{
+		Data2: m,
+	}
+}
+
+// To_UsersIdFound
+func (m *UsersFound) To_UsersIdFound() *TLUsersIdFound {
+	m.PredicateName = Predicate_usersIdFound
+	return &TLUsersIdFound{
+		Data2: m,
+	}
+}
+
+// MakeTLUsersDataFound
+func MakeTLUsersDataFound(data2 *UsersFound) *TLUsersDataFound {
+	if data2 == nil {
+		return &TLUsersDataFound{Data2: &UsersFound{
+			PredicateName: Predicate_usersDataFound,
+		}}
+	} else {
+		data2.PredicateName = Predicate_usersDataFound
+		return &TLUsersDataFound{Data2: data2}
+	}
+}
+
+func (m *TLUsersDataFound) To_UsersFound() *UsersFound {
+	m.Data2.PredicateName = Predicate_usersDataFound
+	return m.Data2
+}
+
+func (m *TLUsersDataFound) SetCount(v int32) { m.Data2.Count = v }
+func (m *TLUsersDataFound) GetCount() int32  { return m.Data2.Count }
+
+func (m *TLUsersDataFound) SetUsers(v []*UserData) { m.Data2.Users = v }
+func (m *TLUsersDataFound) GetUsers() []*UserData  { return m.Data2.Users }
+
+func (m *TLUsersDataFound) SetNextOffset(v string) { m.Data2.NextOffset = v }
+func (m *TLUsersDataFound) GetNextOffset() string  { return m.Data2.NextOffset }
+
+func (m *TLUsersDataFound) GetPredicateName() string {
+	return Predicate_usersDataFound
+}
+
+func (m *TLUsersDataFound) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x3fa3dbc7: func() []byte {
+			x.UInt(0x3fa3dbc7)
+
+			x.Int(m.GetCount())
+
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetUsers())))
+			for _, v := range m.GetUsers() {
+				x.Bytes((*v).Encode(layer))
+			}
+
+			x.String(m.GetNextOffset())
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_usersDataFound, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_usersDataFound, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUsersDataFound) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUsersDataFound) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x3fa3dbc7: func() error {
+			m.SetCount(dBuf.Int())
+			c1 := dBuf.Int()
+			if c1 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+			}
+			l1 := dBuf.Int()
+			v1 := make([]*UserData, l1)
+			for i := int32(0); i < l1; i++ {
+				v1[i] = &UserData{}
+				v1[i].Decode(dBuf)
+			}
+			m.SetUsers(v1)
+
+			m.SetNextOffset(dBuf.String())
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLUsersDataFound) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// MakeTLUsersIdFound
+func MakeTLUsersIdFound(data2 *UsersFound) *TLUsersIdFound {
+	if data2 == nil {
+		return &TLUsersIdFound{Data2: &UsersFound{
+			PredicateName: Predicate_usersIdFound,
+		}}
+	} else {
+		data2.PredicateName = Predicate_usersIdFound
+		return &TLUsersIdFound{Data2: data2}
+	}
+}
+
+func (m *TLUsersIdFound) To_UsersFound() *UsersFound {
+	m.Data2.PredicateName = Predicate_usersIdFound
+	return m.Data2
+}
+
+func (m *TLUsersIdFound) SetIdList(v []int64) { m.Data2.IdList = v }
+func (m *TLUsersIdFound) GetIdList() []int64  { return m.Data2.IdList }
+
+func (m *TLUsersIdFound) GetPredicateName() string {
+	return Predicate_usersIdFound
+}
+
+func (m *TLUsersIdFound) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x80c4adfa: func() []byte {
+			x.UInt(0x80c4adfa)
+
+			x.VectorLong(m.GetIdList())
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_usersIdFound, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_usersIdFound, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUsersIdFound) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUsersIdFound) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x80c4adfa: func() error {
+
+			m.SetIdList(dBuf.VectorLong())
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLUsersIdFound) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -5364,6 +5655,205 @@ func (m *TLUserUpdateEmojiStatus) DebugString() string {
 	return dbgString
 }
 
+// TLUserGetUserDataById
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetUserDataById) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_getUserDataById))
+
+	switch uint32(m.Constructor) {
+	case 0x3bb7103:
+		x.UInt(0x3bb7103)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserGetUserDataById) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetUserDataById) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x3bb7103:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetUserDataById) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserGetUserDataListByIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetUserDataListByIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_getUserDataListByIdList))
+
+	switch uint32(m.Constructor) {
+	case 0x8191eff9:
+		x.UInt(0x8191eff9)
+
+		// no flags
+
+		x.VectorLong(m.GetUserIdList())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserGetUserDataListByIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetUserDataListByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x8191eff9:
+
+		// not has flags
+
+		m.UserIdList = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetUserDataListByIdList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserGetUserDataByToken
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetUserDataByToken) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_getUserDataByToken))
+
+	switch uint32(m.Constructor) {
+	case 0x3f09659e:
+		x.UInt(0x3f09659e)
+
+		// no flags
+
+		x.String(m.GetToken())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserGetUserDataByToken) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetUserDataByToken) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x3f09659e:
+
+		// not has flags
+
+		m.Token = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetUserDataByToken) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserSearch
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSearch) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_search))
+
+	switch uint32(m.Constructor) {
+	case 0x7035b6cd:
+		x.UInt(0x7035b6cd)
+
+		// no flags
+
+		x.String(m.GetQ())
+
+		x.VectorLong(m.GetExcludedContacts())
+
+		x.Long(m.GetOffset())
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserSearch) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSearch) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7035b6cd:
+
+		// not has flags
+
+		m.Q = dBuf.String()
+
+		m.ExcludedContacts = dBuf.VectorLong()
+
+		m.Offset = dBuf.Long()
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserSearch) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 //----------------------------------------------------------------------------------------------------------------
 // Vector_LastSeenData
 ///////////////////////////////////////////////////////////////////////////////
@@ -5630,6 +6120,41 @@ func (m *Vector_ContactData) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ContactData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_UserData
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_UserData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		x.Bytes((*v).Encode(layer))
+	}
+
+	return x.GetBuf()
+}
+
+func (m *Vector_UserData) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*UserData, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(UserData)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_UserData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_UserData) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

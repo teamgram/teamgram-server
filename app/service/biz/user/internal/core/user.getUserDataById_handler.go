@@ -21,21 +21,16 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"strconv"
 )
 
-// UserDeleteUser
-// user.deleteUser user_id:long reason:string = Bool;
-func (c *UserCore) UserDeleteUser(in *user.TLUserDeleteUser) (*mtproto.Bool, error) {
-	affected, err := c.svcCtx.Dao.UsersDAO.Delete(
-		c.ctx,
-		"-"+strconv.FormatInt(in.UserId, 10), // hack
-		in.Reason,
-		in.UserId)
-	if err != nil {
-		c.Logger.Errorf("user.deleteUser - error: %v", err)
-		return nil, err
+// UserGetUserDataById
+// user.getUserDataById user_id:long = UserData;
+func (c *UserCore) UserGetUserDataById(in *user.TLUserGetUserDataById) (*user.UserData, error) {
+	cacheData := c.svcCtx.Dao.GetCacheUserData(c.ctx, in.UserId)
+	if cacheData == nil {
+		c.Logger.Errorf("user.getUserDataById - error: not found userId(%d)", in.UserId)
+		return nil, mtproto.ErrUserIdInvalid
 	}
 
-	return mtproto.ToBool(affected == 1), nil
+	return cacheData.UserData, nil
 }

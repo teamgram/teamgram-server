@@ -55,16 +55,24 @@
                 phone IN (:phoneList)
         </sql>
     </operation>
-    <operation name="SelectByQueryString" result_set="list">
+
+    <operation name="SearchByQueryString" result_set="single_list">
+        <params>
+            <param name="id_list" type="[]int64" />
+            <param name="limit" type="int32" />
+            <param name="q" type="string" />
+            <param name="q2" type="string" />
+        </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason
+                id
             FROM
                 users
             WHERE
-                username = :username OR first_name = :first_name OR last_name = :last_name OR phone = :phone limit 20
+                (username LIKE :q OR first_name LIKE :q2 OR last_name LIKE :q2) AND id NOT IN(:id_list) LIMIT :limit
         </sql>
     </operation>
+
 
     <operation name="SearchByQueryNotIdList" result_set="list">
         <params>
@@ -95,7 +103,7 @@
             UPDATE
                 users
             SET
-                deleted=1, delete_reason = :delete_reason
+                phone = :phone, deleted=1, delete_reason = :delete_reason
             WHERE
                 id=:id
         </sql>

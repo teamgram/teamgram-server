@@ -276,46 +276,66 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 	return
 }
 
-// SelectByQueryString
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
+// SearchByQueryString
+// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) limit :limit
 // TODO(@benqi): sqlmap
-func (dao *UsersDAO) SelectByQueryString(ctx context.Context, username string, first_name string, last_name string, phone string) (rList []dataobject.UsersDO, err error) {
+func (dao *UsersDAO) SearchByQueryString(ctx context.Context, q string, q2 string, id_list []int64, limit int32) (rList []int64, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
-		values []dataobject.UsersDO
+		query = "select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (?) limit ?"
+		a     []interface{}
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
 
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByQueryString(_), error: %v", err)
+	if len(id_list) == 0 {
+		rList = []int64{}
 		return
 	}
 
-	rList = values
+	query, a, err = sqlx.In(query, q, q2, q2, id_list, limit)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryString(_), error: %v", err)
+		return
+	}
+
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+	}
 
 	return
 }
 
-// SelectByQueryStringWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where username = :username or first_name = :first_name or last_name = :last_name or phone = :phone limit 20
+// SearchByQueryStringWithCB
+// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) limit :limit
 // TODO(@benqi): sqlmap
-func (dao *UsersDAO) SelectByQueryStringWithCB(ctx context.Context, username string, first_name string, last_name string, phone string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
+func (dao *UsersDAO) SearchByQueryStringWithCB(ctx context.Context, q string, q2 string, id_list []int64, limit int32, cb func(i int, v int64)) (rList []int64, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where username = ? or first_name = ? or last_name = ? or phone = ? limit 20"
-		values []dataobject.UsersDO
+		query = "select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (?) limit ?"
+		a     []interface{}
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, username, first_name, last_name, phone)
 
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectByQueryString(_), error: %v", err)
+	if len(id_list) == 0 {
+		rList = []int64{}
 		return
 	}
 
-	rList = values
+	query, a, err = sqlx.In(query, q, q2, q2, id_list, limit)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryString(_), error: %v", err)
+		return
+	}
+
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+	}
 
 	if cb != nil {
 		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+			cb(i, rList[i])
 		}
 	}
 
@@ -395,14 +415,14 @@ func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string
 }
 
 // Delete
-// update users set deleted = 1, delete_reason = :delete_reason where id = :id
+// update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 // TODO(@benqi): sqlmap
-func (dao *UsersDAO) Delete(ctx context.Context, delete_reason string, id int64) (rowsAffected int64, err error) {
+func (dao *UsersDAO) Delete(ctx context.Context, phone string, delete_reason string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set deleted = 1, delete_reason = ? where id = ?"
+		query   = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, delete_reason, id)
+	rResult, err = dao.db.Exec(ctx, query, phone, delete_reason, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
@@ -417,15 +437,15 @@ func (dao *UsersDAO) Delete(ctx context.Context, delete_reason string, id int64)
 	return
 }
 
-// update users set deleted = 1, delete_reason = :delete_reason where id = :id
+// update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 // DeleteTx
 // TODO(@benqi): sqlmap
-func (dao *UsersDAO) DeleteTx(tx *sqlx.Tx, delete_reason string, id int64) (rowsAffected int64, err error) {
+func (dao *UsersDAO) DeleteTx(tx *sqlx.Tx, phone string, delete_reason string, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update users set deleted = 1, delete_reason = ? where id = ?"
+		query   = "update users set phone = ?, deleted = 1, delete_reason = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, delete_reason, id)
+	rResult, err = tx.Exec(query, phone, delete_reason, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)

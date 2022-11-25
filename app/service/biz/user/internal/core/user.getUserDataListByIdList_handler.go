@@ -19,23 +19,25 @@
 package core
 
 import (
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"strconv"
 )
 
-// UserDeleteUser
-// user.deleteUser user_id:long reason:string = Bool;
-func (c *UserCore) UserDeleteUser(in *user.TLUserDeleteUser) (*mtproto.Bool, error) {
-	affected, err := c.svcCtx.Dao.UsersDAO.Delete(
-		c.ctx,
-		"-"+strconv.FormatInt(in.UserId, 10), // hack
-		in.Reason,
-		in.UserId)
-	if err != nil {
-		c.Logger.Errorf("user.deleteUser - error: %v", err)
-		return nil, err
+// UserGetUserDataListByIdList
+// user.getUserDataListByIdList user_id_list:Vector<long> = Vector<UserData>;
+func (c *UserCore) UserGetUserDataListByIdList(in *user.TLUserGetUserDataListByIdList) (*user.Vector_UserData, error) {
+	users := &user.Vector_UserData{
+		Datas: []*user.UserData{},
 	}
 
-	return mtproto.ToBool(affected == 1), nil
+	for _, id := range in.UserIdList {
+		cacheData := c.svcCtx.Dao.GetCacheUserData(c.ctx, id)
+		if cacheData == nil {
+			c.Logger.Errorf("user.getUserDataById - error: not found userId(%d)", id)
+			continue
+		}
+		users.Datas = append(users.Datas, cacheData.GetUserData())
+	}
+
+	return users, nil
+
 }

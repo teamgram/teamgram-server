@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -962,3 +963,64 @@ func (s *Service) UserUpdateEmojiStatus(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.updateEmojiStatus - reply: %s", r.DebugString())
 	return r, err
 }
+
+// UserGetUserDataById
+// user.getUserDataById user_id:long = UserData;
+func (s *Service) UserGetUserDataById(ctx context.Context, request *user.TLUserGetUserDataById) (*user.UserData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getUserDataById - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetUserDataById(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getUserDataById - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetUserDataListByIdList
+// user.getUserDataListByIdList user_id_list:Vector<long> = Vector<UserData>;
+func (s *Service) UserGetUserDataListByIdList(ctx context.Context, request *user.TLUserGetUserDataListByIdList) (*user.Vector_UserData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getUserDataListByIdList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetUserDataListByIdList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getUserDataListByIdList - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetUserDataByToken
+// user.getUserDataByToken token:string = UserData;
+func (s *Service) UserGetUserDataByToken(ctx context.Context, request *user.TLUserGetUserDataByToken) (*user.UserData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getUserDataByToken - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetUserDataByToken(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getUserDataByToken - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserSearch
+// user.search q:string offset_id:int limit:int hash:long = UsersFound;
+func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*user.UsersFound, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.search - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserSearch(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.search - reply: %s", r.DebugString())
+	return r, err
+}
+
