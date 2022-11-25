@@ -182,6 +182,41 @@ func (m *MutableChat) ToUnsafeChat(id int64) *mtproto.Chat {
 	return mtproto.MakeTLChat(chat).To_Chat()
 }
 
+// ToChat - used by tgadmin
+func (m *MutableChat) ToChat() *mtproto.Chat {
+	chat := &mtproto.Chat{
+		Creator:                 false,
+		Left:                    false,
+		Deactivated:             false,
+		CallActive:              m.CallActive(),
+		CallNotEmpty:            m.CallNotEmpty(),
+		Noforwards:              m.Noforwards(),
+		Id:                      m.Id(),
+		Title:                   m.Title(),
+		Photo:                   mtproto.MakeChatPhotoByPhoto(m.Chat.Photo),
+		ParticipantsCount_INT32: m.ParticipantsCount(),
+		Date:                    m.Date(),
+		Version:                 m.Version(),
+		MigratedTo:              nil,
+		AdminRights:             nil,
+		DefaultBannedRights:     nil,
+	}
+
+	// chat deactivated
+	if m.Deactivated() {
+		chat.Deactivated = true
+		chat.MigratedTo = m.MigratedTo()
+		return mtproto.MakeTLChat(chat).To_Chat()
+	}
+
+	chat.Creator = false
+	chat.Left = false
+	chat.AdminRights = nil
+	chat.DefaultBannedRights = m.DefaultBannedRights()
+
+	return mtproto.MakeTLChat(chat).To_Chat()
+}
+
 func (m *MutableChat) GetImmutableChatParticipant(id int64) (u *ImmutableChatParticipant, ok bool) {
 	for _, v := range m.ChatParticipants {
 		if v.UserId == id {
@@ -233,13 +268,4 @@ func (m *MutableChat) ToChatForbidden() (chat *mtproto.Chat) {
 		Title: m.Chat.Title,
 	}).To_Chat()
 	return
-}
-
-func (m *Vector_MutableChat) GetChatListByIdList(selfId int64, id ...int64) []*mtproto.Chat {
-	chatList := make([]*mtproto.Chat, 0, len(m.Datas))
-	for _, chat2 := range m.Datas {
-		chatList = append(chatList, chat2.ToUnsafeChat(selfId))
-	}
-
-	return chatList
 }
