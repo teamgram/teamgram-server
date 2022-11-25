@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
@@ -439,7 +440,7 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 }
 
 // ChatSetChatAvailableReactions
-// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = MutableChat;
+// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
 func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.setChatAvailableReactions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -467,3 +468,19 @@ func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSet
 	c.Logger.Debugf("chat.setHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ChatSearch
+// chat.search self_id:long q:string offset:long limit:int = Vector<MutableChat>;
+func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*chat.Vector_MutableChat, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.search - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatSearch(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.search - reply: %s", r.DebugString())
+	return r, err
+}
+

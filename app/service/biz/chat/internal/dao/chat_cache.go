@@ -135,6 +135,18 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 	return removeAllNil(participantList)
 }
 
+func (d *Dao) GetExcludeParticipantsMutableChat(ctx context.Context, chatId int64) (*chatpb.MutableChat, error) {
+	cacheData, err := d.getChatData(ctx, chatId)
+	if err != nil {
+		return nil, err
+	}
+
+	return chatpb.MakeTLMutableChat(&chatpb.MutableChat{
+		Chat:             cacheData.ChatData,
+		ChatParticipants: []*chatpb.ImmutableChatParticipant{},
+	}).To_MutableChat(), nil
+}
+
 func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*chatpb.MutableChat, error) {
 	var (
 		participants []*chatpb.ImmutableChatParticipant

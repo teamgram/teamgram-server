@@ -8,9 +8,10 @@ package chat_client
 
 import (
 	"context"
-	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
@@ -33,6 +34,9 @@ func (m *ChatClientHelper) GetChatListByIdList(ctx context.Context, selfId int64
 		SelfId: selfId,
 		IdList: id,
 	})
+	if chatList == nil {
+		return []*mtproto.Chat{}
+	}
 
 	return chatList.GetChatListByIdList(selfId, id...)
 }

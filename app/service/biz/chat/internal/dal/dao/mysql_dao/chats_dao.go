@@ -709,3 +709,37 @@ func (dao *ChatsDAO) UpdateTTLPeriodTx(tx *sqlx.Tx, ttl_period int32, id int64) 
 
 	return
 }
+
+// SearchByQueryString
+// select id from chats where title like :q limit :limit
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) SearchByQueryString(ctx context.Context, q string, limit int32) (rList []int64, err error) {
+	var query = "select id from chats where title like ? limit ?"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, q, limit)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+	}
+
+	return
+}
+
+// SearchByQueryStringWithCB
+// select id from chats where title like :q limit :limit
+// TODO(@benqi): sqlmap
+func (dao *ChatsDAO) SearchByQueryStringWithCB(ctx context.Context, q string, limit int32, cb func(i int, v int64)) (rList []int64, err error) {
+	var query = "select id from chats where title like ? limit ?"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, q, limit)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SearchByQueryString(_), error: %v", err)
+	}
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, rList[i])
+		}
+	}
+
+	return
+}

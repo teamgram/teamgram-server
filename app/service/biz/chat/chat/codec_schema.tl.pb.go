@@ -217,6 +217,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1023107972,
 		}
 	},
+	568333563: func() mtproto.TLObject { // 0x21e014fb
+		return &TLChatSearch{
+			Constructor: 568333563,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -3218,6 +3223,59 @@ func (m *TLChatSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSetHistoryTTL) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLChatSearch
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatSearch) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_chat_search))
+
+	switch uint32(m.Constructor) {
+	case 0x21e014fb:
+		x.UInt(0x21e014fb)
+
+		// no flags
+
+		x.Long(m.GetSelfId())
+		x.String(m.GetQ())
+		x.Long(m.GetOffset())
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatSearch) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatSearch) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x21e014fb:
+
+		// not has flags
+
+		m.SelfId = dBuf.Long()
+		m.Q = dBuf.String()
+		m.Offset = dBuf.Long()
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLChatSearch) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

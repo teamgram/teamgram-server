@@ -163,4 +163,20 @@
                 id=:id
         </sql>
     </operation>
+
+    <operation name="SearchByQueryString" result_set="single_list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="q" type="string" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                chats
+            WHERE
+                title LIKE :q LIMIT :limit
+        </sql>
+    </operation>
+
 </table>

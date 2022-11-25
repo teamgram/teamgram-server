@@ -48,6 +48,7 @@ const (
 	Predicate_chat_editExportedChatInvite           = "chat_editExportedChatInvite"
 	Predicate_chat_setChatAvailableReactions        = "chat_setChatAvailableReactions"
 	Predicate_chat_setHistoryTTL                    = "chat_setHistoryTTL"
+	Predicate_chat_search                           = "chat_search"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -199,6 +200,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1023107972, // 0x3cfb6384
 
 	},
+	Predicate_chat_search: {
+		0: 568333563, // 0x21e014fb
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -239,6 +244,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1348907914: Predicate_chat_editExportedChatInvite,           // 0xaf994c76
 	-992966286:  Predicate_chat_setChatAvailableReactions,        // 0xc4d08972
 	1023107972:  Predicate_chat_setHistoryTTL,                    // 0x3cfb6384
+	568333563:   Predicate_chat_search,                           // 0x21e014fb
 
 }
 
