@@ -350,4 +350,28 @@
         </sql>
     </operation>
 
+    <operation name="SelectAllDialogs" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectDialogsByPeerType" result_set="list">
+        <params>
+            <param name="peerTypeList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, peer_dialog_id, pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mark, draft_type, draft_message_data, folder_id, folder_pinned, has_scheduled, ttl_period, theme_emoticon, date2
+            FROM
+                dialogs
+            WHERE
+                user_id = :user_id AND peer_type IN (:peerTypeList) AND deleted = 0
+        </sql>
+    </operation>
 </table>

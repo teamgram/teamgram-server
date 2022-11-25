@@ -56,6 +56,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLDialogGetChannelMessageReadParticipants": RPCContextTuple{"/mtproto.RPCDialog/dialog_getChannelMessageReadParticipants", func() interface{} { return new(Vector_Long) }},
 	"TLDialogSetChatTheme":                      RPCContextTuple{"/mtproto.RPCDialog/dialog_setChatTheme", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogSetHistoryTTL":                     RPCContextTuple{"/mtproto.RPCDialog/dialog_setHistoryTTL", func() interface{} { return new(mtproto.Bool) }},
+	"TLDialogGetMyDialogsData":                  RPCContextTuple{"/mtproto.RPCDialog/dialog_getMyDialogsData", func() interface{} { return new(DialogsData) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

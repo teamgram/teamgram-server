@@ -73,7 +73,6 @@
         </sql>
     </operation>
 
-
     <operation name="SearchByQueryNotIdList" result_set="list">
         <params>
             <param name="id_list" type="[]int64" />

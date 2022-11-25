@@ -15,6 +15,7 @@ const (
 	Predicate_dialogExt                                = "dialogExt"
 	Predicate_dialogPinnedExt                          = "dialogPinnedExt"
 	Predicate_dialogFilterExt                          = "dialogFilterExt"
+	Predicate_simpleDialogsData                        = "simpleDialogsData"
 	Predicate_dialog_saveDraftMessage                  = "dialog_saveDraftMessage"
 	Predicate_dialog_clearDraftMessage                 = "dialog_clearDraftMessage"
 	Predicate_dialog_getAllDrafts                      = "dialog_getAllDrafts"
@@ -45,6 +46,7 @@ const (
 	Predicate_dialog_getChannelMessageReadParticipants = "dialog_getChannelMessageReadParticipants"
 	Predicate_dialog_setChatTheme                      = "dialog_setChatTheme"
 	Predicate_dialog_setHistoryTTL                     = "dialog_setHistoryTTL"
+	Predicate_dialog_getMyDialogsData                  = "dialog_getMyDialogsData"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -62,6 +64,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_dialogFilterExt: {
 		0: -1891683854, // 0x8f3f31f2
+
+	},
+	Predicate_simpleDialogsData: {
+		0: 492418141, // 0x1d59b45d
 
 	},
 	Predicate_dialog_saveDraftMessage: {
@@ -184,6 +190,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 165263532, // 0x9d9b8ac
 
 	},
+	Predicate_dialog_getMyDialogsData: {
+		0: 2128645891, // 0x7ee08f03
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -191,6 +201,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1109809056: Predicate_dialogExt,                                // 0xbdd9a860
 	245834284:   Predicate_dialogPinnedExt,                          // 0xea7222c
 	-1891683854: Predicate_dialogFilterExt,                          // 0x8f3f31f2
+	492418141:   Predicate_simpleDialogsData,                        // 0x1d59b45d
 	1321916826:  Predicate_dialog_saveDraftMessage,                  // 0x4ecad99a
 	-76500326:   Predicate_dialog_clearDraftMessage,                 // 0xfb70b29a
 	-1394716698: Predicate_dialog_getAllDrafts,                      // 0xacde4fe6
@@ -221,6 +232,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	683494715:   Predicate_dialog_getChannelMessageReadParticipants, // 0x28bd4d3b
 	-374431190:  Predicate_dialog_setChatTheme,                      // 0xe9aea22a
 	165263532:   Predicate_dialog_setHistoryTTL,                     // 0x9d9b8ac
+	2128645891:  Predicate_dialog_getMyDialogsData,                  // 0x7ee08f03
 
 }
 

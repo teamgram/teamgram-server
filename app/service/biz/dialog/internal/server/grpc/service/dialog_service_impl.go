@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -467,3 +468,19 @@ func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDia
 	c.Logger.Debugf("dialog.setHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }
+
+// DialogGetMyDialogsData
+// dialog.getMyDialogsData flags:# user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
+func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getMyDialogsData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogGetMyDialogsData(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getMyDialogsData - reply: %s", r.DebugString())
+	return r, err
+}
+

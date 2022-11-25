@@ -20,6 +20,7 @@ package dao
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/container2"
@@ -260,6 +261,30 @@ func (d *Dao) UpdateUserEmojiStatus(ctx context.Context, id int64, emojiStatusDo
 		genCacheUserDataCacheKey(id))
 	if err != nil {
 		logx.WithContext(ctx).Errorf("updateUserEmojiStatus - error: %v", err)
+		return false
+	}
+
+	return true
+}
+
+func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.UsersDAO.Delete(
+				ctx,
+				"-"+strconv.FormatInt(id, 10), // hack
+				reason,
+				id)
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("DeleteUser - error: %v", err)
 		return false
 	}
 

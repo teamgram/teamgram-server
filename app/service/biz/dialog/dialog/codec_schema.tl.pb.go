@@ -45,6 +45,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 245834284
 		return o
 	},
+	492418141: func() mtproto.TLObject { // 0x1d59b45d
+		o := MakeTLSimpleDialogsData(nil)
+		o.Data2.Constructor = 492418141
+		return o
+	},
 	-155335502: func() mtproto.TLObject { // 0xf6bdc4b2
 		o := MakeTLUpdateDraftMessage(nil)
 		o.Data2.Constructor = -155335502
@@ -200,6 +205,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	165263532: func() mtproto.TLObject { // 0x9d9b8ac
 		return &TLDialogSetHistoryTTL{
 			Constructor: 165263532,
+		}
+	},
+	2128645891: func() mtproto.TLObject { // 0x7ee08f03
+		return &TLDialogGetMyDialogsData{
+			Constructor: 2128645891,
 		}
 	},
 }
@@ -684,6 +694,162 @@ func (m *TLDialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogPinnedExt) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DialogsData <--
+//  + TL_SimpleDialogsData
+//
+
+func (m *DialogsData) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_simpleDialogsData:
+		t := m.To_SimpleDialogsData()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *DialogsData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *DialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x1d59b45d:
+		m2 := MakeTLSimpleDialogsData(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *DialogsData) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_simpleDialogsData:
+		t := m.To_SimpleDialogsData()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_SimpleDialogsData
+func (m *DialogsData) To_SimpleDialogsData() *TLSimpleDialogsData {
+	m.PredicateName = Predicate_simpleDialogsData
+	return &TLSimpleDialogsData{
+		Data2: m,
+	}
+}
+
+// MakeTLSimpleDialogsData
+func MakeTLSimpleDialogsData(data2 *DialogsData) *TLSimpleDialogsData {
+	if data2 == nil {
+		return &TLSimpleDialogsData{Data2: &DialogsData{
+			PredicateName: Predicate_simpleDialogsData,
+		}}
+	} else {
+		data2.PredicateName = Predicate_simpleDialogsData
+		return &TLSimpleDialogsData{Data2: data2}
+	}
+}
+
+func (m *TLSimpleDialogsData) To_DialogsData() *DialogsData {
+	m.Data2.PredicateName = Predicate_simpleDialogsData
+	return m.Data2
+}
+
+func (m *TLSimpleDialogsData) SetUsers(v []int64) { m.Data2.Users = v }
+func (m *TLSimpleDialogsData) GetUsers() []int64  { return m.Data2.Users }
+
+func (m *TLSimpleDialogsData) SetChats(v []int64) { m.Data2.Chats = v }
+func (m *TLSimpleDialogsData) GetChats() []int64  { return m.Data2.Chats }
+
+func (m *TLSimpleDialogsData) SetChannels(v []int64) { m.Data2.Channels = v }
+func (m *TLSimpleDialogsData) GetChannels() []int64  { return m.Data2.Channels }
+
+func (m *TLSimpleDialogsData) GetPredicateName() string {
+	return Predicate_simpleDialogsData
+}
+
+func (m *TLSimpleDialogsData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x1d59b45d: func() []byte {
+			x.UInt(0x1d59b45d)
+
+			x.VectorLong(m.GetUsers())
+
+			x.VectorLong(m.GetChats())
+
+			x.VectorLong(m.GetChannels())
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_simpleDialogsData, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_simpleDialogsData, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLSimpleDialogsData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLSimpleDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x1d59b45d: func() error {
+
+			m.SetUsers(dBuf.VectorLong())
+
+			m.SetChats(dBuf.VectorLong())
+
+			m.SetChannels(dBuf.VectorLong())
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLSimpleDialogsData) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -2461,6 +2627,78 @@ func (m *TLDialogSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogSetHistoryTTL) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogGetMyDialogsData
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetMyDialogsData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_dialog_getMyDialogsData))
+
+	switch uint32(m.Constructor) {
+	case 0x7ee08f03:
+		x.UInt(0x7ee08f03)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetUser() == true {
+			flags |= 1 << 0
+		}
+		if m.GetChat() == true {
+			flags |= 1 << 1
+		}
+		if m.GetChannel() == true {
+			flags |= 1 << 2
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLDialogGetMyDialogsData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetMyDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7ee08f03:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.User = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Chat = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.Channel = true
+		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogGetMyDialogsData) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
