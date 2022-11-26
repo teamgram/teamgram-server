@@ -30,17 +30,26 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*chat.MutableCha
 		chatId, inviterId, userId = in.ChatId, in.InviterId, in.UserId
 	)
 
-	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, inviterId, userId)
-	if err != nil {
-		c.Logger.Errorf("chat.addChatUser - error: %v", err)
-		return nil, err
-	}
+	if inviterId != 0 {
+		chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, inviterId, userId)
+		if err != nil {
+			c.Logger.Errorf("chat.addChatUser - error: %v", err)
+			return nil, err
+		}
 
-	me, _ = chat2.GetImmutableChatParticipant(inviterId)
-	if me == nil || (me.State != mtproto.ChatMemberStateNormal && !me.IsChatMemberCreator()) {
-		err = mtproto.ErrInputUserDeactivated
-		c.Logger.Errorf("chat.addChatUser - error: %v", err)
-		return nil, err
+		me, _ = chat2.GetImmutableChatParticipant(inviterId)
+		if me == nil || (me.State != mtproto.ChatMemberStateNormal && !me.IsChatMemberCreator()) {
+			err = mtproto.ErrInputUserDeactivated
+			c.Logger.Errorf("chat.addChatUser - error: %v", err)
+			return nil, err
+		}
+	} else {
+		chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, userId)
+		if err != nil {
+			c.Logger.Errorf("chat.addChatUser - error: %v", err)
+			return nil, err
+		}
+		inviterId = chat2.Creator()
 	}
 
 	willAdd, _ = chat2.GetImmutableChatParticipant(userId)
@@ -50,13 +59,15 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*chat.MutableCha
 		return nil, err
 	}
 
-	// TODO(@benqi): check
-	// 400	CHAT_ADMIN_REQUIRED	You must be an admin in this chat to do this
-	if !me.CanInviteUsers() &&
-		!chat2.DefaultBannedRights().CanInviteUsers(int32(time.Now().Unix())) {
-		err = mtproto.ErrChatAdminRequired
-		c.Logger.Errorf("chat.addChatUser - error: %v", err)
-		return nil, err
+	if me != nil {
+		// TODO(@benqi): check
+		// 400	CHAT_ADMIN_REQUIRED	You must be an admin in this chat to do this
+		if !me.CanInviteUsers() &&
+			!chat2.DefaultBannedRights().CanInviteUsers(int32(time.Now().Unix())) {
+			err = mtproto.ErrChatAdminRequired
+			c.Logger.Errorf("chat.addChatUser - error: %v", err)
+			return nil, err
+		}
 	}
 
 	_, _, err = c.svcCtx.Dao.Exec(

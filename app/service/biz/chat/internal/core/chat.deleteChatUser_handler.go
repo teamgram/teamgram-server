@@ -38,6 +38,10 @@ func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*chat.Muta
 		return nil, err
 	}
 
+	if operatorId == 0 {
+		operatorId = chat2.Creator()
+	}
+
 	me, _ = chat2.GetImmutableChatParticipant(operatorId)
 	if me == nil {
 		err = mtproto.ErrInputUserDeactivated

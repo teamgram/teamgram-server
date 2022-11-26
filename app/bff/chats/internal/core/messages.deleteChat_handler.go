@@ -29,10 +29,15 @@ import (
 // MessagesDeleteChat
 // messages.deleteChat#5bd0ee50 chat_id:long = Bool;
 func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error) {
+	operatorId := c.MD.UserId
+	if c.MD.IsAdmin {
+		operatorId = 0
+	}
+
 	// 2. delete chat
 	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatDeleteChat(c.ctx, &chatpb.TLChatDeleteChat{
 		ChatId:     in.ChatId,
-		OperatorId: c.MD.UserId,
+		OperatorId: operatorId,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.deleteChat - error: %v", err)

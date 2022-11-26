@@ -24,6 +24,11 @@ func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*chat.MutableChat,
 		c.Logger.Errorf("chat.deleteChat - error: %v", err)
 		return nil, err
 	}
+
+	if in.OperatorId == 0 {
+		in.OperatorId = mChat.Creator()
+	}
+
 	if mChat.Creator() != in.OperatorId {
 		err = mtproto.ErrChatAdminRequired
 		c.Logger.Errorf("chat.deleteChat - error: %v", err)

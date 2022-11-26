@@ -32,18 +32,20 @@ import (
 func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser) (*mtproto.Updates, error) {
 	deleteUser := mtproto.FromInputUser(c.MD.UserId, in.UserId)
 
-	switch deleteUser.PeerType {
-	case mtproto.PEER_USER:
-	case mtproto.PEER_SELF:
-	default:
+	if !deleteUser.IsUser() || deleteUser.PeerId == 0 {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.deleteChatUser - invalid peer", err)
 		return nil, err
 	}
 
+	operatorId := c.MD.UserId
+	if c.MD.IsAdmin {
+		operatorId = 0
+	}
+
 	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatDeleteChatUser(c.ctx, &chatpb.TLChatDeleteChatUser{
 		ChatId:       in.ChatId,
-		OperatorId:   c.MD.UserId,
+		OperatorId:   operatorId,
 		DeleteUserId: deleteUser.PeerId,
 	})
 	if err != nil {
@@ -56,8 +58,13 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 		PeerId:   in.ChatId,
 	})
 
+	fromId := c.MD.UserId
+	if c.MD.IsAdmin {
+		fromId = chat.Creator()
+	}
+
 	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
-		UserId:    c.MD.UserId,
+		UserId:    fromId,
 		AuthKeyId: c.MD.AuthId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    in.ChatId,
@@ -65,7 +72,7 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 			NoWebpage:    true,
 			Background:   false,
 			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
+			Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
 			ScheduleDate: nil,
 		}).To_OutboxMessage(),
 	})
