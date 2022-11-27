@@ -223,7 +223,7 @@ func (m *Dao) GetPhotoV2(ctx context.Context, photoId int64) (*mtproto.Photo, er
 	}
 
 	if photoDO.HasVideo {
-		videoSizes = m.GetVideoSizeList(ctx, photoDO.VideoSizeId)
+		videoSizes = m.GetVideoSizeList(ctx, photoDO.PhotoId)
 	}
 
 	photo := mtproto.MakeTLPhoto(&mtproto.Photo{
