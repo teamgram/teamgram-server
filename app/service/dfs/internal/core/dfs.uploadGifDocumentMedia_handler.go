@@ -80,7 +80,7 @@ func (c *DfsCore) DfsUploadGifDocumentMedia(in *dfs.TLDfsUploadGifDocumentMedia)
 	}
 
 	if err != nil {
-		c.Logger.Errorf("dfs.uploadGifDocumentMedia - error: %v", err2)
+		c.Logger.Errorf("dfs.uploadGifDocumentMedia - error: %v", err)
 		return nil, err
 	}
 
