@@ -42,6 +42,16 @@ func (c *MessagesCore) MessagesDeleteHistory(in *mtproto.TLMessagesDeleteHistory
 		return nil, err
 	}
 
+	if in.GetMinDate() != nil || in.GetMaxDate() != nil {
+		// TODO: not impl
+		pts := c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, c.MD.UserId)
+		return mtproto.MakeTLMessagesAffectedHistory(&mtproto.Messages_AffectedHistory{
+			Pts:      pts,
+			PtsCount: 0,
+			Offset:   0,
+		}).To_Messages_AffectedHistory(), nil
+	}
+
 	affectedHistory, err := c.svcCtx.Dao.MsgClient.MsgDeleteHistory(c.ctx, &msgpb.TLMsgDeleteHistory{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.AuthId,
