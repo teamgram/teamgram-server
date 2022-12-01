@@ -31,11 +31,11 @@ func NewChatInviteParticipantsDAO(db *sqlx.DB) *ChatInviteParticipantsDAO {
 }
 
 // Insert
-// insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
+// insert into chat_invite_participants(chat_id, link, user_id, requested, approved_by, date2) values (:chat_id, :link, :user_id, :requested, :approved_by, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
+		query = "insert into chat_invite_participants(chat_id, link, user_id, requested, approved_by, date2) values (:chat_id, :link, :user_id, :requested, :approved_by, :date2)"
 		r     sql.Result
 	)
 
@@ -59,11 +59,11 @@ func (dao *ChatInviteParticipantsDAO) Insert(ctx context.Context, do *dataobject
 }
 
 // InsertTx
-// insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)
+// insert into chat_invite_participants(chat_id, link, user_id, requested, approved_by, date2) values (:chat_id, :link, :user_id, :requested, :approved_by, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInviteParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_invite_participants(chat_id, link, user_id, date2) values (:chat_id, :link, :user_id, :date2)"
+		query = "insert into chat_invite_participants(chat_id, link, user_id, requested, approved_by, date2) values (:chat_id, :link, :user_id, :requested, :approved_by, :date2)"
 		r     sql.Result
 	)
 
@@ -87,14 +87,14 @@ func (dao *ChatInviteParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatI
 }
 
 // SelectListByLink
-// select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
+// select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = :link and requested = :b
 // TODO(@benqi): sqlmap
-func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link string) (rList []dataobject.ChatInviteParticipantsDO, err error) {
+func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link string, b int32) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
+		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = ? and requested = ?"
 		values []dataobject.ChatInviteParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, link)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByLink(_), error: %v", err)
@@ -107,14 +107,14 @@ func (dao *ChatInviteParticipantsDAO) SelectListByLink(ctx context.Context, link
 }
 
 // SelectListByLinkWithCB
-// select id, chat_id, link, user_id, date2 from chat_invite_participants where link = :link
+// select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = :link and requested = :b
 // TODO(@benqi): sqlmap
-func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context, link string, cb func(i int, v *dataobject.ChatInviteParticipantsDO)) (rList []dataobject.ChatInviteParticipantsDO, err error) {
+func (dao *ChatInviteParticipantsDAO) SelectListByLinkWithCB(ctx context.Context, link string, b int32, cb func(i int, v *dataobject.ChatInviteParticipantsDO)) (rList []dataobject.ChatInviteParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, link, user_id, date2 from chat_invite_participants where link = ?"
+		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where link = ? and requested = ?"
 		values []dataobject.ChatInviteParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, link)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, link, b)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByLink(_), error: %v", err)
@@ -173,6 +173,144 @@ func (dao *ChatInviteParticipantsDAO) DeleteTx(tx *sqlx.Tx, chat_id int64, user_
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("rowsAffected in Delete(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectRecentRequestedList
+// select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = :chat_id and requested = 1
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) SelectRecentRequestedList(ctx context.Context, chat_id int64) (rList []dataobject.ChatInviteParticipantsDO, err error) {
+	var (
+		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = ? and requested = 1"
+		values []dataobject.ChatInviteParticipantsDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectRecentRequestedList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectRecentRequestedListWithCB
+// select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = :chat_id and requested = 1
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) SelectRecentRequestedListWithCB(ctx context.Context, chat_id int64, cb func(i int, v *dataobject.ChatInviteParticipantsDO)) (rList []dataobject.ChatInviteParticipantsDO, err error) {
+	var (
+		query  = "select id, chat_id, link, user_id, requested, approved_by, date2 from chat_invite_participants where chat_id = ? and requested = 1"
+		values []dataobject.ChatInviteParticipantsDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectRecentRequestedList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// UpdateChatId
+// update chat_invite_participants set chat_id = :chat_id where link = :link
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) UpdateChatId(ctx context.Context, chat_id int64, link string) (rowsAffected int64, err error) {
+	var (
+		query   = "update chat_invite_participants set chat_id = ? where link = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, chat_id, link)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateChatId(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateChatId(_), error: %v", err)
+	}
+
+	return
+}
+
+// update chat_invite_participants set chat_id = :chat_id where link = :link
+// UpdateChatIdTx
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) UpdateChatIdTx(tx *sqlx.Tx, chat_id int64, link string) (rowsAffected int64, err error) {
+	var (
+		query   = "update chat_invite_participants set chat_id = ? where link = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, chat_id, link)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateChatId(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateChatId(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateApprovedBy
+// update chat_invite_participants set requested = 0, approved_by = :approved_by where chat_id = :chat_id and user_id = :user_id
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) UpdateApprovedBy(ctx context.Context, approved_by int64, chat_id int64, user_id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chat_invite_participants set requested = 0, approved_by = ? where chat_id = ? and user_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, approved_by, chat_id, user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateApprovedBy(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateApprovedBy(_), error: %v", err)
+	}
+
+	return
+}
+
+// update chat_invite_participants set requested = 0, approved_by = :approved_by where chat_id = :chat_id and user_id = :user_id
+// UpdateApprovedByTx
+// TODO(@benqi): sqlmap
+func (dao *ChatInviteParticipantsDAO) UpdateApprovedByTx(tx *sqlx.Tx, approved_by int64, chat_id int64, user_id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update chat_invite_participants set requested = 0, approved_by = ? where chat_id = ? and user_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, approved_by, chat_id, user_id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateApprovedBy(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateApprovedBy(_), error: %v", err)
 	}
 
 	return

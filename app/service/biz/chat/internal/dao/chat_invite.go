@@ -14,6 +14,8 @@ import (
 	"github.com/teamgram/teamgram-server/pkg/env2"
 )
 
+// MakeChatInviteExported
+// , requested bool
 func (d *Dao) MakeChatInviteExported(ctx context.Context, chatInviteDO *dataobject.ChatInvitesDO) *mtproto.ExportedChatInvite {
 	rValue := mtproto.MakeTLChatInviteExported(&mtproto.ExportedChatInvite{
 		Revoked:       chatInviteDO.Revoked,
@@ -30,11 +32,35 @@ func (d *Dao) MakeChatInviteExported(ctx context.Context, chatInviteDO *dataobje
 		Title:         mtproto.MakeFlagsString(chatInviteDO.Title),
 	}).To_ExportedChatInvite()
 
-	// TODO: calc
-	sz := d.CommonDAO.CalcSize(ctx, "chat_invite_participants", map[string]interface{}{
-		"link": chatInviteDO.Link,
-	})
-	rValue.Usage = mtproto.MakeFlagsInt32(int32(sz))
+	//usage := d.CommonDAO.CalcSize(ctx, "chat_invite_participants", map[string]interface{}{
+	//	"link":      chatInviteDO.Link,
+	//	"requested": 0,
+	//})
+	rValue.Usage = mtproto.MakeFlagsInt32(d.GetLinkInviteSize(ctx, chatInviteDO.Link))
+
+	//requested := d.CommonDAO.CalcSize(ctx, "chat_invite_participants", map[string]interface{}{
+	//	"link":      chatInviteDO.Link,
+	//	"requested": 1,
+	//})
+	rValue.Requested = mtproto.MakeFlagsInt32(d.GetRequestedLinkInviteSize(ctx, chatInviteDO.Link))
 
 	return rValue
+}
+
+func (d *Dao) GetLinkInviteSize(ctx context.Context, link string) int32 {
+	sz := d.CommonDAO.CalcSize(ctx, "chat_invite_participants", map[string]interface{}{
+		"link":      link,
+		"requested": 0,
+	})
+
+	return int32(sz)
+}
+
+func (d *Dao) GetRequestedLinkInviteSize(ctx context.Context, link string) int32 {
+	sz := d.CommonDAO.CalcSize(ctx, "chat_invite_participants", map[string]interface{}{
+		"link":      link,
+		"requested": 1,
+	})
+
+	return int32(sz)
 }

@@ -53,6 +53,9 @@ type ChatClient interface {
     ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error)
     ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error)
     ChatSearch(ctx context.Context, in *chat.TLChatSearch) (*chat.Vector_MutableChat, error)
+    ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error)
+    ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error)
+    ChatImportChatInvite2(ctx context.Context, in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error)
 
 }
 
@@ -282,5 +285,26 @@ func (m *defaultChatClient) ChatSetHistoryTTL(ctx context.Context, in *chat.TLCh
 func (m *defaultChatClient) ChatSearch(ctx context.Context, in *chat.TLChatSearch) (*chat.Vector_MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatSearch(ctx, in)
+}
+
+// ChatGetRecentChatInviteRequesters
+// chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
+func (m *defaultChatClient) ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
+	client := chat.NewRPCChatClient(m.cli.Conn())
+	return client.ChatGetRecentChatInviteRequesters(ctx, in)
+}
+
+// ChatHideChatJoinRequests
+// chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
+func (m *defaultChatClient) ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
+	client := chat.NewRPCChatClient(m.cli.Conn())
+	return client.ChatHideChatJoinRequests(ctx, in)
+}
+
+// ChatImportChatInvite2
+// chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
+func (m *defaultChatClient) ChatImportChatInvite2(ctx context.Context, in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
+	client := chat.NewRPCChatClient(m.cli.Conn())
+	return client.ChatImportChatInvite2(ctx, in)
 }
 

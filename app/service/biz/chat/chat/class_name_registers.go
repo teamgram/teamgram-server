@@ -18,6 +18,8 @@ const (
 	Predicate_chatInvite                            = "chatInvite"
 	Predicate_chatInvitePeek                        = "chatInvitePeek"
 	Predicate_userChatIdList                        = "userChatIdList"
+	Predicate_recentChatInviteRequesters            = "recentChatInviteRequesters"
+	Predicate_chatInviteImported                    = "chatInviteImported"
 	Predicate_chat_getMutableChat                   = "chat_getMutableChat"
 	Predicate_chat_getChatListByIdList              = "chat_getChatListByIdList"
 	Predicate_chat_getChatBySelfId                  = "chat_getChatBySelfId"
@@ -49,6 +51,9 @@ const (
 	Predicate_chat_setChatAvailableReactions        = "chat_setChatAvailableReactions"
 	Predicate_chat_setHistoryTTL                    = "chat_setHistoryTTL"
 	Predicate_chat_search                           = "chat_search"
+	Predicate_chat_getRecentChatInviteRequesters    = "chat_getRecentChatInviteRequesters"
+	Predicate_chat_hideChatJoinRequests             = "chat_hideChatJoinRequests"
+	Predicate_chat_importChatInvite2                = "chat_importChatInvite2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -78,6 +83,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_userChatIdList: {
 		0: 1342599716, // 0x50067224
+
+	},
+	Predicate_recentChatInviteRequesters: {
+		0: 476986452, // 0x1c6e3c54
+
+	},
+	Predicate_chatInviteImported: {
+		0: 1913672182, // 0x721051f6
 
 	},
 	Predicate_chat_getMutableChat: {
@@ -204,6 +217,18 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 568333563, // 0x21e014fb
 
 	},
+	Predicate_chat_getRecentChatInviteRequesters: {
+		0: -19132264, // 0xfedc1098
+
+	},
+	Predicate_chat_hideChatJoinRequests: {
+		0: 1051012305, // 0x3ea52cd1
+
+	},
+	Predicate_chat_importChatInvite2: {
+		0: -589742657, // 0xdcd93dbf
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -214,6 +239,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-613035609:  Predicate_chatInvite,                            // 0xdb75d1a7
 	-1394351506: Predicate_chatInvitePeek,                        // 0xace3e26e
 	1342599716:  Predicate_userChatIdList,                        // 0x50067224
+	476986452:   Predicate_recentChatInviteRequesters,            // 0x1c6e3c54
+	1913672182:  Predicate_chatInviteImported,                    // 0x721051f6
 	741090770:   Predicate_chat_getMutableChat,                   // 0x2c2c25d2
 	-415173319:  Predicate_chat_getChatListByIdList,              // 0xe740f539
 	1236736584:  Predicate_chat_getChatBySelfId,                  // 0x49b71a48
@@ -245,6 +272,9 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-992966286:  Predicate_chat_setChatAvailableReactions,        // 0xc4d08972
 	1023107972:  Predicate_chat_setHistoryTTL,                    // 0x3cfb6384
 	568333563:   Predicate_chat_search,                           // 0x21e014fb
+	-19132264:   Predicate_chat_getRecentChatInviteRequesters,    // 0xfedc1098
+	1051012305:  Predicate_chat_hideChatJoinRequests,             // 0x3ea52cd1
+	-589742657:  Predicate_chat_importChatInvite2,                // 0xdcd93dbf
 
 }
 

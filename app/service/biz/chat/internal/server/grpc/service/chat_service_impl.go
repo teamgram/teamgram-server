@@ -484,3 +484,48 @@ func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*
 	return r, err
 }
 
+// ChatGetRecentChatInviteRequesters
+// chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
+func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.getRecentChatInviteRequesters - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatGetRecentChatInviteRequesters(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.getRecentChatInviteRequesters - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ChatHideChatJoinRequests
+// chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
+func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.hideChatJoinRequests - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatHideChatJoinRequests(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.hideChatJoinRequests - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ChatImportChatInvite2
+// chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
+func (s *Service) ChatImportChatInvite2(ctx context.Context, request *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.importChatInvite2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChatImportChatInvite2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.importChatInvite2 - reply: %s", r.DebugString())
+	return r, err
+}
+

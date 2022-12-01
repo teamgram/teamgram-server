@@ -57,6 +57,9 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLChatSetChatAvailableReactions":        RPCContextTuple{"/mtproto.RPCChat/chat_setChatAvailableReactions", func() interface{} { return new(MutableChat) }},
 	"TLChatSetHistoryTTL":                    RPCContextTuple{"/mtproto.RPCChat/chat_setHistoryTTL", func() interface{} { return new(MutableChat) }},
 	"TLChatSearch":                           RPCContextTuple{"/mtproto.RPCChat/chat_search", func() interface{} { return new(Vector_MutableChat) }},
+	"TLChatGetRecentChatInviteRequesters":    RPCContextTuple{"/mtproto.RPCChat/chat_getRecentChatInviteRequesters", func() interface{} { return new(RecentChatInviteRequesters) }},
+	"TLChatHideChatJoinRequests":             RPCContextTuple{"/mtproto.RPCChat/chat_hideChatJoinRequests", func() interface{} { return new(RecentChatInviteRequesters) }},
+	"TLChatImportChatInvite2":                RPCContextTuple{"/mtproto.RPCChat/chat_importChatInvite2", func() interface{} { return new(ChatInviteImported) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

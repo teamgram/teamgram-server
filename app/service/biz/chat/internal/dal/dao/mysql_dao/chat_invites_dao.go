@@ -158,6 +158,52 @@ func (dao *ChatInvitesDAO) SelectByLink(ctx context.Context, link string) (rValu
 	return
 }
 
+// SelectAll
+// select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites
+// TODO(@benqi): sqlmap
+func (dao *ChatInvitesDAO) SelectAll(ctx context.Context) (rList []dataobject.ChatInvitesDO, err error) {
+	var (
+		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
+		values []dataobject.ChatInvitesDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectAllWithCB
+// select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites
+// TODO(@benqi): sqlmap
+func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
+	var (
+		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
+		values []dataobject.ChatInvitesDO
+	)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectAll(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
+	}
+
+	return
+}
+
 // SelectListByChatId
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = :chat_id
 // TODO(@benqi): sqlmap

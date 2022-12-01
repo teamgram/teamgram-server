@@ -45,6 +45,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -1394351506
 		return o
 	},
+	1913672182: func() mtproto.TLObject { // 0x721051f6
+		o := MakeTLChatInviteImported(nil)
+		o.Data2.Constructor = 1913672182
+		return o
+	},
 	-1557334680: func() mtproto.TLObject { // 0xa32cf568
 		o := MakeTLImmutableChat(nil)
 		o.Data2.Constructor = -1557334680
@@ -58,6 +63,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-34609042: func() mtproto.TLObject { // 0xfdefe86e
 		o := MakeTLMutableChat(nil)
 		o.Data2.Constructor = -34609042
+		return o
+	},
+	476986452: func() mtproto.TLObject { // 0x1c6e3c54
+		o := MakeTLRecentChatInviteRequesters(nil)
+		o.Data2.Constructor = 476986452
 		return o
 	},
 	1342599716: func() mtproto.TLObject { // 0x50067224
@@ -220,6 +230,21 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	568333563: func() mtproto.TLObject { // 0x21e014fb
 		return &TLChatSearch{
 			Constructor: 568333563,
+		}
+	},
+	-19132264: func() mtproto.TLObject { // 0xfedc1098
+		return &TLChatGetRecentChatInviteRequesters{
+			Constructor: -19132264,
+		}
+	},
+	1051012305: func() mtproto.TLObject { // 0x3ea52cd1
+		return &TLChatHideChatJoinRequests{
+			Constructor: 1051012305,
+		}
+	},
+	-589742657: func() mtproto.TLObject { // 0xdcd93dbf
+		return &TLChatImportChatInvite2{
+			Constructor: -589742657,
 		}
 	},
 }
@@ -632,6 +657,178 @@ func (m *TLChatInvitePeek) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvitePeek) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ChatInviteImported <--
+//  + TL_ChatInviteImported
+//
+
+func (m *ChatInviteImported) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_chatInviteImported:
+		t := m.To_ChatInviteImported()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *ChatInviteImported) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *ChatInviteImported) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x721051f6:
+		m2 := MakeTLChatInviteImported(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *ChatInviteImported) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_chatInviteImported:
+		t := m.To_ChatInviteImported()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_ChatInviteImported
+func (m *ChatInviteImported) To_ChatInviteImported() *TLChatInviteImported {
+	m.PredicateName = Predicate_chatInviteImported
+	return &TLChatInviteImported{
+		Data2: m,
+	}
+}
+
+// MakeTLChatInviteImported
+func MakeTLChatInviteImported(data2 *ChatInviteImported) *TLChatInviteImported {
+	if data2 == nil {
+		return &TLChatInviteImported{Data2: &ChatInviteImported{
+			PredicateName: Predicate_chatInviteImported,
+		}}
+	} else {
+		data2.PredicateName = Predicate_chatInviteImported
+		return &TLChatInviteImported{Data2: data2}
+	}
+}
+
+func (m *TLChatInviteImported) To_ChatInviteImported() *ChatInviteImported {
+	m.Data2.PredicateName = Predicate_chatInviteImported
+	return m.Data2
+}
+
+//// flags
+func (m *TLChatInviteImported) SetChat(v *MutableChat) { m.Data2.Chat = v }
+func (m *TLChatInviteImported) GetChat() *MutableChat  { return m.Data2.Chat }
+
+func (m *TLChatInviteImported) SetRequesters(v *RecentChatInviteRequesters) { m.Data2.Requesters = v }
+func (m *TLChatInviteImported) GetRequesters() *RecentChatInviteRequesters  { return m.Data2.Requesters }
+
+func (m *TLChatInviteImported) GetPredicateName() string {
+	return Predicate_chatInviteImported
+}
+
+func (m *TLChatInviteImported) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x721051f6: func() []byte {
+			x.UInt(0x721051f6)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetRequesters() != nil {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			x.Bytes(m.GetChat().Encode(layer))
+			if m.GetRequesters() != nil {
+				x.Bytes(m.GetRequesters().Encode(layer))
+			}
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_chatInviteImported, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_chatInviteImported, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatInviteImported) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatInviteImported) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x721051f6: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+
+			m1 := &MutableChat{}
+			m1.Decode(dBuf)
+			m.SetChat(m1)
+
+			if (flags & (1 << 0)) != 0 {
+				m2 := &RecentChatInviteRequesters{}
+				m2.Decode(dBuf)
+				m.SetRequesters(m2)
+			}
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLChatInviteImported) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -1357,6 +1554,154 @@ func (m *TLMutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMutableChat) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// RecentChatInviteRequesters <--
+//  + TL_RecentChatInviteRequesters
+//
+
+func (m *RecentChatInviteRequesters) Encode(layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	var (
+		xBuf []byte
+	)
+
+	switch predicateName {
+	case Predicate_recentChatInviteRequesters:
+		t := m.To_RecentChatInviteRequesters()
+		xBuf = t.Encode(layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return []byte{}
+	}
+
+	return xBuf
+}
+
+func (m *RecentChatInviteRequesters) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *RecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x1c6e3c54:
+		m2 := MakeTLRecentChatInviteRequesters(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *RecentChatInviteRequesters) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_recentChatInviteRequesters:
+		t := m.To_RecentChatInviteRequesters()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_RecentChatInviteRequesters
+func (m *RecentChatInviteRequesters) To_RecentChatInviteRequesters() *TLRecentChatInviteRequesters {
+	m.PredicateName = Predicate_recentChatInviteRequesters
+	return &TLRecentChatInviteRequesters{
+		Data2: m,
+	}
+}
+
+// MakeTLRecentChatInviteRequesters
+func MakeTLRecentChatInviteRequesters(data2 *RecentChatInviteRequesters) *TLRecentChatInviteRequesters {
+	if data2 == nil {
+		return &TLRecentChatInviteRequesters{Data2: &RecentChatInviteRequesters{
+			PredicateName: Predicate_recentChatInviteRequesters,
+		}}
+	} else {
+		data2.PredicateName = Predicate_recentChatInviteRequesters
+		return &TLRecentChatInviteRequesters{Data2: data2}
+	}
+}
+
+func (m *TLRecentChatInviteRequesters) To_RecentChatInviteRequesters() *RecentChatInviteRequesters {
+	m.Data2.PredicateName = Predicate_recentChatInviteRequesters
+	return m.Data2
+}
+
+func (m *TLRecentChatInviteRequesters) SetRequestsPending(v int32) { m.Data2.RequestsPending = v }
+func (m *TLRecentChatInviteRequesters) GetRequestsPending() int32  { return m.Data2.RequestsPending }
+
+func (m *TLRecentChatInviteRequesters) SetRecentRequesters(v []int64) { m.Data2.RecentRequesters = v }
+func (m *TLRecentChatInviteRequesters) GetRecentRequesters() []int64  { return m.Data2.RecentRequesters }
+
+func (m *TLRecentChatInviteRequesters) GetPredicateName() string {
+	return Predicate_recentChatInviteRequesters
+}
+
+func (m *TLRecentChatInviteRequesters) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	var encodeF = map[uint32]func() []byte{
+		0x1c6e3c54: func() []byte {
+			x.UInt(0x1c6e3c54)
+
+			x.Int(m.GetRequestsPending())
+
+			x.VectorLong(m.GetRecentRequesters())
+
+			return x.GetBuf()
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_recentChatInviteRequesters, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_recentChatInviteRequesters, layer)
+		return x.GetBuf()
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLRecentChatInviteRequesters) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x1c6e3c54: func() error {
+			m.SetRequestsPending(dBuf.Int())
+
+			m.SetRecentRequesters(dBuf.VectorLong())
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLRecentChatInviteRequesters) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -3276,6 +3621,187 @@ func (m *TLChatSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSearch) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLChatGetRecentChatInviteRequesters
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatGetRecentChatInviteRequesters) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_chat_getRecentChatInviteRequesters))
+
+	switch uint32(m.Constructor) {
+	case 0xfedc1098:
+		x.UInt(0xfedc1098)
+
+		// no flags
+
+		x.Long(m.GetSelfId())
+		x.Long(m.GetChatId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatGetRecentChatInviteRequesters) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatGetRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfedc1098:
+
+		// not has flags
+
+		m.SelfId = dBuf.Long()
+		m.ChatId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLChatGetRecentChatInviteRequesters) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLChatHideChatJoinRequests
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatHideChatJoinRequests) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_chat_hideChatJoinRequests))
+
+	switch uint32(m.Constructor) {
+	case 0x3ea52cd1:
+		x.UInt(0x3ea52cd1)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetApproved() == true {
+			flags |= 1 << 0
+		}
+		if m.GetLink() != nil {
+			flags |= 1 << 1
+		}
+		if m.GetUserId() != nil {
+			flags |= 1 << 2
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetSelfId())
+		x.Long(m.GetChatId())
+		if m.GetLink() != nil {
+			x.String(m.GetLink().Value)
+		}
+
+		if m.GetUserId() != nil {
+			x.Long(m.GetUserId().Value)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatHideChatJoinRequests) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatHideChatJoinRequests) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x3ea52cd1:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.SelfId = dBuf.Long()
+		m.ChatId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.Approved = true
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.Link = &types.StringValue{Value: dBuf.String()}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.UserId = &types.Int64Value{Value: dBuf.Long()}
+		}
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLChatHideChatJoinRequests) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLChatImportChatInvite2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatImportChatInvite2) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_chat_importChatInvite2))
+
+	switch uint32(m.Constructor) {
+	case 0xdcd93dbf:
+		x.UInt(0xdcd93dbf)
+
+		// no flags
+
+		x.Long(m.GetSelfId())
+		x.String(m.GetHash())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLChatImportChatInvite2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatImportChatInvite2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xdcd93dbf:
+
+		// not has flags
+
+		m.SelfId = dBuf.Long()
+		m.Hash = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLChatImportChatInvite2) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

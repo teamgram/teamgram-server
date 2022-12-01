@@ -42,6 +42,11 @@ func (c *ChatInvitesCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckCha
 		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
 		return nil, err
 	}
+	if !chatpb.IsChatInviteHash(in.Hash) {
+		err := mtproto.ErrInviteHashInvalid
+		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
+		return nil, err
+	}
 
 	getUserListF := func(idList []int64) []*mtproto.User {
 		users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
@@ -50,35 +55,23 @@ func (c *ChatInvitesCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckCha
 		return users.GetUserListByIdList(c.MD.UserId, idList...)
 	}
 
-	peerType := chatpb.GetChatTypeByInviteHash(in.Hash)
-	switch peerType {
-	case mtproto.PEER_CHAT:
-		chatInviteExt, err := c.svcCtx.Dao.ChatClient.ChatCheckChatInvite(c.ctx, &chatpb.TLChatCheckChatInvite{
-			SelfId: c.MD.UserId,
-			Hash:   in.Hash,
-		})
-		if err != nil {
-			c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
-			return nil, err
-		}
-
-		rValue := chatInviteExt.ToChatInvite(c.MD.UserId, func(idList []int64) []*mtproto.User {
-			return getUserListF(idList)
-		})
-		if rValue == nil {
-			err = mtproto.ErrInternelServerError
-			c.Logger.Errorf("messages.checkChatInvite - error: ", err)
-			return nil, err
-		}
-
-		return rValue, nil
-	case mtproto.PEER_CHANNEL:
-		c.Logger.Errorf("messages.checkChatInvite blocked, License key from https://teamgram.net required to unlock enterprise features.")
-
-		return nil, mtproto.ErrEnterpriseIsBlocked
-	default:
-		err := mtproto.ErrInviteHashInvalid
+	chatInviteExt, err := c.svcCtx.Dao.ChatClient.ChatCheckChatInvite(c.ctx, &chatpb.TLChatCheckChatInvite{
+		SelfId: c.MD.UserId,
+		Hash:   in.Hash,
+	})
+	if err != nil {
 		c.Logger.Errorf("messages.checkChatInvite - error: %v", err)
 		return nil, err
 	}
+
+	rValue := chatInviteExt.ToChatInvite(c.MD.UserId, func(idList []int64) []*mtproto.User {
+		return getUserListF(idList)
+	})
+	if rValue == nil {
+		err = mtproto.ErrInternelServerError
+		c.Logger.Errorf("messages.checkChatInvite - error: ", err)
+		return nil, err
+	}
+
+	return rValue, nil
 }

@@ -135,6 +135,7 @@ func (s *Server) Initialize() error {
 				UserClient:    c.BizServiceClient,
 				ChatClient:    c.BizServiceClient,
 				MsgClient:     c.MsgClient,
+				SyncClient:    c.SyncClient,
 			}))
 
 		// chats_helper

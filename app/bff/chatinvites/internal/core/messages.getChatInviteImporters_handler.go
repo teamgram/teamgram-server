@@ -41,6 +41,13 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 		// link = mtproto.MakeFlagsString(in.Link)
 	}
 
+	if in.GetQ().GetValue() != "" && link.GetValue() != "" {
+		// TODO: add ErrSearchWithLinkNotSupported
+		err := mtproto.ErrSearchWithLinkNotSupported
+		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)
+		return nil, err
+	}
+
 	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.getChatInviteImporters - error: ", err)

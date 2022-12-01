@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
@@ -93,12 +94,22 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		chatFull.NotifySettings = settings
 	}
 
-	if me.GetAdminRights().GetInviteUsers() {
+	if me.CanInviteUsers() {
 		if me.Link != "" {
 			chatFull.ExportedInvite, _ = c.svcCtx.Dao.ChatClient.Client().ChatGetExportedChatInvite(c.ctx, &chatpb.TLChatGetExportedChatInvite{
 				ChatId: in.ChatId,
 				Link:   me.Link,
 			})
+		}
+
+		requesters, _ := c.svcCtx.Dao.ChatClient.Client().ChatGetRecentChatInviteRequesters(c.ctx, &chatpb.TLChatGetRecentChatInviteRequesters{
+			SelfId: c.MD.UserId,
+			ChatId: in.ChatId,
+		})
+
+		if len(requesters.GetRecentRequesters()) > 0 {
+			chatFull.RequestsPending = &types.Int32Value{Value: requesters.GetRequestsPending()}
+			chatFull.RecentRequesters = requesters.GetRecentRequesters()
 		}
 	}
 
