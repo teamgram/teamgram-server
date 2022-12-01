@@ -199,6 +199,9 @@ func (c *DfsCore) uploadHasThumbGifMp4Media(creatorId int64, media *mtproto.Inpu
 	}
 
 	dstW := (szList[1].W * 2) / 2
+	if dstW%2 != 0 {
+		dstW += 1
+	}
 	dstH := (szList[1].H * 2) / 2
 	if dstH%2 != 0 {
 		dstH += 1
@@ -295,9 +298,6 @@ func (c *DfsCore) uploadGifMp4Media(creatorId int64, media *mtproto.InputMedia) 
 		}
 	}
 
-	//if dstH%2 != 0 {
-	//	dstH += 1
-	//}
 	gifMp4Data, duration, err := c.svcCtx.FFmpegUtil.ConvertToMp4ByPipe(
 		fmt.Sprintf("http://127.0.0.1:11701/dfs/file/%d_%d.gif",
 			creatorId,
