@@ -42,6 +42,7 @@ var (
 	userPrivacyKeyProfilePhotoPrefix    = "user_privacy_profile_photo"
 	userPrivacyKeyPhoneNumberPrefix     = "user_privacy_phone_number"
 	userPrivacyKeyAddedByPhonePrefix    = "user_privacy_added_by_phone"
+	userPrivacyKeyVoiceMessagesPrefix   = "user_privacy_voice_messages"
 )
 
 func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
@@ -62,6 +63,8 @@ func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
 		return genUserPrivacyKeyPhoneNumberPrefix(id)
 	case user.ADDED_BY_PHONE:
 		return genUserPrivacyKeyAddedByPhonePrefix(id)
+	case user.VOICE_MESSAGES:
+		return genUserPrivacyKeyVoiceMessagesPrefix(id)
 	default:
 		return ""
 	}
@@ -97,6 +100,10 @@ func genUserPrivacyKeyPhoneNumberPrefix(id int64) string {
 
 func genUserPrivacyKeyAddedByPhonePrefix(id int64) string {
 	return fmt.Sprintf("%s_%d", userPrivacyKeyAddedByPhonePrefix, id)
+}
+
+func genUserPrivacyKeyVoiceMessagesPrefix(id int64) string {
+	return fmt.Sprintf("%s_%d", userPrivacyKeyVoiceMessagesPrefix, id)
 }
 
 func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys ...int32) []*user.PrivacyKeyRules {
