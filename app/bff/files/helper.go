@@ -25,6 +25,10 @@ type (
 func init() {
 	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveFilePart")
 	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveBigFilePart")
+
+	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/DfsWriteFilePartData")
+	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/DfsDownloadFile")
+
 }
 
 func New(c Config, plugin plugin.FilesPlugin) *service.Service {

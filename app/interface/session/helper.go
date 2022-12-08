@@ -17,6 +17,11 @@ import (
 
 func init() {
 	zrpc.DontLogContentForMethod("/session.RPCSession/SessionSendDataToSession")
+
+	zrpc.DontLogClientContentForMethod("/gateway.RPCGateway/GatewaySendDataToGateway")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadSaveFilePart")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadSaveBigFilePart")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadGetFile")
 }
 
 var (
