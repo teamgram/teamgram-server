@@ -217,7 +217,15 @@ func (m *IDGenClient2) NextScheduledMessageBoxId(ctx context.Context, key int64)
 	return
 }
 
+func (m *IDGenClient2) SetCurrentScheduledMessageBoxId(ctx context.Context, key int64, v int32) {
+	m.setCurrentSeqId(ctx, scheduledMessageNgenId+strconv.FormatInt(key, 10), int64(v))
+}
+
 func (m *IDGenClient2) NextBotUpdateId(ctx context.Context, key int64) (seq int32) {
 	seq = int32(m.getNextSeqId(ctx, botUpdatesNgenId+strconv.FormatInt(key, 10)))
 	return
+}
+
+func (m *IDGenClient2) SetCurrentBotUpdateId(ctx context.Context, key int64, v int32) {
+	m.setCurrentSeqId(ctx, botUpdatesNgenId+strconv.FormatInt(key, 10), int64(v))
 }
