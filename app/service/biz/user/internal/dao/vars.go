@@ -18,11 +18,32 @@
 
 package dao
 
-import userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+import (
+	"github.com/teamgram/proto/mtproto"
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/zeromicro/go-zero/core/jsonx"
+)
 
 const (
 	versionField = "0"
 )
+
+var (
+	defaultRules = []*mtproto.PrivacyRule{
+		mtproto.MakeTLPrivacyValueAllowAll(nil).To_PrivacyRule(),
+	}
+	phoneNumberRules = []*mtproto.PrivacyRule{
+		mtproto.MakeTLPrivacyValueDisallowAll(nil).To_PrivacyRule(),
+	}
+
+	defaultRulesData     string
+	phoneNumberRulesData string
+)
+
+func init() {
+	defaultRulesData, _ = jsonx.MarshalToString(defaultRules)
+	phoneNumberRulesData, _ = jsonx.MarshalToString(phoneNumberRules)
+}
 
 type idxId struct {
 	idx int
