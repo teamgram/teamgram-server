@@ -97,38 +97,6 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 				codeData2.PhoneCodeHash,
 				phoneCode,
 				codeData2.PhoneCodeExtraData)
-
-			//log.Debugf("111")
-			//if s.VerifyCodeInterface == nil {
-			//	log.Debugf("222")
-			//	if env2.PredefinedUser {
-			//		log.Debugf("333")
-			//		predefinedUser, _ := s.UserFacade.GetPredefinedUser(ctx, phoneNumber)
-			//		if predefinedUser == nil || predefinedUser.Code != request.PhoneCode {
-			//			log.Debugf("invalid code: %s", request.PhoneCode)
-			//			return mtproto.ErrPhoneCodeInvalid
-			//		} else {
-			//			return nil
-			//		}
-			//	} else {
-			//		if request.PhoneCode != "12345" {
-			//			return mtproto.ErrPhoneCodeInvalid
-			//		} else {
-			//			return nil
-			//		}
-			//	}
-			//} else {
-			//	log.Debugf("444")
-			//	if codeData2.SentCodeType == model.CodeTypeSms {
-			//		return s.VerifyCodeInterface.VerifySmsCode(ctx, codeData2.PhoneCodeHash, request.PhoneCode, codeData2.PhoneCode)
-			//	} else {
-			//		if request.PhoneCode == codeData2.PhoneCode {
-			//			return nil
-			//		} else {
-			//			return mtproto.ErrPhoneCodeInvalid
-			//		}
-			//	}
-			//}
 		})
 
 	if err2 != nil {

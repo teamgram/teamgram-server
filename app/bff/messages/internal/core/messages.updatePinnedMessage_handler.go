@@ -30,12 +30,8 @@ func (c *MessagesCore) MessagesUpdatePinnedMessage(in *mtproto.TLMessagesUpdateP
 		peer     = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		rUpdates *mtproto.Updates
 	)
-	switch peer.PeerType {
-	case mtproto.PEER_SELF:
-	case mtproto.PEER_USER:
-	case mtproto.PEER_CHAT:
-	case mtproto.PEER_CHANNEL:
-	default:
+
+	if !peer.IsChatOrUser() {
 		c.Logger.Errorf("invalid peer: %v", in.Peer)
 		err := mtproto.ErrPeerIdInvalid
 		return nil, err

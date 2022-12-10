@@ -97,7 +97,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 	case mtproto.PEER_USER:
 		c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 			c.ctx,
-			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),
+			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.PeerId),
 			[]int64{in.DialogMessageId},
 			func(i int, v *dataobject.MessagesDO) {
 				doUpdatePinnedMessageF(peer, v)
