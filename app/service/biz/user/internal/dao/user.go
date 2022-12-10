@@ -20,13 +20,13 @@ package dao
 
 import (
 	"context"
-	"github.com/teamgram/marmota/pkg/threading2"
 	"math/rand"
 	"strconv"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
