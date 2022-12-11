@@ -74,111 +74,45 @@ func (d *Dao) CreateNewUserV2(
 	)
 
 	//
-	tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		// var err error
-		// user
-		userDO = &dataobject.UsersDO{
-			UserType:       user.UserTypeRegular,
-			AccessHash:     rand.Int63(),
-			Phone:          phone,
-			SecretKeyId:    secretKeyId,
-			FirstName:      firstName,
-			LastName:       lastName,
-			CountryCode:    countryCode,
-			AccountDaysTtl: 180,
-		}
-		if lastInsertId, _, err2 := d.UsersDAO.InsertTx(tx, userDO); err2 != nil {
-			if sqlx.IsDuplicate(err2) {
-				result.Err = mtproto.ErrPhoneNumberOccupied
-				return
-			}
-			result.Err = err2
-			return
-		} else {
-			userDO.Id = lastInsertId
-		}
-		cacheUserData.UserData = d.makeUserDataByDO(userDO)
-
-		result.Err = mr.Finish(
-			func() error {
-				// presences
-				presencesDO := &dataobject.UserPresencesDO{
-					UserId:     userDO.Id,
-					LastSeenAt: now,
-					Expires:    0,
-				}
-
-				if _, _, err2 := d.UserPresencesDAO.InsertTx(tx, presencesDO); err2 != nil {
-					return err2
-				}
-
-				return nil
-			},
-			func() error {
-				// privacy
-				//bData, _ := json.Marshal(defaultRules)
-				//bData2, _ := json.Marshal(phoneNumberRules)
-				doList := make([]*dataobject.UserPrivaciesDO, 0, user.MAX_KEY_TYPE)
-				for i := user.STATUS_TIMESTAMP; i <= user.MAX_KEY_TYPE; i++ {
-					if i == user.PHONE_NUMBER {
-						doList = append(doList, &dataobject.UserPrivaciesDO{
-							Id:      1,
-							UserId:  userDO.Id,
-							KeyType: int32(i),
-							Rules:   phoneNumberRulesData,
-						})
-
-						cacheUserData.CachesPrivacyKeyRules = append(
-							cacheUserData.CachesPrivacyKeyRules,
-							user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
-								Key:   int32(i),
-								Rules: phoneNumberRules,
-							}).To_PrivacyKeyRules())
-					} else {
-						doList = append(doList, &dataobject.UserPrivaciesDO{
-							Id:      1,
-							UserId:  userDO.Id,
-							KeyType: int32(i),
-							Rules:   defaultRulesData,
-						})
-
-						if i == user.PROFILE_PHOTO ||
-							i == user.PHONE_NUMBER {
-							cacheUserData.CachesPrivacyKeyRules = append(
-								cacheUserData.CachesPrivacyKeyRules,
-								user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
-									Key:   int32(i),
-									Rules: defaultRules,
-								}).To_PrivacyKeyRules())
-						}
-					}
-				}
-
-				logx.WithContext(ctx).Infof("doList - %v", doList)
-				_, _, err2 := d.UserPrivaciesDAO.InsertBulkTx(tx, doList)
-				if err2 != nil {
-					return err2
-				}
-
-				return nil
-			},
-			func() error {
-				_, _, err2 := d.UserGlobalPrivacySettingsDAO.InsertOrUpdateTx(tx, &dataobject.UserGlobalPrivacySettingsDO{
-					UserId:                           userDO.Id,
-					ArchiveAndMuteNewNoncontactPeers: false,
-				})
-				if err2 != nil {
-					return err2
-				}
-
-				return nil
-			})
-	})
-
-	if tR.Err != nil {
-		logx.WithContext(ctx).Errorf("createNewUser2 error: %v", tR.Err)
-		return nil, tR.Err
+	//tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+	// var err error
+	// user
+	userDO = &dataobject.UsersDO{
+		UserType:       user.UserTypeRegular,
+		AccessHash:     rand.Int63(),
+		Phone:          phone,
+		SecretKeyId:    secretKeyId,
+		FirstName:      firstName,
+		LastName:       lastName,
+		CountryCode:    countryCode,
+		AccountDaysTtl: 180,
 	}
+	if lastInsertId, _, err2 := d.UsersDAO.Insert(ctx, userDO); err2 != nil {
+		if sqlx.IsDuplicate(err2) {
+			err2 = mtproto.ErrPhoneNumberOccupied
+		}
+		return nil, err2
+		//result.Err = err2
+		//return
+	} else {
+		userDO.Id = lastInsertId
+	}
+
+	cacheUserData.UserData = d.makeUserDataByDO(userDO)
+	cacheUserData.CachesPrivacyKeyRules = append(
+		cacheUserData.CachesPrivacyKeyRules,
+		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+			Key:   user.STATUS_TIMESTAMP,
+			Rules: defaultRules,
+		}).To_PrivacyKeyRules(),
+		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+			Key:   user.PHONE_NUMBER,
+			Rules: phoneNumberRules,
+		}).To_PrivacyKeyRules(),
+		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+			Key:   user.PROFILE_PHOTO,
+			Rules: defaultRules,
+		}).To_PrivacyKeyRules())
 
 	return threading2.WrapperGoFunc(
 		ctx,
@@ -189,8 +123,11 @@ func (d *Dao) CreateNewUserV2(
 			KeysPrivacyRules: nil,
 		}).To_ImmutableUser(),
 		func(ctx context.Context) {
-			//
+			// 1. cacheUserData
 			d.CachedConn.SetCache(ctx, genCacheUserDataCacheKey(userDO.Id), cacheUserData)
+
+			// 2. PutLastSeenAt
+			d.PutLastSeenAt(ctx, userDO.Id, now, 300)
 		}).(*user.ImmutableUser), nil
 }
 

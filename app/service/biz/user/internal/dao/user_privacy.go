@@ -163,14 +163,11 @@ func (d *Dao) GetUserPrivacyRules(ctx context.Context, id int64, key int32) (*us
 			}
 			rv := v.(*user.PrivacyKeyRules)
 
-			if do == nil {
-				// return sqlc.ErrNotFound
-				rv.Rules = []*mtproto.PrivacyRule{mtproto.MakeTLPrivacyValueAllowAll(nil).To_PrivacyRule()}
-			} else {
-				if err = jsonx.UnmarshalFromString(do.Rules, &rv.Rules); err != nil {
-					// c.Logger.Errorf("user.getPrivacy - Unmarshal PrivacyRulesData(%d)error: %v", do.Id, err)
-					return err
-				}
+			if do != nil {
+				jsonx.UnmarshalFromString(do.Rules, &rv.Rules)
+			}
+			if rv.Rules == nil {
+				rv.Rules = makeDefaultPrivacyRules(key)
 			}
 
 			return nil

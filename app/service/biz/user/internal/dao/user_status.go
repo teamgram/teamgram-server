@@ -24,9 +24,8 @@ import (
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
-
-	"github.com/zeromicro/go-zero/core/mr"
 )
 
 const (
@@ -72,11 +71,8 @@ func (d *Dao) PutLastSeenAt(ctx context.Context, userId int64, lastSeenAt int64,
 		Expires:    expires,
 	}
 
-	mr.FinishVoid(
-		func() {
-			d.UserPresencesDAO.UpdateLastSeenAt(ctx, lastSeenAt, expires, userId)
-		},
-		func() {
-			d.CachedConn.SetCache(ctx, genUserPresencesKey(userId), do)
-		})
+	d.CachedConn.SetCache(ctx, genUserPresencesKey(userId), do)
+	threading2.WrapperGoFunc(ctx, nil, func(ctx context.Context) {
+		d.UserPresencesDAO.InsertOrUpdate(ctx, do)
+	})
 }

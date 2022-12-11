@@ -67,3 +67,11 @@ func removeAllNil(contacts []*userpb.ContactData) []*userpb.ContactData {
 
 	return contacts
 }
+
+func makeDefaultPrivacyRules(key int32) []*mtproto.PrivacyRule {
+	if key == userpb.PHONE_NUMBER {
+		return phoneNumberRules
+	} else {
+		return defaultRules
+	}
+}

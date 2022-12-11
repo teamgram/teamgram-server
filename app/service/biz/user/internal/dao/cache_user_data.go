@@ -60,6 +60,9 @@ func (m *CacheUserData) GetUserData() *user.UserData {
 func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 	cacheUserData := NewCacheUserData()
 	// user.MakeTLUserData(nil).To_UserData()
+	var (
+		rules0, rules1, rules2 *user.PrivacyKeyRules
+	)
 
 	err := d.CachedConn.QueryRow(
 		ctx,
@@ -117,36 +120,31 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 					return nil
 				},
 				func() error {
-					d.UserPrivaciesDAO.SelectPrivacyListWithCB(
-						ctx,
-						id,
-						[]int32{
-							user.STATUS_TIMESTAMP,
-							user.PROFILE_PHOTO,
-							user.PHONE_NUMBER,
-						},
-						func(i int, v *dataobject.UserPrivaciesDO) {
-							rules := user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
-								Key:   v.KeyType,
-								Rules: nil,
-							}).To_PrivacyKeyRules()
-
-							if err2 := jsonx.UnmarshalFromString(v.Rules, &rules.Rules); err2 != nil {
-								// c.Logger.Errorf("user.getPrivacy - Unmarshal PrivacyRulesData(%d)error: %v", do.Id, err)
-								// return err2
-								return
-							}
-
-							cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules)
-						})
-
+					rules0, _ = d.GetUserPrivacyRules(ctx, id, user.STATUS_TIMESTAMP)
+					return nil
+				},
+				func() error {
+					rules1, _ = d.GetUserPrivacyRules(ctx, id, user.PROFILE_PHOTO)
+					return nil
+				},
+				func() error {
+					rules2, _ = d.GetUserPrivacyRules(ctx, id, user.PHONE_NUMBER)
 					return nil
 				})
-
 			return err2
 		})
 	if err != nil {
 		return nil
+	}
+
+	if rules0 != nil {
+		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules0)
+	}
+	if rules1 != nil {
+		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules1)
+	}
+	if rules2 != nil {
+		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules2)
 	}
 
 	return cacheUserData
