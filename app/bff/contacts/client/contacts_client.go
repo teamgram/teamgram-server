@@ -41,6 +41,8 @@ type ContactsClient interface {
 	ContactsAddContact(ctx context.Context, in *mtproto.TLContactsAddContact) (*mtproto.Updates, error)
 	ContactsAcceptContact(ctx context.Context, in *mtproto.TLContactsAcceptContact) (*mtproto.Updates, error)
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
+	ContactsExportContactToken(ctx context.Context, in *mtproto.TLContactsExportContactToken) (*mtproto.ExportedContactToken, error)
+	ContactsImportContactToken(ctx context.Context, in *mtproto.TLContactsImportContactToken) (*mtproto.User, error)
 }
 
 type defaultContactsClient struct {
@@ -191,4 +193,18 @@ func (m *defaultContactsClient) ContactsAcceptContact(ctx context.Context, in *m
 func (m *defaultContactsClient) ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsGetLocated(ctx, in)
+}
+
+// ContactsExportContactToken
+// contacts.exportContactToken#f8654027 = ExportedContactToken;
+func (m *defaultContactsClient) ContactsExportContactToken(ctx context.Context, in *mtproto.TLContactsExportContactToken) (*mtproto.ExportedContactToken, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsExportContactToken(ctx, in)
+}
+
+// ContactsImportContactToken
+// contacts.importContactToken#13005788 token:string = User;
+func (m *defaultContactsClient) ContactsImportContactToken(ctx context.Context, in *mtproto.TLContactsImportContactToken) (*mtproto.User, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsImportContactToken(ctx, in)
 }

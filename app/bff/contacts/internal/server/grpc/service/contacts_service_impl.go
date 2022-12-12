@@ -316,3 +316,33 @@ func (s *Service) ContactsGetLocated(ctx context.Context, request *mtproto.TLCon
 	c.Logger.Debugf("contacts.getLocated - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ContactsExportContactToken
+// contacts.exportContactToken#f8654027 = ExportedContactToken;
+func (s *Service) ContactsExportContactToken(ctx context.Context, request *mtproto.TLContactsExportContactToken) (*mtproto.ExportedContactToken, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.exportContactToken - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsExportContactToken(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.exportContactToken - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ContactsImportContactToken
+// contacts.importContactToken#13005788 token:string = User;
+func (s *Service) ContactsImportContactToken(ctx context.Context, request *mtproto.TLContactsImportContactToken) (*mtproto.User, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.importContactToken - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsImportContactToken(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.importContactToken - reply: %s", r.DebugString())
+	return r, err
+}

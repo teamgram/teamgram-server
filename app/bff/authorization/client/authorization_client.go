@@ -37,10 +37,11 @@ type AuthorizationClient interface {
 	AuthCancelCode(ctx context.Context, in *mtproto.TLAuthCancelCode) (*mtproto.Bool, error)
 	AuthDropTempAuthKeys(ctx context.Context, in *mtproto.TLAuthDropTempAuthKeys) (*mtproto.Bool, error)
 	AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error)
+	AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
-	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
-	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
 	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
+	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
+	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
 }
 
 type defaultAuthorizationClient struct {
@@ -68,7 +69,7 @@ func (m *defaultAuthorizationClient) AuthSignUp(ctx context.Context, in *mtproto
 }
 
 // AuthSignIn
-// auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
+// auth.signIn#8d52a951 flags:# phone_number:string phone_code_hash:string phone_code:flags.0?string email_verification:flags.1?EmailVerification = auth.Authorization;
 func (m *defaultAuthorizationClient) AuthSignIn(ctx context.Context, in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthSignIn(ctx, in)
@@ -165,6 +166,13 @@ func (m *defaultAuthorizationClient) AuthCheckRecoveryPassword(ctx context.Conte
 	return client.AuthCheckRecoveryPassword(ctx, in)
 }
 
+// AuthImportWebTokenAuthorization
+// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
+func (m *defaultAuthorizationClient) AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthImportWebTokenAuthorization(ctx, in)
+}
+
 // AccountResetPassword
 // account.resetPassword#9308ce1b = account.ResetPasswordResult;
 func (m *defaultAuthorizationClient) AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error) {
@@ -172,11 +180,11 @@ func (m *defaultAuthorizationClient) AccountResetPassword(ctx context.Context, i
 	return client.AccountResetPassword(ctx, in)
 }
 
-// AuthToggleBan
-// auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
-func (m *defaultAuthorizationClient) AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error) {
+// AccountSetAuthorizationTTL
+// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
+func (m *defaultAuthorizationClient) AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AuthToggleBan(ctx, in)
+	return client.AccountSetAuthorizationTTL(ctx, in)
 }
 
 // AccountChangeAuthorizationSettings
@@ -186,9 +194,9 @@ func (m *defaultAuthorizationClient) AccountChangeAuthorizationSettings(ctx cont
 	return client.AccountChangeAuthorizationSettings(ctx, in)
 }
 
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (m *defaultAuthorizationClient) AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
+// AuthToggleBan
+// auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
+func (m *defaultAuthorizationClient) AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AccountSetAuthorizationTTL(ctx, in)
+	return client.AuthToggleBan(ctx, in)
 }

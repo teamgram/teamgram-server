@@ -50,6 +50,8 @@ type MessagesClient interface {
 	MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 	MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error)
+	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
+	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 }
 
@@ -113,21 +115,21 @@ func (m *defaultMessagesClient) MessagesReceivedMessages(ctx context.Context, in
 }
 
 // MessagesSendMessage
-// messages.sendMessage#d9d75a4 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMessage#1cc20387 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMessage(ctx, in)
 }
 
 // MessagesSendMedia
-// messages.sendMedia#e25ff8e0 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMedia#7547c966 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMedia(ctx, in)
 }
 
 // MessagesForwardMessages
-// messages.forwardMessages#cc30290b flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.forwardMessages#c661bbc4 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesForwardMessages(ctx, in)
@@ -169,14 +171,14 @@ func (m *defaultMessagesClient) MessagesEditMessage(ctx context.Context, in *mtp
 }
 
 // MessagesGetUnreadMentions
-// messages.getUnreadMentions#46578472 peer:InputPeer offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
+// messages.getUnreadMentions#f107e790 flags:# peer:InputPeer top_msg_id:flags.0?int offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
 func (m *defaultMessagesClient) MessagesGetUnreadMentions(ctx context.Context, in *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetUnreadMentions(ctx, in)
 }
 
 // MessagesReadMentions
-// messages.readMentions#f0189d3 peer:InputPeer = messages.AffectedHistory;
+// messages.readMentions#36e5bf4d flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (m *defaultMessagesClient) MessagesReadMentions(ctx context.Context, in *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesReadMentions(ctx, in)
@@ -190,7 +192,7 @@ func (m *defaultMessagesClient) MessagesGetRecentLocations(ctx context.Context, 
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#f803138f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMultiMedia#b6f11a1c flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMultiMedia(ctx, in)
@@ -204,14 +206,14 @@ func (m *defaultMessagesClient) MessagesUpdatePinnedMessage(ctx context.Context,
 }
 
 // MessagesGetSearchCounters
-// messages.getSearchCounters#732eef00 peer:InputPeer filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
+// messages.getSearchCounters#ae7cc1 flags:# peer:InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (m *defaultMessagesClient) MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetSearchCounters(ctx, in)
 }
 
 // MessagesUnpinAllMessages
-// messages.unpinAllMessages#f025bc8b peer:InputPeer = messages.AffectedHistory;
+// messages.unpinAllMessages#ee22b9a8 flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (m *defaultMessagesClient) MessagesUnpinAllMessages(ctx context.Context, in *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesUnpinAllMessages(ctx, in)
@@ -264,6 +266,20 @@ func (m *defaultMessagesClient) MessagesSearchSentMedia(ctx context.Context, in 
 func (m *defaultMessagesClient) MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetExtendedMedia(ctx, in)
+}
+
+// MessagesSetDefaultHistoryTTL
+// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
+func (m *defaultMessagesClient) MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesSetDefaultHistoryTTL(ctx, in)
+}
+
+// MessagesGetDefaultHistoryTTL
+// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
+func (m *defaultMessagesClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesGetDefaultHistoryTTL(ctx, in)
 }
 
 // ChannelsGetSendAs

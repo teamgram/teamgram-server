@@ -48,7 +48,7 @@ func (s *Service) AuthSignUp(ctx context.Context, request *mtproto.TLAuthSignUp)
 }
 
 // AuthSignIn
-// auth.signIn#bcd51581 phone_number:string phone_code_hash:string phone_code:string = auth.Authorization;
+// auth.signIn#8d52a951 flags:# phone_number:string phone_code_hash:string phone_code:flags.0?string email_verification:flags.1?EmailVerification = auth.Authorization;
 func (s *Service) AuthSignIn(ctx context.Context, request *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("auth.signIn - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -257,6 +257,21 @@ func (s *Service) AuthCheckRecoveryPassword(ctx context.Context, request *mtprot
 	return r, err
 }
 
+// AuthImportWebTokenAuthorization
+// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
+func (s *Service) AuthImportWebTokenAuthorization(ctx context.Context, request *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.importWebTokenAuthorization - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthImportWebTokenAuthorization(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.importWebTokenAuthorization - reply: %s", r.DebugString())
+	return r, err
+}
+
 // AccountResetPassword
 // account.resetPassword#9308ce1b = account.ResetPasswordResult;
 func (s *Service) AccountResetPassword(ctx context.Context, request *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error) {
@@ -269,21 +284,6 @@ func (s *Service) AccountResetPassword(ctx context.Context, request *mtproto.TLA
 	}
 
 	c.Logger.Debugf("account.resetPassword - reply: %s", r.DebugString())
-	return r, err
-}
-
-// AuthToggleBan
-// auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
-func (s *Service) AuthToggleBan(ctx context.Context, request *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.toggleBan - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AuthToggleBan(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("auth.toggleBan - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -314,5 +314,20 @@ func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, reques
 	}
 
 	c.Logger.Debugf("account.changeAuthorizationSettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AuthToggleBan
+// auth.toggleBan flags:# phone:string predefined:flags.0?true expires:flags.1?int reason:flags.1?string = PredefinedUser;
+func (s *Service) AuthToggleBan(ctx context.Context, request *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.toggleBan - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthToggleBan(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.toggleBan - reply: %s", r.DebugString())
 	return r, err
 }

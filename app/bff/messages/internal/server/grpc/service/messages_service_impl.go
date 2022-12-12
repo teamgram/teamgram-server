@@ -123,7 +123,7 @@ func (s *Service) MessagesReceivedMessages(ctx context.Context, request *mtproto
 }
 
 // MessagesSendMessage
-// messages.sendMessage#d9d75a4 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMessage#1cc20387 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMessage(ctx context.Context, request *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMessage - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -138,7 +138,7 @@ func (s *Service) MessagesSendMessage(ctx context.Context, request *mtproto.TLMe
 }
 
 // MessagesSendMedia
-// messages.sendMedia#e25ff8e0 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMedia#7547c966 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMedia(ctx context.Context, request *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -153,7 +153,7 @@ func (s *Service) MessagesSendMedia(ctx context.Context, request *mtproto.TLMess
 }
 
 // MessagesForwardMessages
-// messages.forwardMessages#cc30290b flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.forwardMessages#c661bbc4 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesForwardMessages(ctx context.Context, request *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.forwardMessages - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -243,7 +243,7 @@ func (s *Service) MessagesEditMessage(ctx context.Context, request *mtproto.TLMe
 }
 
 // MessagesGetUnreadMentions
-// messages.getUnreadMentions#46578472 peer:InputPeer offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
+// messages.getUnreadMentions#f107e790 flags:# peer:InputPeer top_msg_id:flags.0?int offset_id:int add_offset:int limit:int max_id:int min_id:int = messages.Messages;
 func (s *Service) MessagesGetUnreadMentions(ctx context.Context, request *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getUnreadMentions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -258,7 +258,7 @@ func (s *Service) MessagesGetUnreadMentions(ctx context.Context, request *mtprot
 }
 
 // MessagesReadMentions
-// messages.readMentions#f0189d3 peer:InputPeer = messages.AffectedHistory;
+// messages.readMentions#36e5bf4d flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (s *Service) MessagesReadMentions(ctx context.Context, request *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.readMentions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -288,7 +288,7 @@ func (s *Service) MessagesGetRecentLocations(ctx context.Context, request *mtpro
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#f803138f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMultiMedia#b6f11a1c flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMultiMedia(ctx context.Context, request *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMultiMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -318,7 +318,7 @@ func (s *Service) MessagesUpdatePinnedMessage(ctx context.Context, request *mtpr
 }
 
 // MessagesGetSearchCounters
-// messages.getSearchCounters#732eef00 peer:InputPeer filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
+// messages.getSearchCounters#ae7cc1 flags:# peer:InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (s *Service) MessagesGetSearchCounters(ctx context.Context, request *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSearchCounters - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -333,7 +333,7 @@ func (s *Service) MessagesGetSearchCounters(ctx context.Context, request *mtprot
 }
 
 // MessagesUnpinAllMessages
-// messages.unpinAllMessages#f025bc8b peer:InputPeer = messages.AffectedHistory;
+// messages.unpinAllMessages#ee22b9a8 flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
 func (s *Service) MessagesUnpinAllMessages(ctx context.Context, request *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.unpinAllMessages - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -449,6 +449,36 @@ func (s *Service) MessagesGetExtendedMedia(ctx context.Context, request *mtproto
 	}
 
 	c.Logger.Debugf("messages.getExtendedMedia - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesSetDefaultHistoryTTL
+// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
+func (s *Service) MessagesSetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.setDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesSetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.setDefaultHistoryTTL - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetDefaultHistoryTTL
+// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
+func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getDefaultHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }
 
