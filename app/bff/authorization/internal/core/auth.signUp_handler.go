@@ -54,7 +54,7 @@ import (
 func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error) {
 	if c.svcCtx.Plugin != nil {
 		c.svcCtx.Plugin.OnAuthAction(c.ctx,
-			c.MD.AuthId,
+			c.MD.PermAuthKeyId,
 			c.MD.ClientMsgId,
 			c.MD.ClientAddr,
 			in.PhoneNumber,

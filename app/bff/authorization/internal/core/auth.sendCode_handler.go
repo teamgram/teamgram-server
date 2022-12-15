@@ -120,7 +120,7 @@ func (c *AuthorizationCore) AuthSendCode(in *mtproto.TLAuthSendCode) (*mtproto.A
 
 	if c.svcCtx.Plugin != nil {
 		c.svcCtx.Plugin.OnAuthAction(c.ctx,
-			c.MD.AuthId,
+			c.MD.PermAuthKeyId,
 			c.MD.ClientMsgId,
 			c.MD.ClientAddr,
 			in.PhoneNumber,

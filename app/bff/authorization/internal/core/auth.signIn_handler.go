@@ -107,7 +107,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	if c.svcCtx.Plugin != nil {
 		c.svcCtx.Plugin.OnAuthAction(c.ctx,
-			c.MD.AuthId,
+			c.MD.PermAuthKeyId,
 			c.MD.ClientMsgId,
 			c.MD.ClientAddr,
 			in.PhoneNumber,
