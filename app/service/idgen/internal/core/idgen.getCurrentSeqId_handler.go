@@ -19,7 +19,7 @@ import (
 // IdgenGetCurrentSeqId
 // idgen.getCurrentSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetCurrentSeqId(in *idgen.TLIdgenGetCurrentSeqId) (*mtproto.Int64, error) {
-	id, err := c.svcCtx.Dao.Store.Get(in.GetKey())
+	id, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, in.GetKey())
 	if err != nil {
 		c.Logger.Errorf("dgen.getCurrentSeqId(%s) error: %v", in.GetKey(), err)
 		return nil, err

@@ -17,7 +17,7 @@ import (
 // IdgenGetNextSeqId
 // idgen.getNextSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetNextSeqId(in *idgen.TLIdgenGetNextSeqId) (*mtproto.Int64, error) {
-	id, err := c.svcCtx.Dao.Store.Incrby(in.GetKey(), 1)
+	id, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, in.GetKey(), 1)
 	if err != nil {
 		c.Logger.Errorf("dgen.getNextSeqId(%s) error: %v", in.GetKey(), err)
 		return nil, err

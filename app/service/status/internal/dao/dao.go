@@ -9,9 +9,17 @@
 
 package dao
 
+import (
+	"github.com/teamgram/teamgram-server/app/service/status/internal/config"
+	"github.com/zeromicro/go-zero/core/stores/kv"
+)
+
 type Dao struct {
+	KV kv.Store
 }
 
-func New() *Dao {
-	return new(Dao)
+func New(c config.Config) *Dao {
+	return &Dao{
+		KV: kv.NewStore(c.Status),
+	}
 }

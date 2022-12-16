@@ -19,7 +19,7 @@ import (
 
 type Dao struct {
 	*snowflake.Node
-	kv.Store
+	KV kv.Store
 }
 
 func New(c config.Config) *Dao {
@@ -32,7 +32,7 @@ func New(c config.Config) *Dao {
 	if err != nil {
 		log.Fatal("new snowflake node error: ", err)
 	}
-	d.Store = kv.NewStore(c.SeqIDGen)
+	d.KV = kv.NewStore(c.SeqIDGen)
 
 	return d
 }

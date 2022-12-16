@@ -18,7 +18,7 @@ import (
 // StatusGetUserOnlineSessions
 // status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error) {
-	rMap, err := c.svcCtx.KV.Hgetall(getUserKey(in.GetUserId()))
+	rMap, err := c.svcCtx.Dao.KV.HgetallCtx(c.ctx, getUserKey(in.GetUserId()))
 	if err != nil {
 		c.Logger.Errorf("status.getUserOnlineSessions(%s) error(%v)", in.DebugString(), err)
 		return nil, err

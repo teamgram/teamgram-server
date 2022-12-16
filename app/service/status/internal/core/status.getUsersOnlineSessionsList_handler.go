@@ -23,7 +23,7 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 	}
 
 	for _, id := range in.GetUsers() {
-		rMap, err := c.svcCtx.KV.Hgetall(getUserKey(id))
+		rMap, err := c.svcCtx.Dao.KV.HgetallCtx(c.ctx, getUserKey(id))
 		if err != nil {
 			c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in.DebugString(), err)
 			return nil, err

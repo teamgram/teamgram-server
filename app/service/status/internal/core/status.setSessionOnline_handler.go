@@ -29,7 +29,8 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 
 	sessData, _ := jsonx.Marshal(sess)
 
-	if err := c.svcCtx.KV.Hset(
+	if err := c.svcCtx.Dao.KV.HsetCtx(
+		c.ctx,
 		userK,
 		strconv.FormatInt(sess.GetAuthKeyId(), 10),
 		string(sessData)); err != nil {
@@ -37,12 +38,12 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		return nil, err
 	}
 
-	if err := c.svcCtx.KV.Expire(userK, c.svcCtx.Config.StatusExpire); err != nil {
+	if err := c.svcCtx.Dao.KV.ExpireCtx(c.ctx, userK, c.svcCtx.Config.StatusExpire); err != nil {
 		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}
 
-	if err := c.svcCtx.KV.Setex(authK, sess.GetGateway(), c.svcCtx.Config.StatusExpire); err != nil {
+	if err := c.svcCtx.Dao.KV.SetexCtx(c.ctx, authK, sess.GetGateway(), c.svcCtx.Config.StatusExpire); err != nil {
 		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}

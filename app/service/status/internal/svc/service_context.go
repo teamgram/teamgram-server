@@ -11,17 +11,17 @@ package svc
 
 import (
 	"github.com/teamgram/teamgram-server/app/service/status/internal/config"
-	"github.com/zeromicro/go-zero/core/stores/kv"
+	"github.com/teamgram/teamgram-server/app/service/status/internal/dao"
 )
 
 type ServiceContext struct {
 	Config config.Config
-	KV     kv.Store
+	*dao.Dao
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
-		KV:     kv.NewStore(c.Status),
+		Dao:    dao.New(c),
 	}
 }

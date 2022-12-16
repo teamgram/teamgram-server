@@ -24,12 +24,12 @@ func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOfflin
 		authK = getAuthKeyIdKey(in.GetAuthKeyId())
 	)
 
-	if _, err := c.svcCtx.KV.Hdel(userK, strconv.FormatInt(in.GetAuthKeyId(), 10)); err != nil {
+	if _, err := c.svcCtx.Dao.KV.HdelCtx(c.ctx, userK, strconv.FormatInt(in.GetAuthKeyId(), 10)); err != nil {
 		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}
 
-	if _, err := c.svcCtx.KV.Del(authK); err != nil {
+	if _, err := c.svcCtx.Dao.KV.DelCtx(c.ctx, authK); err != nil {
 		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}
