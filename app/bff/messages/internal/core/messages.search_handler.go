@@ -207,10 +207,34 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterEmpty:
+		/*
+			{
+			    "constructor": "CRC32_messages_search",
+			    "peer": {
+			        "predicate_name": "inputPeerUser",
+			        "constructor": "CRC32_inputPeerUser",
+			        "user_id": "136817694",
+			        "access_hash": "9217169765117357414"
+			    },
+			    "q": "1",
+			    "filter": {
+			        "predicate_name": "inputMessagesFilterEmpty",
+			        "constructor": "CRC32_inputMessagesFilterEmpty"
+			    },
+			    "limit": 21
+			}
+		*/
 		if fromId == nil && in.Q == "" {
 			err = mtproto.ErrSearchQueryEmpty
 			c.Logger.Errorf("messages.search - error: %v", err)
 			return nil, err
+		}
+
+		var (
+			fId int64
+		)
+		if fromId != nil {
+			fId = fromId.PeerId
 		}
 
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchV2(
@@ -220,7 +244,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 				PeerType:  peer.PeerType,
 				PeerId:    peer.PeerId,
 				Q:         in.Q,
-				FromId:    fromId.PeerId,
+				FromId:    fId,
 				MinDate:   in.MinDate,
 				MaxDate:   in.MaxDate,
 				OffsetId:  offsetId,
