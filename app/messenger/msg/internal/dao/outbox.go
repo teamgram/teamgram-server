@@ -81,7 +81,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	outBoxMsgId := int32(idList[1].Id)
 	pts := int32(idList[2].Id)
 
-	if dialogMessageId == 0 || outBoxMsgId == 0 {
+	if dialogMessageId == 0 || outBoxMsgId == 0 || pts == 0 {
 		err = mtproto.ErrInternelServerError
 		return nil, err
 	}
@@ -185,7 +185,8 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				//	cMap["draft_type"] = 0
 				//}
 
-				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(tx,
+				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(
+					tx,
 					dialogDO.TopMessage,
 					dialogDO.Date2,
 					fromId,

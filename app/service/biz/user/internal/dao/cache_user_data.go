@@ -60,16 +60,17 @@ func (m *CacheUserData) GetUserData() *user.UserData {
 func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 	cacheUserData := NewCacheUserData()
 	// user.MakeTLUserData(nil).To_UserData()
-	var (
-		rules0, rules1, rules2 *user.PrivacyKeyRules
-	)
 
 	err := d.CachedConn.QueryRow(
 		ctx,
 		cacheUserData,
 		genCacheUserDataCacheKey(id),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-			cacheData := v.(*CacheUserData)
+			var (
+				rules0, rules1, rules2 *user.PrivacyKeyRules
+				cacheData              = v.(*CacheUserData)
+			)
+
 			err2 := mr.Finish(
 				func() error {
 					do, err := d.UsersDAO.SelectById(ctx, id)
@@ -107,7 +108,7 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 						jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
 					}
 
-					cacheUserData.UserData = userData
+					cacheData.UserData = userData
 					return nil
 				},
 				func() error {
@@ -131,20 +132,20 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 					rules2, _ = d.GetUserPrivacyRules(ctx, id, user.PHONE_NUMBER)
 					return nil
 				})
+
+			if rules0 != nil {
+				cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0)
+			}
+			if rules1 != nil {
+				cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules1)
+			}
+			if rules2 != nil {
+				cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2)
+			}
 			return err2
 		})
 	if err != nil {
 		return nil
-	}
-
-	if rules0 != nil {
-		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules0)
-	}
-	if rules1 != nil {
-		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules1)
-	}
-	if rules2 != nil {
-		cacheUserData.CachesPrivacyKeyRules = append(cacheUserData.CachesPrivacyKeyRules, rules2)
 	}
 
 	return cacheUserData
