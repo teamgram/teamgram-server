@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/app/service/idgen/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // IdgenNextId
 // idgen.nextId = Int64;
@@ -107,3 +108,19 @@ func (s *Service) IdgenGetNextNSeqId(ctx context.Context, request *idgen.TLIdgen
 	c.Logger.Debugf("idgen.getNextNSeqId - reply: %s", r.DebugString())
 	return r, err
 }
+
+// IdgenGetNextIdValList
+// idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
+func (s *Service) IdgenGetNextIdValList(ctx context.Context, request *idgen.TLIdgenGetNextIdValList) (*idgen.Vector_IdVal, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("idgen.getNextIdValList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.IdgenGetNextIdValList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("idgen.getNextIdValList - reply: %s", r.DebugString())
+	return r, err
+}
+

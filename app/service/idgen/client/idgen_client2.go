@@ -229,3 +229,29 @@ func (m *IDGenClient2) NextBotUpdateId(ctx context.Context, key int64) (seq int3
 func (m *IDGenClient2) SetCurrentBotUpdateId(ctx context.Context, key int64, v int32) {
 	m.setCurrentSeqId(ctx, botUpdatesNgenId+strconv.FormatInt(key, 10), int64(v))
 }
+
+func (m *IDGenClient2) GetNextIdList(ctx context.Context, idList ...IDTypeNgen) []IDValue {
+	if len(idList) == 0 {
+		return nil
+	}
+
+	ids := make([]*idgen.InputId, len(idList))
+	for i, id := range idList {
+		ids[i] = id.ToInputId()
+	}
+	idValList, _ := m.cli.IdgenGetNextIdValList(ctx, &idgen.TLIdgenGetNextIdValList{
+		Id: ids,
+	})
+	if len(idValList.GetDatas()) != len(idList) {
+		return nil
+	}
+
+	rIdValList := make([]IDValue, len(idList))
+	for i, id := range idValList.GetDatas() {
+		rIdValList[i].IDType = idList[i].IDType
+		rIdValList[i].Id = id.Id_INT64
+		rIdValList[i].IdN = id.Id_VECTORINT64
+	}
+
+	return rIdValList
+}

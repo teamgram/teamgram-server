@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SRC_DIR=.
-DST_DIR=../../../../../..
+DST_DIR=../../../../../../..
 
 GOGOPROTO_PATH=$GOPATH/src/github.com/gogo/protobuf/protobuf
 MTPROTO_PATH=$GOPATH/src/github.com/teamgram/proto/mtproto
