@@ -22,6 +22,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"math"
 	"time"
 
@@ -61,12 +62,24 @@ func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
 
 func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outboxMessage *msg.OutboxMessage) (*mtproto.MessageBox, error) {
 	var (
-		dialogId        = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
-		dialogMessageId = d.IDGenClient2.NextId(ctx)
-		outBoxMsgId     = d.IDGenClient2.NextMessageBoxId(ctx, fromId)
-		err             error
-		message         = outboxMessage.Message
+		dialogId = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
+		err      error
+		message  = outboxMessage.Message
 	)
+
+	idList := d.IDGenClient2.GetNextIdList(
+		ctx,
+		idgen_client.MakeIDTypeNextId(),
+		idgen_client.MakeIDTypeNgen(idgen_client.IDTypeMessageBox, fromId),
+		idgen_client.MakeIDTypeNgen(idgen_client.IDTypePts, fromId))
+	if len(idList) != 3 {
+		err = mtproto.ErrInternelServerError
+		return nil, err
+	}
+
+	dialogMessageId := idList[0].Id
+	outBoxMsgId := int32(idList[1].Id)
+	pts := int32(idList[2].Id)
 
 	if dialogMessageId == 0 || outBoxMsgId == 0 {
 		err = mtproto.ErrInternelServerError
@@ -277,7 +290,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	switch tR.Data.(type) {
 	case *mtproto.MessageBox:
 		outBox = tR.Data.(*mtproto.MessageBox)
-		outBox.Pts = d.IDGenClient2.NextPtsId(ctx, fromId)
+		outBox.Pts = pts // d.IDGenClient2.NextPtsId(ctx, fromId)
 		outBox.PtsCount = 1
 
 	case int64:
