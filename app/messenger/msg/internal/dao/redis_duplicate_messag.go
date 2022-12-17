@@ -44,13 +44,13 @@ func (d *Dao) HasDuplicateMessage(ctx context.Context, senderUserId, clientRando
 
 	k := makeDuplicateMessageKey(duplicateMessageId, senderUserId, clientRandomId)
 
-	seq, err := d.KV.Incr(k)
+	seq, err := d.KV.IncrCtx(ctx, k)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("checkDuplicateMessage - INCR {%s}, error: {%v}", k, err)
 		return false, err
 	}
 
-	if err = d.KV.Expire(k, expireTimeout); err != nil {
+	if err = d.KV.ExpireCtx(ctx, k, expireTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("expire DuplicateMessage - EXPIRE {%s, %d}, error: %s", k, expireTimeout, err)
 		return false, err
 	}
@@ -62,7 +62,7 @@ func (d *Dao) PutDuplicateMessage(ctx context.Context, senderUserId, clientRando
 	k := makeDuplicateMessageKey(duplicateMessageData, senderUserId, clientRandomId)
 	cacheData, _ := proto.Marshal(upd)
 
-	if err := d.KV.Setex(k, string(cacheData), expireTimeout); err != nil {
+	if err := d.KV.SetexCtx(ctx, k, string(cacheData), expireTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("putDuplicateMessage - SET {%s, %s, %d}, error: %s", k, cacheData, expireTimeout, err)
 		return err
 	}
@@ -73,7 +73,7 @@ func (d *Dao) PutDuplicateMessage(ctx context.Context, senderUserId, clientRando
 func (d *Dao) GetDuplicateMessage(ctx context.Context, senderUserId, clientRandomId int64) (*mtproto.Updates, error) {
 	k := makeDuplicateMessageKey(duplicateMessageData, senderUserId, clientRandomId)
 
-	if cacheData, err := d.KV.Get(k); err != nil {
+	if cacheData, err := d.KV.GetCtx(ctx, k); err != nil {
 		if err.Error() == "redigo: nil returned" {
 			return nil, nil
 		}
