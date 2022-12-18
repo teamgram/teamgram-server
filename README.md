@@ -64,6 +64,7 @@ cd teamgram-server
 	2. init teamgram database
 	   mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
 	   mysql -uroot teamgram < teamgramd/sql/migrate-*.sql
+  	   mysql -uroot teamgram < teamgramd/sql/init.sql
 	```
 
 - init minio buckets
