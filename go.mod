@@ -11,9 +11,9 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.1
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.1
-	github.com/teamgram/marmota v0.1.14-0.20221208015242-fb7f02510ddc
+	github.com/teamgram/marmota v0.1.14-0.20221226065715-4b31a0e572c7
 	github.com/teamgram/proto v0.150.0
-	github.com/zeromicro/go-zero v1.4.3-0.20221207225042-b7052854bba2
+	github.com/zeromicro/go-zero v1.4.4-0.20221224132836-e8d3611b4ce9
 	google.golang.org/grpc v1.50.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	mvdan.cc/xurls/v2 v2.4.0
@@ -35,6 +35,7 @@ require (
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
 	github.com/fatih/color v1.13.0 // indirect
+	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
@@ -51,6 +52,7 @@ require (
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/google/pprof v0.0.0-20220520215854-d04f2422c8a1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.2 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
