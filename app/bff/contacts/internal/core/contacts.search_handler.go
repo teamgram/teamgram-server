@@ -92,6 +92,17 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 			c.Logger.Errorf("v: %v", v)
 			idHelper.PickByPeer(v.Peer)
 		}
+
+		rVList2, err := c.svcCtx.Dao.UserClient.UserSearch(c.ctx, &userpb.TLUserSearch{
+			Q:                in.Q,
+			ExcludedContacts: append(contacts.GetDatas(), c.MD.UserId),
+			Offset:           0,
+			Limit:            limit,
+		})
+
+		for _, v := range rVList2.GetIdList() {
+			idHelper.PickByPeerUtil(mtproto.PEER_USER, v)
+		}
 	}
 
 	idHelper.Visit(
