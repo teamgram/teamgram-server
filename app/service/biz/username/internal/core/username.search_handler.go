@@ -23,7 +23,7 @@ func (c *UsernameCore) UsernameSearch(in *username.TLUsernameSearch) (*username.
 	)
 
 	// Check query string and limit
-	if len(in.Q) < 5 || in.Limit <= 0 {
+	if len(in.Q) < 3 || in.Limit <= 0 {
 		return rValList, nil
 	}
 

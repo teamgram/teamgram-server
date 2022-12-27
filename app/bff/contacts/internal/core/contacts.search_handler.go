@@ -50,7 +50,7 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 		q = q[1:]
 	}
 
-	if len(q) < 5 {
+	if len(q) < 3 {
 		err := mtproto.ErrQueryTooShort
 		c.Logger.Errorf("contacts.search - error: %v", err)
 		return nil, err
@@ -72,7 +72,7 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 	//
 
 	// Check query string and limit
-	if len(q) >= 5 && limit > 0 {
+	if len(q) >= 3 && limit > 0 {
 		contacts, _ := c.svcCtx.Dao.UserClient.UserGetContactIdList(c.ctx, &userpb.TLUserGetContactIdList{
 			UserId: c.MD.UserId,
 		})
