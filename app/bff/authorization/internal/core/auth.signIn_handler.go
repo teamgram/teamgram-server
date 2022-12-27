@@ -19,9 +19,11 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
@@ -29,6 +31,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 	"github.com/teamgram/teamgram-server/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/pkg/env2"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
@@ -161,13 +164,50 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 			pNumber, _ := phonenumber.MakePhoneNumberHelper(phoneNumber, "")
 
 			// TODO: check
-			_, err = c.svcCtx.UserClient.UserCreateNewUser(c.ctx, &userpb.TLUserCreateNewUser{
+			user, err3 := c.svcCtx.UserClient.UserCreateNewUser(c.ctx, &userpb.TLUserCreateNewUser{
 				SecretKeyId: key.AuthKeyId(),
 				Phone:       phoneNumber,
 				CountryCode: pNumber.GetRegionCode(),
 				FirstName:   predefinedUser.GetFirstName().GetValue(),
 				LastName:    predefinedUser.GetLastName().GetValue(),
 			})
+			if err3 != nil {
+				c.Logger.Errorf("create new user error: %v", err3)
+				err = mtproto.ErrPhoneNumberUnoccupied
+				return nil, err
+			}
+
+			c.svcCtx.Dao.UserClient.UserPredefinedBindRegisteredUserId(c.ctx, &userpb.TLUserPredefinedBindRegisteredUserId{
+				Phone:            phoneNumber,
+				RegisteredUserId: user.User.Id,
+			})
+			if predefinedUser.GetUsername().GetValue() != "" {
+				// TODO(@benqi): setUsername
+				c.svcCtx.Dao.UserClient.UserUpdateUsername(c.ctx, &userpb.TLUserUpdateUsername{
+					UserId:   user.Id(),
+					Username: predefinedUser.GetUsername().GetValue(),
+				})
+				c.svcCtx.Dao.UsernameClient.UsernameUpdateUsername(c.ctx, &username.TLUsernameUpdateUsername{
+					PeerType: mtproto.PEER_USER,
+					PeerId:   user.Id(),
+					Username: predefinedUser.GetUsername().GetValue(),
+				})
+			}
+			if predefinedUser.Verified {
+				c.svcCtx.Dao.UserClient.UserUpdateVerified(c.ctx, &userpb.TLUserUpdateVerified{
+					UserId:   user.Id(),
+					Verified: mtproto.ToBool(predefinedUser.Verified),
+				})
+			}
+
+			threading2.WrapperGoFunc(c.ctx, nil, func(ctx context.Context) {
+				c.onContactSignUp(c.ctx, c.MD.AuthId, user.Id(), phoneNumber)
+
+				// on event
+				// c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
+				c.pushSignInMessage(c.ctx, user.Id(), codeData.PhoneCode)
+			})
+
 			codeData.PhoneNumberRegistered = true
 		}
 	}

@@ -33,8 +33,9 @@ type Config struct {
 	AuthsessionClient         zrpc.RpcClientConf
 	ChatClient                zrpc.RpcClientConf
 	StatusClient              zrpc.RpcClientConf
-	SyncClient                *kafka.KafkaProducerConf
+	UsernameClient            zrpc.RpcClientConf
 	MsgClient                 zrpc.RpcClientConf
+	SyncClient                *kafka.KafkaProducerConf
 	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`
 	SignInMessage             []conf.MessageEntityConfig `json:",optional"`
 }

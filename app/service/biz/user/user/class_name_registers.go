@@ -70,6 +70,8 @@ const (
 	Predicate_user_getContact                       = "user_getContact"
 	Predicate_user_addContact                       = "user_addContact"
 	Predicate_user_checkContact                     = "user_checkContact"
+	Predicate_user_getImportersByPhone              = "user_getImportersByPhone"
+	Predicate_user_deleteImportersByPhone           = "user_deleteImportersByPhone"
 	Predicate_user_importContacts                   = "user_importContacts"
 	Predicate_user_getCountryCode                   = "user_getCountryCode"
 	Predicate_user_updateAbout                      = "user_updateAbout"
@@ -327,6 +329,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -2102962012, // 0x82a758a4
 
 	},
+	Predicate_user_getImportersByPhone: {
+		0: 1202356754, // 0x47aa8212
+
+	},
+	Predicate_user_deleteImportersByPhone: {
+		0: 390978644, // 0x174ddc54
+
+	},
 	Predicate_user_importContacts: {
 		0: -1711212654, // 0x9a00f792
 
@@ -461,6 +471,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-613250077:  Predicate_user_getContact,                       // 0xdb728be3
 	2042936590:  Predicate_user_addContact,                       // 0x79c4bd0e
 	-2102962012: Predicate_user_checkContact,                     // 0x82a758a4
+	1202356754:  Predicate_user_getImportersByPhone,              // 0x47aa8212
+	390978644:   Predicate_user_deleteImportersByPhone,           // 0x174ddc54
 	-1711212654: Predicate_user_importContacts,                   // 0x9a00f792
 	302016562:   Predicate_user_getCountryCode,                   // 0x12006832
 	-620695161:  Predicate_user_updateAbout,                      // 0xdb00f187

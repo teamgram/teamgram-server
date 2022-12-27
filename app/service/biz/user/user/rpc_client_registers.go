@@ -75,6 +75,8 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserGetContact":                       RPCContextTuple{"/mtproto.RPCUser/user_getContact", func() interface{} { return new(ContactData) }},
 	"TLUserAddContact":                       RPCContextTuple{"/mtproto.RPCUser/user_addContact", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserCheckContact":                     RPCContextTuple{"/mtproto.RPCUser/user_checkContact", func() interface{} { return new(mtproto.Bool) }},
+	"TLUserGetImportersByPhone":              RPCContextTuple{"/mtproto.RPCUser/user_getImportersByPhone", func() interface{} { return new(Vector_InputContact) }},
+	"TLUserDeleteImportersByPhone":           RPCContextTuple{"/mtproto.RPCUser/user_deleteImportersByPhone", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserImportContacts":                   RPCContextTuple{"/mtproto.RPCUser/user_importContacts", func() interface{} { return new(UserImportedContacts) }},
 	"TLUserGetCountryCode":                   RPCContextTuple{"/mtproto.RPCUser/user_getCountryCode", func() interface{} { return new(mtproto.String) }},
 	"TLUserUpdateAbout":                      RPCContextTuple{"/mtproto.RPCUser/user_updateAbout", func() interface{} { return new(mtproto.Bool) }},

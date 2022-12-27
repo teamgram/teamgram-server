@@ -20,11 +20,14 @@ package core
 
 import (
 	"context"
+	"math/rand"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
+	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/pkg/env2"
@@ -198,32 +201,53 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 		return nil, err
 	}
 
-	// on event
-	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
-	c.pushSignInMessage(c.ctx, user.Id(), codeData.PhoneCode)
-	c.onContactSignUp(c.ctx, c.MD.AuthId, user.Id(), phoneNumber)
-
-	return mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-		User: user.ToSelfUser(),
-	}).To_Auth_Authorization(), nil
+	return threading2.WrapperGoFunc(
+		c.ctx,
+		mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
+			User: user.ToSelfUser(),
+		}).To_Auth_Authorization(),
+		func(ctx context.Context) {
+			// on event
+			c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
+			c.pushSignInMessage(c.ctx, user.Id(), codeData.PhoneCode)
+			c.onContactSignUp(c.ctx, c.MD.AuthId, user.Id(), phoneNumber)
+		},
+	).(*mtproto.Auth_Authorization), nil
 }
 
 func (c *AuthorizationCore) onContactSignUp(ctx context.Context, authKeyId, userId int64, phone string) {
-	// log.Debugc(ctx, "onContactSignUp - {phone: %s}")
-	//importers := s.UserFacade.GetImportersByPhone(ctx, phone)
-	//for _, c := range importers {
-	//	log.Debugc(ctx, "importer: %v", c)
-	//	v := s.AccountFacade.GetSettingValue(ctx, int32(c.ClientId), "contactSignUpNotification")
-	//	if v == "true" {
-	//		s.MsgFacade.PushUserMessage(ctx,
-	//			1,
-	//			userId,
-	//			int32(c.ClientId),
-	//			rand.Int63(),
-	//			model2.MakeContactSignUpMessage(userId, int32(c.ClientId)))
-	//	} else {
-	//		log.Debugc(ctx, "not setting contactSignUpNotification")
-	//	}
-	//}
-	//s.UserFacade.DeleteImportersByPhone(ctx, phone)
+	importers, _ := c.svcCtx.Dao.UserClient.UserGetImportersByPhone(ctx, &userpb.TLUserGetImportersByPhone{
+		Phone: phone,
+	})
+
+	for _, c2 := range importers.GetDatas() {
+		c.Logger.Infof("importer: %v", c2)
+		v, _ := c.svcCtx.Dao.UserClient.UserGetContactSignUpNotification(c.ctx, &userpb.TLUserGetContactSignUpNotification{
+			UserId: c2.ClientId,
+		})
+
+		if mtproto.FromBool(v) {
+			c.svcCtx.Dao.MsgClient.MsgPushUserMessage(
+				context.Background(),
+				&msgpb.TLMsgPushUserMessage{
+					UserId:    userId,
+					AuthKeyId: 0,
+					PeerType:  mtproto.PEER_USER,
+					PeerId:    c2.ClientId,
+					PushType:  1,
+					Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+						NoWebpage:    false,
+						Background:   false,
+						RandomId:     rand.Int63(),
+						Message:      mtproto.MakeContactSignUpMessage(userId, c2.ClientId),
+						ScheduleDate: nil,
+					}).To_OutboxMessage(),
+				})
+		} else {
+			c.Logger.Infof("not setting contactSignUpNotification")
+		}
+	}
+	c.svcCtx.Dao.UserClient.UserDeleteImportersByPhone(c.ctx, &userpb.TLUserDeleteImportersByPhone{
+		Phone: phone,
+	})
 }

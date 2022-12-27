@@ -327,6 +327,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -2102962012,
 		}
 	},
+	1202356754: func() mtproto.TLObject { // 0x47aa8212
+		return &TLUserGetImportersByPhone{
+			Constructor: 1202356754,
+		}
+	},
+	390978644: func() mtproto.TLObject { // 0x174ddc54
+		return &TLUserDeleteImportersByPhone{
+			Constructor: 390978644,
+		}
+	},
 	-1711212654: func() mtproto.TLObject { // 0x9a00f792
 		return &TLUserImportContacts{
 			Constructor: -1711212654,
@@ -4930,6 +4940,100 @@ func (m *TLUserCheckContact) DebugString() string {
 	return dbgString
 }
 
+// TLUserGetImportersByPhone
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetImportersByPhone) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_getImportersByPhone))
+
+	switch uint32(m.Constructor) {
+	case 0x47aa8212:
+		x.UInt(0x47aa8212)
+
+		// no flags
+
+		x.String(m.GetPhone())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserGetImportersByPhone) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetImportersByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x47aa8212:
+
+		// not has flags
+
+		m.Phone = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetImportersByPhone) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserDeleteImportersByPhone
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserDeleteImportersByPhone) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_deleteImportersByPhone))
+
+	switch uint32(m.Constructor) {
+	case 0x174ddc54:
+		x.UInt(0x174ddc54)
+
+		// no flags
+
+		x.String(m.GetPhone())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserDeleteImportersByPhone) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserDeleteImportersByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x174ddc54:
+
+		// not has flags
+
+		m.Phone = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserDeleteImportersByPhone) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // TLUserImportContacts
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -6120,6 +6224,41 @@ func (m *Vector_ContactData) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ContactData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_InputContact
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_InputContact) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		x.Bytes((*v).Encode(layer))
+	}
+
+	return x.GetBuf()
+}
+
+func (m *Vector_InputContact) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*mtproto.InputContact, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(mtproto.InputContact)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_InputContact) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_InputContact) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

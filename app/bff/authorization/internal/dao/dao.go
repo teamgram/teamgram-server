@@ -29,6 +29,7 @@ import (
 	authsession_client "github.com/teamgram/teamgram-server/app/service/authsession/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
+	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	status_client "github.com/teamgram/teamgram-server/app/service/status/client"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 )
@@ -50,6 +51,7 @@ type Dao struct {
 	chat_client.ChatClient
 	status_client.StatusClient
 	msg_client.MsgClient
+	username_client.UsernameClient
 }
 
 func New(c config.Config) *Dao {
@@ -66,5 +68,6 @@ func New(c config.Config) *Dao {
 		SyncClient:        sync_client.NewSyncMqClient(kafka.MustKafkaProducer(c.SyncClient)),
 		StatusClient:      status_client.NewStatusClient(rpcx.GetCachedRpcClient(c.StatusClient)),
 		MsgClient:         msg_client.NewMsgClient(rpcx.GetCachedRpcClient(c.MsgClient)),
+		UsernameClient:    username_client.NewUsernameClient(rpcx.GetCachedRpcClient(c.UsernameClient)),
 	}
 }

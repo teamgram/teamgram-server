@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -753,6 +754,36 @@ func (s *Service) UserCheckContact(ctx context.Context, request *user.TLUserChec
 	return r, err
 }
 
+// UserGetImportersByPhone
+// user.getImportersByPhone phone:string = Vector<InputContact>;
+func (s *Service) UserGetImportersByPhone(ctx context.Context, request *user.TLUserGetImportersByPhone) (*user.Vector_InputContact, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getImportersByPhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetImportersByPhone(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getImportersByPhone - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserDeleteImportersByPhone
+// user.deleteImportersByPhone phone:string = Bool;
+func (s *Service) UserDeleteImportersByPhone(ctx context.Context, request *user.TLUserDeleteImportersByPhone) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.deleteImportersByPhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserDeleteImportersByPhone(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.deleteImportersByPhone - reply: %s", r.DebugString())
+	return r, err
+}
+
 // UserImportContacts
 // user.importContacts user_id:long contacts:Vector<InputContact> = UserImportedContacts;
 func (s *Service) UserImportContacts(ctx context.Context, request *user.TLUserImportContacts) (*user.UserImportedContacts, error) {
@@ -1009,7 +1040,7 @@ func (s *Service) UserGetUserDataByToken(ctx context.Context, request *user.TLUs
 }
 
 // UserSearch
-// user.search q:string offset_id:int limit:int hash:long = UsersFound;
+// user.search q:string excluded_contacts:Vector<long> offset:long limit:int = UsersFound;
 func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*user.UsersFound, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.search - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1022,3 +1053,4 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 	c.Logger.Debugf("user.search - reply: %s", r.DebugString())
 	return r, err
 }
+
