@@ -101,7 +101,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 				func(idList []int64) []*mtproto.User {
 					users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
 						&userpb.TLUserGetMutableUsers{
-							Id: idList,
+							Id: append(idList, v.UserId),
 						})
 					return users.GetUserListByIdList(v.UserId, idList...)
 				},
