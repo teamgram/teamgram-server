@@ -62,7 +62,13 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 
 	attributes := make([]*mtproto.DocumentAttribute, 0, len(in.GetMedia().Attributes))
 	for _, attr := range in.GetMedia().GetAttributes() {
-		if attr.GetPredicateName() != mtproto.Predicate_documentAttributeAnimated {
+		switch attr.GetPredicateName() {
+		case mtproto.Predicate_documentAttributeAnimated:
+		case mtproto.Predicate_documentAttributeFilename:
+			if attr.GetFileName() != "" {
+				attributes = append(attributes, attr)
+			}
+		default:
 			attributes = append(attributes, attr)
 		}
 	}
