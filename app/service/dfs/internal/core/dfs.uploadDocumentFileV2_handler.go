@@ -65,7 +65,15 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 		switch attr.GetPredicateName() {
 		case mtproto.Predicate_documentAttributeAnimated:
 		case mtproto.Predicate_documentAttributeFilename:
-			if in.GetMedia().GetMimeType() != "audio/ogg" {
+			if attr.GetFileName() != "" {
+				attributes = append(attributes, attr)
+			}
+		case mtproto.Predicate_documentAttributeAudio:
+			if in.GetMedia().GetMimeType() == "audio/ogg" {
+				if attr.Voice == true {
+					attributes = append(attributes, attr)
+				}
+			} else {
 				attributes = append(attributes, attr)
 			}
 		default:
