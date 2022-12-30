@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // InboxSendUserMessageToInbox
 // inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
@@ -154,7 +155,7 @@ func (s *Service) InboxDeleteChatHistoryToInbox(ctx context.Context, request *in
 }
 
 // InboxReadUserMediaUnreadToInbox
-// inbox.readUserMediaUnreadToInbox from_id:long id:Vector<int> = Void;
+// inbox.readUserMediaUnreadToInbox from_id:long peer_user_id:long id:Vector<InboxMessageId> = Void;
 func (s *Service) InboxReadUserMediaUnreadToInbox(ctx context.Context, request *inbox.TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.readUserMediaUnreadToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -169,7 +170,7 @@ func (s *Service) InboxReadUserMediaUnreadToInbox(ctx context.Context, request *
 }
 
 // InboxReadChatMediaUnreadToInbox
-// inbox.readChatMediaUnreadToInbox from_id:long peer_chat_id:long id:Vector<int> = Void;
+// inbox.readChatMediaUnreadToInbox from_id:long peer_chat_id:long id:Vector<InboxMessageId> = Void;
 func (s *Service) InboxReadChatMediaUnreadToInbox(ctx context.Context, request *inbox.TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.readChatMediaUnreadToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -227,3 +228,4 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 	c.Logger.Debugf("inbox.unpinAllMessages - reply: %s", r.DebugString())
 	return r, err
 }
+

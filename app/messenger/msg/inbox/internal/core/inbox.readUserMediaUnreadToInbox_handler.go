@@ -26,7 +26,7 @@ import (
 )
 
 // InboxReadUserMediaUnreadToInbox
-// inbox.readUserMediaUnreadToInbox from_id:long id:Vector<int> = Void;
+// inbox.readUserMediaUnreadToInbox from_id:long peer_user_id:long id:Vector<InboxMessageId> = Voi
 func (c *InboxCore) InboxReadUserMediaUnreadToInbox(in *inbox.TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error) {
 	idList := make([]int64, 0, len(in.GetId()))
 	for _, id := range in.GetId() {
