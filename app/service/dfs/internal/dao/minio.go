@@ -45,6 +45,16 @@ func s3PutOptions(encrypted bool, contentType string) minio.PutObjectOptions {
 	return options
 }
 
+func (d *Dao) GetFileObject(ctx context.Context, bucket, path string) (*minio.Object, error) {
+	object, err := d.minio.Client.GetObject(bucket, path, minio.GetObjectOptions{})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("GetFileObject error: %v")
+		return nil, err
+	}
+
+	return object, nil
+}
+
 func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset int64, limit int32) (bytes []byte, err error) {
 	_ = ctx
 

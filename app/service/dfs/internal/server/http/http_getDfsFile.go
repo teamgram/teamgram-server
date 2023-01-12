@@ -24,7 +24,7 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func getDfsFile(ctx *svc.ServiceContext) http.HandlerFunc {
+func GetDfsFile(ctx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			err     error

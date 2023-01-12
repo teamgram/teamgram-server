@@ -11,24 +11,38 @@
 package dfs_helper
 
 import (
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server"
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server/grpc/service"
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server/http"
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
-var (
-	New = server.New
+type (
+	Config         = config.Config
+	ServiceContext = svc.ServiceContext
 )
+
+var (
+	New               = service.New
+	NewServiceContext = svc.NewServiceContext
+)
+
+//func New(c Config) *service.Service {
+//	return service.New(svc.NewServiceContext(c))
+//}
 
 type (
 	MinioConfig = minio_util.MinioConfig
 	DFSHelper   = dao.Dao
 )
 
+// imaging - imaging
 var (
 	OpenWebp   = imaging.OpenWebp
 	DecodeWebp = imaging.DecodeWebp
@@ -49,3 +63,8 @@ func init() {
 func NewDFSHelper(minio *MinioConfig, idgen zrpc.RpcClientConf, ssdb kv.KvConf) *DFSHelper {
 	return dao.NewDFSHelper(minio, idgen, ssdb)
 }
+
+// GetDfsFile - GetDfsFile
+var (
+	GetDfsFile = http.GetDfsFile
+)
