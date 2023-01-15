@@ -11,9 +11,9 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.1
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.1
-	github.com/teamgram/marmota v0.1.14-0.20221228075642-d2d255f5ad57
+	github.com/teamgram/marmota v0.1.14-0.20230114122501-f14621bd991f
 	github.com/teamgram/proto v0.150.0
-	github.com/zeromicro/go-zero v1.4.4-0.20221228065322-ce1c02f4f905
+	github.com/zeromicro/go-zero v1.4.3
 	google.golang.org/grpc v1.50.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 	mvdan.cc/xurls/v2 v2.4.0
@@ -96,6 +96,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.11.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.11.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.11.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.10.0 // indirect
 	go.opentelemetry.io/otel/exporters/zipkin v1.11.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.0 // indirect
 	go.opentelemetry.io/otel/trace v1.11.0 // indirect
@@ -128,3 +129,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/zeromicro/go-zero v1.4.3 => github.com/teamgram/go-zero v0.0.0-20230114122314-a2623fbc1ead

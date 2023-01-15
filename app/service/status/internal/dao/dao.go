@@ -10,8 +10,8 @@
 package dao
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/app/service/status/internal/config"
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type Dao struct {

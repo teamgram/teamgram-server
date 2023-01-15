@@ -12,6 +12,8 @@ package core
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/status/internal/svc"
@@ -42,6 +44,16 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *StatusCore {
 
 func getUserKey(id int64) string {
 	return fmt.Sprintf("%s_%d", userKeyIdsPrefix, id)
+}
+
+func getIdByUserKey(k string) int64 {
+	a := strings.Split(k, "_")
+	if len(a) < 2 {
+		return 0
+	}
+	i, _ := strconv.ParseInt(a[1], 10, 64)
+
+	return i
 }
 
 func getAuthKeyIdKey(id int64) string {
