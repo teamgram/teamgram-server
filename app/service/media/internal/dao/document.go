@@ -119,6 +119,9 @@ func (m *Dao) makeDocumentByDO(
 	document.DcId = 1
 	err := jsonx.UnmarshalFromString(do.Attributes, &document.Attributes)
 	if err != nil {
+		logx.WithContext(ctx).Errorf("makeDocumentByDO - error: %v", err)
+	}
+	if document.Attributes == nil {
 		document.Attributes = []*mtproto.DocumentAttribute{}
 	}
 }
@@ -129,16 +132,29 @@ func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {
 		document = new(mtproto.Document)
 	)
 
-	m.CachedConn.QueryRow(ctx, document, key, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-		do, _ := m.DocumentsDAO.SelectByDocumentId(ctx, id)
+	err := m.CachedConn.QueryRow(ctx, document, key, func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+		do, err := m.DocumentsDAO.SelectByDocumentId(ctx, id)
+		if err != nil {
+			logx.WithContext(ctx).Errorf("GetDocumentById(%d) - error: %v", id, err)
+			return err
+		}
 		if do == nil {
 			logx.WithContext(ctx).Infof("not found document by id: %d", id)
+			return sqlc.ErrNotFound
 		}
+
 		m.makeDocumentByDO(ctx, v.(*mtproto.Document), id, do, nil, nil)
 		return nil
 	})
+	if err != nil {
+		document = mtproto.MakeTLDocumentEmpty(&mtproto.Document{
+			Id: id,
+		}).To_Document()
+	} else {
+		document = document.FixData()
+	}
 
-	return document.FixData()
+	return document
 }
 
 func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mtproto.Document {
