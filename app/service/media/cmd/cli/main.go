@@ -27,6 +27,8 @@ type Config struct {
 }
 
 func main() {
+	flag.Parse()
+
 	var (
 		c Config
 	)
