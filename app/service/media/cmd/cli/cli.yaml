@@ -1,5 +1,5 @@
-StatusClient:
+MediaClient:
   Etcd:
     Hosts:
       - 127.0.0.1:2379
-    Key: service.status
+    Key: service.media
