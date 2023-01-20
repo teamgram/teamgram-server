@@ -367,6 +367,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 
 			codeData2.NextCodeType = model.CodeTypeSms
 			codeData2.State = model.CodeStateSent
+			codeData2.PhoneNumberRegistered = phoneRegistered
 
 			return nil
 		})
