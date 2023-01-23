@@ -223,9 +223,11 @@ func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int
 						}
 						_, result.Err = d.UsersDAO.UpdateProfilePhotoTx(tx, nextPhotoId, userId)
 					})
+					mainPhotoId = nextPhotoId
 					err = tR.Err
 				} else {
 					_, err = d.UsersDAO.UpdateProfilePhoto(ctx, 0, userId)
+					mainPhotoId = 0
 				}
 			} else {
 				tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
