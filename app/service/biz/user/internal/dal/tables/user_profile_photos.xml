@@ -7,6 +7,7 @@
             VALUES
                 (:user_id, :photo_id, :date2, 0)
             ON DUPLICATE KEY UPDATE
+                date2 = VALUES(date2),
                 deleted = 0
         </sql>
     </operation>
@@ -18,7 +19,7 @@
             FROM
                 user_profile_photos
             WHERE
-                user_id = :user_id AND deleted = 0 ORDER BY id
+                user_id = :user_id AND deleted = 0 ORDER BY date2 DESC
         </sql>
     </operation>
 
@@ -32,7 +33,7 @@
             FROM
                 user_profile_photos
             WHERE
-                user_id = :user_id AND photo_id NOT IN (:id_list) AND deleted = 0 ORDER BY id LIMIT 1
+                user_id = :user_id AND photo_id NOT IN (:id_list) AND deleted = 0 ORDER BY date2 DESC LIMIT 1
         </sql>
     </operation>
 

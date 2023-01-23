@@ -31,11 +31,11 @@ func NewUserProfilePhotosDAO(db *sqlx.DB) *UserProfilePhotosDAO {
 }
 
 // InsertOrUpdate
-// insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update deleted = 0
+// insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update deleted = 0"
+		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
 		r     sql.Result
 	)
 
@@ -59,11 +59,11 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobj
 }
 
 // InsertOrUpdateTx
-// insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update deleted = 0
+// insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update deleted = 0"
+		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
 		r     sql.Result
 	)
 
@@ -87,10 +87,10 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Us
 }
 
 // SelectList
-// select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by id asc
+// select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) (rList []int64, err error) {
-	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by id asc"
+	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
 
 	if err != nil {
@@ -101,10 +101,10 @@ func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) 
 }
 
 // SelectListWithCB
-// select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by id asc
+// select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
-	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by id asc"
+	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
 
 	if err != nil {
@@ -121,11 +121,11 @@ func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, user_id i
 }
 
 // SelectNext
-// select photo_id from user_profile_photos where user_id = :user_id and photo_id not in (:id_list) and deleted = 0 order by id asc limit 1
+// select photo_id from user_profile_photos where user_id = :user_id and photo_id not in (:id_list) and deleted = 0 order by date2 desc limit 1
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, user_id int64, id_list []int64) (rValue int64, err error) {
 	var (
-		query = "select photo_id from user_profile_photos where user_id = ? and photo_id not in (?) and deleted = 0 order by id asc limit 1"
+		query = "select photo_id from user_profile_photos where user_id = ? and photo_id not in (?) and deleted = 0 order by date2 desc limit 1"
 		a     []interface{}
 	)
 

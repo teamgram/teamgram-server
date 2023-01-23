@@ -26,7 +26,6 @@ import (
 
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
@@ -114,21 +113,18 @@ func (d *Dao) CreateNewUserV2(
 			Rules: defaultRules,
 		}).To_PrivacyKeyRules())
 
-	return threading2.WrapperGoFunc(
-		ctx,
-		user.MakeTLImmutableUser(&user.ImmutableUser{
-			User:             cacheUserData.UserData,
-			LastSeenAt:       now,
-			Contacts:         nil,
-			KeysPrivacyRules: nil,
-		}).To_ImmutableUser(),
-		func(ctx context.Context) {
-			// 1. cacheUserData
-			d.CachedConn.SetCache(ctx, genCacheUserDataCacheKey(userDO.Id), cacheUserData)
+	// 1. cacheUserData
+	d.CachedConn.SetCache(ctx, genCacheUserDataCacheKey(userDO.Id), cacheUserData)
 
-			// 2. PutLastSeenAt
-			d.PutLastSeenAt(ctx, userDO.Id, now, 300)
-		}).(*user.ImmutableUser), nil
+	// 2. PutLastSeenAt
+	d.PutLastSeenAt(ctx, userDO.Id, now, 300)
+
+	return user.MakeTLImmutableUser(&user.ImmutableUser{
+		User:             cacheUserData.UserData,
+		LastSeenAt:       now,
+		Contacts:         nil,
+		KeysPrivacyRules: nil,
+	}).To_ImmutableUser(), nil
 }
 
 func (d *Dao) UpdateUserFirstAndLastName(ctx context.Context, id int64, firstName, lastName string) bool {
@@ -201,6 +197,12 @@ func (d *Dao) UpdateUserUsername(ctx context.Context, id int64, username string)
 	return true
 }
 
+//func (d *Dao) DeleteProfilePhoto(ctx context.Context, userId, photoId int64) int64 {
+//}
+//
+//func (d *Dao) DeleteMainProfilePhoto(ctx context.Context, userId int64) int64 {
+//}
+
 func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int64 {
 	var (
 		mainPhotoId = photoId
@@ -222,6 +224,8 @@ func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int
 						_, result.Err = d.UsersDAO.UpdateProfilePhotoTx(tx, nextPhotoId, userId)
 					})
 					err = tR.Err
+				} else {
+					_, err = d.UsersDAO.UpdateProfilePhoto(ctx, 0, userId)
 				}
 			} else {
 				tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {

@@ -9,6 +9,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -145,6 +146,7 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 			return err2
 		})
 	if err != nil {
+		logx.WithContext(ctx).Errorf("GetCacheUserData(%d) - error: %v", id, err)
 		return nil
 	}
 
