@@ -21,7 +21,6 @@ package dao
 import (
 	"context"
 	"fmt"
-
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -36,6 +35,14 @@ const (
 	contactListKeyPrefix = "user_contact_list"
 	contactKeyPrefix     = "user_contact"
 )
+
+type ContactItem struct {
+	C               *mtproto.InputContact
+	Unregistered    bool  // 未注册
+	UserId          int64 // 已经注册的用户ID
+	ContactId       int64 // 已经注册是我的联系人
+	ImportContactId int64 // 已经注册的反向联系人
+}
 
 func genContactListCacheKey(userId int64) string {
 	return fmt.Sprintf("%s_%d", contactListKeyPrefix, userId)
@@ -218,4 +225,13 @@ func (d *Dao) PutUserContact(ctx context.Context, changeMutual bool, do *dataobj
 		keys...)
 
 	return err
+}
+
+func (d *Dao) ClearContactCaches(ctx context.Context, userId int64, contactId ...int64) {
+	keys := []string{genCacheUserDataCacheKey(userId)}
+	for _, id := range contactId {
+		keys = append(keys, genContactCacheKey(userId, id))
+		keys = append(keys, genContactCacheKey(id, userId))
+	}
+	d.CachedConn.DelCache(ctx, keys...)
 }
