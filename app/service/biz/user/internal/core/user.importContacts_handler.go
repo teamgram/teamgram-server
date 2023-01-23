@@ -192,7 +192,7 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 		//}()
 	}
 
-	c.svcCtx.Dao.ClearContactCaches(c.ctx, c.MD.UserId, idList...)
+	c.svcCtx.Dao.ClearContactCaches(c.ctx, in.UserId, idList...)
 	users, _ := c.UserGetMutableUsers(&user.TLUserGetMutableUsers{
 		Id: append(idList, in.UserId),
 	})
