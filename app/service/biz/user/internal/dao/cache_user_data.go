@@ -9,7 +9,6 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -19,6 +18,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
