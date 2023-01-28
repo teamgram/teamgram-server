@@ -21,7 +21,7 @@ func (c *UserCore) UserGetNotifySettings(in *user.TLUserGetNotifySettings) (*mtp
 		c.ctx,
 		in.GetUserId(),
 		in.GetPeerType(),
-		in.GetUserId())
+		in.GetPeerId())
 
 	if err != nil {
 		c.Logger.Errorf("user.getNotifySettings - error: %v", err)
