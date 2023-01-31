@@ -19,8 +19,12 @@
 package core
 
 import (
+	"context"
+
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 )
 
@@ -90,5 +94,18 @@ func (c *MessagesCore) MessagesReadMessageContents(in *mtproto.TLMessagesReadMes
 		return nil, err
 	}
 
-	return affected, nil
+	return threading2.WrapperGoFunc(
+		c.ctx,
+		affected,
+		func(ctx context.Context) {
+			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
+				UserId:    c.MD.UserId,
+				AuthKeyId: c.MD.AuthId,
+				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadMessagesContents(&mtproto.Update{
+					Messages:  in.Id,
+					Pts_INT32: affected.Pts,
+					PtsCount:  affected.PtsCount,
+				}).To_Update()),
+			})
+		}).(*mtproto.Messages_AffectedMessages), nil
 }
