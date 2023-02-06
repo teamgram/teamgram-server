@@ -7,8 +7,6 @@
 package user
 
 import (
-	"sort"
-
 	"github.com/teamgram/proto/mtproto"
 
 	"github.com/gogo/protobuf/types"
@@ -143,27 +141,43 @@ func (m *ImmutableUser) EmojiStatus() *mtproto.EmojiStatus {
 }
 
 func (m *ImmutableUser) CheckContact(cId int64) (bool, bool) {
-	i := sort.Search(len(m.Contacts), func(i int) bool {
-		return m.Contacts[i].ContactUserId >= cId
-	})
-	if i < len(m.Contacts) && m.Contacts[i].ContactUserId == cId {
-		return true, m.Contacts[i].MutualContact
-	} else {
-		return false, false
+	//i := sort.Search(len(m.Contacts), func(i int) bool {
+	//	return m.Contacts[i].ContactUserId >= cId
+	//})
+	//if i < len(m.Contacts) && m.Contacts[i].ContactUserId == cId {
+	//	return true, m.Contacts[i].MutualContact
+	//} else {
+	//	return false, false
+	//}
+
+	for _, c := range m.Contacts {
+		if cId == c.ContactUserId {
+			return true, c.MutualContact
+		}
 	}
+
+	return false, false
 }
 
 func (m *ImmutableUser) GetContactData(cId int64) *ContactData {
-	// logx.Info("GetContactData: %d ==> %s", cId, m.DebugString())
-	i2 := sort.Search(len(m.Contacts), func(i int) bool {
-		// logx.Info("GetContactData: %d ==> %v", cId, m.Contacts[i].ContactUserId)
-		return m.Contacts[i].ContactUserId >= cId
-	})
-	if i2 < len(m.Contacts) && m.Contacts[i2].ContactUserId == cId {
-		return m.Contacts[i2]
-	} else {
-		return nil
+	//// logx.Info("GetContactData: %d ==> %s", cId, m.DebugString())
+	//i2 := sort.Search(len(m.Contacts), func(i int) bool {
+	//	// logx.Info("GetContactData: %d ==> %v", cId, m.Contacts[i].ContactUserId)
+	//	return m.Contacts[i].ContactUserId >= cId
+	//})
+	//if i2 < len(m.Contacts) && m.Contacts[i2].ContactUserId == cId {
+	//	return m.Contacts[i2]
+	//} else {
+	//	return nil
+	//}
+
+	for _, c := range m.Contacts {
+		if cId == c.ContactUserId {
+			return c
+		}
 	}
+
+	return nil
 }
 
 func (m *ImmutableUser) CheckPrivacy(keyType int, id int64) bool {
