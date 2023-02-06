@@ -14,9 +14,9 @@ import (
 )
 
 // UserGetImmutableUser
-// user.getImmutableUser id:long = ImmutableUser;
+// user.getImmutableUser flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
 func (c *UserCore) UserGetImmutableUser(in *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
-	imUser, err := c.svcCtx.Dao.GetImmutableUser(c.ctx, in.GetId(), false)
+	imUser, err := c.svcCtx.Dao.GetImmutableUser(c.ctx, in.GetId(), in.GetPrivacy(), in.Contacts...)
 	if err != nil {
 		return nil, err
 	}

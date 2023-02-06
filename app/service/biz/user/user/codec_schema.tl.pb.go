@@ -97,9 +97,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1860581154,
 		}
 	},
-	-47047585: func() mtproto.TLObject { // 0xfd321c5f
+	929720132: func() mtproto.TLObject { // 0x376a6744
 		return &TLUserGetImmutableUser{
-			Constructor: -47047585,
+			Constructor: 929720132,
 		}
 	},
 	-1657068585: func() mtproto.TLObject { // 0x9d3b23d7
@@ -2536,12 +2536,22 @@ func (m *TLUserGetImmutableUser) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_user_getImmutableUser))
 
 	switch uint32(m.Constructor) {
-	case 0xfd321c5f:
-		x.UInt(0xfd321c5f)
+	case 0x376a6744:
+		x.UInt(0x376a6744)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
+		if m.GetPrivacy() == true {
+			flags |= 1 << 1
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetId())
+
+		x.VectorLong(m.GetContacts())
 
 	default:
 		// log.Errorf("")
@@ -2556,11 +2566,19 @@ func (m *TLUserGetImmutableUser) CalcByteSize(layer int32) int {
 
 func (m *TLUserGetImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xfd321c5f:
+	case 0x376a6744:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
+		// flags Debug by @benqi
 		m.Id = dBuf.Long()
+		if (flags & (1 << 1)) != 0 {
+			m.Privacy = true
+		}
+
+		m.Contacts = dBuf.VectorLong()
+
 		return dBuf.GetError()
 
 	default:

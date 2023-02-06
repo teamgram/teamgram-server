@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
-
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -65,7 +64,7 @@ func (s *Service) UserGetLastSeen(ctx context.Context, request *user.TLUserGetLa
 }
 
 // UserGetImmutableUser
-// user.getImmutableUser id:long = ImmutableUser;
+// user.getImmutableUser flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
 func (s *Service) UserGetImmutableUser(ctx context.Context, request *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getImmutableUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1053,4 +1052,3 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 	c.Logger.Debugf("user.search - reply: %s", r.DebugString())
 	return r, err
 }
-
