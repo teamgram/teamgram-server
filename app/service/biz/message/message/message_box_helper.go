@@ -16,7 +16,7 @@ func (m *Vector_MessageBox) Visit(toUserId int64,
 	cb3 func(chatIdList []int64),
 	cb4 func(channelIdList []int64)) {
 	var (
-		idHelper    = mtproto.NewIDListHelper()
+		idHelper    = mtproto.NewIDListHelper(toUserId)
 		messageList = make([]*mtproto.Message, 0, len(m.GetDatas()))
 	)
 
