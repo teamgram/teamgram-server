@@ -490,6 +490,21 @@ func (d *Dao) editOutboxMessage(ctx context.Context, fromId int64, peerType int3
 		return nil, err
 	}
 
+	d.HashTagsDAO.DeleteHashTagMessageId(ctx, fromId, message.Id)
+	for _, entity := range message.GetEntities() {
+		if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
+			if entity.GetUrl() != "" {
+				d.HashTagsDAO.InsertOrUpdate(ctx, &dataobject.HashTagsDO{
+					UserId:           fromId,
+					PeerType:         peerType,
+					PeerId:           peerId,
+					HashTag:          entity.GetUrl(),
+					HashTagMessageId: message.Id,
+				})
+			}
+		}
+	}
+
 	return &mtproto.MessageBox{
 		UserId:            fromId,
 		MessageId:         message.Id,

@@ -77,7 +77,7 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 			UserId: c.MD.UserId,
 		})
 
-		c.Logger.Errorf("q: %s", q)
+		// c.Logger.Debugf("q: %s", q)
 		rVList, err := c.svcCtx.Dao.UsernameClient.UsernameSearch(c.ctx, &username.TLUsernameSearch{
 			Q:                q,
 			ExcludedContacts: append(contacts.GetDatas(), c.MD.UserId),
@@ -89,7 +89,7 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 		}
 
 		for _, v := range rVList.GetDatas() {
-			c.Logger.Errorf("v: %v", v)
+			// c.Logger.Debugf("v: %v", v)
 			idHelper.PickByPeer(v.Peer)
 		}
 
