@@ -43,11 +43,11 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *StatusCore {
 }
 
 func getUserKey(id int64) string {
-	return fmt.Sprintf("%s_%d", userKeyIdsPrefix, id)
+	return fmt.Sprintf("%s#%d", userKeyIdsPrefix, id)
 }
 
 func getIdByUserKey(k string) int64 {
-	a := strings.Split(k, "_")
+	a := strings.Split(k, "#")
 	if len(a) < 2 {
 		return 0
 	}
@@ -57,5 +57,5 @@ func getIdByUserKey(k string) int64 {
 }
 
 func getAuthKeyIdKey(id int64) string {
-	return fmt.Sprintf("%s_%d", onlineKeyPrefix, id)
+	return fmt.Sprintf("%s#%d", onlineKeyPrefix, id)
 }
