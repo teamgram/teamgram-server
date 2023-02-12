@@ -369,3 +369,56 @@ func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
 
 	return true
 }
+
+func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList []int64, contacts []int64) []*user.ImmutableUser {
+	var (
+		mUsers = make([]*user.ImmutableUser, len(idList))
+	)
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			for idx := 0; idx < len(idList); idx++ {
+				source <- idx
+			}
+		},
+		func(item interface{}) {
+			var (
+				idx = item.(int)
+				err error
+			)
+
+			if ok, _ := container2.Contains(idList[idx], contacts); ok {
+				mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, idList...)
+				if err != nil {
+					logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
+				}
+			} else {
+				if len(contacts) == 0 {
+					mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, idList...)
+					if err != nil {
+						logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
+					}
+				} else {
+					mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, contacts...)
+					if err != nil {
+						logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
+					}
+				}
+			}
+		})
+
+	for i := 0; i < len(mUsers); {
+		if mUsers[i] != nil {
+			i++
+			continue
+		}
+
+		if i < len(mUsers)-1 {
+			copy(mUsers[i:], mUsers[i+1:])
+		}
+
+		mUsers[len(mUsers)-1] = nil
+		mUsers = mUsers[:len(mUsers)-1]
+	}
+
+	return mUsers
+}

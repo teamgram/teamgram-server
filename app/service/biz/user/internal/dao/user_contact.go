@@ -21,6 +21,8 @@ package dao
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
@@ -33,8 +35,13 @@ import (
 )
 
 const (
-	contactListKeyPrefix = "user_contact_list"
-	contactKeyPrefix     = "user_contact"
+	contactKeyPrefix = "user_contact"
+)
+
+var (
+	GenContactCacheKey   = genContactCacheKey
+	IsContactCacheKey    = isContactCacheKey
+	ParseContactCacheKey = parseContactCacheKey
 )
 
 type ContactItem struct {
@@ -45,39 +52,28 @@ type ContactItem struct {
 	ImportContactId int64 // 已经注册的反向联系人
 }
 
-func genContactListCacheKey(userId int64) string {
-	return fmt.Sprintf("%s_%d", contactListKeyPrefix, userId)
-}
-
 func genContactCacheKey(selfId, contactId int64) string {
 	return fmt.Sprintf("%s_%d_%d", contactKeyPrefix, selfId, contactId)
 }
 
-//func (d *Dao) GetUserContactIdList(ctx context.Context, id int64) (bool, []int64) {
-//	var (
-//		contactIdList []int64
-//		keyMiss       bool
-//	)
-//
-//	err := d.CachedConn.QueryRow(
-//		ctx,
-//		&contactIdList,
-//		genContactListCacheKey(id),
-//		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-//			idList, err := d.UserContactsDAO.SelectUserContactIdList(ctx, id)
-//			if err != nil {
-//				return err
-//			}
-//			*v.(*[]int64) = idList
-//			keyMiss = true
-//			return nil
-//		})
-//	if err != nil {
-//		// return []int64{}
-//	}
-//
-//	return keyMiss, contactIdList
-//}
+func isContactCacheKey(k string) bool {
+	return strings.HasPrefix(k, contactKeyPrefix+"_")
+}
+
+func parseContactCacheKey(k string) (int64, int64) {
+	if strings.HasPrefix(k, contactKeyPrefix+"_") {
+		v := strings.Split(k[len(contactKeyPrefix)+1:], "_")
+		if len(v) != 2 {
+			return 0, 0
+		}
+		v0, _ := strconv.ParseInt(v[0], 10, 64)
+		v1, _ := strconv.ParseInt(v[1], 10, 64)
+
+		return v0, v1
+	}
+
+	return 0, 0
+}
 
 func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*user.ContactData {
 	cacheUserData := d.GetCacheUserData(ctx, id)

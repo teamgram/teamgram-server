@@ -21,6 +21,8 @@ package dao
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -32,8 +34,27 @@ const (
 	userPresencesKeyPrefix = "user_presences"
 )
 
+var (
+	GenUserPresencesKey   = genUserPresencesKey
+	IsUserPresencesKey    = isUserPresencesKey
+	ParseUserPresencesKey = parseUserPresencesKey
+)
+
 func genUserPresencesKey(userId int64) string {
 	return fmt.Sprintf("%s_%d", userPresencesKeyPrefix, userId)
+}
+
+func isUserPresencesKey(k string) bool {
+	return strings.HasPrefix(k, userPresencesKeyPrefix)
+}
+
+func parseUserPresencesKey(k string) int64 {
+	if strings.HasPrefix(k, userPresencesKeyPrefix+"_") {
+		v, _ := strconv.ParseInt(k[len(userPresencesKeyPrefix)+1:], 10, 64)
+		return v
+	}
+
+	return 0
 }
 
 func (d *Dao) GetLastSeenAt(ctx context.Context, id int64) (*dataobject.UserPresencesDO, error) {

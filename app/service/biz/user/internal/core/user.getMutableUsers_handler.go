@@ -12,7 +12,8 @@ package core
 import (
 	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/zeromicro/go-zero/core/mr"
+
+	"github.com/zeromicro/go-zero/core/timex"
 )
 
 // UserGetMutableUsers
@@ -43,45 +44,10 @@ func (c *UserCore) UserGetMutableUsers(in *user.TLUserGetMutableUsers) (*user.Ve
 		}
 
 		return vUser, nil
-	}
-
-	mUsers := make([]*user.ImmutableUser, len(id))
-	mr.ForEach(
-		func(source chan<- interface{}) {
-			for idx := 0; idx < len(id); idx++ {
-				source <- idx
-			}
-		},
-		func(item interface{}) {
-			var (
-				idx = item.(int)
-				err error
-			)
-
-			if ok, _ := container2.Contains(id[idx], in.To); ok {
-				mUsers[idx], err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
-				if err != nil {
-					c.Logger.Errorf("getImmutableUser - error: %v", err)
-				}
-			} else {
-				if len(in.To) == 0 {
-					mUsers[idx], err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.Id...)
-					if err != nil {
-						c.Logger.Errorf("getImmutableUser - error: %v", err)
-					}
-				} else {
-					mUsers[idx], err = c.svcCtx.Dao.GetImmutableUser(c.ctx, id[idx], true, in.To...)
-					if err != nil {
-						c.Logger.Errorf("getImmutableUser - error: %v", err)
-					}
-				}
-			}
-		})
-
-	for _, v := range mUsers {
-		if v != nil {
-			vUser.Datas = append(vUser.Datas, v)
-		}
+	} else {
+		since2 := timex.Now()
+		vUser.Datas = c.svcCtx.Dao.GetCacheImmutableUserList(c.ctx, in.Id, in.To)
+		c.Logger.WithDuration(timex.Since(since2)).Infof("V1: len(%d)", len(in.Id))
 	}
 
 	return vUser, nil
