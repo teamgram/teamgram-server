@@ -69,11 +69,11 @@ func (c *UpdatesCore) UpdatesGetDifferenceV2(in *updates.TLUpdatesGetDifferenceV
 			totalUpdatesCount += c.svcCtx.Dao.IDGenClient2.CurrentSeqId(c.ctx, in.AuthKeyId) - lastSeq
 		}
 
-		if totalUpdatesCount >= 1000 {
-			return updates.MakeTLDifferenceTooLong(&updates.Difference{
-				Pts: maxPts,
-			}).To_Difference(), nil
-		}
+		//if totalUpdatesCount >= 1000 {
+		//	return updates.MakeTLDifferenceTooLong(&updates.Difference{
+		//		Pts: maxPts,
+		//	}).To_Difference(), nil
+		//}
 	}
 
 	merge := newMergeUpdatesHelper()
