@@ -11,9 +11,25 @@
 package media_helper
 
 import (
-	"github.com/teamgram/teamgram-server/app/service/media/internal/server"
+	"github.com/teamgram/teamgram-server/app/service/media/internal/config"
+	"github.com/teamgram/teamgram-server/app/service/media/internal/dao"
+	"github.com/teamgram/teamgram-server/app/service/media/internal/server/grpc/service"
+	"github.com/teamgram/teamgram-server/app/service/media/internal/svc"
+)
+
+type (
+	Dao = dao.Dao
+)
+
+type (
+	Config  = config.Config
+	Service = service.Service
 )
 
 var (
-	New = server.New
+	NewServiceContext = svc.NewServiceContext
 )
+
+func New(c Config) *service.Service {
+	return service.New(svc.NewServiceContext(c))
+}

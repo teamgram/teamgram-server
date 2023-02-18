@@ -17,11 +17,8 @@ import (
 // MediaGetEncryptedFile
 // media.getEncryptedFile id:long access_hash:long = EncryptedFile;
 func (c *MediaCore) MediaGetEncryptedFile(in *media.TLMediaGetEncryptedFile) (*mtproto.EncryptedFile, error) {
-	encryptedFile, err := c.svcCtx.Dao.GetEncryptedFile(c.ctx, in.Id, in.AccessHash)
-	if err != nil {
-		c.Logger.Errorf("media.getEncryptedFile - error: %v", err)
-		return nil, err
-	}
+	// TODO: not impl
+	c.Logger.Errorf("media.getEncryptedFile blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return encryptedFile, nil
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }

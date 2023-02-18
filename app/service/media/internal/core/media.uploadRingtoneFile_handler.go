@@ -20,40 +20,14 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 )
 
 // MediaUploadRingtoneFile
 // media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
 func (c *MediaCore) MediaUploadRingtoneFile(in *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error) {
-	var (
-		err      error
-		document *mtproto.Document
-		file     = in.GetFile()
-	)
+	// TODO: not impl
+	c.Logger.Errorf("media.uploadRingtoneFile blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	if file == nil {
-		c.Logger.Errorf("media.uploadRingtoneFile - error: file is nil")
-		return nil, mtproto.ErrInputRequestInvalid
-	}
-
-	document, err = c.svcCtx.Dao.DfsClient.DfsUploadRingtoneFile(c.ctx, &dfs.TLDfsUploadRingtoneFile{
-		Creator:  in.OwnerId,
-		File:     file,
-		FileName: in.GetFileName(),
-		MimeType: in.GetMimeType(),
-	})
-	if err != nil {
-		c.Logger.Errorf("media.uploadRingtoneFile - error: %v", err)
-		// err = mtproto.ErrThemeFileInvalid
-		return nil, err
-	}
-
-	if len(document.GetThumbs()) > 0 {
-		c.svcCtx.Dao.SavePhotoSizeV2(c.ctx, document.GetId(), document.GetThumbs())
-	}
-	c.svcCtx.Dao.SaveDocumentV2(c.ctx, file.GetName(), document)
-
-	return document, nil
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }
