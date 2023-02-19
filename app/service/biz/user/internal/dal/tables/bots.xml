@@ -35,4 +35,18 @@
                 bot_id IN (:id_list)
         </sql>
     </operation>
+
+    <operation name="Update">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                bots
+            SET
+                cMap = :cMap
+            WHERE
+                bot_id=:bot_id
+        </sql>
+    </operation>
 </table>

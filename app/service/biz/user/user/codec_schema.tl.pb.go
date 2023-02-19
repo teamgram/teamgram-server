@@ -427,6 +427,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1882568397,
 		}
 	},
+	-1174586898: func() mtproto.TLObject { // 0xb9fd39ee
+		return &TLUserUpdateBotData{
+			Constructor: -1174586898,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -5971,6 +5976,119 @@ func (m *TLUserSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserSearch) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserUpdateBotData
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserUpdateBotData) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_updateBotData))
+
+	switch uint32(m.Constructor) {
+	case 0xb9fd39ee:
+		x.UInt(0xb9fd39ee)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetBotChatHistory() != nil {
+			flags |= 1 << 15
+		}
+		if m.GetBotNochats() != nil {
+			flags |= 1 << 16
+		}
+		if m.GetBotInlineGeo() != nil {
+			flags |= 1 << 21
+		}
+		if m.GetBotAttachMenu() != nil {
+			flags |= 1 << 27
+		}
+		if m.GetBotInlinePlaceholder() != nil {
+			flags |= 1 << 19
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetBotId())
+		if m.GetBotChatHistory() != nil {
+			x.Bytes(m.GetBotChatHistory().Encode(layer))
+		}
+
+		if m.GetBotNochats() != nil {
+			x.Bytes(m.GetBotNochats().Encode(layer))
+		}
+
+		if m.GetBotInlineGeo() != nil {
+			x.Bytes(m.GetBotInlineGeo().Encode(layer))
+		}
+
+		if m.GetBotAttachMenu() != nil {
+			x.Bytes(m.GetBotAttachMenu().Encode(layer))
+		}
+
+		if m.GetBotInlinePlaceholder() != nil {
+			x.Bytes(m.GetBotInlinePlaceholder().Encode(layer))
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserUpdateBotData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserUpdateBotData) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xb9fd39ee:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.BotId = dBuf.Long()
+		if (flags & (1 << 15)) != 0 {
+			m3 := &mtproto.Bool{}
+			m3.Decode(dBuf)
+			m.BotChatHistory = m3
+		}
+		if (flags & (1 << 16)) != 0 {
+			m4 := &mtproto.Bool{}
+			m4.Decode(dBuf)
+			m.BotNochats = m4
+		}
+		if (flags & (1 << 21)) != 0 {
+			m5 := &mtproto.Bool{}
+			m5.Decode(dBuf)
+			m.BotInlineGeo = m5
+		}
+		if (flags & (1 << 27)) != 0 {
+			m6 := &mtproto.Bool{}
+			m6.Decode(dBuf)
+			m.BotAttachMenu = m6
+		}
+		if (flags & (1 << 19)) != 0 {
+			m7 := &mtproto.Bool{}
+			m7.Decode(dBuf)
+			m.BotInlinePlaceholder = m7
+		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserUpdateBotData) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

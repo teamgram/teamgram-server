@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
@@ -138,6 +140,72 @@ func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, c
 		for i := 0; i < len(rList); i++ {
 			cb(i, &rList[i])
 		}
+	}
+
+	return
+}
+
+// Update
+// update bots set %s where bot_id = :bot_id
+// TODO(@benqi): sqlmap
+func (dao *BotsDAO) Update(ctx context.Context, cMap map[string]interface{}, bot_id int64) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update bots set %s where bot_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, bot_id)
+
+	rResult, err = dao.db.Exec(ctx, query, aValues...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in Update(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateTx
+// update bots set %s where bot_id = :bot_id
+// TODO(@benqi): sqlmap
+func (dao *BotsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bot_id int64) (rowsAffected int64, err error) {
+	names := make([]string, 0, len(cMap))
+	aValues := make([]interface{}, 0, len(cMap))
+	for k, v := range cMap {
+		names = append(names, k+" = ?")
+		aValues = append(aValues, v)
+	}
+
+	var (
+		query   = fmt.Sprintf("update bots set %s where bot_id = ?", strings.Join(names, ", "))
+		rResult sql.Result
+	)
+
+	aValues = append(aValues, bot_id)
+
+	rResult, err = tx.Exec(query, aValues...)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in Update(_), error: %v", err)
 	}
 
 	return

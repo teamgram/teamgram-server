@@ -63,6 +63,12 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 			return nil, err
 		}
 
+		if added.IsBot() && added.BotNochats() {
+			err = mtproto.ErrBotGroupsBlocked
+			c.Logger.Errorf("messages.addChatUser - error: %v", err)
+			return nil, err
+		}
+
 		rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 			UserId:  addUser.PeerId,
 			KeyType: userpb.CHAT_INVITE,

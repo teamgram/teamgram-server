@@ -90,6 +90,7 @@ const (
 	Predicate_user_getUserDataListByIdList          = "user_getUserDataListByIdList"
 	Predicate_user_getUserDataByToken               = "user_getUserDataByToken"
 	Predicate_user_search                           = "user_search"
+	Predicate_user_updateBotData                    = "user_updateBotData"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -409,6 +410,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1882568397, // 0x7035b6cd
 
 	},
+	Predicate_user_updateBotData: {
+		0: -1174586898, // 0xb9fd39ee
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -491,6 +496,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-2121142279: Predicate_user_getUserDataListByIdList,          // 0x8191eff9
 	1057580446:  Predicate_user_getUserDataByToken,               // 0x3f09659e
 	1882568397:  Predicate_user_search,                           // 0x7035b6cd
+	-1174586898: Predicate_user_updateBotData,                    // 0xb9fd39ee
 
 }
 

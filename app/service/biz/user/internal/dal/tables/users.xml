@@ -218,7 +218,7 @@
         </sql>
     </operation>
 
-    <operation name="UpdateUser">
+`    <operation name="UpdateUser">
         <params>
             <param name="cMap" type="map" />
         </params>
@@ -231,7 +231,7 @@
                 id=:id
         </sql>
     </operation>
-
+`
     <operation name="UpdateEmojiStatus">
         <sql>
             UPDATE
