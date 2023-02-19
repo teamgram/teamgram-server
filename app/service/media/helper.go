@@ -12,6 +12,7 @@ package media_helper
 
 import (
 	"github.com/teamgram/teamgram-server/app/service/media/internal/config"
+	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/svc"
@@ -19,6 +20,15 @@ import (
 
 type (
 	Dao = dao.Dao
+)
+
+type (
+	DocumentsDO = dataobject.DocumentsDO
+)
+
+var (
+	GenCacheDocumentKey = dao.GenCacheDocumentKey
+	GetPhotoSize        = dao.GetPhotoSize
 )
 
 type (

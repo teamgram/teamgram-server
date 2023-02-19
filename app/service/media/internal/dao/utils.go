@@ -24,3 +24,9 @@ func getFileExtName(filePath string) string {
 	}
 	return strings.ToLower(ext)
 }
+
+func makePhotoEmpty(id int64) *mtproto.Photo {
+	return mtproto.MakeTLPhotoEmpty(&mtproto.Photo{
+		Id: id,
+	}).To_Photo()
+}

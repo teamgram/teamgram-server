@@ -10,21 +10,17 @@
 package core
 
 import (
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 )
 
 // MediaGetPhotoSizeList
 // media.getPhotoSizeList size_id:long = PhotoSizeList;
 func (c *MediaCore) MediaGetPhotoSizeList(in *media.TLMediaGetPhotoSizeList) (*media.PhotoSizeList, error) {
-	szList := c.svcCtx.Dao.GetPhotoSizeListV2(c.ctx, in.GetSizeId())
-	if szList == nil {
-		szList = []*mtproto.PhotoSize{}
+	cData, err := c.svcCtx.Dao.GetCachePhotoData(c.ctx, in.GetSizeId())
+	if cData != nil {
+		c.Logger.Errorf("media.getPhotoSizeList - error: %v", err)
+		return nil, err
 	}
 
-	return &media.PhotoSizeList{
-		SizeId: in.GetSizeId(),
-		Sizes:  szList,
-		DcId:   1,
-	}, nil
+	return cData.ToPhotoSizeList(), nil
 }

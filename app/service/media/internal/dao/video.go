@@ -22,10 +22,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gogo/protobuf/types"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
+
+	"github.com/gogo/protobuf/types"
 )
 
 func (m *Dao) GetVideoSizeListList(ctx context.Context, idList []int64) (sizes map[int64][]*mtproto.VideoSize) {
@@ -34,51 +34,48 @@ func (m *Dao) GetVideoSizeListList(ctx context.Context, idList []int64) (sizes m
 		return
 	}
 
-	sizeDOList, _ := m.VideoSizesDAO.SelectListByVideoSizeIdList(ctx, idList)
-	for i := 0; i < len(sizeDOList); i++ {
-		szList, ok := sizes[sizeDOList[i].VideoSizeId]
-		if !ok {
-			szList = []*mtproto.VideoSize{}
-		}
+	m.VideoSizesDAO.SelectListByVideoSizeIdListWithCB(
+		ctx,
+		idList,
+		func(i int, v *dataobject.VideoSizesDO) {
+			szList, ok := sizes[v.VideoSizeId]
+			if !ok {
+				szList = []*mtproto.VideoSize{}
+			}
 
-		size := &sizeDOList[i]
-		videoSize := mtproto.MakeTLVideoSize(&mtproto.VideoSize{
-			Type:         size.SizeType,
-			W:            size.Width,
-			H:            size.Height,
-			Size2:        size.FileSize,
-			VideoStartTs: nil,
-		}).To_VideoSize()
-		if size.VideoStartTs > 0 {
-			videoSize.VideoStartTs = &types.DoubleValue{Value: size.VideoStartTs}
-		}
-		szList = append(szList, videoSize)
+			szList = append(szList, getVideoSize(v))
+			sizes[v.VideoSizeId] = szList
+		})
 
-		sizes[sizeDOList[i].VideoSizeId] = szList
-	}
 	return
 }
 
 func (m *Dao) GetVideoSizeList(ctx context.Context, sizeId int64) (sizes []*mtproto.VideoSize) {
-	sizeDOList, _ := m.VideoSizesDAO.SelectListByVideoSizeId(ctx, sizeId)
-	if len(sizeDOList) >= 0 {
-		sizes = make([]*mtproto.VideoSize, 0, len(sizeDOList))
-		for i := 0; i < len(sizeDOList); i++ {
-			size := &sizeDOList[i]
-			videoSize := mtproto.MakeTLVideoSize(&mtproto.VideoSize{
-				Type:         size.SizeType,
-				W:            size.Width,
-				H:            size.Height,
-				Size2:        size.FileSize,
-				VideoStartTs: nil,
-			}).To_VideoSize()
-			if size.VideoStartTs > 0 {
-				videoSize.VideoStartTs = &types.DoubleValue{Value: size.VideoStartTs}
-			}
-			sizes = append(sizes, videoSize)
-		}
-	}
+	sizes = make([]*mtproto.VideoSize, 0, 2)
+
+	m.VideoSizesDAO.SelectListByVideoSizeIdWithCB(
+		ctx,
+		sizeId,
+		func(i int, v *dataobject.VideoSizesDO) {
+			sizes = append(sizes, getVideoSize(v))
+		})
+
 	return
+}
+
+func getVideoSize(sz *dataobject.VideoSizesDO) *mtproto.VideoSize {
+	videoSize := mtproto.MakeTLVideoSize(&mtproto.VideoSize{
+		Type:         sz.SizeType,
+		W:            sz.Width,
+		H:            sz.Height,
+		Size2:        sz.FileSize,
+		VideoStartTs: nil,
+	}).To_VideoSize()
+	if sz.VideoStartTs > 0 {
+		videoSize.VideoStartTs = &types.DoubleValue{Value: sz.VideoStartTs}
+	}
+
+	return videoSize
 }
 
 func (m *Dao) SaveVideoSizeV2(ctx context.Context, szId int64, szList []*mtproto.VideoSize) error {

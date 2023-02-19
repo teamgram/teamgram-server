@@ -24,11 +24,95 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/app/service/media/media"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
+
+var (
+	cachePhotoPrefix = "photo"
+	GetPhotoSize     = getPhotoSize
+)
+
+func genCachePhotoKey(id int64) string {
+	return fmt.Sprintf("%s#%d", cachePhotoPrefix, id)
+}
+
+type CachePhotoData struct {
+	Id            int64                      `json:"id"`
+	Photo         *dataobject.PhotosDO       `json:"photo"`
+	SizeList      []*dataobject.PhotoSizesDO `json:"size_list"`
+	VideoSizeList []*dataobject.VideoSizesDO `json:"video_size_list"`
+}
+
+func (c *CachePhotoData) ToPhoto() *mtproto.Photo {
+	if c == nil {
+		return makePhotoEmpty(0)
+	}
+
+	if c.Photo == nil {
+		return makePhotoEmpty(c.Id)
+	}
+
+	if len(c.SizeList) == 0 {
+		return makePhotoEmpty(c.Id)
+	}
+
+	return mtproto.MakeTLPhoto(&mtproto.Photo{
+		Id:            c.Id,
+		HasStickers:   c.Photo.HasStickers,
+		AccessHash:    c.Photo.AccessHash,
+		FileReference: []byte{},
+		Date:          int32(c.Photo.Date2),
+		Sizes:         c.ToSizes(),
+		VideoSizes:    c.ToVideoSizes(),
+		DcId:          c.Photo.DcId,
+	}).To_Photo()
+}
+
+func (c *CachePhotoData) ToSizes() []*mtproto.PhotoSize {
+	szList := make([]*mtproto.PhotoSize, 0, len(c.SizeList))
+
+	for _, sz := range c.SizeList {
+		szList = append(szList, getPhotoSize(sz))
+	}
+
+	return szList
+}
+
+func (c *CachePhotoData) ToPhotoSizeList() *media.PhotoSizeList {
+	return &media.PhotoSizeList{
+		SizeId: c.Id,
+		Sizes:  c.ToSizes(),
+		DcId:   1,
+	}
+}
+
+func (c *CachePhotoData) ToVideoSizes() []*mtproto.VideoSize {
+	if !c.Photo.HasVideo || len(c.VideoSizeList) == 0 {
+		return nil
+	}
+
+	szList := make([]*mtproto.VideoSize, 0, len(c.VideoSizeList))
+
+	for _, sz := range c.VideoSizeList {
+		szList = append(szList, getVideoSize(sz))
+	}
+
+	return szList
+}
+
+func (c *CachePhotoData) ToVideoSizeList() *media.VideoSizeList {
+	return &media.VideoSizeList{
+		SizeId: c.Id,
+		Sizes:  c.ToVideoSizes(),
+		DcId:   1,
+	}
+}
 
 func makePhotoSizesDO(szId int64, sz *mtproto.PhotoSize) *dataobject.PhotoSizesDO {
 	szDO := &dataobject.PhotoSizesDO{
@@ -238,4 +322,57 @@ func (m *Dao) GetPhotoV2(ctx context.Context, photoId int64) (*mtproto.Photo, er
 	}).To_Photo()
 
 	return photo, nil
+}
+
+func (m *Dao) GetCachePhotoData(ctx context.Context, photoId int64) (*CachePhotoData, error) {
+	cacheData := &CachePhotoData{
+		Id:            photoId,
+		Photo:         nil,
+		SizeList:      nil,
+		VideoSizeList: nil,
+	}
+
+	err := m.CachedConn.QueryRow(
+		ctx,
+		cacheData,
+		genCachePhotoKey(photoId),
+		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+			photoDO, err := m.PhotosDAO.SelectByPhotoId(ctx, photoId)
+			if err != nil {
+				return err
+			}
+			//if photoDO == nil {
+			//	return sqlc.ErrNotFound
+			//}
+
+			cData := v.(*CachePhotoData)
+			cData.Photo = photoDO
+
+			_, err = m.PhotoSizesDAO.SelectListByPhotoSizeIdWithCB(
+				ctx,
+				photoId,
+				func(i int, v *dataobject.PhotoSizesDO) {
+					cData.SizeList = append(cData.SizeList, v)
+				})
+			if err != nil {
+				return err
+			}
+
+			if photoDO.HasVideo {
+				m.VideoSizesDAO.SelectListByVideoSizeIdWithCB(
+					ctx,
+					photoId,
+					func(i int, v *dataobject.VideoSizesDO) {
+						cData.VideoSizeList = append(cData.VideoSizeList, v)
+					})
+			}
+
+			return nil
+		})
+
+	if err != nil && err != sqlc.ErrNotFound {
+		return nil, err
+	}
+
+	return cacheData, nil
 }

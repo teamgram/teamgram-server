@@ -36,12 +36,14 @@ import (
 
 var (
 	cacheDocumentPrefix = "document"
+	GenCacheDocumentKey = genCacheDocumentKey
 )
 
 func genCacheDocumentKey(id int64) string {
 	return fmt.Sprintf("%s_%d", cacheDocumentPrefix, id)
 }
 
+// MakeDocumentByDO
 /*
 document#1e87342b flags:#
 	id:long
@@ -55,7 +57,7 @@ document#1e87342b flags:#
 	dc_id:int
 	attributes:Vector<DocumentAttribute> = Document;
 */
-func (m *Dao) makeDocumentByDO(
+func (m *Dao) MakeDocumentByDO(
 	ctx context.Context,
 	document *mtproto.Document,
 	id int64,
@@ -143,7 +145,7 @@ func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {
 			return sqlc.ErrNotFound
 		}
 
-		m.makeDocumentByDO(ctx, v.(*mtproto.Document), id, do, nil, nil)
+		m.MakeDocumentByDO(ctx, v.(*mtproto.Document), id, do, nil, nil)
 		return nil
 	})
 	if err != nil {
@@ -269,7 +271,7 @@ func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mt
 				do       = item.(*dataobject.DocumentsDO)
 				document = new(mtproto.Document)
 			)
-			m.makeDocumentByDO(ctx, document, do.DocumentId, do, thumbSizeListList[do.ThumbId], videoThumbSizeListList[do.VideoThumbId])
+			m.MakeDocumentByDO(ctx, document, do.DocumentId, do, thumbSizeListList[do.ThumbId], videoThumbSizeListList[do.VideoThumbId])
 			m.SetCache(ctx, genCacheDocumentKey(do.DocumentId), document)
 			missDocumentList[do.Id] = document
 		})
