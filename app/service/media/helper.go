@@ -27,8 +27,9 @@ type (
 )
 
 var (
-	GenCacheDocumentKey = dao.GenCacheDocumentKey
-	GetPhotoSize        = dao.GetPhotoSize
+	GenCacheDocumentKey   = dao.GenCacheDocumentKey
+	ParseCacheDocumentKey = dao.ParseCacheDocumentKey
+	GetPhotoSize          = dao.GetPhotoSize
 )
 
 type (

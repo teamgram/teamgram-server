@@ -21,6 +21,8 @@ package dao
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/hack"
@@ -35,12 +37,22 @@ import (
 )
 
 var (
-	cacheDocumentPrefix = "document"
-	GenCacheDocumentKey = genCacheDocumentKey
+	cacheDocumentPrefix   = "document"
+	GenCacheDocumentKey   = genCacheDocumentKey
+	ParseCacheDocumentKey = parseCacheDocumentKey
 )
 
 func genCacheDocumentKey(id int64) string {
 	return fmt.Sprintf("%s_%d", cacheDocumentPrefix, id)
+}
+
+func parseCacheDocumentKey(k string) int64 {
+	if strings.HasPrefix(k, cacheDocumentPrefix+"_") {
+		v, _ := strconv.ParseInt(k[len(cacheDocumentPrefix)+1:], 10, 64)
+		return v
+	}
+
+	return 0
 }
 
 // MakeDocumentByDO
