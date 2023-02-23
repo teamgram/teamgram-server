@@ -125,7 +125,7 @@ func (c *MsgCore) sendUserOutgoingMultiMessage(in *msg.TLMsgSendMultiMessage) (*
 				UserId:     in.PeerId,
 				PeerUserId: in.UserId,
 			})
-			if !mtproto.FromBool(blocked) {
+			if mtproto.FromBool(blocked) {
 				return nil
 			}
 
