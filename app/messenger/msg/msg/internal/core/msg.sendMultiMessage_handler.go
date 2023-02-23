@@ -121,6 +121,14 @@ func (c *MsgCore) sendUserOutgoingMultiMessage(in *msg.TLMsgSendMultiMessage) (*
 		in.PeerId,
 		in.Message,
 		func(inboxMsgList []*mtproto.MessageBox) error {
+			blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(c.ctx, &userpb.TLUserBlockedByUser{
+				UserId:     in.PeerId,
+				PeerUserId: in.UserId,
+			})
+			if !mtproto.FromBool(blocked) {
+				return nil
+			}
+
 			var (
 				inboxMsgDataList = make([]*inbox.InboxMessageData, 0, len(inboxMsgList))
 			)
