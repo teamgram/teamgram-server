@@ -18,7 +18,7 @@ import (
 func init() {
 	zrpc.DontLogContentForMethod("/gateway.RPCGateway/GatewaySendDataToGateway")
 
-	zrpc.DontLogClientContentForMethod("/session.RPCSession/SessionSendDataToSession")
+	zrpc.DontLogClientContentForMethod("/session.RPCSession/session_sendDataToSession")
 }
 
 type (

@@ -18,10 +18,10 @@ import (
 func init() {
 	zrpc.DontLogContentForMethod("/session.RPCSession/SessionSendDataToSession")
 
-	zrpc.DontLogClientContentForMethod("/gateway.RPCGateway/GatewaySendDataToGateway")
-	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadSaveFilePart")
-	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadSaveBigFilePart")
-	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/UploadGetFile")
+	zrpc.DontLogClientContentForMethod("/gateway.RPCGateway/gateway_sendDataToGateway")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/upload_saveFilePart")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/upload_saveBigFilePart")
+	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/upload_getFile")
 }
 
 var (
