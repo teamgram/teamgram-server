@@ -370,13 +370,37 @@ func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
 	return true
 }
 
-func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList []int64, contacts []int64) []*user.ImmutableUser {
+func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, contacts []int64) []*user.ImmutableUser {
+	id := make([]int64, 0, len(idList2)+len(contacts))
+	for _, v := range idList2 {
+		if ok, _ := container2.Contains(v, id); !ok {
+			id = append(id, v)
+		}
+	}
+	for _, v := range contacts {
+		if ok, _ := container2.Contains(v, id); !ok {
+			id = append(id, v)
+		}
+	}
+
 	var (
-		mUsers = make([]*user.ImmutableUser, len(idList))
+		mUsers = make([]*user.ImmutableUser, len(id))
 	)
+
+	if len(id) == 0 {
+		return mUsers
+	} else if len(id) == 1 {
+		immutableUser, _ := d.GetImmutableUser(ctx, id[0], false)
+		if immutableUser != nil {
+			mUsers = append(mUsers, immutableUser)
+		}
+
+		return mUsers
+	}
+
 	mr.ForEach(
 		func(source chan<- interface{}) {
-			for idx := 0; idx < len(idList); idx++ {
+			for idx := 0; idx < len(id); idx++ {
 				source <- idx
 			}
 		},
@@ -386,19 +410,19 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList []int64, con
 				err error
 			)
 
-			if ok, _ := container2.Contains(idList[idx], contacts); ok {
-				mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, idList...)
+			if ok, _ := container2.Contains(id[idx], contacts); ok {
+				mUsers[idx], err = d.GetImmutableUser(ctx, id[idx], true, idList2...)
 				if err != nil {
 					logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
 				}
 			} else {
 				if len(contacts) == 0 {
-					mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, idList...)
+					mUsers[idx], err = d.GetImmutableUser(ctx, id[idx], true, idList2...)
 					if err != nil {
 						logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
 					}
 				} else {
-					mUsers[idx], err = d.GetImmutableUser(ctx, idList[idx], true, contacts...)
+					mUsers[idx], err = d.GetImmutableUser(ctx, id[idx], true, contacts...)
 					if err != nil {
 						logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
 					}
