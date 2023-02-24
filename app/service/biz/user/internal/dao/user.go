@@ -384,7 +384,7 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, co
 	}
 
 	var (
-		mUsers = make([]*user.ImmutableUser, len(id))
+		mUsers = make([]*user.ImmutableUser, 0, len(id))
 	)
 
 	if len(id) == 0 {
