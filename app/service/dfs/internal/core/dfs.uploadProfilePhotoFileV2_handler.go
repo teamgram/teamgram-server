@@ -12,6 +12,7 @@ package core
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/minio/minio-go/v7"
 	"math/rand"
 	"time"
 
@@ -125,7 +126,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 		photoId  = c.svcCtx.Dao.IDGenClient2.NextId(c.ctx)
 		sizeList = make([]*mtproto.PhotoSize, 0, 3)
 		// extType  = model.GetStorageFileTypeConstructor(ext)
-		fileSize int64
+		fileSize minio.UploadInfo
 		//ext         = model.GetFileExtName(video.GetName())
 		ext        = ".jpg"
 		extType    = model.GetStorageFileTypeConstructor(ext)
@@ -146,7 +147,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 			Type:  szType,
 			W:     w,
 			H:     h,
-			Size2: int32(fileSize),
+			Size2: int32(fileSize.Size),
 		}).To_PhotoSize())
 
 		return nil
@@ -194,7 +195,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 
 func (c *DfsCore) uploadPhotoSizeListV2(creatorId int64, file *mtproto.InputFile, isABC bool) (photo *mtproto.Photo, err error) {
 	var (
-		fileSize  int64
+		fileSize  minio.UploadInfo
 		cacheData []byte
 		r         *dao.SSDBReader
 	)
@@ -241,7 +242,7 @@ func (c *DfsCore) uploadPhotoSizeListV2(creatorId int64, file *mtproto.InputFile
 			Type:  szType,
 			W:     w,
 			H:     h,
-			Size2: int32(fileSize),
+			Size2: int32(fileSize.Size),
 		}).To_PhotoSize())
 
 		return nil

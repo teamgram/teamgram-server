@@ -12,6 +12,7 @@ package core
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/minio/minio-go/v7"
 	"math/rand"
 
 	"github.com/teamgram/proto/mtproto"
@@ -25,7 +26,7 @@ import (
 // dfs.uploadPhotoFileV2 creator:long file:InputFile = Photo;
 func (c *DfsCore) DfsUploadPhotoFileV2(in *dfs.TLDfsUploadPhotoFileV2) (*mtproto.Photo, error) {
 	var (
-		fileSize  int64
+		fileSize  minio.UploadInfo
 		cacheData []byte
 		file      = in.GetFile()
 		err       error
@@ -86,7 +87,7 @@ func (c *DfsCore) DfsUploadPhotoFileV2(in *dfs.TLDfsUploadPhotoFileV2) (*mtproto
 			Type:  szType,
 			W:     w,
 			H:     h,
-			Size2: int32(fileSize),
+			Size2: int32(fileSize.Size),
 		}).To_PhotoSize())
 
 		return nil

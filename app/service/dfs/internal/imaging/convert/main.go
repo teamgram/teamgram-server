@@ -21,10 +21,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v7"
 
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 )
@@ -60,9 +61,10 @@ func init() {
 	var err error
 	minioCore, err = minio.NewCore(
 		"127.0.0.1:9000",
-		"TLXH0OZVP0AKOJAZ8DIT",
-		"9Sw+Xbhc3aWvxQ78rRgUkTQQLLZ24SyelA+B6Rwe",
-		false)
+		&minio.Options{
+			Creds:  credentials.NewStaticV4("TLXH0OZVP0AKOJAZ8DIT", "9Sw+Xbhc3aWvxQ78rRgUkTQQLLZ24SyelA+B6Rwe", ""),
+			Secure: false,
+		})
 	if err != nil {
 		panic("new minio error")
 	}

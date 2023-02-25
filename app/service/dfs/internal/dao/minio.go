@@ -26,8 +26,8 @@ import (
 
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
 
-	"github.com/minio/minio-go"
-	"github.com/minio/minio-go/pkg/encrypt"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/encrypt"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -46,7 +46,7 @@ func s3PutOptions(encrypted bool, contentType string) minio.PutObjectOptions {
 }
 
 func (d *Dao) GetFileObject(ctx context.Context, bucket, path string) (*minio.Object, error) {
-	object, err := d.minio.Client.GetObject(bucket, path, minio.GetObjectOptions{})
+	object, err := d.minio.Client.GetObject(ctx, bucket, path, minio.GetObjectOptions{})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("GetFileObject error: %v")
 		return nil, err
@@ -63,7 +63,7 @@ func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset int64, li
 		n      int
 	)
 
-	object, err = d.minio.Client.GetObject(bucket, path, minio.GetObjectOptions{})
+	object, err = d.minio.Client.GetObject(ctx, bucket, path, minio.GetObjectOptions{})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("GetFile error: %v")
 		return
@@ -83,7 +83,7 @@ func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset int64, li
 	return
 }
 
-func (d *Dao) PutPhotoFile(ctx context.Context, path string, buf []byte) (n int64, err error) {
+func (d *Dao) PutPhotoFile(ctx context.Context, path string, buf []byte) (n minio.UploadInfo, err error) {
 	_ = ctx
 
 	var contentType string
@@ -94,14 +94,14 @@ func (d *Dao) PutPhotoFile(ctx context.Context, path string, buf []byte) (n int6
 	}
 
 	options := s3PutOptions(false, contentType)
-	n, err = d.minio.Client.PutObject("photos", path, bytes.NewReader(buf), int64(len(buf)), options)
+	n, err = d.minio.Client.PutObject(ctx, "photos", path, bytes.NewReader(buf), int64(len(buf)), options)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("PutPhotoFile (%s) error: %v", path, err)
 	}
 	return
 }
 
-func (d *Dao) PutPhotoFileV2(ctx context.Context, path string, r io.Reader) (n int64, err error) {
+func (d *Dao) PutPhotoFileV2(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error) {
 	var (
 		contentType string
 	)
@@ -113,14 +113,14 @@ func (d *Dao) PutPhotoFileV2(ctx context.Context, path string, r io.Reader) (n i
 	}
 
 	options := s3PutOptions(false, contentType)
-	n, err = d.minio.Client.PutObject("photos", path, r, -1, options)
+	n, err = d.minio.Client.PutObject(ctx, "photos", path, r, -1, options)
 	if err != nil {
 		logx.Errorf("PutPhotoFile (%s) error: %v", path, err)
 	}
 	return
 }
 
-func (d *Dao) PutVideoFile(ctx context.Context, path string, buf []byte) (n int64, err error) {
+func (d *Dao) PutVideoFile(ctx context.Context, path string, buf []byte) (n minio.UploadInfo, err error) {
 	_ = ctx
 
 	var contentType string
@@ -131,14 +131,14 @@ func (d *Dao) PutVideoFile(ctx context.Context, path string, buf []byte) (n int6
 	}
 
 	options := s3PutOptions(false, contentType)
-	n, err = d.minio.Client.PutObject("videos", path, bytes.NewReader(buf), int64(len(buf)), options)
+	n, err = d.minio.Client.PutObject(ctx, "videos", path, bytes.NewReader(buf), int64(len(buf)), options)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("PutPhotoFile (%s) error: %v", path, err)
 	}
 	return
 }
 
-func (d *Dao) PutDocumentFile(ctx context.Context, path string, r io.Reader) (n int64, err error) {
+func (d *Dao) PutDocumentFile(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error) {
 	_ = ctx
 
 	var contentType string
@@ -149,14 +149,14 @@ func (d *Dao) PutDocumentFile(ctx context.Context, path string, r io.Reader) (n 
 	}
 
 	options := s3PutOptions(false, contentType)
-	n, err = d.minio.Client.PutObject("documents", path, r, -1, options)
+	n, err = d.minio.Client.PutObject(ctx, "documents", path, r, -1, options)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("PutDocumentFile (%s) error: %v", path, err)
 	}
 	return
 }
 
-func (d *Dao) FPutDocumentFile(ctx context.Context, path string, r string) (n int64, err error) {
+func (d *Dao) FPutDocumentFile(ctx context.Context, path string, r string) (n minio.UploadInfo, err error) {
 	_ = ctx
 
 	var contentType string
@@ -167,18 +167,18 @@ func (d *Dao) FPutDocumentFile(ctx context.Context, path string, r string) (n in
 	}
 
 	options := s3PutOptions(false, contentType)
-	n, err = d.minio.Client.FPutObject("documents", path, r, options)
+	n, err = d.minio.Client.FPutObject(ctx, "documents", path, r, options)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("PutDocumentFile (%s) error: %v", path, err)
 	}
 	return
 }
 
-func (d *Dao) PutEncryptedFile(ctx context.Context, path string, r io.Reader) (n int64, err error) {
+func (d *Dao) PutEncryptedFile(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error) {
 	_ = ctx
 
 	options := s3PutOptions(false, "binary/octet-stream")
-	n, err = d.minio.Client.PutObject("encryptedfiles", path, r, -1, options)
+	n, err = d.minio.Client.PutObject(ctx, "encryptedfiles", path, r, -1, options)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("PutEncryptedFile (%s) error: %v", path, err)
 	}

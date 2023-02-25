@@ -10,7 +10,7 @@
 package dao
 
 import (
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v7"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"

@@ -17,10 +17,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"io/ioutil"
 
-	"github.com/minio/minio-go"
+	"github.com/minio/minio-go/v7"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -38,9 +40,10 @@ func init() {
 	var err error
 	minioCore, err = minio.NewCore(
 		"127.0.0.1:9000",
-		"TLXH0OZVP0AKOJAZ8DIT",
-		"9Sw+Xbhc3aWvxQ78rRgUkTQQLLZ24SyelA+B6Rwe",
-		false)
+		&minio.Options{
+			Creds:  credentials.NewStaticV4("TLXH0OZVP0AKOJAZ8DIT", "9Sw+Xbhc3aWvxQ78rRgUkTQQLLZ24SyelA+B6Rwe", ""),
+			Secure: false,
+		})
 	if err != nil {
 		panic("new minio error")
 	}
@@ -65,7 +68,7 @@ func SaveFilePart(creator, fileId int64, filePart int32, b []byte) error {
 	)
 
 	if state, ok = partsStates[object]; !ok {
-		uploadID, err := minioCore.NewMultipartUpload(bucket, object, minio.PutObjectOptions{})
+		uploadID, err := minioCore.NewMultipartUpload(context.Background(), bucket, object, minio.PutObjectOptions{})
 		if err != nil {
 			logx.Errorf("error - %v", err)
 			return err
@@ -77,6 +80,7 @@ func SaveFilePart(creator, fileId int64, filePart int32, b []byte) error {
 	}
 
 	objPart, err := minioCore.PutObjectPart(
+		context.Background(),
 		bucket,
 		object,
 		state.uploadID,
@@ -122,7 +126,7 @@ func main() {
 		return
 	}
 
-	uploadID, err = minioCore.NewMultipartUpload(bucket, object, minio.PutObjectOptions{})
+	uploadID, err = minioCore.NewMultipartUpload(context.Background(), bucket, object, minio.PutObjectOptions{})
 	if err != nil {
 		logx.Errorf("error: %v", err)
 		return
@@ -130,6 +134,7 @@ func main() {
 
 	for i = 0; i < len(b)/partSize; i++ {
 		objPart, err := minioCore.PutObjectPart(
+			context.Background(),
 			bucket,
 			object,
 			uploadID,
@@ -153,6 +158,7 @@ func main() {
 	lastSize := len(b) % partSize
 	if lastSize > 0 {
 		objPart, err := minioCore.PutObjectPart(
+			context.Background(),
 			bucket,
 			object,
 			uploadID,
@@ -173,7 +179,7 @@ func main() {
 			ETag:       objPart.ETag})
 	}
 
-	eTag, err := minioCore.CompleteMultipartUpload(bucket, object, uploadID, parts)
+	eTag, err := minioCore.CompleteMultipartUpload(context.Background(), bucket, object, uploadID, parts, minio.PutObjectOptions{})
 	if err != nil {
 		logx.Errorf("error - %v", err)
 	}

@@ -16,9 +16,9 @@
 package minio_util
 
 import (
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"log"
-
-	"github.com/minio/minio-go"
 )
 
 type MinioConfig struct {
@@ -34,7 +34,12 @@ type MinioConfig struct {
 // useSSL := true
 
 func MustNewMinioClient(c *MinioConfig) *minio.Core {
-	core, err := minio.NewCore(c.Endpoint, c.AccessKeyID, c.SecretAccessKey, c.UseSSL)
+	core, err := minio.NewCore(
+		c.Endpoint,
+		&minio.Options{
+			Creds:  credentials.NewStaticV4(c.AccessKeyID, c.SecretAccessKey, ""),
+			Secure: c.UseSSL,
+		})
 	if err != nil {
 		log.Fatal(err)
 	}
