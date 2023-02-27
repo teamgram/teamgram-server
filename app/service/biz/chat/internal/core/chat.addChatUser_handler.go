@@ -35,6 +35,12 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*chat.MutableCha
 		if err != nil {
 			c.Logger.Errorf("chat.addChatUser - error: %v", err)
 			return nil, err
+		} else {
+			if chat2.Deactivated() && chat2.GetChat().GetMigratedTo() != nil {
+				err = mtproto.ErrMigratedToChannel
+				c.Logger.Errorf("chat.addChatUser - error: %v", err)
+				return nil, err
+			}
 		}
 
 		me, _ = chat2.GetImmutableChatParticipant(inviterId)

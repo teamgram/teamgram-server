@@ -60,12 +60,17 @@ func (c *ChatCore) ChatImportChatInvite2(in *chat.TLChatImportChatInvite2) (*cha
 	}
 
 	if chatInviteDO.RequestNeeded {
-		mChat, err := c.svcCtx.Dao.GetMutableChat(c.ctx, chatInviteDO.ChatId, chatInviteDO.AdminId, in.SelfId)
-		if err != nil {
-			err = mtproto.ErrPeerIdInvalid
-			c.Logger.Errorf("chat.importChatInvite - error: %v", err)
-			return nil, err
+		mChat, err2 := c.svcCtx.Dao.GetMutableChat(c.ctx, chatInviteDO.ChatId, chatInviteDO.AdminId, in.SelfId)
+		if err2 != nil {
+			err2 = mtproto.ErrPeerIdInvalid
+			c.Logger.Errorf("chat.importChatInvite - error: %v", err2)
+			return nil, err2
+		} else if mChat.Deactivated() && mChat.GetChat().GetMigratedTo() != nil {
+			err2 = mtproto.ErrMigratedToChannel
+			c.Logger.Errorf("chat.importChatInvite - error: %v", err2)
+			return nil, err2
 		}
+
 		c.svcCtx.Dao.ChatInviteParticipantsDAO.Insert(c.ctx, &dataobject.ChatInviteParticipantsDO{
 			ChatId:    chatInviteDO.ChatId,
 			Link:      in.Hash,

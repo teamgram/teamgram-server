@@ -60,6 +60,12 @@ func (c *ChatCore) ChatCheckChatInvite(in *chat.TLChatCheckChatInvite) (*chat.Ch
 	if err != nil {
 		c.Logger.Errorf("chat.checkChatInvite - error: %v", err)
 		return nil, err
+	} else {
+		if mChat.Deactivated() && mChat.GetChat().GetMigratedTo() != nil {
+			err = mtproto.ErrMigratedToChannel
+			c.Logger.Errorf("chat.checkChatInvite - error: %v", err)
+			return nil, err
+		}
 	}
 
 	admin, _ := mChat.GetImmutableChatParticipant(chatInviteDO.AdminId)
