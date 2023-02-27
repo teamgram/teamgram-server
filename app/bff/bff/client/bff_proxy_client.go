@@ -21,6 +21,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -130,7 +131,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 		logger.Errorf("RPC method: %s,  >> %v.Invoke(_) = _, %v: %#v", t.Method, conn.Conn(), err, reflect.TypeOf(err))
 		if nErr, ok := status.FromError(err); ok {
 			return nil, mtproto.MakeTLRpcError(&mtproto.RpcError{
-				ErrorCode:    int32(nErr.Code()),
+				ErrorCode:    int32(ToMTProtoErrorCod(nErr.Code())),
 				ErrorMessage: nErr.Message(),
 			})
 		} else {
@@ -173,5 +174,30 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 		}
 
 		return reply, nil
+	}
+}
+
+func ToMTProtoErrorCod(code codes.Code) codes.Code {
+	switch code {
+	case mtproto.ErrSeeOther:
+		return code
+	case mtproto.ErrBadRequest:
+		return code
+	case mtproto.ErrUnauthorized:
+		return code
+	case mtproto.ErrForbidden:
+		return code
+	case mtproto.ErrNotFound:
+		return code
+	case mtproto.ErrNotAcceptable:
+		return code
+	case mtproto.ErrFlood:
+		return code
+	case mtproto.ErrInternal:
+		return code
+	case mtproto.ErrNotReturnClient:
+		return code
+	default:
+		return mtproto.ErrInternal
 	}
 }
