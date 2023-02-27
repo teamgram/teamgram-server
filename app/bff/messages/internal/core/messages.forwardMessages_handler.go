@@ -270,6 +270,8 @@ func (c *MessagesCore) makeForwardMessages(
 		m.Silent = request.Silent
 		m.Post = false
 		m.GroupedId = nil
+		m.ReplyTo = nil
+		m.Reactions = nil
 
 		fwdOutboxList = append(fwdOutboxList, &msgpb.OutboxMessage{
 			NoWebpage:    true,
