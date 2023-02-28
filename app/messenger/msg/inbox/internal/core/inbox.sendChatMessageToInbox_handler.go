@@ -97,12 +97,26 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 				}).To_Update())
 			}
 
+			//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
+			//	&userpb.TLUserGetMutableUsers{
+			//		Id: []int64{in.FromId, v.UserId},
+			//	})
+
+			var (
+				isBot = false
+			)
+
 			pushUpdates := mtproto.MakePushUpdates(
 				func(idList []int64) []*mtproto.User {
 					users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
 						&userpb.TLUserGetMutableUsers{
 							Id: append(idList, v.UserId),
 						})
+					for _, bot := range users.GetDatas() {
+						if bot.Id() == v.UserId && bot.IsBot() {
+							isBot = true
+						}
+					}
 					return users.GetUserListByIdList(v.UserId, idList...)
 				},
 				func(idList []int64) []*mtproto.Chat {
@@ -118,10 +132,21 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 				},
 				updates...)
 
-			c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-				UserId:  v.UserId,
-				Updates: pushUpdates,
-			})
+			if isBot {
+				if c.svcCtx.Dao.BotSyncClient != nil {
+					_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
+						UserId:  inBox.UserId,
+						Updates: pushUpdates,
+					})
+				} else {
+					// TODO: log
+				}
+			} else {
+				c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+					UserId:  v.UserId,
+					Updates: pushUpdates,
+				})
+			}
 		})
 	if err != nil {
 		c.Logger.Errorf("inbox.sendUserMessageToInbox - error: %v", err)

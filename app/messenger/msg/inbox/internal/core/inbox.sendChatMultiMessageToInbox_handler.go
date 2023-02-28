@@ -56,12 +56,36 @@ func (c *InboxCore) InboxSendChatMultiMessageToInbox(in *inbox.TLInboxSendChatMu
 			return nil
 		}
 
-		_, err = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-			UserId:  userId,
-			Updates: c.makeUpdateNewMessageListUpdates(userId, inBoxList...),
-		})
-		if err != nil {
-			c.Logger.Errorf("inbox.sendChatMultiMessageToInbox - error: %v", err)
+		pushUpdates := c.makeUpdateNewMessageListUpdates(userId, inBoxList...)
+
+		var (
+			isBot = false
+		)
+
+		for _, u := range pushUpdates.GetUsers() {
+			if u.GetId() == userId {
+				isBot = u.GetBot()
+				break
+			}
+		}
+
+		if isBot {
+			if c.svcCtx.Dao.BotSyncClient != nil {
+				_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
+					UserId:  userId,
+					Updates: pushUpdates,
+				})
+			} else {
+				// TODO: log
+			}
+		} else {
+			_, err = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+				UserId:  userId,
+				Updates: c.makeUpdateNewMessageListUpdates(userId, inBoxList...),
+			})
+			if err != nil {
+				c.Logger.Errorf("inbox.sendChatMultiMessageToInbox - error: %v", err)
+			}
 		}
 
 		return nil

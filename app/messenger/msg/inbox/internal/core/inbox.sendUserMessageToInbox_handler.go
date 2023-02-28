@@ -57,13 +57,17 @@ func (c *InboxCore) InboxSendUserMessageToInbox(in *inbox.TLInboxSendUserMessage
 
 	pushUpdates := c.makeUpdateNewMessageListUpdates(in.PeerUserId, inBox)
 
-	var isBot = false
+	var (
+		isBot = false
+	)
+
 	for _, u := range pushUpdates.GetUsers() {
 		if u.GetId() == in.PeerUserId {
 			isBot = u.GetBot()
 			break
 		}
 	}
+
 	if isBot {
 		if c.svcCtx.Dao.BotSyncClient != nil {
 			_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{

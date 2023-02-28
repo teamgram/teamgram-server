@@ -44,13 +44,36 @@ func (c *InboxCore) InboxSendUserMultiMessageToInbox(in *inbox.TLInboxSendUserMu
 
 	pushUpdates := c.makeUpdateNewMessageListUpdates(in.PeerUserId, inBoxList...)
 
-	_, err = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-		UserId:  in.PeerUserId,
-		Updates: pushUpdates,
-	})
-	if err != nil {
-		c.Logger.Errorf("inbox.sendUserMultiMessageToInbox - error: %v", err)
-		return nil, err
+	var (
+		isBot = false
+	)
+
+	for _, u := range pushUpdates.GetUsers() {
+		if u.GetId() == in.PeerUserId {
+			isBot = u.GetBot()
+			break
+		}
+	}
+
+	if isBot {
+		if c.svcCtx.Dao.BotSyncClient != nil {
+			_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
+				UserId:  in.PeerUserId,
+				Updates: pushUpdates,
+			})
+		} else {
+			// TODO: log
+		}
+	} else {
+
+		_, err = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+			UserId:  in.PeerUserId,
+			Updates: pushUpdates,
+		})
+		if err != nil {
+			c.Logger.Errorf("inbox.sendUserMultiMessageToInbox - error: %v", err)
+			// return nil, err
+		}
 	}
 
 	return mtproto.EmptyVoid, nil
