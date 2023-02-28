@@ -117,7 +117,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 							isBot = true
 						}
 					}
-					return users.GetUserListByIdList(v.UserId, idList...)
+					return users.GetUserListByIdList(v.UserId, append(idList, v.UserId)...)
 				},
 				func(idList []int64) []*mtproto.Chat {
 					chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
@@ -135,7 +135,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 			if isBot {
 				if c.svcCtx.Dao.BotSyncClient != nil {
 					_, err = c.svcCtx.Dao.BotSyncClient.SyncPushBotUpdates(c.ctx, &sync.TLSyncPushBotUpdates{
-						UserId:  inBox.UserId,
+						UserId:  v.UserId,
 						Updates: pushUpdates,
 					})
 				} else {
