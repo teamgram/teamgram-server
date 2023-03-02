@@ -117,9 +117,8 @@ func (c *AuthorizationCore) pushSignInMessage(ctx context.Context, signInUserId 
 			message.Message, message.Entities = mtproto.MakeTextAndMessageEntities(builder)
 		}
 
-		_ = ctx
 		c.svcCtx.Dao.MsgClient.MsgPushUserMessage(
-			context.Background(),
+			ctx,
 			&msgpb.TLMsgPushUserMessage{
 				UserId:    777000,
 				AuthKeyId: 0,

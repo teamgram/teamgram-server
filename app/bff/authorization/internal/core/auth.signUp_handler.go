@@ -208,9 +208,9 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 		}).To_Auth_Authorization(),
 		func(ctx context.Context) {
 			// on event
-			c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
-			c.pushSignInMessage(c.ctx, user.Id(), codeData.PhoneCode)
-			c.onContactSignUp(c.ctx, c.MD.AuthId, user.Id(), phoneNumber)
+			c.svcCtx.AuthLogic.DeletePhoneCode(ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
+			c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
+			c.onContactSignUp(ctx, c.MD.AuthId, user.Id(), phoneNumber)
 		},
 	).(*mtproto.Auth_Authorization), nil
 }
@@ -222,10 +222,11 @@ func (c *AuthorizationCore) onContactSignUp(ctx context.Context, authKeyId, user
 
 	for _, c2 := range importers.GetDatas() {
 		c.Logger.Infof("importer: %v", c2)
-		v, _ := c.svcCtx.Dao.UserClient.UserGetContactSignUpNotification(c.ctx, &userpb.TLUserGetContactSignUpNotification{
+		v, _ := c.svcCtx.Dao.UserClient.UserGetContactSignUpNotification(ctx, &userpb.TLUserGetContactSignUpNotification{
 			UserId: c2.ClientId,
 		})
 
+		_ = authKeyId
 		if mtproto.FromBool(v) {
 			c.svcCtx.Dao.MsgClient.MsgPushUserMessage(
 				context.Background(),
@@ -247,7 +248,7 @@ func (c *AuthorizationCore) onContactSignUp(ctx context.Context, authKeyId, user
 			c.Logger.Infof("not setting contactSignUpNotification")
 		}
 	}
-	c.svcCtx.Dao.UserClient.UserDeleteImportersByPhone(c.ctx, &userpb.TLUserDeleteImportersByPhone{
+	c.svcCtx.Dao.UserClient.UserDeleteImportersByPhone(ctx, &userpb.TLUserDeleteImportersByPhone{
 		Phone: phone,
 	})
 }

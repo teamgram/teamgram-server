@@ -18,7 +18,9 @@
 
 package plugin
 
-import "context"
+import (
+	"context"
+)
 
 type AuthorizationPlugin interface {
 	OnAuthLogout(ctx context.Context, userId int64, keys ...int64) error

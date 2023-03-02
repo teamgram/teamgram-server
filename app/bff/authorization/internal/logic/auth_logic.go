@@ -159,6 +159,7 @@ func (m *AuthLogic) DoAuthReSendCode(ctx context.Context,
 	return
 }
 
+// DoAuthCancelCode
 // auth.cancelCode
 func (m *AuthLogic) DoAuthCancelCode(ctx context.Context, authKeyId int64, phoneNumber, phoneCodeHash string) error {
 	return m.Dao.DeletePhoneCode(ctx, authKeyId, phoneNumber, phoneCodeHash)

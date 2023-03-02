@@ -201,11 +201,11 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 			}
 
 			threading2.WrapperGoFunc(c.ctx, nil, func(ctx context.Context) {
-				c.onContactSignUp(c.ctx, c.MD.AuthId, user.Id(), phoneNumber)
+				c.onContactSignUp(ctx, c.MD.AuthId, user.Id(), phoneNumber)
 
 				// on event
 				// c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
-				c.pushSignInMessage(c.ctx, user.Id(), codeData.PhoneCode)
+				c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
 			})
 
 			codeData.PhoneNumberRegistered = true

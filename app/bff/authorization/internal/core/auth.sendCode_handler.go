@@ -21,6 +21,7 @@ package core
 import (
 	"context"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
@@ -303,7 +304,9 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 						codeData2.PhoneCodeExtraData = codeData2.PhoneCode
 					}
 				}
-				c.pushSignInMessage(c.ctx, user.Id(), codeData2.PhoneCode)
+				threading2.WrapperGoFunc(c.ctx, nil, func(ctx context.Context) {
+					c.pushSignInMessage(ctx, user.Id(), codeData2.PhoneCode)
+				})
 			}
 
 			if needSendSms {
