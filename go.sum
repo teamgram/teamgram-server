@@ -2373,8 +2373,8 @@ github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2/go.mod h1:yHp0
 github.com/tdakkota/asciicheck v0.0.0-20200416200610-e657995f937b/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
 github.com/teamgram/go-zero v0.0.0-20230220002326-6337ffb67972 h1:g7/MATsUhezcKWXPNufBonA/DX6/0kdzAlDRv1/cvxI=
 github.com/teamgram/go-zero v0.0.0-20230220002326-6337ffb67972/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
-github.com/teamgram/marmota v0.1.14-0.20230224145341-73dc18a05769 h1:QKPflfdCXIjiFxxRlM8cyj4J7z5M242E5DsE+sxya0c=
-github.com/teamgram/marmota v0.1.14-0.20230224145341-73dc18a05769/go.mod h1:OATKcgZdxFmu+vcM867sel7mYetHT/09Hl4rqSMAzD4=
+github.com/teamgram/marmota v0.1.14 h1:FU8LTgRp5QV3Jg2M8GK+N6XOSuEIDsObX3Syim8FSUM=
+github.com/teamgram/marmota v0.1.14/go.mod h1:cPnJbYULixPlE8K/5jKnA/OUXmqogWi5Go4ogcXU8Pg=
 github.com/teamgram/proto v0.150.1-0.20230216075814-255d30c8425b h1:KVtV+JQ3HbtX+QXzhOWXAy8xmSRzNDpevHRf8+n4H/Q=
 github.com/teamgram/proto v0.150.1-0.20230216075814-255d30c8425b/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=
@@ -2430,6 +2430,7 @@ github.com/uudashr/gocognit v1.0.5/go.mod h1:wgYz0mitoKOTysqxTDMOUXg+Jb5Svtihkfm
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.2.0/go.mod h1:4vX61m6KN+xDduDNwXrhIAVZaZaZiQ1luJk8LWSxF3s=
 github.com/valyala/fasthttp v1.30.0/go.mod h1:2rsYD01CKFrjjsvFxx75KlEUNpWNBY9JWD3K/7o2Cus=
+github.com/valyala/fastjson v1.6.4/go.mod h1:CLCAqky6SMuOcxStkYQvblddUtoRxhYMGLrsQns1aXY=
 github.com/valyala/quicktemplate v1.2.0/go.mod h1:EH+4AkTd43SvgIbQHYu59/cJyxDoOVRUAfrukLPuGJ4=
 github.com/valyala/quicktemplate v1.7.0/go.mod h1:sqKJnoaOF88V07vkO+9FL8fb9uZg/VPSJnLYn+LmLk8=
 github.com/valyala/tcplisten v0.0.0-20161114210144-ceec8f93295a/go.mod h1:v3UYOV9WzVtRmSR+PDvWpU/qWl4Wa5LApYYX4ZtKbio=
