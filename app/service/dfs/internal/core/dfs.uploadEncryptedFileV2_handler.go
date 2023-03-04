@@ -10,9 +10,11 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 )
@@ -35,12 +37,12 @@ func (c *DfsCore) DfsUploadEncryptedFileV2(in *dfs.TLDfsUploadEncryptedFileV2) (
 	c.svcCtx.Dao.SetCacheFileInfo(c.ctx, encryptedFileId, fileInfo)
 	path := fmt.Sprintf("%d.dat", encryptedFileId)
 
-	go func() {
-		_, err2 := c.svcCtx.Dao.PutEncryptedFile(c.ctx, path, c.svcCtx.Dao.NewSSDBReader(fileInfo))
+	threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
+		_, err2 := c.svcCtx.Dao.PutEncryptedFile(ctx, path, c.svcCtx.Dao.NewSSDBReader(fileInfo))
 		if err2 != nil {
 			c.Logger.Errorf("dfs.uploadEncryptedFile - error: %v", err)
 		}
-	}()
+	})
 
 	encryptedFile := mtproto.MakeTLEncryptedFile(&mtproto.EncryptedFile{
 		Id:             encryptedFileId,

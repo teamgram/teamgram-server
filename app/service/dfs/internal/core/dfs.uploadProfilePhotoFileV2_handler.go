@@ -12,7 +12,6 @@ package core
 import (
 	"crypto/md5"
 	"fmt"
-	"github.com/minio/minio-go/v7"
 	"math/rand"
 	"time"
 
@@ -23,6 +22,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
 
 	"github.com/gogo/protobuf/types"
+	"github.com/minio/minio-go/v7"
 )
 
 // DfsUploadProfilePhotoFileV2

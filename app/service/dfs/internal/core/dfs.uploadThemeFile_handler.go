@@ -11,6 +11,7 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"image"
@@ -18,6 +19,7 @@ import (
 	"time"
 
 	"github.com/teamgram/marmota/pkg/bytes2"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/dao"
@@ -62,14 +64,15 @@ func (c *DfsCore) DfsUploadThemeFile(in *dfs.TLDfsUploadThemeFile) (*mtproto.Doc
 	}
 	c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, fileInfo)
 
-	go func() {
-		_, err2 := c.svcCtx.Dao.PutDocumentFile(c.ctx,
+	threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
+		_, err2 := c.svcCtx.Dao.PutDocumentFile(
+			ctx,
 			fmt.Sprintf("%d.dat", documentId),
 			c.svcCtx.Dao.NewSSDBReader(fileInfo))
 		if err2 != nil {
 			c.Logger.Errorf("dfs.uploadThemeFile - error: %v", err2)
 		}
-	}()
+	})
 
 	// upload thumb file
 	if thumbFile != nil {

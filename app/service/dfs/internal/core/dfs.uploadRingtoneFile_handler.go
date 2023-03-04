@@ -19,16 +19,18 @@
 package core
 
 import (
+	"context"
 	"fmt"
-	"github.com/gogo/protobuf/types"
+	"math/rand"
+	"time"
+
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/ffmpegutil"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
-	"github.com/zeromicro/go-zero/core/contextx"
-	"github.com/zeromicro/go-zero/core/threading"
-	"math/rand"
-	"time"
+
+	"github.com/gogo/protobuf/types"
 )
 
 // DfsUploadRingtoneFile
@@ -75,9 +77,9 @@ func (c *DfsCore) DfsUploadRingtoneFile(in *dfs.TLDfsUploadRingtoneFile) (*mtpro
 	}
 	c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, fileInfo)
 
-	threading.RunSafe(func() {
+	threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
 		_, err2 := c.svcCtx.Dao.PutDocumentFile(
-			contextx.ValueOnlyFrom(c.ctx),
+			ctx,
 			fmt.Sprintf("%d.dat", documentId),
 			c.svcCtx.Dao.NewSSDBReader(fileInfo))
 		if err2 != nil {

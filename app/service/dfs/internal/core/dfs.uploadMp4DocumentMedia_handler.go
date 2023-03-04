@@ -11,12 +11,14 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"image"
 	"math/rand"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/bytes2"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
@@ -167,9 +169,9 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 		c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, fileInfo)
 		path = fmt.Sprintf("%d.dat", documentId)
 
-		threading.RunSafe(func() {
+		threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
 			_, err2 := c.svcCtx.Dao.PutDocumentFile(
-				contextx.ValueOnlyFrom(c.ctx),
+				ctx,
 				path,
 				c.svcCtx.Dao.NewSSDBReader(fileInfo))
 			if err2 != nil {

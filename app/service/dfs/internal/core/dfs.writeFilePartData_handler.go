@@ -71,11 +71,13 @@ func (c *DfsCore) DfsWriteFilePartData(in *dfs.TLDfsWriteFilePartData) (*mtproto
 
 	if in.GetFileTotalParts() != nil {
 		if in.GetFileTotalParts().GetValue() == in.FilePart+1 {
-			err = c.svcCtx.Dao.SetFileInfo(c.ctx, &model.DfsFileInfo{
-				Creator:          in.Creator,
-				FileId:           in.FileId,
-				LastFilePartSize: len(in.Bytes),
-			})
+			err = c.svcCtx.Dao.SetFileInfo(
+				c.ctx,
+				&model.DfsFileInfo{
+					Creator:          in.Creator,
+					FileId:           in.FileId,
+					LastFilePartSize: len(in.Bytes),
+				})
 
 			// TODO(@benqi): error
 			if err != nil {

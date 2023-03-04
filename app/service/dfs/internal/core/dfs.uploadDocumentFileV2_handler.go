@@ -11,11 +11,13 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"image"
 	"math/rand"
 
 	"github.com/teamgram/marmota/pkg/bytes2"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
@@ -181,23 +183,23 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 	}
 
 	defer func() {
-		go func() {
+		threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
 			if mtproto.IsMimeAcceptedForPhotoVideoAlbum(document.MimeType) && model.IsFileExtImage(ext) {
-				_, err2 := c.svcCtx.Dao.PutDocumentFile(c.ctx,
+				_, err2 := c.svcCtx.Dao.PutDocumentFile(ctx,
 					fmt.Sprintf("%d.dat", documentId),
 					bytes.NewReader(cacheData))
 				if err2 != nil {
 					c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err2)
 				}
 			} else {
-				_, err2 := c.svcCtx.Dao.PutDocumentFile(c.ctx,
+				_, err2 := c.svcCtx.Dao.PutDocumentFile(ctx,
 					fmt.Sprintf("%d.dat", documentId),
 					c.svcCtx.Dao.NewSSDBReader(r.DfsFileInfo))
 				if err2 != nil {
 					c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err2)
 				}
 			}
-		}()
+		})
 	}()
 
 	return document, nil
