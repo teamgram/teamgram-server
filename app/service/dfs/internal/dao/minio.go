@@ -68,6 +68,7 @@ func (d *Dao) GetFile(ctx context.Context, bucket, path string, offset int64, li
 		logx.WithContext(ctx).Errorf("GetFile error: %v")
 		return
 	}
+	defer object.Close()
 
 	bytes = make([]byte, limit)
 	n, err = object.ReadAt(bytes, offset)
