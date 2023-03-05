@@ -383,20 +383,20 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, co
 		}
 	}
 
-	var (
-		mUsers = make([]*user.ImmutableUser, 0, len(id))
-	)
-
 	if len(id) == 0 {
-		return mUsers
+		return []*user.ImmutableUser{}
 	} else if len(id) == 1 {
 		immutableUser, _ := d.GetImmutableUser(ctx, id[0], false)
 		if immutableUser != nil {
-			mUsers = append(mUsers, immutableUser)
+			return []*user.ImmutableUser{immutableUser}
+		} else {
+			return []*user.ImmutableUser{}
 		}
-
-		return mUsers
 	}
+
+	var (
+		mUsers = make([]*user.ImmutableUser, len(id))
+	)
 
 	mr.ForEach(
 		func(source chan<- interface{}) {
