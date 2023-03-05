@@ -52,7 +52,7 @@ func (d *Dao) GetFileInfo(ctx context.Context, ownerId, fileId int64) (fileInfo 
 		k      = getFileInfoKey(ownerId, fileId)
 	)
 
-	if values, err = d.ssdb.Hgetall(k); err != nil {
+	if values, err = d.ssdb.HgetallCtx(ctx, k); err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HGETALL %s) error(%v)", k, err)
 		return
 	}
@@ -123,12 +123,12 @@ func (d *Dao) getFileTotalPartsByFile(ctx context.Context, ownerId, fileId int64
 		k    = getFileKey(ownerId, fileId)
 		bBuf string
 	)
-	if fileTotalParts, err = d.ssdb.Hlen(k); err != nil {
+	if fileTotalParts, err = d.ssdb.HlenCtx(ctx, k); err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HLEN %s) error(%v)", k, err)
 		return
 	}
 
-	if bBuf, err = d.ssdb.Hget(k, strconv.Itoa(fileTotalParts-1)); err != nil {
+	if bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(fileTotalParts-1)); err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HGET %s %d) error(%v)", k, err, fileTotalParts-1)
 		return
 	}

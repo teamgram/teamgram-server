@@ -43,7 +43,7 @@ func (d *Dao) GetCacheQRLoginCode(ctx context.Context, keyId int64) (code *model
 		values map[string]string
 	)
 
-	values, err = d.kv.Hgetall(key)
+	values, err = d.kv.HgetallCtx(ctx, key)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HGETALL %s) error(%v)", key, err)
 		return nil, err
@@ -98,7 +98,7 @@ func (d *Dao) PutCacheQRLoginCode(ctx context.Context, keyId int64, qrCode *mode
 	)
 
 	// TODO(@benqi): args error??
-	if err = d.kv.Hmset(key, args); err != nil {
+	if err = d.kv.HmsetCtx(ctx, key, args); err != nil {
 		logx.WithContext(ctx).Error("conn.Send(HMSET %s,%v) error(%v)", key, args, err)
 		return
 	}
@@ -118,7 +118,7 @@ func (d *Dao) UpdateCacheQRLoginCode(ctx context.Context, keyId int64, values ma
 		key = genQRLoginCodeKey(keyId)
 	)
 
-	if err = d.kv.Hmset(key, values); err != nil {
+	if err = d.kv.HmsetCtx(ctx, key, values); err != nil {
 		logx.WithContext(ctx).Errorf("conn.HSET(%s) error(%v)", key, err)
 	}
 
@@ -128,7 +128,7 @@ func (d *Dao) UpdateCacheQRLoginCode(ctx context.Context, keyId int64, values ma
 func (d *Dao) DeleteCacheQRLoginCode(ctx context.Context, authKeyId int64) (err error) {
 	key := genQRLoginCodeKey(authKeyId)
 
-	if _, err = d.kv.Del(key); err != nil {
+	if _, err = d.kv.DelCtx(ctx, key); err != nil {
 		logx.WithContext(ctx).Errorf("conn.DEL(%s) error(%v)", key, err)
 	}
 

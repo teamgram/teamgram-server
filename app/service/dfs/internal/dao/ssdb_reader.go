@@ -126,7 +126,7 @@ func (r *SSDBReader) readFile(ctx context.Context, filePart int) ([]byte, error)
 		bBuf string
 	)
 
-	bBuf, err = r.ssdb.Hget(k, strconv.Itoa(int(filePart)))
+	bBuf, err = r.ssdb.HgetCtx(ctx, k, strconv.Itoa(int(filePart)))
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Send(HGET %s, %d) error(%v)", k, filePart, err)
 		return nil, err
@@ -146,7 +146,7 @@ func (r *SSDBReader) ReadAll(ctx context.Context) ([]byte, error) {
 	)
 
 	for i := 0; i < r.FileTotalParts; i++ {
-		bBuf, err = r.ssdb.Hget(k, strconv.Itoa(i))
+		bBuf, err = r.ssdb.HgetCtx(ctx, k, strconv.Itoa(i))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("conn.Send(HGET %s, %d) error(%v)", k, i, err)
 			return nil, err

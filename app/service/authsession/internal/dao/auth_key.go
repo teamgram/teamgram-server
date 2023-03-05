@@ -109,7 +109,7 @@ func (d *Dao) getAuthKey(ctx context.Context, keyId int64) (keyData *mtproto.Aut
 		values map[string]string
 	)
 
-	values, err = d.kv.Hgetall(key)
+	values, err = d.kv.HgetallCtx(ctx, key)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HGETALL %s) error(%v)", key, err)
 		return

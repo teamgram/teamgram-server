@@ -46,7 +46,7 @@ func (d *Dao) WriteFilePartData(ctx context.Context, ownerId, fileId int64, file
 		k = getFileKey(ownerId, fileId)
 	)
 
-	err = d.ssdb.Hset(k, strconv.Itoa(int(filePart)), string(bytes))
+	err = d.ssdb.HsetCtx(ctx, k, strconv.Itoa(int(filePart)), string(bytes))
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Send(HSET %d, %d, %s) error(%v)", ownerId, fileId, filePart, err)
 		return
@@ -71,7 +71,7 @@ func (d *Dao) ReadFile(ctx context.Context, ownerId, fileId int64, parts int32) 
 			bBuf string
 			b    []byte
 		)
-		bBuf, err = d.ssdb.Hget(k, strconv.Itoa(int(i)))
+		bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(int(i)))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("conn.Send(HGET %s, %d) error(%v)", k, i, err)
 			return 0, nil, err
@@ -96,7 +96,7 @@ func (d *Dao) ReadFileCB(ctx context.Context, ownerId, fileId int64, parts int32
 	)
 
 	for i := int32(0); i < parts; i++ {
-		bBuf, err = d.ssdb.Hget(k, strconv.Itoa(int(i)))
+		bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(int(i)))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("conn.Do(HGET %s, %d) error(%v)", k, i, err)
 			return
@@ -122,7 +122,7 @@ func (d *Dao) ReadOffsetLimit(ctx context.Context, fileInfo *model.DfsFileInfo, 
 
 	if limit == 0 && offset == 0 {
 		for i := 0; i < fileInfo.FileTotalParts; i++ {
-			bBuf, err = d.ssdb.Hget(k, strconv.Itoa(int(i)))
+			bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(int(i)))
 			if err != nil {
 				logx.WithContext(ctx).Errorf("conn.Send(HGET %s, %d) error(%v)", k, i, err)
 				return
@@ -143,7 +143,7 @@ func (d *Dao) ReadOffsetLimit(ctx context.Context, fileInfo *model.DfsFileInfo, 
 
 		bytes = make([]byte, 0, limit)
 		for i := bPart; i <= ePart; i++ {
-			bBuf, err = d.ssdb.Hget(k, strconv.Itoa(i))
+			bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(i))
 			if err != nil {
 				logx.WithContext(ctx).Errorf("conn.Send(HGET %s, %d) error(%v)", k, i, err)
 				return

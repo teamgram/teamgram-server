@@ -129,7 +129,7 @@ func (d *Dao) PutSalts(ctx context.Context, keyId int64, salts []*mtproto.TLFutu
 	}
 
 	// 误差 500
-	if err = d.kv.Setex(key, string(b), len(salts)*saltTimeout); err != nil {
+	if err = d.kv.SetexCtx(ctx, key, string(b), len(salts)*saltTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", key, err)
 	}
 	return
@@ -141,7 +141,7 @@ func (d *Dao) GetSalts(ctx context.Context, keyId int64) (salts []*mtproto.TLFut
 		bBuf string
 	)
 
-	bBuf, err = d.kv.Get(key)
+	bBuf, err = d.kv.GetCtx(ctx, key)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(GET %s) error(%v)", key, err)
 		return

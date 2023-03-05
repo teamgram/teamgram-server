@@ -41,7 +41,7 @@ func genCachePhoneCodeKey(authKeyId int64, phoneNumber string) string {
 func (d *Dao) GetCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumber string) (*model.PhoneCodeTransaction, error) {
 	cacheKey := genCachePhoneCodeKey(authKeyId, phoneNumber)
 
-	v, err := d.kv.Get(cacheKey)
+	v, err := d.kv.GetCtx(ctx, cacheKey)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.GET(%s) error(%v)", cacheKey, err)
 		return nil, err
@@ -67,7 +67,7 @@ func (d *Dao) PutCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumbe
 func (d *Dao) DeleteCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumber string) (err error) {
 	cacheKey := genCachePhoneCodeKey(authKeyId, phoneNumber)
 
-	if _, err = d.kv.Del(cacheKey); err != nil {
+	if _, err = d.kv.DelCtx(ctx, cacheKey); err != nil {
 		logx.WithContext(ctx).Errorf("conn.DEL(%s) error(%v)", cacheKey, err)
 	}
 
