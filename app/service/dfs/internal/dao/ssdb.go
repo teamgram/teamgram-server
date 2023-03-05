@@ -52,7 +52,7 @@ func (d *Dao) WriteFilePartData(ctx context.Context, ownerId, fileId int64, file
 		return
 	}
 
-	_, err = d.ssdb.Expire(k, ssdbExpire)
+	_, err = d.ssdb.ExpireCtx(ctx, k, ssdbExpire)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("conn.Send(EXPIRE %d,%d,%s) error(%v)", ownerId, fileId, filePart, err)
 		return

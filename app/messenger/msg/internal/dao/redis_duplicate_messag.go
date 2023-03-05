@@ -50,7 +50,7 @@ func (d *Dao) HasDuplicateMessage(ctx context.Context, senderUserId, clientRando
 		return false, err
 	}
 
-	if err = d.KV.ExpireCtx(ctx, k, expireTimeout); err != nil {
+	if _, err = d.KV.ExpireCtx(ctx, k, expireTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("expire DuplicateMessage - EXPIRE {%s, %d}, error: %s", k, expireTimeout, err)
 		return false, err
 	}

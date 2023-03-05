@@ -34,12 +34,12 @@ func (d *Dao) SetFileInfo(ctx context.Context, fileInfo *model.DfsFileInfo) (err
 	)
 
 	// TODO(@benqi): args error??
-	if err = d.ssdb.Hmset(key, fileInfo.ToArgs()); err != nil {
+	if err = d.ssdb.HmsetCtx(ctx, key, fileInfo.ToArgs()); err != nil {
 		logx.WithContext(ctx).Errorf("conn.Send(HMSET %s,%v) error(%v)", key, fileInfo, err)
 		return
 	}
 
-	if _, err = d.ssdb.Expire(key, ssdbExpire); err != nil {
+	if _, err = d.ssdb.ExpireCtx(ctx, key, ssdbExpire); err != nil {
 		logx.WithContext(ctx).Error("conn.Send(EXPIRE %d,%d) error(%v)", key, ssdbExpire, err)
 	}
 
