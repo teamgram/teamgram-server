@@ -41,6 +41,10 @@ const (
 	CRC32_status_setSessionOffline          TLConstructor = 631663196
 	CRC32_status_getUserOnlineSessions      TLConstructor = -406788659
 	CRC32_status_getUsersOnlineSessionsList TLConstructor = -2009385532
+	CRC32_status_getChannelOnlineUsers      TLConstructor = 1166257237
+	CRC32_status_setUserChannelsOnline      TLConstructor = -851901363
+	CRC32_status_setUserChannelsOffline     TLConstructor = 1822646698
+	CRC32_status_setChannelUserOffline      TLConstructor = -997471364
 )
 
 var TLConstructor_name = map[int32]string{
@@ -51,6 +55,10 @@ var TLConstructor_name = map[int32]string{
 	631663196:   "CRC32_status_setSessionOffline",
 	-406788659:  "CRC32_status_getUserOnlineSessions",
 	-2009385532: "CRC32_status_getUsersOnlineSessionsList",
+	1166257237:  "CRC32_status_getChannelOnlineUsers",
+	-851901363:  "CRC32_status_setUserChannelsOnline",
+	1822646698:  "CRC32_status_setUserChannelsOffline",
+	-997471364:  "CRC32_status_setChannelUserOffline",
 }
 
 var TLConstructor_value = map[string]int32{
@@ -61,6 +69,10 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_status_setSessionOffline":          631663196,
 	"CRC32_status_getUserOnlineSessions":      -406788659,
 	"CRC32_status_getUsersOnlineSessionsList": -2009385532,
+	"CRC32_status_getChannelOnlineUsers":      1166257237,
+	"CRC32_status_setUserChannelsOnline":      -851901363,
+	"CRC32_status_setUserChannelsOffline":     1822646698,
+	"CRC32_status_setChannelUserOffline":      -997471364,
 }
 
 func (x TLConstructor) String() string {
@@ -594,6 +606,254 @@ func (m *TLStatusGetUsersOnlineSessionsList) GetUsers() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
+type TLStatusGetChannelOnlineUsers struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
+	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLStatusGetChannelOnlineUsers) Reset()         { *m = TLStatusGetChannelOnlineUsers{} }
+func (m *TLStatusGetChannelOnlineUsers) String() string { return proto.CompactTextString(m) }
+func (*TLStatusGetChannelOnlineUsers) ProtoMessage()    {}
+func (*TLStatusGetChannelOnlineUsers) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac2279bebff9f187, []int{8}
+}
+func (m *TLStatusGetChannelOnlineUsers) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLStatusGetChannelOnlineUsers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLStatusGetChannelOnlineUsers.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLStatusGetChannelOnlineUsers) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLStatusGetChannelOnlineUsers.Merge(m, src)
+}
+func (m *TLStatusGetChannelOnlineUsers) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLStatusGetChannelOnlineUsers) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLStatusGetChannelOnlineUsers.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLStatusGetChannelOnlineUsers proto.InternalMessageInfo
+
+func (m *TLStatusGetChannelOnlineUsers) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLStatusGetChannelOnlineUsers) GetChannelId() int64 {
+	if m != nil {
+		return m.ChannelId
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
+type TLStatusSetUserChannelsOnline struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Channels             []int64       `protobuf:"varint,4,rep,packed,name=channels,proto3" json:"channels,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLStatusSetUserChannelsOnline) Reset()         { *m = TLStatusSetUserChannelsOnline{} }
+func (m *TLStatusSetUserChannelsOnline) String() string { return proto.CompactTextString(m) }
+func (*TLStatusSetUserChannelsOnline) ProtoMessage()    {}
+func (*TLStatusSetUserChannelsOnline) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac2279bebff9f187, []int{9}
+}
+func (m *TLStatusSetUserChannelsOnline) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLStatusSetUserChannelsOnline) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLStatusSetUserChannelsOnline.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLStatusSetUserChannelsOnline) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLStatusSetUserChannelsOnline.Merge(m, src)
+}
+func (m *TLStatusSetUserChannelsOnline) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLStatusSetUserChannelsOnline) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLStatusSetUserChannelsOnline.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLStatusSetUserChannelsOnline proto.InternalMessageInfo
+
+func (m *TLStatusSetUserChannelsOnline) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLStatusSetUserChannelsOnline) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLStatusSetUserChannelsOnline) GetChannels() []int64 {
+	if m != nil {
+		return m.Channels
+	}
+	return nil
+}
+
+//--------------------------------------------------------------------------------------------
+type TLStatusSetUserChannelsOffline struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Channels             []int64       `protobuf:"varint,4,rep,packed,name=channels,proto3" json:"channels,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLStatusSetUserChannelsOffline) Reset()         { *m = TLStatusSetUserChannelsOffline{} }
+func (m *TLStatusSetUserChannelsOffline) String() string { return proto.CompactTextString(m) }
+func (*TLStatusSetUserChannelsOffline) ProtoMessage()    {}
+func (*TLStatusSetUserChannelsOffline) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac2279bebff9f187, []int{10}
+}
+func (m *TLStatusSetUserChannelsOffline) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLStatusSetUserChannelsOffline) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLStatusSetUserChannelsOffline.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLStatusSetUserChannelsOffline) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLStatusSetUserChannelsOffline.Merge(m, src)
+}
+func (m *TLStatusSetUserChannelsOffline) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLStatusSetUserChannelsOffline) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLStatusSetUserChannelsOffline.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLStatusSetUserChannelsOffline proto.InternalMessageInfo
+
+func (m *TLStatusSetUserChannelsOffline) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLStatusSetUserChannelsOffline) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLStatusSetUserChannelsOffline) GetChannels() []int64 {
+	if m != nil {
+		return m.Channels
+	}
+	return nil
+}
+
+//--------------------------------------------------------------------------------------------
+type TLStatusSetChannelUserOffline struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
+	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	UserId               int64         `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLStatusSetChannelUserOffline) Reset()         { *m = TLStatusSetChannelUserOffline{} }
+func (m *TLStatusSetChannelUserOffline) String() string { return proto.CompactTextString(m) }
+func (*TLStatusSetChannelUserOffline) ProtoMessage()    {}
+func (*TLStatusSetChannelUserOffline) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac2279bebff9f187, []int{11}
+}
+func (m *TLStatusSetChannelUserOffline) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLStatusSetChannelUserOffline) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLStatusSetChannelUserOffline.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLStatusSetChannelUserOffline) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLStatusSetChannelUserOffline.Merge(m, src)
+}
+func (m *TLStatusSetChannelUserOffline) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLStatusSetChannelUserOffline) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLStatusSetChannelUserOffline.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLStatusSetChannelUserOffline proto.InternalMessageInfo
+
+func (m *TLStatusSetChannelUserOffline) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLStatusSetChannelUserOffline) GetChannelId() int64 {
+	if m != nil {
+		return m.ChannelId
+	}
+	return 0
+}
+
+func (m *TLStatusSetChannelUserOffline) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_UserSessionEntryList struct {
 	Datas                []*UserSessionEntryList `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`
@@ -606,7 +866,7 @@ func (m *Vector_UserSessionEntryList) Reset()         { *m = Vector_UserSessionE
 func (m *Vector_UserSessionEntryList) String() string { return proto.CompactTextString(m) }
 func (*Vector_UserSessionEntryList) ProtoMessage()    {}
 func (*Vector_UserSessionEntryList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac2279bebff9f187, []int{8}
+	return fileDescriptor_ac2279bebff9f187, []int{12}
 }
 func (m *Vector_UserSessionEntryList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -642,6 +902,53 @@ func (m *Vector_UserSessionEntryList) GetDatas() []*UserSessionEntryList {
 	return nil
 }
 
+type Vector_Long struct {
+	Datas                []int64  `protobuf:"varint,1,rep,packed,name=datas,proto3" json:"datas,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Vector_Long) Reset()         { *m = Vector_Long{} }
+func (m *Vector_Long) String() string { return proto.CompactTextString(m) }
+func (*Vector_Long) ProtoMessage()    {}
+func (*Vector_Long) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac2279bebff9f187, []int{13}
+}
+func (m *Vector_Long) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Vector_Long) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Vector_Long.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Vector_Long) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Vector_Long.Merge(m, src)
+}
+func (m *Vector_Long) XXX_Size() int {
+	return m.Size()
+}
+func (m *Vector_Long) XXX_DiscardUnknown() {
+	xxx_messageInfo_Vector_Long.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Vector_Long proto.InternalMessageInfo
+
+func (m *Vector_Long) GetDatas() []int64 {
+	if m != nil {
+		return m.Datas
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("status.TLConstructor", TLConstructor_name, TLConstructor_value)
 	proto.RegisterType((*SessionEntry)(nil), "status.SessionEntry")
@@ -652,65 +959,83 @@ func init() {
 	proto.RegisterType((*TLStatusSetSessionOffline)(nil), "status.TL_status_setSessionOffline")
 	proto.RegisterType((*TLStatusGetUserOnlineSessions)(nil), "status.TL_status_getUserOnlineSessions")
 	proto.RegisterType((*TLStatusGetUsersOnlineSessionsList)(nil), "status.TL_status_getUsersOnlineSessionsList")
+	proto.RegisterType((*TLStatusGetChannelOnlineUsers)(nil), "status.TL_status_getChannelOnlineUsers")
+	proto.RegisterType((*TLStatusSetUserChannelsOnline)(nil), "status.TL_status_setUserChannelsOnline")
+	proto.RegisterType((*TLStatusSetUserChannelsOffline)(nil), "status.TL_status_setUserChannelsOffline")
+	proto.RegisterType((*TLStatusSetChannelUserOffline)(nil), "status.TL_status_setChannelUserOffline")
 	proto.RegisterType((*Vector_UserSessionEntryList)(nil), "status.Vector_UserSessionEntryList")
+	proto.RegisterType((*Vector_Long)(nil), "status.Vector_Long")
 }
 
 func init() { proto.RegisterFile("status.tl.proto", fileDescriptor_ac2279bebff9f187) }
 
 var fileDescriptor_ac2279bebff9f187 = []byte{
-	// 818 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x56, 0x3d, 0x8c, 0xe3, 0x44,
-	0x14, 0xce, 0x24, 0x9b, 0x84, 0xbc, 0xbd, 0xdc, 0x99, 0x51, 0x60, 0x8d, 0xef, 0x30, 0xc1, 0x70,
-	0x24, 0x3a, 0x71, 0x89, 0x94, 0x43, 0x42, 0x14, 0x57, 0x70, 0x11, 0xc5, 0xe9, 0x42, 0xf6, 0xf0,
-	0xed, 0x82, 0x44, 0x63, 0xcd, 0x3a, 0xb3, 0x5e, 0x8b, 0xc4, 0xb6, 0x66, 0xc6, 0xdc, 0xa6, 0xa6,
-	0xa1, 0x03, 0x6d, 0x03, 0x34, 0x34, 0x5b, 0x53, 0xb0, 0x2d, 0x12, 0x12, 0x12, 0x42, 0x08, 0x84,
-	0xa0, 0xa0, 0xa0, 0xa0, 0x80, 0x6d, 0x28, 0xa0, 0xa0, 0xa4, 0x22, 0xc8, 0x63, 0x7b, 0x9d, 0x28,
-	0x4e, 0x16, 0xf1, 0xa3, 0xab, 0x32, 0xef, 0x7d, 0xef, 0xcd, 0xf7, 0xde, 0x37, 0xef, 0x29, 0x86,
-	0x4b, 0x5c, 0x10, 0x11, 0xf2, 0x8e, 0x18, 0x77, 0x02, 0xe6, 0x0b, 0x1f, 0x57, 0x62, 0x87, 0x76,
-	0xdd, 0x71, 0xc5, 0x41, 0xb8, 0xd7, 0xb1, 0xfd, 0x49, 0xd7, 0xf1, 0x1d, 0xbf, 0x2b, 0xe1, 0xbd,
-	0x70, 0x5f, 0x5a, 0xd2, 0x90, 0xa7, 0x38, 0x4d, 0xd3, 0x1d, 0xdf, 0x77, 0xc6, 0x34, 0x8b, 0xba,
-	0xcf, 0x48, 0x10, 0x50, 0xc6, 0x13, 0x5c, 0xe3, 0xf6, 0x01, 0x9d, 0x90, 0x88, 0xc7, 0xf6, 0x19,
-	0xb5, 0xc4, 0x34, 0xa0, 0x29, 0xf6, 0x58, 0x86, 0x09, 0x46, 0x3c, 0x1e, 0xf8, 0x4c, 0x24, 0x50,
-	0x23, 0x83, 0xf8, 0xd4, 0xb3, 0x63, 0xaf, 0x71, 0x52, 0x84, 0x0b, 0xf7, 0x28, 0xe7, 0xae, 0xef,
-	0xbd, 0xe4, 0x09, 0x36, 0xc5, 0x57, 0xe1, 0x62, 0xc0, 0xe8, 0xc8, 0xb5, 0x89, 0xa0, 0x96, 0x47,
-	0x26, 0x54, 0x45, 0x4d, 0xd4, 0xae, 0x99, 0xf5, 0x33, 0xef, 0x90, 0x4c, 0x28, 0x7e, 0x1e, 0x36,
-	0x6d, 0xdf, 0xe3, 0x82, 0x85, 0xb6, 0xf0, 0x99, 0x5a, 0x6c, 0xa2, 0xf6, 0xc5, 0xde, 0x23, 0x9d,
-	0x44, 0x82, 0x9d, 0x41, 0x3f, 0x03, 0xcd, 0xf9, 0x48, 0xbc, 0x05, 0xd5, 0x90, 0x53, 0x66, 0xb9,
-	0x23, 0xb5, 0xd4, 0x44, 0xed, 0x92, 0x59, 0x89, 0xcc, 0xdb, 0x23, 0xac, 0xc3, 0x26, 0x09, 0xc5,
-	0x81, 0xf5, 0x06, 0x9d, 0x46, 0xe0, 0x86, 0x04, 0x6b, 0x91, 0xeb, 0x0e, 0x9d, 0xde, 0x1e, 0x61,
-	0x15, 0xaa, 0x0e, 0x11, 0xf4, 0x3e, 0x99, 0xaa, 0x65, 0x59, 0x51, 0x6a, 0x46, 0x08, 0x3d, 0x0c,
-	0x5c, 0x46, 0x47, 0x6a, 0x45, 0x66, 0xa5, 0x26, 0x6e, 0x40, 0x79, 0x4c, 0xa6, 0x94, 0xa9, 0xd5,
-	0x26, 0x6a, 0x97, 0xcd, 0xd8, 0xc0, 0x2d, 0x50, 0x02, 0xca, 0x26, 0xd6, 0x3c, 0xdd, 0x43, 0x32,
-	0xb1, 0x1e, 0xf9, 0x5f, 0x3c, 0xa3, 0x7c, 0x14, 0x2a, 0xf6, 0xd8, 0xa5, 0x9e, 0x50, 0x6b, 0x92,
-	0x31, 0xb1, 0x8c, 0x9b, 0x70, 0x69, 0x67, 0x60, 0xf1, 0x79, 0xd9, 0xae, 0x41, 0x79, 0x44, 0x04,
-	0xe9, 0x49, 0xb5, 0x36, 0x7b, 0x8d, 0x54, 0x89, 0x79, 0x6d, 0xcd, 0x38, 0xc4, 0xf8, 0x0a, 0x41,
-	0x63, 0x97, 0x53, 0x36, 0x8f, 0x0d, 0x5c, 0x2e, 0x1e, 0x9c, 0xf6, 0x2f, 0x40, 0x5d, 0x02, 0x49,
-	0x4b, 0x5c, 0xdd, 0x68, 0x96, 0x56, 0x76, 0x71, 0x21, 0xcc, 0x6a, 0xe7, 0xc6, 0xcb, 0xb0, 0xb5,
-	0x33, 0xb0, 0xc2, 0xbc, 0x76, 0x7a, 0x8b, 0x9a, 0x5c, 0x49, 0x6f, 0xcb, 0xeb, 0x3d, 0xd5, 0xe6,
-	0x43, 0x04, 0x5a, 0xa4, 0xad, 0x8c, 0xb4, 0x38, 0x15, 0x49, 0xe0, 0xb6, 0x37, 0x76, 0xbd, 0xa5,
-	0xd6, 0xd1, 0xbf, 0x6f, 0xbd, 0x03, 0xd5, 0xa4, 0x6b, 0x39, 0x72, 0xab, 0x9a, 0x4e, 0x83, 0x8c,
-	0x77, 0x10, 0x5c, 0xce, 0x2d, 0x70, 0x7f, 0xff, 0x7f, 0xaa, 0xf0, 0x9c, 0xc5, 0x30, 0x38, 0x3c,
-	0x91, 0x15, 0xe4, 0x50, 0x11, 0xc9, 0x1b, 0xcb, 0x95, 0x3e, 0xd2, 0x7f, 0x5f, 0x94, 0x11, 0xc2,
-	0xd3, 0x4b, 0xa4, 0x7c, 0x91, 0x55, 0xce, 0xc0, 0x3f, 0x66, 0x6e, 0x40, 0x39, 0xa2, 0xe2, 0x6a,
-	0xa9, 0x59, 0x6a, 0x97, 0xcc, 0xd8, 0x30, 0x5e, 0x81, 0xcb, 0xaf, 0xd2, 0x08, 0xb7, 0x76, 0xd7,
-	0x4c, 0x1c, 0x57, 0x91, 0x9c, 0xdf, 0xbf, 0x31, 0x71, 0xfc, 0xda, 0x71, 0x11, 0xea, 0x0b, 0x75,
-	0xe0, 0x87, 0xa1, 0xde, 0x37, 0xfb, 0x37, 0x7a, 0xd6, 0xee, 0xf0, 0xce, 0x70, 0xfb, 0xb5, 0xa1,
-	0x52, 0xc0, 0x1a, 0xe0, 0xd8, 0x35, 0xbf, 0xf4, 0xca, 0xc7, 0x3f, 0x1c, 0x7d, 0x82, 0x70, 0x0b,
-	0xb4, 0x18, 0xcb, 0x5b, 0x02, 0xe5, 0xfd, 0x5f, 0x4e, 0x66, 0x7f, 0xce, 0x66, 0xb3, 0x19, 0xc2,
-	0x57, 0xe1, 0xf1, 0xe4, 0x92, 0xfc, 0xe9, 0x56, 0xbe, 0x7d, 0xef, 0x8b, 0xa3, 0x32, 0x7e, 0x06,
-	0xf4, 0x55, 0x61, 0xf1, 0x8c, 0x29, 0x3f, 0x7e, 0xff, 0xc1, 0x47, 0x45, 0xdc, 0x05, 0x63, 0x21,
-	0x2e, 0xf7, 0xe9, 0x95, 0x6f, 0xbe, 0x7e, 0xeb, 0xd3, 0x84, 0xff, 0x39, 0x68, 0xe5, 0x25, 0xe4,
-	0x3c, 0x9b, 0xf2, 0xf9, 0xaf, 0xbf, 0x7d, 0xf6, 0x87, 0xcc, 0xd2, 0x36, 0xde, 0x3e, 0xd6, 0x0b,
-	0xbd, 0x77, 0x4b, 0x50, 0x33, 0xef, 0xf6, 0xef, 0xc9, 0x4c, 0x3c, 0x84, 0xad, 0x55, 0x1b, 0x6a,
-	0x64, 0x6f, 0xbb, 0xaa, 0x4f, 0xad, 0xde, 0x99, 0x08, 0xf9, 0xf7, 0xd3, 0xb9, 0xe5, 0xfb, 0x63,
-	0xa3, 0x80, 0xef, 0x82, 0xba, 0x72, 0xa1, 0x9e, 0x5a, 0x7b, 0x61, 0x1c, 0xb4, 0x7c, 0xa3, 0x03,
-	0x57, 0xd6, 0x6e, 0x44, 0x6b, 0xf9, 0xd6, 0xdc, 0x40, 0x6d, 0xed, 0x0c, 0x19, 0x05, 0x7c, 0x08,
-	0x4f, 0x9e, 0xbf, 0x05, 0xcf, 0xae, 0x64, 0xcb, 0x89, 0xd6, 0xce, 0x3a, 0x5e, 0x33, 0xea, 0x46,
-	0xe1, 0xd6, 0xf6, 0xef, 0x3f, 0xeb, 0xe8, 0xcb, 0x53, 0x1d, 0x7d, 0x77, 0xaa, 0xa3, 0x9f, 0x4e,
-	0x75, 0xf4, 0xfa, 0xcd, 0xb9, 0x0f, 0x0d, 0x41, 0xc9, 0xc4, 0x61, 0x24, 0x3b, 0x5c, 0xe7, 0x94,
-	0xbd, 0x49, 0x59, 0x97, 0x04, 0x41, 0x37, 0x3a, 0xba, 0x36, 0xed, 0xc6, 0x3c, 0xc9, 0xcf, 0x5e,
-	0x45, 0x2a, 0x78, 0xe3, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbf, 0x2b, 0x3f, 0xca, 0xc9, 0x08,
-	0x00, 0x00,
+	// 1032 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x57, 0x4d, 0x6c, 0x1b, 0x45,
+	0x14, 0xf6, 0xc6, 0x3f, 0xa9, 0x5f, 0xea, 0x76, 0x19, 0x0c, 0x59, 0xb6, 0x8d, 0x6b, 0x36, 0x14,
+	0x5b, 0x81, 0xda, 0x92, 0x8b, 0x84, 0x38, 0xf4, 0x40, 0x2d, 0x0e, 0x51, 0x8d, 0x53, 0xdc, 0x04,
+	0x50, 0x0f, 0xac, 0x36, 0xeb, 0xc9, 0xc6, 0xc2, 0xde, 0x5d, 0xed, 0x8c, 0x69, 0x7d, 0x43, 0xe2,
+	0xd2, 0x0b, 0x3f, 0xca, 0x81, 0x9f, 0x0b, 0x17, 0x38, 0x21, 0x10, 0xa2, 0x57, 0x24, 0x24, 0x04,
+	0x42, 0x08, 0x54, 0xc1, 0x01, 0xa4, 0x1e, 0x10, 0x82, 0x08, 0x84, 0x10, 0x1c, 0x38, 0x72, 0xa8,
+	0x30, 0xda, 0x99, 0xb5, 0xd7, 0xce, 0x8e, 0x37, 0xa8, 0x21, 0xea, 0x29, 0x3b, 0xf3, 0xde, 0x7c,
+	0xdf, 0xf7, 0x7e, 0xe6, 0x4d, 0x0c, 0xc7, 0x09, 0x35, 0x68, 0x9f, 0x54, 0x68, 0xb7, 0xe2, 0x7a,
+	0x0e, 0x75, 0x50, 0x86, 0x6f, 0xa8, 0x67, 0xac, 0x0e, 0xdd, 0xee, 0x6f, 0x56, 0x4c, 0xa7, 0x57,
+	0xb5, 0x1c, 0xcb, 0xa9, 0x32, 0xf3, 0x66, 0x7f, 0x8b, 0xad, 0xd8, 0x82, 0x7d, 0xf1, 0x63, 0x6a,
+	0xc1, 0x72, 0x1c, 0xab, 0x8b, 0x43, 0xaf, 0x2b, 0x9e, 0xe1, 0xba, 0xd8, 0x23, 0x81, 0x5d, 0x25,
+	0xe6, 0x36, 0xee, 0x19, 0x3e, 0x8f, 0xe9, 0x78, 0x58, 0xa7, 0x03, 0x17, 0x8f, 0x6c, 0xf7, 0x85,
+	0x36, 0xea, 0x19, 0x36, 0x71, 0x1d, 0x8f, 0x06, 0xa6, 0x7c, 0x68, 0x22, 0x03, 0xdb, 0xe4, 0xbb,
+	0xda, 0xf5, 0x39, 0x38, 0x7a, 0x09, 0x13, 0xd2, 0x71, 0xec, 0x27, 0x6c, 0xea, 0x0d, 0xd0, 0x69,
+	0x38, 0xe6, 0x7a, 0xb8, 0xdd, 0x31, 0x0d, 0x8a, 0x75, 0xdb, 0xe8, 0x61, 0x45, 0x2a, 0x4a, 0xe5,
+	0x6c, 0x2b, 0x37, 0xde, 0x6d, 0x1a, 0x3d, 0x8c, 0x1e, 0x85, 0x05, 0xd3, 0xb1, 0x09, 0xf5, 0xfa,
+	0x26, 0x75, 0x3c, 0x65, 0xae, 0x28, 0x95, 0x8f, 0xd5, 0xee, 0xa9, 0x04, 0x29, 0x58, 0x6f, 0xd4,
+	0x43, 0x63, 0x6b, 0xd2, 0x13, 0x2d, 0xc2, 0x7c, 0x9f, 0x60, 0x4f, 0xef, 0xb4, 0x95, 0x64, 0x51,
+	0x2a, 0x27, 0x5b, 0x19, 0x7f, 0xb9, 0xda, 0x46, 0x05, 0x58, 0x30, 0xfa, 0x74, 0x5b, 0x7f, 0x1e,
+	0x0f, 0x7c, 0x63, 0x8a, 0x19, 0xb3, 0xfe, 0xd6, 0x05, 0x3c, 0x58, 0x6d, 0x23, 0x05, 0xe6, 0x2d,
+	0x83, 0xe2, 0x2b, 0xc6, 0x40, 0x49, 0x33, 0x45, 0xa3, 0xa5, 0x6f, 0xc1, 0x57, 0xdd, 0x8e, 0x87,
+	0xdb, 0x4a, 0x86, 0x9d, 0x1a, 0x2d, 0x51, 0x1e, 0xd2, 0x5d, 0x63, 0x80, 0x3d, 0x65, 0xbe, 0x28,
+	0x95, 0xd3, 0x2d, 0xbe, 0x40, 0x25, 0x90, 0x5d, 0xec, 0xf5, 0xf4, 0x49, 0xba, 0x23, 0xec, 0x60,
+	0xce, 0xdf, 0x7f, 0x7c, 0x4c, 0x79, 0x2f, 0x64, 0xcc, 0x6e, 0x07, 0xdb, 0x54, 0xc9, 0x32, 0xc6,
+	0x60, 0xa5, 0x9d, 0x83, 0xe3, 0xeb, 0x0d, 0x9d, 0x4c, 0xa6, 0x6d, 0x05, 0xd2, 0x6d, 0x83, 0x1a,
+	0x35, 0x96, 0xad, 0x85, 0x5a, 0x7e, 0x94, 0x89, 0xc9, 0xdc, 0xb6, 0xb8, 0x8b, 0xf6, 0x95, 0x04,
+	0xf9, 0x0d, 0x82, 0xbd, 0x49, 0x5b, 0xa3, 0x43, 0xe8, 0x9d, 0xcb, 0xfd, 0x63, 0x90, 0x63, 0x86,
+	0x20, 0x24, 0xa2, 0xa4, 0x8a, 0xc9, 0x99, 0x51, 0x1c, 0xed, 0x87, 0xda, 0x89, 0xf6, 0x24, 0x2c,
+	0xae, 0x37, 0xf4, 0xbe, 0x28, 0x9c, 0xda, 0x74, 0x4e, 0x4e, 0x8e, 0xd0, 0x44, 0xb1, 0x8f, 0x72,
+	0xf3, 0xb6, 0x04, 0xaa, 0x9f, 0x5b, 0xe6, 0xa9, 0x13, 0x4c, 0x03, 0xc7, 0x35, 0xbb, 0xdb, 0xb1,
+	0x23, 0xa1, 0x4b, 0x07, 0x0f, 0xbd, 0x02, 0xf3, 0x41, 0xd4, 0xac, 0xe5, 0x66, 0x05, 0x3d, 0x72,
+	0xd2, 0x5e, 0x95, 0xe0, 0x84, 0x50, 0xe0, 0xd6, 0xd6, 0x21, 0x29, 0xdc, 0xe7, 0x62, 0x68, 0x04,
+	0x4e, 0x85, 0x82, 0x2c, 0x4c, 0xfd, 0xf4, 0xf2, 0x74, 0x8d, 0x8a, 0xf4, 0xff, 0x8b, 0xd2, 0xfa,
+	0xf0, 0x40, 0x84, 0x94, 0x4c, 0xb3, 0xb2, 0x1e, 0xb8, 0x6d, 0xe6, 0x3c, 0xa4, 0x7d, 0x2a, 0xa2,
+	0x24, 0x8b, 0xc9, 0x72, 0xb2, 0xc5, 0x17, 0xda, 0x60, 0x4f, 0xac, 0xf5, 0x6d, 0xc3, 0xb6, 0x71,
+	0x97, 0x13, 0x33, 0x0d, 0xb7, 0xcf, 0xb8, 0x04, 0x60, 0x72, 0xb8, 0x30, 0xdc, 0x6c, 0xb0, 0xb3,
+	0xda, 0xf6, 0x0b, 0x7f, 0x6a, 0xaa, 0xf0, 0x3e, 0x5d, 0xc0, 0x4f, 0x0e, 0xad, 0x3d, 0x55, 0x38,
+	0x12, 0x48, 0xe0, 0x97, 0x32, 0xd9, 0x1a, 0xaf, 0xb5, 0xd7, 0x24, 0x28, 0xce, 0x56, 0x74, 0x68,
+	0xfd, 0x18, 0x27, 0x69, 0x67, 0x6f, 0x92, 0x02, 0x39, 0xac, 0x27, 0x0f, 0xaa, 0x28, 0xbe, 0x40,
+	0x93, 0x82, 0x53, 0x53, 0xbd, 0xfa, 0x14, 0x9c, 0x78, 0x1a, 0xfb, 0x08, 0xfa, 0x46, 0xcc, 0x98,
+	0x22, 0x8a, 0xc4, 0x86, 0xde, 0x7f, 0x18, 0x53, 0x44, 0x5b, 0x86, 0x85, 0x00, 0xb2, 0xe1, 0xd8,
+	0x96, 0xdf, 0xac, 0x21, 0x44, 0x32, 0x70, 0x5a, 0xf9, 0x31, 0x09, 0xb9, 0xa9, 0x70, 0xd0, 0x5d,
+	0x90, 0xab, 0xb7, 0xea, 0x67, 0x6b, 0xfa, 0x46, 0xf3, 0x42, 0x73, 0xed, 0x99, 0xa6, 0x9c, 0x40,
+	0x2a, 0x20, 0xbe, 0x35, 0xf9, 0x9c, 0xc8, 0x1f, 0xdd, 0xdc, 0xf9, 0x58, 0x42, 0x25, 0x50, 0xb9,
+	0x4d, 0x34, 0x5e, 0xe5, 0x37, 0x7f, 0xbb, 0x3e, 0xfc, 0x67, 0x38, 0x1c, 0x0e, 0x25, 0x74, 0x1a,
+	0x96, 0x02, 0x10, 0xf1, 0xdc, 0x94, 0xbf, 0x79, 0xe3, 0x8b, 0x9d, 0x34, 0x7a, 0x10, 0x0a, 0xb3,
+	0xdc, 0x78, 0x6d, 0xe4, 0x1f, 0xbe, 0x7b, 0xeb, 0x83, 0x39, 0x54, 0x05, 0x6d, 0xca, 0x4f, 0x38,
+	0x54, 0xe4, 0x1b, 0x5f, 0xbf, 0xf4, 0x49, 0xc0, 0xff, 0x08, 0x94, 0x44, 0x07, 0x04, 0x03, 0x41,
+	0xfe, 0xfc, 0x8f, 0x3f, 0x3f, 0xfd, 0x9b, 0x9f, 0x5a, 0x89, 0xd2, 0x44, 0xef, 0xb3, 0xfc, 0xfd,
+	0xcd, 0x57, 0xde, 0x4f, 0x45, 0x24, 0x09, 0xef, 0x9f, 0x7c, 0xe3, 0xda, 0x2f, 0xbf, 0xdf, 0xe2,
+	0xe0, 0x0f, 0xc1, 0x72, 0xec, 0x81, 0x20, 0xe0, 0xf7, 0x3e, 0x7b, 0xf9, 0xd7, 0x8c, 0x08, 0x3d,
+	0xda, 0xb8, 0xf2, 0xad, 0xd7, 0x3f, 0x7c, 0x97, 0xa3, 0xab, 0xa9, 0x6b, 0xef, 0x14, 0x12, 0xb5,
+	0x17, 0x33, 0x90, 0x6d, 0x5d, 0xac, 0x5f, 0x62, 0x87, 0x50, 0x13, 0x16, 0x67, 0x3d, 0x5b, 0x5a,
+	0xd8, 0xdd, 0xb3, 0x4a, 0xa4, 0xe6, 0x2a, 0x3d, 0xca, 0xfe, 0x27, 0xab, 0x9c, 0x77, 0x9c, 0xae,
+	0x96, 0x40, 0x17, 0x41, 0x99, 0xf9, 0xca, 0x2c, 0xc7, 0x02, 0x72, 0xa7, 0x28, 0xa2, 0x05, 0x27,
+	0x63, 0x9f, 0x89, 0x52, 0x14, 0x55, 0xe8, 0xa8, 0xc6, 0xde, 0x11, 0x2d, 0x81, 0xae, 0xc2, 0xfd,
+	0xfb, 0x3f, 0x0d, 0x0f, 0xcf, 0x64, 0x13, 0x78, 0xab, 0xe3, 0x88, 0x63, 0xae, 0xb2, 0x96, 0x40,
+	0xcf, 0x4d, 0x86, 0x28, 0x78, 0x1d, 0xc4, 0x21, 0x46, 0x1d, 0xd5, 0xbb, 0xf7, 0xf0, 0xf9, 0xf7,
+	0x5c, 0x4b, 0xa0, 0x67, 0xc7, 0xf8, 0xe2, 0x17, 0xa0, 0x24, 0x2c, 0x4c, 0xd4, 0x31, 0x5a, 0x9c,
+	0xcb, 0xb0, 0x14, 0x3f, 0xc9, 0xcb, 0xfb, 0x43, 0xcf, 0x2a, 0xfc, 0x94, 0x6a, 0xc1, 0x48, 0x16,
+	0xab, 0x8e, 0x3a, 0x46, 0x90, 0xcf, 0xaf, 0xfd, 0xf5, 0x73, 0x41, 0xfa, 0x72, 0xb7, 0x20, 0x7d,
+	0xbb, 0x5b, 0x90, 0x7e, 0xda, 0x2d, 0x48, 0x97, 0xcf, 0x4d, 0xfc, 0xda, 0xa1, 0xd8, 0xe8, 0x59,
+	0x9e, 0x11, 0x7e, 0x9c, 0x21, 0xd8, 0x7b, 0x01, 0x7b, 0x55, 0xc3, 0x75, 0xab, 0xfe, 0x67, 0xc7,
+	0xc4, 0x55, 0x4e, 0x18, 0xfc, 0xd9, 0xcc, 0x30, 0xf8, 0xb3, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff,
+	0x73, 0xa6, 0x61, 0x59, 0x4e, 0x0d, 0x00, 0x00,
 }
 
 func (this *SessionEntry) GoString() string {
@@ -842,6 +1167,65 @@ func (this *TLStatusGetUsersOnlineSessionsList) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLStatusGetChannelOnlineUsers) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&status.TLStatusGetChannelOnlineUsers{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "ChannelId: "+fmt.Sprintf("%#v", this.ChannelId)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLStatusSetUserChannelsOnline) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&status.TLStatusSetUserChannelsOnline{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "Channels: "+fmt.Sprintf("%#v", this.Channels)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLStatusSetUserChannelsOffline) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&status.TLStatusSetUserChannelsOffline{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "Channels: "+fmt.Sprintf("%#v", this.Channels)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLStatusSetChannelUserOffline) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&status.TLStatusSetChannelUserOffline{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "ChannelId: "+fmt.Sprintf("%#v", this.ChannelId)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Vector_UserSessionEntryList) GoString() string {
 	if this == nil {
 		return "nil"
@@ -851,6 +1235,19 @@ func (this *Vector_UserSessionEntryList) GoString() string {
 	if this.Datas != nil {
 		s = append(s, "Datas: "+fmt.Sprintf("%#v", this.Datas)+",\n")
 	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Vector_Long) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&status.Vector_Long{")
+	s = append(s, "Datas: "+fmt.Sprintf("%#v", this.Datas)+",\n")
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
@@ -882,6 +1279,10 @@ type RPCStatusClient interface {
 	StatusSetSessionOffline(ctx context.Context, in *TLStatusSetSessionOffline, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	StatusGetUserOnlineSessions(ctx context.Context, in *TLStatusGetUserOnlineSessions, opts ...grpc.CallOption) (*UserSessionEntryList, error)
 	StatusGetUsersOnlineSessionsList(ctx context.Context, in *TLStatusGetUsersOnlineSessionsList, opts ...grpc.CallOption) (*Vector_UserSessionEntryList, error)
+	StatusGetChannelOnlineUsers(ctx context.Context, in *TLStatusGetChannelOnlineUsers, opts ...grpc.CallOption) (*Vector_Long, error)
+	StatusSetUserChannelsOnline(ctx context.Context, in *TLStatusSetUserChannelsOnline, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	StatusSetUserChannelsOffline(ctx context.Context, in *TLStatusSetUserChannelsOffline, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	StatusSetChannelUserOffline(ctx context.Context, in *TLStatusSetChannelUserOffline, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCStatusClient struct {
@@ -928,12 +1329,52 @@ func (c *rPCStatusClient) StatusGetUsersOnlineSessionsList(ctx context.Context, 
 	return out, nil
 }
 
+func (c *rPCStatusClient) StatusGetChannelOnlineUsers(ctx context.Context, in *TLStatusGetChannelOnlineUsers, opts ...grpc.CallOption) (*Vector_Long, error) {
+	out := new(Vector_Long)
+	err := c.cc.Invoke(ctx, "/status.RPCStatus/status_getChannelOnlineUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCStatusClient) StatusSetUserChannelsOnline(ctx context.Context, in *TLStatusSetUserChannelsOnline, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/status.RPCStatus/status_setUserChannelsOnline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCStatusClient) StatusSetUserChannelsOffline(ctx context.Context, in *TLStatusSetUserChannelsOffline, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/status.RPCStatus/status_setUserChannelsOffline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCStatusClient) StatusSetChannelUserOffline(ctx context.Context, in *TLStatusSetChannelUserOffline, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/status.RPCStatus/status_setChannelUserOffline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCStatusServer is the server API for RPCStatus service.
 type RPCStatusServer interface {
 	StatusSetSessionOnline(context.Context, *TLStatusSetSessionOnline) (*mtproto.Bool, error)
 	StatusSetSessionOffline(context.Context, *TLStatusSetSessionOffline) (*mtproto.Bool, error)
 	StatusGetUserOnlineSessions(context.Context, *TLStatusGetUserOnlineSessions) (*UserSessionEntryList, error)
 	StatusGetUsersOnlineSessionsList(context.Context, *TLStatusGetUsersOnlineSessionsList) (*Vector_UserSessionEntryList, error)
+	StatusGetChannelOnlineUsers(context.Context, *TLStatusGetChannelOnlineUsers) (*Vector_Long, error)
+	StatusSetUserChannelsOnline(context.Context, *TLStatusSetUserChannelsOnline) (*mtproto.Bool, error)
+	StatusSetUserChannelsOffline(context.Context, *TLStatusSetUserChannelsOffline) (*mtproto.Bool, error)
+	StatusSetChannelUserOffline(context.Context, *TLStatusSetChannelUserOffline) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCStatusServer can be embedded to have forward compatible implementations.
@@ -951,6 +1392,18 @@ func (*UnimplementedRPCStatusServer) StatusGetUserOnlineSessions(ctx context.Con
 }
 func (*UnimplementedRPCStatusServer) StatusGetUsersOnlineSessionsList(ctx context.Context, req *TLStatusGetUsersOnlineSessionsList) (*Vector_UserSessionEntryList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StatusGetUsersOnlineSessionsList not implemented")
+}
+func (*UnimplementedRPCStatusServer) StatusGetChannelOnlineUsers(ctx context.Context, req *TLStatusGetChannelOnlineUsers) (*Vector_Long, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusGetChannelOnlineUsers not implemented")
+}
+func (*UnimplementedRPCStatusServer) StatusSetUserChannelsOnline(ctx context.Context, req *TLStatusSetUserChannelsOnline) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusSetUserChannelsOnline not implemented")
+}
+func (*UnimplementedRPCStatusServer) StatusSetUserChannelsOffline(ctx context.Context, req *TLStatusSetUserChannelsOffline) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusSetUserChannelsOffline not implemented")
+}
+func (*UnimplementedRPCStatusServer) StatusSetChannelUserOffline(ctx context.Context, req *TLStatusSetChannelUserOffline) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusSetChannelUserOffline not implemented")
 }
 
 func RegisterRPCStatusServer(s *grpc.Server, srv RPCStatusServer) {
@@ -1029,6 +1482,78 @@ func _RPCStatus_StatusGetUsersOnlineSessionsList_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCStatus_StatusGetChannelOnlineUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLStatusGetChannelOnlineUsers)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCStatusServer).StatusGetChannelOnlineUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.RPCStatus/StatusGetChannelOnlineUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCStatusServer).StatusGetChannelOnlineUsers(ctx, req.(*TLStatusGetChannelOnlineUsers))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCStatus_StatusSetUserChannelsOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLStatusSetUserChannelsOnline)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCStatusServer).StatusSetUserChannelsOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.RPCStatus/StatusSetUserChannelsOnline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCStatusServer).StatusSetUserChannelsOnline(ctx, req.(*TLStatusSetUserChannelsOnline))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCStatus_StatusSetUserChannelsOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLStatusSetUserChannelsOffline)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCStatusServer).StatusSetUserChannelsOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.RPCStatus/StatusSetUserChannelsOffline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCStatusServer).StatusSetUserChannelsOffline(ctx, req.(*TLStatusSetUserChannelsOffline))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCStatus_StatusSetChannelUserOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLStatusSetChannelUserOffline)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCStatusServer).StatusSetChannelUserOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.RPCStatus/StatusSetChannelUserOffline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCStatusServer).StatusSetChannelUserOffline(ctx, req.(*TLStatusSetChannelUserOffline))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RPCStatus_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "status.RPCStatus",
 	HandlerType: (*RPCStatusServer)(nil),
@@ -1048,6 +1573,22 @@ var _RPCStatus_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "status_getUsersOnlineSessionsList",
 			Handler:    _RPCStatus_StatusGetUsersOnlineSessionsList_Handler,
+		},
+		{
+			MethodName: "status_getChannelOnlineUsers",
+			Handler:    _RPCStatus_StatusGetChannelOnlineUsers_Handler,
+		},
+		{
+			MethodName: "status_setUserChannelsOnline",
+			Handler:    _RPCStatus_StatusSetUserChannelsOnline_Handler,
+		},
+		{
+			MethodName: "status_setUserChannelsOffline",
+			Handler:    _RPCStatus_StatusSetUserChannelsOffline_Handler,
+		},
+		{
+			MethodName: "status_setChannelUserOffline",
+			Handler:    _RPCStatus_StatusSetChannelUserOffline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1447,6 +1988,197 @@ func (m *TLStatusGetUsersOnlineSessionsList) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
+func (m *TLStatusGetChannelOnlineUsers) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLStatusGetChannelOnlineUsers) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLStatusGetChannelOnlineUsers) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ChannelId != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.ChannelId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLStatusSetUserChannelsOnline) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLStatusSetUserChannelsOnline) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLStatusSetUserChannelsOnline) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Channels) > 0 {
+		dAtA7 := make([]byte, len(m.Channels)*10)
+		var j6 int
+		for _, num1 := range m.Channels {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j6++
+			}
+			dAtA7[j6] = uint8(num)
+			j6++
+		}
+		i -= j6
+		copy(dAtA[i:], dAtA7[:j6])
+		i = encodeVarintStatusTl(dAtA, i, uint64(j6))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.UserId != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLStatusSetUserChannelsOffline) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLStatusSetUserChannelsOffline) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLStatusSetUserChannelsOffline) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Channels) > 0 {
+		dAtA9 := make([]byte, len(m.Channels)*10)
+		var j8 int
+		for _, num1 := range m.Channels {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j8++
+			}
+			dAtA9[j8] = uint8(num)
+			j8++
+		}
+		i -= j8
+		copy(dAtA[i:], dAtA9[:j8])
+		i = encodeVarintStatusTl(dAtA, i, uint64(j8))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.UserId != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLStatusSetChannelUserOffline) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLStatusSetChannelUserOffline) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLStatusSetChannelUserOffline) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.UserId != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ChannelId != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.ChannelId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintStatusTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Vector_UserSessionEntryList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1484,6 +2216,52 @@ func (m *Vector_UserSessionEntryList) MarshalToSizedBuffer(dAtA []byte) (int, er
 			i--
 			dAtA[i] = 0xa
 		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Vector_Long) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Vector_Long) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Vector_Long) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Datas) > 0 {
+		dAtA11 := make([]byte, len(m.Datas)*10)
+		var j10 int
+		for _, num1 := range m.Datas {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j10++
+			}
+			dAtA11[j10] = uint8(num)
+			j10++
+		}
+		i -= j10
+		copy(dAtA[i:], dAtA11[:j10])
+		i = encodeVarintStatusTl(dAtA, i, uint64(j10))
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1684,6 +2462,95 @@ func (m *TLStatusGetUsersOnlineSessionsList) Size() (n int) {
 	return n
 }
 
+func (m *TLStatusGetChannelOnlineUsers) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovStatusTl(uint64(m.Constructor))
+	}
+	if m.ChannelId != 0 {
+		n += 1 + sovStatusTl(uint64(m.ChannelId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLStatusSetUserChannelsOnline) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovStatusTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovStatusTl(uint64(m.UserId))
+	}
+	if len(m.Channels) > 0 {
+		l = 0
+		for _, e := range m.Channels {
+			l += sovStatusTl(uint64(e))
+		}
+		n += 1 + sovStatusTl(uint64(l)) + l
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLStatusSetUserChannelsOffline) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovStatusTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovStatusTl(uint64(m.UserId))
+	}
+	if len(m.Channels) > 0 {
+		l = 0
+		for _, e := range m.Channels {
+			l += sovStatusTl(uint64(e))
+		}
+		n += 1 + sovStatusTl(uint64(l)) + l
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLStatusSetChannelUserOffline) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovStatusTl(uint64(m.Constructor))
+	}
+	if m.ChannelId != 0 {
+		n += 1 + sovStatusTl(uint64(m.ChannelId))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovStatusTl(uint64(m.UserId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *Vector_UserSessionEntryList) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1695,6 +2562,25 @@ func (m *Vector_UserSessionEntryList) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovStatusTl(uint64(l))
 		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Vector_Long) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Datas) > 0 {
+		l = 0
+		for _, e := range m.Datas {
+			l += sovStatusTl(uint64(e))
+		}
+		n += 1 + sovStatusTl(uint64(l)) + l
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -2766,6 +3652,533 @@ func (m *TLStatusGetUsersOnlineSessionsList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *TLStatusGetChannelOnlineUsers) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStatusTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_status_getChannelOnlineUsers: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_status_getChannelOnlineUsers: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
+			}
+			m.ChannelId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChannelId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStatusTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthStatusTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLStatusSetUserChannelsOnline) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStatusTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_status_setUserChannelsOnline: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_status_setUserChannelsOnline: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Channels = append(m.Channels, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Channels) == 0 {
+					m.Channels = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowStatusTl
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= int64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Channels = append(m.Channels, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Channels", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStatusTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthStatusTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLStatusSetUserChannelsOffline) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStatusTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_status_setUserChannelsOffline: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_status_setUserChannelsOffline: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Channels = append(m.Channels, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Channels) == 0 {
+					m.Channels = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowStatusTl
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= int64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Channels = append(m.Channels, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Channels", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStatusTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthStatusTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLStatusSetChannelUserOffline) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStatusTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_status_setChannelUserOffline: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_status_setChannelUserOffline: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChannelId", wireType)
+			}
+			m.ChannelId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChannelId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStatusTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStatusTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthStatusTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *Vector_UserSessionEntryList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2829,6 +4242,133 @@ func (m *Vector_UserSessionEntryList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStatusTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthStatusTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Vector_Long) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStatusTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Vector_Long: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Vector_Long: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Datas = append(m.Datas, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowStatusTl
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthStatusTl
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Datas) == 0 {
+					m.Datas = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowStatusTl
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= int64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Datas = append(m.Datas, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Datas", wireType)
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStatusTl(dAtA[iNdEx:])

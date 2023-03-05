@@ -17,6 +17,10 @@ const (
 	Predicate_status_setSessionOffline          = "status_setSessionOffline"
 	Predicate_status_getUserOnlineSessions      = "status_getUserOnlineSessions"
 	Predicate_status_getUsersOnlineSessionsList = "status_getUsersOnlineSessionsList"
+	Predicate_status_getChannelOnlineUsers      = "status_getChannelOnlineUsers"
+	Predicate_status_setUserChannelsOnline      = "status_setUserChannelsOnline"
+	Predicate_status_setUserChannelsOffline     = "status_setUserChannelsOffline"
+	Predicate_status_setChannelUserOffline      = "status_setChannelUserOffline"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -44,6 +48,22 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -2009385532, // 0x883b35c4
 
 	},
+	Predicate_status_getChannelOnlineUsers: {
+		0: 1166257237, // 0x4583ac55
+
+	},
+	Predicate_status_setUserChannelsOnline: {
+		0: -851901363, // 0xcd39044d
+
+	},
+	Predicate_status_setUserChannelsOffline: {
+		0: 1822646698, // 0x6ca361aa
+
+	},
+	Predicate_status_setChannelUserOffline: {
+		0: -997471364, // 0xc48bcb7c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -53,6 +73,10 @@ var clazzIdNameRegisters2 = map[int32]string{
 	631663196:   Predicate_status_setSessionOffline,          // 0x25a66a5c
 	-406788659:  Predicate_status_getUserOnlineSessions,      // 0xe7c0e5cd
 	-2009385532: Predicate_status_getUsersOnlineSessionsList, // 0x883b35c4
+	1166257237:  Predicate_status_getChannelOnlineUsers,      // 0x4583ac55
+	-851901363:  Predicate_status_setUserChannelsOnline,      // 0xcd39044d
+	1822646698:  Predicate_status_setUserChannelsOffline,     // 0x6ca361aa
+	-997471364:  Predicate_status_setChannelUserOffline,      // 0xc48bcb7c
 
 }
 

@@ -19,17 +19,11 @@ import (
 // StatusSetSessionOffline
 // status.setSessionOffline online:SessionEntry = Bool;
 func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOffline) (*mtproto.Bool, error) {
-	var (
-		userK = getUserKey(in.GetUserId())
-		authK = getAuthKeyIdKey(in.GetAuthKeyId())
-	)
-
-	if _, err := c.svcCtx.Dao.KV.HdelCtx(c.ctx, userK, strconv.FormatInt(in.GetAuthKeyId(), 10)); err != nil {
-		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in.DebugString(), err)
-		return nil, err
-	}
-
-	if _, err := c.svcCtx.Dao.KV.DelCtx(c.ctx, authK); err != nil {
+	_, err := c.svcCtx.Dao.KV.HdelCtx(
+		c.ctx,
+		getUserKey(in.GetUserId()),
+		strconv.FormatInt(in.GetAuthKeyId(), 10))
+	if err != nil {
 		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}

@@ -62,6 +62,26 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -2009385532,
 		}
 	},
+	1166257237: func() mtproto.TLObject { // 0x4583ac55
+		return &TLStatusGetChannelOnlineUsers{
+			Constructor: 1166257237,
+		}
+	},
+	-851901363: func() mtproto.TLObject { // 0xcd39044d
+		return &TLStatusSetUserChannelsOnline{
+			Constructor: -851901363,
+		}
+	},
+	1822646698: func() mtproto.TLObject { // 0x6ca361aa
+		return &TLStatusSetUserChannelsOffline{
+			Constructor: 1822646698,
+		}
+	},
+	-997471364: func() mtproto.TLObject { // 0xc48bcb7c
+		return &TLStatusSetChannelUserOffline{
+			Constructor: -997471364,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -608,6 +628,206 @@ func (m *TLStatusGetUsersOnlineSessionsList) DebugString() string {
 	return dbgString
 }
 
+// TLStatusGetChannelOnlineUsers
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusGetChannelOnlineUsers) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_getChannelOnlineUsers))
+
+	switch uint32(m.Constructor) {
+	case 0x4583ac55:
+		x.UInt(0x4583ac55)
+
+		// no flags
+
+		x.Long(m.GetChannelId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusGetChannelOnlineUsers) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusGetChannelOnlineUsers) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x4583ac55:
+
+		// not has flags
+
+		m.ChannelId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusGetChannelOnlineUsers) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLStatusSetUserChannelsOnline
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusSetUserChannelsOnline) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_setUserChannelsOnline))
+
+	switch uint32(m.Constructor) {
+	case 0xcd39044d:
+		x.UInt(0xcd39044d)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.VectorLong(m.GetChannels())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusSetUserChannelsOnline) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusSetUserChannelsOnline) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xcd39044d:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m.Channels = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusSetUserChannelsOnline) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLStatusSetUserChannelsOffline
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusSetUserChannelsOffline) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_setUserChannelsOffline))
+
+	switch uint32(m.Constructor) {
+	case 0x6ca361aa:
+		x.UInt(0x6ca361aa)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+		x.VectorLong(m.GetChannels())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusSetUserChannelsOffline) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusSetUserChannelsOffline) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x6ca361aa:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m.Channels = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusSetUserChannelsOffline) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLStatusSetChannelUserOffline
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusSetChannelUserOffline) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_setChannelUserOffline))
+
+	switch uint32(m.Constructor) {
+	case 0xc48bcb7c:
+		x.UInt(0xc48bcb7c)
+
+		// no flags
+
+		x.Long(m.GetChannelId())
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusSetChannelUserOffline) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusSetChannelUserOffline) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xc48bcb7c:
+
+		// not has flags
+
+		m.ChannelId = dBuf.Long()
+		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusSetChannelUserOffline) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 //----------------------------------------------------------------------------------------------------------------
 // Vector_UserSessionEntryList
 ///////////////////////////////////////////////////////////////////////////////
@@ -639,6 +859,31 @@ func (m *Vector_UserSessionEntryList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserSessionEntryList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_Long
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_Long) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	x.VectorLong(m.Datas)
+
+	return x.GetBuf()
+}
+
+func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Datas = dBuf.VectorLong()
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_Long) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_Long) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

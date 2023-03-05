@@ -24,26 +24,24 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 	var (
 		userK = getUserKey(in.GetUserId())
 		sess  = in.GetSession()
-		authK = getAuthKeyIdKey(sess.GetAuthKeyId())
 	)
 
 	sessData, _ := jsonx.Marshal(sess)
-
-	if err := c.svcCtx.Dao.KV.HsetCtx(
+	err := c.svcCtx.Dao.KV.HsetCtx(
 		c.ctx,
 		userK,
 		strconv.FormatInt(sess.GetAuthKeyId(), 10),
-		string(sessData)); err != nil {
+		string(sessData))
+	if err != nil {
 		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}
 
-	if err := c.svcCtx.Dao.KV.ExpireCtx(c.ctx, userK, c.svcCtx.Config.StatusExpire); err != nil {
-		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
-		return nil, err
-	}
-
-	if err := c.svcCtx.Dao.KV.SetexCtx(c.ctx, authK, sess.GetGateway(), c.svcCtx.Config.StatusExpire); err != nil {
+	_, err = c.svcCtx.Dao.KV.ExpireCtx(
+		c.ctx,
+		userK,
+		c.svcCtx.Config.StatusExpire)
+	if err != nil {
 		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
 		return nil, err
 	}

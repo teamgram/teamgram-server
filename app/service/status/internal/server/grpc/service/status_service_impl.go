@@ -16,6 +16,8 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/status/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 // StatusSetSessionOnline
@@ -76,4 +78,40 @@ func (s *Service) StatusGetUsersOnlineSessionsList(ctx context.Context, request 
 
 	c.Logger.Debugf("status.getUsersOnlineSessionsList - reply: %s", r.DebugString())
 	return r, err
+}
+
+// StatusGetChannelOnlineUsers
+// status.getChannelOnlineUsers channel_id:long = Vector<long>;
+func (s *Service) StatusGetChannelOnlineUsers(ctx context.Context, request *status.TLStatusGetChannelOnlineUsers) (*status.Vector_Long, error) {
+	// TODO: not impl
+	logx.WithContext(ctx).Errorf("status.getChannelOnlineUsers blocked, License key from https://teamgram.net required to unlock enterprise features.")
+
+	return nil, mtproto.ErrEnterpriseIsBlocked
+}
+
+// StatusSetUserChannelsOnline
+// status.setUserChannelsOnline user_id:long channels:Vector<long> = Bool;
+func (s *Service) StatusSetUserChannelsOnline(ctx context.Context, request *status.TLStatusSetUserChannelsOnline) (*mtproto.Bool, error) {
+	// TODO: not impl
+	logx.WithContext(ctx).Errorf("status.setUserChannelsOnline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+
+	return nil, mtproto.ErrEnterpriseIsBlocked
+}
+
+// StatusSetUserChannelsOffline
+// status.setUserChannelsOffline user_id:long channels:Vector<long> = Bool;
+func (s *Service) StatusSetUserChannelsOffline(ctx context.Context, request *status.TLStatusSetUserChannelsOffline) (*mtproto.Bool, error) {
+	// TODO: not impl
+	logx.WithContext(ctx).Errorf("status.setUserChannelsOffline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+
+	return nil, mtproto.ErrEnterpriseIsBlocked
+}
+
+// StatusSetChannelUserOffline
+// status.setChannelUserOffline channel_id:long user_id:long = Bool;
+func (s *Service) StatusSetChannelUserOffline(ctx context.Context, request *status.TLStatusSetChannelUserOffline) (*mtproto.Bool, error) {
+	// TODO: not impl
+	logx.WithContext(ctx).Errorf("status.setChannelUserOffline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }
