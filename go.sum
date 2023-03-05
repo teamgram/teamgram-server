@@ -2404,8 +2404,8 @@ github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cb
 github.com/tchap/go-patricia v2.2.6+incompatible/go.mod h1:bmLyhP68RS6kStMGxByiQ23RP/odRBOTVjwp2cDyi6I=
 github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
 github.com/tdakkota/asciicheck v0.0.0-20200416200610-e657995f937b/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
-github.com/teamgram/go-zero v0.0.0-20230305144425-83dec8e5437d h1:4BTXuyg+5xKPd5xS12s0Fws8W9bTP9YXhiT9d1VjTJ0=
-github.com/teamgram/go-zero v0.0.0-20230305144425-83dec8e5437d/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
+github.com/teamgram/go-zero v0.0.0-20230305151442-15da50af8e87 h1:ZJY9JAjbTkpsTjNavDC7izduCJQvMwyLwXswQOrVAt4=
+github.com/teamgram/go-zero v0.0.0-20230305151442-15da50af8e87/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
 github.com/teamgram/marmota v0.1.14 h1:FU8LTgRp5QV3Jg2M8GK+N6XOSuEIDsObX3Syim8FSUM=
 github.com/teamgram/marmota v0.1.14/go.mod h1:cPnJbYULixPlE8K/5jKnA/OUXmqogWi5Go4ogcXU8Pg=
 github.com/teamgram/proto v0.150.2-0.20230305144817-027dca41e3d1 h1:TfbEaQXz/PFlu6Oop0PxScIJ2YhwpHodwm7Z2gfCWFY=
