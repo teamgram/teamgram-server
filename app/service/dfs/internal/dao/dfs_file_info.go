@@ -39,7 +39,7 @@ func (d *Dao) SetFileInfo(ctx context.Context, fileInfo *model.DfsFileInfo) (err
 		return
 	}
 
-	if err = d.ssdb.Expire(key, ssdbExpire); err != nil {
+	if _, err = d.ssdb.Expire(key, ssdbExpire); err != nil {
 		logx.WithContext(ctx).Error("conn.Send(EXPIRE %d,%d) error(%v)", key, ssdbExpire, err)
 	}
 
