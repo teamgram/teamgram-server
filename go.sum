@@ -2404,10 +2404,10 @@ github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cb
 github.com/tchap/go-patricia v2.2.6+incompatible/go.mod h1:bmLyhP68RS6kStMGxByiQ23RP/odRBOTVjwp2cDyi6I=
 github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
 github.com/tdakkota/asciicheck v0.0.0-20200416200610-e657995f937b/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
-github.com/teamgram/go-zero v0.0.0-20230305151442-15da50af8e87 h1:ZJY9JAjbTkpsTjNavDC7izduCJQvMwyLwXswQOrVAt4=
-github.com/teamgram/go-zero v0.0.0-20230305151442-15da50af8e87/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
-github.com/teamgram/marmota v0.1.14 h1:FU8LTgRp5QV3Jg2M8GK+N6XOSuEIDsObX3Syim8FSUM=
-github.com/teamgram/marmota v0.1.14/go.mod h1:cPnJbYULixPlE8K/5jKnA/OUXmqogWi5Go4ogcXU8Pg=
+github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f h1:4tfuEDNNhwXNY/rYsTaV37PDYJVMABgxSzqCd5U4HJI=
+github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
+github.com/teamgram/marmota v0.1.15 h1:84i3hcZXrvjl+OqK0yHKEokw9Dou/twFR5V/JUUIl3w=
+github.com/teamgram/marmota v0.1.15/go.mod h1:lrLRS9o+LUCiA9AAJrtOA8N18pD97hOC1wtIZg2m1w0=
 github.com/teamgram/proto v0.150.2-0.20230305144817-027dca41e3d1 h1:TfbEaQXz/PFlu6Oop0PxScIJ2YhwpHodwm7Z2gfCWFY=
 github.com/teamgram/proto v0.150.2-0.20230305144817-027dca41e3d1/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=
