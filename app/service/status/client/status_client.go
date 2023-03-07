@@ -13,8 +13,8 @@ package status_client
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
+	"github.com/teamgram/proto/mtproto"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,14 +22,17 @@ import (
 var _ *mtproto.Bool
 
 type StatusClient interface {
-	StatusSetSessionOnline(ctx context.Context, in *status.TLStatusSetSessionOnline) (*mtproto.Bool, error)
-	StatusSetSessionOffline(ctx context.Context, in *status.TLStatusSetSessionOffline) (*mtproto.Bool, error)
-	StatusGetUserOnlineSessions(ctx context.Context, in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error)
-	StatusGetUsersOnlineSessionsList(ctx context.Context, in *status.TLStatusGetUsersOnlineSessionsList) (*status.Vector_UserSessionEntryList, error)
-	StatusGetChannelOnlineUsers(ctx context.Context, in *status.TLStatusGetChannelOnlineUsers) (*status.Vector_Long, error)
-	StatusSetUserChannelsOnline(ctx context.Context, in *status.TLStatusSetUserChannelsOnline) (*mtproto.Bool, error)
-	StatusSetUserChannelsOffline(ctx context.Context, in *status.TLStatusSetUserChannelsOffline) (*mtproto.Bool, error)
-	StatusSetChannelUserOffline(ctx context.Context, in *status.TLStatusSetChannelUserOffline) (*mtproto.Bool, error)
+    StatusSetSessionOnline(ctx context.Context, in *status.TLStatusSetSessionOnline) (*mtproto.Bool, error)
+    StatusSetSessionOffline(ctx context.Context, in *status.TLStatusSetSessionOffline) (*mtproto.Bool, error)
+    StatusGetUserOnlineSessions(ctx context.Context, in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error)
+    StatusGetUsersOnlineSessionsList(ctx context.Context, in *status.TLStatusGetUsersOnlineSessionsList) (*status.Vector_UserSessionEntryList, error)
+    StatusGetChannelOnlineUsers(ctx context.Context, in *status.TLStatusGetChannelOnlineUsers) (*status.Vector_Long, error)
+    StatusSetUserChannelsOnline(ctx context.Context, in *status.TLStatusSetUserChannelsOnline) (*mtproto.Bool, error)
+    StatusSetUserChannelsOffline(ctx context.Context, in *status.TLStatusSetUserChannelsOffline) (*mtproto.Bool, error)
+    StatusSetChannelUserOffline(ctx context.Context, in *status.TLStatusSetChannelUserOffline) (*mtproto.Bool, error)
+    StatusSetChannelUsersOnline(ctx context.Context, in *status.TLStatusSetChannelUsersOnline) (*mtproto.Bool, error)
+    StatusSetChannelOffline(ctx context.Context, in *status.TLStatusSetChannelOffline) (*mtproto.Bool, error)
+
 }
 
 type defaultStatusClient struct {
@@ -41,6 +44,7 @@ func NewStatusClient(cli zrpc.Client) StatusClient {
 		cli: cli,
 	}
 }
+
 
 // StatusSetSessionOnline
 // status.setSessionOnline user_id:long session:SessionEntry = Bool;
@@ -97,3 +101,18 @@ func (m *defaultStatusClient) StatusSetChannelUserOffline(ctx context.Context, i
 	client := status.NewRPCStatusClient(m.cli.Conn())
 	return client.StatusSetChannelUserOffline(ctx, in)
 }
+
+// StatusSetChannelUsersOnline
+// status.setChannelUsersOnline channel_id:long user_id:long = Bool;
+func (m *defaultStatusClient) StatusSetChannelUsersOnline(ctx context.Context, in *status.TLStatusSetChannelUsersOnline) (*mtproto.Bool, error) {
+	client := status.NewRPCStatusClient(m.cli.Conn())
+	return client.StatusSetChannelUsersOnline(ctx, in)
+}
+
+// StatusSetChannelOffline
+// status.setChannelOffline channel_id:long = Bool;
+func (m *defaultStatusClient) StatusSetChannelOffline(ctx context.Context, in *status.TLStatusSetChannelOffline) (*mtproto.Bool, error) {
+	client := status.NewRPCStatusClient(m.cli.Conn())
+	return client.StatusSetChannelOffline(ctx, in)
+}
+

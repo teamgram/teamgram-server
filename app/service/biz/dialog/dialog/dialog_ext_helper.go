@@ -59,17 +59,19 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 			}
 		} else {
 			idx := -1
-			if offsetId > 0 && offsetId < math.MaxInt32 {
-				for i, dialog := range m {
-					if dialog.Dialog.TopMessage == offsetId {
-						idx = i
-						break
-					}
-				}
-			} else if offsetDate > 0 && offsetDate < math.MaxInt32 {
+			if offsetDate > 0 && offsetDate < math.MaxInt32 {
 				for i, dialog := range m {
 					if int32(dialog.Order) == offsetDate {
 						idx = i
+						// logx.Debugf("idx: %v", idx)
+						break
+					}
+				}
+			} else if offsetId > 0 && offsetId < math.MaxInt32 {
+				for i, dialog := range m {
+					if dialog.Dialog.TopMessage == offsetId {
+						idx = i
+						// logx.Debugf("idx: %v", idx)
 						break
 					}
 				}

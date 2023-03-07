@@ -34,6 +34,8 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLStatusSetUserChannelsOnline":      RPCContextTuple{"/mtproto.RPCStatus/status_setUserChannelsOnline", func() interface{} { return new(mtproto.Bool) }},
 	"TLStatusSetUserChannelsOffline":     RPCContextTuple{"/mtproto.RPCStatus/status_setUserChannelsOffline", func() interface{} { return new(mtproto.Bool) }},
 	"TLStatusSetChannelUserOffline":      RPCContextTuple{"/mtproto.RPCStatus/status_setChannelUserOffline", func() interface{} { return new(mtproto.Bool) }},
+	"TLStatusSetChannelUsersOnline":      RPCContextTuple{"/mtproto.RPCStatus/status_setChannelUsersOnline", func() interface{} { return new(mtproto.Bool) }},
+	"TLStatusSetChannelOffline":          RPCContextTuple{"/mtproto.RPCStatus/status_setChannelOffline", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

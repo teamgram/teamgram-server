@@ -82,6 +82,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -997471364,
 		}
 	},
+	-1499734793: func() mtproto.TLObject { // 0xa69bdcf7
+		return &TLStatusSetChannelUsersOnline{
+			Constructor: -1499734793,
+		}
+	},
+	1266112245: func() mtproto.TLObject { // 0x4b7756f5
+		return &TLStatusSetChannelOffline{
+			Constructor: 1266112245,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -823,6 +833,105 @@ func (m *TLStatusSetChannelUserOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelUserOffline) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLStatusSetChannelUsersOnline
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusSetChannelUsersOnline) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_setChannelUsersOnline))
+
+	switch uint32(m.Constructor) {
+	case 0xa69bdcf7:
+		x.UInt(0xa69bdcf7)
+
+		// no flags
+
+		x.Long(m.GetChannelId())
+
+		x.VectorLong(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusSetChannelUsersOnline) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusSetChannelUsersOnline) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xa69bdcf7:
+
+		// not has flags
+
+		m.ChannelId = dBuf.Long()
+
+		m.Id = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusSetChannelUsersOnline) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLStatusSetChannelOffline
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLStatusSetChannelOffline) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_status_setChannelOffline))
+
+	switch uint32(m.Constructor) {
+	case 0x4b7756f5:
+		x.UInt(0x4b7756f5)
+
+		// no flags
+
+		x.Long(m.GetChannelId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLStatusSetChannelOffline) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLStatusSetChannelOffline) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x4b7756f5:
+
+		// not has flags
+
+		m.ChannelId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLStatusSetChannelOffline) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
