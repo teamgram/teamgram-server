@@ -10,12 +10,13 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // UserCreateNewUser
 // user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
-func (c *UserCore) UserCreateNewUser(in *user.TLUserCreateNewUser) (*user.ImmutableUser, error) {
+func (c *UserCore) UserCreateNewUser(in *user.TLUserCreateNewUser) (*mtproto.ImmutableUser, error) {
 	user, err := c.svcCtx.Dao.CreateNewUserV2(
 		c.ctx,
 		in.SecretKeyId,

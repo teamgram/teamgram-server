@@ -85,7 +85,7 @@ func (c *ChatInvitesCore) MessagesHideChatJoinRequest(in *mtproto.TLMessagesHide
 
 	pushUserIdList = append(pushUserIdList, pendingJoinRequests.GetRecentRequesters()...)
 	if len(pushUserIdList) > 0 {
-		mChat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		mChat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			if participant.CanInviteUsers() {
 				pushUserIdList = append(pushUserIdList, participant.UserId)
 			}
@@ -121,7 +121,7 @@ func (c *ChatInvitesCore) MessagesHideChatJoinRequest(in *mtproto.TLMessagesHide
 		rUpdates.Updates = append(rUpdates.Updates, updatePendingJoinRequests)
 		return rUpdates, nil
 	} else {
-		mChat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		mChat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			if c.MD.UserId == participant.UserId {
 				return nil
 			}

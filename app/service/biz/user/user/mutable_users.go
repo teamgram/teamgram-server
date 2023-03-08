@@ -42,7 +42,7 @@ func (m *Vector_ImmutableUser) GetUnsafeUserSelf(id int64) (*mtproto.User, error
 	return me.ToSelfUser(), nil
 }
 
-func (m *Vector_ImmutableUser) findImmutableUser(id int64) *ImmutableUser {
+func (m *Vector_ImmutableUser) findImmutableUser(id int64) *mtproto.ImmutableUser {
 	for _, v := range m.GetDatas() {
 		if v.Id() == id {
 			return v
@@ -52,7 +52,7 @@ func (m *Vector_ImmutableUser) findImmutableUser(id int64) *ImmutableUser {
 	return nil
 }
 
-func (m *Vector_ImmutableUser) GetImmutableUser(id int64) (u *ImmutableUser, ok bool) {
+func (m *Vector_ImmutableUser) GetImmutableUser(id int64) (u *mtproto.ImmutableUser, ok bool) {
 	for _, v := range m.GetDatas() {
 		if v.Id() == id {
 			return v, true
@@ -94,15 +94,15 @@ func (m *Vector_ImmutableUser) GetUserListByIdList(selfId int64, id ...int64) []
 	return users
 }
 
-func (m *Vector_ImmutableUser) Visit(cb func(it *ImmutableUser)) {
+func (m *Vector_ImmutableUser) Visit(cb func(it *mtproto.ImmutableUser)) {
 	for _, v := range m.GetDatas() {
 		cb(v)
 	}
 }
 
-func (m *Vector_ImmutableUser) VisitByMe(meId int64, cb func(me, it *ImmutableUser)) {
+func (m *Vector_ImmutableUser) VisitByMe(meId int64, cb func(me, it *mtproto.ImmutableUser)) {
 	var (
-		me *ImmutableUser
+		me *mtproto.ImmutableUser
 	)
 
 	for _, v := range m.GetDatas() {

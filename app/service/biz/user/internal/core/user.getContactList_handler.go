@@ -10,6 +10,7 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -20,7 +21,7 @@ func (c *UserCore) UserGetContactList(in *user.TLUserGetContactList) (*user.Vect
 
 	rValList.Datas = c.svcCtx.Dao.GetUserContactList(c.ctx, in.GetUserId())
 	if rValList.Datas == nil {
-		rValList.Datas = []*user.ContactData{}
+		rValList.Datas = []*mtproto.ContactData{}
 	}
 
 	return rValList, nil

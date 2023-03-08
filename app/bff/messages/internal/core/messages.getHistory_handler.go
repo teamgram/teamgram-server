@@ -33,7 +33,7 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 	var (
 		err  error
 		peer = mtproto.FromInputPeer2(c.MD.UserId, in.GetPeer())
-		chat *chatpb.MutableChat
+		chat *mtproto.MutableChat
 		//channel   *channelpb.MutableChannel
 		//isChannel bool
 		limit = in.Limit

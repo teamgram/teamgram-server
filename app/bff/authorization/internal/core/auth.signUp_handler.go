@@ -120,7 +120,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	}
 
 	var (
-		user *userpb.ImmutableUser
+		user *mtproto.ImmutableUser
 	)
 
 	key := crypto.CreateAuthKey()

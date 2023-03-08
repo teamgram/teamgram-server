@@ -13,7 +13,6 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
-	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,8 +25,8 @@ const (
 )
 
 type ChatCacheData struct {
-	ChatData              *chatpb.ImmutableChat `json:"chat_data"`
-	ChatParticipantIdList []int64               `json:"chat_participant_id_list"`
+	ChatData              *mtproto.ImmutableChat `json:"chat_data"`
+	ChatParticipantIdList []int64                `json:"chat_participant_id_list"`
 }
 
 func genChatCacheKey(chatId int64) string {
@@ -98,8 +97,8 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 	return chatData, nil
 }
 
-func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, idList []int64) []*chatpb.ImmutableChatParticipant {
-	participantList := make([]*chatpb.ImmutableChatParticipant, len(idList))
+func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, idList []int64) []*mtproto.ImmutableChatParticipant {
+	participantList := make([]*mtproto.ImmutableChatParticipant, len(idList))
 
 	mr.ForEach(
 		func(source chan<- interface{}) {
@@ -110,7 +109,7 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 		func(item interface{}) {
 			idx := item.(idxId)
 			var (
-				p *chatpb.ImmutableChatParticipant
+				p *mtproto.ImmutableChatParticipant
 			)
 			err2 := d.CachedConn.QueryRow(
 				ctx,
@@ -122,7 +121,7 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 						return sqlc.ErrNotFound
 					}
 					logx.WithContext(ctx).Infof("do2: %v", do2)
-					*v.(**chatpb.ImmutableChatParticipant) = d.MakeImmutableChatParticipant(do2)
+					*v.(**mtproto.ImmutableChatParticipant) = d.MakeImmutableChatParticipant(do2)
 					return nil
 				})
 
@@ -135,21 +134,21 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 	return removeAllNil(participantList)
 }
 
-func (d *Dao) GetExcludeParticipantsMutableChat(ctx context.Context, chatId int64) (*chatpb.MutableChat, error) {
+func (d *Dao) GetExcludeParticipantsMutableChat(ctx context.Context, chatId int64) (*mtproto.MutableChat, error) {
 	cacheData, err := d.getChatData(ctx, chatId)
 	if err != nil {
 		return nil, err
 	}
 
-	return chatpb.MakeTLMutableChat(&chatpb.MutableChat{
+	return mtproto.MakeTLMutableChat(&mtproto.MutableChat{
 		Chat:             cacheData.ChatData,
-		ChatParticipants: []*chatpb.ImmutableChatParticipant{},
+		ChatParticipants: []*mtproto.ImmutableChatParticipant{},
 	}).To_MutableChat(), nil
 }
 
-func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*chatpb.MutableChat, error) {
+func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*mtproto.MutableChat, error) {
 	var (
-		participants []*chatpb.ImmutableChatParticipant
+		participants []*mtproto.ImmutableChatParticipant
 	)
 
 	cacheData, err := d.getChatData(ctx, chatId)
@@ -167,13 +166,13 @@ func (d *Dao) GetMutableChat(ctx context.Context, chatId int64, id ...int64) (*c
 	// 	return nil, err
 	// }
 
-	return chatpb.MakeTLMutableChat(&chatpb.MutableChat{
+	return mtproto.MakeTLMutableChat(&mtproto.MutableChat{
 		Chat:             cacheData.ChatData,
 		ChatParticipants: participants,
 	}).To_MutableChat(), nil
 }
 
-func (d *Dao) PutMutableChat(ctx context.Context, chat *chatpb.MutableChat) error {
+func (d *Dao) PutMutableChat(ctx context.Context, chat *mtproto.MutableChat) error {
 	cacheData := &ChatCacheData{
 		ChatData:              chat.Chat,
 		ChatParticipantIdList: make([]int64, len(chat.ChatParticipants)),

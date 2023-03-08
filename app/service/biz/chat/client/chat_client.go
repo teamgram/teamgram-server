@@ -22,20 +22,20 @@ import (
 var _ *mtproto.Bool
 
 type ChatClient interface {
-	ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*chat.MutableChat, error)
+	ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*mtproto.MutableChat, error)
 	ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.Vector_MutableChat, error)
-	ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*chat.MutableChat, error)
-	ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*chat.MutableChat, error)
-	ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*chat.MutableChat, error)
-	ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*chat.MutableChat, error)
-	ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*chat.MutableChat, error)
-	ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*chat.MutableChat, error)
-	ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*chat.MutableChat, error)
-	ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*chat.MutableChat, error)
-	ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error)
-	ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*chat.MutableChat, error)
-	ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error)
-	ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*chat.MutableChat, error)
+	ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*mtproto.MutableChat, error)
+	ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*mtproto.MutableChat, error)
+	ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*mtproto.MutableChat, error)
+	ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*mtproto.MutableChat, error)
+	ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*mtproto.MutableChat, error)
+	ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*mtproto.MutableChat, error)
+	ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*mtproto.MutableChat, error)
+	ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*mtproto.MutableChat, error)
+	ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*mtproto.MutableChat, error)
+	ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*mtproto.MutableChat, error)
+	ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*mtproto.MutableChat, error)
+	ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*mtproto.MutableChat, error)
 	ChatMigratedToChannel(ctx context.Context, in *chat.TLChatMigratedToChannel) (*mtproto.Bool, error)
 	ChatGetChatParticipantIdList(ctx context.Context, in *chat.TLChatGetChatParticipantIdList) (*chat.Vector_Long, error)
 	ChatGetUsersChatIdList(ctx context.Context, in *chat.TLChatGetUsersChatIdList) (*chat.Vector_UserChatIdList, error)
@@ -45,13 +45,13 @@ type ChatClient interface {
 	ChatGetExportedChatInvite(ctx context.Context, in *chat.TLChatGetExportedChatInvite) (*mtproto.ExportedChatInvite, error)
 	ChatGetExportedChatInvites(ctx context.Context, in *chat.TLChatGetExportedChatInvites) (*chat.Vector_ExportedChatInvite, error)
 	ChatCheckChatInvite(ctx context.Context, in *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error)
-	ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*chat.MutableChat, error)
+	ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*mtproto.MutableChat, error)
 	ChatGetChatInviteImporters(ctx context.Context, in *chat.TLChatGetChatInviteImporters) (*chat.Vector_ChatInviteImporter, error)
 	ChatDeleteExportedChatInvite(ctx context.Context, in *chat.TLChatDeleteExportedChatInvite) (*mtproto.Bool, error)
 	ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *chat.TLChatDeleteRevokedExportedChatInvites) (*mtproto.Bool, error)
 	ChatEditExportedChatInvite(ctx context.Context, in *chat.TLChatEditExportedChatInvite) (*chat.Vector_ExportedChatInvite, error)
-	ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error)
-	ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error)
+	ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*mtproto.MutableChat, error)
+	ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*mtproto.MutableChat, error)
 	ChatSearch(ctx context.Context, in *chat.TLChatSearch) (*chat.Vector_MutableChat, error)
 	ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error)
 	ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error)
@@ -70,7 +70,7 @@ func NewChatClient(cli zrpc.Client) ChatClient {
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
-func (m *defaultChatClient) ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatGetMutableChat(ctx, in)
 }
@@ -84,84 +84,84 @@ func (m *defaultChatClient) ChatGetChatListByIdList(ctx context.Context, in *cha
 
 // ChatGetChatBySelfId
 // chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
-func (m *defaultChatClient) ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatGetChatBySelfId(ctx, in)
 }
 
 // ChatCreateChat2
 // chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
-func (m *defaultChatClient) ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatCreateChat2(ctx, in)
 }
 
 // ChatDeleteChat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
-func (m *defaultChatClient) ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatDeleteChat(ctx, in)
 }
 
 // ChatDeleteChatUser
 // chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
-func (m *defaultChatClient) ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatDeleteChatUser(ctx, in)
 }
 
 // ChatEditChatTitle
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
-func (m *defaultChatClient) ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatEditChatTitle(ctx, in)
 }
 
 // ChatEditChatAbout
 // chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
-func (m *defaultChatClient) ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatEditChatAbout(ctx, in)
 }
 
 // ChatEditChatPhoto
 // chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
-func (m *defaultChatClient) ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatEditChatPhoto(ctx, in)
 }
 
 // ChatEditChatAdmin
 // chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
-func (m *defaultChatClient) ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatEditChatAdmin(ctx, in)
 }
 
 // ChatEditChatDefaultBannedRights
 // chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
-func (m *defaultChatClient) ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatEditChatDefaultBannedRights(ctx, in)
 }
 
 // ChatAddChatUser
 // chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
-func (m *defaultChatClient) ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatAddChatUser(ctx, in)
 }
 
 // ChatGetMutableChatByLink
 // chat.getMutableChatByLink link:string = MutableChat;
-func (m *defaultChatClient) ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatGetMutableChatByLink(ctx, in)
 }
 
 // ChatToggleNoForwards
 // chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
-func (m *defaultChatClient) ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatToggleNoForwards(ctx, in)
 }
@@ -231,7 +231,7 @@ func (m *defaultChatClient) ChatCheckChatInvite(ctx context.Context, in *chat.TL
 
 // ChatImportChatInvite
 // chat.importChatInvite self_id:long hash:string = MutableChat;
-func (m *defaultChatClient) ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatImportChatInvite(ctx, in)
 }
@@ -266,14 +266,14 @@ func (m *defaultChatClient) ChatEditExportedChatInvite(ctx context.Context, in *
 
 // ChatSetChatAvailableReactions
 // chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
-func (m *defaultChatClient) ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatSetChatAvailableReactions(ctx, in)
 }
 
 // ChatSetHistoryTTL
 // chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
-func (m *defaultChatClient) ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error) {
+func (m *defaultChatClient) ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*mtproto.MutableChat, error) {
 	client := chat.NewRPCChatClient(m.cli.Conn())
 	return client.ChatSetHistoryTTL(ctx, in)
 }

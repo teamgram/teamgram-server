@@ -36,7 +36,7 @@ func (c *InboxCore) InboxSendChatMultiMessageToInbox(in *inbox.TLInboxSendChatMu
 		return nil, err
 	}
 
-	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if in.FromId == userId {
 			return nil
 		}

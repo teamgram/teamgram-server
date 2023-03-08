@@ -59,7 +59,7 @@ func (c *ChatsCore) MessagesEditChatAdmin(in *mtproto.TLMessagesEditChatAdmin) (
 		Participants_CHATPARTICIPANTS: chat.ToChatParticipants(0),
 	}).To_Update()
 
-	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if participant.IsChatMemberStateNormal() {
 			idList = append(idList, userId)
 		}
@@ -73,7 +73,7 @@ func (c *ChatsCore) MessagesEditChatAdmin(in *mtproto.TLMessagesEditChatAdmin) (
 		c.Logger.Errorf("messages.getFullChat - error: not found dialog")
 	}
 
-	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if !participant.IsChatMemberStateNormal() {
 			return nil
 		}

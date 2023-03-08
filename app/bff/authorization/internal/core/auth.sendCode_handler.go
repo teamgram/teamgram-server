@@ -229,7 +229,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 	// Always crated new phoneCode
 	var (
 		phoneRegistered = false
-		user            *userpb.ImmutableUser
+		user            *mtproto.ImmutableUser
 	)
 
 	if user, err = c.svcCtx.Dao.UserClient.UserGetImmutableUserByPhone(c.ctx, &userpb.TLUserGetImmutableUserByPhone{

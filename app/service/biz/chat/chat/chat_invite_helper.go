@@ -7,11 +7,12 @@
 package chat
 
 import (
+	"strings"
+
 	"github.com/teamgram/marmota/pkg/random2"
 	"github.com/teamgram/marmota/pkg/utils"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/pkg/env2"
-	"strings"
 )
 
 func GetChatTypeByInviteHash(hash string) int {

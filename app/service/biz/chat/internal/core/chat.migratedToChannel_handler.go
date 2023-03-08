@@ -25,7 +25,7 @@ func (c *ChatCore) ChatMigratedToChannel(in *chat.TLChatMigratedToChannel) (*mtp
 	)
 
 	keys := []string{c.svcCtx.Dao.GetChatCacheKey(chat2.Id())}
-	chat2.Walk(func(userId int64, participant *chat.ImmutableChatParticipant) error {
+	chat2.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		keys = append(keys, c.svcCtx.Dao.GetChatParticipantCacheKey(participant.ChatId, participant.UserId))
 		return nil
 	})

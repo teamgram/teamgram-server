@@ -16,7 +16,7 @@ import (
 
 // UserGetImmutableUserByPhone
 // user.getImmutableUserByPhone phone:string = ImmutableUser;
-func (c *UserCore) UserGetImmutableUserByPhone(in *user.TLUserGetImmutableUserByPhone) (*user.ImmutableUser, error) {
+func (c *UserCore) UserGetImmutableUserByPhone(in *user.TLUserGetImmutableUserByPhone) (*mtproto.ImmutableUser, error) {
 	// TODO: performance optimization
 	do, err := c.svcCtx.Dao.UsersDAO.SelectByPhoneNumber(c.ctx, in.Phone)
 	if err != nil {

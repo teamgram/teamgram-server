@@ -6,7 +6,9 @@
 
 package user
 
-import "github.com/teamgram/proto/mtproto"
+import (
+	"github.com/teamgram/proto/mtproto"
+)
 
 func (m *Vector_ContactData) ToContacts() []*mtproto.Contact {
 	contacts := make([]*mtproto.Contact, 0, len(m.GetDatas()))

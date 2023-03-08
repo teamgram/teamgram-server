@@ -42,7 +42,7 @@ func (c *ChatCore) ChatGetAdminsWithInvites(in *chat.TLChatGetAdminsWithInvites)
 		return nil, err
 	}
 
-	chat2.Walk(func(userId int64, participant *chat.ImmutableChatParticipant) error {
+	chat2.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if participant.CanInviteUsers() {
 			canInviteUsers = append(canInviteUsers, participant.UserId)
 		}

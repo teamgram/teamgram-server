@@ -65,7 +65,7 @@ func (s *Service) UserGetLastSeen(ctx context.Context, request *user.TLUserGetLa
 
 // UserGetImmutableUser
 // user.getImmutableUser flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
-func (s *Service) UserGetImmutableUser(ctx context.Context, request *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
+func (s *Service) UserGetImmutableUser(ctx context.Context, request *user.TLUserGetImmutableUser) (*mtproto.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getImmutableUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -95,7 +95,7 @@ func (s *Service) UserGetMutableUsers(ctx context.Context, request *user.TLUserG
 
 // UserGetImmutableUserByPhone
 // user.getImmutableUserByPhone phone:string = ImmutableUser;
-func (s *Service) UserGetImmutableUserByPhone(ctx context.Context, request *user.TLUserGetImmutableUserByPhone) (*user.ImmutableUser, error) {
+func (s *Service) UserGetImmutableUserByPhone(ctx context.Context, request *user.TLUserGetImmutableUserByPhone) (*mtproto.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getImmutableUserByPhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -110,7 +110,7 @@ func (s *Service) UserGetImmutableUserByPhone(ctx context.Context, request *user
 
 // UserGetImmutableUserByToken
 // user.getImmutableUserByToken token:string = ImmutableUser;
-func (s *Service) UserGetImmutableUserByToken(ctx context.Context, request *user.TLUserGetImmutableUserByToken) (*user.ImmutableUser, error) {
+func (s *Service) UserGetImmutableUserByToken(ctx context.Context, request *user.TLUserGetImmutableUserByToken) (*mtproto.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getImmutableUserByToken - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -485,7 +485,7 @@ func (s *Service) UserPredefinedBindRegisteredUserId(ctx context.Context, reques
 
 // UserCreateNewUser
 // user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
-func (s *Service) UserCreateNewUser(ctx context.Context, request *user.TLUserCreateNewUser) (*user.ImmutableUser, error) {
+func (s *Service) UserCreateNewUser(ctx context.Context, request *user.TLUserCreateNewUser) (*mtproto.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.createNewUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -710,7 +710,7 @@ func (s *Service) UserGetContactIdList(ctx context.Context, request *user.TLUser
 
 // UserGetContact
 // user.getContact user_id:long id:long = ContactData;
-func (s *Service) UserGetContact(ctx context.Context, request *user.TLUserGetContact) (*user.ContactData, error) {
+func (s *Service) UserGetContact(ctx context.Context, request *user.TLUserGetContact) (*mtproto.ContactData, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getContact - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -995,7 +995,7 @@ func (s *Service) UserUpdateEmojiStatus(ctx context.Context, request *user.TLUse
 
 // UserGetUserDataById
 // user.getUserDataById user_id:long = UserData;
-func (s *Service) UserGetUserDataById(ctx context.Context, request *user.TLUserGetUserDataById) (*user.UserData, error) {
+func (s *Service) UserGetUserDataById(ctx context.Context, request *user.TLUserGetUserDataById) (*mtproto.UserData, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getUserDataById - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -1025,7 +1025,7 @@ func (s *Service) UserGetUserDataListByIdList(ctx context.Context, request *user
 
 // UserGetUserDataByToken
 // user.getUserDataByToken token:string = UserData;
-func (s *Service) UserGetUserDataByToken(ctx context.Context, request *user.TLUserGetUserDataByToken) (*user.UserData, error) {
+func (s *Service) UserGetUserDataByToken(ctx context.Context, request *user.TLUserGetUserDataByToken) (*mtproto.UserData, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getUserDataByToken - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -1054,7 +1054,7 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# user_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
 func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.updateBotData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1065,5 +1065,35 @@ func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpd
 	}
 
 	c.Logger.Debugf("user.updateBotData - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetImmutableUserV2
+// user.getImmutableUserV2 flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
+func (s *Service) UserGetImmutableUserV2(ctx context.Context, request *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getImmutableUserV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetImmutableUserV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getImmutableUserV2 - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetMutableUsersV2
+// user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
+func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getMutableUsersV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetMutableUsersV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getMutableUsersV2 - reply: %s", r.DebugString())
 	return r, err
 }

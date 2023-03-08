@@ -49,7 +49,7 @@ func (c *ChatsCore) MessagesDeleteChat(in *mtproto.TLMessagesDeleteChat) (*mtpro
 		mtproto.MakeUpdateChat(chat.Id()))
 
 	// 1. kicked all
-	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		c.svcCtx.Dao.DialogClient.DialogDeleteDialog(c.ctx, &dialog.TLDialogDeleteDialog{
 			UserId:   userId,
 			PeerType: mtproto.PEER_CHAT,

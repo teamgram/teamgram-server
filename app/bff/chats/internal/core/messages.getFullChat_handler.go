@@ -119,7 +119,7 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		Users:    nil,
 	}).To_Messages_ChatFull()
 
-	chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if participant.IsChatMemberStateNormal() {
 			idList = append(idList, participant.UserId)
 		}

@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
 
@@ -27,7 +28,7 @@ import (
 func (c *ChatCore) ChatSearch(in *chat.TLChatSearch) (*chat.Vector_MutableChat, error) {
 	var (
 		chatList = &chat.Vector_MutableChat{
-			Datas: []*chat.MutableChat{},
+			Datas: []*mtproto.MutableChat{},
 		}
 	)
 

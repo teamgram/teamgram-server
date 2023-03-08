@@ -51,7 +51,7 @@ func (c *ContactsCore) ContactsDeleteContacts(in *mtproto.TLContactsDeleteContac
 		return nil, err
 	}
 
-	deleteUsers.VisitByMe(c.MD.UserId, func(me, it *userpb.ImmutableUser) {
+	deleteUsers.VisitByMe(c.MD.UserId, func(me, it *mtproto.ImmutableUser) {
 		if me.Id() != it.Id() {
 			// TODO: mutual
 			c.svcCtx.Dao.UserClient.UserDeleteContact(c.ctx, &userpb.TLUserDeleteContact{

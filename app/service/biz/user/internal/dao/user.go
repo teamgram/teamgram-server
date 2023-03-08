@@ -34,15 +34,15 @@ import (
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
-func (d *Dao) getBotData(ctx context.Context, botId int64) *user.BotData {
+func (d *Dao) getBotData(ctx context.Context, botId int64) *mtproto.BotData {
 	var (
-		botData *user.BotData
+		botData *mtproto.BotData
 	)
 
 	botDO, _ := d.BotsDAO.Select(ctx, botId)
 	if botDO != nil {
 		// userData.Bot
-		botData = user.MakeTLBotData(&user.BotData{
+		botData = mtproto.MakeTLBotData(&mtproto.BotData{
 			Id:                   botDO.BotId,
 			BotType:              botDO.BotType,
 			Creator:              botDO.CreatorUserId,
@@ -64,7 +64,7 @@ func (d *Dao) CreateNewUserV2(
 	secretKeyId int64,
 	phone string,
 	countryCode string,
-	firstName string, lastName string) (*user.ImmutableUser, error) {
+	firstName string, lastName string) (*mtproto.ImmutableUser, error) {
 	var (
 		//err    error
 		userDO        *dataobject.UsersDO
@@ -100,15 +100,15 @@ func (d *Dao) CreateNewUserV2(
 	cacheUserData.UserData = d.makeUserDataByDO(userDO)
 	cacheUserData.CachesPrivacyKeyRules = append(
 		cacheUserData.CachesPrivacyKeyRules,
-		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
 			Key:   user.STATUS_TIMESTAMP,
 			Rules: defaultRules,
 		}).To_PrivacyKeyRules(),
-		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
 			Key:   user.PHONE_NUMBER,
 			Rules: phoneNumberRules,
 		}).To_PrivacyKeyRules(),
-		user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
 			Key:   user.PROFILE_PHOTO,
 			Rules: defaultRules,
 		}).To_PrivacyKeyRules())
@@ -119,7 +119,7 @@ func (d *Dao) CreateNewUserV2(
 	// 2. PutLastSeenAt
 	d.PutLastSeenAt(ctx, userDO.Id, now, 300)
 
-	return user.MakeTLImmutableUser(&user.ImmutableUser{
+	return mtproto.MakeTLImmutableUser(&mtproto.ImmutableUser{
 		User:             cacheUserData.UserData,
 		LastSeenAt:       now,
 		Contacts:         nil,
@@ -255,7 +255,7 @@ func (d *Dao) UpdateProfilePhoto(ctx context.Context, userId, photoId int64) int
 	return mainPhotoId
 }
 
-func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, contacts ...int64) (*user.ImmutableUser, error) {
+func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, contacts ...int64) (*mtproto.ImmutableUser, error) {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 
 	// userDO, _ := c.svcCtx.Dao.UsersDAO.SelectById(c.ctx, in.Id)
@@ -265,7 +265,7 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 		return nil, err
 	}
 	userData := cacheUserData.UserData
-	immutableUser := user.MakeTLImmutableUser(&user.ImmutableUser{
+	immutableUser := mtproto.MakeTLImmutableUser(&mtproto.ImmutableUser{
 		User:             userData,
 		LastSeenAt:       0,
 		Contacts:         nil,
@@ -370,7 +370,7 @@ func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
 	return true
 }
 
-func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, contacts []int64) []*user.ImmutableUser {
+func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, contacts []int64) []*mtproto.ImmutableUser {
 	id := make([]int64, 0, len(idList2)+len(contacts))
 	for _, v := range idList2 {
 		if ok, _ := container2.Contains(v, id); !ok {
@@ -384,18 +384,18 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, co
 	}
 
 	if len(id) == 0 {
-		return []*user.ImmutableUser{}
+		return []*mtproto.ImmutableUser{}
 	} else if len(id) == 1 {
 		immutableUser, _ := d.GetImmutableUser(ctx, id[0], false)
 		if immutableUser != nil {
-			return []*user.ImmutableUser{immutableUser}
+			return []*mtproto.ImmutableUser{immutableUser}
 		} else {
-			return []*user.ImmutableUser{}
+			return []*mtproto.ImmutableUser{}
 		}
 	}
 
 	var (
-		mUsers = make([]*user.ImmutableUser, len(id))
+		mUsers = make([]*mtproto.ImmutableUser, len(id))
 	)
 
 	mr.ForEach(

@@ -50,7 +50,7 @@ type idxId struct {
 	id  int64
 }
 
-func removeAllNil(contacts []*userpb.ContactData) []*userpb.ContactData {
+func removeAllNil(contacts []*mtproto.ContactData) []*mtproto.ContactData {
 	for i := 0; i < len(contacts); {
 		if contacts[i] != nil {
 			i++

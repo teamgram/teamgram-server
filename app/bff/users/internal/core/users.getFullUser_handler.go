@@ -34,8 +34,8 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 	var (
 		peerId int64
 		id     = mtproto.FromInputUser(c.MD.UserId, in.Id)
-		me     *userpb.ImmutableUser
-		user   *userpb.ImmutableUser
+		me     *mtproto.ImmutableUser
+		user   *mtproto.ImmutableUser
 	)
 
 	switch id.PeerType {

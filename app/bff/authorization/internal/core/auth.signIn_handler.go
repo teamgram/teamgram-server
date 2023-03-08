@@ -215,7 +215,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	// TODO(@benqi): err handle
 	// do signIn...
 	var (
-		user *userpb.ImmutableUser
+		user *mtproto.ImmutableUser
 	)
 
 	user, err = c.svcCtx.Dao.UserClient.UserGetImmutableUserByPhone(c.ctx, &userpb.TLUserGetImmutableUserByPhone{

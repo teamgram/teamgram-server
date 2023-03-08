@@ -29,8 +29,6 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
@@ -75,7 +73,7 @@ func parseContactCacheKey(k string) (int64, int64) {
 	return 0, 0
 }
 
-func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*user.ContactData {
+func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*mtproto.ContactData {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 	if len(cacheUserData.GetContactIdList()) == 0 {
 		return nil
@@ -84,7 +82,7 @@ func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*user.ContactD
 	return d.getContactListByIdList(ctx, id, cacheUserData.GetContactIdList())
 }
 
-func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *user.ContactData {
+func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *mtproto.ContactData {
 	contacts := d.GetUserContactListByIdList(ctx, id, contactId)
 	if len(contacts) == 0 {
 		return nil
@@ -93,7 +91,7 @@ func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *user.Con
 	return contacts[0]
 }
 
-func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactId ...int64) []*user.ContactData {
+func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactId ...int64) []*mtproto.ContactData {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 	idList := cacheUserData.GetContactIdList()
 	if len(idList) == 0 {
@@ -113,8 +111,8 @@ func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactI
 	return d.getContactListByIdList(ctx, id, idList2)
 }
 
-func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []*user.ContactData {
-	contactList := make([]*user.ContactData, len(idList))
+func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []*mtproto.ContactData {
+	contactList := make([]*mtproto.ContactData, len(idList))
 	mr.ForEach(
 		func(source chan<- interface{}) {
 			for i, v := range idList {
@@ -137,7 +135,7 @@ func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int
 					return nil
 				})
 			if err == nil {
-				contactList[idx.idx] = user.MakeTLContactData(&user.ContactData{
+				contactList[idx.idx] = mtproto.MakeTLContactData(&mtproto.ContactData{
 					UserId:        id,
 					ContactUserId: do.ContactUserId,
 					FirstName:     mtproto.MakeFlagsString(do.ContactFirstName),

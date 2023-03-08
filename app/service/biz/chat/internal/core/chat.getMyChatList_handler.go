@@ -18,7 +18,7 @@ import (
 // chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 func (c *ChatCore) ChatGetMyChatList(in *chat.TLChatGetMyChatList) (*chat.Vector_MutableChat, error) {
 	var (
-		chatList = make([]*chat.MutableChat, 0)
+		chatList = make([]*mtproto.MutableChat, 0)
 	)
 
 	//

@@ -19,7 +19,7 @@
 package dao
 
 import (
-	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/proto/mtproto"
 )
 
 type idxId struct {
@@ -32,7 +32,7 @@ type kv struct {
 	v interface{}
 }
 
-func removeAllNil(participants []*chatpb.ImmutableChatParticipant) []*chatpb.ImmutableChatParticipant {
+func removeAllNil(participants []*mtproto.ImmutableChatParticipant) []*mtproto.ImmutableChatParticipant {
 	for i := 0; i < len(participants); {
 		if participants[i] != nil {
 			i++

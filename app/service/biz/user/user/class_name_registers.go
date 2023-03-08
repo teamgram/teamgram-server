@@ -11,16 +11,11 @@
 package user
 
 const (
-	Predicate_peerPeerNotifySettings                = "peerPeerNotifySettings"
-	Predicate_privacyKeyRules                       = "privacyKeyRules"
-	Predicate_lastSeenData                          = "lastSeenData"
-	Predicate_contactData                           = "contactData"
-	Predicate_botData                               = "botData"
-	Predicate_userData                              = "userData"
-	Predicate_immutableUser                         = "immutableUser"
 	Predicate_userImportedContacts                  = "userImportedContacts"
 	Predicate_usersDataFound                        = "usersDataFound"
 	Predicate_usersIdFound                          = "usersIdFound"
+	Predicate_peerPeerNotifySettings                = "peerPeerNotifySettings"
+	Predicate_lastSeenData                          = "lastSeenData"
 	Predicate_user_getLastSeens                     = "user_getLastSeens"
 	Predicate_user_updateLastSeen                   = "user_updateLastSeen"
 	Predicate_user_getLastSeen                      = "user_getLastSeen"
@@ -91,37 +86,11 @@ const (
 	Predicate_user_getUserDataByToken               = "user_getUserDataByToken"
 	Predicate_user_search                           = "user_search"
 	Predicate_user_updateBotData                    = "user_updateBotData"
+	Predicate_user_getImmutableUserV2               = "user_getImmutableUserV2"
+	Predicate_user_getMutableUsersV2                = "user_getMutableUsersV2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
-	Predicate_peerPeerNotifySettings: {
-		0: 1894399913, // 0x70ea3fa9
-
-	},
-	Predicate_privacyKeyRules: {
-		0: -1810715178, // 0x9412add6
-
-	},
-	Predicate_lastSeenData: {
-		0: -1280204321, // 0xb3b1a1df
-
-	},
-	Predicate_contactData: {
-		0: 722018346, // 0x2b09202a
-
-	},
-	Predicate_botData: {
-		0: 23110840, // 0x160a4b8
-
-	},
-	Predicate_userData: {
-		0: 478939154, // 0x1c8c0812
-
-	},
-	Predicate_immutableUser: {
-		0: 361114766, // 0x15862c8e
-
-	},
 	Predicate_userImportedContacts: {
 		0: 1256160192, // 0x4adf7bc0
 
@@ -132,6 +101,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_usersIdFound: {
 		0: -2134594054, // 0x80c4adfa
+
+	},
+	Predicate_peerPeerNotifySettings: {
+		0: 1894399913, // 0x70ea3fa9
+
+	},
+	Predicate_lastSeenData: {
+		0: -1280204321, // 0xb3b1a1df
 
 	},
 	Predicate_user_getLastSeens: {
@@ -414,19 +391,22 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1174586898, // 0xb9fd39ee
 
 	},
+	Predicate_user_getImmutableUserV2: {
+		0: -1228861082, // 0xb6c11166
+
+	},
+	Predicate_user_getMutableUsersV2: {
+		0: 620766988, // 0x2500270c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	1894399913:  Predicate_peerPeerNotifySettings,                // 0x70ea3fa9
-	-1810715178: Predicate_privacyKeyRules,                       // 0x9412add6
-	-1280204321: Predicate_lastSeenData,                          // 0xb3b1a1df
-	722018346:   Predicate_contactData,                           // 0x2b09202a
-	23110840:    Predicate_botData,                               // 0x160a4b8
-	478939154:   Predicate_userData,                              // 0x1c8c0812
-	361114766:   Predicate_immutableUser,                         // 0x15862c8e
 	1256160192:  Predicate_userImportedContacts,                  // 0x4adf7bc0
 	1067703239:  Predicate_usersDataFound,                        // 0x3fa3dbc7
 	-2134594054: Predicate_usersIdFound,                          // 0x80c4adfa
+	1894399913:  Predicate_peerPeerNotifySettings,                // 0x70ea3fa9
+	-1280204321: Predicate_lastSeenData,                          // 0xb3b1a1df
 	2090958337:  Predicate_user_getLastSeens,                     // 0x7ca17e01
 	-46114259:   Predicate_user_updateLastSeen,                   // 0xfd405a2d
 	-1860581154: Predicate_user_getLastSeen,                      // 0x9119c8de
@@ -497,6 +477,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1057580446:  Predicate_user_getUserDataByToken,               // 0x3f09659e
 	1882568397:  Predicate_user_search,                           // 0x7035b6cd
 	-1174586898: Predicate_user_updateBotData,                    // 0xb9fd39ee
+	-1228861082: Predicate_user_getImmutableUserV2,               // 0xb6c11166
+	620766988:   Predicate_user_getMutableUsersV2,                // 0x2500270c
 
 }
 

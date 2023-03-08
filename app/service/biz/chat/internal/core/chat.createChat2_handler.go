@@ -21,7 +21,7 @@ import (
 
 // ChatCreateChat2
 // chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
-func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*mtproto.MutableChat, error) {
 	var (
 		chatsDO    *dataobject.ChatsDO
 		err        error
@@ -117,9 +117,9 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*chat.MutableCha
 		return nil, tR.Err
 	}
 
-	chat2 := chat.MakeTLMutableChat(&chat.MutableChat{
+	chat2 := mtproto.MakeTLMutableChat(&mtproto.MutableChat{
 		Chat:             c.svcCtx.Dao.MakeImmutableChatByDO(chatsDO),
-		ChatParticipants: make([]*chat.ImmutableChatParticipant, 0, len(participantDOList)),
+		ChatParticipants: make([]*mtproto.ImmutableChatParticipant, 0, len(participantDOList)),
 	}).To_MutableChat()
 
 	for i := 0; i < len(participantDOList); i++ {

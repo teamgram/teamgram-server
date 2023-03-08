@@ -20,11 +20,11 @@ import (
 
 // ChatDeleteChatUser
 // chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
-func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatDeleteChatUser(in *chat.TLChatDeleteChatUser) (*mtproto.MutableChat, error) {
 	var (
 		now             = time.Now().Unix()
-		chat2           *chat.MutableChat
-		me, deletedUser *chat.ImmutableChatParticipant
+		chat2           *mtproto.MutableChat
+		me, deletedUser *mtproto.ImmutableChatParticipant
 		err             error
 		chatId          = in.ChatId
 		operatorId      = in.OperatorId

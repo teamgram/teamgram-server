@@ -20,11 +20,11 @@ import (
 
 // ChatEditChatTitle
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
-func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatEditChatTitle(in *chat.TLChatEditChatTitle) (*mtproto.MutableChat, error) {
 	var (
 		now                = time.Now().Unix()
-		chat2              *chat.MutableChat
-		me                 *chat.ImmutableChatParticipant
+		chat2              *mtproto.MutableChat
+		me                 *mtproto.ImmutableChatParticipant
 		err                error
 		chatId, editUserId = in.ChatId, in.EditUserId
 	)

@@ -33,7 +33,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 	var (
 		err       error
 		addUser   = mtproto.FromInputUser(c.MD.UserId, in.UserId)
-		chat      *chatpb.MutableChat
+		chat      *mtproto.MutableChat
 		inviterId int64
 	)
 

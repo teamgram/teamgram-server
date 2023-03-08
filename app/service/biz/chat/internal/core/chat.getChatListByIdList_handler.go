@@ -10,6 +10,7 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
 
@@ -17,7 +18,7 @@ import (
 // chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (c *ChatCore) ChatGetChatListByIdList(in *chat.TLChatGetChatListByIdList) (*chat.Vector_MutableChat, error) {
 	rValueList := &chat.Vector_MutableChat{
-		Datas: make([]*chat.MutableChat, 0, len(in.IdList)),
+		Datas: make([]*mtproto.MutableChat, 0, len(in.IdList)),
 	}
 
 	for _, id := range in.IdList {

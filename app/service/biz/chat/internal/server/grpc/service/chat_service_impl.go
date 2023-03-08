@@ -13,14 +13,15 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
-func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGetMutableChat) (*chat.MutableChat, error) {
+func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGetMutableChat) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getMutableChat - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -50,7 +51,7 @@ func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLC
 
 // ChatGetChatBySelfId
 // chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
-func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatGetChatBySelfId) (*chat.MutableChat, error) {
+func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatGetChatBySelfId) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getChatBySelfId - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -65,7 +66,7 @@ func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatG
 
 // ChatCreateChat2
 // chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
-func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreateChat2) (*chat.MutableChat, error) {
+func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreateChat2) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.createChat2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -80,7 +81,7 @@ func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreat
 
 // ChatDeleteChat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
-func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDeleteChat) (*chat.MutableChat, error) {
+func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDeleteChat) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteChat - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -95,7 +96,7 @@ func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDelete
 
 // ChatDeleteChatUser
 // chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
-func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDeleteChatUser) (*chat.MutableChat, error) {
+func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDeleteChatUser) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteChatUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -110,7 +111,7 @@ func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDe
 
 // ChatEditChatTitle
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
-func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEditChatTitle) (*chat.MutableChat, error) {
+func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEditChatTitle) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatTitle - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -125,7 +126,7 @@ func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEdi
 
 // ChatEditChatAbout
 // chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
-func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEditChatAbout) (*chat.MutableChat, error) {
+func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEditChatAbout) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatAbout - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -140,7 +141,7 @@ func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEdi
 
 // ChatEditChatPhoto
 // chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
-func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEditChatPhoto) (*chat.MutableChat, error) {
+func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEditChatPhoto) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatPhoto - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -155,7 +156,7 @@ func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEdi
 
 // ChatEditChatAdmin
 // chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
-func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEditChatAdmin) (*chat.MutableChat, error) {
+func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEditChatAdmin) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatAdmin - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -170,7 +171,7 @@ func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEdi
 
 // ChatEditChatDefaultBannedRights
 // chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
-func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error) {
+func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *chat.TLChatEditChatDefaultBannedRights) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatDefaultBannedRights - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -185,7 +186,7 @@ func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *
 
 // ChatAddChatUser
 // chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
-func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddChatUser) (*chat.MutableChat, error) {
+func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddChatUser) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.addChatUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -200,7 +201,7 @@ func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddCh
 
 // ChatGetMutableChatByLink
 // chat.getMutableChatByLink link:string = MutableChat;
-func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error) {
+func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TLChatGetMutableChatByLink) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getMutableChatByLink - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -215,7 +216,7 @@ func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TL
 
 // ChatToggleNoForwards
 // chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
-func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChatToggleNoForwards) (*chat.MutableChat, error) {
+func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChatToggleNoForwards) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.toggleNoForwards - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -365,7 +366,7 @@ func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatC
 
 // ChatImportChatInvite
 // chat.importChatInvite self_id:long hash:string = MutableChat;
-func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChatImportChatInvite) (*chat.MutableChat, error) {
+func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChatImportChatInvite) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.importChatInvite - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -440,7 +441,7 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 
 // ChatSetChatAvailableReactions
 // chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
-func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
+func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.setChatAvailableReactions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -455,7 +456,7 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 
 // ChatSetHistoryTTL
 // chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
-func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error) {
+func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSetHistoryTTL) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.setHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -527,3 +528,4 @@ func (s *Service) ChatImportChatInvite2(ctx context.Context, request *chat.TLCha
 	c.Logger.Debugf("chat.importChatInvite2 - reply: %s", r.DebugString())
 	return r, err
 }
+

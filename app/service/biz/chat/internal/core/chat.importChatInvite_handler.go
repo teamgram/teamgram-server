@@ -19,7 +19,7 @@ import (
 
 // ChatImportChatInvite
 // chat.importChatInvite self_id:long hash:string = MutableChat;
-func (c *ChatCore) ChatImportChatInvite(in *chat.TLChatImportChatInvite) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatImportChatInvite(in *chat.TLChatImportChatInvite) (*mtproto.MutableChat, error) {
 	chatInviteDO, err := c.svcCtx.Dao.ChatInvitesDAO.SelectByLink(c.ctx, in.Hash)
 	if err != nil {
 		c.Logger.Errorf("chat.importChatInvite - error: %v", err)

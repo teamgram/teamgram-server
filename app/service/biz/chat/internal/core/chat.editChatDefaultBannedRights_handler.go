@@ -21,11 +21,11 @@ import (
 
 // ChatEditChatDefaultBannedRights
 // chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
-func (c *ChatCore) ChatEditChatDefaultBannedRights(in *chat.TLChatEditChatDefaultBannedRights) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatEditChatDefaultBannedRights(in *chat.TLChatEditChatDefaultBannedRights) (*mtproto.MutableChat, error) {
 	var (
 		now   = time.Now().Unix()
-		chat2 *chat.MutableChat
-		me    *chat.ImmutableChatParticipant
+		chat2 *mtproto.MutableChat
+		me    *mtproto.ImmutableChatParticipant
 		err   error
 	)
 

@@ -13,8 +13,8 @@ package user_client
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,77 +22,78 @@ import (
 var _ *mtproto.Bool
 
 type UserClient interface {
-    UserGetLastSeens(ctx context.Context, in *user.TLUserGetLastSeens) (*user.Vector_LastSeenData, error)
-    UserUpdateLastSeen(ctx context.Context, in *user.TLUserUpdateLastSeen) (*mtproto.Bool, error)
-    UserGetLastSeen(ctx context.Context, in *user.TLUserGetLastSeen) (*user.LastSeenData, error)
-    UserGetImmutableUser(ctx context.Context, in *user.TLUserGetImmutableUser) (*user.ImmutableUser, error)
-    UserGetMutableUsers(ctx context.Context, in *user.TLUserGetMutableUsers) (*user.Vector_ImmutableUser, error)
-    UserGetImmutableUserByPhone(ctx context.Context, in *user.TLUserGetImmutableUserByPhone) (*user.ImmutableUser, error)
-    UserGetImmutableUserByToken(ctx context.Context, in *user.TLUserGetImmutableUserByToken) (*user.ImmutableUser, error)
-    UserSetAccountDaysTTL(ctx context.Context, in *user.TLUserSetAccountDaysTTL) (*mtproto.Bool, error)
-    UserGetAccountDaysTTL(ctx context.Context, in *user.TLUserGetAccountDaysTTL) (*mtproto.AccountDaysTTL, error)
-    UserGetNotifySettings(ctx context.Context, in *user.TLUserGetNotifySettings) (*mtproto.PeerNotifySettings, error)
-    UserGetNotifySettingsList(ctx context.Context, in *user.TLUserGetNotifySettingsList) (*user.Vector_PeerPeerNotifySettings, error)
-    UserSetNotifySettings(ctx context.Context, in *user.TLUserSetNotifySettings) (*mtproto.Bool, error)
-    UserResetNotifySettings(ctx context.Context, in *user.TLUserResetNotifySettings) (*mtproto.Bool, error)
-    UserGetAllNotifySettings(ctx context.Context, in *user.TLUserGetAllNotifySettings) (*user.Vector_PeerPeerNotifySettings, error)
-    UserGetGlobalPrivacySettings(ctx context.Context, in *user.TLUserGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-    UserSetGlobalPrivacySettings(ctx context.Context, in *user.TLUserSetGlobalPrivacySettings) (*mtproto.Bool, error)
-    UserGetPrivacy(ctx context.Context, in *user.TLUserGetPrivacy) (*user.Vector_PrivacyRule, error)
-    UserSetPrivacy(ctx context.Context, in *user.TLUserSetPrivacy) (*mtproto.Bool, error)
-    UserCheckPrivacy(ctx context.Context, in *user.TLUserCheckPrivacy) (*mtproto.Bool, error)
-    UserAddPeerSettings(ctx context.Context, in *user.TLUserAddPeerSettings) (*mtproto.Bool, error)
-    UserGetPeerSettings(ctx context.Context, in *user.TLUserGetPeerSettings) (*mtproto.PeerSettings, error)
-    UserDeletePeerSettings(ctx context.Context, in *user.TLUserDeletePeerSettings) (*mtproto.Bool, error)
-    UserChangePhone(ctx context.Context, in *user.TLUserChangePhone) (*mtproto.Bool, error)
-    UserCreateNewPredefinedUser(ctx context.Context, in *user.TLUserCreateNewPredefinedUser) (*mtproto.PredefinedUser, error)
-    UserGetPredefinedUser(ctx context.Context, in *user.TLUserGetPredefinedUser) (*mtproto.PredefinedUser, error)
-    UserGetAllPredefinedUser(ctx context.Context, in *user.TLUserGetAllPredefinedUser) (*user.Vector_PredefinedUser, error)
-    UserUpdatePredefinedFirstAndLastName(ctx context.Context, in *user.TLUserUpdatePredefinedFirstAndLastName) (*mtproto.PredefinedUser, error)
-    UserUpdatePredefinedVerified(ctx context.Context, in *user.TLUserUpdatePredefinedVerified) (*mtproto.PredefinedUser, error)
-    UserUpdatePredefinedUsername(ctx context.Context, in *user.TLUserUpdatePredefinedUsername) (*mtproto.PredefinedUser, error)
-    UserUpdatePredefinedCode(ctx context.Context, in *user.TLUserUpdatePredefinedCode) (*mtproto.PredefinedUser, error)
-    UserPredefinedBindRegisteredUserId(ctx context.Context, in *user.TLUserPredefinedBindRegisteredUserId) (*mtproto.Bool, error)
-    UserCreateNewUser(ctx context.Context, in *user.TLUserCreateNewUser) (*user.ImmutableUser, error)
-    UserDeleteUser(ctx context.Context, in *user.TLUserDeleteUser) (*mtproto.Bool, error)
-    UserBlockPeer(ctx context.Context, in *user.TLUserBlockPeer) (*mtproto.Bool, error)
-    UserUnBlockPeer(ctx context.Context, in *user.TLUserUnBlockPeer) (*mtproto.Bool, error)
-    UserBlockedByUser(ctx context.Context, in *user.TLUserBlockedByUser) (*mtproto.Bool, error)
-    UserIsBlockedByUser(ctx context.Context, in *user.TLUserIsBlockedByUser) (*mtproto.Bool, error)
-    UserCheckBlockUserList(ctx context.Context, in *user.TLUserCheckBlockUserList) (*user.Vector_Long, error)
-    UserGetBlockedList(ctx context.Context, in *user.TLUserGetBlockedList) (*user.Vector_PeerBlocked, error)
-    UserGetContactSignUpNotification(ctx context.Context, in *user.TLUserGetContactSignUpNotification) (*mtproto.Bool, error)
-    UserSetContactSignUpNotification(ctx context.Context, in *user.TLUserSetContactSignUpNotification) (*mtproto.Bool, error)
-    UserGetContentSettings(ctx context.Context, in *user.TLUserGetContentSettings) (*mtproto.Account_ContentSettings, error)
-    UserSetContentSettings(ctx context.Context, in *user.TLUserSetContentSettings) (*mtproto.Bool, error)
-    UserDeleteContact(ctx context.Context, in *user.TLUserDeleteContact) (*mtproto.Bool, error)
-    UserGetContactList(ctx context.Context, in *user.TLUserGetContactList) (*user.Vector_ContactData, error)
-    UserGetContactIdList(ctx context.Context, in *user.TLUserGetContactIdList) (*user.Vector_Long, error)
-    UserGetContact(ctx context.Context, in *user.TLUserGetContact) (*user.ContactData, error)
-    UserAddContact(ctx context.Context, in *user.TLUserAddContact) (*mtproto.Bool, error)
-    UserCheckContact(ctx context.Context, in *user.TLUserCheckContact) (*mtproto.Bool, error)
-    UserGetImportersByPhone(ctx context.Context, in *user.TLUserGetImportersByPhone) (*user.Vector_InputContact, error)
-    UserDeleteImportersByPhone(ctx context.Context, in *user.TLUserDeleteImportersByPhone) (*mtproto.Bool, error)
-    UserImportContacts(ctx context.Context, in *user.TLUserImportContacts) (*user.UserImportedContacts, error)
-    UserGetCountryCode(ctx context.Context, in *user.TLUserGetCountryCode) (*mtproto.String, error)
-    UserUpdateAbout(ctx context.Context, in *user.TLUserUpdateAbout) (*mtproto.Bool, error)
-    UserUpdateFirstAndLastName(ctx context.Context, in *user.TLUserUpdateFirstAndLastName) (*mtproto.Bool, error)
-    UserUpdateVerified(ctx context.Context, in *user.TLUserUpdateVerified) (*mtproto.Bool, error)
-    UserUpdateUsername(ctx context.Context, in *user.TLUserUpdateUsername) (*mtproto.Bool, error)
-    UserUpdateProfilePhoto(ctx context.Context, in *user.TLUserUpdateProfilePhoto) (*mtproto.Int64, error)
-    UserDeleteProfilePhotos(ctx context.Context, in *user.TLUserDeleteProfilePhotos) (*mtproto.Int64, error)
-    UserGetProfilePhotos(ctx context.Context, in *user.TLUserGetProfilePhotos) (*user.Vector_Long, error)
-    UserSetBotCommands(ctx context.Context, in *user.TLUserSetBotCommands) (*mtproto.Bool, error)
-    UserIsBot(ctx context.Context, in *user.TLUserIsBot) (*mtproto.Bool, error)
-    UserGetBotInfo(ctx context.Context, in *user.TLUserGetBotInfo) (*mtproto.BotInfo, error)
-    UserGetFullUser(ctx context.Context, in *user.TLUserGetFullUser) (*mtproto.Users_UserFull, error)
-    UserUpdateEmojiStatus(ctx context.Context, in *user.TLUserUpdateEmojiStatus) (*mtproto.Bool, error)
-    UserGetUserDataById(ctx context.Context, in *user.TLUserGetUserDataById) (*user.UserData, error)
-    UserGetUserDataListByIdList(ctx context.Context, in *user.TLUserGetUserDataListByIdList) (*user.Vector_UserData, error)
-    UserGetUserDataByToken(ctx context.Context, in *user.TLUserGetUserDataByToken) (*user.UserData, error)
-    UserSearch(ctx context.Context, in *user.TLUserSearch) (*user.UsersFound, error)
-    UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error)
-
+	UserGetLastSeens(ctx context.Context, in *user.TLUserGetLastSeens) (*user.Vector_LastSeenData, error)
+	UserUpdateLastSeen(ctx context.Context, in *user.TLUserUpdateLastSeen) (*mtproto.Bool, error)
+	UserGetLastSeen(ctx context.Context, in *user.TLUserGetLastSeen) (*user.LastSeenData, error)
+	UserGetImmutableUser(ctx context.Context, in *user.TLUserGetImmutableUser) (*mtproto.ImmutableUser, error)
+	UserGetMutableUsers(ctx context.Context, in *user.TLUserGetMutableUsers) (*user.Vector_ImmutableUser, error)
+	UserGetImmutableUserByPhone(ctx context.Context, in *user.TLUserGetImmutableUserByPhone) (*mtproto.ImmutableUser, error)
+	UserGetImmutableUserByToken(ctx context.Context, in *user.TLUserGetImmutableUserByToken) (*mtproto.ImmutableUser, error)
+	UserSetAccountDaysTTL(ctx context.Context, in *user.TLUserSetAccountDaysTTL) (*mtproto.Bool, error)
+	UserGetAccountDaysTTL(ctx context.Context, in *user.TLUserGetAccountDaysTTL) (*mtproto.AccountDaysTTL, error)
+	UserGetNotifySettings(ctx context.Context, in *user.TLUserGetNotifySettings) (*mtproto.PeerNotifySettings, error)
+	UserGetNotifySettingsList(ctx context.Context, in *user.TLUserGetNotifySettingsList) (*user.Vector_PeerPeerNotifySettings, error)
+	UserSetNotifySettings(ctx context.Context, in *user.TLUserSetNotifySettings) (*mtproto.Bool, error)
+	UserResetNotifySettings(ctx context.Context, in *user.TLUserResetNotifySettings) (*mtproto.Bool, error)
+	UserGetAllNotifySettings(ctx context.Context, in *user.TLUserGetAllNotifySettings) (*user.Vector_PeerPeerNotifySettings, error)
+	UserGetGlobalPrivacySettings(ctx context.Context, in *user.TLUserGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
+	UserSetGlobalPrivacySettings(ctx context.Context, in *user.TLUserSetGlobalPrivacySettings) (*mtproto.Bool, error)
+	UserGetPrivacy(ctx context.Context, in *user.TLUserGetPrivacy) (*user.Vector_PrivacyRule, error)
+	UserSetPrivacy(ctx context.Context, in *user.TLUserSetPrivacy) (*mtproto.Bool, error)
+	UserCheckPrivacy(ctx context.Context, in *user.TLUserCheckPrivacy) (*mtproto.Bool, error)
+	UserAddPeerSettings(ctx context.Context, in *user.TLUserAddPeerSettings) (*mtproto.Bool, error)
+	UserGetPeerSettings(ctx context.Context, in *user.TLUserGetPeerSettings) (*mtproto.PeerSettings, error)
+	UserDeletePeerSettings(ctx context.Context, in *user.TLUserDeletePeerSettings) (*mtproto.Bool, error)
+	UserChangePhone(ctx context.Context, in *user.TLUserChangePhone) (*mtproto.Bool, error)
+	UserCreateNewPredefinedUser(ctx context.Context, in *user.TLUserCreateNewPredefinedUser) (*mtproto.PredefinedUser, error)
+	UserGetPredefinedUser(ctx context.Context, in *user.TLUserGetPredefinedUser) (*mtproto.PredefinedUser, error)
+	UserGetAllPredefinedUser(ctx context.Context, in *user.TLUserGetAllPredefinedUser) (*user.Vector_PredefinedUser, error)
+	UserUpdatePredefinedFirstAndLastName(ctx context.Context, in *user.TLUserUpdatePredefinedFirstAndLastName) (*mtproto.PredefinedUser, error)
+	UserUpdatePredefinedVerified(ctx context.Context, in *user.TLUserUpdatePredefinedVerified) (*mtproto.PredefinedUser, error)
+	UserUpdatePredefinedUsername(ctx context.Context, in *user.TLUserUpdatePredefinedUsername) (*mtproto.PredefinedUser, error)
+	UserUpdatePredefinedCode(ctx context.Context, in *user.TLUserUpdatePredefinedCode) (*mtproto.PredefinedUser, error)
+	UserPredefinedBindRegisteredUserId(ctx context.Context, in *user.TLUserPredefinedBindRegisteredUserId) (*mtproto.Bool, error)
+	UserCreateNewUser(ctx context.Context, in *user.TLUserCreateNewUser) (*mtproto.ImmutableUser, error)
+	UserDeleteUser(ctx context.Context, in *user.TLUserDeleteUser) (*mtproto.Bool, error)
+	UserBlockPeer(ctx context.Context, in *user.TLUserBlockPeer) (*mtproto.Bool, error)
+	UserUnBlockPeer(ctx context.Context, in *user.TLUserUnBlockPeer) (*mtproto.Bool, error)
+	UserBlockedByUser(ctx context.Context, in *user.TLUserBlockedByUser) (*mtproto.Bool, error)
+	UserIsBlockedByUser(ctx context.Context, in *user.TLUserIsBlockedByUser) (*mtproto.Bool, error)
+	UserCheckBlockUserList(ctx context.Context, in *user.TLUserCheckBlockUserList) (*user.Vector_Long, error)
+	UserGetBlockedList(ctx context.Context, in *user.TLUserGetBlockedList) (*user.Vector_PeerBlocked, error)
+	UserGetContactSignUpNotification(ctx context.Context, in *user.TLUserGetContactSignUpNotification) (*mtproto.Bool, error)
+	UserSetContactSignUpNotification(ctx context.Context, in *user.TLUserSetContactSignUpNotification) (*mtproto.Bool, error)
+	UserGetContentSettings(ctx context.Context, in *user.TLUserGetContentSettings) (*mtproto.Account_ContentSettings, error)
+	UserSetContentSettings(ctx context.Context, in *user.TLUserSetContentSettings) (*mtproto.Bool, error)
+	UserDeleteContact(ctx context.Context, in *user.TLUserDeleteContact) (*mtproto.Bool, error)
+	UserGetContactList(ctx context.Context, in *user.TLUserGetContactList) (*user.Vector_ContactData, error)
+	UserGetContactIdList(ctx context.Context, in *user.TLUserGetContactIdList) (*user.Vector_Long, error)
+	UserGetContact(ctx context.Context, in *user.TLUserGetContact) (*mtproto.ContactData, error)
+	UserAddContact(ctx context.Context, in *user.TLUserAddContact) (*mtproto.Bool, error)
+	UserCheckContact(ctx context.Context, in *user.TLUserCheckContact) (*mtproto.Bool, error)
+	UserGetImportersByPhone(ctx context.Context, in *user.TLUserGetImportersByPhone) (*user.Vector_InputContact, error)
+	UserDeleteImportersByPhone(ctx context.Context, in *user.TLUserDeleteImportersByPhone) (*mtproto.Bool, error)
+	UserImportContacts(ctx context.Context, in *user.TLUserImportContacts) (*user.UserImportedContacts, error)
+	UserGetCountryCode(ctx context.Context, in *user.TLUserGetCountryCode) (*mtproto.String, error)
+	UserUpdateAbout(ctx context.Context, in *user.TLUserUpdateAbout) (*mtproto.Bool, error)
+	UserUpdateFirstAndLastName(ctx context.Context, in *user.TLUserUpdateFirstAndLastName) (*mtproto.Bool, error)
+	UserUpdateVerified(ctx context.Context, in *user.TLUserUpdateVerified) (*mtproto.Bool, error)
+	UserUpdateUsername(ctx context.Context, in *user.TLUserUpdateUsername) (*mtproto.Bool, error)
+	UserUpdateProfilePhoto(ctx context.Context, in *user.TLUserUpdateProfilePhoto) (*mtproto.Int64, error)
+	UserDeleteProfilePhotos(ctx context.Context, in *user.TLUserDeleteProfilePhotos) (*mtproto.Int64, error)
+	UserGetProfilePhotos(ctx context.Context, in *user.TLUserGetProfilePhotos) (*user.Vector_Long, error)
+	UserSetBotCommands(ctx context.Context, in *user.TLUserSetBotCommands) (*mtproto.Bool, error)
+	UserIsBot(ctx context.Context, in *user.TLUserIsBot) (*mtproto.Bool, error)
+	UserGetBotInfo(ctx context.Context, in *user.TLUserGetBotInfo) (*mtproto.BotInfo, error)
+	UserGetFullUser(ctx context.Context, in *user.TLUserGetFullUser) (*mtproto.Users_UserFull, error)
+	UserUpdateEmojiStatus(ctx context.Context, in *user.TLUserUpdateEmojiStatus) (*mtproto.Bool, error)
+	UserGetUserDataById(ctx context.Context, in *user.TLUserGetUserDataById) (*mtproto.UserData, error)
+	UserGetUserDataListByIdList(ctx context.Context, in *user.TLUserGetUserDataListByIdList) (*user.Vector_UserData, error)
+	UserGetUserDataByToken(ctx context.Context, in *user.TLUserGetUserDataByToken) (*mtproto.UserData, error)
+	UserSearch(ctx context.Context, in *user.TLUserSearch) (*user.UsersFound, error)
+	UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error)
+	UserGetImmutableUserV2(ctx context.Context, in *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error)
+	UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error)
 }
 
 type defaultUserClient struct {
@@ -104,7 +105,6 @@ func NewUserClient(cli zrpc.Client) UserClient {
 		cli: cli,
 	}
 }
-
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -129,7 +129,7 @@ func (m *defaultUserClient) UserGetLastSeen(ctx context.Context, in *user.TLUser
 
 // UserGetImmutableUser
 // user.getImmutableUser flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
-func (m *defaultUserClient) UserGetImmutableUser(ctx context.Context, in *user.TLUserGetImmutableUser) (*user.ImmutableUser, error) {
+func (m *defaultUserClient) UserGetImmutableUser(ctx context.Context, in *user.TLUserGetImmutableUser) (*mtproto.ImmutableUser, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetImmutableUser(ctx, in)
 }
@@ -143,14 +143,14 @@ func (m *defaultUserClient) UserGetMutableUsers(ctx context.Context, in *user.TL
 
 // UserGetImmutableUserByPhone
 // user.getImmutableUserByPhone phone:string = ImmutableUser;
-func (m *defaultUserClient) UserGetImmutableUserByPhone(ctx context.Context, in *user.TLUserGetImmutableUserByPhone) (*user.ImmutableUser, error) {
+func (m *defaultUserClient) UserGetImmutableUserByPhone(ctx context.Context, in *user.TLUserGetImmutableUserByPhone) (*mtproto.ImmutableUser, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetImmutableUserByPhone(ctx, in)
 }
 
 // UserGetImmutableUserByToken
 // user.getImmutableUserByToken token:string = ImmutableUser;
-func (m *defaultUserClient) UserGetImmutableUserByToken(ctx context.Context, in *user.TLUserGetImmutableUserByToken) (*user.ImmutableUser, error) {
+func (m *defaultUserClient) UserGetImmutableUserByToken(ctx context.Context, in *user.TLUserGetImmutableUserByToken) (*mtproto.ImmutableUser, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetImmutableUserByToken(ctx, in)
 }
@@ -325,7 +325,7 @@ func (m *defaultUserClient) UserPredefinedBindRegisteredUserId(ctx context.Conte
 
 // UserCreateNewUser
 // user.createNewUser secret_key_id:long phone:string country_code:string first_name:string last_name:string = ImmutableUser;
-func (m *defaultUserClient) UserCreateNewUser(ctx context.Context, in *user.TLUserCreateNewUser) (*user.ImmutableUser, error) {
+func (m *defaultUserClient) UserCreateNewUser(ctx context.Context, in *user.TLUserCreateNewUser) (*mtproto.ImmutableUser, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserCreateNewUser(ctx, in)
 }
@@ -430,7 +430,7 @@ func (m *defaultUserClient) UserGetContactIdList(ctx context.Context, in *user.T
 
 // UserGetContact
 // user.getContact user_id:long id:long = ContactData;
-func (m *defaultUserClient) UserGetContact(ctx context.Context, in *user.TLUserGetContact) (*user.ContactData, error) {
+func (m *defaultUserClient) UserGetContact(ctx context.Context, in *user.TLUserGetContact) (*mtproto.ContactData, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetContact(ctx, in)
 }
@@ -563,7 +563,7 @@ func (m *defaultUserClient) UserUpdateEmojiStatus(ctx context.Context, in *user.
 
 // UserGetUserDataById
 // user.getUserDataById user_id:long = UserData;
-func (m *defaultUserClient) UserGetUserDataById(ctx context.Context, in *user.TLUserGetUserDataById) (*user.UserData, error) {
+func (m *defaultUserClient) UserGetUserDataById(ctx context.Context, in *user.TLUserGetUserDataById) (*mtproto.UserData, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetUserDataById(ctx, in)
 }
@@ -577,7 +577,7 @@ func (m *defaultUserClient) UserGetUserDataListByIdList(ctx context.Context, in 
 
 // UserGetUserDataByToken
 // user.getUserDataByToken token:string = UserData;
-func (m *defaultUserClient) UserGetUserDataByToken(ctx context.Context, in *user.TLUserGetUserDataByToken) (*user.UserData, error) {
+func (m *defaultUserClient) UserGetUserDataByToken(ctx context.Context, in *user.TLUserGetUserDataByToken) (*mtproto.UserData, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetUserDataByToken(ctx, in)
 }
@@ -590,9 +590,22 @@ func (m *defaultUserClient) UserSearch(ctx context.Context, in *user.TLUserSearc
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# user_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
 func (m *defaultUserClient) UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserUpdateBotData(ctx, in)
 }
 
+// UserGetImmutableUserV2
+// user.getImmutableUserV2 flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
+func (m *defaultUserClient) UserGetImmutableUserV2(ctx context.Context, in *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetImmutableUserV2(ctx, in)
+}
+
+// UserGetMutableUsersV2
+// user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
+func (m *defaultUserClient) UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetMutableUsersV2(ctx, in)
+}

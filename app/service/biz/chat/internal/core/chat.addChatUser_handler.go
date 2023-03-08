@@ -21,11 +21,11 @@ import (
 
 // ChatAddChatUser
 // chat.addChatUser chat_id:long inviter_id:long user_id:long = MutableChat;
-func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*mtproto.MutableChat, error) {
 	var (
 		now                       = time.Now().Unix()
-		chat2                     *chat.MutableChat
-		me, willAdd               *chat.ImmutableChatParticipant
+		chat2                     *mtproto.MutableChat
+		me, willAdd               *mtproto.ImmutableChatParticipant
 		err                       error
 		chatId, inviterId, userId = in.ChatId, in.InviterId, in.UserId
 	)

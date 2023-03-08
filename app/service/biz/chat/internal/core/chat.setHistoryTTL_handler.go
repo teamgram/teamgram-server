@@ -27,7 +27,7 @@ import (
 
 // ChatSetHistoryTTL
 // chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = Bool;
-func (c *ChatCore) ChatSetHistoryTTL(in *chat.TLChatSetHistoryTTL) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatSetHistoryTTL(in *chat.TLChatSetHistoryTTL) (*mtproto.MutableChat, error) {
 	mChat, err := c.svcCtx.Dao.GetMutableChat(c.ctx, in.ChatId)
 	if err != nil {
 		c.Logger.Errorf("chat.setHistoryTTL - error: %v", err)

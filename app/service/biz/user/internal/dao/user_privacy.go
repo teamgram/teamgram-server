@@ -106,9 +106,9 @@ func genUserPrivacyKeyVoiceMessagesPrefix(id int64) string {
 	return fmt.Sprintf("%s_%d", userPrivacyKeyVoiceMessagesPrefix, id)
 }
 
-func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys ...int32) []*user.PrivacyKeyRules {
+func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys ...int32) []*mtproto.PrivacyKeyRules {
 	var (
-		cacheRules []*user.PrivacyKeyRules
+		cacheRules []*mtproto.PrivacyKeyRules
 		// cacheKey   string
 	)
 
@@ -118,7 +118,7 @@ func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys 
 			cacheRules = append(cacheRules, rules)
 		}
 	} else if len(keys) > 1 {
-		cacheRules2 := make([]*user.PrivacyKeyRules, len(keys))
+		cacheRules2 := make([]*mtproto.PrivacyKeyRules, len(keys))
 		mr.ForEach(
 			func(source chan<- interface{}) {
 				for i := 0; i < len(keys); i++ {
@@ -142,13 +142,13 @@ func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys 
 	return cacheRules
 }
 
-func (d *Dao) GetUserPrivacyRules(ctx context.Context, id int64, key int32) (*user.PrivacyKeyRules, error) {
+func (d *Dao) GetUserPrivacyRules(ctx context.Context, id int64, key int32) (*mtproto.PrivacyKeyRules, error) {
 	cacheKey := genUserPrivacyKeyPrefix(id, key)
 	if cacheKey == "" {
 		return nil, mtproto.ErrPrivacyKeyInvalid
 	}
 
-	rules := user.MakeTLPrivacyKeyRules(&user.PrivacyKeyRules{
+	rules := mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
 		Key:   key,
 		Rules: nil,
 	}).To_PrivacyKeyRules()
@@ -161,7 +161,7 @@ func (d *Dao) GetUserPrivacyRules(ctx context.Context, id int64, key int32) (*us
 			if err != nil {
 				return err
 			}
-			rv := v.(*user.PrivacyKeyRules)
+			rv := v.(*mtproto.PrivacyKeyRules)
 
 			if do != nil {
 				jsonx.UnmarshalFromString(do.Rules, &rv.Rules)

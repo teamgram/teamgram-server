@@ -6,7 +6,9 @@
 
 package chat
 
-import "github.com/teamgram/proto/mtproto"
+import (
+	"github.com/teamgram/proto/mtproto"
+)
 
 func (m *Vector_MutableChat) Length() int32 {
 	return int32(len(m.GetDatas()))
@@ -25,7 +27,7 @@ func (m *Vector_MutableChat) GetChatListByIdList(selfId int64, id ...int64) []*m
 	return chatList
 }
 
-func (m *Vector_MutableChat) Walk(cb func(idx int, v *MutableChat)) {
+func (m *Vector_MutableChat) Walk(cb func(idx int, v *mtproto.MutableChat)) {
 	if m == nil {
 		return
 	}

@@ -16,7 +16,7 @@ import (
 
 // ChatGetMutableChatByLink
 // chat.getMutableChatByLink link:string = MutableChat;
-func (c *ChatCore) ChatGetMutableChatByLink(in *chat.TLChatGetMutableChatByLink) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatGetMutableChatByLink(in *chat.TLChatGetMutableChatByLink) (*mtproto.MutableChat, error) {
 	// TODO: not impl
 	c.Logger.Errorf("chat.getMutableChatByLink - error: method ChatGetMutableChatByLink not impl")
 

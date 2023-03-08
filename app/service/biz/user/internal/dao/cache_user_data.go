@@ -52,16 +52,16 @@ func isCacheUserDataCacheKey(k string) bool {
 }
 
 type CacheUserData struct {
-	UserData              *user.UserData          `json:"user_data"`
-	ContactIdList         []int64                 `json:"contact_id_list"`
-	CachesPrivacyKeyRules []*user.PrivacyKeyRules `json:"caches_privacy_key_rules"`
+	UserData              *mtproto.UserData          `json:"user_data"`
+	ContactIdList         []int64                    `json:"contact_id_list"`
+	CachesPrivacyKeyRules []*mtproto.PrivacyKeyRules `json:"caches_privacy_key_rules"`
 }
 
 func NewCacheUserData() *CacheUserData {
 	return &CacheUserData{
 		UserData:              nil,
 		ContactIdList:         []int64{},
-		CachesPrivacyKeyRules: []*user.PrivacyKeyRules{},
+		CachesPrivacyKeyRules: []*mtproto.PrivacyKeyRules{},
 	}
 }
 
@@ -72,7 +72,7 @@ func (m *CacheUserData) GetContactIdList() []int64 {
 	return m.ContactIdList
 }
 
-func (m *CacheUserData) GetUserData() *user.UserData {
+func (m *CacheUserData) GetUserData() *mtproto.UserData {
 	if m == nil {
 		return nil
 	}
@@ -121,8 +121,8 @@ func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 	}
 }
 
-func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *user.UserData {
-	userData := user.MakeTLUserData(&user.UserData{
+func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
+	userData := mtproto.MakeTLUserData(&mtproto.UserData{
 		Id:                userDO.Id,
 		AccessHash:        userDO.AccessHash,
 		Deleted:           userDO.Deleted,
@@ -154,7 +154,7 @@ func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *user.UserData {
 
 func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData, error) {
 	var (
-		rules0, rules1, rules2 *user.PrivacyKeyRules
+		rules0, rules1, rules2 *mtproto.PrivacyKeyRules
 		cacheData              = NewCacheUserData()
 	)
 

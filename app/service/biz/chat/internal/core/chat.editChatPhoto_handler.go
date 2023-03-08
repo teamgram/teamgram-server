@@ -20,14 +20,14 @@ import (
 
 // ChatEditChatPhoto
 // chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
-func (c *ChatCore) ChatEditChatPhoto(in *chat.TLChatEditChatPhoto) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatEditChatPhoto(in *chat.TLChatEditChatPhoto) (*mtproto.MutableChat, error) {
 	var (
 		err        error
 		now        = time.Now().Unix()
 		chatId     = in.ChatId
 		editUserId = in.EditUserId
-		chat2      *chat.MutableChat
-		me         *chat.ImmutableChatParticipant
+		chat2      *mtproto.MutableChat
+		me         *mtproto.ImmutableChatParticipant
 	)
 
 	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, chatId, editUserId)

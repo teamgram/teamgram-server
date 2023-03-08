@@ -11,9 +11,6 @@
 package chat
 
 const (
-	Predicate_immutableChatParticipant              = "immutableChatParticipant"
-	Predicate_immutableChat                         = "immutableChat"
-	Predicate_mutableChat                           = "mutableChat"
 	Predicate_chatInviteAlready                     = "chatInviteAlready"
 	Predicate_chatInvite                            = "chatInvite"
 	Predicate_chatInvitePeek                        = "chatInvitePeek"
@@ -57,18 +54,6 @@ const (
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
-	Predicate_immutableChatParticipant: {
-		0: 650553001, // 0x26c6a6a9
-
-	},
-	Predicate_immutableChat: {
-		0: -1557334680, // 0xa32cf568
-
-	},
-	Predicate_mutableChat: {
-		0: -34609042, // 0xfdefe86e
-
-	},
 	Predicate_chatInviteAlready: {
 		0: -1542554274, // 0xa40e7d5e
 
@@ -232,9 +217,6 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	650553001:   Predicate_immutableChatParticipant,              // 0x26c6a6a9
-	-1557334680: Predicate_immutableChat,                         // 0xa32cf568
-	-34609042:   Predicate_mutableChat,                           // 0xfdefe86e
 	-1542554274: Predicate_chatInviteAlready,                     // 0xa40e7d5e
 	-613035609:  Predicate_chatInvite,                            // 0xdb75d1a7
 	-1394351506: Predicate_chatInvitePeek,                        // 0xace3e26e

@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
@@ -33,7 +34,7 @@ func (c *UserCore) UserSearch(in *user.TLUserSearch) (*user.UsersFound, error) {
 	if isData {
 		founds = user.MakeTLUsersDataFound(&user.UsersFound{
 			Count:      0,
-			Users:      []*user.UserData{},
+			Users:      []*mtproto.UserData{},
 			NextOffset: "",
 		}).To_UsersFound()
 	} else {

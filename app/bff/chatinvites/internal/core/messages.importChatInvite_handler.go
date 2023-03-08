@@ -77,7 +77,7 @@ func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportC
 		}).To_Update()
 
 		idList := make([]int64, 0)
-		mChat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		mChat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			idList = append(idList, participant.GetUserId())
 			return nil
 		})
@@ -86,7 +86,7 @@ func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportC
 			Id: idList,
 		})
 
-		mChat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		mChat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,
 				&sync.TLSyncPushUpdates{

@@ -62,7 +62,7 @@ func (c *DialogsCore) MessagesSetTyping(in *mtproto.TLMessagesSetTyping) (*mtpro
 			}).To_Update(),
 			Date: date,
 		}).To_Updates()
-		chat.Walk(func(userId int64, participant *chatpb.ImmutableChatParticipant) error {
+		chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			if userId == c.MD.UserId {
 				return nil
 			}

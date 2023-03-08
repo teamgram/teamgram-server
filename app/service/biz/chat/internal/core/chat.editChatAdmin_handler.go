@@ -21,11 +21,11 @@ import (
 
 // ChatEditChatAdmin
 // chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
-func (c *ChatCore) ChatEditChatAdmin(in *chat.TLChatEditChatAdmin) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatEditChatAdmin(in *chat.TLChatEditChatAdmin) (*mtproto.MutableChat, error) {
 	var (
 		now           = time.Now().Unix()
-		chat2         *chat.MutableChat
-		me, editAdmin *chat.ImmutableChatParticipant
+		chat2         *mtproto.MutableChat
+		me, editAdmin *mtproto.ImmutableChatParticipant
 		err           error
 	)
 

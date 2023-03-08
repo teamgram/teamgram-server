@@ -28,11 +28,11 @@ import (
 
 // ChatToggleNoForwards
 // chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
-func (c *ChatCore) ChatToggleNoForwards(in *chat.TLChatToggleNoForwards) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatToggleNoForwards(in *chat.TLChatToggleNoForwards) (*mtproto.MutableChat, error) {
 	var (
 		now   = time.Now().Unix()
-		chat2 *chat.MutableChat
-		me    *chat.ImmutableChatParticipant
+		chat2 *mtproto.MutableChat
+		me    *mtproto.ImmutableChatParticipant
 		err   error
 	)
 

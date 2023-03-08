@@ -16,7 +16,7 @@ import (
 
 // UserGetImmutableUserByToken
 // user.getImmutableUserByToken token:string = ImmutableUser;
-func (c *UserCore) UserGetImmutableUserByToken(in *user.TLUserGetImmutableUserByToken) (*user.ImmutableUser, error) {
+func (c *UserCore) UserGetImmutableUserByToken(in *user.TLUserGetImmutableUserByToken) (*mtproto.ImmutableUser, error) {
 	// TODO: performance optimization
 	botId, err := c.svcCtx.Dao.BotsDAO.SelectByToken(c.ctx, in.Token)
 	if err != nil || botId == 0 {

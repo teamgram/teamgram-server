@@ -28,10 +28,10 @@ import (
 
 // ChatSetChatAvailableReactions
 // chat.setChatAvailableReactions self_id:long chat_id:long available_reactions:Vector<string> = Bool;
-func (c *ChatCore) ChatSetChatAvailableReactions(in *chat.TLChatSetChatAvailableReactions) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatSetChatAvailableReactions(in *chat.TLChatSetChatAvailableReactions) (*mtproto.MutableChat, error) {
 	var (
-		chat2 *chat.MutableChat
-		me    *chat.ImmutableChatParticipant
+		chat2 *mtproto.MutableChat
+		me    *mtproto.ImmutableChatParticipant
 		err   error
 	)
 

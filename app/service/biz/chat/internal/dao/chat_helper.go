@@ -8,13 +8,13 @@ package dao
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
+
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
-func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.ImmutableChat) {
-	chat = &chatpb.ImmutableChat{
+func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *mtproto.ImmutableChat) {
+	chat = &mtproto.ImmutableChat{
 		Id:                     chatsDO.Id,
 		Creator:                chatsDO.CreatorUserId,
 		Title:                  chatsDO.Title,
@@ -64,8 +64,8 @@ func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *chatpb.I
 	return
 }
 
-func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatParticipantsDO) (participant *chatpb.ImmutableChatParticipant) {
-	participant = &chatpb.ImmutableChatParticipant{
+func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatParticipantsDO) (participant *mtproto.ImmutableChatParticipant) {
+	participant = &mtproto.ImmutableChatParticipant{
 		Id:              chatParticipantsDO.Id,
 		ChatId:          chatParticipantsDO.ChatId,
 		UserId:          chatParticipantsDO.UserId,

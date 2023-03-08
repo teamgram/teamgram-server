@@ -23,22 +23,11 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// UserGetUserDataListByIdList
-// user.getUserDataListByIdList user_id_list:Vector<long> = Vector<UserData>;
-func (c *UserCore) UserGetUserDataListByIdList(in *user.TLUserGetUserDataListByIdList) (*user.Vector_UserData, error) {
-	users := &user.Vector_UserData{
-		Datas: []*mtproto.UserData{},
-	}
+// UserGetImmutableUserV2
+// user.getImmutableUserV2 flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
+func (c *UserCore) UserGetImmutableUserV2(in *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error) {
+	// TODO: not impl
+	c.Logger.Errorf("user.getImmutableUserV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	for _, id := range in.UserIdList {
-		cacheData := c.svcCtx.Dao.GetCacheUserData(c.ctx, id)
-		if cacheData == nil {
-			c.Logger.Errorf("user.getUserDataById - error: not found userId(%d)", id)
-			continue
-		}
-		users.Datas = append(users.Datas, cacheData.GetUserData())
-	}
-
-	return users, nil
-
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }

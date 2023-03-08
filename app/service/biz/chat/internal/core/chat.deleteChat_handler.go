@@ -18,7 +18,7 @@ import (
 
 // ChatDeleteChat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
-func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*chat.MutableChat, error) {
+func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*mtproto.MutableChat, error) {
 	mChat, err := c.svcCtx.Dao.GetMutableChat(c.ctx, in.ChatId)
 	if err != nil {
 		c.Logger.Errorf("chat.deleteChat - error: %v", err)
@@ -36,7 +36,7 @@ func (c *ChatCore) ChatDeleteChat(in *chat.TLChatDeleteChat) (*chat.MutableChat,
 	}
 
 	keys := []string{c.svcCtx.Dao.GetChatCacheKey(in.ChatId)}
-	mChat.Walk(func(userId int64, participant *chat.ImmutableChatParticipant) error {
+	mChat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		keys = append(keys, c.svcCtx.Dao.GetChatParticipantCacheKey(participant.ChatId, participant.UserId))
 		return nil
 	})
