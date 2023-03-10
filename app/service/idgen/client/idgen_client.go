@@ -29,6 +29,7 @@ type IdgenClient interface {
 	IdgenGetNextSeqId(ctx context.Context, in *idgen.TLIdgenGetNextSeqId) (*mtproto.Int64, error)
 	IdgenGetNextNSeqId(ctx context.Context, in *idgen.TLIdgenGetNextNSeqId) (*mtproto.Int64, error)
 	IdgenGetNextIdValList(ctx context.Context, in *idgen.TLIdgenGetNextIdValList) (*idgen.Vector_IdVal, error)
+	IdgenGetCurrentSeqIdList(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.Vector_IdVal, error)
 }
 
 type defaultIdgenClient struct {
@@ -88,4 +89,11 @@ func (m *defaultIdgenClient) IdgenGetNextNSeqId(ctx context.Context, in *idgen.T
 func (m *defaultIdgenClient) IdgenGetNextIdValList(ctx context.Context, in *idgen.TLIdgenGetNextIdValList) (*idgen.Vector_IdVal, error) {
 	client := idgen.NewRPCIdgenClient(m.cli.Conn())
 	return client.IdgenGetNextIdValList(ctx, in)
+}
+
+// IdgenGetCurrentSeqIdList
+// idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
+func (m *defaultIdgenClient) IdgenGetCurrentSeqIdList(ctx context.Context, in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.Vector_IdVal, error) {
+	client := idgen.NewRPCIdgenClient(m.cli.Conn())
+	return client.IdgenGetCurrentSeqIdList(ctx, in)
 }

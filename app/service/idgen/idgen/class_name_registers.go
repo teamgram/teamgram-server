@@ -11,20 +11,21 @@
 package idgen
 
 const (
-	Predicate_inputId                = "inputId"
-	Predicate_inputIds               = "inputIds"
-	Predicate_inputSeqId             = "inputSeqId"
-	Predicate_inputNSeqId            = "inputNSeqId"
-	Predicate_idVal                  = "idVal"
-	Predicate_idVals                 = "idVals"
-	Predicate_seqIdVal               = "seqIdVal"
-	Predicate_idgen_nextId           = "idgen_nextId"
-	Predicate_idgen_nextIds          = "idgen_nextIds"
-	Predicate_idgen_getCurrentSeqId  = "idgen_getCurrentSeqId"
-	Predicate_idgen_setCurrentSeqId  = "idgen_setCurrentSeqId"
-	Predicate_idgen_getNextSeqId     = "idgen_getNextSeqId"
-	Predicate_idgen_getNextNSeqId    = "idgen_getNextNSeqId"
-	Predicate_idgen_getNextIdValList = "idgen_getNextIdValList"
+	Predicate_inputId                   = "inputId"
+	Predicate_inputIds                  = "inputIds"
+	Predicate_inputSeqId                = "inputSeqId"
+	Predicate_inputNSeqId               = "inputNSeqId"
+	Predicate_idVal                     = "idVal"
+	Predicate_idVals                    = "idVals"
+	Predicate_seqIdVal                  = "seqIdVal"
+	Predicate_idgen_nextId              = "idgen_nextId"
+	Predicate_idgen_nextIds             = "idgen_nextIds"
+	Predicate_idgen_getCurrentSeqId     = "idgen_getCurrentSeqId"
+	Predicate_idgen_setCurrentSeqId     = "idgen_setCurrentSeqId"
+	Predicate_idgen_getNextSeqId        = "idgen_getNextSeqId"
+	Predicate_idgen_getNextNSeqId       = "idgen_getNextNSeqId"
+	Predicate_idgen_getNextIdValList    = "idgen_getNextIdValList"
+	Predicate_idgen_getCurrentSeqIdList = "idgen_getCurrentSeqIdList"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -84,23 +85,28 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1434062537, // 0xaa85f137
 
 	},
+	Predicate_idgen_getCurrentSeqIdList: {
+		0: -769020349, // 0xd229ae43
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	-1963845268: Predicate_inputId,                // 0x8af2196c
-	2133352380:  Predicate_inputIds,               // 0x7f285fbc
-	-850215987:  Predicate_inputSeqId,             // 0xcd52bbcd
-	2058448257:  Predicate_inputNSeqId,            // 0x7ab16d81
-	-1065859893: Predicate_idVal,                  // 0xc07844cb
-	473672294:   Predicate_idVals,                 // 0x1c3baa66
-	704937224:   Predicate_seqIdVal,               // 0x2a047d08
-	-1099886560: Predicate_idgen_nextId,           // 0xbe711020
-	1204121518:  Predicate_idgen_nextIds,          // 0x47c56fae
-	-1654936704: Predicate_idgen_getCurrentSeqId,  // 0x9d5bab80
-	-852747923:  Predicate_idgen_setCurrentSeqId,  // 0xcd2c196d
-	-160339608:  Predicate_idgen_getNextSeqId,     // 0xf6716968
-	-1479226258: Predicate_idgen_getNextNSeqId,    // 0xa7d4cc6e
-	-1434062537: Predicate_idgen_getNextIdValList, // 0xaa85f137
+	-1963845268: Predicate_inputId,                   // 0x8af2196c
+	2133352380:  Predicate_inputIds,                  // 0x7f285fbc
+	-850215987:  Predicate_inputSeqId,                // 0xcd52bbcd
+	2058448257:  Predicate_inputNSeqId,               // 0x7ab16d81
+	-1065859893: Predicate_idVal,                     // 0xc07844cb
+	473672294:   Predicate_idVals,                    // 0x1c3baa66
+	704937224:   Predicate_seqIdVal,                  // 0x2a047d08
+	-1099886560: Predicate_idgen_nextId,              // 0xbe711020
+	1204121518:  Predicate_idgen_nextIds,             // 0x47c56fae
+	-1654936704: Predicate_idgen_getCurrentSeqId,     // 0x9d5bab80
+	-852747923:  Predicate_idgen_setCurrentSeqId,     // 0xcd2c196d
+	-160339608:  Predicate_idgen_getNextSeqId,        // 0xf6716968
+	-1479226258: Predicate_idgen_getNextNSeqId,       // 0xa7d4cc6e
+	-1434062537: Predicate_idgen_getNextIdValList,    // 0xaa85f137
+	-769020349:  Predicate_idgen_getCurrentSeqIdList, // 0xd229ae43
 
 }
 

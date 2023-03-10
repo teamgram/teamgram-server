@@ -102,6 +102,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1434062537,
 		}
 	},
+	-769020349: func() mtproto.TLObject { // 0xd229ae43
+		return &TLIdgenGetCurrentSeqIdList{
+			Constructor: -769020349,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1197,6 +1202,69 @@ func (m *TLIdgenGetNextIdValList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextIdValList) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLIdgenGetCurrentSeqIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLIdgenGetCurrentSeqIdList) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_idgen_getCurrentSeqIdList))
+
+	switch uint32(m.Constructor) {
+	case 0xd229ae43:
+		x.UInt(0xd229ae43)
+
+		// no flags
+
+		x.Int(int32(mtproto.CRC32_vector))
+		x.Int(int32(len(m.GetId())))
+		for _, v := range m.GetId() {
+			x.Bytes((*v).Encode(layer))
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLIdgenGetCurrentSeqIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLIdgenGetCurrentSeqIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xd229ae43:
+
+		// not has flags
+
+		c1 := dBuf.Int()
+		if c1 != int32(mtproto.CRC32_vector) {
+			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+		}
+		l1 := dBuf.Int()
+		v1 := make([]*InputId, l1)
+		for i := int32(0); i < l1; i++ {
+			v1[i] = &InputId{}
+			v1[i].Decode(dBuf)
+		}
+		m.Id = v1
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLIdgenGetCurrentSeqIdList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

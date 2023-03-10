@@ -255,3 +255,29 @@ func (m *IDGenClient2) GetNextIdList(ctx context.Context, idList ...IDTypeNgen) 
 
 	return rIdValList
 }
+
+func (m *IDGenClient2) GetCurrentSeqIdList(ctx context.Context, idList ...IDTypeNgen) []IDValue {
+	if len(idList) == 0 {
+		return nil
+	}
+
+	ids := make([]*idgen.InputId, len(idList))
+	for i, id := range idList {
+		ids[i] = id.ToInputId()
+	}
+	idValList, _ := m.cli.IdgenGetCurrentSeqIdList(ctx, &idgen.TLIdgenGetCurrentSeqIdList{
+		Id: ids,
+	})
+	if len(idValList.GetDatas()) != len(idList) {
+		return nil
+	}
+
+	rIdValList := make([]IDValue, len(idList))
+	for i, id := range idValList.GetDatas() {
+		rIdValList[i].IDType = idList[i].IDType
+		rIdValList[i].Id = id.Id_INT64
+		rIdValList[i].IdN = id.Id_VECTORINT64
+	}
+
+	return rIdValList
+}

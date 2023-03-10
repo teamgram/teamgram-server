@@ -124,3 +124,18 @@ func (s *Service) IdgenGetNextIdValList(ctx context.Context, request *idgen.TLId
 	return r, err
 }
 
+// IdgenGetCurrentSeqIdList
+// idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
+func (s *Service) IdgenGetCurrentSeqIdList(ctx context.Context, request *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.Vector_IdVal, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("idgen.getCurrentSeqIdList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.IdgenGetCurrentSeqIdList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("idgen.getCurrentSeqIdList - reply: %s", r.DebugString())
+	return r, err
+}
+
