@@ -2408,8 +2408,8 @@ github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f h1:4tfuEDNNhwXNY/
 github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
 github.com/teamgram/marmota v0.1.15 h1:84i3hcZXrvjl+OqK0yHKEokw9Dou/twFR5V/JUUIl3w=
 github.com/teamgram/marmota v0.1.15/go.mod h1:lrLRS9o+LUCiA9AAJrtOA8N18pD97hOC1wtIZg2m1w0=
-github.com/teamgram/proto v0.150.2-0.20230308073911-b5f23b8de701 h1:sHlRz+kTjJdUpl/+RgG4NNTfDbgBWF8XIsE1/iXsMQI=
-github.com/teamgram/proto v0.150.2-0.20230308073911-b5f23b8de701/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.150.2-0.20230310035303-055a38b04798 h1:0rXdZFJmXLFBVfsBHOeE8Y+OM3num/1OGkqkAdq+pHI=
+github.com/teamgram/proto v0.150.2-0.20230310035303-055a38b04798/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=
 github.com/tenntenn/text/transform v0.0.0-20200319021203-7eef512accb3/go.mod h1:ON8b8w4BN/kE1EOhwT0o+d62W65a6aPw1nouo9LMgyY=
 github.com/tetafro/godot v0.3.7/go.mod h1:/7NLHhv08H1+8DNj0MElpAACw1ajsCuf3TKNQxA5S+0=

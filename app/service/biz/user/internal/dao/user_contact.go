@@ -185,6 +185,7 @@ func (d *Dao) DeleteUserContact(ctx context.Context, id int64, contactId int64) 
 func (d *Dao) PutUserContact(ctx context.Context, changeMutual bool, do *dataobject.UserContactsDO) error {
 	keys := []string{
 		genCacheUserDataCacheKey(do.OwnerUserId),
+		genCacheUserDataCacheKey(do.ContactUserId),
 		genContactCacheKey(do.OwnerUserId, do.ContactUserId),
 	}
 	if changeMutual {

@@ -1085,7 +1085,7 @@ func (s *Service) UserGetImmutableUserV2(ctx context.Context, request *user.TLUs
 
 // UserGetMutableUsersV2
 // user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
-func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error) {
+func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getMutableUsersV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 

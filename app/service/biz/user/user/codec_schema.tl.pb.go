@@ -407,14 +407,14 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1174586898,
 		}
 	},
-	-1228861082: func() mtproto.TLObject { // 0xb6c11166
+	806009420: func() mtproto.TLObject { // 0x300aba4c
 		return &TLUserGetImmutableUserV2{
-			Constructor: -1228861082,
+			Constructor: 806009420,
 		}
 	},
-	620766988: func() mtproto.TLObject { // 0x2500270c
+	-1795585240: func() mtproto.TLObject { // 0x94f98b28
 		return &TLUserGetMutableUsersV2{
-			Constructor: 620766988,
+			Constructor: -1795585240,
 		}
 	},
 }
@@ -4931,22 +4931,29 @@ func (m *TLUserGetImmutableUserV2) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_user_getImmutableUserV2))
 
 	switch uint32(m.Constructor) {
-	case 0xb6c11166:
-		x.UInt(0xb6c11166)
+	case 0x300aba4c:
+		x.UInt(0x300aba4c)
 
 		// set flags
 		var flags uint32 = 0
 
 		if m.GetPrivacy() == true {
-			flags |= 1 << 1
+			flags |= 1 << 0
+		}
+		if m.GetHasTo() == true {
+			flags |= 1 << 2
+		}
+		if m.GetTo() != nil {
+			flags |= 1 << 2
 		}
 
 		x.UInt(flags)
 
 		// flags Debug by @benqi
 		x.Long(m.GetId())
-
-		x.VectorLong(m.GetContacts())
+		if m.GetTo() != nil {
+			x.VectorLong(m.GetTo())
+		}
 
 	default:
 		// log.Errorf("")
@@ -4961,19 +4968,22 @@ func (m *TLUserGetImmutableUserV2) CalcByteSize(layer int32) int {
 
 func (m *TLUserGetImmutableUserV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xb6c11166:
+	case 0x300aba4c:
 
 		flags := dBuf.UInt()
 		_ = flags
 
 		// flags Debug by @benqi
 		m.Id = dBuf.Long()
-		if (flags & (1 << 1)) != 0 {
+		if (flags & (1 << 0)) != 0 {
 			m.Privacy = true
 		}
-
-		m.Contacts = dBuf.VectorLong()
-
+		if (flags & (1 << 2)) != 0 {
+			m.HasTo = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.To = dBuf.VectorLong()
+		}
 		return dBuf.GetError()
 
 	default:
@@ -4996,14 +5006,31 @@ func (m *TLUserGetMutableUsersV2) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_user_getMutableUsersV2))
 
 	switch uint32(m.Constructor) {
-	case 0x2500270c:
-		x.UInt(0x2500270c)
+	case 0x94f98b28:
+		x.UInt(0x94f98b28)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetPrivacy() == true {
+			flags |= 1 << 0
+		}
+		if m.GetHasTo() == true {
+			flags |= 1 << 2
+		}
+		if m.GetTo() != nil {
+			flags |= 1 << 2
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 
 		x.VectorLong(m.GetId())
 
-		x.VectorLong(m.GetTo())
+		if m.GetTo() != nil {
+			x.VectorLong(m.GetTo())
+		}
 
 	default:
 		// log.Errorf("")
@@ -5018,14 +5045,24 @@ func (m *TLUserGetMutableUsersV2) CalcByteSize(layer int32) int {
 
 func (m *TLUserGetMutableUsersV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x2500270c:
+	case 0x94f98b28:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
 
 		m.Id = dBuf.VectorLong()
 
-		m.To = dBuf.VectorLong()
-
+		if (flags & (1 << 0)) != 0 {
+			m.Privacy = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.HasTo = true
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.To = dBuf.VectorLong()
+		}
 		return dBuf.GetError()
 
 	default:

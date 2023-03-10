@@ -12,7 +12,7 @@ require (
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.2
 	github.com/teamgram/marmota v0.1.15
-	github.com/teamgram/proto v0.150.2-0.20230308073911-b5f23b8de701
+	github.com/teamgram/proto v0.150.2-0.20230310035303-055a38b04798
 	github.com/zeromicro/go-zero v1.4.5
 	google.golang.org/grpc v1.53.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c

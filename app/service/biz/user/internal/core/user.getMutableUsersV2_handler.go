@@ -24,8 +24,8 @@ import (
 )
 
 // UserGetMutableUsersV2
-// user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
-func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error) {
+// user.getImmutableUserV2 flags:# id:long privacy:flags.0?true contacts:flags.1?Vector<long> reverse_contacts:flags.2?Vector<long> = ImmutableUser;
+func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error) {
 	// TODO: not impl
 	c.Logger.Errorf("user.getMutableUsersV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
 

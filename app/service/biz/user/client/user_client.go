@@ -93,7 +93,7 @@ type UserClient interface {
 	UserSearch(ctx context.Context, in *user.TLUserSearch) (*user.UsersFound, error)
 	UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error)
 	UserGetImmutableUserV2(ctx context.Context, in *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error)
-	UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error)
+	UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error)
 }
 
 type defaultUserClient struct {
@@ -605,7 +605,7 @@ func (m *defaultUserClient) UserGetImmutableUserV2(ctx context.Context, in *user
 
 // UserGetMutableUsersV2
 // user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
-func (m *defaultUserClient) UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*user.Vector_ImmutableUser, error) {
+func (m *defaultUserClient) UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetMutableUsersV2(ctx, in)
 }

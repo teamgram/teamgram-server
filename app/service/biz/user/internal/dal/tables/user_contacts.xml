@@ -88,7 +88,7 @@
             FROM
                 user_contacts
             WHERE
-                owner_user_id=:owner_user_id AND contact_user_id IN (:id_list) AND is_deleted = 0
+                owner_user_id=:owner_user_id AND contact_user_id IN (:id_list) AND is_deleted = 0 ORDER BY contact_user_id
         </sql>
     </operation>
     <operation name="SelectListByOwnerListAndContactList" result_set="list">
@@ -162,6 +162,29 @@
                 contact_phone = :contact_phone
             WHERE
                 contact_user_id = :contact_user_id
+        </sql>
+    </operation>
+    <operation name="SelectUserReverseContactIdList" result_set="single_list">
+        <sql>
+            SELECT
+                owner_user_id
+            FROM
+                user_contacts
+            WHERE
+                contact_user_id=:contact_user_id AND is_deleted = 0 ORDER BY owner_user_id
+        </sql>
+    </operation>
+    <operation name="SelectReverseListByIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted
+            FROM
+                user_contacts
+            WHERE
+                contact_user_id=:contact_user_id AND owner_user_id IN (:id_list) AND is_deleted = 0 ORDER BY owner_user_id
         </sql>
     </operation>
 </table>

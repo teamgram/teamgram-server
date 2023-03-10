@@ -333,11 +333,11 @@ func (dao *UserContactsDAO) SelectUserContactIdListWithCB(ctx context.Context, o
 }
 
 // SelectListByIdList
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id in (:id_list) and is_deleted = 0
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id in (:id_list) and is_deleted = 0 order by contact_user_id asc
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, owner_user_id int64, id_list []int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0 order by contact_user_id asc"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)
@@ -366,11 +366,11 @@ func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, owner_user_i
 }
 
 // SelectListByIdListWithCB
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id in (:id_list) and is_deleted = 0
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id in (:id_list) and is_deleted = 0 order by contact_user_id asc
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByIdListWithCB(ctx context.Context, owner_user_id int64, id_list []int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id in (?) and is_deleted = 0 order by contact_user_id asc"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)
@@ -731,6 +731,112 @@ func (dao *UserContactsDAO) UpdatePhoneByContactIdTx(tx *sqlx.Tx, contact_phone 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdatePhoneByContactId(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectUserReverseContactIdList
+// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0 order by owner_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectUserReverseContactIdList(ctx context.Context, contact_user_id int64) (rList []int64, err error) {
+	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0 order by owner_user_id asc"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, contact_user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectUserReverseContactIdList(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectUserReverseContactIdListWithCB
+// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0 order by owner_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectUserReverseContactIdListWithCB(ctx context.Context, contact_user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
+	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0 order by owner_user_id asc"
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, contact_user_id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectUserReverseContactIdList(_), error: %v", err)
+	}
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectReverseListByIdList
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0 order by owner_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectReverseListByIdList(ctx context.Context, contact_user_id int64, id_list []int64) (rList []dataobject.UserContactsDO, err error) {
+	var (
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0 order by owner_user_id asc"
+		a      []interface{}
+		values []dataobject.UserContactsDO
+	)
+
+	if len(id_list) == 0 {
+		rList = []dataobject.UserContactsDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, contact_user_id, id_list)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectReverseListByIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectReverseListByIdListWithCB
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0 order by owner_user_id asc
+// TODO(@benqi): sqlmap
+func (dao *UserContactsDAO) SelectReverseListByIdListWithCB(ctx context.Context, contact_user_id int64, id_list []int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
+	var (
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0 order by owner_user_id asc"
+		a      []interface{}
+		values []dataobject.UserContactsDO
+	)
+
+	if len(id_list) == 0 {
+		rList = []dataobject.UserContactsDO{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, contact_user_id, id_list)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectReverseListByIdList(_), error: %v", err)
+		return
+	}
+	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, &rList[i])
+		}
 	}
 
 	return

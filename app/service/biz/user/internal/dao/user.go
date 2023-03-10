@@ -272,50 +272,57 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 		KeysPrivacyRules: nil,
 	}).To_ImmutableUser()
 
-	if !userData.Deleted {
-		if int(userData.UserType) == user.UserTypeRegular {
-			mr.FinishVoid(
-				func() {
-					lastSeenAt, _ := d.GetLastSeenAt(ctx, id)
-					if lastSeenAt != nil {
-						immutableUser.LastSeenAt = lastSeenAt.LastSeenAt
-					}
-				},
-				func() {
-					// TODO: aaa
-					// immutableUser.Contacts = c.svcCtx.Dao.GetUserContactListByIdList(c.ctx, id, contacts...)
+	if userData.Deleted {
+		return immutableUser, nil
+	}
 
-					idList := cacheUserData.GetContactIdList()
-					if len(idList) == 0 {
-						return
-					}
+	if userData.UserType == user.UserTypeUnknown ||
+		userData.UserType == user.UserTypeBot ||
+		userData.UserType == user.UserTypeDeleted {
+		// not need load
+		return immutableUser, nil
+	}
 
-					idList2 := make([]int64, 0, len(idList))
-					for _, id2 := range contacts {
-						if ok, _ := container2.Contains(id2, idList); ok && id2 != id {
-							idList2 = append(idList2, id2)
-						}
-					}
-					if len(idList2) == 0 {
-						return
-					}
-
-					immutableUser.Contacts = d.getContactListByIdList(ctx, id, idList2)
-				})
-			//func() {
-			//	if privacy {
-			//		immutableUser.KeysPrivacyRules = c.svcCtx.Dao.GetUserPrivacyRulesListByKeys(
-			//			c.ctx,
-			//			id,
-			//			user.STATUS_TIMESTAMP,
-			//			user.PROFILE_PHOTO,
-			//			user.PHONE_NUMBER)
-			//	}
-			//})
-			if privacy {
-				immutableUser.KeysPrivacyRules = cacheUserData.CachesPrivacyKeyRules
+	mr.FinishVoid(
+		func() {
+			lastSeenAt, _ := d.GetLastSeenAt(ctx, id)
+			if lastSeenAt != nil {
+				immutableUser.LastSeenAt = lastSeenAt.LastSeenAt
 			}
-		}
+		},
+		func() {
+			// TODO: aaa
+			// immutableUser.Contacts = c.svcCtx.Dao.GetUserContactListByIdList(c.ctx, id, contacts...)
+
+			idList := cacheUserData.GetContactIdList()
+			if len(idList) == 0 {
+				return
+			}
+
+			idList2 := make([]int64, 0, len(idList))
+			for _, id2 := range contacts {
+				if ok, _ := container2.Contains(id2, idList); ok && id2 != id {
+					idList2 = append(idList2, id2)
+				}
+			}
+			if len(idList2) == 0 {
+				return
+			}
+
+			immutableUser.Contacts = d.getContactListByIdList(ctx, id, idList2)
+		})
+	//func() {
+	//	if privacy {
+	//		immutableUser.KeysPrivacyRules = c.svcCtx.Dao.GetUserPrivacyRulesListByKeys(
+	//			c.ctx,
+	//			id,
+	//			user.STATUS_TIMESTAMP,
+	//			user.PROFILE_PHOTO,
+	//			user.PHONE_NUMBER)
+	//	}
+	//})
+	if privacy {
+		immutableUser.KeysPrivacyRules = cacheUserData.CachesPrivacyKeyRules
 	}
 
 	return immutableUser, nil

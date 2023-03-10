@@ -97,7 +97,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserSearch":                           RPCContextTuple{"/mtproto.RPCUser/user_search", func() interface{} { return new(UsersFound) }},
 	"TLUserUpdateBotData":                    RPCContextTuple{"/mtproto.RPCUser/user_updateBotData", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetImmutableUserV2":               RPCContextTuple{"/mtproto.RPCUser/user_getImmutableUserV2", func() interface{} { return new(mtproto.ImmutableUser) }},
-	"TLUserGetMutableUsersV2":                RPCContextTuple{"/mtproto.RPCUser/user_getMutableUsersV2", func() interface{} { return new(Vector_ImmutableUser) }},
+	"TLUserGetMutableUsersV2":                RPCContextTuple{"/mtproto.RPCUser/user_getMutableUsersV2", func() interface{} { return new(mtproto.MutableUsers) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

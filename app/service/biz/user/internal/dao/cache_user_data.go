@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	cacheUserDataKeyPrefix = "user_data2"
+	cacheUserDataKeyPrefix = "user_data.1"
 )
 
 var (
@@ -35,11 +35,11 @@ var (
 )
 
 func genCacheUserDataCacheKey(id int64) string {
-	return fmt.Sprintf("%s_%d", cacheUserDataKeyPrefix, id)
+	return fmt.Sprintf("%s#%d", cacheUserDataKeyPrefix, id)
 }
 
 func parseCacheUserDataCacheKey(k string) int64 {
-	if strings.HasPrefix(k, cacheUserDataKeyPrefix+"_") {
+	if strings.HasPrefix(k, cacheUserDataKeyPrefix+"#") {
 		v, _ := strconv.ParseInt(k[len(cacheUserDataKeyPrefix)+1:], 10, 64)
 		return v
 	}
@@ -55,6 +55,7 @@ type CacheUserData struct {
 	UserData              *mtproto.UserData          `json:"user_data"`
 	ContactIdList         []int64                    `json:"contact_id_list"`
 	CachesPrivacyKeyRules []*mtproto.PrivacyKeyRules `json:"caches_privacy_key_rules"`
+	ReverseContactIdList  []int64                    `json:"reverse_contact_id_list"`
 }
 
 func NewCacheUserData() *CacheUserData {
@@ -62,6 +63,7 @@ func NewCacheUserData() *CacheUserData {
 		UserData:              nil,
 		ContactIdList:         []int64{},
 		CachesPrivacyKeyRules: []*mtproto.PrivacyKeyRules{},
+		ReverseContactIdList:  []int64{},
 	}
 }
 
@@ -70,6 +72,13 @@ func (m *CacheUserData) GetContactIdList() []int64 {
 		return nil
 	}
 	return m.ContactIdList
+}
+
+func (m *CacheUserData) GetReverseContactIdList() []int64 {
+	if m == nil {
+		return nil
+	}
+	return m.ReverseContactIdList
 }
 
 func (m *CacheUserData) GetUserData() *mtproto.UserData {
@@ -153,76 +162,71 @@ func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 }
 
 func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData, error) {
+	do, err3 := d.UsersDAO.SelectById(ctx, id)
+	if err3 != nil {
+		return nil, err3
+	}
+	if do == nil {
+		return nil, sqlc.ErrNotFound
+	}
+
 	var (
 		rules0, rules1, rules2 *mtproto.PrivacyKeyRules
 		cacheData              = NewCacheUserData()
 	)
 
-	err2 := mr.Finish(
-		func() error {
-			do, err := d.UsersDAO.SelectById(ctx, id)
-			if err != nil {
-				return err
-			}
-			if do == nil {
-				return sqlc.ErrNotFound
-			}
-			userData := d.makeUserDataByDO(do)
+	userData := d.makeUserDataByDO(do)
+	if do.Restricted {
+		jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
+	}
+	cacheData.UserData = userData
 
-			// TODO: deleted
-			if do.IsBot && do.PhotoId != 0 {
-				mr.FinishVoid(
-					func() {
-						userData.Bot = d.getBotData(ctx, do.Id)
-					},
-					func() {
-						userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
-							PhotoId: do.PhotoId,
-						})
-					})
-			} else {
-				if do.IsBot {
+	if do.UserType == user.UserTypeUnknown ||
+		do.UserType == user.UserTypeDeleted {
+		return cacheData, nil
+	}
+
+	if do.UserType == user.UserTypeBot {
+		if do.PhotoId != 0 {
+			mr.FinishVoid(
+				func() {
 					userData.Bot = d.getBotData(ctx, do.Id)
-				}
-				if do.PhotoId != 0 {
+				},
+				func() {
 					userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
 						PhotoId: do.PhotoId,
 					})
-				}
-			}
+				})
+		} else {
+			userData.Bot = d.getBotData(ctx, do.Id)
+		}
 
-			if do.Restricted {
-				jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
-			}
-
-			cacheData.UserData = userData
-			return nil
-		},
-		func() error {
-			idList2, err := d.UserContactsDAO.SelectUserContactIdList(ctx, id)
-			if err != nil {
-				return err
-			}
-			cacheData.ContactIdList = idList2
-
-			return nil
-		},
-		func() error {
-			rules0, _ = d.GetUserPrivacyRules(ctx, id, user.STATUS_TIMESTAMP)
-			return nil
-		},
-		func() error {
-			rules1, _ = d.GetUserPrivacyRules(ctx, id, user.PROFILE_PHOTO)
-			return nil
-		},
-		func() error {
-			rules2, _ = d.GetUserPrivacyRules(ctx, id, user.PHONE_NUMBER)
-			return nil
-		})
-
-	if err2 != nil {
-		return nil, err2
+		return cacheData, nil
 	}
+
+	mr.FinishVoid(
+		func() {
+			if do.PhotoId != 0 {
+				userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
+					PhotoId: do.PhotoId,
+				})
+			}
+		},
+		func() {
+			cacheData.ContactIdList, _ = d.UserContactsDAO.SelectUserContactIdList(ctx, id)
+		},
+		func() {
+			cacheData.ReverseContactIdList, _ = d.UserContactsDAO.SelectUserReverseContactIdList(ctx, id)
+		},
+		func() {
+			rules0, _ = d.GetUserPrivacyRules(ctx, id, user.STATUS_TIMESTAMP)
+		},
+		func() {
+			rules1, _ = d.GetUserPrivacyRules(ctx, id, user.PROFILE_PHOTO)
+		},
+		func() {
+			rules2, _ = d.GetUserPrivacyRules(ctx, id, user.PHONE_NUMBER)
+		})
 
 	if rules0 != nil {
 		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0)
