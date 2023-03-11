@@ -163,7 +163,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 		},
 	})
 
-	return false, nil
+	return needPush, nil
 }
 
 func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, clientMsgId int64, pushData *mtproto.Updates, hasServerId string, notification bool) {
