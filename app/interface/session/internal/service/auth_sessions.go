@@ -761,12 +761,14 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 	switch request.reqMsg.(type) {
 	case *mtproto.TLAuthBindTempAuthKey:
 		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
-		rpcResult, err = s.Service.Dao.AuthsessionClient.AuthsessionBindTempAuthKey(context.Background(), &authsession.TLAuthsessionBindTempAuthKey{
-			PermAuthKeyId:    r.PermAuthKeyId,
-			Nonce:            r.Nonce,
-			ExpiresAt:        r.ExpiresAt,
-			EncryptedMessage: r.EncryptedMessage,
-		})
+		rpcResult, err = s.Service.Dao.AuthsessionClient.AuthsessionBindTempAuthKey(
+			context.Background(),
+			&authsession.TLAuthsessionBindTempAuthKey{
+				PermAuthKeyId:    r.PermAuthKeyId,
+				Nonce:            r.Nonce,
+				ExpiresAt:        r.ExpiresAt,
+				EncryptedMessage: r.EncryptedMessage,
+			})
 		s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
 	default:
 		rpcResult, err = s.Service.Dao.Invoke(rpcMetadata, request.reqMsg)
