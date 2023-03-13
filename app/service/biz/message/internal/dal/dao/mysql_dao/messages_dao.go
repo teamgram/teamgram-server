@@ -622,124 +622,6 @@ func (dao *MessagesDAO) SelectPeerUserMessage(ctx context.Context, peerId int64,
 	return
 }
 
-//// SelectPeerDialogMessageIdList
-//// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id != :user_id and dialog_message_id in (select dialog_message_id from messages where user_id = :user_id and user_message_box_id in (:idList)) and deleted = 0
-//// TODO(@benqi): sqlmap
-//func (dao *MessagesDAO) SelectPeerDialogMessageIdList(ctx context.Context, user_id int64, idList []int32) (rList []dataobject.MessagesDO, err error) {
-//	var (
-//		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from " + dao.CalcTableName(user_id) + " where user_id != ? and dialog_message_id in (select dialog_message_id from messages where user_id = ? and user_message_box_id in (?)) and deleted = 0"
-//		a      []interface{}
-//		values []dataobject.MessagesDO
-//	)
-//
-//	if len(idList) == 0 {
-//		rList = []dataobject.MessagesDO{}
-//		return
-//	}
-//
-//	query, a, err = sqlx.In(query, user_id, user_id, idList)
-//	if err != nil {
-//		// r sql.Result
-//		logx.WithContext(ctx).Errorf("sqlx.In in SelectPeerDialogMessageIdList(_), error: %v", err)
-//		return
-//	}
-//	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
-//
-//	if err != nil {
-//		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogMessageIdList(_), error: %v", err)
-//		return
-//	}
-//
-//	rList = values
-//
-//	return
-//}
-//
-//// SelectPeerDialogMessageIdListWithCB
-//// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id != :user_id and dialog_message_id in (select dialog_message_id from messages where user_id = :user_id and user_message_box_id in (:idList)) and deleted = 0
-//// TODO(@benqi): sqlmap
-//func (dao *MessagesDAO) SelectPeerDialogMessageIdListWithCB(ctx context.Context, user_id int64, idList []int32, cb func(i int, v *dataobject.MessagesDO)) (rList []dataobject.MessagesDO, err error) {
-//	var (
-//		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id != ? and dialog_message_id in (select dialog_message_id from messages where user_id = ? and user_message_box_id in (?)) and deleted = 0"
-//		a      []interface{}
-//		values []dataobject.MessagesDO
-//	)
-//
-//	if len(idList) == 0 {
-//		rList = []dataobject.MessagesDO{}
-//		return
-//	}
-//
-//	query, a, err = sqlx.In(query, user_id, user_id, idList)
-//	if err != nil {
-//		// r sql.Result
-//		logx.WithContext(ctx).Errorf("sqlx.In in SelectPeerDialogMessageIdList(_), error: %v", err)
-//		return
-//	}
-//	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
-//
-//	if err != nil {
-//		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogMessageIdList(_), error: %v", err)
-//		return
-//	}
-//
-//	rList = values
-//
-//	if cb != nil {
-//		for i := 0; i < len(rList); i++ {
-//			cb(i, &rList[i])
-//		}
-//	}
-//
-//	return
-//}
-//
-//// SelectDialogMessageListByMessageId
-//// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
-//// TODO(@benqi): sqlmap
-//func (dao *MessagesDAO) SelectDialogMessageListByMessageId(ctx context.Context, user_id int64, user_message_box_id int32) (rList []dataobject.MessagesDO, err error) {
-//	var (
-//		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where dialog_message_id = (select dialog_message_id from messages where user_id = ? and user_message_box_id = ?) and deleted = 0"
-//		values []dataobject.MessagesDO
-//	)
-//	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, user_message_box_id)
-//
-//	if err != nil {
-//		logx.WithContext(ctx).Errorf("queryx in SelectDialogMessageListByMessageId(_), error: %v", err)
-//		return
-//	}
-//
-//	rList = values
-//
-//	return
-//}
-//
-//// SelectDialogMessageListByMessageIdWithCB
-//// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where dialog_message_id = (select dialog_message_id from messages where user_id = :user_id and user_message_box_id = :user_message_box_id) and deleted = 0
-//// TODO(@benqi): sqlmap
-//func (dao *MessagesDAO) SelectDialogMessageListByMessageIdWithCB(ctx context.Context, user_id int64, user_message_box_id int32, cb func(i int, v *dataobject.MessagesDO)) (rList []dataobject.MessagesDO, err error) {
-//	var (
-//		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where dialog_message_id = (select dialog_message_id from messages where user_id = ? and user_message_box_id = ?) and deleted = 0"
-//		values []dataobject.MessagesDO
-//	)
-//	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, user_message_box_id)
-//
-//	if err != nil {
-//		logx.WithContext(ctx).Errorf("queryx in SelectDialogMessageListByMessageId(_), error: %v", err)
-//		return
-//	}
-//
-//	rList = values
-//
-//	if cb != nil {
-//		for i := 0; i < len(rList); i++ {
-//			cb(i, &rList[i])
-//		}
-//	}
-//
-//	return
-//}
-
 // SelectDialogLastMessageId
 // select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and deleted = 0 order by user_message_box_id desc limit 1
 // TODO(@benqi): sqlmap
@@ -1096,8 +978,8 @@ func (dao *MessagesDAO) UpdateMediaUnread(ctx context.Context, user_id int64, us
 	return
 }
 
-// update messages set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
 // UpdateMediaUnreadTx
+// update messages set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
 // TODO(@benqi): sqlmap
 func (dao *MessagesDAO) UpdateMediaUnreadTx(tx *sqlx.Tx, user_id int64, user_message_box_id int32) (rowsAffected int64, err error) {
 	var (
@@ -1544,8 +1426,8 @@ func (dao *MessagesDAO) UpdatePinned(ctx context.Context, pinned bool, user_id i
 	return
 }
 
-// update messages set pinned = :pinned where user_id = :user_id and user_message_box_id = :user_message_box_id
 // UpdatePinnedTx
+// update messages set pinned = :pinned where user_id = :user_id and user_message_box_id = :user_message_box_id
 // TODO(@benqi): sqlmap
 func (dao *MessagesDAO) UpdatePinnedTx(tx *sqlx.Tx, pinned bool, user_id int64, user_message_box_id int32) (rowsAffected int64, err error) {
 	var (
@@ -1636,8 +1518,8 @@ func (dao *MessagesDAO) UpdateUnPinnedByIdList(ctx context.Context, user_id int6
 	return
 }
 
-// update messages set pinned = 0 where user_id = :user_id and user_message_box_id in (:idList)
 // UpdateUnPinnedByIdListTx
+// update messages set pinned = 0 where user_id = :user_id and user_message_box_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *MessagesDAO) UpdateUnPinnedByIdListTx(tx *sqlx.Tx, user_id int64, idList []int32) (rowsAffected int64, err error) {
 	var (
@@ -1694,8 +1576,8 @@ func (dao *MessagesDAO) UpdateEditMessage(ctx context.Context, message_data stri
 	return
 }
 
-// update messages set message_data = :message_data, message = :message where user_id = :user_id and user_message_box_id = :user_message_box_id
 // UpdateEditMessageTx
+// update messages set message_data = :message_data, message = :message where user_id = :user_id and user_message_box_id = :user_message_box_id
 // TODO(@benqi): sqlmap
 func (dao *MessagesDAO) UpdateEditMessageTx(tx *sqlx.Tx, message_data string, message string, user_id int64, user_message_box_id int32) (rowsAffected int64, err error) {
 	var (
