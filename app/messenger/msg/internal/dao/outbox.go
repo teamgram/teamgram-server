@@ -23,11 +23,10 @@ import (
 	"errors"
 	"fmt"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
-	"math"
-	"time"
-
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"math"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/hack"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -132,7 +131,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			Message:           message.Message,
 			Mentioned:         false,
 			MediaUnread:       message.MediaUnread,
-			Date2:             time.Now().Unix(),
+			Date2:             int64(outMsgBox.Message.Date),
 			Deleted:           false,
 		}
 
@@ -167,7 +166,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				TopMessage:       outBoxMsgId,
 				UnreadCount:      0,
 				DraftMessageData: "null",
-				Date2:            time.Now().Unix(),
+				Date2:            int64(outMsgBox.Message.Date),
 			}
 			if dialogMessageId > 1 {
 				//// if box_id > 1, then dialogs already created.
@@ -214,7 +213,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				TopMessage:       outBoxMsgId,
 				UnreadCount:      0,
 				DraftMessageData: "null",
-				Date2:            time.Now().Unix(),
+				Date2:            int64(outMsgBox.Message.Date),
 			}
 
 			if dialogMessageId > 1 {
@@ -401,14 +400,14 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 		topMessageIndex = math.MaxInt32
 	}
 
-	getLastTopMessage := func(topMessage2 int32) int32 {
+	getLastTopMessage := func(topMessage2 int32) (int32, int64) {
 		for i := 0; i < len(topMessageDOList); i++ {
 			if topMessageDOList[i].UserMessageBoxId >= topMessage2 {
 				continue
 			}
-			return topMessageDOList[i].UserMessageBoxId
+			return topMessageDOList[i].UserMessageBoxId, topMessageDOList[i].Date2
 		}
-		return 0
+		return 0, 0
 	}
 
 	//_, err = d.DialogsDAO.SelectDialogsWithCB().SelectByPeer(ctx, userId, model.GetPeerIdByDialogId(userId, dialogId))
@@ -417,7 +416,7 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 	//}
 
 	for i := 0; i < len(msgDOList); i++ {
-		topMessage := getLastTopMessage(topMessageIndex)
+		topMessage, _ := getLastTopMessage(topMessageIndex)
 		if topMessage == msgDOList[i].UserMessageBoxId {
 			topMessageIndex = topMessage
 		}
@@ -430,9 +429,10 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 		if result.Err != nil {
 			return
 		}
-
-		d.DialogsDAO.UpdateOutboxDialogTx(tx,
-			getLastTopMessage(topMessageIndex),
+		topMessage, _ := getLastTopMessage(topMessageIndex)
+		d.DialogsDAO.UpdateOutboxDialogTx(
+			tx,
+			topMessage,
 			time.Now().Unix(),
 			userId,
 			peer.PeerType,

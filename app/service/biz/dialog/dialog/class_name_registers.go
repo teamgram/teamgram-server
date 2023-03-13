@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -139,7 +139,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dialog_insertOrUpdateDialog: {
-		0: -317723281, // 0xed0fed6f
+		0: 382601889, // 0x16ce0aa1
 
 	},
 	Predicate_dialog_deleteDialog: {
@@ -219,7 +219,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-92425614:   Predicate_dialog_getTopMessage,                     // 0xfa7db272
 	489158840:   Predicate_dialog_updateReadInbox,                   // 0x1d27f8b8
 	1483799934:  Predicate_dialog_updateReadOutbox,                  // 0x5870fd7e
-	-317723281:  Predicate_dialog_insertOrUpdateDialog,              // 0xed0fed6f
+	382601889:   Predicate_dialog_insertOrUpdateDialog,              // 0x16ce0aa1
 	28515811:    Predicate_dialog_deleteDialog,                      // 0x1b31de3
 	-1885617487: Predicate_dialog_getUserPinnedMessage,              // 0x8f9bc2b1
 	371388970:   Predicate_dialog_updateUserPinnedMessage,           // 0x1622f22a

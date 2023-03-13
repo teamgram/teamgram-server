@@ -13,7 +13,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
-	"time"
 )
 
 // DialogInsertOrUpdateDialog
@@ -21,11 +20,12 @@ import (
 func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	var (
 		cMap = make(map[string]interface{}, 0)
-		date = time.Now().Unix()
+		// date = time.Now().Unix()
 	)
 
 	if in.GetTopMessage() != nil {
 		cMap["top_message"] = in.GetTopMessage().GetValue()
+		cMap["date2"] = in.GetDate2().GetValue()
 	}
 	if in.GetReadOutboxMaxId() != nil {
 		cMap["read_outbox_max_id"] = in.GetReadOutboxMaxId().GetValue()
@@ -39,7 +39,6 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 	if in.GetUnreadMark() {
 		cMap["unread_mark"] = 1
 	}
-	cMap["date2"] = date
 	cMap["deleted"] = 0
 
 	rowsAffected, err := c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
@@ -60,7 +59,7 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 			PeerId:           in.PeerId,
 			PeerDialogId:     mtproto.MakePeerDialogId(in.PeerType, in.PeerId),
 			DraftMessageData: "null",
-			Date2:            date,
+			Date2:            in.GetDate2().GetValue(),
 		}
 
 		if in.GetTopMessage() != nil {

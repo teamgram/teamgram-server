@@ -142,9 +142,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1483799934,
 		}
 	},
-	-317723281: func() mtproto.TLObject { // 0xed0fed6f
+	382601889: func() mtproto.TLObject { // 0x16ce0aa1
 		return &TLDialogInsertOrUpdateDialog{
-			Constructor: -317723281,
+			Constructor: 382601889,
 		}
 	},
 	28515811: func() mtproto.TLObject { // 0x1b31de3
@@ -1914,8 +1914,8 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_dialog_insertOrUpdateDialog))
 
 	switch uint32(m.Constructor) {
-	case 0xed0fed6f:
-		x.UInt(0xed0fed6f)
+	case 0x16ce0aa1:
+		x.UInt(0x16ce0aa1)
 
 		// set flags
 		var flags uint32 = 0
@@ -1934,6 +1934,9 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
 		}
 		if m.GetUnreadMark() == true {
 			flags |= 1 << 4
+		}
+		if m.GetDate2() != nil {
+			flags |= 1 << 5
 		}
 
 		x.UInt(flags)
@@ -1958,6 +1961,10 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
 			x.Int(m.GetUnreadCount().Value)
 		}
 
+		if m.GetDate2() != nil {
+			x.Long(m.GetDate2().Value)
+		}
+
 	default:
 		// log.Errorf("")
 	}
@@ -1971,7 +1978,7 @@ func (m *TLDialogInsertOrUpdateDialog) CalcByteSize(layer int32) int {
 
 func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xed0fed6f:
+	case 0x16ce0aa1:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1999,6 +2006,10 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 		if (flags & (1 << 4)) != 0 {
 			m.UnreadMark = true
 		}
+		if (flags & (1 << 5)) != 0 {
+			m.Date2 = &types.Int64Value{Value: dBuf.Long()}
+		}
+
 		return dBuf.GetError()
 
 	default:

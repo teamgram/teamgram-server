@@ -93,7 +93,7 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 		case mtproto.PEER_SELF, mtproto.PEER_USER:
 			for i, dialog := range m {
 				if dialog.Dialog.TopMessage == offsetId &&
-					int32(dialog.Order) == offsetDate &&
+					// int32(dialog.Order) == offsetDate &&
 					dialog.Dialog.Peer.UserId == offsetPeer.PeerId {
 					idx = i
 					break
@@ -102,7 +102,7 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 		case mtproto.PEER_CHAT:
 			for i, dialog := range m {
 				if dialog.Dialog.TopMessage == offsetId &&
-					int32(dialog.Order) == offsetDate &&
+					// int32(dialog.Order) == offsetDate &&
 					dialog.Dialog.Peer.ChatId == offsetPeer.PeerId {
 					idx = i
 					break
@@ -111,7 +111,7 @@ func (m DialogExtList) GetDialogsByOffsetLimit(offsetDate int32, offsetId int32,
 		case mtproto.PEER_CHANNEL:
 			for i, dialog := range m {
 				if dialog.Dialog.TopMessage == offsetId &&
-					int32(dialog.Order) == offsetDate &&
+					// int32(dialog.Order) == offsetDate &&
 					dialog.Dialog.Peer.ChannelId == offsetPeer.PeerId {
 					idx = i
 					break
