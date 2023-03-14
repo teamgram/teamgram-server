@@ -909,52 +909,6 @@ func (dao *MessagesDAO) SelectDialogMessageIdListWithCB(ctx context.Context, use
 	return
 }
 
-// SelectPeerMessageList
-// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id != :user_id and dialog_message_id = :dialog_message_id and deleted = 0
-// TODO(@benqi): sqlmap
-func (dao *MessagesDAO) SelectPeerMessageList(ctx context.Context, user_id int64, dialog_message_id int64) (rList []dataobject.MessagesDO, err error) {
-	var (
-		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2, ttl_period from " + dao.CalcTableName(user_id) + " where user_id != ? and dialog_message_id = ? and deleted = 0"
-		values []dataobject.MessagesDO
-	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, dialog_message_id)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPeerMessageList(_), error: %v", err)
-		return
-	}
-
-	rList = values
-
-	return
-}
-
-// SelectPeerMessageListWithCB
-// select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2 from messages where user_id != :user_id and dialog_message_id = :dialog_message_id and deleted = 0
-// TODO(@benqi): sqlmap
-func (dao *MessagesDAO) SelectPeerMessageListWithCB(ctx context.Context, user_id int64, dialog_message_id int64, cb func(i int, v *dataobject.MessagesDO)) (rList []dataobject.MessagesDO, err error) {
-	var (
-		query  = "select user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2, ttl_period from " + dao.CalcTableName(user_id) + " where user_id != ? and dialog_message_id = ? and deleted = 0"
-		values []dataobject.MessagesDO
-	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, dialog_message_id)
-
-	if err != nil {
-		logx.WithContext(ctx).Errorf("queryx in SelectPeerMessageList(_), error: %v", err)
-		return
-	}
-
-	rList = values
-
-	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
-		}
-	}
-
-	return
-}
-
 // UpdateMediaUnread
 // update messages set media_unread = 0 where user_id = :user_id and user_message_box_id = :user_message_box_id
 // TODO(@benqi): sqlmap

@@ -188,35 +188,6 @@
         </sql>
     </operation>
 
-    <!-- //
-    <operation name="SelectPeerDialogMessageIdList" result_set="list">
-        <params>
-            <param name="idList" type="[]int32" />
-        </params>
-        <sql>
-            <![CDATA[
-            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
-            FROM
-                messages
-            WHERE
-                user_id <> :user_id AND dialog_message_id in (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id in (:idList)) AND deleted = 0
-            ]]>
-        </sql>
-    </operation>
-
-    <operation name="SelectDialogMessageListByMessageId" result_set="list">
-        <sql>
-            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
-            FROM
-                messages
-            WHERE
-                dialog_message_id = (SELECT dialog_message_id FROM messages WHERE user_id = :user_id AND user_message_box_id = :user_message_box_id) AND deleted = 0
-        </sql>
-    </operation>
-    -->
-
     <operation name="SelectDialogLastMessageId" result_set="single">
         <sql>
             SELECT
@@ -292,19 +263,6 @@
                 messages
             WHERE
                 user_id = :user_id AND (dialog_id1 = :dialog_id1 AND dialog_id2 = :dialog_id2) AND deleted = 0 ORDER BY user_message_box_id DESC
-        </sql>
-    </operation>
-
-    <operation name="SelectPeerMessageList" result_set="list">
-        <sql>
-            <![CDATA[
-            SELECT
-                user_id, user_message_box_id, dialog_id1, dialog_id2, dialog_message_id, sender_user_id, peer_type, peer_id, random_id, message_filter_type, message_data, message, mentioned, media_unread, pinned, has_reaction, reaction, reaction_date, reaction_unread, date2
-            FROM
-                messages
-            WHERE
-                user_id != :user_id AND dialog_message_id = :dialog_message_id AND deleted = 0
-            ]]>
         </sql>
     </operation>
 
