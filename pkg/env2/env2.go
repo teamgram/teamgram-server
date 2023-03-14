@@ -6,10 +6,11 @@
 
 package env2
 
-import "flag"
+import (
+	"flag"
+)
 
 var (
-	SmsCodeName    = ""
 	MyAppName      = "Teamgram"
 	MyWebSite      = "teamgram.net"
 	TDotMe         = "t.me"
@@ -18,16 +19,12 @@ var (
 	// PredefinedUser2
 	// predefined2 - auto register
 	PredefinedUser2 = false
-
-	Server2 = false
 )
 
 func init() {
-	flag.StringVar(&SmsCodeName, "code", "", "code")
 	flag.StringVar(&MyAppName, "app_name", "Teamgram", "app_name")
 	flag.StringVar(&MyWebSite, "site_name", "teamgram.net", "site_name")
 	flag.StringVar(&TDotMe, "t.me", "t.me", "t.me")
 	flag.BoolVar(&PredefinedUser, "predefined", false, "predefined")
 	flag.BoolVar(&PredefinedUser2, "predefined2", false, "predefined2")
-	flag.BoolVar(&Server2, "server2", false, "server2")
 }
