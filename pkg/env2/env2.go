@@ -28,3 +28,16 @@ func init() {
 	flag.BoolVar(&PredefinedUser, "predefined", false, "predefined")
 	flag.BoolVar(&PredefinedUser2, "predefined2", false, "predefined2")
 }
+
+func IsTDotMe(me string) bool {
+	switch me {
+	case "teamgram.me":
+		return true
+	case "t.me":
+		return true
+	case TDotMe:
+		return true
+	}
+
+	return false
+}
