@@ -98,11 +98,11 @@ func (c *MsgCore) pushUserMessage(
 		c.Logger.Errorf("checkDuplicateMessage error - %v", err)
 		return err
 	} else if hasDuplicateMessage {
-		upd, err := c.svcCtx.Dao.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
-		if err != nil {
-			c.Logger.Errorf("checkDuplicateMessage error - %v", err)
-			return err
-		} else if upd != nil {
+		rUpdates, err2 := c.svcCtx.Dao.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
+		if err2 != nil {
+			c.Logger.Errorf("checkDuplicateMessage error - %v", err2)
+			return err2
+		} else if rUpdates != nil {
 			return nil
 		}
 	}
@@ -121,6 +121,10 @@ func (c *MsgCore) pushUserMessage(
 		}
 	}
 
+	if !ok {
+		return nil
+	}
+
 	updateNewMessage := mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
 		Pts_INT32:       box.Pts,
 		PtsCount:        box.PtsCount,
@@ -128,29 +132,33 @@ func (c *MsgCore) pushUserMessage(
 		Message_MESSAGE: box.Message,
 	}).To_Update()
 
+	rUpdates := mtproto.MakePushUpdates(
+		func(idList []int64) []*mtproto.User {
+			users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
+				&userpb.TLUserGetMutableUsers{
+					Id: idList,
+				})
+			return users.GetUserListByIdList(fromUserId, idList...)
+		},
+		func(idList []int64) []*mtproto.Chat {
+			//chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+			//	&chatpb.TLChatGetChatListByIdList{
+			//		IdList: idList,
+			//	})
+			//return chats.GetChatListByIdList(fromUserId, idList...)
+			return nil
+		},
+		func(idList []int64) []*mtproto.Chat {
+			// TODO
+			return nil
+		},
+		updateNewMessage)
+
+	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(c.ctx, fromUserId, outBox.RandomId, rUpdates)
+
 	c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
-		UserId: fromUserId,
-		Updates: mtproto.MakePushUpdates(
-			func(idList []int64) []*mtproto.User {
-				users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
-					&userpb.TLUserGetMutableUsers{
-						Id: idList,
-					})
-				return users.GetUserListByIdList(fromUserId, idList...)
-			},
-			func(idList []int64) []*mtproto.Chat {
-				//chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
-				//	&chatpb.TLChatGetChatListByIdList{
-				//		IdList: idList,
-				//	})
-				//return chats.GetChatListByIdList(fromUserId, idList...)
-				return nil
-			},
-			func(idList []int64) []*mtproto.Chat {
-				// TODO
-				return nil
-			},
-			updateNewMessage),
+		UserId:  fromUserId,
+		Updates: rUpdates,
 	})
 
 	return err

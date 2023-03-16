@@ -70,6 +70,7 @@ func (c *MsgCore) sendUserOutgoingMessage(userId, authKeyId, peerUserId int64, o
 	)
 
 	rUpdates, err = c.sendUserMessage(
+		c.ctx,
 		userId,
 		authKeyId,
 		peerUserId,
@@ -117,12 +118,13 @@ func (c *MsgCore) sendUserOutgoingMessage(userId, authKeyId, peerUserId int64, o
 }
 
 func (c *MsgCore) sendUserMessage(
+	ctx context.Context,
 	fromUserId int64,
 	fromAuthKeyId int64,
 	toUserId int64,
 	outBox *msg.OutboxMessage,
 	cb func(did int64, inboxMsg *mtproto.Message) error) (*mtproto.Updates, error) {
-	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx, &userpb.TLUserGetMutableUsers{
 		Id: []int64{fromUserId, toUserId},
 	})
 	if err != nil {
@@ -158,12 +160,12 @@ func (c *MsgCore) sendUserMessage(
 	}
 
 	// handle duplicateMessage
-	hasDuplicateMessage, err := c.svcCtx.Dao.MessageDeDuplicate.HasDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
+	hasDuplicateMessage, err := c.svcCtx.Dao.MessageDeDuplicate.HasDuplicateMessage(ctx, fromUserId, outBox.RandomId)
 	if err != nil {
 		c.Logger.Errorf("checkDuplicateMessage error - %v", err)
 		return nil, err
 	} else if hasDuplicateMessage {
-		rUpdates, err2 := c.svcCtx.Dao.MessageDeDuplicate.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
+		rUpdates, err2 := c.svcCtx.Dao.MessageDeDuplicate.GetDuplicateMessage(ctx, fromUserId, outBox.RandomId)
 		if err2 != nil {
 			c.Logger.Errorf("checkDuplicateMessage error - %v", err2)
 			return nil, err2
@@ -172,7 +174,7 @@ func (c *MsgCore) sendUserMessage(
 		}
 	}
 
-	box, ok, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
+	box, ok, err := c.svcCtx.Dao.SendUserMessage(ctx, fromUserId, toUserId, outBox)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return nil, err
@@ -196,7 +198,7 @@ func (c *MsgCore) sendUserMessage(
 	rUpdates := mtproto.MakeReplyUpdates(
 		func(idList []int64) []*mtproto.User {
 			// TODO: check
-			//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
+			//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
 			//	&userpb.TLUserGetMutableUsers{
 			//		Id: idList,
 			//	})
@@ -204,7 +206,7 @@ func (c *MsgCore) sendUserMessage(
 		},
 		func(idList []int64) []*mtproto.Chat {
 			if len(idList) > 0 {
-				chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(c.ctx,
+				chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(ctx,
 					&chatpb.TLChatGetChatListByIdList{
 						IdList: idList,
 					})
@@ -219,7 +221,14 @@ func (c *MsgCore) sendUserMessage(
 		},
 		updateNewMessage)
 
-	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+	if !ok {
+		// dup
+		return rUpdates, nil
+	}
+
+	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
+
+	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
 		UserId:    fromUserId,
 		AuthKeyId: fromAuthKeyId,
 		Updates: mtproto.MakeSyncNotMeUpdates(
@@ -336,6 +345,10 @@ func (c *MsgCore) sendChatMessage(
 			return nil
 		},
 		updateNewMessage)
+
+	if !ok {
+		return rUpdates, nil
+	}
 
 	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
 
