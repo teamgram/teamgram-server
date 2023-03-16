@@ -13,18 +13,18 @@ import (
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
+	"github.com/teamgram/teamgram-server/pkg/deduplication"
+
 	// channel_client "github.com/teamgram/teamgram-server/app/service/biz/channel/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
-
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type Dao struct {
 	*Mysql
-	KV kv.Store
+	//KV kv.Store
 	idgen_client.IDGenClient2
 	user_client.UserClient
 	chat_client.ChatClient
@@ -33,4 +33,5 @@ type Dao struct {
 	BotSyncClient sync_client.SyncClient
 	dialog_client.DialogClient
 	plugin.MsgPlugin
+	deduplication.MessageDeDuplicate
 }

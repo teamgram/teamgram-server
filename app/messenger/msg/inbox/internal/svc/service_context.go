@@ -21,8 +21,6 @@ import (
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
-
-	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
 type ServiceContext struct {
@@ -35,7 +33,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	dao := &dao.Dao{
 		Mysql:        dao.NewMysqlDao(db, c.MessageSharding),
-		KV:           kv.NewStore(c.KV),
 		IDGenClient2: idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
 		UserClient:   user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
 		ChatClient:   chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),

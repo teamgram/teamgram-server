@@ -31,6 +31,7 @@ import (
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/pkg/deduplication"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 
@@ -44,15 +45,15 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 	return &ServiceContext{
 		Config: c,
 		Dao: &dao.Dao{
-			Mysql:        dao.NewMysqlDao(db, c.MessageSharding),
-			KV:           kv.NewStore(c.KV),
-			IDGenClient2: idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
-			UserClient:   user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
-			InboxClient:  inbox_client.NewInboxMqClient(kafka.MustKafkaProducer(c.InboxClient)),
-			ChatClient:   chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
-			SyncClient:   sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.SyncClient)),
-			DialogClient: dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
-			MsgPlugin:    plugin,
+			Mysql:              dao.NewMysqlDao(db, c.MessageSharding),
+			IDGenClient2:       idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
+			UserClient:         user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
+			InboxClient:        inbox_client.NewInboxMqClient(kafka.MustKafkaProducer(c.InboxClient)),
+			ChatClient:         chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+			SyncClient:         sync_client.NewSyncMqClient(kafka.GetCachedMQClient(c.SyncClient)),
+			DialogClient:       dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
+			MsgPlugin:          plugin,
+			MessageDeDuplicate: deduplication.NewMessageDeDuplicate(kv.NewStore(c.KV)),
 		},
 	}
 }

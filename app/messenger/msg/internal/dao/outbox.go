@@ -22,9 +22,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
-	"github.com/zeromicro/go-zero/core/jsonx"
-	"github.com/zeromicro/go-zero/core/logx"
 	"math"
 	"time"
 
@@ -33,6 +30,10 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
@@ -59,7 +60,7 @@ func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
 	return box
 }
 
-func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outboxMessage *msg.OutboxMessage) (*mtproto.MessageBox, error) {
+func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outboxMessage *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	var (
 		dialogId = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
 		err      error
@@ -73,7 +74,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 		idgen_client.MakeIDTypeNgen(idgen_client.IDTypePts, fromId))
 	if len(idList) != 3 {
 		err = mtproto.ErrInternelServerError
-		return nil, err
+		return nil, false, err
 	}
 
 	dialogMessageId := idList[0].Id
@@ -82,7 +83,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 
 	if dialogMessageId == 0 || outBoxMsgId == 0 || pts == 0 {
 		err = mtproto.ErrInternelServerError
-		return nil, err
+		return nil, false, err
 	}
 
 	// A, B
@@ -282,7 +283,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	})
 
 	if tR.Err != nil {
-		return nil, tR.Err
+		return nil, false, tR.Err
 	}
 
 	var outBox *mtproto.MessageBox
@@ -296,31 +297,32 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	case int64:
 		if tR.Data.(int64) <= 0 {
 			logx.WithContext(ctx).Error("unknown error")
-			return nil, errors.New("fatal unknown error")
+			return nil, false, errors.New("fatal unknown error")
 		}
 
 		// dup, we'll recreate box
 		do, err := d.MessagesDAO.SelectByRandomId(ctx, fromId, outboxMessage.RandomId)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		if do != nil {
 			outBox = makeMessageBoxByDO(do)
 			outBox.Pts = d.IDGenClient2.CurrentPtsId(ctx, outBox.UserId)
 			outBox.PtsCount = 1
+			return outBox, false, nil
 		} else {
 			logx.WithContext(ctx).Error("unknown error")
-			return nil, errors.New("fatal unknown error")
+			return nil, false, errors.New("fatal unknown error")
 		}
 	default:
 		logx.WithContext(ctx).Error("unknown error")
-		return nil, errors.New("fatal unknown error")
+		return nil, false, errors.New("fatal unknown error")
 	}
 
-	return outBox, nil
+	return outBox, true, nil
 }
 
-func (d *Dao) SendUserMessage(ctx context.Context, fromId, toId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, error) {
+func (d *Dao) SendUserMessage(ctx context.Context, fromId, toId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_USER, PeerId: toId}
 	return d.sendMessageToOutbox(ctx, fromId, peer, outBox)
 }
@@ -332,14 +334,14 @@ func (d *Dao) SendUserMultiMessage(ctx context.Context, fromId, toId int64, outB
 
 	for _, msg := range outBoxList {
 		peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_USER, PeerId: toId}
-		outBox, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
+		outBox, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
 		boxList = append(boxList, outBox)
 	}
 
 	return boxList, nil
 }
 
-func (d *Dao) SendChatMessage(ctx context.Context, fromId, chatId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, error) {
+func (d *Dao) SendChatMessage(ctx context.Context, fromId, chatId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_CHAT, PeerId: chatId}
 	return d.sendMessageToOutbox(ctx, fromId, peer, outBox)
 }
@@ -351,7 +353,7 @@ func (d *Dao) SendChatMultiMessage(ctx context.Context, fromId, chatId int64, ou
 
 	for _, msg := range outBoxList {
 		peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_CHAT, PeerId: chatId}
-		box, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
+		box, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
 		boxList = append(boxList, box)
 	}
 

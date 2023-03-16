@@ -107,13 +107,13 @@ func (c *MsgCore) pushUserMessage(
 		}
 	}
 
-	box, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
+	box, ok, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return err
 	}
 
-	if !hasDuplicateMessage && cb != nil {
+	if !ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())

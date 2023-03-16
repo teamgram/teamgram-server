@@ -158,27 +158,27 @@ func (c *MsgCore) sendUserMessage(
 	}
 
 	// handle duplicateMessage
-	hasDuplicateMessage, err := c.svcCtx.Dao.HasDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
+	hasDuplicateMessage, err := c.svcCtx.Dao.MessageDeDuplicate.HasDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
 	if err != nil {
 		c.Logger.Errorf("checkDuplicateMessage error - %v", err)
 		return nil, err
 	} else if hasDuplicateMessage {
-		upd, err := c.svcCtx.Dao.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
-		if err != nil {
+		rUpdates, err2 := c.svcCtx.Dao.MessageDeDuplicate.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
+		if err2 != nil {
 			c.Logger.Errorf("checkDuplicateMessage error - %v", err)
-			return nil, err
-		} else if upd != nil {
-			return upd, nil
+			return nil, err2
+		} else if rUpdates != nil {
+			return rUpdates, nil
 		}
 	}
 
-	box, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
+	box, ok, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return nil, err
 	}
 
-	if !hasDuplicateMessage && cb != nil {
+	if !ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())
@@ -286,22 +286,22 @@ func (c *MsgCore) sendChatMessage(
 		c.Logger.Errorf("checkDuplicateMessage error - %v", err)
 		return nil, err
 	} else if hasDuplicateMessage {
-		upd, err := c.svcCtx.Dao.GetDuplicateMessage(ctx, fromUserId, outBox.RandomId)
-		if err != nil {
-			c.Logger.Errorf("checkDuplicateMessage error - %v", err)
-			return nil, err
-		} else if upd != nil {
-			return upd, nil
+		rUpdates, err2 := c.svcCtx.Dao.GetDuplicateMessage(ctx, fromUserId, outBox.RandomId)
+		if err2 != nil {
+			c.Logger.Errorf("checkDuplicateMessage error - %v", err2)
+			return nil, err2
+		} else if rUpdates != nil {
+			return rUpdates, nil
 		}
 	}
 
-	box, err := c.svcCtx.Dao.SendChatMessage(ctx, fromUserId, chatId, outBox)
+	box, ok, err := c.svcCtx.Dao.SendChatMessage(ctx, fromUserId, chatId, outBox)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return nil, err
 	}
 
-	if !hasDuplicateMessage && cb != nil {
+	if !ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())
@@ -337,6 +337,8 @@ func (c *MsgCore) sendChatMessage(
 		},
 		updateNewMessage)
 
+	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
+
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 		UserId:    fromUserId,
 		AuthKeyId: fromAuthKeyId,
@@ -353,8 +355,6 @@ func (c *MsgCore) sendChatMessage(
 			},
 			updateNewMessage),
 	})
-
-	c.svcCtx.Dao.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
 
 	return rUpdates, nil
 }

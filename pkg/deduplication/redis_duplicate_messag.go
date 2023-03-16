@@ -16,12 +16,13 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package dao
+package deduplication
 
 import (
 	"context"
 	"fmt"
 
+	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/proto/mtproto"
 
 	"github.com/gogo/protobuf/proto"
@@ -38,19 +39,26 @@ func makeDuplicateMessageKey(prefix string, senderUserId, clientRandomId int64) 
 	return fmt.Sprintf("%s_%d_%d", prefix, senderUserId, clientRandomId)
 }
 
-func (d *Dao) HasDuplicateMessage(ctx context.Context, senderUserId, clientRandomId int64) (bool, error) {
-	//conn := d.redis.Redis.Get(ctx)
-	//defer conn.Close()
+type MessageDeDuplicate struct {
+	kv kv.Store
+}
 
-	k := makeDuplicateMessageKey(duplicateMessageId, senderUserId, clientRandomId)
+func NewMessageDeDuplicate(kv kv.Store) MessageDeDuplicate {
+	return MessageDeDuplicate{
+		kv: kv,
+	}
+}
 
-	seq, err := d.KV.IncrCtx(ctx, k)
+func (m *MessageDeDuplicate) HasDuplicateMessage(ctx context.Context, senderUserId, deDuplicateId int64) (bool, error) {
+	k := makeDuplicateMessageKey(duplicateMessageId, senderUserId, deDuplicateId)
+
+	seq, err := m.kv.IncrCtx(ctx, k)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("checkDuplicateMessage - INCR {%s}, error: {%v}", k, err)
 		return false, err
 	}
 
-	if _, err = d.KV.ExpireCtx(ctx, k, expireTimeout); err != nil {
+	if _, err = m.kv.ExpireCtx(ctx, k, expireTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("expire DuplicateMessage - EXPIRE {%s, %d}, error: %s", k, expireTimeout, err)
 		return false, err
 	}
@@ -58,11 +66,11 @@ func (d *Dao) HasDuplicateMessage(ctx context.Context, senderUserId, clientRando
 	return seq > 1, nil
 }
 
-func (d *Dao) PutDuplicateMessage(ctx context.Context, senderUserId, clientRandomId int64, upd *mtproto.Updates) error {
-	k := makeDuplicateMessageKey(duplicateMessageData, senderUserId, clientRandomId)
+func (m *MessageDeDuplicate) PutDuplicateMessage(ctx context.Context, senderUserId, deDuplicateId int64, upd *mtproto.Updates) error {
+	k := makeDuplicateMessageKey(duplicateMessageData, senderUserId, deDuplicateId)
 	cacheData, _ := proto.Marshal(upd)
 
-	if err := d.KV.SetexCtx(ctx, k, string(cacheData), expireTimeout); err != nil {
+	if err := m.kv.SetexCtx(ctx, k, string(cacheData), expireTimeout); err != nil {
 		logx.WithContext(ctx).Errorf("putDuplicateMessage - SET {%s, %s, %d}, error: %s", k, cacheData, expireTimeout, err)
 		return err
 	}
@@ -70,20 +78,26 @@ func (d *Dao) PutDuplicateMessage(ctx context.Context, senderUserId, clientRando
 	return nil
 }
 
-func (d *Dao) GetDuplicateMessage(ctx context.Context, senderUserId, clientRandomId int64) (*mtproto.Updates, error) {
+func (m *MessageDeDuplicate) GetDuplicateMessage(ctx context.Context, senderUserId, clientRandomId int64) (*mtproto.Updates, error) {
 	k := makeDuplicateMessageKey(duplicateMessageData, senderUserId, clientRandomId)
 
-	if cacheData, err := d.KV.GetCtx(ctx, k); err != nil {
-		if err.Error() == "redigo: nil returned" {
-			return nil, nil
-		}
-
+	if cacheData, err := m.kv.GetCtx(ctx, k); err != nil {
 		logx.WithContext(ctx).Errorf("getDuplicateMessage - GET {%s}, error: %s", k, err)
 		return nil, err
 	} else {
-		upd := &mtproto.Updates{}
-		proto.Unmarshal([]byte(cacheData), upd)
+		if cacheData == "" {
+			return nil, nil
+		}
 
-		return upd, nil
+		var (
+			rUpdates = new(mtproto.Updates)
+		)
+
+		err = proto.Unmarshal([]byte(cacheData), rUpdates)
+		if err != nil {
+			return nil, err
+		}
+
+		return rUpdates, nil
 	}
 }
