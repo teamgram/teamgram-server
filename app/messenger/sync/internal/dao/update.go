@@ -8,11 +8,12 @@ package dao
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/jsonx"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/internal/dal/dataobject"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 func (d *Dao) AddSeqToUpdatesQueue(ctx context.Context, authId, userId int64, updateType int32, updateData []byte) int32 {
