@@ -165,7 +165,7 @@ func (c *MsgCore) sendUserMessage(
 	} else if hasDuplicateMessage {
 		rUpdates, err2 := c.svcCtx.Dao.MessageDeDuplicate.GetDuplicateMessage(c.ctx, fromUserId, outBox.RandomId)
 		if err2 != nil {
-			c.Logger.Errorf("checkDuplicateMessage error - %v", err)
+			c.Logger.Errorf("checkDuplicateMessage error - %v", err2)
 			return nil, err2
 		} else if rUpdates != nil {
 			return rUpdates, nil
