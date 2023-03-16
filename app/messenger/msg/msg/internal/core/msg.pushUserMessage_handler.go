@@ -113,7 +113,7 @@ func (c *MsgCore) pushUserMessage(
 		return err
 	}
 
-	if !ok && cb != nil {
+	if ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())

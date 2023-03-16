@@ -180,7 +180,7 @@ func (c *MsgCore) sendUserMessage(
 		return nil, err
 	}
 
-	if !ok && cb != nil {
+	if ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())
@@ -310,7 +310,7 @@ func (c *MsgCore) sendChatMessage(
 		return nil, err
 	}
 
-	if !ok && cb != nil {
+	if ok && cb != nil {
 		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 		if err != nil {
 			c.Logger.Error(err.Error())
