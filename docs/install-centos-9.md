@@ -94,6 +94,7 @@ default port : 9221
 cd /tmp
 wget https://github.com/OpenAtomFoundation/pika/releases/download/v3.3.6/pika-linux-x86_64-v3.3.6.tar.bz2
 tar -xf pika-linux-x86_64-v3.3.6.tar.bz2
+mv output pika
 /tmp/pika/bin/pika -c /tmp/pika/conf/pika.conf &
 ```
 ### Install FFMpeg 
@@ -102,7 +103,7 @@ cd /tmp
 wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
 xz -d ffmpeg-release-amd64-static.tar.xz
 tar xf ffmpeg-release-amd64-static.tar
-cd cd ffmpeg-5.0-amd64-static/
+cd ffmpeg-5.0-amd64-static/
 cp ff* /usr/local/bin/
 ```
 
