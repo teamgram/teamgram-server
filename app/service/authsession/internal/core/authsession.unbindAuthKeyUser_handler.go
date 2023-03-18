@@ -22,16 +22,20 @@ func (c *AuthsessionCore) AuthsessionUnbindAuthKeyUser(in *authsession.TLAuthses
 	)
 
 	if unBindKeyId != 0 {
-		keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, unBindKeyId)
+		var (
+			inKeyId = in.AuthKeyId
+		)
+
+		keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
 		if err != nil {
-			c.Logger.Errorf("session.unbindAuthKeyUser - error: %v", err)
+			c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
 			return nil, err
-		} else if keyData == nil || keyData.PermAuthKeyId == 0 {
-			err = mtproto.ErrAuthKeyInvalid
-			return nil, err
-		} else {
-			unBindKeyId = keyData.PermAuthKeyId
+		} else if keyData.PermAuthKeyId == 0 {
+			c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
+			return nil, mtproto.ErrAuthKeyPermEmpty
 		}
+
+		unBindKeyId = keyData.PermAuthKeyId
 	}
 
 	c.svcCtx.Dao.UnbindAuthUser(c.ctx, unBindKeyId, in.UserId)

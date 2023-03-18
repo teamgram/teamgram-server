@@ -10,8 +10,6 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -19,15 +17,20 @@ import (
 // AuthsessionGetAuthorization
 // authsession.getAuthorization auth_key_id:long = Authorization;
 func (c *AuthsessionCore) AuthsessionGetAuthorization(in *authsession.TLAuthsessionGetAuthorization) (*mtproto.Authorization, error) {
-	myKeyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.AuthKeyId)
+	var (
+		inKeyId = in.GetAuthKeyId()
+	)
+
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
 	if err != nil {
-		c.Logger.Errorf("session.getAuthorization - error: %v", err)
+		c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
 		return nil, err
-	} else if myKeyData == nil || myKeyData.PermAuthKeyId == 0 {
-		return nil, fmt.Errorf("not found keyId")
+	} else if keyData.PermAuthKeyId == 0 {
+		c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
+		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
-	authorization, err := c.svcCtx.Dao.GetAuthorization(c.ctx, myKeyData.PermAuthKeyId)
+	authorization, err := c.svcCtx.Dao.GetAuthorization(c.ctx, keyData.PermAuthKeyId)
 	if err != nil {
 		c.Logger.Errorf("session.getAuthorization - error: %v", err)
 		return nil, err

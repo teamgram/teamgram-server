@@ -10,7 +10,6 @@
 package core
 
 import (
-	"fmt"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -18,12 +17,17 @@ import (
 // AuthsessionGetLayer
 // authsession.getLayer auth_key_id:long = Int32;
 func (c *AuthsessionCore) AuthsessionGetLayer(in *authsession.TLAuthsessionGetLayer) (*mtproto.Int32, error) {
-	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
+	var (
+		inKeyId = in.GetAuthKeyId()
+	)
+
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
 	if err != nil {
-		c.Logger.Errorf("session.getUserId - error: %v", err)
+		c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
 		return nil, err
-	} else if keyData == nil || keyData.PermAuthKeyId == 0 {
-		return nil, fmt.Errorf("not found keyId")
+	} else if keyData.PermAuthKeyId == 0 {
+		c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
+		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
 	layer := c.svcCtx.GetApiLayer(c.ctx, keyData.PermAuthKeyId)

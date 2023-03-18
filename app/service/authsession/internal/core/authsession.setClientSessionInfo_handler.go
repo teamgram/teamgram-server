@@ -10,7 +10,6 @@
 package core
 
 import (
-	"fmt"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -25,12 +24,17 @@ func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuth
 		return nil, err
 	}
 
-	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, clientSession.GetAuthKeyId())
+	var (
+		inKeyId = clientSession.GetAuthKeyId()
+	)
+
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
 	if err != nil {
-		c.Logger.Errorf("session.setClientSessionInfo - error: %v", err)
+		c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
 		return nil, err
-	} else if keyData == nil || keyData.PermAuthKeyId == 0 {
-		return nil, fmt.Errorf("not found keyId")
+	} else if keyData.PermAuthKeyId == 0 {
+		c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
+		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
 	clientSession.AuthKeyId = keyData.PermAuthKeyId

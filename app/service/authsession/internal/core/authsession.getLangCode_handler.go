@@ -10,7 +10,6 @@
 package core
 
 import (
-	"fmt"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -18,13 +17,17 @@ import (
 // AuthsessionGetLangCode
 // authsession.getLangCode auth_key_id:long = String;
 func (c *AuthsessionCore) AuthsessionGetLangCode(in *authsession.TLAuthsessionGetLangCode) (*mtproto.String, error) {
-	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetAuthKeyId())
+	var (
+		inKeyId = in.GetAuthKeyId()
+	)
+
+	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
 	if err != nil {
-		c.Logger.Errorf("session.getLangCode - error: %v", err)
+		c.Logger.Errorf("queryAuthKeyV2(%d) is error: %v", inKeyId, err)
 		return nil, err
-	} else if keyData == nil || keyData.PermAuthKeyId == 0 {
-		c.Logger.Errorf("session.getLangCode - not found keyId %d", in.GetAuthKeyId())
-		return nil, fmt.Errorf("not found keyId")
+	} else if keyData.PermAuthKeyId == 0 {
+		c.Logger.Errorf("queryAuthKeyV2(%d) - PermAuthKeyId is empty", inKeyId)
+		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
 	langCode := c.svcCtx.Dao.GetLangCode(c.ctx, keyData.PermAuthKeyId)
