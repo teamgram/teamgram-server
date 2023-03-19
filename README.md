@@ -140,6 +140,7 @@ cd teamgram-server
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221016.sql
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221023.sql
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221101.sql
+  mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/migrate-20221127.sql
   mysql -uteamgram -h127.0.0.1 -pteamgram teamgram < teamgramd/sql/init.sql
   
   # quit docker mysql
