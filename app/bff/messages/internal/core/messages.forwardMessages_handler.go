@@ -41,11 +41,11 @@ func (c *MessagesCore) MessagesForwardMessages(in *mtproto.TLMessagesForwardMess
 		saved    = false
 	)
 
-	if c.MD.IsBot {
-		err := mtproto.ErrBotMethodInvalid
-		c.Logger.Errorf("messages.forwardMessages - error: %v", err)
-		return nil, err
-	}
+	//if c.MD.IsBot {
+	//	err := mtproto.ErrBotMethodInvalid
+	//	c.Logger.Errorf("messages.forwardMessages - error: %v", err)
+	//	return nil, err
+	//}
 
 	/*
 	   ## android's from_peer maybe is empty
