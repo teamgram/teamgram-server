@@ -25,6 +25,7 @@ type AuthorizationClient interface {
 	AuthSignUp(ctx context.Context, in *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error)
 	AuthSignIn(ctx context.Context, in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error)
 	AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error)
+	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AuthResetAuthorizations(ctx context.Context, in *mtproto.TLAuthResetAuthorizations) (*mtproto.Bool, error)
 	AuthExportAuthorization(ctx context.Context, in *mtproto.TLAuthExportAuthorization) (*mtproto.Auth_ExportedAuthorization, error)
 	AuthImportAuthorization(ctx context.Context, in *mtproto.TLAuthImportAuthorization) (*mtproto.Auth_Authorization, error)
@@ -37,10 +38,12 @@ type AuthorizationClient interface {
 	AuthCancelCode(ctx context.Context, in *mtproto.TLAuthCancelCode) (*mtproto.Bool, error)
 	AuthDropTempAuthKeys(ctx context.Context, in *mtproto.TLAuthDropTempAuthKeys) (*mtproto.Bool, error)
 	AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error)
-	AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error)
+	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
+	AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
 	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
 	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
+	AccountVerifyEmailECBA39DB(ctx context.Context, in *mtproto.TLAccountVerifyEmailECBA39DB) (*mtproto.Bool, error)
 	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
 }
 
@@ -80,6 +83,13 @@ func (m *defaultAuthorizationClient) AuthSignIn(ctx context.Context, in *mtproto
 func (m *defaultAuthorizationClient) AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthLogOut(ctx, in)
+}
+
+// AuthResetLoginEmail
+// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
+func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthResetLoginEmail(ctx, in)
 }
 
 // AuthResetAuthorizations
@@ -166,11 +176,18 @@ func (m *defaultAuthorizationClient) AuthCheckRecoveryPassword(ctx context.Conte
 	return client.AuthCheckRecoveryPassword(ctx, in)
 }
 
-// AuthImportWebTokenAuthorization
-// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
-func (m *defaultAuthorizationClient) AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+// AccountSendVerifyEmailCode
+// account.sendVerifyEmailCode#98e037bb purpose:EmailVerifyPurpose email:string = account.SentEmailCode;
+func (m *defaultAuthorizationClient) AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AuthImportWebTokenAuthorization(ctx, in)
+	return client.AccountSendVerifyEmailCode(ctx, in)
+}
+
+// AccountVerifyEmail32DA4CF
+// account.verifyEmail#32da4cf purpose:EmailVerifyPurpose verification:EmailVerification = account.EmailVerified;
+func (m *defaultAuthorizationClient) AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AccountVerifyEmail32DA4CF(ctx, in)
 }
 
 // AccountResetPassword
@@ -192,6 +209,13 @@ func (m *defaultAuthorizationClient) AccountSetAuthorizationTTL(ctx context.Cont
 func (m *defaultAuthorizationClient) AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AccountChangeAuthorizationSettings(ctx, in)
+}
+
+// AccountVerifyEmailECBA39DB
+// account.verifyEmail#ecba39db email:string code:string = Bool;
+func (m *defaultAuthorizationClient) AccountVerifyEmailECBA39DB(ctx context.Context, in *mtproto.TLAccountVerifyEmailECBA39DB) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AccountVerifyEmailECBA39DB(ctx, in)
 }
 
 // AuthToggleBan

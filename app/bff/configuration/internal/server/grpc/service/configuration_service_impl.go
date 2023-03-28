@@ -107,18 +107,18 @@ func (s *Service) HelpGetAppChangelog(ctx context.Context, request *mtproto.TLHe
 	return r, err
 }
 
-// HelpGetAppConfig
-// help.getAppConfig#98914110 = JSONValue;
-func (s *Service) HelpGetAppConfig(ctx context.Context, request *mtproto.TLHelpGetAppConfig) (*mtproto.JSONValue, error) {
+// HelpGetAppConfig61E3F854
+// help.getAppConfig#61e3f854 hash:int = help.AppConfig;
+func (s *Service) HelpGetAppConfig61E3F854(ctx context.Context, request *mtproto.TLHelpGetAppConfig61E3F854) (*mtproto.Help_AppConfig, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.getAppConfig - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("help.getAppConfig61E3F854 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.HelpGetAppConfig(request)
+	r, err := c.HelpGetAppConfig61E3F854(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("help.getAppConfig - reply: %s", r.DebugString())
+	c.Logger.Debugf("help.getAppConfig61E3F854 - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -164,5 +164,20 @@ func (s *Service) HelpGetCountriesList(ctx context.Context, request *mtproto.TLH
 	}
 
 	c.Logger.Debugf("help.getCountriesList - reply: %s", r.DebugString())
+	return r, err
+}
+
+// HelpGetAppConfig98914110
+// help.getAppConfig#98914110 = JSONValue;
+func (s *Service) HelpGetAppConfig98914110(ctx context.Context, request *mtproto.TLHelpGetAppConfig98914110) (*mtproto.JSONValue, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("help.getAppConfig98914110 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.HelpGetAppConfig98914110(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("help.getAppConfig98914110 - reply: %s", r.DebugString())
 	return r, err
 }

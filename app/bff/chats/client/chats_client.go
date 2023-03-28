@@ -35,8 +35,9 @@ type ChatsClient interface {
 	MessagesEditChatAbout(ctx context.Context, in *mtproto.TLMessagesEditChatAbout) (*mtproto.Bool, error)
 	MessagesEditChatDefaultBannedRights(ctx context.Context, in *mtproto.TLMessagesEditChatDefaultBannedRights) (*mtproto.Updates, error)
 	MessagesDeleteChat(ctx context.Context, in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error)
-	MessagesGetMessageReadParticipants(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants) (*mtproto.Vector_Long, error)
+	MessagesGetMessageReadParticipants31C1C44F(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error)
 	ChannelsConvertToGigagroup(ctx context.Context, in *mtproto.TLChannelsConvertToGigagroup) (*mtproto.Updates, error)
+	MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error)
 }
 
 type defaultChatsClient struct {
@@ -92,7 +93,7 @@ func (m *defaultChatsClient) MessagesDeleteChatUser(ctx context.Context, in *mtp
 }
 
 // MessagesCreateChat
-// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
+// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
 func (m *defaultChatsClient) MessagesCreateChat(ctx context.Context, in *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
 	return client.MessagesCreateChat(ctx, in)
@@ -147,11 +148,11 @@ func (m *defaultChatsClient) MessagesDeleteChat(ctx context.Context, in *mtproto
 	return client.MessagesDeleteChat(ctx, in)
 }
 
-// MessagesGetMessageReadParticipants
-// messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
-func (m *defaultChatsClient) MessagesGetMessageReadParticipants(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants) (*mtproto.Vector_Long, error) {
+// MessagesGetMessageReadParticipants31C1C44F
+// messages.getMessageReadParticipants#31c1c44f peer:InputPeer msg_id:int = Vector<ReadParticipantDate>;
+func (m *defaultChatsClient) MessagesGetMessageReadParticipants31C1C44F(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
-	return client.MessagesGetMessageReadParticipants(ctx, in)
+	return client.MessagesGetMessageReadParticipants31C1C44F(ctx, in)
 }
 
 // ChannelsConvertToGigagroup
@@ -159,4 +160,11 @@ func (m *defaultChatsClient) MessagesGetMessageReadParticipants(ctx context.Cont
 func (m *defaultChatsClient) ChannelsConvertToGigagroup(ctx context.Context, in *mtproto.TLChannelsConvertToGigagroup) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
 	return client.ChannelsConvertToGigagroup(ctx, in)
+}
+
+// MessagesGetMessageReadParticipants2C6F97B7
+// messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
+func (m *defaultChatsClient) MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.MessagesGetMessageReadParticipants2C6F97B7(ctx, in)
 }

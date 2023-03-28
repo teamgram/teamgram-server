@@ -25,6 +25,7 @@ type PhotosClient interface {
 	PhotosUploadProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUploadProfilePhoto) (*mtproto.Photos_Photo, error)
 	PhotosDeletePhotos(ctx context.Context, in *mtproto.TLPhotosDeletePhotos) (*mtproto.Vector_Long, error)
 	PhotosGetUserPhotos(ctx context.Context, in *mtproto.TLPhotosGetUserPhotos) (*mtproto.Photos_Photos, error)
+	PhotosUploadContactProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUploadContactProfilePhoto) (*mtproto.Photos_Photo, error)
 }
 
 type defaultPhotosClient struct {
@@ -38,14 +39,14 @@ func NewPhotosClient(cli zrpc.Client) PhotosClient {
 }
 
 // PhotosUpdateProfilePhoto
-// photos.updateProfilePhoto#72d4742c id:InputPhoto = photos.Photo;
+// photos.updateProfilePhoto#1c3d5956 flags:# fallback:flags.0?true id:InputPhoto = photos.Photo;
 func (m *defaultPhotosClient) PhotosUpdateProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUpdateProfilePhoto) (*mtproto.Photos_Photo, error) {
 	client := mtproto.NewRPCPhotosClient(m.cli.Conn())
 	return client.PhotosUpdateProfilePhoto(ctx, in)
 }
 
 // PhotosUploadProfilePhoto
-// photos.uploadProfilePhoto#89f30f69 flags:# file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = photos.Photo;
+// photos.uploadProfilePhoto#93c9a51 flags:# fallback:flags.3?true file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = photos.Photo;
 func (m *defaultPhotosClient) PhotosUploadProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUploadProfilePhoto) (*mtproto.Photos_Photo, error) {
 	client := mtproto.NewRPCPhotosClient(m.cli.Conn())
 	return client.PhotosUploadProfilePhoto(ctx, in)
@@ -63,4 +64,11 @@ func (m *defaultPhotosClient) PhotosDeletePhotos(ctx context.Context, in *mtprot
 func (m *defaultPhotosClient) PhotosGetUserPhotos(ctx context.Context, in *mtproto.TLPhotosGetUserPhotos) (*mtproto.Photos_Photos, error) {
 	client := mtproto.NewRPCPhotosClient(m.cli.Conn())
 	return client.PhotosGetUserPhotos(ctx, in)
+}
+
+// PhotosUploadContactProfilePhoto
+// photos.uploadContactProfilePhoto#e14c4a71 flags:# suggest:flags.3?true save:flags.4?true user_id:InputUser file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.5?VideoSize = photos.Photo;
+func (m *defaultPhotosClient) PhotosUploadContactProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUploadContactProfilePhoto) (*mtproto.Photos_Photo, error) {
+	client := mtproto.NewRPCPhotosClient(m.cli.Conn())
+	return client.PhotosUploadContactProfilePhoto(ctx, in)
 }

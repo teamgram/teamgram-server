@@ -77,6 +77,21 @@ func (s *Service) AuthLogOut(ctx context.Context, request *mtproto.TLAuthLogOut)
 	return r, err
 }
 
+// AuthResetLoginEmail
+// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
+func (s *Service) AuthResetLoginEmail(ctx context.Context, request *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.resetLoginEmail - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthResetLoginEmail(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.resetLoginEmail - reply: %s", r.DebugString())
+	return r, err
+}
+
 // AuthResetAuthorizations
 // auth.resetAuthorizations#9fab0d1a = Bool;
 func (s *Service) AuthResetAuthorizations(ctx context.Context, request *mtproto.TLAuthResetAuthorizations) (*mtproto.Bool, error) {
@@ -257,18 +272,33 @@ func (s *Service) AuthCheckRecoveryPassword(ctx context.Context, request *mtprot
 	return r, err
 }
 
-// AuthImportWebTokenAuthorization
-// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
-func (s *Service) AuthImportWebTokenAuthorization(ctx context.Context, request *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+// AccountSendVerifyEmailCode
+// account.sendVerifyEmailCode#98e037bb purpose:EmailVerifyPurpose email:string = account.SentEmailCode;
+func (s *Service) AccountSendVerifyEmailCode(ctx context.Context, request *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.importWebTokenAuthorization - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("account.sendVerifyEmailCode - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.AuthImportWebTokenAuthorization(request)
+	r, err := c.AccountSendVerifyEmailCode(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("auth.importWebTokenAuthorization - reply: %s", r.DebugString())
+	c.Logger.Debugf("account.sendVerifyEmailCode - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AccountVerifyEmail32DA4CF
+// account.verifyEmail#32da4cf purpose:EmailVerifyPurpose verification:EmailVerification = account.EmailVerified;
+func (s *Service) AccountVerifyEmail32DA4CF(ctx context.Context, request *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.verifyEmail32DA4CF - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountVerifyEmail32DA4CF(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.verifyEmail32DA4CF - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -314,6 +344,21 @@ func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, reques
 	}
 
 	c.Logger.Debugf("account.changeAuthorizationSettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AccountVerifyEmailECBA39DB
+// account.verifyEmail#ecba39db email:string code:string = Bool;
+func (s *Service) AccountVerifyEmailECBA39DB(ctx context.Context, request *mtproto.TLAccountVerifyEmailECBA39DB) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.verifyEmailECBA39DB - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountVerifyEmailECBA39DB(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.verifyEmailECBA39DB - reply: %s", r.DebugString())
 	return r, err
 }
 

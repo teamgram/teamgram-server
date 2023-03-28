@@ -88,7 +88,9 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLHelpGetNearestDc,
 		*mtproto.TLHelpGetAppUpdate,
 		*mtproto.TLHelpGetCdnConfig,
-		*mtproto.TLHelpGetAppConfig:
+		*mtproto.TLHelpGetAppConfig61E3F854,
+		*mtproto.TLHelpGetAppConfig98914110:
+
 		return true
 
 	// langpack

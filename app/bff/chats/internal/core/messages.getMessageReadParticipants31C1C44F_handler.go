@@ -25,12 +25,13 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 )
 
-// MessagesGetMessageReadParticipants
-// messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
-func (c *ChatsCore) MessagesGetMessageReadParticipants(in *mtproto.TLMessagesGetMessageReadParticipants) (*mtproto.Vector_Long, error) {
+// MessagesGetMessageReadParticipants31C1C44F
+// messages.getMessageReadParticipants#31c1c44f peer:InputPeer msg_id:int = Vector<ReadParticipantDate>;
+func (c *ChatsCore) MessagesGetMessageReadParticipants31C1C44F(in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error) {
 	var (
-		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-		rValueList = make([]int64, 0)
+		peer                 = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
+		rValueList           = make([]int64, 0)
+		readParticipantDates = make([]*mtproto.ReadParticipantDate, 0)
 	)
 
 	switch peer.PeerType {
@@ -88,7 +89,8 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants(in *mtproto.TLMessagesGet
 		return nil, err
 	}
 
-	return &mtproto.Vector_Long{
-		Datas: rValueList,
+	// TODO: add readParticipantDates
+	return &mtproto.Vector_ReadParticipantDate{
+		Datas: readParticipantDates,
 	}, nil
 }

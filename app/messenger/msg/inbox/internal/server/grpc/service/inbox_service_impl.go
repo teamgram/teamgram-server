@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // InboxSendUserMessageToInbox
 // inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
@@ -228,4 +227,3 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 	c.Logger.Debugf("inbox.unpinAllMessages - reply: %s", r.DebugString())
 	return r, err
 }
-

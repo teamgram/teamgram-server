@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/app/service/idgen/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // IdgenNextId
 // idgen.nextId = Int64;
@@ -138,4 +137,3 @@ func (s *Service) IdgenGetCurrentSeqIdList(ctx context.Context, request *idgen.T
 	c.Logger.Debugf("idgen.getCurrentSeqIdList - reply: %s", r.DebugString())
 	return r, err
 }
-

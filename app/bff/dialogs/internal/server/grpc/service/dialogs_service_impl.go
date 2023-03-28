@@ -51,14 +51,14 @@ func (s *Service) MessagesSetTyping(ctx context.Context, request *mtproto.TLMess
 // messages.getPeerSettings#efd9a6a2 peer:InputPeer = messages.PeerSettings;
 func (s *Service) MessagesGetPeerSettings(ctx context.Context, request *mtproto.TLMessagesGetPeerSettings) (*mtproto.Messages_PeerSettings, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getPeerSettingsEFD9A6A2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("messages.getPeerSettings - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
 	r, err := c.MessagesGetPeerSettings(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getPeerSettingsEFD9A6A2 - reply: %s", r.DebugString())
+	c.Logger.Debugf("messages.getPeerSettings - reply: %s", r.DebugString())
 	return r, err
 }
 

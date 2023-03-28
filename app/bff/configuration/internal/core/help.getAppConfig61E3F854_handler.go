@@ -20,14 +20,18 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// UserUpdateBotData
-// user.updateBotData flags:# user_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
-func (c *UserCore) UserUpdateBotData(in *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
+// HelpGetAppConfig61E3F854
+// help.getAppConfig#61e3f854 hash:int = help.AppConfig;
+func (c *ConfigurationCore) HelpGetAppConfig61E3F854(in *mtproto.TLHelpGetAppConfig61E3F854) (*mtproto.Help_AppConfig, error) {
 	// TODO: not impl
-	c.Logger.Errorf("user.updateBotData blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("help.getAppConfig blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLHelpAppConfig(&mtproto.Help_AppConfig{
+		Hash: 0,
+		Config: mtproto.MakeTLJsonObject(&mtproto.JSONValue{
+			Value_VECTORJSONOBJECTVALUE: []*mtproto.JSONObjectValue{},
+		}).To_JSONValue(),
+	}).To_Help_AppConfig(), nil
 }

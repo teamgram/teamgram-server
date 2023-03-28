@@ -108,7 +108,7 @@ func (s *Service) MessagesDeleteChatUser(ctx context.Context, request *mtproto.T
 }
 
 // MessagesCreateChat
-// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
+// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
 func (s *Service) MessagesCreateChat(ctx context.Context, request *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.createChat - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -227,18 +227,18 @@ func (s *Service) MessagesDeleteChat(ctx context.Context, request *mtproto.TLMes
 	return r, err
 }
 
-// MessagesGetMessageReadParticipants
-// messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
-func (s *Service) MessagesGetMessageReadParticipants(ctx context.Context, request *mtproto.TLMessagesGetMessageReadParticipants) (*mtproto.Vector_Long, error) {
+// MessagesGetMessageReadParticipants31C1C44F
+// messages.getMessageReadParticipants#31c1c44f peer:InputPeer msg_id:int = Vector<ReadParticipantDate>;
+func (s *Service) MessagesGetMessageReadParticipants31C1C44F(ctx context.Context, request *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getMessageReadParticipants - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("messages.getMessageReadParticipants31C1C44F - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.MessagesGetMessageReadParticipants(request)
+	r, err := c.MessagesGetMessageReadParticipants31C1C44F(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getMessageReadParticipants - reply: %s", r.DebugString())
+	c.Logger.Debugf("messages.getMessageReadParticipants31C1C44F - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -254,5 +254,20 @@ func (s *Service) ChannelsConvertToGigagroup(ctx context.Context, request *mtpro
 	}
 
 	c.Logger.Debugf("channels.convertToGigagroup - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetMessageReadParticipants2C6F97B7
+// messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
+func (s *Service) MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, request *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getMessageReadParticipants2C6F97B7 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetMessageReadParticipants2C6F97B7(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getMessageReadParticipants2C6F97B7 - reply: %s", r.DebugString())
 	return r, err
 }

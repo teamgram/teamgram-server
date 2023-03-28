@@ -18,7 +18,7 @@ import (
 )
 
 // PhotosUpdateProfilePhoto
-// photos.updateProfilePhoto#72d4742c id:InputPhoto = photos.Photo;
+// photos.updateProfilePhoto#1c3d5956 flags:# fallback:flags.0?true id:InputPhoto = photos.Photo;
 func (s *Service) PhotosUpdateProfilePhoto(ctx context.Context, request *mtproto.TLPhotosUpdateProfilePhoto) (*mtproto.Photos_Photo, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("photos.updateProfilePhoto - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -33,7 +33,7 @@ func (s *Service) PhotosUpdateProfilePhoto(ctx context.Context, request *mtproto
 }
 
 // PhotosUploadProfilePhoto
-// photos.uploadProfilePhoto#89f30f69 flags:# file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = photos.Photo;
+// photos.uploadProfilePhoto#93c9a51 flags:# fallback:flags.3?true file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.4?VideoSize = photos.Photo;
 func (s *Service) PhotosUploadProfilePhoto(ctx context.Context, request *mtproto.TLPhotosUploadProfilePhoto) (*mtproto.Photos_Photo, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("photos.uploadProfilePhoto - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -74,5 +74,20 @@ func (s *Service) PhotosGetUserPhotos(ctx context.Context, request *mtproto.TLPh
 	}
 
 	c.Logger.Debugf("photos.getUserPhotos - reply: %s", r.DebugString())
+	return r, err
+}
+
+// PhotosUploadContactProfilePhoto
+// photos.uploadContactProfilePhoto#e14c4a71 flags:# suggest:flags.3?true save:flags.4?true user_id:InputUser file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double video_emoji_markup:flags.5?VideoSize = photos.Photo;
+func (s *Service) PhotosUploadContactProfilePhoto(ctx context.Context, request *mtproto.TLPhotosUploadContactProfilePhoto) (*mtproto.Photos_Photo, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("photos.uploadContactProfilePhoto - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.PhotosUploadContactProfilePhoto(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("photos.uploadContactProfilePhoto - reply: %s", r.DebugString())
 	return r, err
 }
