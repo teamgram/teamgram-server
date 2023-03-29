@@ -105,7 +105,7 @@ func (s *Service) MediaGetVideoSizeList(ctx context.Context, request *media.TLMe
 	}
 
 	c.Logger.Debugf("media.getVideoSizeList - reply: %s", r.DebugString())
-	return r, err
+	return r, nil
 }
 
 // MediaUploadedDocumentMedia

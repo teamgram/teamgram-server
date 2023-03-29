@@ -358,7 +358,7 @@ func (m *Dao) GetCachePhotoData(ctx context.Context, photoId int64) (*CachePhoto
 				return err
 			}
 
-			if photoDO.HasVideo {
+			if photoDO != nil && photoDO.HasVideo {
 				m.VideoSizesDAO.SelectListByVideoSizeIdWithCB(
 					ctx,
 					photoId,
