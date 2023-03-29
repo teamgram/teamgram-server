@@ -99,6 +99,7 @@ func (m *AuthLogic) DoAuthSendCode(
 	return
 }
 
+// DoAuthReSendCode
 // auth.resendCode
 func (m *AuthLogic) DoAuthReSendCode(ctx context.Context,
 	authKeyId int64,
@@ -234,6 +235,7 @@ func (m *AuthLogic) DoAuthSignIn(ctx context.Context,
 	return
 }
 
+// DoAuthSignUp
 // TODO(@benqi): 合并DoSignUp和DoSignIn部分代码
 func (m *AuthLogic) DoAuthSignUp(ctx context.Context, authKeyId int64, phoneNumber string, phoneCode *string, phoneCodeHash string) (codeData *model.PhoneCodeTransaction, err error) {
 	if codeData, err = m.Dao.GetPhoneCode(ctx, authKeyId, phoneNumber, phoneCodeHash); err != nil {

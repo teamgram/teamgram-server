@@ -58,7 +58,7 @@ func (d *Dao) PutCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumbe
 	cacheKey := genCachePhoneCodeKey(authKeyId, phoneNumber)
 	b, _ := json.Marshal(codeData)
 
-	if err = d.kv.Setex(cacheKey, string(b), int(phoneCodeTimeout)); err != nil {
+	if err = d.kv.SetexCtx(ctx, cacheKey, string(b), int(phoneCodeTimeout)); err != nil {
 		logx.WithContext(ctx).Errorf("conn.SETEX(%s) error(%v)", cacheKey, err)
 	}
 	return
