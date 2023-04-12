@@ -141,6 +141,7 @@ func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int
 					FirstName:     mtproto.MakeFlagsString(do.ContactFirstName),
 					LastName:      mtproto.MakeFlagsString(do.ContactLastName),
 					MutualContact: do.Mutual,
+					Phone:         mtproto.MakeFlagsString(do.ContactPhone),
 				}).To_ContactData()
 			}
 		})
