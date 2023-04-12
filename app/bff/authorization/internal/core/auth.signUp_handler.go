@@ -117,6 +117,8 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	if err != nil {
 		c.Logger.Errorf(err.Error())
 		return nil, err
+	} else {
+		_ = codeData
 	}
 
 	var (
@@ -209,7 +211,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 		func(ctx context.Context) {
 			// on event
 			c.svcCtx.AuthLogic.DeletePhoneCode(ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
-			c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
+			// c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
 			c.onContactSignUp(ctx, c.MD.AuthId, user.Id(), phoneNumber)
 		},
 	).(*mtproto.Auth_Authorization), nil
