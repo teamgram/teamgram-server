@@ -13,7 +13,7 @@ services:
       - /etc/localtime:/etc/localtime
     restart: always
     ports:
-      - 2181:2181
+      - 127.0.0.1:2181:2181
     networks:
       - teamgram_net
 
@@ -22,13 +22,13 @@ services:
     image: wurstmeister/kafka
     container_name: kafka
     ports:
-      - 9092:9092
+      - 127.0.0.1:9092:9092
     environment:
       #TZ: Asia/Shanghai
       KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "Inbox-T:1:0,Sync-T:1:0"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.150:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
     restart: always
     volumes:
@@ -41,8 +41,8 @@ services:
   etcd:
     image: quay.io/coreos/etcd:v3.5.2
     ports:
-      - 2379:2379
-      - 2380:2380
+      - 127.0.0.1:2379:2379
+      - 127.0.0.1:2380:2380
     container_name: etcd
     volumes:
       - ./data/etcd/data:/data
@@ -53,11 +53,11 @@ services:
       ETCD_DATA_DIR: /data
       ETCD_NAME: node1
       INITIAL_CLUSTER_TOKEN: etcd-test-cluster
-      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://192.168.1.150:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd:2380
       ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-      ETCD_ADVERTISE_CLIENT_URLS: http://192.168.1.150:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
       ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-      ETCD_INITIAL_CLUSTER: node1=http://192.168.1.150:2380
+      ETCD_INITIAL_CLUSTER: node1=http://etcd:2380
       ETCD_INITIAL_CLUSTER_STATE: new
       ETCD_AUTO_COMPACTION_RETENTION: 1
     restart: always
@@ -69,13 +69,13 @@ services:
     image: redis
     container_name: redis
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
     volumes:
       - ./data/redis/data:/data:rw
       #redis config file
       #- ./deploy/redis/config/redis.conf:/usr/local/redis/config/redis.conf
     environment:
-      TZ: Asia/Shanghai
+      TZ: Europe/Moscow
     restart: always
     privileged: true
     command: redis-server --appendonly yes
@@ -84,7 +84,6 @@ services:
 
   mysql:
     image: mysql:5.7
-    platform: linux/amd64
     container_name: mysql
     environment:
       # 时区上海 - Time zone Shanghai (Change if needed)
@@ -96,10 +95,11 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-teamgram}
       # MYSQL_ALLOW_EMPTY_PASSWORD: "true"
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306
     volumes:
       # 数据挂载 - Data mounting
       - ./data/mysql/data:/var/lib/mysql
+      - ./teamgramd/sql:/docker-entrypoint-initdb.d/
       #- /etc/localtime:/etc/localtime
       # 日志
     command:
@@ -117,8 +117,8 @@ services:
     image: minio/minio
     container_name: minio
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     volumes:
       - ./data/minio/data:/data
     environment:
@@ -126,6 +126,15 @@ services:
       MINIO_SECRET_KEY: miniostorage
     command: server /data --console-address ":9001"
     restart: always
+    networks:
+      - teamgram_net
+
+  minio_mc:
+    image: minio/mc:latest
+    container_name: minio_mc
+    volumes:
+      - ./minio_init.sh:/minio_init.sh
+    entrypoint: /minio_init.sh
     networks:
       - teamgram_net
 
