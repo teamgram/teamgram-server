@@ -6,7 +6,7 @@
 -- 生成日期： 2022-03-01 12:33:39
 -- 服务器版本： 5.7.37
 -- PHP 版本： 8.1.2
-
+use teamgram;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
