@@ -13,7 +13,7 @@ services:
       - /etc/localtime:/etc/localtime
     restart: always
     ports:
-      - 127.0.01:2181:2181
+      - 127.0.0.1:2181:2181
     networks:
       - teamgram_net
 
