@@ -28,7 +28,6 @@ func init() {
 
 	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/dfs_writeFilePartData")
 	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/dfs_downloadFile")
-
 }
 
 func New(c Config, plugin plugin.FilesPlugin) *service.Service {

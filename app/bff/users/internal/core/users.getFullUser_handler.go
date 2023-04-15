@@ -70,11 +70,11 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 
 	userFull := mtproto.MakeTLUserFull(&mtproto.UserFull{
 		Blocked:                 false,
-		PhoneCallsAvailable:     true,
+		PhoneCallsAvailable:     c.MD.UserId != peerId,
 		PhoneCallsPrivate:       false,
 		CanPinMessage:           true,
 		HasScheduled:            false,
-		VideoCallsAvailable:     true,
+		VideoCallsAvailable:     c.MD.UserId != peerId,
 		VoiceMessagesForbidden:  false,
 		TranslationsDisabled:    false,
 		Id:                      peerId,
@@ -127,6 +127,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 			if user.GetUser().GetBot() != nil {
 				userFull.PhoneCallsAvailable = false
 				userFull.PhoneCallsPrivate = false
+				userFull.VideoCallsAvailable = false
 				userFull.BotInfo, _ = c.svcCtx.Dao.UserClient.UserGetBotInfo(c.ctx, &userpb.TLUserGetBotInfo{
 					BotId: peerId,
 				})
