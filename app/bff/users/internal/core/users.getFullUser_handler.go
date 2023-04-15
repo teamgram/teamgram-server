@@ -68,45 +68,32 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		return nil, err
 	}
 
-	// Layer135
-	// userFull#cf366521 flags:#
-	//	blocked:flags.0?true
-	//	phone_calls_available:flags.4?true
-	//	phone_calls_private:flags.5?true
-	//	can_pin_message:flags.7?true
-	//	has_scheduled:flags.12?true
-	//	video_calls_available:flags.13?true
-	//	id:long
-	//	about:flags.1?string
-	//	settings:PeerSettings
-	//	profile_photo:flags.2?Photo
-	//	notify_settings:PeerNotifySettings
-	//	bot_info:flags.3?BotInfo
-	//	pinned_msg_id:flags.6?int
-	//	common_chats_count:int
-	//	folder_id:flags.11?int
-	//	ttl_period:flags.14?int
-	//	theme_emoticon:flags.15?string
-	//	private_forward_name:flags.16?string = UserFull;
 	userFull := mtproto.MakeTLUserFull(&mtproto.UserFull{
-		Blocked:             false,
-		PhoneCallsAvailable: true,
-		PhoneCallsPrivate:   false,
-		CanPinMessage:       true,
-		HasScheduled:        false,
-		VideoCallsAvailable: true,
-		Id:                  peerId,
-		About:               user.GetUser().GetAbout(),
-		Settings:            nil,
-		ProfilePhoto:        user.GetUser().GetProfilePhoto(),
-		NotifySettings:      nil,
-		BotInfo:             nil,
-		PinnedMsgId:         nil,
-		CommonChatsCount:    0,
-		FolderId:            nil,
-		TtlPeriod:           nil,
-		ThemeEmoticon:       nil,
-		PrivateForwardName:  nil,
+		Blocked:                 false,
+		PhoneCallsAvailable:     true,
+		PhoneCallsPrivate:       false,
+		CanPinMessage:           true,
+		HasScheduled:            false,
+		VideoCallsAvailable:     true,
+		VoiceMessagesForbidden:  false,
+		TranslationsDisabled:    false,
+		Id:                      peerId,
+		About:                   user.GetUser().GetAbout(),
+		Settings:                nil,
+		PersonalPhoto:           nil,
+		ProfilePhoto:            user.GetUser().GetProfilePhoto(),
+		FallbackPhoto:           nil,
+		NotifySettings:          nil,
+		BotInfo:                 nil,
+		PinnedMsgId:             nil,
+		CommonChatsCount:        0,
+		FolderId:                nil,
+		TtlPeriod:               nil,
+		ThemeEmoticon:           nil,
+		PrivateForwardName:      nil,
+		BotGroupAdminRights:     nil,
+		BotBroadcastAdminRights: nil,
+		PremiumGifts:            nil,
 	}).To_UserFull()
 
 	mr.FinishVoid(
@@ -173,6 +160,30 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 					userFull.ThemeEmoticon = mtproto.MakeFlagsString(dialogExt.ThemeEmoticon)
 					userFull.TtlPeriod = mtproto.MakeFlagsInt32(dialogExt.TtlPeriod)
 				}
+			}
+		},
+		func() {
+			rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
+				UserId:  peerId,
+				KeyType: userpb.VOICE_MESSAGES,
+			})
+			if len(rules.Datas) > 0 {
+				allow := userpb.CheckPrivacyIsAllow(
+					peerId,
+					rules.Datas,
+					c.MD.UserId,
+					func(id, checkId int64) bool {
+						contact, _ := user.CheckContact(checkId)
+						return contact
+					},
+					func(checkId int64, idList []int64) bool {
+						// TODO
+						chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+						_ = chatIdList
+						// return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
+						return false
+					})
+				userFull.VoiceMessagesForbidden = !allow
 			}
 		})
 
