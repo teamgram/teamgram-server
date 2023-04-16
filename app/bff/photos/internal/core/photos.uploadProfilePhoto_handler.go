@@ -19,12 +19,11 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/app/service/media/media"
+	"time"
 )
 
 // PhotosUploadProfilePhoto
@@ -51,14 +50,31 @@ func (c *PhotosCore) PhotosUploadProfilePhoto(in *mtproto.TLPhotosUploadProfileP
 		return nil, err
 	}
 
+	me, err := c.svcCtx.Dao.UserClient.UserGetImmutableUser(
+		c.ctx,
+		&userpb.TLUserGetImmutableUser{
+			Id:       c.MD.UserId,
+			Privacy:  false,
+			Contacts: nil,
+		})
+	if err != nil {
+		c.Logger.Errorf("photos.uploadProfilePhoto - error: %v", err)
+		return nil, err
+	}
+
 	c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 		UserId: c.MD.UserId,
-		Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserPhoto(&mtproto.Update{
-			UserId:   c.MD.UserId,
-			Date:     int32(time.Now().Unix()),
-			Photo:    mtproto.MakeUserProfilePhotoByPhoto(photo),
-			Previous: mtproto.BoolFalse,
-		}).To_Update()),
+		Updates: mtproto.MakeUpdatesByUpdatesUsers(
+			[]*mtproto.User{me.ToSelfUser()},
+			mtproto.MakeTLUpdateUser(&mtproto.Update{
+				UserId: c.MD.UserId,
+			}).To_Update(),
+			mtproto.MakeTLUpdateUserPhoto(&mtproto.Update{
+				UserId:   c.MD.UserId,
+				Date:     int32(time.Now().Unix()),
+				Photo:    mtproto.MakeUserProfilePhotoByPhoto(photo),
+				Previous: mtproto.BoolFalse,
+			}).To_Update()),
 	})
 
 	return mtproto.MakeTLPhotosPhoto(&mtproto.Photos_Photo{
