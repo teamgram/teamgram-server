@@ -408,7 +408,7 @@ func (s *Service) MessagesSaveDefaultSendAs(ctx context.Context, request *mtprot
 }
 
 // MessagesTranslateText
-// messages.translateText#24ce6dee flags:# peer:flags.0?InputPeer msg_id:flags.0?int text:flags.1?string from_lang:flags.2?string to_lang:string = messages.TranslatedText;
+// messages.translateText#63183030 flags:# peer:flags.0?InputPeer id:flags.0?Vector<int> text:flags.1?Vector<TextWithEntities> to_lang:string = messages.TranslatedText;
 func (s *Service) MessagesTranslateText(ctx context.Context, request *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.translateText - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -434,51 +434,6 @@ func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *mtproto.
 	}
 
 	c.Logger.Debugf("messages.searchSentMedia - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesGetExtendedMedia
-// messages.getExtendedMedia#84f80814 peer:InputPeer id:Vector<int> = Updates;
-func (s *Service) MessagesGetExtendedMedia(ctx context.Context, request *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getExtendedMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesGetExtendedMedia(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.getExtendedMedia - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesSetDefaultHistoryTTL
-// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
-func (s *Service) MessagesSetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.setDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesSetDefaultHistoryTTL(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.setDefaultHistoryTTL - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesGetDefaultHistoryTTL
-// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
-func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesGetDefaultHistoryTTL(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.getDefaultHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }
 

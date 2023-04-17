@@ -49,9 +49,6 @@ type MessagesClient interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
 	MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
-	MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error)
-	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
-	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 }
 
@@ -248,7 +245,7 @@ func (m *defaultMessagesClient) MessagesSaveDefaultSendAs(ctx context.Context, i
 }
 
 // MessagesTranslateText
-// messages.translateText#24ce6dee flags:# peer:flags.0?InputPeer msg_id:flags.0?int text:flags.1?string from_lang:flags.2?string to_lang:string = messages.TranslatedText;
+// messages.translateText#63183030 flags:# peer:flags.0?InputPeer id:flags.0?Vector<int> text:flags.1?Vector<TextWithEntities> to_lang:string = messages.TranslatedText;
 func (m *defaultMessagesClient) MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesTranslateText(ctx, in)
@@ -259,27 +256,6 @@ func (m *defaultMessagesClient) MessagesTranslateText(ctx context.Context, in *m
 func (m *defaultMessagesClient) MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSearchSentMedia(ctx, in)
-}
-
-// MessagesGetExtendedMedia
-// messages.getExtendedMedia#84f80814 peer:InputPeer id:Vector<int> = Updates;
-func (m *defaultMessagesClient) MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesGetExtendedMedia(ctx, in)
-}
-
-// MessagesSetDefaultHistoryTTL
-// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
-func (m *defaultMessagesClient) MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesSetDefaultHistoryTTL(ctx, in)
-}
-
-// MessagesGetDefaultHistoryTTL
-// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
-func (m *defaultMessagesClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesGetDefaultHistoryTTL(ctx, in)
 }
 
 // ChannelsGetSendAs
