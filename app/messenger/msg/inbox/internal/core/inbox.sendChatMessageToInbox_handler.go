@@ -80,7 +80,8 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 				}).To_Update()}
 			)
 
-			if inBox.GetMessage().GetAction().GetPredicateName() == mtproto.Predicate_messageActionChatMigrateTo {
+			switch inBox.GetMessage().GetAction().GetPredicateName() {
+			case mtproto.Predicate_messageActionChatMigrateTo:
 				c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
 					c.ctx,
 					inBox.MessageId,
@@ -95,6 +96,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 					Pts_INT32:        c.svcCtx.Dao.NextPtsId(c.ctx, v.UserId),
 					PtsCount:         1,
 				}).To_Update())
+				// case mtproto.Predicate_messageActionGroupCall:
 			}
 
 			//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,

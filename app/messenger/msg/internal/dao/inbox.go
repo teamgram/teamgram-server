@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/container2"
 	"github.com/teamgram/marmota/pkg/container2/sets"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
@@ -103,6 +104,18 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 
 	if !message.MediaUnread {
 		message.MediaUnread = mtproto.CheckHasMediaUnread(message)
+	}
+
+	if peer.PeerType == mtproto.PEER_CHAT {
+		if message2.GetAction().GetPredicateName() == mtproto.Predicate_messageActionGroupCall {
+			call := message2.GetAction()
+			if call != nil && len(call.Users) > 0 {
+				if ok, _ := container2.Contains(toUserId, call.Users); ok {
+					message.MediaUnread = true
+					message.Mentioned = true
+				}
+			}
+		}
 	}
 
 	mData, _ := jsonx.Marshal(message)
