@@ -2422,8 +2422,8 @@ github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2/go.mod h1:yHp0
 github.com/tdakkota/asciicheck v0.0.0-20200416200610-e657995f937b/go.mod h1:yHp0ai0Z9gUljN3o0xMhYJnH/IcvkdTBOX2fmJ93JEM=
 github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f h1:4tfuEDNNhwXNY/rYsTaV37PDYJVMABgxSzqCd5U4HJI=
 github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
-github.com/teamgram/marmota v0.1.16-0.20230313035042-d338577d21e0 h1:hHV2r7ZFRHHxSAczicRToifjXYtKgYfu9o6bLClw+z0=
-github.com/teamgram/marmota v0.1.16-0.20230313035042-d338577d21e0/go.mod h1:ZuW/hJ+vqnpjElKsB3hw1VFs8giCXFXZBbO7fQGXl88=
+github.com/teamgram/marmota v0.1.16-0.20230419011833-ca4901e9a6ce h1:hkMjfg8Xz7XAO5GEbzuK51KFqo4ZPPPNXu7zJbzET9M=
+github.com/teamgram/marmota v0.1.16-0.20230419011833-ca4901e9a6ce/go.mod h1:ZuW/hJ+vqnpjElKsB3hw1VFs8giCXFXZBbO7fQGXl88=
 github.com/teamgram/proto v0.157.1-0.20230416084927-0e1a841c616e h1:IWnb7T+c44DERHxX4HZ0/TkYEfTAyA2dgZqOE0QqId4=
 github.com/teamgram/proto v0.157.1-0.20230416084927-0e1a841c616e/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=

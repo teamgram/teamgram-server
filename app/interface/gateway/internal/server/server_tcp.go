@@ -392,16 +392,17 @@ func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, 
 		isNew     = ctx.sessionId != sessionId
 		authKeyId = mmsg.AuthKeyId()
 	)
-	if isNew {
-		ctx.sessionId = sessionId
-	} else {
-		// check sessionId??
-	}
 
 	sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.AuthKeyId(), 10))
 	if err2 != nil {
 		logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", conn.String(), err, mmsg.AuthKeyId())
 		return err2
+	}
+
+	if isNew {
+		ctx.sessionId = sessionId
+	} else {
+		// check sessionId??
 	}
 
 	if isNew {
