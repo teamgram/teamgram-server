@@ -82,7 +82,7 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 		})
 
 	if err != nil {
-		if err != sqlc.ErrNotFound {
+		if err == sqlc.ErrNotFound {
 			err = mtproto.ErrChatIdInvalid
 		}
 		return nil, err

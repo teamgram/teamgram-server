@@ -11,10 +11,10 @@ import (
 )
 
 type DialogsDataHelper struct {
-	Dialogs  []*mtproto.Dialog
-	Messages []*mtproto.Message
-	Chats    []*mtproto.Chat
-	Users    []*mtproto.User
+	Dialogs  []*mtproto.Dialog `json:"dialogs"`
+	Messages []*mtproto.Message `json:"messages"`
+	Chats    []*mtproto.Chat `json:"chats"`
+	Users    []*mtproto.User `json:"users"`
 }
 
 func (m *DialogsDataHelper) fix() {
