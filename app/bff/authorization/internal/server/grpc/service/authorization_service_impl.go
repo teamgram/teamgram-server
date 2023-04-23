@@ -77,21 +77,6 @@ func (s *Service) AuthLogOut(ctx context.Context, request *mtproto.TLAuthLogOut)
 	return r, err
 }
 
-// AuthResetLoginEmail
-// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
-func (s *Service) AuthResetLoginEmail(ctx context.Context, request *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.resetLoginEmail - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.AuthResetLoginEmail(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("auth.resetLoginEmail - reply: %s", r.DebugString())
-	return r, err
-}
-
 // AuthResetAuthorizations
 // auth.resetAuthorizations#9fab0d1a = Bool;
 func (s *Service) AuthResetAuthorizations(ctx context.Context, request *mtproto.TLAuthResetAuthorizations) (*mtproto.Bool, error) {
@@ -269,6 +254,36 @@ func (s *Service) AuthCheckRecoveryPassword(ctx context.Context, request *mtprot
 	}
 
 	c.Logger.Debugf("auth.checkRecoveryPassword - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AuthRequestFirebaseSms
+// auth.requestFirebaseSms#89464b50 flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string ios_push_secret:flags.1?string = Bool;
+func (s *Service) AuthRequestFirebaseSms(ctx context.Context, request *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.requestFirebaseSms - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthRequestFirebaseSms(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.requestFirebaseSms - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AuthResetLoginEmail
+// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
+func (s *Service) AuthResetLoginEmail(ctx context.Context, request *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.resetLoginEmail - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthResetLoginEmail(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.resetLoginEmail - reply: %s", r.DebugString())
 	return r, err
 }
 

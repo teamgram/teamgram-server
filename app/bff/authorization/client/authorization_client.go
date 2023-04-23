@@ -25,7 +25,6 @@ type AuthorizationClient interface {
 	AuthSignUp(ctx context.Context, in *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error)
 	AuthSignIn(ctx context.Context, in *mtproto.TLAuthSignIn) (*mtproto.Auth_Authorization, error)
 	AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error)
-	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AuthResetAuthorizations(ctx context.Context, in *mtproto.TLAuthResetAuthorizations) (*mtproto.Bool, error)
 	AuthExportAuthorization(ctx context.Context, in *mtproto.TLAuthExportAuthorization) (*mtproto.Auth_ExportedAuthorization, error)
 	AuthImportAuthorization(ctx context.Context, in *mtproto.TLAuthImportAuthorization) (*mtproto.Auth_Authorization, error)
@@ -38,6 +37,8 @@ type AuthorizationClient interface {
 	AuthCancelCode(ctx context.Context, in *mtproto.TLAuthCancelCode) (*mtproto.Bool, error)
 	AuthDropTempAuthKeys(ctx context.Context, in *mtproto.TLAuthDropTempAuthKeys) (*mtproto.Bool, error)
 	AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error)
+	AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error)
+	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
 	AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
@@ -83,13 +84,6 @@ func (m *defaultAuthorizationClient) AuthSignIn(ctx context.Context, in *mtproto
 func (m *defaultAuthorizationClient) AuthLogOut(ctx context.Context, in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthLogOut(ctx, in)
-}
-
-// AuthResetLoginEmail
-// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
-func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
-	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
-	return client.AuthResetLoginEmail(ctx, in)
 }
 
 // AuthResetAuthorizations
@@ -174,6 +168,20 @@ func (m *defaultAuthorizationClient) AuthDropTempAuthKeys(ctx context.Context, i
 func (m *defaultAuthorizationClient) AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthCheckRecoveryPassword(ctx, in)
+}
+
+// AuthRequestFirebaseSms
+// auth.requestFirebaseSms#89464b50 flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string ios_push_secret:flags.1?string = Bool;
+func (m *defaultAuthorizationClient) AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthRequestFirebaseSms(ctx, in)
+}
+
+// AuthResetLoginEmail
+// auth.resetLoginEmail#7e960193 phone_number:string phone_code_hash:string = auth.SentCode;
+func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthResetLoginEmail(ctx, in)
 }
 
 // AccountSendVerifyEmailCode

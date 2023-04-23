@@ -407,21 +407,6 @@ func (s *Service) MessagesSaveDefaultSendAs(ctx context.Context, request *mtprot
 	return r, err
 }
 
-// MessagesTranslateText
-// messages.translateText#63183030 flags:# peer:flags.0?InputPeer id:flags.0?Vector<int> text:flags.1?Vector<TextWithEntities> to_lang:string = messages.TranslatedText;
-func (s *Service) MessagesTranslateText(ctx context.Context, request *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.translateText - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesTranslateText(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.translateText - reply: %s", r.DebugString())
-	return r, err
-}
-
 // MessagesSearchSentMedia
 // messages.searchSentMedia#107e31a0 q:string filter:MessagesFilter limit:int = messages.Messages;
 func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {

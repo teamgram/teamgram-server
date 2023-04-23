@@ -47,7 +47,6 @@ type MessagesClient interface {
 	MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error)
 	MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
-	MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 }
@@ -242,13 +241,6 @@ func (m *defaultMessagesClient) MessagesToggleNoForwards(ctx context.Context, in
 func (m *defaultMessagesClient) MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSaveDefaultSendAs(ctx, in)
-}
-
-// MessagesTranslateText
-// messages.translateText#63183030 flags:# peer:flags.0?InputPeer id:flags.0?Vector<int> text:flags.1?Vector<TextWithEntities> to_lang:string = messages.TranslatedText;
-func (m *defaultMessagesClient) MessagesTranslateText(ctx context.Context, in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesTranslateText(ctx, in)
 }
 
 // MessagesSearchSentMedia

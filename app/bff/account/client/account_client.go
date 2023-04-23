@@ -35,6 +35,9 @@ type AccountClient interface {
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
+	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
+	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
+	AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error)
 }
 
 type defaultAccountClient struct {
@@ -76,7 +79,7 @@ func (m *defaultAccountClient) AccountSetPrivacy(ctx context.Context, in *mtprot
 }
 
 // AccountDeleteAccount
-// account.deleteAccount#418d4e0b reason:string = Bool;
+// account.deleteAccount#a2c0cf74 flags:# reason:string password:flags.0?InputCheckPasswordSRP = Bool;
 func (m *defaultAccountClient) AccountDeleteAccount(ctx context.Context, in *mtproto.TLAccountDeleteAccount) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountDeleteAccount(ctx, in)
@@ -143,4 +146,25 @@ func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Conte
 func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
+}
+
+// MessagesSetDefaultHistoryTTL
+// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
+func (m *defaultAccountClient) MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.MessagesSetDefaultHistoryTTL(ctx, in)
+}
+
+// MessagesGetDefaultHistoryTTL
+// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
+func (m *defaultAccountClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.MessagesGetDefaultHistoryTTL(ctx, in)
+}
+
+// AccountUpdateVerified
+// account.updateVerified flags:# id:long verified:flags.0?true = User;
+func (m *defaultAccountClient) AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.AccountUpdateVerified(ctx, in)
 }

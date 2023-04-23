@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesTranslateText
-// messages.translateText#24ce6dee flags:# peer:flags.0?InputPeer msg_id:flags.0?int text:flags.1?string from_lang:flags.2?string to_lang:string = messages.TranslatedText;
-func (c *MessagesCore) MessagesTranslateText(in *mtproto.TLMessagesTranslateText) (*mtproto.Messages_TranslatedText, error) {
+// AuthRequestFirebaseSms
+// auth.requestFirebaseSms#89464b50 flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string ios_push_secret:flags.1?string = Bool;
+func (c *AuthorizationCore) AuthRequestFirebaseSms(in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.translateText blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("auth.requestFirebaseSms blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

@@ -78,7 +78,7 @@ func (s *Service) AccountSetPrivacy(ctx context.Context, request *mtproto.TLAcco
 }
 
 // AccountDeleteAccount
-// account.deleteAccount#418d4e0b reason:string = Bool;
+// account.deleteAccount#a2c0cf74 flags:# reason:string password:flags.0?InputCheckPasswordSRP = Bool;
 func (s *Service) AccountDeleteAccount(ctx context.Context, request *mtproto.TLAccountDeleteAccount) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("account.deleteAccount - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -224,6 +224,36 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	}
 
 	c.Logger.Debugf("account.setGlobalPrivacySettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesSetDefaultHistoryTTL
+// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
+func (s *Service) MessagesSetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.setDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesSetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.setDefaultHistoryTTL - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetDefaultHistoryTTL
+// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
+func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getDefaultHistoryTTL - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getDefaultHistoryTTL - reply: %s", r.DebugString())
 	return r, err
 }
 
