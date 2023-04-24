@@ -258,21 +258,15 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			c.Logger.Errorf("messages.search - error: %v", err)
 			return rValues, nil
 		}
+
+		if boxList.Count > 0 {
+			rValues.Count = boxList.Count
+			rValues.PredicateName = mtproto.Predicate_messages_messagesSlice
+		}
 	default:
 		err = mtproto.ErrInputFilterInvalid
 		c.Logger.Errorf("messages.search - error: %v", err)
 		return nil, err
-	}
-
-	//
-	if peer.PeerType == mtproto.PEER_CHANNEL {
-		rValues.Count = boxList.Length()
-		//channelLogic, err := s.ChannelCore.NewChannelLogicById(ctx, peer.PeerId)
-		//if err != nil {
-		//	messages.Pts = channelLogic.Pts
-		//}
-	} else {
-
 	}
 
 	boxList.Visit(c.MD.UserId,
