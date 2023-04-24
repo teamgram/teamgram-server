@@ -101,6 +101,7 @@ func (c *MessagesCore) MessagesForwardMessages(in *mtproto.TLMessagesForwardMess
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.forwardMessages - error: %v", err)
+		return nil, err
 	}
 
 	return rUpdates, err
