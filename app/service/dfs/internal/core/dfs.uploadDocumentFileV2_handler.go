@@ -108,7 +108,8 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 		Attributes:    attributes,
 	}).To_Document()
 
-	if mtproto.IsMimeAcceptedForPhotoVideoAlbum(document.MimeType) && model.IsFileExtImage(ext) {
+	isThumb := mtproto.IsMimeAcceptedForPhotoVideoAlbum(document.MimeType) && model.IsFileExtImage(ext)
+	if isThumb {
 		var (
 			thumb image.Image
 			// photoId = idgen.GetUUID()
@@ -127,64 +128,67 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 
 		// build photoStrippedSize
 		thumb, err = imaging.Decode(bytes.NewReader(cacheData))
-		if err != nil {
+		if err == nil {
+			stripped := bytes2.NewBuffer(make([]byte, 0, 4096))
+			if thumb.Bounds().Dx() >= thumb.Bounds().Dy() {
+				err = imaging.EncodeStripped(stripped, imaging.Resize(thumb, 40, 0), 30)
+			} else {
+				err = imaging.EncodeStripped(stripped, imaging.Resize(thumb, 0, 40), 30)
+			}
+			if err != nil {
+				c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
+				return nil, err
+			}
+
+			// upload thumb
+			var (
+				mThumbData = bytes2.NewBuffer(make([]byte, 0, len(cacheData)))
+				mThumb     image.Image
+			)
+			if thumb.Bounds().Dx() >= thumb.Bounds().Dy() {
+				mThumb = imaging.Resize(thumb, 320, 0)
+				// err = imaging.Encode(mThumbData, mThumb, 80)
+			} else {
+				mThumb = imaging.Resize(thumb, 0, 320)
+				// err = imaging.Encode(mThumbData, imaging.Resize(thumb, 0, 320), 80)
+			}
+
+			err = imaging.EncodeJpeg(mThumbData, mThumb)
+			if err != nil {
+				c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
+				return nil, err
+			}
+
+			// upload thumb
+			path := fmt.Sprintf("%s/%d.dat", mtproto.PhotoSZMediumType, documentId)
+			// upload
+			c.svcCtx.Dao.PutPhotoFile(c.ctx, path, mThumbData.Bytes())
+
+			document.Thumbs = []*mtproto.PhotoSize{
+				mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
+					Type:  mtproto.PhotoSZStrippedType,
+					Bytes: stripped.Bytes(),
+				}).To_PhotoSize(),
+				mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
+					Type:  mtproto.PhotoSZMediumType,
+					W:     int32(mThumb.Bounds().Dx()),
+					H:     int32(mThumb.Bounds().Dy()),
+					Size2: int32(len(mThumbData.Bytes())),
+				}).To_PhotoSize(),
+			}
+		} else {
 			// ioutil.WriteFile("./t.jpg", cacheData, 0644)
 			c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
-			return nil, err
-
-		}
-		stripped := bytes2.NewBuffer(make([]byte, 0, 4096))
-		if thumb.Bounds().Dx() >= thumb.Bounds().Dy() {
-			err = imaging.EncodeStripped(stripped, imaging.Resize(thumb, 40, 0), 30)
-		} else {
-			err = imaging.EncodeStripped(stripped, imaging.Resize(thumb, 0, 40), 30)
-		}
-		if err != nil {
-			c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
-			return nil, err
-		}
-
-		// upload thumb
-		var (
-			mThumbData = bytes2.NewBuffer(make([]byte, 0, len(cacheData)))
-			mThumb     image.Image
-		)
-		if thumb.Bounds().Dx() >= thumb.Bounds().Dy() {
-			mThumb = imaging.Resize(thumb, 320, 0)
-			// err = imaging.Encode(mThumbData, mThumb, 80)
-		} else {
-			mThumb = imaging.Resize(thumb, 0, 320)
-			// err = imaging.Encode(mThumbData, imaging.Resize(thumb, 0, 320), 80)
-		}
-
-		err = imaging.EncodeJpeg(mThumbData, mThumb)
-		if err != nil {
-			c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
-			return nil, err
-		}
-
-		// upload thumb
-		path := fmt.Sprintf("%s/%d.dat", mtproto.PhotoSZMediumType, documentId)
-		// upload
-		c.svcCtx.Dao.PutPhotoFile(c.ctx, path, mThumbData.Bytes())
-
-		document.Thumbs = []*mtproto.PhotoSize{
-			mtproto.MakeTLPhotoStrippedSize(&mtproto.PhotoSize{
-				Type:  mtproto.PhotoSZStrippedType,
-				Bytes: stripped.Bytes(),
-			}).To_PhotoSize(),
-			mtproto.MakeTLPhotoSize(&mtproto.PhotoSize{
-				Type:  mtproto.PhotoSZMediumType,
-				W:     int32(mThumb.Bounds().Dx()),
-				H:     int32(mThumb.Bounds().Dy()),
-				Size2: int32(len(mThumbData.Bytes())),
-			}).To_PhotoSize(),
+			// return nil, err
+			isThumb = false
 		}
 	}
 
-	defer func() {
-		threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
-			if mtproto.IsMimeAcceptedForPhotoVideoAlbum(document.MimeType) && model.IsFileExtImage(ext) {
+	return threading2.WrapperGoFunc(
+		c.ctx,
+		document,
+		func(ctx context.Context) {
+			if isThumb {
 				_, err2 := c.svcCtx.Dao.PutDocumentFile(ctx,
 					fmt.Sprintf("%d.dat", documentId),
 					bytes.NewReader(cacheData))
@@ -199,8 +203,5 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 					c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err2)
 				}
 			}
-		})
-	}()
-
-	return document, nil
+		}).(*mtproto.Document), nil
 }
