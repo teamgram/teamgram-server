@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -34,12 +34,12 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLMessageGetHistoryMessagesCount":              RPCContextTuple{"/mtproto.RPCMessage/message_getHistoryMessagesCount", func() interface{} { return new(mtproto.Int32) }},
 	"TLMessageGetPeerUserMessageId":                 RPCContextTuple{"/mtproto.RPCMessage/message_getPeerUserMessageId", func() interface{} { return new(mtproto.Int32) }},
 	"TLMessageGetPeerUserMessage":                   RPCContextTuple{"/mtproto.RPCMessage/message_getPeerUserMessage", func() interface{} { return new(mtproto.MessageBox) }},
-	"TLMessageSearchByMediaType":                    RPCContextTuple{"/mtproto.RPCMessage/message_searchByMediaType", func() interface{} { return new(Vector_MessageBox) }},
-	"TLMessageSearch":                               RPCContextTuple{"/mtproto.RPCMessage/message_search", func() interface{} { return new(Vector_MessageBox) }},
-	"TLMessageSearchGlobal":                         RPCContextTuple{"/mtproto.RPCMessage/message_searchGlobal", func() interface{} { return new(Vector_MessageBox) }},
-	"TLMessageSearchByPinned":                       RPCContextTuple{"/mtproto.RPCMessage/message_searchByPinned", func() interface{} { return new(Vector_MessageBox) }},
+	"TLMessageSearchByMediaType":                    RPCContextTuple{"/mtproto.RPCMessage/message_searchByMediaType", func() interface{} { return new(mtproto.MessageBoxList) }},
+	"TLMessageSearch":                               RPCContextTuple{"/mtproto.RPCMessage/message_search", func() interface{} { return new(mtproto.MessageBoxList) }},
+	"TLMessageSearchGlobal":                         RPCContextTuple{"/mtproto.RPCMessage/message_searchGlobal", func() interface{} { return new(mtproto.MessageBoxList) }},
+	"TLMessageSearchByPinned":                       RPCContextTuple{"/mtproto.RPCMessage/message_searchByPinned", func() interface{} { return new(mtproto.MessageBoxList) }},
 	"TLMessageGetSearchCounter":                     RPCContextTuple{"/mtproto.RPCMessage/message_getSearchCounter", func() interface{} { return new(mtproto.Int32) }},
-	"TLMessageSearchV2":                             RPCContextTuple{"/mtproto.RPCMessage/message_searchV2", func() interface{} { return new(Vector_MessageBox) }},
+	"TLMessageSearchV2":                             RPCContextTuple{"/mtproto.RPCMessage/message_searchV2", func() interface{} { return new(mtproto.MessageBoxList) }},
 	"TLMessageGetLastTwoPinnedMessageId":            RPCContextTuple{"/mtproto.RPCMessage/message_getLastTwoPinnedMessageId", func() interface{} { return new(Vector_Int) }},
 	"TLMessageUpdatePinnedMessageId":                RPCContextTuple{"/mtproto.RPCMessage/message_updatePinnedMessageId", func() interface{} { return new(mtproto.Bool) }},
 	"TLMessageGetPinnedMessageIdList":               RPCContextTuple{"/mtproto.RPCMessage/message_getPinnedMessageIdList", func() interface{} { return new(Vector_Int) }},

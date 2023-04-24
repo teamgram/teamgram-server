@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // MessageGetUserMessage
 // message.getUserMessage user_id:long id:int = MessageBox;
@@ -89,7 +90,7 @@ func (s *Service) MessageGetHistoryMessages(ctx context.Context, request *messag
 		return nil, err
 	}
 
-	c.Logger.Debugf("message.getHistoryMessages - reply: %d", r.Length())
+	c.Logger.Debugf("message.getHistoryMessages - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -139,8 +140,8 @@ func (s *Service) MessageGetPeerUserMessage(ctx context.Context, request *messag
 }
 
 // MessageSearchByMediaType
-// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = Vector<MessageBox>;
-func (s *Service) MessageSearchByMediaType(ctx context.Context, request *message.TLMessageSearchByMediaType) (*message.Vector_MessageBox, error) {
+// message.searchByMediaType user_id:long peer_type:int peer_id:long media_type:int offset:int limit:int = MessageBoxList;
+func (s *Service) MessageSearchByMediaType(ctx context.Context, request *message.TLMessageSearchByMediaType) (*mtproto.MessageBoxList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("message.searchByMediaType - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -154,8 +155,8 @@ func (s *Service) MessageSearchByMediaType(ctx context.Context, request *message
 }
 
 // MessageSearch
-// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = Vector<MessageBox>;
-func (s *Service) MessageSearch(ctx context.Context, request *message.TLMessageSearch) (*message.Vector_MessageBox, error) {
+// message.search user_id:long peer_type:int peer_id:long q:string offset:int limit:int = MessageBoxList;
+func (s *Service) MessageSearch(ctx context.Context, request *message.TLMessageSearch) (*mtproto.MessageBoxList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("message.search - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -169,8 +170,8 @@ func (s *Service) MessageSearch(ctx context.Context, request *message.TLMessageS
 }
 
 // MessageSearchGlobal
-// message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
-func (s *Service) MessageSearchGlobal(ctx context.Context, request *message.TLMessageSearchGlobal) (*message.Vector_MessageBox, error) {
+// message.searchGlobal user_id:long q:string offset:int limit:int = MessageBoxList;
+func (s *Service) MessageSearchGlobal(ctx context.Context, request *message.TLMessageSearchGlobal) (*mtproto.MessageBoxList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("message.searchGlobal - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -184,8 +185,8 @@ func (s *Service) MessageSearchGlobal(ctx context.Context, request *message.TLMe
 }
 
 // MessageSearchByPinned
-// message.searchByPinned user_id:long peer_type:int peer_id:long = Vector<MessageBox>;
-func (s *Service) MessageSearchByPinned(ctx context.Context, request *message.TLMessageSearchByPinned) (*message.Vector_MessageBox, error) {
+// message.searchByPinned user_id:long peer_type:int peer_id:long = MessageBoxList;
+func (s *Service) MessageSearchByPinned(ctx context.Context, request *message.TLMessageSearchByPinned) (*mtproto.MessageBoxList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("message.searchByPinned - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -214,8 +215,8 @@ func (s *Service) MessageGetSearchCounter(ctx context.Context, request *message.
 }
 
 // MessageSearchV2
-// message.searchV2 user_id:long peer_type:int peer_id:long q:string from_id:long min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = Vector<MessageBox>;
-func (s *Service) MessageSearchV2(ctx context.Context, request *message.TLMessageSearchV2) (*message.Vector_MessageBox, error) {
+// message.searchV2 user_id:long peer_type:int peer_id:long q:string from_id:long min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = MessageBoxList;
+func (s *Service) MessageSearchV2(ctx context.Context, request *message.TLMessageSearchV2) (*mtproto.MessageBoxList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("message.searchV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
@@ -317,3 +318,4 @@ func (s *Service) MessageGetUnreadMentionsCount(ctx context.Context, request *me
 	c.Logger.Debugf("message.getUnreadMentionsCount - reply: %s", r.DebugString())
 	return r, err
 }
+

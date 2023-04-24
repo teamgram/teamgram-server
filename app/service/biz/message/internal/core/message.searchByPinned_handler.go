@@ -17,7 +17,7 @@ import (
 
 // MessageSearchByPinned
 // message.searchByPinned user_id:long peer:PeerUtil = Vector<MessageBox>;
-func (c *MessageCore) MessageSearchByPinned(in *message.TLMessageSearchByPinned) (*message.Vector_MessageBox, error) {
+func (c *MessageCore) MessageSearchByPinned(in *message.TLMessageSearchByPinned) (*mtproto.MessageBoxList, error) {
 	var (
 		dialogId = mtproto.MakeDialogId(in.UserId, in.PeerType, in.PeerId)
 		boxList  = make([]*mtproto.MessageBox, 0)
@@ -39,7 +39,7 @@ func (c *MessageCore) MessageSearchByPinned(in *message.TLMessageSearchByPinned)
 		return nil, mtproto.ErrEnterpriseIsBlocked
 	}
 
-	return &message.Vector_MessageBox{
-		Datas: boxList,
-	}, nil
+	return mtproto.MakeTLMessageBoxList(&mtproto.MessageBoxList{
+		BoxList: boxList,
+	}).To_MessageBoxList(), nil
 }

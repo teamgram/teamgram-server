@@ -19,7 +19,7 @@ import (
 
 // MessageSearchGlobal
 // message.searchGlobal user_id:long q:string offset:int limit:int = Vector<MessageBox>;
-func (c *MessageCore) MessageSearchGlobal(in *message.TLMessageSearchGlobal) (*message.Vector_MessageBox, error) {
+func (c *MessageCore) MessageSearchGlobal(in *message.TLMessageSearchGlobal) (*mtproto.MessageBoxList, error) {
 	var (
 		offset  = in.Offset
 		rValues []*mtproto.MessageBox
@@ -43,7 +43,7 @@ func (c *MessageCore) MessageSearchGlobal(in *message.TLMessageSearchGlobal) (*m
 		rValues = []*mtproto.MessageBox{}
 	}
 
-	return &message.Vector_MessageBox{
-		Datas: rValues,
-	}, nil
+	return mtproto.MakeTLMessageBoxList(&mtproto.MessageBoxList{
+		BoxList: rValues,
+	}).To_MessageBoxList(), nil
 }

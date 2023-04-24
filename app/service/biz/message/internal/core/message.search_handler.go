@@ -19,7 +19,7 @@ import (
 
 // MessageSearch
 // message.search user_id:long peer:PeerUtil q:string offset:int limit:int = Vector<MessageBox>;
-func (c *MessageCore) MessageSearch(in *message.TLMessageSearch) (*message.Vector_MessageBox, error) {
+func (c *MessageCore) MessageSearch(in *message.TLMessageSearch) (*mtproto.MessageBoxList, error) {
 	var (
 		offset  = in.Offset
 		q       = in.Q
@@ -78,7 +78,7 @@ func (c *MessageCore) MessageSearch(in *message.TLMessageSearch) (*message.Vecto
 		boxList = []*mtproto.MessageBox{}
 	}
 
-	return &message.Vector_MessageBox{
-		Datas: boxList,
-	}, nil
+	return mtproto.MakeTLMessageBoxList(&mtproto.MessageBoxList{
+		BoxList: boxList,
+	}).To_MessageBoxList(), nil
 }

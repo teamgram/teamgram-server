@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -67,19 +67,19 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_message_searchByMediaType: {
-		0: 287058243, // 0x111c2943
+		0: -1152381832, // 0xbb500c78
 
 	},
 	Predicate_message_search: {
-		0: 1748348963, // 0x6835b023
+		0: 251910661, // 0xf03da05
 
 	},
 	Predicate_message_searchGlobal: {
-		0: -1281860155, // 0xb3985dc5
+		0: 1113214626, // 0x425a4ea2
 
 	},
 	Predicate_message_searchByPinned: {
-		0: 1853053781, // 0x6e735b55
+		0: 721580084, // 0x2b027034
 
 	},
 	Predicate_message_getSearchCounter: {
@@ -87,7 +87,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_message_searchV2: {
-		0: -1580848351, // 0xa1c62b21
+		0: -356633351, // 0xeabe34f9
 
 	},
 	Predicate_message_getLastTwoPinnedMessageId: {
@@ -125,12 +125,12 @@ var clazzIdNameRegisters2 = map[int32]string{
 	256933395:   Predicate_message_getHistoryMessagesCount,              // 0xf507e13
 	1940829983:  Predicate_message_getPeerUserMessageId,                 // 0x73aeb71f
 	1662161426:  Predicate_message_getPeerUserMessage,                   // 0x63129212
-	287058243:   Predicate_message_searchByMediaType,                    // 0x111c2943
-	1748348963:  Predicate_message_search,                               // 0x6835b023
-	-1281860155: Predicate_message_searchGlobal,                         // 0xb3985dc5
-	1853053781:  Predicate_message_searchByPinned,                       // 0x6e735b55
+	-1152381832: Predicate_message_searchByMediaType,                    // 0xbb500c78
+	251910661:   Predicate_message_search,                               // 0xf03da05
+	1113214626:  Predicate_message_searchGlobal,                         // 0x425a4ea2
+	721580084:   Predicate_message_searchByPinned,                       // 0x2b027034
 	-489963706:  Predicate_message_getSearchCounter,                     // 0xe2cbbf46
-	-1580848351: Predicate_message_searchV2,                             // 0xa1c62b21
+	-356633351:  Predicate_message_searchV2,                             // 0xeabe34f9
 	-1348859861: Predicate_message_getLastTwoPinnedMessageId,            // 0xaf9a082b
 	-182391344:  Predicate_message_updatePinnedMessageId,                // 0xf520edd0
 	-637415203:  Predicate_message_getPinnedMessageIdList,               // 0xda01d0dd

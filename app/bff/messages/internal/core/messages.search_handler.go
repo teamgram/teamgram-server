@@ -41,7 +41,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		rValues  *mtproto.Messages_Messages
 		offsetId = in.OffsetId
 		limit    = in.Limit
-		boxList  *message.Vector_MessageBox
+		boxList  *mtproto.MessageBoxList
 		err      error
 		fromId   *mtproto.PeerUtil
 	)

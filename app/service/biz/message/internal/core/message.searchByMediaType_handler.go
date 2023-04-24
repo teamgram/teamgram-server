@@ -17,7 +17,7 @@ import (
 
 // MessageSearchByMediaType
 // message.searchByMediaType user_id:long peer:PeerUtil media_type:int offset:int limit:int = Vector<MessageBox>;
-func (c *MessageCore) MessageSearchByMediaType(in *message.TLMessageSearchByMediaType) (*message.Vector_MessageBox, error) {
+func (c *MessageCore) MessageSearchByMediaType(in *message.TLMessageSearchByMediaType) (*mtproto.MessageBoxList, error) {
 	var (
 		boxList []*mtproto.MessageBox
 	)
@@ -28,9 +28,9 @@ func (c *MessageCore) MessageSearchByMediaType(in *message.TLMessageSearchByMedi
 		boxList = c.searchByMediaType(in.UserId, in.PeerType, in.PeerId, in.MediaType, in.Offset, in.Limit)
 	}
 
-	return &message.Vector_MessageBox{
-		Datas: boxList,
-	}, nil
+	return mtproto.MakeTLMessageBoxList(&mtproto.MessageBoxList{
+		BoxList: boxList,
+	}).To_MessageBoxList(), nil
 }
 
 func (c *MessageCore) searchByMediaType(

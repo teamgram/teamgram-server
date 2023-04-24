@@ -72,24 +72,24 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1662161426,
 		}
 	},
-	287058243: func() mtproto.TLObject { // 0x111c2943
+	-1152381832: func() mtproto.TLObject { // 0xbb500c78
 		return &TLMessageSearchByMediaType{
-			Constructor: 287058243,
+			Constructor: -1152381832,
 		}
 	},
-	1748348963: func() mtproto.TLObject { // 0x6835b023
+	251910661: func() mtproto.TLObject { // 0xf03da05
 		return &TLMessageSearch{
-			Constructor: 1748348963,
+			Constructor: 251910661,
 		}
 	},
-	-1281860155: func() mtproto.TLObject { // 0xb3985dc5
+	1113214626: func() mtproto.TLObject { // 0x425a4ea2
 		return &TLMessageSearchGlobal{
-			Constructor: -1281860155,
+			Constructor: 1113214626,
 		}
 	},
-	1853053781: func() mtproto.TLObject { // 0x6e735b55
+	721580084: func() mtproto.TLObject { // 0x2b027034
 		return &TLMessageSearchByPinned{
-			Constructor: 1853053781,
+			Constructor: 721580084,
 		}
 	},
 	-489963706: func() mtproto.TLObject { // 0xe2cbbf46
@@ -97,9 +97,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -489963706,
 		}
 	},
-	-1580848351: func() mtproto.TLObject { // 0xa1c62b21
+	-356633351: func() mtproto.TLObject { // 0xeabe34f9
 		return &TLMessageSearchV2{
-			Constructor: -1580848351,
+			Constructor: -356633351,
 		}
 	},
 	-1348859861: func() mtproto.TLObject { // 0xaf9a082b
@@ -581,8 +581,8 @@ func (m *TLMessageSearchByMediaType) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_message_searchByMediaType))
 
 	switch uint32(m.Constructor) {
-	case 0x111c2943:
-		x.UInt(0x111c2943)
+	case 0xbb500c78:
+		x.UInt(0xbb500c78)
 
 		// no flags
 
@@ -606,7 +606,7 @@ func (m *TLMessageSearchByMediaType) CalcByteSize(layer int32) int {
 
 func (m *TLMessageSearchByMediaType) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x111c2943:
+	case 0xbb500c78:
 
 		// not has flags
 
@@ -638,8 +638,8 @@ func (m *TLMessageSearch) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_message_search))
 
 	switch uint32(m.Constructor) {
-	case 0x6835b023:
-		x.UInt(0x6835b023)
+	case 0xf03da05:
+		x.UInt(0xf03da05)
 
 		// no flags
 
@@ -663,7 +663,7 @@ func (m *TLMessageSearch) CalcByteSize(layer int32) int {
 
 func (m *TLMessageSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x6835b023:
+	case 0xf03da05:
 
 		// not has flags
 
@@ -695,8 +695,8 @@ func (m *TLMessageSearchGlobal) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_message_searchGlobal))
 
 	switch uint32(m.Constructor) {
-	case 0xb3985dc5:
-		x.UInt(0xb3985dc5)
+	case 0x425a4ea2:
+		x.UInt(0x425a4ea2)
 
 		// no flags
 
@@ -718,7 +718,7 @@ func (m *TLMessageSearchGlobal) CalcByteSize(layer int32) int {
 
 func (m *TLMessageSearchGlobal) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xb3985dc5:
+	case 0x425a4ea2:
 
 		// not has flags
 
@@ -748,8 +748,8 @@ func (m *TLMessageSearchByPinned) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_message_searchByPinned))
 
 	switch uint32(m.Constructor) {
-	case 0x6e735b55:
-		x.UInt(0x6e735b55)
+	case 0x2b027034:
+		x.UInt(0x2b027034)
 
 		// no flags
 
@@ -770,7 +770,7 @@ func (m *TLMessageSearchByPinned) CalcByteSize(layer int32) int {
 
 func (m *TLMessageSearchByPinned) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x6e735b55:
+	case 0x2b027034:
 
 		// not has flags
 
@@ -852,8 +852,8 @@ func (m *TLMessageSearchV2) Encode(layer int32) []byte {
 	// x.Int(int32(CRC32_message_searchV2))
 
 	switch uint32(m.Constructor) {
-	case 0xa1c62b21:
-		x.UInt(0xa1c62b21)
+	case 0xeabe34f9:
+		x.UInt(0xeabe34f9)
 
 		// no flags
 
@@ -884,7 +884,7 @@ func (m *TLMessageSearchV2) CalcByteSize(layer int32) int {
 
 func (m *TLMessageSearchV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xa1c62b21:
+	case 0xeabe34f9:
 
 		// not has flags
 
