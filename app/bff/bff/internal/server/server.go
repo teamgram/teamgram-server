@@ -165,7 +165,7 @@ func (s *Server) Initialize() error {
 				DfsClient:     c.DfsClient,
 				UserClient:    c.BizServiceClient,
 				MediaClient:   c.MediaClient,
-			}, nil))
+			}, nil, nil))
 
 		// updates_helper
 		mtproto.RegisterRPCUpdatesServer(

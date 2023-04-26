@@ -84,8 +84,8 @@ func (c *FilesCore) UploadGetFile(in *mtproto.TLUploadGetFile) (*mtproto.Upload_
 		// inputStickerSetThumb#9d84f3db
 		//	stickerset:InputStickerSet
 		//	thumb_version:int = InputFileLocation;
-		if c.svcCtx.Plugin != nil {
-			location2, err := c.svcCtx.Plugin.GetStickerSetThumbFileLocation(c.ctx,
+		if c.svcCtx.Plugin1 != nil {
+			location2, err := c.svcCtx.Plugin1.GetStickerSetThumbFileLocation(c.ctx,
 				c.MD.UserId,
 				location.GetStickerset(),
 				location.GetThumbVersion())
@@ -104,8 +104,8 @@ func (c *FilesCore) UploadGetFile(in *mtproto.TLUploadGetFile) (*mtproto.Upload_
 		//	time_ms:long
 		//	scale:int = InputFileLocation;
 		//
-		if c.svcCtx.Plugin != nil {
-			uploadFile, err := c.svcCtx.Plugin.GetGroupCallStreamFile(
+		if c.svcCtx.Plugin2 != nil {
+			uploadFile, err := c.svcCtx.Plugin2.GetGroupCallStreamFile(
 				c.ctx,
 				c.MD.UserId,
 				in.GetLocation())

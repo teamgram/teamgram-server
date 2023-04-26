@@ -27,13 +27,15 @@ import (
 type ServiceContext struct {
 	Config config.Config
 	*dao.Dao
-	Plugin plugin.FilesPlugin
+	Plugin1 plugin.ThumbFilesPlugin
+	Plugin2 plugin.StreamFilesPlugin
 }
 
-func NewServiceContext(c config.Config, plugin plugin.FilesPlugin) *ServiceContext {
+func NewServiceContext(c config.Config, plugin1 plugin.ThumbFilesPlugin, plugin2 plugin.StreamFilesPlugin) *ServiceContext {
 	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
-		Plugin: plugin,
+		Config:  c,
+		Dao:     dao.New(c),
+		Plugin1: plugin1,
+		Plugin2: plugin2,
 	}
 }

@@ -30,6 +30,6 @@ func init() {
 	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/dfs_downloadFile")
 }
 
-func New(c Config, plugin plugin.FilesPlugin) *service.Service {
-	return service.New(svc.NewServiceContext(c, plugin))
+func New(c Config, plugin1 plugin.ThumbFilesPlugin, plugin2 plugin.StreamFilesPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin1, plugin2))
 }
