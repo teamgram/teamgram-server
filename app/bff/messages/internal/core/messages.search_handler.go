@@ -138,7 +138,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		}
 	case mtproto.FilterGif:
 		// TODO
-		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
 		return rValues, nil
 	case mtproto.FilterVoice:
 		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
@@ -158,6 +158,8 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		}
 	case mtproto.FilterChatPhotos:
 		// TODO
+		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		return rValues, nil
 	case mtproto.FilterPhoneCalls:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
 			UserId:    c.MD.UserId,
