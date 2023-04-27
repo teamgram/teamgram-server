@@ -111,7 +111,7 @@ func (c *FilesCore) UploadGetFile(in *mtproto.TLUploadGetFile) (*mtproto.Upload_
 				in.GetLocation())
 			if err != nil {
 				c.Logger.Errorf("upload.getFile - error: %v inputFileLocation", err)
-				return nil, mtproto.ErrGroupcallForbidden
+				return nil, err
 			}
 			return uploadFile, nil
 		}

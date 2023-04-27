@@ -175,6 +175,10 @@ func (t *Transcoder) Initialize(inputPath string, outputPath string) error {
 	}
 
 	command := []string{"-i", inputPath, "-print_format", "json", "-show_format", "-show_streams", "-show_error"}
+	// hack for rtmp
+	if strings.HasPrefix(inputPath, "rtmp://") {
+		command = append(command, "-rw_timeout", "5000")
+	}
 
 	if t.whiteListProtocols != nil {
 		command = append([]string{"-protocol_whitelist", strings.Join(t.whiteListProtocols, ",")}, command...)
