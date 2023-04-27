@@ -21,6 +21,11 @@ type (
 	Config = config.Config
 )
 
+var (
+	ConsumeInboxMessage = mq.ConsumeInboxMessage
+	NewServiceContext   = svc.NewServiceContext
+)
+
 func New(c Config) *kafka.ConsumerGroup {
 	return mq.New(svc.NewServiceContext(c), c.InboxConsumer)
 }
