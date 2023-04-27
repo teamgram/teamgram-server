@@ -71,6 +71,12 @@ func (c *ChatCore) ChatImportChatInvite2(in *chat.TLChatImportChatInvite2) (*cha
 			return nil, err2
 		}
 
+		if mChat.ParticipantsCount() >= 200 {
+			err2 = mtproto.ErrUsersTooMuch
+			c.Logger.Errorf("chat.importChatInvite - error: %v", err2)
+			return nil, err2
+		}
+
 		c.svcCtx.Dao.ChatInviteParticipantsDAO.Insert(c.ctx, &dataobject.ChatInviteParticipantsDO{
 			ChatId:    chatInviteDO.ChatId,
 			Link:      in.Hash,

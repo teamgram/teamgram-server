@@ -58,6 +58,12 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*mtproto.Mutable
 		inviterId = chat2.Creator()
 	}
 
+	if chat2.ParticipantsCount() >= 200 {
+		err = mtproto.ErrUsersTooFew
+		c.Logger.Errorf("chat.addChatUser - error: %v", err)
+		return nil, err
+	}
+
 	willAdd, _ = chat2.GetImmutableChatParticipant(userId)
 	if willAdd != nil && willAdd.State == mtproto.ChatMemberStateNormal {
 		err = mtproto.ErrUserAlreadyParticipant
