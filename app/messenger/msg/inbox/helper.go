@@ -13,17 +13,20 @@ package inbox_helper
 import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/config"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/server/mq"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/svc"
 )
 
 type (
-	Config = config.Config
+	Config         = config.Config
+	ServiceContext = svc.ServiceContext
+	InboxCore      = core.InboxCore
 )
 
 var (
-	ConsumeInboxMessage = mq.ConsumeInboxMessage
-	NewServiceContext   = svc.NewServiceContext
+	NewServiceContext = svc.NewServiceContext
+	NewInboxCore      = core.New
 )
 
 func New(c Config) *kafka.ConsumerGroup {
