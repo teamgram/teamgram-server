@@ -139,13 +139,12 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 				usersChatIdList, _ := c.svcCtx.Dao.ChatClient.ChatGetUsersChatIdList(c.ctx, &chatpb.TLChatGetUsersChatIdList{
 					Id: []int64{c.MD.UserId, peerId},
 				})
-				if len(usersChatIdList.Datas) == 2 {
+				if usersChatIdList != nil && len(usersChatIdList.Datas) == 2 {
 					commonChats := utils.Int64Intersect(
 						usersChatIdList.Datas[0].ChatIdList,
 						usersChatIdList.Datas[1].ChatIdList)
 					userFull.CommonChatsCount = int32(len(commonChats))
 				}
-
 				// TODO: Fetch CommonChannelsCount
 			}
 		},
@@ -168,7 +167,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 				UserId:  peerId,
 				KeyType: userpb.VOICE_MESSAGES,
 			})
-			if len(rules.Datas) > 0 {
+			if rules != nil && len(rules.Datas) > 0 {
 				allow := userpb.CheckPrivacyIsAllow(
 					peerId,
 					rules.Datas,
