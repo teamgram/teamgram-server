@@ -33,6 +33,7 @@ import (
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
+	"github.com/zeromicro/go-zero/core/threading"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -462,11 +463,14 @@ func (s *authSessions) rpcRunLoop() {
 			logx.Info("quit rpcRunLoop...")
 			return
 		} else {
-			request, _ := apiRequest.(*rpcApiMessage)
-			// log.Debugf("apiRequests: %s", request.DebugString())
-			if s.onRpcRequest(request) {
-				s.rpcDataChan <- request
-			}
+			threading.RunSafe(func() {
+				// TODO: fix panic
+				request, _ := apiRequest.(*rpcApiMessage)
+				// log.Debugf("apiRequests: %s", request.DebugString())
+				if s.onRpcRequest(request) {
+					s.rpcDataChan <- request
+				}
+			})
 		}
 	}
 }
