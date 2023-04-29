@@ -126,13 +126,14 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *mtproto.TLMessagesGetPeerDialog
 
 	err = mr.Finish(
 		func() error {
-			state, err = c.svcCtx.Dao.UpdatesClient.UpdatesGetState(c.ctx, &updates.TLUpdatesGetState{
+			var err2 error
+			state, err2 = c.svcCtx.Dao.UpdatesClient.UpdatesGetState(c.ctx, &updates.TLUpdatesGetState{
 				AuthKeyId: c.MD.AuthId,
 				UserId:    c.MD.UserId,
 			})
-			if err != nil {
-				c.Logger.Errorf("messages.getPeerDialogs - getState error: %v", err)
-				return err
+			if err2 != nil {
+				c.Logger.Errorf("messages.getPeerDialogs - getState error: %v", err2)
+				return err2
 			}
 
 			return nil
@@ -178,7 +179,6 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *mtproto.TLMessagesGetPeerDialog
 			return nil
 		},
 	)
-
 	if err != nil {
 		c.Logger.Errorf("messages.getPeerDialogs - getPeerDialogs error: %v", err)
 		return nil, err

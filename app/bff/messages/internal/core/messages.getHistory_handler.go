@@ -92,7 +92,8 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 
 	err = mr.Finish(
 		func() error {
-			boxList, err = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
+			var err2 error
+			boxList, err2 = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessages(c.ctx, &message.TLMessageGetHistoryMessages{
 				UserId:     c.MD.UserId,
 				PeerType:   peer.PeerType,
 				PeerId:     peer.PeerId,
@@ -104,25 +105,26 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 				MinId:      in.MinId,
 				Hash:       in.Hash,
 			})
-			if err != nil {
-				c.Logger.Errorf("messages.getHistory - error: %v", err)
+			if err2 != nil {
+				c.Logger.Errorf("messages.getHistory - error: %v", err2)
 			}
 
-			return err
+			return err2
 		},
 		func() error {
-			count, err = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessagesCount(
+			var err2 error
+			count, err2 = c.svcCtx.Dao.MessageClient.MessageGetHistoryMessagesCount(
 				c.ctx,
 				&message.TLMessageGetHistoryMessagesCount{
 					UserId:   c.MD.UserId,
 					PeerType: peer.PeerType,
 					PeerId:   peer.PeerId,
 				})
-			if err != nil {
-				c.Logger.Errorf("messages.getHistory - error: %v", err)
+			if err2 != nil {
+				c.Logger.Errorf("messages.getHistory - error: %v", err2)
 			}
 
-			return err
+			return err2
 		})
 	if err != nil {
 		return nil, err

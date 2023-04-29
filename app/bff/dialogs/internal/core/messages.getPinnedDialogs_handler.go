@@ -55,12 +55,13 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 
 	err = mr.Finish(
 		func() error {
-			state, err = c.svcCtx.Dao.UpdatesClient.UpdatesGetState(c.ctx, &updates.TLUpdatesGetState{
+			var err2 error
+			state, err2 = c.svcCtx.Dao.UpdatesClient.UpdatesGetState(c.ctx, &updates.TLUpdatesGetState{
 				AuthKeyId: c.MD.AuthId,
 				UserId:    c.MD.UserId,
 			})
-			if err != nil {
-				c.Logger.Errorf("messages.getPinnedDialogs - error: %v", err)
+			if err2 != nil {
+				c.Logger.Errorf("messages.getPinnedDialogs - error: %v", err2)
 				return mtproto.ErrInternelServerError
 			}
 
@@ -97,6 +98,10 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 			return nil
 		},
 	)
+	if err != nil {
+		c.Logger.Errorf("messages.getPinnedDialogs - getPeerDialogs error: %v", err)
+		return nil, err
+	}
 
 	for _, dialogEx := range dialogExtList {
 		peer2 := mtproto.FromPeer(dialogEx.GetDialog().GetPeer())
@@ -112,7 +117,7 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 			Peers:  peers,
 		})
 		if err2 != nil {
-			c.Logger.Errorf("messages.getDialogs - error: %v", err2)
+			c.Logger.Errorf("messages.getPinnedDialogs - error: %v", err2)
 			return nil, err2
 		}
 
