@@ -426,30 +426,46 @@ func (s *authSessions) runLoop() {
 		case sessionMsg, _ := <-s.sessionDataChan:
 			switch sessionMsg.(type) {
 			case *sessionData:
-				s.onSessionData(sessionMsg.(*sessionData))
+				threading.RunSafe(func() {
+					s.onSessionData(sessionMsg.(*sessionData))
+				})
 			case *sessionHttpData:
-				s.onSessionHttpData(sessionMsg.(*sessionHttpData))
+				threading.RunSafe(func() {
+					s.onSessionHttpData(sessionMsg.(*sessionHttpData))
+				})
 			case *syncRpcResultData:
-				s.onSyncRpcResultData(sessionMsg.(*syncRpcResultData))
+				threading.RunSafe(func() {
+					s.onSyncRpcResultData(sessionMsg.(*syncRpcResultData))
+				})
 			case *syncData:
-				s.onSyncData(sessionMsg.(*syncData))
+				threading.RunSafe(func() {
+					s.onSyncData(sessionMsg.(*syncData))
+				})
 			case *syncSessionData:
-				s.onSyncSessionData(sessionMsg.(*syncSessionData))
+				threading.RunSafe(func() {
+					s.onSyncSessionData(sessionMsg.(*syncSessionData))
+				})
 			case *connData:
-				if sessionMsg.(*connData).isNew {
-					s.onSessionNew(sessionMsg.(*connData))
-				} else {
-					s.onSessionClosed(sessionMsg.(*connData))
-				}
+				threading.RunSafe(func() {
+					if sessionMsg.(*connData).isNew {
+						s.onSessionNew(sessionMsg.(*connData))
+					} else {
+						s.onSessionClosed(sessionMsg.(*connData))
+					}
+				})
 			default:
 				panic("receive invalid type msg")
 			}
 		case rpcMessages, _ := <-s.rpcDataChan:
-			result, _ := rpcMessages.(*rpcApiMessage)
-			s.onRpcResult(result)
-		// case <-time.After(100 * time.Millisecond):
+			threading.RunSafe(func() {
+				result, _ := rpcMessages.(*rpcApiMessage)
+				s.onRpcResult(result)
+			})
+			// case <-time.After(100 * time.Millisecond):
 		case <-ticker.C:
-			s.onTimer()
+			threading.RunSafe(func() {
+				s.onTimer()
+			})
 		}
 	}
 
