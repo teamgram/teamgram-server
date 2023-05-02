@@ -56,20 +56,9 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 			return nil, mtproto.ErrMsgIdInvalid
 		}
 
+		senderId = maxInboxMsg.SenderUserId
 		if maxInboxMsg.SenderUserId == in.UserId {
-			maxInboxId, err2 := c.svcCtx.Dao.MessagesDAO.SelectDialogLastInboxMessageId(
-				c.ctx,
-				in.UserId,
-				did.A,
-				did.B,
-				in.UserId,
-				maxId)
-			if err2 != nil {
-				c.Logger.Errorf("messages.readHistory - error: invalid peer %v", err2)
-				return nil, mtproto.ErrInternelServerError
-			} else {
-				maxId = maxInboxId
-			}
+			maxId = 0
 		}
 	}
 	// inbox readed
