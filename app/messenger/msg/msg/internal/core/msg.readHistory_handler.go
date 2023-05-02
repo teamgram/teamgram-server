@@ -46,7 +46,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 	}
 
 	// inbox readed
-	if dlg.UnreadCount > 0 || maxId < dlg.ReadInboxMaxId {
+	if dlg.UnreadCount > 0 || maxId > dlg.ReadInboxMaxId {
 		maxInboxMsg, err3 := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(c.ctx, in.UserId, maxId)
 		if err3 != nil {
 			c.Logger.Errorf("messages.readHistory - error: not found dialog(%d,%d), error is %v", in.UserId, maxId, err3)
@@ -71,7 +71,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 		}).To_Messages_AffectedMessages(), nil
 	}
 
-	if maxId < dlg.ReadInboxMaxId {
+	if maxId > dlg.ReadInboxMaxId {
 		readCount := c.svcCtx.Dao.CommonDAO.CalcSizeByWhere(
 			c.ctx,
 			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),

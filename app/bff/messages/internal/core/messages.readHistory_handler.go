@@ -30,13 +30,9 @@ func (c *MessagesCore) MessagesReadHistory(in *mtproto.TLMessagesReadHistory) (*
 		peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 	)
 
-	switch peer.PeerType {
-	case mtproto.PEER_SELF:
-	case mtproto.PEER_USER:
-	case mtproto.PEER_CHAT:
-	default:
-		c.Logger.Errorf("invalid peer: %v", in.Peer)
+	if !peer.IsChatOrUser() {
 		err := mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("messages.readHistory - error: %v", err)
 		return nil, err
 	}
 
