@@ -1666,3 +1666,22 @@ func (dao *MessagesDAO) SelectBackwardBySendUserIdOffsetIdLimitWithCB(ctx contex
 
 	return
 }
+
+// SelectDialogLastInboxMessageId
+// select user_message_box_id from messages where user_id = :user_id and dialog_id1 = :dialog_id1 and dialog_id2 = :dialog_id2 and sender_user_id != :sender_user_id and user_message_box_id < :user_message_box_id order by user_message_box_id desc limit :limit
+// TODO(@benqi): sqlmap
+func (dao *MessagesDAO) SelectDialogLastInboxMessageId(ctx context.Context, user_id int64, dialog_id1 int64, dialog_id2 int64, sender_user_id int64, user_message_box_id int32) (rValue int32, err error) {
+	var query = "select user_message_box_id from " + dao.CalcTableName(user_id) + " where user_id = ? and dialog_id1 = ? and dialog_id2 = ? and sender_user_id != ? and user_message_box_id < ? order by user_message_box_id desc limit ?"
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, user_id, dialog_id1, dialog_id2, sender_user_id, user_message_box_id)
+
+	if err != nil {
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("get in SelectDialogLastInboxMessageId(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
+	}
+
+	return
+}

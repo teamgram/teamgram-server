@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type HashTagsDAO struct {
 	db *sqlx.DB
 }
 
 func NewHashTagsDAO(db *sqlx.DB) *HashTagsDAO {
-	return &HashTagsDAO{db}
+	return &HashTagsDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
@@ -143,8 +149,8 @@ func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, user_id int6
 	return
 }
 
-// update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
 // DeleteHashTagMessageIdTx
+// update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
 // TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) DeleteHashTagMessageIdTx(tx *sqlx.Tx, user_id int64, hash_tag_message_id int32) (rowsAffected int64, err error) {
 	var (

@@ -162,7 +162,7 @@
             UPDATE
                 dialogs
             SET
-                unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id
+                unread_count = :unread_count, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id
             WHERE
                 user_id=:user_id AND peer_dialog_id = :peer_dialog_id
         </sql>

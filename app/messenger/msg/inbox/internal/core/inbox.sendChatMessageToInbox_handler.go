@@ -84,6 +84,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 			case mtproto.Predicate_messageActionChatMigrateTo:
 				c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
 					c.ctx,
+					0,
 					inBox.MessageId,
 					v.UserId,
 					mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerChatId))

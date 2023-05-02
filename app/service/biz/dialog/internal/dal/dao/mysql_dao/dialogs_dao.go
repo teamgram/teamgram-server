@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type DialogsDAO struct {
 	db *sqlx.DB
 }
 
 func NewDialogsDAO(db *sqlx.DB) *DialogsDAO {
-	return &DialogsDAO{db}
+	return &DialogsDAO{
+		db: db,
+	}
 }
 
 // InsertIgnore
@@ -223,8 +227,8 @@ func (dao *DialogsDAO) UpdateOutboxDialog(ctx context.Context, top_message int32
 	return
 }
 
-// update dialogs set unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null' where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // UpdateOutboxDialogTx
+// update dialogs set unread_count = 0, deleted = 0, top_message = :top_message, date2 = :date2, unread_mark = 0, draft_message_data = 'null' where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, top_message int32, date2 int64, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
@@ -667,14 +671,14 @@ func (dao *DialogsDAO) SelectExcludeFolderPinnedDialogsWithCB(ctx context.Contex
 }
 
 // UpdateReadInboxMaxId
-// update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
+// update dialogs set unread_count = :unread_count, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // TODO(@benqi): sqlmap
-func (dao *DialogsDAO) UpdateReadInboxMaxId(ctx context.Context, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
+func (dao *DialogsDAO) UpdateReadInboxMaxId(ctx context.Context, unread_count int32, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
+		query   = "update dialogs set unread_count = ?, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, read_inbox_max_id, user_id, peer_dialog_id)
+	rResult, err = dao.db.Exec(ctx, query, unread_count, read_inbox_max_id, user_id, peer_dialog_id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateReadInboxMaxId(_), error: %v", err)
@@ -689,15 +693,15 @@ func (dao *DialogsDAO) UpdateReadInboxMaxId(ctx context.Context, read_inbox_max_
 	return
 }
 
-// update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // UpdateReadInboxMaxIdTx
+// update dialogs set unread_count = :unread_count, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // TODO(@benqi): sqlmap
-func (dao *DialogsDAO) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
+func (dao *DialogsDAO) UpdateReadInboxMaxIdTx(tx *sqlx.Tx, unread_count int32, read_inbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialogs set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
+		query   = "update dialogs set unread_count = ?, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and peer_dialog_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, read_inbox_max_id, user_id, peer_dialog_id)
+	rResult, err = tx.Exec(query, unread_count, read_inbox_max_id, user_id, peer_dialog_id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateReadInboxMaxId(_), error: %v", err)
@@ -735,8 +739,8 @@ func (dao *DialogsDAO) UpdateReadOutboxMaxId(ctx context.Context, read_outbox_ma
 	return
 }
 
-// update dialogs set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // UpdateReadOutboxMaxIdTx
+// update dialogs set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateReadOutboxMaxIdTx(tx *sqlx.Tx, read_outbox_max_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
@@ -781,8 +785,8 @@ func (dao *DialogsDAO) UpdateTopMessage(ctx context.Context, top_message int32, 
 	return
 }
 
-// update dialogs set top_message = :top_message where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // UpdateTopMessageTx
+// update dialogs set top_message = :top_message where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateTopMessageTx(tx *sqlx.Tx, top_message int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
@@ -827,8 +831,8 @@ func (dao *DialogsDAO) UpdatePinnedMsgId(ctx context.Context, pinned_msg_id int3
 	return
 }
 
-// update dialogs set pinned_msg_id = :pinned_msg_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // UpdatePinnedMsgIdTx
+// update dialogs set pinned_msg_id = :pinned_msg_id where user_id = :user_id and peer_dialog_id = :peer_dialog_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, pinned_msg_id int32, user_id int64, peer_dialog_id int64) (rowsAffected int64, err error) {
 	var (
@@ -1023,8 +1027,8 @@ func (dao *DialogsDAO) SaveDraft(ctx context.Context, draft_type int32, draft_me
 	return
 }
 
-// update dialogs set draft_type = :draft_type, draft_message_data = :draft_message_data where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // SaveDraftTx
+// update dialogs set draft_type = :draft_type, draft_message_data = :draft_message_data where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) SaveDraftTx(tx *sqlx.Tx, draft_type int32, draft_message_data string, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
@@ -1115,8 +1119,8 @@ func (dao *DialogsDAO) ClearAllDrafts(ctx context.Context, user_id int64) (rowsA
 	return
 }
 
-// update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and draft_type = 2
 // ClearAllDraftsTx
+// update dialogs set draft_type = 0, draft_message_data = 'null' where user_id = :user_id and draft_type = 2
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) ClearAllDraftsTx(tx *sqlx.Tx, user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -1161,8 +1165,8 @@ func (dao *DialogsDAO) UpdatePeerFolderId(ctx context.Context, folder_id int32, 
 	return
 }
 
-// update dialogs set folder_id = :folder_id where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // UpdatePeerFolderIdTx
+// update dialogs set folder_id = :folder_id where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerFolderIdTx(tx *sqlx.Tx, folder_id int32, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
 	var (
@@ -1219,8 +1223,8 @@ func (dao *DialogsDAO) UpdatePeerDialogListFolderId(ctx context.Context, folder_
 	return
 }
 
-// update dialogs set folder_id = :folder_id where user_id = :user_id and peer_dialog_id in (:idList)
 // UpdatePeerDialogListFolderIdTx
+// update dialogs set folder_id = :folder_id where user_id = :user_id and peer_dialog_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListFolderIdTx(tx *sqlx.Tx, folder_id int32, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
@@ -1289,8 +1293,8 @@ func (dao *DialogsDAO) UpdatePeerDialogListPinned(ctx context.Context, pinned in
 	return
 }
 
-// update dialogs set pinned = :pinned where user_id = :user_id and folder_id = 0 and peer_dialog_id in (:idList)
 // UpdatePeerDialogListPinnedTx
+// update dialogs set pinned = :pinned where user_id = :user_id and folder_id = 0 and peer_dialog_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdatePeerDialogListPinnedTx(tx *sqlx.Tx, pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
@@ -1359,8 +1363,8 @@ func (dao *DialogsDAO) UpdateFolderPeerDialogListPinned(ctx context.Context, fol
 	return
 }
 
-// update dialogs set folder_pinned = :folder_pinned where user_id = :user_id and folder_id = 1 and peer_dialog_id in (:idList)
 // UpdateFolderPeerDialogListPinnedTx
+// update dialogs set folder_pinned = :folder_pinned where user_id = :user_id and folder_id = 1 and peer_dialog_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateFolderPeerDialogListPinnedTx(tx *sqlx.Tx, folder_pinned int64, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
@@ -1429,8 +1433,8 @@ func (dao *DialogsDAO) UpdateUnPinnedNotIdList(ctx context.Context, user_id int6
 	return
 }
 
-// update dialogs set pinned = 0 where user_id = :user_id and folder_id = 0 and pinned > 0 and peer_dialog_id not in (:idList)
 // UpdateUnPinnedNotIdListTx
+// update dialogs set pinned = 0 where user_id = :user_id and folder_id = 0 and pinned > 0 and peer_dialog_id not in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateUnPinnedNotIdListTx(tx *sqlx.Tx, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
@@ -1499,8 +1503,8 @@ func (dao *DialogsDAO) UpdateFolderUnPinnedNotIdList(ctx context.Context, user_i
 	return
 }
 
-// update dialogs set folder_pinned = 0 where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (:idList)
 // UpdateFolderUnPinnedNotIdListTx
+// update dialogs set folder_pinned = 0 where user_id = :user_id and folder_id = 1 and folder_pinned > 0 and peer_dialog_id not in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *DialogsDAO) UpdateFolderUnPinnedNotIdListTx(tx *sqlx.Tx, user_id int64, idList []int64) (rowsAffected int64, err error) {
 	var (
