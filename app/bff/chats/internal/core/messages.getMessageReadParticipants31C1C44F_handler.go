@@ -30,7 +30,6 @@ import (
 func (c *ChatsCore) MessagesGetMessageReadParticipants31C1C44F(in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error) {
 	var (
 		peer                 = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
-		rValueList           = make([]int64, 0)
 		readParticipantDates = make([]*mtproto.ReadParticipantDate, 0)
 	)
 
@@ -53,7 +52,7 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants31C1C44F(in *mtproto.TLMes
 			return nil, err
 		}
 
-		boxList, err := c.svcCtx.Dao.MessageGetUserMessageListByDataIdUserIdList(c.ctx, &message.TLMessageGetUserMessageListByDataIdUserIdList{
+		boxList, err := c.svcCtx.Dao.MessageClient.MessageGetUserMessageListByDataIdUserIdList(c.ctx, &message.TLMessageGetUserMessageListByDataIdUserIdList{
 			Id:         msgBox.DialogMessageId,
 			UserIdList: pIdList.GetDatas(),
 		})
@@ -75,7 +74,10 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants31C1C44F(in *mtproto.TLMes
 			for _, d := range dialogList.GetDatas() {
 				// c.Logger.Infof("messages.getMessageReadParticipants - dialog: %s", d.DebugString())
 				if d.GetDialog().GetReadInboxMaxId() >= v.MessageId {
-					rValueList = append(rValueList, v.UserId)
+					readParticipantDates = append(readParticipantDates, mtproto.MakeTLReadParticipantDate(&mtproto.ReadParticipantDate{
+						UserId: v.UserId,
+						Date:   0,
+					}).To_ReadParticipantDate())
 				}
 			}
 		})
