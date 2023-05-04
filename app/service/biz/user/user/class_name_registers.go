@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -79,6 +79,7 @@ const (
 	Predicate_user_setBotCommands                   = "user_setBotCommands"
 	Predicate_user_isBot                            = "user_isBot"
 	Predicate_user_getBotInfo                       = "user_getBotInfo"
+	Predicate_user_checkBots                        = "user_checkBots"
 	Predicate_user_getFullUser                      = "user_getFullUser"
 	Predicate_user_updateEmojiStatus                = "user_updateEmojiStatus"
 	Predicate_user_getUserDataById                  = "user_getUserDataById"
@@ -363,6 +364,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 879114000, // 0x34663710
 
 	},
+	Predicate_user_checkBots: {
+		0: 1935999169, // 0x736500c1
+
+	},
 	Predicate_user_getFullUser: {
 		0: -49225414, // 0xfd10e13a
 
@@ -470,6 +475,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1966844182:  Predicate_user_setBotCommands,                   // 0x753ba916
 	-948779026:  Predicate_user_isBot,                            // 0xc772c7ee
 	879114000:   Predicate_user_getBotInfo,                       // 0x34663710
+	1935999169:  Predicate_user_checkBots,                        // 0x736500c1
 	-49225414:   Predicate_user_getFullUser,                      // 0xfd10e13a
 	-121062696:  Predicate_user_updateEmojiStatus,                // 0xf8c8bad8
 	62615811:    Predicate_user_getUserDataById,                  // 0x3bb7103

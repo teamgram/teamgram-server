@@ -29,6 +29,7 @@
                 id=:id LIMIT 1
         </sql>
     </operation>
+
     <operation name="SelectUsersByIdList" result_set="list">
         <params>
             <param name="id_list" type="[]int64" />
@@ -42,6 +43,7 @@
                 id IN (:id_list)
         </sql>
     </operation>
+
     <operation name="SelectUsersByPhoneList" result_set="list">
         <params>
             <param name="phoneList" type="[]string" />
@@ -258,6 +260,20 @@
             WHERE
                 id IN (SELECT user_id FROM channel_participants WHERE channel_id = :channelId AND state = 0)
                 AND (first_name LIKE :q1 OR last_name LIKE :q2 OR username LIKE :q3)
+        </sql>
+    </operation>
+
+    <operation name="SelectBots" result_set="single_list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                users
+            WHERE
+                id IN(:id_list) AND is_bot = 1
         </sql>
     </operation>
 </table>

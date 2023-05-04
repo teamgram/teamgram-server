@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -963,6 +964,21 @@ func (s *Service) UserGetBotInfo(ctx context.Context, request *user.TLUserGetBot
 	return r, err
 }
 
+// UserCheckBots
+// user.checkBots id:Vector<long> = Vector<long>;
+func (s *Service) UserCheckBots(ctx context.Context, request *user.TLUserCheckBots) (*user.Vector_Long, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.checkBots - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserCheckBots(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.checkBots - reply: %s", r.DebugString())
+	return r, err
+}
+
 // UserGetFullUser
 // user.getFullUser self_user_id:long id:long = users.UserFull;
 func (s *Service) UserGetFullUser(ctx context.Context, request *user.TLUserGetFullUser) (*mtproto.Users_UserFull, error) {
@@ -1069,7 +1085,7 @@ func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpd
 }
 
 // UserGetImmutableUserV2
-// user.getImmutableUserV2 flags:# id:long privacy:flags.1?true contacts:Vector<long> = ImmutableUser;
+// user.getImmutableUserV2 flags:# id:long privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = ImmutableUser;
 func (s *Service) UserGetImmutableUserV2(ctx context.Context, request *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getImmutableUserV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1084,7 +1100,7 @@ func (s *Service) UserGetImmutableUserV2(ctx context.Context, request *user.TLUs
 }
 
 // UserGetMutableUsersV2
-// user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
+// user.getMutableUsersV2 flags:# id:Vector<long> privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = MutableUsers;
 func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.getMutableUsersV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1097,3 +1113,4 @@ func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.getMutableUsersV2 - reply: %s", r.DebugString())
 	return r, err
 }
+

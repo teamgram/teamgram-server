@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type UsersDAO struct {
 	db *sqlx.DB
 }
 
 func NewUsersDAO(db *sqlx.DB) *UsersDAO {
-	return &UsersDAO{db}
+	return &UsersDAO{
+		db: db,
+	}
 }
 
 // Insert
@@ -437,8 +441,8 @@ func (dao *UsersDAO) Delete(ctx context.Context, phone string, delete_reason str
 	return
 }
 
-// update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 // DeleteTx
+// update users set phone = :phone, deleted = 1, delete_reason = :delete_reason where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) DeleteTx(tx *sqlx.Tx, phone string, delete_reason string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -483,8 +487,8 @@ func (dao *UsersDAO) UpdateUsername(ctx context.Context, username string, id int
 	return
 }
 
-// update users set username = :username where id = :id
 // UpdateUsernameTx
+// update users set username = :username where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -529,8 +533,8 @@ func (dao *UsersDAO) UpdateFirstAndLastName(ctx context.Context, first_name stri
 	return
 }
 
-// update users set first_name = :first_name, last_name = :last_name where id = :id
 // UpdateFirstAndLastNameTx
+// update users set first_name = :first_name, last_name = :last_name where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateFirstAndLastNameTx(tx *sqlx.Tx, first_name string, last_name string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -575,8 +579,8 @@ func (dao *UsersDAO) UpdateAbout(ctx context.Context, about string, id int64) (r
 	return
 }
 
-// update users set about = :about where id = :id
 // UpdateAboutTx
+// update users set about = :about where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateAboutTx(tx *sqlx.Tx, about string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -621,8 +625,8 @@ func (dao *UsersDAO) UpdateProfile(ctx context.Context, first_name string, last_
 	return
 }
 
-// update users set first_name = :first_name, last_name = :last_name, about = :about where id = :id
 // UpdateProfileTx
+// update users set first_name = :first_name, last_name = :last_name, about = :about where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateProfileTx(tx *sqlx.Tx, first_name string, last_name string, about string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -715,8 +719,8 @@ func (dao *UsersDAO) UpdateAccountDaysTTL(ctx context.Context, account_days_ttl 
 	return
 }
 
-// update users set account_days_ttl = :account_days_ttl where id = :id
 // UpdateAccountDaysTTLTx
+// update users set account_days_ttl = :account_days_ttl where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateAccountDaysTTLTx(tx *sqlx.Tx, account_days_ttl int32, id int64) (rowsAffected int64, err error) {
 	var (
@@ -804,8 +808,8 @@ func (dao *UsersDAO) UpdateProfilePhoto(ctx context.Context, photo_id int64, id 
 	return
 }
 
-// update users set photo_id = :photo_id where id = :id
 // UpdateProfilePhotoTx
+// update users set photo_id = :photo_id where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateProfilePhotoTx(tx *sqlx.Tx, photo_id int64, id int64) (rowsAffected int64, err error) {
 	var (
@@ -916,8 +920,8 @@ func (dao *UsersDAO) UpdateEmojiStatus(ctx context.Context, emoji_status_documen
 	return
 }
 
-// update users set emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until where id = :id
 // UpdateEmojiStatusTx
+// update users set emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) UpdateEmojiStatusTx(tx *sqlx.Tx, emoji_status_document_id int64, emoji_status_until int32, id int64) (rowsAffected int64, err error) {
 	var (
@@ -979,6 +983,70 @@ func (dao *UsersDAO) QueryChannelParticipantsWithCB(ctx context.Context, channel
 	if cb != nil {
 		for i := 0; i < len(rList); i++ {
 			cb(i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectBots
+// select id from users where id in (:id_list) and is_bot = 1
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) SelectBots(ctx context.Context, id_list []int64) (rList []int64, err error) {
+	var (
+		query = "select id from users where id in (?) and is_bot = 1"
+		a     []interface{}
+	)
+	if len(id_list) == 0 {
+		rList = []int64{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, id_list)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectBots(_), error: %v", err)
+		return
+	}
+
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectBots(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectBotsWithCB
+// select id from users where id in (:id_list) and is_bot = 1
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) SelectBotsWithCB(ctx context.Context, id_list []int64, cb func(i int, v int64)) (rList []int64, err error) {
+	var (
+		query = "select id from users where id in (?) and is_bot = 1"
+		a     []interface{}
+	)
+	if len(id_list) == 0 {
+		rList = []int64{}
+		return
+	}
+
+	query, a, err = sqlx.In(query, id_list)
+	if err != nil {
+		// r sql.Result
+		logx.WithContext(ctx).Errorf("sqlx.In in SelectBots(_), error: %v", err)
+		return
+	}
+
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, a...)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("select in SelectBots(_), error: %v", err)
+	}
+
+	if cb != nil {
+		for i := 0; i < len(rList); i++ {
+			cb(i, rList[i])
 		}
 	}
 

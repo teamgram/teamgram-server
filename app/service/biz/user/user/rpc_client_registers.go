@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -89,6 +89,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserSetBotCommands":                   RPCContextTuple{"/mtproto.RPCUser/user_setBotCommands", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserIsBot":                            RPCContextTuple{"/mtproto.RPCUser/user_isBot", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetBotInfo":                       RPCContextTuple{"/mtproto.RPCUser/user_getBotInfo", func() interface{} { return new(mtproto.BotInfo) }},
+	"TLUserCheckBots":                        RPCContextTuple{"/mtproto.RPCUser/user_checkBots", func() interface{} { return new(Vector_Long) }},
 	"TLUserGetFullUser":                      RPCContextTuple{"/mtproto.RPCUser/user_getFullUser", func() interface{} { return new(mtproto.Users_UserFull) }},
 	"TLUserUpdateEmojiStatus":                RPCContextTuple{"/mtproto.RPCUser/user_updateEmojiStatus", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetUserDataById":                  RPCContextTuple{"/mtproto.RPCUser/user_getUserDataById", func() interface{} { return new(mtproto.UserData) }},

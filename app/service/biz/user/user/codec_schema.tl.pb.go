@@ -372,6 +372,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 879114000,
 		}
 	},
+	1935999169: func() mtproto.TLObject { // 0x736500c1
+		return &TLUserCheckBots{
+			Constructor: 1935999169,
+		}
+	},
 	-49225414: func() mtproto.TLObject { // 0xfd10e13a
 		return &TLUserGetFullUser{
 			Constructor: -49225414,
@@ -4506,6 +4511,54 @@ func (m *TLUserGetBotInfo) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserGetBotInfo) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserCheckBots
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserCheckBots) Encode(layer int32) []byte {
+	x := mtproto.NewEncodeBuf(512)
+	// x.Int(int32(CRC32_user_checkBots))
+
+	switch uint32(m.Constructor) {
+	case 0x736500c1:
+		x.UInt(0x736500c1)
+
+		// no flags
+
+		x.VectorLong(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return x.GetBuf()
+}
+
+func (m *TLUserCheckBots) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserCheckBots) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x736500c1:
+
+		// not has flags
+
+		m.Id = dBuf.VectorLong()
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserCheckBots) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
