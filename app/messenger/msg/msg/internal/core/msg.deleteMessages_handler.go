@@ -45,6 +45,9 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*mtproto.Messa
 			}
 		}
 	case mtproto.PEER_CHANNEL:
+		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("DeleteMessages - error: %v", err)
+		return nil, err
 	default:
 		err = mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("DeleteMessages - error: %v", err)

@@ -38,6 +38,10 @@ func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*mtproto.Message
 		mtproto.PEER_USER,
 		mtproto.PEER_CHAT:
 		rValue, err = c.deleteUserHistory(in)
+		if err != nil {
+			c.Logger.Errorf("msg.deleteHistory - error: %v", err)
+			return nil, err
+		}
 
 	case mtproto.PEER_CHANNEL:
 	default:
