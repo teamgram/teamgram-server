@@ -153,14 +153,6 @@ type authSessions struct {
 }
 
 func newAuthSessions(authKeyId int64, s2 *Service) (*authSessions, error) {
-	//keyData, err := s2.Dao.AuthsessionClient.AuthsessionGetAuthStateData(context.Background(), &authsession.TLAuthsessionGetAuthStateData{
-	//	AuthKeyId: authKeyId,
-	//})
-	//if err != nil {
-	//	logx.Errorf("getKeyStateData error: %v", err)
-	//	return nil, err
-	//}
-
 	s := &authSessions{
 		authKeyId:       authKeyId,
 		Layer:           0,
@@ -585,9 +577,6 @@ func (s *authSessions) onSessionNew(connMsg *connData) {
 	}
 
 	sess.onSessionConnNew(connMsg.gatewayId)
-	//if sess.isGeneric() {
-	//
-	//}
 }
 
 func (s *authSessions) onSessionData(sessionMsg *sessionData) {

@@ -20,6 +20,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/teamgram/proto/mtproto"
 	sessionpb "github.com/teamgram/teamgram-server/app/interface/session/session"
@@ -30,54 +31,69 @@ import (
 // SessionPushUpdatesData
 // RPCPushClient is the client API for RPCPush service.
 func (s *Service) SessionPushUpdatesData(ctx context.Context, r *sessionpb.TLSessionPushUpdatesData) (*mtproto.Bool, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	logx.WithContext(ctx).Debugf("session.pushUpdatesData - request: %", r.DebugString())
 
 	var (
 		sessList *authSessions
 		ok       bool
 	)
-	if sessList, ok = s.sessionsManager[r.AuthKeyId]; !ok {
-		logx.WithContext(ctx).Errorf("not found authKeyId")
-		return mtproto.ToBool(false), nil
-	}
 
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[r.AuthKeyId]
+	s.mu.RUnlock()
+
+	if !ok {
+		err := fmt.Errorf("not found authKeyId(%d)", r.AuthKeyId)
+		logx.WithContext(ctx).Errorf("session.pushUpdatesData - %v", err)
+		return nil, err
+	}
 	sessList.syncDataArrived(r.Notification, &messageData{obj: r.Updates})
-	return mtproto.ToBool(true), nil
+
+	return mtproto.BoolTrue, nil
 }
 
 // SessionPushSessionUpdatesData
 // RPCPushClient is the client API for RPCPush service.
 func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, r *sessionpb.TLSessionPushSessionUpdatesData) (*mtproto.Bool, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	logx.WithContext(ctx).Debugf("session.pushSessionUpdatesData - request: %", r.DebugString())
 
 	var (
 		sessList *authSessions
 		ok       bool
 	)
-	if sessList, ok = s.sessionsManager[r.AuthKeyId]; !ok {
-		logx.WithContext(ctx).Errorf("not found authKeyId")
-		return mtproto.ToBool(false), nil
-	}
 
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[r.AuthKeyId]
+	s.mu.RUnlock()
+
+	if !ok {
+		err := fmt.Errorf("not found authKeyId(%d)", r.AuthKeyId)
+		logx.WithContext(ctx).Errorf("session.pushUpdatesData - %v", err)
+		return nil, err
+	}
 	sessList.syncSessionDataArrived(r.SessionId, &messageData{obj: r.Updates})
-	return mtproto.ToBool(true), nil
+
+	return mtproto.BoolTrue, nil
 }
 
 func (s *Service) SessionPushRpcResultData(ctx context.Context, r *sessionpb.TLSessionPushRpcResultData) (*mtproto.Bool, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	logx.WithContext(ctx).Debugf("session.pushRpcResultData - request: %", r.DebugString())
 
 	var (
 		sessList *authSessions
 		ok       bool
 	)
-	if sessList, ok = s.sessionsManager[r.AuthKeyId]; !ok {
-		logx.WithContext(ctx).Errorf("not found authKeyId")
-		return mtproto.ToBool(false), nil
-	}
 
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[r.AuthKeyId]
+	s.mu.RUnlock()
+
+	if !ok {
+		err := fmt.Errorf("not found authKeyId(%d)", r.AuthKeyId)
+		logx.WithContext(ctx).Errorf("session.pushRpcResultData - %v", err)
+		return nil, err
+	}
 	sessList.syncRpcResultDataArrived(r.SessionId, r.ClientReqMsgId, r.RpcResultData)
-	return mtproto.ToBool(true), nil
+
+	return mtproto.BoolTrue, nil
 }

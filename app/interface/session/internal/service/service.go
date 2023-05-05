@@ -21,9 +21,9 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/teamgram/marmota/pkg/net/ip"
 	"sync"
 
+	"github.com/teamgram/marmota/pkg/net/ip"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/config"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
@@ -34,17 +34,8 @@ import (
 )
 
 var (
-	//etcdPrefix is a etcd globe key prefix
 	endpoints string
 )
-
-//
-//func init() {
-//	endpoints = os.Getenv("ETCD_ENDPOINTS")
-//	if endpoints == "" {
-//		panic(fmt.Errorf("invalid etcd config endpoints:%+v", endpoints))
-//	}
-//}
 
 type Service struct {
 	ac              config.Config
@@ -87,7 +78,6 @@ func (s *Service) Close() error {
 		}
 	}
 
-	// s.Dao.Close()
 	return nil
 }
 
@@ -95,41 +85,6 @@ func (s *Service) Close() error {
 func (s *Service) Ping(ctx context.Context) (err error) {
 	return nil
 }
-
-//func (s *Service) newAddress(insMap map[string][]*naming.Instance) error {
-//	ins := insMap[env.Zone]
-//	if len(ins) == 0 {
-//		return fmt.Errorf("watchComet instance is empty")
-//	}
-//	eGates := map[string]*Gateway{}
-//	options := gatewayOptions{
-//		RoutineSize: s.ac.Routine.Size,
-//		RoutineChan: s.ac.Routine.Chan,
-//	}
-//
-//	for _, in := range ins {
-//		if old, ok := s.eGateServers[in.Hostname]; ok {
-//			eGates[in.Hostname] = old
-//			continue
-//		}
-//		c, err := NewGateway(in, s.ac, options)
-//		if err != nil {
-//			log.Errorf("watchComet NewComet(%+v) error(%v)", in, err)
-//			return err
-//		}
-//		eGates[in.Hostname] = c
-//		log.Infof("watchComet AddComet grpc:%+v", in)
-//	}
-//	for key, old := range s.eGateServers {
-//		if _, ok := eGates[key]; !ok {
-//			_ = old
-//			// old.cancel()
-//			log.Infof("watchComet DelComet:%s", key)
-//		}
-//	}
-//	s.eGateServers = eGates
-//	return nil
-//}
 
 func (s *Service) watchGateway(c zrpc.RpcClientConf) {
 	sub, _ := discov.NewSubscriber(c.Etcd.Hosts, c.Etcd.Key)
@@ -170,8 +125,6 @@ func (s *Service) watchGateway(c zrpc.RpcClientConf) {
 }
 
 func (s *Service) SendDataToGateway(ctx context.Context, gatewayId string, authKeyId, salt, sessionId int64, msg *mtproto.TLMessageRawData) (bool, error) {
-	// log.Debugf("sendDataToGateway - %v", s.eGateServers)
-	//k := fmt.Sprintf("/nebulaim/egate/node%d", serverId)
 	if c, ok := s.eGateServers[gatewayId]; ok {
 		return c.SendDataToGate(ctx, authKeyId, sessionId, SerializeToBuffer2(salt, sessionId, msg))
 	} else {
@@ -190,13 +143,6 @@ func (s *Service) SendHttpDataToGateway(ctx context.Context, ch chan interface{}
 		return false, fmt.Errorf("ch closed")
 	}
 }
-
-//func (s *Service) PushUpdatesToNpns(ctx context.Context, authKeyId int64, updates *mtproto.Updates) {
-//	s.npnsClient.PushUpdates(ctx, &npnspb.PushUpdates{
-//		AuthKeyId: authKeyId,
-//		Updates:   updates,
-//	})
-//}
 
 func (s *Service) DeleteByAuthKeyId(authKeyId int64) {
 	s.mu.Lock()

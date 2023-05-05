@@ -718,7 +718,6 @@ func (c *session) sendQueueToGateway(gatewayId string) {
 	if len(pendings) == 1 {
 		logx.Infof("sendRawDirectToGateway - pendings[0]")
 		b, err = c.sendRawDirectToGateway(gatewayId, pendings[0].msg)
-
 	} else if len(pendings) > 1 {
 		msgContainer := &mtproto.TLMsgRawDataContainer{
 			Messages: make([]*mtproto.TLMessageRawData, 0, len(pendings)),

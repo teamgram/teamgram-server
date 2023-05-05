@@ -11,10 +11,11 @@ package server
 
 import (
 	"flag"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/service"
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/config"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/server/grpc"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/service"
+
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"

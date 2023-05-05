@@ -29,6 +29,8 @@ import (
 )
 
 func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessionCreateSession) (*mtproto.Bool, error) {
+	logx.WithContext(ctx).Debugf("session.createSession - request: %", r.DebugString())
+
 	var (
 		sessList *authSessions
 		ok       bool
@@ -36,17 +38,18 @@ func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessi
 		err      error
 	)
 
-	logx.WithContext(ctx).Infof("createSession - request: %s", r.DebugString())
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	if sessList, ok = s.sessionsManager[c.GetAuthKeyId()]; !ok {
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[c.GetAuthKeyId()]
+	s.mu.RUnlock()
+	if !ok {
 		sessList, err = newAuthSessions(c.GetAuthKeyId(), s)
 		if err != nil {
+			logx.WithContext(ctx).Errorf("session.createSession - newAuthSessions error: %v", err)
 			return nil, err
 		}
+		s.mu.Lock()
 		s.sessionsManager[c.GetAuthKeyId()] = sessList
+		s.mu.Unlock()
 	}
 	sessList.sessionClientNew(c.GetServerId(), c.GetSessionId())
 
@@ -54,20 +57,19 @@ func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessi
 }
 
 func (s *Service) SessionCloseSession(ctx context.Context, r *sessionpb.TLSessionCloseSession) (*mtproto.Bool, error) {
+	logx.WithContext(ctx).Debugf("session.closeSession - request: %", r.DebugString())
+
 	var (
 		sessList *authSessions
 		ok       bool
 		c        = r.GetClient()
-		logger   = logx.WithContext(ctx)
 	)
 
-	logx.WithContext(ctx).Infof("closeSession - request: %s", r.DebugString())
-
 	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	if sessList, ok = s.sessionsManager[c.GetAuthKeyId()]; !ok {
-		logger.Errorf("not found sessList by keyId: %d", c.GetAuthKeyId())
+	sessList, ok = s.sessionsManager[c.GetAuthKeyId()]
+	s.mu.RUnlock()
+	if !ok {
+		logx.WithContext(ctx).Errorf("session.closeSession - not found sessList by keyId: %d", c.GetAuthKeyId())
 	} else {
 		sessList.sessionClientClosed(c.GetServerId(), c.GetSessionId())
 	}
@@ -76,106 +78,87 @@ func (s *Service) SessionCloseSession(ctx context.Context, r *sessionpb.TLSessio
 }
 
 func (s *Service) SessionSendDataToSession(ctx context.Context, r *sessionpb.TLSessionSendDataToSession) (res *mtproto.Bool, err error) {
+	logx.WithContext(ctx).Debugf("session.sendDataToSession - request: %", r.DebugString())
+
 	var (
 		sessList *authSessions
 		ok       bool
 		data     = r.GetData()
 	)
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[data.GetAuthKeyId()]
+	s.mu.RUnlock()
 
-	if sessList, ok = s.sessionsManager[data.GetAuthKeyId()]; !ok {
+	if !ok {
 		sessList, err = newAuthSessions(data.GetAuthKeyId(), s)
 		if err != nil {
-			return
+			logx.WithContext(ctx).Errorf("session.createSession - newAuthSessions error: %v", err)
+			return nil, err
 		}
 
+		s.mu.Lock()
 		s.sessionsManager[data.GetAuthKeyId()] = sessList
+		s.mu.Unlock()
 	}
+
 	sessList.sessionDataArrived(data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload())
-	res = mtproto.ToBool(true)
-	return
+
+	return mtproto.BoolTrue, nil
 }
 
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, r *sessionpb.TLSessionSendHttpDataToSession) (res *sessionpb.HttpSessionData, err error) {
-	//respChan := make(chan interface{}, 2)
-	//
-	//s.mu.Lock()
-	//var (
-	//	sessList *authSessions
-	//	ok       bool
-	//)
-	//
-	//if sessList, ok = s.sessionsManager[r.AuthKeyId]; !ok {
-	//	sessList, err = newAuthSessions(r.AuthKeyId, s)
-	//	if err != nil {
-	//		s.mu.Unlock()
-	//		return
-	//	}
-	//	s.sessionsManager[r.AuthKeyId] = sessList
-	//}
-	//sessList.sessionHttpDataArrived(r.ServerId, r.ClientIp, r.SessionId, r.Salt, r.Payload, respChan)
-	//s.mu.Unlock()
-	//
-	//timer := time.NewTimer(60 * time.Second)
-	//select {
-	//case rc := <-respChan:
-	//	if rc != nil {
-	//		if payload, ok := rc.([]byte); ok {
-	//			log.Debugf("recv http data: %d", len(payload))
-	//			res = &_.SessionData{
-	//				Payload: payload,
-	//			}
-	//			return
-	//		}
-	//	}
-	//	err = mtproto.ErrInternelServerError
-	//	log.Errorf("sendSyncSessionData - error: %v", err)
-	//case <-timer.C:
-	//	err = mtproto.ErrTimeOut503
-	//	log.Errorf("sendSyncSessionData - error: %v", err)
-	//}
-	//
-
 	logx.WithContext(ctx).Errorf("not impl session.sendHttpDataToSession")
 	return nil, mtproto.ErrMethodNotImpl
 }
 
 func (s *Service) SessionQueryAuthKey(ctx context.Context, r *sessionpb.TLSessionQueryAuthKey) (*mtproto.AuthKeyInfo, error) {
+	logx.WithContext(ctx).Debugf("session.queryAuthKey - request: %", r.DebugString())
+
 	key, err := s.Dao.AuthsessionClient.AuthsessionQueryAuthKey(ctx, &authsession.TLAuthsessionQueryAuthKey{
 		AuthKeyId: r.AuthKeyId,
 	})
 	if err != nil {
-		logx.WithContext(ctx).Errorf("queryAuthKey error: %v", err)
+		logx.WithContext(ctx).Errorf("session.queryAuthKey - error: %v", err)
 		return nil, err
 	}
 
-	return &mtproto.AuthKeyInfo{
+	return mtproto.MakeTLAuthKeyInfo(&mtproto.AuthKeyInfo{
 		AuthKeyId:          key.AuthKeyId,
 		AuthKey:            key.AuthKey,
 		AuthKeyType:        key.AuthKeyType,
 		PermAuthKeyId:      key.PermAuthKeyId,
 		TempAuthKeyId:      key.TempAuthKeyId,
 		MediaTempAuthKeyId: key.MediaTempAuthKeyId,
-	}, nil
+	}).To_AuthKeyInfo(), nil
 }
 
 func (s *Service) SessionSetAuthKey(ctx context.Context, r *sessionpb.TLSessionSetAuthKey) (*mtproto.Bool, error) {
+	logx.WithContext(ctx).Debugf("session.setAuthKey - request: %", r.DebugString())
+
 	if r.AuthKey == nil {
-		logx.WithContext(ctx).Errorf("setAuthKey error: auth_key is nil")
+		logx.WithContext(ctx).Errorf("session.setAuthKey error: auth_key is nil")
 		return nil, mtproto.ErrInputRequestInvalid
 	}
-	return s.Dao.AuthsessionClient.AuthsessionSetAuthKey(ctx, &authsession.TLAuthsessionSetAuthKey{
-		AuthKey: &mtproto.AuthKeyInfo{
-			AuthKeyId:          r.AuthKey.AuthKeyId,
-			AuthKey:            r.AuthKey.AuthKey,
-			AuthKeyType:        r.AuthKey.AuthKeyType,
-			PermAuthKeyId:      r.AuthKey.PermAuthKeyId,
-			TempAuthKeyId:      r.AuthKey.TempAuthKeyId,
-			MediaTempAuthKeyId: r.AuthKey.MediaTempAuthKeyId,
-		},
-		FutureSalt: r.FutureSalt,
-		ExpiresIn:  r.ExpiresIn,
-	})
+
+	rV, err := s.Dao.AuthsessionClient.AuthsessionSetAuthKey(
+		ctx,
+		&authsession.TLAuthsessionSetAuthKey{
+			AuthKey: mtproto.MakeTLAuthKeyInfo(&mtproto.AuthKeyInfo{
+				AuthKeyId:          r.AuthKey.AuthKeyId,
+				AuthKey:            r.AuthKey.AuthKey,
+				AuthKeyType:        r.AuthKey.AuthKeyType,
+				PermAuthKeyId:      r.AuthKey.PermAuthKeyId,
+				TempAuthKeyId:      r.AuthKey.TempAuthKeyId,
+				MediaTempAuthKeyId: r.AuthKey.MediaTempAuthKeyId,
+			}).To_AuthKeyInfo(),
+			FutureSalt: r.FutureSalt,
+			ExpiresIn:  r.ExpiresIn,
+		})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("session.setAuthKey - error: %v", err)
+		return nil, err
+	}
+
+	return rV, nil
 }
