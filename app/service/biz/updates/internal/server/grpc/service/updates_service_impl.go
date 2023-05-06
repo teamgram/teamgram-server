@@ -18,18 +18,18 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/updates/updates"
 )
 
-// UpdatesGetState
-// updates.getState auth_key_id:long user_id:long = updates.State;
-func (s *Service) UpdatesGetState(ctx context.Context, request *updates.TLUpdatesGetState) (*mtproto.Updates_State, error) {
+// UpdatesGetStateV2
+// updates.getStateV2 auth_key_id:long user_id:long = updates.State;
+func (s *Service) UpdatesGetStateV2(ctx context.Context, request *updates.TLUpdatesGetStateV2) (*mtproto.Updates_State, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("updates.getState - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("updates.getStateV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.UpdatesGetState(request)
+	r, err := c.UpdatesGetStateV2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("updates.getState - reply: %s", r.DebugString())
+	c.Logger.Debugf("updates.getStateV2 - reply: %s", r.DebugString())
 	return r, err
 }
 

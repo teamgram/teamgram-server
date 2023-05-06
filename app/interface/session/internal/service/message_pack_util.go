@@ -33,15 +33,12 @@ func ParseFromIncomingMessage(b []byte) (salt, sessionId int64, msg2 *mtproto.TL
 	return
 }
 
-func SerializeToBuffer(salt, sessionId int64, msg2 *mtproto.TLMessage2, layer int32) []byte {
-	oBuf := msg2.Encode(layer)
-
-	x := mtproto.NewEncodeBuf(16 + len(oBuf))
+func SerializeToBuffer(x *mtproto.EncodeBuf, salt, sessionId int64, msg2 *mtproto.TLMessage2, layer int32) error {
 	x.Long(salt)
 	x.Long(sessionId)
-	x.Bytes(oBuf)
+	msg2.Encode(x, layer)
 
-	return x.GetBuf()
+	return nil
 }
 
 func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) []byte {

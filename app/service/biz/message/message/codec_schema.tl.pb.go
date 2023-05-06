@@ -153,10 +153,7 @@ func CheckClassID(classId int32) (ok bool) {
 // TLMessageGetUserMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUserMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUserMessage))
-
+func (m *TLMessageGetUserMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7accb1c8:
 		x.UInt(0x7accb1c8)
@@ -170,7 +167,7 @@ func (m *TLMessageGetUserMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUserMessage) CalcByteSize(layer int32) int {
@@ -202,10 +199,7 @@ func (m *TLMessageGetUserMessage) DebugString() string {
 // TLMessageGetUserMessageList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUserMessageList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUserMessageList))
-
+func (m *TLMessageGetUserMessageList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd3581c26:
 		x.UInt(0xd3581c26)
@@ -220,7 +214,7 @@ func (m *TLMessageGetUserMessageList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUserMessageList) CalcByteSize(layer int32) int {
@@ -254,10 +248,7 @@ func (m *TLMessageGetUserMessageList) DebugString() string {
 // TLMessageGetUserMessageListByDataIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUserMessageListByDataIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUserMessageListByDataIdList))
-
+func (m *TLMessageGetUserMessageListByDataIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1155a17b:
 		x.UInt(0x1155a17b)
@@ -272,7 +263,7 @@ func (m *TLMessageGetUserMessageListByDataIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUserMessageListByDataIdList) CalcByteSize(layer int32) int {
@@ -306,10 +297,7 @@ func (m *TLMessageGetUserMessageListByDataIdList) DebugString() string {
 // TLMessageGetUserMessageListByDataIdUserIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUserMessageListByDataIdUserIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUserMessageListByDataIdUserIdList))
-
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2cb26a31:
 		x.UInt(0x2cb26a31)
@@ -324,7 +312,7 @@ func (m *TLMessageGetUserMessageListByDataIdUserIdList) Encode(layer int32) []by
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUserMessageListByDataIdUserIdList) CalcByteSize(layer int32) int {
@@ -358,10 +346,7 @@ func (m *TLMessageGetUserMessageListByDataIdUserIdList) DebugString() string {
 // TLMessageGetHistoryMessages
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetHistoryMessages) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getHistoryMessages))
-
+func (m *TLMessageGetHistoryMessages) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x308a340:
 		x.UInt(0x308a340)
@@ -383,7 +368,7 @@ func (m *TLMessageGetHistoryMessages) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetHistoryMessages) CalcByteSize(layer int32) int {
@@ -423,10 +408,7 @@ func (m *TLMessageGetHistoryMessages) DebugString() string {
 // TLMessageGetHistoryMessagesCount
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetHistoryMessagesCount) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getHistoryMessagesCount))
-
+func (m *TLMessageGetHistoryMessagesCount) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf507e13:
 		x.UInt(0xf507e13)
@@ -441,7 +423,7 @@ func (m *TLMessageGetHistoryMessagesCount) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetHistoryMessagesCount) CalcByteSize(layer int32) int {
@@ -474,10 +456,7 @@ func (m *TLMessageGetHistoryMessagesCount) DebugString() string {
 // TLMessageGetPeerUserMessageId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetPeerUserMessageId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getPeerUserMessageId))
-
+func (m *TLMessageGetPeerUserMessageId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x73aeb71f:
 		x.UInt(0x73aeb71f)
@@ -492,7 +471,7 @@ func (m *TLMessageGetPeerUserMessageId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetPeerUserMessageId) CalcByteSize(layer int32) int {
@@ -525,10 +504,7 @@ func (m *TLMessageGetPeerUserMessageId) DebugString() string {
 // TLMessageGetPeerUserMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetPeerUserMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getPeerUserMessage))
-
+func (m *TLMessageGetPeerUserMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x63129212:
 		x.UInt(0x63129212)
@@ -543,7 +519,7 @@ func (m *TLMessageGetPeerUserMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetPeerUserMessage) CalcByteSize(layer int32) int {
@@ -576,10 +552,7 @@ func (m *TLMessageGetPeerUserMessage) DebugString() string {
 // TLMessageSearchByMediaType
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageSearchByMediaType) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_searchByMediaType))
-
+func (m *TLMessageSearchByMediaType) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbb500c78:
 		x.UInt(0xbb500c78)
@@ -597,7 +570,7 @@ func (m *TLMessageSearchByMediaType) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageSearchByMediaType) CalcByteSize(layer int32) int {
@@ -633,10 +606,7 @@ func (m *TLMessageSearchByMediaType) DebugString() string {
 // TLMessageSearch
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageSearch) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_search))
-
+func (m *TLMessageSearch) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf03da05:
 		x.UInt(0xf03da05)
@@ -654,7 +624,7 @@ func (m *TLMessageSearch) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageSearch) CalcByteSize(layer int32) int {
@@ -690,10 +660,7 @@ func (m *TLMessageSearch) DebugString() string {
 // TLMessageSearchGlobal
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageSearchGlobal) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_searchGlobal))
-
+func (m *TLMessageSearchGlobal) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x425a4ea2:
 		x.UInt(0x425a4ea2)
@@ -709,7 +676,7 @@ func (m *TLMessageSearchGlobal) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageSearchGlobal) CalcByteSize(layer int32) int {
@@ -743,10 +710,7 @@ func (m *TLMessageSearchGlobal) DebugString() string {
 // TLMessageSearchByPinned
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageSearchByPinned) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_searchByPinned))
-
+func (m *TLMessageSearchByPinned) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2b027034:
 		x.UInt(0x2b027034)
@@ -761,7 +725,7 @@ func (m *TLMessageSearchByPinned) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageSearchByPinned) CalcByteSize(layer int32) int {
@@ -794,10 +758,7 @@ func (m *TLMessageSearchByPinned) DebugString() string {
 // TLMessageGetSearchCounter
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetSearchCounter) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getSearchCounter))
-
+func (m *TLMessageGetSearchCounter) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe2cbbf46:
 		x.UInt(0xe2cbbf46)
@@ -813,7 +774,7 @@ func (m *TLMessageGetSearchCounter) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetSearchCounter) CalcByteSize(layer int32) int {
@@ -847,10 +808,7 @@ func (m *TLMessageGetSearchCounter) DebugString() string {
 // TLMessageSearchV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageSearchV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_searchV2))
-
+func (m *TLMessageSearchV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xeabe34f9:
 		x.UInt(0xeabe34f9)
@@ -875,7 +833,7 @@ func (m *TLMessageSearchV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageSearchV2) CalcByteSize(layer int32) int {
@@ -918,10 +876,7 @@ func (m *TLMessageSearchV2) DebugString() string {
 // TLMessageGetLastTwoPinnedMessageId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetLastTwoPinnedMessageId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getLastTwoPinnedMessageId))
-
+func (m *TLMessageGetLastTwoPinnedMessageId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xaf9a082b:
 		x.UInt(0xaf9a082b)
@@ -936,7 +891,7 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetLastTwoPinnedMessageId) CalcByteSize(layer int32) int {
@@ -969,10 +924,7 @@ func (m *TLMessageGetLastTwoPinnedMessageId) DebugString() string {
 // TLMessageUpdatePinnedMessageId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageUpdatePinnedMessageId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_updatePinnedMessageId))
-
+func (m *TLMessageUpdatePinnedMessageId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf520edd0:
 		x.UInt(0xf520edd0)
@@ -983,13 +935,13 @@ func (m *TLMessageUpdatePinnedMessageId) Encode(layer int32) []byte {
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
 		x.Int(m.GetId())
-		x.Bytes(m.GetPinned().Encode(layer))
+		m.GetPinned().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageUpdatePinnedMessageId) CalcByteSize(layer int32) int {
@@ -1028,10 +980,7 @@ func (m *TLMessageUpdatePinnedMessageId) DebugString() string {
 // TLMessageGetPinnedMessageIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetPinnedMessageIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getPinnedMessageIdList))
-
+func (m *TLMessageGetPinnedMessageIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xda01d0dd:
 		x.UInt(0xda01d0dd)
@@ -1046,7 +995,7 @@ func (m *TLMessageGetPinnedMessageIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetPinnedMessageIdList) CalcByteSize(layer int32) int {
@@ -1079,10 +1028,7 @@ func (m *TLMessageGetPinnedMessageIdList) DebugString() string {
 // TLMessageUnPinAllMessages
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageUnPinAllMessages) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_unPinAllMessages))
-
+func (m *TLMessageUnPinAllMessages) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xea0a2a73:
 		x.UInt(0xea0a2a73)
@@ -1097,7 +1043,7 @@ func (m *TLMessageUnPinAllMessages) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageUnPinAllMessages) CalcByteSize(layer int32) int {
@@ -1130,10 +1076,7 @@ func (m *TLMessageUnPinAllMessages) DebugString() string {
 // TLMessageGetUnreadMentions
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUnreadMentions) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUnreadMentions))
-
+func (m *TLMessageGetUnreadMentions) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6fe184b4:
 		x.UInt(0x6fe184b4)
@@ -1153,7 +1096,7 @@ func (m *TLMessageGetUnreadMentions) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUnreadMentions) CalcByteSize(layer int32) int {
@@ -1191,10 +1134,7 @@ func (m *TLMessageGetUnreadMentions) DebugString() string {
 // TLMessageGetUnreadMentionsCount
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMessageGetUnreadMentionsCount) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_message_getUnreadMentionsCount))
-
+func (m *TLMessageGetUnreadMentionsCount) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb5412049:
 		x.UInt(0xb5412049)
@@ -1209,7 +1149,7 @@ func (m *TLMessageGetUnreadMentionsCount) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMessageGetUnreadMentionsCount) CalcByteSize(layer int32) int {
@@ -1242,15 +1182,14 @@ func (m *TLMessageGetUnreadMentionsCount) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_MessageBox
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_MessageBox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_MessageBox) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_MessageBox) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -1277,11 +1216,10 @@ func (m *Vector_MessageBox) DebugString() string {
 
 // Vector_Int
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Int) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Int) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorInt(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Int) Decode(dBuf *mtproto.DecodeBuf) error {

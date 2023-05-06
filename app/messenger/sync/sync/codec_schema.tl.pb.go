@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -88,13 +88,9 @@ func CheckClassID(classId int32) (ok bool) {
 // TLSyncUpdatesMe
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncUpdatesMe) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_updatesMe))
-
+func (m *TLSyncUpdatesMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x603c5cf0:
-		// sync.updatesMe flags:# user_id:long auth_key_id:long server_id:string session_id:flags.0?long updates:Updates = Void;
 		x.UInt(0x603c5cf0)
 
 		// set flags
@@ -114,13 +110,13 @@ func (m *TLSyncUpdatesMe) Encode(layer int32) []byte {
 			x.Long(m.GetSessionId().Value)
 		}
 
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncUpdatesMe) CalcByteSize(layer int32) int {
@@ -130,7 +126,6 @@ func (m *TLSyncUpdatesMe) CalcByteSize(layer int32) int {
 func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x603c5cf0:
-		// sync.updatesMe flags:# user_id:long auth_key_id:long server_id:string session_id:flags.0?long updates:Updates = Void;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -164,26 +159,22 @@ func (m *TLSyncUpdatesMe) DebugString() string {
 // TLSyncUpdatesNotMe
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncUpdatesNotMe) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_updatesNotMe))
-
+func (m *TLSyncUpdatesNotMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfb22cf:
-		// sync.updatesNotMe user_id:long auth_key_id:long updates:Updates = Void;
 		x.UInt(0xfb22cf)
 
 		// no flags
 
 		x.Long(m.GetUserId())
 		x.Long(m.GetAuthKeyId())
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncUpdatesNotMe) CalcByteSize(layer int32) int {
@@ -193,7 +184,6 @@ func (m *TLSyncUpdatesNotMe) CalcByteSize(layer int32) int {
 func (m *TLSyncUpdatesNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xfb22cf:
-		// sync.updatesNotMe user_id:long auth_key_id:long updates:Updates = Void;
 
 		// not has flags
 
@@ -221,25 +211,21 @@ func (m *TLSyncUpdatesNotMe) DebugString() string {
 // TLSyncPushUpdates
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncPushUpdates) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_pushUpdates))
-
+func (m *TLSyncPushUpdates) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8f0ad9be:
-		// sync.pushUpdates user_id:long updates:Updates = Void;
 		x.UInt(0x8f0ad9be)
 
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncPushUpdates) CalcByteSize(layer int32) int {
@@ -249,7 +235,6 @@ func (m *TLSyncPushUpdates) CalcByteSize(layer int32) int {
 func (m *TLSyncPushUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8f0ad9be:
-		// sync.pushUpdates user_id:long updates:Updates = Void;
 
 		// not has flags
 
@@ -276,13 +261,9 @@ func (m *TLSyncPushUpdates) DebugString() string {
 // TLSyncPushUpdatesIfNot
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncPushUpdatesIfNot) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_pushUpdatesIfNot))
-
+func (m *TLSyncPushUpdatesIfNot) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x40053fe4:
-		// sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
 		x.UInt(0x40053fe4)
 
 		// no flags
@@ -291,13 +272,13 @@ func (m *TLSyncPushUpdatesIfNot) Encode(layer int32) []byte {
 
 		x.VectorLong(m.GetExcludes())
 
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncPushUpdatesIfNot) CalcByteSize(layer int32) int {
@@ -307,7 +288,6 @@ func (m *TLSyncPushUpdatesIfNot) CalcByteSize(layer int32) int {
 func (m *TLSyncPushUpdatesIfNot) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x40053fe4:
-		// sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
 
 		// not has flags
 
@@ -336,25 +316,21 @@ func (m *TLSyncPushUpdatesIfNot) DebugString() string {
 // TLSyncPushBotUpdates
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncPushBotUpdates) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_pushBotUpdates))
-
+func (m *TLSyncPushBotUpdates) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xadc3f000:
-		// sync.pushBotUpdates user_id:long updates:Updates = Void;
 		x.UInt(0xadc3f000)
 
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncPushBotUpdates) CalcByteSize(layer int32) int {
@@ -364,7 +340,6 @@ func (m *TLSyncPushBotUpdates) CalcByteSize(layer int32) int {
 func (m *TLSyncPushBotUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xadc3f000:
-		// sync.pushBotUpdates user_id:long updates:Updates = Void;
 
 		// not has flags
 
@@ -391,13 +366,9 @@ func (m *TLSyncPushBotUpdates) DebugString() string {
 // TLSyncPushRpcResult
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncPushRpcResult) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_pushRpcResult))
-
+func (m *TLSyncPushRpcResult) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x904bb7a1:
-		// sync.pushRpcResult auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 		x.UInt(0x904bb7a1)
 
 		// no flags
@@ -412,7 +383,7 @@ func (m *TLSyncPushRpcResult) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncPushRpcResult) CalcByteSize(layer int32) int {
@@ -422,7 +393,6 @@ func (m *TLSyncPushRpcResult) CalcByteSize(layer int32) int {
 func (m *TLSyncPushRpcResult) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x904bb7a1:
-		// sync.pushRpcResult auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 
 		// not has flags
 
@@ -448,13 +418,9 @@ func (m *TLSyncPushRpcResult) DebugString() string {
 // TLSyncBroadcastUpdates
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSyncBroadcastUpdates) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_sync_broadcastUpdates))
-
+func (m *TLSyncBroadcastUpdates) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf5e35cb6:
-		// sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 		x.UInt(0xf5e35cb6)
 
 		// no flags
@@ -464,13 +430,13 @@ func (m *TLSyncBroadcastUpdates) Encode(layer int32) []byte {
 
 		x.VectorLong(m.GetExcludeIdList())
 
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSyncBroadcastUpdates) CalcByteSize(layer int32) int {
@@ -480,7 +446,6 @@ func (m *TLSyncBroadcastUpdates) CalcByteSize(layer int32) int {
 func (m *TLSyncBroadcastUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xf5e35cb6:
-		// sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 
 		// not has flags
 

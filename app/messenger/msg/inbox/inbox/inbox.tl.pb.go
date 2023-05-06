@@ -34,28 +34,23 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type TLConstructor int32
 
 const (
-	CRC32_UNKNOWN                              TLConstructor = 0
-	CRC32_inboxMessageData                     TLConstructor = 1002286548
-	CRC32_inboxMessageId                       TLConstructor = -963460705
-	CRC32_inbox_sendUserMessageToInbox         TLConstructor = -208741709
-	CRC32_inbox_sendChatMessageToInbox         TLConstructor = -1760197438
-	CRC32_inbox_sendChannelMessageToInbox      TLConstructor = 2050486614
-	CRC32_inbox_sendUserMultiMessageToInbox    TLConstructor = -1782288007
-	CRC32_inbox_sendChatMultiMessageToInbox    TLConstructor = -694455924
-	CRC32_inbox_sendChannelMultiMessageToInbox TLConstructor = 999414081
-	CRC32_inbox_editUserMessageToInbox         TLConstructor = 1559967656
-	CRC32_inbox_editChatMessageToInbox         TLConstructor = 2031122959
-	CRC32_inbox_editChannelMessageToInbox      TLConstructor = -231965363
-	CRC32_inbox_deleteMessagesToInbox          TLConstructor = -2061734348
-	CRC32_inbox_deleteChannelMessagesToInbox   TLConstructor = 295332038
-	CRC32_inbox_deleteUserHistoryToInbox       TLConstructor = 336232792
-	CRC32_inbox_deleteChatHistoryToInbox       TLConstructor = -659905022
-	CRC32_inbox_readUserMediaUnreadToInbox     TLConstructor = 364970827
-	CRC32_inbox_readChatMediaUnreadToInbox     TLConstructor = 1430347220
-	CRC32_inbox_readChannelMediaUnreadToInbox  TLConstructor = -1476338378
-	CRC32_inbox_updateHistoryReaded            TLConstructor = -1010283296
-	CRC32_inbox_updatePinnedMessage            TLConstructor = -1452528908
-	CRC32_inbox_unpinAllMessages               TLConstructor = 589079137
+	CRC32_UNKNOWN                           TLConstructor = 0
+	CRC32_inboxMessageData                  TLConstructor = 1002286548
+	CRC32_inboxMessageId                    TLConstructor = -963460705
+	CRC32_inbox_sendUserMessageToInbox      TLConstructor = -208741709
+	CRC32_inbox_sendChatMessageToInbox      TLConstructor = -1760197438
+	CRC32_inbox_sendUserMultiMessageToInbox TLConstructor = -1782288007
+	CRC32_inbox_sendChatMultiMessageToInbox TLConstructor = -694455924
+	CRC32_inbox_editUserMessageToInbox      TLConstructor = 1559967656
+	CRC32_inbox_editChatMessageToInbox      TLConstructor = 2031122959
+	CRC32_inbox_deleteMessagesToInbox       TLConstructor = -2061734348
+	CRC32_inbox_deleteUserHistoryToInbox    TLConstructor = 336232792
+	CRC32_inbox_deleteChatHistoryToInbox    TLConstructor = -659905022
+	CRC32_inbox_readUserMediaUnreadToInbox  TLConstructor = 364970827
+	CRC32_inbox_readChatMediaUnreadToInbox  TLConstructor = 1430347220
+	CRC32_inbox_updateHistoryReaded         TLConstructor = -1010283296
+	CRC32_inbox_updatePinnedMessage         TLConstructor = -1452528908
+	CRC32_inbox_unpinAllMessages            TLConstructor = 589079137
 )
 
 var TLConstructor_name = map[int32]string{
@@ -64,48 +59,38 @@ var TLConstructor_name = map[int32]string{
 	-963460705:  "CRC32_inboxMessageId",
 	-208741709:  "CRC32_inbox_sendUserMessageToInbox",
 	-1760197438: "CRC32_inbox_sendChatMessageToInbox",
-	2050486614:  "CRC32_inbox_sendChannelMessageToInbox",
 	-1782288007: "CRC32_inbox_sendUserMultiMessageToInbox",
 	-694455924:  "CRC32_inbox_sendChatMultiMessageToInbox",
-	999414081:   "CRC32_inbox_sendChannelMultiMessageToInbox",
 	1559967656:  "CRC32_inbox_editUserMessageToInbox",
 	2031122959:  "CRC32_inbox_editChatMessageToInbox",
-	-231965363:  "CRC32_inbox_editChannelMessageToInbox",
 	-2061734348: "CRC32_inbox_deleteMessagesToInbox",
-	295332038:   "CRC32_inbox_deleteChannelMessagesToInbox",
 	336232792:   "CRC32_inbox_deleteUserHistoryToInbox",
 	-659905022:  "CRC32_inbox_deleteChatHistoryToInbox",
 	364970827:   "CRC32_inbox_readUserMediaUnreadToInbox",
 	1430347220:  "CRC32_inbox_readChatMediaUnreadToInbox",
-	-1476338378: "CRC32_inbox_readChannelMediaUnreadToInbox",
 	-1010283296: "CRC32_inbox_updateHistoryReaded",
 	-1452528908: "CRC32_inbox_updatePinnedMessage",
 	589079137:   "CRC32_inbox_unpinAllMessages",
 }
 
 var TLConstructor_value = map[string]int32{
-	"CRC32_UNKNOWN":                              0,
-	"CRC32_inboxMessageData":                     1002286548,
-	"CRC32_inboxMessageId":                       -963460705,
-	"CRC32_inbox_sendUserMessageToInbox":         -208741709,
-	"CRC32_inbox_sendChatMessageToInbox":         -1760197438,
-	"CRC32_inbox_sendChannelMessageToInbox":      2050486614,
-	"CRC32_inbox_sendUserMultiMessageToInbox":    -1782288007,
-	"CRC32_inbox_sendChatMultiMessageToInbox":    -694455924,
-	"CRC32_inbox_sendChannelMultiMessageToInbox": 999414081,
-	"CRC32_inbox_editUserMessageToInbox":         1559967656,
-	"CRC32_inbox_editChatMessageToInbox":         2031122959,
-	"CRC32_inbox_editChannelMessageToInbox":      -231965363,
-	"CRC32_inbox_deleteMessagesToInbox":          -2061734348,
-	"CRC32_inbox_deleteChannelMessagesToInbox":   295332038,
-	"CRC32_inbox_deleteUserHistoryToInbox":       336232792,
-	"CRC32_inbox_deleteChatHistoryToInbox":       -659905022,
-	"CRC32_inbox_readUserMediaUnreadToInbox":     364970827,
-	"CRC32_inbox_readChatMediaUnreadToInbox":     1430347220,
-	"CRC32_inbox_readChannelMediaUnreadToInbox":  -1476338378,
-	"CRC32_inbox_updateHistoryReaded":            -1010283296,
-	"CRC32_inbox_updatePinnedMessage":            -1452528908,
-	"CRC32_inbox_unpinAllMessages":               589079137,
+	"CRC32_UNKNOWN":                           0,
+	"CRC32_inboxMessageData":                  1002286548,
+	"CRC32_inboxMessageId":                    -963460705,
+	"CRC32_inbox_sendUserMessageToInbox":      -208741709,
+	"CRC32_inbox_sendChatMessageToInbox":      -1760197438,
+	"CRC32_inbox_sendUserMultiMessageToInbox": -1782288007,
+	"CRC32_inbox_sendChatMultiMessageToInbox": -694455924,
+	"CRC32_inbox_editUserMessageToInbox":      1559967656,
+	"CRC32_inbox_editChatMessageToInbox":      2031122959,
+	"CRC32_inbox_deleteMessagesToInbox":       -2061734348,
+	"CRC32_inbox_deleteUserHistoryToInbox":    336232792,
+	"CRC32_inbox_deleteChatHistoryToInbox":    -659905022,
+	"CRC32_inbox_readUserMediaUnreadToInbox":  364970827,
+	"CRC32_inbox_readChatMediaUnreadToInbox":  1430347220,
+	"CRC32_inbox_updateHistoryReaded":         -1010283296,
+	"CRC32_inbox_updatePinnedMessage":         -1452528908,
+	"CRC32_inbox_unpinAllMessages":            589079137,
 }
 
 func (x TLConstructor) String() string {
@@ -511,78 +496,6 @@ func (m *TLInboxSendChatMessageToInbox) GetMessage() *InboxMessageData {
 }
 
 //--------------------------------------------------------------------------------------------
-type TLInboxSendChannelMessageToInbox struct {
-	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
-	FromId               int64               `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
-	PeerChannelId        int64               `protobuf:"varint,4,opt,name=peer_channel_id,json=peerChannelId,proto3" json:"peer_channel_id,omitempty"`
-	Message              *mtproto.MessageBox `protobuf:"bytes,5,opt,name=message,proto3" json:"message,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_unrecognized     []byte              `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
-}
-
-func (m *TLInboxSendChannelMessageToInbox) Reset()         { *m = TLInboxSendChannelMessageToInbox{} }
-func (m *TLInboxSendChannelMessageToInbox) String() string { return proto.CompactTextString(m) }
-func (*TLInboxSendChannelMessageToInbox) ProtoMessage()    {}
-func (*TLInboxSendChannelMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{6}
-}
-func (m *TLInboxSendChannelMessageToInbox) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLInboxSendChannelMessageToInbox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLInboxSendChannelMessageToInbox.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLInboxSendChannelMessageToInbox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInboxSendChannelMessageToInbox.Merge(m, src)
-}
-func (m *TLInboxSendChannelMessageToInbox) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLInboxSendChannelMessageToInbox) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInboxSendChannelMessageToInbox.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInboxSendChannelMessageToInbox proto.InternalMessageInfo
-
-func (m *TLInboxSendChannelMessageToInbox) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLInboxSendChannelMessageToInbox) GetFromId() int64 {
-	if m != nil {
-		return m.FromId
-	}
-	return 0
-}
-
-func (m *TLInboxSendChannelMessageToInbox) GetPeerChannelId() int64 {
-	if m != nil {
-		return m.PeerChannelId
-	}
-	return 0
-}
-
-func (m *TLInboxSendChannelMessageToInbox) GetMessage() *mtproto.MessageBox {
-	if m != nil {
-		return m.Message
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 type TLInboxSendUserMultiMessageToInbox struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
 	FromId               int64               `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
@@ -597,7 +510,7 @@ func (m *TLInboxSendUserMultiMessageToInbox) Reset()         { *m = TLInboxSendU
 func (m *TLInboxSendUserMultiMessageToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxSendUserMultiMessageToInbox) ProtoMessage()    {}
 func (*TLInboxSendUserMultiMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{7}
+	return fileDescriptor_9a6f35d665e824e1, []int{6}
 }
 func (m *TLInboxSendUserMultiMessageToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -669,7 +582,7 @@ func (m *TLInboxSendChatMultiMessageToInbox) Reset()         { *m = TLInboxSendC
 func (m *TLInboxSendChatMultiMessageToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxSendChatMultiMessageToInbox) ProtoMessage()    {}
 func (*TLInboxSendChatMultiMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{8}
+	return fileDescriptor_9a6f35d665e824e1, []int{7}
 }
 func (m *TLInboxSendChatMultiMessageToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -727,78 +640,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) GetMessage() []*InboxMessageData {
 }
 
 //--------------------------------------------------------------------------------------------
-type TLInboxSendChannelMultiMessageToInbox struct {
-	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
-	FromId               int64                 `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
-	PeerChannelId        int64                 `protobuf:"varint,4,opt,name=peer_channel_id,json=peerChannelId,proto3" json:"peer_channel_id,omitempty"`
-	Message              []*mtproto.MessageBox `protobuf:"bytes,5,rep,name=message,proto3" json:"message,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) Reset()         { *m = TLInboxSendChannelMultiMessageToInbox{} }
-func (m *TLInboxSendChannelMultiMessageToInbox) String() string { return proto.CompactTextString(m) }
-func (*TLInboxSendChannelMultiMessageToInbox) ProtoMessage()    {}
-func (*TLInboxSendChannelMultiMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{9}
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLInboxSendChannelMultiMessageToInbox.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInboxSendChannelMultiMessageToInbox.Merge(m, src)
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInboxSendChannelMultiMessageToInbox.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInboxSendChannelMultiMessageToInbox proto.InternalMessageInfo
-
-func (m *TLInboxSendChannelMultiMessageToInbox) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) GetFromId() int64 {
-	if m != nil {
-		return m.FromId
-	}
-	return 0
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) GetPeerChannelId() int64 {
-	if m != nil {
-		return m.PeerChannelId
-	}
-	return 0
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) GetMessage() []*mtproto.MessageBox {
-	if m != nil {
-		return m.Message
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 type TLInboxEditUserMessageToInbox struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
 	FromId               int64            `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
@@ -813,7 +654,7 @@ func (m *TLInboxEditUserMessageToInbox) Reset()         { *m = TLInboxEditUserMe
 func (m *TLInboxEditUserMessageToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxEditUserMessageToInbox) ProtoMessage()    {}
 func (*TLInboxEditUserMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{10}
+	return fileDescriptor_9a6f35d665e824e1, []int{8}
 }
 func (m *TLInboxEditUserMessageToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -885,7 +726,7 @@ func (m *TLInboxEditChatMessageToInbox) Reset()         { *m = TLInboxEditChatMe
 func (m *TLInboxEditChatMessageToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxEditChatMessageToInbox) ProtoMessage()    {}
 func (*TLInboxEditChatMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{11}
+	return fileDescriptor_9a6f35d665e824e1, []int{9}
 }
 func (m *TLInboxEditChatMessageToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -943,94 +784,6 @@ func (m *TLInboxEditChatMessageToInbox) GetMessage() *mtproto.Message {
 }
 
 //--------------------------------------------------------------------------------------------
-type TLInboxEditChannelMessageToInbox struct {
-	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
-	FromId               int64            `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
-	PeerChannelId        int64            `protobuf:"varint,4,opt,name=peer_channel_id,json=peerChannelId,proto3" json:"peer_channel_id,omitempty"`
-	Pts                  int32            `protobuf:"varint,5,opt,name=pts,proto3" json:"pts,omitempty"`
-	PtsCount             int32            `protobuf:"varint,6,opt,name=pts_count,json=ptsCount,proto3" json:"pts_count,omitempty"`
-	Message              *mtproto.Message `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
-}
-
-func (m *TLInboxEditChannelMessageToInbox) Reset()         { *m = TLInboxEditChannelMessageToInbox{} }
-func (m *TLInboxEditChannelMessageToInbox) String() string { return proto.CompactTextString(m) }
-func (*TLInboxEditChannelMessageToInbox) ProtoMessage()    {}
-func (*TLInboxEditChannelMessageToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{12}
-}
-func (m *TLInboxEditChannelMessageToInbox) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLInboxEditChannelMessageToInbox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLInboxEditChannelMessageToInbox.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLInboxEditChannelMessageToInbox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInboxEditChannelMessageToInbox.Merge(m, src)
-}
-func (m *TLInboxEditChannelMessageToInbox) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLInboxEditChannelMessageToInbox) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInboxEditChannelMessageToInbox.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInboxEditChannelMessageToInbox proto.InternalMessageInfo
-
-func (m *TLInboxEditChannelMessageToInbox) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLInboxEditChannelMessageToInbox) GetFromId() int64 {
-	if m != nil {
-		return m.FromId
-	}
-	return 0
-}
-
-func (m *TLInboxEditChannelMessageToInbox) GetPeerChannelId() int64 {
-	if m != nil {
-		return m.PeerChannelId
-	}
-	return 0
-}
-
-func (m *TLInboxEditChannelMessageToInbox) GetPts() int32 {
-	if m != nil {
-		return m.Pts
-	}
-	return 0
-}
-
-func (m *TLInboxEditChannelMessageToInbox) GetPtsCount() int32 {
-	if m != nil {
-		return m.PtsCount
-	}
-	return 0
-}
-
-func (m *TLInboxEditChannelMessageToInbox) GetMessage() *mtproto.Message {
-	if m != nil {
-		return m.Message
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 type TLInboxDeleteMessagesToInbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
 	FromId               int64         `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
@@ -1046,7 +799,7 @@ func (m *TLInboxDeleteMessagesToInbox) Reset()         { *m = TLInboxDeleteMessa
 func (m *TLInboxDeleteMessagesToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxDeleteMessagesToInbox) ProtoMessage()    {}
 func (*TLInboxDeleteMessagesToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{13}
+	return fileDescriptor_9a6f35d665e824e1, []int{10}
 }
 func (m *TLInboxDeleteMessagesToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1111,94 +864,6 @@ func (m *TLInboxDeleteMessagesToInbox) GetId() []int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-type TLInboxDeleteChannelMessagesToInbox struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
-	FromId               int64         `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
-	PeerChannelId        int64         `protobuf:"varint,4,opt,name=peer_channel_id,json=peerChannelId,proto3" json:"peer_channel_id,omitempty"`
-	Pts                  int32         `protobuf:"varint,5,opt,name=pts,proto3" json:"pts,omitempty"`
-	PtsCount             int32         `protobuf:"varint,6,opt,name=pts_count,json=ptsCount,proto3" json:"pts_count,omitempty"`
-	Id                   []int32       `protobuf:"varint,7,rep,packed,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) Reset()         { *m = TLInboxDeleteChannelMessagesToInbox{} }
-func (m *TLInboxDeleteChannelMessagesToInbox) String() string { return proto.CompactTextString(m) }
-func (*TLInboxDeleteChannelMessagesToInbox) ProtoMessage()    {}
-func (*TLInboxDeleteChannelMessagesToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{14}
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLInboxDeleteChannelMessagesToInbox.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInboxDeleteChannelMessagesToInbox.Merge(m, src)
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInboxDeleteChannelMessagesToInbox.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInboxDeleteChannelMessagesToInbox proto.InternalMessageInfo
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetFromId() int64 {
-	if m != nil {
-		return m.FromId
-	}
-	return 0
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetPeerChannelId() int64 {
-	if m != nil {
-		return m.PeerChannelId
-	}
-	return 0
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetPts() int32 {
-	if m != nil {
-		return m.Pts
-	}
-	return 0
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetPtsCount() int32 {
-	if m != nil {
-		return m.PtsCount
-	}
-	return 0
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) GetId() []int32 {
-	if m != nil {
-		return m.Id
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 type TLInboxDeleteUserHistoryToInbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
 	FromId               int64         `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
@@ -1214,7 +879,7 @@ func (m *TLInboxDeleteUserHistoryToInbox) Reset()         { *m = TLInboxDeleteUs
 func (m *TLInboxDeleteUserHistoryToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxDeleteUserHistoryToInbox) ProtoMessage()    {}
 func (*TLInboxDeleteUserHistoryToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{15}
+	return fileDescriptor_9a6f35d665e824e1, []int{11}
 }
 func (m *TLInboxDeleteUserHistoryToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1293,7 +958,7 @@ func (m *TLInboxDeleteChatHistoryToInbox) Reset()         { *m = TLInboxDeleteCh
 func (m *TLInboxDeleteChatHistoryToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxDeleteChatHistoryToInbox) ProtoMessage()    {}
 func (*TLInboxDeleteChatHistoryToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{16}
+	return fileDescriptor_9a6f35d665e824e1, []int{12}
 }
 func (m *TLInboxDeleteChatHistoryToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1365,7 +1030,7 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Reset()         { *m = TLInboxReadUs
 func (m *TLInboxReadUserMediaUnreadToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxReadUserMediaUnreadToInbox) ProtoMessage()    {}
 func (*TLInboxReadUserMediaUnreadToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{17}
+	return fileDescriptor_9a6f35d665e824e1, []int{13}
 }
 func (m *TLInboxReadUserMediaUnreadToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1437,7 +1102,7 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Reset()         { *m = TLInboxReadCh
 func (m *TLInboxReadChatMediaUnreadToInbox) String() string { return proto.CompactTextString(m) }
 func (*TLInboxReadChatMediaUnreadToInbox) ProtoMessage()    {}
 func (*TLInboxReadChatMediaUnreadToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{18}
+	return fileDescriptor_9a6f35d665e824e1, []int{14}
 }
 func (m *TLInboxReadChatMediaUnreadToInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1495,78 +1160,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) GetId() []*InboxMessageId {
 }
 
 //--------------------------------------------------------------------------------------------
-type TLInboxReadChannelMediaUnreadToInbox struct {
-	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
-	FromId               int64         `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
-	PeerChannelId        int64         `protobuf:"varint,4,opt,name=peer_channel_id,json=peerChannelId,proto3" json:"peer_channel_id,omitempty"`
-	Id                   []int32       `protobuf:"varint,5,rep,packed,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) Reset()         { *m = TLInboxReadChannelMediaUnreadToInbox{} }
-func (m *TLInboxReadChannelMediaUnreadToInbox) String() string { return proto.CompactTextString(m) }
-func (*TLInboxReadChannelMediaUnreadToInbox) ProtoMessage()    {}
-func (*TLInboxReadChannelMediaUnreadToInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{19}
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLInboxReadChannelMediaUnreadToInbox.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLInboxReadChannelMediaUnreadToInbox.Merge(m, src)
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLInboxReadChannelMediaUnreadToInbox.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLInboxReadChannelMediaUnreadToInbox proto.InternalMessageInfo
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) GetFromId() int64 {
-	if m != nil {
-		return m.FromId
-	}
-	return 0
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) GetPeerChannelId() int64 {
-	if m != nil {
-		return m.PeerChannelId
-	}
-	return 0
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) GetId() []int32 {
-	if m != nil {
-		return m.Id
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
 type TLInboxUpdateHistoryReaded struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=inbox.TLConstructor" json:"constructor,omitempty"`
 	FromId               int64         `protobuf:"varint,3,opt,name=from_id,json=fromId,proto3" json:"from_id,omitempty"`
@@ -1583,7 +1176,7 @@ func (m *TLInboxUpdateHistoryReaded) Reset()         { *m = TLInboxUpdateHistory
 func (m *TLInboxUpdateHistoryReaded) String() string { return proto.CompactTextString(m) }
 func (*TLInboxUpdateHistoryReaded) ProtoMessage()    {}
 func (*TLInboxUpdateHistoryReaded) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{20}
+	return fileDescriptor_9a6f35d665e824e1, []int{15}
 }
 func (m *TLInboxUpdateHistoryReaded) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1672,7 +1265,7 @@ func (m *TLInboxUpdatePinnedMessage) Reset()         { *m = TLInboxUpdatePinnedM
 func (m *TLInboxUpdatePinnedMessage) String() string { return proto.CompactTextString(m) }
 func (*TLInboxUpdatePinnedMessage) ProtoMessage()    {}
 func (*TLInboxUpdatePinnedMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{21}
+	return fileDescriptor_9a6f35d665e824e1, []int{16}
 }
 func (m *TLInboxUpdatePinnedMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1766,7 +1359,7 @@ func (m *TLInboxUnpinAllMessages) Reset()         { *m = TLInboxUnpinAllMessages
 func (m *TLInboxUnpinAllMessages) String() string { return proto.CompactTextString(m) }
 func (*TLInboxUnpinAllMessages) ProtoMessage()    {}
 func (*TLInboxUnpinAllMessages) Descriptor() ([]byte, []int) {
-	return fileDescriptor_9a6f35d665e824e1, []int{22}
+	return fileDescriptor_9a6f35d665e824e1, []int{17}
 }
 func (m *TLInboxUnpinAllMessages) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1838,20 +1431,15 @@ func init() {
 	proto.RegisterType((*TLInboxMessageId)(nil), "inbox.TL_inboxMessageId")
 	proto.RegisterType((*TLInboxSendUserMessageToInbox)(nil), "inbox.TL_inbox_sendUserMessageToInbox")
 	proto.RegisterType((*TLInboxSendChatMessageToInbox)(nil), "inbox.TL_inbox_sendChatMessageToInbox")
-	proto.RegisterType((*TLInboxSendChannelMessageToInbox)(nil), "inbox.TL_inbox_sendChannelMessageToInbox")
 	proto.RegisterType((*TLInboxSendUserMultiMessageToInbox)(nil), "inbox.TL_inbox_sendUserMultiMessageToInbox")
 	proto.RegisterType((*TLInboxSendChatMultiMessageToInbox)(nil), "inbox.TL_inbox_sendChatMultiMessageToInbox")
-	proto.RegisterType((*TLInboxSendChannelMultiMessageToInbox)(nil), "inbox.TL_inbox_sendChannelMultiMessageToInbox")
 	proto.RegisterType((*TLInboxEditUserMessageToInbox)(nil), "inbox.TL_inbox_editUserMessageToInbox")
 	proto.RegisterType((*TLInboxEditChatMessageToInbox)(nil), "inbox.TL_inbox_editChatMessageToInbox")
-	proto.RegisterType((*TLInboxEditChannelMessageToInbox)(nil), "inbox.TL_inbox_editChannelMessageToInbox")
 	proto.RegisterType((*TLInboxDeleteMessagesToInbox)(nil), "inbox.TL_inbox_deleteMessagesToInbox")
-	proto.RegisterType((*TLInboxDeleteChannelMessagesToInbox)(nil), "inbox.TL_inbox_deleteChannelMessagesToInbox")
 	proto.RegisterType((*TLInboxDeleteUserHistoryToInbox)(nil), "inbox.TL_inbox_deleteUserHistoryToInbox")
 	proto.RegisterType((*TLInboxDeleteChatHistoryToInbox)(nil), "inbox.TL_inbox_deleteChatHistoryToInbox")
 	proto.RegisterType((*TLInboxReadUserMediaUnreadToInbox)(nil), "inbox.TL_inbox_readUserMediaUnreadToInbox")
 	proto.RegisterType((*TLInboxReadChatMediaUnreadToInbox)(nil), "inbox.TL_inbox_readChatMediaUnreadToInbox")
-	proto.RegisterType((*TLInboxReadChannelMediaUnreadToInbox)(nil), "inbox.TL_inbox_readChannelMediaUnreadToInbox")
 	proto.RegisterType((*TLInboxUpdateHistoryReaded)(nil), "inbox.TL_inbox_updateHistoryReaded")
 	proto.RegisterType((*TLInboxUpdatePinnedMessage)(nil), "inbox.TL_inbox_updatePinnedMessage")
 	proto.RegisterType((*TLInboxUnpinAllMessages)(nil), "inbox.TL_inbox_unpinAllMessages")
@@ -1860,106 +1448,89 @@ func init() {
 func init() { proto.RegisterFile("inbox.tl.proto", fileDescriptor_9a6f35d665e824e1) }
 
 var fileDescriptor_9a6f35d665e824e1 = []byte{
-	// 1569 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x5d, 0x6c, 0x14, 0x55,
-	0x14, 0x66, 0xba, 0xec, 0x4f, 0x4f, 0x6d, 0x19, 0x86, 0x02, 0xa5, 0xe0, 0xb2, 0x5d, 0xda, 0xb2,
-	0x14, 0xba, 0x2b, 0x8b, 0xe1, 0x59, 0x58, 0x1e, 0xdc, 0x80, 0x15, 0xc7, 0x56, 0x12, 0x8d, 0xd9,
-	0x4c, 0x77, 0x2e, 0xdb, 0xd1, 0xdd, 0x99, 0xc9, 0xcc, 0x5d, 0x6d, 0x5f, 0x41, 0x8c, 0x26, 0x24,
-	0x86, 0x37, 0x4d, 0x8c, 0x3f, 0xf1, 0x85, 0x60, 0x24, 0xa2, 0xf8, 0x13, 0x79, 0x10, 0x88, 0x0a,
-	0x09, 0x98, 0x48, 0x82, 0xc4, 0x44, 0x0c, 0x50, 0x13, 0x8d, 0x89, 0xc4, 0x9f, 0x10, 0x05, 0x02,
-	0xa9, 0xb9, 0x33, 0xb3, 0x7f, 0x73, 0xef, 0xec, 0x0e, 0x68, 0x4b, 0x7d, 0x69, 0xf6, 0xde, 0xfb,
-	0xdd, 0x73, 0xce, 0x77, 0xcf, 0xb9, 0xe7, 0x9e, 0x33, 0x85, 0x2e, 0x45, 0x1d, 0xd7, 0x26, 0x93,
-	0xb8, 0x98, 0xd4, 0x0d, 0x0d, 0x6b, 0x42, 0xd0, 0x1a, 0xf7, 0x0e, 0x17, 0x14, 0x3c, 0x51, 0x1e,
-	0x4f, 0xe6, 0xb5, 0x52, 0xaa, 0xa0, 0x15, 0xb4, 0x94, 0xb5, 0x3a, 0x5e, 0xde, 0x6d, 0x8d, 0xac,
-	0x81, 0xf5, 0xcb, 0xde, 0xd5, 0x1b, 0x2d, 0x68, 0x5a, 0xa1, 0x88, 0x6a, 0xa8, 0xe7, 0x0d, 0x49,
-	0xd7, 0x91, 0x61, 0x3a, 0xeb, 0xbd, 0x66, 0x7e, 0x02, 0x95, 0x24, 0xa2, 0x26, 0xaf, 0x19, 0x28,
-	0x87, 0xa7, 0x74, 0x54, 0x59, 0x5b, 0x51, 0x5b, 0xc3, 0x86, 0xa4, 0x9a, 0xba, 0x66, 0x60, 0x67,
-	0xa9, 0xbb, 0xb6, 0x64, 0x4e, 0xa9, 0x79, 0x7b, 0x36, 0xfe, 0x13, 0x07, 0x7c, 0x96, 0x58, 0xf9,
-	0x08, 0x32, 0x4d, 0xa9, 0x80, 0xb6, 0x49, 0x58, 0x12, 0x06, 0xa0, 0x4b, 0x37, 0x90, 0xac, 0xe4,
-	0x25, 0x8c, 0x72, 0xaa, 0x54, 0x42, 0x3d, 0x5c, 0x8c, 0x4b, 0xb4, 0x8b, 0x9d, 0xd5, 0xd9, 0x11,
-	0xa9, 0x84, 0x84, 0xcd, 0xd0, 0x91, 0xd7, 0x54, 0x13, 0x1b, 0xe5, 0x3c, 0xd6, 0x8c, 0x9e, 0xb6,
-	0x18, 0x97, 0xe8, 0x4a, 0x77, 0x27, 0xed, 0x43, 0x18, 0xdd, 0x91, 0xa9, 0xad, 0x89, 0xf5, 0x40,
-	0x61, 0x25, 0xb4, 0x1b, 0x92, 0x2a, 0x6b, 0xa5, 0x9c, 0x22, 0xf7, 0x04, 0x62, 0x5c, 0x22, 0x20,
-	0x46, 0xec, 0x89, 0xac, 0x2c, 0x0c, 0xc1, 0x62, 0x59, 0x91, 0x8a, 0x5a, 0x21, 0x57, 0xb2, 0x2d,
-	0x22, 0xa0, 0x85, 0x16, 0x68, 0x91, 0xbd, 0xe0, 0x58, 0x6a, 0x61, 0xc3, 0x0e, 0xa8, 0x27, 0x18,
-	0xe3, 0x12, 0x1d, 0x69, 0x3e, 0x59, 0xc2, 0x16, 0xaf, 0xa4, 0x03, 0x12, 0x2b, 0x80, 0xf8, 0x36,
-	0x58, 0x32, 0xba, 0x23, 0xa7, 0xb8, 0xa9, 0x0e, 0x43, 0x50, 0x96, 0xb0, 0x94, 0xb6, 0x18, 0x76,
-	0xa4, 0x97, 0x3b, 0xd6, 0xbb, 0x8f, 0x44, 0xb4, 0x51, 0xf1, 0x77, 0x39, 0xe8, 0xaa, 0x5f, 0xcb,
-	0xca, 0xb3, 0x7d, 0x58, 0x5d, 0xd0, 0xe6, 0x9c, 0x52, 0x50, 0x6c, 0x53, 0xee, 0xe8, 0x7c, 0xe2,
-	0x0f, 0xc1, 0x62, 0x17, 0xe7, 0xac, 0x2c, 0xac, 0x6f, 0x64, 0xbc, 0x94, 0xc1, 0x38, 0x2b, 0x57,
-	0xf8, 0x9e, 0xe2, 0x60, 0x75, 0x45, 0x44, 0xce, 0x44, 0xaa, 0x3c, 0x66, 0x22, 0xc3, 0x41, 0x8d,
-	0x6a, 0xd6, 0x1e, 0x37, 0x33, 0xce, 0x2f, 0xb3, 0xe5, 0x10, 0xde, 0x6d, 0xd4, 0x07, 0x41, 0x88,
-	0x0c, 0xb3, 0xb2, 0x10, 0x83, 0xfb, 0x74, 0x84, 0x8c, 0x5c, 0xd9, 0x44, 0x46, 0x8d, 0x1d, 0x90,
-	0x39, 0xa2, 0x3e, 0x2b, 0x0b, 0x1b, 0xdd, 0x8e, 0xf7, 0xf4, 0x5b, 0xd5, 0xff, 0x14, 0x93, 0xcc,
-	0x84, 0x84, 0xe7, 0x8a, 0x49, 0x7e, 0x42, 0xc2, 0x2e, 0x26, 0x44, 0xfd, 0xdd, 0x31, 0x39, 0xcb,
-	0x41, 0xdc, 0xcd, 0x44, 0x55, 0x51, 0x71, 0xb6, 0xc9, 0x0c, 0xc2, 0xa2, 0x0a, 0x19, 0xa2, 0xae,
-	0xc6, 0xa7, 0xd3, 0xe1, 0x43, 0x66, 0xb3, 0xb2, 0x30, 0xec, 0xa6, 0xb4, 0xc4, 0x7d, 0x2b, 0xb7,
-	0x6a, 0x93, 0x0d, 0x74, 0xfa, 0xe9, 0x10, 0x2b, 0x17, 0xb1, 0x32, 0xcf, 0xe2, 0x2c, 0xe0, 0xd7,
-	0x3b, 0xfd, 0x74, 0x9c, 0xcd, 0x25, 0x1d, 0x9f, 0xc1, 0xe6, 0x8f, 0xce, 0x39, 0x0e, 0xd6, 0x32,
-	0x83, 0x6d, 0x2e, 0x18, 0xdd, 0x55, 0xc4, 0x05, 0x5a, 0x46, 0xdc, 0xf1, 0xfa, 0x54, 0x80, 0x64,
-	0x05, 0xcf, 0x8f, 0xa4, 0x76, 0x27, 0xaf, 0x19, 0x45, 0x61, 0x7e, 0x64, 0xb3, 0x3b, 0xa1, 0x70,
-	0xbd, 0x3e, 0x8d, 0x39, 0x14, 0xe6, 0x53, 0x1a, 0xe3, 0x21, 0xa0, 0x63, 0xd3, 0xe2, 0x11, 0x14,
-	0xc9, 0x4f, 0x52, 0xb7, 0xe8, 0xd8, 0xcc, 0xe5, 0xb5, 0xb2, 0x8a, 0x7b, 0x42, 0xd6, 0x7c, 0x44,
-	0xc7, 0x66, 0x86, 0x8c, 0xeb, 0xa9, 0x87, 0x5b, 0x51, 0xff, 0x84, 0x83, 0x68, 0x95, 0xba, 0x8c,
-	0x8a, 0x08, 0x23, 0x07, 0x63, 0xce, 0x1a, 0x6d, 0x62, 0x3c, 0xa1, 0x4d, 0xaa, 0x45, 0x8b, 0x30,
-	0x31, 0x1e, 0x21, 0x63, 0x74, 0x4a, 0x47, 0x64, 0x97, 0xb5, 0xa8, 0xc8, 0x16, 0xdf, 0x80, 0x18,
-	0x22, 0xc3, 0xac, 0xec, 0x54, 0x1f, 0xa1, 0x58, 0x20, 0x11, 0x20, 0xd5, 0x47, 0xfc, 0x12, 0x07,
-	0x03, 0x2e, 0xcb, 0x1b, 0xdd, 0x66, 0xfe, 0xdf, 0xfc, 0x66, 0x33, 0x0c, 0xc7, 0x02, 0x76, 0x7d,
-	0x45, 0xf2, 0x77, 0x9f, 0x8b, 0x21, 0xb9, 0x9f, 0x0f, 0x2b, 0x26, 0xd6, 0x8c, 0xa9, 0x7b, 0x98,
-	0x1e, 0xee, 0x07, 0x78, 0xa6, 0x6c, 0xe2, 0x5c, 0xbe, 0x88, 0x24, 0xc3, 0xa2, 0x17, 0x11, 0xdb,
-	0xc9, 0x4c, 0x86, 0x4c, 0x08, 0x4b, 0x21, 0x54, 0x92, 0x26, 0x73, 0x96, 0xb7, 0x08, 0xc3, 0x60,
-	0x49, 0x9a, 0xcc, 0xca, 0xf1, 0xf7, 0x68, 0x3a, 0xe4, 0xae, 0xce, 0x15, 0x1d, 0xef, 0x54, 0x51,
-	0xb3, 0x37, 0x58, 0x6f, 0xef, 0xe7, 0x1c, 0xac, 0xa9, 0xda, 0x6b, 0x20, 0xc9, 0x29, 0x38, 0x65,
-	0x45, 0x1a, 0x53, 0xc9, 0xf0, 0x1e, 0x3a, 0x60, 0xc0, 0x8a, 0x14, 0xfb, 0x81, 0xf1, 0xa8, 0x9a,
-	0x49, 0x00, 0x51, 0x0c, 0xec, 0xd4, 0x3c, 0x77, 0x0c, 0xbc, 0xcf, 0xdc, 0x27, 0x83, 0x23, 0x1c,
-	0x0c, 0xba, 0x19, 0xd8, 0x57, 0x7c, 0xf6, 0x49, 0xf8, 0xbd, 0xe5, 0x5d, 0x55, 0x2a, 0xf6, 0xb5,
-	0x3d, 0xcf, 0xc1, 0xaa, 0xaa, 0xcd, 0x65, 0x5d, 0x96, 0x30, 0x72, 0x62, 0x5c, 0x44, 0x92, 0x8c,
-	0xe4, 0xf9, 0x92, 0x50, 0xd9, 0xd7, 0x54, 0x58, 0x06, 0x21, 0x52, 0x5c, 0x21, 0xc3, 0x7a, 0x3c,
-	0x02, 0xa2, 0x33, 0x8a, 0xff, 0x4d, 0xd3, 0xda, 0xa9, 0xa8, 0x2a, 0x92, 0x1d, 0x8f, 0xfd, 0x1b,
-	0x5a, 0x95, 0x48, 0x77, 0x68, 0x95, 0xed, 0x28, 0xef, 0x86, 0x60, 0x59, 0xd5, 0x15, 0xd5, 0xa2,
-	0x14, 0x11, 0xed, 0x41, 0x23, 0xd9, 0xa0, 0x37, 0xd9, 0x10, 0xe3, 0xf5, 0x08, 0x37, 0xef, 0x5d,
-	0x23, 0xec, 0xde, 0xf5, 0x24, 0x07, 0x2b, 0x6a, 0xcc, 0x89, 0x11, 0x5b, 0x8a, 0xd5, 0x47, 0xe6,
-	0xbf, 0xa7, 0x1d, 0x85, 0x0e, 0xa9, 0x8c, 0x27, 0x72, 0xcf, 0xa2, 0xa9, 0x5a, 0xcc, 0xb5, 0x93,
-	0xa9, 0xed, 0x68, 0xca, 0xed, 0x6d, 0xbf, 0x07, 0x30, 0xb4, 0x2f, 0x02, 0x9d, 0x0d, 0xd6, 0x08,
-	0x8b, 0xa1, 0x33, 0x23, 0x66, 0x36, 0xa5, 0x73, 0x63, 0x23, 0xdb, 0x47, 0x1e, 0xdd, 0x35, 0xc2,
-	0x2f, 0x10, 0xa2, 0xb0, 0xcc, 0x9e, 0x72, 0x7f, 0x9c, 0xe0, 0xcf, 0x7f, 0xff, 0xd7, 0x0f, 0x01,
-	0xa1, 0x0f, 0xba, 0xe9, 0xf5, 0xac, 0xcc, 0xbf, 0xb9, 0xf7, 0xcc, 0xd1, 0x5b, 0x33, 0x33, 0x33,
-	0x33, 0x9c, 0x90, 0x82, 0x78, 0x1d, 0xc4, 0xa3, 0x51, 0xe7, 0x3f, 0xfc, 0xe8, 0xd8, 0xeb, 0x33,
-	0x9e, 0x1b, 0xe8, 0x0a, 0x92, 0x3f, 0xf9, 0xf2, 0x85, 0x4f, 0x6f, 0xd8, 0x1b, 0x86, 0x61, 0x80,
-	0xb1, 0x81, 0xae, 0xd7, 0xf8, 0x0b, 0xd3, 0x97, 0xce, 0x85, 0x85, 0x07, 0x61, 0x2d, 0xd3, 0x20,
-	0xba, 0x6b, 0xe0, 0x6f, 0x4c, 0x1f, 0x38, 0xec, 0x28, 0x61, 0xec, 0xf2, 0xe8, 0x9e, 0xf8, 0xfd,
-	0x3f, 0x5e, 0x3d, 0x7a, 0xdb, 0xde, 0x95, 0x86, 0x21, 0x2f, 0xd3, 0x18, 0x1b, 0x4f, 0x7c, 0x70,
-	0xea, 0x62, 0x40, 0x18, 0x6a, 0xe4, 0xcf, 0x6e, 0x02, 0xf8, 0x83, 0xbf, 0xfd, 0xfa, 0x73, 0x90,
-	0x85, 0x65, 0x9c, 0xd5, 0x2b, 0xd7, 0x4e, 0x9c, 0x0e, 0x0b, 0xe9, 0xc6, 0x63, 0xf2, 0x2c, 0x6b,
-	0xf9, 0xaf, 0x6f, 0x1e, 0x39, 0xe0, 0xf8, 0x22, 0x09, 0x7d, 0xf5, 0x7b, 0x98, 0xf5, 0x20, 0x7f,
-	0xf4, 0xe2, 0x1f, 0x07, 0xaf, 0xdb, 0xf8, 0x07, 0x20, 0x41, 0xe3, 0xd9, 0x55, 0x18, 0xff, 0xd5,
-	0xb9, 0x5f, 0xf6, 0x73, 0xc2, 0x06, 0xe8, 0xa7, 0x77, 0xd0, 0x55, 0x0d, 0xff, 0xdd, 0x9e, 0x43,
-	0x6f, 0x71, 0xc2, 0x46, 0x16, 0x9a, 0x2e, 0x1a, 0xf8, 0x3d, 0x67, 0x0f, 0x7d, 0x79, 0xbb, 0x42,
-	0x61, 0xb0, 0x7e, 0x8b, 0xf7, 0xbb, 0xcd, 0x9f, 0x79, 0xf1, 0x85, 0xc3, 0x4c, 0x3c, 0xfb, 0x95,
-	0xe4, 0xcf, 0x1f, 0xdb, 0x77, 0x28, 0x28, 0x6c, 0x86, 0x75, 0x0c, 0x3c, 0xfb, 0x4d, 0xe2, 0x3f,
-	0xfe, 0x6c, 0xef, 0xf1, 0x9b, 0xb6, 0x5d, 0x1b, 0x60, 0x75, 0xfd, 0x3e, 0xc6, 0xbb, 0xc0, 0x5f,
-	0x7e, 0xed, 0xed, 0x37, 0x6e, 0x35, 0x41, 0x37, 0xa4, 0x5b, 0xfe, 0xda, 0xb7, 0xef, 0x9f, 0x71,
-	0x64, 0xf7, 0xc3, 0xaa, 0x06, 0xb4, 0x2b, 0x45, 0xf1, 0x57, 0xbe, 0xf8, 0xf3, 0xd5, 0xb6, 0xde,
-	0x85, 0x2f, 0xbd, 0x13, 0x5d, 0x90, 0xbe, 0xda, 0x09, 0x11, 0x71, 0x67, 0xc6, 0x7e, 0x33, 0x77,
-	0xc1, 0xaa, 0xa6, 0xdf, 0xd3, 0x06, 0xab, 0x69, 0xac, 0xe9, 0x75, 0xee, 0xed, 0xac, 0x36, 0x18,
-	0x4f, 0x68, 0x8a, 0x1c, 0x5f, 0xd0, 0x28, 0x98, 0xd1, 0x10, 0x32, 0x05, 0xd3, 0x38, 0x5a, 0xf0,
-	0xd3, 0xb0, 0xba, 0xd5, 0xd7, 0xa6, 0x75, 0x1e, 0xb2, 0x69, 0x28, 0x2d, 0x5e, 0x82, 0xbe, 0xd6,
-	0x5f, 0x7f, 0xd6, 0x7b, 0x9e, 0x0a, 0x0d, 0x6e, 0xa1, 0xc2, 0xeb, 0x8b, 0xcc, 0x7a, 0xcf, 0xf3,
-	0xf1, 0xa3, 0xa2, 0x00, 0xfd, 0xbe, 0xbe, 0x92, 0x24, 0x9b, 0x9d, 0x94, 0x1f, 0x45, 0x55, 0x37,
-	0x7b, 0x7c, 0xba, 0xa0, 0xdc, 0xcc, 0xc6, 0xb5, 0x10, 0xec, 0x27, 0x7e, 0xd8, 0xb8, 0x26, 0xf1,
-	0xe3, 0xdd, 0xe6, 0xaf, 0xf3, 0x90, 0xed, 0x27, 0x7e, 0xc6, 0x60, 0x65, 0xb3, 0x56, 0x7a, 0xc0,
-	0x2d, 0x9a, 0x09, 0xa3, 0xc5, 0xe6, 0x21, 0xee, 0xa3, 0xcf, 0xdd, 0xc0, 0x96, 0xce, 0x46, 0xd3,
-	0x4a, 0x9e, 0x82, 0x68, 0x8b, 0x56, 0x33, 0xc1, 0x56, 0x40, 0x23, 0x5b, 0x0a, 0x67, 0x34, 0x7e,
-	0x09, 0x4f, 0xeb, 0x71, 0x2b, 0xe1, 0x39, 0x88, 0xb5, 0xec, 0xd2, 0x86, 0xdc, 0xe2, 0xbd, 0xb1,
-	0x2d, 0x14, 0x78, 0x34, 0x51, 0x4c, 0x05, 0x6c, 0x2c, 0xad, 0x00, 0xc1, 0x1a, 0x3f, 0x3d, 0xce,
-	0xb0, 0x87, 0x0e, 0x36, 0x9c, 0x56, 0xf3, 0x18, 0xac, 0xf0, 0x6e, 0x4b, 0xd6, 0xb8, 0x85, 0x33,
-	0x40, 0x2d, 0x45, 0x36, 0xb6, 0x04, 0x1e, 0x22, 0x1b, 0x40, 0xb4, 0xc8, 0xed, 0xb0, 0xcc, 0xa3,
-	0xd6, 0x8e, 0x51, 0xf2, 0x5c, 0x08, 0x4a, 0xd8, 0xd6, 0xc7, 0x7f, 0xbf, 0x12, 0xe5, 0x4e, 0x4f,
-	0x47, 0xb9, 0x6f, 0xa6, 0xa3, 0xdc, 0xe5, 0xe9, 0x28, 0xf7, 0xe4, 0x96, 0xba, 0xff, 0x81, 0x62,
-	0x24, 0x95, 0x0a, 0x86, 0x54, 0xfb, 0x31, 0x6c, 0x22, 0xe3, 0x39, 0x64, 0xa4, 0x24, 0x5d, 0x4f,
-	0x91, 0xce, 0x00, 0xa9, 0x05, 0x64, 0xa4, 0x4a, 0x66, 0x21, 0x65, 0x29, 0xb4, 0xff, 0x8e, 0x87,
-	0x2c, 0x15, 0x9b, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0x64, 0x44, 0x6f, 0x53, 0x66, 0x1d, 0x00,
-	0x00,
+	// 1300 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x98, 0x4f, 0x6c, 0x1b, 0xc5,
+	0x17, 0xc7, 0xbb, 0x71, 0xed, 0xd8, 0x2f, 0xbf, 0xe4, 0xb7, 0x5d, 0xd2, 0x34, 0xff, 0x70, 0x1d,
+	0x37, 0x29, 0x56, 0xd2, 0xd8, 0xaa, 0x8b, 0x38, 0x53, 0xdc, 0x03, 0x56, 0x4a, 0x28, 0x4b, 0x42,
+	0x25, 0x38, 0xac, 0x26, 0x9e, 0xa9, 0xb3, 0x60, 0xef, 0xae, 0x76, 0xd7, 0x10, 0x5f, 0x4b, 0x41,
+	0x20, 0x21, 0x21, 0x6e, 0x20, 0x21, 0xfe, 0x88, 0x4b, 0x15, 0x44, 0x85, 0x44, 0x10, 0x48, 0x3d,
+	0x00, 0x15, 0x88, 0x4a, 0xe9, 0x81, 0x43, 0x40, 0x48, 0x80, 0xd4, 0x06, 0x09, 0x2e, 0x20, 0xfe,
+	0xa8, 0x02, 0x5a, 0x15, 0x05, 0xcd, 0xee, 0xfa, 0xdf, 0xce, 0x6c, 0xec, 0x14, 0x9a, 0xe6, 0x12,
+	0x79, 0x66, 0xbe, 0xf3, 0xe6, 0x7d, 0xe6, 0xbd, 0x99, 0x79, 0x1b, 0xe8, 0x53, 0xb5, 0x05, 0x7d,
+	0x29, 0x6d, 0x97, 0xd2, 0x86, 0xa9, 0xdb, 0xba, 0x14, 0x76, 0xda, 0xc3, 0xd3, 0x45, 0xd5, 0x5e,
+	0xac, 0x2c, 0xa4, 0x0b, 0x7a, 0x39, 0x53, 0xd4, 0x8b, 0x7a, 0xc6, 0x19, 0x5d, 0xa8, 0x9c, 0x72,
+	0x5a, 0x4e, 0xc3, 0xf9, 0xe5, 0xce, 0x1a, 0x8e, 0x17, 0x75, 0xbd, 0x58, 0x22, 0x0d, 0xd5, 0x53,
+	0x26, 0x32, 0x0c, 0x62, 0x5a, 0xde, 0xf8, 0xb0, 0x55, 0x58, 0x24, 0x65, 0x44, 0x97, 0x29, 0xe8,
+	0x26, 0x51, 0xec, 0xaa, 0x41, 0x6a, 0x63, 0x43, 0x8d, 0x31, 0xdb, 0x44, 0x9a, 0x65, 0xe8, 0xa6,
+	0xed, 0x0d, 0xf5, 0x37, 0x86, 0xac, 0xaa, 0x56, 0x70, 0x7b, 0x93, 0x3f, 0x08, 0x20, 0xe6, 0xa9,
+	0x97, 0x0f, 0x10, 0xcb, 0x42, 0x45, 0x72, 0x0c, 0xd9, 0x48, 0x9a, 0x80, 0x3e, 0xc3, 0x24, 0x58,
+	0x2d, 0x20, 0x9b, 0x28, 0x1a, 0x2a, 0x93, 0x41, 0x21, 0x21, 0xa4, 0x62, 0x72, 0x6f, 0xbd, 0x77,
+	0x16, 0x95, 0x89, 0x74, 0x0f, 0xf4, 0x14, 0x74, 0xcd, 0xb2, 0xcd, 0x4a, 0xc1, 0xd6, 0xcd, 0xc1,
+	0xae, 0x84, 0x90, 0xea, 0xcb, 0xf6, 0xa7, 0xdd, 0x4d, 0x98, 0x3b, 0x9e, 0x6b, 0x8c, 0xc9, 0xcd,
+	0x42, 0x69, 0x04, 0x62, 0x26, 0xd2, 0xb0, 0x5e, 0x56, 0x54, 0x3c, 0x18, 0x4a, 0x08, 0xa9, 0x90,
+	0x1c, 0x75, 0x3b, 0xf2, 0x58, 0x9a, 0x84, 0x3d, 0x58, 0x45, 0x25, 0xbd, 0xa8, 0x94, 0x5d, 0x8f,
+	0xa8, 0x68, 0xb7, 0x23, 0xfa, 0xbf, 0x3b, 0xe0, 0x79, 0xea, 0x68, 0xbb, 0x3d, 0xd1, 0x60, 0x38,
+	0x21, 0xa4, 0x7a, 0xb2, 0x62, 0xba, 0x6c, 0x3b, 0x5c, 0x69, 0x4f, 0x24, 0xd7, 0x04, 0xc9, 0x63,
+	0x70, 0xc7, 0xdc, 0x71, 0x45, 0xf5, 0xa3, 0x4e, 0x43, 0x18, 0x23, 0x1b, 0x65, 0x1d, 0xc2, 0x9e,
+	0xec, 0x3e, 0xcf, 0x7b, 0xff, 0x96, 0xc8, 0xae, 0x2a, 0xf9, 0xb6, 0x00, 0x7d, 0xcd, 0x63, 0x79,
+	0x7c, 0xab, 0x37, 0xab, 0x0f, 0xba, 0xbc, 0x5d, 0x0a, 0xcb, 0x5d, 0xea, 0x96, 0xf6, 0x27, 0x79,
+	0x2f, 0xec, 0xf1, 0x31, 0xe7, 0xb1, 0x34, 0xd5, 0x4a, 0xbc, 0x97, 0x43, 0x9c, 0xc7, 0x35, 0xde,
+	0xcf, 0x05, 0xd8, 0x5f, 0x33, 0xa1, 0x58, 0x44, 0xc3, 0xf3, 0x16, 0x31, 0x3d, 0xd5, 0x9c, 0xee,
+	0xcc, 0xf1, 0x93, 0x09, 0x9d, 0x92, 0xed, 0x83, 0xee, 0x53, 0x66, 0x73, 0x12, 0x44, 0x68, 0x33,
+	0x8f, 0xa5, 0x04, 0xfc, 0xcf, 0x20, 0xc4, 0x54, 0x2a, 0x16, 0x31, 0x1b, 0x74, 0x40, 0xfb, 0xe8,
+	0xf2, 0x79, 0x2c, 0x1d, 0xf6, 0x07, 0x3e, 0x30, 0x6e, 0xf5, 0xf8, 0x33, 0x24, 0xb9, 0x45, 0x64,
+	0x6f, 0x17, 0x49, 0x61, 0x11, 0xd9, 0x3e, 0x12, 0xba, 0xfc, 0xcd, 0x91, 0x5c, 0x12, 0x60, 0x9c,
+	0x8d, 0x49, 0xa5, 0x64, 0xab, 0x3b, 0x2c, 0x30, 0xa1, 0x9b, 0xc3, 0x71, 0x02, 0xb3, 0x9d, 0x38,
+	0x1d, 0x46, 0xa7, 0x33, 0x9c, 0x8f, 0x9b, 0xf3, 0x8c, 0x60, 0xd5, 0xde, 0x19, 0x27, 0x66, 0x2b,
+	0x57, 0x25, 0x83, 0xb0, 0x33, 0x8e, 0xca, 0x56, 0x10, 0x3e, 0x10, 0x20, 0x5e, 0x47, 0xc0, 0xa4,
+	0x44, 0x6c, 0xe2, 0x69, 0xac, 0x5b, 0x46, 0x30, 0x02, 0x31, 0x87, 0x80, 0xbe, 0xc7, 0x8e, 0xfb,
+	0x61, 0x39, 0x4a, 0x3b, 0xe6, 0xaa, 0x06, 0xa1, 0xb3, 0x9c, 0x41, 0x15, 0x3b, 0xce, 0x87, 0xe4,
+	0x08, 0x6d, 0xe6, 0xb1, 0x77, 0xbf, 0x47, 0x12, 0xa1, 0x54, 0x88, 0xde, 0xef, 0xf4, 0x38, 0x8c,
+	0xf9, 0x3c, 0xa7, 0x21, 0xbc, 0x5f, 0xb5, 0x6c, 0xdd, 0xac, 0xde, 0xc6, 0x0c, 0xba, 0x13, 0xe0,
+	0xf1, 0x8a, 0x65, 0x2b, 0x85, 0x12, 0x41, 0xa6, 0x03, 0x11, 0x95, 0x63, 0xb4, 0x27, 0x47, 0x3b,
+	0xa4, 0xbd, 0x10, 0x29, 0xa3, 0x25, 0xc5, 0x61, 0xa1, 0xe8, 0xe1, 0x32, 0x5a, 0xca, 0xe3, 0xe4,
+	0x3b, 0x2c, 0x0e, 0x0d, 0xe7, 0x76, 0xe1, 0x04, 0x67, 0x53, 0xc3, 0xdf, 0x70, 0xb3, 0xbf, 0x1f,
+	0x09, 0x70, 0xa0, 0xee, 0xaf, 0x49, 0x90, 0xf7, 0xe0, 0x61, 0x15, 0xcd, 0x6b, 0xb4, 0x79, 0x1b,
+	0x03, 0x30, 0xe1, 0x64, 0x8a, 0x7b, 0x0f, 0x05, 0xbc, 0xda, 0x34, 0x81, 0x18, 0x02, 0xf7, 0xf4,
+	0x6e, 0x1f, 0x41, 0xf0, 0x9e, 0x77, 0x48, 0xb0, 0x26, 0xc0, 0x68, 0x9d, 0xa0, 0x62, 0x60, 0x64,
+	0x13, 0x2f, 0x5f, 0x64, 0x82, 0x30, 0xc1, 0x3b, 0xe5, 0xe8, 0xf2, 0x53, 0x5e, 0x1a, 0x80, 0x08,
+	0x7d, 0xc6, 0x88, 0x39, 0xd8, 0xed, 0xca, 0xdd, 0x56, 0xf2, 0x4f, 0x16, 0xeb, 0x84, 0xaa, 0x69,
+	0x04, 0x7b, 0xf4, 0xff, 0x06, 0xab, 0x96, 0x35, 0x1e, 0x56, 0xc5, 0xcd, 0x98, 0x7e, 0x08, 0x57,
+	0x34, 0x43, 0xd5, 0x1c, 0xa4, 0xa8, 0xec, 0x36, 0x5a, 0x61, 0xc3, 0xc1, 0xb0, 0x11, 0xce, 0x3d,
+	0xd5, 0xbd, 0x79, 0x1d, 0x1a, 0xe5, 0xd7, 0xa1, 0x17, 0x04, 0x18, 0x6a, 0x90, 0x53, 0x27, 0x8e,
+	0x96, 0x4a, 0xb5, 0xfb, 0xf8, 0xbf, 0xc7, 0x8e, 0x43, 0x0f, 0xaa, 0xd8, 0x8b, 0xca, 0x13, 0xa4,
+	0xda, 0xc8, 0xc3, 0x18, 0xed, 0x9a, 0x21, 0x55, 0x7f, 0xb4, 0x3b, 0xdd, 0x80, 0xc9, 0x33, 0x11,
+	0xe8, 0x6d, 0xf1, 0x46, 0xda, 0x03, 0xbd, 0x39, 0x39, 0x77, 0x24, 0xab, 0xcc, 0xcf, 0xce, 0xcc,
+	0x3e, 0x78, 0x72, 0x56, 0xdc, 0x25, 0xc5, 0x61, 0xc0, 0xed, 0xf2, 0x7f, 0x68, 0x88, 0x6b, 0xdf,
+	0xfc, 0xf1, 0x5d, 0x48, 0x1a, 0x83, 0x7e, 0x76, 0x3c, 0x8f, 0xc5, 0xd7, 0x9f, 0x5e, 0x5d, 0xb9,
+	0xb1, 0xb1, 0xb1, 0xb1, 0x21, 0x48, 0x19, 0x48, 0x36, 0x49, 0x02, 0x8a, 0x6e, 0xf1, 0xbd, 0xf7,
+	0xcf, 0xbf, 0xba, 0x11, 0x38, 0x81, 0x7d, 0xb0, 0xc5, 0x0b, 0xcf, 0x7f, 0xf5, 0xe1, 0x35, 0x77,
+	0xc2, 0xdd, 0x70, 0x17, 0x77, 0x05, 0xb6, 0xe6, 0x12, 0xaf, 0xad, 0xbf, 0x74, 0x2e, 0x78, 0x56,
+	0x40, 0xa5, 0x26, 0xbe, 0xf0, 0xfd, 0xcf, 0x2b, 0x7f, 0xbb, 0xb3, 0x26, 0x5b, 0x9d, 0xe3, 0x17,
+	0x44, 0xe2, 0xd9, 0x5f, 0x7e, 0xfa, 0x31, 0xcc, 0xd3, 0x72, 0x40, 0x5e, 0xbc, 0xfa, 0xc9, 0xc5,
+	0x6e, 0x29, 0x0d, 0x63, 0xcd, 0x5a, 0xee, 0x13, 0x2f, 0xae, 0x7c, 0xfb, 0xdb, 0xd9, 0xbf, 0x5c,
+	0x3f, 0x0e, 0xc1, 0x38, 0xab, 0x67, 0x1f, 0x56, 0xf1, 0xeb, 0xd3, 0xcb, 0x6f, 0x08, 0xd2, 0x61,
+	0x9e, 0x9a, 0x7d, 0xb7, 0xc4, 0xd3, 0x97, 0x96, 0x3f, 0xf3, 0x40, 0xd3, 0x70, 0xb0, 0x79, 0x4a,
+	0xf0, 0xd3, 0x21, 0xae, 0x3e, 0x7b, 0xe6, 0x1c, 0x57, 0xcf, 0xbf, 0xa8, 0xc5, 0xb5, 0xf3, 0xcf,
+	0x2c, 0x87, 0xa5, 0x43, 0xb0, 0xbf, 0x59, 0xcf, 0xb9, 0x16, 0xc5, 0xcb, 0xaf, 0xbc, 0xf9, 0xda,
+	0x8d, 0x1a, 0x2e, 0x47, 0xdd, 0x72, 0xdb, 0x88, 0x57, 0xbf, 0x7c, 0x77, 0xf5, 0xba, 0xab, 0x1e,
+	0x87, 0xd1, 0x16, 0xb5, 0xef, 0x84, 0x8a, 0x57, 0x3e, 0xfd, 0xfd, 0xe5, 0xae, 0xe1, 0xdd, 0xcf,
+	0xbd, 0x15, 0xdf, 0x95, 0xbd, 0x1e, 0x83, 0xa8, 0x7c, 0x22, 0xe7, 0xbe, 0x21, 0x27, 0x61, 0x74,
+	0xd3, 0x4f, 0xc3, 0x83, 0xf5, 0x53, 0xbc, 0x69, 0x36, 0x0f, 0xf7, 0xd6, 0x2b, 0xb9, 0x47, 0x74,
+	0x15, 0x27, 0x77, 0xb5, 0x1a, 0xe6, 0x94, 0x9f, 0x5c, 0xc3, 0xac, 0x8e, 0x35, 0x8c, 0x60, 0xac,
+	0xfd, 0x87, 0xd3, 0x54, 0xa0, 0xdb, 0xac, 0xb8, 0xcd, 0x12, 0x41, 0x1f, 0x33, 0x53, 0x81, 0x00,
+	0x9d, 0x2c, 0x51, 0xdf, 0x9e, 0x80, 0x0f, 0x0c, 0x66, 0x7b, 0xf8, 0xba, 0x36, 0x86, 0x3b, 0xd9,
+	0x77, 0xbe, 0x8e, 0x35, 0x3c, 0x0f, 0x23, 0x9b, 0x15, 0xe3, 0x13, 0x7e, 0xbb, 0x5c, 0x19, 0x6b,
+	0xf6, 0x31, 0x88, 0xb7, 0xa9, 0x94, 0x53, 0x7c, 0xcb, 0xac, 0xb2, 0xad, 0x71, 0x4e, 0xdd, 0x1a,
+	0x60, 0x9c, 0x55, 0xb2, 0xc6, 0x15, 0x48, 0xb4, 0x2d, 0x32, 0x27, 0xfd, 0xe6, 0x83, 0xb5, 0x6d,
+	0x16, 0x08, 0xa8, 0x01, 0xb9, 0x0b, 0xf0, 0xb5, 0xec, 0x02, 0x0f, 0xc1, 0x50, 0x70, 0x89, 0x76,
+	0xc0, 0x6f, 0x99, 0x23, 0x6a, 0x6b, 0xb2, 0xb5, 0x3c, 0x0a, 0x30, 0xd9, 0x22, 0x62, 0x4d, 0xce,
+	0xc0, 0x40, 0x40, 0xdd, 0x91, 0x60, 0xec, 0xf9, 0x14, 0x8c, 0xb1, 0xfb, 0x1e, 0xfe, 0xf5, 0x4a,
+	0x5c, 0xb8, 0xb8, 0x1e, 0x17, 0xbe, 0x58, 0x8f, 0x0b, 0x97, 0xd7, 0xe3, 0xc2, 0xa3, 0x47, 0x9b,
+	0xfe, 0xb7, 0x6b, 0x13, 0x54, 0x2e, 0x9a, 0xa8, 0xf1, 0x63, 0xda, 0x22, 0xe6, 0x93, 0xc4, 0xcc,
+	0x20, 0xc3, 0xc8, 0xd0, 0x2a, 0x89, 0x68, 0x45, 0x62, 0x66, 0xca, 0x56, 0x31, 0xe3, 0x2c, 0xe8,
+	0xfe, 0x5d, 0x88, 0x38, 0x4b, 0x1c, 0xf9, 0x27, 0x00, 0x00, 0xff, 0xff, 0xf7, 0x7b, 0xd5, 0x06,
+	0x3e, 0x16, 0x00, 0x00,
 }
 
 func (this *InboxMessageData) GoString() string {
@@ -2063,24 +1634,6 @@ func (this *TLInboxSendChatMessageToInbox) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *TLInboxSendChannelMessageToInbox) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&inbox.TLInboxSendChannelMessageToInbox{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
-	s = append(s, "PeerChannelId: "+fmt.Sprintf("%#v", this.PeerChannelId)+",\n")
-	if this.Message != nil {
-		s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *TLInboxSendUserMultiMessageToInbox) GoString() string {
 	if this == nil {
 		return "nil"
@@ -2108,24 +1661,6 @@ func (this *TLInboxSendChatMultiMessageToInbox) GoString() string {
 	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
 	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
 	s = append(s, "PeerChatId: "+fmt.Sprintf("%#v", this.PeerChatId)+",\n")
-	if this.Message != nil {
-		s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLInboxSendChannelMultiMessageToInbox) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&inbox.TLInboxSendChannelMultiMessageToInbox{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
-	s = append(s, "PeerChannelId: "+fmt.Sprintf("%#v", this.PeerChannelId)+",\n")
 	if this.Message != nil {
 		s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
 	}
@@ -2171,26 +1706,6 @@ func (this *TLInboxEditChatMessageToInbox) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *TLInboxEditChannelMessageToInbox) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&inbox.TLInboxEditChannelMessageToInbox{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
-	s = append(s, "PeerChannelId: "+fmt.Sprintf("%#v", this.PeerChannelId)+",\n")
-	s = append(s, "Pts: "+fmt.Sprintf("%#v", this.Pts)+",\n")
-	s = append(s, "PtsCount: "+fmt.Sprintf("%#v", this.PtsCount)+",\n")
-	if this.Message != nil {
-		s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *TLInboxDeleteMessagesToInbox) GoString() string {
 	if this == nil {
 		return "nil"
@@ -2201,24 +1716,6 @@ func (this *TLInboxDeleteMessagesToInbox) GoString() string {
 	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
 	s = append(s, "PeerType: "+fmt.Sprintf("%#v", this.PeerType)+",\n")
 	s = append(s, "PeerId: "+fmt.Sprintf("%#v", this.PeerId)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLInboxDeleteChannelMessagesToInbox) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&inbox.TLInboxDeleteChannelMessagesToInbox{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
-	s = append(s, "PeerChannelId: "+fmt.Sprintf("%#v", this.PeerChannelId)+",\n")
-	s = append(s, "Pts: "+fmt.Sprintf("%#v", this.Pts)+",\n")
-	s = append(s, "PtsCount: "+fmt.Sprintf("%#v", this.PtsCount)+",\n")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
@@ -2289,22 +1786,6 @@ func (this *TLInboxReadChatMediaUnreadToInbox) GoString() string {
 	if this.Id != nil {
 		s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLInboxReadChannelMediaUnreadToInbox) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&inbox.TLInboxReadChannelMediaUnreadToInbox{")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "FromId: "+fmt.Sprintf("%#v", this.FromId)+",\n")
-	s = append(s, "PeerChannelId: "+fmt.Sprintf("%#v", this.PeerChannelId)+",\n")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	if this.XXX_unrecognized != nil {
 		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
 	}
@@ -2388,20 +1869,15 @@ const _ = grpc.SupportPackageIsVersion4
 type RPCInboxClient interface {
 	InboxSendUserMessageToInbox(ctx context.Context, in *TLInboxSendUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxSendChatMessageToInbox(ctx context.Context, in *TLInboxSendChatMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxSendChannelMessageToInbox(ctx context.Context, in *TLInboxSendChannelMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxSendUserMultiMessageToInbox(ctx context.Context, in *TLInboxSendUserMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxSendChatMultiMessageToInbox(ctx context.Context, in *TLInboxSendChatMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxSendChannelMultiMessageToInbox(ctx context.Context, in *TLInboxSendChannelMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(ctx context.Context, in *TLInboxEditUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(ctx context.Context, in *TLInboxEditChatMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxEditChannelMessageToInbox(ctx context.Context, in *TLInboxEditChannelMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(ctx context.Context, in *TLInboxDeleteMessagesToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxDeleteChannelMessagesToInbox(ctx context.Context, in *TLInboxDeleteChannelMessagesToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxDeleteUserHistoryToInbox(ctx context.Context, in *TLInboxDeleteUserHistoryToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxDeleteChatHistoryToInbox(ctx context.Context, in *TLInboxDeleteChatHistoryToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxReadUserMediaUnreadToInbox(ctx context.Context, in *TLInboxReadUserMediaUnreadToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxReadChatMediaUnreadToInbox(ctx context.Context, in *TLInboxReadChatMediaUnreadToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxReadChannelMediaUnreadToInbox(ctx context.Context, in *TLInboxReadChannelMediaUnreadToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxUpdateHistoryReaded(ctx context.Context, in *TLInboxUpdateHistoryReaded, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxUpdatePinnedMessage(ctx context.Context, in *TLInboxUpdatePinnedMessage, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxUnpinAllMessages(ctx context.Context, in *TLInboxUnpinAllMessages, opts ...grpc.CallOption) (*mtproto.Void, error)
@@ -2433,15 +1909,6 @@ func (c *rPCInboxClient) InboxSendChatMessageToInbox(ctx context.Context, in *TL
 	return out, nil
 }
 
-func (c *rPCInboxClient) InboxSendChannelMessageToInbox(ctx context.Context, in *TLInboxSendChannelMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_sendChannelMessageToInbox", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *rPCInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *TLInboxSendUserMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
 	out := new(mtproto.Void)
 	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_sendUserMultiMessageToInbox", in, out, opts...)
@@ -2454,15 +1921,6 @@ func (c *rPCInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Context, i
 func (c *rPCInboxClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *TLInboxSendChatMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
 	out := new(mtproto.Void)
 	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_sendChatMultiMessageToInbox", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCInboxClient) InboxSendChannelMultiMessageToInbox(ctx context.Context, in *TLInboxSendChannelMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_sendChannelMultiMessageToInbox", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2487,27 +1945,9 @@ func (c *rPCInboxClient) InboxEditChatMessageToInbox(ctx context.Context, in *TL
 	return out, nil
 }
 
-func (c *rPCInboxClient) InboxEditChannelMessageToInbox(ctx context.Context, in *TLInboxEditChannelMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_editChannelMessageToInbox", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *rPCInboxClient) InboxDeleteMessagesToInbox(ctx context.Context, in *TLInboxDeleteMessagesToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
 	out := new(mtproto.Void)
 	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_deleteMessagesToInbox", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCInboxClient) InboxDeleteChannelMessagesToInbox(ctx context.Context, in *TLInboxDeleteChannelMessagesToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_deleteChannelMessagesToInbox", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2550,15 +1990,6 @@ func (c *rPCInboxClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, in
 	return out, nil
 }
 
-func (c *rPCInboxClient) InboxReadChannelMediaUnreadToInbox(ctx context.Context, in *TLInboxReadChannelMediaUnreadToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_readChannelMediaUnreadToInbox", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *rPCInboxClient) InboxUpdateHistoryReaded(ctx context.Context, in *TLInboxUpdateHistoryReaded, opts ...grpc.CallOption) (*mtproto.Void, error) {
 	out := new(mtproto.Void)
 	err := c.cc.Invoke(ctx, "/inbox.RPCInbox/inbox_updateHistoryReaded", in, out, opts...)
@@ -2590,20 +2021,15 @@ func (c *rPCInboxClient) InboxUnpinAllMessages(ctx context.Context, in *TLInboxU
 type RPCInboxServer interface {
 	InboxSendUserMessageToInbox(context.Context, *TLInboxSendUserMessageToInbox) (*mtproto.Void, error)
 	InboxSendChatMessageToInbox(context.Context, *TLInboxSendChatMessageToInbox) (*mtproto.Void, error)
-	InboxSendChannelMessageToInbox(context.Context, *TLInboxSendChannelMessageToInbox) (*mtproto.Void, error)
 	InboxSendUserMultiMessageToInbox(context.Context, *TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error)
 	InboxSendChatMultiMessageToInbox(context.Context, *TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error)
-	InboxSendChannelMultiMessageToInbox(context.Context, *TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(context.Context, *TLInboxEditUserMessageToInbox) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(context.Context, *TLInboxEditChatMessageToInbox) (*mtproto.Void, error)
-	InboxEditChannelMessageToInbox(context.Context, *TLInboxEditChannelMessageToInbox) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(context.Context, *TLInboxDeleteMessagesToInbox) (*mtproto.Void, error)
-	InboxDeleteChannelMessagesToInbox(context.Context, *TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error)
 	InboxDeleteUserHistoryToInbox(context.Context, *TLInboxDeleteUserHistoryToInbox) (*mtproto.Void, error)
 	InboxDeleteChatHistoryToInbox(context.Context, *TLInboxDeleteChatHistoryToInbox) (*mtproto.Void, error)
 	InboxReadUserMediaUnreadToInbox(context.Context, *TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error)
 	InboxReadChatMediaUnreadToInbox(context.Context, *TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error)
-	InboxReadChannelMediaUnreadToInbox(context.Context, *TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error)
 	InboxUpdateHistoryReaded(context.Context, *TLInboxUpdateHistoryReaded) (*mtproto.Void, error)
 	InboxUpdatePinnedMessage(context.Context, *TLInboxUpdatePinnedMessage) (*mtproto.Void, error)
 	InboxUnpinAllMessages(context.Context, *TLInboxUnpinAllMessages) (*mtproto.Void, error)
@@ -2619,17 +2045,11 @@ func (*UnimplementedRPCInboxServer) InboxSendUserMessageToInbox(ctx context.Cont
 func (*UnimplementedRPCInboxServer) InboxSendChatMessageToInbox(ctx context.Context, req *TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChatMessageToInbox not implemented")
 }
-func (*UnimplementedRPCInboxServer) InboxSendChannelMessageToInbox(ctx context.Context, req *TLInboxSendChannelMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChannelMessageToInbox not implemented")
-}
 func (*UnimplementedRPCInboxServer) InboxSendUserMultiMessageToInbox(ctx context.Context, req *TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxSendUserMultiMessageToInbox not implemented")
 }
 func (*UnimplementedRPCInboxServer) InboxSendChatMultiMessageToInbox(ctx context.Context, req *TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChatMultiMessageToInbox not implemented")
-}
-func (*UnimplementedRPCInboxServer) InboxSendChannelMultiMessageToInbox(ctx context.Context, req *TLInboxSendChannelMultiMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChannelMultiMessageToInbox not implemented")
 }
 func (*UnimplementedRPCInboxServer) InboxEditUserMessageToInbox(ctx context.Context, req *TLInboxEditUserMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxEditUserMessageToInbox not implemented")
@@ -2637,14 +2057,8 @@ func (*UnimplementedRPCInboxServer) InboxEditUserMessageToInbox(ctx context.Cont
 func (*UnimplementedRPCInboxServer) InboxEditChatMessageToInbox(ctx context.Context, req *TLInboxEditChatMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxEditChatMessageToInbox not implemented")
 }
-func (*UnimplementedRPCInboxServer) InboxEditChannelMessageToInbox(ctx context.Context, req *TLInboxEditChannelMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxEditChannelMessageToInbox not implemented")
-}
 func (*UnimplementedRPCInboxServer) InboxDeleteMessagesToInbox(ctx context.Context, req *TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxDeleteMessagesToInbox not implemented")
-}
-func (*UnimplementedRPCInboxServer) InboxDeleteChannelMessagesToInbox(ctx context.Context, req *TLInboxDeleteChannelMessagesToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxDeleteChannelMessagesToInbox not implemented")
 }
 func (*UnimplementedRPCInboxServer) InboxDeleteUserHistoryToInbox(ctx context.Context, req *TLInboxDeleteUserHistoryToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxDeleteUserHistoryToInbox not implemented")
@@ -2657,9 +2071,6 @@ func (*UnimplementedRPCInboxServer) InboxReadUserMediaUnreadToInbox(ctx context.
 }
 func (*UnimplementedRPCInboxServer) InboxReadChatMediaUnreadToInbox(ctx context.Context, req *TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxReadChatMediaUnreadToInbox not implemented")
-}
-func (*UnimplementedRPCInboxServer) InboxReadChannelMediaUnreadToInbox(ctx context.Context, req *TLInboxReadChannelMediaUnreadToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxReadChannelMediaUnreadToInbox not implemented")
 }
 func (*UnimplementedRPCInboxServer) InboxUpdateHistoryReaded(ctx context.Context, req *TLInboxUpdateHistoryReaded) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxUpdateHistoryReaded not implemented")
@@ -2711,24 +2122,6 @@ func _RPCInbox_InboxSendChatMessageToInbox_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCInbox_InboxSendChannelMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendChannelMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendChannelMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inbox.RPCInbox/InboxSendChannelMessageToInbox",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendChannelMessageToInbox(ctx, req.(*TLInboxSendChannelMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RPCInbox_InboxSendUserMultiMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TLInboxSendUserMultiMessageToInbox)
 	if err := dec(in); err != nil {
@@ -2761,24 +2154,6 @@ func _RPCInbox_InboxSendChatMultiMessageToInbox_Handler(srv interface{}, ctx con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RPCInboxServer).InboxSendChatMultiMessageToInbox(ctx, req.(*TLInboxSendChatMultiMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCInbox_InboxSendChannelMultiMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendChannelMultiMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendChannelMultiMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inbox.RPCInbox/InboxSendChannelMultiMessageToInbox",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendChannelMultiMessageToInbox(ctx, req.(*TLInboxSendChannelMultiMessageToInbox))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2819,24 +2194,6 @@ func _RPCInbox_InboxEditChatMessageToInbox_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCInbox_InboxEditChannelMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxEditChannelMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxEditChannelMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inbox.RPCInbox/InboxEditChannelMessageToInbox",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxEditChannelMessageToInbox(ctx, req.(*TLInboxEditChannelMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RPCInbox_InboxDeleteMessagesToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TLInboxDeleteMessagesToInbox)
 	if err := dec(in); err != nil {
@@ -2851,24 +2208,6 @@ func _RPCInbox_InboxDeleteMessagesToInbox_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RPCInboxServer).InboxDeleteMessagesToInbox(ctx, req.(*TLInboxDeleteMessagesToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCInbox_InboxDeleteChannelMessagesToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxDeleteChannelMessagesToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxDeleteChannelMessagesToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inbox.RPCInbox/InboxDeleteChannelMessagesToInbox",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxDeleteChannelMessagesToInbox(ctx, req.(*TLInboxDeleteChannelMessagesToInbox))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2945,24 +2284,6 @@ func _RPCInbox_InboxReadChatMediaUnreadToInbox_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCInbox_InboxReadChannelMediaUnreadToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxReadChannelMediaUnreadToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxReadChannelMediaUnreadToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inbox.RPCInbox/InboxReadChannelMediaUnreadToInbox",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxReadChannelMediaUnreadToInbox(ctx, req.(*TLInboxReadChannelMediaUnreadToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RPCInbox_InboxUpdateHistoryReaded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TLInboxUpdateHistoryReaded)
 	if err := dec(in); err != nil {
@@ -3030,20 +2351,12 @@ var _RPCInbox_serviceDesc = grpc.ServiceDesc{
 			Handler:    _RPCInbox_InboxSendChatMessageToInbox_Handler,
 		},
 		{
-			MethodName: "inbox_sendChannelMessageToInbox",
-			Handler:    _RPCInbox_InboxSendChannelMessageToInbox_Handler,
-		},
-		{
 			MethodName: "inbox_sendUserMultiMessageToInbox",
 			Handler:    _RPCInbox_InboxSendUserMultiMessageToInbox_Handler,
 		},
 		{
 			MethodName: "inbox_sendChatMultiMessageToInbox",
 			Handler:    _RPCInbox_InboxSendChatMultiMessageToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_sendChannelMultiMessageToInbox",
-			Handler:    _RPCInbox_InboxSendChannelMultiMessageToInbox_Handler,
 		},
 		{
 			MethodName: "inbox_editUserMessageToInbox",
@@ -3054,16 +2367,8 @@ var _RPCInbox_serviceDesc = grpc.ServiceDesc{
 			Handler:    _RPCInbox_InboxEditChatMessageToInbox_Handler,
 		},
 		{
-			MethodName: "inbox_editChannelMessageToInbox",
-			Handler:    _RPCInbox_InboxEditChannelMessageToInbox_Handler,
-		},
-		{
 			MethodName: "inbox_deleteMessagesToInbox",
 			Handler:    _RPCInbox_InboxDeleteMessagesToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_deleteChannelMessagesToInbox",
-			Handler:    _RPCInbox_InboxDeleteChannelMessagesToInbox_Handler,
 		},
 		{
 			MethodName: "inbox_deleteUserHistoryToInbox",
@@ -3080,10 +2385,6 @@ var _RPCInbox_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inbox_readChatMediaUnreadToInbox",
 			Handler:    _RPCInbox_InboxReadChatMediaUnreadToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_readChannelMediaUnreadToInbox",
-			Handler:    _RPCInbox_InboxReadChannelMediaUnreadToInbox_Handler,
 		},
 		{
 			MethodName: "inbox_updateHistoryReaded",
@@ -3398,60 +2699,6 @@ func (m *TLInboxSendChatMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *TLInboxSendChannelMessageToInbox) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLInboxSendChannelMessageToInbox) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLInboxSendChannelMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Message != nil {
-		{
-			size, err := m.Message.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintInboxTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.PeerChannelId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChannelId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.FromId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.FromId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *TLInboxSendUserMultiMessageToInbox) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -3548,62 +2795,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (
 	}
 	if m.PeerChatId != 0 {
 		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChatId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.FromId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.FromId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Message) > 0 {
-		for iNdEx := len(m.Message) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Message[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintInboxTl(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if m.PeerChannelId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChannelId))
 		i--
 		dAtA[i] = 0x20
 	}
@@ -3728,70 +2919,6 @@ func (m *TLInboxEditChatMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *TLInboxEditChannelMessageToInbox) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLInboxEditChannelMessageToInbox) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLInboxEditChannelMessageToInbox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Message != nil {
-		{
-			size, err := m.Message.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintInboxTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x3a
-	}
-	if m.PtsCount != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PtsCount))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.Pts != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Pts))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.PeerChannelId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChannelId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.FromId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.FromId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *TLInboxDeleteMessagesToInbox) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -3817,21 +2944,21 @@ func (m *TLInboxDeleteMessagesToInbox) MarshalToSizedBuffer(dAtA []byte) (int, e
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.Id) > 0 {
-		dAtA11 := make([]byte, len(m.Id)*10)
-		var j10 int
+		dAtA9 := make([]byte, len(m.Id)*10)
+		var j8 int
 		for _, num1 := range m.Id {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j10++
+				j8++
 			}
-			dAtA11[j10] = uint8(num)
-			j10++
+			dAtA9[j8] = uint8(num)
+			j8++
 		}
-		i -= j10
-		copy(dAtA[i:], dAtA11[:j10])
-		i = encodeVarintInboxTl(dAtA, i, uint64(j10))
+		i -= j8
+		copy(dAtA[i:], dAtA9[:j8])
+		i = encodeVarintInboxTl(dAtA, i, uint64(j8))
 		i--
 		dAtA[i] = 0x32
 	}
@@ -3842,77 +2969,6 @@ func (m *TLInboxDeleteMessagesToInbox) MarshalToSizedBuffer(dAtA []byte) (int, e
 	}
 	if m.PeerType != 0 {
 		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerType))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.FromId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.FromId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Id) > 0 {
-		dAtA13 := make([]byte, len(m.Id)*10)
-		var j12 int
-		for _, num1 := range m.Id {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA13[j12] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j12++
-			}
-			dAtA13[j12] = uint8(num)
-			j12++
-		}
-		i -= j12
-		copy(dAtA[i:], dAtA13[:j12])
-		i = encodeVarintInboxTl(dAtA, i, uint64(j12))
-		i--
-		dAtA[i] = 0x3a
-	}
-	if m.PtsCount != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PtsCount))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.Pts != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Pts))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.PeerChannelId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChannelId))
 		i--
 		dAtA[i] = 0x20
 	}
@@ -4129,67 +3185,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) MarshalToSizedBuffer(dAtA []byte) (i
 	}
 	if m.PeerChatId != 0 {
 		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChatId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.FromId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.FromId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Id) > 0 {
-		dAtA15 := make([]byte, len(m.Id)*10)
-		var j14 int
-		for _, num1 := range m.Id {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j14++
-			}
-			dAtA15[j14] = uint8(num)
-			j14++
-		}
-		i -= j14
-		copy(dAtA[i:], dAtA15[:j14])
-		i = encodeVarintInboxTl(dAtA, i, uint64(j14))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.PeerChannelId != 0 {
-		i = encodeVarintInboxTl(dAtA, i, uint64(m.PeerChannelId))
 		i--
 		dAtA[i] = 0x20
 	}
@@ -4529,31 +3524,6 @@ func (m *TLInboxSendChatMessageToInbox) Size() (n int) {
 	return n
 }
 
-func (m *TLInboxSendChannelMessageToInbox) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovInboxTl(uint64(m.Constructor))
-	}
-	if m.FromId != 0 {
-		n += 1 + sovInboxTl(uint64(m.FromId))
-	}
-	if m.PeerChannelId != 0 {
-		n += 1 + sovInboxTl(uint64(m.PeerChannelId))
-	}
-	if m.Message != nil {
-		l = m.Message.Size()
-		n += 1 + l + sovInboxTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *TLInboxSendUserMultiMessageToInbox) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4595,33 +3565,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) Size() (n int) {
 	}
 	if m.PeerChatId != 0 {
 		n += 1 + sovInboxTl(uint64(m.PeerChatId))
-	}
-	if len(m.Message) > 0 {
-		for _, e := range m.Message {
-			l = e.Size()
-			n += 1 + l + sovInboxTl(uint64(l))
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLInboxSendChannelMultiMessageToInbox) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovInboxTl(uint64(m.Constructor))
-	}
-	if m.FromId != 0 {
-		n += 1 + sovInboxTl(uint64(m.FromId))
-	}
-	if m.PeerChannelId != 0 {
-		n += 1 + sovInboxTl(uint64(m.PeerChannelId))
 	}
 	if len(m.Message) > 0 {
 		for _, e := range m.Message {
@@ -4685,37 +3628,6 @@ func (m *TLInboxEditChatMessageToInbox) Size() (n int) {
 	return n
 }
 
-func (m *TLInboxEditChannelMessageToInbox) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovInboxTl(uint64(m.Constructor))
-	}
-	if m.FromId != 0 {
-		n += 1 + sovInboxTl(uint64(m.FromId))
-	}
-	if m.PeerChannelId != 0 {
-		n += 1 + sovInboxTl(uint64(m.PeerChannelId))
-	}
-	if m.Pts != 0 {
-		n += 1 + sovInboxTl(uint64(m.Pts))
-	}
-	if m.PtsCount != 0 {
-		n += 1 + sovInboxTl(uint64(m.PtsCount))
-	}
-	if m.Message != nil {
-		l = m.Message.Size()
-		n += 1 + l + sovInboxTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *TLInboxDeleteMessagesToInbox) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4733,40 +3645,6 @@ func (m *TLInboxDeleteMessagesToInbox) Size() (n int) {
 	}
 	if m.PeerId != 0 {
 		n += 1 + sovInboxTl(uint64(m.PeerId))
-	}
-	if len(m.Id) > 0 {
-		l = 0
-		for _, e := range m.Id {
-			l += sovInboxTl(uint64(e))
-		}
-		n += 1 + sovInboxTl(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLInboxDeleteChannelMessagesToInbox) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovInboxTl(uint64(m.Constructor))
-	}
-	if m.FromId != 0 {
-		n += 1 + sovInboxTl(uint64(m.FromId))
-	}
-	if m.PeerChannelId != 0 {
-		n += 1 + sovInboxTl(uint64(m.PeerChannelId))
-	}
-	if m.Pts != 0 {
-		n += 1 + sovInboxTl(uint64(m.Pts))
-	}
-	if m.PtsCount != 0 {
-		n += 1 + sovInboxTl(uint64(m.PtsCount))
 	}
 	if len(m.Id) > 0 {
 		l = 0
@@ -4879,34 +3757,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovInboxTl(uint64(l))
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLInboxReadChannelMediaUnreadToInbox) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Constructor != 0 {
-		n += 1 + sovInboxTl(uint64(m.Constructor))
-	}
-	if m.FromId != 0 {
-		n += 1 + sovInboxTl(uint64(m.FromId))
-	}
-	if m.PeerChannelId != 0 {
-		n += 1 + sovInboxTl(uint64(m.PeerChannelId))
-	}
-	if len(m.Id) > 0 {
-		l = 0
-		for _, e := range m.Id {
-			l += sovInboxTl(uint64(e))
-		}
-		n += 1 + sovInboxTl(uint64(l)) + l
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -5788,150 +4638,6 @@ func (m *TLInboxSendChatMessageToInbox) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLInboxSendChannelMessageToInbox) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInboxTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_inbox_sendChannelMessageToInbox: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_inbox_sendChannelMessageToInbox: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
-			}
-			m.FromId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FromId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerChannelId", wireType)
-			}
-			m.PeerChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Message == nil {
-				m.Message = &mtproto.MessageBox{}
-			}
-			if err := m.Message.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInboxTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *TLInboxSendUserMultiMessageToInbox) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -6190,148 +4896,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Message = append(m.Message, &InboxMessageData{})
-			if err := m.Message[len(m.Message)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInboxTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLInboxSendChannelMultiMessageToInbox) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInboxTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_inbox_sendChannelMultiMessageToInbox: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_inbox_sendChannelMultiMessageToInbox: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
-			}
-			m.FromId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FromId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerChannelId", wireType)
-			}
-			m.PeerChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Message = append(m.Message, &mtproto.MessageBox{})
 			if err := m.Message[len(m.Message)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -6646,188 +5210,6 @@ func (m *TLInboxEditChatMessageToInbox) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TLInboxEditChannelMessageToInbox) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInboxTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_inbox_editChannelMessageToInbox: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_inbox_editChannelMessageToInbox: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
-			}
-			m.FromId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FromId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerChannelId", wireType)
-			}
-			m.PeerChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pts", wireType)
-			}
-			m.Pts = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Pts |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PtsCount", wireType)
-			}
-			m.PtsCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PtsCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Message == nil {
-				m.Message = &mtproto.Message{}
-			}
-			if err := m.Message.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInboxTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *TLInboxDeleteMessagesToInbox) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -7000,228 +5382,6 @@ func (m *TLInboxDeleteMessagesToInbox) Unmarshal(dAtA []byte) error {
 						b := dAtA[iNdEx]
 						iNdEx++
 						v |= int64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Id = append(m.Id, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInboxTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLInboxDeleteChannelMessagesToInbox) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInboxTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_inbox_deleteChannelMessagesToInbox: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_inbox_deleteChannelMessagesToInbox: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
-			}
-			m.FromId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FromId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerChannelId", wireType)
-			}
-			m.PeerChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pts", wireType)
-			}
-			m.Pts = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Pts |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PtsCount", wireType)
-			}
-			m.PtsCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PtsCount |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType == 0 {
-				var v int32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowInboxTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Id = append(m.Id, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowInboxTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthInboxTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthInboxTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.Id) == 0 {
-					m.Id = make([]int32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowInboxTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -7789,190 +5949,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInboxTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInboxTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLInboxReadChannelMediaUnreadToInbox) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInboxTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_inbox_readChannelMediaUnreadToInbox: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_inbox_readChannelMediaUnreadToInbox: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromId", wireType)
-			}
-			m.FromId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.FromId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerChannelId", wireType)
-			}
-			m.PeerChannelId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInboxTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PeerChannelId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType == 0 {
-				var v int32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowInboxTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= int32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Id = append(m.Id, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowInboxTl
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthInboxTl
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthInboxTl
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.Id) == 0 {
-					m.Id = make([]int32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v int32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowInboxTl
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= int32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Id = append(m.Id, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipInboxTl(dAtA[iNdEx:])

@@ -234,7 +234,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_DialogExt
 //
 
-func (m *DialogExt) Encode(layer int32) []byte {
+func (m *DialogExt) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -242,21 +242,17 @@ func (m *DialogExt) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_dialogExt:
 		t := m.To_DialogExt()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *DialogExt) CalcByteSize(layer int32) int {
@@ -334,20 +330,18 @@ func (m *TLDialogExt) GetPredicateName() string {
 	return Predicate_dialogExt
 }
 
-func (m *TLDialogExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xbdd9a860: func() []byte {
+func (m *TLDialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xbdd9a860: func() error {
 			x.UInt(0xbdd9a860)
 
 			x.Long(m.GetOrder())
-			x.Bytes(m.GetDialog().Encode(layer))
+			m.GetDialog().Encode(x, layer)
 			x.Int(m.GetAvailableMinId())
 			x.Long(m.GetDate())
 			x.String(m.GetThemeEmoticon())
 			x.Int(m.GetTtlPeriod())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -357,10 +351,10 @@ func (m *TLDialogExt) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_dialogExt, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogExt) CalcByteSize(layer int32) int {
@@ -402,7 +396,7 @@ func (m *TLDialogExt) DebugString() string {
 //  + TL_DialogFilterExt
 //
 
-func (m *DialogFilterExt) Encode(layer int32) []byte {
+func (m *DialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -410,21 +404,17 @@ func (m *DialogFilterExt) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_dialogFilterExt:
 		t := m.To_DialogFilterExt()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *DialogFilterExt) CalcByteSize(layer int32) int {
@@ -493,17 +483,15 @@ func (m *TLDialogFilterExt) GetPredicateName() string {
 	return Predicate_dialogFilterExt
 }
 
-func (m *TLDialogFilterExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x8f3f31f2: func() []byte {
+func (m *TLDialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x8f3f31f2: func() error {
 			x.UInt(0x8f3f31f2)
 
 			x.Int(m.GetId())
-			x.Bytes(m.GetDialogFilter().Encode(layer))
+			m.GetDialogFilter().Encode(x, layer)
 			x.Long(m.GetOrder())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -513,10 +501,10 @@ func (m *TLDialogFilterExt) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_dialogFilterExt, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogFilterExt) CalcByteSize(layer int32) int {
@@ -555,7 +543,7 @@ func (m *TLDialogFilterExt) DebugString() string {
 //  + TL_DialogPinnedExt
 //
 
-func (m *DialogPinnedExt) Encode(layer int32) []byte {
+func (m *DialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -563,21 +551,17 @@ func (m *DialogPinnedExt) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_dialogPinnedExt:
 		t := m.To_DialogPinnedExt()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *DialogPinnedExt) CalcByteSize(layer int32) int {
@@ -646,17 +630,15 @@ func (m *TLDialogPinnedExt) GetPredicateName() string {
 	return Predicate_dialogPinnedExt
 }
 
-func (m *TLDialogPinnedExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xea7222c: func() []byte {
+func (m *TLDialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xea7222c: func() error {
 			x.UInt(0xea7222c)
 
 			x.Long(m.GetOrder())
 			x.Int(m.GetPeerType())
 			x.Long(m.GetPeerId())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -666,10 +648,10 @@ func (m *TLDialogPinnedExt) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_dialogPinnedExt, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogPinnedExt) CalcByteSize(layer int32) int {
@@ -704,7 +686,7 @@ func (m *TLDialogPinnedExt) DebugString() string {
 //  + TL_SimpleDialogsData
 //
 
-func (m *DialogsData) Encode(layer int32) []byte {
+func (m *DialogsData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -712,21 +694,17 @@ func (m *DialogsData) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_simpleDialogsData:
 		t := m.To_SimpleDialogsData()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *DialogsData) CalcByteSize(layer int32) int {
@@ -795,11 +773,9 @@ func (m *TLSimpleDialogsData) GetPredicateName() string {
 	return Predicate_simpleDialogsData
 }
 
-func (m *TLSimpleDialogsData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x1d59b45d: func() []byte {
+func (m *TLSimpleDialogsData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1d59b45d: func() error {
 			x.UInt(0x1d59b45d)
 
 			x.VectorLong(m.GetUsers())
@@ -808,7 +784,7 @@ func (m *TLSimpleDialogsData) Encode(layer int32) []byte {
 
 			x.VectorLong(m.GetChannels())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -818,10 +794,10 @@ func (m *TLSimpleDialogsData) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_simpleDialogsData, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSimpleDialogsData) CalcByteSize(layer int32) int {
@@ -860,7 +836,7 @@ func (m *TLSimpleDialogsData) DebugString() string {
 //  + TL_UpdateDraftMessage
 //
 
-func (m *PeerWithDraftMessage) Encode(layer int32) []byte {
+func (m *PeerWithDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -868,21 +844,17 @@ func (m *PeerWithDraftMessage) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_updateDraftMessage:
 		t := m.To_UpdateDraftMessage()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *PeerWithDraftMessage) CalcByteSize(layer int32) int {
@@ -948,16 +920,14 @@ func (m *TLUpdateDraftMessage) GetPredicateName() string {
 	return Predicate_updateDraftMessage
 }
 
-func (m *TLUpdateDraftMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xf6bdc4b2: func() []byte {
+func (m *TLUpdateDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xf6bdc4b2: func() error {
 			x.UInt(0xf6bdc4b2)
 
-			x.Bytes(m.GetPeer().Encode(layer))
-			x.Bytes(m.GetDraft().Encode(layer))
-			return x.GetBuf()
+			m.GetPeer().Encode(x, layer)
+			m.GetDraft().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -967,10 +937,10 @@ func (m *TLUpdateDraftMessage) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_updateDraftMessage, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUpdateDraftMessage) CalcByteSize(layer int32) int {
@@ -1010,10 +980,7 @@ func (m *TLUpdateDraftMessage) DebugString() string {
 // TLDialogSaveDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogSaveDraftMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_saveDraftMessage))
-
+func (m *TLDialogSaveDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4ecad99a:
 		x.UInt(0x4ecad99a)
@@ -1023,13 +990,13 @@ func (m *TLDialogSaveDraftMessage) Encode(layer int32) []byte {
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		x.Bytes(m.GetMessage().Encode(layer))
+		m.GetMessage().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogSaveDraftMessage) CalcByteSize(layer int32) int {
@@ -1067,10 +1034,7 @@ func (m *TLDialogSaveDraftMessage) DebugString() string {
 // TLDialogClearDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogClearDraftMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_clearDraftMessage))
-
+func (m *TLDialogClearDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfb70b29a:
 		x.UInt(0xfb70b29a)
@@ -1085,7 +1049,7 @@ func (m *TLDialogClearDraftMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogClearDraftMessage) CalcByteSize(layer int32) int {
@@ -1118,10 +1082,7 @@ func (m *TLDialogClearDraftMessage) DebugString() string {
 // TLDialogGetAllDrafts
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetAllDrafts) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getAllDrafts))
-
+func (m *TLDialogGetAllDrafts) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xacde4fe6:
 		x.UInt(0xacde4fe6)
@@ -1134,7 +1095,7 @@ func (m *TLDialogGetAllDrafts) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetAllDrafts) CalcByteSize(layer int32) int {
@@ -1165,10 +1126,7 @@ func (m *TLDialogGetAllDrafts) DebugString() string {
 // TLDialogClearAllDrafts
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogClearAllDrafts) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_clearAllDrafts))
-
+func (m *TLDialogClearAllDrafts) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x41b890fc:
 		x.UInt(0x41b890fc)
@@ -1181,7 +1139,7 @@ func (m *TLDialogClearAllDrafts) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogClearAllDrafts) CalcByteSize(layer int32) int {
@@ -1212,10 +1170,7 @@ func (m *TLDialogClearAllDrafts) DebugString() string {
 // TLDialogMarkDialogUnread
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogMarkDialogUnread) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_markDialogUnread))
-
+func (m *TLDialogMarkDialogUnread) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4532910e:
 		x.UInt(0x4532910e)
@@ -1225,13 +1180,13 @@ func (m *TLDialogMarkDialogUnread) Encode(layer int32) []byte {
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		x.Bytes(m.GetUnreadMark().Encode(layer))
+		m.GetUnreadMark().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogMarkDialogUnread) CalcByteSize(layer int32) int {
@@ -1269,10 +1224,7 @@ func (m *TLDialogMarkDialogUnread) DebugString() string {
 // TLDialogToggleDialogPin
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogToggleDialogPin) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_toggleDialogPin))
-
+func (m *TLDialogToggleDialogPin) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x867ee52f:
 		x.UInt(0x867ee52f)
@@ -1282,13 +1234,13 @@ func (m *TLDialogToggleDialogPin) Encode(layer int32) []byte {
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		x.Bytes(m.GetPinned().Encode(layer))
+		m.GetPinned().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogToggleDialogPin) CalcByteSize(layer int32) int {
@@ -1326,10 +1278,7 @@ func (m *TLDialogToggleDialogPin) DebugString() string {
 // TLDialogGetDialogUnreadMarkList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogUnreadMarkList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogUnreadMarkList))
-
+func (m *TLDialogGetDialogUnreadMarkList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcabc38f4:
 		x.UInt(0xcabc38f4)
@@ -1342,7 +1291,7 @@ func (m *TLDialogGetDialogUnreadMarkList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogUnreadMarkList) CalcByteSize(layer int32) int {
@@ -1373,10 +1322,7 @@ func (m *TLDialogGetDialogUnreadMarkList) DebugString() string {
 // TLDialogGetDialogsByOffsetDate
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogsByOffsetDate) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogsByOffsetDate))
-
+func (m *TLDialogGetDialogsByOffsetDate) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d7e8604:
 		x.UInt(0x9d7e8604)
@@ -1384,7 +1330,7 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetExcludePinned().Encode(layer))
+		m.GetExcludePinned().Encode(x, layer)
 		x.Int(m.GetOffsetDate())
 		x.Int(m.GetLimit())
 
@@ -1392,7 +1338,7 @@ func (m *TLDialogGetDialogsByOffsetDate) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogsByOffsetDate) CalcByteSize(layer int32) int {
@@ -1430,10 +1376,7 @@ func (m *TLDialogGetDialogsByOffsetDate) DebugString() string {
 // TLDialogGetDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogs) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogs))
-
+func (m *TLDialogGetDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x860b1e16:
 		x.UInt(0x860b1e16)
@@ -1441,14 +1384,14 @@ func (m *TLDialogGetDialogs) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetExcludePinned().Encode(layer))
+		m.GetExcludePinned().Encode(x, layer)
 		x.Int(m.GetFolderId())
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogs) CalcByteSize(layer int32) int {
@@ -1485,10 +1428,7 @@ func (m *TLDialogGetDialogs) DebugString() string {
 // TLDialogGetDialogsByIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogsByIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogsByIdList))
-
+func (m *TLDialogGetDialogsByIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xad258871:
 		x.UInt(0xad258871)
@@ -1503,7 +1443,7 @@ func (m *TLDialogGetDialogsByIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogsByIdList) CalcByteSize(layer int32) int {
@@ -1537,10 +1477,7 @@ func (m *TLDialogGetDialogsByIdList) DebugString() string {
 // TLDialogGetDialogsCount
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogsCount) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogsCount))
-
+func (m *TLDialogGetDialogsCount) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe039b465:
 		x.UInt(0xe039b465)
@@ -1548,14 +1485,14 @@ func (m *TLDialogGetDialogsCount) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetExcludePinned().Encode(layer))
+		m.GetExcludePinned().Encode(x, layer)
 		x.Int(m.GetFolderId())
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogsCount) CalcByteSize(layer int32) int {
@@ -1592,10 +1529,7 @@ func (m *TLDialogGetDialogsCount) DebugString() string {
 // TLDialogGetPinnedDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetPinnedDialogs) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getPinnedDialogs))
-
+func (m *TLDialogGetPinnedDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa8c21bb5:
 		x.UInt(0xa8c21bb5)
@@ -1609,7 +1543,7 @@ func (m *TLDialogGetPinnedDialogs) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetPinnedDialogs) CalcByteSize(layer int32) int {
@@ -1641,10 +1575,7 @@ func (m *TLDialogGetPinnedDialogs) DebugString() string {
 // TLDialogReorderPinnedDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogReorderPinnedDialogs) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_reorderPinnedDialogs))
-
+func (m *TLDialogReorderPinnedDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfee33567:
 		x.UInt(0xfee33567)
@@ -1652,7 +1583,7 @@ func (m *TLDialogReorderPinnedDialogs) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetForce().Encode(layer))
+		m.GetForce().Encode(x, layer)
 		x.Int(m.GetFolderId())
 
 		x.VectorLong(m.GetIdList())
@@ -1661,7 +1592,7 @@ func (m *TLDialogReorderPinnedDialogs) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogReorderPinnedDialogs) CalcByteSize(layer int32) int {
@@ -1701,10 +1632,7 @@ func (m *TLDialogReorderPinnedDialogs) DebugString() string {
 // TLDialogGetDialogById
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogById) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogById))
-
+func (m *TLDialogGetDialogById) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa15f3bf5:
 		x.UInt(0xa15f3bf5)
@@ -1719,7 +1647,7 @@ func (m *TLDialogGetDialogById) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogById) CalcByteSize(layer int32) int {
@@ -1752,10 +1680,7 @@ func (m *TLDialogGetDialogById) DebugString() string {
 // TLDialogGetTopMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetTopMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getTopMessage))
-
+func (m *TLDialogGetTopMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfa7db272:
 		x.UInt(0xfa7db272)
@@ -1770,7 +1695,7 @@ func (m *TLDialogGetTopMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetTopMessage) CalcByteSize(layer int32) int {
@@ -1803,10 +1728,7 @@ func (m *TLDialogGetTopMessage) DebugString() string {
 // TLDialogUpdateReadInbox
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogUpdateReadInbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_updateReadInbox))
-
+func (m *TLDialogUpdateReadInbox) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1d27f8b8:
 		x.UInt(0x1d27f8b8)
@@ -1822,7 +1744,7 @@ func (m *TLDialogUpdateReadInbox) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogUpdateReadInbox) CalcByteSize(layer int32) int {
@@ -1856,10 +1778,7 @@ func (m *TLDialogUpdateReadInbox) DebugString() string {
 // TLDialogUpdateReadOutbox
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogUpdateReadOutbox) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_updateReadOutbox))
-
+func (m *TLDialogUpdateReadOutbox) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x5870fd7e:
 		x.UInt(0x5870fd7e)
@@ -1875,7 +1794,7 @@ func (m *TLDialogUpdateReadOutbox) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogUpdateReadOutbox) CalcByteSize(layer int32) int {
@@ -1909,10 +1828,7 @@ func (m *TLDialogUpdateReadOutbox) DebugString() string {
 // TLDialogInsertOrUpdateDialog
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_insertOrUpdateDialog))
-
+func (m *TLDialogInsertOrUpdateDialog) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x16ce0aa1:
 		x.UInt(0x16ce0aa1)
@@ -1969,7 +1885,7 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogInsertOrUpdateDialog) CalcByteSize(layer int32) int {
@@ -2027,10 +1943,7 @@ func (m *TLDialogInsertOrUpdateDialog) DebugString() string {
 // TLDialogDeleteDialog
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogDeleteDialog) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_deleteDialog))
-
+func (m *TLDialogDeleteDialog) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1b31de3:
 		x.UInt(0x1b31de3)
@@ -2045,7 +1958,7 @@ func (m *TLDialogDeleteDialog) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogDeleteDialog) CalcByteSize(layer int32) int {
@@ -2078,10 +1991,7 @@ func (m *TLDialogDeleteDialog) DebugString() string {
 // TLDialogGetUserPinnedMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetUserPinnedMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getUserPinnedMessage))
-
+func (m *TLDialogGetUserPinnedMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8f9bc2b1:
 		x.UInt(0x8f9bc2b1)
@@ -2096,7 +2006,7 @@ func (m *TLDialogGetUserPinnedMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetUserPinnedMessage) CalcByteSize(layer int32) int {
@@ -2129,10 +2039,7 @@ func (m *TLDialogGetUserPinnedMessage) DebugString() string {
 // TLDialogUpdateUserPinnedMessage
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogUpdateUserPinnedMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_updateUserPinnedMessage))
-
+func (m *TLDialogUpdateUserPinnedMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1622f22a:
 		x.UInt(0x1622f22a)
@@ -2148,7 +2055,7 @@ func (m *TLDialogUpdateUserPinnedMessage) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogUpdateUserPinnedMessage) CalcByteSize(layer int32) int {
@@ -2182,10 +2089,7 @@ func (m *TLDialogUpdateUserPinnedMessage) DebugString() string {
 // TLDialogInsertOrUpdateDialogFilter
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogInsertOrUpdateDialogFilter) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_insertOrUpdateDialogFilter))
-
+func (m *TLDialogInsertOrUpdateDialogFilter) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xaa8a384:
 		x.UInt(0xaa8a384)
@@ -2194,13 +2098,13 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Encode(layer int32) []byte {
 
 		x.Long(m.GetUserId())
 		x.Int(m.GetId())
-		x.Bytes(m.GetDialogFilter().Encode(layer))
+		m.GetDialogFilter().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogInsertOrUpdateDialogFilter) CalcByteSize(layer int32) int {
@@ -2237,10 +2141,7 @@ func (m *TLDialogInsertOrUpdateDialogFilter) DebugString() string {
 // TLDialogDeleteDialogFilter
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogDeleteDialogFilter) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_deleteDialogFilter))
-
+func (m *TLDialogDeleteDialogFilter) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1dd3e97:
 		x.UInt(0x1dd3e97)
@@ -2254,7 +2155,7 @@ func (m *TLDialogDeleteDialogFilter) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogDeleteDialogFilter) CalcByteSize(layer int32) int {
@@ -2286,10 +2187,7 @@ func (m *TLDialogDeleteDialogFilter) DebugString() string {
 // TLDialogUpdateDialogFiltersOrder
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogUpdateDialogFiltersOrder) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_updateDialogFiltersOrder))
-
+func (m *TLDialogUpdateDialogFiltersOrder) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb13c0b3f:
 		x.UInt(0xb13c0b3f)
@@ -2304,7 +2202,7 @@ func (m *TLDialogUpdateDialogFiltersOrder) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogUpdateDialogFiltersOrder) CalcByteSize(layer int32) int {
@@ -2338,10 +2236,7 @@ func (m *TLDialogUpdateDialogFiltersOrder) DebugString() string {
 // TLDialogGetDialogFilters
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogFilters) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogFilters))
-
+func (m *TLDialogGetDialogFilters) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6c676c3c:
 		x.UInt(0x6c676c3c)
@@ -2354,7 +2249,7 @@ func (m *TLDialogGetDialogFilters) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogFilters) CalcByteSize(layer int32) int {
@@ -2385,10 +2280,7 @@ func (m *TLDialogGetDialogFilters) DebugString() string {
 // TLDialogGetDialogFolder
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetDialogFolder) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getDialogFolder))
-
+func (m *TLDialogGetDialogFolder) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x411b8eb5:
 		x.UInt(0x411b8eb5)
@@ -2402,7 +2294,7 @@ func (m *TLDialogGetDialogFolder) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetDialogFolder) CalcByteSize(layer int32) int {
@@ -2434,10 +2326,7 @@ func (m *TLDialogGetDialogFolder) DebugString() string {
 // TLDialogEditPeerFolders
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogEditPeerFolders) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_editPeerFolders))
-
+func (m *TLDialogEditPeerFolders) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2446869a:
 		x.UInt(0x2446869a)
@@ -2454,7 +2343,7 @@ func (m *TLDialogEditPeerFolders) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogEditPeerFolders) CalcByteSize(layer int32) int {
@@ -2489,10 +2378,7 @@ func (m *TLDialogEditPeerFolders) DebugString() string {
 // TLDialogGetChannelMessageReadParticipants
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetChannelMessageReadParticipants) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getChannelMessageReadParticipants))
-
+func (m *TLDialogGetChannelMessageReadParticipants) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x28bd4d3b:
 		x.UInt(0x28bd4d3b)
@@ -2507,7 +2393,7 @@ func (m *TLDialogGetChannelMessageReadParticipants) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetChannelMessageReadParticipants) CalcByteSize(layer int32) int {
@@ -2540,10 +2426,7 @@ func (m *TLDialogGetChannelMessageReadParticipants) DebugString() string {
 // TLDialogSetChatTheme
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogSetChatTheme) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_setChatTheme))
-
+func (m *TLDialogSetChatTheme) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe9aea22a:
 		x.UInt(0xe9aea22a)
@@ -2559,7 +2442,7 @@ func (m *TLDialogSetChatTheme) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogSetChatTheme) CalcByteSize(layer int32) int {
@@ -2593,10 +2476,7 @@ func (m *TLDialogSetChatTheme) DebugString() string {
 // TLDialogSetHistoryTTL
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogSetHistoryTTL) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_setHistoryTTL))
-
+func (m *TLDialogSetHistoryTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d9b8ac:
 		x.UInt(0x9d9b8ac)
@@ -2612,7 +2492,7 @@ func (m *TLDialogSetHistoryTTL) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogSetHistoryTTL) CalcByteSize(layer int32) int {
@@ -2646,10 +2526,7 @@ func (m *TLDialogSetHistoryTTL) DebugString() string {
 // TLDialogGetMyDialogsData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDialogGetMyDialogsData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dialog_getMyDialogsData))
-
+func (m *TLDialogGetMyDialogsData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7ee08f03:
 		x.UInt(0x7ee08f03)
@@ -2676,7 +2553,7 @@ func (m *TLDialogGetMyDialogsData) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDialogGetMyDialogsData) CalcByteSize(layer int32) int {
@@ -2718,15 +2595,14 @@ func (m *TLDialogGetMyDialogsData) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_PeerWithDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PeerWithDraftMessage) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PeerWithDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PeerWithDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -2753,15 +2629,14 @@ func (m *Vector_PeerWithDraftMessage) DebugString() string {
 
 // Vector_DialogPeer
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_DialogPeer) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_DialogPeer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_DialogPeer) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -2788,15 +2663,14 @@ func (m *Vector_DialogPeer) DebugString() string {
 
 // Vector_DialogExt
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_DialogExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_DialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_DialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -2823,15 +2697,14 @@ func (m *Vector_DialogExt) DebugString() string {
 
 // Vector_DialogFilterExt
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_DialogFilterExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_DialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_DialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -2858,15 +2731,14 @@ func (m *Vector_DialogFilterExt) DebugString() string {
 
 // Vector_DialogPinnedExt
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_DialogPinnedExt) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_DialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_DialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -2893,11 +2765,10 @@ func (m *Vector_DialogPinnedExt) DebugString() string {
 
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {

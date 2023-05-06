@@ -15,9 +15,9 @@ import (
 	"time"
 )
 
-// UpdatesGetState
-// updates.getState auth_key_id:long user_id:long = updates.State;
-func (c *UpdatesCore) UpdatesGetState(in *updates.TLUpdatesGetState) (*mtproto.Updates_State, error) {
+// UpdatesGetStateV2
+// updates.getStateV2 auth_key_id:long user_id:long = updates.State;
+func (c *UpdatesCore) UpdatesGetStateV2(in *updates.TLUpdatesGetStateV2) (*mtproto.Updates_State, error) {
 	pts := int32(c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, in.UserId))
 	if pts == 0 {
 		pts = int32(c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId))

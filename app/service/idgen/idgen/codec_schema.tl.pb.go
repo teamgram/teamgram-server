@@ -131,7 +131,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_SeqIdVal
 //
 
-func (m *IdVal) Encode(layer int32) []byte {
+func (m *IdVal) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -139,27 +139,23 @@ func (m *IdVal) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_idVal:
 		t := m.To_IdVal()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_idVals:
 		t := m.To_IdVals()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_seqIdVal:
 		t := m.To_SeqIdVal()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *IdVal) CalcByteSize(layer int32) int {
@@ -250,15 +246,13 @@ func (m *TLIdVal) GetPredicateName() string {
 	return Predicate_idVal
 }
 
-func (m *TLIdVal) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xc07844cb: func() []byte {
+func (m *TLIdVal) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xc07844cb: func() error {
 			x.UInt(0xc07844cb)
 
 			x.Long(m.GetId_INT64())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -268,10 +262,10 @@ func (m *TLIdVal) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_idVal, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdVal) CalcByteSize(layer int32) int {
@@ -323,16 +317,14 @@ func (m *TLIdVals) GetPredicateName() string {
 	return Predicate_idVals
 }
 
-func (m *TLIdVals) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x1c3baa66: func() []byte {
+func (m *TLIdVals) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1c3baa66: func() error {
 			x.UInt(0x1c3baa66)
 
 			x.VectorLong(m.GetId_VECTORINT64())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -342,10 +334,10 @@ func (m *TLIdVals) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_idVals, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdVals) CalcByteSize(layer int32) int {
@@ -399,15 +391,13 @@ func (m *TLSeqIdVal) GetPredicateName() string {
 	return Predicate_seqIdVal
 }
 
-func (m *TLSeqIdVal) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x2a047d08: func() []byte {
+func (m *TLSeqIdVal) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x2a047d08: func() error {
 			x.UInt(0x2a047d08)
 
 			x.Long(m.GetId_INT64())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -417,10 +407,10 @@ func (m *TLSeqIdVal) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_seqIdVal, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSeqIdVal) CalcByteSize(layer int32) int {
@@ -456,7 +446,7 @@ func (m *TLSeqIdVal) DebugString() string {
 //  + TL_InputNSeqId
 //
 
-func (m *InputId) Encode(layer int32) []byte {
+func (m *InputId) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -464,30 +454,26 @@ func (m *InputId) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_inputId:
 		t := m.To_InputId()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_inputIds:
 		t := m.To_InputIds()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_inputSeqId:
 		t := m.To_InputSeqId()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_inputNSeqId:
 		t := m.To_InputNSeqId()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *InputId) CalcByteSize(layer int32) int {
@@ -589,14 +575,12 @@ func (m *TLInputId) GetPredicateName() string {
 	return Predicate_inputId
 }
 
-func (m *TLInputId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x8af2196c: func() []byte {
+func (m *TLInputId) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x8af2196c: func() error {
 			x.UInt(0x8af2196c)
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -606,10 +590,10 @@ func (m *TLInputId) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_inputId, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLInputId) CalcByteSize(layer int32) int {
@@ -660,15 +644,13 @@ func (m *TLInputIds) GetPredicateName() string {
 	return Predicate_inputIds
 }
 
-func (m *TLInputIds) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x7f285fbc: func() []byte {
+func (m *TLInputIds) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x7f285fbc: func() error {
 			x.UInt(0x7f285fbc)
 
 			x.Int(m.GetNum())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -678,10 +660,10 @@ func (m *TLInputIds) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_inputIds, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLInputIds) CalcByteSize(layer int32) int {
@@ -733,15 +715,13 @@ func (m *TLInputSeqId) GetPredicateName() string {
 	return Predicate_inputSeqId
 }
 
-func (m *TLInputSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xcd52bbcd: func() []byte {
+func (m *TLInputSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xcd52bbcd: func() error {
 			x.UInt(0xcd52bbcd)
 
 			x.String(m.GetKey())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -751,10 +731,10 @@ func (m *TLInputSeqId) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_inputSeqId, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLInputSeqId) CalcByteSize(layer int32) int {
@@ -809,16 +789,14 @@ func (m *TLInputNSeqId) GetPredicateName() string {
 	return Predicate_inputNSeqId
 }
 
-func (m *TLInputNSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x7ab16d81: func() []byte {
+func (m *TLInputNSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x7ab16d81: func() error {
 			x.UInt(0x7ab16d81)
 
 			x.String(m.GetKey())
 			x.Int(m.GetN())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -828,10 +806,10 @@ func (m *TLInputNSeqId) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_inputNSeqId, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLInputNSeqId) CalcByteSize(layer int32) int {
@@ -864,10 +842,7 @@ func (m *TLInputNSeqId) DebugString() string {
 // TLIdgenNextId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenNextId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_nextId))
-
+func (m *TLIdgenNextId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbe711020:
 		x.UInt(0xbe711020)
@@ -878,7 +853,7 @@ func (m *TLIdgenNextId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenNextId) CalcByteSize(layer int32) int {
@@ -908,10 +883,7 @@ func (m *TLIdgenNextId) DebugString() string {
 // TLIdgenNextIds
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenNextIds) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_nextIds))
-
+func (m *TLIdgenNextIds) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x47c56fae:
 		x.UInt(0x47c56fae)
@@ -924,7 +896,7 @@ func (m *TLIdgenNextIds) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenNextIds) CalcByteSize(layer int32) int {
@@ -955,10 +927,7 @@ func (m *TLIdgenNextIds) DebugString() string {
 // TLIdgenGetCurrentSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenGetCurrentSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_getCurrentSeqId))
-
+func (m *TLIdgenGetCurrentSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d5bab80:
 		x.UInt(0x9d5bab80)
@@ -971,7 +940,7 @@ func (m *TLIdgenGetCurrentSeqId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenGetCurrentSeqId) CalcByteSize(layer int32) int {
@@ -1002,10 +971,7 @@ func (m *TLIdgenGetCurrentSeqId) DebugString() string {
 // TLIdgenSetCurrentSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenSetCurrentSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_setCurrentSeqId))
-
+func (m *TLIdgenSetCurrentSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcd2c196d:
 		x.UInt(0xcd2c196d)
@@ -1019,7 +985,7 @@ func (m *TLIdgenSetCurrentSeqId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenSetCurrentSeqId) CalcByteSize(layer int32) int {
@@ -1051,10 +1017,7 @@ func (m *TLIdgenSetCurrentSeqId) DebugString() string {
 // TLIdgenGetNextSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenGetNextSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_getNextSeqId))
-
+func (m *TLIdgenGetNextSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf6716968:
 		x.UInt(0xf6716968)
@@ -1067,7 +1030,7 @@ func (m *TLIdgenGetNextSeqId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenGetNextSeqId) CalcByteSize(layer int32) int {
@@ -1098,10 +1061,7 @@ func (m *TLIdgenGetNextSeqId) DebugString() string {
 // TLIdgenGetNextNSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenGetNextNSeqId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_getNextNSeqId))
-
+func (m *TLIdgenGetNextNSeqId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa7d4cc6e:
 		x.UInt(0xa7d4cc6e)
@@ -1115,7 +1075,7 @@ func (m *TLIdgenGetNextNSeqId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenGetNextNSeqId) CalcByteSize(layer int32) int {
@@ -1147,10 +1107,7 @@ func (m *TLIdgenGetNextNSeqId) DebugString() string {
 // TLIdgenGetNextIdValList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenGetNextIdValList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_getNextIdValList))
-
+func (m *TLIdgenGetNextIdValList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xaa85f137:
 		x.UInt(0xaa85f137)
@@ -1160,14 +1117,14 @@ func (m *TLIdgenGetNextIdValList) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetId())))
 		for _, v := range m.GetId() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenGetNextIdValList) CalcByteSize(layer int32) int {
@@ -1210,10 +1167,7 @@ func (m *TLIdgenGetNextIdValList) DebugString() string {
 // TLIdgenGetCurrentSeqIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLIdgenGetCurrentSeqIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_idgen_getCurrentSeqIdList))
-
+func (m *TLIdgenGetCurrentSeqIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd229ae43:
 		x.UInt(0xd229ae43)
@@ -1223,14 +1177,14 @@ func (m *TLIdgenGetCurrentSeqIdList) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetId())))
 		for _, v := range m.GetId() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) CalcByteSize(layer int32) int {
@@ -1273,11 +1227,10 @@ func (m *TLIdgenGetCurrentSeqIdList) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -1298,15 +1251,14 @@ func (m *Vector_Long) DebugString() string {
 
 // Vector_IdVal
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_IdVal) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_IdVal) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_IdVal) Decode(dBuf *mtproto.DecodeBuf) error {

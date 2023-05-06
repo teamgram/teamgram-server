@@ -56,7 +56,7 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 	err = mr.Finish(
 		func() error {
 			var err2 error
-			state, err2 = c.svcCtx.Dao.UpdatesClient.UpdatesGetState(c.ctx, &updates.TLUpdatesGetState{
+			state, err2 = c.svcCtx.Dao.UpdatesClient.UpdatesGetStateV2(c.ctx, &updates.TLUpdatesGetStateV2{
 				AuthKeyId: c.MD.AuthId,
 				UserId:    c.MD.UserId,
 			})

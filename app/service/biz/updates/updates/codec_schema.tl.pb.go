@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -57,9 +57,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	},
 
 	// Method
-	524332412: func() mtproto.TLObject { // 0x1f40ad7c
-		return &TLUpdatesGetState{
-			Constructor: 524332412,
+	1173671269: func() mtproto.TLObject { // 0x45f4cd65
+		return &TLUpdatesGetStateV2{
+			Constructor: 1173671269,
 		}
 	},
 	-1217698151: func() mtproto.TLObject { // 0xb76b6699
@@ -94,7 +94,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_ChannelDifference
 //
 
-func (m *ChannelDifference) Encode(layer int32) []byte {
+func (m *ChannelDifference) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -102,21 +102,17 @@ func (m *ChannelDifference) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_channelDifference:
 		t := m.To_ChannelDifference()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *ChannelDifference) CalcByteSize(layer int32) int {
@@ -148,7 +144,6 @@ func (m *ChannelDifference) DebugString() string {
 }
 
 // To_ChannelDifference
-// channelDifference flags:# final:flags.0?true pts:int new_messages:Vector<Message> other_updates:Vector<Update> = ChannelDifference;
 func (m *ChannelDifference) To_ChannelDifference() *TLChannelDifference {
 	m.PredicateName = Predicate_channelDifference
 	return &TLChannelDifference{
@@ -157,7 +152,6 @@ func (m *ChannelDifference) To_ChannelDifference() *TLChannelDifference {
 }
 
 // MakeTLChannelDifference
-// channelDifference flags:# final:flags.0?true pts:int new_messages:Vector<Message> other_updates:Vector<Update> = ChannelDifference;
 func MakeTLChannelDifference(data2 *ChannelDifference) *TLChannelDifference {
 	if data2 == nil {
 		return &TLChannelDifference{Data2: &ChannelDifference{
@@ -191,12 +185,9 @@ func (m *TLChannelDifference) GetPredicateName() string {
 	return Predicate_channelDifference
 }
 
-func (m *TLChannelDifference) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xcd19034a: func() []byte {
-			// channelDifference flags:# final:flags.0?true pts:int new_messages:Vector<Message> other_updates:Vector<Update> = ChannelDifference;
+func (m *TLChannelDifference) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xcd19034a: func() error {
 			x.UInt(0xcd19034a)
 
 			// set flags
@@ -218,16 +209,16 @@ func (m *TLChannelDifference) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetNewMessages())))
 			for _, v := range m.GetNewMessages() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetOtherUpdates())))
 			for _, v := range m.GetOtherUpdates() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -237,10 +228,10 @@ func (m *TLChannelDifference) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_channelDifference, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChannelDifference) CalcByteSize(layer int32) int {
@@ -250,7 +241,6 @@ func (m *TLChannelDifference) CalcByteSize(layer int32) int {
 func (m *TLChannelDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0xcd19034a: func() error {
-			// channelDifference flags:# final:flags.0?true pts:int new_messages:Vector<Message> other_updates:Vector<Update> = ChannelDifference;
 			var flags = dBuf.UInt()
 			_ = flags
 			if (flags & (1 << 0)) != 0 {
@@ -308,7 +298,7 @@ func (m *TLChannelDifference) DebugString() string {
 //  + TL_DifferenceTooLong
 //
 
-func (m *Difference) Encode(layer int32) []byte {
+func (m *Difference) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -316,30 +306,26 @@ func (m *Difference) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_differenceEmpty:
 		t := m.To_DifferenceEmpty()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_difference:
 		t := m.To_Difference()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_differenceSlice:
 		t := m.To_DifferenceSlice()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_differenceTooLong:
 		t := m.To_DifferenceTooLong()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *Difference) CalcByteSize(layer int32) int {
@@ -389,7 +375,6 @@ func (m *Difference) DebugString() string {
 }
 
 // To_DifferenceEmpty
-// differenceEmpty state:updates.State = Difference;
 func (m *Difference) To_DifferenceEmpty() *TLDifferenceEmpty {
 	m.PredicateName = Predicate_differenceEmpty
 	return &TLDifferenceEmpty{
@@ -398,7 +383,6 @@ func (m *Difference) To_DifferenceEmpty() *TLDifferenceEmpty {
 }
 
 // To_Difference
-// difference new_messages:Vector<Message> other_updates:Vector<Update> state:updates.State = Difference;
 func (m *Difference) To_Difference() *TLDifference {
 	m.PredicateName = Predicate_difference
 	return &TLDifference{
@@ -407,7 +391,6 @@ func (m *Difference) To_Difference() *TLDifference {
 }
 
 // To_DifferenceSlice
-// differenceSlice new_messages:Vector<Message> other_updates:Vector<Update> intermediate_state:updates.State = Difference;
 func (m *Difference) To_DifferenceSlice() *TLDifferenceSlice {
 	m.PredicateName = Predicate_differenceSlice
 	return &TLDifferenceSlice{
@@ -416,7 +399,6 @@ func (m *Difference) To_DifferenceSlice() *TLDifferenceSlice {
 }
 
 // To_DifferenceTooLong
-// differenceTooLong pts:int = Difference;
 func (m *Difference) To_DifferenceTooLong() *TLDifferenceTooLong {
 	m.PredicateName = Predicate_differenceTooLong
 	return &TLDifferenceTooLong{
@@ -425,7 +407,6 @@ func (m *Difference) To_DifferenceTooLong() *TLDifferenceTooLong {
 }
 
 // MakeTLDifferenceEmpty
-// differenceEmpty state:updates.State = Difference;
 func MakeTLDifferenceEmpty(data2 *Difference) *TLDifferenceEmpty {
 	if data2 == nil {
 		return &TLDifferenceEmpty{Data2: &Difference{
@@ -449,16 +430,13 @@ func (m *TLDifferenceEmpty) GetPredicateName() string {
 	return Predicate_differenceEmpty
 }
 
-func (m *TLDifferenceEmpty) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x8bdbda4e: func() []byte {
-			// differenceEmpty state:updates.State = Difference;
+func (m *TLDifferenceEmpty) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x8bdbda4e: func() error {
 			x.UInt(0x8bdbda4e)
 
-			x.Bytes(m.GetState().Encode(layer))
-			return x.GetBuf()
+			m.GetState().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -468,10 +446,10 @@ func (m *TLDifferenceEmpty) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_differenceEmpty, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDifferenceEmpty) CalcByteSize(layer int32) int {
@@ -481,7 +459,6 @@ func (m *TLDifferenceEmpty) CalcByteSize(layer int32) int {
 func (m *TLDifferenceEmpty) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x8bdbda4e: func() error {
-			// differenceEmpty state:updates.State = Difference;
 
 			m0 := &mtproto.Updates_State{}
 			m0.Decode(dBuf)
@@ -505,7 +482,6 @@ func (m *TLDifferenceEmpty) DebugString() string {
 }
 
 // MakeTLDifference
-// difference new_messages:Vector<Message> other_updates:Vector<Update> state:updates.State = Difference;
 func MakeTLDifference(data2 *Difference) *TLDifference {
 	if data2 == nil {
 		return &TLDifference{Data2: &Difference{
@@ -535,28 +511,25 @@ func (m *TLDifference) GetPredicateName() string {
 	return Predicate_difference
 }
 
-func (m *TLDifference) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x5482832b: func() []byte {
-			// difference new_messages:Vector<Message> other_updates:Vector<Update> state:updates.State = Difference;
+func (m *TLDifference) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x5482832b: func() error {
 			x.UInt(0x5482832b)
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetNewMessages())))
 			for _, v := range m.GetNewMessages() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetOtherUpdates())))
 			for _, v := range m.GetOtherUpdates() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
-			x.Bytes(m.GetState().Encode(layer))
-			return x.GetBuf()
+			m.GetState().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -566,10 +539,10 @@ func (m *TLDifference) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_difference, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDifference) CalcByteSize(layer int32) int {
@@ -579,7 +552,6 @@ func (m *TLDifference) CalcByteSize(layer int32) int {
 func (m *TLDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x5482832b: func() error {
-			// difference new_messages:Vector<Message> other_updates:Vector<Update> state:updates.State = Difference;
 			c1 := dBuf.Int()
 			if c1 != int32(mtproto.CRC32_vector) {
 				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
@@ -628,7 +600,6 @@ func (m *TLDifference) DebugString() string {
 }
 
 // MakeTLDifferenceSlice
-// differenceSlice new_messages:Vector<Message> other_updates:Vector<Update> intermediate_state:updates.State = Difference;
 func MakeTLDifferenceSlice(data2 *Difference) *TLDifferenceSlice {
 	if data2 == nil {
 		return &TLDifferenceSlice{Data2: &Difference{
@@ -662,28 +633,25 @@ func (m *TLDifferenceSlice) GetPredicateName() string {
 	return Predicate_differenceSlice
 }
 
-func (m *TLDifferenceSlice) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xcb965ddf: func() []byte {
-			// differenceSlice new_messages:Vector<Message> other_updates:Vector<Update> intermediate_state:updates.State = Difference;
+func (m *TLDifferenceSlice) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xcb965ddf: func() error {
 			x.UInt(0xcb965ddf)
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetNewMessages())))
 			for _, v := range m.GetNewMessages() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetOtherUpdates())))
 			for _, v := range m.GetOtherUpdates() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
-			x.Bytes(m.GetIntermediateState().Encode(layer))
-			return x.GetBuf()
+			m.GetIntermediateState().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -693,10 +661,10 @@ func (m *TLDifferenceSlice) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_differenceSlice, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDifferenceSlice) CalcByteSize(layer int32) int {
@@ -706,7 +674,6 @@ func (m *TLDifferenceSlice) CalcByteSize(layer int32) int {
 func (m *TLDifferenceSlice) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0xcb965ddf: func() error {
-			// differenceSlice new_messages:Vector<Message> other_updates:Vector<Update> intermediate_state:updates.State = Difference;
 			c1 := dBuf.Int()
 			if c1 != int32(mtproto.CRC32_vector) {
 				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
@@ -755,7 +722,6 @@ func (m *TLDifferenceSlice) DebugString() string {
 }
 
 // MakeTLDifferenceTooLong
-// differenceTooLong pts:int = Difference;
 func MakeTLDifferenceTooLong(data2 *Difference) *TLDifferenceTooLong {
 	if data2 == nil {
 		return &TLDifferenceTooLong{Data2: &Difference{
@@ -779,16 +745,13 @@ func (m *TLDifferenceTooLong) GetPredicateName() string {
 	return Predicate_differenceTooLong
 }
 
-func (m *TLDifferenceTooLong) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x3572ee30: func() []byte {
-			// differenceTooLong pts:int = Difference;
+func (m *TLDifferenceTooLong) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x3572ee30: func() error {
 			x.UInt(0x3572ee30)
 
 			x.Int(m.GetPts())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -798,10 +761,10 @@ func (m *TLDifferenceTooLong) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_differenceTooLong, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDifferenceTooLong) CalcByteSize(layer int32) int {
@@ -811,7 +774,6 @@ func (m *TLDifferenceTooLong) CalcByteSize(layer int32) int {
 func (m *TLDifferenceTooLong) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x3572ee30: func() error {
-			// differenceTooLong pts:int = Difference;
 			m.SetPts(dBuf.Int())
 			return dBuf.GetError()
 		},
@@ -831,17 +793,13 @@ func (m *TLDifferenceTooLong) DebugString() string {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-// TLUpdatesGetState
+// TLUpdatesGetStateV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUpdatesGetState) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_updates_getState))
-
+func (m *TLUpdatesGetStateV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x1f40ad7c:
-		// updates.getState auth_key_id:long user_id:long = updates.State;
-		x.UInt(0x1f40ad7c)
+	case 0x45f4cd65:
+		x.UInt(0x45f4cd65)
 
 		// no flags
 
@@ -852,17 +810,16 @@ func (m *TLUpdatesGetState) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
-func (m *TLUpdatesGetState) CalcByteSize(layer int32) int {
+func (m *TLUpdatesGetStateV2) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *TLUpdatesGetState) Decode(dBuf *mtproto.DecodeBuf) error {
+func (m *TLUpdatesGetStateV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x1f40ad7c:
-		// updates.getState auth_key_id:long user_id:long = updates.State;
+	case 0x45f4cd65:
 
 		// not has flags
 
@@ -876,7 +833,7 @@ func (m *TLUpdatesGetState) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUpdatesGetState) DebugString() string {
+func (m *TLUpdatesGetStateV2) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -885,13 +842,9 @@ func (m *TLUpdatesGetState) DebugString() string {
 // TLUpdatesGetDifferenceV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUpdatesGetDifferenceV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_updates_getDifferenceV2))
-
+func (m *TLUpdatesGetDifferenceV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb76b6699:
-		// updates.getDifferenceV2 flags:# auth_key_id:long user_id:long pts:int pts_total_limit:flags.0?int date:long = Difference;
 		x.UInt(0xb76b6699)
 
 		// set flags
@@ -917,7 +870,7 @@ func (m *TLUpdatesGetDifferenceV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUpdatesGetDifferenceV2) CalcByteSize(layer int32) int {
@@ -927,7 +880,6 @@ func (m *TLUpdatesGetDifferenceV2) CalcByteSize(layer int32) int {
 func (m *TLUpdatesGetDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb76b6699:
-		// updates.getDifferenceV2 flags:# auth_key_id:long user_id:long pts:int pts_total_limit:flags.0?int date:long = Difference;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -958,13 +910,9 @@ func (m *TLUpdatesGetDifferenceV2) DebugString() string {
 // TLUpdatesGetChannelDifferenceV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUpdatesGetChannelDifferenceV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_updates_getChannelDifferenceV2))
-
+func (m *TLUpdatesGetChannelDifferenceV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4da3318a:
-		// updates.getChannelDifferenceV2 auth_key_id:long user_id:long channel_id:long pts:int limit:int = ChannelDifference;
 		x.UInt(0x4da3318a)
 
 		// no flags
@@ -979,7 +927,7 @@ func (m *TLUpdatesGetChannelDifferenceV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUpdatesGetChannelDifferenceV2) CalcByteSize(layer int32) int {
@@ -989,7 +937,6 @@ func (m *TLUpdatesGetChannelDifferenceV2) CalcByteSize(layer int32) int {
 func (m *TLUpdatesGetChannelDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4da3318a:
-		// updates.getChannelDifferenceV2 auth_key_id:long user_id:long channel_id:long pts:int limit:int = ChannelDifference;
 
 		// not has flags
 

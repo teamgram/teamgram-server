@@ -139,7 +139,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_PhotoSizeList
 //
 
-func (m *PhotoSizeList) Encode(layer int32) []byte {
+func (m *PhotoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -147,21 +147,17 @@ func (m *PhotoSizeList) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_photoSizeList:
 		t := m.To_PhotoSizeList()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *PhotoSizeList) CalcByteSize(layer int32) int {
@@ -230,11 +226,9 @@ func (m *TLPhotoSizeList) GetPredicateName() string {
 	return Predicate_photoSizeList
 }
 
-func (m *TLPhotoSizeList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x67139b3: func() []byte {
+func (m *TLPhotoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x67139b3: func() error {
 			x.UInt(0x67139b3)
 
 			x.Long(m.GetSizeId())
@@ -242,11 +236,11 @@ func (m *TLPhotoSizeList) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetSizes())))
 			for _, v := range m.GetSizes() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(m.GetDcId())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -256,10 +250,10 @@ func (m *TLPhotoSizeList) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_photoSizeList, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLPhotoSizeList) CalcByteSize(layer int32) int {
@@ -306,7 +300,7 @@ func (m *TLPhotoSizeList) DebugString() string {
 //  + TL_VideoSizeList
 //
 
-func (m *VideoSizeList) Encode(layer int32) []byte {
+func (m *VideoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -314,21 +308,17 @@ func (m *VideoSizeList) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_videoSizeList:
 		t := m.To_VideoSizeList()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *VideoSizeList) CalcByteSize(layer int32) int {
@@ -397,11 +387,9 @@ func (m *TLVideoSizeList) GetPredicateName() string {
 	return Predicate_videoSizeList
 }
 
-func (m *TLVideoSizeList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x38d19bf2: func() []byte {
+func (m *TLVideoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x38d19bf2: func() error {
 			x.UInt(0x38d19bf2)
 
 			x.Long(m.GetSizeId())
@@ -409,11 +397,11 @@ func (m *TLVideoSizeList) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetSizes())))
 			for _, v := range m.GetSizes() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(m.GetDcId())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -423,10 +411,10 @@ func (m *TLVideoSizeList) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_videoSizeList, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLVideoSizeList) CalcByteSize(layer int32) int {
@@ -472,10 +460,7 @@ func (m *TLVideoSizeList) DebugString() string {
 // TLMediaUploadPhotoFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadPhotoFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadPhotoFile))
-
+func (m *TLMediaUploadPhotoFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3c2b0b17:
 		x.UInt(0x3c2b0b17)
@@ -494,12 +479,12 @@ func (m *TLMediaUploadPhotoFile) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		if m.GetStickers() != nil {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetStickers())))
 			for _, v := range m.GetStickers() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 		}
 		if m.GetTtlSeconds() != nil {
@@ -510,7 +495,7 @@ func (m *TLMediaUploadPhotoFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadPhotoFile) CalcByteSize(layer int32) int {
@@ -566,10 +551,7 @@ func (m *TLMediaUploadPhotoFile) DebugString() string {
 // TLMediaUploadProfilePhotoFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadProfilePhotoFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadProfilePhotoFile))
-
+func (m *TLMediaUploadProfilePhotoFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x973f2f24:
 		x.UInt(0x973f2f24)
@@ -592,11 +574,11 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(layer int32) []byte {
 		// flags Debug by @benqi
 		x.Long(m.GetOwnerId())
 		if m.GetFile() != nil {
-			x.Bytes(m.GetFile().Encode(layer))
+			m.GetFile().Encode(x, layer)
 		}
 
 		if m.GetVideo() != nil {
-			x.Bytes(m.GetVideo().Encode(layer))
+			m.GetVideo().Encode(x, layer)
 		}
 
 		if m.GetVideoStartTs() != nil {
@@ -607,7 +589,7 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadProfilePhotoFile) CalcByteSize(layer int32) int {
@@ -654,10 +636,7 @@ func (m *TLMediaUploadProfilePhotoFile) DebugString() string {
 // TLMediaGetPhoto
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetPhoto) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getPhoto))
-
+func (m *TLMediaGetPhoto) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x657eb86b:
 		x.UInt(0x657eb86b)
@@ -670,7 +649,7 @@ func (m *TLMediaGetPhoto) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetPhoto) CalcByteSize(layer int32) int {
@@ -701,10 +680,7 @@ func (m *TLMediaGetPhoto) DebugString() string {
 // TLMediaGetPhotoSizeList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetPhotoSizeList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getPhotoSizeList))
-
+func (m *TLMediaGetPhotoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa1eb7f45:
 		x.UInt(0xa1eb7f45)
@@ -717,7 +693,7 @@ func (m *TLMediaGetPhotoSizeList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetPhotoSizeList) CalcByteSize(layer int32) int {
@@ -748,10 +724,7 @@ func (m *TLMediaGetPhotoSizeList) DebugString() string {
 // TLMediaGetPhotoSizeListList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetPhotoSizeListList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getPhotoSizeListList))
-
+func (m *TLMediaGetPhotoSizeListList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfb5c80e0:
 		x.UInt(0xfb5c80e0)
@@ -764,7 +737,7 @@ func (m *TLMediaGetPhotoSizeListList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetPhotoSizeListList) CalcByteSize(layer int32) int {
@@ -796,10 +769,7 @@ func (m *TLMediaGetPhotoSizeListList) DebugString() string {
 // TLMediaGetVideoSizeList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetVideoSizeList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getVideoSizeList))
-
+func (m *TLMediaGetVideoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc47692ea:
 		x.UInt(0xc47692ea)
@@ -812,7 +782,7 @@ func (m *TLMediaGetVideoSizeList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetVideoSizeList) CalcByteSize(layer int32) int {
@@ -843,10 +813,7 @@ func (m *TLMediaGetVideoSizeList) DebugString() string {
 // TLMediaUploadedDocumentMedia
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadedDocumentMedia) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadedDocumentMedia))
-
+func (m *TLMediaUploadedDocumentMedia) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4f5fb06c:
 		x.UInt(0x4f5fb06c)
@@ -854,13 +821,13 @@ func (m *TLMediaUploadedDocumentMedia) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetMedia().Encode(layer))
+		m.GetMedia().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadedDocumentMedia) CalcByteSize(layer int32) int {
@@ -896,10 +863,7 @@ func (m *TLMediaUploadedDocumentMedia) DebugString() string {
 // TLMediaGetDocument
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetDocument) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getDocument))
-
+func (m *TLMediaGetDocument) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3fe5974d:
 		x.UInt(0x3fe5974d)
@@ -912,7 +876,7 @@ func (m *TLMediaGetDocument) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetDocument) CalcByteSize(layer int32) int {
@@ -943,10 +907,7 @@ func (m *TLMediaGetDocument) DebugString() string {
 // TLMediaGetDocumentList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetDocumentList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getDocumentList))
-
+func (m *TLMediaGetDocumentList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc52fd26f:
 		x.UInt(0xc52fd26f)
@@ -959,7 +920,7 @@ func (m *TLMediaGetDocumentList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetDocumentList) CalcByteSize(layer int32) int {
@@ -991,10 +952,7 @@ func (m *TLMediaGetDocumentList) DebugString() string {
 // TLMediaUploadEncryptedFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadEncryptedFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadEncryptedFile))
-
+func (m *TLMediaUploadEncryptedFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xab00c69b:
 		x.UInt(0xab00c69b)
@@ -1002,13 +960,13 @@ func (m *TLMediaUploadEncryptedFile) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadEncryptedFile) CalcByteSize(layer int32) int {
@@ -1044,10 +1002,7 @@ func (m *TLMediaUploadEncryptedFile) DebugString() string {
 // TLMediaGetEncryptedFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaGetEncryptedFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_getEncryptedFile))
-
+func (m *TLMediaGetEncryptedFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfc6080d1:
 		x.UInt(0xfc6080d1)
@@ -1061,7 +1016,7 @@ func (m *TLMediaGetEncryptedFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaGetEncryptedFile) CalcByteSize(layer int32) int {
@@ -1093,10 +1048,7 @@ func (m *TLMediaGetEncryptedFile) DebugString() string {
 // TLMediaUploadWallPaperFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadWallPaperFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadWallPaperFile))
-
+func (m *TLMediaUploadWallPaperFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9cfaadfe:
 		x.UInt(0x9cfaadfe)
@@ -1104,15 +1056,15 @@ func (m *TLMediaUploadWallPaperFile) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		x.String(m.GetMimeType())
-		x.Bytes(m.GetAdmin().Encode(layer))
+		m.GetAdmin().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadWallPaperFile) CalcByteSize(layer int32) int {
@@ -1154,10 +1106,7 @@ func (m *TLMediaUploadWallPaperFile) DebugString() string {
 // TLMediaUploadThemeFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadThemeFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadThemeFile))
-
+func (m *TLMediaUploadThemeFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x42e6b860:
 		x.UInt(0x42e6b860)
@@ -1173,9 +1122,9 @@ func (m *TLMediaUploadThemeFile) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		if m.GetThumb() != nil {
-			x.Bytes(m.GetThumb().Encode(layer))
+			m.GetThumb().Encode(x, layer)
 		}
 
 		x.String(m.GetMimeType())
@@ -1185,7 +1134,7 @@ func (m *TLMediaUploadThemeFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadThemeFile) CalcByteSize(layer int32) int {
@@ -1230,10 +1179,7 @@ func (m *TLMediaUploadThemeFile) DebugString() string {
 // TLMediaUploadStickerFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadStickerFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadStickerFile))
-
+func (m *TLMediaUploadStickerFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xacb624ed:
 		x.UInt(0xacb624ed)
@@ -1249,20 +1195,20 @@ func (m *TLMediaUploadStickerFile) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		if m.GetThumb() != nil {
-			x.Bytes(m.GetThumb().Encode(layer))
+			m.GetThumb().Encode(x, layer)
 		}
 
 		x.String(m.GetMimeType())
 		x.String(m.GetFileName())
-		x.Bytes(m.GetDocumentAttributeSticker().Encode(layer))
+		m.GetDocumentAttributeSticker().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadStickerFile) CalcByteSize(layer int32) int {
@@ -1312,10 +1258,7 @@ func (m *TLMediaUploadStickerFile) DebugString() string {
 // TLMediaUploadRingtoneFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLMediaUploadRingtoneFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_media_uploadRingtoneFile))
-
+func (m *TLMediaUploadRingtoneFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3dbab209:
 		x.UInt(0x3dbab209)
@@ -1327,7 +1270,7 @@ func (m *TLMediaUploadRingtoneFile) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetOwnerId())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		x.String(m.GetMimeType())
 		x.String(m.GetFileName())
 
@@ -1335,7 +1278,7 @@ func (m *TLMediaUploadRingtoneFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLMediaUploadRingtoneFile) CalcByteSize(layer int32) int {
@@ -1375,15 +1318,14 @@ func (m *TLMediaUploadRingtoneFile) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_PhotoSizeList
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PhotoSizeList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PhotoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -1410,15 +1352,14 @@ func (m *Vector_PhotoSizeList) DebugString() string {
 
 // Vector_Document
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Document) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Document) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Document) Decode(dBuf *mtproto.DecodeBuf) error {

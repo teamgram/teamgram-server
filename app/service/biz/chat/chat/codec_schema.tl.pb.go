@@ -256,7 +256,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_ChatInvitePeek
 //
 
-func (m *ChatInviteExt) Encode(layer int32) []byte {
+func (m *ChatInviteExt) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -264,27 +264,23 @@ func (m *ChatInviteExt) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_chatInviteAlready:
 		t := m.To_ChatInviteAlready()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_chatInvite:
 		t := m.To_ChatInvite()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_chatInvitePeek:
 		t := m.To_ChatInvitePeek()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *ChatInviteExt) CalcByteSize(layer int32) int {
@@ -375,15 +371,13 @@ func (m *TLChatInviteAlready) GetPredicateName() string {
 	return Predicate_chatInviteAlready
 }
 
-func (m *TLChatInviteAlready) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xa40e7d5e: func() []byte {
+func (m *TLChatInviteAlready) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xa40e7d5e: func() error {
 			x.UInt(0xa40e7d5e)
 
-			x.Bytes(m.GetChat().Encode(layer))
-			return x.GetBuf()
+			m.GetChat().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -393,10 +387,10 @@ func (m *TLChatInviteAlready) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_chatInviteAlready, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatInviteAlready) CalcByteSize(layer int32) int {
@@ -468,11 +462,9 @@ func (m *TLChatInvite) GetPredicateName() string {
 	return Predicate_chatInvite
 }
 
-func (m *TLChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xdb75d1a7: func() []byte {
+func (m *TLChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xdb75d1a7: func() error {
 			x.UInt(0xdb75d1a7)
 
 			// set flags
@@ -502,12 +494,12 @@ func (m *TLChatInvite) Encode(layer int32) []byte {
 				x.String(m.GetAbout().Value)
 			}
 
-			x.Bytes(m.GetPhoto().Encode(layer))
+			m.GetPhoto().Encode(x, layer)
 			x.Int(m.GetParticipantsCount())
 			if m.GetParticipants() != nil {
 				x.VectorLong(m.GetParticipants())
 			}
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -517,10 +509,10 @@ func (m *TLChatInvite) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_chatInvite, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatInvite) CalcByteSize(layer int32) int {
@@ -592,16 +584,14 @@ func (m *TLChatInvitePeek) GetPredicateName() string {
 	return Predicate_chatInvitePeek
 }
 
-func (m *TLChatInvitePeek) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xace3e26e: func() []byte {
+func (m *TLChatInvitePeek) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xace3e26e: func() error {
 			x.UInt(0xace3e26e)
 
-			x.Bytes(m.GetChat().Encode(layer))
+			m.GetChat().Encode(x, layer)
 			x.Int(m.GetExpires())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -611,10 +601,10 @@ func (m *TLChatInvitePeek) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_chatInvitePeek, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatInvitePeek) CalcByteSize(layer int32) int {
@@ -652,7 +642,7 @@ func (m *TLChatInvitePeek) DebugString() string {
 //  + TL_ChatInviteImported
 //
 
-func (m *ChatInviteImported) Encode(layer int32) []byte {
+func (m *ChatInviteImported) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -660,21 +650,17 @@ func (m *ChatInviteImported) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_chatInviteImported:
 		t := m.To_ChatInviteImported()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *ChatInviteImported) CalcByteSize(layer int32) int {
@@ -741,11 +727,9 @@ func (m *TLChatInviteImported) GetPredicateName() string {
 	return Predicate_chatInviteImported
 }
 
-func (m *TLChatInviteImported) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x721051f6: func() []byte {
+func (m *TLChatInviteImported) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x721051f6: func() error {
 			x.UInt(0x721051f6)
 
 			// set flags
@@ -762,12 +746,12 @@ func (m *TLChatInviteImported) Encode(layer int32) []byte {
 			// set flags
 			var flags = getFlags()
 			x.UInt(flags)
-			x.Bytes(m.GetChat().Encode(layer))
+			m.GetChat().Encode(x, layer)
 			if m.GetRequesters() != nil {
-				x.Bytes(m.GetRequesters().Encode(layer))
+				m.GetRequesters().Encode(x, layer)
 			}
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -777,10 +761,10 @@ func (m *TLChatInviteImported) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_chatInviteImported, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatInviteImported) CalcByteSize(layer int32) int {
@@ -824,7 +808,7 @@ func (m *TLChatInviteImported) DebugString() string {
 //  + TL_RecentChatInviteRequesters
 //
 
-func (m *RecentChatInviteRequesters) Encode(layer int32) []byte {
+func (m *RecentChatInviteRequesters) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -832,21 +816,17 @@ func (m *RecentChatInviteRequesters) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_recentChatInviteRequesters:
 		t := m.To_RecentChatInviteRequesters()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *RecentChatInviteRequesters) CalcByteSize(layer int32) int {
@@ -912,18 +892,16 @@ func (m *TLRecentChatInviteRequesters) GetPredicateName() string {
 	return Predicate_recentChatInviteRequesters
 }
 
-func (m *TLRecentChatInviteRequesters) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x1c6e3c54: func() []byte {
+func (m *TLRecentChatInviteRequesters) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1c6e3c54: func() error {
 			x.UInt(0x1c6e3c54)
 
 			x.Int(m.GetRequestsPending())
 
 			x.VectorLong(m.GetRecentRequesters())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -933,10 +911,10 @@ func (m *TLRecentChatInviteRequesters) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_recentChatInviteRequesters, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLRecentChatInviteRequesters) CalcByteSize(layer int32) int {
@@ -972,7 +950,7 @@ func (m *TLRecentChatInviteRequesters) DebugString() string {
 //  + TL_UserChatIdList
 //
 
-func (m *UserChatIdList) Encode(layer int32) []byte {
+func (m *UserChatIdList) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -980,21 +958,17 @@ func (m *UserChatIdList) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_userChatIdList:
 		t := m.To_UserChatIdList()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *UserChatIdList) CalcByteSize(layer int32) int {
@@ -1060,18 +1034,16 @@ func (m *TLUserChatIdList) GetPredicateName() string {
 	return Predicate_userChatIdList
 }
 
-func (m *TLUserChatIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x50067224: func() []byte {
+func (m *TLUserChatIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x50067224: func() error {
 			x.UInt(0x50067224)
 
 			x.Long(m.GetUserId())
 
 			x.VectorLong(m.GetChatIdList())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -1081,10 +1053,10 @@ func (m *TLUserChatIdList) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_userChatIdList, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserChatIdList) CalcByteSize(layer int32) int {
@@ -1119,10 +1091,7 @@ func (m *TLUserChatIdList) DebugString() string {
 // TLChatGetMutableChat
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetMutableChat) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getMutableChat))
-
+func (m *TLChatGetMutableChat) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2c2c25d2:
 		x.UInt(0x2c2c25d2)
@@ -1135,7 +1104,7 @@ func (m *TLChatGetMutableChat) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetMutableChat) CalcByteSize(layer int32) int {
@@ -1166,10 +1135,7 @@ func (m *TLChatGetMutableChat) DebugString() string {
 // TLChatGetChatListByIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetChatListByIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getChatListByIdList))
-
+func (m *TLChatGetChatListByIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe740f539:
 		x.UInt(0xe740f539)
@@ -1184,7 +1150,7 @@ func (m *TLChatGetChatListByIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetChatListByIdList) CalcByteSize(layer int32) int {
@@ -1218,10 +1184,7 @@ func (m *TLChatGetChatListByIdList) DebugString() string {
 // TLChatGetChatBySelfId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetChatBySelfId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getChatBySelfId))
-
+func (m *TLChatGetChatBySelfId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x49b71a48:
 		x.UInt(0x49b71a48)
@@ -1235,7 +1198,7 @@ func (m *TLChatGetChatBySelfId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetChatBySelfId) CalcByteSize(layer int32) int {
@@ -1267,10 +1230,7 @@ func (m *TLChatGetChatBySelfId) DebugString() string {
 // TLChatCreateChat2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatCreateChat2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_createChat2))
-
+func (m *TLChatCreateChat2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe43f61af:
 		x.UInt(0xe43f61af)
@@ -1287,7 +1247,7 @@ func (m *TLChatCreateChat2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatCreateChat2) CalcByteSize(layer int32) int {
@@ -1322,10 +1282,7 @@ func (m *TLChatCreateChat2) DebugString() string {
 // TLChatDeleteChat
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatDeleteChat) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_deleteChat))
-
+func (m *TLChatDeleteChat) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6d11ec1e:
 		x.UInt(0x6d11ec1e)
@@ -1339,7 +1296,7 @@ func (m *TLChatDeleteChat) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatDeleteChat) CalcByteSize(layer int32) int {
@@ -1371,10 +1328,7 @@ func (m *TLChatDeleteChat) DebugString() string {
 // TLChatDeleteChatUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatDeleteChatUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_deleteChatUser))
-
+func (m *TLChatDeleteChatUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb270fd5:
 		x.UInt(0xb270fd5)
@@ -1389,7 +1343,7 @@ func (m *TLChatDeleteChatUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatDeleteChatUser) CalcByteSize(layer int32) int {
@@ -1422,10 +1376,7 @@ func (m *TLChatDeleteChatUser) DebugString() string {
 // TLChatEditChatTitle
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditChatTitle) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editChatTitle))
-
+func (m *TLChatEditChatTitle) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x95c59ea7:
 		x.UInt(0x95c59ea7)
@@ -1440,7 +1391,7 @@ func (m *TLChatEditChatTitle) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditChatTitle) CalcByteSize(layer int32) int {
@@ -1473,10 +1424,7 @@ func (m *TLChatEditChatTitle) DebugString() string {
 // TLChatEditChatAbout
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditChatAbout) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editChatAbout))
-
+func (m *TLChatEditChatAbout) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x5c737c78:
 		x.UInt(0x5c737c78)
@@ -1491,7 +1439,7 @@ func (m *TLChatEditChatAbout) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditChatAbout) CalcByteSize(layer int32) int {
@@ -1524,10 +1472,7 @@ func (m *TLChatEditChatAbout) DebugString() string {
 // TLChatEditChatPhoto
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditChatPhoto) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editChatPhoto))
-
+func (m *TLChatEditChatPhoto) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x45c2a668:
 		x.UInt(0x45c2a668)
@@ -1536,13 +1481,13 @@ func (m *TLChatEditChatPhoto) Encode(layer int32) []byte {
 
 		x.Long(m.GetChatId())
 		x.Long(m.GetEditUserId())
-		x.Bytes(m.GetChatPhoto().Encode(layer))
+		m.GetChatPhoto().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditChatPhoto) CalcByteSize(layer int32) int {
@@ -1579,10 +1524,7 @@ func (m *TLChatEditChatPhoto) DebugString() string {
 // TLChatEditChatAdmin
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditChatAdmin) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editChatAdmin))
-
+func (m *TLChatEditChatAdmin) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1905e5ec:
 		x.UInt(0x1905e5ec)
@@ -1592,13 +1534,13 @@ func (m *TLChatEditChatAdmin) Encode(layer int32) []byte {
 		x.Long(m.GetChatId())
 		x.Long(m.GetOperatorId())
 		x.Long(m.GetEditChatAdminId())
-		x.Bytes(m.GetIsAdmin().Encode(layer))
+		m.GetIsAdmin().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditChatAdmin) CalcByteSize(layer int32) int {
@@ -1636,10 +1578,7 @@ func (m *TLChatEditChatAdmin) DebugString() string {
 // TLChatEditChatDefaultBannedRights
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditChatDefaultBannedRights) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editChatDefaultBannedRights))
-
+func (m *TLChatEditChatDefaultBannedRights) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x5a34a687:
 		x.UInt(0x5a34a687)
@@ -1648,13 +1587,13 @@ func (m *TLChatEditChatDefaultBannedRights) Encode(layer int32) []byte {
 
 		x.Long(m.GetChatId())
 		x.Long(m.GetOperatorId())
-		x.Bytes(m.GetBannedRights().Encode(layer))
+		m.GetBannedRights().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditChatDefaultBannedRights) CalcByteSize(layer int32) int {
@@ -1691,10 +1630,7 @@ func (m *TLChatEditChatDefaultBannedRights) DebugString() string {
 // TLChatAddChatUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatAddChatUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_addChatUser))
-
+func (m *TLChatAddChatUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7c5da48d:
 		x.UInt(0x7c5da48d)
@@ -1709,7 +1645,7 @@ func (m *TLChatAddChatUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatAddChatUser) CalcByteSize(layer int32) int {
@@ -1742,10 +1678,7 @@ func (m *TLChatAddChatUser) DebugString() string {
 // TLChatGetMutableChatByLink
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetMutableChatByLink) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getMutableChatByLink))
-
+func (m *TLChatGetMutableChatByLink) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa266278b:
 		x.UInt(0xa266278b)
@@ -1758,7 +1691,7 @@ func (m *TLChatGetMutableChatByLink) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetMutableChatByLink) CalcByteSize(layer int32) int {
@@ -1789,10 +1722,7 @@ func (m *TLChatGetMutableChatByLink) DebugString() string {
 // TLChatToggleNoForwards
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatToggleNoForwards) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_toggleNoForwards))
-
+func (m *TLChatToggleNoForwards) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd5952af9:
 		x.UInt(0xd5952af9)
@@ -1801,13 +1731,13 @@ func (m *TLChatToggleNoForwards) Encode(layer int32) []byte {
 
 		x.Long(m.GetChatId())
 		x.Long(m.GetOperatorId())
-		x.Bytes(m.GetEnabled().Encode(layer))
+		m.GetEnabled().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatToggleNoForwards) CalcByteSize(layer int32) int {
@@ -1844,17 +1774,14 @@ func (m *TLChatToggleNoForwards) DebugString() string {
 // TLChatMigratedToChannel
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatMigratedToChannel) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_migratedToChannel))
-
+func (m *TLChatMigratedToChannel) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x83faadf:
 		x.UInt(0x83faadf)
 
 		// no flags
 
-		x.Bytes(m.GetChat().Encode(layer))
+		m.GetChat().Encode(x, layer)
 		x.Long(m.GetId())
 		x.Long(m.GetAccessHash())
 
@@ -1862,7 +1789,7 @@ func (m *TLChatMigratedToChannel) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatMigratedToChannel) CalcByteSize(layer int32) int {
@@ -1898,10 +1825,7 @@ func (m *TLChatMigratedToChannel) DebugString() string {
 // TLChatGetChatParticipantIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetChatParticipantIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getChatParticipantIdList))
-
+func (m *TLChatGetChatParticipantIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x329622a9:
 		x.UInt(0x329622a9)
@@ -1914,7 +1838,7 @@ func (m *TLChatGetChatParticipantIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetChatParticipantIdList) CalcByteSize(layer int32) int {
@@ -1945,10 +1869,7 @@ func (m *TLChatGetChatParticipantIdList) DebugString() string {
 // TLChatGetUsersChatIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetUsersChatIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getUsersChatIdList))
-
+func (m *TLChatGetUsersChatIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2f36ab4c:
 		x.UInt(0x2f36ab4c)
@@ -1961,7 +1882,7 @@ func (m *TLChatGetUsersChatIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetUsersChatIdList) CalcByteSize(layer int32) int {
@@ -1993,10 +1914,7 @@ func (m *TLChatGetUsersChatIdList) DebugString() string {
 // TLChatGetMyChatList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetMyChatList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getMyChatList))
-
+func (m *TLChatGetMyChatList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf3756c88:
 		x.UInt(0xf3756c88)
@@ -2004,13 +1922,13 @@ func (m *TLChatGetMyChatList) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetIsCreator().Encode(layer))
+		m.GetIsCreator().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetMyChatList) CalcByteSize(layer int32) int {
@@ -2046,10 +1964,7 @@ func (m *TLChatGetMyChatList) DebugString() string {
 // TLChatExportChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatExportChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_exportChatInvite))
-
+func (m *TLChatExportChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc5cf804b:
 		x.UInt(0xc5cf804b)
@@ -2094,7 +2009,7 @@ func (m *TLChatExportChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatExportChatInvite) CalcByteSize(layer int32) int {
@@ -2146,10 +2061,7 @@ func (m *TLChatExportChatInvite) DebugString() string {
 // TLChatGetAdminsWithInvites
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetAdminsWithInvites) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getAdminsWithInvites))
-
+func (m *TLChatGetAdminsWithInvites) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd2ea41d2:
 		x.UInt(0xd2ea41d2)
@@ -2163,7 +2075,7 @@ func (m *TLChatGetAdminsWithInvites) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetAdminsWithInvites) CalcByteSize(layer int32) int {
@@ -2195,10 +2107,7 @@ func (m *TLChatGetAdminsWithInvites) DebugString() string {
 // TLChatGetExportedChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetExportedChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getExportedChatInvite))
-
+func (m *TLChatGetExportedChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xddea3250:
 		x.UInt(0xddea3250)
@@ -2212,7 +2121,7 @@ func (m *TLChatGetExportedChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetExportedChatInvite) CalcByteSize(layer int32) int {
@@ -2244,10 +2153,7 @@ func (m *TLChatGetExportedChatInvite) DebugString() string {
 // TLChatGetExportedChatInvites
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetExportedChatInvites) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getExportedChatInvites))
-
+func (m *TLChatGetExportedChatInvites) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb48f18f6:
 		x.UInt(0xb48f18f6)
@@ -2284,7 +2190,7 @@ func (m *TLChatGetExportedChatInvites) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetExportedChatInvites) CalcByteSize(layer int32) int {
@@ -2330,10 +2236,7 @@ func (m *TLChatGetExportedChatInvites) DebugString() string {
 // TLChatCheckChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatCheckChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_checkChatInvite))
-
+func (m *TLChatCheckChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7387f28c:
 		x.UInt(0x7387f28c)
@@ -2347,7 +2250,7 @@ func (m *TLChatCheckChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatCheckChatInvite) CalcByteSize(layer int32) int {
@@ -2379,10 +2282,7 @@ func (m *TLChatCheckChatInvite) DebugString() string {
 // TLChatImportChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatImportChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_importChatInvite))
-
+func (m *TLChatImportChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x58e660d4:
 		x.UInt(0x58e660d4)
@@ -2396,7 +2296,7 @@ func (m *TLChatImportChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatImportChatInvite) CalcByteSize(layer int32) int {
@@ -2428,10 +2328,7 @@ func (m *TLChatImportChatInvite) DebugString() string {
 // TLChatGetChatInviteImporters
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetChatInviteImporters) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getChatInviteImporters))
-
+func (m *TLChatGetChatInviteImporters) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9846557f:
 		x.UInt(0x9846557f)
@@ -2470,7 +2367,7 @@ func (m *TLChatGetChatInviteImporters) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetChatInviteImporters) CalcByteSize(layer int32) int {
@@ -2518,10 +2415,7 @@ func (m *TLChatGetChatInviteImporters) DebugString() string {
 // TLChatDeleteExportedChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatDeleteExportedChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_deleteExportedChatInvite))
-
+func (m *TLChatDeleteExportedChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x562288b8:
 		x.UInt(0x562288b8)
@@ -2536,7 +2430,7 @@ func (m *TLChatDeleteExportedChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatDeleteExportedChatInvite) CalcByteSize(layer int32) int {
@@ -2569,10 +2463,7 @@ func (m *TLChatDeleteExportedChatInvite) DebugString() string {
 // TLChatDeleteRevokedExportedChatInvites
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatDeleteRevokedExportedChatInvites) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_deleteRevokedExportedChatInvites))
-
+func (m *TLChatDeleteRevokedExportedChatInvites) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd0126269:
 		x.UInt(0xd0126269)
@@ -2587,7 +2478,7 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatDeleteRevokedExportedChatInvites) CalcByteSize(layer int32) int {
@@ -2620,10 +2511,7 @@ func (m *TLChatDeleteRevokedExportedChatInvites) DebugString() string {
 // TLChatEditExportedChatInvite
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatEditExportedChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_editExportedChatInvite))
-
+func (m *TLChatEditExportedChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xaf994c76:
 		x.UInt(0xaf994c76)
@@ -2663,7 +2551,7 @@ func (m *TLChatEditExportedChatInvite) Encode(layer int32) []byte {
 		}
 
 		if m.GetRequestNeeded() != nil {
-			x.Bytes(m.GetRequestNeeded().Encode(layer))
+			m.GetRequestNeeded().Encode(x, layer)
 		}
 
 		if m.GetTitle() != nil {
@@ -2674,7 +2562,7 @@ func (m *TLChatEditExportedChatInvite) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatEditExportedChatInvite) CalcByteSize(layer int32) int {
@@ -2729,10 +2617,7 @@ func (m *TLChatEditExportedChatInvite) DebugString() string {
 // TLChatSetChatAvailableReactions
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatSetChatAvailableReactions) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_setChatAvailableReactions))
-
+func (m *TLChatSetChatAvailableReactions) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc4d08972:
 		x.UInt(0xc4d08972)
@@ -2749,7 +2634,7 @@ func (m *TLChatSetChatAvailableReactions) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatSetChatAvailableReactions) CalcByteSize(layer int32) int {
@@ -2785,10 +2670,7 @@ func (m *TLChatSetChatAvailableReactions) DebugString() string {
 // TLChatSetHistoryTTL
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatSetHistoryTTL) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_setHistoryTTL))
-
+func (m *TLChatSetHistoryTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3cfb6384:
 		x.UInt(0x3cfb6384)
@@ -2803,7 +2685,7 @@ func (m *TLChatSetHistoryTTL) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatSetHistoryTTL) CalcByteSize(layer int32) int {
@@ -2836,10 +2718,7 @@ func (m *TLChatSetHistoryTTL) DebugString() string {
 // TLChatSearch
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatSearch) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_search))
-
+func (m *TLChatSearch) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x21e014fb:
 		x.UInt(0x21e014fb)
@@ -2855,7 +2734,7 @@ func (m *TLChatSearch) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatSearch) CalcByteSize(layer int32) int {
@@ -2889,10 +2768,7 @@ func (m *TLChatSearch) DebugString() string {
 // TLChatGetRecentChatInviteRequesters
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatGetRecentChatInviteRequesters) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_getRecentChatInviteRequesters))
-
+func (m *TLChatGetRecentChatInviteRequesters) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfedc1098:
 		x.UInt(0xfedc1098)
@@ -2906,7 +2782,7 @@ func (m *TLChatGetRecentChatInviteRequesters) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatGetRecentChatInviteRequesters) CalcByteSize(layer int32) int {
@@ -2938,10 +2814,7 @@ func (m *TLChatGetRecentChatInviteRequesters) DebugString() string {
 // TLChatHideChatJoinRequests
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatHideChatJoinRequests) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_hideChatJoinRequests))
-
+func (m *TLChatHideChatJoinRequests) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3ea52cd1:
 		x.UInt(0x3ea52cd1)
@@ -2976,7 +2849,7 @@ func (m *TLChatHideChatJoinRequests) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatHideChatJoinRequests) CalcByteSize(layer int32) int {
@@ -3021,10 +2894,7 @@ func (m *TLChatHideChatJoinRequests) DebugString() string {
 // TLChatImportChatInvite2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLChatImportChatInvite2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_chat_importChatInvite2))
-
+func (m *TLChatImportChatInvite2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdcd93dbf:
 		x.UInt(0xdcd93dbf)
@@ -3038,7 +2908,7 @@ func (m *TLChatImportChatInvite2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLChatImportChatInvite2) CalcByteSize(layer int32) int {
@@ -3070,15 +2940,14 @@ func (m *TLChatImportChatInvite2) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_MutableChat
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_MutableChat) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_MutableChat) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_MutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -3105,11 +2974,10 @@ func (m *Vector_MutableChat) DebugString() string {
 
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -3130,15 +2998,14 @@ func (m *Vector_Long) DebugString() string {
 
 // Vector_UserChatIdList
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_UserChatIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_UserChatIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_UserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -3165,15 +3032,14 @@ func (m *Vector_UserChatIdList) DebugString() string {
 
 // Vector_ChatAdminWithInvites
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_ChatAdminWithInvites) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_ChatAdminWithInvites) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_ChatAdminWithInvites) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -3200,15 +3066,14 @@ func (m *Vector_ChatAdminWithInvites) DebugString() string {
 
 // Vector_ExportedChatInvite
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_ExportedChatInvite) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_ExportedChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_ExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -3235,15 +3100,14 @@ func (m *Vector_ExportedChatInvite) DebugString() string {
 
 // Vector_ChatInviteImporter
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_ChatInviteImporter) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_ChatInviteImporter) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_ChatInviteImporter) Decode(dBuf *mtproto.DecodeBuf) error {

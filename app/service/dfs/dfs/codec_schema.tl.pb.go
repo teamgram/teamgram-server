@@ -108,10 +108,7 @@ func CheckClassID(classId int32) (ok bool) {
 // TLDfsWriteFilePartData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsWriteFilePartData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_writeFilePartData))
-
+func (m *TLDfsWriteFilePartData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1a484107:
 		x.UInt(0x1a484107)
@@ -141,7 +138,7 @@ func (m *TLDfsWriteFilePartData) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsWriteFilePartData) CalcByteSize(layer int32) int {
@@ -184,10 +181,7 @@ func (m *TLDfsWriteFilePartData) DebugString() string {
 // TLDfsUploadPhotoFileV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadPhotoFileV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadPhotoFileV2))
-
+func (m *TLDfsUploadPhotoFileV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2410d1a2:
 		x.UInt(0x2410d1a2)
@@ -195,13 +189,13 @@ func (m *TLDfsUploadPhotoFileV2) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadPhotoFileV2) CalcByteSize(layer int32) int {
@@ -237,10 +231,7 @@ func (m *TLDfsUploadPhotoFileV2) DebugString() string {
 // TLDfsUploadProfilePhotoFileV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadProfilePhotoFileV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadProfilePhotoFileV2))
-
+func (m *TLDfsUploadProfilePhotoFileV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcc1da2b2:
 		x.UInt(0xcc1da2b2)
@@ -263,11 +254,11 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(layer int32) []byte {
 		// flags Debug by @benqi
 		x.Long(m.GetCreator())
 		if m.GetFile() != nil {
-			x.Bytes(m.GetFile().Encode(layer))
+			m.GetFile().Encode(x, layer)
 		}
 
 		if m.GetVideo() != nil {
-			x.Bytes(m.GetVideo().Encode(layer))
+			m.GetVideo().Encode(x, layer)
 		}
 
 		if m.GetVideoStartTs() != nil {
@@ -278,7 +269,7 @@ func (m *TLDfsUploadProfilePhotoFileV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) CalcByteSize(layer int32) int {
@@ -325,10 +316,7 @@ func (m *TLDfsUploadProfilePhotoFileV2) DebugString() string {
 // TLDfsUploadEncryptedFileV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadEncryptedFileV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadEncryptedFileV2))
-
+func (m *TLDfsUploadEncryptedFileV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x79d3c523:
 		x.UInt(0x79d3c523)
@@ -336,13 +324,13 @@ func (m *TLDfsUploadEncryptedFileV2) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadEncryptedFileV2) CalcByteSize(layer int32) int {
@@ -378,17 +366,14 @@ func (m *TLDfsUploadEncryptedFileV2) DebugString() string {
 // TLDfsDownloadFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsDownloadFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_downloadFile))
-
+func (m *TLDfsDownloadFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd6bfee3e:
 		x.UInt(0xd6bfee3e)
 
 		// no flags
 
-		x.Bytes(m.GetLocation().Encode(layer))
+		m.GetLocation().Encode(x, layer)
 		x.Long(m.GetOffset())
 		x.Int(m.GetLimit())
 
@@ -396,7 +381,7 @@ func (m *TLDfsDownloadFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsDownloadFile) CalcByteSize(layer int32) int {
@@ -432,10 +417,7 @@ func (m *TLDfsDownloadFile) DebugString() string {
 // TLDfsUploadDocumentFileV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadDocumentFileV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadDocumentFileV2))
-
+func (m *TLDfsUploadDocumentFileV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x76336db7:
 		x.UInt(0x76336db7)
@@ -443,13 +425,13 @@ func (m *TLDfsUploadDocumentFileV2) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetMedia().Encode(layer))
+		m.GetMedia().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadDocumentFileV2) CalcByteSize(layer int32) int {
@@ -485,10 +467,7 @@ func (m *TLDfsUploadDocumentFileV2) DebugString() string {
 // TLDfsUploadGifDocumentMedia
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadGifDocumentMedia) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadGifDocumentMedia))
-
+func (m *TLDfsUploadGifDocumentMedia) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x41c4cd00:
 		x.UInt(0x41c4cd00)
@@ -496,13 +475,13 @@ func (m *TLDfsUploadGifDocumentMedia) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetMedia().Encode(layer))
+		m.GetMedia().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadGifDocumentMedia) CalcByteSize(layer int32) int {
@@ -538,10 +517,7 @@ func (m *TLDfsUploadGifDocumentMedia) DebugString() string {
 // TLDfsUploadMp4DocumentMedia
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadMp4DocumentMedia) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadMp4DocumentMedia))
-
+func (m *TLDfsUploadMp4DocumentMedia) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa2a4f818:
 		x.UInt(0xa2a4f818)
@@ -549,13 +525,13 @@ func (m *TLDfsUploadMp4DocumentMedia) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetMedia().Encode(layer))
+		m.GetMedia().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) CalcByteSize(layer int32) int {
@@ -591,10 +567,7 @@ func (m *TLDfsUploadMp4DocumentMedia) DebugString() string {
 // TLDfsUploadWallPaperFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadWallPaperFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadWallPaperFile))
-
+func (m *TLDfsUploadWallPaperFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc1a61056:
 		x.UInt(0xc1a61056)
@@ -602,15 +575,15 @@ func (m *TLDfsUploadWallPaperFile) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		x.String(m.GetMimeType())
-		x.Bytes(m.GetAdmin().Encode(layer))
+		m.GetAdmin().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadWallPaperFile) CalcByteSize(layer int32) int {
@@ -652,10 +625,7 @@ func (m *TLDfsUploadWallPaperFile) DebugString() string {
 // TLDfsUploadThemeFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadThemeFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadThemeFile))
-
+func (m *TLDfsUploadThemeFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdea64f97:
 		x.UInt(0xdea64f97)
@@ -671,9 +641,9 @@ func (m *TLDfsUploadThemeFile) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		if m.GetThumb() != nil {
-			x.Bytes(m.GetThumb().Encode(layer))
+			m.GetThumb().Encode(x, layer)
 		}
 
 		x.String(m.GetMimeType())
@@ -683,7 +653,7 @@ func (m *TLDfsUploadThemeFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadThemeFile) CalcByteSize(layer int32) int {
@@ -728,10 +698,7 @@ func (m *TLDfsUploadThemeFile) DebugString() string {
 // TLDfsUploadRingtoneFile
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLDfsUploadRingtoneFile) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_dfs_uploadRingtoneFile))
-
+func (m *TLDfsUploadRingtoneFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2b3c5b1:
 		x.UInt(0x2b3c5b1)
@@ -739,7 +706,7 @@ func (m *TLDfsUploadRingtoneFile) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetCreator())
-		x.Bytes(m.GetFile().Encode(layer))
+		m.GetFile().Encode(x, layer)
 		x.String(m.GetMimeType())
 		x.String(m.GetFileName())
 
@@ -747,7 +714,7 @@ func (m *TLDfsUploadRingtoneFile) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLDfsUploadRingtoneFile) CalcByteSize(layer int32) int {

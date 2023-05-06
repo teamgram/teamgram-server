@@ -478,7 +478,9 @@ func (s *handshake) onReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLReq
 		ServerTime:  int32(time.Now().Unix()),
 	}}
 
-	serverDHInnerDataBuf := serverDHInnerData.Encode(0)
+	x := mtproto.NewEncodeBuf(500)
+	serverDHInnerData.Encode(x, 0)
+	serverDHInnerDataBuf := x.GetBuf()
 	// server_DHInnerData_buf_sha1 := sha1.Sum(server_DHInnerData_buf)
 
 	// 创建aes和iv key

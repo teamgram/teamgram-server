@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package updates
@@ -16,7 +16,7 @@ const (
 	Predicate_difference                     = "difference"
 	Predicate_differenceSlice                = "differenceSlice"
 	Predicate_differenceTooLong              = "differenceTooLong"
-	Predicate_updates_getState               = "updates_getState"
+	Predicate_updates_getStateV2             = "updates_getStateV2"
 	Predicate_updates_getDifferenceV2        = "updates_getDifferenceV2"
 	Predicate_updates_getChannelDifferenceV2 = "updates_getChannelDifferenceV2"
 )
@@ -42,8 +42,8 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 896724528, // 0x3572ee30
 
 	},
-	Predicate_updates_getState: {
-		0: 524332412, // 0x1f40ad7c
+	Predicate_updates_getStateV2: {
+		0: 1173671269, // 0x45f4cd65
 
 	},
 	Predicate_updates_getDifferenceV2: {
@@ -62,7 +62,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1417839403:  Predicate_difference,                     // 0x5482832b
 	-879338017:  Predicate_differenceSlice,                // 0xcb965ddf
 	896724528:   Predicate_differenceTooLong,              // 0x3572ee30
-	524332412:   Predicate_updates_getState,               // 0x1f40ad7c
+	1173671269:  Predicate_updates_getStateV2,             // 0x45f4cd65
 	-1217698151: Predicate_updates_getDifferenceV2,        // 0xb76b6699
 	1302540682:  Predicate_updates_getChannelDifferenceV2, // 0x4da3318a
 

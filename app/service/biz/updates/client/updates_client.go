@@ -22,7 +22,7 @@ import (
 var _ *mtproto.Bool
 
 type UpdatesClient interface {
-	UpdatesGetState(ctx context.Context, in *updates.TLUpdatesGetState) (*mtproto.Updates_State, error)
+	UpdatesGetStateV2(ctx context.Context, in *updates.TLUpdatesGetStateV2) (*mtproto.Updates_State, error)
 	UpdatesGetDifferenceV2(ctx context.Context, in *updates.TLUpdatesGetDifferenceV2) (*updates.Difference, error)
 	UpdatesGetChannelDifferenceV2(ctx context.Context, in *updates.TLUpdatesGetChannelDifferenceV2) (*updates.ChannelDifference, error)
 }
@@ -37,11 +37,11 @@ func NewUpdatesClient(cli zrpc.Client) UpdatesClient {
 	}
 }
 
-// UpdatesGetState
-// updates.getState auth_key_id:long user_id:long = updates.State;
-func (m *defaultUpdatesClient) UpdatesGetState(ctx context.Context, in *updates.TLUpdatesGetState) (*mtproto.Updates_State, error) {
+// UpdatesGetStateV2
+// updates.getStateV2 auth_key_id:long user_id:long = updates.State;
+func (m *defaultUpdatesClient) UpdatesGetStateV2(ctx context.Context, in *updates.TLUpdatesGetStateV2) (*mtproto.Updates_State, error) {
 	client := updates.NewRPCUpdatesClient(m.cli.Conn())
-	return client.UpdatesGetState(ctx, in)
+	return client.UpdatesGetStateV2(ctx, in)
 }
 
 // UpdatesGetDifferenceV2

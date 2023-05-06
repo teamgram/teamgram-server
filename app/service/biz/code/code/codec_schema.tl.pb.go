@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -79,7 +79,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_PhoneCodeTransaction
 //
 
-func (m *PhoneCodeTransaction) Encode(layer int32) []byte {
+func (m *PhoneCodeTransaction) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -87,21 +87,17 @@ func (m *PhoneCodeTransaction) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_phoneCodeTransaction:
 		t := m.To_PhoneCodeTransaction()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *PhoneCodeTransaction) CalcByteSize(layer int32) int {
@@ -133,7 +129,6 @@ func (m *PhoneCodeTransaction) DebugString() string {
 }
 
 // To_PhoneCodeTransaction
-// phoneCodeTransaction flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true phone_code:string phone_code_hash:string phone_code_expired:int phone_code_extra_data:string sent_code_type:int flash_call_pattern:string next_code_type:int state:int = PhoneCodeTransaction;
 func (m *PhoneCodeTransaction) To_PhoneCodeTransaction() *TLPhoneCodeTransaction {
 	m.PredicateName = Predicate_phoneCodeTransaction
 	return &TLPhoneCodeTransaction{
@@ -142,7 +137,6 @@ func (m *PhoneCodeTransaction) To_PhoneCodeTransaction() *TLPhoneCodeTransaction
 }
 
 // MakeTLPhoneCodeTransaction
-// phoneCodeTransaction flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true phone_code:string phone_code_hash:string phone_code_expired:int phone_code_extra_data:string sent_code_type:int flash_call_pattern:string next_code_type:int state:int = PhoneCodeTransaction;
 func MakeTLPhoneCodeTransaction(data2 *PhoneCodeTransaction) *TLPhoneCodeTransaction {
 	if data2 == nil {
 		return &TLPhoneCodeTransaction{Data2: &PhoneCodeTransaction{
@@ -202,12 +196,9 @@ func (m *TLPhoneCodeTransaction) GetPredicateName() string {
 	return Predicate_phoneCodeTransaction
 }
 
-func (m *TLPhoneCodeTransaction) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x83739698: func() []byte {
-			// phoneCodeTransaction flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true phone_code:string phone_code_hash:string phone_code_expired:int phone_code_extra_data:string sent_code_type:int flash_call_pattern:string next_code_type:int state:int = PhoneCodeTransaction;
+func (m *TLPhoneCodeTransaction) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x83739698: func() error {
 			x.UInt(0x83739698)
 
 			// set flags
@@ -235,7 +226,7 @@ func (m *TLPhoneCodeTransaction) Encode(layer int32) []byte {
 			x.String(m.GetFlashCallPattern())
 			x.Int(m.GetNextCodeType())
 			x.Int(m.GetState())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -245,10 +236,10 @@ func (m *TLPhoneCodeTransaction) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_phoneCodeTransaction, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLPhoneCodeTransaction) CalcByteSize(layer int32) int {
@@ -258,7 +249,6 @@ func (m *TLPhoneCodeTransaction) CalcByteSize(layer int32) int {
 func (m *TLPhoneCodeTransaction) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x83739698: func() error {
-			// phoneCodeTransaction flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true phone_code:string phone_code_hash:string phone_code_expired:int phone_code_extra_data:string sent_code_type:int flash_call_pattern:string next_code_type:int state:int = PhoneCodeTransaction;
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetAuthKeyId(dBuf.Long())
@@ -296,13 +286,9 @@ func (m *TLPhoneCodeTransaction) DebugString() string {
 // TLCodeCreatePhoneCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLCodeCreatePhoneCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_code_createPhoneCode))
-
+func (m *TLCodeCreatePhoneCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6023e09e:
-		// code.createPhoneCode flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true sent_code_type:int next_code_type:int state:int = PhoneCodeTransaction;
 		x.UInt(0x6023e09e)
 
 		// set flags
@@ -326,7 +312,7 @@ func (m *TLCodeCreatePhoneCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLCodeCreatePhoneCode) CalcByteSize(layer int32) int {
@@ -336,7 +322,6 @@ func (m *TLCodeCreatePhoneCode) CalcByteSize(layer int32) int {
 func (m *TLCodeCreatePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6023e09e:
-		// code.createPhoneCode flags:# auth_key_id:long session_id:long phone:string phone_number_registered:flags.0?true sent_code_type:int next_code_type:int state:int = PhoneCodeTransaction;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -368,13 +353,9 @@ func (m *TLCodeCreatePhoneCode) DebugString() string {
 // TLCodeGetPhoneCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLCodeGetPhoneCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_code_getPhoneCode))
-
+func (m *TLCodeGetPhoneCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x61a4a0f9:
-		// code.getPhoneCode auth_key_id:long phone:string phone_code_hash:string = PhoneCodeTransaction;
 		x.UInt(0x61a4a0f9)
 
 		// no flags
@@ -387,7 +368,7 @@ func (m *TLCodeGetPhoneCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLCodeGetPhoneCode) CalcByteSize(layer int32) int {
@@ -397,7 +378,6 @@ func (m *TLCodeGetPhoneCode) CalcByteSize(layer int32) int {
 func (m *TLCodeGetPhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x61a4a0f9:
-		// code.getPhoneCode auth_key_id:long phone:string phone_code_hash:string = PhoneCodeTransaction;
 
 		// not has flags
 
@@ -421,13 +401,9 @@ func (m *TLCodeGetPhoneCode) DebugString() string {
 // TLCodeDeletePhoneCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLCodeDeletePhoneCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_code_deletePhoneCode))
-
+func (m *TLCodeDeletePhoneCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa6b06a50:
-		// code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 		x.UInt(0xa6b06a50)
 
 		// no flags
@@ -440,7 +416,7 @@ func (m *TLCodeDeletePhoneCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLCodeDeletePhoneCode) CalcByteSize(layer int32) int {
@@ -450,7 +426,6 @@ func (m *TLCodeDeletePhoneCode) CalcByteSize(layer int32) int {
 func (m *TLCodeDeletePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa6b06a50:
-		// code.deletePhoneCode auth_key_id:long phone:string phone_code_hash:string = Bool;
 
 		// not has flags
 
@@ -474,13 +449,9 @@ func (m *TLCodeDeletePhoneCode) DebugString() string {
 // TLCodeUpdatePhoneCodeData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLCodeUpdatePhoneCodeData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_code_updatePhoneCodeData))
-
+func (m *TLCodeUpdatePhoneCodeData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb6950a95:
-		// code.updatePhoneCodeData auth_key_id:long phone:string phone_code_hash:string code_data:PhoneCodeTransaction = Bool;
 		x.UInt(0xb6950a95)
 
 		// no flags
@@ -488,13 +459,13 @@ func (m *TLCodeUpdatePhoneCodeData) Encode(layer int32) []byte {
 		x.Long(m.GetAuthKeyId())
 		x.String(m.GetPhone())
 		x.String(m.GetPhoneCodeHash())
-		x.Bytes(m.GetCodeData().Encode(layer))
+		m.GetCodeData().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLCodeUpdatePhoneCodeData) CalcByteSize(layer int32) int {
@@ -504,7 +475,6 @@ func (m *TLCodeUpdatePhoneCodeData) CalcByteSize(layer int32) int {
 func (m *TLCodeUpdatePhoneCodeData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb6950a95:
-		// code.updatePhoneCodeData auth_key_id:long phone:string phone_code_hash:string code_data:PhoneCodeTransaction = Bool;
 
 		// not has flags
 

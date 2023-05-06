@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -30,9 +30,9 @@ var _ fmt.GoStringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	-739769057: func() mtproto.TLObject { // 0xd3e8051f
-		o := MakeTLSessionClientEvent(nil)
-		o.Data2.Constructor = -739769057
+	-606579889: func() mtproto.TLObject { // 0xdbd8534f
+		o := MakeTLHttpSessionData(nil)
+		o.Data2.Constructor = -606579889
 		return o
 	},
 	825806990: func() mtproto.TLObject { // 0x3138d08e
@@ -40,9 +40,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = 825806990
 		return o
 	},
-	-606579889: func() mtproto.TLObject { // 0xdbd8534f
-		o := MakeTLHttpSessionData(nil)
-		o.Data2.Constructor = -606579889
+	-739769057: func() mtproto.TLObject { // 0xd3e8051f
+		o := MakeTLSessionClientEvent(nil)
+		o.Data2.Constructor = -739769057
 		return o
 	},
 
@@ -110,11 +110,11 @@ func CheckClassID(classId int32) (ok bool) {
 //----------------------------------------------------------------------------------------------------------------
 
 ///////////////////////////////////////////////////////////////////////////////
-// SessionClientEvent <--
-//  + TL_SessionClientEvent
+// HttpSessionData <--
+//  + TL_HttpSessionData
 //
 
-func (m *SessionClientEvent) Encode(layer int32) []byte {
+func (m *HttpSessionData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -122,32 +122,28 @@ func (m *SessionClientEvent) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
-	case Predicate_sessionClientEvent:
-		t := m.To_SessionClientEvent()
-		xBuf = t.Encode(layer)
+	case Predicate_httpSessionData:
+		t := m.To_HttpSessionData()
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
-func (m *SessionClientEvent) CalcByteSize(layer int32) int {
+func (m *HttpSessionData) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
+func (m *HttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xd3e8051f:
-		m2 := MakeTLSessionClientEvent(m)
+	case 0xdbd8534f:
+		m2 := MakeTLHttpSessionData(m)
 		m2.Decode(dBuf)
 
 	default:
@@ -156,10 +152,10 @@ func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *SessionClientEvent) DebugString() string {
+func (m *HttpSessionData) DebugString() string {
 	switch m.PredicateName {
-	case Predicate_sessionClientEvent:
-		t := m.To_SessionClientEvent()
+	case Predicate_httpSessionData:
+		t := m.To_HttpSessionData()
 		return t.DebugString()
 
 	default:
@@ -167,94 +163,68 @@ func (m *SessionClientEvent) DebugString() string {
 	}
 }
 
-// To_SessionClientEvent
-// sessionClientEvent server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string = SessionClientEvent;
-func (m *SessionClientEvent) To_SessionClientEvent() *TLSessionClientEvent {
-	m.PredicateName = Predicate_sessionClientEvent
-	return &TLSessionClientEvent{
+// To_HttpSessionData
+func (m *HttpSessionData) To_HttpSessionData() *TLHttpSessionData {
+	m.PredicateName = Predicate_httpSessionData
+	return &TLHttpSessionData{
 		Data2: m,
 	}
 }
 
-// MakeTLSessionClientEvent
-// sessionClientEvent server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string = SessionClientEvent;
-func MakeTLSessionClientEvent(data2 *SessionClientEvent) *TLSessionClientEvent {
+// MakeTLHttpSessionData
+func MakeTLHttpSessionData(data2 *HttpSessionData) *TLHttpSessionData {
 	if data2 == nil {
-		return &TLSessionClientEvent{Data2: &SessionClientEvent{
-			PredicateName: Predicate_sessionClientEvent,
+		return &TLHttpSessionData{Data2: &HttpSessionData{
+			PredicateName: Predicate_httpSessionData,
 		}}
 	} else {
-		data2.PredicateName = Predicate_sessionClientEvent
-		return &TLSessionClientEvent{Data2: data2}
+		data2.PredicateName = Predicate_httpSessionData
+		return &TLHttpSessionData{Data2: data2}
 	}
 }
 
-func (m *TLSessionClientEvent) To_SessionClientEvent() *SessionClientEvent {
-	m.Data2.PredicateName = Predicate_sessionClientEvent
+func (m *TLHttpSessionData) To_HttpSessionData() *HttpSessionData {
+	m.Data2.PredicateName = Predicate_httpSessionData
 	return m.Data2
 }
 
-func (m *TLSessionClientEvent) SetServerId(v string) { m.Data2.ServerId = v }
-func (m *TLSessionClientEvent) GetServerId() string  { return m.Data2.ServerId }
+func (m *TLHttpSessionData) SetPayload(v []byte) { m.Data2.Payload = v }
+func (m *TLHttpSessionData) GetPayload() []byte  { return m.Data2.Payload }
 
-func (m *TLSessionClientEvent) SetConnType(v int32) { m.Data2.ConnType = v }
-func (m *TLSessionClientEvent) GetConnType() int32  { return m.Data2.ConnType }
-
-func (m *TLSessionClientEvent) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
-func (m *TLSessionClientEvent) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
-
-func (m *TLSessionClientEvent) SetSessionId(v int64) { m.Data2.SessionId = v }
-func (m *TLSessionClientEvent) GetSessionId() int64  { return m.Data2.SessionId }
-
-func (m *TLSessionClientEvent) SetClientIp(v string) { m.Data2.ClientIp = v }
-func (m *TLSessionClientEvent) GetClientIp() string  { return m.Data2.ClientIp }
-
-func (m *TLSessionClientEvent) GetPredicateName() string {
-	return Predicate_sessionClientEvent
+func (m *TLHttpSessionData) GetPredicateName() string {
+	return Predicate_httpSessionData
 }
 
-func (m *TLSessionClientEvent) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *TLHttpSessionData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xdbd8534f: func() error {
+			x.UInt(0xdbd8534f)
 
-	var encodeF = map[uint32]func() []byte{
-		0xd3e8051f: func() []byte {
-			// sessionClientEvent server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string = SessionClientEvent;
-			x.UInt(0xd3e8051f)
-
-			x.String(m.GetServerId())
-			x.Int(m.GetConnType())
-			x.Long(m.GetAuthKeyId())
-			x.Long(m.GetSessionId())
-			x.String(m.GetClientIp())
-			return x.GetBuf()
+			x.StringBytes(m.GetPayload())
+			return nil
 		},
 	}
 
-	clazzId := GetClazzID(Predicate_sessionClientEvent, int(layer))
+	clazzId := GetClazzID(Predicate_httpSessionData, int(layer))
 	if f, ok := encodeF[uint32(clazzId)]; ok {
 		return f()
 	} else {
 		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_sessionClientEvent, layer)
-		return x.GetBuf()
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_httpSessionData, layer)
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
-func (m *TLSessionClientEvent) CalcByteSize(layer int32) int {
+func (m *TLHttpSessionData) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
+func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xd3e8051f: func() error {
-			// sessionClientEvent server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string = SessionClientEvent;
-			m.SetServerId(dBuf.String())
-			m.SetConnType(dBuf.Int())
-			m.SetAuthKeyId(dBuf.Long())
-			m.SetSessionId(dBuf.Long())
-			m.SetClientIp(dBuf.String())
+		0xdbd8534f: func() error {
+			m.SetPayload(dBuf.StringBytes())
 			return dBuf.GetError()
 		},
 	}
@@ -266,7 +236,7 @@ func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSessionClientEvent) DebugString() string {
+func (m *TLHttpSessionData) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -277,7 +247,7 @@ func (m *TLSessionClientEvent) DebugString() string {
 //  + TL_SessionClientData
 //
 
-func (m *SessionClientData) Encode(layer int32) []byte {
+func (m *SessionClientData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -285,21 +255,17 @@ func (m *SessionClientData) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_sessionClientData:
 		t := m.To_SessionClientData()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *SessionClientData) CalcByteSize(layer int32) int {
@@ -331,7 +297,6 @@ func (m *SessionClientData) DebugString() string {
 }
 
 // To_SessionClientData
-// sessionClientData  server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string quick_ack:int salt:long payload:bytes = SessionClientData;
 func (m *SessionClientData) To_SessionClientData() *TLSessionClientData {
 	m.PredicateName = Predicate_sessionClientData
 	return &TLSessionClientData{
@@ -340,7 +305,6 @@ func (m *SessionClientData) To_SessionClientData() *TLSessionClientData {
 }
 
 // MakeTLSessionClientData
-// sessionClientData  server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string quick_ack:int salt:long payload:bytes = SessionClientData;
 func MakeTLSessionClientData(data2 *SessionClientData) *TLSessionClientData {
 	if data2 == nil {
 		return &TLSessionClientData{Data2: &SessionClientData{
@@ -385,12 +349,9 @@ func (m *TLSessionClientData) GetPredicateName() string {
 	return Predicate_sessionClientData
 }
 
-func (m *TLSessionClientData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x3138d08e: func() []byte {
-			// sessionClientData  server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string quick_ack:int salt:long payload:bytes = SessionClientData;
+func (m *TLSessionClientData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x3138d08e: func() error {
 			x.UInt(0x3138d08e)
 
 			x.String(m.GetServerId())
@@ -401,7 +362,7 @@ func (m *TLSessionClientData) Encode(layer int32) []byte {
 			x.Int(m.GetQuickAck())
 			x.Long(m.GetSalt())
 			x.StringBytes(m.GetPayload())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -411,10 +372,10 @@ func (m *TLSessionClientData) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_sessionClientData, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionClientData) CalcByteSize(layer int32) int {
@@ -424,7 +385,6 @@ func (m *TLSessionClientData) CalcByteSize(layer int32) int {
 func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x3138d08e: func() error {
-			// sessionClientData  server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string quick_ack:int salt:long payload:bytes = SessionClientData;
 			m.SetServerId(dBuf.String())
 			m.SetConnType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
@@ -451,11 +411,11 @@ func (m *TLSessionClientData) DebugString() string {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// HttpSessionData <--
-//  + TL_HttpSessionData
+// SessionClientEvent <--
+//  + TL_SessionClientEvent
 //
 
-func (m *HttpSessionData) Encode(layer int32) []byte {
+func (m *SessionClientEvent) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -463,32 +423,28 @@ func (m *HttpSessionData) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
-	case Predicate_httpSessionData:
-		t := m.To_HttpSessionData()
-		xBuf = t.Encode(layer)
+	case Predicate_sessionClientEvent:
+		t := m.To_SessionClientEvent()
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
-func (m *HttpSessionData) CalcByteSize(layer int32) int {
+func (m *SessionClientEvent) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *HttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
+func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xdbd8534f:
-		m2 := MakeTLHttpSessionData(m)
+	case 0xd3e8051f:
+		m2 := MakeTLSessionClientEvent(m)
 		m2.Decode(dBuf)
 
 	default:
@@ -497,10 +453,10 @@ func (m *HttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *HttpSessionData) DebugString() string {
+func (m *SessionClientEvent) DebugString() string {
 	switch m.PredicateName {
-	case Predicate_httpSessionData:
-		t := m.To_HttpSessionData()
+	case Predicate_sessionClientEvent:
+		t := m.To_SessionClientEvent()
 		return t.DebugString()
 
 	default:
@@ -508,74 +464,88 @@ func (m *HttpSessionData) DebugString() string {
 	}
 }
 
-// To_HttpSessionData
-// httpSessionData payload:bytes = HttpSessionData;
-func (m *HttpSessionData) To_HttpSessionData() *TLHttpSessionData {
-	m.PredicateName = Predicate_httpSessionData
-	return &TLHttpSessionData{
+// To_SessionClientEvent
+func (m *SessionClientEvent) To_SessionClientEvent() *TLSessionClientEvent {
+	m.PredicateName = Predicate_sessionClientEvent
+	return &TLSessionClientEvent{
 		Data2: m,
 	}
 }
 
-// MakeTLHttpSessionData
-// httpSessionData payload:bytes = HttpSessionData;
-func MakeTLHttpSessionData(data2 *HttpSessionData) *TLHttpSessionData {
+// MakeTLSessionClientEvent
+func MakeTLSessionClientEvent(data2 *SessionClientEvent) *TLSessionClientEvent {
 	if data2 == nil {
-		return &TLHttpSessionData{Data2: &HttpSessionData{
-			PredicateName: Predicate_httpSessionData,
+		return &TLSessionClientEvent{Data2: &SessionClientEvent{
+			PredicateName: Predicate_sessionClientEvent,
 		}}
 	} else {
-		data2.PredicateName = Predicate_httpSessionData
-		return &TLHttpSessionData{Data2: data2}
+		data2.PredicateName = Predicate_sessionClientEvent
+		return &TLSessionClientEvent{Data2: data2}
 	}
 }
 
-func (m *TLHttpSessionData) To_HttpSessionData() *HttpSessionData {
-	m.Data2.PredicateName = Predicate_httpSessionData
+func (m *TLSessionClientEvent) To_SessionClientEvent() *SessionClientEvent {
+	m.Data2.PredicateName = Predicate_sessionClientEvent
 	return m.Data2
 }
 
-func (m *TLHttpSessionData) SetPayload(v []byte) { m.Data2.Payload = v }
-func (m *TLHttpSessionData) GetPayload() []byte  { return m.Data2.Payload }
+func (m *TLSessionClientEvent) SetServerId(v string) { m.Data2.ServerId = v }
+func (m *TLSessionClientEvent) GetServerId() string  { return m.Data2.ServerId }
 
-func (m *TLHttpSessionData) GetPredicateName() string {
-	return Predicate_httpSessionData
+func (m *TLSessionClientEvent) SetConnType(v int32) { m.Data2.ConnType = v }
+func (m *TLSessionClientEvent) GetConnType() int32  { return m.Data2.ConnType }
+
+func (m *TLSessionClientEvent) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
+func (m *TLSessionClientEvent) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
+
+func (m *TLSessionClientEvent) SetSessionId(v int64) { m.Data2.SessionId = v }
+func (m *TLSessionClientEvent) GetSessionId() int64  { return m.Data2.SessionId }
+
+func (m *TLSessionClientEvent) SetClientIp(v string) { m.Data2.ClientIp = v }
+func (m *TLSessionClientEvent) GetClientIp() string  { return m.Data2.ClientIp }
+
+func (m *TLSessionClientEvent) GetPredicateName() string {
+	return Predicate_sessionClientEvent
 }
 
-func (m *TLHttpSessionData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *TLSessionClientEvent) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xd3e8051f: func() error {
+			x.UInt(0xd3e8051f)
 
-	var encodeF = map[uint32]func() []byte{
-		0xdbd8534f: func() []byte {
-			// httpSessionData payload:bytes = HttpSessionData;
-			x.UInt(0xdbd8534f)
-
-			x.StringBytes(m.GetPayload())
-			return x.GetBuf()
+			x.String(m.GetServerId())
+			x.Int(m.GetConnType())
+			x.Long(m.GetAuthKeyId())
+			x.Long(m.GetSessionId())
+			x.String(m.GetClientIp())
+			return nil
 		},
 	}
 
-	clazzId := GetClazzID(Predicate_httpSessionData, int(layer))
+	clazzId := GetClazzID(Predicate_sessionClientEvent, int(layer))
 	if f, ok := encodeF[uint32(clazzId)]; ok {
 		return f()
 	} else {
 		// TODO(@benqi): handle error
-		// log.Errorf("not found clazzId by (%s, %d)", Predicate_httpSessionData, layer)
-		return x.GetBuf()
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_sessionClientEvent, layer)
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
-func (m *TLHttpSessionData) CalcByteSize(layer int32) int {
+func (m *TLSessionClientEvent) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
+func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xdbd8534f: func() error {
-			// httpSessionData payload:bytes = HttpSessionData;
-			m.SetPayload(dBuf.StringBytes())
+		0xd3e8051f: func() error {
+			m.SetServerId(dBuf.String())
+			m.SetConnType(dBuf.Int())
+			m.SetAuthKeyId(dBuf.Long())
+			m.SetSessionId(dBuf.Long())
+			m.SetClientIp(dBuf.String())
 			return dBuf.GetError()
 		},
 	}
@@ -587,7 +557,7 @@ func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLHttpSessionData) DebugString() string {
+func (m *TLSessionClientEvent) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -597,13 +567,9 @@ func (m *TLHttpSessionData) DebugString() string {
 // TLSessionQueryAuthKey
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionQueryAuthKey) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_queryAuthKey))
-
+func (m *TLSessionQueryAuthKey) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6b2df851:
-		// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
 		x.UInt(0x6b2df851)
 
 		// no flags
@@ -614,7 +580,7 @@ func (m *TLSessionQueryAuthKey) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionQueryAuthKey) CalcByteSize(layer int32) int {
@@ -624,7 +590,6 @@ func (m *TLSessionQueryAuthKey) CalcByteSize(layer int32) int {
 func (m *TLSessionQueryAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6b2df851:
-		// session.queryAuthKey auth_key_id:long = AuthKeyInfo;
 
 		// not has flags
 
@@ -646,26 +611,22 @@ func (m *TLSessionQueryAuthKey) DebugString() string {
 // TLSessionSetAuthKey
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionSetAuthKey) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_setAuthKey))
-
+func (m *TLSessionSetAuthKey) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x1d11490b:
-		// session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 		x.UInt(0x1d11490b)
 
 		// no flags
 
-		x.Bytes(m.GetAuthKey().Encode(layer))
-		x.Bytes(m.GetFutureSalt().Encode(layer))
+		m.GetAuthKey().Encode(x, layer)
+		m.GetFutureSalt().Encode(x, layer)
 		x.Int(m.GetExpiresIn())
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionSetAuthKey) CalcByteSize(layer int32) int {
@@ -675,7 +636,6 @@ func (m *TLSessionSetAuthKey) CalcByteSize(layer int32) int {
 func (m *TLSessionSetAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x1d11490b:
-		// session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 
 		// not has flags
 
@@ -705,24 +665,20 @@ func (m *TLSessionSetAuthKey) DebugString() string {
 // TLSessionCreateSession
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionCreateSession) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_createSession))
-
+func (m *TLSessionCreateSession) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x410cb20d:
-		// session.createSession client:SessionClientEvent = Bool;
 		x.UInt(0x410cb20d)
 
 		// no flags
 
-		x.Bytes(m.GetClient().Encode(layer))
+		m.GetClient().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionCreateSession) CalcByteSize(layer int32) int {
@@ -732,7 +688,6 @@ func (m *TLSessionCreateSession) CalcByteSize(layer int32) int {
 func (m *TLSessionCreateSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x410cb20d:
-		// session.createSession client:SessionClientEvent = Bool;
 
 		// not has flags
 
@@ -757,24 +712,20 @@ func (m *TLSessionCreateSession) DebugString() string {
 // TLSessionSendDataToSession
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionSendDataToSession) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_sendDataToSession))
-
+func (m *TLSessionSendDataToSession) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x876b2dec:
-		// session.sendDataToSession data:SessionClientData = Bool;
 		x.UInt(0x876b2dec)
 
 		// no flags
 
-		x.Bytes(m.GetData().Encode(layer))
+		m.GetData().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionSendDataToSession) CalcByteSize(layer int32) int {
@@ -784,7 +735,6 @@ func (m *TLSessionSendDataToSession) CalcByteSize(layer int32) int {
 func (m *TLSessionSendDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x876b2dec:
-		// session.sendDataToSession data:SessionClientData = Bool;
 
 		// not has flags
 
@@ -809,24 +759,20 @@ func (m *TLSessionSendDataToSession) DebugString() string {
 // TLSessionSendHttpDataToSession
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionSendHttpDataToSession) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_sendHttpDataToSession))
-
+func (m *TLSessionSendHttpDataToSession) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbbec23ae:
-		// session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 		x.UInt(0xbbec23ae)
 
 		// no flags
 
-		x.Bytes(m.GetClient().Encode(layer))
+		m.GetClient().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionSendHttpDataToSession) CalcByteSize(layer int32) int {
@@ -836,7 +782,6 @@ func (m *TLSessionSendHttpDataToSession) CalcByteSize(layer int32) int {
 func (m *TLSessionSendHttpDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xbbec23ae:
-		// session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 
 		// not has flags
 
@@ -861,24 +806,20 @@ func (m *TLSessionSendHttpDataToSession) DebugString() string {
 // TLSessionCloseSession
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionCloseSession) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_closeSession))
-
+func (m *TLSessionCloseSession) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x176fc253:
-		// session.closeSession client:SessionClientEvent = Bool;
 		x.UInt(0x176fc253)
 
 		// no flags
 
-		x.Bytes(m.GetClient().Encode(layer))
+		m.GetClient().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionCloseSession) CalcByteSize(layer int32) int {
@@ -888,7 +829,6 @@ func (m *TLSessionCloseSession) CalcByteSize(layer int32) int {
 func (m *TLSessionCloseSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x176fc253:
-		// session.closeSession client:SessionClientEvent = Bool;
 
 		// not has flags
 
@@ -913,13 +853,9 @@ func (m *TLSessionCloseSession) DebugString() string {
 // TLSessionPushUpdatesData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionPushUpdatesData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_pushUpdatesData))
-
+func (m *TLSessionPushUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4015853f:
-		// session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 		x.UInt(0x4015853f)
 
 		// set flags
@@ -933,13 +869,13 @@ func (m *TLSessionPushUpdatesData) Encode(layer int32) []byte {
 
 		// flags Debug by @benqi
 		x.Long(m.GetAuthKeyId())
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionPushUpdatesData) CalcByteSize(layer int32) int {
@@ -949,7 +885,6 @@ func (m *TLSessionPushUpdatesData) CalcByteSize(layer int32) int {
 func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4015853f:
-		// session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -981,26 +916,22 @@ func (m *TLSessionPushUpdatesData) DebugString() string {
 // TLSessionPushSessionUpdatesData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionPushSessionUpdatesData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_pushSessionUpdatesData))
-
+func (m *TLSessionPushSessionUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x65f22f5:
-		// session.pushSessionUpdatesData auth_key_id:long session_id:long updates:Updates = Bool;
 		x.UInt(0x65f22f5)
 
 		// no flags
 
 		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetSessionId())
-		x.Bytes(m.GetUpdates().Encode(layer))
+		m.GetUpdates().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionPushSessionUpdatesData) CalcByteSize(layer int32) int {
@@ -1010,7 +941,6 @@ func (m *TLSessionPushSessionUpdatesData) CalcByteSize(layer int32) int {
 func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x65f22f5:
-		// session.pushSessionUpdatesData auth_key_id:long session_id:long updates:Updates = Bool;
 
 		// not has flags
 
@@ -1038,13 +968,9 @@ func (m *TLSessionPushSessionUpdatesData) DebugString() string {
 // TLSessionPushRpcResultData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLSessionPushRpcResultData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_session_pushRpcResultData))
-
+func (m *TLSessionPushRpcResultData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x212922c0:
-		// session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 		x.UInt(0x212922c0)
 
 		// no flags
@@ -1058,7 +984,7 @@ func (m *TLSessionPushRpcResultData) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionPushRpcResultData) CalcByteSize(layer int32) int {
@@ -1068,7 +994,6 @@ func (m *TLSessionPushRpcResultData) CalcByteSize(layer int32) int {
 func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x212922c0:
-		// session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 
 		// not has flags
 

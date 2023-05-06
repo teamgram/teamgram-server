@@ -444,7 +444,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_LastSeenData
 //
 
-func (m *LastSeenData) Encode(layer int32) []byte {
+func (m *LastSeenData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -452,21 +452,17 @@ func (m *LastSeenData) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_lastSeenData:
 		t := m.To_LastSeenData()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *LastSeenData) CalcByteSize(layer int32) int {
@@ -535,17 +531,15 @@ func (m *TLLastSeenData) GetPredicateName() string {
 	return Predicate_lastSeenData
 }
 
-func (m *TLLastSeenData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xb3b1a1df: func() []byte {
+func (m *TLLastSeenData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xb3b1a1df: func() error {
 			x.UInt(0xb3b1a1df)
 
 			x.Long(m.GetUserId())
 			x.Long(m.GetLastSeenAt())
 			x.Int(m.GetExpires())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -555,10 +549,10 @@ func (m *TLLastSeenData) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_lastSeenData, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLLastSeenData) CalcByteSize(layer int32) int {
@@ -593,7 +587,7 @@ func (m *TLLastSeenData) DebugString() string {
 //  + TL_PeerPeerNotifySettings
 //
 
-func (m *PeerPeerNotifySettings) Encode(layer int32) []byte {
+func (m *PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -601,21 +595,17 @@ func (m *PeerPeerNotifySettings) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_peerPeerNotifySettings:
 		t := m.To_PeerPeerNotifySettings()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *PeerPeerNotifySettings) CalcByteSize(layer int32) int {
@@ -684,17 +674,15 @@ func (m *TLPeerPeerNotifySettings) GetPredicateName() string {
 	return Predicate_peerPeerNotifySettings
 }
 
-func (m *TLPeerPeerNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x70ea3fa9: func() []byte {
+func (m *TLPeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x70ea3fa9: func() error {
 			x.UInt(0x70ea3fa9)
 
 			x.Int(m.GetPeerType())
 			x.Long(m.GetPeerId())
-			x.Bytes(m.GetSettings().Encode(layer))
-			return x.GetBuf()
+			m.GetSettings().Encode(x, layer)
+			return nil
 		},
 	}
 
@@ -704,10 +692,10 @@ func (m *TLPeerPeerNotifySettings) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_peerPeerNotifySettings, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLPeerPeerNotifySettings) CalcByteSize(layer int32) int {
@@ -746,7 +734,7 @@ func (m *TLPeerPeerNotifySettings) DebugString() string {
 //  + TL_UserImportedContacts
 //
 
-func (m *UserImportedContacts) Encode(layer int32) []byte {
+func (m *UserImportedContacts) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -754,21 +742,17 @@ func (m *UserImportedContacts) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_userImportedContacts:
 		t := m.To_UserImportedContacts()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *UserImportedContacts) CalcByteSize(layer int32) int {
@@ -847,23 +831,21 @@ func (m *TLUserImportedContacts) GetPredicateName() string {
 	return Predicate_userImportedContacts
 }
 
-func (m *TLUserImportedContacts) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x4adf7bc0: func() []byte {
+func (m *TLUserImportedContacts) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x4adf7bc0: func() error {
 			x.UInt(0x4adf7bc0)
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetImported())))
 			for _, v := range m.GetImported() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetPopularInvites())))
 			for _, v := range m.GetPopularInvites() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.VectorLong(m.GetRetryContacts())
@@ -871,12 +853,12 @@ func (m *TLUserImportedContacts) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetUsers())))
 			for _, v := range m.GetUsers() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.VectorLong(m.GetUpdateIdList())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -886,10 +868,10 @@ func (m *TLUserImportedContacts) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_userImportedContacts, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserImportedContacts) CalcByteSize(layer int32) int {
@@ -965,7 +947,7 @@ func (m *TLUserImportedContacts) DebugString() string {
 //  + TL_UsersIdFound
 //
 
-func (m *UsersFound) Encode(layer int32) []byte {
+func (m *UsersFound) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -973,24 +955,20 @@ func (m *UsersFound) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_usersDataFound:
 		t := m.To_UsersDataFound()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 	case Predicate_usersIdFound:
 		t := m.To_UsersIdFound()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *UsersFound) CalcByteSize(layer int32) int {
@@ -1073,11 +1051,9 @@ func (m *TLUsersDataFound) GetPredicateName() string {
 	return Predicate_usersDataFound
 }
 
-func (m *TLUsersDataFound) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x3fa3dbc7: func() []byte {
+func (m *TLUsersDataFound) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x3fa3dbc7: func() error {
 			x.UInt(0x3fa3dbc7)
 
 			x.Int(m.GetCount())
@@ -1085,11 +1061,11 @@ func (m *TLUsersDataFound) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetUsers())))
 			for _, v := range m.GetUsers() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
 			x.String(m.GetNextOffset())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -1099,10 +1075,10 @@ func (m *TLUsersDataFound) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_usersDataFound, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUsersDataFound) CalcByteSize(layer int32) int {
@@ -1168,16 +1144,14 @@ func (m *TLUsersIdFound) GetPredicateName() string {
 	return Predicate_usersIdFound
 }
 
-func (m *TLUsersIdFound) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x80c4adfa: func() []byte {
+func (m *TLUsersIdFound) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x80c4adfa: func() error {
 			x.UInt(0x80c4adfa)
 
 			x.VectorLong(m.GetIdList())
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -1187,10 +1161,10 @@ func (m *TLUsersIdFound) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_usersIdFound, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUsersIdFound) CalcByteSize(layer int32) int {
@@ -1224,10 +1198,7 @@ func (m *TLUsersIdFound) DebugString() string {
 // TLUserGetLastSeens
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetLastSeens) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getLastSeens))
-
+func (m *TLUserGetLastSeens) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7ca17e01:
 		x.UInt(0x7ca17e01)
@@ -1240,7 +1211,7 @@ func (m *TLUserGetLastSeens) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetLastSeens) CalcByteSize(layer int32) int {
@@ -1272,10 +1243,7 @@ func (m *TLUserGetLastSeens) DebugString() string {
 // TLUserUpdateLastSeen
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateLastSeen) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateLastSeen))
-
+func (m *TLUserUpdateLastSeen) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfd405a2d:
 		x.UInt(0xfd405a2d)
@@ -1290,7 +1258,7 @@ func (m *TLUserUpdateLastSeen) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateLastSeen) CalcByteSize(layer int32) int {
@@ -1323,10 +1291,7 @@ func (m *TLUserUpdateLastSeen) DebugString() string {
 // TLUserGetLastSeen
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetLastSeen) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getLastSeen))
-
+func (m *TLUserGetLastSeen) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9119c8de:
 		x.UInt(0x9119c8de)
@@ -1339,7 +1304,7 @@ func (m *TLUserGetLastSeen) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetLastSeen) CalcByteSize(layer int32) int {
@@ -1370,10 +1335,7 @@ func (m *TLUserGetLastSeen) DebugString() string {
 // TLUserGetImmutableUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetImmutableUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getImmutableUser))
-
+func (m *TLUserGetImmutableUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x376a6744:
 		x.UInt(0x376a6744)
@@ -1396,7 +1358,7 @@ func (m *TLUserGetImmutableUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetImmutableUser) CalcByteSize(layer int32) int {
@@ -1435,10 +1397,7 @@ func (m *TLUserGetImmutableUser) DebugString() string {
 // TLUserGetMutableUsers
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetMutableUsers) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getMutableUsers))
-
+func (m *TLUserGetMutableUsers) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d3b23d7:
 		x.UInt(0x9d3b23d7)
@@ -1453,7 +1412,7 @@ func (m *TLUserGetMutableUsers) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetMutableUsers) CalcByteSize(layer int32) int {
@@ -1487,10 +1446,7 @@ func (m *TLUserGetMutableUsers) DebugString() string {
 // TLUserGetImmutableUserByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetImmutableUserByPhone) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getImmutableUserByPhone))
-
+func (m *TLUserGetImmutableUserByPhone) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe9c36fe4:
 		x.UInt(0xe9c36fe4)
@@ -1503,7 +1459,7 @@ func (m *TLUserGetImmutableUserByPhone) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetImmutableUserByPhone) CalcByteSize(layer int32) int {
@@ -1534,10 +1490,7 @@ func (m *TLUserGetImmutableUserByPhone) DebugString() string {
 // TLUserGetImmutableUserByToken
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetImmutableUserByToken) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getImmutableUserByToken))
-
+func (m *TLUserGetImmutableUserByToken) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xff3e1373:
 		x.UInt(0xff3e1373)
@@ -1550,7 +1503,7 @@ func (m *TLUserGetImmutableUserByToken) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetImmutableUserByToken) CalcByteSize(layer int32) int {
@@ -1581,10 +1534,7 @@ func (m *TLUserGetImmutableUserByToken) DebugString() string {
 // TLUserSetAccountDaysTTL
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetAccountDaysTTL) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setAccountDaysTTL))
-
+func (m *TLUserSetAccountDaysTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd2550b4c:
 		x.UInt(0xd2550b4c)
@@ -1598,7 +1548,7 @@ func (m *TLUserSetAccountDaysTTL) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetAccountDaysTTL) CalcByteSize(layer int32) int {
@@ -1630,10 +1580,7 @@ func (m *TLUserSetAccountDaysTTL) DebugString() string {
 // TLUserGetAccountDaysTTL
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetAccountDaysTTL) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getAccountDaysTTL))
-
+func (m *TLUserGetAccountDaysTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb2843ee0:
 		x.UInt(0xb2843ee0)
@@ -1646,7 +1593,7 @@ func (m *TLUserGetAccountDaysTTL) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetAccountDaysTTL) CalcByteSize(layer int32) int {
@@ -1677,10 +1624,7 @@ func (m *TLUserGetAccountDaysTTL) DebugString() string {
 // TLUserGetNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getNotifySettings))
-
+func (m *TLUserGetNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x40ac3766:
 		x.UInt(0x40ac3766)
@@ -1695,7 +1639,7 @@ func (m *TLUserGetNotifySettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetNotifySettings) CalcByteSize(layer int32) int {
@@ -1728,10 +1672,7 @@ func (m *TLUserGetNotifySettings) DebugString() string {
 // TLUserGetNotifySettingsList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetNotifySettingsList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getNotifySettingsList))
-
+func (m *TLUserGetNotifySettingsList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe465159c:
 		x.UInt(0xe465159c)
@@ -1743,14 +1684,14 @@ func (m *TLUserGetNotifySettingsList) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetPeers())))
 		for _, v := range m.GetPeers() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetNotifySettingsList) CalcByteSize(layer int32) int {
@@ -1794,10 +1735,7 @@ func (m *TLUserGetNotifySettingsList) DebugString() string {
 // TLUserSetNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setNotifySettings))
-
+func (m *TLUserSetNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc9ed65e5:
 		x.UInt(0xc9ed65e5)
@@ -1807,13 +1745,13 @@ func (m *TLUserSetNotifySettings) Encode(layer int32) []byte {
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		x.Bytes(m.GetSettings().Encode(layer))
+		m.GetSettings().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetNotifySettings) CalcByteSize(layer int32) int {
@@ -1851,10 +1789,7 @@ func (m *TLUserSetNotifySettings) DebugString() string {
 // TLUserResetNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserResetNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_resetNotifySettings))
-
+func (m *TLUserResetNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe079d74:
 		x.UInt(0xe079d74)
@@ -1867,7 +1802,7 @@ func (m *TLUserResetNotifySettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserResetNotifySettings) CalcByteSize(layer int32) int {
@@ -1898,10 +1833,7 @@ func (m *TLUserResetNotifySettings) DebugString() string {
 // TLUserGetAllNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetAllNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getAllNotifySettings))
-
+func (m *TLUserGetAllNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x55926875:
 		x.UInt(0x55926875)
@@ -1914,7 +1846,7 @@ func (m *TLUserGetAllNotifySettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetAllNotifySettings) CalcByteSize(layer int32) int {
@@ -1945,10 +1877,7 @@ func (m *TLUserGetAllNotifySettings) DebugString() string {
 // TLUserGetGlobalPrivacySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetGlobalPrivacySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getGlobalPrivacySettings))
-
+func (m *TLUserGetGlobalPrivacySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x77f6f112:
 		x.UInt(0x77f6f112)
@@ -1961,7 +1890,7 @@ func (m *TLUserGetGlobalPrivacySettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetGlobalPrivacySettings) CalcByteSize(layer int32) int {
@@ -1992,10 +1921,7 @@ func (m *TLUserGetGlobalPrivacySettings) DebugString() string {
 // TLUserSetGlobalPrivacySettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetGlobalPrivacySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setGlobalPrivacySettings))
-
+func (m *TLUserSetGlobalPrivacySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8cb592ae:
 		x.UInt(0x8cb592ae)
@@ -2003,13 +1929,13 @@ func (m *TLUserSetGlobalPrivacySettings) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetSettings().Encode(layer))
+		m.GetSettings().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetGlobalPrivacySettings) CalcByteSize(layer int32) int {
@@ -2045,10 +1971,7 @@ func (m *TLUserSetGlobalPrivacySettings) DebugString() string {
 // TLUserGetPrivacy
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetPrivacy) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getPrivacy))
-
+func (m *TLUserGetPrivacy) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d40a3b4:
 		x.UInt(0x9d40a3b4)
@@ -2062,7 +1985,7 @@ func (m *TLUserGetPrivacy) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetPrivacy) CalcByteSize(layer int32) int {
@@ -2094,10 +2017,7 @@ func (m *TLUserGetPrivacy) DebugString() string {
 // TLUserSetPrivacy
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetPrivacy) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setPrivacy))
-
+func (m *TLUserSetPrivacy) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8855ad8f:
 		x.UInt(0x8855ad8f)
@@ -2110,14 +2030,14 @@ func (m *TLUserSetPrivacy) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetRules())))
 		for _, v := range m.GetRules() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetPrivacy) CalcByteSize(layer int32) int {
@@ -2162,10 +2082,7 @@ func (m *TLUserSetPrivacy) DebugString() string {
 // TLUserCheckPrivacy
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCheckPrivacy) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_checkPrivacy))
-
+func (m *TLUserCheckPrivacy) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc56e1eaa:
 		x.UInt(0xc56e1eaa)
@@ -2184,7 +2101,7 @@ func (m *TLUserCheckPrivacy) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCheckPrivacy) CalcByteSize(layer int32) int {
@@ -2219,10 +2136,7 @@ func (m *TLUserCheckPrivacy) DebugString() string {
 // TLUserAddPeerSettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserAddPeerSettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_addPeerSettings))
-
+func (m *TLUserAddPeerSettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcae22763:
 		x.UInt(0xcae22763)
@@ -2232,13 +2146,13 @@ func (m *TLUserAddPeerSettings) Encode(layer int32) []byte {
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		x.Bytes(m.GetSettings().Encode(layer))
+		m.GetSettings().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserAddPeerSettings) CalcByteSize(layer int32) int {
@@ -2276,10 +2190,7 @@ func (m *TLUserAddPeerSettings) DebugString() string {
 // TLUserGetPeerSettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetPeerSettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getPeerSettings))
-
+func (m *TLUserGetPeerSettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xd02ef67:
 		x.UInt(0xd02ef67)
@@ -2294,7 +2205,7 @@ func (m *TLUserGetPeerSettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetPeerSettings) CalcByteSize(layer int32) int {
@@ -2327,10 +2238,7 @@ func (m *TLUserGetPeerSettings) DebugString() string {
 // TLUserDeletePeerSettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserDeletePeerSettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_deletePeerSettings))
-
+func (m *TLUserDeletePeerSettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x5e891967:
 		x.UInt(0x5e891967)
@@ -2345,7 +2253,7 @@ func (m *TLUserDeletePeerSettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserDeletePeerSettings) CalcByteSize(layer int32) int {
@@ -2378,10 +2286,7 @@ func (m *TLUserDeletePeerSettings) DebugString() string {
 // TLUserChangePhone
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserChangePhone) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_changePhone))
-
+func (m *TLUserChangePhone) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xff7a575b:
 		x.UInt(0xff7a575b)
@@ -2395,7 +2300,7 @@ func (m *TLUserChangePhone) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserChangePhone) CalcByteSize(layer int32) int {
@@ -2427,10 +2332,7 @@ func (m *TLUserChangePhone) DebugString() string {
 // TLUserCreateNewPredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCreateNewPredefinedUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_createNewPredefinedUser))
-
+func (m *TLUserCreateNewPredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x57493241:
 		x.UInt(0x57493241)
@@ -2462,7 +2364,7 @@ func (m *TLUserCreateNewPredefinedUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCreateNewPredefinedUser) CalcByteSize(layer int32) int {
@@ -2505,10 +2407,7 @@ func (m *TLUserCreateNewPredefinedUser) DebugString() string {
 // TLUserGetPredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetPredefinedUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getPredefinedUser))
-
+func (m *TLUserGetPredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x34376b25:
 		x.UInt(0x34376b25)
@@ -2521,7 +2420,7 @@ func (m *TLUserGetPredefinedUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetPredefinedUser) CalcByteSize(layer int32) int {
@@ -2552,10 +2451,7 @@ func (m *TLUserGetPredefinedUser) DebugString() string {
 // TLUserGetAllPredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetAllPredefinedUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getAllPredefinedUser))
-
+func (m *TLUserGetAllPredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc1353fe5:
 		x.UInt(0xc1353fe5)
@@ -2566,7 +2462,7 @@ func (m *TLUserGetAllPredefinedUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetAllPredefinedUser) CalcByteSize(layer int32) int {
@@ -2596,10 +2492,7 @@ func (m *TLUserGetAllPredefinedUser) DebugString() string {
 // TLUserUpdatePredefinedFirstAndLastName
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdatePredefinedFirstAndLastName) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updatePredefinedFirstAndLastName))
-
+func (m *TLUserUpdatePredefinedFirstAndLastName) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3a3aa596:
 		x.UInt(0x3a3aa596)
@@ -2624,7 +2517,7 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdatePredefinedFirstAndLastName) CalcByteSize(layer int32) int {
@@ -2662,10 +2555,7 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) DebugString() string {
 // TLUserUpdatePredefinedVerified
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdatePredefinedVerified) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updatePredefinedVerified))
-
+func (m *TLUserUpdatePredefinedVerified) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbaf5b249:
 		x.UInt(0xbaf5b249)
@@ -2686,7 +2576,7 @@ func (m *TLUserUpdatePredefinedVerified) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdatePredefinedVerified) CalcByteSize(layer int32) int {
@@ -2722,10 +2612,7 @@ func (m *TLUserUpdatePredefinedVerified) DebugString() string {
 // TLUserUpdatePredefinedUsername
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdatePredefinedUsername) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updatePredefinedUsername))
-
+func (m *TLUserUpdatePredefinedUsername) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4ba7bed2:
 		x.UInt(0x4ba7bed2)
@@ -2749,7 +2636,7 @@ func (m *TLUserUpdatePredefinedUsername) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdatePredefinedUsername) CalcByteSize(layer int32) int {
@@ -2786,10 +2673,7 @@ func (m *TLUserUpdatePredefinedUsername) DebugString() string {
 // TLUserUpdatePredefinedCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdatePredefinedCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updatePredefinedCode))
-
+func (m *TLUserUpdatePredefinedCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x60f68f67:
 		x.UInt(0x60f68f67)
@@ -2803,7 +2687,7 @@ func (m *TLUserUpdatePredefinedCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdatePredefinedCode) CalcByteSize(layer int32) int {
@@ -2835,10 +2719,7 @@ func (m *TLUserUpdatePredefinedCode) DebugString() string {
 // TLUserPredefinedBindRegisteredUserId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserPredefinedBindRegisteredUserId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_predefinedBindRegisteredUserId))
-
+func (m *TLUserPredefinedBindRegisteredUserId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x40f37a9:
 		x.UInt(0x40f37a9)
@@ -2852,7 +2733,7 @@ func (m *TLUserPredefinedBindRegisteredUserId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserPredefinedBindRegisteredUserId) CalcByteSize(layer int32) int {
@@ -2884,10 +2765,7 @@ func (m *TLUserPredefinedBindRegisteredUserId) DebugString() string {
 // TLUserCreateNewUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCreateNewUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_createNewUser))
-
+func (m *TLUserCreateNewUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x79e01881:
 		x.UInt(0x79e01881)
@@ -2904,7 +2782,7 @@ func (m *TLUserCreateNewUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCreateNewUser) CalcByteSize(layer int32) int {
@@ -2939,10 +2817,7 @@ func (m *TLUserCreateNewUser) DebugString() string {
 // TLUserDeleteUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserDeleteUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_deleteUser))
-
+func (m *TLUserDeleteUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7f1f98c8:
 		x.UInt(0x7f1f98c8)
@@ -2956,7 +2831,7 @@ func (m *TLUserDeleteUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserDeleteUser) CalcByteSize(layer int32) int {
@@ -2988,10 +2863,7 @@ func (m *TLUserDeleteUser) DebugString() string {
 // TLUserBlockPeer
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserBlockPeer) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_blockPeer))
-
+func (m *TLUserBlockPeer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x81062eb0:
 		x.UInt(0x81062eb0)
@@ -3006,7 +2878,7 @@ func (m *TLUserBlockPeer) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserBlockPeer) CalcByteSize(layer int32) int {
@@ -3039,10 +2911,7 @@ func (m *TLUserBlockPeer) DebugString() string {
 // TLUserUnBlockPeer
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUnBlockPeer) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_unBlockPeer))
-
+func (m *TLUserUnBlockPeer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdee7160d:
 		x.UInt(0xdee7160d)
@@ -3057,7 +2926,7 @@ func (m *TLUserUnBlockPeer) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUnBlockPeer) CalcByteSize(layer int32) int {
@@ -3090,10 +2959,7 @@ func (m *TLUserUnBlockPeer) DebugString() string {
 // TLUserBlockedByUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserBlockedByUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_blockedByUser))
-
+func (m *TLUserBlockedByUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbba0058e:
 		x.UInt(0xbba0058e)
@@ -3107,7 +2973,7 @@ func (m *TLUserBlockedByUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserBlockedByUser) CalcByteSize(layer int32) int {
@@ -3139,10 +3005,7 @@ func (m *TLUserBlockedByUser) DebugString() string {
 // TLUserIsBlockedByUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserIsBlockedByUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_isBlockedByUser))
-
+func (m *TLUserIsBlockedByUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8caeb1df:
 		x.UInt(0x8caeb1df)
@@ -3156,7 +3019,7 @@ func (m *TLUserIsBlockedByUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserIsBlockedByUser) CalcByteSize(layer int32) int {
@@ -3188,10 +3051,7 @@ func (m *TLUserIsBlockedByUser) DebugString() string {
 // TLUserCheckBlockUserList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCheckBlockUserList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_checkBlockUserList))
-
+func (m *TLUserCheckBlockUserList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc3fd70f0:
 		x.UInt(0xc3fd70f0)
@@ -3206,7 +3066,7 @@ func (m *TLUserCheckBlockUserList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCheckBlockUserList) CalcByteSize(layer int32) int {
@@ -3240,10 +3100,7 @@ func (m *TLUserCheckBlockUserList) DebugString() string {
 // TLUserGetBlockedList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetBlockedList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getBlockedList))
-
+func (m *TLUserGetBlockedList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x23ffc348:
 		x.UInt(0x23ffc348)
@@ -3258,7 +3115,7 @@ func (m *TLUserGetBlockedList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetBlockedList) CalcByteSize(layer int32) int {
@@ -3291,10 +3148,7 @@ func (m *TLUserGetBlockedList) DebugString() string {
 // TLUserGetContactSignUpNotification
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetContactSignUpNotification) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getContactSignUpNotification))
-
+func (m *TLUserGetContactSignUpNotification) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe4d1d3d6:
 		x.UInt(0xe4d1d3d6)
@@ -3307,7 +3161,7 @@ func (m *TLUserGetContactSignUpNotification) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetContactSignUpNotification) CalcByteSize(layer int32) int {
@@ -3338,10 +3192,7 @@ func (m *TLUserGetContactSignUpNotification) DebugString() string {
 // TLUserSetContactSignUpNotification
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetContactSignUpNotification) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setContactSignUpNotification))
-
+func (m *TLUserSetContactSignUpNotification) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x85a17361:
 		x.UInt(0x85a17361)
@@ -3349,13 +3200,13 @@ func (m *TLUserSetContactSignUpNotification) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetSilent().Encode(layer))
+		m.GetSilent().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetContactSignUpNotification) CalcByteSize(layer int32) int {
@@ -3391,10 +3242,7 @@ func (m *TLUserSetContactSignUpNotification) DebugString() string {
 // TLUserGetContentSettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetContentSettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getContentSettings))
-
+func (m *TLUserGetContentSettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x94c3ad9f:
 		x.UInt(0x94c3ad9f)
@@ -3407,7 +3255,7 @@ func (m *TLUserGetContentSettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetContentSettings) CalcByteSize(layer int32) int {
@@ -3438,10 +3286,7 @@ func (m *TLUserGetContentSettings) DebugString() string {
 // TLUserSetContentSettings
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetContentSettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setContentSettings))
-
+func (m *TLUserSetContentSettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9d63fe6b:
 		x.UInt(0x9d63fe6b)
@@ -3462,7 +3307,7 @@ func (m *TLUserSetContentSettings) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetContentSettings) CalcByteSize(layer int32) int {
@@ -3498,10 +3343,7 @@ func (m *TLUserSetContentSettings) DebugString() string {
 // TLUserDeleteContact
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserDeleteContact) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_deleteContact))
-
+func (m *TLUserDeleteContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc6018219:
 		x.UInt(0xc6018219)
@@ -3515,7 +3357,7 @@ func (m *TLUserDeleteContact) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserDeleteContact) CalcByteSize(layer int32) int {
@@ -3547,10 +3389,7 @@ func (m *TLUserDeleteContact) DebugString() string {
 // TLUserGetContactList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetContactList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getContactList))
-
+func (m *TLUserGetContactList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc74bd161:
 		x.UInt(0xc74bd161)
@@ -3563,7 +3402,7 @@ func (m *TLUserGetContactList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetContactList) CalcByteSize(layer int32) int {
@@ -3594,10 +3433,7 @@ func (m *TLUserGetContactList) DebugString() string {
 // TLUserGetContactIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetContactIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getContactIdList))
-
+func (m *TLUserGetContactIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf1dd983e:
 		x.UInt(0xf1dd983e)
@@ -3610,7 +3446,7 @@ func (m *TLUserGetContactIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetContactIdList) CalcByteSize(layer int32) int {
@@ -3641,10 +3477,7 @@ func (m *TLUserGetContactIdList) DebugString() string {
 // TLUserGetContact
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetContact) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getContact))
-
+func (m *TLUserGetContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdb728be3:
 		x.UInt(0xdb728be3)
@@ -3658,7 +3491,7 @@ func (m *TLUserGetContact) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetContact) CalcByteSize(layer int32) int {
@@ -3690,10 +3523,7 @@ func (m *TLUserGetContact) DebugString() string {
 // TLUserAddContact
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserAddContact) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_addContact))
-
+func (m *TLUserAddContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x79c4bd0e:
 		x.UInt(0x79c4bd0e)
@@ -3701,7 +3531,7 @@ func (m *TLUserAddContact) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetAddPhonePrivacyException().Encode(layer))
+		m.GetAddPhonePrivacyException().Encode(x, layer)
 		x.Long(m.GetId())
 		x.String(m.GetFirstName())
 		x.String(m.GetLastName())
@@ -3711,7 +3541,7 @@ func (m *TLUserAddContact) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserAddContact) CalcByteSize(layer int32) int {
@@ -3751,10 +3581,7 @@ func (m *TLUserAddContact) DebugString() string {
 // TLUserCheckContact
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCheckContact) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_checkContact))
-
+func (m *TLUserCheckContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x82a758a4:
 		x.UInt(0x82a758a4)
@@ -3768,7 +3595,7 @@ func (m *TLUserCheckContact) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCheckContact) CalcByteSize(layer int32) int {
@@ -3800,10 +3627,7 @@ func (m *TLUserCheckContact) DebugString() string {
 // TLUserGetImportersByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetImportersByPhone) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getImportersByPhone))
-
+func (m *TLUserGetImportersByPhone) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x47aa8212:
 		x.UInt(0x47aa8212)
@@ -3816,7 +3640,7 @@ func (m *TLUserGetImportersByPhone) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetImportersByPhone) CalcByteSize(layer int32) int {
@@ -3847,10 +3671,7 @@ func (m *TLUserGetImportersByPhone) DebugString() string {
 // TLUserDeleteImportersByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserDeleteImportersByPhone) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_deleteImportersByPhone))
-
+func (m *TLUserDeleteImportersByPhone) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x174ddc54:
 		x.UInt(0x174ddc54)
@@ -3863,7 +3684,7 @@ func (m *TLUserDeleteImportersByPhone) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserDeleteImportersByPhone) CalcByteSize(layer int32) int {
@@ -3894,10 +3715,7 @@ func (m *TLUserDeleteImportersByPhone) DebugString() string {
 // TLUserImportContacts
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserImportContacts) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_importContacts))
-
+func (m *TLUserImportContacts) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x9a00f792:
 		x.UInt(0x9a00f792)
@@ -3909,14 +3727,14 @@ func (m *TLUserImportContacts) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetContacts())))
 		for _, v := range m.GetContacts() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserImportContacts) CalcByteSize(layer int32) int {
@@ -3960,10 +3778,7 @@ func (m *TLUserImportContacts) DebugString() string {
 // TLUserGetCountryCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetCountryCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getCountryCode))
-
+func (m *TLUserGetCountryCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x12006832:
 		x.UInt(0x12006832)
@@ -3976,7 +3791,7 @@ func (m *TLUserGetCountryCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetCountryCode) CalcByteSize(layer int32) int {
@@ -4007,10 +3822,7 @@ func (m *TLUserGetCountryCode) DebugString() string {
 // TLUserUpdateAbout
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateAbout) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateAbout))
-
+func (m *TLUserUpdateAbout) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdb00f187:
 		x.UInt(0xdb00f187)
@@ -4024,7 +3836,7 @@ func (m *TLUserUpdateAbout) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateAbout) CalcByteSize(layer int32) int {
@@ -4056,10 +3868,7 @@ func (m *TLUserUpdateAbout) DebugString() string {
 // TLUserUpdateFirstAndLastName
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateFirstAndLastName) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateFirstAndLastName))
-
+func (m *TLUserUpdateFirstAndLastName) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcb6685ec:
 		x.UInt(0xcb6685ec)
@@ -4074,7 +3883,7 @@ func (m *TLUserUpdateFirstAndLastName) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateFirstAndLastName) CalcByteSize(layer int32) int {
@@ -4107,10 +3916,7 @@ func (m *TLUserUpdateFirstAndLastName) DebugString() string {
 // TLUserUpdateVerified
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateVerified) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateVerified))
-
+func (m *TLUserUpdateVerified) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x24c92963:
 		x.UInt(0x24c92963)
@@ -4118,13 +3924,13 @@ func (m *TLUserUpdateVerified) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetVerified().Encode(layer))
+		m.GetVerified().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateVerified) CalcByteSize(layer int32) int {
@@ -4160,10 +3966,7 @@ func (m *TLUserUpdateVerified) DebugString() string {
 // TLUserUpdateUsername
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateUsername) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateUsername))
-
+func (m *TLUserUpdateUsername) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf54d1e71:
 		x.UInt(0xf54d1e71)
@@ -4177,7 +3980,7 @@ func (m *TLUserUpdateUsername) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateUsername) CalcByteSize(layer int32) int {
@@ -4209,10 +4012,7 @@ func (m *TLUserUpdateUsername) DebugString() string {
 // TLUserUpdateProfilePhoto
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateProfilePhoto) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateProfilePhoto))
-
+func (m *TLUserUpdateProfilePhoto) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3b740f87:
 		x.UInt(0x3b740f87)
@@ -4226,7 +4026,7 @@ func (m *TLUserUpdateProfilePhoto) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateProfilePhoto) CalcByteSize(layer int32) int {
@@ -4258,10 +4058,7 @@ func (m *TLUserUpdateProfilePhoto) DebugString() string {
 // TLUserDeleteProfilePhotos
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserDeleteProfilePhotos) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_deleteProfilePhotos))
-
+func (m *TLUserDeleteProfilePhotos) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2be3620e:
 		x.UInt(0x2be3620e)
@@ -4276,7 +4073,7 @@ func (m *TLUserDeleteProfilePhotos) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserDeleteProfilePhotos) CalcByteSize(layer int32) int {
@@ -4310,10 +4107,7 @@ func (m *TLUserDeleteProfilePhotos) DebugString() string {
 // TLUserGetProfilePhotos
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetProfilePhotos) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getProfilePhotos))
-
+func (m *TLUserGetProfilePhotos) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xdc66c146:
 		x.UInt(0xdc66c146)
@@ -4326,7 +4120,7 @@ func (m *TLUserGetProfilePhotos) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetProfilePhotos) CalcByteSize(layer int32) int {
@@ -4357,10 +4151,7 @@ func (m *TLUserGetProfilePhotos) DebugString() string {
 // TLUserSetBotCommands
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSetBotCommands) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_setBotCommands))
-
+func (m *TLUserSetBotCommands) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x753ba916:
 		x.UInt(0x753ba916)
@@ -4373,14 +4164,14 @@ func (m *TLUserSetBotCommands) Encode(layer int32) []byte {
 		x.Int(int32(mtproto.CRC32_vector))
 		x.Int(int32(len(m.GetCommands())))
 		for _, v := range m.GetCommands() {
-			x.Bytes((*v).Encode(layer))
+			v.Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSetBotCommands) CalcByteSize(layer int32) int {
@@ -4425,10 +4216,7 @@ func (m *TLUserSetBotCommands) DebugString() string {
 // TLUserIsBot
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserIsBot) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_isBot))
-
+func (m *TLUserIsBot) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc772c7ee:
 		x.UInt(0xc772c7ee)
@@ -4441,7 +4229,7 @@ func (m *TLUserIsBot) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserIsBot) CalcByteSize(layer int32) int {
@@ -4472,10 +4260,7 @@ func (m *TLUserIsBot) DebugString() string {
 // TLUserGetBotInfo
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetBotInfo) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getBotInfo))
-
+func (m *TLUserGetBotInfo) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x34663710:
 		x.UInt(0x34663710)
@@ -4488,7 +4273,7 @@ func (m *TLUserGetBotInfo) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetBotInfo) CalcByteSize(layer int32) int {
@@ -4519,10 +4304,7 @@ func (m *TLUserGetBotInfo) DebugString() string {
 // TLUserCheckBots
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserCheckBots) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_checkBots))
-
+func (m *TLUserCheckBots) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x736500c1:
 		x.UInt(0x736500c1)
@@ -4535,7 +4317,7 @@ func (m *TLUserCheckBots) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserCheckBots) CalcByteSize(layer int32) int {
@@ -4567,10 +4349,7 @@ func (m *TLUserCheckBots) DebugString() string {
 // TLUserGetFullUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetFullUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getFullUser))
-
+func (m *TLUserGetFullUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xfd10e13a:
 		x.UInt(0xfd10e13a)
@@ -4584,7 +4363,7 @@ func (m *TLUserGetFullUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetFullUser) CalcByteSize(layer int32) int {
@@ -4616,10 +4395,7 @@ func (m *TLUserGetFullUser) DebugString() string {
 // TLUserUpdateEmojiStatus
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateEmojiStatus) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateEmojiStatus))
-
+func (m *TLUserUpdateEmojiStatus) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xf8c8bad8:
 		x.UInt(0xf8c8bad8)
@@ -4634,7 +4410,7 @@ func (m *TLUserUpdateEmojiStatus) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateEmojiStatus) CalcByteSize(layer int32) int {
@@ -4667,10 +4443,7 @@ func (m *TLUserUpdateEmojiStatus) DebugString() string {
 // TLUserGetUserDataById
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetUserDataById) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getUserDataById))
-
+func (m *TLUserGetUserDataById) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3bb7103:
 		x.UInt(0x3bb7103)
@@ -4683,7 +4456,7 @@ func (m *TLUserGetUserDataById) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetUserDataById) CalcByteSize(layer int32) int {
@@ -4714,10 +4487,7 @@ func (m *TLUserGetUserDataById) DebugString() string {
 // TLUserGetUserDataListByIdList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetUserDataListByIdList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getUserDataListByIdList))
-
+func (m *TLUserGetUserDataListByIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8191eff9:
 		x.UInt(0x8191eff9)
@@ -4730,7 +4500,7 @@ func (m *TLUserGetUserDataListByIdList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetUserDataListByIdList) CalcByteSize(layer int32) int {
@@ -4762,10 +4532,7 @@ func (m *TLUserGetUserDataListByIdList) DebugString() string {
 // TLUserGetUserDataByToken
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetUserDataByToken) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getUserDataByToken))
-
+func (m *TLUserGetUserDataByToken) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3f09659e:
 		x.UInt(0x3f09659e)
@@ -4778,7 +4545,7 @@ func (m *TLUserGetUserDataByToken) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetUserDataByToken) CalcByteSize(layer int32) int {
@@ -4809,10 +4576,7 @@ func (m *TLUserGetUserDataByToken) DebugString() string {
 // TLUserSearch
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserSearch) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_search))
-
+func (m *TLUserSearch) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x7035b6cd:
 		x.UInt(0x7035b6cd)
@@ -4830,7 +4594,7 @@ func (m *TLUserSearch) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSearch) CalcByteSize(layer int32) int {
@@ -4866,10 +4630,7 @@ func (m *TLUserSearch) DebugString() string {
 // TLUserUpdateBotData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserUpdateBotData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_updateBotData))
-
+func (m *TLUserUpdateBotData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb9fd39ee:
 		x.UInt(0xb9fd39ee)
@@ -4898,30 +4659,30 @@ func (m *TLUserUpdateBotData) Encode(layer int32) []byte {
 		// flags Debug by @benqi
 		x.Long(m.GetBotId())
 		if m.GetBotChatHistory() != nil {
-			x.Bytes(m.GetBotChatHistory().Encode(layer))
+			m.GetBotChatHistory().Encode(x, layer)
 		}
 
 		if m.GetBotNochats() != nil {
-			x.Bytes(m.GetBotNochats().Encode(layer))
+			m.GetBotNochats().Encode(x, layer)
 		}
 
 		if m.GetBotInlineGeo() != nil {
-			x.Bytes(m.GetBotInlineGeo().Encode(layer))
+			m.GetBotInlineGeo().Encode(x, layer)
 		}
 
 		if m.GetBotAttachMenu() != nil {
-			x.Bytes(m.GetBotAttachMenu().Encode(layer))
+			m.GetBotAttachMenu().Encode(x, layer)
 		}
 
 		if m.GetBotInlinePlaceholder() != nil {
-			x.Bytes(m.GetBotInlinePlaceholder().Encode(layer))
+			m.GetBotInlinePlaceholder().Encode(x, layer)
 		}
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserUpdateBotData) CalcByteSize(layer int32) int {
@@ -4979,10 +4740,7 @@ func (m *TLUserUpdateBotData) DebugString() string {
 // TLUserGetImmutableUserV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetImmutableUserV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getImmutableUserV2))
-
+func (m *TLUserGetImmutableUserV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x300aba4c:
 		x.UInt(0x300aba4c)
@@ -5012,7 +4770,7 @@ func (m *TLUserGetImmutableUserV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetImmutableUserV2) CalcByteSize(layer int32) int {
@@ -5054,10 +4812,7 @@ func (m *TLUserGetImmutableUserV2) DebugString() string {
 // TLUserGetMutableUsersV2
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLUserGetMutableUsersV2) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_user_getMutableUsersV2))
-
+func (m *TLUserGetMutableUsersV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x94f98b28:
 		x.UInt(0x94f98b28)
@@ -5089,7 +4844,7 @@ func (m *TLUserGetMutableUsersV2) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserGetMutableUsersV2) CalcByteSize(layer int32) int {
@@ -5133,15 +4888,14 @@ func (m *TLUserGetMutableUsersV2) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_LastSeenData
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_LastSeenData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_LastSeenData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5168,15 +4922,14 @@ func (m *Vector_LastSeenData) DebugString() string {
 
 // Vector_ImmutableUser
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_ImmutableUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_ImmutableUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_ImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5203,15 +4956,14 @@ func (m *Vector_ImmutableUser) DebugString() string {
 
 // Vector_PeerPeerNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PeerPeerNotifySettings) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5238,15 +4990,14 @@ func (m *Vector_PeerPeerNotifySettings) DebugString() string {
 
 // Vector_PrivacyRule
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PrivacyRule) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PrivacyRule) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PrivacyRule) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5273,15 +5024,14 @@ func (m *Vector_PrivacyRule) DebugString() string {
 
 // Vector_PredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PredefinedUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5308,11 +5058,10 @@ func (m *Vector_PredefinedUser) DebugString() string {
 
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5333,15 +5082,14 @@ func (m *Vector_Long) DebugString() string {
 
 // Vector_PeerBlocked
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_PeerBlocked) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_PeerBlocked) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_PeerBlocked) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5368,15 +5116,14 @@ func (m *Vector_PeerBlocked) DebugString() string {
 
 // Vector_ContactData
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_ContactData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_ContactData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_ContactData) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5403,15 +5150,14 @@ func (m *Vector_ContactData) DebugString() string {
 
 // Vector_InputContact
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_InputContact) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_InputContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_InputContact) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -5438,15 +5184,14 @@ func (m *Vector_InputContact) DebugString() string {
 
 // Vector_UserData
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_UserData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_UserData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_UserData) Decode(dBuf *mtproto.DecodeBuf) error {

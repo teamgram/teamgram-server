@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -154,7 +154,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_AuthKeyStateData
 //
 
-func (m *AuthKeyStateData) Encode(layer int32) []byte {
+func (m *AuthKeyStateData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -162,21 +162,17 @@ func (m *AuthKeyStateData) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_authKeyStateData:
 		t := m.To_AuthKeyStateData()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *AuthKeyStateData) CalcByteSize(layer int32) int {
@@ -208,7 +204,6 @@ func (m *AuthKeyStateData) DebugString() string {
 }
 
 // To_AuthKeyStateData
-// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
 func (m *AuthKeyStateData) To_AuthKeyStateData() *TLAuthKeyStateData {
 	m.PredicateName = Predicate_authKeyStateData
 	return &TLAuthKeyStateData{
@@ -217,7 +212,6 @@ func (m *AuthKeyStateData) To_AuthKeyStateData() *TLAuthKeyStateData {
 }
 
 // MakeTLAuthKeyStateData
-// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
 func MakeTLAuthKeyStateData(data2 *AuthKeyStateData) *TLAuthKeyStateData {
 	if data2 == nil {
 		return &TLAuthKeyStateData{Data2: &AuthKeyStateData{
@@ -256,12 +250,9 @@ func (m *TLAuthKeyStateData) GetPredicateName() string {
 	return Predicate_authKeyStateData
 }
 
-func (m *TLAuthKeyStateData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xd971a630: func() []byte {
-			// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
+func (m *TLAuthKeyStateData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xd971a630: func() error {
 			x.UInt(0xd971a630)
 
 			x.Long(m.GetAuthKeyId())
@@ -270,7 +261,7 @@ func (m *TLAuthKeyStateData) Encode(layer int32) []byte {
 			x.Int(m.GetLayer())
 			x.Int(m.GetClientType())
 			x.Long(m.GetAndroidPushSessionId())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -280,10 +271,10 @@ func (m *TLAuthKeyStateData) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_authKeyStateData, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthKeyStateData) CalcByteSize(layer int32) int {
@@ -293,7 +284,6 @@ func (m *TLAuthKeyStateData) CalcByteSize(layer int32) int {
 func (m *TLAuthKeyStateData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0xd971a630: func() error {
-			// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
 			m.SetAuthKeyId(dBuf.Long())
 			m.SetUserId(dBuf.Long())
 			m.SetKeyState(dBuf.Int())
@@ -322,7 +312,7 @@ func (m *TLAuthKeyStateData) DebugString() string {
 //  + TL_ClientSession
 //
 
-func (m *ClientSession) Encode(layer int32) []byte {
+func (m *ClientSession) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -330,21 +320,17 @@ func (m *ClientSession) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_clientSession:
 		t := m.To_ClientSession()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *ClientSession) CalcByteSize(layer int32) int {
@@ -376,7 +362,6 @@ func (m *ClientSession) DebugString() string {
 }
 
 // To_ClientSession
-// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
 func (m *ClientSession) To_ClientSession() *TLClientSession {
 	m.PredicateName = Predicate_clientSession
 	return &TLClientSession{
@@ -385,7 +370,6 @@ func (m *ClientSession) To_ClientSession() *TLClientSession {
 }
 
 // MakeTLClientSession
-// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
 func MakeTLClientSession(data2 *ClientSession) *TLClientSession {
 	if data2 == nil {
 		return &TLClientSession{Data2: &ClientSession{
@@ -442,12 +426,9 @@ func (m *TLClientSession) GetPredicateName() string {
 	return Predicate_clientSession
 }
 
-func (m *TLClientSession) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x9a8e71b0: func() []byte {
-			// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
+func (m *TLClientSession) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x9a8e71b0: func() error {
 			x.UInt(0x9a8e71b0)
 
 			x.Long(m.GetAuthKeyId())
@@ -462,7 +443,7 @@ func (m *TLClientSession) Encode(layer int32) []byte {
 			x.String(m.GetLangCode())
 			x.String(m.GetProxy())
 			x.String(m.GetParams())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -472,10 +453,10 @@ func (m *TLClientSession) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_clientSession, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLClientSession) CalcByteSize(layer int32) int {
@@ -485,7 +466,6 @@ func (m *TLClientSession) CalcByteSize(layer int32) int {
 func (m *TLClientSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
 		0x9a8e71b0: func() error {
-			// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
 			m.SetAuthKeyId(dBuf.Long())
 			m.SetIp(dBuf.String())
 			m.SetLayer(dBuf.Int())
@@ -519,13 +499,9 @@ func (m *TLClientSession) DebugString() string {
 // TLAuthsessionGetAuthorizations
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetAuthorizations) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getAuthorizations))
-
+func (m *TLAuthsessionGetAuthorizations) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x30e21244:
-		// authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 		x.UInt(0x30e21244)
 
 		// no flags
@@ -537,7 +513,7 @@ func (m *TLAuthsessionGetAuthorizations) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetAuthorizations) CalcByteSize(layer int32) int {
@@ -547,7 +523,6 @@ func (m *TLAuthsessionGetAuthorizations) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetAuthorizations) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x30e21244:
-		// authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 
 		// not has flags
 
@@ -570,13 +545,9 @@ func (m *TLAuthsessionGetAuthorizations) DebugString() string {
 // TLAuthsessionResetAuthorization
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionResetAuthorization) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_resetAuthorization))
-
+func (m *TLAuthsessionResetAuthorization) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x8d5f6ca6:
-		// authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 		x.UInt(0x8d5f6ca6)
 
 		// no flags
@@ -589,7 +560,7 @@ func (m *TLAuthsessionResetAuthorization) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionResetAuthorization) CalcByteSize(layer int32) int {
@@ -599,7 +570,6 @@ func (m *TLAuthsessionResetAuthorization) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionResetAuthorization) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x8d5f6ca6:
-		// authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 
 		// not has flags
 
@@ -623,13 +593,9 @@ func (m *TLAuthsessionResetAuthorization) DebugString() string {
 // TLAuthsessionGetLayer
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetLayer) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getLayer))
-
+func (m *TLAuthsessionGetLayer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa82f16a9:
-		// authsession.getLayer auth_key_id:long = Int32;
 		x.UInt(0xa82f16a9)
 
 		// no flags
@@ -640,7 +606,7 @@ func (m *TLAuthsessionGetLayer) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetLayer) CalcByteSize(layer int32) int {
@@ -650,7 +616,6 @@ func (m *TLAuthsessionGetLayer) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetLayer) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xa82f16a9:
-		// authsession.getLayer auth_key_id:long = Int32;
 
 		// not has flags
 
@@ -672,13 +637,9 @@ func (m *TLAuthsessionGetLayer) DebugString() string {
 // TLAuthsessionGetLangPack
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetLangPack) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getLangPack))
-
+func (m *TLAuthsessionGetLangPack) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x29bbc166:
-		// authsession.getLangPack auth_key_id:long = String;
 		x.UInt(0x29bbc166)
 
 		// no flags
@@ -689,7 +650,7 @@ func (m *TLAuthsessionGetLangPack) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetLangPack) CalcByteSize(layer int32) int {
@@ -699,7 +660,6 @@ func (m *TLAuthsessionGetLangPack) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetLangPack) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x29bbc166:
-		// authsession.getLangPack auth_key_id:long = String;
 
 		// not has flags
 
@@ -721,13 +681,9 @@ func (m *TLAuthsessionGetLangPack) DebugString() string {
 // TLAuthsessionGetClient
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetClient) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getClient))
-
+func (m *TLAuthsessionGetClient) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x605855be:
-		// authsession.getClient auth_key_id:long = String;
 		x.UInt(0x605855be)
 
 		// no flags
@@ -738,7 +694,7 @@ func (m *TLAuthsessionGetClient) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetClient) CalcByteSize(layer int32) int {
@@ -748,7 +704,6 @@ func (m *TLAuthsessionGetClient) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetClient) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x605855be:
-		// authsession.getClient auth_key_id:long = String;
 
 		// not has flags
 
@@ -770,13 +725,9 @@ func (m *TLAuthsessionGetClient) DebugString() string {
 // TLAuthsessionGetLangCode
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetLangCode) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getLangCode))
-
+func (m *TLAuthsessionGetLangCode) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x5899b559:
-		// authsession.getLangCode auth_key_id:long = String;
 		x.UInt(0x5899b559)
 
 		// no flags
@@ -787,7 +738,7 @@ func (m *TLAuthsessionGetLangCode) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetLangCode) CalcByteSize(layer int32) int {
@@ -797,7 +748,6 @@ func (m *TLAuthsessionGetLangCode) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetLangCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x5899b559:
-		// authsession.getLangCode auth_key_id:long = String;
 
 		// not has flags
 
@@ -819,13 +769,9 @@ func (m *TLAuthsessionGetLangCode) DebugString() string {
 // TLAuthsessionGetUserId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetUserId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getUserId))
-
+func (m *TLAuthsessionGetUserId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x57491cac:
-		// authsession.getUserId auth_key_id:long = Int64;
 		x.UInt(0x57491cac)
 
 		// no flags
@@ -836,7 +782,7 @@ func (m *TLAuthsessionGetUserId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetUserId) CalcByteSize(layer int32) int {
@@ -846,7 +792,6 @@ func (m *TLAuthsessionGetUserId) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetUserId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x57491cac:
-		// authsession.getUserId auth_key_id:long = Int64;
 
 		// not has flags
 
@@ -868,13 +813,9 @@ func (m *TLAuthsessionGetUserId) DebugString() string {
 // TLAuthsessionGetPushSessionId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetPushSessionId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getPushSessionId))
-
+func (m *TLAuthsessionGetPushSessionId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb3c23141:
-		// authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 		x.UInt(0xb3c23141)
 
 		// no flags
@@ -887,7 +828,7 @@ func (m *TLAuthsessionGetPushSessionId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetPushSessionId) CalcByteSize(layer int32) int {
@@ -897,7 +838,6 @@ func (m *TLAuthsessionGetPushSessionId) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetPushSessionId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb3c23141:
-		// authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 
 		// not has flags
 
@@ -921,13 +861,9 @@ func (m *TLAuthsessionGetPushSessionId) DebugString() string {
 // TLAuthsessionGetFutureSalts
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetFutureSalts) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getFutureSalts))
-
+func (m *TLAuthsessionGetFutureSalts) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xb8cf5815:
-		// authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 		x.UInt(0xb8cf5815)
 
 		// no flags
@@ -939,7 +875,7 @@ func (m *TLAuthsessionGetFutureSalts) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetFutureSalts) CalcByteSize(layer int32) int {
@@ -949,7 +885,6 @@ func (m *TLAuthsessionGetFutureSalts) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetFutureSalts) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xb8cf5815:
-		// authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 
 		// not has flags
 
@@ -972,13 +907,9 @@ func (m *TLAuthsessionGetFutureSalts) DebugString() string {
 // TLAuthsessionQueryAuthKey
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionQueryAuthKey) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_queryAuthKey))
-
+func (m *TLAuthsessionQueryAuthKey) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x54b73828:
-		// authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 		x.UInt(0x54b73828)
 
 		// no flags
@@ -989,7 +920,7 @@ func (m *TLAuthsessionQueryAuthKey) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionQueryAuthKey) CalcByteSize(layer int32) int {
@@ -999,7 +930,6 @@ func (m *TLAuthsessionQueryAuthKey) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionQueryAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x54b73828:
-		// authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 
 		// not has flags
 
@@ -1021,26 +951,22 @@ func (m *TLAuthsessionQueryAuthKey) DebugString() string {
 // TLAuthsessionSetAuthKey
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionSetAuthKey) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_setAuthKey))
-
+func (m *TLAuthsessionSetAuthKey) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x3e940c91:
-		// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 		x.UInt(0x3e940c91)
 
 		// no flags
 
-		x.Bytes(m.GetAuthKey().Encode(layer))
-		x.Bytes(m.GetFutureSalt().Encode(layer))
+		m.GetAuthKey().Encode(x, layer)
+		m.GetFutureSalt().Encode(x, layer)
 		x.Int(m.GetExpiresIn())
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionSetAuthKey) CalcByteSize(layer int32) int {
@@ -1050,7 +976,6 @@ func (m *TLAuthsessionSetAuthKey) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionSetAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x3e940c91:
-		// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 
 		// not has flags
 
@@ -1080,13 +1005,9 @@ func (m *TLAuthsessionSetAuthKey) DebugString() string {
 // TLAuthsessionBindAuthKeyUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionBindAuthKeyUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_bindAuthKeyUser))
-
+func (m *TLAuthsessionBindAuthKeyUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xbce0423:
-		// authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 		x.UInt(0xbce0423)
 
 		// no flags
@@ -1098,7 +1019,7 @@ func (m *TLAuthsessionBindAuthKeyUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionBindAuthKeyUser) CalcByteSize(layer int32) int {
@@ -1108,7 +1029,6 @@ func (m *TLAuthsessionBindAuthKeyUser) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionBindAuthKeyUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0xbce0423:
-		// authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 
 		// not has flags
 
@@ -1131,13 +1051,9 @@ func (m *TLAuthsessionBindAuthKeyUser) DebugString() string {
 // TLAuthsessionUnbindAuthKeyUser
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionUnbindAuthKeyUser) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_unbindAuthKeyUser))
-
+func (m *TLAuthsessionUnbindAuthKeyUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x758c648:
-		// authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 		x.UInt(0x758c648)
 
 		// no flags
@@ -1149,7 +1065,7 @@ func (m *TLAuthsessionUnbindAuthKeyUser) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionUnbindAuthKeyUser) CalcByteSize(layer int32) int {
@@ -1159,7 +1075,6 @@ func (m *TLAuthsessionUnbindAuthKeyUser) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionUnbindAuthKeyUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x758c648:
-		// authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 
 		// not has flags
 
@@ -1182,13 +1097,9 @@ func (m *TLAuthsessionUnbindAuthKeyUser) DebugString() string {
 // TLAuthsessionGetPermAuthKeyId
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetPermAuthKeyId) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getPermAuthKeyId))
-
+func (m *TLAuthsessionGetPermAuthKeyId) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x907464d6:
-		// authsession.getPermAuthKeyId auth_key_id:long= Int64;
 		x.UInt(0x907464d6)
 
 		// no flags
@@ -1199,7 +1110,7 @@ func (m *TLAuthsessionGetPermAuthKeyId) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetPermAuthKeyId) CalcByteSize(layer int32) int {
@@ -1209,7 +1120,6 @@ func (m *TLAuthsessionGetPermAuthKeyId) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetPermAuthKeyId) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x907464d6:
-		// authsession.getPermAuthKeyId auth_key_id:long= Int64;
 
 		// not has flags
 
@@ -1231,13 +1141,9 @@ func (m *TLAuthsessionGetPermAuthKeyId) DebugString() string {
 // TLAuthsessionBindTempAuthKey
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionBindTempAuthKey) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_bindTempAuthKey))
-
+func (m *TLAuthsessionBindTempAuthKey) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x608f4f86:
-		// authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 		x.UInt(0x608f4f86)
 
 		// no flags
@@ -1251,7 +1157,7 @@ func (m *TLAuthsessionBindTempAuthKey) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionBindTempAuthKey) CalcByteSize(layer int32) int {
@@ -1261,7 +1167,6 @@ func (m *TLAuthsessionBindTempAuthKey) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionBindTempAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x608f4f86:
-		// authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 
 		// not has flags
 
@@ -1286,24 +1191,20 @@ func (m *TLAuthsessionBindTempAuthKey) DebugString() string {
 // TLAuthsessionSetClientSessionInfo
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionSetClientSessionInfo) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_setClientSessionInfo))
-
+func (m *TLAuthsessionSetClientSessionInfo) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x2d9ff94:
-		// authsession.setClientSessionInfo data:ClientSession = Bool;
 		x.UInt(0x2d9ff94)
 
 		// no flags
 
-		x.Bytes(m.GetData().Encode(layer))
+		m.GetData().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionSetClientSessionInfo) CalcByteSize(layer int32) int {
@@ -1313,7 +1214,6 @@ func (m *TLAuthsessionSetClientSessionInfo) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionSetClientSessionInfo) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x2d9ff94:
-		// authsession.setClientSessionInfo data:ClientSession = Bool;
 
 		// not has flags
 
@@ -1338,13 +1238,9 @@ func (m *TLAuthsessionSetClientSessionInfo) DebugString() string {
 // TLAuthsessionGetAuthorization
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetAuthorization) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getAuthorization))
-
+func (m *TLAuthsessionGetAuthorization) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6e5e1923:
-		// authsession.getAuthorization auth_key_id:long = Authorization;
 		x.UInt(0x6e5e1923)
 
 		// no flags
@@ -1355,7 +1251,7 @@ func (m *TLAuthsessionGetAuthorization) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetAuthorization) CalcByteSize(layer int32) int {
@@ -1365,7 +1261,6 @@ func (m *TLAuthsessionGetAuthorization) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetAuthorization) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x6e5e1923:
-		// authsession.getAuthorization auth_key_id:long = Authorization;
 
 		// not has flags
 
@@ -1387,13 +1282,9 @@ func (m *TLAuthsessionGetAuthorization) DebugString() string {
 // TLAuthsessionGetAuthStateData
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLAuthsessionGetAuthStateData) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_authsession_getAuthStateData))
-
+func (m *TLAuthsessionGetAuthStateData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4f5e3131:
-		// authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 		x.UInt(0x4f5e3131)
 
 		// no flags
@@ -1404,7 +1295,7 @@ func (m *TLAuthsessionGetAuthStateData) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLAuthsessionGetAuthStateData) CalcByteSize(layer int32) int {
@@ -1414,7 +1305,6 @@ func (m *TLAuthsessionGetAuthStateData) CalcByteSize(layer int32) int {
 func (m *TLAuthsessionGetAuthStateData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x4f5e3131:
-		// authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 
 		// not has flags
 
@@ -1436,11 +1326,10 @@ func (m *TLAuthsessionGetAuthStateData) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {

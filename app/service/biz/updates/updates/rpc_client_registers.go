@@ -2,10 +2,10 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 package updates
@@ -26,7 +26,7 @@ type RPCContextTuple struct {
 }
 
 var rpcContextRegisters = map[string]RPCContextTuple{
-	"TLUpdatesGetState":               RPCContextTuple{"/mtproto.RPCUpdates/updates_getState", func() interface{} { return new(mtproto.Updates_State) }},
+	"TLUpdatesGetStateV2":             RPCContextTuple{"/mtproto.RPCUpdates/updates_getStateV2", func() interface{} { return new(mtproto.Updates_State) }},
 	"TLUpdatesGetDifferenceV2":        RPCContextTuple{"/mtproto.RPCUpdates/updates_getDifferenceV2", func() interface{} { return new(Difference) }},
 	"TLUpdatesGetChannelDifferenceV2": RPCContextTuple{"/mtproto.RPCUpdates/updates_getChannelDifferenceV2", func() interface{} { return new(ChannelDifference) }},
 }

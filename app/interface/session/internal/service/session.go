@@ -501,22 +501,6 @@ func (c *session) onTimer() bool {
 	return true
 }
 
-//============================================================================================
-func (c *session) encodeMessage(messageId int64, confirm bool, tl mtproto.TLObject) ([]byte, error) {
-	salt := c.cb.getCacheSalt().GetSalt()
-	seqNo := c.generateMessageSeqNo(confirm)
-
-	if messageId == 0 {
-		messageId = nextMessageId(false)
-	}
-
-	return SerializeToBuffer(salt, c.sessionId, &mtproto.TLMessage2{
-		MsgId:  messageId,
-		Seqno:  seqNo,
-		Object: tl,
-	}, c.cb.getLayer()), nil
-}
-
 func (c *session) generateMessageSeqNo(increment bool) int32 {
 	value := c.nextSeqNo
 	if increment {
@@ -532,12 +516,13 @@ func (c *session) sendRpcResultToQueue(gatewayId string, reqMsgId int64, result 
 		ReqMsgId: reqMsgId,
 		Result:   result,
 	}
-	b := rpcResult.Encode(c.cb.getLayer())
+	x := mtproto.NewEncodeBuf(500)
+	rpcResult.Encode(x, c.cb.getLayer())
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(true),
 		Seqno: c.generateMessageSeqNo(true),
-		Bytes: int32(len(b)),
-		Body:  b,
+		Bytes: int32(x.GetOffset()),
+		Body:  x.GetBuf(),
 	}
 	c.outQueue.AddRpcResultMsg(reqMsgId, rawMsg)
 	// cb(rawMsg)
@@ -560,12 +545,16 @@ func (c *session) sendPushRpcResultToQueue(gatewayId string, reqMsgId int64, res
 }
 
 func (c *session) sendPushToQueue(gatewayId string, pushMsgId int64, pushMsg mtproto.TLObject) {
-	rawBytes := pushMsg.Encode(c.cb.getLayer())
-	if len(rawBytes) > 256 {
+	x := mtproto.NewEncodeBuf(512)
+	pushMsg.Encode(x, c.cb.getLayer())
+	rawBytes := x.GetBuf()
+	if x.GetOffset() > 256 {
 		gzipPacked := &mtproto.TLGzipPacked{
 			PackedData: rawBytes,
 		}
-		rawBytes = gzipPacked.Encode(c.cb.getLayer())
+		x2 := mtproto.NewEncodeBuf(512)
+		gzipPacked.Encode(x2, c.cb.getLayer())
+		rawBytes = x2.GetBuf()
 	}
 
 	rawMsg := &mtproto.TLMessageRawData{
@@ -578,7 +567,9 @@ func (c *session) sendPushToQueue(gatewayId string, pushMsgId int64, pushMsg mtp
 }
 
 func (c *session) sendRawToQueue(gatewayId string, msgId int64, confirm bool, rawMsg mtproto.TLObject) {
-	b := rawMsg.Encode(c.cb.getLayer())
+	x := mtproto.NewEncodeBuf(512)
+	rawMsg.Encode(x, c.cb.getLayer())
+	b := x.GetBuf()
 	rawMsg2 := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
 		Seqno: c.generateMessageSeqNo(confirm),
@@ -590,9 +581,10 @@ func (c *session) sendRawToQueue(gatewayId string, msgId int64, confirm bool, ra
 }
 
 func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+	x := mtproto.NewEncodeBuf(512)
 	salt := c.cb.getCacheSalt().GetSalt()
-	b := obj.Encode(c.cb.getLayer())
-
+	obj.Encode(x, c.cb.getLayer())
+	b := x.GetBuf()
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
 		Seqno: c.generateMessageSeqNo(confirm),
@@ -618,8 +610,10 @@ func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj
 }
 
 func (c *session) sendDirectToGateway(gatewayId string, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+	x := mtproto.NewEncodeBuf(512)
 	salt := c.cb.getCacheSalt().GetSalt()
-	b := obj.Encode(c.cb.getLayer())
+	obj.Encode(x, c.cb.getLayer())
+	b := x.GetBuf()
 
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),

@@ -5,7 +5,7 @@
  * Copyright (c) 2022-present,  Teamgram Authors.
  *  All rights reserved.
  *
- * Author: teagramio (teagram.io@gmail.com)
+ * Author: Benqi (wubenqi@gmail.com)
  */
 
 // ConstructorList
@@ -23,6 +23,7 @@ import (
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
 var _ *types.Int32Value
 var _ *mtproto.Bool
 var _ fmt.GoStringer
@@ -56,13 +57,10 @@ func CheckClassID(classId int32) (ok bool) {
 //----------------------------------------------------------------------------------------------------------------
 // TLGatewaySendDataToGateway
 ///////////////////////////////////////////////////////////////////////////////
-func (m *TLGatewaySendDataToGateway) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_gateway_sendDataToGateway))
 
+func (m *TLGatewaySendDataToGateway) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x26807810:
-		// gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 		x.UInt(0x26807810)
 
 		// no flags
@@ -75,7 +73,7 @@ func (m *TLGatewaySendDataToGateway) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLGatewaySendDataToGateway) CalcByteSize(layer int32) int {
@@ -85,7 +83,6 @@ func (m *TLGatewaySendDataToGateway) CalcByteSize(layer int32) int {
 func (m *TLGatewaySendDataToGateway) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x26807810:
-		// gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 
 		// not has flags
 

@@ -114,7 +114,7 @@ func CheckClassID(classId int32) (ok bool) {
 //  + TL_SessionEntry
 //
 
-func (m *SessionEntry) Encode(layer int32) []byte {
+func (m *SessionEntry) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -122,21 +122,17 @@ func (m *SessionEntry) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_sessionEntry:
 		t := m.To_SessionEntry()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *SessionEntry) CalcByteSize(layer int32) int {
@@ -217,11 +213,9 @@ func (m *TLSessionEntry) GetPredicateName() string {
 	return Predicate_sessionEntry
 }
 
-func (m *TLSessionEntry) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0x1764ac31: func() []byte {
+func (m *TLSessionEntry) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1764ac31: func() error {
 			x.UInt(0x1764ac31)
 
 			x.Long(m.GetUserId())
@@ -231,7 +225,7 @@ func (m *TLSessionEntry) Encode(layer int32) []byte {
 			x.Int(m.GetLayer())
 			x.Long(m.GetPermAuthKeyId())
 			x.String(m.GetClient())
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -241,10 +235,10 @@ func (m *TLSessionEntry) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_sessionEntry, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLSessionEntry) CalcByteSize(layer int32) int {
@@ -283,7 +277,7 @@ func (m *TLSessionEntry) DebugString() string {
 //  + TL_UserSessionEntryList
 //
 
-func (m *UserSessionEntryList) Encode(layer int32) []byte {
+func (m *UserSessionEntryList) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
 	predicateName := m.PredicateName
 	if predicateName == "" {
 		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
@@ -291,21 +285,17 @@ func (m *UserSessionEntryList) Encode(layer int32) []byte {
 		}
 	}
 
-	var (
-		xBuf []byte
-	)
-
 	switch predicateName {
 	case Predicate_userSessionEntryList:
 		t := m.To_UserSessionEntryList()
-		xBuf = t.Encode(layer)
+		t.Encode(x, layer)
 
 	default:
 		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
-		return []byte{}
+		return nil
 	}
 
-	return xBuf
+	return nil
 }
 
 func (m *UserSessionEntryList) CalcByteSize(layer int32) int {
@@ -371,11 +361,9 @@ func (m *TLUserSessionEntryList) GetPredicateName() string {
 	return Predicate_userSessionEntryList
 }
 
-func (m *TLUserSessionEntryList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	var encodeF = map[uint32]func() []byte{
-		0xefecb398: func() []byte {
+func (m *TLUserSessionEntryList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xefecb398: func() error {
 			x.UInt(0xefecb398)
 
 			x.Long(m.GetUserId())
@@ -383,10 +371,10 @@ func (m *TLUserSessionEntryList) Encode(layer int32) []byte {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetUserSessions())))
 			for _, v := range m.GetUserSessions() {
-				x.Bytes((*v).Encode(layer))
+				v.Encode(x, layer)
 			}
 
-			return x.GetBuf()
+			return nil
 		},
 	}
 
@@ -396,10 +384,10 @@ func (m *TLUserSessionEntryList) Encode(layer int32) []byte {
 	} else {
 		// TODO(@benqi): handle error
 		// log.Errorf("not found clazzId by (%s, %d)", Predicate_userSessionEntryList, layer)
-		return x.GetBuf()
+		return nil
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLUserSessionEntryList) CalcByteSize(layer int32) int {
@@ -444,10 +432,7 @@ func (m *TLUserSessionEntryList) DebugString() string {
 // TLStatusSetSessionOnline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetSessionOnline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setSessionOnline))
-
+func (m *TLStatusSetSessionOnline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x52518bcf:
 		x.UInt(0x52518bcf)
@@ -455,13 +440,13 @@ func (m *TLStatusSetSessionOnline) Encode(layer int32) []byte {
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Bytes(m.GetSession().Encode(layer))
+		m.GetSession().Encode(x, layer)
 
 	default:
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetSessionOnline) CalcByteSize(layer int32) int {
@@ -497,10 +482,7 @@ func (m *TLStatusSetSessionOnline) DebugString() string {
 // TLStatusSetSessionOffline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetSessionOffline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setSessionOffline))
-
+func (m *TLStatusSetSessionOffline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x25a66a5c:
 		x.UInt(0x25a66a5c)
@@ -514,7 +496,7 @@ func (m *TLStatusSetSessionOffline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetSessionOffline) CalcByteSize(layer int32) int {
@@ -546,10 +528,7 @@ func (m *TLStatusSetSessionOffline) DebugString() string {
 // TLStatusGetUserOnlineSessions
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusGetUserOnlineSessions) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_getUserOnlineSessions))
-
+func (m *TLStatusGetUserOnlineSessions) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xe7c0e5cd:
 		x.UInt(0xe7c0e5cd)
@@ -562,7 +541,7 @@ func (m *TLStatusGetUserOnlineSessions) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusGetUserOnlineSessions) CalcByteSize(layer int32) int {
@@ -593,10 +572,7 @@ func (m *TLStatusGetUserOnlineSessions) DebugString() string {
 // TLStatusGetUsersOnlineSessionsList
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusGetUsersOnlineSessionsList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_getUsersOnlineSessionsList))
-
+func (m *TLStatusGetUsersOnlineSessionsList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x883b35c4:
 		x.UInt(0x883b35c4)
@@ -609,7 +585,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusGetUsersOnlineSessionsList) CalcByteSize(layer int32) int {
@@ -641,10 +617,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) DebugString() string {
 // TLStatusGetChannelOnlineUsers
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusGetChannelOnlineUsers) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_getChannelOnlineUsers))
-
+func (m *TLStatusGetChannelOnlineUsers) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4583ac55:
 		x.UInt(0x4583ac55)
@@ -657,7 +630,7 @@ func (m *TLStatusGetChannelOnlineUsers) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusGetChannelOnlineUsers) CalcByteSize(layer int32) int {
@@ -688,10 +661,7 @@ func (m *TLStatusGetChannelOnlineUsers) DebugString() string {
 // TLStatusSetUserChannelsOnline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetUserChannelsOnline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setUserChannelsOnline))
-
+func (m *TLStatusSetUserChannelsOnline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xcd39044d:
 		x.UInt(0xcd39044d)
@@ -706,7 +676,7 @@ func (m *TLStatusSetUserChannelsOnline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetUserChannelsOnline) CalcByteSize(layer int32) int {
@@ -740,10 +710,7 @@ func (m *TLStatusSetUserChannelsOnline) DebugString() string {
 // TLStatusSetUserChannelsOffline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetUserChannelsOffline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setUserChannelsOffline))
-
+func (m *TLStatusSetUserChannelsOffline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x6ca361aa:
 		x.UInt(0x6ca361aa)
@@ -758,7 +725,7 @@ func (m *TLStatusSetUserChannelsOffline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetUserChannelsOffline) CalcByteSize(layer int32) int {
@@ -792,10 +759,7 @@ func (m *TLStatusSetUserChannelsOffline) DebugString() string {
 // TLStatusSetChannelUserOffline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetChannelUserOffline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setChannelUserOffline))
-
+func (m *TLStatusSetChannelUserOffline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xc48bcb7c:
 		x.UInt(0xc48bcb7c)
@@ -809,7 +773,7 @@ func (m *TLStatusSetChannelUserOffline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetChannelUserOffline) CalcByteSize(layer int32) int {
@@ -841,10 +805,7 @@ func (m *TLStatusSetChannelUserOffline) DebugString() string {
 // TLStatusSetChannelUsersOnline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetChannelUsersOnline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setChannelUsersOnline))
-
+func (m *TLStatusSetChannelUsersOnline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0xa69bdcf7:
 		x.UInt(0xa69bdcf7)
@@ -859,7 +820,7 @@ func (m *TLStatusSetChannelUsersOnline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetChannelUsersOnline) CalcByteSize(layer int32) int {
@@ -893,10 +854,7 @@ func (m *TLStatusSetChannelUsersOnline) DebugString() string {
 // TLStatusSetChannelOffline
 ///////////////////////////////////////////////////////////////////////////////
 
-func (m *TLStatusSetChannelOffline) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-	// x.Int(int32(CRC32_status_setChannelOffline))
-
+func (m *TLStatusSetChannelOffline) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
 	case 0x4b7756f5:
 		x.UInt(0x4b7756f5)
@@ -909,7 +867,7 @@ func (m *TLStatusSetChannelOffline) Encode(layer int32) []byte {
 		// log.Errorf("")
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *TLStatusSetChannelOffline) CalcByteSize(layer int32) int {
@@ -940,15 +898,14 @@ func (m *TLStatusSetChannelOffline) DebugString() string {
 //----------------------------------------------------------------------------------------------------------------
 // Vector_UserSessionEntryList
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_UserSessionEntryList) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_UserSessionEntryList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
 	for _, v := range m.Datas {
-		x.Bytes((*v).Encode(layer))
+		v.Encode(x, layer)
 	}
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_UserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
@@ -975,11 +932,10 @@ func (m *Vector_UserSessionEntryList) DebugString() string {
 
 // Vector_Long
 ///////////////////////////////////////////////////////////////////////////////
-func (m *Vector_Long) Encode(layer int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
-	return x.GetBuf()
+	return nil
 }
 
 func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {

@@ -308,7 +308,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 		logx.Errorf(err.Error())
 	}
 
-	var rData []byte
+	x := mtproto.NewEncodeBuf(512)
 
 	switch request := obj.(type) {
 	case *mtproto.TLReqPq:
@@ -324,7 +324,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		rData = serializeToBuffer(mtproto.GenerateMessageId(), resPQ)
+		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReqPqMulti:
 		logx.Infof("TLReqPqMulti - {\"request\":%s", request.DebugString())
 		resPQ, err := s.handshake.onReqPqMulti(request)
@@ -338,7 +338,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
 		})
-		rData = serializeToBuffer(mtproto.GenerateMessageId(), resPQ)
+		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReq_DHParams:
 		logx.Infof("TLReq_DHParams - {\"request\":%s", request.DebugString())
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
@@ -349,7 +349,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 				return err
 			}
 			state.State = STATE_DH_params_res
-			rData = serializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
+			serializeToBuffer(x, mtproto.GenerateMessageId(), resServerDHParam)
 		} else {
 			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
 			return conn.Close()
@@ -363,7 +363,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 				return conn.Close()
 			}
 			state.State = STATE_dh_gen_res
-			rData = serializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
+			serializeToBuffer(x, mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
 		} else {
 			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
 			return conn.Close()
@@ -377,7 +377,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 		err = fmt.Errorf("invalid handshake type")
 		return conn.Close()
 	}
-	return conn.Send(&mtproto.MTPRawMessage{Payload: rData})
+	return conn.Send(&mtproto.MTPRawMessage{Payload: x.GetBuf()})
 }
 
 func (s *Server) onEncryptedMessage(ctx *connContext, conn *net2.TcpConnection, authKey *authKeyUtil, mmsg *mtproto.MTPRawMessage) error {
