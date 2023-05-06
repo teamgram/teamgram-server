@@ -140,4 +140,4 @@ require (
 )
 
 // replace github.com/teamgram/proto => ../proto
-replace github.com/zeromicro/go-zero v1.4.5 => github.com/teamgram/go-zero v0.0.0-20230306003356-c022121e731f
+replace github.com/zeromicro/go-zero v1.4.5 => github.com/teamgram/go-zero v0.0.0-20230506063231-4e4880b9d2b4
