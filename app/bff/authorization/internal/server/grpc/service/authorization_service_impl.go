@@ -257,6 +257,21 @@ func (s *Service) AuthCheckRecoveryPassword(ctx context.Context, request *mtprot
 	return r, err
 }
 
+// AuthImportWebTokenAuthorization
+// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
+func (s *Service) AuthImportWebTokenAuthorization(ctx context.Context, request *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.importWebTokenAuthorization - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthImportWebTokenAuthorization(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.importWebTokenAuthorization - reply: %s", r.DebugString())
+	return r, err
+}
+
 // AuthRequestFirebaseSms
 // auth.requestFirebaseSms#89464b50 flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string ios_push_secret:flags.1?string = Bool;
 func (s *Service) AuthRequestFirebaseSms(ctx context.Context, request *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error) {

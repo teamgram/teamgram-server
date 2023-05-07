@@ -37,6 +37,7 @@ type AuthorizationClient interface {
 	AuthCancelCode(ctx context.Context, in *mtproto.TLAuthCancelCode) (*mtproto.Bool, error)
 	AuthDropTempAuthKeys(ctx context.Context, in *mtproto.TLAuthDropTempAuthKeys) (*mtproto.Bool, error)
 	AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error)
+	AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error)
 	AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error)
 	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
@@ -168,6 +169,13 @@ func (m *defaultAuthorizationClient) AuthDropTempAuthKeys(ctx context.Context, i
 func (m *defaultAuthorizationClient) AuthCheckRecoveryPassword(ctx context.Context, in *mtproto.TLAuthCheckRecoveryPassword) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthCheckRecoveryPassword(ctx, in)
+}
+
+// AuthImportWebTokenAuthorization
+// auth.importWebTokenAuthorization#2db873a9 api_id:int api_hash:string web_auth_token:string = auth.Authorization;
+func (m *defaultAuthorizationClient) AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthImportWebTokenAuthorization(ctx, in)
 }
 
 // AuthRequestFirebaseSms

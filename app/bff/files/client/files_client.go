@@ -24,6 +24,7 @@ type FilesClient interface {
 	MessagesGetDocumentByHash(ctx context.Context, in *mtproto.TLMessagesGetDocumentByHash) (*mtproto.Document, error)
 	MessagesUploadMedia(ctx context.Context, in *mtproto.TLMessagesUploadMedia) (*mtproto.MessageMedia, error)
 	MessagesUploadEncryptedFile(ctx context.Context, in *mtproto.TLMessagesUploadEncryptedFile) (*mtproto.EncryptedFile, error)
+	MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error)
 	UploadSaveFilePart(ctx context.Context, in *mtproto.TLUploadSaveFilePart) (*mtproto.Bool, error)
 	UploadGetFile(ctx context.Context, in *mtproto.TLUploadGetFile) (*mtproto.Upload_File, error)
 	UploadSaveBigFilePart(ctx context.Context, in *mtproto.TLUploadSaveBigFilePart) (*mtproto.Bool, error)
@@ -46,7 +47,7 @@ func NewFilesClient(cli zrpc.Client) FilesClient {
 }
 
 // MessagesGetDocumentByHash
-// messages.getDocumentByHash#338e2464 sha256:bytes size:int mime_type:string = Document;
+// messages.getDocumentByHash#b1f2061f sha256:bytes size:long mime_type:string = Document;
 func (m *defaultFilesClient) MessagesGetDocumentByHash(ctx context.Context, in *mtproto.TLMessagesGetDocumentByHash) (*mtproto.Document, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.MessagesGetDocumentByHash(ctx, in)
@@ -66,6 +67,13 @@ func (m *defaultFilesClient) MessagesUploadEncryptedFile(ctx context.Context, in
 	return client.MessagesUploadEncryptedFile(ctx, in)
 }
 
+// MessagesGetExtendedMedia
+// messages.getExtendedMedia#84f80814 peer:InputPeer id:Vector<int> = Updates;
+func (m *defaultFilesClient) MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCFilesClient(m.cli.Conn())
+	return client.MessagesGetExtendedMedia(ctx, in)
+}
+
 // UploadSaveFilePart
 // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
 func (m *defaultFilesClient) UploadSaveFilePart(ctx context.Context, in *mtproto.TLUploadSaveFilePart) (*mtproto.Bool, error) {
@@ -74,7 +82,7 @@ func (m *defaultFilesClient) UploadSaveFilePart(ctx context.Context, in *mtproto
 }
 
 // UploadGetFile
-// upload.getFile#b15a9afc flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:int limit:int = upload.File;
+// upload.getFile#be5335be flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:long limit:int = upload.File;
 func (m *defaultFilesClient) UploadGetFile(ctx context.Context, in *mtproto.TLUploadGetFile) (*mtproto.Upload_File, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.UploadGetFile(ctx, in)
@@ -95,7 +103,7 @@ func (m *defaultFilesClient) UploadGetWebFile(ctx context.Context, in *mtproto.T
 }
 
 // UploadGetCdnFile
-// upload.getCdnFile#2000bcc3 file_token:bytes offset:int limit:int = upload.CdnFile;
+// upload.getCdnFile#395f69da file_token:bytes offset:long limit:int = upload.CdnFile;
 func (m *defaultFilesClient) UploadGetCdnFile(ctx context.Context, in *mtproto.TLUploadGetCdnFile) (*mtproto.Upload_CdnFile, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.UploadGetCdnFile(ctx, in)
@@ -109,14 +117,14 @@ func (m *defaultFilesClient) UploadReuploadCdnFile(ctx context.Context, in *mtpr
 }
 
 // UploadGetCdnFileHashes
-// upload.getCdnFileHashes#4da54231 file_token:bytes offset:int = Vector<FileHash>;
+// upload.getCdnFileHashes#91dc3f31 file_token:bytes offset:long = Vector<FileHash>;
 func (m *defaultFilesClient) UploadGetCdnFileHashes(ctx context.Context, in *mtproto.TLUploadGetCdnFileHashes) (*mtproto.Vector_FileHash, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.UploadGetCdnFileHashes(ctx, in)
 }
 
 // UploadGetFileHashes
-// upload.getFileHashes#c7025931 location:InputFileLocation offset:int = Vector<FileHash>;
+// upload.getFileHashes#9156982a location:InputFileLocation offset:long = Vector<FileHash>;
 func (m *defaultFilesClient) UploadGetFileHashes(ctx context.Context, in *mtproto.TLUploadGetFileHashes) (*mtproto.Vector_FileHash, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.UploadGetFileHashes(ctx, in)
