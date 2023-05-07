@@ -11,7 +11,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.6
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.2
-	github.com/teamgram/marmota v0.1.16-0.20230419011833-ca4901e9a6ce
+	github.com/teamgram/marmota v0.1.16
 	github.com/teamgram/proto v0.158.1-0.20230507074120-3ff0e0bfb059
 	github.com/zeromicro/go-zero v1.4.5
 	google.golang.org/grpc v1.53.0
@@ -140,4 +140,4 @@ require (
 )
 
 // replace github.com/teamgram/proto => ../proto
-replace github.com/zeromicro/go-zero v1.4.5 => github.com/teamgram/go-zero v0.0.0-20230506063231-4e4880b9d2b4
+replace github.com/zeromicro/go-zero v1.4.5 => github.com/teamgram/go-zero v0.0.0-20230507122319-e160d05ace41
