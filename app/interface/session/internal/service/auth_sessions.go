@@ -780,7 +780,13 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 				EncryptedMessage: r.EncryptedMessage,
 			})
 		if err != nil {
-			err = mtproto.NewRpcError(status2.Convert(err))
+			s2 := status2.Convert(err)
+			if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
+				s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
+				s.DeleteByAuthKeyId(s.authKeyId)
+				s.AuthUserId = 0
+			}
+			err = mtproto.NewRpcError(s2)
 		} else {
 			s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
 		}

@@ -13,6 +13,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
+	status2 "google.golang.org/grpc/status"
 )
 
 /*
@@ -104,6 +105,10 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, in.GetPermAuthKeyId())
 	if err != nil {
 		c.Logger.Errorf("auth.bindTempAuthKey - error: %v", err)
+		if status2.Convert(err).Message() == "AUTH_KEY_UNREGISTERED" {
+			err = mtproto.ErrEncryptedMessageInvalid
+		}
+
 		return nil, err
 	}
 
@@ -111,7 +116,7 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	innerData, err := permAuthKey.AesIgeDecryptV1(in.EncryptedMessage[8:8+16], in.EncryptedMessage[8+16:])
 	if err != nil {
 		c.Logger.Errorf("auth.bindTempAuthKey - error: %v", err)
-		return nil, err
+		return nil, mtproto.ErrEncryptedMessageInvalid
 	}
 
 	// 8+8+8+8
@@ -121,10 +126,10 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	o := dbuf.Object()
 	if dbuf.GetError() != nil {
 		c.Logger.Errorf("auth.bindTempAuthKey - error: %v", dbuf.GetError())
-		return nil, dbuf.GetError()
+		return nil, mtproto.ErrEncryptedMessageInvalid
 	} else if bindAuthKeyInner, ok := o.(*mtproto.TLBindAuthKeyInner); !ok {
 		c.Logger.Errorf("auth.bindTempAuthKey - invalid innerData")
-		return nil, mtproto.ErrInternelServerError
+		return nil, mtproto.ErrEncryptedMessageInvalid
 	} else {
 		// bind_auth_key_inner#75a3f765 nonce:long temp_auth_key_id:long perm_auth_key_id:long temp_session_id:long expires_at:int = BindAuthKeyInner;
 		// bind
@@ -132,7 +137,7 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 		tempKeyData, err2 := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, bindAuthKeyInner.GetTempAuthKeyId())
 		if err2 != nil {
 			c.Logger.Errorf("auth.bindTempAuthKey - invalid innerData")
-			return nil, mtproto.ErrInternelServerError
+			return nil, mtproto.ErrEncryptedMessageInvalid
 		}
 
 		// TODO: tx wrapper
