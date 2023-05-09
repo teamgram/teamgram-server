@@ -36,6 +36,7 @@ import (
 	"github.com/zeromicro/go-zero/core/threading"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	status2 "google.golang.org/grpc/status"
 )
 
 type rpcApiMessage struct {
@@ -778,7 +779,11 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 				ExpiresAt:        r.ExpiresAt,
 				EncryptedMessage: r.EncryptedMessage,
 			})
-		s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
+		if err != nil {
+			err = mtproto.NewRpcError(status2.Convert(err))
+		} else {
+			s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
+		}
 	default:
 		rpcResult, err = s.Service.Dao.Invoke(rpcMetadata, request.reqMsg)
 	}
