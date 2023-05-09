@@ -22,10 +22,3 @@ type Config struct {
 	Server         *net2.TcpServerConfig
 	Session        zrpc.RpcClientConf
 }
-
-//type TcpServerConfig struct {
-//	Addrs      []string
-//	Multicore  bool
-//	SendBuf    int
-//	ReceiveBuf int
-//}
