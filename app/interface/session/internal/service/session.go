@@ -577,7 +577,6 @@ func (c *session) sendRawToQueue(gatewayId string, msgId int64, confirm bool, ra
 		Body:  b,
 	}
 	c.outQueue.AddNotifyMsg(msgId, confirm, rawMsg2)
-	// cb(rawMsg2)
 }
 
 func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {

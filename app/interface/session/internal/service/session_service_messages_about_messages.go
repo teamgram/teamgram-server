@@ -58,7 +58,6 @@ func (c *session) onMsgsAck(gatewayId string, msgId int64, seqno int32, request 
 	Required to protect against replay attacks and certain tricks associated
 	with adjusting the client clock to a moment in the distant future.
 */
-
 func (c *session) checkBadServerSalt(gatewayId string, salt int64, msg *mtproto.TLMessage2) bool {
 	// Notice of Ignored Error Message
 	//

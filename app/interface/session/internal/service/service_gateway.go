@@ -29,7 +29,7 @@ import (
 )
 
 func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessionCreateSession) (*mtproto.Bool, error) {
-	logx.WithContext(ctx).Debugf("session.createSession - request: %", r.DebugString())
+	logx.WithContext(ctx).Debugf("session.createSession - request: %s", r.DebugString())
 
 	var (
 		sessList *authSessions
@@ -57,7 +57,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessi
 }
 
 func (s *Service) SessionCloseSession(ctx context.Context, r *sessionpb.TLSessionCloseSession) (*mtproto.Bool, error) {
-	logx.WithContext(ctx).Debugf("session.closeSession - request: %", r.DebugString())
+	logx.WithContext(ctx).Debugf("session.closeSession - request: %s", r.DebugString())
 
 	var (
 		sessList *authSessions
@@ -78,7 +78,15 @@ func (s *Service) SessionCloseSession(ctx context.Context, r *sessionpb.TLSessio
 }
 
 func (s *Service) SessionSendDataToSession(ctx context.Context, r *sessionpb.TLSessionSendDataToSession) (res *mtproto.Bool, err error) {
-	logx.WithContext(ctx).Debugf("session.sendDataToSession - request: %", r.DebugString())
+	logx.WithContext(ctx).Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %s, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		r.GetData().GetServerId(),
+		r.GetData().GetConnType(),
+		r.GetData().GetAuthKeyId(),
+		r.GetData().GetSessionId(),
+		r.GetData().GetClientIp(),
+		r.GetData().GetQuickAck(),
+		r.GetData().GetSalt(),
+		len(r.GetData().GetPayload()))
 
 	var (
 		sessList *authSessions
@@ -113,7 +121,7 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, r *sessionpb
 }
 
 func (s *Service) SessionQueryAuthKey(ctx context.Context, r *sessionpb.TLSessionQueryAuthKey) (*mtproto.AuthKeyInfo, error) {
-	logx.WithContext(ctx).Debugf("session.queryAuthKey - request: %", r.DebugString())
+	logx.WithContext(ctx).Debugf("session.queryAuthKey - request: %s", r.DebugString())
 
 	key, err := s.Dao.AuthsessionClient.AuthsessionQueryAuthKey(ctx, &authsession.TLAuthsessionQueryAuthKey{
 		AuthKeyId: r.AuthKeyId,
@@ -134,7 +142,7 @@ func (s *Service) SessionQueryAuthKey(ctx context.Context, r *sessionpb.TLSessio
 }
 
 func (s *Service) SessionSetAuthKey(ctx context.Context, r *sessionpb.TLSessionSetAuthKey) (*mtproto.Bool, error) {
-	logx.WithContext(ctx).Debugf("session.setAuthKey - request: %", r.DebugString())
+	logx.WithContext(ctx).Debugf("session.setAuthKey - request: %s", r.DebugString())
 
 	if r.AuthKey == nil {
 		logx.WithContext(ctx).Errorf("session.setAuthKey error: auth_key is nil")

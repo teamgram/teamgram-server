@@ -398,7 +398,7 @@ func (c *session) onRpcRequest(gatewayId, clientIp string, msgId *inboxMsg, quer
 			c.cb.setOnline()
 		}
 	case *mtproto.TLUsersGetUsers:
-		logx.Infof("user.getUsers: %s", query.DebugString())
+		// logx.Infof("user.getUsers: %s", query.DebugString())
 	}
 
 	if c.cb.getUserId() == 0 {
@@ -446,7 +446,7 @@ func (c *session) onRpcResult(rpcResult *rpcApiMessage) {
 		}
 	}
 
-	c.sendRpcResult(rpcResult.rpcResult)
+	c.sendRpcResult(rpcResult.MoveRpcResult())
 }
 
 func (c *session) sendRpcResult(rpcResult *mtproto.TLRpcResult) {

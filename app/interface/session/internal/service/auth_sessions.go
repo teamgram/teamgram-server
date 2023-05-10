@@ -47,6 +47,12 @@ type rpcApiMessage struct {
 	rpcResult *mtproto.TLRpcResult
 }
 
+func (m *rpcApiMessage) MoveRpcResult() *mtproto.TLRpcResult {
+	v := m.rpcResult
+	m.rpcResult = nil
+	return v
+}
+
 func (m *rpcApiMessage) DebugString() string {
 	if m.rpcResult == nil {
 		return fmt.Sprintf("{session_id: %d, req_msg_id: %d, req_msg: %s}",

@@ -49,16 +49,8 @@ type Service struct {
 
 func New(c config.Config) *Service {
 	var (
-		// ac  = &Config{}
-		// err error
 		s = new(Service)
 	)
-
-	//if err = paladin.Get("application.toml").UnmarshalTOML(&ac); err != nil {
-	//	if err != paladin.ErrNotExist {
-	//		panic(err)
-	//	}
-	//}
 
 	s.ac = c
 	s.Dao = dao.New(c)
