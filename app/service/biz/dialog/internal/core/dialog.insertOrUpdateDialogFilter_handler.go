@@ -10,8 +10,10 @@
 package core
 
 import (
+	"context"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
@@ -28,13 +30,22 @@ func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertO
 		return nil, err
 	}
 
-	c.svcCtx.Dao.DialogFiltersDAO.InsertOrUpdate(c.ctx, &dataobject.DialogFiltersDO{
-		UserId:         in.UserId,
-		DialogFilterId: in.Id,
-		DialogFilter:   string(dialogFilterData),
-		OrderValue:     time.Now().Unix() << 32,
-		Deleted:        false,
-	})
+	c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, _, err2 := c.svcCtx.Dao.DialogFiltersDAO.InsertOrUpdate(
+				ctx,
+				&dataobject.DialogFiltersDO{
+					UserId:         in.UserId,
+					DialogFilterId: in.Id,
+					DialogFilter:   string(dialogFilterData),
+					OrderValue:     time.Now().Unix() << 32,
+					Deleted:        false,
+				})
+
+			return 0, 0, err2
+		},
+		dialog.GenDialogFilterCacheKey(in.UserId))
 
 	return mtproto.BoolTrue, nil
 }

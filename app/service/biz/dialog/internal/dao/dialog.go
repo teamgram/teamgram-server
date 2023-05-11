@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2023 Teamgram Authors
 //  All rights reserved.
 //
 // Author: Benqi (wubenqi@gmail.com)
@@ -8,27 +8,16 @@ package dao
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
+
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-const (
-	dialogKeyPrefix = "dialog"
-)
-
-func genDialogCacheKey(userId, peerDialogId int64) string {
-	return fmt.Sprintf("%s_%d_%d", dialogKeyPrefix, userId, peerDialogId)
-}
-
-func genDialogCacheKeyByPeer(userId int64, peerType int32, peerId int64) string {
-	return genDialogCacheKey(userId, mtproto.MakePeerDialogId(peerType, peerId))
-}
 
 func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	dialog2 := mtproto.MakeTLDialog(&mtproto.Dialog{
@@ -91,7 +80,7 @@ func (d *Dao) GetDialogByPeerDialogId(ctx context.Context, userId, peerDialogId 
 	err := d.CachedConn.QueryRow(
 		ctx,
 		&dlgExt,
-		genDialogCacheKey(userId, peerDialogId),
+		dialog.GenDialogCacheKey(userId, peerDialogId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			dialogDO, err := d.DialogsDAO.SelectByPeerDialogId(ctx, userId, peerDialogId)
 			if err != nil {
