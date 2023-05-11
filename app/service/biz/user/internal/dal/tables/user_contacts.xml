@@ -171,7 +171,7 @@
             FROM
                 user_contacts
             WHERE
-                contact_user_id=:contact_user_id AND is_deleted = 0 ORDER BY owner_user_id
+                contact_user_id=:contact_user_id AND is_deleted = 0
         </sql>
     </operation>
     <operation name="SelectReverseListByIdList" result_set="list">
@@ -184,7 +184,7 @@
             FROM
                 user_contacts
             WHERE
-                contact_user_id=:contact_user_id AND owner_user_id IN (:id_list) AND is_deleted = 0 ORDER BY owner_user_id
+                contact_user_id=:contact_user_id AND owner_user_id IN (:id_list) AND is_deleted = 0
         </sql>
     </operation>
 </table>

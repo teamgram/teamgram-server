@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type UserContactsDAO struct {
 	db *sqlx.DB
 }
 
 func NewUserContactsDAO(db *sqlx.DB) *UserContactsDAO {
-	return &UserContactsDAO{db}
+	return &UserContactsDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
@@ -505,8 +511,8 @@ func (dao *UserContactsDAO) UpdateContactNameById(ctx context.Context, contact_f
 	return
 }
 
-// update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where id = :id
 // UpdateContactNameByIdTx
+// update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where id = :id
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdateContactNameByIdTx(tx *sqlx.Tx, contact_first_name string, contact_last_name string, id int64) (rowsAffected int64, err error) {
 	var (
@@ -551,8 +557,8 @@ func (dao *UserContactsDAO) UpdateContactName(ctx context.Context, contact_first
 	return
 }
 
-// update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 // UpdateContactNameTx
+// update user_contacts set contact_first_name = :contact_first_name, contact_last_name = :contact_last_name, is_deleted = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, contact_first_name string, contact_last_name string, owner_user_id int64, contact_user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -597,8 +603,8 @@ func (dao *UserContactsDAO) UpdateMutual(ctx context.Context, mutual bool, owner
 	return
 }
 
-// update user_contacts set mutual = :mutual where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 // UpdateMutualTx
+// update user_contacts set mutual = :mutual where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id = :contact_user_id)
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdateMutualTx(tx *sqlx.Tx, mutual bool, owner_user_id int64, contact_user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -655,8 +661,8 @@ func (dao *UserContactsDAO) DeleteContacts(ctx context.Context, owner_user_id in
 	return
 }
 
-// update user_contacts set is_deleted = 1, mutual = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id in (:id_list))
 // DeleteContactsTx
+// update user_contacts set is_deleted = 1, mutual = 0 where contact_user_id != 0 and (owner_user_id = :owner_user_id and contact_user_id in (:id_list))
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) DeleteContactsTx(tx *sqlx.Tx, owner_user_id int64, id_list []int64) (rowsAffected int64, err error) {
 	var (
@@ -713,8 +719,8 @@ func (dao *UserContactsDAO) UpdatePhoneByContactId(ctx context.Context, contact_
 	return
 }
 
-// update user_contacts set contact_phone = :contact_phone where contact_user_id = :contact_user_id
 // UpdatePhoneByContactIdTx
+// update user_contacts set contact_phone = :contact_phone where contact_user_id = :contact_user_id
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) UpdatePhoneByContactIdTx(tx *sqlx.Tx, contact_phone string, contact_user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -737,10 +743,10 @@ func (dao *UserContactsDAO) UpdatePhoneByContactIdTx(tx *sqlx.Tx, contact_phone 
 }
 
 // SelectUserReverseContactIdList
-// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0 order by owner_user_id asc
+// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectUserReverseContactIdList(ctx context.Context, contact_user_id int64) (rList []int64, err error) {
-	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0 order by owner_user_id asc"
+	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0"
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, contact_user_id)
 
 	if err != nil {
@@ -751,10 +757,10 @@ func (dao *UserContactsDAO) SelectUserReverseContactIdList(ctx context.Context, 
 }
 
 // SelectUserReverseContactIdListWithCB
-// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0 order by owner_user_id asc
+// select owner_user_id from user_contacts where contact_user_id = :contact_user_id and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectUserReverseContactIdListWithCB(ctx context.Context, contact_user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
-	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0 order by owner_user_id asc"
+	var query = "select owner_user_id from user_contacts where contact_user_id = ? and is_deleted = 0"
 	err = dao.db.QueryRowsPartial(ctx, &rList, query, contact_user_id)
 
 	if err != nil {
@@ -771,11 +777,11 @@ func (dao *UserContactsDAO) SelectUserReverseContactIdListWithCB(ctx context.Con
 }
 
 // SelectReverseListByIdList
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0 order by owner_user_id asc
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectReverseListByIdList(ctx context.Context, contact_user_id int64, id_list []int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0 order by owner_user_id asc"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)
@@ -804,11 +810,11 @@ func (dao *UserContactsDAO) SelectReverseListByIdList(ctx context.Context, conta
 }
 
 // SelectReverseListByIdListWithCB
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0 order by owner_user_id asc
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = :contact_user_id and owner_user_id in (:id_list) and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectReverseListByIdListWithCB(ctx context.Context, contact_user_id int64, id_list []int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0 order by owner_user_id asc"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where contact_user_id = ? and owner_user_id in (?) and is_deleted = 0"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)

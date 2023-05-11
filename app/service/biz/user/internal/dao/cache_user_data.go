@@ -9,6 +9,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -217,6 +218,9 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		},
 		func() {
 			cacheData.ReverseContactIdList, _ = d.UserContactsDAO.SelectUserReverseContactIdList(ctx, id)
+			if len(cacheData.ReverseContactIdList) > 0 {
+				sort.Slice(cacheData.ReverseContactIdList, func(i, j int) bool { return cacheData.ReverseContactIdList[i] < cacheData.ReverseContactIdList[j] })
+			}
 		},
 		func() {
 			rules0, _ = d.GetUserPrivacyRules(ctx, id, user.STATUS_TIMESTAMP)
