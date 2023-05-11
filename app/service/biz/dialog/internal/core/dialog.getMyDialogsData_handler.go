@@ -19,72 +19,124 @@
 package core
 
 import (
+	"context"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
+
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // DialogGetMyDialogsData
 // dialog.getMyDialogsData flags:# user:flags.0?true chat:flags.1?true channel:flags.2?true = Vector<PeerUtil>;
 func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
-	dialogsData := dialog.MakeTLSimpleDialogsData(&dialog.DialogsData{
-		Users:    []int64{},
-		Chats:    []int64{},
-		Channels: []int64{},
-	}).To_DialogsData()
+	var (
+		fns      []func() error
+		uIdList  []int64
+		cIdList  []int64
+		chIdList []int64
+	)
 
-	isGetAll := false
-	if in.User == false && in.Chat == false && in.Channel == false {
-		isGetAll = true
-	}
-	if in.User == true && in.Chat == true && in.Channel == true {
-		isGetAll = true
-	}
+	if in.User {
+		fns = append(fns, func() error {
+			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
+				c.ctx,
+				&uIdList,
+				dialog.GenConversationsCacheKey(in.UserId),
+				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+					var (
+						idList []int64
+					)
+					_, err2 := c.svcCtx.Dao.DialogsDAO.SelectDialogsByPeerTypeWithCB(
+						ctx,
+						in.UserId,
+						[]int32{mtproto.PEER_USER},
+						func(i int, v *dataobject.DialogsDO) {
+							idList = append(idList, v.PeerId)
+						})
+					if err2 != nil {
+						// TODO: log
+						return err2
+					}
 
-	if isGetAll {
-		c.svcCtx.Dao.DialogsDAO.SelectAllDialogsWithCB(
-			c.ctx,
-			in.UserId,
-			func(i int, v *dataobject.DialogsDO) {
-				switch v.PeerType {
-				case mtproto.PEER_USER:
-					dialogsData.Users = append(dialogsData.Users, v.PeerId)
-				case mtproto.PEER_CHAT:
-					dialogsData.Chats = append(dialogsData.Chats, v.PeerId)
-				case mtproto.PEER_CHANNEL:
-					dialogsData.Channels = append(dialogsData.Channels, v.PeerId)
-				}
-			})
-	} else {
-		var (
-			pList []int32
-		)
+					*v.(*[]int64) = idList
 
-		if in.User {
-			pList = append(pList, mtproto.PEER_USER)
-		}
-		if in.Chat {
-			pList = append(pList, mtproto.PEER_CHAT)
-		}
-		if in.Channel {
-			pList = append(pList, mtproto.PEER_CHANNEL)
-		}
-
-		c.svcCtx.Dao.DialogsDAO.SelectDialogsByPeerTypeWithCB(
-			c.ctx,
-			in.UserId,
-			pList,
-			func(i int, v *dataobject.DialogsDO) {
-				switch v.PeerType {
-				case mtproto.PEER_USER:
-					dialogsData.Users = append(dialogsData.Users, v.PeerId)
-				case mtproto.PEER_CHAT:
-					dialogsData.Chats = append(dialogsData.Chats, v.PeerId)
-				case mtproto.PEER_CHANNEL:
-					dialogsData.Channels = append(dialogsData.Channels, v.PeerId)
-				}
-			})
+					return nil
+				})
+			return err2
+		})
 	}
 
-	return dialogsData, nil
+	if in.Chat {
+		fns = append(fns, func() error {
+			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
+				c.ctx,
+				&cIdList,
+				dialog.GenChatsCacheKey(in.UserId),
+				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+					var (
+						idList []int64
+					)
+					_, err2 := c.svcCtx.Dao.DialogsDAO.SelectDialogsByPeerTypeWithCB(
+						ctx,
+						in.UserId,
+						[]int32{mtproto.PEER_CHAT},
+						func(i int, v *dataobject.DialogsDO) {
+							idList = append(idList, v.PeerId)
+						})
+					if err2 != nil {
+						// TODO: log
+						return err2
+					}
+
+					*v.(*[]int64) = idList
+
+					return nil
+				})
+			return err2
+		})
+	}
+
+	if in.Channel {
+		fns = append(fns, func() error {
+			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
+				c.ctx,
+				&chIdList,
+				dialog.GenChannelsCacheKey(in.UserId),
+				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+					var (
+						idList []int64
+					)
+					_, err2 := c.svcCtx.Dao.DialogsDAO.SelectDialogsByPeerTypeWithCB(
+						ctx,
+						in.UserId,
+						[]int32{mtproto.PEER_CHANNEL},
+						func(i int, v *dataobject.DialogsDO) {
+							idList = append(idList, v.PeerId)
+						})
+					if err2 != nil {
+						// TODO: log
+						return err2
+					}
+
+					*v.(*[]int64) = idList
+
+					return nil
+				})
+			return err2
+		})
+	}
+
+	if err := mr.Finish(fns...); err != nil {
+		c.Logger.Errorf("dialog.getMyDialogsData - error: %v", err)
+		return nil, err
+	}
+
+	return dialog.MakeTLSimpleDialogsData(&dialog.DialogsData{
+		Users:    uIdList,
+		Chats:    cIdList,
+		Channels: chIdList,
+	}).To_DialogsData(), nil
 }

@@ -10,6 +10,8 @@
 package core
 
 import (
+	"context"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
@@ -41,12 +43,22 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 	}
 	cMap["deleted"] = 0
 
-	rowsAffected, err := c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+	_, rowsAffected, err := c.svcCtx.Dao.CachedConn.Exec(
 		c.ctx,
-		cMap,
-		in.UserId,
-		in.PeerType,
-		in.PeerId)
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			r, err := c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+				c.ctx,
+				cMap,
+				in.UserId,
+				in.PeerType,
+				in.PeerId)
+			if err != nil {
+				c.Logger.Errorf("dialog.insertOrUpdateDialog - error: %v", err)
+			}
+
+			return 0, r, err
+		},
+		dialog.GenCacheKeyByPeerType(in.UserId, in.PeerType))
 	if err != nil {
 		c.Logger.Errorf("dialog.insertOrUpdateDialog - error: %v", err)
 		return nil, err

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	dialogKeyPrefix = "dialogs"
+	dialogKeyPrefix = "dialog"
 )
 
 const (
