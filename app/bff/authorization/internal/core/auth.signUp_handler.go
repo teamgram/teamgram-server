@@ -99,7 +99,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	// check first name invalid
 	if in.FirstName == "" {
 		c.Logger.Errorf("check first_name error - empty")
-		err = mtproto.ErrFirstNameInvalid
+		err = mtproto.ErrFirstnameInvalid
 		return nil, err
 	}
 

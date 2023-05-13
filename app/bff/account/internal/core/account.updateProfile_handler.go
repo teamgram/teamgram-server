@@ -51,7 +51,7 @@ func (c *AccountCore) AccountUpdateProfile(in *mtproto.TLAccountUpdateProfile) (
 		}
 	} else {
 		if in.GetFirstName().GetValue() == "" {
-			err = mtproto.ErrFirstNameInvalid
+			err = mtproto.ErrFirstnameInvalid
 			c.Logger.Errorf("account.updateProfile - error: bad request (%v)", err)
 			return nil, err
 		}
