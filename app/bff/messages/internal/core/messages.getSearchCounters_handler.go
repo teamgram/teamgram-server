@@ -91,6 +91,8 @@ func (c *MessagesCore) MessagesGetSearchCounters(in *mtproto.TLMessagesGetSearch
 			mType = mtproto.MEDIA_MUSIC
 		case mtproto.FilterRoundVoice:
 			mType = mtproto.MEDIA_AUDIO
+		case mtproto.FilterChatPhotos:
+			mType = mtproto.MEDIA_CHAT_PHOTO
 		default:
 			/*
 				[

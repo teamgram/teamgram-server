@@ -2424,8 +2424,8 @@ github.com/teamgram/go-zero v0.0.0-20230507122319-e160d05ace41 h1:r3TRJK80ock37X
 github.com/teamgram/go-zero v0.0.0-20230507122319-e160d05ace41/go.mod h1:5WSUwtJm0bYdDZ69GlckigcT6D0EyAPbDaX3unbSY/4=
 github.com/teamgram/marmota v0.1.17-0.20230511055955-9409f92470df h1:8Mp4MZk4mRBq+aI8uvvjkjtzmTrlQN7JamVcwZqU4hk=
 github.com/teamgram/marmota v0.1.17-0.20230511055955-9409f92470df/go.mod h1:1isDu5Tc+hNrL+QKsS3pyT0bHh/f6OmCc09nbHm1140=
-github.com/teamgram/proto v0.158.1-0.20230513141354-063ad93dde11 h1:DsmuSFUne9z+XomktcSbtecX5V8z28h4MIRWKnP3xHs=
-github.com/teamgram/proto v0.158.1-0.20230513141354-063ad93dde11/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
+github.com/teamgram/proto v0.158.1-0.20230515095319-5b6ef6f93940 h1:8G9mpBiCefnEStfdENG8x51kx9pcaVLTUJsJocwqezE=
+github.com/teamgram/proto v0.158.1-0.20230515095319-5b6ef6f93940/go.mod h1:Z3dkL8EDO4xAACAG6uzqdDgPK8I4fj87Zl/xFgGhiec=
 github.com/tenntenn/modver v1.0.1/go.mod h1:bePIyQPb7UeioSRkw3Q0XeMhYZSMx9B8ePqg6SAMGH0=
 github.com/tenntenn/text/transform v0.0.0-20200319021203-7eef512accb3/go.mod h1:ON8b8w4BN/kE1EOhwT0o+d62W65a6aPw1nouo9LMgyY=
 github.com/tetafro/godot v0.3.7/go.mod h1:/7NLHhv08H1+8DNj0MElpAACw1ajsCuf3TKNQxA5S+0=
