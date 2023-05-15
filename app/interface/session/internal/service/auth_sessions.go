@@ -68,7 +68,7 @@ func (m *rpcApiMessage) DebugString() string {
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////
 type sessionData struct {
 	gatewayId string
 	clientIp  string
@@ -119,7 +119,7 @@ func (c *connData) DebugString() string {
 	return fmt.Sprintf("{isNew: %d, gatewayId: %s, sessionId: %d}", c.isNew, c.gatewayId, c.sessionId)
 }
 
-///////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////
 const (
 	keyIdNew     = 0
 	keyLoaded    = 1
@@ -365,26 +365,29 @@ func (s *authSessions) trySetOffline() {
 		}
 	}
 
-	logx.Infof("authSessions]]>> offline: %s", s)
-
-	s.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
-		UserId:    s.AuthUserId,
-		AuthKeyId: s.authKeyId,
-	})
+	if s.AuthUserId > 0 {
+		logx.Infof("authSessions]]>> offline: %s", s)
+		s.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
+			UserId:    s.AuthUserId,
+			AuthKeyId: s.authKeyId,
+		})
+	}
 	s.onlineExpired = 0
 }
 
 func (s *authSessions) delOnline() {
-	logx.Infof("authSessions]]>> delOnline: %s", s)
+	if s.AuthUserId > 0 {
+		logx.Infof("authSessions]]>> delOnline: %s", s)
 
-	s.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
-		UserId:    s.AuthUserId,
-		AuthKeyId: s.authKeyId,
-	})
+		s.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
+			UserId:    s.AuthUserId,
+			AuthKeyId: s.authKeyId,
+		})
+	}
 	s.onlineExpired = 0
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////
 func (s *authSessions) String() string {
 	return fmt.Sprintf("{auth_key_id: %d, user_id: %d, layer: %d}", s.authKeyId, s.AuthUserId, s.Layer)
 }
@@ -511,7 +514,7 @@ func (s *authSessions) onTimer() {
 	}()
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
 // client
 func (s *authSessions) sessionClientNew(gatewayId string, sessionId int64) error {
 	select {
@@ -570,7 +573,7 @@ func (s *authSessions) syncDataArrived(needAndroidPush bool, data *messageData) 
 	return nil
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
 func (s *authSessions) onSessionNew(connMsg *connData) {
 	sess, ok := s.sessions[connMsg.sessionId]
 	if !ok {
