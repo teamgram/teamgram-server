@@ -18,15 +18,6 @@ Open source [mtproto](https://core.telegram.org/mtproto) server implementation w
 ## Architecture
 ![Architecture](docs/image/architecture-001.png)
 
-### Documents
-[Diffie–Hellman key exchange](docs/dh-key-exchange.md)
-
-[Creating an Authorization Key](docs/Creating_an_Authorization_Key.md)
-
-[Mobile Protocol: Detailed Description (v.1.0, DEPRECATED)](docs/Mobile_Protocol-Detailed_Description_v.1.0_DEPRECATED.md)
-
-[Encrypted CDNs for Speed and Security](docs/cdn.md) Translate By [@steedfly](https://github.com/steedfly)
-
 ## Installing Teamgram 
 `Teamgram` relies on open source high-performance components: 
 
@@ -121,14 +112,14 @@ docker-compose up -d
 [tdesktop for Teamgram](clients/teamgram-tdesktop.md)
 
 ## Feedback
-Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram中文社区](https://t.me/+S1_22-6EM1BaffXS) Or [Teamgram](https://t.me/+TjD5LZJ5XLRlCYLF) to discuss problems around source code.
+Please report bugs, concerns, suggestions by issues, or join telegram group [Teamgram](https://t.me/+TjD5LZJ5XLRlCYLF) to discuss problems around source code.
 
 ## Notes
-If need enterprise edition:
+If need more features:
 
-- sticker/theme/wallpaper/reactions/2fa/secretchat/sms/push(apns/web/fcm)/web...
+- sticker/theme/wallpaper/reactions/2fa/sms/push(apns/web/fcm)/web...
 - channel/megagroup
-- audiocall/videocall/groupcall/`rtmp live stream`
+- audiocall/videocall/groupcall
 - bots
 
 please PM the **[author](https://t.me/benqi)**
