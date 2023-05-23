@@ -54,34 +54,39 @@ func (c *session) onInvokeWithLayer(gatewayId, clientIp string, msgId *inboxMsg,
 		return
 	}
 
-	initConnection, ok := query.(*mtproto.TLInitConnection)
-	if !ok {
-		logx.Errorf("need initConnection, but query is : %v", query)
-	}
-
 	c.cb.setLayer(request.Layer)
-	c.cb.setClient(initConnection.LangPack)
+	c.PutLayer(context.Background(), c.cb.getAuthKeyId(), request.Layer, clientIp)
 
-	c.PutUploadInitConnection(context.Background(), c.cb.getAuthKeyId(), request.Layer, clientIp, initConnection)
+	//initConnection, ok := query.(*mtproto.TLInitConnection)
+	//if !ok {
+	//	logx.Errorf("need initConnection, but query is : %v", query)
+	//	c.processMsg(gatewayId, clientIp, msgId, query)
+	//	return
+	//}
+	//
+	//c.cb.setLayer(request.Layer)
+	//c.cb.setClient(initConnection.LangPack)
+	//
+	//c.PutUploadInitConnection(context.Background(), c.cb.getAuthKeyId(), request.Layer, clientIp, initConnection)
+	//
+	//dBuf = mtproto.NewDecodeBuf(initConnection.GetQuery())
+	//query = dBuf.Object()
+	//if dBuf.GetError() != nil {
+	//	logx.Errorf("dBuf query error: %s", dBuf.GetError().Error())
+	//	return
+	//}
+	//
+	//if query == nil {
+	//	logx.Errorf("decode buf is nil, query: %v", query)
+	//	return
+	//}
 
-	dBuf = mtproto.NewDecodeBuf(initConnection.GetQuery())
-	query = dBuf.Object()
-	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %s", dBuf.GetError().Error())
-		return
-	}
-
-	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
-		return
-	}
-
-	logx.Infof("processMsg - data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, query: {%s}}",
-		c,
-		gatewayId,
-		msgId.msgId,
-		msgId.seqNo,
-		query.DebugString())
+	//logx.Infof("processMsg - data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, query: {%s}}",
+	//	c,
+	//	gatewayId,
+	//	msgId.msgId,
+	//	msgId.seqNo,
+	//	query.DebugString())
 
 	c.processMsg(gatewayId, clientIp, msgId, query)
 }
@@ -324,6 +329,48 @@ func (c *session) onInvokeWithTakeout(gatewayId, clientIp string, msgId *inboxMs
 		logx.Errorf("decode buf is nil, query: %v", query)
 		return
 	}
+
+	c.processMsg(gatewayId, clientIp, msgId, query)
+}
+
+func (c *session) onInitConnection(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
+	logx.Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+		c,
+		gatewayId,
+		msgId.msgId,
+		msgId.msgId,
+		reflect.TypeOf(request))
+
+	//initConnection, ok := query.(*mtproto.TLInitConnection)
+	//if !ok {
+	//	logx.Errorf("need initConnection, but query is : %v", query)
+	//	c.processMsg(gatewayId, clientIp, msgId, query)
+	//	return
+	//}
+	//
+	//c.cb.setLayer(request.Layer)
+	//c.cb.setClient(initConnection.LangPack)
+	//
+	c.PutInitConnection(context.Background(), c.cb.getAuthKeyId(), clientIp, request)
+	//
+	dBuf := mtproto.NewDecodeBuf(request.GetQuery())
+	query := dBuf.Object()
+	if dBuf.GetError() != nil {
+		logx.Errorf("dBuf query error: %s", dBuf.GetError().Error())
+		return
+	}
+
+	if query == nil {
+		logx.Errorf("decode buf is nil, query: %v", query)
+		return
+	}
+
+	//logx.Infof("processMsg - data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, query: {%s}}",
+	//	c,
+	//	gatewayId,
+	//	msgId.msgId,
+	//	msgId.seqNo,
+	//	query.DebugString())
 
 	c.processMsg(gatewayId, clientIp, msgId, query)
 }

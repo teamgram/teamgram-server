@@ -36,12 +36,12 @@ import (
 )
 
 const (
-	authDataPrefix = "auth_data"
+	authDataPrefix = "auth_data.1"
 	// authUsersTablePrefix = "auth_users"
 )
 
 func genAuthDataCacheKey(id int64) string {
-	return fmt.Sprintf("%s_%d", authDataPrefix, id)
+	return fmt.Sprintf("%s#%d", authDataPrefix, id)
 }
 
 //
@@ -298,6 +298,52 @@ func (d *Dao) SetClientSessionInfo(ctx context.Context, session *authsession.Cli
 		genAuthDataCacheKey(session.GetAuthKeyId()))
 
 	return err == nil
+}
+
+func (d *Dao) SetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			return d.AuthsDAO.InsertOrUpdateLayer(
+				ctx,
+				&dataobject.AuthsDO{
+					AuthKeyId:  in.GetAuthKeyId(),
+					Layer:      in.GetLayer(),
+					ClientIp:   in.GetIp(),
+					DateActive: time.Now().Unix(),
+				})
+		},
+		genAuthDataCacheKey(in.GetAuthKeyId()))
+
+	return err
+}
+
+func (d *Dao) SetInitConnection(ctx context.Context, i *authsession.TLAuthsessionSetInitConnection) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			do := &dataobject.AuthsDO{
+				AuthKeyId:      i.GetAuthKeyId(),
+				ApiId:          i.GetApiId(),
+				DeviceModel:    i.GetDeviceModel(),
+				SystemVersion:  i.GetSystemVersion(),
+				AppVersion:     i.GetAppVersion(),
+				SystemLangCode: i.GetSystemLangCode(),
+				LangPack:       i.GetLangPack(),
+				LangCode:       i.GetLangCode(),
+				ClientIp:       i.GetIp(),
+				Proxy:          i.GetProxy(),
+				Params:         i.GetParams(),
+				DateActive:     time.Now().Unix(),
+			}
+			if do.Params == "" {
+				do.Params = "null"
+			}
+			return d.AuthsDAO.InsertOrUpdate(ctx, do)
+		},
+		genAuthDataCacheKey(i.GetAuthKeyId()))
+
+	return err
 }
 
 func (d *Dao) GetCacheAuthData(ctx context.Context, authKeyId int64) (*CacheAuthData, error) {

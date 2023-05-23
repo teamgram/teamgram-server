@@ -44,6 +44,8 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLAuthsessionSetClientSessionInfo": RPCContextTuple{"/mtproto.RPCAuthsession/authsession_setClientSessionInfo", func() interface{} { return new(mtproto.Bool) }},
 	"TLAuthsessionGetAuthorization":     RPCContextTuple{"/mtproto.RPCAuthsession/authsession_getAuthorization", func() interface{} { return new(mtproto.Authorization) }},
 	"TLAuthsessionGetAuthStateData":     RPCContextTuple{"/mtproto.RPCAuthsession/authsession_getAuthStateData", func() interface{} { return new(AuthKeyStateData) }},
+	"TLAuthsessionSetLayer":             RPCContextTuple{"/mtproto.RPCAuthsession/authsession_setLayer", func() interface{} { return new(mtproto.Bool) }},
+	"TLAuthsessionSetInitConnection":    RPCContextTuple{"/mtproto.RPCAuthsession/authsession_setInitConnection", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

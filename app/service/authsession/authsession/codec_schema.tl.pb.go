@@ -132,6 +132,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1331573041,
 		}
 	},
+	1147475077: func() mtproto.TLObject { // 0x44651485
+		return &TLAuthsessionSetLayer{
+			Constructor: 1147475077,
+		}
+	},
+	2095024780: func() mtproto.TLObject { // 0x7cdf8a8c
+		return &TLAuthsessionSetInitConnection{
+			Constructor: 2095024780,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1318,6 +1328,118 @@ func (m *TLAuthsessionGetAuthStateData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLAuthsessionGetAuthStateData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLAuthsessionSetLayer
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLAuthsessionSetLayer) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x44651485:
+		x.UInt(0x44651485)
+
+		// no flags
+
+		x.Long(m.GetAuthKeyId())
+		x.String(m.GetIp())
+		x.Int(m.GetLayer())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLAuthsessionSetLayer) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLAuthsessionSetLayer) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x44651485:
+
+		// not has flags
+
+		m.AuthKeyId = dBuf.Long()
+		m.Ip = dBuf.String()
+		m.Layer = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLAuthsessionSetLayer) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLAuthsessionSetInitConnection
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLAuthsessionSetInitConnection) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x7cdf8a8c:
+		x.UInt(0x7cdf8a8c)
+
+		// no flags
+
+		x.Long(m.GetAuthKeyId())
+		x.String(m.GetIp())
+		x.Int(m.GetApiId())
+		x.String(m.GetDeviceModel())
+		x.String(m.GetSystemVersion())
+		x.String(m.GetAppVersion())
+		x.String(m.GetSystemLangCode())
+		x.String(m.GetLangPack())
+		x.String(m.GetLangCode())
+		x.String(m.GetProxy())
+		x.String(m.GetParams())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLAuthsessionSetInitConnection) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLAuthsessionSetInitConnection) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7cdf8a8c:
+
+		// not has flags
+
+		m.AuthKeyId = dBuf.Long()
+		m.Ip = dBuf.String()
+		m.ApiId = dBuf.Int()
+		m.DeviceModel = dBuf.String()
+		m.SystemVersion = dBuf.String()
+		m.AppVersion = dBuf.String()
+		m.SystemLangCode = dBuf.String()
+		m.LangPack = dBuf.String()
+		m.LangCode = dBuf.String()
+		m.Proxy = dBuf.String()
+		m.Params = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLAuthsessionSetInitConnection) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

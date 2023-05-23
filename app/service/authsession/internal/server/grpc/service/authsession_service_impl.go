@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2022 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
@@ -169,7 +170,7 @@ func (s *Service) AuthsessionQueryAuthKey(ctx context.Context, request *authsess
 }
 
 // AuthsessionSetAuthKey
-// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt = Bool;
+// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (s *Service) AuthsessionSetAuthKey(ctx context.Context, request *authsession.TLAuthsessionSetAuthKey) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("authsession.setAuthKey - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -287,3 +288,34 @@ func (s *Service) AuthsessionGetAuthStateData(ctx context.Context, request *auth
 	c.Logger.Debugf("authsession.getAuthStateData - reply: %s", r.DebugString())
 	return r, err
 }
+
+// AuthsessionSetLayer
+// authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
+func (s *Service) AuthsessionSetLayer(ctx context.Context, request *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("authsession.setLayer - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthsessionSetLayer(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("authsession.setLayer - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AuthsessionSetInitConnection
+// authsession.setInitConnection auth_key_id:long ip:string api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = Bool;
+func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("authsession.setInitConnection - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthsessionSetInitConnection(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("authsession.setInitConnection - reply: %s", r.DebugString())
+	return r, err
+}
+

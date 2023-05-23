@@ -246,6 +246,60 @@ func (d *Dao) getFutureSaltList(ctx context.Context, authKeyId int64) ([]*mtprot
 	return nil, false
 }
 
+func (d *Dao) PutLayer(ctx context.Context, authKeyId int64, layer int32, ip string) error {
+	_, err := d.AuthsessionClient.AuthsessionSetLayer(
+		ctx,
+		&authsession.TLAuthsessionSetLayer{
+			AuthKeyId: authKeyId,
+			Ip:        ip,
+			Layer:     layer,
+		})
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("PutLayer - error: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (d *Dao) PutInitConnection(ctx context.Context, authKeyId int64, ip string, initConnection *mtproto.TLInitConnection) error {
+	var (
+		proxy  string
+		params string
+	)
+
+	if initConnection.GetProxy() != nil {
+		proxy = hack.String(mtproto.TLObjectToJson(initConnection.Proxy))
+	}
+	if initConnection.GetParams() != nil {
+		params = hack.String(mtproto.TLObjectToJson(initConnection.Params))
+	}
+
+	_, err := d.AuthsessionClient.AuthsessionSetInitConnection(
+		ctx,
+		&authsession.TLAuthsessionSetInitConnection{
+			AuthKeyId:      authKeyId,
+			Ip:             ip,
+			ApiId:          initConnection.GetApiId(),
+			DeviceModel:    initConnection.GetDeviceModel(),
+			SystemVersion:  initConnection.GetSystemVersion(),
+			AppVersion:     initConnection.GetAppVersion(),
+			SystemLangCode: initConnection.GetSystemLangCode(),
+			LangPack:       initConnection.GetLangPack(),
+			LangCode:       initConnection.GetLangCode(),
+			Proxy:          proxy,
+			Params:         params,
+		})
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("PutInitConnection - error: %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (d *Dao) PutUploadInitConnection(ctx context.Context, authKeyId int64, layer int32, ip string, initConnection *mtproto.TLInitConnection) error {
 	session := authsession.MakeTLClientSession(&authsession.ClientSession{
 		AuthKeyId:      authKeyId,

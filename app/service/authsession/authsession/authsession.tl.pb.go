@@ -55,6 +55,8 @@ const (
 	CRC32_authsession_setClientSessionInfo TLConstructor = 47841172
 	CRC32_authsession_getAuthorization     TLConstructor = 1851660579
 	CRC32_authsession_getAuthStateData     TLConstructor = 1331573041
+	CRC32_authsession_setLayer             TLConstructor = 1147475077
+	CRC32_authsession_setInitConnection    TLConstructor = 2095024780
 )
 
 var TLConstructor_name = map[int32]string{
@@ -79,6 +81,8 @@ var TLConstructor_name = map[int32]string{
 	47841172:    "CRC32_authsession_setClientSessionInfo",
 	1851660579:  "CRC32_authsession_getAuthorization",
 	1331573041:  "CRC32_authsession_getAuthStateData",
+	1147475077:  "CRC32_authsession_setLayer",
+	2095024780:  "CRC32_authsession_setInitConnection",
 }
 
 var TLConstructor_value = map[string]int32{
@@ -103,6 +107,8 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_authsession_setClientSessionInfo": 47841172,
 	"CRC32_authsession_getAuthorization":     1851660579,
 	"CRC32_authsession_getAuthStateData":     1331573041,
+	"CRC32_authsession_setLayer":             1147475077,
+	"CRC32_authsession_setInitConnection":    2095024780,
 }
 
 func (x TLConstructor) String() string {
@@ -113,9 +119,159 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_7cbc1347c4a76ecf, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
-// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
+// AuthKeyStateData <--
+//  + TL_authKeyStateData
 //
+type AuthKeyStateData struct {
+	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
+	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
+	UserId               int64         `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	KeyState             int32         `protobuf:"varint,5,opt,name=key_state,json=keyState,proto3" json:"key_state,omitempty"`
+	Layer                int32         `protobuf:"varint,6,opt,name=layer,proto3" json:"layer,omitempty"`
+	ClientType           int32         `protobuf:"varint,7,opt,name=client_type,json=clientType,proto3" json:"client_type,omitempty"`
+	AndroidPushSessionId int64         `protobuf:"varint,8,opt,name=android_push_session_id,json=androidPushSessionId,proto3" json:"android_push_session_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *AuthKeyStateData) Reset()         { *m = AuthKeyStateData{} }
+func (m *AuthKeyStateData) String() string { return proto.CompactTextString(m) }
+func (*AuthKeyStateData) ProtoMessage()    {}
+func (*AuthKeyStateData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbc1347c4a76ecf, []int{0}
+}
+func (m *AuthKeyStateData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AuthKeyStateData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AuthKeyStateData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AuthKeyStateData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AuthKeyStateData.Merge(m, src)
+}
+func (m *AuthKeyStateData) XXX_Size() int {
+	return m.Size()
+}
+func (m *AuthKeyStateData) XXX_DiscardUnknown() {
+	xxx_messageInfo_AuthKeyStateData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AuthKeyStateData proto.InternalMessageInfo
+
+func (m *AuthKeyStateData) GetPredicateName() string {
+	if m != nil {
+		return m.PredicateName
+	}
+	return ""
+}
+
+func (m *AuthKeyStateData) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *AuthKeyStateData) GetAuthKeyId() int64 {
+	if m != nil {
+		return m.AuthKeyId
+	}
+	return 0
+}
+
+func (m *AuthKeyStateData) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *AuthKeyStateData) GetKeyState() int32 {
+	if m != nil {
+		return m.KeyState
+	}
+	return 0
+}
+
+func (m *AuthKeyStateData) GetLayer() int32 {
+	if m != nil {
+		return m.Layer
+	}
+	return 0
+}
+
+func (m *AuthKeyStateData) GetClientType() int32 {
+	if m != nil {
+		return m.ClientType
+	}
+	return 0
+}
+
+func (m *AuthKeyStateData) GetAndroidPushSessionId() int64 {
+	if m != nil {
+		return m.AndroidPushSessionId
+	}
+	return 0
+}
+
+type TLAuthKeyStateData struct {
+	Data2                *AuthKeyStateData `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *TLAuthKeyStateData) Reset()         { *m = TLAuthKeyStateData{} }
+func (m *TLAuthKeyStateData) String() string { return proto.CompactTextString(m) }
+func (*TLAuthKeyStateData) ProtoMessage()    {}
+func (*TLAuthKeyStateData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbc1347c4a76ecf, []int{1}
+}
+func (m *TLAuthKeyStateData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLAuthKeyStateData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLAuthKeyStateData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLAuthKeyStateData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLAuthKeyStateData.Merge(m, src)
+}
+func (m *TLAuthKeyStateData) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLAuthKeyStateData) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLAuthKeyStateData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLAuthKeyStateData proto.InternalMessageInfo
+
+func (m *TLAuthKeyStateData) GetData2() *AuthKeyStateData {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
 // ClientSession <--
 //  + TL_clientSession
 //
@@ -143,7 +299,7 @@ func (m *ClientSession) Reset()         { *m = ClientSession{} }
 func (m *ClientSession) String() string { return proto.CompactTextString(m) }
 func (*ClientSession) ProtoMessage()    {}
 func (*ClientSession) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbc1347c4a76ecf, []int{0}
+	return fileDescriptor_7cbc1347c4a76ecf, []int{2}
 }
 func (m *ClientSession) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -270,7 +426,6 @@ func (m *ClientSession) GetParams() string {
 	return ""
 }
 
-// clientSession auth_key_id:long ip:string layer:int api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = ClientSession;
 type TLClientSession struct {
 	Data2                *ClientSession `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
@@ -282,7 +437,7 @@ func (m *TLClientSession) Reset()         { *m = TLClientSession{} }
 func (m *TLClientSession) String() string { return proto.CompactTextString(m) }
 func (*TLClientSession) ProtoMessage()    {}
 func (*TLClientSession) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbc1347c4a76ecf, []int{1}
+	return fileDescriptor_7cbc1347c4a76ecf, []int{3}
 }
 func (m *TLClientSession) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -319,164 +474,6 @@ func (m *TLClientSession) GetData2() *ClientSession {
 }
 
 //--------------------------------------------------------------------------------------------
-// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
-//
-// AuthKeyStateData <--
-//  + TL_authKeyStateData
-//
-type AuthKeyStateData struct {
-	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
-	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
-	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
-	UserId               int64         `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	KeyState             int32         `protobuf:"varint,5,opt,name=key_state,json=keyState,proto3" json:"key_state,omitempty"`
-	Layer                int32         `protobuf:"varint,6,opt,name=layer,proto3" json:"layer,omitempty"`
-	ClientType           int32         `protobuf:"varint,7,opt,name=client_type,json=clientType,proto3" json:"client_type,omitempty"`
-	AndroidPushSessionId int64         `protobuf:"varint,8,opt,name=android_push_session_id,json=androidPushSessionId,proto3" json:"android_push_session_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
-}
-
-func (m *AuthKeyStateData) Reset()         { *m = AuthKeyStateData{} }
-func (m *AuthKeyStateData) String() string { return proto.CompactTextString(m) }
-func (*AuthKeyStateData) ProtoMessage()    {}
-func (*AuthKeyStateData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbc1347c4a76ecf, []int{2}
-}
-func (m *AuthKeyStateData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *AuthKeyStateData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_AuthKeyStateData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *AuthKeyStateData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AuthKeyStateData.Merge(m, src)
-}
-func (m *AuthKeyStateData) XXX_Size() int {
-	return m.Size()
-}
-func (m *AuthKeyStateData) XXX_DiscardUnknown() {
-	xxx_messageInfo_AuthKeyStateData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AuthKeyStateData proto.InternalMessageInfo
-
-func (m *AuthKeyStateData) GetPredicateName() string {
-	if m != nil {
-		return m.PredicateName
-	}
-	return ""
-}
-
-func (m *AuthKeyStateData) GetConstructor() TLConstructor {
-	if m != nil {
-		return m.Constructor
-	}
-	return CRC32_UNKNOWN
-}
-
-func (m *AuthKeyStateData) GetAuthKeyId() int64 {
-	if m != nil {
-		return m.AuthKeyId
-	}
-	return 0
-}
-
-func (m *AuthKeyStateData) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *AuthKeyStateData) GetKeyState() int32 {
-	if m != nil {
-		return m.KeyState
-	}
-	return 0
-}
-
-func (m *AuthKeyStateData) GetLayer() int32 {
-	if m != nil {
-		return m.Layer
-	}
-	return 0
-}
-
-func (m *AuthKeyStateData) GetClientType() int32 {
-	if m != nil {
-		return m.ClientType
-	}
-	return 0
-}
-
-func (m *AuthKeyStateData) GetAndroidPushSessionId() int64 {
-	if m != nil {
-		return m.AndroidPushSessionId
-	}
-	return 0
-}
-
-// authKeyStateData auth_key_id:long user_id:long key_state:int layer:int client_type:int android_push_session_id:long = AuthKeyStateData;
-type TLAuthKeyStateData struct {
-	Data2                *AuthKeyStateData `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
-}
-
-func (m *TLAuthKeyStateData) Reset()         { *m = TLAuthKeyStateData{} }
-func (m *TLAuthKeyStateData) String() string { return proto.CompactTextString(m) }
-func (*TLAuthKeyStateData) ProtoMessage()    {}
-func (*TLAuthKeyStateData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbc1347c4a76ecf, []int{3}
-}
-func (m *TLAuthKeyStateData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *TLAuthKeyStateData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TLAuthKeyStateData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *TLAuthKeyStateData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TLAuthKeyStateData.Merge(m, src)
-}
-func (m *TLAuthKeyStateData) XXX_Size() int {
-	return m.Size()
-}
-func (m *TLAuthKeyStateData) XXX_DiscardUnknown() {
-	xxx_messageInfo_TLAuthKeyStateData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TLAuthKeyStateData proto.InternalMessageInfo
-
-func (m *TLAuthKeyStateData) GetData2() *AuthKeyStateData {
-	if m != nil {
-		return m.Data2
-	}
-	return nil
-}
-
-//--------------------------------------------------------------------------------------------
-// authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 type TLAuthsessionGetAuthorizations struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -541,7 +538,6 @@ func (m *TLAuthsessionGetAuthorizations) GetExcludeAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 type TLAuthsessionResetAuthorization struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -614,7 +610,6 @@ func (m *TLAuthsessionResetAuthorization) GetHash() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getLayer auth_key_id:long = Int32;
 type TLAuthsessionGetLayer struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -671,7 +666,6 @@ func (m *TLAuthsessionGetLayer) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getLangPack auth_key_id:long = String;
 type TLAuthsessionGetLangPack struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -728,7 +722,6 @@ func (m *TLAuthsessionGetLangPack) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getClient auth_key_id:long = String;
 type TLAuthsessionGetClient struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -785,7 +778,6 @@ func (m *TLAuthsessionGetClient) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getLangCode auth_key_id:long = String;
 type TLAuthsessionGetLangCode struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -842,7 +834,6 @@ func (m *TLAuthsessionGetLangCode) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getUserId auth_key_id:long = Int64;
 type TLAuthsessionGetUserId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -899,7 +890,6 @@ func (m *TLAuthsessionGetUserId) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 type TLAuthsessionGetPushSessionId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -972,7 +962,6 @@ func (m *TLAuthsessionGetPushSessionId) GetTokenType() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 type TLAuthsessionGetFutureSalts struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1037,7 +1026,6 @@ func (m *TLAuthsessionGetFutureSalts) GetNum() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 type TLAuthsessionQueryAuthKey struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1094,7 +1082,6 @@ func (m *TLAuthsessionQueryAuthKey) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 type TLAuthsessionSetAuthKey struct {
 	Constructor          TLConstructor        `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKey              *mtproto.AuthKeyInfo `protobuf:"bytes,3,opt,name=auth_key,json=authKey,proto3" json:"auth_key,omitempty"`
@@ -1167,7 +1154,6 @@ func (m *TLAuthsessionSetAuthKey) GetExpiresIn() int32 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 type TLAuthsessionBindAuthKeyUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1232,7 +1218,6 @@ func (m *TLAuthsessionBindAuthKeyUser) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 type TLAuthsessionUnbindAuthKeyUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1297,7 +1282,6 @@ func (m *TLAuthsessionUnbindAuthKeyUser) GetUserId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getPermAuthKeyId auth_key_id:long= Int64;
 type TLAuthsessionGetPermAuthKeyId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1354,7 +1338,6 @@ func (m *TLAuthsessionGetPermAuthKeyId) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 type TLAuthsessionBindTempAuthKey struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	PermAuthKeyId        int64         `protobuf:"varint,3,opt,name=perm_auth_key_id,json=permAuthKeyId,proto3" json:"perm_auth_key_id,omitempty"`
@@ -1435,7 +1418,6 @@ func (m *TLAuthsessionBindTempAuthKey) GetEncryptedMessage() []byte {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.setClientSessionInfo data:ClientSession = Bool;
 type TLAuthsessionSetClientSessionInfo struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	Data                 *ClientSession `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
@@ -1492,7 +1474,6 @@ func (m *TLAuthsessionSetClientSessionInfo) GetData() *ClientSession {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getAuthorization auth_key_id:long = Authorization;
 type TLAuthsessionGetAuthorization struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1549,7 +1530,6 @@ func (m *TLAuthsessionGetAuthorization) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
-// authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 type TLAuthsessionGetAuthStateData struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -1606,6 +1586,214 @@ func (m *TLAuthsessionGetAuthStateData) GetAuthKeyId() int64 {
 }
 
 //--------------------------------------------------------------------------------------------
+type TLAuthsessionSetLayer struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
+	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
+	Ip                   string        `protobuf:"bytes,4,opt,name=ip,proto3" json:"ip,omitempty"`
+	Layer                int32         `protobuf:"varint,5,opt,name=layer,proto3" json:"layer,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLAuthsessionSetLayer) Reset()         { *m = TLAuthsessionSetLayer{} }
+func (m *TLAuthsessionSetLayer) String() string { return proto.CompactTextString(m) }
+func (*TLAuthsessionSetLayer) ProtoMessage()    {}
+func (*TLAuthsessionSetLayer) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbc1347c4a76ecf, []int{22}
+}
+func (m *TLAuthsessionSetLayer) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLAuthsessionSetLayer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLAuthsessionSetLayer.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLAuthsessionSetLayer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLAuthsessionSetLayer.Merge(m, src)
+}
+func (m *TLAuthsessionSetLayer) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLAuthsessionSetLayer) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLAuthsessionSetLayer.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLAuthsessionSetLayer proto.InternalMessageInfo
+
+func (m *TLAuthsessionSetLayer) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLAuthsessionSetLayer) GetAuthKeyId() int64 {
+	if m != nil {
+		return m.AuthKeyId
+	}
+	return 0
+}
+
+func (m *TLAuthsessionSetLayer) GetIp() string {
+	if m != nil {
+		return m.Ip
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetLayer) GetLayer() int32 {
+	if m != nil {
+		return m.Layer
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
+type TLAuthsessionSetInitConnection struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=authsession.TLConstructor" json:"constructor,omitempty"`
+	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
+	Ip                   string        `protobuf:"bytes,4,opt,name=ip,proto3" json:"ip,omitempty"`
+	ApiId                int32         `protobuf:"varint,5,opt,name=api_id,json=apiId,proto3" json:"api_id,omitempty"`
+	DeviceModel          string        `protobuf:"bytes,6,opt,name=device_model,json=deviceModel,proto3" json:"device_model,omitempty"`
+	SystemVersion        string        `protobuf:"bytes,7,opt,name=system_version,json=systemVersion,proto3" json:"system_version,omitempty"`
+	AppVersion           string        `protobuf:"bytes,8,opt,name=app_version,json=appVersion,proto3" json:"app_version,omitempty"`
+	SystemLangCode       string        `protobuf:"bytes,9,opt,name=system_lang_code,json=systemLangCode,proto3" json:"system_lang_code,omitempty"`
+	LangPack             string        `protobuf:"bytes,10,opt,name=lang_pack,json=langPack,proto3" json:"lang_pack,omitempty"`
+	LangCode             string        `protobuf:"bytes,11,opt,name=lang_code,json=langCode,proto3" json:"lang_code,omitempty"`
+	Proxy                string        `protobuf:"bytes,12,opt,name=proxy,proto3" json:"proxy,omitempty"`
+	Params               string        `protobuf:"bytes,13,opt,name=params,proto3" json:"params,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLAuthsessionSetInitConnection) Reset()         { *m = TLAuthsessionSetInitConnection{} }
+func (m *TLAuthsessionSetInitConnection) String() string { return proto.CompactTextString(m) }
+func (*TLAuthsessionSetInitConnection) ProtoMessage()    {}
+func (*TLAuthsessionSetInitConnection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7cbc1347c4a76ecf, []int{23}
+}
+func (m *TLAuthsessionSetInitConnection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLAuthsessionSetInitConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLAuthsessionSetInitConnection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLAuthsessionSetInitConnection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLAuthsessionSetInitConnection.Merge(m, src)
+}
+func (m *TLAuthsessionSetInitConnection) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLAuthsessionSetInitConnection) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLAuthsessionSetInitConnection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLAuthsessionSetInitConnection proto.InternalMessageInfo
+
+func (m *TLAuthsessionSetInitConnection) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLAuthsessionSetInitConnection) GetAuthKeyId() int64 {
+	if m != nil {
+		return m.AuthKeyId
+	}
+	return 0
+}
+
+func (m *TLAuthsessionSetInitConnection) GetIp() string {
+	if m != nil {
+		return m.Ip
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetApiId() int32 {
+	if m != nil {
+		return m.ApiId
+	}
+	return 0
+}
+
+func (m *TLAuthsessionSetInitConnection) GetDeviceModel() string {
+	if m != nil {
+		return m.DeviceModel
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetSystemVersion() string {
+	if m != nil {
+		return m.SystemVersion
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetAppVersion() string {
+	if m != nil {
+		return m.AppVersion
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetSystemLangCode() string {
+	if m != nil {
+		return m.SystemLangCode
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetLangPack() string {
+	if m != nil {
+		return m.LangPack
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetLangCode() string {
+	if m != nil {
+		return m.LangCode
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetProxy() string {
+	if m != nil {
+		return m.Proxy
+	}
+	return ""
+}
+
+func (m *TLAuthsessionSetInitConnection) GetParams() string {
+	if m != nil {
+		return m.Params
+	}
+	return ""
+}
+
+//--------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_Long struct {
 	Datas                []int64  `protobuf:"varint,1,rep,packed,name=datas,proto3" json:"datas,omitempty"`
@@ -1618,7 +1806,7 @@ func (m *Vector_Long) Reset()         { *m = Vector_Long{} }
 func (m *Vector_Long) String() string { return proto.CompactTextString(m) }
 func (*Vector_Long) ProtoMessage()    {}
 func (*Vector_Long) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7cbc1347c4a76ecf, []int{22}
+	return fileDescriptor_7cbc1347c4a76ecf, []int{24}
 }
 func (m *Vector_Long) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1656,10 +1844,10 @@ func (m *Vector_Long) GetDatas() []int64 {
 
 func init() {
 	proto.RegisterEnum("authsession.TLConstructor", TLConstructor_name, TLConstructor_value)
-	proto.RegisterType((*ClientSession)(nil), "authsession.ClientSession")
-	proto.RegisterType((*TLClientSession)(nil), "authsession.TL_clientSession")
 	proto.RegisterType((*AuthKeyStateData)(nil), "authsession.AuthKeyStateData")
 	proto.RegisterType((*TLAuthKeyStateData)(nil), "authsession.TL_authKeyStateData")
+	proto.RegisterType((*ClientSession)(nil), "authsession.ClientSession")
+	proto.RegisterType((*TLClientSession)(nil), "authsession.TL_clientSession")
 	proto.RegisterType((*TLAuthsessionGetAuthorizations)(nil), "authsession.TL_authsession_getAuthorizations")
 	proto.RegisterType((*TLAuthsessionResetAuthorization)(nil), "authsession.TL_authsession_resetAuthorization")
 	proto.RegisterType((*TLAuthsessionGetLayer)(nil), "authsession.TL_authsession_getLayer")
@@ -1678,124 +1866,169 @@ func init() {
 	proto.RegisterType((*TLAuthsessionSetClientSessionInfo)(nil), "authsession.TL_authsession_setClientSessionInfo")
 	proto.RegisterType((*TLAuthsessionGetAuthorization)(nil), "authsession.TL_authsession_getAuthorization")
 	proto.RegisterType((*TLAuthsessionGetAuthStateData)(nil), "authsession.TL_authsession_getAuthStateData")
+	proto.RegisterType((*TLAuthsessionSetLayer)(nil), "authsession.TL_authsession_setLayer")
+	proto.RegisterType((*TLAuthsessionSetInitConnection)(nil), "authsession.TL_authsession_setInitConnection")
 	proto.RegisterType((*Vector_Long)(nil), "authsession.Vector_Long")
 }
 
 func init() { proto.RegisterFile("authsession.tl.proto", fileDescriptor_7cbc1347c4a76ecf) }
 
 var fileDescriptor_7cbc1347c4a76ecf = []byte{
-	// 1734 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x58, 0x5d, 0x6c, 0x1b, 0x59,
-	0x15, 0xf6, 0xc4, 0xb1, 0x9b, 0x1c, 0xd7, 0x61, 0xf6, 0xd6, 0x9b, 0x78, 0x27, 0x1b, 0xc7, 0x9d,
-	0xf4, 0x27, 0xa4, 0x8d, 0xbd, 0x24, 0x0b, 0x0f, 0x08, 0x09, 0x65, 0xb3, 0x42, 0x32, 0x9b, 0x0d,
-	0x59, 0x27, 0x5d, 0x24, 0x40, 0x3b, 0xdc, 0xcc, 0xdc, 0x38, 0xa3, 0x78, 0x7e, 0x76, 0x66, 0xdc,
-	0x8d, 0x97, 0x07, 0xa4, 0x05, 0x41, 0x1e, 0x90, 0x10, 0x02, 0x84, 0xf6, 0x05, 0x1e, 0xba, 0xfc,
-	0x89, 0x1f, 0x15, 0x5e, 0x60, 0x81, 0x22, 0x55, 0xaa, 0xaa, 0x22, 0x7e, 0x54, 0x24, 0x84, 0x54,
-	0x09, 0x09, 0x9a, 0x4a, 0x45, 0xf4, 0x85, 0x0a, 0x21, 0x51, 0x8a, 0xaa, 0xa0, 0xb9, 0x77, 0x6c,
-	0xcf, 0x9f, 0xed, 0x56, 0xad, 0xd5, 0xbe, 0xcd, 0x3d, 0xf7, 0xbb, 0xe7, 0x7c, 0xf7, 0x9c, 0x73,
-	0xcf, 0x3d, 0x77, 0x20, 0x87, 0x1b, 0xce, 0xb6, 0x4d, 0x6c, 0x5b, 0x35, 0xf4, 0x92, 0x53, 0x2f,
-	0x99, 0x96, 0xe1, 0x18, 0x28, 0xe3, 0x93, 0x0a, 0xf3, 0x35, 0xd5, 0xd9, 0x6e, 0x6c, 0x96, 0x64,
-	0x43, 0x2b, 0xd7, 0x8c, 0x9a, 0x51, 0xa6, 0x98, 0xcd, 0xc6, 0x16, 0x1d, 0xd1, 0x01, 0xfd, 0x62,
-	0x6b, 0x85, 0x42, 0xcd, 0x30, 0x6a, 0x75, 0xd2, 0x41, 0xbd, 0x61, 0x61, 0xd3, 0x24, 0x96, 0xed,
-	0xcd, 0x0b, 0xb6, 0xbc, 0x4d, 0x34, 0xec, 0x1a, 0x93, 0x0d, 0x8b, 0x48, 0x4e, 0xd3, 0x24, 0xad,
-	0xb9, 0x67, 0x3a, 0x73, 0x8e, 0x85, 0x75, 0xdb, 0x34, 0x2c, 0xc7, 0x9b, 0xca, 0x75, 0xa6, 0xec,
-	0xa6, 0x2e, 0x33, 0xa9, 0xf8, 0x87, 0x24, 0x64, 0x97, 0xeb, 0x2a, 0xd1, 0x9d, 0x75, 0xc6, 0x16,
-	0x1d, 0x87, 0x31, 0xd3, 0x22, 0x8a, 0x2a, 0x63, 0x87, 0x48, 0x3a, 0xd6, 0x48, 0x9e, 0x2b, 0x72,
-	0xb3, 0xa3, 0xd5, 0x6c, 0x5b, 0xba, 0x8a, 0x35, 0x82, 0x3e, 0x04, 0x19, 0xd9, 0xd0, 0x6d, 0xc7,
-	0x6a, 0xc8, 0x8e, 0x61, 0xe5, 0x87, 0x8a, 0xdc, 0xec, 0xd8, 0x82, 0x50, 0xf2, 0x7b, 0x63, 0x63,
-	0x65, 0xb9, 0x83, 0xa8, 0xfa, 0xe1, 0xa8, 0x00, 0xd4, 0x43, 0xd2, 0x0e, 0x69, 0x4a, 0xaa, 0x92,
-	0x4f, 0x16, 0xb9, 0xd9, 0x64, 0x75, 0xd4, 0x15, 0xbd, 0x44, 0x9a, 0x15, 0x05, 0x8d, 0xc1, 0x90,
-	0x6a, 0xe6, 0x87, 0xa9, 0xe1, 0x21, 0xd5, 0x44, 0x39, 0x48, 0xd5, 0x71, 0x93, 0x58, 0xf9, 0x54,
-	0x91, 0x9b, 0x4d, 0x55, 0xd9, 0x00, 0x3d, 0x0d, 0x69, 0x6c, 0xaa, 0xae, 0x82, 0x34, 0x13, 0x63,
-	0x53, 0xad, 0x28, 0xe8, 0x28, 0x1c, 0x56, 0xc8, 0x59, 0x55, 0x26, 0x92, 0x66, 0x28, 0xa4, 0x9e,
-	0x3f, 0x44, 0xd5, 0x64, 0x98, 0xec, 0x65, 0x57, 0xe4, 0x6e, 0xd2, 0x6e, 0xda, 0x0e, 0xd1, 0xa4,
-	0xb3, 0xc4, 0x72, 0xc9, 0xe6, 0x47, 0xd8, 0x26, 0x99, 0xf4, 0x55, 0x26, 0x44, 0xd3, 0x90, 0xc1,
-	0xa6, 0xd9, 0xc6, 0x8c, 0x52, 0x0c, 0x60, 0xd3, 0x6c, 0x01, 0x66, 0x81, 0xf7, 0xf4, 0xd4, 0xb1,
-	0x5e, 0x93, 0x64, 0x43, 0x21, 0x79, 0xa0, 0x28, 0x4f, 0xff, 0x0a, 0xd6, 0x6b, 0xcb, 0x86, 0x42,
-	0xd0, 0x24, 0x8c, 0x52, 0x88, 0x89, 0xe5, 0x9d, 0x7c, 0x86, 0x42, 0x46, 0x5c, 0xc1, 0x1a, 0x96,
-	0x77, 0xda, 0x93, 0x74, 0xfd, 0xe1, 0xce, 0x24, 0x5d, 0x99, 0x83, 0x94, 0x69, 0x19, 0xbb, 0xcd,
-	0x7c, 0x96, 0x4e, 0xb0, 0x01, 0x1a, 0x87, 0xb4, 0x89, 0x2d, 0xac, 0xd9, 0xf9, 0x31, 0x2a, 0xf6,
-	0x46, 0xe2, 0x8b, 0xc0, 0x6f, 0xac, 0x48, 0x72, 0x20, 0xa4, 0xcf, 0x41, 0x4a, 0xc1, 0x0e, 0x5e,
-	0xa0, 0x91, 0xcc, 0x84, 0xa2, 0x14, 0x88, 0x7e, 0x95, 0x01, 0xc5, 0x5f, 0x0e, 0x01, 0xbf, 0xc4,
-	0xa2, 0xb1, 0xee, 0x60, 0x87, 0xbc, 0x88, 0x1d, 0xfc, 0x64, 0x64, 0xc6, 0x04, 0x1c, 0x6a, 0xd8,
-	0xc4, 0x72, 0xe7, 0x86, 0xe9, 0x5c, 0xda, 0x1d, 0x56, 0x14, 0xd7, 0x87, 0xee, 0x1a, 0xdb, 0xa5,
-	0xeb, 0xa5, 0xc9, 0xc8, 0x8e, 0x47, 0xbf, 0x93, 0x3f, 0x69, 0x7f, 0xfe, 0x4c, 0x43, 0x86, 0x39,
-	0x8a, 0x9e, 0x21, 0x9a, 0x27, 0xa9, 0x2a, 0x30, 0xd1, 0x46, 0xd3, 0x24, 0xe8, 0xfd, 0x30, 0x81,
-	0x75, 0xc5, 0x32, 0x54, 0x45, 0x32, 0x1b, 0xf6, 0xb6, 0xe4, 0xf1, 0x77, 0x8d, 0x8f, 0x50, 0xe3,
-	0x39, 0x6f, 0x7a, 0xad, 0x61, 0x6f, 0x7b, 0x2e, 0xac, 0x28, 0xe2, 0x47, 0xe1, 0xc8, 0xc6, 0x8a,
-	0x84, 0xc3, 0xfe, 0x5b, 0x0c, 0x86, 0x61, 0x2a, 0xe0, 0x92, 0xb0, 0xb7, 0x5b, 0x91, 0xf8, 0x2e,
-	0x07, 0x45, 0x4f, 0x59, 0xcb, 0x7a, 0x8d, 0x38, 0x2e, 0xda, 0xb0, 0xd4, 0x37, 0xb1, 0xa3, 0x1a,
-	0xba, 0x1d, 0x76, 0x39, 0xf7, 0x60, 0x2e, 0xf7, 0xb9, 0x34, 0x19, 0x70, 0xe9, 0x69, 0x40, 0x64,
-	0x57, 0xae, 0x37, 0x14, 0x22, 0xb5, 0x62, 0x52, 0x69, 0xb9, 0x9d, 0xf7, 0x66, 0x96, 0x5a, 0x91,
-	0x11, 0x7f, 0xcc, 0xc1, 0xd1, 0x10, 0x53, 0x8b, 0xd8, 0x21, 0xae, 0x83, 0xa2, 0x1a, 0x4a, 0x9b,
-	0xe1, 0x70, 0xda, 0x20, 0x18, 0xde, 0xc6, 0xf6, 0x36, 0x4d, 0x8c, 0x64, 0x95, 0x7e, 0x8b, 0x6f,
-	0xc0, 0x44, 0xd4, 0xb3, 0x2b, 0x34, 0x33, 0x1e, 0x8e, 0x65, 0x9f, 0x1c, 0x16, 0xdf, 0x04, 0x21,
-	0xce, 0xb0, 0x57, 0x0c, 0x06, 0x6b, 0x7b, 0x17, 0xf2, 0x51, 0xdb, 0xac, 0x06, 0x3c, 0xae, 0x5d,
-	0xd3, 0x2a, 0xf7, 0x18, 0x76, 0x7d, 0x86, 0xa5, 0xce, 0x60, 0x2d, 0xff, 0x8c, 0x83, 0xe9, 0xa8,
-	0xe9, 0x40, 0xbd, 0x78, 0x5c, 0x67, 0x62, 0x0a, 0xc0, 0x31, 0x76, 0x88, 0xce, 0xaa, 0x1f, 0x2b,
-	0x99, 0xa3, 0x54, 0xe2, 0x16, 0x3f, 0xf1, 0xcb, 0x1c, 0x4c, 0x45, 0x99, 0x7f, 0xa4, 0xe1, 0x34,
-	0x2c, 0xb2, 0x8e, 0xeb, 0x8e, 0x3d, 0x58, 0xcf, 0x21, 0x1e, 0x92, 0x7a, 0x43, 0xa3, 0xb4, 0x53,
-	0x55, 0xf7, 0x53, 0xfc, 0x0c, 0x4c, 0x86, 0x08, 0xbd, 0xde, 0x20, 0x56, 0xd3, 0x2b, 0x41, 0x03,
-	0x0e, 0xe4, 0x5f, 0x39, 0x78, 0x26, 0x64, 0xdd, 0x2b, 0x6e, 0x0f, 0x6f, 0xbb, 0x0c, 0x23, 0x2d,
-	0xdb, 0xd4, 0x70, 0x66, 0x21, 0x57, 0xd2, 0x1c, 0xda, 0xa1, 0xb5, 0x2e, 0x86, 0x8a, 0xbe, 0x65,
-	0x54, 0x0f, 0x79, 0x74, 0xd0, 0xf3, 0x90, 0xd9, 0xa2, 0x81, 0x90, 0x6c, 0x5c, 0x77, 0xa8, 0x8f,
-	0x32, 0x0b, 0x47, 0xda, 0x6b, 0x3a, 0x41, 0xaa, 0xc2, 0x56, 0xfb, 0xdb, 0x0d, 0x38, 0xd9, 0x35,
-	0x55, 0x8b, 0xd8, 0x92, 0xaa, 0xb7, 0x02, 0xee, 0x49, 0x2a, 0xba, 0xf8, 0x0d, 0x0e, 0x0a, 0xa1,
-	0x1d, 0x6e, 0xaa, 0xba, 0xe2, 0x11, 0x70, 0x4f, 0xcb, 0x80, 0x23, 0xde, 0xed, 0x6e, 0x17, 0xdf,
-	0x8e, 0x5e, 0x82, 0x0d, 0xfd, 0x09, 0xe1, 0xf6, 0xd9, 0xd8, 0xf3, 0x4d, 0x2c, 0xad, 0x7d, 0x33,
-	0x0e, 0x38, 0x31, 0xff, 0x11, 0x1f, 0xb6, 0x0d, 0xa2, 0x99, 0x8f, 0x26, 0x3b, 0x4f, 0x02, 0x6f,
-	0x12, 0x4b, 0x93, 0xa2, 0x2c, 0xb2, 0x66, 0x60, 0x9f, 0x39, 0x48, 0xe9, 0x86, 0x2e, 0x13, 0xcf,
-	0x43, 0x6c, 0xe0, 0xcf, 0x3a, 0xec, 0x84, 0xb2, 0x6e, 0xc9, 0x41, 0xa7, 0xe0, 0x29, 0xa2, 0xcb,
-	0x56, 0xd3, 0x74, 0x88, 0x22, 0x69, 0xc4, 0xb6, 0x71, 0x8d, 0xd0, 0x36, 0xed, 0x70, 0x95, 0x6f,
-	0x4f, 0xbc, 0xcc, 0xe4, 0xe2, 0x57, 0x39, 0x98, 0x89, 0x1e, 0xc2, 0x40, 0x0b, 0xeb, 0x1e, 0x94,
-	0x87, 0xdc, 0x70, 0x09, 0x86, 0xdd, 0xe6, 0xcb, 0x3b, 0x8a, 0xbd, 0xda, 0x65, 0x8a, 0x8b, 0x4f,
-	0x81, 0x47, 0xd9, 0xf6, 0xf4, 0x4b, 0x81, 0xae, 0x04, 0x3a, 0xcd, 0xe7, 0x60, 0x09, 0xcc, 0x40,
-	0xe6, 0x55, 0xe2, 0x22, 0xa5, 0x15, 0x43, 0xaf, 0xb9, 0x89, 0xe0, 0x3a, 0xc6, 0xce, 0x73, 0xc5,
-	0xa4, 0x9b, 0x08, 0x74, 0x30, 0xf7, 0x9f, 0x34, 0x64, 0x03, 0x36, 0xd0, 0x53, 0x90, 0x5d, 0xae,
-	0x2e, 0x2f, 0x2e, 0x48, 0x67, 0x56, 0x5f, 0x5a, 0xfd, 0xd8, 0xc7, 0x57, 0xf9, 0x04, 0x2a, 0xc2,
-	0x11, 0x26, 0x0a, 0x3c, 0x61, 0xf8, 0xf3, 0x37, 0xde, 0xfd, 0xd3, 0x7f, 0x0f, 0x0e, 0x0e, 0x0e,
-	0x38, 0x34, 0x03, 0xe3, 0x0c, 0x11, 0x6e, 0xb0, 0xf9, 0xf3, 0xbf, 0xbb, 0xfc, 0xdb, 0x7b, 0x0c,
-	0x74, 0x0a, 0x66, 0x3a, 0xa0, 0xae, 0x8d, 0x33, 0x7f, 0xe9, 0x9d, 0xbd, 0x2f, 0x26, 0xd1, 0xfb,
-	0xe0, 0x58, 0x14, 0x1c, 0xed, 0x5d, 0xf9, 0xef, 0x5c, 0xbb, 0x77, 0xeb, 0x0e, 0xd3, 0x7f, 0x12,
-	0x84, 0x58, 0xfd, 0xb4, 0x7d, 0xe4, 0xbf, 0xff, 0xa3, 0x5f, 0x5d, 0xbc, 0xcb, 0x80, 0xc7, 0x61,
-	0xaa, 0x0b, 0x90, 0xb5, 0x7b, 0xfc, 0xcd, 0xb7, 0xfe, 0xf9, 0xfb, 0x21, 0x34, 0x03, 0x93, 0xb1,
-	0x30, 0x96, 0x6e, 0xfc, 0xaf, 0x7f, 0x70, 0xfd, 0xad, 0x74, 0x4f, 0x5d, 0x6e, 0x13, 0xc5, 0x5f,
-	0xbb, 0x75, 0xf3, 0x52, 0xaa, 0xab, 0x2e, 0xd6, 0xef, 0xf0, 0x3f, 0x7c, 0xf7, 0x9d, 0x5f, 0xa4,
-	0x50, 0x19, 0xc4, 0x58, 0x50, 0xa0, 0x33, 0xe1, 0x2f, 0xee, 0xef, 0x7d, 0xf3, 0x7f, 0x6c, 0x23,
-	0xf3, 0x50, 0x8c, 0x5d, 0xe0, 0x6b, 0x08, 0xf8, 0xaf, 0x9f, 0xbf, 0x70, 0xd9, 0x83, 0x9f, 0x80,
-	0x42, 0x14, 0xee, 0xbf, 0xae, 0xf9, 0xef, 0xdd, 0xfe, 0xcb, 0xb7, 0x53, 0xe8, 0x18, 0x3c, 0x1b,
-	0xc5, 0x75, 0x2e, 0x56, 0xfe, 0x2b, 0x6f, 0x5f, 0xfd, 0x77, 0x12, 0xcd, 0xc2, 0xd1, 0x28, 0x2a,
-	0x74, 0x01, 0xf0, 0xe7, 0xf6, 0x7e, 0xfe, 0x1a, 0x9a, 0x8b, 0x0b, 0x7c, 0xe4, 0xb2, 0xe0, 0xaf,
-	0x7c, 0xe9, 0xc6, 0x07, 0xbb, 0xfb, 0xc0, 0x5f, 0xd5, 0xf8, 0x3f, 0xff, 0xe6, 0x8f, 0x9f, 0xf3,
-	0x52, 0xef, 0xbd, 0xdd, 0x68, 0xf8, 0x8a, 0x2d, 0xff, 0x85, 0x6f, 0x5d, 0xf8, 0x7c, 0x1a, 0xcd,
-	0xc3, 0x89, 0xd8, 0x7d, 0x45, 0x6a, 0x15, 0xff, 0xb5, 0x83, 0xbf, 0x8f, 0xa3, 0xb9, 0x2e, 0x54,
-	0x82, 0x09, 0x78, 0xee, 0xa7, 0x77, 0xfe, 0x95, 0xee, 0x89, 0xed, 0x1c, 0x86, 0x9f, 0xec, 0xdf,
-	0xb9, 0x3b, 0x2c, 0x0c, 0xef, 0x9d, 0x2b, 0x24, 0x16, 0x2e, 0x66, 0x61, 0xac, 0xba, 0xb6, 0xbc,
-	0xd4, 0xc1, 0xa3, 0xd7, 0x61, 0xaa, 0xf7, 0x9b, 0x72, 0x3e, 0x54, 0x1b, 0x7a, 0x9f, 0x24, 0x61,
-	0xba, 0xdd, 0x7c, 0x60, 0x59, 0x36, 0x1a, 0xba, 0x23, 0x05, 0x01, 0x62, 0x02, 0xd5, 0xa1, 0xd0,
-	0xe7, 0x71, 0x58, 0xea, 0x65, 0x33, 0x8a, 0x17, 0xf2, 0x01, 0xbc, 0xaf, 0x02, 0x89, 0x09, 0xb4,
-	0x1a, 0xf8, 0x35, 0xd7, 0x79, 0xda, 0x1d, 0xeb, 0xb3, 0x2f, 0x8a, 0x12, 0xc6, 0xda, 0xdb, 0xa9,
-	0xe8, 0xce, 0xe2, 0x82, 0x98, 0x40, 0x67, 0x60, 0xa2, 0xdb, 0x8b, 0xed, 0x64, 0x5f, 0x95, 0x0c,
-	0x28, 0xbc, 0xa7, 0xad, 0x75, 0xdd, 0xb1, 0x54, 0x4a, 0xf3, 0x15, 0x78, 0x3a, 0xfe, 0x31, 0x76,
-	0xbc, 0x8f, 0x52, 0x06, 0x8b, 0x53, 0x19, 0xcf, 0x94, 0xbe, 0xb2, 0xee, 0x87, 0xa9, 0x0b, 0x8c,
-	0x53, 0xbb, 0x16, 0x61, 0xea, 0x3d, 0xa0, 0xfa, 0x31, 0x65, 0xb0, 0xa0, 0x4b, 0x3f, 0xf0, 0xbc,
-	0x98, 0x40, 0xaf, 0xc1, 0xb3, 0x3d, 0xdf, 0x45, 0xa7, 0xfb, 0x28, 0x0e, 0xa0, 0x63, 0xf4, 0x7f,
-	0x1a, 0x84, 0x1e, 0xaf, 0x97, 0xb9, 0x3e, 0xda, 0x7d, 0x58, 0x21, 0x17, 0xd3, 0x5a, 0xbb, 0x29,
-	0xfd, 0x29, 0xc8, 0x77, 0x7d, 0x8e, 0xcc, 0xf6, 0xd2, 0xef, 0x47, 0x0a, 0xb1, 0xcd, 0x3e, 0xcd,
-	0x8d, 0xf1, 0x2e, 0xcf, 0x8d, 0x13, 0xbd, 0x74, 0x77, 0x70, 0x42, 0xb6, 0xad, 0xf9, 0x05, 0xc3,
-	0xa8, 0x53, 0xc2, 0x93, 0xbd, 0xfa, 0xfb, 0x53, 0xbd, 0xf4, 0x86, 0xc0, 0x31, 0x0e, 0x97, 0x82,
-	0x45, 0x25, 0xda, 0xa3, 0xf7, 0x2c, 0x2a, 0x11, 0x78, 0x94, 0x7e, 0x4c, 0xc6, 0x04, 0x3a, 0xd0,
-	0xbe, 0x19, 0xe3, 0x47, 0xc7, 0x6c, 0xe0, 0x93, 0x51, 0xf7, 0xf8, 0xfb, 0xe8, 0xbe, 0xee, 0xf1,
-	0x81, 0xa3, 0xe4, 0x09, 0x14, 0xfb, 0x36, 0xae, 0xcf, 0xf5, 0x09, 0x6c, 0x64, 0x45, 0xd4, 0xcc,
-	0x56, 0xc4, 0x47, 0xc1, 0x22, 0x7b, 0xfa, 0x41, 0x0a, 0xbb, 0x30, 0x1e, 0xc8, 0xcd, 0xb6, 0x5c,
-	0x4c, 0x20, 0x2d, 0xd6, 0x4e, 0xa7, 0xe3, 0xbc, 0x1f, 0x3b, 0x6d, 0xb4, 0xd0, 0xfb, 0x6f, 0xa8,
-	0x98, 0x78, 0xe1, 0x95, 0xdb, 0xd7, 0x0b, 0xdc, 0x95, 0xfd, 0x02, 0x77, 0x75, 0xbf, 0xc0, 0xfd,
-	0x6d, 0xbf, 0xc0, 0x7d, 0xe2, 0xc3, 0x0e, 0xc1, 0x5a, 0xcd, 0xc2, 0x5a, 0x49, 0x35, 0xca, 0xad,
-	0xef, 0x79, 0x9b, 0x58, 0x67, 0x89, 0x55, 0xc6, 0xa6, 0x59, 0x76, 0x3f, 0x55, 0x99, 0x94, 0x7d,
-	0x9a, 0xfd, 0xdf, 0x9b, 0x69, 0xba, 0xb1, 0xc5, 0xff, 0x07, 0x00, 0x00, 0xff, 0xff, 0x85, 0xa5,
-	0xf1, 0x7d, 0xc4, 0x19, 0x00, 0x00,
+	// 1861 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x59, 0x5d, 0x6c, 0x23, 0x57,
+	0x15, 0xf6, 0xc4, 0xb1, 0x13, 0x1f, 0xaf, 0xc3, 0xf4, 0xae, 0x9b, 0x75, 0x67, 0x1b, 0xaf, 0x77,
+	0xb2, 0x3f, 0x61, 0x77, 0x93, 0x14, 0x6f, 0xe1, 0x01, 0xf1, 0x92, 0xa6, 0x02, 0x99, 0x66, 0x43,
+	0x70, 0xb2, 0x45, 0xfc, 0xa8, 0xc3, 0xcd, 0xcc, 0x8d, 0x3d, 0x8a, 0x3d, 0x33, 0x9d, 0xb9, 0xde,
+	0xc6, 0xe5, 0x01, 0xa9, 0xfc, 0xe5, 0xa1, 0x12, 0x42, 0xb4, 0x42, 0x7d, 0x00, 0x1e, 0xb2, 0xfc,
+	0x54, 0xfc, 0x68, 0xe1, 0x05, 0x0a, 0x14, 0xa9, 0x52, 0x55, 0x2d, 0xe2, 0x47, 0x45, 0x42, 0x48,
+	0x95, 0x90, 0xa0, 0xa9, 0xb4, 0x88, 0xbe, 0x50, 0x10, 0x0f, 0x4b, 0x51, 0x09, 0x9a, 0x3b, 0x63,
+	0xcf, 0xaf, 0xc7, 0xa9, 0xb6, 0x66, 0xf7, 0x6d, 0xee, 0xbd, 0xdf, 0x3d, 0xe7, 0xdc, 0x73, 0xbe,
+	0x7b, 0xee, 0x39, 0x36, 0x14, 0x71, 0x87, 0x36, 0x2d, 0x62, 0x59, 0xaa, 0xae, 0x2d, 0xd0, 0xd6,
+	0x82, 0x61, 0xea, 0x54, 0x47, 0x79, 0xdf, 0xac, 0x30, 0xdf, 0x50, 0x69, 0xb3, 0xb3, 0xb9, 0x20,
+	0xeb, 0xed, 0xc5, 0x86, 0xde, 0xd0, 0x17, 0x19, 0x66, 0xb3, 0xb3, 0xc5, 0x46, 0x6c, 0xc0, 0xbe,
+	0x9c, 0xbd, 0x42, 0xb9, 0xa1, 0xeb, 0x8d, 0x16, 0xf1, 0x50, 0x8f, 0x99, 0xd8, 0x30, 0x88, 0x69,
+	0xb9, 0xeb, 0x82, 0x25, 0x37, 0x49, 0x1b, 0xdb, 0xca, 0x64, 0xdd, 0x24, 0x12, 0xed, 0x1a, 0xa4,
+	0xb7, 0x76, 0x8f, 0xb7, 0x46, 0x4d, 0xac, 0x59, 0x86, 0x6e, 0x52, 0x77, 0xa9, 0xe8, 0x2d, 0x59,
+	0x5d, 0x4d, 0x76, 0x66, 0xc5, 0x9f, 0x8f, 0x01, 0xbf, 0xd4, 0xa1, 0xcd, 0x87, 0x48, 0x77, 0x9d,
+	0x62, 0x4a, 0x1e, 0xc4, 0x14, 0xa3, 0xd3, 0x30, 0x65, 0x98, 0x44, 0x51, 0x65, 0x4c, 0x89, 0xa4,
+	0xe1, 0x36, 0x29, 0x71, 0x15, 0x6e, 0x2e, 0x57, 0x2f, 0xf4, 0x67, 0x57, 0x71, 0x9b, 0xa0, 0x0f,
+	0x40, 0x5e, 0xd6, 0x35, 0x8b, 0x9a, 0x1d, 0x99, 0xea, 0x66, 0x69, 0xac, 0xc2, 0xcd, 0x4d, 0x55,
+	0x85, 0x05, 0xbf, 0x43, 0x36, 0x56, 0x96, 0x3d, 0x44, 0xdd, 0x0f, 0x47, 0x65, 0x60, 0x4e, 0x92,
+	0xb6, 0x49, 0x57, 0x52, 0x95, 0x52, 0xba, 0xc2, 0xcd, 0xa5, 0xeb, 0x39, 0xec, 0xd8, 0x52, 0x53,
+	0xd0, 0x31, 0x98, 0xe8, 0x58, 0xc4, 0xb4, 0xd7, 0xc6, 0xd9, 0x5a, 0xd6, 0x1e, 0xd6, 0x14, 0x74,
+	0x1c, 0x72, 0xf6, 0x1e, 0xcb, 0x36, 0xb7, 0x94, 0xa9, 0x70, 0x73, 0x99, 0xfa, 0xe4, 0xb6, 0x6b,
+	0x3e, 0x2a, 0x42, 0xa6, 0x85, 0xbb, 0xc4, 0x2c, 0x65, 0xd9, 0x82, 0x33, 0x40, 0x27, 0x20, 0x2f,
+	0xb7, 0x54, 0xa2, 0x51, 0xe6, 0xac, 0xd2, 0x04, 0x5b, 0x03, 0x67, 0x6a, 0xa3, 0x6b, 0x10, 0xf4,
+	0x5e, 0x38, 0x86, 0x35, 0xc5, 0xd4, 0x55, 0x45, 0x32, 0x3a, 0x56, 0x53, 0x72, 0xed, 0xb7, 0x95,
+	0x4f, 0x32, 0xe5, 0x45, 0x77, 0x79, 0xad, 0x63, 0x35, 0xd7, 0x9d, 0xc5, 0x9a, 0x22, 0x7e, 0x18,
+	0x8e, 0x6e, 0xac, 0x48, 0x38, 0xec, 0xbf, 0x8b, 0x90, 0x51, 0x30, 0xc5, 0x55, 0xe6, 0xb6, 0x7c,
+	0x75, 0x26, 0xe0, 0x92, 0xb0, 0xb7, 0xeb, 0x0e, 0x56, 0xfc, 0x5d, 0x1a, 0x0a, 0xcb, 0xcc, 0x22,
+	0x57, 0xfe, 0x9d, 0x11, 0x86, 0x29, 0x18, 0x53, 0x0d, 0x16, 0x81, 0x5c, 0x7d, 0x4c, 0x35, 0x3c,
+	0x07, 0x67, 0xfc, 0x0e, 0xbe, 0x1b, 0xb2, 0xd8, 0x50, 0x6d, 0x01, 0xae, 0xdf, 0xb1, 0xa1, 0xd6,
+	0x14, 0x74, 0x12, 0x8e, 0x28, 0xe4, 0x8a, 0x2a, 0x13, 0xa9, 0xad, 0x2b, 0xa4, 0xc5, 0x1c, 0x9f,
+	0xab, 0xe7, 0x9d, 0xb9, 0x4b, 0xf6, 0x94, 0x7d, 0x48, 0xab, 0x6b, 0x51, 0xd2, 0x96, 0xae, 0x10,
+	0xd3, 0x36, 0x96, 0x39, 0x3c, 0x57, 0x2f, 0x38, 0xb3, 0x0f, 0x3b, 0x93, 0x76, 0x04, 0xb1, 0x61,
+	0xf4, 0x31, 0x39, 0x86, 0x01, 0x6c, 0x18, 0x3d, 0xc0, 0x1c, 0xf0, 0xae, 0x9c, 0x16, 0xd6, 0x1a,
+	0x92, 0xac, 0x2b, 0xa4, 0x04, 0x0c, 0xe5, 0xca, 0x5f, 0xc1, 0x5a, 0x63, 0x59, 0x57, 0x88, 0xcd,
+	0x1f, 0x06, 0x31, 0xb0, 0xbc, 0x5d, 0xca, 0x33, 0xc8, 0xa4, 0x3d, 0xb1, 0x86, 0xe5, 0xed, 0xfe,
+	0x22, 0xdb, 0x7f, 0xc4, 0x5b, 0x64, 0x3b, 0x8b, 0x90, 0x31, 0x4c, 0x7d, 0xa7, 0x5b, 0x2a, 0xb0,
+	0x05, 0x67, 0x80, 0xa6, 0x21, 0x6b, 0x60, 0x13, 0xb7, 0xad, 0xd2, 0x14, 0x9b, 0x76, 0x47, 0xe2,
+	0x83, 0xc0, 0x6f, 0xac, 0x48, 0x72, 0x20, 0xa4, 0xf7, 0x05, 0x99, 0x11, 0x8c, 0x52, 0x20, 0xfa,
+	0x3d, 0x5a, 0x7c, 0x87, 0x83, 0x8a, 0xcb, 0xb1, 0x1e, 0x29, 0x1b, 0x84, 0xda, 0x24, 0xd2, 0x4d,
+	0xf5, 0x71, 0x4c, 0x55, 0x5d, 0xb3, 0xc2, 0x14, 0xe0, 0xde, 0x1e, 0x05, 0x7c, 0x37, 0x2d, 0x1d,
+	0xb8, 0x69, 0x17, 0x00, 0x91, 0x1d, 0xb9, 0xd5, 0x51, 0x88, 0xd4, 0xe3, 0x48, 0xad, 0x77, 0x1b,
+	0x79, 0x77, 0x65, 0xa9, 0xc7, 0x14, 0xf1, 0x87, 0x1c, 0x9c, 0x0c, 0x59, 0x6a, 0x12, 0x2b, 0x64,
+	0xeb, 0xa8, 0x4c, 0x0d, 0xd1, 0x78, 0x3c, 0x4c, 0x63, 0x04, 0xe3, 0x4d, 0x6c, 0x35, 0x19, 0x6b,
+	0xd3, 0x75, 0xf6, 0x2d, 0x3e, 0x06, 0xc7, 0xa2, 0x9e, 0x5d, 0x61, 0x7c, 0xbe, 0x35, 0x2b, 0x87,
+	0xdc, 0x29, 0xf1, 0x71, 0x10, 0xe2, 0x14, 0xbb, 0x14, 0x1c, 0xad, 0xee, 0x1d, 0x28, 0x45, 0x75,
+	0x3b, 0xcc, 0xbb, 0x5d, 0xa7, 0x66, 0x77, 0xeb, 0x36, 0x9c, 0xfa, 0xb2, 0x43, 0x9d, 0xd1, 0x6a,
+	0xfe, 0x09, 0x07, 0x27, 0xa2, 0xaa, 0x03, 0xcf, 0xc8, 0xed, 0xba, 0x13, 0x33, 0x00, 0x54, 0xdf,
+	0x26, 0x9a, 0xf3, 0x28, 0x3a, 0xf9, 0x3c, 0xc7, 0x66, 0xec, 0x37, 0x51, 0xfc, 0x32, 0x07, 0x33,
+	0x51, 0xcb, 0x3f, 0xd8, 0xa1, 0x1d, 0x93, 0xac, 0xe3, 0x16, 0xb5, 0x46, 0xeb, 0x39, 0xc4, 0x43,
+	0x5a, 0xeb, 0xb4, 0x99, 0xd9, 0x99, 0xba, 0xfd, 0x29, 0x7e, 0x06, 0x8e, 0x87, 0x0c, 0x7a, 0xb4,
+	0x43, 0xcc, 0xae, 0x9b, 0x82, 0x46, 0x1c, 0xc8, 0x3f, 0x73, 0x70, 0x4f, 0x48, 0xbb, 0x9b, 0xdc,
+	0x6e, 0x5d, 0xf7, 0x22, 0x4c, 0xf6, 0x74, 0x33, 0xc5, 0xf9, 0x6a, 0x71, 0xa1, 0x4d, 0x59, 0x85,
+	0xd6, 0xab, 0x17, 0x6a, 0xda, 0x96, 0x5e, 0x9f, 0x70, 0xcd, 0x41, 0xf7, 0x43, 0x7e, 0x8b, 0x05,
+	0x42, 0xb2, 0x70, 0x8b, 0x32, 0x1f, 0xe5, 0xab, 0x47, 0xfb, 0x7b, 0xbc, 0x20, 0xd5, 0x61, 0xab,
+	0xff, 0x6d, 0x07, 0x9c, 0xec, 0x18, 0xaa, 0x49, 0x2c, 0x49, 0xd5, 0x7a, 0x01, 0x77, 0x67, 0x6a,
+	0x9a, 0xf8, 0x35, 0x0e, 0xca, 0xa1, 0x13, 0x6e, 0xaa, 0x9a, 0xe2, 0x1a, 0x60, 0xdf, 0x96, 0x11,
+	0x47, 0x7c, 0x50, 0xc9, 0x27, 0x3e, 0x13, 0x7d, 0x04, 0x3b, 0xda, 0x1d, 0x62, 0xdb, 0x67, 0x63,
+	0xef, 0x37, 0x31, 0xdb, 0xfd, 0x97, 0x71, 0xc4, 0xc4, 0xfc, 0x5b, 0x7c, 0xd8, 0x36, 0x48, 0xdb,
+	0x78, 0x67, 0xd8, 0x79, 0x16, 0x78, 0x83, 0x98, 0x6d, 0x29, 0x6a, 0x45, 0xc1, 0x08, 0x9c, 0xb3,
+	0x08, 0x19, 0x4d, 0xd7, 0x64, 0xe2, 0x7a, 0xc8, 0x19, 0xf8, 0x59, 0x87, 0x69, 0x88, 0x75, 0x4b,
+	0x14, 0x9d, 0x87, 0xbb, 0x88, 0x26, 0x9b, 0x5d, 0x83, 0x12, 0x45, 0x6a, 0x13, 0xcb, 0xc2, 0x0d,
+	0xc2, 0xaa, 0xc8, 0x23, 0x75, 0xbe, 0xbf, 0x70, 0xc9, 0x99, 0x17, 0xbf, 0xca, 0xc1, 0x6c, 0xf4,
+	0x12, 0x06, 0x0a, 0x27, 0xfb, 0xa2, 0xdc, 0xe2, 0x81, 0x17, 0x60, 0xdc, 0x2e, 0xbe, 0xdc, 0xab,
+	0x98, 0x54, 0xa4, 0x31, 0x5c, 0x3c, 0x05, 0xde, 0xc9, 0xb2, 0x67, 0x18, 0x05, 0x06, 0x1a, 0xe0,
+	0xf5, 0x24, 0xa3, 0x35, 0xe0, 0xeb, 0x5c, 0xa4, 0x96, 0xb2, 0xfe, 0x2f, 0xb5, 0xd4, 0xe1, 0xfa,
+	0x13, 0xf1, 0x6a, 0x3a, 0x92, 0x40, 0x2c, 0x42, 0x6b, 0x9a, 0x4a, 0x97, 0x75, 0x4d, 0x23, 0xf2,
+	0xe8, 0x63, 0x14, 0x31, 0xd4, 0x6b, 0x99, 0x32, 0x49, 0x2d, 0x53, 0xf6, 0x30, 0x2d, 0xd3, 0xc4,
+	0x21, 0x5a, 0xa6, 0xc9, 0x43, 0xb5, 0x4c, 0xb9, 0xe1, 0x2d, 0x13, 0x24, 0xb5, 0x4c, 0xf9, 0x41,
+	0x2d, 0xd3, 0x91, 0xf8, 0x96, 0xa9, 0x10, 0x68, 0x99, 0x66, 0x21, 0xff, 0x30, 0xb1, 0xbd, 0x29,
+	0xad, 0xe8, 0x5a, 0xc3, 0xde, 0x6c, 0xdf, 0x2f, 0xab, 0xc4, 0x55, 0xd2, 0x76, 0x3e, 0x61, 0x83,
+	0x73, 0xd7, 0x27, 0xa0, 0x10, 0x88, 0x03, 0xba, 0x0b, 0x0a, 0xcb, 0xf5, 0xe5, 0x8b, 0x55, 0xe9,
+	0xf2, 0xea, 0x43, 0xab, 0x1f, 0xf9, 0xd8, 0x2a, 0x9f, 0x42, 0x15, 0x38, 0xea, 0x4c, 0x05, 0xfa,
+	0x2f, 0xfe, 0xda, 0x6b, 0xcf, 0xfd, 0xe1, 0xdf, 0x07, 0x07, 0x07, 0x07, 0x1c, 0x9a, 0x85, 0x69,
+	0x07, 0x11, 0x6e, 0xdf, 0xf9, 0x6b, 0xbf, 0x79, 0xe9, 0xd7, 0x6f, 0x39, 0xa0, 0xf3, 0x30, 0xeb,
+	0x81, 0x06, 0xf6, 0x5f, 0xfc, 0x8b, 0x57, 0x77, 0xbf, 0x94, 0x46, 0xef, 0x81, 0x53, 0x51, 0x70,
+	0xb4, 0x05, 0xe2, 0xbf, 0xfd, 0xca, 0x5b, 0xaf, 0xdf, 0x74, 0xe4, 0x9f, 0x05, 0x21, 0x56, 0x3e,
+	0xbb, 0x39, 0xfc, 0xb3, 0x3f, 0xf8, 0xc5, 0x0b, 0x6f, 0x3a, 0xc0, 0xd3, 0x30, 0x33, 0x00, 0xe8,
+	0x44, 0x81, 0xbf, 0xf1, 0xc4, 0xdf, 0x7f, 0x3b, 0x86, 0x66, 0xe1, 0x78, 0x2c, 0xcc, 0xc9, 0x5a,
+	0xfc, 0x2f, 0xbf, 0xf7, 0xea, 0x13, 0xd9, 0x44, 0x59, 0x76, 0xd0, 0xf8, 0x57, 0x5e, 0xbf, 0xf1,
+	0x62, 0x66, 0xa0, 0x2c, 0xa7, 0x6c, 0xe6, 0xbf, 0xff, 0xdc, 0xd5, 0x9f, 0x65, 0xd0, 0x22, 0x88,
+	0xb1, 0xa0, 0x40, 0x81, 0xcb, 0xbf, 0xb0, 0xbf, 0xfb, 0x8d, 0xff, 0x38, 0x07, 0x99, 0x87, 0x4a,
+	0xec, 0x06, 0x5f, 0x5d, 0xc9, 0x3f, 0x7d, 0xed, 0xf9, 0x97, 0x5c, 0xf8, 0x19, 0x28, 0x47, 0xe1,
+	0xfe, 0xaa, 0x8f, 0xff, 0xee, 0x1b, 0x7f, 0xfa, 0x56, 0x06, 0x9d, 0x82, 0x7b, 0xa3, 0x38, 0xaf,
+	0x3e, 0xe3, 0xbf, 0xf2, 0xcc, 0xcb, 0xff, 0x4a, 0xa3, 0x39, 0x38, 0x19, 0x45, 0x85, 0xea, 0x08,
+	0x7e, 0x6f, 0xf7, 0xa7, 0x8f, 0xa0, 0x73, 0x71, 0x81, 0x8f, 0xd4, 0x1c, 0xfc, 0xf5, 0x27, 0x5f,
+	0x7b, 0xff, 0x60, 0x1f, 0xf8, 0x1f, 0x47, 0xfe, 0x8f, 0xbf, 0xfa, 0xfd, 0xe7, 0x5c, 0xea, 0xbd,
+	0x7b, 0x90, 0x19, 0xbe, 0x37, 0x9b, 0xff, 0xe2, 0x37, 0x9f, 0xff, 0x7c, 0x16, 0xcd, 0xc3, 0x99,
+	0xd8, 0x73, 0x45, 0x9e, 0x3c, 0xfe, 0xa9, 0x83, 0xbf, 0x4e, 0xa3, 0x73, 0x03, 0x4c, 0x09, 0x12,
+	0x70, 0xef, 0xc7, 0x37, 0xff, 0x99, 0x4d, 0xc4, 0x7a, 0x97, 0xe1, 0x47, 0xfb, 0x37, 0xdf, 0x1c,
+	0x47, 0x62, 0x1c, 0x4f, 0x7b, 0x19, 0x9e, 0xff, 0xc2, 0xb3, 0x4f, 0xed, 0x8d, 0xc7, 0xdf, 0x95,
+	0x48, 0x96, 0xe5, 0x9f, 0x7c, 0xfa, 0xbf, 0x37, 0x26, 0x84, 0xf1, 0xdd, 0xbd, 0x72, 0xaa, 0xfa,
+	0x8f, 0x29, 0x98, 0xaa, 0xaf, 0x2d, 0x2f, 0x79, 0x1b, 0xd0, 0xa3, 0x30, 0x93, 0xfc, 0x5b, 0xc7,
+	0x7c, 0x28, 0x21, 0x27, 0x5f, 0x4d, 0xe1, 0x44, 0xbf, 0x28, 0xc6, 0xb2, 0xac, 0x77, 0x34, 0x2a,
+	0x05, 0x01, 0x62, 0x0a, 0xb5, 0xa0, 0x3c, 0xe4, 0x47, 0x8b, 0x85, 0x24, 0x9d, 0x51, 0xbc, 0x50,
+	0x0a, 0xe0, 0x7d, 0x29, 0x4d, 0x4c, 0xa1, 0xd5, 0xc0, 0x4f, 0xc6, 0xde, 0x4f, 0x0e, 0xa7, 0x86,
+	0x9c, 0x8b, 0xa1, 0x84, 0xa9, 0xfe, 0x71, 0x6a, 0x1a, 0xbd, 0x58, 0x15, 0x53, 0xe8, 0x32, 0x1c,
+	0x1b, 0xf4, 0x4b, 0xc2, 0xd9, 0xa1, 0x22, 0x1d, 0xa0, 0xf0, 0xae, 0xbe, 0xd4, 0x75, 0x6a, 0xaa,
+	0xcc, 0xcc, 0x8f, 0xc2, 0xdd, 0xf1, 0x3f, 0x12, 0x9c, 0x1e, 0x22, 0xd4, 0x81, 0xc5, 0x89, 0x8c,
+	0xb7, 0x94, 0x3d, 0x13, 0x87, 0xb1, 0xd4, 0x06, 0xc6, 0x89, 0x5d, 0x8b, 0x58, 0xea, 0x36, 0xf6,
+	0xc3, 0x2c, 0x75, 0x60, 0x41, 0x97, 0xbe, 0xef, 0x7e, 0x31, 0x85, 0x1e, 0x81, 0x7b, 0x13, 0xfb,
+	0xf5, 0x0b, 0x43, 0x04, 0x07, 0xd0, 0x31, 0xf2, 0x3f, 0x0d, 0x42, 0x42, 0x57, 0x7d, 0x6e, 0x88,
+	0x74, 0x1f, 0x56, 0x28, 0xc6, 0xb4, 0x7c, 0x36, 0xa5, 0x3f, 0x05, 0xa5, 0x81, 0x6d, 0xf2, 0x5c,
+	0x92, 0x7c, 0x3f, 0x52, 0x88, 0x6d, 0x42, 0x19, 0x37, 0xa6, 0x07, 0xb4, 0xc1, 0x67, 0x92, 0x64,
+	0x7b, 0x38, 0xa1, 0xd0, 0x97, 0xfc, 0x80, 0xae, 0xb7, 0x98, 0xc1, 0xc7, 0x93, 0xfa, 0xce, 0xf3,
+	0x49, 0x72, 0x43, 0xe0, 0x18, 0x87, 0x4b, 0xc1, 0xa4, 0x12, 0xed, 0x1d, 0x13, 0x93, 0x4a, 0x04,
+	0x1e, 0x35, 0x3f, 0x86, 0x31, 0x81, 0xce, 0x68, 0x28, 0x63, 0xfc, 0xe8, 0x98, 0x03, 0x7c, 0x32,
+	0xea, 0x1e, 0x7f, 0x7f, 0x37, 0xd4, 0x3d, 0x3e, 0x70, 0xd4, 0x78, 0x02, 0x95, 0xa1, 0x0d, 0xd5,
+	0x7d, 0x43, 0x02, 0x1b, 0xd9, 0x11, 0x55, 0xb3, 0x15, 0xf1, 0x51, 0x30, 0xc9, 0x5e, 0x78, 0x3b,
+	0x89, 0x5d, 0x98, 0x0e, 0x70, 0xb3, 0x3f, 0x2f, 0xa6, 0x50, 0x3b, 0x56, 0x8f, 0xd7, 0x09, 0x1d,
+	0x46, 0x4f, 0x1f, 0x2d, 0x24, 0xff, 0x79, 0x23, 0xa6, 0xd0, 0xa5, 0x60, 0x3e, 0xb7, 0x0e, 0x95,
+	0xcf, 0x7b, 0xa8, 0xa8, 0x97, 0x42, 0x54, 0x8d, 0x76, 0x29, 0xf3, 0x43, 0xe4, 0x06, 0xe1, 0x11,
+	0x05, 0x0f, 0x7c, 0xfc, 0x8d, 0x57, 0xcb, 0xdc, 0xf5, 0xfd, 0x32, 0xf7, 0xf2, 0x7e, 0x99, 0xfb,
+	0xcb, 0x7e, 0x99, 0xfb, 0xc4, 0x87, 0x7c, 0xff, 0x4f, 0x52, 0x82, 0xdb, 0x0d, 0x13, 0x7b, 0x1f,
+	0xf3, 0x16, 0x31, 0xaf, 0x10, 0x73, 0x11, 0x1b, 0xc6, 0xa2, 0xfd, 0xa9, 0xca, 0x64, 0xd1, 0xa7,
+	0xd1, 0xff, 0xbd, 0x99, 0x65, 0x8a, 0x2e, 0xfe, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x11, 0x7d, 0x80,
+	0x69, 0x14, 0x1d, 0x00, 0x00,
 }
 
+func (this *AuthKeyStateData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 12)
+	s = append(s, "&authsession.AuthKeyStateData{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "AuthKeyId: "+fmt.Sprintf("%#v", this.AuthKeyId)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	s = append(s, "KeyState: "+fmt.Sprintf("%#v", this.KeyState)+",\n")
+	s = append(s, "Layer: "+fmt.Sprintf("%#v", this.Layer)+",\n")
+	s = append(s, "ClientType: "+fmt.Sprintf("%#v", this.ClientType)+",\n")
+	s = append(s, "AndroidPushSessionId: "+fmt.Sprintf("%#v", this.AndroidPushSessionId)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLAuthKeyStateData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&authsession.TLAuthKeyStateData{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *ClientSession) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1828,41 +2061,6 @@ func (this *TLClientSession) GoString() string {
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&authsession.TLClientSession{")
-	if this.Data2 != nil {
-		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
-	}
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AuthKeyStateData) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 12)
-	s = append(s, "&authsession.AuthKeyStateData{")
-	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
-	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
-	s = append(s, "AuthKeyId: "+fmt.Sprintf("%#v", this.AuthKeyId)+",\n")
-	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
-	s = append(s, "KeyState: "+fmt.Sprintf("%#v", this.KeyState)+",\n")
-	s = append(s, "Layer: "+fmt.Sprintf("%#v", this.Layer)+",\n")
-	s = append(s, "ClientType: "+fmt.Sprintf("%#v", this.ClientType)+",\n")
-	s = append(s, "AndroidPushSessionId: "+fmt.Sprintf("%#v", this.AndroidPushSessionId)+",\n")
-	if this.XXX_unrecognized != nil {
-		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *TLAuthKeyStateData) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&authsession.TLAuthKeyStateData{")
 	if this.Data2 != nil {
 		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
 	}
@@ -2143,6 +2341,46 @@ func (this *TLAuthsessionGetAuthStateData) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLAuthsessionSetLayer) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&authsession.TLAuthsessionSetLayer{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "AuthKeyId: "+fmt.Sprintf("%#v", this.AuthKeyId)+",\n")
+	s = append(s, "Ip: "+fmt.Sprintf("%#v", this.Ip)+",\n")
+	s = append(s, "Layer: "+fmt.Sprintf("%#v", this.Layer)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLAuthsessionSetInitConnection) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 16)
+	s = append(s, "&authsession.TLAuthsessionSetInitConnection{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "AuthKeyId: "+fmt.Sprintf("%#v", this.AuthKeyId)+",\n")
+	s = append(s, "Ip: "+fmt.Sprintf("%#v", this.Ip)+",\n")
+	s = append(s, "ApiId: "+fmt.Sprintf("%#v", this.ApiId)+",\n")
+	s = append(s, "DeviceModel: "+fmt.Sprintf("%#v", this.DeviceModel)+",\n")
+	s = append(s, "SystemVersion: "+fmt.Sprintf("%#v", this.SystemVersion)+",\n")
+	s = append(s, "AppVersion: "+fmt.Sprintf("%#v", this.AppVersion)+",\n")
+	s = append(s, "SystemLangCode: "+fmt.Sprintf("%#v", this.SystemLangCode)+",\n")
+	s = append(s, "LangPack: "+fmt.Sprintf("%#v", this.LangPack)+",\n")
+	s = append(s, "LangCode: "+fmt.Sprintf("%#v", this.LangCode)+",\n")
+	s = append(s, "Proxy: "+fmt.Sprintf("%#v", this.Proxy)+",\n")
+	s = append(s, "Params: "+fmt.Sprintf("%#v", this.Params)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Vector_Long) GoString() string {
 	if this == nil {
 		return "nil"
@@ -2177,42 +2415,26 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RPCAuthsessionClient interface {
-	// authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 	AuthsessionGetAuthorizations(ctx context.Context, in *TLAuthsessionGetAuthorizations, opts ...grpc.CallOption) (*mtproto.Account_Authorizations, error)
-	// authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 	AuthsessionResetAuthorization(ctx context.Context, in *TLAuthsessionResetAuthorization, opts ...grpc.CallOption) (*Vector_Long, error)
-	// authsession.getLayer auth_key_id:long = Int32;
 	AuthsessionGetLayer(ctx context.Context, in *TLAuthsessionGetLayer, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	// authsession.getLangPack auth_key_id:long = String;
 	AuthsessionGetLangPack(ctx context.Context, in *TLAuthsessionGetLangPack, opts ...grpc.CallOption) (*mtproto.String, error)
-	// authsession.getClient auth_key_id:long = String;
 	AuthsessionGetClient(ctx context.Context, in *TLAuthsessionGetClient, opts ...grpc.CallOption) (*mtproto.String, error)
-	// authsession.getLangCode auth_key_id:long = String;
 	AuthsessionGetLangCode(ctx context.Context, in *TLAuthsessionGetLangCode, opts ...grpc.CallOption) (*mtproto.String, error)
-	// authsession.getUserId auth_key_id:long = Int64;
 	AuthsessionGetUserId(ctx context.Context, in *TLAuthsessionGetUserId, opts ...grpc.CallOption) (*mtproto.Int64, error)
-	// authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 	AuthsessionGetPushSessionId(ctx context.Context, in *TLAuthsessionGetPushSessionId, opts ...grpc.CallOption) (*mtproto.Int64, error)
-	// authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 	AuthsessionGetFutureSalts(ctx context.Context, in *TLAuthsessionGetFutureSalts, opts ...grpc.CallOption) (*mtproto.FutureSalts, error)
-	// authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 	AuthsessionQueryAuthKey(ctx context.Context, in *TLAuthsessionQueryAuthKey, opts ...grpc.CallOption) (*mtproto.AuthKeyInfo, error)
-	// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 	AuthsessionSetAuthKey(ctx context.Context, in *TLAuthsessionSetAuthKey, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 	AuthsessionBindAuthKeyUser(ctx context.Context, in *TLAuthsessionBindAuthKeyUser, opts ...grpc.CallOption) (*mtproto.Int64, error)
-	// authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 	AuthsessionUnbindAuthKeyUser(ctx context.Context, in *TLAuthsessionUnbindAuthKeyUser, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// authsession.getPermAuthKeyId auth_key_id:long= Int64;
 	AuthsessionGetPermAuthKeyId(ctx context.Context, in *TLAuthsessionGetPermAuthKeyId, opts ...grpc.CallOption) (*mtproto.Int64, error)
-	// authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 	AuthsessionBindTempAuthKey(ctx context.Context, in *TLAuthsessionBindTempAuthKey, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// authsession.setClientSessionInfo data:ClientSession = Bool;
 	AuthsessionSetClientSessionInfo(ctx context.Context, in *TLAuthsessionSetClientSessionInfo, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	// authsession.getAuthorization auth_key_id:long = Authorization;
 	AuthsessionGetAuthorization(ctx context.Context, in *TLAuthsessionGetAuthorization, opts ...grpc.CallOption) (*mtproto.Authorization, error)
-	// authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 	AuthsessionGetAuthStateData(ctx context.Context, in *TLAuthsessionGetAuthStateData, opts ...grpc.CallOption) (*AuthKeyStateData, error)
+	AuthsessionSetLayer(ctx context.Context, in *TLAuthsessionSetLayer, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	AuthsessionSetInitConnection(ctx context.Context, in *TLAuthsessionSetInitConnection, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCAuthsessionClient struct {
@@ -2385,44 +2607,46 @@ func (c *rPCAuthsessionClient) AuthsessionGetAuthStateData(ctx context.Context, 
 	return out, nil
 }
 
+func (c *rPCAuthsessionClient) AuthsessionSetLayer(ctx context.Context, in *TLAuthsessionSetLayer, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/authsession.RPCAuthsession/authsession_setLayer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCAuthsessionClient) AuthsessionSetInitConnection(ctx context.Context, in *TLAuthsessionSetInitConnection, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/authsession.RPCAuthsession/authsession_setInitConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCAuthsessionServer is the server API for RPCAuthsession service.
 type RPCAuthsessionServer interface {
-	// authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 	AuthsessionGetAuthorizations(context.Context, *TLAuthsessionGetAuthorizations) (*mtproto.Account_Authorizations, error)
-	// authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 	AuthsessionResetAuthorization(context.Context, *TLAuthsessionResetAuthorization) (*Vector_Long, error)
-	// authsession.getLayer auth_key_id:long = Int32;
 	AuthsessionGetLayer(context.Context, *TLAuthsessionGetLayer) (*mtproto.Int32, error)
-	// authsession.getLangPack auth_key_id:long = String;
 	AuthsessionGetLangPack(context.Context, *TLAuthsessionGetLangPack) (*mtproto.String, error)
-	// authsession.getClient auth_key_id:long = String;
 	AuthsessionGetClient(context.Context, *TLAuthsessionGetClient) (*mtproto.String, error)
-	// authsession.getLangCode auth_key_id:long = String;
 	AuthsessionGetLangCode(context.Context, *TLAuthsessionGetLangCode) (*mtproto.String, error)
-	// authsession.getUserId auth_key_id:long = Int64;
 	AuthsessionGetUserId(context.Context, *TLAuthsessionGetUserId) (*mtproto.Int64, error)
-	// authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 	AuthsessionGetPushSessionId(context.Context, *TLAuthsessionGetPushSessionId) (*mtproto.Int64, error)
-	// authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 	AuthsessionGetFutureSalts(context.Context, *TLAuthsessionGetFutureSalts) (*mtproto.FutureSalts, error)
-	// authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 	AuthsessionQueryAuthKey(context.Context, *TLAuthsessionQueryAuthKey) (*mtproto.AuthKeyInfo, error)
-	// authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 	AuthsessionSetAuthKey(context.Context, *TLAuthsessionSetAuthKey) (*mtproto.Bool, error)
-	// authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 	AuthsessionBindAuthKeyUser(context.Context, *TLAuthsessionBindAuthKeyUser) (*mtproto.Int64, error)
-	// authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 	AuthsessionUnbindAuthKeyUser(context.Context, *TLAuthsessionUnbindAuthKeyUser) (*mtproto.Bool, error)
-	// authsession.getPermAuthKeyId auth_key_id:long= Int64;
 	AuthsessionGetPermAuthKeyId(context.Context, *TLAuthsessionGetPermAuthKeyId) (*mtproto.Int64, error)
-	// authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 	AuthsessionBindTempAuthKey(context.Context, *TLAuthsessionBindTempAuthKey) (*mtproto.Bool, error)
-	// authsession.setClientSessionInfo data:ClientSession = Bool;
 	AuthsessionSetClientSessionInfo(context.Context, *TLAuthsessionSetClientSessionInfo) (*mtproto.Bool, error)
-	// authsession.getAuthorization auth_key_id:long = Authorization;
 	AuthsessionGetAuthorization(context.Context, *TLAuthsessionGetAuthorization) (*mtproto.Authorization, error)
-	// authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 	AuthsessionGetAuthStateData(context.Context, *TLAuthsessionGetAuthStateData) (*AuthKeyStateData, error)
+	AuthsessionSetLayer(context.Context, *TLAuthsessionSetLayer) (*mtproto.Bool, error)
+	AuthsessionSetInitConnection(context.Context, *TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCAuthsessionServer can be embedded to have forward compatible implementations.
@@ -2482,6 +2706,12 @@ func (*UnimplementedRPCAuthsessionServer) AuthsessionGetAuthorization(ctx contex
 }
 func (*UnimplementedRPCAuthsessionServer) AuthsessionGetAuthStateData(ctx context.Context, req *TLAuthsessionGetAuthStateData) (*AuthKeyStateData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthsessionGetAuthStateData not implemented")
+}
+func (*UnimplementedRPCAuthsessionServer) AuthsessionSetLayer(ctx context.Context, req *TLAuthsessionSetLayer) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthsessionSetLayer not implemented")
+}
+func (*UnimplementedRPCAuthsessionServer) AuthsessionSetInitConnection(ctx context.Context, req *TLAuthsessionSetInitConnection) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthsessionSetInitConnection not implemented")
 }
 
 func RegisterRPCAuthsessionServer(s *grpc.Server, srv RPCAuthsessionServer) {
@@ -2812,6 +3042,42 @@ func _RPCAuthsession_AuthsessionGetAuthStateData_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCAuthsession_AuthsessionSetLayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLAuthsessionSetLayer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCAuthsessionServer).AuthsessionSetLayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/authsession.RPCAuthsession/AuthsessionSetLayer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCAuthsessionServer).AuthsessionSetLayer(ctx, req.(*TLAuthsessionSetLayer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCAuthsession_AuthsessionSetInitConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLAuthsessionSetInitConnection)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCAuthsessionServer).AuthsessionSetInitConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/authsession.RPCAuthsession/AuthsessionSetInitConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCAuthsessionServer).AuthsessionSetInitConnection(ctx, req.(*TLAuthsessionSetInitConnection))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RPCAuthsession_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "authsession.RPCAuthsession",
 	HandlerType: (*RPCAuthsessionServer)(nil),
@@ -2888,9 +3154,125 @@ var _RPCAuthsession_serviceDesc = grpc.ServiceDesc{
 			MethodName: "authsession_getAuthStateData",
 			Handler:    _RPCAuthsession_AuthsessionGetAuthStateData_Handler,
 		},
+		{
+			MethodName: "authsession_setLayer",
+			Handler:    _RPCAuthsession_AuthsessionSetLayer_Handler,
+		},
+		{
+			MethodName: "authsession_setInitConnection",
+			Handler:    _RPCAuthsession_AuthsessionSetInitConnection_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "authsession.tl.proto",
+}
+
+func (m *AuthKeyStateData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AuthKeyStateData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AuthKeyStateData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.AndroidPushSessionId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AndroidPushSessionId))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.ClientType != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.ClientType))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.Layer != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Layer))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.KeyState != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.KeyState))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.UserId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.AuthKeyId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AuthKeyId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.PredicateName) > 0 {
+		i -= len(m.PredicateName)
+		copy(dAtA[i:], m.PredicateName)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.PredicateName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLAuthKeyStateData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLAuthKeyStateData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLAuthKeyStateData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Data2 != nil {
+		{
+			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAuthsessionTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ClientSession) Marshal() (dAtA []byte, err error) {
@@ -3026,114 +3408,6 @@ func (m *TLClientSession) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *TLClientSession) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data2 != nil {
-		{
-			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintAuthsessionTl(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *AuthKeyStateData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *AuthKeyStateData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *AuthKeyStateData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.AndroidPushSessionId != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AndroidPushSessionId))
-		i--
-		dAtA[i] = 0x40
-	}
-	if m.ClientType != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.ClientType))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.Layer != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Layer))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.KeyState != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.KeyState))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.UserId != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.UserId))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.AuthKeyId != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AuthKeyId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Constructor != 0 {
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Constructor))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.PredicateName) > 0 {
-		i -= len(m.PredicateName)
-		copy(dAtA[i:], m.PredicateName)
-		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.PredicateName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *TLAuthKeyStateData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *TLAuthKeyStateData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *TLAuthKeyStateData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -3911,6 +4185,160 @@ func (m *TLAuthsessionGetAuthStateData) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
+func (m *TLAuthsessionSetLayer) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLAuthsessionSetLayer) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLAuthsessionSetLayer) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Layer != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Layer))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Ip) > 0 {
+		i -= len(m.Ip)
+		copy(dAtA[i:], m.Ip)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.Ip)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.AuthKeyId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AuthKeyId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLAuthsessionSetInitConnection) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLAuthsessionSetInitConnection) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLAuthsessionSetInitConnection) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Params) > 0 {
+		i -= len(m.Params)
+		copy(dAtA[i:], m.Params)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.Params)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if len(m.Proxy) > 0 {
+		i -= len(m.Proxy)
+		copy(dAtA[i:], m.Proxy)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.Proxy)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.LangCode) > 0 {
+		i -= len(m.LangCode)
+		copy(dAtA[i:], m.LangCode)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.LangCode)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.LangPack) > 0 {
+		i -= len(m.LangPack)
+		copy(dAtA[i:], m.LangPack)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.LangPack)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.SystemLangCode) > 0 {
+		i -= len(m.SystemLangCode)
+		copy(dAtA[i:], m.SystemLangCode)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.SystemLangCode)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.AppVersion) > 0 {
+		i -= len(m.AppVersion)
+		copy(dAtA[i:], m.AppVersion)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.AppVersion)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.SystemVersion) > 0 {
+		i -= len(m.SystemVersion)
+		copy(dAtA[i:], m.SystemVersion)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.SystemVersion)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.DeviceModel) > 0 {
+		i -= len(m.DeviceModel)
+		copy(dAtA[i:], m.DeviceModel)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.DeviceModel)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.ApiId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.ApiId))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Ip) > 0 {
+		i -= len(m.Ip)
+		copy(dAtA[i:], m.Ip)
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(len(m.Ip)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.AuthKeyId != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.AuthKeyId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintAuthsessionTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Vector_Long) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -3968,6 +4396,59 @@ func encodeVarintAuthsessionTl(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *AuthKeyStateData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PredicateName)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	if m.Constructor != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.Constructor))
+	}
+	if m.AuthKeyId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.AuthKeyId))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.UserId))
+	}
+	if m.KeyState != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.KeyState))
+	}
+	if m.Layer != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.Layer))
+	}
+	if m.ClientType != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.ClientType))
+	}
+	if m.AndroidPushSessionId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.AndroidPushSessionId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLAuthKeyStateData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Data2 != nil {
+		l = m.Data2.Size()
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *ClientSession) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4033,59 +4514,6 @@ func (m *ClientSession) Size() (n int) {
 }
 
 func (m *TLClientSession) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Data2 != nil {
-		l = m.Data2.Size()
-		n += 1 + l + sovAuthsessionTl(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *AuthKeyStateData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.PredicateName)
-	if l > 0 {
-		n += 1 + l + sovAuthsessionTl(uint64(l))
-	}
-	if m.Constructor != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.Constructor))
-	}
-	if m.AuthKeyId != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.AuthKeyId))
-	}
-	if m.UserId != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.UserId))
-	}
-	if m.KeyState != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.KeyState))
-	}
-	if m.Layer != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.Layer))
-	}
-	if m.ClientType != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.ClientType))
-	}
-	if m.AndroidPushSessionId != 0 {
-		n += 1 + sovAuthsessionTl(uint64(m.AndroidPushSessionId))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *TLAuthKeyStateData) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -4468,6 +4896,88 @@ func (m *TLAuthsessionGetAuthStateData) Size() (n int) {
 	return n
 }
 
+func (m *TLAuthsessionSetLayer) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.Constructor))
+	}
+	if m.AuthKeyId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.AuthKeyId))
+	}
+	l = len(m.Ip)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	if m.Layer != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.Layer))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLAuthsessionSetInitConnection) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.Constructor))
+	}
+	if m.AuthKeyId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.AuthKeyId))
+	}
+	l = len(m.Ip)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	if m.ApiId != 0 {
+		n += 1 + sovAuthsessionTl(uint64(m.ApiId))
+	}
+	l = len(m.DeviceModel)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.SystemVersion)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.AppVersion)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.SystemLangCode)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.LangPack)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.LangCode)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.Proxy)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	l = len(m.Params)
+	if l > 0 {
+		n += 1 + l + sovAuthsessionTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *Vector_Long) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4492,6 +5002,309 @@ func sovAuthsessionTl(x uint64) (n int) {
 }
 func sozAuthsessionTl(x uint64) (n int) {
 	return sovAuthsessionTl(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *AuthKeyStateData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthsessionTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AuthKeyStateData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AuthKeyStateData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PredicateName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AuthKeyId", wireType)
+			}
+			m.AuthKeyId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AuthKeyId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KeyState", wireType)
+			}
+			m.KeyState = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KeyState |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Layer", wireType)
+			}
+			m.Layer = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Layer |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClientType", wireType)
+			}
+			m.ClientType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ClientType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AndroidPushSessionId", wireType)
+			}
+			m.AndroidPushSessionId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AndroidPushSessionId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLAuthKeyStateData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthsessionTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_authKeyStateData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_authKeyStateData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data2 == nil {
+				m.Data2 = &AuthKeyStateData{}
+			}
+			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *ClientSession) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -5000,309 +5813,6 @@ func (m *TLClientSession) Unmarshal(dAtA []byte) error {
 			}
 			if m.Data2 == nil {
 				m.Data2 = &ClientSession{}
-			}
-			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *AuthKeyStateData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthsessionTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: AuthKeyStateData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AuthKeyStateData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PredicateName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
-			}
-			m.Constructor = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Constructor |= TLConstructor(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AuthKeyId", wireType)
-			}
-			m.AuthKeyId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.AuthKeyId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
-			}
-			m.UserId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UserId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeyState", wireType)
-			}
-			m.KeyState = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.KeyState |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Layer", wireType)
-			}
-			m.Layer = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Layer |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ClientType", wireType)
-			}
-			m.ClientType = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ClientType |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AndroidPushSessionId", wireType)
-			}
-			m.AndroidPushSessionId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.AndroidPushSessionId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TLAuthKeyStateData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthsessionTl
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TL_authKeyStateData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TL_authKeyStateData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthsessionTl
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthAuthsessionTl
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Data2 == nil {
-				m.Data2 = &AuthKeyStateData{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -7223,6 +7733,542 @@ func (m *TLAuthsessionGetAuthStateData) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLAuthsessionSetLayer) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthsessionTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_authsession_setLayer: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_authsession_setLayer: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AuthKeyId", wireType)
+			}
+			m.AuthKeyId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AuthKeyId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ip", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ip = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Layer", wireType)
+			}
+			m.Layer = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Layer |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLAuthsessionSetInitConnection) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthsessionTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_authsession_setInitConnection: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_authsession_setInitConnection: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AuthKeyId", wireType)
+			}
+			m.AuthKeyId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AuthKeyId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ip", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ip = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApiId", wireType)
+			}
+			m.ApiId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ApiId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeviceModel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DeviceModel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SystemVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SystemVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AppVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SystemLangCode", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SystemLangCode = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LangPack", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LangPack = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LangCode", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LangCode = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Proxy", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Proxy = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthsessionTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAuthsessionTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Params = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthsessionTl(dAtA[iNdEx:])

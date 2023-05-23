@@ -31,6 +31,8 @@ const (
 	Predicate_authsession_setClientSessionInfo = "authsession_setClientSessionInfo"
 	Predicate_authsession_getAuthorization     = "authsession_getAuthorization"
 	Predicate_authsession_getAuthStateData     = "authsession_getAuthStateData"
+	Predicate_authsession_setLayer             = "authsession_setLayer"
+	Predicate_authsession_setInitConnection    = "authsession_setInitConnection"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -114,6 +116,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1331573041, // 0x4f5e3131
 
 	},
+	Predicate_authsession_setLayer: {
+		0: 1147475077, // 0x44651485
+
+	},
+	Predicate_authsession_setInitConnection: {
+		0: 2095024780, // 0x7cdf8a8c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -137,6 +147,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	47841172:    Predicate_authsession_setClientSessionInfo, // 0x2d9ff94
 	1851660579:  Predicate_authsession_getAuthorization,     // 0x6e5e1923
 	1331573041:  Predicate_authsession_getAuthStateData,     // 0x4f5e3131
+	1147475077:  Predicate_authsession_setLayer,             // 0x44651485
+	2095024780:  Predicate_authsession_setInitConnection,    // 0x7cdf8a8c
 
 }
 
