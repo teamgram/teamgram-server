@@ -51,7 +51,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, r *sessionpb.TLSessi
 		s.sessionsManager[c.GetAuthKeyId()] = sessList
 		s.mu.Unlock()
 	}
-	sessList.sessionClientNew(c.GetServerId(), c.GetSessionId())
+	sessList.sessionClientNew(ctx, c.GetServerId(), c.GetSessionId())
 
 	return mtproto.BoolTrue, nil
 }
@@ -71,14 +71,14 @@ func (s *Service) SessionCloseSession(ctx context.Context, r *sessionpb.TLSessio
 	if !ok {
 		logx.WithContext(ctx).Errorf("session.closeSession - not found sessList by keyId: %d", c.GetAuthKeyId())
 	} else {
-		sessList.sessionClientClosed(c.GetServerId(), c.GetSessionId())
+		sessList.sessionClientClosed(ctx, c.GetServerId(), c.GetSessionId())
 	}
 
 	return mtproto.BoolTrue, nil
 }
 
 func (s *Service) SessionSendDataToSession(ctx context.Context, r *sessionpb.TLSessionSendDataToSession) (res *mtproto.Bool, err error) {
-	logx.WithContext(ctx).Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %s, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+	logx.WithContext(ctx).Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
 		r.GetData().GetServerId(),
 		r.GetData().GetConnType(),
 		r.GetData().GetAuthKeyId(),
@@ -110,7 +110,7 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, r *sessionpb.TLS
 		s.mu.Unlock()
 	}
 
-	sessList.sessionDataArrived(data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload())
+	sessList.sessionDataArrived(ctx, data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload())
 
 	return mtproto.BoolTrue, nil
 }

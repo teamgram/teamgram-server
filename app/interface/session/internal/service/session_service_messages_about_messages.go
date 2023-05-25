@@ -19,6 +19,7 @@
 package service
 
 import (
+	"context"
 	"math"
 	"reflect"
 	"time"
@@ -58,7 +59,7 @@ func (c *session) onMsgsAck(gatewayId string, msgId int64, seqno int32, request 
 	Required to protect against replay attacks and certain tricks associated
 	with adjusting the client clock to a moment in the distant future.
 */
-func (c *session) checkBadServerSalt(gatewayId string, salt int64, msg *mtproto.TLMessage2) bool {
+func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt int64, msg *mtproto.TLMessage2) bool {
 	// Notice of Ignored Error Message
 	//
 	// Here, error_code can also take on the following values:
@@ -69,13 +70,13 @@ func (c *session) checkBadServerSalt(gatewayId string, salt int64, msg *mtproto.
 
 	valid := false
 
-	if salt == c.cb.getCacheSalt().GetSalt() {
+	if salt == c.cb.getCacheSalt(ctx).GetSalt() {
 		valid = true
 	} else {
-		if c.cb.getCacheSalt() != nil {
-			if salt == c.cb.getCacheSalt().GetSalt() {
+		if c.cb.getCacheSalt(ctx) != nil {
+			if salt == c.cb.getCacheSalt(ctx).GetSalt() {
 				date := int32(time.Now().Unix())
-				if c.cb.getCacheSalt().GetValidUntil()+300 >= date {
+				if c.cb.getCacheSalt(ctx).GetValidUntil()+300 >= date {
 					valid = true
 				}
 			}
@@ -87,11 +88,11 @@ func (c *session) checkBadServerSalt(gatewayId string, salt int64, msg *mtproto.
 			BadMsgId:      msg.MsgId,
 			ErrorCode:     kServerSaltIncorrect,
 			BadMsgSeqno:   msg.Seqno,
-			NewServerSalt: c.cb.getCacheSalt().GetSalt(),
+			NewServerSalt: c.cb.getCacheSalt(ctx).GetSalt(),
 		}).To_BadMsgNotification()
-		logx.Errorf("invalid salt: %d, send badServerSalt: {%v}, cacheSalt: %v", salt, badServerSalt, c.cb.getCacheSalt())
+		logx.WithContext(ctx).Errorf("invalid salt: %d, send badServerSalt: {%v}, cacheSalt: %v", salt, badServerSalt, c.cb.getCacheSalt(ctx))
 
-		c.sendDirectToGateway(gatewayId, false, badServerSalt, func(sentRaw *mtproto.TLMessageRawData) {
+		c.sendDirectToGateway(ctx, gatewayId, false, badServerSalt, func(sentRaw *mtproto.TLMessageRawData) {
 			// nothing do
 		})
 		return false
@@ -171,7 +172,7 @@ func (c *session) checkBadServerSalt(gatewayId string, salt int64, msg *mtproto.
 */
 
 // func checkConfirm()
-func (c *session) checkBadMsgNotification(gatewayId string, excludeMsgIdToo bool, msg *mtproto.TLMessage2) bool {
+func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string, excludeMsgIdToo bool, msg *mtproto.TLMessage2) bool {
 	// Notice of Ignored Error Message
 	//
 	// In certain cases, a server may notify a client that its incoming message was ignored for whatever reason.
@@ -365,7 +366,7 @@ func (c *session) checkBadMsgNotification(gatewayId string, excludeMsgIdToo bool
 			ErrorCode:   errorCode,
 		}).To_BadMsgNotification()
 		logx.Error("errorCode - ", errorCode, ", msg: ", reflect.TypeOf(msg.Object))
-		c.sendDirectToGateway(gatewayId, false, badMsgNotification, func(sentRaw *mtproto.TLMessageRawData) {
+		c.sendDirectToGateway(ctx, gatewayId, false, badMsgNotification, func(sentRaw *mtproto.TLMessageRawData) {
 			//
 		})
 		return false
@@ -374,61 +375,61 @@ func (c *session) checkBadMsgNotification(gatewayId string, excludeMsgIdToo bool
 }
 
 /*
- // tdesktop ------------------------------------------------------------------------------------------
+	 // tdesktop ------------------------------------------------------------------------------------------
 
-	case mtpc_msgs_state_req: {
-		if (badTime) {
-			DEBUG_LOG(("Message Info: skipping with bad time..."));
-			return HandleResult::Ignored;
-		}
-		MTPMsgsStateReq msg;
-		msg.read(from, end);
-		auto &ids = msg.c_msgs_state_req().vmsg_ids.v;
-		auto idsCount = ids.size();
-		DEBUG_LOG(("Message Info: msgs_state_req received, ids: %1").arg(LogIdsVector(ids)));
-		if (!idsCount) return HandleResult::Success;
+		case mtpc_msgs_state_req: {
+			if (badTime) {
+				DEBUG_LOG(("Message Info: skipping with bad time..."));
+				return HandleResult::Ignored;
+			}
+			MTPMsgsStateReq msg;
+			msg.read(from, end);
+			auto &ids = msg.c_msgs_state_req().vmsg_ids.v;
+			auto idsCount = ids.size();
+			DEBUG_LOG(("Message Info: msgs_state_req received, ids: %1").arg(LogIdsVector(ids)));
+			if (!idsCount) return HandleResult::Success;
 
-		QByteArray info(idsCount, Qt::Uninitialized);
-		{
-			QReadLocker lock(sessionData->receivedIdsMutex());
-			auto &receivedIds = sessionData->receivedIdsSet();
-			auto minRecv = receivedIds.min();
-			auto maxRecv = receivedIds.max();
+			QByteArray info(idsCount, Qt::Uninitialized);
+			{
+				QReadLocker lock(sessionData->receivedIdsMutex());
+				auto &receivedIds = sessionData->receivedIdsSet();
+				auto minRecv = receivedIds.min();
+				auto maxRecv = receivedIds.max();
 
-			QReadLocker locker(sessionData->wereAckedMutex());
-			const auto &wereAcked = sessionData->wereAckedMap();
-			const auto wereAckedEnd = wereAcked.cend();
+				QReadLocker locker(sessionData->wereAckedMutex());
+				const auto &wereAcked = sessionData->wereAckedMap();
+				const auto wereAckedEnd = wereAcked.cend();
 
-			for (uint32 i = 0, l = idsCount; i < l; ++i) {
-				char state = 0;
-				uint64 reqMsgId = ids[i].v;
-				if (reqMsgId < minRecv) {
-					state |= 0x01;
-				} else if (reqMsgId > maxRecv) {
-					state |= 0x03;
-				} else {
-					auto msgIdState = receivedIds.lookup(reqMsgId);
-					if (msgIdState == ReceivedMsgIds::State::NotFound) {
-						state |= 0x02;
+				for (uint32 i = 0, l = idsCount; i < l; ++i) {
+					char state = 0;
+					uint64 reqMsgId = ids[i].v;
+					if (reqMsgId < minRecv) {
+						state |= 0x01;
+					} else if (reqMsgId > maxRecv) {
+						state |= 0x03;
 					} else {
-						state |= 0x04;
-						if (wereAcked.constFind(reqMsgId) != wereAckedEnd) {
-							state |= 0x80; // we know, that server knows, that we received request
-						}
-						if (msgIdState == ReceivedMsgIds::State::NeedsAck) { // need ack, so we sent ack
-							state |= 0x08;
+						auto msgIdState = receivedIds.lookup(reqMsgId);
+						if (msgIdState == ReceivedMsgIds::State::NotFound) {
+							state |= 0x02;
 						} else {
-							state |= 0x10;
+							state |= 0x04;
+							if (wereAcked.constFind(reqMsgId) != wereAckedEnd) {
+								state |= 0x80; // we know, that server knows, that we received request
+							}
+							if (msgIdState == ReceivedMsgIds::State::NeedsAck) { // need ack, so we sent ack
+								state |= 0x08;
+							} else {
+								state |= 0x10;
+							}
 						}
 					}
+					info[i] = state;
 				}
-				info[i] = state;
 			}
-		}
-		emit sendMsgsStateInfoAsync(msgId, info);
-	} return HandleResult::Success;
+			emit sendMsgsStateInfoAsync(msgId, info);
+		} return HandleResult::Success;
 */
-func (c *session) onMsgsStateReq(gatewayId string, msgId *inboxMsg, request *mtproto.TLMsgsStateReq) {
+func (c *session) onMsgsStateReq(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLMsgsStateReq) {
 	logx.Infof("onMsgsStateReq - request data: {sess: %s, gatewayId: %s, md: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -497,59 +498,61 @@ func (c *session) onMsgsStateReq(gatewayId string, msgId *inboxMsg, request *mtp
 		Info:     string(info),
 	}).To_MsgsStateInfo()
 
-	c.sendRawToQueue(gatewayId, msgId.msgId, false, msgsStateInfo)
+	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, msgsStateInfo)
 	msgId.state = RECEIVED | NEED_NO_ACK
 }
 
-/*****************************************************************************************************************
+/*
+****************************************************************************************************************
 // resend
 // 注意：服务端要处理这种情况，和文档不太一样
 //
-mtpRequestId Session::resend(quint64 msgId, qint64 msCanWait, bool forceContainer, bool sendMsgStateInfo) {
-	SecureRequest request;
-	{
-		QWriteLocker locker(data.haveSentMutex());
-		auto &haveSent = data.haveSentMap();
 
-		auto i = haveSent.find(msgId);
-		if (i == haveSent.end()) {
-			if (sendMsgStateInfo) {
-				char cantResend[2] = {1, 0};
-				DEBUG_LOG(("Message Info: cant resend %1, request not found").arg(msgId));
+	mtpRequestId Session::resend(quint64 msgId, qint64 msCanWait, bool forceContainer, bool sendMsgStateInfo) {
+		SecureRequest request;
+		{
+			QWriteLocker locker(data.haveSentMutex());
+			auto &haveSent = data.haveSentMap();
 
-				auto info = std::string(cantResend, cantResend + 1);
-				return _instance->sendProtocolMessage(
-					dcWithShift,
-					MTPMsgsStateInfo(
-						MTP_msgs_state_info(
-							MTP_long(msgId),
-							MTP_string(std::move(info)))));
+			auto i = haveSent.find(msgId);
+			if (i == haveSent.end()) {
+				if (sendMsgStateInfo) {
+					char cantResend[2] = {1, 0};
+					DEBUG_LOG(("Message Info: cant resend %1, request not found").arg(msgId));
+
+					auto info = std::string(cantResend, cantResend + 1);
+					return _instance->sendProtocolMessage(
+						dcWithShift,
+						MTPMsgsStateInfo(
+							MTP_msgs_state_info(
+								MTP_long(msgId),
+								MTP_string(std::move(info)))));
+				}
+				return 0;
 			}
+
+			request = i.value();
+			haveSent.erase(i);
+		}
+		if (request.isSentContainer()) { // for container just resend all messages we can
+			DEBUG_LOG(("Message Info: resending container from haveSent, msgId %1").arg(msgId));
+			const mtpMsgId *ids = (const mtpMsgId *)(request->constData() + 8);
+			for (uint32 i = 0, l = (request->size() - 8) >> 1; i < l; ++i) {
+				resend(ids[i], 10, true);
+			}
+			return 0xFFFFFFFF;
+		} else if (!request.isStateRequest()) {
+			request->msDate = forceContainer ? 0 : getms(true);
+			sendPrepared(request, msCanWait, false);
+			{
+				QWriteLocker locker(data.toResendMutex());
+				data.toResendMap().insert(msgId, request->requestId);
+			}
+			return request->requestId;
+		} else {
 			return 0;
 		}
-
-		request = i.value();
-		haveSent.erase(i);
 	}
-	if (request.isSentContainer()) { // for container just resend all messages we can
-		DEBUG_LOG(("Message Info: resending container from haveSent, msgId %1").arg(msgId));
-		const mtpMsgId *ids = (const mtpMsgId *)(request->constData() + 8);
-		for (uint32 i = 0, l = (request->size() - 8) >> 1; i < l; ++i) {
-			resend(ids[i], 10, true);
-		}
-		return 0xFFFFFFFF;
-	} else if (!request.isStateRequest()) {
-		request->msDate = forceContainer ? 0 : getms(true);
-		sendPrepared(request, msCanWait, false);
-		{
-			QWriteLocker locker(data.toResendMutex());
-			data.toResendMap().insert(msgId, request->requestId);
-		}
-		return request->requestId;
-	} else {
-		return 0;
-	}
-}
 */
 func (c *session) onMsgsStateInfo(gatewayId string, msgId *inboxMsg, request *mtproto.TLMsgsStateInfo) {
 	logx.Infof("onMsgsStateInfo - request data: {sess: %s, gatewayId: %s, md: %s, msg_id: %d, seq_no: %d, request: {%s}}",
@@ -679,7 +682,7 @@ func (c *session) onMsgsAllInfo(gatewayId string, msgId *inboxMsg, request *mtpr
 	msgId.state = RECEIVED | NEED_NO_ACK
 }
 
-func (c *session) onMsgResendReq(gatewayId string, msgId *inboxMsg, request *mtproto.TLMsgResendReq) {
+func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLMsgResendReq) {
 	logx.Errorf("onMsgResendReq - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -748,7 +751,7 @@ func (c *session) onMsgResendReq(gatewayId string, msgId *inboxMsg, request *mtp
 			Info:     string(info),
 		}).To_MsgsStateInfo()
 
-		c.sendRawToQueue(gatewayId, msgId.msgId, false, msgsStateInfo)
+		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, msgsStateInfo)
 		msgId.state = RECEIVED | NEED_NO_ACK
 	} else {
 		for i := 0; i < len(msgIds); i++ {
@@ -779,14 +782,14 @@ func (c *session) onMsgNewDetailInfo(gatewayId string, msgId *inboxMsg, request 
 	// NOTE(@benqi): not received by server
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (c *session) notifyMsgsStateInfo(gatewayId string, inMsg *inboxMsg) {
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////
+func (c *session) notifyMsgsStateInfo(ctx context.Context, gatewayId string, inMsg *inboxMsg) {
 	// TODO(@benqi): if aced and < resendSize, send rsp.
 	msgsStateInfo := mtproto.MakeTLMsgsStateInfo(&mtproto.MsgsStateInfo{
 		ReqMsgId: inMsg.msgId,
 		Info:     string([]byte{inMsg.state}),
 	})
-	c.sendDirectToGateway(gatewayId, false, msgsStateInfo, func(sentRaw *mtproto.TLMessageRawData) {
+	c.sendDirectToGateway(ctx, gatewayId, false, msgsStateInfo, func(sentRaw *mtproto.TLMessageRawData) {
 
 	})
 }
@@ -816,7 +819,6 @@ func (c *session) notifyMsgsAllInfo() {
 // Currently, status is always zero. This may change in future.
 //
 // This message does not require an acknowledgment.
-//
 func (c *session) notifyMsgDetailedInfo(inMsg *inboxMsg) {
 }
 

@@ -28,7 +28,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func (c *session) onInvokeWithLayer(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithLayer) {
+func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithLayer) {
 	logx.Infof("onInvokeWithLayer - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -54,8 +54,8 @@ func (c *session) onInvokeWithLayer(gatewayId, clientIp string, msgId *inboxMsg,
 		return
 	}
 
-	c.cb.setLayer(request.Layer)
-	c.PutLayer(context.Background(), c.cb.getAuthKeyId(), request.Layer, clientIp)
+	c.cb.setLayer(ctx, request.Layer)
+	c.PutLayer(ctx, c.cb.getAuthKeyId(ctx), request.Layer, clientIp)
 
 	//initConnection, ok := query.(*mtproto.TLInitConnection)
 	//if !ok {
@@ -88,10 +88,10 @@ func (c *session) onInvokeWithLayer(gatewayId, clientIp string, msgId *inboxMsg,
 	//	msgId.seqNo,
 	//	query.DebugString())
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInvokeAfterMsg(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsg) {
+func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsg) {
 	logx.Infof("onInvokeAfterMsg - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
@@ -159,10 +159,10 @@ func (c *session) onInvokeAfterMsg(gatewayId, clientIp string, msgId *inboxMsg, 
 	//			messages[i].Object = query
 	//		}
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInvokeAfterMsgs(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsgs) {
+func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsgs) {
 	logx.Infof("onInvokeAfterMsgs - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
@@ -243,10 +243,10 @@ func (c *session) onInvokeAfterMsgs(gatewayId, clientIp string, msgId *inboxMsg,
 	//				messages[i].Object = query
 	//			}
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInvokeWithoutUpdates(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithoutUpdates) {
+func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithoutUpdates) {
 	logx.Infof("onInvokeWithoutUpdates - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -272,10 +272,10 @@ func (c *session) onInvokeWithoutUpdates(gatewayId, clientIp string, msgId *inbo
 		return
 	}
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInvokeWithMessagesRange(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithMessagesRange) {
+func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithMessagesRange) {
 	logx.Infof("onInvokeWithMessagesRange - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -301,10 +301,10 @@ func (c *session) onInvokeWithMessagesRange(gatewayId, clientIp string, msgId *i
 		return
 	}
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInvokeWithTakeout(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithTakeout) {
+func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithTakeout) {
 	logx.Infof("onInvokeWithTakeout - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -330,10 +330,10 @@ func (c *session) onInvokeWithTakeout(gatewayId, clientIp string, msgId *inboxMs
 		return
 	}
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onInitConnection(gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
+func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
 	logx.Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -351,7 +351,7 @@ func (c *session) onInitConnection(gatewayId, clientIp string, msgId *inboxMsg, 
 	//c.cb.setLayer(request.Layer)
 	//c.cb.setClient(initConnection.LangPack)
 	//
-	c.PutInitConnection(context.Background(), c.cb.getAuthKeyId(), clientIp, request)
+	c.PutInitConnection(context.Background(), c.cb.getAuthKeyId(ctx), clientIp, request)
 	//
 	dBuf := mtproto.NewDecodeBuf(request.GetQuery())
 	query := dBuf.Object()
@@ -372,10 +372,10 @@ func (c *session) onInitConnection(gatewayId, clientIp string, msgId *inboxMsg, 
 	//	msgId.seqNo,
 	//	query.DebugString())
 
-	c.processMsg(gatewayId, clientIp, msgId, query)
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
-func (c *session) onRpcRequest(gatewayId, clientIp string, msgId *inboxMsg, query mtproto.TLObject) bool {
+func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, query mtproto.TLObject) bool {
 	logx.Infof("onRpcRequest - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -396,24 +396,24 @@ func (c *session) onRpcRequest(gatewayId, clientIp string, msgId *inboxMsg, quer
 		if registerDevice.TokenType == 7 {
 			pushSessionId, err := strconv.ParseInt(registerDevice.GetToken(), 10, 64)
 			if err == nil {
-				c.cb.onBindPushSessionId(pushSessionId)
-				c.PutCachePushSessionId(context.Background(), c.cb.getAuthKeyId(), int64(pushSessionId))
+				c.cb.onBindPushSessionId(ctx, pushSessionId)
+				c.PutCachePushSessionId(ctx, c.cb.getAuthKeyId(ctx), int64(pushSessionId))
 			}
 		}
 	case *mtproto.TLUpdatesGetState:
 		if !c.isGeneric {
 			c.isGeneric = true
-			c.cb.setOnline()
+			c.cb.setOnline(ctx)
 		}
 	case *mtproto.TLUpdatesGetDifference:
 		if !c.isGeneric {
 			c.isGeneric = true
-			c.cb.setOnline()
+			c.cb.setOnline(ctx)
 		}
 	case *mtproto.TLUpdatesGetChannelDifference:
 		if !c.isGeneric {
 			c.isGeneric = true
-			c.cb.setOnline()
+			c.cb.setOnline(ctx)
 		}
 		//case *mtproto.TLAuthBindTempAuthKey:
 		//	res, err := c.AuthSessionRpcClient.AuthBindTempAuthKey(context.Background(), query.(*mtproto.TLAuthBindTempAuthKey))
@@ -442,46 +442,48 @@ func (c *session) onRpcRequest(gatewayId, clientIp string, msgId *inboxMsg, quer
 	case *mtproto.TLAccountUpdateStatus:
 		if !c.isGeneric {
 			c.isGeneric = true
-			c.cb.setOnline()
+			c.cb.setOnline(ctx)
 		}
 	case *mtproto.TLUsersGetUsers:
 		// logx.Infof("user.getUsers: %s", query.DebugString())
 	}
 
-	if c.cb.getUserId() == 0 {
+	if c.cb.getUserId(ctx) == 0 {
 		if !checkRpcWithoutLogin(query) {
-			authUserId, _ := c.GetCacheUserID(context.Background(), c.cb.getAuthKeyId())
+			authUserId, _ := c.GetCacheUserID(ctx, c.cb.getAuthKeyId(ctx))
 			if authUserId == 0 {
-				logx.Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId())
+				logx.Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId(ctx))
 				// 401
 				rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
 					ErrorCode:    401,
 					ErrorMessage: "AUTH_KEY_INVALID",
 				}}
-				c.sendRpcResultToQueue(gatewayId, msgId.msgId, rpcError)
+				c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcError)
 				msgId.state = RECEIVED | RESPONSE_GENERATED
 				return false
 			} else {
-				c.cb.setUserId(authUserId)
+				c.cb.setUserId(ctx, authUserId)
 			}
 		}
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
-	c.cb.sendToRpcQueue(&rpcApiMessage{
-		sessionId: c.sessionId,
-		clientIp:  clientIp,
-		reqMsgId:  msgId.msgId,
-		reqMsg:    query,
-	})
+	c.cb.sendToRpcQueue(
+		ctx,
+		&rpcApiMessage{
+			sessionId: c.sessionId,
+			clientIp:  clientIp,
+			reqMsgId:  msgId.msgId,
+			reqMsg:    query,
+		})
 
 	return true
 }
 
-func (c *session) onRpcResult(rpcResult *rpcApiMessage) {
+func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	defer func() {
 		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut); ok {
-			c.DeleteByAuthKeyId(c.cb.getAuthKeyId())
+			c.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
 		}
 	}()
 
@@ -493,10 +495,10 @@ func (c *session) onRpcResult(rpcResult *rpcApiMessage) {
 		}
 	}
 
-	c.sendRpcResult(rpcResult.MoveRpcResult())
+	c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
 }
 
-func (c *session) sendRpcResult(rpcResult *mtproto.TLRpcResult) {
+func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcResult) {
 	// TODO(@benqi): lookup inBoxMsg
 	msgId := c.inQueue.Lookup(rpcResult.ReqMsgId)
 	if msgId == nil {
@@ -505,12 +507,12 @@ func (c *session) sendRpcResult(rpcResult *mtproto.TLRpcResult) {
 	}
 
 	gatewayId := c.getGatewayId()
-	c.sendRpcResultToQueue(gatewayId, msgId.msgId, rpcResult.Result)
+	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcResult.Result)
 	msgId.state = RECEIVED | ACKNOWLEDGED
 
 	if gatewayId == "" {
 		logx.Errorf("gatewayId is empty, send delay...")
 	} else {
-		c.sendQueueToGateway(gatewayId)
+		c.sendQueueToGateway(ctx, gatewayId)
 	}
 }

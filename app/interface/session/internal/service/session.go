@@ -98,32 +98,32 @@ func (c serverIdCtx) Equal(id string) bool {
 
 // ////////////////////////////////////////////////////////////////////////////////////////////////////////
 type sessionCallback interface {
-	getCacheSalt() *mtproto.TLFutureSalt
+	getCacheSalt(ctx context.Context) *mtproto.TLFutureSalt
 
-	getAuthKeyId() int64
-	getTempAuthKeyId() int64
-	getPermAuthKeyId() int64
-	setPermAuthKeyId(kId int64)
+	getAuthKeyId(ctx context.Context) int64
+	getTempAuthKeyId(ctx context.Context) int64
+	getPermAuthKeyId(ctx context.Context) int64
+	setPermAuthKeyId(ctx context.Context, kId int64)
 
-	getUserId() int64
-	setUserId(userId int64)
+	getUserId(ctx context.Context) int64
+	setUserId(ctx context.Context, userId int64)
 
-	getLayer() int32
-	setLayer(layer int32)
+	getLayer(ctx context.Context) int32
+	setLayer(ctx context.Context, layer int32)
 
-	getClient() string
-	setClient(c string)
+	getClient(ctx context.Context) string
+	setClient(ctx context.Context, c string)
 
-	getLangpack() string
-	setLangpack(c string)
+	getLangpack(ctx context.Context) string
+	setLangpack(ctx context.Context, c string)
 
-	destroySession(sessionId int64) bool
+	destroySession(ctx context.Context, sessionId int64) bool
 
-	sendToRpcQueue(rpcMessage *rpcApiMessage)
+	sendToRpcQueue(ctx context.Context, rpcMessage *rpcApiMessage)
 
-	onBindPushSessionId(sessionId int64)
-	setOnline()
-	trySetOffline()
+	onBindPushSessionId(ctx context.Context, sessionId int64)
+	setOnline(ctx context.Context)
+	trySetOffline(ctx context.Context)
 }
 
 /*
@@ -219,28 +219,28 @@ func (c *session) checkGatewayIdExist(gateId string) bool {
 	return false
 }
 
-func (c *session) changeConnState(state int) {
+func (c *session) changeConnState(ctx context.Context, state int) {
 	c.connState = state
 	if c.isAndroidPush || c.isGeneric {
 		if state == kStateOnline {
-			c.cb.setOnline()
+			c.cb.setOnline(ctx)
 		} else if state == kStateOffline {
-			c.cb.trySetOffline()
+			c.cb.trySetOffline(ctx)
 		}
 	}
 }
 
-func (c *session) onSessionConnNew(id string) {
+func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	if c.connState != kStateOnline {
 		// c.sessionState = kSessionStateNew
-		c.changeConnState(kStateOnline)
+		c.changeConnState(ctx, kStateOnline)
 		c.addGatewayId(id)
 	}
 }
 
-func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, msg *mtproto.TLMessage2) {
+func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp string, salt int64, msg *mtproto.TLMessage2) {
 	// 1. check salt
-	if !c.checkBadServerSalt(gatewayId, salt, msg) {
+	if !c.checkBadServerSalt(ctx, gatewayId, salt, msg) {
 		return
 	}
 
@@ -267,7 +267,7 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 	*/
 	// tdesktop: code = 16, 17, 64会重发，我们不要检查container里的msgId和seqNo
 	//
-	if !c.checkBadMsgNotification(gatewayId, false, msg) {
+	if !c.checkBadMsgNotification(ctx, gatewayId, false, msg) {
 		// log.Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, gatewayId)
 		return
 	}
@@ -311,8 +311,8 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 	}
 
 	if c.sessionState == kSessionStateNew || minMsgId < c.firstMsgId {
-		logx.Infof("onNewSessionCreated - %#v, c: %s", msgs, c)
-		c.onNewSessionCreated(gatewayId, minMsgId)
+		logx.WithContext(ctx).Infof("onNewSessionCreated - %#v, c: %s", msgs, c)
+		c.onNewSessionCreated(ctx, gatewayId, minMsgId)
 		if c.firstMsgId != 0 {
 			c.firstMsgId = minMsgId
 		}
@@ -321,7 +321,7 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 	}
 
 	defer func() {
-		c.sendQueueToGateway(gatewayId)
+		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
 
 		//pendings := make([]*outboxMsg, 0)
@@ -352,13 +352,13 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 		if m2.MsgId < c.firstMsgId {
 			continue
 		}
-		if !c.checkBadMsgNotification(gatewayId, true, m2) {
+		if !c.checkBadMsgNotification(ctx, gatewayId, true, m2) {
 			// log.Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, id)
 			continue
 		}
 
 		if m2.Object == nil {
-			logx.Errorf("obj is nil: %v", m2)
+			logx.WithContext(ctx).Errorf("obj is nil: %v", m2)
 			continue
 		}
 
@@ -373,7 +373,7 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 			inMsg := c.inQueue.AddMsgId(m2.MsgId)
 			if inMsg.state == NONE {
 				// 第一次收到
-				c.processMsg(gatewayId, clientIp, inMsg, m2.Object)
+				c.processMsg(ctx, gatewayId, clientIp, inMsg, m2.Object)
 			} else {
 				// TODO(@benqi): resend
 				// 已经收到，返回发送状态
@@ -384,54 +384,54 @@ func (c *session) onSessionMessageData(gatewayId, clientIp string, salt int64, m
 	}
 }
 
-func (c *session) processMsg(gatewayId, clientIp string, inMsg *inboxMsg, r mtproto.TLObject) {
+func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, inMsg *inboxMsg, r mtproto.TLObject) {
 	switch r.(type) {
 	case *mtproto.TLDestroyAuthKey: // 所有连接都有可能
-		c.onDestroyAuthKey(gatewayId, inMsg, r.(*mtproto.TLDestroyAuthKey))
+		c.onDestroyAuthKey(ctx, gatewayId, inMsg, r.(*mtproto.TLDestroyAuthKey))
 	case *mtproto.TLRpcDropAnswer: // 所有连接都有可能
-		c.onRpcDropAnswer(gatewayId, inMsg, r.(*mtproto.TLRpcDropAnswer))
+		c.onRpcDropAnswer(ctx, gatewayId, inMsg, r.(*mtproto.TLRpcDropAnswer))
 	case *mtproto.TLGetFutureSalts: // GENERIC
-		c.onGetFutureSalts(gatewayId, inMsg, r.(*mtproto.TLGetFutureSalts))
+		c.onGetFutureSalts(ctx, gatewayId, inMsg, r.(*mtproto.TLGetFutureSalts))
 	case *mtproto.TLPing: // android未用
-		c.onPing(gatewayId, inMsg, r.(*mtproto.TLPing))
+		c.onPing(ctx, gatewayId, inMsg, r.(*mtproto.TLPing))
 	case *mtproto.TLPingDelayDisconnect: // PUSH和GENERIC
-		c.onPingDelayDisconnect(gatewayId, inMsg, r.(*mtproto.TLPingDelayDisconnect))
+		c.onPingDelayDisconnect(ctx, gatewayId, inMsg, r.(*mtproto.TLPingDelayDisconnect))
 	case *mtproto.TLDestroySession: // GENERIC
-		c.onDestroySession(gatewayId, inMsg, r.(*mtproto.TLDestroySession))
+		c.onDestroySession(ctx, gatewayId, inMsg, r.(*mtproto.TLDestroySession))
 	case *mtproto.TLMsgsStateReq: // android未用
-		c.onMsgsStateReq(gatewayId, inMsg, r.(*mtproto.TLMsgsStateReq))
+		c.onMsgsStateReq(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgsStateReq))
 	case *mtproto.TLMsgsStateInfo: // android未用
 		c.onMsgsStateInfo(gatewayId, inMsg, r.(*mtproto.TLMsgsStateInfo))
 	case *mtproto.TLMsgsAllInfo: // android未用
 		c.onMsgsAllInfo(gatewayId, inMsg, r.(*mtproto.TLMsgsAllInfo))
 	case *mtproto.TLMsgResendReq: // 都有可能
-		c.onMsgResendReq(gatewayId, inMsg, r.(*mtproto.TLMsgResendReq))
+		c.onMsgResendReq(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgResendReq))
 	case *mtproto.TLMsgDetailedInfo: // 都有可能
 		c.onMsgDetailInfo(gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
 	case *mtproto.TLMsgNewDetailedInfo: // 都有可能
 		c.onMsgNewDetailInfo(gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
 	case *mtproto.TLInvokeWithLayer:
-		c.onInvokeWithLayer(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithLayer))
+		c.onInvokeWithLayer(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithLayer))
 	case *mtproto.TLInvokeAfterMsg:
-		c.onInvokeAfterMsg(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeAfterMsg))
+		c.onInvokeAfterMsg(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeAfterMsg))
 	case *mtproto.TLInvokeAfterMsgs:
-		c.onInvokeAfterMsgs(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeAfterMsgs))
+		c.onInvokeAfterMsgs(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeAfterMsgs))
 	case *mtproto.TLInvokeWithoutUpdates:
-		c.onInvokeWithoutUpdates(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithoutUpdates))
+		c.onInvokeWithoutUpdates(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithoutUpdates))
 	case *mtproto.TLInvokeWithMessagesRange:
-		c.onInvokeWithMessagesRange(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithMessagesRange))
+		c.onInvokeWithMessagesRange(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithMessagesRange))
 	case *mtproto.TLInvokeWithTakeout:
-		c.onInvokeWithTakeout(gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithTakeout))
+		c.onInvokeWithTakeout(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithTakeout))
 	case *mtproto.TLInitConnection:
-		c.onInitConnection(gatewayId, clientIp, inMsg, r.(*mtproto.TLInitConnection))
+		c.onInitConnection(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInitConnection))
 	case *mtproto.TLGzipPacked:
-		c.onRpcRequest(gatewayId, clientIp, inMsg, r.(*mtproto.TLGzipPacked).Obj)
+		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLGzipPacked).Obj)
 	default:
-		c.onRpcRequest(gatewayId, clientIp, inMsg, r)
+		c.onRpcRequest(ctx, gatewayId, clientIp, inMsg, r)
 	}
 }
 
-func (c *session) onSessionConnClose(id string) {
+func (c *session) onSessionConnClose(ctx context.Context, id string) {
 	var (
 		idx = -1
 	)
@@ -448,7 +448,7 @@ func (c *session) onSessionConnClose(id string) {
 	}
 
 	if len(c.gatewayIdList) == 0 {
-		c.changeConnState(kStateOffline)
+		c.changeConnState(ctx, kStateOffline)
 	}
 }
 
@@ -462,20 +462,22 @@ func (c *session) sessionClosed() bool {
 
 // ============================================================================================
 // return false, will delete this clientSession
-func (c *session) onTimer() bool {
+func (c *session) onTimer(ctx context.Context) bool {
 	date := time.Now().Unix()
 	// log.Debugf("onTimer - c: %s, outQ len: %d", c.String(), c.outQueue.oMsgs.Len())
 	gatewayId := c.getGatewayId()
 
 	timeoutIdList := c.pendingQueue.OnTimer()
 	for _, id := range timeoutIdList {
-		c.sendRpcResult(&mtproto.TLRpcResult{
-			ReqMsgId: id,
-			Result: &mtproto.TLRpcError{Data2: &mtproto.RpcError{
-				ErrorCode:    -503,
-				ErrorMessage: "Timeout",
-			}},
-		})
+		c.sendRpcResult(
+			ctx,
+			&mtproto.TLRpcResult{
+				ReqMsgId: id,
+				Result: &mtproto.TLRpcError{Data2: &mtproto.RpcError{
+					ErrorCode:    -503,
+					ErrorMessage: "Timeout",
+				}},
+			})
 	}
 
 	httpTimeOutList := c.httpQueue.PopTimeoutList()
@@ -483,7 +485,7 @@ func (c *session) onTimer() bool {
 		logx.Infof("timeoutList: %d", len(httpTimeOutList))
 	}
 	for _, ch := range httpTimeOutList {
-		c.sendHttpDirectToGateway(ch, false, emptyMsgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+		c.sendHttpDirectToGateway(ctx, ch, false, emptyMsgContainer, func(sentRaw *mtproto.TLMessageRawData) {
 			//
 		})
 	}
@@ -491,13 +493,13 @@ func (c *session) onTimer() bool {
 	if c.connState == kStateOnline {
 		if date >= c.closeDate {
 			// log.Debugf("closeDate: %s", c.String())
-			c.changeConnState(kStateOffline)
+			c.changeConnState(context.Background(), kStateOffline)
 		} else {
-			c.sendQueueToGateway(gatewayId)
+			c.sendQueueToGateway(ctx, gatewayId)
 		}
 	} else if c.connState == kStateOffline || c.connState == kStateNew {
 		if date >= c.closeDate+kCacheSessionTimeout {
-			c.changeConnState(kStateClose)
+			c.changeConnState(context.Background(), kStateClose)
 		}
 	}
 	return true
@@ -513,13 +515,13 @@ func (c *session) generateMessageSeqNo(increment bool) int32 {
 	}
 }
 
-func (c *session) sendRpcResultToQueue(gatewayId string, reqMsgId int64, result mtproto.TLObject) {
+func (c *session) sendRpcResultToQueue(ctx context.Context, gatewayId string, reqMsgId int64, result mtproto.TLObject) {
 	rpcResult := &mtproto.TLRpcResult{
 		ReqMsgId: reqMsgId,
 		Result:   result,
 	}
 	x := mtproto.NewEncodeBuf(500)
-	rpcResult.Encode(x, c.cb.getLayer())
+	rpcResult.Encode(x, c.cb.getLayer(ctx))
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(true),
 		Seqno: c.generateMessageSeqNo(true),
@@ -546,16 +548,16 @@ func (c *session) sendPushRpcResultToQueue(gatewayId string, reqMsgId int64, res
 	// cb(rawMsg)
 }
 
-func (c *session) sendPushToQueue(gatewayId string, pushMsgId int64, pushMsg mtproto.TLObject) {
+func (c *session) sendPushToQueue(ctx context.Context, gatewayId string, pushMsgId int64, pushMsg mtproto.TLObject) {
 	x := mtproto.NewEncodeBuf(512)
-	pushMsg.Encode(x, c.cb.getLayer())
+	pushMsg.Encode(x, c.cb.getLayer(ctx))
 	rawBytes := x.GetBuf()
 	if x.GetOffset() > 256 {
 		gzipPacked := &mtproto.TLGzipPacked{
 			PackedData: rawBytes,
 		}
 		x2 := mtproto.NewEncodeBuf(512)
-		gzipPacked.Encode(x2, c.cb.getLayer())
+		gzipPacked.Encode(x2, c.cb.getLayer(ctx))
 		rawBytes = x2.GetBuf()
 	}
 
@@ -568,9 +570,9 @@ func (c *session) sendPushToQueue(gatewayId string, pushMsgId int64, pushMsg mtp
 	c.outQueue.AddPushUpdates(pushMsgId, rawMsg)
 }
 
-func (c *session) sendRawToQueue(gatewayId string, msgId int64, confirm bool, rawMsg mtproto.TLObject) {
+func (c *session) sendRawToQueue(ctx context.Context, gatewayId string, msgId int64, confirm bool, rawMsg mtproto.TLObject) {
 	x := mtproto.NewEncodeBuf(512)
-	rawMsg.Encode(x, c.cb.getLayer())
+	rawMsg.Encode(x, c.cb.getLayer(ctx))
 	b := x.GetBuf()
 	rawMsg2 := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -581,10 +583,10 @@ func (c *session) sendRawToQueue(gatewayId string, msgId int64, confirm bool, ra
 	c.outQueue.AddNotifyMsg(msgId, confirm, rawMsg2)
 }
 
-func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
 	x := mtproto.NewEncodeBuf(512)
-	salt := c.cb.getCacheSalt().GetSalt()
-	obj.Encode(x, c.cb.getLayer())
+	salt := c.cb.getCacheSalt(ctx).GetSalt()
+	obj.Encode(x, c.cb.getLayer(ctx))
 	b := x.GetBuf()
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -594,9 +596,9 @@ func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj
 	}
 
 	rB, err := c.SendHttpDataToGateway(
-		context.Background(),
+		ctx,
 		ch,
-		c.cb.getTempAuthKeyId(),
+		c.cb.getTempAuthKeyId(ctx),
 		salt,
 		c.sessionId,
 		rawMsg)
@@ -610,10 +612,10 @@ func (c *session) sendHttpDirectToGateway(ch chan interface{}, confirm bool, obj
 	return rB, err
 }
 
-func (c *session) sendDirectToGateway(gatewayId string, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
 	x := mtproto.NewEncodeBuf(512)
-	salt := c.cb.getCacheSalt().GetSalt()
-	obj.Encode(x, c.cb.getLayer())
+	salt := c.cb.getCacheSalt(ctx).GetSalt()
+	obj.Encode(x, c.cb.getLayer(ctx))
 	b := x.GetBuf()
 
 	rawMsg := &mtproto.TLMessageRawData{
@@ -630,18 +632,18 @@ func (c *session) sendDirectToGateway(gatewayId string, confirm bool, obj mtprot
 
 	if !c.isHttp {
 		rB, err = c.SendDataToGateway(
-			context.Background(),
+			ctx,
 			gatewayId,
-			c.cb.getTempAuthKeyId(),
+			c.cb.getTempAuthKeyId(ctx),
 			salt,
 			c.sessionId,
 			rawMsg)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
 			rB, err = c.SendHttpDataToGateway(
-				context.Background(),
+				ctx,
 				ch,
-				c.cb.getTempAuthKeyId(),
+				c.cb.getTempAuthKeyId(ctx),
 				salt,
 				c.sessionId,
 				rawMsg)
@@ -657,8 +659,8 @@ func (c *session) sendDirectToGateway(gatewayId string, confirm bool, obj mtprot
 	return rB, err
 }
 
-func (c *session) sendRawDirectToGateway(gatewayId string, raw *mtproto.TLMessageRawData) (bool, error) {
-	salt := c.cb.getCacheSalt().GetSalt()
+func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, raw *mtproto.TLMessageRawData) (bool, error) {
+	salt := c.cb.getCacheSalt(ctx).GetSalt()
 
 	var (
 		rB  bool
@@ -666,18 +668,18 @@ func (c *session) sendRawDirectToGateway(gatewayId string, raw *mtproto.TLMessag
 	)
 	if !c.isHttp {
 		rB, err = c.SendDataToGateway(
-			context.Background(),
+			ctx,
 			gatewayId,
-			c.cb.getTempAuthKeyId(),
+			c.cb.getTempAuthKeyId(ctx),
 			salt,
 			c.sessionId,
 			raw)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
 			rB, err = c.SendHttpDataToGateway(
-				context.Background(),
+				ctx,
 				ch,
-				c.cb.getTempAuthKeyId(),
+				c.cb.getTempAuthKeyId(ctx),
 				salt,
 				c.sessionId,
 				raw)
@@ -690,7 +692,7 @@ func (c *session) sendRawDirectToGateway(gatewayId string, raw *mtproto.TLMessag
 	return rB, err
 }
 
-func (c *session) sendQueueToGateway(gatewayId string) {
+func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 	if gatewayId == "" {
 		return
 	}
@@ -712,7 +714,7 @@ func (c *session) sendQueueToGateway(gatewayId string) {
 
 	if len(pendings) == 1 {
 		logx.Infof("sendRawDirectToGateway - pendings[0]")
-		b, err = c.sendRawDirectToGateway(gatewayId, pendings[0].msg)
+		b, err = c.sendRawDirectToGateway(ctx, gatewayId, pendings[0].msg)
 	} else if len(pendings) > 1 {
 		msgContainer := &mtproto.TLMsgRawDataContainer{
 			Messages: make([]*mtproto.TLMessageRawData, 0, len(pendings)),
@@ -722,7 +724,7 @@ func (c *session) sendQueueToGateway(gatewayId string) {
 		}
 
 		logx.Infof("sendRawDirectToGateway - TLMsgRawDataContainer")
-		b, err = c.sendDirectToGateway(gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+		b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
 			// TODO(@benqi):
 		})
 

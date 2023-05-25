@@ -35,6 +35,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 	"github.com/zeromicro/go-zero/core/threading"
 
+	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
 	status2 "google.golang.org/grpc/status"
 )
@@ -77,6 +78,11 @@ type sessionData struct {
 	buf       []byte
 }
 
+type sessionDataCtx struct {
+	ctx         context.Context
+	sessionData sessionData
+}
+
 type sessionHttpData struct {
 	gatewayId  string
 	clientIp   string
@@ -86,10 +92,20 @@ type sessionHttpData struct {
 	resChannel chan interface{}
 }
 
+type sessionHttpDataCtx struct {
+	ctx             context.Context
+	sessionHttpData sessionHttpData
+}
+
 type syncRpcResultData struct {
 	sessionId   int64
 	clientMsgId int64
 	data        []byte
+}
+
+type syncRpcResultDataCtx struct {
+	ctx               context.Context
+	syncRpcResultData syncRpcResultData
 }
 
 type syncSessionData struct {
@@ -97,22 +113,37 @@ type syncSessionData struct {
 	data      *messageData
 }
 
+type syncSessionDataCtx struct {
+	ctx             context.Context
+	syncSessionData syncSessionData
+}
+
 type syncData struct {
 	needAndroidPush bool
 	data            *messageData
 }
 
-func makeSyncData(needAndroidPush bool, data *messageData) *syncData {
-	return &syncData{
-		needAndroidPush: needAndroidPush,
-		data:            data,
-	}
+type syncDataCtx struct {
+	ctx      context.Context
+	syncData syncData
 }
+
+//func makeSyncData(needAndroidPush bool, data *messageData) *syncData {
+//	return &syncData{
+//		needAndroidPush: needAndroidPush,
+//		data:            data,
+//	}
+//}
 
 type connData struct {
 	isNew     bool
 	gatewayId string
 	sessionId int64
+}
+
+type connDataCtx struct {
+	ctx      context.Context
+	connData connData
 }
 
 func (c *connData) DebugString() string {
@@ -192,15 +223,15 @@ func (s *authSessions) getNextPushId() (id int64) {
 	return
 }
 
-func (s *authSessions) getAuthKeyId() int64 {
+func (s *authSessions) getAuthKeyId(ctx context.Context) int64 {
 	return s.authKeyId
 }
 
-func (s *authSessions) getTempAuthKeyId() int64 {
+func (s *authSessions) getTempAuthKeyId(ctx context.Context) int64 {
 	return s.authKeyId
 }
 
-func (s *authSessions) getPermAuthKeyId() int64 {
+func (s *authSessions) getPermAuthKeyId(ctx context.Context) int64 {
 	if s.permAuthKeyId != 0 {
 		return s.permAuthKeyId
 	}
@@ -208,7 +239,7 @@ func (s *authSessions) getPermAuthKeyId() int64 {
 	return s.permAuthKeyId
 }
 
-func (s *authSessions) setPermAuthKeyId(kId int64) {
+func (s *authSessions) setPermAuthKeyId(ctx context.Context, kId int64) {
 	s.permAuthKeyId = kId
 	if kId != 0 {
 		s.permAuthKeyId = kId
@@ -216,62 +247,62 @@ func (s *authSessions) setPermAuthKeyId(kId int64) {
 	}
 }
 
-func (s *authSessions) getUserId() int64 {
+func (s *authSessions) getUserId(ctx context.Context) int64 {
 	return s.AuthUserId
 }
 
-func (s *authSessions) setUserId(userId int64) {
+func (s *authSessions) setUserId(ctx context.Context, userId int64) {
 	s.AuthUserId = userId
 	s.onBindUser(userId)
 }
 
-func (s *authSessions) getCacheSalt() *mtproto.TLFutureSalt {
+func (s *authSessions) getCacheSalt(ctx context.Context) *mtproto.TLFutureSalt {
 	return s.cacheSalt
 }
 
-func (s *authSessions) getLayer() int32 {
+func (s *authSessions) getLayer(ctx context.Context) int32 {
 	if s.Layer == 0 {
-		s.Layer, _ = s.Dao.GetCacheApiLayer(context.Background(), s.authKeyId)
+		s.Layer, _ = s.Dao.GetCacheApiLayer(ctx, s.authKeyId)
 	}
 	return s.Layer
 }
 
-func (s *authSessions) setLayer(layer int32) {
+func (s *authSessions) setLayer(ctx context.Context, layer int32) {
 	if layer != 0 {
 		s.Layer = layer
-		s.Dao.PutCacheApiLayer(context.Background(), s.authKeyId, layer)
+		s.Dao.PutCacheApiLayer(ctx, s.authKeyId, layer)
 	}
 }
 
-func (s *authSessions) getClient() string {
+func (s *authSessions) getClient(ctx context.Context) string {
 	if s.Client == "" {
-		s.Client = s.Dao.GetCacheClient(context.Background(), s.authKeyId)
+		s.Client = s.Dao.GetCacheClient(ctx, s.authKeyId)
 	}
 	return s.Client
 }
 
-func (s *authSessions) setClient(c string) {
+func (s *authSessions) setClient(ctx context.Context, c string) {
 	if c != "" {
 		s.Client = c
-		s.Dao.PutCacheClient(context.Background(), s.authKeyId, c)
+		s.Dao.PutCacheClient(ctx, s.authKeyId, c)
 	}
 }
 
-func (s *authSessions) getLangpack() string {
+func (s *authSessions) getLangpack(ctx context.Context) string {
 	if s.Langpack == "" {
-		s.Langpack = s.Dao.GetCacheLangpack(context.Background(), s.authKeyId)
+		s.Langpack = s.Dao.GetCacheLangpack(ctx, s.authKeyId)
 	}
 	return s.Langpack
 }
 
-func (s *authSessions) setLangpack(c string) {
+func (s *authSessions) setLangpack(ctx context.Context, c string) {
 	if c != "" {
 		s.Langpack = c
-		s.Dao.PutCacheLangpack(context.Background(), s.authKeyId, c)
+		s.Dao.PutCacheLangpack(ctx, s.authKeyId, c)
 	}
 }
 
-func (s *authSessions) destroySession(sessionId int64) bool {
+func (s *authSessions) destroySession(ctx context.Context, sessionId int64) bool {
 	// TODO(@benqi):
 	if _, ok := s.sessions[sessionId]; ok {
 		// s.updates.onGenericSessionClose(sess)
@@ -282,7 +313,7 @@ func (s *authSessions) destroySession(sessionId int64) bool {
 	return true
 }
 
-func (s *authSessions) sendToRpcQueue(rpcMessage *rpcApiMessage) {
+func (s *authSessions) sendToRpcQueue(ctx context.Context, rpcMessage *rpcApiMessage) {
 	s.rpcQueue.Push(rpcMessage)
 }
 
@@ -308,14 +339,14 @@ func (s *authSessions) onBindUser(userId int64) {
 	}
 }
 
-func (s *authSessions) onBindPushSessionId(sessionId int64) {
+func (s *authSessions) onBindPushSessionId(ctx context.Context, sessionId int64) {
 	if s.pushSessionId == 0 {
 		s.pushSessionId = sessionId
 	}
 	sess, _ := s.sessions[sessionId]
 	if sess != nil {
 		sess.isAndroidPush = true
-		sess.cb.setOnline()
+		sess.cb.setOnline(ctx)
 	}
 }
 
@@ -323,7 +354,7 @@ func (s *authSessions) onBindLayer(layer int32) {
 	s.Layer = layer
 }
 
-func (s *authSessions) setOnline() {
+func (s *authSessions) setOnline(ctx context.Context) {
 	//setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
 	date := time.Now().Unix()
 	if (s.onlineExpired == 0 || date > s.onlineExpired-kPingAddTimeout) && s.AuthUserId != 0 {
@@ -343,9 +374,9 @@ func (s *authSessions) setOnline() {
 					AuthKeyId:     s.authKeyId,
 					Gateway:       s.serverId,
 					Expired:       date + 60,
-					Layer:         s.getLayer(),
-					PermAuthKeyId: s.getPermAuthKeyId(),
-					Client:        s.getClient(),
+					Layer:         s.getLayer(ctx),
+					PermAuthKeyId: s.getPermAuthKeyId(ctx),
+					Client:        s.getClient(ctx),
 				},
 			})
 		s.onlineExpired = date + 60
@@ -357,7 +388,7 @@ func (s *authSessions) setOnline() {
 	}
 }
 
-func (s *authSessions) trySetOffline() {
+func (s *authSessions) trySetOffline(ctx context.Context) {
 	for _, sess := range s.sessions {
 		if (sess.isGeneric && sess.sessionOnline()) ||
 			(sess.isAndroidPush && sess.sessionOnline()) {
@@ -413,6 +444,8 @@ func (s *authSessions) runLoop() {
 
 		s.finish.Done()
 		close(s.closeChan)
+		close(s.sessionDataChan)
+		close(s.rpcDataChan)
 		s.finish.Wait()
 	}()
 
@@ -426,33 +459,33 @@ func (s *authSessions) runLoop() {
 			return
 
 		case sessionMsg, _ := <-s.sessionDataChan:
-			switch sessionMsg.(type) {
-			case *sessionData:
+			switch ctxData := sessionMsg.(type) {
+			case *sessionDataCtx:
 				threading.RunSafe(func() {
-					s.onSessionData(sessionMsg.(*sessionData))
+					s.onSessionData(ctxData.ctx, &ctxData.sessionData)
 				})
-			case *sessionHttpData:
+			case *sessionHttpDataCtx:
 				threading.RunSafe(func() {
-					s.onSessionHttpData(sessionMsg.(*sessionHttpData))
+					s.onSessionHttpData(ctxData.ctx, &ctxData.sessionHttpData)
 				})
-			case *syncRpcResultData:
+			case *syncRpcResultDataCtx:
 				threading.RunSafe(func() {
-					s.onSyncRpcResultData(sessionMsg.(*syncRpcResultData))
+					s.onSyncRpcResultData(ctxData.ctx, &ctxData.syncRpcResultData)
 				})
-			case *syncData:
+			case *syncDataCtx:
 				threading.RunSafe(func() {
-					s.onSyncData(sessionMsg.(*syncData))
+					s.onSyncData(ctxData.ctx, &ctxData.syncData)
 				})
-			case *syncSessionData:
+			case *syncSessionDataCtx:
 				threading.RunSafe(func() {
-					s.onSyncSessionData(sessionMsg.(*syncSessionData))
+					s.onSyncSessionData(ctxData.ctx, &ctxData.syncSessionData)
 				})
-			case *connData:
+			case *connDataCtx:
 				threading.RunSafe(func() {
 					if sessionMsg.(*connData).isNew {
-						s.onSessionNew(sessionMsg.(*connData))
+						s.onSessionNew(ctxData.ctx, &ctxData.connData)
 					} else {
-						s.onSessionClosed(sessionMsg.(*connData))
+						s.onSessionClosed(ctxData.ctx, &ctxData.connData)
 					}
 				})
 			default:
@@ -461,12 +494,12 @@ func (s *authSessions) runLoop() {
 		case rpcMessages, _ := <-s.rpcDataChan:
 			threading.RunSafe(func() {
 				result, _ := rpcMessages.(*rpcApiMessage)
-				s.onRpcResult(result)
+				s.onRpcResult(context.Background(), result)
 			})
 			// case <-time.After(100 * time.Millisecond):
 		case <-ticker.C:
 			threading.RunSafe(func() {
-				s.onTimer()
+				s.onTimer(context.Background())
 			})
 		}
 	}
@@ -485,7 +518,7 @@ func (s *authSessions) rpcRunLoop() {
 				// TODO: fix panic
 				request, _ := apiRequest.(*rpcApiMessage)
 				// log.Debugf("apiRequests: %s", request.DebugString())
-				if s.onRpcRequest(request) {
+				if s.onRpcRequest(context.Background(), request) {
 					s.rpcDataChan <- request
 				}
 			})
@@ -493,14 +526,14 @@ func (s *authSessions) rpcRunLoop() {
 	}
 }
 
-func (s *authSessions) onTimer() {
+func (s *authSessions) onTimer(ctx context.Context) {
 	for _, sess := range s.sessions {
 		if (sess.isGeneric && sess.sessionOnline()) ||
 			sess.isAndroidPush && sess.sessionOnline() {
-			s.setOnline()
+			s.setOnline(ctx)
 		}
 
-		sess.onTimer()
+		sess.onTimer(ctx)
 	}
 
 	for _, sess := range s.sessions {
@@ -516,65 +549,65 @@ func (s *authSessions) onTimer() {
 
 // ///////////////////////////////////////////////////////////////////////////////////////////////////
 // client
-func (s *authSessions) sessionClientNew(gatewayId string, sessionId int64) error {
+func (s *authSessions) sessionClientNew(ctx context.Context, gatewayId string, sessionId int64) error {
 	select {
-	case s.sessionDataChan <- &connData{true, gatewayId, sessionId}:
+	case s.sessionDataChan <- &connDataCtx{contextx.ValueOnlyFrom(ctx), connData{true, gatewayId, sessionId}}:
 		return nil
 	}
 	return nil
 }
 
-func (s *authSessions) sessionDataArrived(gatewayId, clientIp string, sessionId, salt int64, buf []byte) error {
+func (s *authSessions) sessionDataArrived(ctx context.Context, gatewayId, clientIp string, sessionId, salt int64, buf []byte) error {
 	select {
-	case s.sessionDataChan <- &sessionData{gatewayId, clientIp, sessionId, salt, buf}:
+	case s.sessionDataChan <- &sessionDataCtx{contextx.ValueOnlyFrom(ctx), sessionData{gatewayId, clientIp, sessionId, salt, buf}}:
 		return nil
 	}
 	return nil
 }
 
-func (s *authSessions) sessionHttpDataArrived(gatewayId, clientIp string, sessionId, salt int64, buf []byte, resChan chan interface{}) error {
+func (s *authSessions) sessionHttpDataArrived(ctx context.Context, gatewayId, clientIp string, sessionId, salt int64, buf []byte, resChan chan interface{}) error {
 	select {
-	case s.sessionDataChan <- &sessionHttpData{gatewayId, clientIp, sessionId, salt, buf, resChan}:
+	case s.sessionDataChan <- &sessionHttpDataCtx{contextx.ValueOnlyFrom(ctx), sessionHttpData{gatewayId, clientIp, sessionId, salt, buf, resChan}}:
 		return nil
 	}
 	return nil
 }
 
-func (s *authSessions) sessionClientClosed(gatewayId string, sessionId int64) error {
+func (s *authSessions) sessionClientClosed(ctx context.Context, gatewayId string, sessionId int64) error {
 	select {
-	case s.sessionDataChan <- &connData{false, gatewayId, sessionId}:
+	case s.sessionDataChan <- &connDataCtx{contextx.ValueOnlyFrom(ctx), connData{false, gatewayId, sessionId}}:
 		return nil
 	}
 	return nil
 }
 
 // push
-func (s *authSessions) syncRpcResultDataArrived(sessionId, clientMsgId int64, data []byte) error {
+func (s *authSessions) syncRpcResultDataArrived(ctx context.Context, sessionId, clientMsgId int64, data []byte) error {
 	select {
-	case s.sessionDataChan <- &syncRpcResultData{sessionId, clientMsgId, data}:
+	case s.sessionDataChan <- &syncRpcResultDataCtx{contextx.ValueOnlyFrom(ctx), syncRpcResultData{sessionId, clientMsgId, data}}:
 		return nil
 	}
 	return nil
 }
 
-func (s *authSessions) syncSessionDataArrived(sessionId int64, data *messageData) error {
+func (s *authSessions) syncSessionDataArrived(ctx context.Context, sessionId int64, data *messageData) error {
 	select {
-	case s.sessionDataChan <- &syncSessionData{sessionId, data}:
+	case s.sessionDataChan <- &syncSessionDataCtx{contextx.ValueOnlyFrom(ctx), syncSessionData{sessionId, data}}:
 		return nil
 	}
 	return nil
 }
 
-func (s *authSessions) syncDataArrived(needAndroidPush bool, data *messageData) error {
+func (s *authSessions) syncDataArrived(ctx context.Context, needAndroidPush bool, data *messageData) error {
 	select {
-	case s.sessionDataChan <- makeSyncData(needAndroidPush, data):
+	case s.sessionDataChan <- &syncDataCtx{contextx.ValueOnlyFrom(ctx), syncData{needAndroidPush, data}}:
 		return nil
 	}
 	return nil
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////////////////////
-func (s *authSessions) onSessionNew(connMsg *connData) {
+func (s *authSessions) onSessionNew(ctx context.Context, connMsg *connData) {
 	sess, ok := s.sessions[connMsg.sessionId]
 	if !ok {
 		logx.Infof("onSessionNew - newSession, conn: %s", connMsg.DebugString())
@@ -586,10 +619,10 @@ func (s *authSessions) onSessionNew(connMsg *connData) {
 		logx.Infof("onSessionNew - session found, conn: %s", connMsg.DebugString())
 	}
 
-	sess.onSessionConnNew(connMsg.gatewayId)
+	sess.onSessionConnNew(ctx, connMsg.gatewayId)
 }
 
-func (s *authSessions) onSessionData(sessionMsg *sessionData) {
+func (s *authSessions) onSessionData(ctx context.Context, sessionMsg *sessionData) {
 	var (
 		err error
 		// salt, sessionId int64
@@ -602,21 +635,21 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 	if err != nil {
 		// TODO(@benqi): close frontend conn??
 		// log.Error(err)
-		logx.Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, s, sessionMsg.gatewayId)
+		logx.WithContext(ctx).Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, s, sessionMsg.gatewayId)
 		return
 	}
 
 	// TODO(@benqi): load onNew
 	if s.cacheSalt == nil {
-		s.cacheSalt, s.cacheLastSalt, _ = s.Dao.GetOrFetchNewSalt(context.Background(), s.authKeyId)
+		s.cacheSalt, s.cacheLastSalt, _ = s.Dao.GetOrFetchNewSalt(ctx, s.authKeyId)
 	} else {
 		if now >= s.cacheSalt.GetValidUntil() {
-			s.cacheSalt, s.cacheLastSalt, _ = s.Dao.GetOrFetchNewSalt(context.Background(), s.authKeyId)
+			s.cacheSalt, s.cacheLastSalt, _ = s.Dao.GetOrFetchNewSalt(ctx, s.authKeyId)
 		}
 	}
 
 	if s.cacheSalt == nil {
-		logx.Infof("onSessionData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", s, sessionMsg.gatewayId)
+		logx.WithContext(ctx).Infof("onSessionData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", s, sessionMsg.gatewayId)
 		return
 	}
 
@@ -626,11 +659,11 @@ func (s *authSessions) onSessionData(sessionMsg *sessionData) {
 		s.sessions[sessionMsg.sessionId] = sess
 	}
 
-	sess.onSessionConnNew(sessionMsg.gatewayId)
-	sess.onSessionMessageData(sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
+	sess.onSessionConnNew(ctx, sessionMsg.gatewayId)
+	sess.onSessionMessageData(ctx, sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
 }
 
-func (s *authSessions) onSessionHttpData(sessionMsg *sessionHttpData) {
+func (s *authSessions) onSessionHttpData(ctx context.Context, sessionMsg *sessionHttpData) {
 	var (
 		err error
 		// salt, sessionId int64
@@ -669,46 +702,46 @@ func (s *authSessions) onSessionHttpData(sessionMsg *sessionHttpData) {
 
 	sess.isHttp = true
 	sess.httpQueue.Push(sessionMsg.resChannel)
-	sess.onSessionConnNew(sessionMsg.gatewayId)
-	sess.onSessionMessageData(sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
+	sess.onSessionConnNew(ctx, sessionMsg.gatewayId)
+	sess.onSessionMessageData(ctx, sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
 }
 
-func (s *authSessions) onSessionClosed(connMsg *connData) {
+func (s *authSessions) onSessionClosed(ctx context.Context, connMsg *connData) {
 	if sess, ok := s.sessions[connMsg.sessionId]; !ok {
-		logx.Errorf("onSessionClosed - session conn closed -  conn: %s", connMsg.DebugString())
+		logx.WithContext(ctx).Errorf("onSessionClosed - session conn closed -  conn: %s", connMsg.DebugString())
 	} else {
-		logx.Infof("onSessionClosed - conn: %s, sess: %s", connMsg.DebugString(), sess)
-		sess.onSessionConnClose(connMsg.gatewayId)
+		logx.WithContext(ctx).Infof("onSessionClosed - conn: %s, sess: %s", connMsg.DebugString(), sess)
+		sess.onSessionConnClose(ctx, connMsg.gatewayId)
 	}
 }
 
-func (s *authSessions) onSyncRpcResultData(syncMsg *syncRpcResultData) {
-	logx.Infof("onSyncRpcResultData - receive data: {sess: %s}",
+func (s *authSessions) onSyncRpcResultData(ctx context.Context, syncMsg *syncRpcResultData) {
+	logx.WithContext(ctx).Infof("onSyncRpcResultData - receive data: {sess: %s}",
 		s)
 
 	sess, _ := s.sessions[syncMsg.sessionId]
 	if sess != nil {
-		sess.onSyncRpcResultData(syncMsg.clientMsgId, syncMsg.data)
+		sess.onSyncRpcResultData(ctx, syncMsg.clientMsgId, syncMsg.data)
 	}
 }
 
-func (s *authSessions) onSyncSessionData(syncMsg *syncSessionData) {
-	logx.Infof("onSyncSessionData - receive data: {sess: %s}",
+func (s *authSessions) onSyncSessionData(ctx context.Context, syncMsg *syncSessionData) {
+	logx.WithContext(ctx).Infof("onSyncSessionData - receive data: {sess: %s}",
 		s)
 	sess, _ := s.sessions[syncMsg.sessionId]
 	if sess != nil {
 		// s.syncQueue.PushBack(syncMsg.data.obj)
-		sess.onSyncSessionData(syncMsg.data.obj)
+		sess.onSyncSessionData(ctx, syncMsg.data.obj)
 	}
 }
 
-func (s *authSessions) onSyncData(syncMsg *syncData) {
-	logx.Info("authSessions - ", reflect.TypeOf(syncMsg.data.obj))
+func (s *authSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
+	logx.WithContext(ctx).Info("authSessions - ", reflect.TypeOf(syncMsg.data.obj))
 	if upds, ok := syncMsg.data.obj.(*mtproto.Updates); ok {
 		if upds.PredicateName == mtproto.Predicate_updateAccountResetAuthorization {
-			logx.Infof("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
+			logx.WithContext(ctx).Infof("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
 			if s.AuthUserId != upds.GetUserId() {
-				logx.Errorf("upds -- ", upds)
+				logx.WithContext(ctx).Errorf("upds -- ", upds)
 			}
 			s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
 			s.DeleteByAuthKeyId(s.authKeyId)
@@ -729,17 +762,17 @@ func (s *authSessions) onSyncData(syncMsg *syncData) {
 	for _, sess2 := range s.sessions {
 		if sess2.isGeneric {
 			// genericSession = sess2
-			sess2.onSyncData(syncMsg.data.obj)
+			sess2.onSyncData(ctx, syncMsg.data.obj)
 		}
 		if sess2.isAndroidPush {
 			if syncMsg.needAndroidPush {
-				sess2.onSyncData(nil)
+				sess2.onSyncData(ctx, nil)
 			}
 		}
 	}
 }
 
-func (s *authSessions) onRpcResult(rpcResult *rpcApiMessage) {
+func (s *authSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	defer func() {
 		if err := recover(); err != nil {
 			logx.Errorf("tcp_server handle panic: %v\n%s", err, debug.Stack())
@@ -749,13 +782,13 @@ func (s *authSessions) onRpcResult(rpcResult *rpcApiMessage) {
 	// log.Debugf("onRpcResult - sessionId: ", rpcResult.sessionId)
 	if sess, ok := s.sessions[rpcResult.sessionId]; ok {
 		// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
-		sess.onRpcResult(rpcResult)
+		sess.onRpcResult(ctx, rpcResult)
 	} else {
 		logx.Errorf("onRpcResult - not found rpcSession by sessionId: ", rpcResult.sessionId)
 	}
 }
 
-func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
+func (s *authSessions) onRpcRequest(ctx context.Context, request *rpcApiMessage) bool {
 	var (
 		err       error
 		rpcResult mtproto.TLObject
@@ -771,9 +804,9 @@ func (s *authSessions) onRpcRequest(request *rpcApiMessage) bool {
 		UserId:        s.AuthUserId,
 		ClientMsgId:   request.reqMsgId,
 		Layer:         s.Layer,
-		Client:        s.getClient(),
-		Langpack:      s.getLangpack(),
-		PermAuthKeyId: s.getPermAuthKeyId(),
+		Client:        s.getClient(ctx),
+		Langpack:      s.getLangpack(ctx),
+		PermAuthKeyId: s.getPermAuthKeyId(ctx),
 	}
 
 	// TODO(@benqi): change state.

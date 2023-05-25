@@ -47,7 +47,7 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, r *sessionpb.TLSes
 		logx.WithContext(ctx).Errorf("session.pushUpdatesData - %v", err)
 		return nil, err
 	}
-	sessList.syncDataArrived(r.Notification, &messageData{obj: r.Updates})
+	sessList.syncDataArrived(ctx, r.Notification, &messageData{obj: r.Updates})
 
 	return mtproto.BoolTrue, nil
 }
@@ -71,7 +71,7 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, r *sessionp
 		logx.WithContext(ctx).Errorf("session.pushUpdatesData - %v", err)
 		return nil, err
 	}
-	sessList.syncSessionDataArrived(r.SessionId, &messageData{obj: r.Updates})
+	sessList.syncSessionDataArrived(ctx, r.SessionId, &messageData{obj: r.Updates})
 
 	return mtproto.BoolTrue, nil
 }
@@ -93,7 +93,7 @@ func (s *Service) SessionPushRpcResultData(ctx context.Context, r *sessionpb.TLS
 		logx.WithContext(ctx).Errorf("session.pushRpcResultData - %v", err)
 		return nil, err
 	}
-	sessList.syncRpcResultDataArrived(r.SessionId, r.ClientReqMsgId, r.RpcResultData)
+	sessList.syncRpcResultDataArrived(ctx, r.SessionId, r.ClientReqMsgId, r.RpcResultData)
 
 	return mtproto.BoolTrue, nil
 }

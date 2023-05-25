@@ -28,7 +28,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-/////////////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////
 func (c *session) checkContainer(msgId int64, seqno int32, container *mtproto.TLMsgContainer) int32 {
 	if c.inQueue.Lookup(msgId) != nil {
 		logx.Errorf("checkContainer - msgId collision: {msg_id: %d, seqno: %d}", msgId, seqno)
@@ -64,46 +64,47 @@ func (c *session) checkContainer(msgId int64, seqno int32, container *mtproto.TL
 	return 0
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//============================================================================================
-func (c *session) onNewSessionCreated(gatewayId string, msgId int64) {
-	logx.Infof("onNewSessionCreated - request data: %d", msgId)
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ============================================================================================
+func (c *session) onNewSessionCreated(ctx context.Context, gatewayId string, msgId int64) {
+	logx.WithContext(ctx).Infof("onNewSessionCreated - request data: %d", msgId)
 	newSessionCreated := mtproto.MakeTLNewSessionCreated(&mtproto.NewSession{
 		FirstMsgId: msgId,
 		UniqueId:   rand.Int63(),
-		ServerSalt: c.cb.getCacheSalt().GetSalt(),
+		ServerSalt: c.cb.getCacheSalt(ctx).GetSalt(),
 	})
 
-	logx.Infof("onNewSessionCreated - reply: {%v}", newSessionCreated)
+	logx.WithContext(ctx).Infof("onNewSessionCreated - reply: {%v}", newSessionCreated)
 
-	c.sendDirectToGateway(gatewayId, true, newSessionCreated, func(sentRaw *mtproto.TLMessageRawData) {
+	c.sendDirectToGateway(ctx, gatewayId, true, newSessionCreated, func(sentRaw *mtproto.TLMessageRawData) {
 		id2 := c.authSessions.getNextNotifyId()
 		sentMsg := c.outQueue.AddNotifyMsg(id2, true, sentRaw)
 		sentMsg.sent = 0
 	})
 }
 
-/* tdesktop
+/*
+	tdesktop
 
-void Instance::Private::performKeyDestroy(ShiftedDcId shiftedDcId) {
-	Expects(isKeysDestroyer());
+	void Instance::Private::performKeyDestroy(ShiftedDcId shiftedDcId) {
+		Expects(isKeysDestroyer());
 
-	_instance->send(MTPDestroy_auth_key(), rpcDone([this, shiftedDcId](const MTPDestroyAuthKeyRes &result) {
-		switch (result.type()) {
-		case mtpc_destroy_auth_key_ok: LOG(("MTP Info: key %1 destroyed.").arg(shiftedDcId)); break;
-		case mtpc_destroy_auth_key_fail: {
-			LOG(("MTP Error: key %1 destruction fail, leave it for now.").arg(shiftedDcId));
-			killSession(shiftedDcId);
-		} break;
-		case mtpc_destroy_auth_key_none: LOG(("MTP Info: key %1 already destroyed.").arg(shiftedDcId)); break;
-		}
-		emit _instance->keyDestroyed(shiftedDcId);
-	}), rpcFail([this, shiftedDcId](const RPCError &error) {
-		LOG(("MTP Error: key %1 destruction resulted in error: %2").arg(shiftedDcId).arg(error.type()));
-		emit _instance->keyDestroyed(shiftedDcId);
-		return true;
-	}), shiftedDcId);
-}
+		_instance->send(MTPDestroy_auth_key(), rpcDone([this, shiftedDcId](const MTPDestroyAuthKeyRes &result) {
+			switch (result.type()) {
+			case mtpc_destroy_auth_key_ok: LOG(("MTP Info: key %1 destroyed.").arg(shiftedDcId)); break;
+			case mtpc_destroy_auth_key_fail: {
+				LOG(("MTP Error: key %1 destruction fail, leave it for now.").arg(shiftedDcId));
+				killSession(shiftedDcId);
+			} break;
+			case mtpc_destroy_auth_key_none: LOG(("MTP Info: key %1 already destroyed.").arg(shiftedDcId)); break;
+			}
+			emit _instance->keyDestroyed(shiftedDcId);
+		}), rpcFail([this, shiftedDcId](const RPCError &error) {
+			LOG(("MTP Error: key %1 destruction resulted in error: %2").arg(shiftedDcId).arg(error.type()));
+			emit _instance->keyDestroyed(shiftedDcId);
+			return true;
+		}), shiftedDcId);
+	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 destroy_auth_key#d1435160 = DestroyAuthKeyRes;
@@ -111,9 +112,8 @@ destroy_auth_key#d1435160 = DestroyAuthKeyRes;
 destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
 destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
 destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
-
 */
-func (c *session) onDestroyAuthKey(gatewayId string, msgId *inboxMsg, destroyAuthKey *mtproto.TLDestroyAuthKey) {
+func (c *session) onDestroyAuthKey(ctx context.Context, gatewayId string, msgId *inboxMsg, destroyAuthKey *mtproto.TLDestroyAuthKey) {
 	logx.Infof("onDestroyAuthKey - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -126,11 +126,11 @@ func (c *session) onDestroyAuthKey(gatewayId string, msgId *inboxMsg, destroyAut
 	// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
 	// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
 	res := mtproto.MakeTLDestroyAuthKeyOk(nil).To_DestroyAuthKeyRes()
-	c.sendRpcResultToQueue(gatewayId, msgId.msgId, res)
+	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, res)
 	msgId.state = RECEIVED | ACKNOWLEDGED
 }
 
-func (c *session) onPing(gatewayId string, msgId *inboxMsg, ping *mtproto.TLPing) {
+func (c *session) onPing(ctx context.Context, gatewayId string, msgId *inboxMsg, ping *mtproto.TLPing) {
 	logx.Infof("onPing - request data: {sess: %s, gatewayId: %s, msg_id: %s, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -143,13 +143,13 @@ func (c *session) onPing(gatewayId string, msgId *inboxMsg, ping *mtproto.TLPing
 		PingId: ping.PingId,
 	}}
 
-	c.sendRawToQueue(gatewayId, msgId.msgId, false, pong)
+	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, pong)
 	msgId.state = RECEIVED | NEED_NO_ACK
 
 	c.closeDate = time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
 }
 
-func (c *session) onPingDelayDisconnect(gatewayId string, msgId *inboxMsg, pingDelayDisconnect *mtproto.TLPingDelayDisconnect) {
+func (c *session) onPingDelayDisconnect(ctx context.Context, gatewayId string, msgId *inboxMsg, pingDelayDisconnect *mtproto.TLPingDelayDisconnect) {
 	logx.Infof("onPingDelayDisconnect - request data: {sess: %s, gatewayId: %s, msg_id: %s, request: {%s}}",
 		c,
 		gatewayId,
@@ -161,7 +161,7 @@ func (c *session) onPingDelayDisconnect(gatewayId string, msgId *inboxMsg, pingD
 		PingId: pingDelayDisconnect.PingId,
 	}}
 
-	c.sendRawToQueue(gatewayId, msgId.msgId, false, pong)
+	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, pong)
 	msgId.state = RECEIVED | NEED_NO_ACK
 
 	willCloseDate := time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
@@ -233,7 +233,7 @@ func (c *session) onHttpWait(gatewayId string, msgId int64, seqNo int32, request
 	// c.manager.updatesSession.SubscribeHttpUpdates(c, connID)
 }
 
-func (c *session) onDestroySession(gatewayId string, msgId *inboxMsg, request *mtproto.TLDestroySession) {
+func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLDestroySession) {
 	logx.Infof("onDestroySession - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -260,22 +260,22 @@ func (c *session) onDestroySession(gatewayId string, msgId *inboxMsg, request *m
 		return
 	}
 
-	if c.cb.destroySession(request.GetSessionId()) {
+	if c.cb.destroySession(ctx, request.GetSessionId()) {
 		destroySessionOk := mtproto.MakeTLDestroySessionOk(&mtproto.DestroySessionRes{
 			SessionId: request.SessionId,
 		}).To_DestroySessionRes()
-		c.sendRawToQueue(gatewayId, msgId.msgId, false, destroySessionOk)
+		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, destroySessionOk)
 	} else {
 		destroySessionNone := mtproto.MakeTLDestroySessionNone(&mtproto.DestroySessionRes{
 			SessionId: request.SessionId,
 		}).To_DestroySessionRes()
-		c.sendRawToQueue(gatewayId, msgId.msgId, false, destroySessionNone)
+		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, destroySessionNone)
 	}
 
 	msgId.state = RECEIVED | NEED_NO_ACK
 }
 
-func (c *session) onGetFutureSalts(gatewayId string, msgId *inboxMsg, request *mtproto.TLGetFutureSalts) {
+func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLGetFutureSalts) {
 	logx.Infof("onGetFutureSalts - request data: {sess: %s, gateway_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
@@ -283,7 +283,7 @@ func (c *session) onGetFutureSalts(gatewayId string, msgId *inboxMsg, request *m
 		msgId.seqNo,
 		request)
 
-	salts, err := c.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(), request.Num)
+	salts, err := c.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(ctx), request.Num)
 	if err != nil {
 		logx.Errorf("getFutureSalts error: %v", err)
 		return
@@ -296,18 +296,18 @@ func (c *session) onGetFutureSalts(gatewayId string, msgId *inboxMsg, request *m
 	}).To_FutureSalts()
 
 	logx.Infof("onGetFutureSalts - reply data: %s", futureSalts.DebugString())
-	c.sendRawToQueue(gatewayId, msgId.msgId, false, futureSalts)
+	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, futureSalts)
 	msgId.state = RECEIVED | NEED_NO_ACK
 }
 
 // sendToClient:
-// 	rpc_answer_unknown#5e2ad36e = RpcDropAnswer;
-// 	rpc_answer_dropped_running#cd78e586 = RpcDropAnswer;
-// 	rpc_answer_dropped#a43ad8b7 msg_id:long seq_no:int bytes:int = RpcDropAnswer;
+//
+//	rpc_answer_unknown#5e2ad36e = RpcDropAnswer;
+//	rpc_answer_dropped_running#cd78e586 = RpcDropAnswer;
+//	rpc_answer_dropped#a43ad8b7 msg_id:long seq_no:int bytes:int = RpcDropAnswer;
 //
 // and both of these responses require an acknowledgment from the client.
-//
-func (c *session) onRpcDropAnswer(gatewayId string, msgId *inboxMsg, request *mtproto.TLRpcDropAnswer) {
+func (c *session) onRpcDropAnswer(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLRpcDropAnswer) {
 	logx.Infof("onRpcDropAnswer - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
@@ -354,6 +354,6 @@ func (c *session) onRpcDropAnswer(gatewayId string, msgId *inboxMsg, request *mt
 		PredicateName: mtproto.Predicate_rpc_answer_unknown,
 	}
 
-	c.sendRpcResultToQueue(gatewayId, msgId.msgId, rpcAnswer)
+	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcAnswer)
 	msgId.state = RECEIVED | ACKNOWLEDGED
 }
