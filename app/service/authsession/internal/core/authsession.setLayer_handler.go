@@ -27,7 +27,8 @@ import (
 // authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
 func (c *AuthsessionCore) AuthsessionSetLayer(in *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error) {
 	var (
-		inKeyId = in.GetAuthKeyId()
+		setLayer = in
+		inKeyId  = in.GetAuthKeyId()
 	)
 
 	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
@@ -39,7 +40,8 @@ func (c *AuthsessionCore) AuthsessionSetLayer(in *authsession.TLAuthsessionSetLa
 		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
-	err = c.svcCtx.Dao.SetLayer(c.ctx, in)
+	setLayer.AuthKeyId = keyData.PermAuthKeyId
+	err = c.svcCtx.Dao.SetLayer(c.ctx, setLayer)
 	if err != nil {
 		c.Logger.Errorf("setLayer(%d, %d) is error: %v", inKeyId, in.Layer, err)
 		return nil, err

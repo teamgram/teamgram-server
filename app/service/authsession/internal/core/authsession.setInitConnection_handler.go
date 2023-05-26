@@ -27,7 +27,8 @@ import (
 // authsession.setInitConnection auth_key_id:long ip:string api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = Bool;
 func (c *AuthsessionCore) AuthsessionSetInitConnection(in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error) {
 	var (
-		inKeyId = in.GetAuthKeyId()
+		initConnection = in
+		inKeyId        = in.GetAuthKeyId()
 	)
 
 	keyData, err := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, inKeyId)
@@ -39,6 +40,7 @@ func (c *AuthsessionCore) AuthsessionSetInitConnection(in *authsession.TLAuthses
 		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
+	initConnection.AuthKeyId = keyData.PermAuthKeyId
 	err = c.svcCtx.Dao.SetInitConnection(c.ctx, in)
 	if err != nil {
 		c.Logger.Errorf("setInitConnection(%d) is error: %v", inKeyId, err)
