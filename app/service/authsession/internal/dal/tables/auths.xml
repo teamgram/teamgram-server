@@ -3,9 +3,9 @@
     <operation name="InsertOrUpdateLayer">
         <sql>
             INSERT INTO auths
-                (auth_key_id, layer, client_ip, date_active)
+                (auth_key_id, layer, api_id, params, client_ip, date_active)
             VALUES
-                (:auth_key_id, :layer, :client_ip, :date_active)
+                (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active)
             ON DUPLICATE KEY UPDATE
                 layer = VALUES(layer),
                 client_ip = VALUES(client_ip),

@@ -37,11 +37,11 @@ func NewAuthsDAO(db *sqlx.DB) *AuthsDAO {
 }
 
 // InsertOrUpdateLayer
-// insert into auths(auth_key_id, layer, client_ip, date_active) values (:auth_key_id, :layer, :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
+// insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdateLayer(ctx context.Context, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auths(auth_key_id, layer, client_ip, date_active) values (:auth_key_id, :layer, :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
+		query = "insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
 		r     sql.Result
 	)
 
@@ -65,11 +65,11 @@ func (dao *AuthsDAO) InsertOrUpdateLayer(ctx context.Context, do *dataobject.Aut
 }
 
 // InsertOrUpdateLayerTx
-// insert into auths(auth_key_id, layer, client_ip, date_active) values (:auth_key_id, :layer, :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
+// insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
 // TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdateLayerTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auths(auth_key_id, layer, client_ip, date_active) values (:auth_key_id, :layer, :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
+		query = "insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
 		r     sql.Result
 	)
 
