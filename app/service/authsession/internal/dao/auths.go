@@ -61,13 +61,6 @@ type CacheAuthData struct {
 	BindUser *BindUser                  `json:"bind_user,omitempty"`
 }
 
-//func (c *CacheAuthData) ClientSession() *authsession.ClientSession {
-//	if c == nil {
-//		return nil
-//	}
-//	return c.Client
-//}
-
 func (c *CacheAuthData) AuthKeyId() int64 {
 	return c.Client.GetAuthKeyId()
 }

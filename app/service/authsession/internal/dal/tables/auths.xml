@@ -20,6 +20,8 @@
             VALUES
                 (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active)
             ON DUPLICATE KEY UPDATE
+                api_id = VALUES(api_id),
+                device_model = VALUES(device_model),
                 system_version = VALUES(system_version),
                 app_version=VALUES(app_version),
                 system_lang_code = VALUES(system_lang_code),
