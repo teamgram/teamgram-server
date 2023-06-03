@@ -131,7 +131,7 @@ func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 	}
 }
 
-func (d *Dao) makeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
+func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 	userData := mtproto.MakeTLUserData(&mtproto.UserData{
 		Id:                userDO.Id,
 		AccessHash:        userDO.AccessHash,
@@ -176,7 +176,7 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		cacheData              = NewCacheUserData()
 	)
 
-	userData := d.makeUserDataByDO(do)
+	userData := d.MakeUserDataByDO(do)
 	if do.Restricted {
 		jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
 	}

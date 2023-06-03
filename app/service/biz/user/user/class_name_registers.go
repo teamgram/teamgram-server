@@ -89,6 +89,7 @@ const (
 	Predicate_user_updateBotData                    = "user_updateBotData"
 	Predicate_user_getImmutableUserV2               = "user_getImmutableUserV2"
 	Predicate_user_getMutableUsersV2                = "user_getMutableUsersV2"
+	Predicate_user_createNewTestUser                = "user_createNewTestUser"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -404,6 +405,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1795585240, // 0x94f98b28
 
 	},
+	Predicate_user_createNewTestUser: {
+		0: 1282329771, // 0x4c6eccab
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -485,6 +490,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1174586898: Predicate_user_updateBotData,                    // 0xb9fd39ee
 	806009420:   Predicate_user_getImmutableUserV2,               // 0x300aba4c
 	-1795585240: Predicate_user_getMutableUsersV2,                // 0x94f98b28
+	1282329771:  Predicate_user_createNewTestUser,                // 0x4c6eccab
 
 }
 

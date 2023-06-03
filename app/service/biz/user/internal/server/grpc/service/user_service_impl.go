@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1112,3 +1113,19 @@ func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.getMutableUsersV2 - reply: %s", r.DebugString())
 	return r, err
 }
+
+// UserCreateNewTestUser
+// user.createNewTestUser secret_key_id:long min_id:long max_id:long = ImmutableUser;
+func (s *Service) UserCreateNewTestUser(ctx context.Context, request *user.TLUserCreateNewTestUser) (*mtproto.ImmutableUser, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.createNewTestUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserCreateNewTestUser(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.createNewTestUser - reply: %s", r.DebugString())
+	return r, err
+}
+

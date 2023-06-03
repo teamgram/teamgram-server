@@ -422,6 +422,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1795585240,
 		}
 	},
+	1282329771: func() mtproto.TLObject { // 0x4c6eccab
+		return &TLUserCreateNewTestUser{
+			Constructor: 1282329771,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4880,6 +4885,54 @@ func (m *TLUserGetMutableUsersV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserGetMutableUsersV2) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserCreateNewTestUser
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserCreateNewTestUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x4c6eccab:
+		x.UInt(0x4c6eccab)
+
+		// no flags
+
+		x.Long(m.GetSecretKeyId())
+		x.Long(m.GetMinId())
+		x.Long(m.GetMaxId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserCreateNewTestUser) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserCreateNewTestUser) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x4c6eccab:
+
+		// not has flags
+
+		m.SecretKeyId = dBuf.Long()
+		m.MinId = dBuf.Long()
+		m.MaxId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserCreateNewTestUser) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

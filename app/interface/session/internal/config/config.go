@@ -11,13 +11,11 @@ package config
 
 import (
 	"github.com/teamgram/teamgram-server/pkg/conf"
-	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	Cache           cache.CacheConf
 	AuthSession     zrpc.RpcClientConf
 	StatusClient    zrpc.RpcClientConf
 	GatewayClient   zrpc.RpcClientConf

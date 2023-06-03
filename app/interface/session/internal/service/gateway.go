@@ -73,7 +73,7 @@ func (c *Gateway) SendDataToGate(ctx context.Context, authKeyId, sessionId int64
 		res *mtproto.Bool
 	)
 
-	res, err = c.client.GatewaySendDataToGateway(context.Background(), &gateway.TLGatewaySendDataToGateway{
+	res, err = c.client.GatewaySendDataToGateway(ctx, &gateway.TLGatewaySendDataToGateway{
 		AuthKeyId: authKeyId,
 		SessionId: sessionId,
 		Payload:   payload,
@@ -88,26 +88,3 @@ func (c *Gateway) SendDataToGate(ctx context.Context, authKeyId, sessionId int64
 	b = mtproto.FromBool(res)
 	return
 }
-
-//// NewGateway
-//// NewComet new a comet.
-//func NewGateway(data *naming.Instance, conf *Config, options gatewayOptions) (*Gateway, error) {
-//	c := &Gateway{
-//		serverID: data.Hostname,
-//	}
-//	var grpcAddr string
-//	for _, addrs := range data.Addrs {
-//		u, err := url.Parse(addrs)
-//		if err == nil && u.Scheme == "grpc" {
-//			grpcAddr = u.Host
-//		}
-//	}
-//	if grpcAddr == "" {
-//		return nil, fmt.Errorf("invalid grpc address:%v", data.Addrs)
-//	}
-//	var err error
-//	if c.client, err = gateway_client.NewClient(grpcAddr, conf.WardenClient); err != nil {
-//		return nil, err
-//	}
-//	return c, nil
-//}

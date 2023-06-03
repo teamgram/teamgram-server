@@ -97,7 +97,7 @@ func (d *Dao) CreateNewUserV2(
 		userDO.Id = lastInsertId
 	}
 
-	cacheUserData.UserData = d.makeUserDataByDO(userDO)
+	cacheUserData.UserData = d.MakeUserDataByDO(userDO)
 	cacheUserData.CachesPrivacyKeyRules = append(
 		cacheUserData.CachesPrivacyKeyRules,
 		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{

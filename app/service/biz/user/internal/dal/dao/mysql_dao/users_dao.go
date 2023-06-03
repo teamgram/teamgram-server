@@ -92,6 +92,62 @@ func (dao *UsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId
 	return
 }
 
+// InsertTestUser
+// insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) InsertTestUser(ctx context.Context, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		r     sql.Result
+	)
+
+	r, err = dao.db.NamedExec(ctx, query, do)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("namedExec in InsertTestUser(%v), error: %v", do, err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("lastInsertId in InsertTestUser(%v)_error: %v", do, err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in InsertTestUser(%v)_error: %v", do, err)
+	}
+
+	return
+}
+
+// InsertTestUserTx
+// insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) InsertTestUserTx(tx *sqlx.Tx, do *dataobject.UsersDO) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into users(id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot) values (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)"
+		r     sql.Result
+	)
+
+	r, err = tx.NamedExec(query, do)
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("namedExec in InsertTestUser(%v), error: %v", do, err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("lastInsertId in InsertTestUser(%v)_error: %v", do, err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in InsertTestUser(%v)_error: %v", do, err)
+	}
+
+	return
+}
+
 // SelectByPhoneNumber
 // select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where phone = :phone limit 1
 // TODO(@benqi): sqlmap
@@ -129,6 +185,30 @@ func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobje
 	if err != nil {
 		if err != sqlx.ErrNotFound {
 			logx.WithContext(ctx).Errorf("queryx in SelectById(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
+	} else {
+		rValue = do
+	}
+
+	return
+}
+
+// SelectNextTestUserId
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where id < :maxId order by id desc limit 1
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) SelectNextTestUserId(ctx context.Context, maxId int64) (rValue *dataobject.UsersDO, err error) {
+	var (
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, deleted, delete_reason from users where id < ? order by id desc limit 1"
+		do    = &dataobject.UsersDO{}
+	)
+	err = dao.db.QueryRowPartial(ctx, do, query, maxId)
+
+	if err != nil {
+		if err != sqlx.ErrNotFound {
+			logx.WithContext(ctx).Errorf("queryx in SelectNextTestUserId(_), error: %v", err)
 			return
 		} else {
 			err = nil
