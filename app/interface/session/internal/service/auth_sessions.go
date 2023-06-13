@@ -482,7 +482,7 @@ func (s *authSessions) runLoop() {
 				})
 			case *connDataCtx:
 				threading.RunSafe(func() {
-					if sessionMsg.(*connData).isNew {
+					if ctxData.connData.isNew {
 						s.onSessionNew(ctxData.ctx, &ctxData.connData)
 					} else {
 						s.onSessionClosed(ctxData.ctx, &ctxData.connData)
