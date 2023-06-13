@@ -115,7 +115,7 @@ docker-compose up -d
 Please report bugs, concerns, suggestions by issues, or join telegram group **[Teamgram](https://t.me/+TjD5LZJ5XLRlCYLF)** to discuss problems around source code.
 
 ## Notes
-If need enterprise edition::
+If need enterprise edition:
 
 - sticker/theme/wallpaper/reactions/2fa/sms/push(apns/web/fcm)/web...
 - channel/megagroup
