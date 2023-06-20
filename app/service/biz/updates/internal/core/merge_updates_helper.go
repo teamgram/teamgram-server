@@ -48,6 +48,7 @@ type mergeUpdatesHelper struct {
 	readMessagesContents  *list.Element
 	folderPeers           *list.Element
 	pinnedMessages        *list.Element
+	phoneCallRequest      *list.Element
 	otherUpdates          *list.List
 }
 
@@ -182,6 +183,11 @@ func (m *mergeUpdatesHelper) merge(update *mtproto.Update, pts int32) {
 	case mtproto.Predicate_updatePinnedChannelMessages:
 		// updatePinnedChannelMessages#8588878b flags:# pinned:flags.0?true channel_id:int messages:Vector<int> pts:int pts_count:int = Update;
 		// ignore
+	case mtproto.Predicate_phoneCallRequested:
+		if m.phoneCallRequest != nil {
+			m.otherUpdates.Remove(m.phoneCallRequest)
+		}
+		m.phoneCallRequest = m.otherUpdates.PushBack(update)
 	default:
 		// TODO: merge
 		m.otherUpdates.PushBack(update)
