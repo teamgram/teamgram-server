@@ -183,6 +183,19 @@ func (m *mergeUpdatesHelper) merge(update *mtproto.Update, pts int32) {
 	case mtproto.Predicate_updatePinnedChannelMessages:
 		// updatePinnedChannelMessages#8588878b flags:# pinned:flags.0?true channel_id:int messages:Vector<int> pts:int pts_count:int = Update;
 		// ignore
+	case mtproto.Predicate_updatePhoneCall:
+		switch update.GetPhoneCall().GetPredicateName() {
+		case mtproto.Predicate_phoneCallRequested:
+			if m.phoneCallRequest != nil {
+				m.otherUpdates.Remove(m.phoneCallRequest)
+			}
+			m.phoneCallRequest = m.otherUpdates.PushBack(update)
+		case mtproto.Predicate_phoneCallDiscarded:
+			if m.phoneCallRequest != nil {
+				m.otherUpdates.Remove(m.phoneCallRequest)
+				m.phoneCallRequest = nil
+			}
+		}
 	default:
 		// TODO: merge
 		m.otherUpdates.PushBack(update)
