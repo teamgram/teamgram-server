@@ -40,6 +40,7 @@ func (c *InboxCore) InboxDeleteMessagesToInbox(in *inbox.TLInboxDeleteMessagesTo
 					Messages:  idList,
 					Pts_INT32: c.svcCtx.Dao.IDGenClient2.NextNPtsId(ctx, userId, len(idList)),
 					PtsCount:  int32(len(idList)),
+					PeerId:    mtproto.MakePeerUser(in.FromId),
 				}).To_Update()),
 			})
 		})
