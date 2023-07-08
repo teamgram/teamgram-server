@@ -13,6 +13,7 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -21,24 +22,21 @@ import (
 
 const (
 	chatKeyPrefix            = "chat"
-	chatParticipantKeyPrefix = "chat_participant2"
+	chatParticipantKeyPrefix = "chat_participant.2"
 )
 
 type ChatCacheData struct {
 	ChatData              *mtproto.ImmutableChat `json:"chat_data"`
 	ChatParticipantIdList []int64                `json:"chat_participant_id_list"`
-}
-
-func genChatCacheKey(chatId int64) string {
-	return fmt.Sprintf("%s_%d", chatKeyPrefix, chatId)
+	BotIdList             []int64                `json:"bot_id_list"`
 }
 
 func (d *Dao) GetChatCacheKey(chatId int64) string {
-	return fmt.Sprintf("%s_%d", chatKeyPrefix, chatId)
+	return fmt.Sprintf("%s#%d", chatKeyPrefix, chatId)
 }
 
 func genChatParticipantCacheKey(chatId, chatParticipantId int64) string {
-	return fmt.Sprintf("%s_%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
+	return fmt.Sprintf("%s#%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
 }
 
 func (d *Dao) GetChatParticipantCacheKey(chatId, chatParticipantId int64) string {
@@ -50,10 +48,19 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 		chatData = &ChatCacheData{}
 	)
 
+	getChatDataIdListF := func(id int64) {
+		d.ChatParticipantsDAO.SelectListWithCB(ctx, id, func(i int, v *dataobject.ChatParticipantsDO) {
+			chatData.ChatParticipantIdList = append(chatData.ChatParticipantIdList, v.UserId)
+			if v.State == 0 && v.IsBot {
+				chatData.BotIdList = append(chatData.BotIdList, v.UserId)
+			}
+		})
+	}
+
 	err := d.CachedConn.QueryRow(
 		ctx,
 		chatData,
-		genChatCacheKey(chatId),
+		d.GetChatCacheKey(chatId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			do2, err := d.ChatsDAO.Select(ctx, chatId)
 			if err != nil {
@@ -72,10 +79,10 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 						})
 					},
 					func() {
-						cacheData.ChatParticipantIdList, _ = d.ChatParticipantsDAO.SelectChatParticipantIdList(ctx, chatId)
+						getChatDataIdListF(chatId)
 					})
 			} else {
-				cacheData.ChatParticipantIdList, _ = d.ChatParticipantsDAO.SelectChatParticipantIdList(ctx, chatId)
+				getChatDataIdListF(chatId)
 			}
 
 			return nil
@@ -184,7 +191,7 @@ func (d *Dao) PutMutableChat(ctx context.Context, chat *mtproto.MutableChat) err
 
 	mr.ForEach(
 		func(source chan<- interface{}) {
-			source <- &kv{genChatCacheKey(chat.Id()), cacheData}
+			source <- &kv{d.GetChatCacheKey(chat.Id()), cacheData}
 			for _, v := range chat.ChatParticipants {
 				source <- &kv{genChatParticipantCacheKey(v.ChatId, v.UserId), v}
 			}

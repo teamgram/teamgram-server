@@ -77,6 +77,7 @@ func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatPa
 		KickedAt:        chatParticipantsDO.KickedAt,
 		LeftAt:          chatParticipantsDO.LeftAt,
 		AdminRights:     nil,
+		IsBot:           chatParticipantsDO.IsBot,
 		Date:            chatParticipantsDO.Date2,
 	}
 

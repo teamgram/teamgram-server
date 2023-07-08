@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2023-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/internal/dal/dataobject"
@@ -21,21 +23,25 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type ChatParticipantsDAO struct {
 	db *sqlx.DB
 }
 
 func NewChatParticipantsDAO(db *sqlx.DB) *ChatParticipantsDAO {
-	return &ChatParticipantsDAO{db}
+	return &ChatParticipantsDAO{
+		db: db,
+	}
 }
 
 // Insert
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
 	)
 
@@ -59,11 +65,11 @@ func (dao *ChatParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatP
 }
 
 // InsertTx
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
 	)
 
@@ -87,11 +93,11 @@ func (dao *ChatParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatPartici
 }
 
 // InsertBulk
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertBulk(ctx context.Context, doList []*dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
 	)
 
@@ -119,11 +125,11 @@ func (dao *ChatParticipantsDAO) InsertBulk(ctx context.Context, doList []*dataob
 }
 
 // InsertBulkTx
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)"
 		r     sql.Result
 	)
 
@@ -151,11 +157,11 @@ func (dao *ChatParticipantsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.C
 }
 
 // InsertOrUpdate
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)"
 		r     sql.Result
 	)
 
@@ -179,11 +185,11 @@ func (dao *ChatParticipantsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 }
 
 // InsertOrUpdateTx
-// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)
+// insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)"
+		query = "insert into chat_participants(chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2) values (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), link = values(link), invited_at = values(invited_at), is_bot = values(is_bot), state = 0, kicked_at = 0, left_at = 0, date2 = values(date2)"
 		r     sql.Result
 	)
 
@@ -207,11 +213,11 @@ func (dao *ChatParticipantsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Cha
 }
 
 // SelectList
-// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectList(ctx context.Context, chat_id int64) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = ?"
+		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
@@ -227,11 +233,11 @@ func (dao *ChatParticipantsDAO) SelectList(ctx context.Context, chat_id int64) (
 }
 
 // SelectListWithCB
-// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chat_id int64, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = ?"
+		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
@@ -287,11 +293,11 @@ func (dao *ChatParticipantsDAO) SelectChatParticipantIdListWithCB(ctx context.Co
 }
 
 // SelectByParticipantId
-// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectByParticipantId(ctx context.Context, chat_id int64, user_id int64) (rValue *dataobject.ChatParticipantsDO, err error) {
 	var (
-		query = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = ? and user_id = ?"
+		query = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id = ?"
 		do    = &dataobject.ChatParticipantsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, chat_id, user_id)
@@ -311,11 +317,11 @@ func (dao *ChatParticipantsDAO) SelectByParticipantId(ctx context.Context, chat_
 }
 
 // SelectListByParticipantIdList
-// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectListByParticipantIdList(ctx context.Context, chat_id int64, idList []int64) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = ? and user_id in (?)"
+		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id in (?)"
 		a      []interface{}
 		values []dataobject.ChatParticipantsDO
 	)
@@ -344,11 +350,11 @@ func (dao *ChatParticipantsDAO) SelectListByParticipantIdList(ctx context.Contex
 }
 
 // SelectListByParticipantIdListWithCB
-// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
+// select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = :chat_id and user_id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) SelectListByParticipantIdListWithCB(ctx context.Context, chat_id int64, idList []int64, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2 from chat_participants where chat_id = ? and user_id in (?)"
+		query  = "select id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2 from chat_participants where chat_id = ? and user_id in (?)"
 		a      []interface{}
 		values []dataobject.ChatParticipantsDO
 	)
@@ -383,14 +389,14 @@ func (dao *ChatParticipantsDAO) SelectListByParticipantIdListWithCB(ctx context.
 }
 
 // Update
-// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
+// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0, is_bot = :is_bot where id = :id
 // TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) Update(ctx context.Context, participant_type int32, inviter_user_id int64, invited_at int64, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) Update(ctx context.Context, participant_type int32, inviter_user_id int64, invited_at int64, is_bot bool, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0 where id = ?"
+		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0, is_bot = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, participant_type, inviter_user_id, invited_at, id)
+	rResult, err = dao.db.Exec(ctx, query, participant_type, inviter_user_id, invited_at, is_bot, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
@@ -405,15 +411,15 @@ func (dao *ChatParticipantsDAO) Update(ctx context.Context, participant_type int
 	return
 }
 
-// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
 // UpdateTx
+// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0, is_bot = :is_bot where id = :id
 // TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateTx(tx *sqlx.Tx, participant_type int32, inviter_user_id int64, invited_at int64, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateTx(tx *sqlx.Tx, participant_type int32, inviter_user_id int64, invited_at int64, is_bot bool, id int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0 where id = ?"
+		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0, is_bot = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, participant_type, inviter_user_id, invited_at, id)
+	rResult, err = tx.Exec(query, participant_type, inviter_user_id, invited_at, is_bot, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
@@ -451,8 +457,8 @@ func (dao *ChatParticipantsDAO) UpdateKicked(ctx context.Context, kicked_at int6
 	return
 }
 
-// update chat_participants set kicked_at = :kicked_at, left_at = 0, state = 2 where id = :id
 // UpdateKickedTx
+// update chat_participants set kicked_at = :kicked_at, left_at = 0, state = 2 where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateKickedTx(tx *sqlx.Tx, kicked_at int64, id int64) (rowsAffected int64, err error) {
 	var (
@@ -497,8 +503,8 @@ func (dao *ChatParticipantsDAO) UpdateLeft(ctx context.Context, left_at int64, i
 	return
 }
 
-// update chat_participants set kicked_at = 0, left_at = :left_at, state = 1 where id = :id
 // UpdateLeftTx
+// update chat_participants set kicked_at = 0, left_at = :left_at, state = 1 where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateLeftTx(tx *sqlx.Tx, left_at int64, id int64) (rowsAffected int64, err error) {
 	var (
@@ -543,8 +549,8 @@ func (dao *ChatParticipantsDAO) UpdateParticipantType(ctx context.Context, parti
 	return
 }
 
-// update chat_participants set participant_type = :participant_type where id = :id
 // UpdateParticipantTypeTx
+// update chat_participants set participant_type = :participant_type where id = :id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateParticipantTypeTx(tx *sqlx.Tx, participant_type int32, id int64) (rowsAffected int64, err error) {
 	var (
@@ -727,8 +733,8 @@ func (dao *ChatParticipantsDAO) UpdateStateByChatId(ctx context.Context, state i
 	return
 }
 
-// update chat_participants set state = :state where chat_id = :chat_id and state = 0
 // UpdateStateByChatIdTx
+// update chat_participants set state = :state where chat_id = :chat_id and state = 0
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateStateByChatIdTx(tx *sqlx.Tx, state int32, chat_id int64) (rowsAffected int64, err error) {
 	var (
@@ -773,8 +779,8 @@ func (dao *ChatParticipantsDAO) UpdateLink(ctx context.Context, link string, cha
 	return
 }
 
-// update chat_participants set link = :link where chat_id = :chat_id and user_id = :user_id
 // UpdateLinkTx
+// update chat_participants set link = :link where chat_id = :chat_id and user_id = :user_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateLinkTx(tx *sqlx.Tx, link string, chat_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -819,8 +825,8 @@ func (dao *ChatParticipantsDAO) UpdateLinkUsage(ctx context.Context, usage2 int3
 	return
 }
 
-// update chat_participants set usage2 = :usage2 where chat_id = :chat_id and user_id = :user_id
 // UpdateLinkUsageTx
+// update chat_participants set usage2 = :usage2 where chat_id = :chat_id and user_id = :user_id
 // TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) UpdateLinkUsageTx(tx *sqlx.Tx, usage2 int32, chat_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (

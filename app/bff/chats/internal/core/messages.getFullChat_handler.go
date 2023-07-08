@@ -122,6 +122,15 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 	chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 		if participant.IsChatMemberStateNormal() {
 			idList = append(idList, participant.UserId)
+			if participant.IsBot {
+				// TODO: 优化
+				botInfo, _ := c.svcCtx.Dao.UserClient.UserGetBotInfo(c.ctx, &userpb.TLUserGetBotInfo{
+					BotId: participant.UserId,
+				})
+				if botInfo != nil {
+					chatFull.BotInfo = append(chatFull.BotInfo, botInfo)
+				}
+			}
 		}
 		return nil
 	})

@@ -3,32 +3,33 @@
     <operation name="Insert">
         <sql>
             INSERT INTO chat_participants
-                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2)
+                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2)
             VALUES
-                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
         </sql>
     </operation>
 
     <operation name="InsertBulk" type="bulkinsert">
         <sql>
             INSERT INTO chat_participants
-                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2)
+                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2)
             VALUES
-                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
         </sql>
     </operation>
 
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO chat_participants
-                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, date2)
+                (chat_id, user_id, participant_type, link, inviter_user_id, invited_at, is_bot, date2)
             VALUES
-                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :date2)
+                (:chat_id, :user_id, :participant_type, :link, :inviter_user_id, :invited_at, :is_bot, :date2)
             ON DUPLICATE KEY UPDATE
                 participant_type = VALUES(participant_type),
                 inviter_user_id = VALUES(inviter_user_id),
                 link = VALUES(link),
                 invited_at = VALUES(invited_at),
+                is_bot = VALUES(is_bot),
                 state = 0,
                 kicked_at = 0,
                 left_at = 0,
@@ -39,7 +40,7 @@
     <operation name="SelectList" result_set="list">
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
             FROM
                 chat_participants
             WHERE
@@ -61,7 +62,7 @@
     <operation name="SelectByParticipantId">
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
             FROM
                 chat_participants
             WHERE
@@ -75,7 +76,7 @@
         </params>
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
             FROM
                 chat_participants
             WHERE
@@ -88,7 +89,7 @@
             UPDATE
                 chat_participants
             SET
-                participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0
+                participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0, is_bot = :is_bot
             WHERE
                 id=:id
         </sql>

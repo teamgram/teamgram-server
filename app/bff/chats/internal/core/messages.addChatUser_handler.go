@@ -35,6 +35,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 		addUser   = mtproto.FromInputUser(c.MD.UserId, in.UserId)
 		chat      *mtproto.MutableChat
 		inviterId int64
+		isBot     = false
 	)
 
 	if !addUser.IsUser() || addUser.PeerId == 0 {
@@ -96,6 +97,8 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 				return nil, err
 			}
 		}
+
+		isBot = added.IsBot()
 	} else {
 		inviterId = 0
 	}
@@ -104,6 +107,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 		ChatId:    in.ChatId,
 		InviterId: inviterId,
 		UserId:    addUser.PeerId,
+		IsBot:     isBot,
 	})
 	//request.ChatId, md.UserId, peer.PeerId)
 	if err != nil {

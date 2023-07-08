@@ -123,7 +123,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_chat_addChatUser: {
-		0: 2086511757, // 0x7c5da48d
+		0: -447397528, // 0xe5554168
 
 	},
 	Predicate_chat_getMutableChatByLink: {
@@ -234,7 +234,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1170384488:  Predicate_chat_editChatPhoto,                    // 0x45c2a668
 	419816940:   Predicate_chat_editChatAdmin,                    // 0x1905e5ec
 	1513399943:  Predicate_chat_editChatDefaultBannedRights,      // 0x5a34a687
-	2086511757:  Predicate_chat_addChatUser,                      // 0x7c5da48d
+	-447397528:  Predicate_chat_addChatUser,                      // 0xe5554168
 	-1570363509: Predicate_chat_getMutableChatByLink,             // 0xa266278b
 	-711644423:  Predicate_chat_toggleNoForwards,                 // 0xd5952af9
 	138390239:   Predicate_chat_migratedToChannel,                // 0x83faadf

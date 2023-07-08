@@ -92,6 +92,7 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*mtproto.Mutable
 					ParticipantType: mtproto.ChatMemberNormal,
 					InviterUserId:   inviterId,
 					InvitedAt:       now,
+					IsBot:           in.GetIsBot(),
 				}
 				if chat2.Chat.Creator == userId {
 					chatParticipantDO.ParticipantType = mtproto.ChatMemberCreator
@@ -106,7 +107,13 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*mtproto.Mutable
 					willAdd = c.svcCtx.Dao.MakeImmutableChatParticipant(chatParticipantDO)
 				} else {
 					chatParticipantDO.Id = willAdd.Id
-					_, err2 := c.svcCtx.Dao.ChatParticipantsDAO.UpdateTx(tx, chatParticipantDO.ParticipantType, inviterId, now, chatParticipantDO.Id)
+					_, err2 := c.svcCtx.Dao.ChatParticipantsDAO.UpdateTx(
+						tx,
+						chatParticipantDO.ParticipantType,
+						inviterId,
+						now,
+						in.GetIsBot(),
+						chatParticipantDO.Id)
 					if err != nil {
 						result.Err = err2
 						return
