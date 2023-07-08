@@ -125,25 +125,9 @@ mysql> exit
 
 - import sql scripts
 ```
-mysql -uroot teamgram < teamgramd/sql/teamgram2.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220321.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220326.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220328.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220401.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220412.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220419.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220423.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220504.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220721.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220826.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20220919.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221008.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221011.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221016.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221023.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221101.sql
-mysql -uroot teamgram < teamgramd/sql/migrate-20221127.sql
-mysql -uroot teamgram < teamgramd/sql/init.sql
+mysql -uroot teamgram < teamgramd/sql/1_teamgram.sql
+mysql -uroot teamgram < teamgramd/sql/migrate-*.sql
+mysql -uroot teamgram < teamgramd/sql/z_init.sql
 ```
 
 ### Build
