@@ -22,7 +22,7 @@ import (
 
 const (
 	chatKeyPrefix            = "chat"
-	chatParticipantKeyPrefix = "chat_participant.2"
+	chatParticipantKeyPrefix = "chat_participant.3"
 )
 
 type ChatCacheData struct {
@@ -35,12 +35,12 @@ func (d *Dao) GetChatCacheKey(chatId int64) string {
 	return fmt.Sprintf("%s#%d", chatKeyPrefix, chatId)
 }
 
-func genChatParticipantCacheKey(chatId, chatParticipantId int64) string {
-	return fmt.Sprintf("%s#%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
-}
+//func genChatParticipantCacheKey(chatId, chatParticipantId int64) string {
+//	return fmt.Sprintf("%s#%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
+//}
 
 func (d *Dao) GetChatParticipantCacheKey(chatId, chatParticipantId int64) string {
-	return fmt.Sprintf("%s_%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
+	return fmt.Sprintf("%s#%d_%d", chatParticipantKeyPrefix, chatId, chatParticipantId)
 }
 
 func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, error) {
@@ -121,7 +121,7 @@ func (d *Dao) getChatParticipantListByIdList(ctx context.Context, chatId int64, 
 			err2 := d.CachedConn.QueryRow(
 				ctx,
 				&p,
-				genChatParticipantCacheKey(chatId, idx.id),
+				d.GetChatParticipantCacheKey(chatId, idx.id),
 				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 					do2, _ := d.ChatParticipantsDAO.SelectByParticipantId(ctx, chatId, idx.id)
 					if do2 == nil {
@@ -193,7 +193,7 @@ func (d *Dao) PutMutableChat(ctx context.Context, chat *mtproto.MutableChat) err
 		func(source chan<- interface{}) {
 			source <- &kv{d.GetChatCacheKey(chat.Id()), cacheData}
 			for _, v := range chat.ChatParticipants {
-				source <- &kv{genChatParticipantCacheKey(v.ChatId, v.UserId), v}
+				source <- &kv{d.GetChatParticipantCacheKey(v.ChatId, v.UserId), v}
 			}
 		},
 		func(item interface{}) {
