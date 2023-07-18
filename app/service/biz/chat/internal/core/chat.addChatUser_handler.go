@@ -92,6 +92,7 @@ func (c *ChatCore) ChatAddChatUser(in *chat.TLChatAddChatUser) (*mtproto.Mutable
 					ParticipantType: mtproto.ChatMemberNormal,
 					InviterUserId:   inviterId,
 					InvitedAt:       now,
+					Date2:           now,
 					IsBot:           in.GetIsBot(),
 				}
 				if chat2.Chat.Creator == userId {

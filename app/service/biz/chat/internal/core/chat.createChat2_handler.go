@@ -60,27 +60,41 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*mtproto.Mutable
 		Date:                 date,
 	}
 
-	participantDOList := make([]*dataobject.ChatParticipantsDO, 1+len(userIdList))
+	participantDOList := make([]*dataobject.ChatParticipantsDO, 0)
 	for i := 0; i < len(userIdList)+1; i++ {
 		if i == 0 {
-			participantDOList[i] = &dataobject.ChatParticipantsDO{
+			participantDOList = append(participantDOList, &dataobject.ChatParticipantsDO{
 				UserId:          creatorId,
 				ParticipantType: mtproto.ChatMemberCreator,
 				Link:            chat.GenChatInviteHash(),
 				InviterUserId:   0,
 				InvitedAt:       date,
 				Date2:           date,
-			}
+				IsBot:           false,
+			})
 		} else {
-			participantDOList[i] = &dataobject.ChatParticipantsDO{
+			participantDOList = append(participantDOList, &dataobject.ChatParticipantsDO{
 				UserId:          userIdList[i-1],
 				ParticipantType: mtproto.ChatMemberNormal,
 				Link:            "",
 				InviterUserId:   creatorId,
 				InvitedAt:       date,
 				Date2:           date,
-			}
+				IsBot:           false,
+			})
 		}
+	}
+
+	for _, id := range in.Bots {
+		participantDOList = append(participantDOList, &dataobject.ChatParticipantsDO{
+			UserId:          id,
+			ParticipantType: mtproto.ChatMemberNormal,
+			Link:            "",
+			InviterUserId:   creatorId,
+			InvitedAt:       date,
+			Date2:           date,
+			IsBot:           true,
+		})
 	}
 
 	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {

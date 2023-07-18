@@ -77,9 +77,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1236736584,
 		}
 	},
-	-465608273: func() mtproto.TLObject { // 0xe43f61af
+	-143374126: func() mtproto.TLObject { // 0xf77448d2
 		return &TLChatCreateChat2{
-			Constructor: -465608273,
+			Constructor: -143374126,
 		}
 	},
 	1829891102: func() mtproto.TLObject { // 0x6d11ec1e
@@ -1232,16 +1232,27 @@ func (m *TLChatGetChatBySelfId) DebugString() string {
 
 func (m *TLChatCreateChat2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xe43f61af:
-		x.UInt(0xe43f61af)
+	case 0xf77448d2:
+		x.UInt(0xf77448d2)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
+		if m.GetBots() != nil {
+			flags |= 1 << 0
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetCreatorId())
 
 		x.VectorLong(m.GetUserIdList())
 
 		x.String(m.GetTitle())
+		if m.GetBots() != nil {
+			x.VectorLong(m.GetBots())
+		}
 
 	default:
 		// log.Errorf("")
@@ -1256,15 +1267,20 @@ func (m *TLChatCreateChat2) CalcByteSize(layer int32) int {
 
 func (m *TLChatCreateChat2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xe43f61af:
+	case 0xf77448d2:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
+		// flags Debug by @benqi
 		m.CreatorId = dBuf.Long()
 
 		m.UserIdList = dBuf.VectorLong()
 
 		m.Title = dBuf.String()
+		if (flags & (1 << 0)) != 0 {
+			m.Bots = dBuf.VectorLong()
+		}
 		return dBuf.GetError()
 
 	default:

@@ -32,6 +32,8 @@ import (
 func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
 	var (
 		chatUserIdList []int64
+		userAddList    = make([]int64, 0)
+		botAddList     = make([]int64, 0)
 		chatTitle      = in.GetTitle()
 	)
 
@@ -77,46 +79,51 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 		return nil, err
 	}
 
-	var (
-		i = 0
-	)
 	for _, u := range in.Users {
 		if addUser, ok := users.GetImmutableUser(u.UserId); !ok {
 			err := mtproto.ErrInputUserDeactivated
 			c.Logger.Errorf("messages.createChat - error: %v", err)
 			return nil, err
 		} else {
-			rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
-				UserId:  addUser.Id(),
-				KeyType: userpb.CHAT_INVITE,
-			})
-			if len(rules.Datas) > 0 {
-				allowAddChat := userpb.CheckPrivacyIsAllow(
-					addUser.Id(),
-					rules.Datas,
-					c.MD.UserId,
-					func(id, checkId int64) bool {
-						contact, _ := c.svcCtx.Dao.UserClient.UserCheckContact(c.ctx, &userpb.TLUserCheckContact{
-							UserId: id,
-							Id:     checkId,
-						})
-						return mtproto.FromBool(contact)
-					},
-					func(checkId int64, idList []int64) bool {
-						chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
-						return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
-					})
-				if !allowAddChat {
-					c.Logger.Errorf("chatInvite privacy, ignore %d", u.UserId)
+			if addUser.IsBot() {
+				if !addUser.BotNochats() {
+					c.Logger.Errorf("user is bot and nochats, ignore %d", u.UserId)
 					continue
+				} else {
+					botAddList = append(botAddList, addUser.Id())
 				}
+			} else {
+				rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
+					UserId:  addUser.Id(),
+					KeyType: userpb.CHAT_INVITE,
+				})
+				if len(rules.Datas) > 0 {
+					allowAddChat := userpb.CheckPrivacyIsAllow(
+						addUser.Id(),
+						rules.Datas,
+						c.MD.UserId,
+						func(id, checkId int64) bool {
+							contact, _ := c.svcCtx.Dao.UserClient.UserCheckContact(c.ctx, &userpb.TLUserCheckContact{
+								UserId: id,
+								Id:     checkId,
+							})
+							return mtproto.FromBool(contact)
+						},
+						func(checkId int64, idList []int64) bool {
+							chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+							return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
+						})
+					if !allowAddChat {
+						c.Logger.Errorf("chatInvite privacy, ignore %d", u.UserId)
+						continue
+					}
+				}
+				userAddList = append(userAddList, addUser.Id())
 			}
-			chatUserIdList[i] = addUser.Id()
-			i++
 		}
 	}
-	chatUserIdList = chatUserIdList[:i]
-	if len(chatUserIdList) == 0 {
+
+	if len(userAddList) == 0 {
 		err := mtproto.ErrUsersTooFew
 		c.Logger.Errorf("messages.createChat - error: %v", err)
 		return nil, err
@@ -124,8 +131,9 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 
 	chat, err := c.svcCtx.Dao.ChatClient.Client().ChatCreateChat2(c.ctx, &chatpb.TLChatCreateChat2{
 		CreatorId:  c.MD.UserId,
-		UserIdList: chatUserIdList,
+		UserIdList: userAddList,
 		Title:      chatTitle,
+		Bots:       botAddList,
 	})
 	if err != nil {
 		c.Logger.Errorf("createChat duplicate: %v", err)
@@ -142,7 +150,7 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 			NoWebpage:    true,
 			Background:   false,
 			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatCreate(chatTitle, chatUserIdList)),
+			Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatCreate(chatTitle, append(userAddList, botAddList...))),
 			ScheduleDate: nil,
 		}).To_OutboxMessage(),
 	})
