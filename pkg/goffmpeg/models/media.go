@@ -1123,7 +1123,7 @@ func (m *Mediafile) ObtainHlsSegmentDuration() []string {
 
 func (m *Mediafile) ObtainHlsMasterPlaylistName() []string {
 	if m.hlsMasterPlaylistName != "" {
-		return []string{"-master_pl_name", fmt.Sprintf("%s", m.hlsMasterPlaylistName)}
+		return []string{"-master_pl_name", m.hlsMasterPlaylistName}
 	} else {
 		return nil
 	}
@@ -1131,7 +1131,7 @@ func (m *Mediafile) ObtainHlsMasterPlaylistName() []string {
 
 func (m *Mediafile) ObtainHlsSegmentFilename() []string {
 	if m.hlsSegmentFilename != "" {
-		return []string{"-hls_segment_filename", fmt.Sprintf("%s", m.hlsSegmentFilename)}
+		return []string{"-hls_segment_filename", m.hlsSegmentFilename}
 	} else {
 		return nil
 	}
