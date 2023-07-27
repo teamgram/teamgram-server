@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
@@ -318,4 +317,3 @@ func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *aut
 	c.Logger.Debugf("authsession.setInitConnection - reply: %s", r.DebugString())
 	return r, err
 }
-

@@ -13,8 +13,8 @@ package authsession_client
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,27 +22,26 @@ import (
 var _ *mtproto.Bool
 
 type AuthsessionClient interface {
-    AuthsessionGetAuthorizations(ctx context.Context, in *authsession.TLAuthsessionGetAuthorizations) (*mtproto.Account_Authorizations, error)
-    AuthsessionResetAuthorization(ctx context.Context, in *authsession.TLAuthsessionResetAuthorization) (*authsession.Vector_Long, error)
-    AuthsessionGetLayer(ctx context.Context, in *authsession.TLAuthsessionGetLayer) (*mtproto.Int32, error)
-    AuthsessionGetLangPack(ctx context.Context, in *authsession.TLAuthsessionGetLangPack) (*mtproto.String, error)
-    AuthsessionGetClient(ctx context.Context, in *authsession.TLAuthsessionGetClient) (*mtproto.String, error)
-    AuthsessionGetLangCode(ctx context.Context, in *authsession.TLAuthsessionGetLangCode) (*mtproto.String, error)
-    AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*mtproto.Int64, error)
-    AuthsessionGetPushSessionId(ctx context.Context, in *authsession.TLAuthsessionGetPushSessionId) (*mtproto.Int64, error)
-    AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*mtproto.FutureSalts, error)
-    AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*mtproto.AuthKeyInfo, error)
-    AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*mtproto.Bool, error)
-    AuthsessionBindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionBindAuthKeyUser) (*mtproto.Int64, error)
-    AuthsessionUnbindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionUnbindAuthKeyUser) (*mtproto.Bool, error)
-    AuthsessionGetPermAuthKeyId(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyId) (*mtproto.Int64, error)
-    AuthsessionBindTempAuthKey(ctx context.Context, in *authsession.TLAuthsessionBindTempAuthKey) (*mtproto.Bool, error)
-    AuthsessionSetClientSessionInfo(ctx context.Context, in *authsession.TLAuthsessionSetClientSessionInfo) (*mtproto.Bool, error)
-    AuthsessionGetAuthorization(ctx context.Context, in *authsession.TLAuthsessionGetAuthorization) (*mtproto.Authorization, error)
-    AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error)
-    AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error)
-    AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
-
+	AuthsessionGetAuthorizations(ctx context.Context, in *authsession.TLAuthsessionGetAuthorizations) (*mtproto.Account_Authorizations, error)
+	AuthsessionResetAuthorization(ctx context.Context, in *authsession.TLAuthsessionResetAuthorization) (*authsession.Vector_Long, error)
+	AuthsessionGetLayer(ctx context.Context, in *authsession.TLAuthsessionGetLayer) (*mtproto.Int32, error)
+	AuthsessionGetLangPack(ctx context.Context, in *authsession.TLAuthsessionGetLangPack) (*mtproto.String, error)
+	AuthsessionGetClient(ctx context.Context, in *authsession.TLAuthsessionGetClient) (*mtproto.String, error)
+	AuthsessionGetLangCode(ctx context.Context, in *authsession.TLAuthsessionGetLangCode) (*mtproto.String, error)
+	AuthsessionGetUserId(ctx context.Context, in *authsession.TLAuthsessionGetUserId) (*mtproto.Int64, error)
+	AuthsessionGetPushSessionId(ctx context.Context, in *authsession.TLAuthsessionGetPushSessionId) (*mtproto.Int64, error)
+	AuthsessionGetFutureSalts(ctx context.Context, in *authsession.TLAuthsessionGetFutureSalts) (*mtproto.FutureSalts, error)
+	AuthsessionQueryAuthKey(ctx context.Context, in *authsession.TLAuthsessionQueryAuthKey) (*mtproto.AuthKeyInfo, error)
+	AuthsessionSetAuthKey(ctx context.Context, in *authsession.TLAuthsessionSetAuthKey) (*mtproto.Bool, error)
+	AuthsessionBindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionBindAuthKeyUser) (*mtproto.Int64, error)
+	AuthsessionUnbindAuthKeyUser(ctx context.Context, in *authsession.TLAuthsessionUnbindAuthKeyUser) (*mtproto.Bool, error)
+	AuthsessionGetPermAuthKeyId(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyId) (*mtproto.Int64, error)
+	AuthsessionBindTempAuthKey(ctx context.Context, in *authsession.TLAuthsessionBindTempAuthKey) (*mtproto.Bool, error)
+	AuthsessionSetClientSessionInfo(ctx context.Context, in *authsession.TLAuthsessionSetClientSessionInfo) (*mtproto.Bool, error)
+	AuthsessionGetAuthorization(ctx context.Context, in *authsession.TLAuthsessionGetAuthorization) (*mtproto.Authorization, error)
+	AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error)
+	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error)
+	AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
 }
 
 type defaultAuthsessionClient struct {
@@ -54,7 +53,6 @@ func NewAuthsessionClient(cli zrpc.Client) AuthsessionClient {
 		cli: cli,
 	}
 }
-
 
 // AuthsessionGetAuthorizations
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
@@ -195,4 +193,3 @@ func (m *defaultAuthsessionClient) AuthsessionSetInitConnection(ctx context.Cont
 	client := authsession.NewRPCAuthsessionClient(m.cli.Conn())
 	return client.AuthsessionSetInitConnection(ctx, in)
 }
-

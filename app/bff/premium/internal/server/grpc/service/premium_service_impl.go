@@ -76,33 +76,3 @@ func (s *Service) PaymentsCanPurchasePremium(ctx context.Context, request *mtpro
 	c.Logger.Debugf("payments.canPurchasePremium - reply: %s", r.DebugString())
 	return r, err
 }
-
-// PaymentsRequestRecurringPayment
-// payments.requestRecurringPayment#146e958d user_id:InputUser recurring_init_charge:string invoice_media:InputMedia = Updates;
-func (s *Service) PaymentsRequestRecurringPayment(ctx context.Context, request *mtproto.TLPaymentsRequestRecurringPayment) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("payments.requestRecurringPayment - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.PaymentsRequestRecurringPayment(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("payments.requestRecurringPayment - reply: %s", r.DebugString())
-	return r, err
-}
-
-// PaymentsRestorePlayMarketReceipt
-// payments.restorePlayMarketReceipt#d164e36a receipt:bytes = Updates;
-func (s *Service) PaymentsRestorePlayMarketReceipt(ctx context.Context, request *mtproto.TLPaymentsRestorePlayMarketReceipt) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("payments.restorePlayMarketReceipt - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.PaymentsRestorePlayMarketReceipt(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("payments.restorePlayMarketReceipt - reply: %s", r.DebugString())
-	return r, err
-}

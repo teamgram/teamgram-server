@@ -25,8 +25,6 @@ type PremiumClient interface {
 	PaymentsAssignAppStoreTransaction(ctx context.Context, in *mtproto.TLPaymentsAssignAppStoreTransaction) (*mtproto.Updates, error)
 	PaymentsAssignPlayMarketTransaction(ctx context.Context, in *mtproto.TLPaymentsAssignPlayMarketTransaction) (*mtproto.Updates, error)
 	PaymentsCanPurchasePremium(ctx context.Context, in *mtproto.TLPaymentsCanPurchasePremium) (*mtproto.Bool, error)
-	PaymentsRequestRecurringPayment(ctx context.Context, in *mtproto.TLPaymentsRequestRecurringPayment) (*mtproto.Updates, error)
-	PaymentsRestorePlayMarketReceipt(ctx context.Context, in *mtproto.TLPaymentsRestorePlayMarketReceipt) (*mtproto.Updates, error)
 }
 
 type defaultPremiumClient struct {
@@ -65,18 +63,4 @@ func (m *defaultPremiumClient) PaymentsAssignPlayMarketTransaction(ctx context.C
 func (m *defaultPremiumClient) PaymentsCanPurchasePremium(ctx context.Context, in *mtproto.TLPaymentsCanPurchasePremium) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCPremiumClient(m.cli.Conn())
 	return client.PaymentsCanPurchasePremium(ctx, in)
-}
-
-// PaymentsRequestRecurringPayment
-// payments.requestRecurringPayment#146e958d user_id:InputUser recurring_init_charge:string invoice_media:InputMedia = Updates;
-func (m *defaultPremiumClient) PaymentsRequestRecurringPayment(ctx context.Context, in *mtproto.TLPaymentsRequestRecurringPayment) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCPremiumClient(m.cli.Conn())
-	return client.PaymentsRequestRecurringPayment(ctx, in)
-}
-
-// PaymentsRestorePlayMarketReceipt
-// payments.restorePlayMarketReceipt#d164e36a receipt:bytes = Updates;
-func (m *defaultPremiumClient) PaymentsRestorePlayMarketReceipt(ctx context.Context, in *mtproto.TLPaymentsRestorePlayMarketReceipt) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCPremiumClient(m.cli.Conn())
-	return client.PaymentsRestorePlayMarketReceipt(ctx, in)
 }

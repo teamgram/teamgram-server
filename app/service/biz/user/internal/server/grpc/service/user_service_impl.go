@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
-
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1128,4 +1127,3 @@ func (s *Service) UserCreateNewTestUser(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.createNewTestUser - reply: %s", r.DebugString())
 	return r, err
 }
-
