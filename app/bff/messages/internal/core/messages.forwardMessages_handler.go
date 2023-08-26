@@ -20,14 +20,17 @@ package core
 
 import (
 	"context"
-	"github.com/gogo/protobuf/types"
+	"math/rand"
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
-	"time"
+
+	"github.com/gogo/protobuf/types"
 )
 
 // MessagesForwardMessages
@@ -192,10 +195,14 @@ func (c *MessagesCore) makeForwardMessages(
 	}
 
 	fwdOutboxList := make([]*msgpb.OutboxMessage, 0, int(messageList.Length()))
+	groupedId := int64(0)
 	for _, box := range messageList.Datas {
 		m := box.Message
 		// TODO(@benqi): rid is 0
 
+		if m.GetGroupedId() != nil && groupedId == 0 {
+			groupedId = rand.Int63()
+		}
 		if mtproto.IsMusicMessage(m) {
 			m.FwdFrom = nil
 		} else {
@@ -270,7 +277,7 @@ func (c *MessagesCore) makeForwardMessages(
 		m.Date = now
 		m.Silent = request.Silent
 		m.Post = false
-		m.GroupedId = box.GetMessage().GetGroupedId()
+		m.GroupedId = mtproto.MakeFlagsInt64(groupedId)
 		m.ReplyTo = nil
 		m.Reactions = nil
 
