@@ -270,7 +270,7 @@ func (c *MessagesCore) makeForwardMessages(
 		m.Date = now
 		m.Silent = request.Silent
 		m.Post = false
-		m.GroupedId = nil
+		m.GroupedId = box.GetMessage().GetGroupedId()
 		m.ReplyTo = nil
 		m.Reactions = nil
 
