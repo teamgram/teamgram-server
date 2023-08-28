@@ -195,13 +195,16 @@ func (c *MessagesCore) makeForwardMessages(
 	}
 
 	fwdOutboxList := make([]*msgpb.OutboxMessage, 0, int(messageList.Length()))
-	groupedId := int64(0)
+	groupedIds := make(map[int64]int64)
 	for _, box := range messageList.Datas {
 		m := box.Message
 		// TODO(@benqi): rid is 0
 
-		if m.GetGroupedId() != nil && groupedId == 0 {
-			groupedId = rand.Int63()
+		if m.GetGroupedId() != nil {
+			groupedId := groupedIds[m.GetGroupedId().GetValue()]
+			if _, ok := groupedIds[groupedId]; !ok {
+				groupedIds[groupedId] = rand.Int63()
+			}
 		}
 		if mtproto.IsMusicMessage(m) {
 			m.FwdFrom = nil
@@ -277,7 +280,12 @@ func (c *MessagesCore) makeForwardMessages(
 		m.Date = now
 		m.Silent = request.Silent
 		m.Post = false
-		m.GroupedId = mtproto.MakeFlagsInt64(groupedId)
+		if m.GetGroupedId() != nil {
+			groupedId := groupedIds[m.GetGroupedId().GetValue()]
+			m.GroupedId = mtproto.MakeFlagsInt64(groupedId)
+		} else {
+			m.GroupedId = nil
+		}
 		m.ReplyTo = nil
 		m.Reactions = nil
 
