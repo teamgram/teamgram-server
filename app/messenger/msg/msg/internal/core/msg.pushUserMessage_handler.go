@@ -107,7 +107,7 @@ func (c *MsgCore) pushUserMessage(
 		}
 	}
 
-	box, ok, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox)
+	box, ok, err := c.svcCtx.Dao.SendUserMessage(c.ctx, fromUserId, toUserId, outBox, nil)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return err
