@@ -107,7 +107,7 @@ func (c *MsgCore) sendUserOutgoingMessage(userId, authKeyId, peerUserId int64, o
 				})
 			}
 			//}
-			return err
+			return nil
 		})
 	if err != nil {
 		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
@@ -174,19 +174,19 @@ func (c *MsgCore) sendUserMessage(
 		}
 	}
 
-	box, ok, err := c.svcCtx.Dao.SendUserMessage(ctx, fromUserId, toUserId, outBox, cb)
+	box, ok, err := c.svcCtx.Dao.SendUserMessage(ctx, fromUserId, toUserId, outBox)
 	if err != nil {
 		c.Logger.Error(err.Error())
 		return nil, err
 	}
 
-	// if ok && cb != nil {
-	//	err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
-	//	if err != nil {
-	//		c.Logger.Error(err.Error())
-	//		return nil, err
-	//	}
-	// }
+	if ok && cb != nil {
+		err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
+		if err != nil {
+			c.Logger.Error(err.Error())
+			return nil, err
+		}
+	}
 
 	updateNewMessage := mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
 		Pts_INT32:       box.Pts,

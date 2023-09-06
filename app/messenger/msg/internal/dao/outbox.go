@@ -60,12 +60,7 @@ func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
 	return box
 }
 
-func (d *Dao) sendMessageToOutbox(
-	ctx context.Context,
-	fromId int64,
-	peer *mtproto.PeerUtil,
-	outboxMessage *msg.OutboxMessage,
-	cb func(did int64, inboxMsg *mtproto.Message) error) (*mtproto.MessageBox, bool, error) {
+func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outboxMessage *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	var (
 		dialogId = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
 		err      error
@@ -285,13 +280,6 @@ func (d *Dao) sendMessageToOutbox(
 				}
 			}
 		}
-		if cb != nil {
-			err = cb(outMsgBox.DialogMessageId, outMsgBox.ToMessage(fromId))
-			if err != nil {
-				result.Err = errors.New(err.Error())
-				return
-			}
-		}
 	})
 
 	if tR.Err != nil {
@@ -334,14 +322,9 @@ func (d *Dao) sendMessageToOutbox(
 	return outBox, true, nil
 }
 
-func (d *Dao) SendUserMessage(
-	ctx context.Context,
-	fromId,
-	toId int64,
-	outBox *msg.OutboxMessage,
-	cb func(did int64, inboxMsg *mtproto.Message) error) (*mtproto.MessageBox, bool, error) {
+func (d *Dao) SendUserMessage(ctx context.Context, fromId, toId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_USER, PeerId: toId}
-	return d.sendMessageToOutbox(ctx, fromId, peer, outBox, cb)
+	return d.sendMessageToOutbox(ctx, fromId, peer, outBox)
 }
 
 func (d *Dao) SendUserMultiMessage(ctx context.Context, fromId, toId int64, outBoxList []*msg.OutboxMessage) ([]*mtproto.MessageBox, error) {
@@ -351,7 +334,7 @@ func (d *Dao) SendUserMultiMessage(ctx context.Context, fromId, toId int64, outB
 
 	for _, msg := range outBoxList {
 		peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_USER, PeerId: toId}
-		outBox, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg, nil)
+		outBox, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
 		boxList = append(boxList, outBox)
 	}
 
@@ -360,7 +343,7 @@ func (d *Dao) SendUserMultiMessage(ctx context.Context, fromId, toId int64, outB
 
 func (d *Dao) SendChatMessage(ctx context.Context, fromId, chatId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, bool, error) {
 	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_CHAT, PeerId: chatId}
-	return d.sendMessageToOutbox(ctx, fromId, peer, outBox, nil)
+	return d.sendMessageToOutbox(ctx, fromId, peer, outBox)
 }
 
 func (d *Dao) SendChatMultiMessage(ctx context.Context, fromId, chatId int64, outBoxList []*msg.OutboxMessage) ([]*mtproto.MessageBox, error) {
@@ -370,7 +353,7 @@ func (d *Dao) SendChatMultiMessage(ctx context.Context, fromId, chatId int64, ou
 
 	for _, msg := range outBoxList {
 		peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_CHAT, PeerId: chatId}
-		box, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg, nil)
+		box, _, _ := d.sendMessageToOutbox(ctx, fromId, peer, msg)
 		boxList = append(boxList, box)
 	}
 
