@@ -201,7 +201,7 @@ func (c *MessagesCore) makeForwardMessages(
 		// TODO(@benqi): rid is 0
 
 		if m.GetGroupedId() != nil {
-			groupedId := groupedIds[m.GetGroupedId().GetValue()]
+			groupedId := m.GetGroupedId().GetValue()
 			if _, ok := groupedIds[groupedId]; !ok {
 				groupedIds[groupedId] = rand.Int63()
 			}
