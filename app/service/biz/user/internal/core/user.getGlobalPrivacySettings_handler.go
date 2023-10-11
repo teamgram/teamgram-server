@@ -27,6 +27,9 @@ func (c *UserCore) UserGetGlobalPrivacySettings(in *user.TLUserGetGlobalPrivacyS
 	}
 
 	return mtproto.MakeTLGlobalPrivacySettings(&mtproto.GlobalPrivacySettings{
-		ArchiveAndMuteNewNoncontactPeers: mtproto.ToBool(archiveAndMuteNewNoncontactPeers),
+		ArchiveAndMuteNewNoncontactPeers_FLAGBOOLEAN: archiveAndMuteNewNoncontactPeers,
+		ArchiveAndMuteNewNoncontactPeers_FLAGBOOL:    mtproto.ToBool(archiveAndMuteNewNoncontactPeers),
+		KeepArchivedUnmuted:                          false,
+		KeepArchivedFolders:                          false,
 	}).To_GlobalPrivacySettings(), nil
 }

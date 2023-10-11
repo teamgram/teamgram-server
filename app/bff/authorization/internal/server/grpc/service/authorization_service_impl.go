@@ -363,7 +363,7 @@ func (s *Service) AccountSetAuthorizationTTL(ctx context.Context, request *mtpro
 }
 
 // AccountChangeAuthorizationSettings
-// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
+// account.changeAuthorizationSettings#40f48462 flags:# confirmed:flags.3?true hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
 func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, request *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("account.changeAuthorizationSettings - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -374,6 +374,21 @@ func (s *Service) AccountChangeAuthorizationSettings(ctx context.Context, reques
 	}
 
 	c.Logger.Debugf("account.changeAuthorizationSettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AccountInvalidateSignInCodes
+// account.invalidateSignInCodes#ca8ae8ba codes:Vector<string> = Bool;
+func (s *Service) AccountInvalidateSignInCodes(ctx context.Context, request *mtproto.TLAccountInvalidateSignInCodes) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.invalidateSignInCodes - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountInvalidateSignInCodes(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.invalidateSignInCodes - reply: %s", r.DebugString())
 	return r, err
 }
 

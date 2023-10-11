@@ -138,6 +138,7 @@ func (m *Dao) MakeDocumentByDO(
 	if document.Attributes == nil {
 		document.Attributes = []*mtproto.DocumentAttribute{}
 	}
+	document = document.FixData()
 }
 
 func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {

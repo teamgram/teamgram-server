@@ -138,7 +138,7 @@ func (s *Service) ContactsDeleteByPhones(ctx context.Context, request *mtproto.T
 }
 
 // ContactsBlock
-// contacts.block#68cc1411 id:InputPeer = Bool;
+// contacts.block#2e2e8734 flags:# my_stories_from:flags.0?true id:InputPeer = Bool;
 func (s *Service) ContactsBlock(ctx context.Context, request *mtproto.TLContactsBlock) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("contacts.block - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -153,7 +153,7 @@ func (s *Service) ContactsBlock(ctx context.Context, request *mtproto.TLContacts
 }
 
 // ContactsUnblock
-// contacts.unblock#bea65d50 id:InputPeer = Bool;
+// contacts.unblock#b550d328 flags:# my_stories_from:flags.0?true id:InputPeer = Bool;
 func (s *Service) ContactsUnblock(ctx context.Context, request *mtproto.TLContactsUnblock) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("contacts.unblock - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -168,7 +168,7 @@ func (s *Service) ContactsUnblock(ctx context.Context, request *mtproto.TLContac
 }
 
 // ContactsGetBlocked
-// contacts.getBlocked#f57c350f offset:int limit:int = contacts.Blocked;
+// contacts.getBlocked#9a868f80 flags:# my_stories_from:flags.0?true offset:int limit:int = contacts.Blocked;
 func (s *Service) ContactsGetBlocked(ctx context.Context, request *mtproto.TLContactsGetBlocked) (*mtproto.Contacts_Blocked, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("contacts.getBlocked - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -314,5 +314,35 @@ func (s *Service) ContactsGetLocated(ctx context.Context, request *mtproto.TLCon
 	}
 
 	c.Logger.Debugf("contacts.getLocated - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ContactsEditCloseFriends
+// contacts.editCloseFriends#ba6705f0 id:Vector<long> = Bool;
+func (s *Service) ContactsEditCloseFriends(ctx context.Context, request *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.editCloseFriends - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsEditCloseFriends(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.editCloseFriends - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ContactsSetBlocked
+// contacts.setBlocked#94c65c76 flags:# my_stories_from:flags.0?true id:Vector<InputPeer> limit:int = Bool;
+func (s *Service) ContactsSetBlocked(ctx context.Context, request *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.setBlocked - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsSetBlocked(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.setBlocked - reply: %s", r.DebugString())
 	return r, err
 }

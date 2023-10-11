@@ -101,11 +101,13 @@ func (c *DfsCore) DfsUploadRingtoneFile(in *dfs.TLDfsUploadRingtoneFile) (*mtpro
 		DcId:          1,
 		Attributes: []*mtproto.DocumentAttribute{
 			mtproto.MakeTLDocumentAttributeAudio(&mtproto.DocumentAttribute{
-				Voice:     false,
-				Duration:  int32(duration),
-				Title:     &types.StringValue{Value: in.GetFileName()},
-				Performer: &types.StringValue{Value: ""}, // TODO:
-				Waveform:  nil,
+				Voice:            false,
+				Duration:         float64(duration),
+				Duration_INT32:   int32(duration),
+				Duration_FLOAT64: float64(duration),
+				Title:            &types.StringValue{Value: in.GetFileName()},
+				Performer:        &types.StringValue{Value: ""}, // TODO:
+				Waveform:         nil,
 			}).To_DocumentAttribute(),
 			mtproto.MakeTLDocumentAttributeFilename(&mtproto.DocumentAttribute{
 				FileName: in.GetFileName(),

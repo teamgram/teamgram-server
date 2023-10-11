@@ -23,6 +23,7 @@ var _ *mtproto.Bool
 type SponsoredMessagesClient interface {
 	ChannelsViewSponsoredMessage(ctx context.Context, in *mtproto.TLChannelsViewSponsoredMessage) (*mtproto.Bool, error)
 	ChannelsGetSponsoredMessages(ctx context.Context, in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error)
+	ChannelsClickSponsoredMessage(ctx context.Context, in *mtproto.TLChannelsClickSponsoredMessage) (*mtproto.Bool, error)
 }
 
 type defaultSponsoredMessagesClient struct {
@@ -47,4 +48,11 @@ func (m *defaultSponsoredMessagesClient) ChannelsViewSponsoredMessage(ctx contex
 func (m *defaultSponsoredMessagesClient) ChannelsGetSponsoredMessages(ctx context.Context, in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
 	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
 	return client.ChannelsGetSponsoredMessages(ctx, in)
+}
+
+// ChannelsClickSponsoredMessage
+// channels.clickSponsoredMessage#18afbc93 channel:InputChannel random_id:bytes = Bool;
+func (m *defaultSponsoredMessagesClient) ChannelsClickSponsoredMessage(ctx context.Context, in *mtproto.TLChannelsClickSponsoredMessage) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
+	return client.ChannelsClickSponsoredMessage(ctx, in)
 }

@@ -65,10 +65,10 @@ func (c *PhotosCore) PhotosDeletePhotos(in *mtproto.TLPhotosDeletePhotos) (*mtpr
 	c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 		UserId: c.MD.UserId,
 		Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserPhoto(&mtproto.Update{
-			UserId:   c.MD.UserId,
-			Date:     int32(time.Now().Unix()),
-			Photo:    mtproto.MakeUserProfilePhotoByPhoto(photo),
-			Previous: mtproto.BoolFalse,
+			UserId:     c.MD.UserId,
+			Date_INT32: int32(time.Now().Unix()),
+			Photo:      mtproto.MakeUserProfilePhotoByPhoto(photo),
+			Previous:   mtproto.BoolFalse,
 		}).To_Update()),
 	})
 

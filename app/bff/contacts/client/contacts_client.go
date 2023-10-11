@@ -41,6 +41,8 @@ type ContactsClient interface {
 	ContactsAddContact(ctx context.Context, in *mtproto.TLContactsAddContact) (*mtproto.Updates, error)
 	ContactsAcceptContact(ctx context.Context, in *mtproto.TLContactsAcceptContact) (*mtproto.Updates, error)
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
+	ContactsEditCloseFriends(ctx context.Context, in *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error)
+	ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error)
 }
 
 type defaultContactsClient struct {
@@ -110,21 +112,21 @@ func (m *defaultContactsClient) ContactsDeleteByPhones(ctx context.Context, in *
 }
 
 // ContactsBlock
-// contacts.block#68cc1411 id:InputPeer = Bool;
+// contacts.block#2e2e8734 flags:# my_stories_from:flags.0?true id:InputPeer = Bool;
 func (m *defaultContactsClient) ContactsBlock(ctx context.Context, in *mtproto.TLContactsBlock) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsBlock(ctx, in)
 }
 
 // ContactsUnblock
-// contacts.unblock#bea65d50 id:InputPeer = Bool;
+// contacts.unblock#b550d328 flags:# my_stories_from:flags.0?true id:InputPeer = Bool;
 func (m *defaultContactsClient) ContactsUnblock(ctx context.Context, in *mtproto.TLContactsUnblock) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsUnblock(ctx, in)
 }
 
 // ContactsGetBlocked
-// contacts.getBlocked#f57c350f offset:int limit:int = contacts.Blocked;
+// contacts.getBlocked#9a868f80 flags:# my_stories_from:flags.0?true offset:int limit:int = contacts.Blocked;
 func (m *defaultContactsClient) ContactsGetBlocked(ctx context.Context, in *mtproto.TLContactsGetBlocked) (*mtproto.Contacts_Blocked, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsGetBlocked(ctx, in)
@@ -191,4 +193,18 @@ func (m *defaultContactsClient) ContactsAcceptContact(ctx context.Context, in *m
 func (m *defaultContactsClient) ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsGetLocated(ctx, in)
+}
+
+// ContactsEditCloseFriends
+// contacts.editCloseFriends#ba6705f0 id:Vector<long> = Bool;
+func (m *defaultContactsClient) ContactsEditCloseFriends(ctx context.Context, in *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsEditCloseFriends(ctx, in)
+}
+
+// ContactsSetBlocked
+// contacts.setBlocked#94c65c76 flags:# my_stories_from:flags.0?true id:Vector<InputPeer> limit:int = Bool;
+func (m *defaultContactsClient) ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsSetBlocked(ctx, in)
 }

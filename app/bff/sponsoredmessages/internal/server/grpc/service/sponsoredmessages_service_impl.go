@@ -46,3 +46,18 @@ func (s *Service) ChannelsGetSponsoredMessages(ctx context.Context, request *mtp
 	c.Logger.Debugf("channels.getSponsoredMessages - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ChannelsClickSponsoredMessage
+// channels.clickSponsoredMessage#18afbc93 channel:InputChannel random_id:bytes = Bool;
+func (s *Service) ChannelsClickSponsoredMessage(ctx context.Context, request *mtproto.TLChannelsClickSponsoredMessage) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("channels.clickSponsoredMessage - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ChannelsClickSponsoredMessage(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("channels.clickSponsoredMessage - reply: %s", r.DebugString())
+	return r, err
+}

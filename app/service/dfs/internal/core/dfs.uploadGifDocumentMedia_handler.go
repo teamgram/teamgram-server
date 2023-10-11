@@ -243,7 +243,9 @@ func (c *DfsCore) uploadHasThumbGifMp4Media(creatorId int64, media *mtproto.Inpu
 			mtproto.MakeTLDocumentAttributeVideo(&mtproto.DocumentAttribute{
 				RoundMessage:      false,
 				SupportsStreaming: true,
-				Duration:          duration, // gif.mp4's duration
+				Duration:          float64(duration), // gif.mp4's duration
+				Duration_INT32:    duration,
+				Duration_FLOAT64:  float64(duration),
 				W:                 dstW,
 				H:                 dstH,
 			}).To_DocumentAttribute(),
@@ -358,7 +360,9 @@ func (c *DfsCore) uploadGifMp4Media(creatorId int64, media *mtproto.InputMedia) 
 			mtproto.MakeTLDocumentAttributeVideo(&mtproto.DocumentAttribute{
 				RoundMessage:      false,
 				SupportsStreaming: true,
-				Duration:          duration, // gif.mp4's duration
+				Duration:          float64(duration), // gif.mp4's duration
+				Duration_INT32:    duration,
+				Duration_FLOAT64:  float64(duration),
 				W:                 int32(gifThumb.Bounds().Dx()),
 				H:                 int32(gifThumb.Bounds().Dy()),
 			}).To_DocumentAttribute(),

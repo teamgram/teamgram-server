@@ -45,6 +45,7 @@ type AuthorizationClient interface {
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
 	AccountSetAuthorizationTTL(ctx context.Context, in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error)
 	AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error)
+	AccountInvalidateSignInCodes(ctx context.Context, in *mtproto.TLAccountInvalidateSignInCodes) (*mtproto.Bool, error)
 	AccountVerifyEmailECBA39DB(ctx context.Context, in *mtproto.TLAccountVerifyEmailECBA39DB) (*mtproto.Bool, error)
 	AuthToggleBan(ctx context.Context, in *mtproto.TLAuthToggleBan) (*mtproto.PredefinedUser, error)
 }
@@ -221,10 +222,17 @@ func (m *defaultAuthorizationClient) AccountSetAuthorizationTTL(ctx context.Cont
 }
 
 // AccountChangeAuthorizationSettings
-// account.changeAuthorizationSettings#40f48462 flags:# hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
+// account.changeAuthorizationSettings#40f48462 flags:# confirmed:flags.3?true hash:long encrypted_requests_disabled:flags.0?Bool call_requests_disabled:flags.1?Bool = Bool;
 func (m *defaultAuthorizationClient) AccountChangeAuthorizationSettings(ctx context.Context, in *mtproto.TLAccountChangeAuthorizationSettings) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AccountChangeAuthorizationSettings(ctx, in)
+}
+
+// AccountInvalidateSignInCodes
+// account.invalidateSignInCodes#ca8ae8ba codes:Vector<string> = Bool;
+func (m *defaultAuthorizationClient) AccountInvalidateSignInCodes(ctx context.Context, in *mtproto.TLAccountInvalidateSignInCodes) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AccountInvalidateSignInCodes(ctx, in)
 }
 
 // AccountVerifyEmailECBA39DB
