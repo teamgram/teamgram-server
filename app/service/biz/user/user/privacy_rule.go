@@ -32,6 +32,7 @@ const (
 	DISALLOW_USERS             = 6
 	ALLOW_CHAT_PARTICIPANTS    = 7
 	DISALLOW_CHAT_PARTICIPANTS = 8
+	ALLOW_CLOSE_FRIENDS        = 10
 )
 
 /*
@@ -45,6 +46,7 @@ inputPrivacyKeyProfilePhoto#5719bacc = InputPrivacyKey;
 inputPrivacyKeyPhoneNumber#352dafa = InputPrivacyKey;
 inputPrivacyKeyAddedByPhone#d1219bdd = InputPrivacyKey;
 inputPrivacyKeyVoiceMessages#aee69d68 = InputPrivacyKey;
+inputPrivacyKeyAbout#3823cc40 = InputPrivacyKey;
 ```
 */
 const (
@@ -58,7 +60,7 @@ const (
 	PHONE_NUMBER     = 7
 	ADDED_BY_PHONE   = 8
 	VOICE_MESSAGES   = 9
-	MAX_KEY_TYPE     = 9
+	ABOUT            = 10
 )
 
 func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
@@ -81,6 +83,8 @@ func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
 		return ADDED_BY_PHONE
 	case mtproto.Predicate_inputPrivacyKeyVoiceMessages:
 		return VOICE_MESSAGES
+	case mtproto.Predicate_inputPrivacyKeyAbout:
+		return ABOUT
 	}
 	return KEY_TYPE_INVALID
 }
@@ -105,6 +109,8 @@ func ToPrivacyKey(keyType int) (key *mtproto.PrivacyKey) {
 		key = mtproto.MakeTLPrivacyKeyAddedByPhone(nil).To_PrivacyKey()
 	case VOICE_MESSAGES:
 		key = mtproto.MakeTLPrivacyKeyVoiceMessages(nil).To_PrivacyKey()
+	case ABOUT:
+		key = mtproto.MakeTLPrivacyKeyAbout(nil).To_PrivacyKey()
 	default:
 		panic("type is invalid")
 	}
@@ -150,6 +156,8 @@ func ToPrivacyRuleByInput(userSelfId int64, inputRule *mtproto.InputPrivacyRule)
 		return mtproto.MakeTLPrivacyValueDisallowChatParticipants(&mtproto.PrivacyRule{
 			Chats: inputRule.GetChats(),
 		}).To_PrivacyRule()
+	case mtproto.Predicate_inputPrivacyValueAllowCloseFriends:
+		return mtproto.MakeTLPrivacyValueAllowCloseFriends(nil).To_PrivacyRule()
 	default:
 		// log.Errorf("type is invalid")
 	}
@@ -268,14 +276,14 @@ func CheckPrivacyIsAllow(selfId int64,
 }
 
 /*
-	privacyValueAllowContacts#fffe1bac = PrivacyRule;
-	privacyValueAllowAll#65427b82 = PrivacyRule;
-	privacyValueAllowUsers#4d5bbe0c users:Vector<int> = PrivacyRule;
-	privacyValueDisallowContacts#f888fa1a = PrivacyRule;
-	privacyValueDisallowAll#8b73e763 = PrivacyRule;
-	privacyValueDisallowUsers#c7f49b7 users:Vector<int> = PrivacyRule;
-	privacyValueAllowChatParticipants#18be796b chats:Vector<int> = PrivacyRule;
-	privacyValueDisallowChatParticipants#acae0690 chats:Vector<int> = PrivacyRule;
+privacyValueAllowContacts#fffe1bac = PrivacyRule;
+privacyValueAllowAll#65427b82 = PrivacyRule;
+privacyValueAllowUsers#4d5bbe0c users:Vector<int> = PrivacyRule;
+privacyValueDisallowContacts#f888fa1a = PrivacyRule;
+privacyValueDisallowAll#8b73e763 = PrivacyRule;
+privacyValueDisallowUsers#c7f49b7 users:Vector<int> = PrivacyRule;
+privacyValueAllowChatParticipants#18be796b chats:Vector<int> = PrivacyRule;
+privacyValueDisallowChatParticipants#acae0690 chats:Vector<int> = PrivacyRule;
 */
 func privacyIsAllow(rules []*mtproto.PrivacyRule, userId int64, isContact bool) bool {
 	ruleType := RULE_TYPE_INVALID
