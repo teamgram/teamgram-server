@@ -174,13 +174,12 @@ func (m *Dao) GetDocumentById(ctx context.Context, id int64) *mtproto.Document {
 
 func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mtproto.Document {
 	rList, err := mr.MapReduce(
-		func(source chan<- interface{}) {
+		func(source chan<- int64) {
 			for _, id2 := range idList {
 				source <- id2
 			}
 		},
-		func(item interface{}, writer mr.Writer, cancel func(error)) {
-			id2 := item.(int64)
+		func(id2 int64, writer mr.Writer[*mtproto.Document], cancel func(error)) {
 			document := new(mtproto.Document)
 			// since2 := timex.Now()
 			err := m.GetCache(ctx, genCacheDocumentKey(id2), document)
@@ -195,10 +194,10 @@ func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mt
 			}
 			// logx.WithDuration(timex.Since(since2)).Infof("getCache: %v", do)
 		},
-		func(pipe <-chan interface{}, writer mr.Writer, cancel func(error)) {
+		func(pipe <-chan *mtproto.Document, writer mr.Writer[[]*mtproto.Document], cancel func(error)) {
 			var documentList2 []*mtproto.Document
 			for p := range pipe {
-				documentList2 = append(documentList2, p.(*mtproto.Document))
+				documentList2 = append(documentList2, p)
 			}
 			writer.Write(documentList2)
 		})
@@ -208,7 +207,7 @@ func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mt
 
 	var documentList []*mtproto.Document
 	if rList != nil {
-		documentList = rList.([]*mtproto.Document)
+		documentList = rList
 	}
 	// logx.Infof("doList: %v", doList)
 
