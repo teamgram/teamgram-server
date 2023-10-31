@@ -193,7 +193,7 @@ func (ctx *connContext) DebugString() string {
 }
 
 // OnNewConnection
-///////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////
 func (s *Server) OnNewConnection(conn *net2.TcpConnection) {
 	ctx := newConnContext()
 	ctx.setClientIp(strings.Split(conn.RemoteAddr().String(), ":")[0])
@@ -292,7 +292,7 @@ func (s *Server) OnConnectionClosed(conn *net2.TcpConnection) {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////////
 func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection, mmsg *mtproto.MTPRawMessage) error {
 	logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
 

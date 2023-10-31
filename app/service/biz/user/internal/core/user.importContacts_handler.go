@@ -18,7 +18,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-//
 type contactItem = dao.ContactItem
 
 //	c               *mtproto.InputContact

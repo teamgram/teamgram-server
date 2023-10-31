@@ -56,7 +56,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_c10c1e4729b66838, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 type TLGatewaySendDataToGateway struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=gateway.TLConstructor" json:"constructor,omitempty"`

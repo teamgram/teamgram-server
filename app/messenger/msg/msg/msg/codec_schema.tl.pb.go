@@ -208,7 +208,7 @@ func (m *TLContentMessage) To_ContentMessage() *ContentMessage {
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLContentMessage) SetId(v int32) { m.Data2.Id = v }
 func (m *TLContentMessage) GetId() int32  { return m.Data2.Id }
 
@@ -387,7 +387,7 @@ func (m *TLOutboxMessage) To_OutboxMessage() *OutboxMessage {
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLOutboxMessage) SetNoWebpage(v bool) { m.Data2.NoWebpage = v }
 func (m *TLOutboxMessage) GetNoWebpage() bool  { return m.Data2.NoWebpage }
 

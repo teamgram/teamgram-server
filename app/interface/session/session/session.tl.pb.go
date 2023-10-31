@@ -89,12 +89,11 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_3b8e1e0b46c4ab6f, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sessionClientEvent server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string = SessionClientEvent;
 //
 // SessionClientEvent <--
-//  + TL_sessionClientEvent
-//
+//   - TL_sessionClientEvent
 type SessionClientEvent struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -238,12 +237,11 @@ func (m *TLSessionClientEvent) GetData2() *SessionClientEvent {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sessionClientData  server_id:string conn_type:int auth_key_id:long session_id:long client_ip:string quick_ack:int salt:long payload:bytes = SessionClientData;
 //
 // SessionClientData <--
-//  + TL_sessionClientData
-//
+//   - TL_sessionClientData
 type SessionClientData struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -411,12 +409,11 @@ func (m *TLSessionClientData) GetData2() *SessionClientData {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // httpSessionData payload:bytes = HttpSessionData;
 //
 // HttpSessionData <--
-//  + TL_httpSessionData
-//
+//   - TL_httpSessionData
 type HttpSessionData struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -528,7 +525,7 @@ func (m *TLHttpSessionData) GetData2() *HttpSessionData {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.queryAuthKey auth_key_id:long = AuthKeyInfo;
 type TLSessionQueryAuthKey struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -585,7 +582,7 @@ func (m *TLSessionQueryAuthKey) GetAuthKeyId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 type TLSessionSetAuthKey struct {
 	Constructor          TLConstructor        `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -658,7 +655,7 @@ func (m *TLSessionSetAuthKey) GetExpiresIn() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.createSession client:SessionClientEvent = Bool;
 type TLSessionCreateSession struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -715,7 +712,7 @@ func (m *TLSessionCreateSession) GetClient() *SessionClientEvent {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.sendDataToSession data:SessionClientData = Bool;
 type TLSessionSendDataToSession struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -772,7 +769,7 @@ func (m *TLSessionSendDataToSession) GetData() *SessionClientData {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 type TLSessionSendHttpDataToSession struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -829,7 +826,7 @@ func (m *TLSessionSendHttpDataToSession) GetClient() *SessionClientData {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.closeSession client:SessionClientEvent = Bool;
 type TLSessionCloseSession struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -886,7 +883,7 @@ func (m *TLSessionCloseSession) GetClient() *SessionClientEvent {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 type TLSessionPushUpdatesData struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -959,7 +956,7 @@ func (m *TLSessionPushUpdatesData) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.pushSessionUpdatesData auth_key_id:long session_id:long updates:Updates = Bool;
 type TLSessionPushSessionUpdatesData struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`
@@ -1032,7 +1029,7 @@ func (m *TLSessionPushSessionUpdatesData) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 type TLSessionPushRpcResultData struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=session.TLConstructor" json:"constructor,omitempty"`

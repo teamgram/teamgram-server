@@ -439,7 +439,7 @@ func (m *TLChatInvite) To_ChatInviteExt() *ChatInviteExt {
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLChatInvite) SetRequestNeeded(v bool) { m.Data2.RequestNeeded = v }
 func (m *TLChatInvite) GetRequestNeeded() bool  { return m.Data2.RequestNeeded }
 
@@ -716,7 +716,7 @@ func (m *TLChatInviteImported) To_ChatInviteImported() *ChatInviteImported {
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLChatInviteImported) SetChat(v *mtproto.MutableChat) { m.Data2.Chat = v }
 func (m *TLChatInviteImported) GetChat() *mtproto.MutableChat  { return m.Data2.Chat }
 
@@ -2966,9 +2966,9 @@ func (m *TLChatImportChatInvite2) DebugString() string {
 	return dbgString
 }
 
-//----------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------
 // Vector_MutableChat
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_MutableChat) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3002,7 +3002,7 @@ func (m *Vector_MutableChat) DebugString() string {
 }
 
 // Vector_Long
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
@@ -3026,7 +3026,7 @@ func (m *Vector_Long) DebugString() string {
 }
 
 // Vector_UserChatIdList
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserChatIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3060,7 +3060,7 @@ func (m *Vector_UserChatIdList) DebugString() string {
 }
 
 // Vector_ChatAdminWithInvites
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ChatAdminWithInvites) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3094,7 +3094,7 @@ func (m *Vector_ChatAdminWithInvites) DebugString() string {
 }
 
 // Vector_ExportedChatInvite
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ExportedChatInvite) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3128,7 +3128,7 @@ func (m *Vector_ExportedChatInvite) DebugString() string {
 }
 
 // Vector_ChatInviteImporter
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ChatInviteImporter) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))

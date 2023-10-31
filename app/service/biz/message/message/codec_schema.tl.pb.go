@@ -1179,9 +1179,9 @@ func (m *TLMessageGetUnreadMentionsCount) DebugString() string {
 	return dbgString
 }
 
-//----------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------
 // Vector_MessageBox
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_MessageBox) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -1215,7 +1215,7 @@ func (m *Vector_MessageBox) DebugString() string {
 }
 
 // Vector_Int
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Int) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorInt(m.Datas)
 

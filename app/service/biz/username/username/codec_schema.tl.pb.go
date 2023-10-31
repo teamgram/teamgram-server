@@ -213,7 +213,7 @@ func (m *TLUsernameData) To_UsernameData() *UsernameData {
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLUsernameData) SetUsername(v string) { m.Data2.Username = v }
 func (m *TLUsernameData) GetUsername() string  { return m.Data2.Username }
 
@@ -1228,9 +1228,9 @@ func (m *TLUsernameSearch) DebugString() string {
 	return dbgString
 }
 
-//----------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------
 // Vector_UsernameData
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UsernameData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))

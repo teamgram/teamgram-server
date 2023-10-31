@@ -23,41 +23,41 @@ import (
 )
 
 /*
- By android source code - RequestFlagWithoutLogin:
-	TL_account_getAuthorizationForm
-	TL_account_getPasswordSettings
-	TL_account_confirmPasswordEmail
-	TL_account_updatePasswordSettings
-	TL_account_getTmpPassword
-	TL_account_getPassword
-	TL_account_deleteAccount
+	 By android source code - RequestFlagWithoutLogin:
+		TL_account_getAuthorizationForm
+		TL_account_getPasswordSettings
+		TL_account_confirmPasswordEmail
+		TL_account_updatePasswordSettings
+		TL_account_getTmpPassword
+		TL_account_getPassword
+		TL_account_deleteAccount
 
-	TL_auth_resendCode
-	TL_auth_signIn
-	TL_auth_cancelCode
-	TL_auth_requestPasswordRecovery
-	TL_auth_checkPassword
-	TL_auth_checkRecoveryPassword
-	TL_auth_recoverPassword
-	TL_auth_signUp
-	TL_auth_exportAuthorization
-	TL_auth_importAuthorization
-	TL_auth_bindTempAuthKey
-	TL_auth_cancelCode
+		TL_auth_resendCode
+		TL_auth_signIn
+		TL_auth_cancelCode
+		TL_auth_requestPasswordRecovery
+		TL_auth_checkPassword
+		TL_auth_checkRecoveryPassword
+		TL_auth_recoverPassword
+		TL_auth_signUp
+		TL_auth_exportAuthorization
+		TL_auth_importAuthorization
+		TL_auth_bindTempAuthKey
+		TL_auth_cancelCode
 
-	TL_rpc_drop_answer
-	TL_get_future_salts
-	TL_ping
+		TL_rpc_drop_answer
+		TL_get_future_salts
+		TL_ping
 
-	TL_help_getNearestDc
-	TL_help_getConfig
-	TL_help_getCdnConfig
+		TL_help_getNearestDc
+		TL_help_getConfig
+		TL_help_getCdnConfig
 
-	TL_langpack_getLanguages
-	TL_langpack_getLanguages
-	TL_langpack_getDifference
-	TL_langpack_getLangPack
-	TL_langpack_getStrings
+		TL_langpack_getLanguages
+		TL_langpack_getLanguages
+		TL_langpack_getDifference
+		TL_langpack_getLangPack
+		TL_langpack_getStrings
 */
 func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 	switch tl.(type) {

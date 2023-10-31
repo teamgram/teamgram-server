@@ -257,7 +257,6 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 }
 
 // TODO(@benqi): mention...
-//
 func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, noWebpage bool, message *mtproto.Message, hasBot bool) (*mtproto.Message, error) {
 	var (
 		entities mtproto.MessageEntitySlice

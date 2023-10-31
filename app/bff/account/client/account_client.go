@@ -35,6 +35,8 @@ type AccountClient interface {
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
+	AccountUpdateColor(ctx context.Context, in *mtproto.TLAccountUpdateColor) (*mtproto.Bool, error)
+	AccountGetDefaultBackgroundEmojis(ctx context.Context, in *mtproto.TLAccountGetDefaultBackgroundEmojis) (*mtproto.EmojiList, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 	AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error)
@@ -146,6 +148,20 @@ func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Conte
 func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
+}
+
+// AccountUpdateColor
+// account.updateColor#a001cc43 flags:# color:int background_emoji_id:flags.0?long = Bool;
+func (m *defaultAccountClient) AccountUpdateColor(ctx context.Context, in *mtproto.TLAccountUpdateColor) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.AccountUpdateColor(ctx, in)
+}
+
+// AccountGetDefaultBackgroundEmojis
+// account.getDefaultBackgroundEmojis#a60ab9ce hash:long = EmojiList;
+func (m *defaultAccountClient) AccountGetDefaultBackgroundEmojis(ctx context.Context, in *mtproto.TLAccountGetDefaultBackgroundEmojis) (*mtproto.EmojiList, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.AccountGetDefaultBackgroundEmojis(ctx, in)
 }
 
 // MessagesSetDefaultHistoryTTL

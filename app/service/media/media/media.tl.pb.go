@@ -105,8 +105,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // PhotoSizeList <--
-//  + TL_photoSizeList
-//
+//   - TL_photoSizeList
 type PhotoSizeList struct {
 	PredicateName        string               `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor        `protobuf:"varint,2,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
@@ -234,8 +233,7 @@ func (m *TLPhotoSizeList) GetData2() *PhotoSizeList {
 }
 
 // VideoSizeList <--
-//  + TL_videoSizeList
-//
+//   - TL_videoSizeList
 type VideoSizeList struct {
 	PredicateName        string               `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor        `protobuf:"varint,2,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
@@ -362,7 +360,7 @@ func (m *TLVideoSizeList) GetData2() *VideoSizeList {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadPhotoFile struct {
 	Constructor          TLConstructor            `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64                    `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -442,7 +440,7 @@ func (m *TLMediaUploadPhotoFile) GetTtlSeconds() *types.Int32Value {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadProfilePhotoFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64              `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -522,7 +520,7 @@ func (m *TLMediaUploadProfilePhotoFile) GetVideoStartTs() *types.DoubleValue {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetPhoto struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	PhotoId              int64         `protobuf:"varint,3,opt,name=photo_id,json=photoId,proto3" json:"photo_id,omitempty"`
@@ -578,7 +576,7 @@ func (m *TLMediaGetPhoto) GetPhotoId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetPhotoSizeList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	SizeId               int64         `protobuf:"varint,3,opt,name=size_id,json=sizeId,proto3" json:"size_id,omitempty"`
@@ -634,7 +632,7 @@ func (m *TLMediaGetPhotoSizeList) GetSizeId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetPhotoSizeListList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	IdList               []int64       `protobuf:"varint,3,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
@@ -690,7 +688,7 @@ func (m *TLMediaGetPhotoSizeListList) GetIdList() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetVideoSizeList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	SizeId               int64         `protobuf:"varint,3,opt,name=size_id,json=sizeId,proto3" json:"size_id,omitempty"`
@@ -746,7 +744,7 @@ func (m *TLMediaGetVideoSizeList) GetSizeId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadedDocumentMedia struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64               `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -810,7 +808,7 @@ func (m *TLMediaUploadedDocumentMedia) GetMedia() *mtproto.InputMedia {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetDocument struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -866,7 +864,7 @@ func (m *TLMediaGetDocument) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetDocumentList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	IdList               []int64       `protobuf:"varint,3,rep,packed,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
@@ -922,7 +920,7 @@ func (m *TLMediaGetDocumentList) GetIdList() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadEncryptedFile struct {
 	Constructor          TLConstructor               `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64                       `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -986,7 +984,7 @@ func (m *TLMediaUploadEncryptedFile) GetFile() *mtproto.InputEncryptedFile {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaGetEncryptedFile struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -1050,7 +1048,7 @@ func (m *TLMediaGetEncryptedFile) GetAccessHash() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadWallPaperFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64              `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -1130,7 +1128,7 @@ func (m *TLMediaUploadWallPaperFile) GetAdmin() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadThemeFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64              `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -1218,7 +1216,7 @@ func (m *TLMediaUploadThemeFile) GetFileName() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadStickerFile struct {
 	Constructor              TLConstructor              `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId                  int64                      `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -1314,7 +1312,7 @@ func (m *TLMediaUploadStickerFile) GetDocumentAttributeSticker() *mtproto.Docume
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMediaUploadRingtoneFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=media.TLConstructor" json:"constructor,omitempty"`
 	OwnerId              int64              `protobuf:"varint,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
@@ -1394,7 +1392,7 @@ func (m *TLMediaUploadRingtoneFile) GetFileName() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_PhotoSizeList struct {
 	Datas                []*PhotoSizeList `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`

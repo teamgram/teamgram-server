@@ -69,8 +69,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // PhoneCodeTransaction <--
-//  + TL_phoneCodeTransaction
-//
+//   - TL_phoneCodeTransaction
 type PhoneCodeTransaction struct {
 	PredicateName         string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor           TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=code.TLConstructor" json:"constructor,omitempty"`
@@ -269,7 +268,7 @@ func (m *TLPhoneCodeTransaction) GetData2() *PhoneCodeTransaction {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLCodeCreatePhoneCode struct {
 	Constructor           TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=code.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId             int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -373,7 +372,7 @@ func (m *TLCodeCreatePhoneCode) GetState() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLCodeGetPhoneCode struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=code.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -445,7 +444,7 @@ func (m *TLCodeGetPhoneCode) GetPhoneCodeHash() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLCodeDeletePhoneCode struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=code.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -517,7 +516,7 @@ func (m *TLCodeDeletePhoneCode) GetPhoneCodeHash() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLCodeUpdatePhoneCodeData struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=code.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64                 `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`

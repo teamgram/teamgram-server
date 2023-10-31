@@ -74,7 +74,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_04d9f5ff30041e30, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.updatesMe flags:# user_id:long auth_key_id:long server_id:string session_id:flags.0?long updates:Updates = Void;
 type TLSyncUpdatesMe struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -163,7 +163,7 @@ func (m *TLSyncUpdatesMe) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.updatesNotMe user_id:long auth_key_id:long updates:Updates = Void;
 type TLSyncUpdatesNotMe struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -236,7 +236,7 @@ func (m *TLSyncUpdatesNotMe) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.pushUpdates user_id:long updates:Updates = Void;
 type TLSyncPushUpdates struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -301,7 +301,7 @@ func (m *TLSyncPushUpdates) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
 type TLSyncPushUpdatesIfNot struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -374,7 +374,7 @@ func (m *TLSyncPushUpdatesIfNot) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.pushBotUpdates user_id:long updates:Updates = Void;
 type TLSyncPushBotUpdates struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -439,7 +439,7 @@ func (m *TLSyncPushBotUpdates) GetUpdates() *mtproto.Updates {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.pushRpcResult auth_key_id:long server_id:string session_id:long client_req_msg_id:long rpc_result:bytes = Void;
 type TLSyncPushRpcResult struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`
@@ -528,7 +528,7 @@ func (m *TLSyncPushRpcResult) GetRpcResult() []byte {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // sync.broadcastUpdates broadcast_type:int chat_id:long exclude_id_list:Vector<long> updates:Updates = Void;
 type TLSyncBroadcastUpdates struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=sync.TLConstructor" json:"constructor,omitempty"`

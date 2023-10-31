@@ -78,8 +78,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // ChannelDifference <--
-//  + TL_channelDifference
-//
+//   - TL_channelDifference
 type ChannelDifference struct {
 	PredicateName        string             `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor      `protobuf:"varint,2,opt,name=constructor,proto3,enum=updates.TLConstructor" json:"constructor,omitempty"`
@@ -215,11 +214,10 @@ func (m *TLChannelDifference) GetData2() *ChannelDifference {
 }
 
 // Difference <--
-//  + TL_differenceEmpty
-//  + TL_difference
-//  + TL_differenceSlice
-//  + TL_differenceTooLong
-//
+//   - TL_differenceEmpty
+//   - TL_difference
+//   - TL_differenceSlice
+//   - TL_differenceTooLong
 type Difference struct {
 	PredicateName        string                 `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor          `protobuf:"varint,2,opt,name=constructor,proto3,enum=updates.TLConstructor" json:"constructor,omitempty"`
@@ -503,7 +501,7 @@ func (m *TLDifferenceTooLong) GetData2() *Difference {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUpdatesGetStateV2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=updates.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -567,7 +565,7 @@ func (m *TLUpdatesGetStateV2) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUpdatesGetDifferenceV2 struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=updates.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64             `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`
@@ -655,7 +653,7 @@ func (m *TLUpdatesGetDifferenceV2) GetDate() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUpdatesGetChannelDifferenceV2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=updates.TLConstructor" json:"constructor,omitempty"`
 	AuthKeyId            int64         `protobuf:"varint,3,opt,name=auth_key_id,json=authKeyId,proto3" json:"auth_key_id,omitempty"`

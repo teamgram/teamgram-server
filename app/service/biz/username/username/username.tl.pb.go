@@ -105,8 +105,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // UsernameData <--
-//  + TL_usernameData
-//
+//   - TL_usernameData
 type UsernameData struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
@@ -226,11 +225,10 @@ func (m *TLUsernameData) GetData2() *UsernameData {
 }
 
 // UsernameExist <--
-//  + TL_usernameNotExisted
-//  + TL_usernameExisted
-//  + TL_usernameExistedNotMe
-//  + TL_usernameExistedIsMe
-//
+//   - TL_usernameNotExisted
+//   - TL_usernameExisted
+//   - TL_usernameExistedNotMe
+//   - TL_usernameExistedIsMe
 type UsernameExist struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
@@ -474,7 +472,7 @@ func (m *TLUsernameExistedIsMe) GetData2() *UsernameExist {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameGetAccountUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -530,7 +528,7 @@ func (m *TLUsernameGetAccountUsername) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameCheckAccountUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -594,7 +592,7 @@ func (m *TLUsernameCheckAccountUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameGetChannelUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -650,7 +648,7 @@ func (m *TLUsernameGetChannelUsername) GetChannelId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameCheckChannelUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -714,7 +712,7 @@ func (m *TLUsernameCheckChannelUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameUpdateUsernameByPeer struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	PeerType             int32         `protobuf:"varint,3,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
@@ -786,7 +784,7 @@ func (m *TLUsernameUpdateUsernameByPeer) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameCheckUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	Username             string        `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
@@ -842,7 +840,7 @@ func (m *TLUsernameCheckUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameUpdateUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	PeerType             int32         `protobuf:"varint,3,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
@@ -914,7 +912,7 @@ func (m *TLUsernameUpdateUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameDeleteUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	Username             string        `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
@@ -970,7 +968,7 @@ func (m *TLUsernameDeleteUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameResolveUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	Username             string        `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
@@ -1026,7 +1024,7 @@ func (m *TLUsernameResolveUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameGetListByUsernameList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	Names                []string      `protobuf:"bytes,3,rep,name=names,proto3" json:"names,omitempty"`
@@ -1082,7 +1080,7 @@ func (m *TLUsernameGetListByUsernameList) GetNames() []string {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameDeleteUsernameByPeer struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	PeerType             int32         `protobuf:"varint,3,opt,name=peer_type,json=peerType,proto3" json:"peer_type,omitempty"`
@@ -1146,7 +1144,7 @@ func (m *TLUsernameDeleteUsernameByPeer) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUsernameSearch struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=username.TLConstructor" json:"constructor,omitempty"`
 	Q                    string        `protobuf:"bytes,3,opt,name=q,proto3" json:"q,omitempty"`
@@ -1218,7 +1216,7 @@ func (m *TLUsernameSearch) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_UsernameData struct {
 	Datas                []*UsernameData `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`

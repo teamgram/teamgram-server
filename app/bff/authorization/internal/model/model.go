@@ -46,9 +46,11 @@ type PhoneCodeTransaction struct {
 	State                 int    `json:"state"`
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO(@benqi): 如果手机号已经注册，检查是否有其他设备在线，有则使用sentCodeTypeApp
-// 				 否则使用sentCodeTypeSms
+//
+//	否则使用sentCodeTypeSms
+//
 // TODO(@benqi): 有则使用sentCodeTypeFlashCall和entCodeTypeCall？？
 func (m *PhoneCodeTransaction) ToAuthSentCode() *mtproto.Auth_SentCode {
 	// TODO(@benqi): only use sms

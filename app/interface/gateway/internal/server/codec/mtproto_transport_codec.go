@@ -93,7 +93,7 @@ func init() {
 }
 
 // MTProtoTransport
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////
 type MTProtoTransport struct {
 }
 
@@ -126,22 +126,24 @@ func (c *TransportCodec) peekCodec() error {
 	}
 }
 
-/**
-  Android client code:
+/*
+*
 
-	RAND_bytes(bytes, 64);
-	uint32_t val = (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0]);
-	uint32_t val2 = (bytes[7] << 24) | (bytes[6] << 16) | (bytes[5] << 8) | (bytes[4]);
-	if (bytes[0] != 0xef &&
-		val != 0x44414548 &&
-		val != 0x54534f50 &&
-		val != 0x20544547 &&
-		val != 0x4954504f &&
-		val != 0xeeeeeeee &&
-		val2 != 0x00000000) {
-		bytes[56] = bytes[57] = bytes[58] = bytes[59] = 0xef;
-		break;
-	}
+	  Android client code:
+
+		RAND_bytes(bytes, 64);
+		uint32_t val = (bytes[3] << 24) | (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0]);
+		uint32_t val2 = (bytes[7] << 24) | (bytes[6] << 16) | (bytes[5] << 8) | (bytes[4]);
+		if (bytes[0] != 0xef &&
+			val != 0x44414548 &&
+			val != 0x54534f50 &&
+			val != 0x20544547 &&
+			val != 0x4954504f &&
+			val != 0xeeeeeeee &&
+			val2 != 0x00000000) {
+			bytes[56] = bytes[57] = bytes[58] = bytes[59] = 0xef;
+			break;
+		}
 */
 func (c *TransportCodec) peekMTProtoCodec() error {
 	peek, _ := c.conn.(net2.PeekAble)

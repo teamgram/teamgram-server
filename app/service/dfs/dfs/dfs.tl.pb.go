@@ -86,7 +86,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_1c9cc97391f90775, []int{0}
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsWriteFilePartData struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64             `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -182,7 +182,7 @@ func (m *TLDfsWriteFilePartData) GetFileTotalParts() *types.Int32Value {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadPhotoFileV2 struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64              `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -246,7 +246,7 @@ func (m *TLDfsUploadPhotoFileV2) GetFile() *mtproto.InputFile {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadProfilePhotoFileV2 struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64              `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -326,7 +326,7 @@ func (m *TLDfsUploadProfilePhotoFileV2) GetVideoStartTs() *types.DoubleValue {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadEncryptedFileV2 struct {
 	Constructor          TLConstructor               `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64                       `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -390,7 +390,7 @@ func (m *TLDfsUploadEncryptedFileV2) GetFile() *mtproto.InputEncryptedFile {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsDownloadFile struct {
 	Constructor          TLConstructor              `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Location             *mtproto.InputFileLocation `protobuf:"bytes,3,opt,name=location,proto3" json:"location,omitempty"`
@@ -462,7 +462,7 @@ func (m *TLDfsDownloadFile) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadDocumentFileV2 struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64               `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -526,7 +526,7 @@ func (m *TLDfsUploadDocumentFileV2) GetMedia() *mtproto.InputMedia {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadGifDocumentMedia struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64               `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -590,7 +590,7 @@ func (m *TLDfsUploadGifDocumentMedia) GetMedia() *mtproto.InputMedia {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadMp4DocumentMedia struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64               `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -654,7 +654,7 @@ func (m *TLDfsUploadMp4DocumentMedia) GetMedia() *mtproto.InputMedia {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadWallPaperFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64              `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -734,7 +734,7 @@ func (m *TLDfsUploadWallPaperFile) GetAdmin() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadThemeFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64              `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -822,7 +822,7 @@ func (m *TLDfsUploadThemeFile) GetFileName() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLDfsUploadRingtoneFile struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=dfs.TLConstructor" json:"constructor,omitempty"`
 	Creator              int64              `protobuf:"varint,3,opt,name=creator,proto3" json:"creator,omitempty"`

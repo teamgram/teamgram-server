@@ -102,8 +102,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // ContentMessage <--
-//  + TL_contentMessage
-//
+//   - TL_contentMessage
 type ContentMessage struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
@@ -247,8 +246,7 @@ func (m *TLContentMessage) GetData2() *ContentMessage {
 }
 
 // OutboxMessage <--
-//  + TL_outboxMessage
-//
+//   - TL_outboxMessage
 type OutboxMessage struct {
 	PredicateName        string            `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor     `protobuf:"varint,2,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
@@ -392,8 +390,7 @@ func (m *TLOutboxMessage) GetData2() *OutboxMessage {
 }
 
 // Sender <--
-//  + TL_sender
-//
+//   - TL_sender
 type Sender struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
@@ -520,7 +517,7 @@ func (m *TLSender) GetData2() *Sender {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgSendMessage struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64          `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -608,7 +605,7 @@ func (m *TLMsgSendMessage) GetMessage() *OutboxMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgSendMultiMessage struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64            `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -696,7 +693,7 @@ func (m *TLMsgSendMultiMessage) GetMessage() []*OutboxMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgPushUserMessage struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64          `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -792,7 +789,7 @@ func (m *TLMsgPushUserMessage) GetMessage() *OutboxMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgReadMessageContents struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64             `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -880,7 +877,7 @@ func (m *TLMsgReadMessageContents) GetId() []*ContentMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgSendMessageV2 struct {
 	Constructor          TLConstructor    `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64            `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -968,7 +965,7 @@ func (m *TLMsgSendMessageV2) GetMessage() []*OutboxMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgEditMessage struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64          `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1064,7 +1061,7 @@ func (m *TLMsgEditMessage) GetMessage() *OutboxMessage {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgDeleteMessages struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1160,7 +1157,7 @@ func (m *TLMsgDeleteMessages) GetId() []int32 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgDeleteHistory struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1264,7 +1261,7 @@ func (m *TLMsgDeleteHistory) GetMaxId() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgDeletePhoneCallHistory struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1336,7 +1333,7 @@ func (m *TLMsgDeletePhoneCallHistory) GetRevoke() bool {
 	return false
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgDeleteChatHistory struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1400,7 +1397,7 @@ func (m *TLMsgDeleteChatHistory) GetDeleteUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgReadHistory struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1488,7 +1485,7 @@ func (m *TLMsgReadHistory) GetMaxId() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgUpdatePinnedMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1600,7 +1597,7 @@ func (m *TLMsgUpdatePinnedMessage) GetId() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLMsgUnpinAllMessages struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=msg.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`

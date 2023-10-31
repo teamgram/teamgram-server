@@ -90,8 +90,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // SessionEntry <--
-//  + TL_sessionEntry
-//
+//   - TL_sessionEntry
 type SessionEntry struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
@@ -251,8 +250,7 @@ func (m *TLSessionEntry) GetData2() *SessionEntry {
 }
 
 // UserSessionEntryList <--
-//  + TL_userSessionEntryList
-//
+//   - TL_userSessionEntryList
 type UserSessionEntryList struct {
 	PredicateName        string          `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor   `protobuf:"varint,2,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
@@ -371,7 +369,7 @@ func (m *TLUserSessionEntryList) GetData2() *UserSessionEntryList {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetSessionOnline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -435,7 +433,7 @@ func (m *TLStatusSetSessionOnline) GetSession() *SessionEntry {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetSessionOffline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -499,7 +497,7 @@ func (m *TLStatusSetSessionOffline) GetAuthKeyId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusGetUserOnlineSessions struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -555,7 +553,7 @@ func (m *TLStatusGetUserOnlineSessions) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusGetUsersOnlineSessionsList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	Users                []int64       `protobuf:"varint,3,rep,packed,name=users,proto3" json:"users,omitempty"`
@@ -611,7 +609,7 @@ func (m *TLStatusGetUsersOnlineSessionsList) GetUsers() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusGetChannelOnlineUsers struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -667,7 +665,7 @@ func (m *TLStatusGetChannelOnlineUsers) GetChannelId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetUserChannelsOnline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -731,7 +729,7 @@ func (m *TLStatusSetUserChannelsOnline) GetChannels() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetUserChannelsOffline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -795,7 +793,7 @@ func (m *TLStatusSetUserChannelsOffline) GetChannels() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetChannelUserOffline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -859,7 +857,7 @@ func (m *TLStatusSetChannelUserOffline) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetChannelUsersOnline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -923,7 +921,7 @@ func (m *TLStatusSetChannelUsersOnline) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLStatusSetChannelOffline struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=status.TLConstructor" json:"constructor,omitempty"`
 	ChannelId            int64         `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
@@ -979,7 +977,7 @@ func (m *TLStatusSetChannelOffline) GetChannelId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_UserSessionEntryList struct {
 	Datas                []*UserSessionEntryList `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`

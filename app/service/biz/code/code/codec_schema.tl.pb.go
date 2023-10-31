@@ -153,7 +153,7 @@ func (m *TLPhoneCodeTransaction) To_PhoneCodeTransaction() *PhoneCodeTransaction
 	return m.Data2
 }
 
-//// flags
+// // flags
 func (m *TLPhoneCodeTransaction) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLPhoneCodeTransaction) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
 

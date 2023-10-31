@@ -227,6 +227,36 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	return r, err
 }
 
+// AccountUpdateColor
+// account.updateColor#a001cc43 flags:# color:int background_emoji_id:flags.0?long = Bool;
+func (s *Service) AccountUpdateColor(ctx context.Context, request *mtproto.TLAccountUpdateColor) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.updateColor - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountUpdateColor(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.updateColor - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AccountGetDefaultBackgroundEmojis
+// account.getDefaultBackgroundEmojis#a60ab9ce hash:long = EmojiList;
+func (s *Service) AccountGetDefaultBackgroundEmojis(ctx context.Context, request *mtproto.TLAccountGetDefaultBackgroundEmojis) (*mtproto.EmojiList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.getDefaultBackgroundEmojis - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountGetDefaultBackgroundEmojis(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.getDefaultBackgroundEmojis - reply: %s", r.DebugString())
+	return r, err
+}
+
 // MessagesSetDefaultHistoryTTL
 // messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
 func (s *Service) MessagesSetDefaultHistoryTTL(ctx context.Context, request *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {

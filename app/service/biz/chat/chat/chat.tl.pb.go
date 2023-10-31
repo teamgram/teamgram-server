@@ -174,10 +174,9 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // ChatInviteExt <--
-//  + TL_chatInviteAlready
-//  + TL_chatInvite
-//  + TL_chatInvitePeek
-//
+//   - TL_chatInviteAlready
+//   - TL_chatInvite
+//   - TL_chatInvitePeek
 type ChatInviteExt struct {
 	PredicateName        string               `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor        `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
@@ -439,8 +438,7 @@ func (m *TLChatInvitePeek) GetData2() *ChatInviteExt {
 }
 
 // ChatInviteImported <--
-//  + TL_chatInviteImported
-//
+//   - TL_chatInviteImported
 type ChatInviteImported struct {
 	PredicateName        string                      `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor               `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
@@ -560,8 +558,7 @@ func (m *TLChatInviteImported) GetData2() *ChatInviteImported {
 }
 
 // RecentChatInviteRequesters <--
-//  + TL_recentChatInviteRequesters
-//
+//   - TL_recentChatInviteRequesters
 type RecentChatInviteRequesters struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
@@ -681,8 +678,7 @@ func (m *TLRecentChatInviteRequesters) GetData2() *RecentChatInviteRequesters {
 }
 
 // UserChatIdList <--
-//  + TL_userChatIdList
-//
+//   - TL_userChatIdList
 type UserChatIdList struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
@@ -801,7 +797,7 @@ func (m *TLUserChatIdList) GetData2() *UserChatIdList {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetMutableChat struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -857,7 +853,7 @@ func (m *TLChatGetMutableChat) GetChatId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetChatListByIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -921,7 +917,7 @@ func (m *TLChatGetChatListByIdList) GetIdList() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetChatBySelfId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -985,7 +981,7 @@ func (m *TLChatGetChatBySelfId) GetChatId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatCreateChat2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	CreatorId            int64         `protobuf:"varint,3,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
@@ -1065,7 +1061,7 @@ func (m *TLChatCreateChat2) GetBots() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatDeleteChat struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1129,7 +1125,7 @@ func (m *TLChatDeleteChat) GetOperatorId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatDeleteChatUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1201,7 +1197,7 @@ func (m *TLChatDeleteChatUser) GetDeleteUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditChatTitle struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1273,7 +1269,7 @@ func (m *TLChatEditChatTitle) GetTitle() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditChatAbout struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1345,7 +1341,7 @@ func (m *TLChatEditChatAbout) GetAbout() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditChatPhoto struct {
 	Constructor          TLConstructor  `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64          `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1417,7 +1413,7 @@ func (m *TLChatEditChatPhoto) GetChatPhoto() *mtproto.Photo {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditChatAdmin struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1497,7 +1493,7 @@ func (m *TLChatEditChatAdmin) GetIsAdmin() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditChatDefaultBannedRights struct {
 	Constructor          TLConstructor             `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64                     `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1569,7 +1565,7 @@ func (m *TLChatEditChatDefaultBannedRights) GetBannedRights() *mtproto.ChatBanne
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatAddChatUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1649,7 +1645,7 @@ func (m *TLChatAddChatUser) GetIsBot() bool {
 	return false
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetMutableChatByLink struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Link                 string        `protobuf:"bytes,3,opt,name=link,proto3" json:"link,omitempty"`
@@ -1705,7 +1701,7 @@ func (m *TLChatGetMutableChatByLink) GetLink() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatToggleNoForwards struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1777,7 +1773,7 @@ func (m *TLChatToggleNoForwards) GetEnabled() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatMigratedToChannel struct {
 	Constructor          TLConstructor        `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Chat                 *mtproto.MutableChat `protobuf:"bytes,3,opt,name=chat,proto3" json:"chat,omitempty"`
@@ -1849,7 +1845,7 @@ func (m *TLChatMigratedToChannel) GetAccessHash() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetChatParticipantIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1905,7 +1901,7 @@ func (m *TLChatGetChatParticipantIdList) GetChatId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetUsersChatIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -1961,7 +1957,7 @@ func (m *TLChatGetUsersChatIdList) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetMyChatList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2025,7 +2021,7 @@ func (m *TLChatGetMyChatList) GetIsCreator() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatExportChatInvite struct {
 	Constructor           TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId                int64              `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2129,7 +2125,7 @@ func (m *TLChatExportChatInvite) GetTitle() *types.StringValue {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetAdminsWithInvites struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2193,7 +2189,7 @@ func (m *TLChatGetAdminsWithInvites) GetChatId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetExportedChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64         `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2257,7 +2253,7 @@ func (m *TLChatGetExportedChatInvite) GetLink() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetExportedChatInvites struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	ChatId               int64              `protobuf:"varint,3,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -2353,7 +2349,7 @@ func (m *TLChatGetExportedChatInvites) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatCheckChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2417,7 +2413,7 @@ func (m *TLChatCheckChatInvite) GetHash() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatImportChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2481,7 +2477,7 @@ func (m *TLChatImportChatInvite) GetHash() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetChatInviteImporters struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64              `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2593,7 +2589,7 @@ func (m *TLChatGetChatInviteImporters) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatDeleteExportedChatInvite struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2665,7 +2661,7 @@ func (m *TLChatDeleteExportedChatInvite) GetLink() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatDeleteRevokedExportedChatInvites struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2739,7 +2735,7 @@ func (m *TLChatDeleteRevokedExportedChatInvites) GetAdminId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatEditExportedChatInvite struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64              `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2851,7 +2847,7 @@ func (m *TLChatEditExportedChatInvite) GetTitle() *types.StringValue {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatSetChatAvailableReactions struct {
 	Constructor            TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId                 int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -2931,7 +2927,7 @@ func (m *TLChatSetChatAvailableReactions) GetAvailableReactions() []string {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatSetHistoryTTL struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3003,7 +2999,7 @@ func (m *TLChatSetHistoryTTL) GetTtlPeriod() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatSearch struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3083,7 +3079,7 @@ func (m *TLChatSearch) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatGetRecentChatInviteRequesters struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3147,7 +3143,7 @@ func (m *TLChatGetRecentChatInviteRequesters) GetChatId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatHideChatJoinRequests struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64              `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3235,7 +3231,7 @@ func (m *TLChatHideChatJoinRequests) GetUserId() *types.Int64Value {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLChatImportChatInvite2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=chat.TLConstructor" json:"constructor,omitempty"`
 	SelfId               int64         `protobuf:"varint,3,opt,name=self_id,json=selfId,proto3" json:"self_id,omitempty"`
@@ -3299,7 +3295,7 @@ func (m *TLChatImportChatInvite2) GetHash() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_MutableChat struct {
 	Datas                []*mtproto.MutableChat `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`

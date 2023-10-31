@@ -99,10 +99,9 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // IdVal <--
-//  + TL_idVal
-//  + TL_idVals
-//  + TL_seqIdVal
-//
+//   - TL_idVal
+//   - TL_idVals
+//   - TL_seqIdVal
 type IdVal struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
@@ -316,11 +315,10 @@ func (m *TLSeqIdVal) GetData2() *IdVal {
 }
 
 // InputId <--
-//  + TL_inputId
-//  + TL_inputIds
-//  + TL_inputSeqId
-//  + TL_inputNSeqId
-//
+//   - TL_inputId
+//   - TL_inputIds
+//   - TL_inputSeqId
+//   - TL_inputNSeqId
 type InputId struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
@@ -588,7 +586,7 @@ func (m *TLInputNSeqId) GetData2() *InputId {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenNextId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
@@ -636,7 +634,7 @@ func (m *TLIdgenNextId) GetConstructor() TLConstructor {
 	return CRC32_UNKNOWN
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenNextIds struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Num                  int32         `protobuf:"varint,3,opt,name=num,proto3" json:"num,omitempty"`
@@ -692,7 +690,7 @@ func (m *TLIdgenNextIds) GetNum() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenGetCurrentSeqId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Key                  string        `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
@@ -748,7 +746,7 @@ func (m *TLIdgenGetCurrentSeqId) GetKey() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenSetCurrentSeqId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Key                  string        `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
@@ -812,7 +810,7 @@ func (m *TLIdgenSetCurrentSeqId) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenGetNextSeqId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Key                  string        `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
@@ -868,7 +866,7 @@ func (m *TLIdgenGetNextSeqId) GetKey() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenGetNextNSeqId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Key                  string        `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
@@ -932,7 +930,7 @@ func (m *TLIdgenGetNextNSeqId) GetN() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenGetNextIdValList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Id                   []*InputId    `protobuf:"bytes,3,rep,name=id,proto3" json:"id,omitempty"`
@@ -988,7 +986,7 @@ func (m *TLIdgenGetNextIdValList) GetId() []*InputId {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLIdgenGetCurrentSeqIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=idgen.TLConstructor" json:"constructor,omitempty"`
 	Id                   []*InputId    `protobuf:"bytes,3,rep,name=id,proto3" json:"id,omitempty"`
@@ -1044,7 +1042,7 @@ func (m *TLIdgenGetCurrentSeqIdList) GetId() []*InputId {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_Long struct {
 	Datas                []int64  `protobuf:"varint,1,rep,packed,name=datas,proto3" json:"datas,omitempty"`

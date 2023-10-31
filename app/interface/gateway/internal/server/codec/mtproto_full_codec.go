@@ -39,7 +39,6 @@ import (
 // and 4 bytes with the packet sequence number within this TCP connection
 // (the first packet sent is numbered 0, the next one 1, etc.),
 // and 4 CRC32 bytes at the end (length, sequence number, and payload together).
-//
 type FullCodec struct {
 	conn io.ReadWriteCloser
 }
