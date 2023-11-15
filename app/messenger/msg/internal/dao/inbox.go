@@ -76,6 +76,8 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 			// message.ReplyToMsgId.Value = replyId.UserMessageBoxId
 			if message.ReplyTo != nil {
 				message.ReplyTo.ReplyToMsgId = replyId.UserMessageBoxId
+				message.ReplyTo.ReplyToMsgId_INT32 = replyId.UserMessageBoxId
+				message.ReplyTo.ReplyToMsgId_FLAGINT32 = mtproto.MakeFlagsInt32(replyId.UserMessageBoxId)
 			}
 
 			if peer.PeerType == mtproto.PEER_CHAT && replyId.SenderUserId == toUserId {
