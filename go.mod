@@ -3,7 +3,7 @@ module github.com/teamgram/teamgram-server
 go 1.19
 
 require (
-	github.com/bwmarrin/snowflake v0.3.0
+	github.com/bwmarrin/snowflake v0.3.1-0.20221123153919-bc74ab286f15
 	github.com/chai2010/webp v1.1.2-0.20220219151144-e81c7511b15a
 	github.com/disintegration/imaging v1.6.2
 	github.com/gogo/protobuf v1.3.2
@@ -12,7 +12,7 @@ require (
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/teamgram/marmota v0.1.19
-	github.com/teamgram/proto v0.166.1
+	github.com/teamgram/proto v0.166.2
 	github.com/zeromicro/go-zero v1.6.0
 	google.golang.org/grpc v1.59.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c

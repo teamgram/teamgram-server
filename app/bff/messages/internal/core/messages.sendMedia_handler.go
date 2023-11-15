@@ -117,10 +117,25 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 	// Fix ReplyToMsgId
 	if in.GetReplyToMsgId() != nil {
 		outMessage.ReplyTo = mtproto.MakeTLMessageReplyHeader(&mtproto.MessageReplyHeader{
-			ReplyToMsgId:  in.GetReplyToMsgId().GetValue(),
-			ReplyToPeerId: nil,
-			ReplyToTopId:  nil,
+			ReplyToMsgId:           in.GetReplyToMsgId().GetValue(),
+			ReplyToMsgId_INT32:     in.GetReplyToMsgId().GetValue(),
+			ReplyToMsgId_FLAGINT32: in.GetReplyToMsgId(),
+			ReplyToPeerId:          nil,
+			ReplyToTopId:           nil,
 		}).To_MessageReplyHeader()
+	} else if in.GetReplyTo() != nil {
+		switch in.ReplyTo.PredicateName {
+		case mtproto.Predicate_inputReplyToMessage:
+			outMessage.ReplyTo = mtproto.MakeTLMessageReplyHeader(&mtproto.MessageReplyHeader{
+				ReplyToMsgId:           in.GetReplyTo().GetReplyToMsgId(),
+				ReplyToMsgId_INT32:     in.GetReplyTo().GetReplyToMsgId(),
+				ReplyToMsgId_FLAGINT32: mtproto.MakeFlagsInt32(in.GetReplyTo().GetReplyToMsgId()),
+				ReplyToPeerId:          nil,
+				ReplyToTopId:           nil,
+			}).To_MessageReplyHeader()
+		case mtproto.Predicate_inputReplyToStory:
+			// TODO:
+		}
 	}
 
 	if linkChatId > 0 {

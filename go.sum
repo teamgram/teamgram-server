@@ -12,8 +12,8 @@ github.com/alicebob/miniredis/v2 v2.31.0 h1:ObEFUNlJwoIiyjxdrYF0QIDE7qXcLc7D3WpS
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
-github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=
+github.com/bwmarrin/snowflake v0.3.1-0.20221123153919-bc74ab286f15 h1:LENUIGGG4QyRQpI8LfwfIgJ97mxxkHfKfE5hmNpndmU=
+github.com/bwmarrin/snowflake v0.3.1-0.20221123153919-bc74ab286f15/go.mod h1:ahP/WSNRoKO81yHU3rB9emlMk9jJLOKNS/JRDIWBzJk=
 github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
 github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/cespare/xxhash/v2 v2.2.0 h1:DC2CZ1Ep5Y4k3ZQ899DldepgrayRUGE6BBZ/cd9Cj44=
@@ -225,8 +225,8 @@ github.com/teamgram/go-zero v1.6.0-teamgram h1:d9jMPw6a8R1crrMfAgT8No0b4ly4dbtXK
 github.com/teamgram/go-zero v1.6.0-teamgram/go.mod h1:E9GCFPb0SwsTKFBcFr9UynGvXiDMmfc6fI5F15vqvAQ=
 github.com/teamgram/marmota v0.1.19 h1:+JjS+Ls+HTk1NrhCdYDF0FHsDlnxCh7Geh/C33p3+W4=
 github.com/teamgram/marmota v0.1.19/go.mod h1:RJiN1MUewkn/EG5gY+nBNkCJbHpNwaNZpD/f3HzJeN4=
-github.com/teamgram/proto v0.166.1 h1:b4a4RIuiXiz8NM+bYfly51yeut1E4hO6GWNnIPilhkc=
-github.com/teamgram/proto v0.166.1/go.mod h1:FPVvD9Dr4eTcX8+HMs3rgY2i7+HcyJ/wA67XcqQcKuI=
+github.com/teamgram/proto v0.166.2 h1:8gfTJEnOfrspR9Ppyd/kZVDryNlcCY0yg87SFTZkTxE=
+github.com/teamgram/proto v0.166.2/go.mod h1:FPVvD9Dr4eTcX8+HMs3rgY2i7+HcyJ/wA67XcqQcKuI=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
