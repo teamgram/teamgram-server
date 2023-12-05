@@ -167,6 +167,36 @@ func (s *Service) HelpGetCountriesList(ctx context.Context, request *mtproto.TLH
 	return r, err
 }
 
+// HelpGetPeerColors
+// help.getPeerColors#da80f42f hash:int = help.PeerColors;
+func (s *Service) HelpGetPeerColors(ctx context.Context, request *mtproto.TLHelpGetPeerColors) (*mtproto.Help_PeerColors, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("help.getPeerColors - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.HelpGetPeerColors(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("help.getPeerColors - reply: %s", r.DebugString())
+	return r, err
+}
+
+// HelpGetPeerProfileColors
+// help.getPeerProfileColors#abcfa9fd hash:int = help.PeerColors;
+func (s *Service) HelpGetPeerProfileColors(ctx context.Context, request *mtproto.TLHelpGetPeerProfileColors) (*mtproto.Help_PeerColors, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("help.getPeerProfileColors - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.HelpGetPeerProfileColors(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("help.getPeerProfileColors - reply: %s", r.DebugString())
+	return r, err
+}
+
 // HelpGetAppConfig98914110
 // help.getAppConfig#98914110 = JSONValue;
 func (s *Service) HelpGetAppConfig98914110(ctx context.Context, request *mtproto.TLHelpGetAppConfig98914110) (*mtproto.JSONValue, error) {

@@ -31,6 +31,8 @@ type ConfigurationClient interface {
 	HelpGetSupportName(ctx context.Context, in *mtproto.TLHelpGetSupportName) (*mtproto.Help_SupportName, error)
 	HelpDismissSuggestion(ctx context.Context, in *mtproto.TLHelpDismissSuggestion) (*mtproto.Bool, error)
 	HelpGetCountriesList(ctx context.Context, in *mtproto.TLHelpGetCountriesList) (*mtproto.Help_CountriesList, error)
+	HelpGetPeerColors(ctx context.Context, in *mtproto.TLHelpGetPeerColors) (*mtproto.Help_PeerColors, error)
+	HelpGetPeerProfileColors(ctx context.Context, in *mtproto.TLHelpGetPeerProfileColors) (*mtproto.Help_PeerColors, error)
 	HelpGetAppConfig98914110(ctx context.Context, in *mtproto.TLHelpGetAppConfig98914110) (*mtproto.JSONValue, error)
 }
 
@@ -112,6 +114,20 @@ func (m *defaultConfigurationClient) HelpDismissSuggestion(ctx context.Context, 
 func (m *defaultConfigurationClient) HelpGetCountriesList(ctx context.Context, in *mtproto.TLHelpGetCountriesList) (*mtproto.Help_CountriesList, error) {
 	client := mtproto.NewRPCConfigurationClient(m.cli.Conn())
 	return client.HelpGetCountriesList(ctx, in)
+}
+
+// HelpGetPeerColors
+// help.getPeerColors#da80f42f hash:int = help.PeerColors;
+func (m *defaultConfigurationClient) HelpGetPeerColors(ctx context.Context, in *mtproto.TLHelpGetPeerColors) (*mtproto.Help_PeerColors, error) {
+	client := mtproto.NewRPCConfigurationClient(m.cli.Conn())
+	return client.HelpGetPeerColors(ctx, in)
+}
+
+// HelpGetPeerProfileColors
+// help.getPeerProfileColors#abcfa9fd hash:int = help.PeerColors;
+func (m *defaultConfigurationClient) HelpGetPeerProfileColors(ctx context.Context, in *mtproto.TLHelpGetPeerProfileColors) (*mtproto.Help_PeerColors, error) {
+	client := mtproto.NewRPCConfigurationClient(m.cli.Conn())
+	return client.HelpGetPeerProfileColors(ctx, in)
 }
 
 // HelpGetAppConfig98914110
