@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -34,6 +34,12 @@ type DialogsClient interface {
 	MessagesGetOnlines(ctx context.Context, in *mtproto.TLMessagesGetOnlines) (*mtproto.ChatOnlines, error)
 	MessagesHidePeerSettingsBar(ctx context.Context, in *mtproto.TLMessagesHidePeerSettingsBar) (*mtproto.Bool, error)
 	MessagesSetHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetHistoryTTL) (*mtproto.Updates, error)
+	MessagesGetSavedDialogs(ctx context.Context, in *mtproto.TLMessagesGetSavedDialogs) (*mtproto.Messages_SavedDialogs, error)
+	MessagesGetSavedHistory(ctx context.Context, in *mtproto.TLMessagesGetSavedHistory) (*mtproto.Messages_Messages, error)
+	MessagesDeleteSavedHistory(ctx context.Context, in *mtproto.TLMessagesDeleteSavedHistory) (*mtproto.Messages_AffectedHistory, error)
+	MessagesGetPinnedSavedDialogs(ctx context.Context, in *mtproto.TLMessagesGetPinnedSavedDialogs) (*mtproto.Messages_SavedDialogs, error)
+	MessagesToggleSavedDialogPin(ctx context.Context, in *mtproto.TLMessagesToggleSavedDialogPin) (*mtproto.Bool, error)
+	MessagesReorderPinnedSavedDialogs(ctx context.Context, in *mtproto.TLMessagesReorderPinnedSavedDialogs) (*mtproto.Bool, error)
 }
 
 type defaultDialogsClient struct {
@@ -96,7 +102,7 @@ func (m *defaultDialogsClient) MessagesGetPinnedDialogs(ctx context.Context, in 
 }
 
 // MessagesSendScreenshotNotification
-// messages.sendScreenshotNotification#c97df020 peer:InputPeer reply_to_msg_id:int random_id:long = Updates;
+// messages.sendScreenshotNotification#a1405817 peer:InputPeer reply_to:InputReplyTo random_id:long = Updates;
 func (m *defaultDialogsClient) MessagesSendScreenshotNotification(ctx context.Context, in *mtproto.TLMessagesSendScreenshotNotification) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
 	return client.MessagesSendScreenshotNotification(ctx, in)
@@ -135,4 +141,46 @@ func (m *defaultDialogsClient) MessagesHidePeerSettingsBar(ctx context.Context, 
 func (m *defaultDialogsClient) MessagesSetHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetHistoryTTL) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
 	return client.MessagesSetHistoryTTL(ctx, in)
+}
+
+// MessagesGetSavedDialogs
+// messages.getSavedDialogs#5381d21a flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
+func (m *defaultDialogsClient) MessagesGetSavedDialogs(ctx context.Context, in *mtproto.TLMessagesGetSavedDialogs) (*mtproto.Messages_SavedDialogs, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesGetSavedDialogs(ctx, in)
+}
+
+// MessagesGetSavedHistory
+// messages.getSavedHistory#3d9a414d peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+func (m *defaultDialogsClient) MessagesGetSavedHistory(ctx context.Context, in *mtproto.TLMessagesGetSavedHistory) (*mtproto.Messages_Messages, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesGetSavedHistory(ctx, in)
+}
+
+// MessagesDeleteSavedHistory
+// messages.deleteSavedHistory#6e98102b flags:# peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
+func (m *defaultDialogsClient) MessagesDeleteSavedHistory(ctx context.Context, in *mtproto.TLMessagesDeleteSavedHistory) (*mtproto.Messages_AffectedHistory, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesDeleteSavedHistory(ctx, in)
+}
+
+// MessagesGetPinnedSavedDialogs
+// messages.getPinnedSavedDialogs#d63d94e0 = messages.SavedDialogs;
+func (m *defaultDialogsClient) MessagesGetPinnedSavedDialogs(ctx context.Context, in *mtproto.TLMessagesGetPinnedSavedDialogs) (*mtproto.Messages_SavedDialogs, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesGetPinnedSavedDialogs(ctx, in)
+}
+
+// MessagesToggleSavedDialogPin
+// messages.toggleSavedDialogPin#ac81bbde flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
+func (m *defaultDialogsClient) MessagesToggleSavedDialogPin(ctx context.Context, in *mtproto.TLMessagesToggleSavedDialogPin) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesToggleSavedDialogPin(ctx, in)
+}
+
+// MessagesReorderPinnedSavedDialogs
+// messages.reorderPinnedSavedDialogs#8b716587 flags:# force:flags.0?true order:Vector<InputDialogPeer> = Bool;
+func (m *defaultDialogsClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, in *mtproto.TLMessagesReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCDialogsClient(m.cli.Conn())
+	return client.MessagesReorderPinnedSavedDialogs(ctx, in)
 }

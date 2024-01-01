@@ -8,11 +8,11 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/gogo/protobuf v1.3.2
 	github.com/minio/minio-go/v7 v7.0.49
-	github.com/nyaruka/phonenumbers v1.1.8
+	github.com/nyaruka/phonenumbers v1.3.0
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/teamgram/marmota v0.1.19
-	github.com/teamgram/proto v0.169.2
+	github.com/teamgram/proto v0.170.0
 	github.com/zeromicro/go-zero v1.6.0
 	google.golang.org/grpc v1.59.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
@@ -112,7 +112,7 @@ require (
 	golang.org/x/oauth2 v0.12.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b // indirect
