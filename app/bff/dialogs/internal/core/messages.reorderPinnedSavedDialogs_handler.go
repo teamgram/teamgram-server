@@ -26,7 +26,7 @@ import (
 // messages.reorderPinnedSavedDialogs#8b716587 flags:# force:flags.0?true order:Vector<InputDialogPeer> = Bool;
 func (c *DialogsCore) MessagesReorderPinnedSavedDialogs(in *mtproto.TLMessagesReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.reorderPinnedSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Debugf("messages.reorderPinnedSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.BoolFalse, nil
 }

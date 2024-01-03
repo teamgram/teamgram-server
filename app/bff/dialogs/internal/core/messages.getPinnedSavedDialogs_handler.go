@@ -26,7 +26,12 @@ import (
 // messages.getPinnedSavedDialogs#d63d94e0 = messages.SavedDialogs;
 func (c *DialogsCore) MessagesGetPinnedSavedDialogs(in *mtproto.TLMessagesGetPinnedSavedDialogs) (*mtproto.Messages_SavedDialogs, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getPinnedSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Debugf("messages.getPinnedSavedDialogs blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLMessagesSavedDialogs(&mtproto.Messages_SavedDialogs{
+		Dialogs:  []*mtproto.SavedDialog{},
+		Messages: []*mtproto.Message{},
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{},
+	}).To_Messages_SavedDialogs(), nil
 }

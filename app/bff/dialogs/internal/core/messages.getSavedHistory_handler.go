@@ -26,7 +26,11 @@ import (
 // messages.getSavedHistory#3d9a414d peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *DialogsCore) MessagesGetSavedHistory(in *mtproto.TLMessagesGetSavedHistory) (*mtproto.Messages_Messages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSavedHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Debugf("messages.getSavedHistory blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLMessagesMessages(&mtproto.Messages_Messages{
+		Messages: []*mtproto.Message{},
+		Chats:    []*mtproto.Chat{},
+		Users:    []*mtproto.User{},
+	}).To_Messages_Messages(), nil
 }

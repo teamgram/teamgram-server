@@ -26,7 +26,7 @@ import (
 // messages.toggleSavedDialogPin#ac81bbde flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
 func (c *DialogsCore) MessagesToggleSavedDialogPin(in *mtproto.TLMessagesToggleSavedDialogPin) (*mtproto.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.toggleSavedDialogPin blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Debugf("messages.toggleSavedDialogPin blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.BoolFalse, nil
 }
