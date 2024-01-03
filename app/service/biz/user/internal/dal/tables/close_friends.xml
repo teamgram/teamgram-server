@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="close_friends">
+    <operation name="InsertBulk" type="bulkinsert">
+        <sql>
+            INSERT INTO close_friends
+                (user_id, close_friend_id, date)
+            VALUES
+                (:user_id, :close_friend_id, :date)
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                user_id, close_friend_id
+            FROM
+                close_friends
+            WHERE
+                user_id = :user_id ORDER BY id LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM
+                close_friends
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>

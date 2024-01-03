@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1127,3 +1128,19 @@ func (s *Service) UserCreateNewTestUser(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.createNewTestUser - reply: %s", r.DebugString())
 	return r, err
 }
+
+// UserEditCloseFriends
+// user.editCloseFriends user_id:long id:Vector<long> = Bool;
+func (s *Service) UserEditCloseFriends(ctx context.Context, request *user.TLUserEditCloseFriends) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.editCloseFriends - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserEditCloseFriends(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.editCloseFriends - reply: %s", r.DebugString())
+	return r, err
+}
+
