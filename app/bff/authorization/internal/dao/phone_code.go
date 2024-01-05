@@ -57,7 +57,7 @@ func (d *Dao) CreatePhoneCode(ctx context.Context,
 
 	if codeData, err = d.GetCachePhoneCode(ctx, authKeyId, phoneNumber); err != nil {
 		logx.WithContext(ctx).Errorf("getCachePhoneCode - error: %v", err)
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return
 	}
 	if codeData == nil {
@@ -78,7 +78,7 @@ func (d *Dao) CreatePhoneCode(ctx context.Context,
 	//
 	//if err = c.Dao.PutCachePhoneCode(ctx, authKeyId, phoneNumber, codeData); err != nil {
 	//	log.Errorf("putCachePhoneCode - error: %v", err)
-	//	err = mtproto.ErrInternelServerError
+	//	err = mtproto.ErrInternalServerError
 	//	return
 	//}
 	return

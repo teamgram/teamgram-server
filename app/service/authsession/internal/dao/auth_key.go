@@ -219,7 +219,7 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 		if err == sqlc.ErrNotFound {
 			err = mtproto.ErrAuthKeyUnregistered
 		} else {
-			err = mtproto.ErrInternelServerError
+			err = mtproto.ErrInternalServerError
 		}
 		return nil, err
 	}

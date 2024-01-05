@@ -35,7 +35,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 	dlg, err := c.svcCtx.Dao.DialogsDAO.SelectDialog(c.ctx, in.UserId, in.PeerType, in.PeerId)
 	if err != nil {
 		c.Logger.Errorf("messages.readHistory - error: invalid peer %v", err)
-		return nil, mtproto.ErrInternelServerError
+		return nil, mtproto.ErrInternalServerError
 	} else if dlg == nil {
 		c.Logger.Errorf("messages.readHistory - error: not found dialog, request: %s", in.DebugString())
 		return nil, mtproto.ErrPeerIdInvalid
@@ -50,7 +50,7 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 		maxInboxMsg, err3 := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(c.ctx, in.UserId, maxId)
 		if err3 != nil {
 			c.Logger.Errorf("messages.readHistory - error: not found dialog(%d,%d), error is %v", in.UserId, maxId, err3)
-			return nil, mtproto.ErrInternelServerError
+			return nil, mtproto.ErrInternalServerError
 		} else if maxInboxMsg == nil {
 			c.Logger.Errorf("messages.readHistory - error: not found dialog(%d,%d)", in.UserId, maxId)
 			return nil, mtproto.ErrMsgIdInvalid

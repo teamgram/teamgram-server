@@ -54,7 +54,7 @@ func (c *ChatInvitesCore) MessagesEditExportedChatInvite(in *mtproto.TLMessagesE
 		return nil, err
 	}
 	if len(chatInvites.Datas) == 0 || len(chatInvites.Datas) > 2 {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("messages.editExportedChatInvite - error: %v", err)
 		return nil, err
 	}

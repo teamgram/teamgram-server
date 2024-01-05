@@ -141,7 +141,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 				return nil, rpcErr
 			} else {
 				// log.Debugf("error")
-				return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternelServerError))
+				return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternalServerError))
 			}
 		}
 
@@ -170,7 +170,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 		if !ok {
 			err = fmt.Errorf("Invalid reply type, maybe server side bug, %v\n", reply)
 			// log.Error(err.Error())
-			return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternelServerError))
+			return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternalServerError))
 		}
 
 		return reply, nil

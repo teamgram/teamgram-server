@@ -68,7 +68,7 @@ func (c *ChatInvitesCore) MessagesCheckChatInvite(in *mtproto.TLMessagesCheckCha
 		return getUserListF(idList)
 	})
 	if rValue == nil {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("messages.checkChatInvite - error: ", err)
 		return nil, err
 	}

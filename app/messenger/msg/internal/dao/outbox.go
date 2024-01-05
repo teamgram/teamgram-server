@@ -73,7 +73,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 		idgen_client.MakeIDTypeNgen(idgen_client.IDTypeMessageBox, fromId),
 		idgen_client.MakeIDTypeNgen(idgen_client.IDTypePts, fromId))
 	if len(idList) != 3 {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return nil, false, err
 	}
 
@@ -82,7 +82,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 	pts := int32(idList[2].Id)
 
 	if dialogMessageId == 0 || outBoxMsgId == 0 || pts == 0 {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return nil, false, err
 	}
 

@@ -419,7 +419,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		//	res, err := c.AuthSessionRpcClient.AuthBindTempAuthKey(context.Background(), query.(*mtproto.TLAuthBindTempAuthKey))
 		//	if err != nil {
 		//		logx.Errorf("bindTempAuthKey error - %v", err)
-		//		err = mtproto.ErrInternelServerError
+		//		err = mtproto.ErrInternalServerError
 		//		c.sendRpcResultToQueue(gatewayId, msgId.msgId, &mtproto.RpcError{
 		//			ErrorCode:    500,
 		//			ErrorMessage: "INTERNAL_SERVER_ERROR",

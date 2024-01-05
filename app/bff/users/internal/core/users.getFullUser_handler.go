@@ -54,7 +54,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		c.Logger.Errorf("users.getFullUser - error: %v", err)
 		return nil, err
 	} else if len(mutableUsers.Datas) == 0 {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("users.getFullUser - error: %v", err)
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 	user, _ = mutableUsers.GetImmutableUser(peerId)
 
 	if user == nil {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("users.getFullUser - error: %v", err)
 		return nil, err
 	}

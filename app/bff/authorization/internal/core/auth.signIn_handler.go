@@ -226,7 +226,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 		return nil, err
 	} else if user == nil {
 		c.Logger.Errorf("user(%s) is nil", phoneNumber)
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return nil, err
 	}
 

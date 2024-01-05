@@ -62,7 +62,7 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *mtproto.TLMessagesGetPinnedDi
 			})
 			if err2 != nil {
 				c.Logger.Errorf("messages.getPinnedDialogs - error: %v", err2)
-				return mtproto.ErrInternelServerError
+				return mtproto.ErrInternalServerError
 			}
 
 			return nil

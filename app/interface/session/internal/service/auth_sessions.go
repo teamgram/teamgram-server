@@ -845,7 +845,7 @@ func (s *authSessions) onRpcRequest(ctx context.Context, request *rpcApiMessage)
 		if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
 			reply.Result = rpcErr
 		} else {
-			reply.Result = mtproto.NewRpcError(mtproto.StatusInternelServerError)
+			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
 		}
 	} else {
 		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))

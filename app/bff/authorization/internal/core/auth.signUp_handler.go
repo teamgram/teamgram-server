@@ -199,7 +199,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	})
 	if err != nil {
 		c.Logger.Errorf("bindAuthKeyUser error: %v", err)
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return nil, err
 	}
 

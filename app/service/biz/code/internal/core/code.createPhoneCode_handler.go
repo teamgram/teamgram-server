@@ -24,7 +24,7 @@ func (c *CodeCore) CodeCreatePhoneCode(in *code.TLCodeCreatePhoneCode) (*code.Ph
 	codeData, err := c.svcCtx.Dao.GetCachePhoneCode(c.ctx, in.AuthKeyId, in.Phone)
 	if err != nil {
 		c.Logger.Errorf("getCachePhoneCode - error: %v", err)
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return nil, err
 	}
 	if codeData == nil {
@@ -58,7 +58,7 @@ func (c *CodeCore) CodeCreatePhoneCode(in *code.TLCodeCreatePhoneCode) (*code.Ph
 	//
 	//if err = c.Dao.PutCachePhoneCode(ctx, authKeyId, phoneNumber, codeData); err != nil {
 	//	log.Errorf("putCachePhoneCode - error: %v", err)
-	//	err = mtproto.ErrInternelServerError
+	//	err = mtproto.ErrInternalServerError
 	//	return
 	//}
 

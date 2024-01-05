@@ -91,7 +91,7 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 		//	photos, err := s.UserFacade.GetCacheUserPhotos(ctx, md.UserId)
 		//	if err != nil {
 		//		log.Errorf("photos.updateProfilePhoto - error: %v", err)
-		//		return nil, mtproto.ErrInternelServerError
+		//		return nil, mtproto.ErrInternalServerError
 		//	}
 		//	photos.RemovePhotoId(photos.GetDefaultPhotoId(), func(id int64) *mtproto.Photo {
 		//		photo := media_client.GetPhoto(id)

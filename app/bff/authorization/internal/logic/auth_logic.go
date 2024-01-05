@@ -127,7 +127,7 @@ func (m *AuthLogic) DoAuthReSendCode(ctx context.Context,
 
 	// check state invalid.
 	if codeData.State != model.CodeStateSent && codeData.State != model.CodeStateSignIn {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return
 	}
 
@@ -189,7 +189,7 @@ func (m *AuthLogic) DoAuthSignIn(ctx context.Context,
 		codeData.State != model.CodeStateSent &&
 		codeData.State != model.CodeStateSignIn {
 		logx.WithContext(ctx).Errorf("error - invalid codeData state: %v", codeData)
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		return
 	}
 
@@ -287,7 +287,7 @@ func (m *AuthLogic) DoAuthSignUp(ctx context.Context, authKeyId int64, phoneNumb
 
 	/*
 		if !m.AuthCore.UpdatePhoneCodeData(ctx, authKeyId, phoneNumber, phoneCodeHash, codeData) {
-			err = mtproto.ErrInternelServerError
+			err = mtproto.ErrInternalServerError
 			return
 		}
 

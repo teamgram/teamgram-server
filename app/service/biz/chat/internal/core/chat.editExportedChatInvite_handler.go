@@ -29,7 +29,7 @@ func (c *ChatCore) ChatEditExportedChatInvite(in *chat.TLChatEditExportedChatInv
 		c.Logger.Errorf("chat.editExportedChatInvite - error: %v", err)
 		return nil, err
 	} else if chatInviteDO == nil {
-		err = mtproto.ErrInternelServerError
+		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("chat.editExportedChatInvite - error: %v", err)
 		return nil, err
 	}
