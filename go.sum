@@ -225,8 +225,8 @@ github.com/teamgram/go-zero v1.6.0-teamgram h1:d9jMPw6a8R1crrMfAgT8No0b4ly4dbtXK
 github.com/teamgram/go-zero v1.6.0-teamgram/go.mod h1:E9GCFPb0SwsTKFBcFr9UynGvXiDMmfc6fI5F15vqvAQ=
 github.com/teamgram/marmota v0.1.19 h1:+JjS+Ls+HTk1NrhCdYDF0FHsDlnxCh7Geh/C33p3+W4=
 github.com/teamgram/marmota v0.1.19/go.mod h1:RJiN1MUewkn/EG5gY+nBNkCJbHpNwaNZpD/f3HzJeN4=
-github.com/teamgram/proto v0.170.3 h1:fn9hF/jUONH3HKIUZj+V35QdgrBeUMza6jL14GCDoCs=
-github.com/teamgram/proto v0.170.3/go.mod h1:FPVvD9Dr4eTcX8+HMs3rgY2i7+HcyJ/wA67XcqQcKuI=
+github.com/teamgram/proto v0.170.4 h1:8K9oY240flF/lUzDjgTEvGuk+kPqVp+jb0A8WEBDt5w=
+github.com/teamgram/proto v0.170.4/go.mod h1:FPVvD9Dr4eTcX8+HMs3rgY2i7+HcyJ/wA67XcqQcKuI=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
