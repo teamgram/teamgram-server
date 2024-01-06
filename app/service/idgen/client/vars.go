@@ -24,6 +24,8 @@ var (
 	channelPtsUpdatesNgenId = "channel_pts_updates_ngen_"
 	scheduledMessageNgenId  = "scheduled_ngen_"
 	botUpdatesNgenId        = "bot_updates_ngen_"
+	storyNgenId             = "story_ngen_"
+	channelStoryNgenId      = "channel_story_ngen_"
 )
 
 func genMessageDataNgenIdKey(id int64) string {
@@ -62,6 +64,14 @@ func genBotUpdatesNgenIdKey(id int64) string {
 	return botUpdatesNgenId + strconv.FormatInt(id, 10)
 }
 
+func genStoryNgenIdKey(id int64) string {
+	return storyNgenId + strconv.FormatInt(id, 10)
+}
+
+func genChannelStoryNgenIdKey(id int64) string {
+	return channelStoryNgenId + strconv.FormatInt(id, 10)
+}
+
 const (
 	IDTypeNextId            = 0
 	IDTypeMessageData       = 1
@@ -73,6 +83,8 @@ const (
 	IDTypeChannelPts        = 7
 	IDTypeScheduledMessage  = 8
 	IDTypeBot               = 9
+	IDTypeStory             = 10
+	IDTypeChannelStory      = 11
 )
 
 var (
@@ -176,6 +188,18 @@ func (m IDTypeNgen) ToInputId() *idgen.InputId {
 				return MakeInputSeqId(genBotUpdatesNgenIdKey(m.Key))
 			} else {
 				return MakeInputNSeqId(genBotUpdatesNgenIdKey(m.Key), m.N)
+			}
+		case IDTypeStory:
+			if m.N == 0 {
+				return MakeInputSeqId(genStoryNgenIdKey(m.Key))
+			} else {
+				return MakeInputNSeqId(genStoryNgenIdKey(m.Key), m.N)
+			}
+		case IDTypeChannelStory:
+			if m.N == 0 {
+				return MakeInputSeqId(genChannelStoryNgenIdKey(m.Key))
+			} else {
+				return MakeInputNSeqId(genChannelStoryNgenIdKey(m.Key), m.N)
 			}
 		}
 	}

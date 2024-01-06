@@ -230,6 +230,24 @@ func (m *IDGenClient2) SetCurrentBotUpdateId(ctx context.Context, key int64, v i
 	m.setCurrentSeqId(ctx, botUpdatesNgenId+strconv.FormatInt(key, 10), int64(v))
 }
 
+func (m *IDGenClient2) NextStoryId(ctx context.Context, key int64) (seq int32) {
+	seq = int32(m.getNextSeqId(ctx, storyNgenId+strconv.FormatInt(key, 10)))
+	return
+}
+
+func (m *IDGenClient2) SetCurrentStoryId(ctx context.Context, key int64, v int32) {
+	m.setCurrentSeqId(ctx, storyNgenId+strconv.FormatInt(key, 10), int64(v))
+}
+
+func (m *IDGenClient2) NextChannelStoryId(ctx context.Context, key int64) (seq int32) {
+	seq = int32(m.getNextSeqId(ctx, channelStoryNgenId+strconv.FormatInt(key, 10)))
+	return
+}
+
+func (m *IDGenClient2) SetCurrentChannelStoryId(ctx context.Context, key int64, v int32) {
+	m.setCurrentSeqId(ctx, channelStoryNgenId+strconv.FormatInt(key, 10), int64(v))
+}
+
 func (m *IDGenClient2) GetNextIdList(ctx context.Context, idList ...IDTypeNgen) []IDValue {
 	if len(idList) == 0 {
 		return nil
