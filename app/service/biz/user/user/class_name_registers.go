@@ -91,6 +91,7 @@ const (
 	Predicate_user_getMutableUsersV2                = "user_getMutableUsersV2"
 	Predicate_user_createNewTestUser                = "user_createNewTestUser"
 	Predicate_user_editCloseFriends                 = "user_editCloseFriends"
+	Predicate_user_setStoriesMaxId                  = "user_setStoriesMaxId"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -414,6 +415,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -2044429563, // 0x86247b05
 
 	},
+	Predicate_user_setStoriesMaxId: {
+		0: 1391834736, // 0x52f5b670
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -497,6 +502,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1795585240: Predicate_user_getMutableUsersV2,                // 0x94f98b28
 	1282329771:  Predicate_user_createNewTestUser,                // 0x4c6eccab
 	-2044429563: Predicate_user_editCloseFriends,                 // 0x86247b05
+	1391834736:  Predicate_user_setStoriesMaxId,                  // 0x52f5b670
 
 }
 

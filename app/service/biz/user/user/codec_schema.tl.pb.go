@@ -432,6 +432,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -2044429563,
 		}
 	},
+	1391834736: func() mtproto.TLObject { // 0x52f5b670
+		return &TLUserSetStoriesMaxId{
+			Constructor: 1391834736,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4987,6 +4992,52 @@ func (m *TLUserEditCloseFriends) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserEditCloseFriends) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserSetStoriesMaxId
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSetStoriesMaxId) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x52f5b670:
+		x.UInt(0x52f5b670)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSetStoriesMaxId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSetStoriesMaxId) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x52f5b670:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Id = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserSetStoriesMaxId) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

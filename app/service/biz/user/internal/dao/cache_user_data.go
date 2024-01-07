@@ -133,29 +133,33 @@ func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 
 func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 	userData := mtproto.MakeTLUserData(&mtproto.UserData{
-		Id:                userDO.Id,
-		AccessHash:        userDO.AccessHash,
-		Deleted:           userDO.Deleted,
-		UserType:          userDO.UserType,
-		SceretKeyId:       userDO.SecretKeyId,
-		FirstName:         userDO.FirstName,
-		LastName:          userDO.LastName,
-		Username:          userDO.Username,
-		Phone:             userDO.Phone,
-		ProfilePhoto:      nil,
-		Bot:               nil,
-		CountryCode:       userDO.CountryCode,
-		Verified:          userDO.Verified,
-		Support:           userDO.Support,
-		Scam:              userDO.Scam,
-		Fake:              userDO.Fake,
-		About:             mtproto.MakeFlagsString(userDO.About),
-		Restricted:        userDO.Restricted,
-		RestrictionReason: nil,
-		ContactsVersion:   1,
-		PrivaciesVersion:  1,
-		Premium:           userDO.Premium,
-		EmojiStatus:       makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
+		Id:                 userDO.Id,
+		AccessHash:         userDO.AccessHash,
+		Deleted:            userDO.Deleted,
+		UserType:           userDO.UserType,
+		SceretKeyId:        userDO.SecretKeyId,
+		FirstName:          userDO.FirstName,
+		LastName:           userDO.LastName,
+		Username:           userDO.Username,
+		Phone:              userDO.Phone,
+		ProfilePhoto:       nil,
+		Bot:                nil,
+		CountryCode:        userDO.CountryCode,
+		Verified:           userDO.Verified,
+		Support:            userDO.Support,
+		Scam:               userDO.Scam,
+		Fake:               userDO.Fake,
+		About:              mtproto.MakeFlagsString(userDO.About),
+		Restricted:         userDO.Restricted,
+		RestrictionReason:  nil,
+		ContactsVersion:    1,
+		PrivaciesVersion:   1,
+		Premium:            userDO.Premium,
+		EmojiStatus:        makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
+		StoriesUnavailable: false,
+		StoriesMaxId:       userDO.StoriesMaxId,
+		Color:              nil,
+		ProfileColor:       nil,
 	}).To_UserData()
 
 	return userData
@@ -240,6 +244,11 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 	if rules2 != nil {
 		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2)
 	}
+
+	// TODO
+	// close_friends:Vector<long>
+
+	// stories_hiddens:Vector<long>
 
 	return cacheData, nil
 }

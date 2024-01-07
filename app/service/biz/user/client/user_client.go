@@ -97,6 +97,7 @@ type UserClient interface {
     UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error)
     UserCreateNewTestUser(ctx context.Context, in *user.TLUserCreateNewTestUser) (*mtproto.ImmutableUser, error)
     UserEditCloseFriends(ctx context.Context, in *user.TLUserEditCloseFriends) (*mtproto.Bool, error)
+    UserSetStoriesMaxId(ctx context.Context, in *user.TLUserSetStoriesMaxId) (*mtproto.Bool, error)
 
 }
 
@@ -634,5 +635,12 @@ func (m *defaultUserClient) UserCreateNewTestUser(ctx context.Context, in *user.
 func (m *defaultUserClient) UserEditCloseFriends(ctx context.Context, in *user.TLUserEditCloseFriends) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserEditCloseFriends(ctx, in)
+}
+
+// UserSetStoriesMaxId
+// user.setStoriesMaxId user_id:long id:int = Bool;
+func (m *defaultUserClient) UserSetStoriesMaxId(ctx context.Context, in *user.TLUserSetStoriesMaxId) (*mtproto.Bool, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserSetStoriesMaxId(ctx, in)
 }
 

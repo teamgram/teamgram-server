@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2023-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -35,6 +35,7 @@ type UsersDO struct {
 	ArchiveAndMuteNewNoncontactPeers bool   `db:"archive_and_mute_new_noncontact_peers" json:"archive_and_mute_new_noncontact_peers"`
 	EmojiStatusDocumentId            int64  `db:"emoji_status_document_id" json:"emoji_status_document_id"`
 	EmojiStatusUntil                 int32  `db:"emoji_status_until" json:"emoji_status_until"`
+	StoriesMaxId                     int32  `db:"stories_max_id" json:"stories_max_id"`
 	Deleted                          bool   `db:"deleted" json:"deleted"`
 	DeleteReason                     string `db:"delete_reason" json:"delete_reason"`
 }

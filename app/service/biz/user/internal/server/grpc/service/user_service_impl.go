@@ -1144,3 +1144,18 @@ func (s *Service) UserEditCloseFriends(ctx context.Context, request *user.TLUser
 	return r, err
 }
 
+// UserSetStoriesMaxId
+// user.setStoriesMaxId user_id:long id:int = Bool;
+func (s *Service) UserSetStoriesMaxId(ctx context.Context, request *user.TLUserSetStoriesMaxId) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setStoriesMaxId - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserSetStoriesMaxId(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setStoriesMaxId - reply: %s", r.DebugString())
+	return r, err
+}
+

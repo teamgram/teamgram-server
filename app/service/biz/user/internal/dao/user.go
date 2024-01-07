@@ -328,6 +328,12 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 		immutableUser.KeysPrivacyRules = cacheUserData.CachesPrivacyKeyRules
 	}
 
+	// TODO: close_friends
+	immutableUser.CloseFriends = nil
+
+	// TODO: stories_hiddens
+	immutableUser.StoriesHiddens = nil
+
 	return immutableUser, nil
 }
 
@@ -455,4 +461,25 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, co
 	}
 
 	return mUsers
+}
+
+func (d *Dao) UpdateStoriesMaxId(ctx context.Context, id int64, maxId int32) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.UsersDAO.UpdateStoriesMaxId(ctx, maxId, id)
+
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updateStoriesMaxId - error: %v", err)
+		return false
+	}
+
+	return true
 }
