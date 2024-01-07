@@ -53,6 +53,9 @@ func (d *Dao) getBotData(ctx context.Context, botId int64) *mtproto.BotData {
 			BotInlineGeo:         botDO.BotInlineGeo,
 			BotInfoVersion:       botDO.BotInfoVersion,
 			BotInlinePlaceholder: mtproto.MakeFlagsString(botDO.BotInlinePlaceholder),
+			BotAttachMenu:        false,
+			AttachMenuEnabled:    false,
+			BotCanEdit:           false,
 		}).To_BotData()
 	}
 

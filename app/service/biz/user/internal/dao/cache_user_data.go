@@ -154,7 +154,6 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		RestrictionReason: nil,
 		ContactsVersion:   1,
 		PrivaciesVersion:  1,
-		BotAttachMenu:     false,
 		Premium:           userDO.Premium,
 		EmojiStatus:       makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
 	}).To_UserData()
