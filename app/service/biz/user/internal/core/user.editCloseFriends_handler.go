@@ -19,46 +19,60 @@
 package core
 
 import (
+	"context"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"time"
 )
 
 // UserEditCloseFriends
 // user.editCloseFriends user_id:long id:Vector<long> = Bool;
 func (c *UserCore) UserEditCloseFriends(in *user.TLUserEditCloseFriends) (*mtproto.Bool, error) {
-	tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		_, err := c.svcCtx.Dao.CloseFriendsDAO.DeleteTx(tx, in.UserId)
-		if err != nil {
-			c.Logger.Errorf("user.editCloseFriends - error: %v", err)
-			result.Err = err
-			return
-		}
+	var (
+		cList   = c.svcCtx.Dao.GetCloseFriendList(c.ctx, in.UserId)
+		kList   []string
+		cIdList []int64
+	)
 
-		doList := make([]*dataobject.CloseFriendsDO, 0, len(in.Id))
-		date := time.Now().Unix()
-		for _, id := range in.Id {
-			doList = append(doList, &dataobject.CloseFriendsDO{
-				UserId:        in.UserId,
-				CloseFriendId: id,
-				Date:          date,
-			})
-		}
-		if len(doList) == 0 {
-			return
-		}
-		_, _, err = c.svcCtx.Dao.CloseFriendsDAO.InsertBulkTx(tx, doList)
-		if err != nil {
-			c.Logger.Errorf("user.editCloseFriends - error: %v", err)
-			result.Err = err
-			return
-		}
-	})
-	if tR.Err != nil {
-		return nil, tR.Err
+	if len(cList) == 0 && len(in.Id) == 0 {
+		return mtproto.BoolTrue, nil
 	}
+
+	for _, id := range in.Id {
+		kList = append(kList, dao.GenContactCacheKey(in.UserId, id))
+	}
+
+	for _, c := range cList {
+		kList = append(kList, dao.GenContactCacheKey(in.UserId, c.ContactUserId))
+		cIdList = append(cIdList, c.ContactUserId)
+	}
+
+	c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			var (
+				err error
+			)
+
+			if len(cIdList) > 0 {
+				_, err = c.svcCtx.Dao.UserContactsDAO.UpdateCloseFriend(c.ctx, false, in.UserId, cIdList)
+				if err != nil {
+					c.Logger.Errorf("user.editCloseFriends - error: %v", err)
+					return 0, 0, err
+				}
+			}
+
+			if len(in.Id) > 0 {
+				_, err = c.svcCtx.Dao.UserContactsDAO.UpdateCloseFriend(c.ctx, true, in.UserId, in.Id)
+				if err != nil {
+					c.Logger.Errorf("user.editCloseFriends - error: %v", err)
+				}
+			}
+
+			return 0, 0, err
+		},
+		kList...)
 
 	return mtproto.BoolTrue, nil
 }

@@ -328,9 +328,6 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 		immutableUser.KeysPrivacyRules = cacheUserData.CachesPrivacyKeyRules
 	}
 
-	// TODO: close_friends
-	immutableUser.CloseFriends = nil
-
 	// TODO: stories_hiddens
 	immutableUser.StoriesHiddens = nil
 

@@ -142,6 +142,7 @@ func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int
 					LastName:      mtproto.MakeFlagsString(do.ContactLastName),
 					MutualContact: do.Mutual,
 					Phone:         mtproto.MakeFlagsString(do.ContactPhone),
+					CloseFriend:   do.CloseFriend,
 				}).To_ContactData()
 			}
 		})
@@ -232,4 +233,59 @@ func (d *Dao) ClearContactCaches(ctx context.Context, userId int64, contactId ..
 		keys = append(keys, genContactCacheKey(id, userId))
 	}
 	d.CachedConn.DelCache(ctx, keys...)
+}
+
+func (d *Dao) GetCloseFriendList(ctx context.Context, id int64) []*mtproto.ContactData {
+	cacheUserData := d.GetCacheUserData(ctx, id)
+	if len(cacheUserData.GetContactIdList()) == 0 {
+		return nil
+	}
+
+	return d.getCloseFriendListByIdList(ctx, id, cacheUserData.GetContactIdList())
+}
+
+func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList []int64) []*mtproto.ContactData {
+	closeFriendList := make([]*mtproto.ContactData, len(idList))
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			for i, v := range idList {
+				source <- idxId{i, v}
+			}
+		},
+		func(item interface{}) {
+			idx := item.(idxId)
+			do := new(dataobject.UserContactsDO)
+			err := d.CachedConn.QueryRow(
+				ctx,
+				do,
+				genContactCacheKey(id, idx.id),
+				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+					do2, _ := d.UserContactsDAO.SelectContact(ctx, id, idx.id)
+					if do2 == nil {
+						return sqlc.ErrNotFound
+					}
+					*v.(*dataobject.UserContactsDO) = *do2
+					return nil
+				})
+			if err == nil && do.CloseFriend {
+				closeFriendList[idx.idx] = mtproto.MakeTLContactData(&mtproto.ContactData{
+					UserId:        id,
+					ContactUserId: do.ContactUserId,
+					FirstName:     mtproto.MakeFlagsString(do.ContactFirstName),
+					LastName:      mtproto.MakeFlagsString(do.ContactLastName),
+					MutualContact: do.Mutual,
+					Phone:         mtproto.MakeFlagsString(do.ContactPhone),
+					CloseFriend:   do.CloseFriend,
+				}).To_ContactData()
+			}
+		})
+
+	for _, v := range closeFriendList {
+		if v == nil {
+			// has hole, internal error
+			return nil
+		}
+	}
+
+	return closeFriendList
 }
