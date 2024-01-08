@@ -33,7 +33,7 @@ import (
 )
 
 const (
-	contactKeyPrefix = "user_contact"
+	contactKeyPrefix = "user_contact.1"
 )
 
 var (
@@ -100,7 +100,7 @@ func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactI
 
 	idList2 := make([]int64, 0, len(idList))
 	for _, id2 := range contactId {
-		if ok, _ := container2.Contains(id2, idList); !ok {
+		if ok, _ := container2.Contains(id2, idList); ok {
 			idList2 = append(idList2, id2)
 		}
 	}
@@ -176,10 +176,11 @@ func (d *Dao) DeleteUserContact(ctx context.Context, id int64, contactId int64) 
 				})
 			return 0, tR.Data.(int64), tR.Err
 		},
-		genCacheUserDataCacheKey(id))
+		genCacheUserDataCacheKey(id),
+		genContactCacheKey(id, contactId))
 
 	if affected != 0 {
-		d.CachedConn.DelCache(ctx, genContactCacheKey(contactId, id))
+		d.CachedConn.DelCache(ctx, genContactCacheKey(contactId, id), genCacheUserDataCacheKey(contactId))
 	}
 }
 

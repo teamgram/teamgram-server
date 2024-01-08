@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2023-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -117,11 +117,11 @@ func (dao *UserContactsDAO) SelectContact(ctx context.Context, owner_user_id int
 }
 
 // SelectByContactId
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_user_id = :contact_user_id and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectByContactId(ctx context.Context, owner_user_id int64, contact_user_id int64) (rValue *dataobject.UserContactsDO, err error) {
 	var (
-		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id = ?"
+		query = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_user_id = ? and is_deleted = 0"
 		do    = &dataobject.UserContactsDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, owner_user_id, contact_user_id)
@@ -141,11 +141,11 @@ func (dao *UserContactsDAO) SelectByContactId(ctx context.Context, owner_user_id
 }
 
 // SelectListByPhoneList
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = :owner_user_id and contact_phone in (:phoneList)
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_phone in (:phoneList) and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, owner_user_id int64, phoneList []string) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_phone in (?) and is_deleted = 0"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)
@@ -174,11 +174,11 @@ func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, owner_use
 }
 
 // SelectListByPhoneListWithCB
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = :owner_user_id and contact_phone in (:phoneList)
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and contact_phone in (:phoneList) and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, owner_user_id int64, phoneList []string, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where is_deleted = 0 and owner_user_id = ? and contact_phone in (?)"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and contact_phone in (?) and is_deleted = 0"
 		a      []interface{}
 		values []dataobject.UserContactsDO
 	)
@@ -213,11 +213,11 @@ func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, own
 }
 
 // SelectAllUserContacts
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectAllUserContacts(ctx context.Context, owner_user_id int64) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0"
 		values []dataobject.UserContactsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)
@@ -233,11 +233,11 @@ func (dao *UserContactsDAO) SelectAllUserContacts(ctx context.Context, owner_use
 }
 
 // SelectAllUserContactsWithCB
-// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id
+// select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = :owner_user_id and is_deleted = 0
 // TODO(@benqi): sqlmap
 func (dao *UserContactsDAO) SelectAllUserContactsWithCB(ctx context.Context, owner_user_id int64, cb func(i int, v *dataobject.UserContactsDO)) (rList []dataobject.UserContactsDO, err error) {
 	var (
-		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ?"
+		query  = "select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, is_deleted from user_contacts where owner_user_id = ? and is_deleted = 0"
 		values []dataobject.UserContactsDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, owner_user_id)

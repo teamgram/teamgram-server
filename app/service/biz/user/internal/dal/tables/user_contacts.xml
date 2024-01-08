@@ -32,7 +32,7 @@
             FROM
                 user_contacts
             WHERE
-                owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id
+                owner_user_id = :owner_user_id AND contact_user_id = :contact_user_id AND is_deleted = 0
         </sql>
     </operation>
     <operation name="SelectListByPhoneList" result_set="list">
@@ -45,7 +45,7 @@
             FROM
                 user_contacts
             WHERE
-                is_deleted = 0 AND owner_user_id = :owner_user_id AND contact_phone IN (:phoneList)
+                owner_user_id = :owner_user_id AND contact_phone IN (:phoneList) AND is_deleted = 0
         </sql>
     </operation>
     <operation name="SelectAllUserContacts" result_set="list">
@@ -55,7 +55,7 @@
             FROM
                 user_contacts
             WHERE
-                owner_user_id=:owner_user_id
+                owner_user_id=:owner_user_id AND is_deleted = 0
         </sql>
     </operation>
     <operation name="SelectUserContacts" result_set="list">
