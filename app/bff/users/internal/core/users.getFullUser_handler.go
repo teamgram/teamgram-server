@@ -77,6 +77,9 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		VideoCallsAvailable:     c.MD.UserId != peerId,
 		VoiceMessagesForbidden:  false,
 		TranslationsDisabled:    false,
+		StoriesPinnedAvailable:  false,
+		BlockedMyStoriesFrom:    false,
+		WallpaperOverridden:     false,
 		Id:                      peerId,
 		About:                   user.GetUser().GetAbout(),
 		Settings:                nil,
@@ -94,8 +97,38 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		BotGroupAdminRights:     nil,
 		BotBroadcastAdminRights: nil,
 		PremiumGifts:            nil,
+		Wallpaper:               nil,
+		Stories_FLAGPEERSTORIES: nil,
+		Stories_FLAGUSERSTORIES: nil,
 	}).To_UserFull()
 
+	// PremiumGifts
+	if user.Premium() {
+		// TODO: config able
+		userFull.PremiumGifts = []*mtproto.PremiumGiftOption{
+			mtproto.MakeTLPremiumGiftOption(&mtproto.PremiumGiftOption{
+				Months:       12,
+				Currency:     "CNY",
+				Amount:       20900,
+				BotUrl:       "https://t.me/$premgift448603711_12_5248da16f536f717a2",
+				StoreProduct: mtproto.MakeFlagsString("org.telegram.telegramPremium.twelveMonths"),
+			}).To_PremiumGiftOption(),
+			mtproto.MakeTLPremiumGiftOption(&mtproto.PremiumGiftOption{
+				Months:       6,
+				Currency:     "CNY",
+				Amount:       10900,
+				BotUrl:       "https://t.me/$premgift448603711_6_c7aae8edbdae927b72",
+				StoreProduct: mtproto.MakeFlagsString("org.telegram.telegramPremium.sixMonths"),
+			}).To_PremiumGiftOption(),
+			mtproto.MakeTLPremiumGiftOption(&mtproto.PremiumGiftOption{
+				Months:       3,
+				Currency:     "CNY",
+				Amount:       8499,
+				BotUrl:       "https://t.me/$premgift448603711_3_051b80db4901b91dd5",
+				StoreProduct: mtproto.MakeFlagsString("org.telegram.telegramPremium.threeMonths"),
+			}).To_PremiumGiftOption(),
+		}
+	}
 	mr.FinishVoid(
 		func() {
 			// blocked
@@ -188,6 +221,15 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		})
 
 	// TODO: FolderId:    0,
+
+	// TODO: WallPaper
+
+	// TODO: Stories
+	if c.svcCtx.Dao.Plugin != nil {
+		userFull.StoriesPinnedAvailable = c.svcCtx.Dao.Plugin.GetStoriesPinnedAvailable(c.ctx, peerId)
+		userFull.BlockedMyStoriesFrom = c.svcCtx.Dao.Plugin.GetBlockedMyStoriesFrom(c.ctx, peerId)
+		userFull.Stories_FLAGPEERSTORIES = c.svcCtx.Dao.Plugin.GetActiveStories(c.ctx, peerId)
+	}
 
 	return mtproto.MakeTLUsersUserFull(&mtproto.Users_UserFull{
 		FullUser: userFull,

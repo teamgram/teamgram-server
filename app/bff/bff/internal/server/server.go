@@ -256,7 +256,7 @@ func (s *Server) Initialize() error {
 				UserClient:    c.BizServiceClient,
 				ChatClient:    c.BizServiceClient,
 				DialogClient:  c.BizServiceClient,
-			}))
+			}, nil))
 
 		// nsfw_helper
 		mtproto.RegisterRPCNsfwServer(

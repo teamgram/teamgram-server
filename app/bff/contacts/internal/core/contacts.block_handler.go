@@ -25,7 +25,7 @@ import (
 )
 
 // ContactsBlock
-// contacts.block#68cc1411 id:InputPeer = Bool;
+// contacts.block#2e2e8734 flags:# my_stories_from:flags.0?true id:InputPeer = Bool;
 func (c *ContactsCore) ContactsBlock(in *mtproto.TLContactsBlock) (*mtproto.Bool, error) {
 	var (
 		err    error
