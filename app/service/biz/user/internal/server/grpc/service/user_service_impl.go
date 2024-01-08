@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
-
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1158,4 +1157,3 @@ func (s *Service) UserSetStoriesMaxId(ctx context.Context, request *user.TLUserS
 	c.Logger.Debugf("user.setStoriesMaxId - reply: %s", r.DebugString())
 	return r, err
 }
-
