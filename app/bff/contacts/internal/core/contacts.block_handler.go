@@ -87,9 +87,10 @@ func (c *ContactsCore) ContactsBlock(in *mtproto.TLContactsBlock) (*mtproto.Bool
 	idHelper.AppendUsers(blockId.PeerId)
 
 	syncUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePeerBlocked(&mtproto.Update{
-		PeerId:              blockId.ToPeer(),
-		Blocked_BOOL:        mtproto.BoolTrue,
-		Blocked_FLAGBOOLEAN: true,
+		Blocked_BOOL:         mtproto.BoolTrue,
+		Blocked_FLAGBOOLEAN:  true,
+		BlockedMyStoriesFrom: false,
+		PeerId:               blockId.ToPeer(),
 	}).To_Update())
 
 	idHelper.Visit(
