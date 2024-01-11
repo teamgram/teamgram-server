@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	cacheUserDataKeyPrefix = "user_data.1"
+	cacheUserDataKeyPrefix = "user_data.2"
 )
 
 var (
@@ -131,6 +131,17 @@ func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 	}
 }
 
+func makePeerColor(color int32, backgroundEmojiId int64) *mtproto.PeerColor {
+	if color == 0 && backgroundEmojiId == 0 {
+		return nil
+	}
+
+	return mtproto.MakeTLPeerColor(&mtproto.PeerColor{
+		Color:             mtproto.MakeFlagsInt32(color),
+		BackgroundEmojiId: mtproto.MakeFlagsInt64(backgroundEmojiId),
+	}).To_PeerColor()
+}
+
 func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 	userData := mtproto.MakeTLUserData(&mtproto.UserData{
 		Id:                 userDO.Id,
@@ -158,8 +169,8 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		EmojiStatus:        makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
 		StoriesUnavailable: false,
 		StoriesMaxId:       userDO.StoriesMaxId,
-		Color:              nil,
-		ProfileColor:       nil,
+		Color:              makePeerColor(userDO.Color, userDO.ColorBackgroundEmojiId),
+		ProfileColor:       makePeerColor(userDO.ProfileColor, userDO.ProfileColorBackgroundEmojiId),
 	}).To_UserData()
 
 	return userData

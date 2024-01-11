@@ -437,6 +437,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1391834736,
 		}
 	},
+	586812791: func() mtproto.TLObject { // 0x22fa0d77
+		return &TLUserSetColor{
+			Constructor: 586812791,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -5043,6 +5048,67 @@ func (m *TLUserSetStoriesMaxId) DebugString() string {
 	return dbgString
 }
 
+// TLUserSetColor
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSetColor) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x22fa0d77:
+		x.UInt(0x22fa0d77)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetForProfile() == true {
+			flags |= 1 << 1
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Int(m.GetColor())
+		x.Long(m.GetBackgroundEmojiId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSetColor) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSetColor) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x22fa0d77:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 1)) != 0 {
+			m.ForProfile = true
+		}
+		m.Color = dBuf.Int()
+		m.BackgroundEmojiId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserSetColor) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // ----------------------------------------------------------------------------------------------------------------
 // Vector_LastSeenData
 // /////////////////////////////////////////////////////////////////////////////
@@ -5079,7 +5145,7 @@ func (m *Vector_LastSeenData) DebugString() string {
 }
 
 // Vector_ImmutableUser
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ImmutableUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5113,7 +5179,7 @@ func (m *Vector_ImmutableUser) DebugString() string {
 }
 
 // Vector_PeerPeerNotifySettings
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5147,7 +5213,7 @@ func (m *Vector_PeerPeerNotifySettings) DebugString() string {
 }
 
 // Vector_PrivacyRule
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PrivacyRule) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5181,7 +5247,7 @@ func (m *Vector_PrivacyRule) DebugString() string {
 }
 
 // Vector_PredefinedUser
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5215,7 +5281,7 @@ func (m *Vector_PredefinedUser) DebugString() string {
 }
 
 // Vector_Long
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
@@ -5239,7 +5305,7 @@ func (m *Vector_Long) DebugString() string {
 }
 
 // Vector_PeerBlocked
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerBlocked) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5273,7 +5339,7 @@ func (m *Vector_PeerBlocked) DebugString() string {
 }
 
 // Vector_ContactData
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5307,7 +5373,7 @@ func (m *Vector_ContactData) DebugString() string {
 }
 
 // Vector_InputContact
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_InputContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5341,7 +5407,7 @@ func (m *Vector_InputContact) DebugString() string {
 }
 
 // Vector_UserData
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))

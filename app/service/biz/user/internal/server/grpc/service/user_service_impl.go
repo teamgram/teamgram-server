@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1157,3 +1158,19 @@ func (s *Service) UserSetStoriesMaxId(ctx context.Context, request *user.TLUserS
 	c.Logger.Debugf("user.setStoriesMaxId - reply: %s", r.DebugString())
 	return r, err
 }
+
+// UserSetColor
+// user.setColor flags:# for_profile:flags.1?true color:int background_emoji_id:long = Bool;
+func (s *Service) UserSetColor(ctx context.Context, request *user.TLUserSetColor) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setColor - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserSetColor(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setColor - reply: %s", r.DebugString())
+	return r, err
+}
+

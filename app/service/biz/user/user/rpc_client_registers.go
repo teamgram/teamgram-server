@@ -102,6 +102,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserCreateNewTestUser":                RPCContextTuple{"/mtproto.RPCUser/user_createNewTestUser", func() interface{} { return new(mtproto.ImmutableUser) }},
 	"TLUserEditCloseFriends":                 RPCContextTuple{"/mtproto.RPCUser/user_editCloseFriends", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserSetStoriesMaxId":                  RPCContextTuple{"/mtproto.RPCUser/user_setStoriesMaxId", func() interface{} { return new(mtproto.Bool) }},
+	"TLUserSetColor":                         RPCContextTuple{"/mtproto.RPCUser/user_setColor", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

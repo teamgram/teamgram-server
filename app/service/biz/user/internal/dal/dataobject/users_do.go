@@ -36,6 +36,10 @@ type UsersDO struct {
 	EmojiStatusDocumentId            int64  `db:"emoji_status_document_id" json:"emoji_status_document_id"`
 	EmojiStatusUntil                 int32  `db:"emoji_status_until" json:"emoji_status_until"`
 	StoriesMaxId                     int32  `db:"stories_max_id" json:"stories_max_id"`
+	Color                            int32  `db:"color" json:"color"`
+	ColorBackgroundEmojiId           int64  `db:"color_background_emoji_id" json:"color_background_emoji_id"`
+	ProfileColor                     int32  `db:"profile_color" json:"profile_color"`
+	ProfileColorBackgroundEmojiId    int64  `db:"profile_color_background_emoji_id" json:"profile_color_background_emoji_id"`
 	Deleted                          bool   `db:"deleted" json:"deleted"`
 	DeleteReason                     string `db:"delete_reason" json:"delete_reason"`
 }
