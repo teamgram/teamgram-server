@@ -256,6 +256,9 @@ func (c *MessagesCore) makeForwardMessages(
 						fwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
 					}
 					fwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+					m.SavedPeerId = fwdFrom.SavedFromPeer
+				} else {
+					m.SavedPeerId = nil
 				}
 				m.FwdFrom = fwdFrom
 			} else {
@@ -267,9 +270,11 @@ func (c *MessagesCore) makeForwardMessages(
 						m.FwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
 					}
 					m.FwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+					m.SavedPeerId = m.FwdFrom.SavedFromPeer
 				} else {
 					m.FwdFrom.SavedFromPeer = nil
 					m.FwdFrom.SavedFromMsgId = nil
+					m.SavedPeerId = nil
 				}
 			}
 		}

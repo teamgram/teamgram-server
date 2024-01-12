@@ -112,15 +112,19 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 			FromScheduled:     false,
 			Legacy:            false,
 			EditHide:          false,
+			Pinned:            false,
+			Noforwards:        in.Noforwards,
+			InvertMedia:       in.InvertMedia,
 			Id:                0,
 			FromId:            mtproto.MakePeerUser(c.MD.UserId),
 			PeerId:            peer.ToPeer(),
+			SavedPeerId:       nil,
 			FwdFrom:           nil,
 			ViaBotId:          nil,
 			ReplyTo:           nil,
 			Date:              int32(time.Now().Unix()),
-			Media:             nil,
 			Message:           media.Message,
+			Media:             nil,
 			ReplyMarkup:       nil, // request.ReplyMarkup,
 			Entities:          media.Entities,
 			Views:             nil,
@@ -129,8 +133,15 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 			EditDate:          nil,
 			PostAuthor:        nil,
 			GroupedId:         mtproto.MakeFlagsInt64(groupedId),
+			Reactions:         nil,
 			RestrictionReason: nil,
+			TtlPeriod:         nil,
 		}).To_Message()
+
+		// Fix SavedPeerId
+		if peer.IsSelfUser(c.MD.UserId) {
+			outMessage.SavedPeerId = peer.ToPeer()
+		}
 
 		// Fix ReplyToMsgId
 		if in.GetReplyToMsgId() != nil {

@@ -21,6 +21,7 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 )
 
@@ -28,9 +29,25 @@ import (
 // inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
 func (c *InboxCore) InboxSendUserMultiMessageToInbox(in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
 	if in.FromId == in.PeerUserId {
-		c.Logger.Errorf("inbox.sendUserMultiMessageToInbox - error: sendToSelfUser")
-		err := mtproto.ErrPeerIdInvalid
-		return nil, err
+		for _, m := range in.Message {
+			peer2 := m.GetMessage().GetSavedPeerId()
+			if peer2 == nil {
+				c.Logger.Errorf("inbox.sendUserMessageToInbox - error: sendToSelfUser")
+			} else {
+				peer := mtproto.FromPeer(peer2)
+				c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
+					c.ctx,
+					&dataobject.SavedDialogsDO{
+						UserId:     in.FromId,
+						PeerType:   peer.PeerType,
+						PeerId:     peer.PeerId,
+						Pinned:     0,
+						TopMessage: m.GetMessage().GetId(),
+					})
+			}
+		}
+
+		return mtproto.EmptyVoid, nil
 	}
 
 	inBoxList, err := c.svcCtx.Dao.SendUserMultiMessageToInbox(c.ctx,

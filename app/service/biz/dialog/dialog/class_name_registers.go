@@ -16,6 +16,7 @@ const (
 	Predicate_dialogPinnedExt                          = "dialogPinnedExt"
 	Predicate_dialogFilterExt                          = "dialogFilterExt"
 	Predicate_simpleDialogsData                        = "simpleDialogsData"
+	Predicate_savedDialogList                          = "savedDialogList"
 	Predicate_dialog_saveDraftMessage                  = "dialog_saveDraftMessage"
 	Predicate_dialog_clearDraftMessage                 = "dialog_clearDraftMessage"
 	Predicate_dialog_getAllDrafts                      = "dialog_getAllDrafts"
@@ -47,6 +48,10 @@ const (
 	Predicate_dialog_setChatTheme                      = "dialog_setChatTheme"
 	Predicate_dialog_setHistoryTTL                     = "dialog_setHistoryTTL"
 	Predicate_dialog_getMyDialogsData                  = "dialog_getMyDialogsData"
+	Predicate_dialog_getSavedDialogs                   = "dialog_getSavedDialogs"
+	Predicate_dialog_getPinnedSavedDialogs             = "dialog_getPinnedSavedDialogs"
+	Predicate_dialog_toggleSavedDialogPin              = "dialog_toggleSavedDialogPin"
+	Predicate_dialog_reorderPinnedSavedDialogs         = "dialog_reorderPinnedSavedDialogs"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -68,6 +73,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_simpleDialogsData: {
 		0: 492418141, // 0x1d59b45d
+
+	},
+	Predicate_savedDialogList: {
+		0: 2005919834, // 0x778fe85a
 
 	},
 	Predicate_dialog_saveDraftMessage: {
@@ -194,6 +203,22 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 2128645891, // 0x7ee08f03
 
 	},
+	Predicate_dialog_getSavedDialogs: {
+		0: 952227432, // 0x38c1d668
+
+	},
+	Predicate_dialog_getPinnedSavedDialogs: {
+		0: 1084471271, // 0x40a3b7e7
+
+	},
+	Predicate_dialog_toggleSavedDialogPin: {
+		0: 1156782041, // 0x44f317d9
+
+	},
+	Predicate_dialog_reorderPinnedSavedDialogs: {
+		0: -665007150, // 0xd85ccbd2
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -202,6 +227,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	245834284:   Predicate_dialogPinnedExt,                          // 0xea7222c
 	-1891683854: Predicate_dialogFilterExt,                          // 0x8f3f31f2
 	492418141:   Predicate_simpleDialogsData,                        // 0x1d59b45d
+	2005919834:  Predicate_savedDialogList,                          // 0x778fe85a
 	1321916826:  Predicate_dialog_saveDraftMessage,                  // 0x4ecad99a
 	-76500326:   Predicate_dialog_clearDraftMessage,                 // 0xfb70b29a
 	-1394716698: Predicate_dialog_getAllDrafts,                      // 0xacde4fe6
@@ -233,6 +259,10 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-374431190:  Predicate_dialog_setChatTheme,                      // 0xe9aea22a
 	165263532:   Predicate_dialog_setHistoryTTL,                     // 0x9d9b8ac
 	2128645891:  Predicate_dialog_getMyDialogsData,                  // 0x7ee08f03
+	952227432:   Predicate_dialog_getSavedDialogs,                   // 0x38c1d668
+	1084471271:  Predicate_dialog_getPinnedSavedDialogs,             // 0x40a3b7e7
+	1156782041:  Predicate_dialog_toggleSavedDialogPin,              // 0x44f317d9
+	-665007150:  Predicate_dialog_reorderPinnedSavedDialogs,         // 0xd85ccbd2
 
 }
 

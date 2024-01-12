@@ -65,24 +65,6 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		return nil, err
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	// 发件箱
-
-	/*
-		Name	Type	Description
-		flags	#	Flags, see TL conditional fields
-		silent	flags.5?true	Send message silently (no notification should be triggered)
-		background	flags.6?true	Send message in background
-		clear_draft	flags.7?true	Clear the draft
-		peer	InputPeer	Destination
-		reply_to_msg_id	flags.0?int	Message ID to which this message should reply to
-		media	InputMedia	Attached media
-		message	string	Caption
-		random_id	long	Random ID to avoid resending the same message
-		reply_markup	flags.2?ReplyMarkup	Reply markup for bot keyboards
-		entities	flags.3?Vector<MessageEntity>	Message entities for styled text
-		schedule_date	flags.10?int	Scheduled message date for scheduled messages
-	*/
 	outMessage := mtproto.MakeTLMessage(&mtproto.Message{
 		Out:               true,
 		Mentioned:         false,
@@ -93,9 +75,12 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		Legacy:            false,
 		EditHide:          false,
 		Pinned:            false,
+		Noforwards:        in.Noforwards,
+		InvertMedia:       in.InvertMedia,
 		Id:                0,
 		FromId:            mtproto.MakePeerUser(c.MD.UserId),
 		PeerId:            peer.ToPeer(),
+		SavedPeerId:       nil,
 		FwdFrom:           nil,
 		ViaBotId:          nil,
 		ReplyTo:           nil,
@@ -110,9 +95,15 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		EditDate:          nil,
 		PostAuthor:        nil,
 		GroupedId:         nil,
+		Reactions:         nil,
 		RestrictionReason: nil,
 		TtlPeriod:         nil,
 	}).To_Message()
+
+	// Fix SavedPeerId
+	if peer.IsSelfUser(c.MD.UserId) {
+		outMessage.SavedPeerId = peer.ToPeer()
+	}
 
 	// Fix ReplyToMsgId
 	if in.GetReplyToMsgId() != nil {

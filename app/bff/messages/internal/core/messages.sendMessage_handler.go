@@ -72,16 +72,18 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		Out:               true,
 		Mentioned:         false,
 		MediaUnread:       false,
-		Silent:            in.GetSilent(),
+		Silent:            in.Silent,
 		Post:              false,
 		FromScheduled:     false,
 		Legacy:            false,
 		EditHide:          false,
 		Pinned:            false,
-		Noforwards:        in.GetNoforwards(),
+		Noforwards:        in.Noforwards,
+		InvertMedia:       in.InvertMedia,
 		Id:                0,
 		FromId:            mtproto.MakePeerUser(c.MD.UserId),
 		PeerId:            peer.ToPeer(),
+		SavedPeerId:       nil,
 		FwdFrom:           nil,
 		ViaBotId:          nil,
 		ReplyTo:           nil,
@@ -100,6 +102,11 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		RestrictionReason: nil,
 		TtlPeriod:         nil,
 	}).To_Message()
+
+	// Fix SavedPeerId
+	if peer.IsSelfUser(c.MD.UserId) {
+		outMessage.SavedPeerId = peer.ToPeer()
+	}
 
 	// Fix ReplyToMsgId
 	if in.GetReplyToMsgId() != nil {

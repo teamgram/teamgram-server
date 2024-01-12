@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,8 +13,8 @@ package dialog_client
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+	"github.com/teamgram/proto/mtproto"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,37 +22,42 @@ import (
 var _ *mtproto.Bool
 
 type DialogClient interface {
-	DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*mtproto.Bool, error)
-	DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*mtproto.Bool, error)
-	DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error)
-	DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error)
-	DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*mtproto.Bool, error)
-	DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*mtproto.Int32, error)
-	DialogGetDialogUnreadMarkList(ctx context.Context, in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.Vector_DialogPeer, error)
-	DialogGetDialogsByOffsetDate(ctx context.Context, in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.Vector_DialogExt, error)
-	DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.Vector_DialogExt, error)
-	DialogGetDialogsByIdList(ctx context.Context, in *dialog.TLDialogGetDialogsByIdList) (*dialog.Vector_DialogExt, error)
-	DialogGetDialogsCount(ctx context.Context, in *dialog.TLDialogGetDialogsCount) (*mtproto.Int32, error)
-	DialogGetPinnedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedDialogs) (*dialog.Vector_DialogExt, error)
-	DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*mtproto.Bool, error)
-	DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error)
-	DialogGetTopMessage(ctx context.Context, in *dialog.TLDialogGetTopMessage) (*mtproto.Int32, error)
-	DialogUpdateReadInbox(ctx context.Context, in *dialog.TLDialogUpdateReadInbox) (*mtproto.Bool, error)
-	DialogUpdateReadOutbox(ctx context.Context, in *dialog.TLDialogUpdateReadOutbox) (*mtproto.Bool, error)
-	DialogInsertOrUpdateDialog(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error)
-	DialogDeleteDialog(ctx context.Context, in *dialog.TLDialogDeleteDialog) (*mtproto.Bool, error)
-	DialogGetUserPinnedMessage(ctx context.Context, in *dialog.TLDialogGetUserPinnedMessage) (*mtproto.Int32, error)
-	DialogUpdateUserPinnedMessage(ctx context.Context, in *dialog.TLDialogUpdateUserPinnedMessage) (*mtproto.Bool, error)
-	DialogInsertOrUpdateDialogFilter(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialogFilter) (*mtproto.Bool, error)
-	DialogDeleteDialogFilter(ctx context.Context, in *dialog.TLDialogDeleteDialogFilter) (*mtproto.Bool, error)
-	DialogUpdateDialogFiltersOrder(ctx context.Context, in *dialog.TLDialogUpdateDialogFiltersOrder) (*mtproto.Bool, error)
-	DialogGetDialogFilters(ctx context.Context, in *dialog.TLDialogGetDialogFilters) (*dialog.Vector_DialogFilterExt, error)
-	DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.Vector_DialogExt, error)
-	DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.Vector_DialogPinnedExt, error)
-	DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.Vector_Long, error)
-	DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error)
-	DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error)
-	DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
+    DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*mtproto.Bool, error)
+    DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*mtproto.Bool, error)
+    DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error)
+    DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error)
+    DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*mtproto.Bool, error)
+    DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*mtproto.Int32, error)
+    DialogGetDialogUnreadMarkList(ctx context.Context, in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.Vector_DialogPeer, error)
+    DialogGetDialogsByOffsetDate(ctx context.Context, in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.Vector_DialogExt, error)
+    DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.Vector_DialogExt, error)
+    DialogGetDialogsByIdList(ctx context.Context, in *dialog.TLDialogGetDialogsByIdList) (*dialog.Vector_DialogExt, error)
+    DialogGetDialogsCount(ctx context.Context, in *dialog.TLDialogGetDialogsCount) (*mtproto.Int32, error)
+    DialogGetPinnedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedDialogs) (*dialog.Vector_DialogExt, error)
+    DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*mtproto.Bool, error)
+    DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error)
+    DialogGetTopMessage(ctx context.Context, in *dialog.TLDialogGetTopMessage) (*mtproto.Int32, error)
+    DialogUpdateReadInbox(ctx context.Context, in *dialog.TLDialogUpdateReadInbox) (*mtproto.Bool, error)
+    DialogUpdateReadOutbox(ctx context.Context, in *dialog.TLDialogUpdateReadOutbox) (*mtproto.Bool, error)
+    DialogInsertOrUpdateDialog(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error)
+    DialogDeleteDialog(ctx context.Context, in *dialog.TLDialogDeleteDialog) (*mtproto.Bool, error)
+    DialogGetUserPinnedMessage(ctx context.Context, in *dialog.TLDialogGetUserPinnedMessage) (*mtproto.Int32, error)
+    DialogUpdateUserPinnedMessage(ctx context.Context, in *dialog.TLDialogUpdateUserPinnedMessage) (*mtproto.Bool, error)
+    DialogInsertOrUpdateDialogFilter(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialogFilter) (*mtproto.Bool, error)
+    DialogDeleteDialogFilter(ctx context.Context, in *dialog.TLDialogDeleteDialogFilter) (*mtproto.Bool, error)
+    DialogUpdateDialogFiltersOrder(ctx context.Context, in *dialog.TLDialogUpdateDialogFiltersOrder) (*mtproto.Bool, error)
+    DialogGetDialogFilters(ctx context.Context, in *dialog.TLDialogGetDialogFilters) (*dialog.Vector_DialogFilterExt, error)
+    DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.Vector_DialogExt, error)
+    DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.Vector_DialogPinnedExt, error)
+    DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.Vector_Long, error)
+    DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error)
+    DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error)
+    DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
+    DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error)
+    DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error)
+    DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*mtproto.Bool, error)
+    DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error)
+
 }
 
 type defaultDialogClient struct {
@@ -64,6 +69,7 @@ func NewDialogClient(cli zrpc.Client) DialogClient {
 		cli: cli,
 	}
 }
+
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -185,7 +191,7 @@ func (m *defaultDialogClient) DialogUpdateReadOutbox(ctx context.Context, in *di
 }
 
 // DialogInsertOrUpdateDialog
-// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
+// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long = Bool;
 func (m *defaultDialogClient) DialogInsertOrUpdateDialog(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogInsertOrUpdateDialog(ctx, in)
@@ -276,8 +282,37 @@ func (m *defaultDialogClient) DialogSetHistoryTTL(ctx context.Context, in *dialo
 }
 
 // DialogGetMyDialogsData
-// dialog.getMyDialogsData flags:# user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
+// dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (m *defaultDialogClient) DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetMyDialogsData(ctx, in)
 }
+
+// DialogGetSavedDialogs
+// dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
+func (m *defaultDialogClient) DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogGetSavedDialogs(ctx, in)
+}
+
+// DialogGetPinnedSavedDialogs
+// dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
+func (m *defaultDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogGetPinnedSavedDialogs(ctx, in)
+}
+
+// DialogToggleSavedDialogPin
+// dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
+func (m *defaultDialogClient) DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*mtproto.Bool, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogToggleSavedDialogPin(ctx, in)
+}
+
+// DialogReorderPinnedSavedDialogs
+// dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
+func (m *defaultDialogClient) DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogReorderPinnedSavedDialogs(ctx, in)
+}
+

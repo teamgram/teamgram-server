@@ -27,10 +27,13 @@ func New(c Config) *service.Service {
 }
 
 type (
-	DialogsDAO = mysql_dao.DialogsDAO
-	DialogsDO  = dataobject.DialogsDO
+	DialogsDAO      = mysql_dao.DialogsDAO
+	DialogsDO       = dataobject.DialogsDO
+	SavedDialogsDAO = mysql_dao.SavedDialogsDAO
+	SavedDialogsDO  = dataobject.SavedDialogsDO
 )
 
 var (
-	NewDialogsDAO = mysql_dao.NewDialogsDAO
+	NewDialogsDAO      = mysql_dao.NewDialogsDAO
+	NewSavedDialogsDAO = mysql_dao.NewSavedDialogsDAO
 )

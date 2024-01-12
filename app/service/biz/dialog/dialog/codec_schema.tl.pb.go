@@ -55,6 +55,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -155335502
 		return o
 	},
+	2005919834: func() mtproto.TLObject { // 0x778fe85a
+		o := MakeTLSavedDialogList(nil)
+		o.Data2.Constructor = 2005919834
+		return o
+	},
 
 	// Method
 	1321916826: func() mtproto.TLObject { // 0x4ecad99a
@@ -210,6 +215,26 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	2128645891: func() mtproto.TLObject { // 0x7ee08f03
 		return &TLDialogGetMyDialogsData{
 			Constructor: 2128645891,
+		}
+	},
+	952227432: func() mtproto.TLObject { // 0x38c1d668
+		return &TLDialogGetSavedDialogs{
+			Constructor: 952227432,
+		}
+	},
+	1084471271: func() mtproto.TLObject { // 0x40a3b7e7
+		return &TLDialogGetPinnedSavedDialogs{
+			Constructor: 1084471271,
+		}
+	},
+	1156782041: func() mtproto.TLObject { // 0x44f317d9
+		return &TLDialogToggleSavedDialogPin{
+			Constructor: 1156782041,
+		}
+	},
+	-665007150: func() mtproto.TLObject { // 0xd85ccbd2
+		return &TLDialogReorderPinnedSavedDialogs{
+			Constructor: -665007150,
 		}
 	},
 }
@@ -971,6 +996,162 @@ func (m *TLUpdateDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdateDraftMessage) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SavedDialogList <--
+//  + TL_SavedDialogList
+//
+
+func (m *SavedDialogList) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	switch predicateName {
+	case Predicate_savedDialogList:
+		t := m.To_SavedDialogList()
+		t.Encode(x, layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return nil
+	}
+
+	return nil
+}
+
+func (m *SavedDialogList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *SavedDialogList) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x778fe85a:
+		m2 := MakeTLSavedDialogList(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+func (m *SavedDialogList) DebugString() string {
+	switch m.PredicateName {
+	case Predicate_savedDialogList:
+		t := m.To_SavedDialogList()
+		return t.DebugString()
+
+	default:
+		return "{}"
+	}
+}
+
+// To_SavedDialogList
+func (m *SavedDialogList) To_SavedDialogList() *TLSavedDialogList {
+	m.PredicateName = Predicate_savedDialogList
+	return &TLSavedDialogList{
+		Data2: m,
+	}
+}
+
+// MakeTLSavedDialogList
+func MakeTLSavedDialogList(data2 *SavedDialogList) *TLSavedDialogList {
+	if data2 == nil {
+		return &TLSavedDialogList{Data2: &SavedDialogList{
+			PredicateName: Predicate_savedDialogList,
+		}}
+	} else {
+		data2.PredicateName = Predicate_savedDialogList
+		return &TLSavedDialogList{Data2: data2}
+	}
+}
+
+func (m *TLSavedDialogList) To_SavedDialogList() *SavedDialogList {
+	m.Data2.PredicateName = Predicate_savedDialogList
+	return m.Data2
+}
+
+func (m *TLSavedDialogList) SetCount(v int32) { m.Data2.Count = v }
+func (m *TLSavedDialogList) GetCount() int32  { return m.Data2.Count }
+
+func (m *TLSavedDialogList) SetDialogs(v []*mtproto.SavedDialog) { m.Data2.Dialogs = v }
+func (m *TLSavedDialogList) GetDialogs() []*mtproto.SavedDialog  { return m.Data2.Dialogs }
+
+func (m *TLSavedDialogList) GetPredicateName() string {
+	return Predicate_savedDialogList
+}
+
+func (m *TLSavedDialogList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x778fe85a: func() error {
+			x.UInt(0x778fe85a)
+
+			x.Int(m.GetCount())
+
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetDialogs())))
+			for _, v := range m.GetDialogs() {
+				v.Encode(x, layer)
+			}
+
+			return nil
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_savedDialogList, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_savedDialogList, layer)
+		return nil
+	}
+
+	return nil
+}
+
+func (m *TLSavedDialogList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLSavedDialogList) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x778fe85a: func() error {
+			m.SetCount(dBuf.Int())
+			c1 := dBuf.Int()
+			if c1 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 1, c1)
+			}
+			l1 := dBuf.Int()
+			v1 := make([]*mtproto.SavedDialog, l1)
+			for i := int32(0); i < l1; i++ {
+				v1[i] = &mtproto.SavedDialog{}
+				v1[i].Decode(dBuf)
+			}
+			m.SetDialogs(v1)
+
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
+
+func (m *TLSavedDialogList) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString
@@ -2592,6 +2773,236 @@ func (m *TLDialogGetMyDialogsData) DebugString() string {
 	return dbgString
 }
 
+// TLDialogGetSavedDialogs
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetSavedDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x38c1d668:
+		x.UInt(0x38c1d668)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetExcludePinned().Encode(x, layer)
+		x.Int(m.GetOffsetDate())
+		x.Int(m.GetOffsetId())
+		m.GetOffsetPeer().Encode(x, layer)
+		x.Int(m.GetLimit())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogGetSavedDialogs) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x38c1d668:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.Bool{}
+		m2.Decode(dBuf)
+		m.ExcludePinned = m2
+
+		m.OffsetDate = dBuf.Int()
+		m.OffsetId = dBuf.Int()
+
+		m5 := &mtproto.PeerUtil{}
+		m5.Decode(dBuf)
+		m.OffsetPeer = m5
+
+		m.Limit = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogGetSavedDialogs) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogGetPinnedSavedDialogs
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetPinnedSavedDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x40a3b7e7:
+		x.UInt(0x40a3b7e7)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x40a3b7e7:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogToggleSavedDialogPin
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogToggleSavedDialogPin) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x44f317d9:
+		x.UInt(0x44f317d9)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetPeer().Encode(x, layer)
+		m.GetPinned().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogToggleSavedDialogPin) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogToggleSavedDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x44f317d9:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.PeerUtil{}
+		m2.Decode(dBuf)
+		m.Peer = m2
+
+		m3 := &mtproto.Bool{}
+		m3.Decode(dBuf)
+		m.Pinned = m3
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogToggleSavedDialogPin) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogReorderPinnedSavedDialogs
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogReorderPinnedSavedDialogs) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xd85ccbd2:
+		x.UInt(0xd85ccbd2)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetForce().Encode(x, layer)
+
+		x.Int(int32(mtproto.CRC32_vector))
+		x.Int(int32(len(m.GetOrder())))
+		for _, v := range m.GetOrder() {
+			v.Encode(x, layer)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xd85ccbd2:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.Bool{}
+		m2.Decode(dBuf)
+		m.Force = m2
+
+		c3 := dBuf.Int()
+		if c3 != int32(mtproto.CRC32_vector) {
+			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
+			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 3, c3)
+		}
+		l3 := dBuf.Int()
+		v3 := make([]*mtproto.PeerUtil, l3)
+		for i := int32(0); i < l3; i++ {
+			v3[i] = &mtproto.PeerUtil{}
+			v3[i].Decode(dBuf)
+		}
+		m.Order = v3
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // ----------------------------------------------------------------------------------------------------------------
 // Vector_PeerWithDraftMessage
 // /////////////////////////////////////////////////////////////////////////////
@@ -2628,7 +3039,7 @@ func (m *Vector_PeerWithDraftMessage) DebugString() string {
 }
 
 // Vector_DialogPeer
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogPeer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -2662,7 +3073,7 @@ func (m *Vector_DialogPeer) DebugString() string {
 }
 
 // Vector_DialogExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -2696,7 +3107,7 @@ func (m *Vector_DialogExt) DebugString() string {
 }
 
 // Vector_DialogFilterExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -2730,7 +3141,7 @@ func (m *Vector_DialogFilterExt) DebugString() string {
 }
 
 // Vector_DialogPinnedExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -2764,7 +3175,7 @@ func (m *Vector_DialogPinnedExt) DebugString() string {
 }
 
 // Vector_Long
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 

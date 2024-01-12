@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -274,7 +275,7 @@ func (s *Service) DialogUpdateReadOutbox(ctx context.Context, request *dialog.TL
 }
 
 // DialogInsertOrUpdateDialog
-// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true = Bool;
+// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long = Bool;
 func (s *Service) DialogInsertOrUpdateDialog(ctx context.Context, request *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.insertOrUpdateDialog - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -469,7 +470,7 @@ func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDia
 }
 
 // DialogGetMyDialogsData
-// dialog.getMyDialogsData flags:# user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
+// dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.getMyDialogsData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -482,3 +483,64 @@ func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TL
 	c.Logger.Debugf("dialog.getMyDialogsData - reply: %s", r.DebugString())
 	return r, err
 }
+
+// DialogGetSavedDialogs
+// dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
+func (s *Service) DialogGetSavedDialogs(ctx context.Context, request *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getSavedDialogs - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogGetSavedDialogs(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getSavedDialogs - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DialogGetPinnedSavedDialogs
+// dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
+func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getPinnedSavedDialogs - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogGetPinnedSavedDialogs(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getPinnedSavedDialogs - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DialogToggleSavedDialogPin
+// dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
+func (s *Service) DialogToggleSavedDialogPin(ctx context.Context, request *dialog.TLDialogToggleSavedDialogPin) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.toggleSavedDialogPin - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogToggleSavedDialogPin(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.toggleSavedDialogPin - reply: %s", r.DebugString())
+	return r, err
+}
+
+// DialogReorderPinnedSavedDialogs
+// dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
+func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogReorderPinnedSavedDialogs(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - reply: %s", r.DebugString())
+	return r, err
+}
+

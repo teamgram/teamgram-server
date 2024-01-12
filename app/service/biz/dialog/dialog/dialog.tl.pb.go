@@ -40,6 +40,7 @@ const (
 	CRC32_dialogPinnedExt                          TLConstructor = 245834284
 	CRC32_dialogFilterExt                          TLConstructor = -1891683854
 	CRC32_simpleDialogsData                        TLConstructor = 492418141
+	CRC32_savedDialogList                          TLConstructor = 2005919834
 	CRC32_dialog_saveDraftMessage                  TLConstructor = 1321916826
 	CRC32_dialog_clearDraftMessage                 TLConstructor = -76500326
 	CRC32_dialog_getAllDrafts                      TLConstructor = -1394716698
@@ -71,6 +72,10 @@ const (
 	CRC32_dialog_setChatTheme                      TLConstructor = -374431190
 	CRC32_dialog_setHistoryTTL                     TLConstructor = 165263532
 	CRC32_dialog_getMyDialogsData                  TLConstructor = 2128645891
+	CRC32_dialog_getSavedDialogs                   TLConstructor = 952227432
+	CRC32_dialog_getPinnedSavedDialogs             TLConstructor = 1084471271
+	CRC32_dialog_toggleSavedDialogPin              TLConstructor = 1156782041
+	CRC32_dialog_reorderPinnedSavedDialogs         TLConstructor = -665007150
 )
 
 var TLConstructor_name = map[int32]string{
@@ -80,6 +85,7 @@ var TLConstructor_name = map[int32]string{
 	245834284:   "CRC32_dialogPinnedExt",
 	-1891683854: "CRC32_dialogFilterExt",
 	492418141:   "CRC32_simpleDialogsData",
+	2005919834:  "CRC32_savedDialogList",
 	1321916826:  "CRC32_dialog_saveDraftMessage",
 	-76500326:   "CRC32_dialog_clearDraftMessage",
 	-1394716698: "CRC32_dialog_getAllDrafts",
@@ -111,6 +117,10 @@ var TLConstructor_name = map[int32]string{
 	-374431190:  "CRC32_dialog_setChatTheme",
 	165263532:   "CRC32_dialog_setHistoryTTL",
 	2128645891:  "CRC32_dialog_getMyDialogsData",
+	952227432:   "CRC32_dialog_getSavedDialogs",
+	1084471271:  "CRC32_dialog_getPinnedSavedDialogs",
+	1156782041:  "CRC32_dialog_toggleSavedDialogPin",
+	-665007150:  "CRC32_dialog_reorderPinnedSavedDialogs",
 }
 
 var TLConstructor_value = map[string]int32{
@@ -120,6 +130,7 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_dialogPinnedExt":                          245834284,
 	"CRC32_dialogFilterExt":                          -1891683854,
 	"CRC32_simpleDialogsData":                        492418141,
+	"CRC32_savedDialogList":                          2005919834,
 	"CRC32_dialog_saveDraftMessage":                  1321916826,
 	"CRC32_dialog_clearDraftMessage":                 -76500326,
 	"CRC32_dialog_getAllDrafts":                      -1394716698,
@@ -151,6 +162,10 @@ var TLConstructor_value = map[string]int32{
 	"CRC32_dialog_setChatTheme":                      -374431190,
 	"CRC32_dialog_setHistoryTTL":                     165263532,
 	"CRC32_dialog_getMyDialogsData":                  2128645891,
+	"CRC32_dialog_getSavedDialogs":                   952227432,
+	"CRC32_dialog_getPinnedSavedDialogs":             1084471271,
+	"CRC32_dialog_toggleSavedDialogPin":              1156782041,
+	"CRC32_dialog_reorderPinnedSavedDialogs":         -665007150,
 }
 
 func (x TLConstructor) String() string {
@@ -162,7 +177,8 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // DialogExt <--
-//   - TL_dialogExt
+//  + TL_dialogExt
+//
 type DialogExt struct {
 	PredicateName        string          `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor   `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
@@ -314,7 +330,8 @@ func (m *TLDialogExt) GetData2() *DialogExt {
 }
 
 // DialogFilterExt <--
-//   - TL_dialogFilterExt
+//  + TL_dialogFilterExt
+//
 type DialogFilterExt struct {
 	PredicateName        string                `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor         `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
@@ -442,7 +459,8 @@ func (m *TLDialogFilterExt) GetData2() *DialogFilterExt {
 }
 
 // DialogPinnedExt <--
-//   - TL_dialogPinnedExt
+//  + TL_dialogPinnedExt
+//
 type DialogPinnedExt struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
@@ -570,7 +588,8 @@ func (m *TLDialogPinnedExt) GetData2() *DialogPinnedExt {
 }
 
 // DialogsData <--
-//   - TL_simpleDialogsData
+//  + TL_simpleDialogsData
+//
 type DialogsData struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
@@ -698,7 +717,8 @@ func (m *TLSimpleDialogsData) GetData2() *DialogsData {
 }
 
 // PeerWithDraftMessage <--
-//   - TL_updateDraftMessage
+//  + TL_updateDraftMessage
+//
 type PeerWithDraftMessage struct {
 	PredicateName        string                `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor         `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
@@ -817,7 +837,128 @@ func (m *TLUpdateDraftMessage) GetData2() *PeerWithDraftMessage {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+// SavedDialogList <--
+//  + TL_savedDialogList
+//
+type SavedDialogList struct {
+	PredicateName        string                 `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
+	Constructor          TLConstructor          `protobuf:"varint,2,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	Count                int32                  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
+	Dialogs              []*mtproto.SavedDialog `protobuf:"bytes,4,rep,name=dialogs,proto3" json:"dialogs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *SavedDialogList) Reset()         { *m = SavedDialogList{} }
+func (m *SavedDialogList) String() string { return proto.CompactTextString(m) }
+func (*SavedDialogList) ProtoMessage()    {}
+func (*SavedDialogList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{10}
+}
+func (m *SavedDialogList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SavedDialogList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SavedDialogList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SavedDialogList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SavedDialogList.Merge(m, src)
+}
+func (m *SavedDialogList) XXX_Size() int {
+	return m.Size()
+}
+func (m *SavedDialogList) XXX_DiscardUnknown() {
+	xxx_messageInfo_SavedDialogList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SavedDialogList proto.InternalMessageInfo
+
+func (m *SavedDialogList) GetPredicateName() string {
+	if m != nil {
+		return m.PredicateName
+	}
+	return ""
+}
+
+func (m *SavedDialogList) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *SavedDialogList) GetCount() int32 {
+	if m != nil {
+		return m.Count
+	}
+	return 0
+}
+
+func (m *SavedDialogList) GetDialogs() []*mtproto.SavedDialog {
+	if m != nil {
+		return m.Dialogs
+	}
+	return nil
+}
+
+type TLSavedDialogList struct {
+	Data2                *SavedDialogList `protobuf:"bytes,1,opt,name=data2,proto3" json:"data2,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *TLSavedDialogList) Reset()         { *m = TLSavedDialogList{} }
+func (m *TLSavedDialogList) String() string { return proto.CompactTextString(m) }
+func (*TLSavedDialogList) ProtoMessage()    {}
+func (*TLSavedDialogList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{11}
+}
+func (m *TLSavedDialogList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLSavedDialogList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLSavedDialogList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLSavedDialogList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLSavedDialogList.Merge(m, src)
+}
+func (m *TLSavedDialogList) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLSavedDialogList) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLSavedDialogList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLSavedDialogList proto.InternalMessageInfo
+
+func (m *TLSavedDialogList) GetData2() *SavedDialogList {
+	if m != nil {
+		return m.Data2
+	}
+	return nil
+}
+
+//--------------------------------------------------------------------------------------------
 type TLDialogSaveDraftMessage struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -833,7 +974,7 @@ func (m *TLDialogSaveDraftMessage) Reset()         { *m = TLDialogSaveDraftMessa
 func (m *TLDialogSaveDraftMessage) String() string { return proto.CompactTextString(m) }
 func (*TLDialogSaveDraftMessage) ProtoMessage()    {}
 func (*TLDialogSaveDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{10}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{12}
 }
 func (m *TLDialogSaveDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -897,7 +1038,7 @@ func (m *TLDialogSaveDraftMessage) GetMessage() *mtproto.DraftMessage {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogClearDraftMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -912,7 +1053,7 @@ func (m *TLDialogClearDraftMessage) Reset()         { *m = TLDialogClearDraftMes
 func (m *TLDialogClearDraftMessage) String() string { return proto.CompactTextString(m) }
 func (*TLDialogClearDraftMessage) ProtoMessage()    {}
 func (*TLDialogClearDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{11}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{13}
 }
 func (m *TLDialogClearDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -969,7 +1110,7 @@ func (m *TLDialogClearDraftMessage) GetPeerId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetAllDrafts struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -982,7 +1123,7 @@ func (m *TLDialogGetAllDrafts) Reset()         { *m = TLDialogGetAllDrafts{} }
 func (m *TLDialogGetAllDrafts) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetAllDrafts) ProtoMessage()    {}
 func (*TLDialogGetAllDrafts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{12}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{14}
 }
 func (m *TLDialogGetAllDrafts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1025,7 +1166,7 @@ func (m *TLDialogGetAllDrafts) GetUserId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogClearAllDrafts struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1038,7 +1179,7 @@ func (m *TLDialogClearAllDrafts) Reset()         { *m = TLDialogClearAllDrafts{}
 func (m *TLDialogClearAllDrafts) String() string { return proto.CompactTextString(m) }
 func (*TLDialogClearAllDrafts) ProtoMessage()    {}
 func (*TLDialogClearAllDrafts) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{13}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{15}
 }
 func (m *TLDialogClearAllDrafts) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1081,7 +1222,7 @@ func (m *TLDialogClearAllDrafts) GetUserId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogMarkDialogUnread struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1097,7 +1238,7 @@ func (m *TLDialogMarkDialogUnread) Reset()         { *m = TLDialogMarkDialogUnre
 func (m *TLDialogMarkDialogUnread) String() string { return proto.CompactTextString(m) }
 func (*TLDialogMarkDialogUnread) ProtoMessage()    {}
 func (*TLDialogMarkDialogUnread) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{14}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{16}
 }
 func (m *TLDialogMarkDialogUnread) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1161,7 +1302,7 @@ func (m *TLDialogMarkDialogUnread) GetUnreadMark() *mtproto.Bool {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogToggleDialogPin struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1177,7 +1318,7 @@ func (m *TLDialogToggleDialogPin) Reset()         { *m = TLDialogToggleDialogPin
 func (m *TLDialogToggleDialogPin) String() string { return proto.CompactTextString(m) }
 func (*TLDialogToggleDialogPin) ProtoMessage()    {}
 func (*TLDialogToggleDialogPin) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{15}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{17}
 }
 func (m *TLDialogToggleDialogPin) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1241,7 +1382,7 @@ func (m *TLDialogToggleDialogPin) GetPinned() *mtproto.Bool {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogUnreadMarkList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1254,7 +1395,7 @@ func (m *TLDialogGetDialogUnreadMarkList) Reset()         { *m = TLDialogGetDial
 func (m *TLDialogGetDialogUnreadMarkList) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogUnreadMarkList) ProtoMessage()    {}
 func (*TLDialogGetDialogUnreadMarkList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{16}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{18}
 }
 func (m *TLDialogGetDialogUnreadMarkList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1297,7 +1438,7 @@ func (m *TLDialogGetDialogUnreadMarkList) GetUserId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogsByOffsetDate struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1313,7 +1454,7 @@ func (m *TLDialogGetDialogsByOffsetDate) Reset()         { *m = TLDialogGetDialo
 func (m *TLDialogGetDialogsByOffsetDate) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogsByOffsetDate) ProtoMessage()    {}
 func (*TLDialogGetDialogsByOffsetDate) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{17}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{19}
 }
 func (m *TLDialogGetDialogsByOffsetDate) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1377,7 +1518,7 @@ func (m *TLDialogGetDialogsByOffsetDate) GetLimit() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1392,7 +1533,7 @@ func (m *TLDialogGetDialogs) Reset()         { *m = TLDialogGetDialogs{} }
 func (m *TLDialogGetDialogs) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogs) ProtoMessage()    {}
 func (*TLDialogGetDialogs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{18}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{20}
 }
 func (m *TLDialogGetDialogs) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1449,7 +1590,7 @@ func (m *TLDialogGetDialogs) GetFolderId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogsByIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1463,7 +1604,7 @@ func (m *TLDialogGetDialogsByIdList) Reset()         { *m = TLDialogGetDialogsBy
 func (m *TLDialogGetDialogsByIdList) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogsByIdList) ProtoMessage()    {}
 func (*TLDialogGetDialogsByIdList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{19}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{21}
 }
 func (m *TLDialogGetDialogsByIdList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1513,7 +1654,7 @@ func (m *TLDialogGetDialogsByIdList) GetIdList() []int64 {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogsCount struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1528,7 +1669,7 @@ func (m *TLDialogGetDialogsCount) Reset()         { *m = TLDialogGetDialogsCount
 func (m *TLDialogGetDialogsCount) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogsCount) ProtoMessage()    {}
 func (*TLDialogGetDialogsCount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{20}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{22}
 }
 func (m *TLDialogGetDialogsCount) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1585,7 +1726,7 @@ func (m *TLDialogGetDialogsCount) GetFolderId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetPinnedDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1599,7 +1740,7 @@ func (m *TLDialogGetPinnedDialogs) Reset()         { *m = TLDialogGetPinnedDialo
 func (m *TLDialogGetPinnedDialogs) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetPinnedDialogs) ProtoMessage()    {}
 func (*TLDialogGetPinnedDialogs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{21}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{23}
 }
 func (m *TLDialogGetPinnedDialogs) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1649,7 +1790,7 @@ func (m *TLDialogGetPinnedDialogs) GetFolderId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogReorderPinnedDialogs struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1665,7 +1806,7 @@ func (m *TLDialogReorderPinnedDialogs) Reset()         { *m = TLDialogReorderPin
 func (m *TLDialogReorderPinnedDialogs) String() string { return proto.CompactTextString(m) }
 func (*TLDialogReorderPinnedDialogs) ProtoMessage()    {}
 func (*TLDialogReorderPinnedDialogs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{22}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{24}
 }
 func (m *TLDialogReorderPinnedDialogs) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1729,7 +1870,7 @@ func (m *TLDialogReorderPinnedDialogs) GetIdList() []int64 {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogById struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1744,7 +1885,7 @@ func (m *TLDialogGetDialogById) Reset()         { *m = TLDialogGetDialogById{} }
 func (m *TLDialogGetDialogById) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogById) ProtoMessage()    {}
 func (*TLDialogGetDialogById) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{23}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{25}
 }
 func (m *TLDialogGetDialogById) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1801,7 +1942,7 @@ func (m *TLDialogGetDialogById) GetPeerId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetTopMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1816,7 +1957,7 @@ func (m *TLDialogGetTopMessage) Reset()         { *m = TLDialogGetTopMessage{} }
 func (m *TLDialogGetTopMessage) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetTopMessage) ProtoMessage()    {}
 func (*TLDialogGetTopMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{24}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{26}
 }
 func (m *TLDialogGetTopMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1873,7 +2014,7 @@ func (m *TLDialogGetTopMessage) GetPeerId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogUpdateReadInbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1889,7 +2030,7 @@ func (m *TLDialogUpdateReadInbox) Reset()         { *m = TLDialogUpdateReadInbox
 func (m *TLDialogUpdateReadInbox) String() string { return proto.CompactTextString(m) }
 func (*TLDialogUpdateReadInbox) ProtoMessage()    {}
 func (*TLDialogUpdateReadInbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{25}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{27}
 }
 func (m *TLDialogUpdateReadInbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1953,7 +2094,7 @@ func (m *TLDialogUpdateReadInbox) GetReadInboxId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogUpdateReadOutbox struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1969,7 +2110,7 @@ func (m *TLDialogUpdateReadOutbox) Reset()         { *m = TLDialogUpdateReadOutb
 func (m *TLDialogUpdateReadOutbox) String() string { return proto.CompactTextString(m) }
 func (*TLDialogUpdateReadOutbox) ProtoMessage()    {}
 func (*TLDialogUpdateReadOutbox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{26}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{28}
 }
 func (m *TLDialogUpdateReadOutbox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2033,7 +2174,7 @@ func (m *TLDialogUpdateReadOutbox) GetReadOutboxId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogInsertOrUpdateDialog struct {
 	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64             `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2054,7 +2195,7 @@ func (m *TLDialogInsertOrUpdateDialog) Reset()         { *m = TLDialogInsertOrUp
 func (m *TLDialogInsertOrUpdateDialog) String() string { return proto.CompactTextString(m) }
 func (*TLDialogInsertOrUpdateDialog) ProtoMessage()    {}
 func (*TLDialogInsertOrUpdateDialog) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{27}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{29}
 }
 func (m *TLDialogInsertOrUpdateDialog) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2153,7 +2294,7 @@ func (m *TLDialogInsertOrUpdateDialog) GetDate2() *types.Int64Value {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogDeleteDialog struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2168,7 +2309,7 @@ func (m *TLDialogDeleteDialog) Reset()         { *m = TLDialogDeleteDialog{} }
 func (m *TLDialogDeleteDialog) String() string { return proto.CompactTextString(m) }
 func (*TLDialogDeleteDialog) ProtoMessage()    {}
 func (*TLDialogDeleteDialog) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{28}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{30}
 }
 func (m *TLDialogDeleteDialog) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2225,7 +2366,7 @@ func (m *TLDialogDeleteDialog) GetPeerId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetUserPinnedMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2240,7 +2381,7 @@ func (m *TLDialogGetUserPinnedMessage) Reset()         { *m = TLDialogGetUserPin
 func (m *TLDialogGetUserPinnedMessage) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetUserPinnedMessage) ProtoMessage()    {}
 func (*TLDialogGetUserPinnedMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{29}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{31}
 }
 func (m *TLDialogGetUserPinnedMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2297,7 +2438,7 @@ func (m *TLDialogGetUserPinnedMessage) GetPeerId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogUpdateUserPinnedMessage struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2313,7 +2454,7 @@ func (m *TLDialogUpdateUserPinnedMessage) Reset()         { *m = TLDialogUpdateU
 func (m *TLDialogUpdateUserPinnedMessage) String() string { return proto.CompactTextString(m) }
 func (*TLDialogUpdateUserPinnedMessage) ProtoMessage()    {}
 func (*TLDialogUpdateUserPinnedMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{30}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{32}
 }
 func (m *TLDialogUpdateUserPinnedMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2377,7 +2518,7 @@ func (m *TLDialogUpdateUserPinnedMessage) GetPinnedMsgId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogInsertOrUpdateDialogFilter struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2392,7 +2533,7 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Reset()         { *m = TLDialogInse
 func (m *TLDialogInsertOrUpdateDialogFilter) String() string { return proto.CompactTextString(m) }
 func (*TLDialogInsertOrUpdateDialogFilter) ProtoMessage()    {}
 func (*TLDialogInsertOrUpdateDialogFilter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{31}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{33}
 }
 func (m *TLDialogInsertOrUpdateDialogFilter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2449,7 +2590,7 @@ func (m *TLDialogInsertOrUpdateDialogFilter) GetDialogFilter() *mtproto.DialogFi
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogDeleteDialogFilter struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2463,7 +2604,7 @@ func (m *TLDialogDeleteDialogFilter) Reset()         { *m = TLDialogDeleteDialog
 func (m *TLDialogDeleteDialogFilter) String() string { return proto.CompactTextString(m) }
 func (*TLDialogDeleteDialogFilter) ProtoMessage()    {}
 func (*TLDialogDeleteDialogFilter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{32}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{34}
 }
 func (m *TLDialogDeleteDialogFilter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2513,7 +2654,7 @@ func (m *TLDialogDeleteDialogFilter) GetId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogUpdateDialogFiltersOrder struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2527,7 +2668,7 @@ func (m *TLDialogUpdateDialogFiltersOrder) Reset()         { *m = TLDialogUpdate
 func (m *TLDialogUpdateDialogFiltersOrder) String() string { return proto.CompactTextString(m) }
 func (*TLDialogUpdateDialogFiltersOrder) ProtoMessage()    {}
 func (*TLDialogUpdateDialogFiltersOrder) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{33}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{35}
 }
 func (m *TLDialogUpdateDialogFiltersOrder) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2577,7 +2718,7 @@ func (m *TLDialogUpdateDialogFiltersOrder) GetOrder() []int32 {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogFilters struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2590,7 +2731,7 @@ func (m *TLDialogGetDialogFilters) Reset()         { *m = TLDialogGetDialogFilte
 func (m *TLDialogGetDialogFilters) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogFilters) ProtoMessage()    {}
 func (*TLDialogGetDialogFilters) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{34}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{36}
 }
 func (m *TLDialogGetDialogFilters) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2633,7 +2774,7 @@ func (m *TLDialogGetDialogFilters) GetUserId() int64 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetDialogFolder struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2647,7 +2788,7 @@ func (m *TLDialogGetDialogFolder) Reset()         { *m = TLDialogGetDialogFolder
 func (m *TLDialogGetDialogFolder) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetDialogFolder) ProtoMessage()    {}
 func (*TLDialogGetDialogFolder) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{35}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{37}
 }
 func (m *TLDialogGetDialogFolder) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2697,7 +2838,7 @@ func (m *TLDialogGetDialogFolder) GetFolderId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogEditPeerFolders struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2712,7 +2853,7 @@ func (m *TLDialogEditPeerFolders) Reset()         { *m = TLDialogEditPeerFolders
 func (m *TLDialogEditPeerFolders) String() string { return proto.CompactTextString(m) }
 func (*TLDialogEditPeerFolders) ProtoMessage()    {}
 func (*TLDialogEditPeerFolders) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{36}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{38}
 }
 func (m *TLDialogEditPeerFolders) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2769,7 +2910,7 @@ func (m *TLDialogEditPeerFolders) GetFolderId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetChannelMessageReadParticipants struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2788,7 +2929,7 @@ func (m *TLDialogGetChannelMessageReadParticipants) String() string {
 }
 func (*TLDialogGetChannelMessageReadParticipants) ProtoMessage() {}
 func (*TLDialogGetChannelMessageReadParticipants) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{37}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{39}
 }
 func (m *TLDialogGetChannelMessageReadParticipants) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2845,7 +2986,7 @@ func (m *TLDialogGetChannelMessageReadParticipants) GetMsgId() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogSetChatTheme struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2861,7 +3002,7 @@ func (m *TLDialogSetChatTheme) Reset()         { *m = TLDialogSetChatTheme{} }
 func (m *TLDialogSetChatTheme) String() string { return proto.CompactTextString(m) }
 func (*TLDialogSetChatTheme) ProtoMessage()    {}
 func (*TLDialogSetChatTheme) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{38}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{40}
 }
 func (m *TLDialogSetChatTheme) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2925,7 +3066,7 @@ func (m *TLDialogSetChatTheme) GetThemeEmoticon() string {
 	return ""
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogSetHistoryTTL struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2941,7 +3082,7 @@ func (m *TLDialogSetHistoryTTL) Reset()         { *m = TLDialogSetHistoryTTL{} }
 func (m *TLDialogSetHistoryTTL) String() string { return proto.CompactTextString(m) }
 func (*TLDialogSetHistoryTTL) ProtoMessage()    {}
 func (*TLDialogSetHistoryTTL) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{39}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{41}
 }
 func (m *TLDialogSetHistoryTTL) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3005,7 +3146,7 @@ func (m *TLDialogSetHistoryTTL) GetTtlPeriod() int32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 type TLDialogGetMyDialogsData struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3021,7 +3162,7 @@ func (m *TLDialogGetMyDialogsData) Reset()         { *m = TLDialogGetMyDialogsDa
 func (m *TLDialogGetMyDialogsData) String() string { return proto.CompactTextString(m) }
 func (*TLDialogGetMyDialogsData) ProtoMessage()    {}
 func (*TLDialogGetMyDialogsData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{40}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{42}
 }
 func (m *TLDialogGetMyDialogsData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3085,7 +3226,303 @@ func (m *TLDialogGetMyDialogsData) GetChannel() bool {
 	return false
 }
 
-// --------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+type TLDialogGetSavedDialogs struct {
+	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64             `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ExcludePinned        *mtproto.Bool     `protobuf:"bytes,4,opt,name=exclude_pinned,json=excludePinned,proto3" json:"exclude_pinned,omitempty"`
+	OffsetDate           int32             `protobuf:"varint,5,opt,name=offset_date,json=offsetDate,proto3" json:"offset_date,omitempty"`
+	OffsetId             int32             `protobuf:"varint,6,opt,name=offset_id,json=offsetId,proto3" json:"offset_id,omitempty"`
+	OffsetPeer           *mtproto.PeerUtil `protobuf:"bytes,7,opt,name=offset_peer,json=offsetPeer,proto3" json:"offset_peer,omitempty"`
+	Limit                int32             `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *TLDialogGetSavedDialogs) Reset()         { *m = TLDialogGetSavedDialogs{} }
+func (m *TLDialogGetSavedDialogs) String() string { return proto.CompactTextString(m) }
+func (*TLDialogGetSavedDialogs) ProtoMessage()    {}
+func (*TLDialogGetSavedDialogs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{43}
+}
+func (m *TLDialogGetSavedDialogs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogGetSavedDialogs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogGetSavedDialogs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogGetSavedDialogs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogGetSavedDialogs.Merge(m, src)
+}
+func (m *TLDialogGetSavedDialogs) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogGetSavedDialogs) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogGetSavedDialogs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogGetSavedDialogs proto.InternalMessageInfo
+
+func (m *TLDialogGetSavedDialogs) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogGetSavedDialogs) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLDialogGetSavedDialogs) GetExcludePinned() *mtproto.Bool {
+	if m != nil {
+		return m.ExcludePinned
+	}
+	return nil
+}
+
+func (m *TLDialogGetSavedDialogs) GetOffsetDate() int32 {
+	if m != nil {
+		return m.OffsetDate
+	}
+	return 0
+}
+
+func (m *TLDialogGetSavedDialogs) GetOffsetId() int32 {
+	if m != nil {
+		return m.OffsetId
+	}
+	return 0
+}
+
+func (m *TLDialogGetSavedDialogs) GetOffsetPeer() *mtproto.PeerUtil {
+	if m != nil {
+		return m.OffsetPeer
+	}
+	return nil
+}
+
+func (m *TLDialogGetSavedDialogs) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
+type TLDialogGetPinnedSavedDialogs struct {
+	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) Reset()         { *m = TLDialogGetPinnedSavedDialogs{} }
+func (m *TLDialogGetPinnedSavedDialogs) String() string { return proto.CompactTextString(m) }
+func (*TLDialogGetPinnedSavedDialogs) ProtoMessage()    {}
+func (*TLDialogGetPinnedSavedDialogs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{44}
+}
+func (m *TLDialogGetPinnedSavedDialogs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogGetPinnedSavedDialogs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogGetPinnedSavedDialogs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogGetPinnedSavedDialogs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogGetPinnedSavedDialogs.Merge(m, src)
+}
+func (m *TLDialogGetPinnedSavedDialogs) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogGetPinnedSavedDialogs) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogGetPinnedSavedDialogs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogGetPinnedSavedDialogs proto.InternalMessageInfo
+
+func (m *TLDialogGetPinnedSavedDialogs) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+//--------------------------------------------------------------------------------------------
+type TLDialogToggleSavedDialogPin struct {
+	Constructor          TLConstructor     `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64             `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Peer                 *mtproto.PeerUtil `protobuf:"bytes,4,opt,name=peer,proto3" json:"peer,omitempty"`
+	Pinned               *mtproto.Bool     `protobuf:"bytes,5,opt,name=pinned,proto3" json:"pinned,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *TLDialogToggleSavedDialogPin) Reset()         { *m = TLDialogToggleSavedDialogPin{} }
+func (m *TLDialogToggleSavedDialogPin) String() string { return proto.CompactTextString(m) }
+func (*TLDialogToggleSavedDialogPin) ProtoMessage()    {}
+func (*TLDialogToggleSavedDialogPin) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{45}
+}
+func (m *TLDialogToggleSavedDialogPin) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogToggleSavedDialogPin) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogToggleSavedDialogPin.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogToggleSavedDialogPin) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogToggleSavedDialogPin.Merge(m, src)
+}
+func (m *TLDialogToggleSavedDialogPin) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogToggleSavedDialogPin) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogToggleSavedDialogPin.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogToggleSavedDialogPin proto.InternalMessageInfo
+
+func (m *TLDialogToggleSavedDialogPin) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogToggleSavedDialogPin) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLDialogToggleSavedDialogPin) GetPeer() *mtproto.PeerUtil {
+	if m != nil {
+		return m.Peer
+	}
+	return nil
+}
+
+func (m *TLDialogToggleSavedDialogPin) GetPinned() *mtproto.Bool {
+	if m != nil {
+		return m.Pinned
+	}
+	return nil
+}
+
+//--------------------------------------------------------------------------------------------
+type TLDialogReorderPinnedSavedDialogs struct {
+	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=dialog.TLConstructor" json:"constructor,omitempty"`
+	UserId               int64               `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Force                *mtproto.Bool       `protobuf:"bytes,4,opt,name=force,proto3" json:"force,omitempty"`
+	Order                []*mtproto.PeerUtil `protobuf:"bytes,5,rep,name=order,proto3" json:"order,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) Reset()         { *m = TLDialogReorderPinnedSavedDialogs{} }
+func (m *TLDialogReorderPinnedSavedDialogs) String() string { return proto.CompactTextString(m) }
+func (*TLDialogReorderPinnedSavedDialogs) ProtoMessage()    {}
+func (*TLDialogReorderPinnedSavedDialogs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0afe6dcb8d4fc860, []int{46}
+}
+func (m *TLDialogReorderPinnedSavedDialogs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TLDialogReorderPinnedSavedDialogs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TLDialogReorderPinnedSavedDialogs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TLDialogReorderPinnedSavedDialogs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TLDialogReorderPinnedSavedDialogs.Merge(m, src)
+}
+func (m *TLDialogReorderPinnedSavedDialogs) XXX_Size() int {
+	return m.Size()
+}
+func (m *TLDialogReorderPinnedSavedDialogs) XXX_DiscardUnknown() {
+	xxx_messageInfo_TLDialogReorderPinnedSavedDialogs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TLDialogReorderPinnedSavedDialogs proto.InternalMessageInfo
+
+func (m *TLDialogReorderPinnedSavedDialogs) GetConstructor() TLConstructor {
+	if m != nil {
+		return m.Constructor
+	}
+	return CRC32_UNKNOWN
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) GetUserId() int64 {
+	if m != nil {
+		return m.UserId
+	}
+	return 0
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) GetForce() *mtproto.Bool {
+	if m != nil {
+		return m.Force
+	}
+	return nil
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) GetOrder() []*mtproto.PeerUtil {
+	if m != nil {
+		return m.Order
+	}
+	return nil
+}
+
+//--------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_PeerWithDraftMessage struct {
 	Datas                []*PeerWithDraftMessage `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`
@@ -3098,7 +3535,7 @@ func (m *Vector_PeerWithDraftMessage) Reset()         { *m = Vector_PeerWithDraf
 func (m *Vector_PeerWithDraftMessage) String() string { return proto.CompactTextString(m) }
 func (*Vector_PeerWithDraftMessage) ProtoMessage()    {}
 func (*Vector_PeerWithDraftMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{41}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{47}
 }
 func (m *Vector_PeerWithDraftMessage) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3145,7 +3582,7 @@ func (m *Vector_DialogPeer) Reset()         { *m = Vector_DialogPeer{} }
 func (m *Vector_DialogPeer) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogPeer) ProtoMessage()    {}
 func (*Vector_DialogPeer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{42}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{48}
 }
 func (m *Vector_DialogPeer) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3192,7 +3629,7 @@ func (m *Vector_DialogExt) Reset()         { *m = Vector_DialogExt{} }
 func (m *Vector_DialogExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogExt) ProtoMessage()    {}
 func (*Vector_DialogExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{43}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{49}
 }
 func (m *Vector_DialogExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3239,7 +3676,7 @@ func (m *Vector_DialogFilterExt) Reset()         { *m = Vector_DialogFilterExt{}
 func (m *Vector_DialogFilterExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogFilterExt) ProtoMessage()    {}
 func (*Vector_DialogFilterExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{44}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{50}
 }
 func (m *Vector_DialogFilterExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3286,7 +3723,7 @@ func (m *Vector_DialogPinnedExt) Reset()         { *m = Vector_DialogPinnedExt{}
 func (m *Vector_DialogPinnedExt) String() string { return proto.CompactTextString(m) }
 func (*Vector_DialogPinnedExt) ProtoMessage()    {}
 func (*Vector_DialogPinnedExt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{45}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{51}
 }
 func (m *Vector_DialogPinnedExt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3333,7 +3770,7 @@ func (m *Vector_Long) Reset()         { *m = Vector_Long{} }
 func (m *Vector_Long) String() string { return proto.CompactTextString(m) }
 func (*Vector_Long) ProtoMessage()    {}
 func (*Vector_Long) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0afe6dcb8d4fc860, []int{46}
+	return fileDescriptor_0afe6dcb8d4fc860, []int{52}
 }
 func (m *Vector_Long) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3381,6 +3818,8 @@ func init() {
 	proto.RegisterType((*TLSimpleDialogsData)(nil), "dialog.TL_simpleDialogsData")
 	proto.RegisterType((*PeerWithDraftMessage)(nil), "dialog.PeerWithDraftMessage")
 	proto.RegisterType((*TLUpdateDraftMessage)(nil), "dialog.TL_updateDraftMessage")
+	proto.RegisterType((*SavedDialogList)(nil), "dialog.SavedDialogList")
+	proto.RegisterType((*TLSavedDialogList)(nil), "dialog.TL_savedDialogList")
 	proto.RegisterType((*TLDialogSaveDraftMessage)(nil), "dialog.TL_dialog_saveDraftMessage")
 	proto.RegisterType((*TLDialogClearDraftMessage)(nil), "dialog.TL_dialog_clearDraftMessage")
 	proto.RegisterType((*TLDialogGetAllDrafts)(nil), "dialog.TL_dialog_getAllDrafts")
@@ -3412,6 +3851,10 @@ func init() {
 	proto.RegisterType((*TLDialogSetChatTheme)(nil), "dialog.TL_dialog_setChatTheme")
 	proto.RegisterType((*TLDialogSetHistoryTTL)(nil), "dialog.TL_dialog_setHistoryTTL")
 	proto.RegisterType((*TLDialogGetMyDialogsData)(nil), "dialog.TL_dialog_getMyDialogsData")
+	proto.RegisterType((*TLDialogGetSavedDialogs)(nil), "dialog.TL_dialog_getSavedDialogs")
+	proto.RegisterType((*TLDialogGetPinnedSavedDialogs)(nil), "dialog.TL_dialog_getPinnedSavedDialogs")
+	proto.RegisterType((*TLDialogToggleSavedDialogPin)(nil), "dialog.TL_dialog_toggleSavedDialogPin")
+	proto.RegisterType((*TLDialogReorderPinnedSavedDialogs)(nil), "dialog.TL_dialog_reorderPinnedSavedDialogs")
 	proto.RegisterType((*Vector_PeerWithDraftMessage)(nil), "dialog.Vector_PeerWithDraftMessage")
 	proto.RegisterType((*Vector_DialogPeer)(nil), "dialog.Vector_DialogPeer")
 	proto.RegisterType((*Vector_DialogExt)(nil), "dialog.Vector_DialogExt")
@@ -3423,175 +3866,192 @@ func init() {
 func init() { proto.RegisterFile("dialog.tl.proto", fileDescriptor_0afe6dcb8d4fc860) }
 
 var fileDescriptor_0afe6dcb8d4fc860 = []byte{
-	// 2679 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5a, 0x6b, 0x6c, 0x1c, 0x57,
-	0xf5, 0xf7, 0xd8, 0xbb, 0x6b, 0xfb, 0x6c, 0xec, 0x4c, 0x26, 0x7e, 0x6c, 0xd6, 0x89, 0x1f, 0x13,
-	0x3b, 0x71, 0xfa, 0x58, 0xff, 0xeb, 0x54, 0xad, 0xf4, 0x07, 0x55, 0x4a, 0x9c, 0x84, 0xac, 0x6a,
-	0x3b, 0x66, 0x70, 0x12, 0x81, 0x0a, 0xcb, 0x78, 0xe7, 0x7a, 0x3d, 0x74, 0x77, 0x67, 0x35, 0x33,
-	0x1b, 0x62, 0x3e, 0xf1, 0x28, 0x52, 0xd2, 0xa6, 0x88, 0x2f, 0x04, 0x29, 0xa2, 0x94, 0x04, 0x21,
-	0x41, 0x89, 0xa0, 0xa5, 0x04, 0x2a, 0x52, 0x04, 0xa2, 0xa1, 0x41, 0x11, 0x15, 0x95, 0x4a, 0x25,
-	0x24, 0x84, 0xd4, 0x26, 0xad, 0x69, 0x8b, 0x54, 0x92, 0xaa, 0x4d, 0x48, 0x1a, 0x5a, 0x34, 0xf7,
-	0xce, 0xeb, 0xce, 0xbd, 0xbb, 0x0e, 0x28, 0x0e, 0x4b, 0xbe, 0x64, 0xe7, 0xde, 0x73, 0xcf, 0xfc,
-	0xce, 0xef, 0x9e, 0x7b, 0xee, 0x99, 0x73, 0x0c, 0xab, 0x35, 0x5d, 0x2d, 0x1a, 0x85, 0x8c, 0x5d,
-	0xcc, 0x54, 0x4c, 0xc3, 0x36, 0xa4, 0x04, 0x19, 0x48, 0xdf, 0x59, 0xd0, 0xed, 0x85, 0xea, 0x5c,
-	0x26, 0x6f, 0x94, 0xc6, 0x0a, 0x46, 0xc1, 0x18, 0xc3, 0xd3, 0x73, 0xd5, 0x79, 0xfc, 0x84, 0x1f,
-	0xf0, 0x2f, 0xb2, 0x2c, 0xdd, 0x5f, 0x30, 0x8c, 0x42, 0x11, 0x05, 0x52, 0x9f, 0x37, 0xd5, 0x4a,
-	0x05, 0x99, 0x96, 0x3b, 0x9f, 0xb6, 0xf2, 0x0b, 0xa8, 0xa4, 0x3a, 0xef, 0xc9, 0x1b, 0x26, 0xca,
-	0xd9, 0x8b, 0x15, 0xe4, 0xcd, 0xad, 0x0b, 0xe6, 0x6c, 0x53, 0x2d, 0x5b, 0x15, 0xc3, 0xb4, 0xdd,
-	0xa9, 0xae, 0x60, 0xca, 0x5a, 0x2c, 0xe7, 0xc9, 0xa8, 0xfc, 0xa3, 0x66, 0x68, 0xdf, 0x81, 0x61,
-	0xee, 0x3c, 0x68, 0x4b, 0x23, 0xd0, 0x59, 0x31, 0x91, 0xa6, 0xe7, 0x55, 0x1b, 0xe5, 0xca, 0x6a,
-	0x09, 0xa5, 0x84, 0x41, 0x61, 0xb4, 0x5d, 0xe9, 0xf0, 0x47, 0xa7, 0xd5, 0x12, 0x92, 0xee, 0x85,
-	0x64, 0xde, 0x28, 0x5b, 0xb6, 0x59, 0xcd, 0xdb, 0x86, 0x99, 0x6a, 0x1e, 0x14, 0x46, 0x3b, 0xc7,
-	0xbb, 0x33, 0xae, 0xfd, 0xb3, 0x93, 0x13, 0xc1, 0xa4, 0x12, 0x96, 0x94, 0xba, 0x20, 0x6e, 0x98,
-	0x1a, 0x32, 0x53, 0x2d, 0x83, 0xc2, 0x68, 0x8b, 0x42, 0x1e, 0xa4, 0xcd, 0xe0, 0x32, 0x95, 0x8a,
-	0x0d, 0x0a, 0xa3, 0xc9, 0xf1, 0xd5, 0x99, 0x92, 0x8d, 0xd1, 0x65, 0x08, 0x32, 0xc5, 0x9d, 0x96,
-	0x46, 0x41, 0x54, 0x0f, 0xa8, 0x7a, 0x51, 0x9d, 0x2b, 0xa2, 0x5c, 0x49, 0x2f, 0xe7, 0x74, 0x2d,
-	0x15, 0x1f, 0x14, 0x46, 0xe3, 0x4a, 0xa7, 0x3f, 0x3e, 0xa5, 0x97, 0xb3, 0x9a, 0x24, 0x41, 0x4c,
-	0x53, 0x6d, 0x94, 0x4a, 0xe0, 0xf7, 0xe0, 0xdf, 0x8e, 0x71, 0xf6, 0x02, 0x2a, 0xa1, 0x1c, 0x2a,
-	0x19, 0xb6, 0x9e, 0x37, 0xca, 0xa9, 0x56, 0x62, 0x1c, 0x1e, 0xdd, 0xe9, 0x0e, 0x4a, 0x1b, 0x00,
-	0x6c, 0xbb, 0x98, 0xab, 0x20, 0x53, 0x37, 0xb4, 0x54, 0x1b, 0x56, 0xdf, 0x6e, 0xdb, 0xc5, 0x19,
-	0x3c, 0x20, 0xdf, 0x0b, 0xab, 0x66, 0x27, 0x73, 0x9a, 0x4f, 0xd9, 0x66, 0x88, 0x6b, 0xaa, 0xad,
-	0x8e, 0x63, 0xa6, 0x92, 0xe3, 0x6b, 0x3c, 0x16, 0x7c, 0x52, 0x15, 0x32, 0x2f, 0xbf, 0x24, 0xc0,
-	0x6a, 0x32, 0xb8, 0x4b, 0x2f, 0xda, 0xc8, 0xbc, 0x15, 0x7c, 0x77, 0x42, 0xb3, 0xae, 0x61, 0xb2,
-	0xe3, 0x4a, 0xb3, 0xae, 0x49, 0xff, 0x0f, 0x1d, 0x64, 0x51, 0x6e, 0x1e, 0x63, 0x70, 0x09, 0xef,
-	0x8e, 0x10, 0x4e, 0x00, 0x2a, 0xab, 0xb4, 0xd0, 0x53, 0xb0, 0x77, 0xf1, 0xd0, 0xde, 0xc9, 0x13,
-	0x20, 0xf9, 0x74, 0x04, 0x76, 0xdd, 0x49, 0x93, 0xd2, 0x4b, 0x93, 0xe2, 0xcb, 0x79, 0xd4, 0xfc,
-	0xd2, 0xa7, 0x66, 0x46, 0x2f, 0x97, 0x91, 0xf6, 0xdf, 0x73, 0xc5, 0x3e, 0x68, 0xaf, 0x20, 0x64,
-	0xe2, 0x33, 0x85, 0xc9, 0x89, 0x2b, 0x6d, 0xce, 0xc0, 0xec, 0x62, 0x05, 0x49, 0xbd, 0xd0, 0x8a,
-	0x27, 0x5d, 0xaf, 0x6b, 0x51, 0x12, 0xce, 0x63, 0x56, 0xa3, 0x48, 0x08, 0x2c, 0xa8, 0x4f, 0x82,
-	0x2f, 0xe7, 0x91, 0x70, 0x4a, 0x80, 0x24, 0x99, 0xb2, 0x76, 0xa8, 0xb6, 0x7a, 0x2b, 0x08, 0xa8,
-	0x5a, 0xc8, 0xb4, 0x52, 0x2d, 0x83, 0x2d, 0x0e, 0x01, 0xf8, 0xc1, 0x19, 0xcd, 0x2f, 0xa8, 0xb6,
-	0x95, 0x8a, 0x91, 0x51, 0xfc, 0x20, 0xa5, 0xa1, 0x2d, 0xbf, 0xa0, 0x96, 0xcb, 0xa8, 0x68, 0xa5,
-	0xe2, 0x78, 0xc2, 0x7f, 0x96, 0xb7, 0x41, 0xd7, 0xec, 0x64, 0xce, 0xd2, 0x4b, 0x95, 0x22, 0x0a,
-	0xe3, 0xdf, 0x42, 0x9b, 0xbf, 0x96, 0x36, 0x1f, 0xcb, 0x78, 0xa6, 0x3f, 0x2f, 0x40, 0xd7, 0x0c,
-	0x42, 0xe6, 0x7e, 0xdd, 0x5e, 0xd8, 0x61, 0xaa, 0xf3, 0xf6, 0x14, 0xb2, 0x2c, 0xb5, 0x80, 0x56,
-	0x9c, 0x83, 0x21, 0x88, 0x39, 0x5b, 0x88, 0x7d, 0x20, 0x39, 0xde, 0xe1, 0x1f, 0x03, 0x07, 0x8c,
-	0x82, 0xa7, 0xa4, 0xdb, 0x21, 0xae, 0x39, 0x90, 0xd8, 0xa3, 0x12, 0x02, 0xaa, 0x10, 0x19, 0xf9,
-	0x7e, 0xe8, 0x9e, 0x9d, 0xcc, 0x55, 0x2b, 0x4e, 0xbc, 0xa1, 0x0c, 0x19, 0xa7, 0xc9, 0x58, 0xef,
-	0x61, 0xe3, 0x59, 0xed, 0xb1, 0xf2, 0xb2, 0x00, 0x69, 0xdf, 0xad, 0x72, 0x96, 0x7a, 0x80, 0x56,
-	0x19, 0x31, 0x5a, 0xb8, 0x61, 0xa3, 0x7b, 0xa1, 0xd5, 0xd9, 0xeb, 0x9c, 0x1b, 0x19, 0x5a, 0x94,
-	0x84, 0xf3, 0x98, 0xd5, 0xfe, 0x33, 0xe7, 0x97, 0xc6, 0xa0, 0xb5, 0x44, 0x20, 0xe1, 0x68, 0x5b,
-	0x93, 0x22, 0x4f, 0x4a, 0xfe, 0x9e, 0x00, 0x7d, 0x81, 0x5d, 0xf9, 0x22, 0x52, 0xcd, 0x46, 0x34,
-	0x4c, 0xfe, 0x1c, 0xf4, 0x04, 0x30, 0x0b, 0xc8, 0xde, 0x56, 0x2c, 0x62, 0x9c, 0xd6, 0xcd, 0x47,
-	0x28, 0x17, 0x21, 0x15, 0xa1, 0x64, 0x25, 0xdf, 0xf6, 0x47, 0xca, 0xb3, 0x4a, 0xaa, 0xf9, 0x20,
-	0x39, 0x94, 0x7b, 0xcb, 0x26, 0x52, 0xb5, 0x86, 0xf1, 0xac, 0x0c, 0x24, 0xab, 0x18, 0x11, 0x86,
-	0xe8, 0x7a, 0x57, 0x70, 0x48, 0xb7, 0x1b, 0x46, 0x51, 0x01, 0x22, 0x31, 0xa5, 0x9a, 0x0f, 0xca,
-	0xe7, 0x04, 0x58, 0x17, 0x98, 0x65, 0x1b, 0x85, 0x82, 0x17, 0x91, 0x66, 0xf4, 0x72, 0xc3, 0x58,
-	0x35, 0x02, 0x89, 0x0a, 0x8e, 0xfd, 0x7c, 0x83, 0xdc, 0x49, 0xb9, 0x0a, 0x43, 0x94, 0xf7, 0x85,
-	0x77, 0xc8, 0xb1, 0x76, 0x52, 0xb7, 0xec, 0x15, 0x70, 0x8d, 0x57, 0x05, 0x18, 0xe4, 0xbc, 0xd7,
-	0xda, 0xbe, 0xb8, 0x67, 0x7e, 0xde, 0x42, 0xf6, 0x0e, 0x27, 0x93, 0xba, 0xf9, 0x54, 0xde, 0x0d,
-	0x9d, 0xe8, 0x60, 0xbe, 0x58, 0xd5, 0x50, 0xce, 0x25, 0x27, 0xc6, 0x23, 0xa7, 0xc3, 0x15, 0x22,
-	0x97, 0xa7, 0x34, 0x00, 0x49, 0x03, 0xa3, 0xca, 0xe1, 0x64, 0x8f, 0xa4, 0x82, 0x60, 0x04, 0x40,
-	0xbb, 0x20, 0x5e, 0xd4, 0x4b, 0xba, 0x8d, 0xa9, 0x8e, 0x2b, 0xe4, 0x41, 0x3e, 0x2d, 0xe0, 0x2b,
-	0x8b, 0xb1, 0xb1, 0x61, 0xec, 0xea, 0x83, 0xf6, 0x79, 0xa3, 0xa8, 0x05, 0xde, 0x13, 0x57, 0xda,
-	0xc8, 0x40, 0x56, 0x93, 0x0f, 0x0b, 0xb0, 0x9e, 0xbf, 0x43, 0x59, 0x6d, 0x65, 0x9c, 0xc2, 0x99,
-	0xd0, 0xb5, 0x5c, 0x51, 0xb7, 0x6c, 0x37, 0x2d, 0x48, 0xe8, 0xf8, 0x55, 0xf2, 0xaf, 0xa9, 0x13,
-	0x17, 0x60, 0x99, 0x30, 0xaa, 0x65, 0xfb, 0x7f, 0x83, 0xce, 0x47, 0xa8, 0x58, 0x58, 0x40, 0x36,
-	0x59, 0xb4, 0x72, 0x2e, 0x41, 0xa1, 0x89, 0x45, 0xd0, 0xbc, 0x20, 0x40, 0x7f, 0x80, 0xc6, 0x44,
-	0x38, 0x2b, 0x5d, 0x69, 0x44, 0x1b, 0x21, 0x3e, 0x6f, 0x98, 0x79, 0xc4, 0x27, 0x93, 0xcc, 0xd5,
-	0x25, 0x31, 0xec, 0x20, 0x09, 0xca, 0x41, 0x8e, 0x0b, 0xd0, 0xcb, 0x71, 0x10, 0xc7, 0x57, 0x1b,
-	0xe6, 0x9e, 0x67, 0x30, 0xce, 0x1a, 0x95, 0x46, 0xcb, 0x45, 0xce, 0x52, 0x07, 0x8d, 0x24, 0x98,
-	0x0a, 0x52, 0xb5, 0x6c, 0x79, 0xce, 0x38, 0xd8, 0x30, 0x57, 0x9b, 0x0c, 0x1d, 0xf8, 0xba, 0xd6,
-	0x1d, 0x54, 0xce, 0x34, 0x09, 0xbb, 0x49, 0xd3, 0x43, 0x9a, 0xd5, 0x9c, 0x4b, 0x3a, 0xcd, 0xb3,
-	0x64, 0x4f, 0xd5, 0x6e, 0x24, 0x53, 0x86, 0xa1, 0x13, 0x9b, 0x62, 0x60, 0x58, 0x81, 0x2d, 0xab,
-	0x4c, 0x1f, 0x6b, 0x56, 0x93, 0x8f, 0xc4, 0xc2, 0xc7, 0x55, 0x2f, 0x5b, 0xc8, 0xb4, 0xf7, 0x98,
-	0x7b, 0x49, 0xfe, 0x4f, 0x6a, 0x16, 0x8d, 0x62, 0xd0, 0x47, 0x21, 0x69, 0x1b, 0x95, 0x1c, 0x9d,
-	0xaa, 0xf7, 0x65, 0x48, 0xad, 0x29, 0xe3, 0xd5, 0x9a, 0x32, 0xd9, 0xb2, 0xbd, 0x75, 0x7c, 0x9f,
-	0x5a, 0xac, 0x22, 0x05, 0xec, 0xe0, 0x1c, 0xec, 0x06, 0x29, 0x4c, 0x47, 0x49, 0xc5, 0x94, 0xb4,
-	0x2e, 0xaf, 0x64, 0x75, 0xc0, 0xd7, 0x94, 0x7a, 0x30, 0xab, 0x49, 0xbb, 0x60, 0x4d, 0xc8, 0x47,
-	0x5c, 0x45, 0x6d, 0xcb, 0x2b, 0xea, 0xf4, 0x9d, 0x88, 0xe8, 0xb9, 0x0f, 0x56, 0xb9, 0xc9, 0x61,
-	0xde, 0xb9, 0x6c, 0x52, 0xed, 0xcb, 0xab, 0x70, 0xb3, 0x49, 0x72, 0x39, 0x0d, 0xd0, 0xc9, 0x25,
-	0x0c, 0x0a, 0xa3, 0x6d, 0xe1, 0x6c, 0x52, 0xba, 0x0b, 0x7f, 0xb2, 0xa1, 0xf1, 0x54, 0xb2, 0xb6,
-	0xe6, 0x7b, 0xee, 0x26, 0x9a, 0x89, 0xa4, 0xfc, 0x1d, 0x21, 0xfc, 0xc9, 0xa0, 0xa1, 0x22, 0x6a,
-	0x34, 0x37, 0x90, 0xbf, 0x4f, 0x5d, 0x30, 0x05, 0x64, 0xef, 0xb5, 0xbc, 0x0b, 0xa6, 0xd1, 0x62,
-	0xde, 0x1f, 0x84, 0x70, 0x0a, 0x4c, 0x22, 0x45, 0xc3, 0xa2, 0x75, 0x62, 0x1f, 0x49, 0x49, 0x72,
-	0x25, 0xab, 0x10, 0x8a, 0x7d, 0x64, 0x70, 0xca, 0x2a, 0x64, 0x35, 0xf9, 0x8c, 0x00, 0xc3, 0xf5,
-	0xc3, 0x85, 0x5b, 0x6b, 0xbb, 0xf9, 0x46, 0x91, 0x4a, 0x60, 0xac, 0x76, 0x25, 0x30, 0x7e, 0xc3,
-	0x95, 0x40, 0xf9, 0x8b, 0x54, 0x06, 0x1a, 0x76, 0xf3, 0x5b, 0x05, 0x5f, 0x3e, 0x22, 0x80, 0x1c,
-	0xf5, 0x8d, 0x30, 0x04, 0x6b, 0x0f, 0x2e, 0xe7, 0xdd, 0x7c, 0x20, 0x7e, 0xd9, 0xd0, 0x49, 0x84,
-	0xe3, 0x5e, 0x15, 0xb4, 0x1c, 0xc9, 0x21, 0x29, 0x28, 0x2b, 0xf0, 0x95, 0xf6, 0x30, 0x3f, 0xef,
-	0xde, 0x85, 0xf3, 0xb1, 0x5b, 0x9d, 0xb3, 0xfe, 0x94, 0x02, 0x83, 0x34, 0xdd, 0x9e, 0x41, 0xc8,
-	0x24, 0x58, 0x56, 0x22, 0x5d, 0x1d, 0x05, 0x11, 0x1f, 0x41, 0xf7, 0x85, 0xa1, 0xcf, 0x92, 0x4e,
-	0x67, 0x9c, 0x50, 0x81, 0xbf, 0x84, 0xea, 0x26, 0xfe, 0xa7, 0x04, 0xb8, 0x9d, 0xe2, 0x70, 0x82,
-	0x54, 0x34, 0xbd, 0x7a, 0x15, 0x52, 0xb5, 0x19, 0xd5, 0xb4, 0xf5, 0xbc, 0x5e, 0x51, 0xcb, 0x2b,
-	0x51, 0x86, 0x91, 0x36, 0x00, 0xb8, 0x55, 0x54, 0x8f, 0xd6, 0x16, 0xa5, 0xdd, 0x1d, 0xc9, 0x6a,
-	0x52, 0x37, 0x24, 0xdc, 0x50, 0x42, 0xa0, 0xc7, 0x4b, 0x38, 0x88, 0x9c, 0xa5, 0x2e, 0x19, 0x0b,
-	0xe3, 0xb6, 0x67, 0x17, 0x50, 0x09, 0x35, 0x50, 0x89, 0x23, 0xda, 0x69, 0x49, 0x70, 0x3a, 0x2d,
-	0xce, 0xd7, 0x63, 0x2f, 0x65, 0xc9, 0x6e, 0xdd, 0xb2, 0x0d, 0x73, 0x71, 0x76, 0x76, 0xb2, 0x61,
-	0x4c, 0xa1, 0xbb, 0x41, 0x89, 0x68, 0x37, 0xe8, 0xc9, 0xe8, 0xd7, 0xe3, 0xd4, 0x62, 0xb8, 0x06,
-	0x7e, 0xf3, 0xad, 0x90, 0x20, 0xe6, 0xfc, 0xc2, 0x06, 0xb4, 0x29, 0xf8, 0xb7, 0x33, 0x96, 0x5f,
-	0x50, 0x6d, 0x8c, 0xbc, 0x4d, 0xc1, 0xbf, 0xa5, 0x14, 0xb4, 0xba, 0x9e, 0x84, 0x41, 0xb7, 0x29,
-	0xde, 0xa3, 0xfc, 0x71, 0xe8, 0xdb, 0x87, 0x9c, 0x97, 0xe4, 0xb8, 0x25, 0x77, 0xb7, 0x52, 0x6d,
-	0xa5, 0x84, 0xc1, 0x96, 0x1b, 0xab, 0x54, 0x5b, 0xf2, 0x7d, 0xb0, 0xc6, 0x55, 0xe9, 0x96, 0xdb,
-	0x10, 0x32, 0xbd, 0xfa, 0xbf, 0xa7, 0x68, 0x6d, 0xe4, 0x66, 0xc1, 0x25, 0x76, 0x77, 0xfd, 0x47,
-	0x40, 0xa4, 0xd6, 0x87, 0xfa, 0x6a, 0xde, 0xf2, 0x5a, 0x7d, 0x35, 0x4b, 0xfe, 0x18, 0xf4, 0x50,
-	0x8b, 0x99, 0x2e, 0x94, 0xa7, 0xa2, 0x7e, 0x17, 0x8a, 0x55, 0xc4, 0x74, 0x72, 0x6a, 0x28, 0x8a,
-	0x74, 0x72, 0x2c, 0x79, 0x23, 0x24, 0x5d, 0x45, 0x93, 0x46, 0xb9, 0xe0, 0x5c, 0x19, 0xc1, 0xea,
-	0x16, 0x57, 0xe8, 0xb6, 0xcb, 0x49, 0xe8, 0xa0, 0x1c, 0x40, 0x5a, 0x03, 0x1d, 0x13, 0xca, 0xc4,
-	0xd6, 0xf1, 0xdc, 0xde, 0xe9, 0xfb, 0xa7, 0xf7, 0xec, 0x9f, 0x16, 0x9b, 0xa4, 0x11, 0x48, 0x91,
-	0x21, 0xb6, 0xa5, 0x20, 0xfe, 0xe4, 0xf0, 0x95, 0x53, 0x1f, 0x3a, 0xff, 0x04, 0x69, 0x3d, 0xac,
-	0x26, 0x62, 0x7e, 0x5b, 0x52, 0x7c, 0xe5, 0xc5, 0xa5, 0xb7, 0xdf, 0xf7, 0x66, 0xbb, 0xc3, 0xb3,
-	0x3e, 0x5c, 0xf1, 0xe4, 0x99, 0x6f, 0x55, 0x25, 0x99, 0x9e, 0xf5, 0x59, 0x11, 0xdf, 0xb9, 0x70,
-	0xfd, 0xea, 0x3f, 0x88, 0x86, 0x01, 0xe8, 0x25, 0x32, 0x4c, 0x97, 0x47, 0xfc, 0xcb, 0x1b, 0x4b,
-	0x6f, 0x09, 0xd2, 0x08, 0x6c, 0x08, 0x2b, 0x61, 0x9a, 0x15, 0xe2, 0xb1, 0xa7, 0x7f, 0x78, 0x39,
-	0x26, 0xdd, 0x0e, 0xfd, 0x94, 0x18, 0x53, 0xfb, 0x17, 0x8f, 0xbd, 0xfe, 0x9b, 0x3f, 0xbb, 0x46,
-	0x6d, 0x82, 0x75, 0x94, 0x70, 0xb8, 0x02, 0x2f, 0x2e, 0x3d, 0x7e, 0x75, 0xe9, 0x1a, 0x91, 0xdb,
-	0x08, 0x7d, 0xac, 0xd2, 0x40, 0xf2, 0xfa, 0xf1, 0xf3, 0x8f, 0xc6, 0x18, 0x80, 0xd1, 0x9a, 0xb7,
-	0xf8, 0xb5, 0x13, 0xe7, 0x7e, 0x10, 0x93, 0xb6, 0xc0, 0x7a, 0x4a, 0x2c, 0x52, 0x43, 0x16, 0x7f,
-	0x7c, 0xee, 0xfd, 0xa7, 0x5d, 0x4e, 0xee, 0x82, 0xe1, 0x28, 0x3c, 0x5e, 0x89, 0x56, 0x7c, 0xf7,
-	0xd2, 0xc5, 0x97, 0xaf, 0x93, 0x25, 0xff, 0x07, 0x1b, 0xf9, 0x4b, 0xa8, 0xea, 0xaa, 0xf8, 0xd0,
-	0x91, 0x6b, 0x7f, 0xbb, 0x4a, 0x56, 0x0c, 0x7b, 0xc4, 0x33, 0x2b, 0xc4, 0xa3, 0xcf, 0x9e, 0x7c,
-	0xd2, 0x85, 0x72, 0x07, 0x0c, 0xd4, 0xd4, 0x4b, 0x6a, 0x82, 0xe2, 0xa5, 0xaf, 0x1f, 0x7d, 0xd3,
-	0xe5, 0x2b, 0x6a, 0x63, 0xa4, 0x6a, 0x27, 0xbe, 0xfe, 0xc6, 0xd2, 0x97, 0x3e, 0x20, 0xa2, 0xb7,
-	0x45, 0x58, 0x8b, 0x56, 0xc7, 0xc4, 0x53, 0x3f, 0x3f, 0xf4, 0xbc, 0xab, 0x36, 0x03, 0x43, 0x94,
-	0x2c, 0xaf, 0x76, 0x25, 0xfe, 0xf5, 0xad, 0x23, 0x57, 0xdc, 0xed, 0xdd, 0x0c, 0x69, 0x3e, 0x0c,
-	0x07, 0xb3, 0xf8, 0xde, 0x95, 0xeb, 0x0f, 0x5f, 0xab, 0x29, 0x18, 0x14, 0x68, 0xc4, 0x77, 0x5e,
-	0xbb, 0xfc, 0xd2, 0x87, 0x1e, 0x59, 0xb4, 0x61, 0x91, 0x2a, 0x89, 0xf8, 0xcc, 0xa5, 0xc7, 0xdf,
-	0x64, 0x5d, 0x35, 0x5a, 0x81, 0x10, 0x3f, 0xb8, 0xf6, 0xdc, 0x73, 0x71, 0x69, 0x4b, 0xc4, 0x1c,
-	0x5e, 0xb2, 0x2e, 0x1e, 0xff, 0xc6, 0x33, 0x3f, 0x13, 0xa4, 0xc1, 0x88, 0xa3, 0x86, 0x13, 0x62,
-	0xf1, 0xc2, 0xe9, 0xdf, 0x77, 0x30, 0xdc, 0xf0, 0x3e, 0xbb, 0xc4, 0xa7, 0xbe, 0xfa, 0xf7, 0xeb,
-	0xfe, 0x86, 0x0e, 0x73, 0x30, 0xb2, 0x4b, 0x9e, 0x78, 0xed, 0x91, 0xa7, 0x1c, 0xe6, 0x37, 0x2f,
-	0x0b, 0x95, 0x1c, 0x6b, 0xf1, 0xa1, 0xb3, 0x27, 0xf6, 0x4a, 0x9b, 0x22, 0xee, 0xc2, 0x26, 0xf0,
-	0xe2, 0x37, 0xff, 0xf9, 0x6e, 0xa7, 0x34, 0x0e, 0x23, 0x1c, 0x14, 0x6c, 0x96, 0x2d, 0xfe, 0xea,
-	0xe8, 0xc5, 0xc3, 0x6e, 0xac, 0x19, 0x61, 0x3d, 0x86, 0x5a, 0x20, 0x3e, 0xfb, 0xa7, 0xc7, 0x2e,
-	0x24, 0x98, 0xad, 0x8a, 0x64, 0xb0, 0xe2, 0xa9, 0xc7, 0xde, 0x3e, 0x14, 0x63, 0xa4, 0x22, 0xa9,
-	0xa5, 0x78, 0xec, 0xd1, 0x63, 0x27, 0x9a, 0xa5, 0x7b, 0x20, 0x13, 0xd5, 0x55, 0x3f, 0x93, 0x13,
-	0x4f, 0x1f, 0x7b, 0xef, 0xb7, 0xcd, 0x4c, 0x7c, 0x09, 0x67, 0x52, 0xe2, 0x13, 0x67, 0x7e, 0xf1,
-	0x82, 0x7b, 0x08, 0x86, 0x22, 0xfe, 0x47, 0xe5, 0x29, 0xe2, 0xc9, 0x4b, 0x4b, 0xd3, 0x3c, 0xab,
-	0xa9, 0x3c, 0x40, 0xfc, 0xca, 0xb7, 0xbf, 0x7c, 0xa5, 0x35, 0x1d, 0x3b, 0xf4, 0xdd, 0xfe, 0xa6,
-	0xf1, 0x93, 0xdd, 0xd0, 0xae, 0xcc, 0x4c, 0xb8, 0x75, 0x81, 0x69, 0xe8, 0xad, 0xd5, 0xe0, 0x95,
-	0x83, 0x3c, 0xa1, 0x56, 0x5c, 0x4d, 0xd3, 0xb5, 0x5a, 0xb9, 0x49, 0x9a, 0x81, 0x54, 0xcd, 0xc6,
-	0xea, 0x46, 0x56, 0x21, 0x23, 0xc4, 0x6a, 0x7c, 0x00, 0xd6, 0xf2, 0x7a, 0xa0, 0xfd, 0xac, 0xb2,
-	0xf0, 0x7c, 0xda, 0x7f, 0x59, 0x9d, 0x64, 0x43, 0x6e, 0x92, 0x3e, 0x0b, 0xdd, 0xfc, 0xae, 0xe7,
-	0x60, 0x0d, 0xb0, 0xff, 0xf6, 0x1b, 0x02, 0x86, 0x99, 0x46, 0x27, 0x87, 0xe1, 0xa8, 0x0c, 0xcb,
-	0xc7, 0x14, 0xf4, 0xd4, 0xe8, 0x30, 0x0e, 0xb1, 0xea, 0x22, 0x22, 0xe9, 0x4e, 0x5f, 0x1b, 0xae,
-	0x4b, 0xc9, 0x4d, 0xd2, 0x02, 0xf4, 0x2f, 0xd3, 0xe4, 0xdb, 0xc2, 0x65, 0x9a, 0x27, 0x9a, 0x5e,
-	0x17, 0xa1, 0x24, 0x48, 0xb5, 0xe4, 0x26, 0x09, 0xc1, 0x86, 0xfa, 0x6d, 0xbd, 0xd1, 0x3a, 0x2f,
-	0xa2, 0x24, 0xd3, 0x29, 0xee, 0x7b, 0x76, 0x1e, 0xb4, 0x31, 0x3f, 0x6b, 0xd8, 0xce, 0xda, 0xfa,
-	0x7a, 0xaa, 0xeb, 0xaa, 0xfb, 0x34, 0xac, 0xab, 0xdd, 0xea, 0x1a, 0xae, 0x8f, 0x98, 0x48, 0x2d,
-	0x83, 0xb6, 0xa7, 0x46, 0xf7, 0x6a, 0xa8, 0x9e, 0x6e, 0x2c, 0xc2, 0xd9, 0xcd, 0x4f, 0xfa, 0xce,
-	0xc6, 0x74, 0x92, 0x64, 0xae, 0x3e, 0x4a, 0xa6, 0x2e, 0xd2, 0x7d, 0xd0, 0x57, 0xaf, 0x2d, 0xb4,
-	0x89, 0x55, 0xcf, 0x93, 0x63, 0xfd, 0x79, 0x12, 0xba, 0xb8, 0xed, 0x99, 0x81, 0x3a, 0xf6, 0x3b,
-	0x02, 0x69, 0x36, 0x25, 0x97, 0x9b, 0xa4, 0x6c, 0x58, 0x5b, 0xa8, 0x91, 0xc2, 0xd7, 0x16, 0x08,
-	0x70, 0xb8, 0x9c, 0xf4, 0xb7, 0x26, 0xda, 0xef, 0xe0, 0x6c, 0x4d, 0x44, 0x84, 0x35, 0x33, 0x08,
-	0x03, 0x4c, 0xcf, 0x41, 0xae, 0xa7, 0x8e, 0xc8, 0xb0, 0xfa, 0x82, 0xed, 0xe0, 0x96, 0xfd, 0x39,
-	0xdb, 0xc1, 0x93, 0x63, 0xf5, 0xee, 0xf2, 0xc3, 0x2d, 0x55, 0x3f, 0xe6, 0x84, 0xdb, 0xf0, 0x3c,
-	0xab, 0x67, 0xbf, 0x8f, 0x8f, 0x5b, 0xe4, 0xdd, 0xc4, 0xdd, 0x0f, 0x46, 0x8e, 0xb3, 0x2d, 0x0f,
-	0xf8, 0x01, 0xab, 0x56, 0x49, 0x76, 0x4b, 0x2d, 0x3e, 0x59, 0xf5, 0x0c, 0xec, 0x39, 0x18, 0x5a,
-	0xbe, 0x3c, 0x7a, 0xc7, 0x8d, 0x91, 0x4b, 0xa4, 0xd9, 0x77, 0x28, 0x7e, 0x48, 0xe1, 0xd4, 0x2e,
-	0x87, 0xeb, 0x13, 0x5d, 0x4b, 0xe7, 0x67, 0x60, 0x60, 0xb9, 0x62, 0xe4, 0x6d, 0xb5, 0x68, 0x61,
-	0x65, 0x59, 0xfd, 0xb9, 0x70, 0x60, 0xa1, 0xcb, 0x8b, 0x72, 0x9d, 0x83, 0xea, 0xca, 0xa4, 0xfb,
-	0xb9, 0x81, 0xc5, 0xff, 0xd8, 0xc3, 0xfe, 0xd2, 0x53, 0xa3, 0x9c, 0x58, 0x2f, 0x10, 0x12, 0x91,
-	0x65, 0x02, 0x78, 0x4f, 0x8d, 0xd2, 0x20, 0x47, 0x71, 0x44, 0xa4, 0x06, 0x6e, 0xff, 0x13, 0x56,
-	0x6e, 0x92, 0x0e, 0xc0, 0xe8, 0x0d, 0x97, 0xf0, 0xb6, 0x72, 0x2d, 0xa9, 0xbf, 0x28, 0xbd, 0x36,
-	0x02, 0xc1, 0xf9, 0xa6, 0xa7, 0xce, 0x29, 0x55, 0x82, 0xe3, 0x9c, 0xd3, 0xf0, 0x3c, 0xbb, 0xb1,
-	0xbb, 0xfd, 0x80, 0x49, 0x17, 0xc0, 0x06, 0xb8, 0x8a, 0x02, 0x01, 0x56, 0xd3, 0x6c, 0xd8, 0x45,
-	0xe8, 0x3a, 0x14, 0xdf, 0x45, 0x28, 0x99, 0x34, 0xef, 0x0f, 0x34, 0xe5, 0xa6, 0xed, 0x9f, 0xb8,
-	0xf8, 0x6a, 0xbf, 0xf0, 0xbb, 0xf3, 0xfd, 0xc2, 0x8b, 0xe7, 0xfb, 0x85, 0x57, 0xce, 0xf7, 0x0b,
-	0x9f, 0xda, 0x16, 0xfa, 0x73, 0x76, 0x1b, 0xa9, 0xa5, 0x82, 0xa9, 0x06, 0x3f, 0xee, 0xb4, 0x90,
-	0x79, 0x00, 0x99, 0x63, 0x6a, 0xa5, 0x32, 0xe6, 0xfc, 0xd4, 0xf3, 0x68, 0x6c, 0x4e, 0xff, 0xc2,
-	0x18, 0xd1, 0xed, 0xfe, 0x37, 0x97, 0xc0, 0xc0, 0xb7, 0xfe, 0x2b, 0x00, 0x00, 0xff, 0xff, 0xf3,
-	0xbc, 0x89, 0xcb, 0x33, 0x2f, 0x00, 0x00,
+	// 2957 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5b, 0x6b, 0x6c, 0x1c, 0xd5,
+	0xf5, 0xf7, 0xd8, 0xbb, 0x7e, 0x1c, 0xc7, 0xce, 0x64, 0xe2, 0xd8, 0x9b, 0x75, 0xe2, 0xc7, 0xc4,
+	0x4e, 0x9c, 0x04, 0xd6, 0x7f, 0x36, 0x08, 0xa4, 0x7f, 0x2b, 0x24, 0x70, 0x48, 0x59, 0x61, 0x27,
+	0xee, 0xe0, 0x80, 0x5a, 0xd1, 0x2e, 0xe3, 0x9d, 0xeb, 0xf5, 0x94, 0xdd, 0x9d, 0xd5, 0xcc, 0x38,
+	0x4d, 0xfa, 0xa9, 0x0f, 0x50, 0x79, 0x04, 0xd4, 0x2f, 0x05, 0x29, 0x2a, 0xa5, 0xa4, 0xaa, 0xda,
+	0x42, 0x54, 0xa0, 0x34, 0x05, 0x15, 0x2a, 0x2a, 0x5e, 0xa9, 0x10, 0xa8, 0xa8, 0x14, 0xa9, 0x0f,
+	0x55, 0x82, 0x00, 0xe1, 0x51, 0x09, 0x08, 0x05, 0x52, 0x42, 0x80, 0x6a, 0xee, 0x9d, 0xd7, 0x9d,
+	0x7b, 0x67, 0xec, 0x56, 0x76, 0xba, 0xe4, 0x4b, 0xf6, 0xde, 0x7b, 0xee, 0xb9, 0xe7, 0xfc, 0xee,
+	0xb9, 0xe7, 0x9e, 0x7b, 0xce, 0x18, 0x56, 0x6b, 0xba, 0x5a, 0x31, 0xca, 0x39, 0xbb, 0x92, 0xab,
+	0x9b, 0x86, 0x6d, 0x48, 0xad, 0xa4, 0x23, 0x7b, 0x6e, 0x59, 0xb7, 0xe7, 0x17, 0x66, 0x73, 0x25,
+	0xa3, 0x3a, 0x5e, 0x36, 0xca, 0xc6, 0x38, 0x1e, 0x9e, 0x5d, 0x98, 0xc3, 0x2d, 0xdc, 0xc0, 0xbf,
+	0xc8, 0xb4, 0xec, 0x40, 0xd9, 0x30, 0xca, 0x15, 0x14, 0x50, 0x7d, 0xdd, 0x54, 0xeb, 0x75, 0x64,
+	0x5a, 0xee, 0x78, 0xd6, 0x2a, 0xcd, 0xa3, 0xaa, 0xea, 0xac, 0x53, 0x32, 0x4c, 0x54, 0xb4, 0x0f,
+	0xd4, 0x91, 0x37, 0xb6, 0x3e, 0x18, 0xb3, 0x4d, 0xb5, 0x66, 0xd5, 0x0d, 0xd3, 0x76, 0x87, 0x7a,
+	0x82, 0x21, 0xeb, 0x40, 0xad, 0x44, 0x7a, 0xe5, 0x5f, 0x34, 0x43, 0xc7, 0x4e, 0x2c, 0xe6, 0xa5,
+	0xfb, 0x6d, 0x69, 0x14, 0xba, 0xeb, 0x26, 0xd2, 0xf4, 0x92, 0x6a, 0xa3, 0x62, 0x4d, 0xad, 0xa2,
+	0x8c, 0x30, 0x24, 0x8c, 0x75, 0x28, 0x5d, 0x7e, 0xef, 0x6e, 0xb5, 0x8a, 0xa4, 0x0b, 0xa1, 0xb3,
+	0x64, 0xd4, 0x2c, 0xdb, 0x5c, 0x28, 0xd9, 0x86, 0x99, 0x69, 0x1e, 0x12, 0xc6, 0xba, 0xf3, 0xeb,
+	0x72, 0xae, 0xfe, 0x33, 0x93, 0x13, 0xc1, 0xa0, 0x12, 0xa6, 0x94, 0x7a, 0x20, 0x6d, 0x98, 0x1a,
+	0x32, 0x33, 0x2d, 0x43, 0xc2, 0x58, 0x8b, 0x42, 0x1a, 0xd2, 0x16, 0x70, 0x91, 0xca, 0xa4, 0x86,
+	0x84, 0xb1, 0xce, 0xfc, 0xea, 0x5c, 0xd5, 0xc6, 0xd2, 0xe5, 0x88, 0x64, 0x8a, 0x3b, 0x2c, 0x8d,
+	0x81, 0xa8, 0xee, 0x53, 0xf5, 0x8a, 0x3a, 0x5b, 0x41, 0xc5, 0xaa, 0x5e, 0x2b, 0xea, 0x5a, 0x26,
+	0x3d, 0x24, 0x8c, 0xa5, 0x95, 0x6e, 0xbf, 0x7f, 0x4a, 0xaf, 0x15, 0x34, 0x49, 0x82, 0x94, 0xa6,
+	0xda, 0x28, 0xd3, 0x8a, 0xd7, 0xc1, 0xbf, 0x1d, 0xe5, 0xec, 0x79, 0x54, 0x45, 0x45, 0x54, 0x35,
+	0x6c, 0xbd, 0x64, 0xd4, 0x32, 0x6d, 0x44, 0x39, 0xdc, 0x7b, 0xa9, 0xdb, 0x29, 0x6d, 0x04, 0xb0,
+	0xed, 0x4a, 0xb1, 0x8e, 0x4c, 0xdd, 0xd0, 0x32, 0xed, 0x98, 0x7d, 0x87, 0x6d, 0x57, 0xa6, 0x71,
+	0x87, 0x7c, 0x21, 0xac, 0x9a, 0x99, 0x2c, 0x6a, 0x3e, 0x64, 0x5b, 0x20, 0xad, 0xa9, 0xb6, 0x9a,
+	0xc7, 0x48, 0x75, 0xe6, 0xd7, 0x78, 0x28, 0xf8, 0xa0, 0x2a, 0x64, 0x5c, 0x7e, 0x5e, 0x80, 0xd5,
+	0xa4, 0x73, 0x97, 0x5e, 0xb1, 0x91, 0x79, 0x36, 0xf0, 0xee, 0x86, 0x66, 0x5d, 0xc3, 0x60, 0xa7,
+	0x95, 0x66, 0x5d, 0x93, 0xfe, 0x1f, 0xba, 0xc8, 0xa4, 0xe2, 0x1c, 0x96, 0xc1, 0x05, 0x7c, 0x5d,
+	0x04, 0x70, 0x22, 0xa0, 0xb2, 0x4a, 0x0b, 0xb5, 0x82, 0xbd, 0x4b, 0x87, 0xf6, 0x4e, 0x9e, 0x00,
+	0xc9, 0x87, 0x23, 0xd0, 0xeb, 0x5c, 0x1a, 0x94, 0x3e, 0x1a, 0x14, 0x9f, 0xce, 0x83, 0xe6, 0xb7,
+	0x3e, 0x34, 0xd3, 0x7a, 0xad, 0x86, 0xb4, 0xff, 0x9d, 0x29, 0xf6, 0x43, 0x47, 0x1d, 0x21, 0x13,
+	0x9f, 0x29, 0x0c, 0x4e, 0x5a, 0x69, 0x77, 0x3a, 0x66, 0x0e, 0xd4, 0x91, 0xd4, 0x07, 0x6d, 0x78,
+	0xd0, 0xb5, 0xba, 0x16, 0xa5, 0xd5, 0x69, 0x16, 0x34, 0x0a, 0x84, 0x40, 0x83, 0x64, 0x10, 0x7c,
+	0x3a, 0x0f, 0x84, 0xa3, 0x02, 0x74, 0x92, 0x21, 0x6b, 0xa7, 0x6a, 0xab, 0x67, 0x03, 0x80, 0x05,
+	0x0b, 0x99, 0x56, 0xa6, 0x65, 0xa8, 0xc5, 0x01, 0x00, 0x37, 0x9c, 0xde, 0xd2, 0xbc, 0x6a, 0x5b,
+	0x99, 0x14, 0xe9, 0xc5, 0x0d, 0x29, 0x0b, 0xed, 0xa5, 0x79, 0xb5, 0x56, 0x43, 0x15, 0x2b, 0x93,
+	0xc6, 0x03, 0x7e, 0x5b, 0xbe, 0x18, 0x7a, 0x66, 0x26, 0x8b, 0x96, 0x5e, 0xad, 0x57, 0x50, 0x58,
+	0xfe, 0xad, 0xb4, 0xfa, 0x6b, 0x69, 0xf5, 0x31, 0x8d, 0xa7, 0xfa, 0x53, 0x02, 0xf4, 0x4c, 0x23,
+	0x64, 0x5e, 0xa5, 0xdb, 0xf3, 0x3b, 0x4d, 0x75, 0xce, 0x9e, 0x42, 0x96, 0xa5, 0x96, 0xd1, 0x8a,
+	0x63, 0x30, 0x0c, 0x29, 0x67, 0x0b, 0xb1, 0x0d, 0x74, 0xe6, 0xbb, 0xfc, 0x63, 0xe0, 0x08, 0xa3,
+	0xe0, 0x21, 0x69, 0x3b, 0xa4, 0x35, 0x47, 0x24, 0xf6, 0xa8, 0x84, 0x04, 0x55, 0x08, 0x8d, 0x7c,
+	0x39, 0xac, 0x9b, 0x99, 0x2c, 0x2e, 0xd4, 0x1d, 0x7f, 0x43, 0x29, 0x92, 0xa7, 0xc1, 0xd8, 0xe0,
+	0xc9, 0xc6, 0xd3, 0xda, 0x43, 0xe5, 0x41, 0x01, 0x56, 0x5f, 0xa1, 0xee, 0x43, 0x1a, 0x41, 0x6c,
+	0x52, 0xb7, 0xce, 0xca, 0xa9, 0x28, 0x19, 0x0b, 0x35, 0xdb, 0xf5, 0x19, 0xa4, 0x21, 0xe5, 0xa0,
+	0x8d, 0x4c, 0x25, 0x66, 0xd1, 0x99, 0xef, 0xf1, 0x51, 0x08, 0x09, 0xa8, 0x78, 0x44, 0xee, 0x79,
+	0xb0, 0x22, 0xb2, 0xc7, 0x9d, 0x87, 0x88, 0x8e, 0x9e, 0xfa, 0x2f, 0x08, 0x90, 0xf5, 0x4f, 0x15,
+	0x66, 0x46, 0x21, 0x1a, 0x51, 0x51, 0x58, 0xb2, 0x8a, 0x7d, 0xd0, 0xe6, 0x98, 0x7a, 0xd1, 0x75,
+	0x8c, 0x2d, 0x4a, 0xab, 0xd3, 0x2c, 0x68, 0xff, 0xdd, 0xd9, 0x97, 0xc6, 0xa1, 0xad, 0x4a, 0x44,
+	0xc2, 0x97, 0x4d, 0xac, 0x85, 0x78, 0x54, 0xf2, 0x4f, 0x04, 0xe8, 0x0f, 0xf4, 0x2a, 0x55, 0x90,
+	0x6a, 0x36, 0xa2, 0x62, 0xf2, 0xd7, 0xa0, 0x37, 0x10, 0xb3, 0x8c, 0xec, 0x8b, 0x2b, 0x15, 0x2c,
+	0xa7, 0xb5, 0xfc, 0x12, 0xca, 0x15, 0xc8, 0x44, 0x20, 0x59, 0xc9, 0xd5, 0xfe, 0x44, 0x59, 0x56,
+	0x55, 0x35, 0xaf, 0x25, 0xd6, 0xb7, 0xb7, 0x66, 0x22, 0x55, 0x6b, 0x18, 0xcb, 0xca, 0x41, 0xe7,
+	0x02, 0x96, 0x08, 0x8b, 0xe8, 0x5a, 0x57, 0xe0, 0xa3, 0x2e, 0x31, 0x8c, 0x8a, 0x02, 0x84, 0x62,
+	0x4a, 0x35, 0xaf, 0x95, 0x9f, 0x16, 0x60, 0x7d, 0xa0, 0x96, 0x6d, 0x94, 0xcb, 0x9e, 0x43, 0x9e,
+	0xd6, 0x6b, 0x0d, 0xa3, 0xd5, 0x28, 0xb4, 0xd6, 0xf1, 0xd5, 0xc7, 0x57, 0xc8, 0x1d, 0x94, 0x17,
+	0x60, 0x98, 0xb2, 0xbe, 0xf0, 0x0e, 0x39, 0xda, 0x62, 0x8f, 0xb2, 0xfc, 0xa6, 0xf1, 0x92, 0x00,
+	0x43, 0x9c, 0x75, 0xad, 0x4b, 0x0e, 0xec, 0x99, 0x9b, 0xb3, 0x90, 0xbd, 0xd3, 0x09, 0x24, 0x97,
+	0x1f, 0xca, 0xf3, 0xa1, 0x1b, 0xed, 0x2f, 0x55, 0x16, 0x34, 0x54, 0x74, 0xc1, 0x49, 0xf1, 0xc0,
+	0xe9, 0x72, 0x89, 0x48, 0xec, 0x20, 0x0d, 0x42, 0xa7, 0x81, 0xa5, 0x2a, 0xe2, 0x58, 0x97, 0x44,
+	0xc2, 0x60, 0x04, 0x82, 0xf6, 0x40, 0xba, 0xa2, 0x57, 0x75, 0x1b, 0x43, 0x9d, 0x56, 0x48, 0x43,
+	0x7e, 0x58, 0xc0, 0x37, 0x36, 0xa3, 0x63, 0xc3, 0xe8, 0xd5, 0x0f, 0x1d, 0x73, 0x46, 0x45, 0x0b,
+	0xac, 0x27, 0xad, 0xb4, 0x93, 0x8e, 0x82, 0x26, 0xdf, 0x28, 0xc0, 0x06, 0xfe, 0x0e, 0x15, 0xb4,
+	0x95, 0x31, 0x0a, 0x67, 0x40, 0xd7, 0x8a, 0x15, 0xdd, 0xb2, 0xdd, 0xa8, 0xa8, 0x55, 0xc7, 0x4b,
+	0xc9, 0xbf, 0xa3, 0x4e, 0x5c, 0x20, 0xcb, 0x04, 0xbe, 0x35, 0x3f, 0x13, 0x70, 0xde, 0x4c, 0xf9,
+	0xc2, 0x32, 0xb2, 0xc9, 0xa4, 0x95, 0x33, 0x09, 0x4a, 0x9a, 0x54, 0x44, 0x9a, 0x67, 0x05, 0x18,
+	0x08, 0xa4, 0x31, 0x11, 0x0e, 0xca, 0x57, 0x5a, 0xa2, 0x4d, 0x90, 0x9e, 0x33, 0xcc, 0x12, 0xe2,
+	0x83, 0x49, 0xc6, 0x12, 0x41, 0x0c, 0x1b, 0x48, 0x2b, 0x65, 0x20, 0x77, 0x09, 0xd0, 0xc7, 0x31,
+	0x10, 0xc7, 0x56, 0x1b, 0xe6, 0x9e, 0x67, 0x64, 0x9c, 0x31, 0xea, 0x8d, 0x16, 0x8b, 0x1c, 0xa3,
+	0x0e, 0x1a, 0x89, 0xaf, 0x15, 0xa4, 0x6a, 0x85, 0xda, 0xac, 0xb1, 0xbf, 0x61, 0xae, 0x36, 0x19,
+	0xba, 0xf0, 0x75, 0xad, 0x3b, 0x52, 0x39, 0xc3, 0xc4, 0xed, 0x76, 0x9a, 0x9e, 0xa4, 0x05, 0xcd,
+	0xb9, 0xa4, 0xb3, 0x3c, 0x4d, 0xf6, 0x2c, 0xd8, 0x8d, 0xa4, 0xca, 0x08, 0x74, 0x63, 0x55, 0x0c,
+	0x2c, 0x56, 0xa0, 0xcb, 0x2a, 0xd3, 0x97, 0xb5, 0xa0, 0xc9, 0x07, 0x53, 0xe1, 0xe3, 0xaa, 0xd7,
+	0x2c, 0x64, 0xda, 0x7b, 0xcc, 0xbd, 0xe4, 0xf9, 0x43, 0x52, 0x36, 0x8d, 0xa2, 0xd0, 0xe7, 0xa1,
+	0xd3, 0x36, 0xea, 0x45, 0x3a, 0x54, 0xef, 0xcf, 0x91, 0x54, 0x5b, 0xce, 0x4b, 0xb5, 0xe5, 0x0a,
+	0x35, 0x7b, 0x47, 0xfe, 0x4a, 0xb5, 0xb2, 0x80, 0x14, 0xb0, 0x83, 0x73, 0x70, 0x19, 0x48, 0x61,
+	0x38, 0xaa, 0x2a, 0x86, 0xa4, 0x6d, 0x71, 0x26, 0xab, 0x03, 0xbc, 0xa6, 0xd4, 0xfd, 0x05, 0x4d,
+	0xda, 0x05, 0x6b, 0x42, 0x36, 0xe2, 0x32, 0x6a, 0x5f, 0x9c, 0x51, 0xb7, 0x6f, 0x44, 0x84, 0xcf,
+	0x45, 0xb0, 0xca, 0x0d, 0x0e, 0xc9, 0x7b, 0xad, 0x63, 0x71, 0x16, 0x6e, 0x34, 0x49, 0x2e, 0xa7,
+	0x41, 0x3a, 0xb8, 0x84, 0x21, 0x61, 0xac, 0x3d, 0x1c, 0x4d, 0x4a, 0xe7, 0xe1, 0xd7, 0x1a, 0xca,
+	0x67, 0x3a, 0xe3, 0x39, 0x5f, 0x70, 0x3e, 0xe1, 0x4c, 0x28, 0xe5, 0x1f, 0x09, 0xe1, 0x27, 0x83,
+	0x86, 0x2a, 0xa8, 0xd1, 0xcc, 0x40, 0xfe, 0x19, 0x75, 0xc1, 0x94, 0x91, 0xbd, 0xd7, 0xf2, 0x2e,
+	0x98, 0x46, 0xf3, 0x79, 0x7f, 0x10, 0xc2, 0x21, 0x30, 0xf1, 0x14, 0x0d, 0x2b, 0xad, 0xe3, 0xfb,
+	0x48, 0x48, 0x52, 0xac, 0x5a, 0xe5, 0x90, 0xef, 0x23, 0x9d, 0x53, 0x56, 0xb9, 0xa0, 0xc9, 0x4f,
+	0x08, 0x30, 0x92, 0xec, 0x2e, 0xdc, 0x54, 0xe3, 0xf2, 0x2b, 0x45, 0x12, 0xa1, 0xa9, 0xf8, 0x44,
+	0x68, 0x7a, 0xc9, 0x89, 0x50, 0xf9, 0x9b, 0x54, 0x04, 0x1a, 0x36, 0xf3, 0xb3, 0x25, 0xbe, 0x7c,
+	0x50, 0x00, 0x39, 0x6a, 0x1b, 0x61, 0x11, 0xac, 0x3d, 0x38, 0x9b, 0xb9, 0xfc, 0x82, 0xf8, 0x59,
+	0x53, 0x27, 0x10, 0x4e, 0x7b, 0x49, 0xe0, 0x5a, 0x24, 0x86, 0xa4, 0x44, 0x59, 0x81, 0x57, 0xda,
+	0x4d, 0xfc, 0xb8, 0x7b, 0x17, 0x8e, 0xc7, 0xce, 0x76, 0xcc, 0xfa, 0x2b, 0x4a, 0x18, 0xa4, 0xe9,
+	0xf6, 0x34, 0x42, 0x26, 0x91, 0x65, 0x25, 0xc2, 0xd5, 0x31, 0x10, 0xf1, 0x11, 0x74, 0x17, 0x0c,
+	0x3d, 0x4b, 0xba, 0x9d, 0xfe, 0x50, 0xc2, 0x2d, 0x31, 0xf0, 0x3f, 0x2a, 0xc0, 0x76, 0x0a, 0xc3,
+	0x09, 0x92, 0xd0, 0xf5, 0xf2, 0x55, 0x48, 0xd5, 0xa6, 0x55, 0xd3, 0xd6, 0x4b, 0x7a, 0x5d, 0xad,
+	0xad, 0x44, 0x1a, 0x46, 0xda, 0x08, 0xe0, 0x26, 0x91, 0x3d, 0x58, 0x5b, 0x94, 0x0e, 0xb7, 0xa7,
+	0xa0, 0x49, 0xeb, 0xa0, 0xd5, 0x75, 0x25, 0x44, 0xf4, 0x74, 0x15, 0x3b, 0x91, 0x63, 0xd4, 0x25,
+	0x63, 0x61, 0xb9, 0xed, 0x99, 0x79, 0x54, 0x45, 0x0d, 0x94, 0xe2, 0x88, 0x16, 0x9a, 0x5a, 0x39,
+	0x85, 0x26, 0xe7, 0xf5, 0xd8, 0x47, 0x69, 0x72, 0x99, 0x6e, 0xd9, 0x86, 0x79, 0x60, 0x66, 0x66,
+	0xb2, 0x61, 0x54, 0xa1, 0x8b, 0x61, 0xad, 0xd1, 0x62, 0xd8, 0x7d, 0xd1, 0xd7, 0xe3, 0xd4, 0x81,
+	0x70, 0x09, 0x60, 0xf9, 0xb5, 0x90, 0x20, 0xe5, 0xfc, 0xc2, 0x0a, 0xb4, 0x2b, 0xf8, 0xb7, 0xd3,
+	0x57, 0x9a, 0x57, 0x6d, 0x2c, 0x79, 0xbb, 0x82, 0x7f, 0x4b, 0x19, 0x68, 0x73, 0x2d, 0x09, 0x0b,
+	0xdd, 0xae, 0x78, 0x4d, 0xf9, 0x9e, 0xe6, 0x88, 0xef, 0x08, 0xa5, 0x9f, 0xad, 0xcf, 0x4e, 0x6a,
+	0xa7, 0x1f, 0x3a, 0x5c, 0x02, 0xff, 0xae, 0x6d, 0x27, 0x1d, 0x05, 0x4d, 0xca, 0xfb, 0xb3, 0x71,
+	0x75, 0xa3, 0xcd, 0xad, 0x4c, 0x86, 0xab, 0x1b, 0x7b, 0x6d, 0xbd, 0xe2, 0x31, 0x74, 0xda, 0x41,
+	0xae, 0xa8, 0x3d, 0x9c, 0x2b, 0xb2, 0x60, 0x90, 0x93, 0x1d, 0x58, 0x59, 0xc8, 0x9c, 0x83, 0x31,
+	0x10, 0x4d, 0x64, 0x86, 0x96, 0x5c, 0x99, 0x6c, 0xe6, 0xa8, 0x5b, 0x0a, 0x4a, 0xc5, 0x81, 0x45,
+	0xca, 0x41, 0x41, 0xfa, 0x32, 0x9d, 0x94, 0xbe, 0x7c, 0x52, 0x80, 0x4d, 0x31, 0x89, 0x8c, 0x15,
+	0xb6, 0xb7, 0x25, 0x65, 0x33, 0xb6, 0x04, 0xb5, 0xdc, 0x16, 0xbe, 0xb6, 0xee, 0xcd, 0xfe, 0x45,
+	0xe8, 0xbf, 0x12, 0x39, 0x0b, 0x16, 0xb9, 0xf5, 0x39, 0xb7, 0xac, 0x65, 0x65, 0x04, 0xcc, 0x67,
+	0x09, 0x65, 0x2d, 0x4b, 0xbe, 0x08, 0xd6, 0xb8, 0x2c, 0xdd, 0xed, 0x74, 0x60, 0xdd, 0x4a, 0x33,
+	0x5a, 0x1b, 0x89, 0xc3, 0x70, 0x3d, 0xce, 0x9d, 0xff, 0x39, 0x10, 0xa9, 0xf9, 0xa1, 0x22, 0xbc,
+	0x37, 0x3d, 0xae, 0x08, 0x6f, 0xc9, 0x5f, 0x80, 0x5e, 0x6a, 0x32, 0x53, 0xb2, 0xf6, 0x58, 0x24,
+	0x97, 0xac, 0x59, 0x46, 0x4c, 0xd9, 0x37, 0x86, 0x51, 0xa4, 0xec, 0x6b, 0xc9, 0x9b, 0xa0, 0xd3,
+	0x65, 0x34, 0x69, 0xd4, 0xca, 0xce, 0x31, 0x0c, 0x66, 0xb7, 0xb8, 0x44, 0xdb, 0x8e, 0x75, 0x41,
+	0x17, 0x65, 0x0c, 0xd2, 0x1a, 0xe8, 0x9a, 0x50, 0x26, 0x76, 0xe4, 0x8b, 0x7b, 0x77, 0x5f, 0xbe,
+	0x7b, 0xcf, 0x55, 0xbb, 0xc5, 0x26, 0x69, 0x14, 0x32, 0xa4, 0x8b, 0xad, 0x3f, 0x8a, 0xbf, 0xbc,
+	0xf1, 0xd4, 0xd1, 0x4f, 0x9d, 0x7f, 0x82, 0xb4, 0x01, 0x56, 0x13, 0x32, 0xff, 0x1b, 0x06, 0xf1,
+	0xc5, 0xe7, 0x4e, 0xbc, 0xf5, 0x91, 0x37, 0xba, 0x2e, 0x3c, 0xea, 0x8b, 0x2b, 0x1e, 0x79, 0xe2,
+	0x07, 0x0b, 0x92, 0x4c, 0x8f, 0xfa, 0xa8, 0x88, 0xef, 0xbe, 0x7c, 0xe6, 0xc3, 0x7f, 0x11, 0x0e,
+	0x83, 0xd0, 0x47, 0x68, 0x98, 0x92, 0xb0, 0xf8, 0xf7, 0xd7, 0x4f, 0xbc, 0x29, 0x48, 0x1b, 0x3d,
+	0x26, 0x91, 0x02, 0xa1, 0xf8, 0xd7, 0xe7, 0x1e, 0x7d, 0xa4, 0x4d, 0x1a, 0x85, 0x8d, 0xe1, 0x35,
+	0x98, 0xca, 0x9f, 0x78, 0xe8, 0x81, 0x7b, 0x3e, 0x48, 0x49, 0xdb, 0x61, 0x80, 0x22, 0x63, 0x0a,
+	0x69, 0xe2, 0xa1, 0x57, 0x1f, 0xfb, 0x9b, 0xab, 0xf3, 0x66, 0x58, 0x4f, 0x11, 0x87, 0xcb, 0x59,
+	0xe2, 0x89, 0x3b, 0x3f, 0x3c, 0x71, 0x9a, 0xd0, 0x6d, 0x82, 0x7e, 0x96, 0x69, 0x40, 0x79, 0xe6,
+	0xae, 0xe3, 0xb7, 0xa4, 0x18, 0x01, 0xa3, 0x05, 0x24, 0xf1, 0xd6, 0xc3, 0x4f, 0xff, 0x3c, 0x25,
+	0x6d, 0x85, 0x0d, 0x14, 0x59, 0xa4, 0x20, 0x23, 0xde, 0xfb, 0xf4, 0x47, 0x0f, 0xb8, 0x90, 0x9d,
+	0x07, 0x23, 0x51, 0xf1, 0x78, 0xf5, 0x0e, 0xf1, 0xbd, 0x93, 0xef, 0xbc, 0x70, 0x86, 0x4c, 0xf9,
+	0x3f, 0xd8, 0xc4, 0x9f, 0x42, 0x95, 0x2a, 0xc4, 0xeb, 0x0e, 0x9e, 0xfe, 0xc7, 0x87, 0x64, 0xc6,
+	0x88, 0xb7, 0x2f, 0xcc, 0x0c, 0xf1, 0xb6, 0x47, 0x8e, 0xdc, 0xe7, 0x8a, 0x72, 0x0e, 0x0c, 0xc6,
+	0xf2, 0x25, 0x09, 0x76, 0xf1, 0xe4, 0xf7, 0x6e, 0x7b, 0xc3, 0xc5, 0x2b, 0xaa, 0x63, 0x24, 0x05,
+	0x2e, 0xbe, 0xfa, 0xfa, 0x89, 0x6f, 0x7d, 0x42, 0x48, 0xb7, 0x45, 0x50, 0x8b, 0xa6, 0x9a, 0xc5,
+	0xa3, 0x0f, 0xde, 0xf0, 0x94, 0xcb, 0x36, 0x07, 0xc3, 0x14, 0x2d, 0x2f, 0x11, 0x2c, 0xbe, 0xf6,
+	0xe6, 0xc1, 0x53, 0xee, 0xf6, 0x6e, 0x81, 0x2c, 0x5f, 0x0c, 0x47, 0x66, 0xf1, 0xfd, 0x53, 0x67,
+	0x6e, 0x3a, 0x1d, 0x4b, 0x18, 0x64, 0x3b, 0xc5, 0x77, 0x5f, 0xf9, 0xe0, 0xf9, 0x4f, 0x3d, 0xb0,
+	0x68, 0xc5, 0x22, 0x29, 0x47, 0xf1, 0xa1, 0x93, 0x77, 0xbe, 0x21, 0x30, 0x96, 0x10, 0x4d, 0xe7,
+	0x89, 0x9f, 0x9c, 0x7e, 0xfc, 0xf1, 0xb4, 0xb4, 0x35, 0xa2, 0x0e, 0xef, 0xe5, 0x2b, 0xde, 0xf5,
+	0xfd, 0x87, 0x7e, 0x2d, 0x48, 0x43, 0x11, 0x43, 0x0d, 0xbf, 0x2e, 0xc5, 0x97, 0x1f, 0x7e, 0xa6,
+	0x8b, 0xc1, 0x86, 0x97, 0xc3, 0x10, 0xef, 0xbf, 0xfe, 0xed, 0x33, 0xfe, 0x86, 0x8e, 0x70, 0x64,
+	0x64, 0xa7, 0xdc, 0xfd, 0xca, 0xcd, 0xf7, 0x3b, 0xc8, 0x6f, 0x59, 0x54, 0x54, 0x72, 0xea, 0xc5,
+	0xeb, 0x8e, 0x1d, 0xde, 0x2b, 0x6d, 0x8e, 0x98, 0x0b, 0xfb, 0x1a, 0x16, 0x6f, 0xff, 0xf8, 0xbd,
+	0x6e, 0x29, 0x0f, 0xa3, 0x1c, 0x29, 0xd8, 0x27, 0xab, 0xf8, 0xe8, 0x6d, 0xef, 0xdc, 0xe8, 0xba,
+	0xa2, 0x51, 0xd6, 0x62, 0xa8, 0x09, 0xe2, 0x23, 0x7f, 0xbe, 0xe3, 0xe5, 0x56, 0x66, 0xab, 0x22,
+	0xcf, 0x41, 0xf1, 0xe8, 0x1d, 0x6f, 0xdd, 0x90, 0x62, 0xa8, 0x22, 0xef, 0x34, 0xf1, 0xd0, 0x2d,
+	0x87, 0x0e, 0x37, 0x4b, 0x17, 0x40, 0x2e, 0xca, 0x2b, 0xf9, 0x59, 0x24, 0x3e, 0x7c, 0xe8, 0xfd,
+	0x27, 0x9b, 0x19, 0xff, 0x12, 0x7e, 0x96, 0x88, 0x77, 0x3f, 0xf1, 0x9b, 0x67, 0xdd, 0x43, 0x30,
+	0x1c, 0xb1, 0x3f, 0x2a, 0xe8, 0x17, 0x8f, 0x9c, 0x3c, 0xb1, 0x9b, 0xa7, 0x35, 0x15, 0x54, 0x8b,
+	0xdf, 0xf9, 0xe1, 0xb7, 0x4f, 0xb5, 0xf1, 0xb4, 0x0e, 0x07, 0x16, 0xe2, 0xeb, 0x47, 0xbe, 0xfb,
+	0x54, 0x8b, 0xb4, 0x0d, 0x64, 0xfe, 0xa1, 0xa3, 0x68, 0x5f, 0x7b, 0xfb, 0xd6, 0xeb, 0x53, 0x8c,
+	0x95, 0xf2, 0xe2, 0x2e, 0xf1, 0x2f, 0xf7, 0x3e, 0xf3, 0xd3, 0x94, 0xb4, 0x03, 0x36, 0xc7, 0x9f,
+	0x4f, 0x8a, 0xf5, 0x1f, 0x6f, 0xff, 0xe7, 0x63, 0x1f, 0x63, 0xdd, 0xb3, 0xa9, 0x1b, 0x7e, 0x3c,
+	0xd0, 0x94, 0x3f, 0x9c, 0x81, 0x0e, 0x65, 0x7a, 0xc2, 0x4d, 0x0b, 0xee, 0x86, 0xbe, 0xb8, 0xef,
+	0x3b, 0xe4, 0x20, 0x08, 0x8a, 0xbb, 0x09, 0xb2, 0x74, 0x70, 0x23, 0x37, 0x49, 0xd3, 0x90, 0x89,
+	0xfd, 0xae, 0x62, 0x13, 0xcb, 0x90, 0x21, 0x62, 0x39, 0x5e, 0x0d, 0x6b, 0x79, 0x9f, 0x40, 0x0c,
+	0xb0, 0xcc, 0xc2, 0xe3, 0x59, 0x7f, 0xb1, 0x84, 0xe8, 0x49, 0x6e, 0x92, 0xae, 0x81, 0x75, 0xfc,
+	0x8f, 0x1e, 0x86, 0x62, 0x84, 0xfd, 0x8f, 0x57, 0x08, 0x10, 0x66, 0xbe, 0x73, 0xe0, 0x20, 0x1c,
+	0xa5, 0x61, 0xf1, 0x98, 0x82, 0xde, 0x98, 0x0f, 0x0c, 0x86, 0x59, 0x76, 0x11, 0x92, 0x6c, 0xb7,
+	0xcf, 0x0d, 0xa7, 0xa5, 0xe5, 0x26, 0x69, 0x1e, 0x06, 0x16, 0xa9, 0xf1, 0x6f, 0xe5, 0x22, 0xcd,
+	0x23, 0xcd, 0xae, 0x8f, 0x40, 0x12, 0xc4, 0x8e, 0x72, 0x93, 0x84, 0x60, 0x63, 0x72, 0x55, 0x7f,
+	0x2c, 0x61, 0x21, 0x8a, 0x32, 0x9b, 0xe1, 0xae, 0x73, 0xe9, 0x7e, 0x1b, 0xe3, 0xb3, 0x86, 0x2d,
+	0xac, 0x6f, 0x48, 0x62, 0x9d, 0xc8, 0xee, 0x2b, 0xb0, 0x3e, 0xbe, 0xd2, 0x3d, 0x92, 0x2c, 0x31,
+	0xa1, 0x5a, 0x44, 0xda, 0xde, 0x98, 0xe2, 0xf5, 0x70, 0x12, 0x6f, 0x4c, 0xc2, 0xd9, 0xcd, 0x2f,
+	0xf9, 0xc6, 0xc6, 0x14, 0x92, 0x65, 0x2e, 0x3f, 0x8a, 0x26, 0x51, 0xd2, 0x2b, 0xa1, 0x3f, 0xa9,
+	0x2a, 0xbc, 0x99, 0x65, 0xcf, 0xa3, 0x63, 0xed, 0x79, 0x12, 0x7a, 0xb8, 0xd5, 0xd9, 0xc1, 0x04,
+	0xfd, 0x1d, 0x82, 0x2c, 0xfb, 0xc6, 0x90, 0x9b, 0xa4, 0x42, 0x98, 0x5b, 0xa8, 0x8e, 0xca, 0xe7,
+	0x16, 0x10, 0x70, 0xb0, 0x9c, 0xf4, 0xb7, 0x26, 0x5a, 0xee, 0xe4, 0x6c, 0x4d, 0x84, 0x84, 0x55,
+	0x33, 0x70, 0x03, 0x4c, 0xc9, 0x51, 0x4e, 0x62, 0x47, 0x68, 0x58, 0x7e, 0xc1, 0x76, 0x70, 0xab,
+	0x7e, 0x9c, 0xed, 0xe0, 0xd1, 0xb1, 0x7c, 0x77, 0xf9, 0xee, 0x96, 0x2a, 0x1f, 0x71, 0xdc, 0x6d,
+	0x78, 0x9c, 0xe5, 0x73, 0x95, 0x2f, 0x1f, 0xb7, 0xc6, 0xb3, 0x99, 0xbb, 0x1f, 0x0c, 0x1d, 0x67,
+	0x5b, 0xae, 0xf6, 0x1d, 0x56, 0x5c, 0x45, 0x66, 0x6b, 0x1c, 0x9e, 0x2c, 0x7b, 0x46, 0xec, 0x59,
+	0x18, 0x5e, 0xbc, 0x3a, 0x72, 0xce, 0xd2, 0xc0, 0x25, 0xd4, 0xec, 0x1a, 0x8a, 0xef, 0x52, 0x38,
+	0xa5, 0x8b, 0x91, 0x64, 0xa0, 0xe3, 0x78, 0x7e, 0x15, 0x06, 0x17, 0xab, 0x45, 0x6c, 0x8b, 0x83,
+	0x85, 0xa5, 0x65, 0xf9, 0x17, 0xc3, 0x8e, 0x85, 0xae, 0x2e, 0xc8, 0x09, 0x07, 0xd5, 0xa5, 0xc9,
+	0x0e, 0x70, 0x1d, 0x8b, 0xff, 0x7a, 0xc5, 0xf6, 0xd2, 0x1b, 0x53, 0x4d, 0x48, 0x72, 0x84, 0x84,
+	0x64, 0x11, 0x07, 0xde, 0x1b, 0x53, 0x19, 0xe0, 0x30, 0x8e, 0x90, 0xc4, 0xc8, 0xed, 0xbf, 0xc9,
+	0xe5, 0x26, 0x69, 0x1f, 0x8c, 0x2d, 0x39, 0x83, 0xbf, 0x83, 0xab, 0x49, 0xf2, 0xa4, 0xec, 0xda,
+	0x88, 0x08, 0x93, 0x46, 0xad, 0x4c, 0x9d, 0x53, 0x2a, 0x03, 0xcf, 0x39, 0xa7, 0xe1, 0x71, 0x76,
+	0x63, 0x2f, 0xf3, 0x1d, 0x26, 0x9d, 0xff, 0x1e, 0xe4, 0x32, 0x0a, 0x08, 0x58, 0x4e, 0x33, 0x61,
+	0x13, 0xa1, 0xd3, 0xd0, 0x7c, 0x13, 0xa1, 0x68, 0xb2, 0xbc, 0xcf, 0xd3, 0xb1, 0x9f, 0xeb, 0x8d,
+	0xc9, 0x14, 0xf3, 0xed, 0x22, 0x4c, 0x92, 0x8d, 0xfb, 0xc2, 0x19, 0x1f, 0xf4, 0x0d, 0x89, 0x49,
+	0xd5, 0x2d, 0x09, 0xd7, 0xe5, 0x52, 0xd7, 0x08, 0x7c, 0x34, 0x37, 0x85, 0xba, 0x39, 0x2e, 0x5e,
+	0xa3, 0xe9, 0x58, 0xa4, 0xaf, 0x81, 0xa1, 0x45, 0xf3, 0x9a, 0xdb, 0x17, 0xb9, 0x8f, 0x29, 0x1d,
+	0xa2, 0x2b, 0x5c, 0x72, 0xc5, 0x3b, 0x2f, 0x0d, 0x08, 0xbf, 0x3f, 0x3e, 0x20, 0x3c, 0x77, 0x7c,
+	0x40, 0x78, 0xf1, 0xf8, 0x80, 0xf0, 0xe5, 0x8b, 0x43, 0x7f, 0x42, 0x65, 0x23, 0xb5, 0x5a, 0x36,
+	0xd5, 0xe0, 0xc7, 0xb9, 0x16, 0x32, 0xf7, 0x21, 0x73, 0x5c, 0xad, 0xd7, 0xc7, 0x9d, 0x9f, 0x7a,
+	0x09, 0x8d, 0xcf, 0xea, 0xdf, 0x18, 0x27, 0x0b, 0xbb, 0xff, 0xcd, 0xb6, 0xe2, 0x25, 0x76, 0xfc,
+	0x3b, 0x00, 0x00, 0xff, 0xff, 0x80, 0x9c, 0x15, 0x6b, 0xa7, 0x35, 0x00, 0x00,
 }
 
 func (this *DialogExt) GoString() string {
@@ -3755,6 +4215,39 @@ func (this *TLUpdateDraftMessage) GoString() string {
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&dialog.TLUpdateDraftMessage{")
+	if this.Data2 != nil {
+		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *SavedDialogList) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&dialog.SavedDialogList{")
+	s = append(s, "PredicateName: "+fmt.Sprintf("%#v", this.PredicateName)+",\n")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "Count: "+fmt.Sprintf("%#v", this.Count)+",\n")
+	if this.Dialogs != nil {
+		s = append(s, "Dialogs: "+fmt.Sprintf("%#v", this.Dialogs)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLSavedDialogList) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.TLSavedDialogList{")
 	if this.Data2 != nil {
 		s = append(s, "Data2: "+fmt.Sprintf("%#v", this.Data2)+",\n")
 	}
@@ -4290,6 +4783,83 @@ func (this *TLDialogGetMyDialogsData) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *TLDialogGetSavedDialogs) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 11)
+	s = append(s, "&dialog.TLDialogGetSavedDialogs{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	if this.ExcludePinned != nil {
+		s = append(s, "ExcludePinned: "+fmt.Sprintf("%#v", this.ExcludePinned)+",\n")
+	}
+	s = append(s, "OffsetDate: "+fmt.Sprintf("%#v", this.OffsetDate)+",\n")
+	s = append(s, "OffsetId: "+fmt.Sprintf("%#v", this.OffsetId)+",\n")
+	if this.OffsetPeer != nil {
+		s = append(s, "OffsetPeer: "+fmt.Sprintf("%#v", this.OffsetPeer)+",\n")
+	}
+	s = append(s, "Limit: "+fmt.Sprintf("%#v", this.Limit)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLDialogGetPinnedSavedDialogs) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dialog.TLDialogGetPinnedSavedDialogs{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLDialogToggleSavedDialogPin) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&dialog.TLDialogToggleSavedDialogPin{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	if this.Peer != nil {
+		s = append(s, "Peer: "+fmt.Sprintf("%#v", this.Peer)+",\n")
+	}
+	if this.Pinned != nil {
+		s = append(s, "Pinned: "+fmt.Sprintf("%#v", this.Pinned)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TLDialogReorderPinnedSavedDialogs) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&dialog.TLDialogReorderPinnedSavedDialogs{")
+	s = append(s, "Constructor: "+fmt.Sprintf("%#v", this.Constructor)+",\n")
+	s = append(s, "UserId: "+fmt.Sprintf("%#v", this.UserId)+",\n")
+	if this.Force != nil {
+		s = append(s, "Force: "+fmt.Sprintf("%#v", this.Force)+",\n")
+	}
+	if this.Order != nil {
+		s = append(s, "Order: "+fmt.Sprintf("%#v", this.Order)+",\n")
+	}
+	if this.XXX_unrecognized != nil {
+		s = append(s, "XXX_unrecognized:"+fmt.Sprintf("%#v", this.XXX_unrecognized)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Vector_PeerWithDraftMessage) GoString() string {
 	if this == nil {
 		return "nil"
@@ -4430,6 +5000,10 @@ type RPCDialogClient interface {
 	DialogSetChatTheme(ctx context.Context, in *TLDialogSetChatTheme, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogSetHistoryTTL(ctx context.Context, in *TLDialogSetHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogGetMyDialogsData(ctx context.Context, in *TLDialogGetMyDialogsData, opts ...grpc.CallOption) (*DialogsData, error)
+	DialogGetSavedDialogs(ctx context.Context, in *TLDialogGetSavedDialogs, opts ...grpc.CallOption) (*SavedDialogList, error)
+	DialogGetPinnedSavedDialogs(ctx context.Context, in *TLDialogGetPinnedSavedDialogs, opts ...grpc.CallOption) (*SavedDialogList, error)
+	DialogToggleSavedDialogPin(ctx context.Context, in *TLDialogToggleSavedDialogPin, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	DialogReorderPinnedSavedDialogs(ctx context.Context, in *TLDialogReorderPinnedSavedDialogs, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCDialogClient struct {
@@ -4719,6 +5293,42 @@ func (c *rPCDialogClient) DialogGetMyDialogsData(ctx context.Context, in *TLDial
 	return out, nil
 }
 
+func (c *rPCDialogClient) DialogGetSavedDialogs(ctx context.Context, in *TLDialogGetSavedDialogs, opts ...grpc.CallOption) (*SavedDialogList, error) {
+	out := new(SavedDialogList)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_getSavedDialogs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, in *TLDialogGetPinnedSavedDialogs, opts ...grpc.CallOption) (*SavedDialogList, error) {
+	out := new(SavedDialogList)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_getPinnedSavedDialogs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCDialogClient) DialogToggleSavedDialogPin(ctx context.Context, in *TLDialogToggleSavedDialogPin, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_toggleSavedDialogPin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCDialogClient) DialogReorderPinnedSavedDialogs(ctx context.Context, in *TLDialogReorderPinnedSavedDialogs, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, "/dialog.RPCDialog/dialog_reorderPinnedSavedDialogs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCDialogServer is the server API for RPCDialog service.
 type RPCDialogServer interface {
 	DialogSaveDraftMessage(context.Context, *TLDialogSaveDraftMessage) (*mtproto.Bool, error)
@@ -4752,6 +5362,10 @@ type RPCDialogServer interface {
 	DialogSetChatTheme(context.Context, *TLDialogSetChatTheme) (*mtproto.Bool, error)
 	DialogSetHistoryTTL(context.Context, *TLDialogSetHistoryTTL) (*mtproto.Bool, error)
 	DialogGetMyDialogsData(context.Context, *TLDialogGetMyDialogsData) (*DialogsData, error)
+	DialogGetSavedDialogs(context.Context, *TLDialogGetSavedDialogs) (*SavedDialogList, error)
+	DialogGetPinnedSavedDialogs(context.Context, *TLDialogGetPinnedSavedDialogs) (*SavedDialogList, error)
+	DialogToggleSavedDialogPin(context.Context, *TLDialogToggleSavedDialogPin) (*mtproto.Bool, error)
+	DialogReorderPinnedSavedDialogs(context.Context, *TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCDialogServer can be embedded to have forward compatible implementations.
@@ -4850,6 +5464,18 @@ func (*UnimplementedRPCDialogServer) DialogSetHistoryTTL(ctx context.Context, re
 }
 func (*UnimplementedRPCDialogServer) DialogGetMyDialogsData(ctx context.Context, req *TLDialogGetMyDialogsData) (*DialogsData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DialogGetMyDialogsData not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogGetSavedDialogs(ctx context.Context, req *TLDialogGetSavedDialogs) (*SavedDialogList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogGetSavedDialogs not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogGetPinnedSavedDialogs(ctx context.Context, req *TLDialogGetPinnedSavedDialogs) (*SavedDialogList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogGetPinnedSavedDialogs not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogToggleSavedDialogPin(ctx context.Context, req *TLDialogToggleSavedDialogPin) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogToggleSavedDialogPin not implemented")
+}
+func (*UnimplementedRPCDialogServer) DialogReorderPinnedSavedDialogs(ctx context.Context, req *TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogReorderPinnedSavedDialogs not implemented")
 }
 
 func RegisterRPCDialogServer(s *grpc.Server, srv RPCDialogServer) {
@@ -5414,6 +6040,78 @@ func _RPCDialog_DialogGetMyDialogsData_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCDialog_DialogGetSavedDialogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogGetSavedDialogs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogGetSavedDialogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogGetSavedDialogs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogGetSavedDialogs(ctx, req.(*TLDialogGetSavedDialogs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCDialog_DialogGetPinnedSavedDialogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogGetPinnedSavedDialogs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogGetPinnedSavedDialogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogGetPinnedSavedDialogs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogGetPinnedSavedDialogs(ctx, req.(*TLDialogGetPinnedSavedDialogs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCDialog_DialogToggleSavedDialogPin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogToggleSavedDialogPin)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogToggleSavedDialogPin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogToggleSavedDialogPin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogToggleSavedDialogPin(ctx, req.(*TLDialogToggleSavedDialogPin))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCDialog_DialogReorderPinnedSavedDialogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogReorderPinnedSavedDialogs)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogReorderPinnedSavedDialogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.RPCDialog/DialogReorderPinnedSavedDialogs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogReorderPinnedSavedDialogs(ctx, req.(*TLDialogReorderPinnedSavedDialogs))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RPCDialog_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dialog.RPCDialog",
 	HandlerType: (*RPCDialogServer)(nil),
@@ -5541,6 +6239,22 @@ var _RPCDialog_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "dialog_getMyDialogsData",
 			Handler:    _RPCDialog_DialogGetMyDialogsData_Handler,
+		},
+		{
+			MethodName: "dialog_getSavedDialogs",
+			Handler:    _RPCDialog_DialogGetSavedDialogs_Handler,
+		},
+		{
+			MethodName: "dialog_getPinnedSavedDialogs",
+			Handler:    _RPCDialog_DialogGetPinnedSavedDialogs_Handler,
+		},
+		{
+			MethodName: "dialog_toggleSavedDialogPin",
+			Handler:    _RPCDialog_DialogToggleSavedDialogPin_Handler,
+		},
+		{
+			MethodName: "dialog_reorderPinnedSavedDialogs",
+			Handler:    _RPCDialog_DialogReorderPinnedSavedDialogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -6094,6 +6808,103 @@ func (m *TLUpdateDraftMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *SavedDialogList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SavedDialogList) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedDialogList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Dialogs) > 0 {
+		for iNdEx := len(m.Dialogs) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Dialogs[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDialogTl(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.Count != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Count))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.PredicateName) > 0 {
+		i -= len(m.PredicateName)
+		copy(dAtA[i:], m.PredicateName)
+		i = encodeVarintDialogTl(dAtA, i, uint64(len(m.PredicateName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLSavedDialogList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLSavedDialogList) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLSavedDialogList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Data2 != nil {
+		{
+			size, err := m.Data2.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *TLDialogSaveDraftMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -6567,21 +7378,21 @@ func (m *TLDialogGetDialogsByIdList) MarshalToSizedBuffer(dAtA []byte) (int, err
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.IdList) > 0 {
-		dAtA22 := make([]byte, len(m.IdList)*10)
-		var j21 int
+		dAtA23 := make([]byte, len(m.IdList)*10)
+		var j22 int
 		for _, num1 := range m.IdList {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA22[j21] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA23[j22] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j21++
+				j22++
 			}
-			dAtA22[j21] = uint8(num)
-			j21++
+			dAtA23[j22] = uint8(num)
+			j22++
 		}
-		i -= j21
-		copy(dAtA[i:], dAtA22[:j21])
-		i = encodeVarintDialogTl(dAtA, i, uint64(j21))
+		i -= j22
+		copy(dAtA[i:], dAtA23[:j22])
+		i = encodeVarintDialogTl(dAtA, i, uint64(j22))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -6719,21 +7530,21 @@ func (m *TLDialogReorderPinnedDialogs) MarshalToSizedBuffer(dAtA []byte) (int, e
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.IdList) > 0 {
-		dAtA25 := make([]byte, len(m.IdList)*10)
-		var j24 int
+		dAtA26 := make([]byte, len(m.IdList)*10)
+		var j25 int
 		for _, num1 := range m.IdList {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA25[j24] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA26[j25] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j24++
+				j25++
 			}
-			dAtA25[j24] = uint8(num)
-			j24++
+			dAtA26[j25] = uint8(num)
+			j25++
 		}
-		i -= j24
-		copy(dAtA[i:], dAtA25[:j24])
-		i = encodeVarintDialogTl(dAtA, i, uint64(j24))
+		i -= j25
+		copy(dAtA[i:], dAtA26[:j25])
+		i = encodeVarintDialogTl(dAtA, i, uint64(j25))
 		i--
 		dAtA[i] = 0x32
 	}
@@ -7349,21 +8160,21 @@ func (m *TLDialogUpdateDialogFiltersOrder) MarshalToSizedBuffer(dAtA []byte) (in
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.Order) > 0 {
-		dAtA34 := make([]byte, len(m.Order)*10)
-		var j33 int
+		dAtA35 := make([]byte, len(m.Order)*10)
+		var j34 int
 		for _, num1 := range m.Order {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA34[j33] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA35[j34] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j33++
+				j34++
 			}
-			dAtA34[j33] = uint8(num)
-			j33++
+			dAtA35[j34] = uint8(num)
+			j34++
 		}
-		i -= j33
-		copy(dAtA[i:], dAtA34[:j33])
-		i = encodeVarintDialogTl(dAtA, i, uint64(j33))
+		i -= j34
+		copy(dAtA[i:], dAtA35[:j34])
+		i = encodeVarintDialogTl(dAtA, i, uint64(j34))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -7489,21 +8300,21 @@ func (m *TLDialogEditPeerFolders) MarshalToSizedBuffer(dAtA []byte) (int, error)
 		dAtA[i] = 0x28
 	}
 	if len(m.PeerDialogList) > 0 {
-		dAtA36 := make([]byte, len(m.PeerDialogList)*10)
-		var j35 int
+		dAtA37 := make([]byte, len(m.PeerDialogList)*10)
+		var j36 int
 		for _, num1 := range m.PeerDialogList {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA36[j35] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA37[j36] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j35++
+				j36++
 			}
-			dAtA36[j35] = uint8(num)
-			j35++
+			dAtA37[j36] = uint8(num)
+			j36++
 		}
-		i -= j35
-		copy(dAtA[i:], dAtA36[:j35])
-		i = encodeVarintDialogTl(dAtA, i, uint64(j35))
+		i -= j36
+		copy(dAtA[i:], dAtA37[:j36])
+		i = encodeVarintDialogTl(dAtA, i, uint64(j36))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -7726,6 +8537,243 @@ func (m *TLDialogGetMyDialogsData) MarshalToSizedBuffer(dAtA []byte) (int, error
 		}
 		i--
 		dAtA[i] = 0x20
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogGetSavedDialogs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogGetSavedDialogs) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogGetSavedDialogs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Limit != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Limit))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.OffsetPeer != nil {
+		{
+			size, err := m.OffsetPeer.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.OffsetId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.OffsetId))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.OffsetDate != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.OffsetDate))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.ExcludePinned != nil {
+		{
+			size, err := m.ExcludePinned.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogToggleSavedDialogPin) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogToggleSavedDialogPin) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogToggleSavedDialogPin) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Pinned != nil {
+		{
+			size, err := m.Pinned.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Peer != nil {
+		{
+			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.UserId != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Constructor != 0 {
+		i = encodeVarintDialogTl(dAtA, i, uint64(m.Constructor))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Order) > 0 {
+		for iNdEx := len(m.Order) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Order[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDialogTl(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if m.Force != nil {
+		{
+			size, err := m.Force.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDialogTl(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
 	}
 	if m.UserId != 0 {
 		i = encodeVarintDialogTl(dAtA, i, uint64(m.UserId))
@@ -7970,21 +9018,21 @@ func (m *Vector_Long) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.Datas) > 0 {
-		dAtA38 := make([]byte, len(m.Datas)*10)
-		var j37 int
+		dAtA44 := make([]byte, len(m.Datas)*10)
+		var j43 int
 		for _, num1 := range m.Datas {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA38[j37] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA44[j43] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j37++
+				j43++
 			}
-			dAtA38[j37] = uint8(num)
-			j37++
+			dAtA44[j43] = uint8(num)
+			j43++
 		}
-		i -= j37
-		copy(dAtA[i:], dAtA38[:j37])
-		i = encodeVarintDialogTl(dAtA, i, uint64(j37))
+		i -= j43
+		copy(dAtA[i:], dAtA44[:j43])
+		i = encodeVarintDialogTl(dAtA, i, uint64(j43))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -8230,6 +9278,50 @@ func (m *PeerWithDraftMessage) Size() (n int) {
 }
 
 func (m *TLUpdateDraftMessage) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Data2 != nil {
+		l = m.Data2.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *SavedDialogList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.PredicateName)
+	if l > 0 {
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.Count != 0 {
+		n += 1 + sovDialogTl(uint64(m.Count))
+	}
+	if len(m.Dialogs) > 0 {
+		for _, e := range m.Dialogs {
+			l = e.Size()
+			n += 1 + l + sovDialogTl(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLSavedDialogList) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -9024,6 +10116,113 @@ func (m *TLDialogGetMyDialogsData) Size() (n int) {
 	}
 	if m.Channel {
 		n += 2
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogGetSavedDialogs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.ExcludePinned != nil {
+		l = m.ExcludePinned.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.OffsetDate != 0 {
+		n += 1 + sovDialogTl(uint64(m.OffsetDate))
+	}
+	if m.OffsetId != 0 {
+		n += 1 + sovDialogTl(uint64(m.OffsetId))
+	}
+	if m.OffsetPeer != nil {
+		l = m.OffsetPeer.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.Limit != 0 {
+		n += 1 + sovDialogTl(uint64(m.Limit))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogToggleSavedDialogPin) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.Peer != nil {
+		l = m.Peer.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.Pinned != nil {
+		l = m.Pinned.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Constructor != 0 {
+		n += 1 + sovDialogTl(uint64(m.Constructor))
+	}
+	if m.UserId != 0 {
+		n += 1 + sovDialogTl(uint64(m.UserId))
+	}
+	if m.Force != nil {
+		l = m.Force.Size()
+		n += 1 + l + sovDialogTl(uint64(l))
+	}
+	if len(m.Order) > 0 {
+		for _, e := range m.Order {
+			l = e.Size()
+			n += 1 + l + sovDialogTl(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -10639,6 +11838,248 @@ func (m *TLUpdateDraftMessage) Unmarshal(dAtA []byte) error {
 			}
 			if m.Data2 == nil {
 				m.Data2 = &PeerWithDraftMessage{}
+			}
+			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SavedDialogList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SavedDialogList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SavedDialogList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PredicateName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PredicateName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
+			}
+			m.Count = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Count |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dialogs", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Dialogs = append(m.Dialogs, &mtproto.SavedDialog{})
+			if err := m.Dialogs[len(m.Dialogs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLSavedDialogList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_savedDialogList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_savedDialogList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data2", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data2 == nil {
+				m.Data2 = &SavedDialogList{}
 			}
 			if err := m.Data2.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -15123,6 +16564,633 @@ func (m *TLDialogGetMyDialogsData) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Channel = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogGetSavedDialogs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_getSavedDialogs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_getSavedDialogs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExcludePinned", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ExcludePinned == nil {
+				m.ExcludePinned = &mtproto.Bool{}
+			}
+			if err := m.ExcludePinned.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OffsetDate", wireType)
+			}
+			m.OffsetDate = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OffsetDate |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OffsetId", wireType)
+			}
+			m.OffsetId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OffsetId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OffsetPeer", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.OffsetPeer == nil {
+				m.OffsetPeer = &mtproto.PeerUtil{}
+			}
+			if err := m.OffsetPeer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Limit", wireType)
+			}
+			m.Limit = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Limit |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogGetPinnedSavedDialogs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_getPinnedSavedDialogs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_getPinnedSavedDialogs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogToggleSavedDialogPin) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_toggleSavedDialogPin: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_toggleSavedDialogPin: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Peer == nil {
+				m.Peer = &mtproto.PeerUtil{}
+			}
+			if err := m.Peer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pinned", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pinned == nil {
+				m.Pinned = &mtproto.Bool{}
+			}
+			if err := m.Pinned.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDialogTl(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TLDialogReorderPinnedSavedDialogs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDialogTl
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TL_dialog_reorderPinnedSavedDialogs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TL_dialog_reorderPinnedSavedDialogs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Constructor", wireType)
+			}
+			m.Constructor = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Constructor |= TLConstructor(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+			}
+			m.UserId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Force", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Force == nil {
+				m.Force = &mtproto.Bool{}
+			}
+			if err := m.Force.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Order", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDialogTl
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDialogTl
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Order = append(m.Order, &mtproto.PeerUtil{})
+			if err := m.Order[len(m.Order)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDialogTl(dAtA[iNdEx:])
