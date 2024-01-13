@@ -87,6 +87,11 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 		Users:    []*mtproto.User{},
 	}).To_Messages_Messages()
 
+	if in.SavedPeerId != nil {
+		// TODO: not impl
+		return rValues, nil
+	}
+
 	filterType := mtproto.FromMessagesFilter(in.Filter)
 	switch filterType {
 	case mtproto.FilterPhotos:

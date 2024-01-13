@@ -33,6 +33,11 @@ func (c *MessagesCore) MessagesGetSearchCounters(in *mtproto.TLMessagesGetSearch
 		Datas: make([]*mtproto.Messages_SearchCounter, 0, len(in.GetFilters())),
 	}
 
+	if in.SavedPeerId != nil {
+		// TODO: not impl
+		return counters, nil
+	}
+
 	for _, filter := range in.GetFilters() {
 		/*
 			{

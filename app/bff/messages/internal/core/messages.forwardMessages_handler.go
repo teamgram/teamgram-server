@@ -212,6 +212,7 @@ func (c *MessagesCore) makeForwardMessages(
 			if m.FwdFrom == nil {
 				fwdFrom := mtproto.MakeTLMessageFwdHeader(&mtproto.MessageFwdHeader{
 					Imported:       false,
+					SavedOut:       false,
 					FromId:         nil,
 					FromName:       nil,
 					Date:           m.GetDate(),
@@ -219,6 +220,9 @@ func (c *MessagesCore) makeForwardMessages(
 					PostAuthor:     nil,
 					SavedFromPeer:  nil,
 					SavedFromMsgId: nil,
+					SavedFromId:    nil,
+					SavedFromName:  nil,
+					SavedDate:      nil,
 					PsaType:        nil,
 				}).To_MessageFwdHeader()
 
