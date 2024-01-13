@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/core"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
-
 
 // UserGetLastSeens
 // user.getLastSeens id:Vector<long> = Vector<LastSeenData>;
@@ -1173,4 +1172,3 @@ func (s *Service) UserSetColor(ctx context.Context, request *user.TLUserSetColor
 	c.Logger.Debugf("user.setColor - reply: %s", r.DebugString())
 	return r, err
 }
-

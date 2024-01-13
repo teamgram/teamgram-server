@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -315,5 +315,20 @@ func (s *Service) MessageGetUnreadMentionsCount(ctx context.Context, request *me
 	}
 
 	c.Logger.Debugf("message.getUnreadMentionsCount - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessageGetSavedHistoryMessages
+// message.getSavedHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = MessageBoxList;
+func (s *Service) MessageGetSavedHistoryMessages(ctx context.Context, request *message.TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("message.getSavedHistoryMessages - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessageGetSavedHistoryMessages(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("message.getSavedHistoryMessages - reply: %s", r.DebugString())
 	return r, err
 }

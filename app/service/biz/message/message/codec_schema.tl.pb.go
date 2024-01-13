@@ -132,6 +132,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1254023095,
 		}
 	},
+	-60243377: func() mtproto.TLObject { // 0xfc68c24f
+		return &TLMessageGetSavedHistoryMessages{
+			Constructor: -60243377,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1174,6 +1179,68 @@ func (m *TLMessageGetUnreadMentionsCount) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLMessageGetUnreadMentionsCount) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLMessageGetSavedHistoryMessages
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetSavedHistoryMessages) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xfc68c24f:
+		x.UInt(0xfc68c24f)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetOffsetId())
+		x.Int(m.GetOffsetDate())
+		x.Int(m.GetAddOffset())
+		x.Int(m.GetLimit())
+		x.Int(m.GetMaxId())
+		x.Int(m.GetMinId())
+		x.Long(m.GetHash())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMessageGetSavedHistoryMessages) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetSavedHistoryMessages) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfc68c24f:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.OffsetId = dBuf.Int()
+		m.OffsetDate = dBuf.Int()
+		m.AddOffset = dBuf.Int()
+		m.Limit = dBuf.Int()
+		m.MaxId = dBuf.Int()
+		m.MinId = dBuf.Int()
+		m.Hash = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLMessageGetSavedHistoryMessages) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -543,4 +542,3 @@ func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *
 	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - reply: %s", r.DebugString())
 	return r, err
 }
-

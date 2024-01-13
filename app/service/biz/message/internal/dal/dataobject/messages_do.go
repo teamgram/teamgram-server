@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2023-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -33,5 +33,7 @@ type MessagesDO struct {
 	ReactionUnread    bool   `db:"reaction_unread" json:"reaction_unread"`
 	Date2             int64  `db:"date2" json:"date2"`
 	TtlPeriod         int32  `db:"ttl_period" json:"ttl_period"`
+	SavedPeerType     int32  `db:"saved_peer_type" json:"saved_peer_type"`
+	SavedPeerId       int64  `db:"saved_peer_id" json:"saved_peer_id"`
 	Deleted           bool   `db:"deleted" json:"deleted"`
 }

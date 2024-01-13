@@ -46,6 +46,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLMessageUnPinAllMessages":                     RPCContextTuple{"/mtproto.RPCMessage/message_unPinAllMessages", func() interface{} { return new(Vector_Int) }},
 	"TLMessageGetUnreadMentions":                    RPCContextTuple{"/mtproto.RPCMessage/message_getUnreadMentions", func() interface{} { return new(Vector_MessageBox) }},
 	"TLMessageGetUnreadMentionsCount":               RPCContextTuple{"/mtproto.RPCMessage/message_getUnreadMentionsCount", func() interface{} { return new(mtproto.Int32) }},
+	"TLMessageGetSavedHistoryMessages":              RPCContextTuple{"/mtproto.RPCMessage/message_getSavedHistoryMessages", func() interface{} { return new(mtproto.MessageBoxList) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

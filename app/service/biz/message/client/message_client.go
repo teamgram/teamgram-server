@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -42,6 +42,7 @@ type MessageClient interface {
 	MessageUnPinAllMessages(ctx context.Context, in *message.TLMessageUnPinAllMessages) (*message.Vector_Int, error)
 	MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.Vector_MessageBox, error)
 	MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
+	MessageGetSavedHistoryMessages(ctx context.Context, in *message.TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error)
 }
 
 type defaultMessageClient struct {
@@ -192,4 +193,11 @@ func (m *defaultMessageClient) MessageGetUnreadMentions(ctx context.Context, in 
 func (m *defaultMessageClient) MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error) {
 	client := message.NewRPCMessageClient(m.cli.Conn())
 	return client.MessageGetUnreadMentionsCount(ctx, in)
+}
+
+// MessageGetSavedHistoryMessages
+// message.getSavedHistoryMessages user_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = MessageBoxList;
+func (m *defaultMessageClient) MessageGetSavedHistoryMessages(ctx context.Context, in *message.TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error) {
+	client := message.NewRPCMessageClient(m.cli.Conn())
+	return client.MessageGetSavedHistoryMessages(ctx, in)
 }

@@ -300,8 +300,7 @@ func (TLConstructor) EnumDescriptor() ([]byte, []int) {
 }
 
 // LastSeenData <--
-//  + TL_lastSeenData
-//
+//   - TL_lastSeenData
 type LastSeenData struct {
 	PredicateName        string        `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor `protobuf:"varint,2,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
@@ -429,8 +428,7 @@ func (m *TLLastSeenData) GetData2() *LastSeenData {
 }
 
 // PeerPeerNotifySettings <--
-//  + TL_peerPeerNotifySettings
-//
+//   - TL_peerPeerNotifySettings
 type PeerPeerNotifySettings struct {
 	PredicateName        string                      `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor               `protobuf:"varint,2,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
@@ -558,8 +556,7 @@ func (m *TLPeerPeerNotifySettings) GetData2() *PeerPeerNotifySettings {
 }
 
 // UserImportedContacts <--
-//  + TL_userImportedContacts
-//
+//   - TL_userImportedContacts
 type UserImportedContacts struct {
 	PredicateName        string                     `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor              `protobuf:"varint,2,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
@@ -703,9 +700,8 @@ func (m *TLUserImportedContacts) GetData2() *UserImportedContacts {
 }
 
 // UsersFound <--
-//  + TL_usersDataFound
-//  + TL_usersIdFound
-//
+//   - TL_usersDataFound
+//   - TL_usersIdFound
 type UsersFound struct {
 	PredicateName        string              `protobuf:"bytes,1,opt,name=predicate_name,json=predicateName,proto3" json:"predicate_name,omitempty"`
 	Constructor          TLConstructor       `protobuf:"varint,2,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
@@ -887,7 +883,7 @@ func (m *TLUsersIdFound) GetData2() *UsersFound {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetLastSeens struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -943,7 +939,7 @@ func (m *TLUserGetLastSeens) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateLastSeen struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -1015,7 +1011,7 @@ func (m *TLUserUpdateLastSeen) GetExpires() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetLastSeen struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -1071,7 +1067,7 @@ func (m *TLUserGetLastSeen) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetImmutableUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -1143,7 +1139,7 @@ func (m *TLUserGetImmutableUser) GetContacts() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetMutableUsers struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -1207,7 +1203,7 @@ func (m *TLUserGetMutableUsers) GetTo() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetImmutableUserByPhone struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -1263,7 +1259,7 @@ func (m *TLUserGetImmutableUserByPhone) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetImmutableUserByToken struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Token                string        `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
@@ -1319,7 +1315,7 @@ func (m *TLUserGetImmutableUserByToken) GetToken() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetAccountDaysTTL struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1383,7 +1379,7 @@ func (m *TLUserSetAccountDaysTTL) GetTtl() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetAccountDaysTTL struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1439,7 +1435,7 @@ func (m *TLUserGetAccountDaysTTL) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetNotifySettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1511,7 +1507,7 @@ func (m *TLUserGetNotifySettings) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetNotifySettingsList struct {
 	Constructor          TLConstructor       `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64               `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1575,7 +1571,7 @@ func (m *TLUserGetNotifySettingsList) GetPeers() []*mtproto.PeerUtil {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetNotifySettings struct {
 	Constructor          TLConstructor               `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1655,7 +1651,7 @@ func (m *TLUserSetNotifySettings) GetSettings() *mtproto.PeerNotifySettings {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserResetNotifySettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1711,7 +1707,7 @@ func (m *TLUserResetNotifySettings) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetAllNotifySettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1767,7 +1763,7 @@ func (m *TLUserGetAllNotifySettings) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetGlobalPrivacySettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1823,7 +1819,7 @@ func (m *TLUserGetGlobalPrivacySettings) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetGlobalPrivacySettings struct {
 	Constructor          TLConstructor                  `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                          `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1887,7 +1883,7 @@ func (m *TLUserSetGlobalPrivacySettings) GetSettings() *mtproto.GlobalPrivacySet
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetPrivacy struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1951,7 +1947,7 @@ func (m *TLUserGetPrivacy) GetKeyType() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetPrivacy struct {
 	Constructor          TLConstructor          `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2023,7 +2019,7 @@ func (m *TLUserSetPrivacy) GetRules() []*mtproto.PrivacyRule {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCheckPrivacy struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2095,7 +2091,7 @@ func (m *TLUserCheckPrivacy) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserAddPeerSettings struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2175,7 +2171,7 @@ func (m *TLUserAddPeerSettings) GetSettings() *mtproto.PeerSettings {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetPeerSettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2247,7 +2243,7 @@ func (m *TLUserGetPeerSettings) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserDeletePeerSettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2319,7 +2315,7 @@ func (m *TLUserDeletePeerSettings) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserChangePhone struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2383,7 +2379,7 @@ func (m *TLUserChangePhone) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCreateNewPredefinedUser struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string             `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2479,7 +2475,7 @@ func (m *TLUserCreateNewPredefinedUser) GetVerified() bool {
 	return false
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetPredefinedUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2535,7 +2531,7 @@ func (m *TLUserGetPredefinedUser) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetAllPredefinedUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
@@ -2583,7 +2579,7 @@ func (m *TLUserGetAllPredefinedUser) GetConstructor() TLConstructor {
 	return CRC32_UNKNOWN
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdatePredefinedFirstAndLastName struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string             `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2657,7 +2653,7 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) GetLastName() *types.StringValu
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdatePredefinedVerified struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2721,7 +2717,7 @@ func (m *TLUserUpdatePredefinedVerified) GetVerified() bool {
 	return false
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdatePredefinedUsername struct {
 	Constructor          TLConstructor      `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string             `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2785,7 +2781,7 @@ func (m *TLUserUpdatePredefinedUsername) GetUsername() *types.StringValue {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdatePredefinedCode struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2849,7 +2845,7 @@ func (m *TLUserUpdatePredefinedCode) GetCode() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserPredefinedBindRegisteredUserId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -2913,7 +2909,7 @@ func (m *TLUserPredefinedBindRegisteredUserId) GetRegisteredUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCreateNewUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	SecretKeyId          int64         `protobuf:"varint,3,opt,name=secret_key_id,json=secretKeyId,proto3" json:"secret_key_id,omitempty"`
@@ -3001,7 +2997,7 @@ func (m *TLUserCreateNewUser) GetLastName() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserDeleteUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3065,7 +3061,7 @@ func (m *TLUserDeleteUser) GetReason() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserBlockPeer struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3137,7 +3133,7 @@ func (m *TLUserBlockPeer) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUnBlockPeer struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3209,7 +3205,7 @@ func (m *TLUserUnBlockPeer) GetPeerId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserBlockedByUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3273,7 +3269,7 @@ func (m *TLUserBlockedByUser) GetPeerUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserIsBlockedByUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3337,7 +3333,7 @@ func (m *TLUserIsBlockedByUser) GetPeerUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCheckBlockUserList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3401,7 +3397,7 @@ func (m *TLUserCheckBlockUserList) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetBlockedList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3473,7 +3469,7 @@ func (m *TLUserGetBlockedList) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetContactSignUpNotification struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3529,7 +3525,7 @@ func (m *TLUserGetContactSignUpNotification) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetContactSignUpNotification struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3593,7 +3589,7 @@ func (m *TLUserSetContactSignUpNotification) GetSilent() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetContentSettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3649,7 +3645,7 @@ func (m *TLUserGetContentSettings) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetContentSettings struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3713,7 +3709,7 @@ func (m *TLUserSetContentSettings) GetSensitiveEnabled() bool {
 	return false
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserDeleteContact struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3777,7 +3773,7 @@ func (m *TLUserDeleteContact) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetContactList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3833,7 +3829,7 @@ func (m *TLUserGetContactList) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetContactIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3889,7 +3885,7 @@ func (m *TLUserGetContactIdList) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetContact struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -3953,7 +3949,7 @@ func (m *TLUserGetContact) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserAddContact struct {
 	Constructor              TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId                   int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4049,7 +4045,7 @@ func (m *TLUserAddContact) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCheckContact struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4113,7 +4109,7 @@ func (m *TLUserCheckContact) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetImportersByPhone struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -4169,7 +4165,7 @@ func (m *TLUserGetImportersByPhone) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserDeleteImportersByPhone struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Phone                string        `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -4225,7 +4221,7 @@ func (m *TLUserDeleteImportersByPhone) GetPhone() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserImportContacts struct {
 	Constructor          TLConstructor           `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                   `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4289,7 +4285,7 @@ func (m *TLUserImportContacts) GetContacts() []*mtproto.InputContact {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetCountryCode struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4345,7 +4341,7 @@ func (m *TLUserGetCountryCode) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateAbout struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4409,7 +4405,7 @@ func (m *TLUserUpdateAbout) GetAbout() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateFirstAndLastName struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4481,7 +4477,7 @@ func (m *TLUserUpdateFirstAndLastName) GetLastName() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateVerified struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4545,7 +4541,7 @@ func (m *TLUserUpdateVerified) GetVerified() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateUsername struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4609,7 +4605,7 @@ func (m *TLUserUpdateUsername) GetUsername() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateProfilePhoto struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4673,7 +4669,7 @@ func (m *TLUserUpdateProfilePhoto) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserDeleteProfilePhotos struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4737,7 +4733,7 @@ func (m *TLUserDeleteProfilePhotos) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetProfilePhotos struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4793,7 +4789,7 @@ func (m *TLUserGetProfilePhotos) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetBotCommands struct {
 	Constructor          TLConstructor         `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -4865,7 +4861,7 @@ func (m *TLUserSetBotCommands) GetCommands() []*mtproto.BotCommand {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserIsBot struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -4921,7 +4917,7 @@ func (m *TLUserIsBot) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetBotInfo struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	BotId                int64         `protobuf:"varint,3,opt,name=bot_id,json=botId,proto3" json:"bot_id,omitempty"`
@@ -4977,7 +4973,7 @@ func (m *TLUserGetBotInfo) GetBotId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCheckBots struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -5033,7 +5029,7 @@ func (m *TLUserCheckBots) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetFullUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	SelfUserId           int64         `protobuf:"varint,3,opt,name=self_user_id,json=selfUserId,proto3" json:"self_user_id,omitempty"`
@@ -5097,7 +5093,7 @@ func (m *TLUserGetFullUser) GetId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateEmojiStatus struct {
 	Constructor           TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId                int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -5169,7 +5165,7 @@ func (m *TLUserUpdateEmojiStatus) GetEmojiStatusUntil() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetUserDataById struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -5225,7 +5221,7 @@ func (m *TLUserGetUserDataById) GetUserId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetUserDataListByIdList struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserIdList           []int64       `protobuf:"varint,3,rep,packed,name=user_id_list,json=userIdList,proto3" json:"user_id_list,omitempty"`
@@ -5281,7 +5277,7 @@ func (m *TLUserGetUserDataListByIdList) GetUserIdList() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetUserDataByToken struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Token                string        `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
@@ -5337,7 +5333,7 @@ func (m *TLUserGetUserDataByToken) GetToken() string {
 	return ""
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSearch struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Q                    string        `protobuf:"bytes,3,opt,name=q,proto3" json:"q,omitempty"`
@@ -5417,7 +5413,7 @@ func (m *TLUserSearch) GetLimit() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserUpdateBotData struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	BotId                int64         `protobuf:"varint,3,opt,name=bot_id,json=botId,proto3" json:"bot_id,omitempty"`
@@ -5513,7 +5509,7 @@ func (m *TLUserUpdateBotData) GetBotInlinePlaceholder() *mtproto.Bool {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetImmutableUserV2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   int64         `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
@@ -5593,7 +5589,7 @@ func (m *TLUserGetImmutableUserV2) GetTo() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserGetMutableUsersV2 struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	Id                   []int64       `protobuf:"varint,3,rep,packed,name=id,proto3" json:"id,omitempty"`
@@ -5673,7 +5669,7 @@ func (m *TLUserGetMutableUsersV2) GetTo() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserCreateNewTestUser struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	SecretKeyId          int64         `protobuf:"varint,3,opt,name=secret_key_id,json=secretKeyId,proto3" json:"secret_key_id,omitempty"`
@@ -5745,7 +5741,7 @@ func (m *TLUserCreateNewTestUser) GetMaxId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserEditCloseFriends struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -5809,7 +5805,7 @@ func (m *TLUserEditCloseFriends) GetId() []int64 {
 	return nil
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetStoriesMaxId struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -5873,7 +5869,7 @@ func (m *TLUserSetStoriesMaxId) GetId() int32 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 type TLUserSetColor struct {
 	Constructor          TLConstructor `protobuf:"varint,1,opt,name=constructor,proto3,enum=user.TLConstructor" json:"constructor,omitempty"`
 	UserId               int64         `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -5953,7 +5949,7 @@ func (m *TLUserSetColor) GetBackgroundEmojiId() int64 {
 	return 0
 }
 
-//--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 // Vector api result type
 type Vector_LastSeenData struct {
 	Datas                []*LastSeenData `protobuf:"bytes,1,rep,name=datas,proto3" json:"datas,omitempty"`
