@@ -117,6 +117,15 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			Message:           message,
 		}
 
+		var (
+			savedPeerUtil *mtproto.PeerUtil
+		)
+		if message.GetSavedPeerId() != nil {
+			savedPeerUtil = mtproto.FromPeer(message.GetSavedPeerId())
+		} else {
+			savedPeerUtil = &mtproto.PeerUtil{PeerType: mtproto.PEER_EMPTY, PeerId: 0}
+		}
+
 		outBoxDO := &dataobject.MessagesDO{
 			UserId:            outMsgBox.UserId,
 			UserMessageBoxId:  outMsgBox.MessageId,
@@ -133,6 +142,8 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			Mentioned:         false,
 			MediaUnread:       message.MediaUnread,
 			Date2:             int64(outMsgBox.Message.Date),
+			SavedPeerType:     savedPeerUtil.PeerType,
+			SavedPeerId:       savedPeerUtil.PeerId,
 			Deleted:           false,
 		}
 
