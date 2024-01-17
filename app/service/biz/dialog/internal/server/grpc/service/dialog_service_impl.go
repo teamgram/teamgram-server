@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -542,3 +543,19 @@ func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *
 	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - reply: %s", r.DebugString())
 	return r, err
 }
+
+// DialogGetDialogFilter
+// dialog.getDialogFilter user_id:long id:int = DialogFilterExt;
+func (s *Service) DialogGetDialogFilter(ctx context.Context, request *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogFilter - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogGetDialogFilter(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogFilter - reply: %s", r.DebugString())
+	return r, err
+}
+

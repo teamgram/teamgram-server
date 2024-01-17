@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -11,10 +11,12 @@
 package dataobject
 
 type DialogFiltersDO struct {
-	Id             int64  `db:"id"`
-	UserId         int64  `db:"user_id"`
-	DialogFilterId int32  `db:"dialog_filter_id"`
-	DialogFilter   string `db:"dialog_filter"`
-	OrderValue     int64  `db:"order_value"`
-	Deleted        bool   `db:"deleted"`
+	Id             int64  `db:"id" json:"id"`
+	UserId         int64  `db:"user_id" json:"user_id"`
+	DialogFilterId int32  `db:"dialog_filter_id" json:"dialog_filter_id"`
+	IsChatlist     bool   `db:"is_chatlist" json:"is_chatlist"`
+	DialogFilter   string `db:"dialog_filter" json:"dialog_filter"`
+	OrderValue     int64  `db:"order_value" json:"order_value"`
+	FromSuggested  int32  `db:"from_suggested" json:"from_suggested"`
+	Deleted        bool   `db:"deleted" json:"deleted"`
 }

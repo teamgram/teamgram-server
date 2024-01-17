@@ -3,21 +3,33 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO dialog_filters
-                (user_id, dialog_filter_id, dialog_filter, order_value)
+                (user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value)
             VALUES
-                (:user_id, :dialog_filter_id, :dialog_filter, :order_value)
+                (:user_id, :dialog_filter_id, :is_chatlist, :dialog_filter, :order_value)
             ON DUPLICATE KEY UPDATE
+                is_chatlist = VALUES(is_chatlist),
                 dialog_filter = VALUES(dialog_filter),
                 order_value = VALUES(order_value),
                 deleted = 0
         </sql>
     </operation>
 
+    <operation name="Select">
+        <sql>
+            SELECT
+                user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value, from_suggested
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND dialog_filter_id=:dialog_filter_id AND deleted=0
+            ORDER BY order_value DESC
+        </sql>
+    </operation>
 
     <operation name="SelectList" result_set="list">
         <sql>
             SELECT
-                user_id, dialog_filter_id, dialog_filter
+                user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value, from_suggested
             FROM
                 dialog_filters
             WHERE

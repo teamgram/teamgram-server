@@ -81,5 +81,4 @@
                 user_id = :user_id
         </sql>
     </operation>
-
 </table>

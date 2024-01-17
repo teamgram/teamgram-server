@@ -52,6 +52,7 @@ const (
 	Predicate_dialog_getPinnedSavedDialogs             = "dialog_getPinnedSavedDialogs"
 	Predicate_dialog_toggleSavedDialogPin              = "dialog_toggleSavedDialogPin"
 	Predicate_dialog_reorderPinnedSavedDialogs         = "dialog_reorderPinnedSavedDialogs"
+	Predicate_dialog_getDialogFilter                   = "dialog_getDialogFilter"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -219,6 +220,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -665007150, // 0xd85ccbd2
 
 	},
+	Predicate_dialog_getDialogFilter: {
+		0: -209189348, // 0xf388061c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -263,6 +268,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1084471271:  Predicate_dialog_getPinnedSavedDialogs,             // 0x40a3b7e7
 	1156782041:  Predicate_dialog_toggleSavedDialogPin,              // 0x44f317d9
 	-665007150:  Predicate_dialog_reorderPinnedSavedDialogs,         // 0xd85ccbd2
+	-209189348:  Predicate_dialog_getDialogFilter,                   // 0xf388061c
 
 }
 

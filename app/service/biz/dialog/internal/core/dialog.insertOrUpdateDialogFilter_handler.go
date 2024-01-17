@@ -25,6 +25,8 @@ import (
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertOrUpdateDialogFilter) (*mtproto.Bool, error) {
 	dialogFilterData, err := jsonx.Marshal(in.GetDialogFilter())
+	isChatlist := in.GetDialogFilter().GetPredicateName() == mtproto.Predicate_dialogFilterChatlist
+
 	if err != nil {
 		c.Logger.Errorf("dialog.insertOrUpdateDialogFilter - error: %v", err)
 		return nil, err
@@ -38,8 +40,10 @@ func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertO
 				&dataobject.DialogFiltersDO{
 					UserId:         in.UserId,
 					DialogFilterId: in.Id,
+					IsChatlist:     isChatlist,
 					DialogFilter:   string(dialogFilterData),
 					OrderValue:     time.Now().Unix() << 32,
+					FromSuggested:  -1,
 					Deleted:        false,
 				})
 

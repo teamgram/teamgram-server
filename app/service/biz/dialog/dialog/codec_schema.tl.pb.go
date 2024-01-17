@@ -237,6 +237,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -665007150,
 		}
 	},
+	-209189348: func() mtproto.TLObject { // 0xf388061c
+		return &TLDialogGetDialogFilter{
+			Constructor: -209189348,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -3003,6 +3008,52 @@ func (m *TLDialogReorderPinnedSavedDialogs) DebugString() string {
 	return dbgString
 }
 
+// TLDialogGetDialogFilter
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetDialogFilter) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xf388061c:
+		x.UInt(0xf388061c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogGetDialogFilter) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xf388061c:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Id = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogGetDialogFilter) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // ----------------------------------------------------------------------------------------------------------------
 // Vector_PeerWithDraftMessage
 // /////////////////////////////////////////////////////////////////////////////
@@ -3039,7 +3090,7 @@ func (m *Vector_PeerWithDraftMessage) DebugString() string {
 }
 
 // Vector_DialogPeer
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogPeer) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3073,7 +3124,7 @@ func (m *Vector_DialogPeer) DebugString() string {
 }
 
 // Vector_DialogExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3107,7 +3158,7 @@ func (m *Vector_DialogExt) DebugString() string {
 }
 
 // Vector_DialogFilterExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3141,7 +3192,7 @@ func (m *Vector_DialogFilterExt) DebugString() string {
 }
 
 // Vector_DialogPinnedExt
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -3175,7 +3226,7 @@ func (m *Vector_DialogPinnedExt) DebugString() string {
 }
 
 // Vector_Long
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
