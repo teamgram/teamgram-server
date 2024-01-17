@@ -58,6 +58,7 @@ type DialogClient interface {
     DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*mtproto.Bool, error)
     DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error)
     DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error)
+    DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error)
 
 }
 
@@ -322,5 +323,12 @@ func (m *defaultDialogClient) DialogReorderPinnedSavedDialogs(ctx context.Contex
 func (m *defaultDialogClient) DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilter(ctx, in)
+}
+
+// DialogGetDialogFilterBySlug
+// dialog.getDialogFilterBySlug user_id:long slug:string = DialogFilterExt;
+func (m *defaultDialogClient) DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogGetDialogFilterBySlug(ctx, in)
 }
 

@@ -3,21 +3,35 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO dialog_filters
-                (user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value)
+                (user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value)
             VALUES
-                (:user_id, :dialog_filter_id, :is_chatlist, :dialog_filter, :order_value)
+                (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value)
             ON DUPLICATE KEY UPDATE
                 is_chatlist = VALUES(is_chatlist),
                 dialog_filter = VALUES(dialog_filter),
+                joined_by_slug = VALUES(joined_by_slug),
+                slug = VALUES(slug),
                 order_value = VALUES(order_value),
                 deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectBySlug">
+        <sql>
+            SELECT
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+            FROM
+                dialog_filters
+            WHERE
+                user_id=:user_id AND slug=:slug AND deleted=0
+            ORDER BY order_value DESC
         </sql>
     </operation>
 
     <operation name="Select">
         <sql>
             SELECT
-                user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value, from_suggested
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
             FROM
                 dialog_filters
             WHERE
@@ -29,7 +43,7 @@
     <operation name="SelectList" result_set="list">
         <sql>
             SELECT
-                user_id, dialog_filter_id, is_chatlist, dialog_filter, order_value, from_suggested
+                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
             FROM
                 dialog_filters
             WHERE

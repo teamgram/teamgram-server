@@ -35,9 +35,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -1109809056
 		return o
 	},
-	-1891683854: func() mtproto.TLObject { // 0x8f3f31f2
+	-1496016642: func() mtproto.TLObject { // 0xa6d498fe
 		o := MakeTLDialogFilterExt(nil)
-		o.Data2.Constructor = -1891683854
+		o.Data2.Constructor = -1496016642
 		return o
 	},
 	245834284: func() mtproto.TLObject { // 0xea7222c
@@ -240,6 +240,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-209189348: func() mtproto.TLObject { // 0xf388061c
 		return &TLDialogGetDialogFilter{
 			Constructor: -209189348,
+		}
+	},
+	1313177583: func() mtproto.TLObject { // 0x4e457fef
+		return &TLDialogGetDialogFilterBySlug{
+			Constructor: 1313177583,
 		}
 	},
 }
@@ -454,7 +459,7 @@ func (m *DialogFilterExt) CalcByteSize(layer int32) int {
 func (m *DialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x8f3f31f2:
+	case 0xa6d498fe:
 		m2 := MakeTLDialogFilterExt(m)
 		m2.Decode(dBuf)
 
@@ -500,8 +505,15 @@ func (m *TLDialogFilterExt) To_DialogFilterExt() *DialogFilterExt {
 	return m.Data2
 }
 
+//// flags
 func (m *TLDialogFilterExt) SetId(v int32) { m.Data2.Id = v }
 func (m *TLDialogFilterExt) GetId() int32  { return m.Data2.Id }
+
+func (m *TLDialogFilterExt) SetJoinedBySlug(v bool) { m.Data2.JoinedBySlug = v }
+func (m *TLDialogFilterExt) GetJoinedBySlug() bool  { return m.Data2.JoinedBySlug }
+
+func (m *TLDialogFilterExt) SetSlug(v string) { m.Data2.Slug = v }
+func (m *TLDialogFilterExt) GetSlug() string  { return m.Data2.Slug }
 
 func (m *TLDialogFilterExt) SetDialogFilter(v *mtproto.DialogFilter) { m.Data2.DialogFilter = v }
 func (m *TLDialogFilterExt) GetDialogFilter() *mtproto.DialogFilter  { return m.Data2.DialogFilter }
@@ -515,10 +527,25 @@ func (m *TLDialogFilterExt) GetPredicateName() string {
 
 func (m *TLDialogFilterExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0x8f3f31f2: func() error {
-			x.UInt(0x8f3f31f2)
+		0xa6d498fe: func() error {
+			x.UInt(0xa6d498fe)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetJoinedBySlug() == true {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
 			x.Int(m.GetId())
+			x.String(m.GetSlug())
 			m.GetDialogFilter().Encode(x, layer)
 			x.Long(m.GetOrder())
 			return nil
@@ -543,12 +570,18 @@ func (m *TLDialogFilterExt) CalcByteSize(layer int32) int {
 
 func (m *TLDialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x8f3f31f2: func() error {
+		0xa6d498fe: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
 			m.SetId(dBuf.Int())
+			if (flags & (1 << 0)) != 0 {
+				m.SetJoinedBySlug(true)
+			}
+			m.SetSlug(dBuf.String())
 
-			m1 := &mtproto.DialogFilter{}
-			m1.Decode(dBuf)
-			m.SetDialogFilter(m1)
+			m4 := &mtproto.DialogFilter{}
+			m4.Decode(dBuf)
+			m.SetDialogFilter(m4)
 
 			m.SetOrder(dBuf.Long())
 			return dBuf.GetError()
@@ -3049,6 +3082,52 @@ func (m *TLDialogGetDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFilter) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogGetDialogFilterBySlug
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetDialogFilterBySlug) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x4e457fef:
+		x.UInt(0x4e457fef)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.String(m.GetSlug())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogGetDialogFilterBySlug) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetDialogFilterBySlug) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x4e457fef:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Slug = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogGetDialogFilterBySlug) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

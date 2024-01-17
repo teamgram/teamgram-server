@@ -559,3 +559,18 @@ func (s *Service) DialogGetDialogFilter(ctx context.Context, request *dialog.TLD
 	return r, err
 }
 
+// DialogGetDialogFilterBySlug
+// dialog.getDialogFilterBySlug user_id:long slug:string = DialogFilterExt;
+func (s *Service) DialogGetDialogFilterBySlug(ctx context.Context, request *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogFilterBySlug - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.DialogGetDialogFilterBySlug(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogFilterBySlug - reply: %s", r.DebugString())
+	return r, err
+}
+
