@@ -247,6 +247,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1313177583,
 		}
 	},
+	-959749265: func() mtproto.TLObject { // 0xc6cb636f
+		return &TLDialogCreateDialogFilter{
+			Constructor: -959749265,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -3128,6 +3133,56 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFilterBySlug) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLDialogCreateDialogFilter
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogCreateDialogFilter) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xc6cb636f:
+		x.UInt(0xc6cb636f)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetDialogFilter().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogCreateDialogFilter) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogCreateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xc6cb636f:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &DialogFilterExt{}
+		m2.Decode(dBuf)
+		m.DialogFilter = m2
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLDialogCreateDialogFilter) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

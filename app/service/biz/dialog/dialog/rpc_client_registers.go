@@ -63,6 +63,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLDialogReorderPinnedSavedDialogs":         RPCContextTuple{"/mtproto.RPCDialog/dialog_reorderPinnedSavedDialogs", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogGetDialogFilter":                   RPCContextTuple{"/mtproto.RPCDialog/dialog_getDialogFilter", func() interface{} { return new(DialogFilterExt) }},
 	"TLDialogGetDialogFilterBySlug":             RPCContextTuple{"/mtproto.RPCDialog/dialog_getDialogFilterBySlug", func() interface{} { return new(DialogFilterExt) }},
+	"TLDialogCreateDialogFilter":                RPCContextTuple{"/mtproto.RPCDialog/dialog_createDialogFilter", func() interface{} { return new(DialogFilterExt) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

@@ -59,6 +59,7 @@ type DialogClient interface {
     DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error)
     DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error)
     DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error)
+    DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error)
 
 }
 
@@ -330,5 +331,12 @@ func (m *defaultDialogClient) DialogGetDialogFilter(ctx context.Context, in *dia
 func (m *defaultDialogClient) DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilterBySlug(ctx, in)
+}
+
+// DialogCreateDialogFilter
+// dialog.createDialogFilter user_id:long dialog_filter:DialogFilterExt = DialogFilterExt;
+func (m *defaultDialogClient) DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogCreateDialogFilter(ctx, in)
 }
 
