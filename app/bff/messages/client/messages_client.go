@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -48,6 +48,7 @@ type MessagesClient interface {
 	MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
+	MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 }
 
@@ -76,7 +77,7 @@ func (m *defaultMessagesClient) MessagesGetHistory(ctx context.Context, in *mtpr
 }
 
 // MessagesSearch
-// messages.search#a0fda762 flags:# peer:InputPeer q:string from_id:flags.0?InputPeer top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+// messages.search#29ee847a flags:# peer:InputPeer q:string from_id:flags.0?InputPeer saved_peer_id:flags.2?InputPeer saved_reaction:flags.3?Vector<Reaction> top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (m *defaultMessagesClient) MessagesSearch(ctx context.Context, in *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSearch(ctx, in)
@@ -111,14 +112,14 @@ func (m *defaultMessagesClient) MessagesReceivedMessages(ctx context.Context, in
 }
 
 // MessagesSendMessage
-// messages.sendMessage#1cc20387 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMessage#280d096f flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMessage(ctx, in)
 }
 
 // MessagesSendMedia
-// messages.sendMedia#7547c966 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMedia#72ccc23d flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMedia(ctx, in)
@@ -160,7 +161,7 @@ func (m *defaultMessagesClient) MessagesGetMessageEditData(ctx context.Context, 
 }
 
 // MessagesEditMessage
-// messages.editMessage#48f71778 flags:# no_webpage:flags.1?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
+// messages.editMessage#48f71778 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
 func (m *defaultMessagesClient) MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesEditMessage(ctx, in)
@@ -188,7 +189,7 @@ func (m *defaultMessagesClient) MessagesGetRecentLocations(ctx context.Context, 
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#b6f11a1c flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMultiMedia#456e8987 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (m *defaultMessagesClient) MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMultiMedia(ctx, in)
@@ -202,7 +203,7 @@ func (m *defaultMessagesClient) MessagesUpdatePinnedMessage(ctx context.Context,
 }
 
 // MessagesGetSearchCounters
-// messages.getSearchCounters#ae7cc1 flags:# peer:InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
+// messages.getSearchCounters#1bbcf300 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (m *defaultMessagesClient) MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetSearchCounters(ctx, in)
@@ -216,14 +217,14 @@ func (m *defaultMessagesClient) MessagesUnpinAllMessages(ctx context.Context, in
 }
 
 // MessagesGetSearchResultsCalendar
-// messages.getSearchResultsCalendar#49f0bde9 peer:InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
+// messages.getSearchResultsCalendar#6aa3f6bd flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
 func (m *defaultMessagesClient) MessagesGetSearchResultsCalendar(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetSearchResultsCalendar(ctx, in)
 }
 
 // MessagesGetSearchResultsPositions
-// messages.getSearchResultsPositions#6e9583a3 peer:InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
+// messages.getSearchResultsPositions#9c7f2f10 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (m *defaultMessagesClient) MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetSearchResultsPositions(ctx, in)
@@ -248,6 +249,13 @@ func (m *defaultMessagesClient) MessagesSaveDefaultSendAs(ctx context.Context, i
 func (m *defaultMessagesClient) MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSearchSentMedia(ctx, in)
+}
+
+// MessagesGetOutboxReadDate
+// messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
+func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesGetOutboxReadDate(ctx, in)
 }
 
 // ChannelsGetSendAs

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,8 +23,9 @@ var _ *mtproto.Bool
 type UsersClient interface {
 	UsersGetUsers(ctx context.Context, in *mtproto.TLUsersGetUsers) (*mtproto.Vector_User, error)
 	UsersGetFullUser(ctx context.Context, in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error)
-	UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error)
+	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error)
 	ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error)
+	UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error)
 }
 
 type defaultUsersClient struct {
@@ -51,11 +52,11 @@ func (m *defaultUsersClient) UsersGetFullUser(ctx context.Context, in *mtproto.T
 	return client.UsersGetFullUser(ctx, in)
 }
 
-// UsersGetMe
-// users.getMe id:long token:string = User;
-func (m *defaultUsersClient) UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error) {
+// UsersGetIsPremiumRequiredToContact
+// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
+func (m *defaultUsersClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
 	client := mtproto.NewRPCUsersClient(m.cli.Conn())
-	return client.UsersGetMe(ctx, in)
+	return client.UsersGetIsPremiumRequiredToContact(ctx, in)
 }
 
 // ContactsResolvePhone
@@ -63,4 +64,11 @@ func (m *defaultUsersClient) UsersGetMe(ctx context.Context, in *mtproto.TLUsers
 func (m *defaultUsersClient) ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
 	client := mtproto.NewRPCUsersClient(m.cli.Conn())
 	return client.ContactsResolvePhone(ctx, in)
+}
+
+// UsersGetMe
+// users.getMe id:long token:string = User;
+func (m *defaultUsersClient) UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error) {
+	client := mtproto.NewRPCUsersClient(m.cli.Conn())
+	return client.UsersGetMe(ctx, in)
 }

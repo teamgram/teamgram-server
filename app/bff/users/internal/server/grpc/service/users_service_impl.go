@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -36,14 +36,44 @@ func (s *Service) UsersGetUsers(ctx context.Context, request *mtproto.TLUsersGet
 // users.getFullUser#b60f5918 id:InputUser = users.UserFull;
 func (s *Service) UsersGetFullUser(ctx context.Context, request *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getFullUserB60F5918 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("users.getFullUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
 	r, err := c.UsersGetFullUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.getFullUserB60F5918 - reply: %s", r.DebugString())
+	c.Logger.Debugf("users.getFullUser - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UsersGetIsPremiumRequiredToContact
+// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
+func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, request *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("users.getIsPremiumRequiredToContact - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UsersGetIsPremiumRequiredToContact(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("users.getIsPremiumRequiredToContact - reply: %s", r.DebugString())
+	return r, err
+}
+
+// ContactsResolvePhone
+// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
+func (s *Service) ContactsResolvePhone(ctx context.Context, request *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.resolvePhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsResolvePhone(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.resolvePhone - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -59,20 +89,5 @@ func (s *Service) UsersGetMe(ctx context.Context, request *mtproto.TLUsersGetMe)
 	}
 
 	c.Logger.Debugf("users.getMe - reply: %s", r.DebugString())
-	return r, err
-}
-
-// ContactsResolvePhone
-// contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
-func (s *Service) ContactsResolvePhone(ctx context.Context, request *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("contacts.resolvePhone - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.ContactsResolvePhone(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("contacts.getLocated - reply: %s", r.DebugString())
 	return r, err
 }

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -48,7 +48,7 @@ func (s *Service) MessagesGetHistory(ctx context.Context, request *mtproto.TLMes
 }
 
 // MessagesSearch
-// messages.search#a0fda762 flags:# peer:InputPeer q:string from_id:flags.0?InputPeer top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+// messages.search#29ee847a flags:# peer:InputPeer q:string from_id:flags.0?InputPeer saved_peer_id:flags.2?InputPeer saved_reaction:flags.3?Vector<Reaction> top_msg_id:flags.1?int filter:MessagesFilter min_date:int max_date:int offset_id:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (s *Service) MessagesSearch(ctx context.Context, request *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.search - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -123,7 +123,7 @@ func (s *Service) MessagesReceivedMessages(ctx context.Context, request *mtproto
 }
 
 // MessagesSendMessage
-// messages.sendMessage#1cc20387 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMessage#280d096f flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMessage(ctx context.Context, request *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMessage - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -138,7 +138,7 @@ func (s *Service) MessagesSendMessage(ctx context.Context, request *mtproto.TLMe
 }
 
 // MessagesSendMedia
-// messages.sendMedia#7547c966 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMedia#72ccc23d flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMedia(ctx context.Context, request *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -228,7 +228,7 @@ func (s *Service) MessagesGetMessageEditData(ctx context.Context, request *mtpro
 }
 
 // MessagesEditMessage
-// messages.editMessage#48f71778 flags:# no_webpage:flags.1?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
+// messages.editMessage#48f71778 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
 func (s *Service) MessagesEditMessage(ctx context.Context, request *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.editMessage - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -288,7 +288,7 @@ func (s *Service) MessagesGetRecentLocations(ctx context.Context, request *mtpro
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#b6f11a1c flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true peer:InputPeer reply_to_msg_id:flags.0?int top_msg_id:flags.9?int multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMultiMedia#456e8987 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (s *Service) MessagesSendMultiMedia(ctx context.Context, request *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMultiMedia - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -318,7 +318,7 @@ func (s *Service) MessagesUpdatePinnedMessage(ctx context.Context, request *mtpr
 }
 
 // MessagesGetSearchCounters
-// messages.getSearchCounters#ae7cc1 flags:# peer:InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
+// messages.getSearchCounters#1bbcf300 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer top_msg_id:flags.0?int filters:Vector<MessagesFilter> = Vector<messages.SearchCounter>;
 func (s *Service) MessagesGetSearchCounters(ctx context.Context, request *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSearchCounters - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -348,7 +348,7 @@ func (s *Service) MessagesUnpinAllMessages(ctx context.Context, request *mtproto
 }
 
 // MessagesGetSearchResultsCalendar
-// messages.getSearchResultsCalendar#49f0bde9 peer:InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
+// messages.getSearchResultsCalendar#6aa3f6bd flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int offset_date:int = messages.SearchResultsCalendar;
 func (s *Service) MessagesGetSearchResultsCalendar(ctx context.Context, request *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSearchResultsCalendar - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -363,7 +363,7 @@ func (s *Service) MessagesGetSearchResultsCalendar(ctx context.Context, request 
 }
 
 // MessagesGetSearchResultsPositions
-// messages.getSearchResultsPositions#6e9583a3 peer:InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
+// messages.getSearchResultsPositions#9c7f2f10 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (s *Service) MessagesGetSearchResultsPositions(ctx context.Context, request *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSearchResultsPositions - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -419,6 +419,21 @@ func (s *Service) MessagesSearchSentMedia(ctx context.Context, request *mtproto.
 	}
 
 	c.Logger.Debugf("messages.searchSentMedia - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetOutboxReadDate
+// messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
+func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getOutboxReadDate - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetOutboxReadDate(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getOutboxReadDate - reply: %s", r.DebugString())
 	return r, err
 }
 

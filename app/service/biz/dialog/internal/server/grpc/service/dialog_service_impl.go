@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
@@ -588,4 +587,3 @@ func (s *Service) DialogCreateDialogFilter(ctx context.Context, request *dialog.
 	c.Logger.Debugf("dialog.createDialogFilter - reply: %s", r.DebugString())
 	return r, err
 }
-
