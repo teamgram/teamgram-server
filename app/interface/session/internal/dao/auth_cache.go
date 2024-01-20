@@ -20,6 +20,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -68,7 +69,11 @@ func (d *Dao) GetCacheUserID(ctx context.Context, authKeyId int64) (int64, bool)
 		})
 		if err != nil {
 			logx.WithContext(ctx).Error(err.Error())
-			return 0, false
+			if errors.Is(err, mtproto.ErrAuthKeyPermEmpty) {
+				return 0, true
+			} else {
+				return 0, false
+			}
 		}
 
 		// update to cache

@@ -21,6 +21,7 @@ package dao
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -190,7 +191,7 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 
 					return nil
 				})
-			if err == sqlc.ErrNotFound {
+			if errors.Is(err, sqlc.ErrNotFound) {
 				kInfo2, _ := d.getAuthKey(ctx, authKeyId)
 				if kInfo2 != nil {
 					kInfo.AuthKeyType = kInfo2.AuthKeyType
@@ -216,7 +217,7 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 			return err
 		})
 	if err != nil {
-		if err == sqlc.ErrNotFound {
+		if errors.Is(err, sqlc.ErrNotFound) {
 			err = mtproto.ErrAuthKeyUnregistered
 		} else {
 			err = mtproto.ErrInternalServerError

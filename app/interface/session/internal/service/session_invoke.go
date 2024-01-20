@@ -456,7 +456,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 				// 401
 				rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
 					ErrorCode:    401,
-					ErrorMessage: "AUTH_KEY_INVALID",
+					ErrorMessage: "AUTH_KEY_UNREGISTERED",
 				}}
 				c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcError)
 				msgId.state = RECEIVED | RESPONSE_GENERATED

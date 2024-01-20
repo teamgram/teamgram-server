@@ -739,9 +739,9 @@ func (s *authSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 	logx.WithContext(ctx).Info("authSessions - ", reflect.TypeOf(syncMsg.data.obj))
 	if upds, ok := syncMsg.data.obj.(*mtproto.Updates); ok {
 		if upds.PredicateName == mtproto.Predicate_updateAccountResetAuthorization {
-			logx.WithContext(ctx).Infof("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
+			logx.WithContext(ctx).Info("recv updateAccountResetAuthorization - ", reflect.TypeOf(syncMsg.data.obj))
 			if s.AuthUserId != upds.GetUserId() {
-				logx.WithContext(ctx).Errorf("upds -- ", upds)
+				logx.WithContext(ctx).Error("upds -- ", upds)
 			}
 			s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
 			s.DeleteByAuthKeyId(s.authKeyId)
@@ -784,7 +784,7 @@ func (s *authSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage
 		// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
 		sess.onRpcResult(ctx, rpcResult)
 	} else {
-		logx.Errorf("onRpcResult - not found rpcSession by sessionId: ", rpcResult.sessionId)
+		logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
 	}
 }
 
