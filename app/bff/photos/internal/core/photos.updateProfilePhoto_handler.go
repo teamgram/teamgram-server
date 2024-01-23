@@ -23,7 +23,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/app/service/media/media"
-	"time"
 )
 
 // PhotosUpdateProfilePhoto
@@ -75,12 +74,6 @@ func (c *PhotosCore) PhotosUpdateProfilePhoto(in *mtproto.TLPhotosUpdateProfileP
 			[]*mtproto.User{me.ToSelfUser()},
 			mtproto.MakeTLUpdateUser(&mtproto.Update{
 				UserId: c.MD.UserId,
-			}).To_Update(),
-			mtproto.MakeTLUpdateUserPhoto(&mtproto.Update{
-				UserId:     c.MD.UserId,
-				Date_INT32: int32(time.Now().Unix()),
-				Photo:      mtproto.MakeUserProfilePhotoByPhoto(photo),
-				Previous:   mtproto.BoolFalse,
 			}).To_Update()),
 	})
 
