@@ -150,6 +150,13 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 				outMessage.ReplyTo.QuoteEntities = replyTo.GetQuoteEntities()
 				outMessage.ReplyTo.QuoteOffset = replyTo.GetQuoteOffset()
 			}
+
+			// disable replyToPeerId
+			// TODO enable replyToPeerId
+			if replyTo.ReplyToPeerId != nil {
+				outMessage.ReplyTo = nil
+			}
+
 		case mtproto.Predicate_inputReplyToStory:
 			// TODO:
 		}
