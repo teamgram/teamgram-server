@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type UserProfilePhotosDAO struct {
 	db *sqlx.DB
 }
 
 func NewUserProfilePhotosDAO(db *sqlx.DB) *UserProfilePhotosDAO {
-	return &UserProfilePhotosDAO{db}
+	return &UserProfilePhotosDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
@@ -189,8 +195,8 @@ func (dao *UserProfilePhotosDAO) Delete(ctx context.Context, user_id int64, id_l
 	return
 }
 
-// update user_profile_photos set deleted = 1, date2 = 0 where user_id = :user_id and photo_id in (:id_list)
 // DeleteTx
+// update user_profile_photos set deleted = 1, date2 = 0 where user_id = :user_id and photo_id in (:id_list)
 // TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) DeleteTx(tx *sqlx.Tx, user_id int64, id_list []int64) (rowsAffected int64, err error) {
 	var (

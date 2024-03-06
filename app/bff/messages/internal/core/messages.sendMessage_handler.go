@@ -111,22 +111,45 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 	// Fix ReplyToMsgId
 	if in.GetReplyToMsgId() != nil {
 		outMessage.ReplyTo = mtproto.MakeTLMessageReplyHeader(&mtproto.MessageReplyHeader{
+			ReplyToScheduled:       false,
+			ForumTopic:             false,
+			Quote:                  false,
 			ReplyToMsgId:           in.GetReplyToMsgId().GetValue(),
 			ReplyToMsgId_INT32:     in.GetReplyToMsgId().GetValue(),
 			ReplyToMsgId_FLAGINT32: in.GetReplyToMsgId(),
 			ReplyToPeerId:          nil,
+			ReplyFrom:              nil,
+			ReplyMedia:             nil,
 			ReplyToTopId:           nil,
+			QuoteText:              nil,
+			QuoteEntities:          nil,
+			QuoteOffset:            nil,
 		}).To_MessageReplyHeader()
 	} else if in.GetReplyTo() != nil {
 		switch in.ReplyTo.PredicateName {
 		case mtproto.Predicate_inputReplyToMessage:
+			replyTo := in.GetReplyTo()
 			outMessage.ReplyTo = mtproto.MakeTLMessageReplyHeader(&mtproto.MessageReplyHeader{
-				ReplyToMsgId:           in.GetReplyTo().GetReplyToMsgId(),
-				ReplyToMsgId_INT32:     in.GetReplyTo().GetReplyToMsgId(),
-				ReplyToMsgId_FLAGINT32: mtproto.MakeFlagsInt32(in.GetReplyTo().GetReplyToMsgId()),
+				ReplyToScheduled:       false,
+				ForumTopic:             false,
+				Quote:                  false,
+				ReplyToMsgId:           replyTo.GetReplyToMsgId(),
+				ReplyToMsgId_INT32:     replyTo.GetReplyToMsgId(),
+				ReplyToMsgId_FLAGINT32: mtproto.MakeFlagsInt32(replyTo.GetReplyToMsgId()),
 				ReplyToPeerId:          nil,
+				ReplyFrom:              nil,
+				ReplyMedia:             nil,
 				ReplyToTopId:           nil,
+				QuoteText:              nil,
+				QuoteEntities:          nil,
+				QuoteOffset:            nil,
 			}).To_MessageReplyHeader()
+			if replyTo.GetQuoteText() != nil {
+				outMessage.ReplyTo.Quote = true
+				outMessage.ReplyTo.QuoteText = replyTo.GetQuoteText()
+				outMessage.ReplyTo.QuoteEntities = replyTo.GetQuoteEntities()
+				outMessage.ReplyTo.QuoteOffset = replyTo.GetQuoteOffset()
+			}
 		case mtproto.Predicate_inputReplyToStory:
 			// TODO:
 		}
