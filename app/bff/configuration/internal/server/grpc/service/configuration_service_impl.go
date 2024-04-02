@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -149,6 +149,21 @@ func (s *Service) HelpGetCountriesList(ctx context.Context, request *mtproto.TLH
 	}
 
 	c.Logger.Debugf("help.getCountriesList - reply: %s", r.DebugString())
+	return r, err
+}
+
+// HelpGetTimezonesList
+// help.getTimezonesList#49b30240 hash:int = help.TimezonesList;
+func (s *Service) HelpGetTimezonesList(ctx context.Context, request *mtproto.TLHelpGetTimezonesList) (*mtproto.Help_TimezonesList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("help.getTimezonesList - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.HelpGetTimezonesList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("help.getTimezonesList - reply: %s", r.DebugString())
 	return r, err
 }
 
