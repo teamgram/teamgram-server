@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,26 +19,19 @@
 package core
 
 import (
-	"context"
-
-	"github.com/zeromicro/go-zero/core/logx"
-
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
-	"github.com/teamgram/teamgram-server/app/bff/sponsoredmessages/internal/svc"
+	"github.com/teamgram/proto/mtproto"
 )
 
-type SponsoredMessagesCore struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
-	logx.Logger
-	MD *metadata.RpcMetadata
-}
-
-func New(ctx context.Context, svcCtx *svc.ServiceContext) *SponsoredMessagesCore {
-	return &SponsoredMessagesCore{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-		MD:     metadata.RpcMetadataFromIncoming(ctx),
+// MessagesCreateChat92CEDDD4
+// messages.createChat#92ceddd4 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = messages.InvitedUsers;
+func (c *ChatsCore) MessagesCreateChat92CEDDD4(in *mtproto.TLMessagesCreateChat92CEDDD4) (*mtproto.Messages_InvitedUsers, error) {
+	rV, err := c.createChat(in.Users, in.Title, in.GetTtlPeriod().GetValue())
+	if err != nil {
+		return nil, err
 	}
+
+	return mtproto.MakeTLMessagesInvitedUsers(&mtproto.Messages_InvitedUsers{
+		Updates:         rV,
+		MissingInvitees: []*mtproto.MissingInvitee{},
+	}).To_Messages_InvitedUsers(), nil
 }

@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +16,14 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
+package core
 
 import (
-	"github.com/teamgram/teamgram-server/app/bff/sponsoredmessages/internal/config"
+	"github.com/teamgram/proto/mtproto"
 )
 
-type ServiceContext struct {
-	Config config.Config
-}
-
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-	}
+// MessagesCreateChat9CB126E
+// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
+func (c *ChatsCore) MessagesCreateChat9CB126E(in *mtproto.TLMessagesCreateChat9CB126E) (*mtproto.Updates, error) {
+	return c.createChat(in.Users, in.Title, 0)
 }

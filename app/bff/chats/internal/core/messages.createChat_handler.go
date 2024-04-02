@@ -27,14 +27,11 @@ import (
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesCreateChat
-// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
-func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
+func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, ttlPeriod int32) (*mtproto.Updates, error) {
 	var (
 		chatUserIdList []int64
 		userAddList    = make([]int64, 0)
 		botAddList     = make([]int64, 0)
-		chatTitle      = in.GetTitle()
 	)
 
 	// check chat title
@@ -44,14 +41,14 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 		return nil, err
 	}
 
-	if len(in.Users) == 0 {
+	if len(iUsers) == 0 {
 		err := mtproto.ErrUsersTooFew
 		c.Logger.Errorf("messages.createChat - error: %v", err)
 		return nil, err
 	}
 
 	// check user too much
-	if len(in.GetUsers()) > 200-1 {
+	if len(iUsers) > 200-1 {
 		err := mtproto.ErrUsersTooMuch
 		c.Logger.Errorf("messages.createChat - error: %v", err)
 		return nil, err
@@ -59,7 +56,7 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 
 	// check len(users)
 	chatUserIdList = []int64{c.MD.UserId}
-	for _, u := range in.Users {
+	for _, u := range iUsers {
 		if u.PredicateName != mtproto.Predicate_inputUser {
 			err := mtproto.ErrPeerIdInvalid
 			c.Logger.Errorf("messages.createChat - error: %v", err)
@@ -79,7 +76,7 @@ func (c *ChatsCore) MessagesCreateChat(in *mtproto.TLMessagesCreateChat) (*mtpro
 		return nil, err
 	}
 
-	for _, u := range in.Users {
+	for _, u := range iUsers {
 		if addUser, ok := users.GetImmutableUser(u.UserId); !ok {
 			err := mtproto.ErrInputUserDeactivated
 			c.Logger.Errorf("messages.createChat - error: %v", err)

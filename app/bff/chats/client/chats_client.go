@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,19 +25,22 @@ type ChatsClient interface {
 	MessagesGetFullChat(ctx context.Context, in *mtproto.TLMessagesGetFullChat) (*mtproto.Messages_ChatFull, error)
 	MessagesEditChatTitle(ctx context.Context, in *mtproto.TLMessagesEditChatTitle) (*mtproto.Updates, error)
 	MessagesEditChatPhoto(ctx context.Context, in *mtproto.TLMessagesEditChatPhoto) (*mtproto.Updates, error)
-	MessagesAddChatUser(ctx context.Context, in *mtproto.TLMessagesAddChatUser) (*mtproto.Updates, error)
+	MessagesAddChatUserCBC6D107(ctx context.Context, in *mtproto.TLMessagesAddChatUserCBC6D107) (*mtproto.Messages_InvitedUsers, error)
 	MessagesDeleteChatUser(ctx context.Context, in *mtproto.TLMessagesDeleteChatUser) (*mtproto.Updates, error)
-	MessagesCreateChat(ctx context.Context, in *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error)
+	MessagesCreateChat92CEDDD4(ctx context.Context, in *mtproto.TLMessagesCreateChat92CEDDD4) (*mtproto.Messages_InvitedUsers, error)
 	MessagesEditChatAdmin(ctx context.Context, in *mtproto.TLMessagesEditChatAdmin) (*mtproto.Bool, error)
 	MessagesMigrateChat(ctx context.Context, in *mtproto.TLMessagesMigrateChat) (*mtproto.Updates, error)
 	MessagesGetCommonChats(ctx context.Context, in *mtproto.TLMessagesGetCommonChats) (*mtproto.Messages_Chats, error)
-	MessagesGetAllChats(ctx context.Context, in *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error)
 	MessagesEditChatAbout(ctx context.Context, in *mtproto.TLMessagesEditChatAbout) (*mtproto.Bool, error)
 	MessagesEditChatDefaultBannedRights(ctx context.Context, in *mtproto.TLMessagesEditChatDefaultBannedRights) (*mtproto.Updates, error)
 	MessagesDeleteChat(ctx context.Context, in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error)
 	MessagesGetMessageReadParticipants31C1C44F(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error)
 	ChannelsConvertToGigagroup(ctx context.Context, in *mtproto.TLChannelsConvertToGigagroup) (*mtproto.Updates, error)
+	MessagesAddChatUserF24753E3(ctx context.Context, in *mtproto.TLMessagesAddChatUserF24753E3) (*mtproto.Updates, error)
+	MessagesCreateChat34A818(ctx context.Context, in *mtproto.TLMessagesCreateChat34A818) (*mtproto.Updates, error)
+	MessagesGetAllChats(ctx context.Context, in *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error)
 	MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error)
+	MessagesCreateChat9CB126E(ctx context.Context, in *mtproto.TLMessagesCreateChat9CB126E) (*mtproto.Updates, error)
 }
 
 type defaultChatsClient struct {
@@ -78,11 +81,11 @@ func (m *defaultChatsClient) MessagesEditChatPhoto(ctx context.Context, in *mtpr
 	return client.MessagesEditChatPhoto(ctx, in)
 }
 
-// MessagesAddChatUser
-// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
-func (m *defaultChatsClient) MessagesAddChatUser(ctx context.Context, in *mtproto.TLMessagesAddChatUser) (*mtproto.Updates, error) {
+// MessagesAddChatUserCBC6D107
+// messages.addChatUser#cbc6d107 chat_id:long user_id:InputUser fwd_limit:int = messages.InvitedUsers;
+func (m *defaultChatsClient) MessagesAddChatUserCBC6D107(ctx context.Context, in *mtproto.TLMessagesAddChatUserCBC6D107) (*mtproto.Messages_InvitedUsers, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
-	return client.MessagesAddChatUser(ctx, in)
+	return client.MessagesAddChatUserCBC6D107(ctx, in)
 }
 
 // MessagesDeleteChatUser
@@ -92,11 +95,11 @@ func (m *defaultChatsClient) MessagesDeleteChatUser(ctx context.Context, in *mtp
 	return client.MessagesDeleteChatUser(ctx, in)
 }
 
-// MessagesCreateChat
-// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
-func (m *defaultChatsClient) MessagesCreateChat(ctx context.Context, in *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
+// MessagesCreateChat92CEDDD4
+// messages.createChat#92ceddd4 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = messages.InvitedUsers;
+func (m *defaultChatsClient) MessagesCreateChat92CEDDD4(ctx context.Context, in *mtproto.TLMessagesCreateChat92CEDDD4) (*mtproto.Messages_InvitedUsers, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
-	return client.MessagesCreateChat(ctx, in)
+	return client.MessagesCreateChat92CEDDD4(ctx, in)
 }
 
 // MessagesEditChatAdmin
@@ -118,13 +121,6 @@ func (m *defaultChatsClient) MessagesMigrateChat(ctx context.Context, in *mtprot
 func (m *defaultChatsClient) MessagesGetCommonChats(ctx context.Context, in *mtproto.TLMessagesGetCommonChats) (*mtproto.Messages_Chats, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
 	return client.MessagesGetCommonChats(ctx, in)
-}
-
-// MessagesGetAllChats
-// messages.getAllChats#875f74be except_ids:Vector<long> = messages.Chats;
-func (m *defaultChatsClient) MessagesGetAllChats(ctx context.Context, in *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error) {
-	client := mtproto.NewRPCChatsClient(m.cli.Conn())
-	return client.MessagesGetAllChats(ctx, in)
 }
 
 // MessagesEditChatAbout
@@ -162,9 +158,37 @@ func (m *defaultChatsClient) ChannelsConvertToGigagroup(ctx context.Context, in 
 	return client.ChannelsConvertToGigagroup(ctx, in)
 }
 
+// MessagesAddChatUserF24753E3
+// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
+func (m *defaultChatsClient) MessagesAddChatUserF24753E3(ctx context.Context, in *mtproto.TLMessagesAddChatUserF24753E3) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.MessagesAddChatUserF24753E3(ctx, in)
+}
+
+// MessagesCreateChat34A818
+// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
+func (m *defaultChatsClient) MessagesCreateChat34A818(ctx context.Context, in *mtproto.TLMessagesCreateChat34A818) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.MessagesCreateChat34A818(ctx, in)
+}
+
+// MessagesGetAllChats
+// messages.getAllChats#875f74be except_ids:Vector<long> = messages.Chats;
+func (m *defaultChatsClient) MessagesGetAllChats(ctx context.Context, in *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.MessagesGetAllChats(ctx, in)
+}
+
 // MessagesGetMessageReadParticipants2C6F97B7
 // messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
 func (m *defaultChatsClient) MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
 	return client.MessagesGetMessageReadParticipants2C6F97B7(ctx, in)
+}
+
+// MessagesCreateChat9CB126E
+// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
+func (m *defaultChatsClient) MessagesCreateChat9CB126E(ctx context.Context, in *mtproto.TLMessagesCreateChat9CB126E) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.MessagesCreateChat9CB126E(ctx, in)
 }

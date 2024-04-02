@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -77,18 +77,18 @@ func (s *Service) MessagesEditChatPhoto(ctx context.Context, request *mtproto.TL
 	return r, err
 }
 
-// MessagesAddChatUser
-// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
-func (s *Service) MessagesAddChatUser(ctx context.Context, request *mtproto.TLMessagesAddChatUser) (*mtproto.Updates, error) {
+// MessagesAddChatUserCBC6D107
+// messages.addChatUser#cbc6d107 chat_id:long user_id:InputUser fwd_limit:int = messages.InvitedUsers;
+func (s *Service) MessagesAddChatUserCBC6D107(ctx context.Context, request *mtproto.TLMessagesAddChatUserCBC6D107) (*mtproto.Messages_InvitedUsers, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.addChatUser - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("messages.addChatUserCBC6D107 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.MessagesAddChatUser(request)
+	r, err := c.MessagesAddChatUserCBC6D107(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.addChatUser - reply: %s", r.DebugString())
+	c.Logger.Debugf("messages.addChatUserCBC6D107 - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -107,18 +107,18 @@ func (s *Service) MessagesDeleteChatUser(ctx context.Context, request *mtproto.T
 	return r, err
 }
 
-// MessagesCreateChat
-// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
-func (s *Service) MessagesCreateChat(ctx context.Context, request *mtproto.TLMessagesCreateChat) (*mtproto.Updates, error) {
+// MessagesCreateChat92CEDDD4
+// messages.createChat#92ceddd4 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = messages.InvitedUsers;
+func (s *Service) MessagesCreateChat92CEDDD4(ctx context.Context, request *mtproto.TLMessagesCreateChat92CEDDD4) (*mtproto.Messages_InvitedUsers, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.createChat - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("messages.createChat92CEDDD4 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
-	r, err := c.MessagesCreateChat(request)
+	r, err := c.MessagesCreateChat92CEDDD4(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.createChat - reply: %s", r.DebugString())
+	c.Logger.Debugf("messages.createChat92CEDDD4 - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -164,21 +164,6 @@ func (s *Service) MessagesGetCommonChats(ctx context.Context, request *mtproto.T
 	}
 
 	c.Logger.Debugf("messages.getCommonChats - reply: %s", r.DebugString())
-	return r, err
-}
-
-// MessagesGetAllChats
-// messages.getAllChats#875f74be except_ids:Vector<long> = messages.Chats;
-func (s *Service) MessagesGetAllChats(ctx context.Context, request *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getAllChats - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
-
-	r, err := c.MessagesGetAllChats(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.getAllChats - reply: %s", r.DebugString())
 	return r, err
 }
 
@@ -257,6 +242,51 @@ func (s *Service) ChannelsConvertToGigagroup(ctx context.Context, request *mtpro
 	return r, err
 }
 
+// MessagesAddChatUserF24753E3
+// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
+func (s *Service) MessagesAddChatUserF24753E3(ctx context.Context, request *mtproto.TLMessagesAddChatUserF24753E3) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.addChatUserF24753E3 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesAddChatUserF24753E3(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.addChatUserF24753E3 - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesCreateChat34A818
+// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
+func (s *Service) MessagesCreateChat34A818(ctx context.Context, request *mtproto.TLMessagesCreateChat34A818) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.createChat34A818 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesCreateChat34A818(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.createChat34A818 - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetAllChats
+// messages.getAllChats#875f74be except_ids:Vector<long> = messages.Chats;
+func (s *Service) MessagesGetAllChats(ctx context.Context, request *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getAllChats - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetAllChats(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getAllChats - reply: %s", r.DebugString())
+	return r, err
+}
+
 // MessagesGetMessageReadParticipants2C6F97B7
 // messages.getMessageReadParticipants#2c6f97b7 peer:InputPeer msg_id:int = Vector<long>;
 func (s *Service) MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context, request *mtproto.TLMessagesGetMessageReadParticipants2C6F97B7) (*mtproto.Vector_Long, error) {
@@ -269,5 +299,20 @@ func (s *Service) MessagesGetMessageReadParticipants2C6F97B7(ctx context.Context
 	}
 
 	c.Logger.Debugf("messages.getMessageReadParticipants2C6F97B7 - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesCreateChat9CB126E
+// messages.createChat#9cb126e users:Vector<InputUser> title:string = Updates;
+func (s *Service) MessagesCreateChat9CB126E(ctx context.Context, request *mtproto.TLMessagesCreateChat9CB126E) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.createChat9CB126E - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesCreateChat9CB126E(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.createChat9CB126E - reply: %s", r.DebugString())
 	return r, err
 }

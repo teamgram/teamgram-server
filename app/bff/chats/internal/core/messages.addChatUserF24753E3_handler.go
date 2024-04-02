@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,8 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (c *SponsoredMessagesCore) ChannelsGetSponsoredMessages(in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
-	// disable SponsoredMessages
-	return mtproto.MakeTLMessagesSponsoredMessages(&mtproto.Messages_SponsoredMessages{
-		Messages: []*mtproto.SponsoredMessage{},
-		Chats:    []*mtproto.Chat{},
-		Users:    []*mtproto.User{},
-	}).To_Messages_SponsoredMessages(), nil
+// MessagesAddChatUserF24753E3
+// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
+func (c *ChatsCore) MessagesAddChatUserF24753E3(in *mtproto.TLMessagesAddChatUserF24753E3) (*mtproto.Updates, error) {
+	return c.addChatUser(in.ChatId, in.UserId, in.FwdLimit)
 }

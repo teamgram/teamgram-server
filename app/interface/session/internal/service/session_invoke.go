@@ -333,6 +333,35 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
+func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithBusinessConnection) {
+	logx.Infof("onInvokeWithBusinessConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+		c,
+		gatewayId,
+		msgId.msgId,
+		msgId.msgId,
+		reflect.TypeOf(request))
+
+	if request.GetQuery() == nil {
+		logx.Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
+		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
+		return
+	}
+
+	dBuf := mtproto.NewDecodeBuf(request.Query)
+	query := dBuf.Object()
+	if dBuf.GetError() != nil {
+		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		return
+	}
+
+	if query == nil {
+		logx.Errorf("decode buf is nil, query: %v", query)
+		return
+	}
+
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+}
+
 func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
 	logx.Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,

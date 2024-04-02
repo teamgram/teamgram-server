@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,11 +22,16 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// ChannelsClickSponsoredMessage
-// channels.clickSponsoredMessage#18afbc93 channel:InputChannel random_id:bytes = Bool;
-func (c *SponsoredMessagesCore) ChannelsClickSponsoredMessage(in *mtproto.TLChannelsClickSponsoredMessage) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("channels.clickSponsoredMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+// MessagesAddChatUserCBC6D107
+// messages.addChatUser#cbc6d107 chat_id:long user_id:InputUser fwd_limit:int = messages.InvitedUsers;
+func (c *ChatsCore) MessagesAddChatUserCBC6D107(in *mtproto.TLMessagesAddChatUserCBC6D107) (*mtproto.Messages_InvitedUsers, error) {
+	rV, err := c.addChatUser(in.ChatId, in.UserId, in.FwdLimit)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLMessagesInvitedUsers(&mtproto.Messages_InvitedUsers{
+		Updates:         rV,
+		MissingInvitees: []*mtproto.MissingInvitee{},
+	}).To_Messages_InvitedUsers(), nil
 }

@@ -27,12 +27,10 @@ import (
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesAddChatUser
-// messages.addChatUser#f24753e3 chat_id:long user_id:InputUser fwd_limit:int = Updates;
-func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtproto.Updates, error) {
+func (c *ChatsCore) addChatUser(chatId int64, userId *mtproto.InputUser, fwdLimit int32) (*mtproto.Updates, error) {
 	var (
 		err       error
-		addUser   = mtproto.FromInputUser(c.MD.UserId, in.UserId)
+		addUser   = mtproto.FromInputUser(c.MD.UserId, userId)
 		chat      *mtproto.MutableChat
 		inviterId int64
 		isBot     = false
@@ -104,7 +102,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 	}
 
 	chat, err = c.svcCtx.Dao.ChatClient.Client().ChatAddChatUser(c.ctx, &chatpb.TLChatAddChatUser{
-		ChatId:    in.ChatId,
+		ChatId:    chatId,
 		InviterId: inviterId,
 		UserId:    addUser.PeerId,
 		IsBot:     isBot,
@@ -124,7 +122,7 @@ func (c *ChatsCore) MessagesAddChatUser(in *mtproto.TLMessagesAddChatUser) (*mtp
 		UserId:    fromId,
 		AuthKeyId: c.MD.AuthId,
 		PeerType:  mtproto.PEER_CHAT,
-		PeerId:    in.ChatId,
+		PeerId:    chatId,
 		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
 			NoWebpage:    true,
 			Background:   false,

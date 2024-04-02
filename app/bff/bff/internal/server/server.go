@@ -39,7 +39,6 @@ import (
 	photos_helper "github.com/teamgram/teamgram-server/app/bff/photos"
 	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
-	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
@@ -264,13 +263,6 @@ func (s *Server) Initialize() error {
 			nsfw_helper.New(nsfw_helper.Config{
 				RpcServerConf: c.RpcServerConf,
 				UserClient:    c.BizServiceClient,
-			}))
-
-		// sponsoredmessages_helper
-		mtproto.RegisterRPCSponsoredMessagesServer(
-			grpcServer,
-			sponsoredmessages_helper.New(sponsoredmessages_helper.Config{
-				RpcServerConf: c.RpcServerConf,
 			}))
 
 		// account_helper

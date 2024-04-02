@@ -422,6 +422,8 @@ func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, in
 		c.onInvokeWithMessagesRange(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithMessagesRange))
 	case *mtproto.TLInvokeWithTakeout:
 		c.onInvokeWithTakeout(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithTakeout))
+	case *mtproto.TLInvokeWithBusinessConnection:
+		c.onInvokeWithBusinessConnection(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithBusinessConnection))
 	case *mtproto.TLInitConnection:
 		c.onInitConnection(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInitConnection))
 	case *mtproto.TLGzipPacked:

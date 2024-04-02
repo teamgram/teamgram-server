@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +16,14 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package dao
+package core
 
-type Dao struct {
-}
+import (
+	"github.com/teamgram/proto/mtproto"
+)
 
-func New() *Dao {
-	return new(Dao)
+// MessagesCreateChat34A818
+// messages.createChat#34a818 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = Updates;
+func (c *ChatsCore) MessagesCreateChat34A818(in *mtproto.TLMessagesCreateChat34A818) (*mtproto.Updates, error) {
+	return c.createChat(in.Users, in.Title, in.GetTtlPeriod().GetValue())
 }
