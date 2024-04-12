@@ -268,7 +268,7 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	// tdesktop: code = 16, 17, 64会重发，我们不要检查container里的msgId和seqNo
 	//
 	if !c.checkBadMsgNotification(ctx, gatewayId, false, msg) {
-		// log.Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, gatewayId)
+		logx.Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, gatewayId)
 		return
 	}
 

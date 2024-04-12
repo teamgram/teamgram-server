@@ -278,12 +278,12 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 				errorCode = kMsgIdTooLow
 				logx.Errorf("bad server time from msg_id: %d, my time: %d", clientTime, serverTime)
 
-				break
+				// break
 			}
 			if clientTime > serverTime+60 {
 				errorCode = kMsgIdTooHigh
 				logx.Errorf("bad server time from msg_id: %d, my time: %d", clientTime, serverTime)
-				break
+				// break
 			}
 		}
 
