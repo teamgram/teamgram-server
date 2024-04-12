@@ -100,6 +100,7 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 		FileReference: nil,
 		Date:          int32(r.DfsFileInfo.Mtime),
 		MimeType:      in.GetMedia().GetMimeType(),
+		Size2:         r.DfsFileInfo.GetFileSize(),
 		Size2_INT32:   int32(r.DfsFileInfo.GetFileSize()),
 		Size2_INT64:   r.DfsFileInfo.GetFileSize(),
 		Thumbs:        nil,

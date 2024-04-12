@@ -98,6 +98,7 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 			FileReference: []byte{}, // TODO(@benqi): gen file_reference
 			Date:          int32(time.Now().Unix()),
 			MimeType:      "video/mp4",
+			Size2:         fileInfo.GetFileSize(),
 			Size2_INT32:   int32(fileInfo.GetFileSize()),
 			Size2_INT64:   fileInfo.GetFileSize(),
 			Thumbs:        nil,
@@ -198,6 +199,7 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 			FileReference: []byte{}, // TODO(@benqi): gen file_reference
 			Date:          int32(time.Now().Unix()),
 			MimeType:      "video/mp4",
+			Size2:         fileInfo.GetFileSize(),
 			Size2_INT32:   int32(fileInfo.GetFileSize()),
 			Size2_INT64:   fileInfo.GetFileSize(),
 			Thumbs:        szList,

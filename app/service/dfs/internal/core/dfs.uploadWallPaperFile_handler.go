@@ -156,6 +156,7 @@ func (c *DfsCore) DfsUploadWallPaperFile(in *dfs.TLDfsUploadWallPaperFile) (*mtp
 		FileReference: []byte{}, // TODO(@benqi): gen file_reference
 		Date:          int32(time.Now().Unix()),
 		MimeType:      in.GetMimeType(),
+		Size2:         int64(len(cacheData)),
 		Size2_INT32:   int32(len(cacheData)),
 		Size2_INT64:   int64(len(cacheData)),
 		Thumbs:        szList,
