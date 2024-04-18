@@ -163,7 +163,7 @@ func (ctx *connContext) getHandshakeStateCtx(nonce []byte) *HandshakeStateCtx {
 	return nil
 }
 
-func (ctx *connContext) putHandshakeStateCt(state *HandshakeStateCtx) {
+func (ctx *connContext) putHandshakeStateCtx(state *HandshakeStateCtx) {
 	ctx.Lock()
 	defer ctx.Unlock()
 
@@ -319,7 +319,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 			conn.Close()
 			return err
 		}
-		ctx.putHandshakeStateCt(&HandshakeStateCtx{
+		ctx.putHandshakeStateCtx(&HandshakeStateCtx{
 			State:       STATE_pq_res,
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),
@@ -333,7 +333,7 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 			conn.Close()
 			return err
 		}
-		ctx.putHandshakeStateCt(&HandshakeStateCtx{
+		ctx.putHandshakeStateCtx(&HandshakeStateCtx{
 			State:       STATE_pq_res,
 			Nonce:       resPQ.GetNonce(),
 			ServerNonce: resPQ.GetServerNonce(),

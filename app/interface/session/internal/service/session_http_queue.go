@@ -40,7 +40,7 @@ func newHttpRequestQueue() *httpRequestQueue {
 
 func (q *httpRequestQueue) Push(resChan chan interface{}) {
 	q.q.PushBack(&httpReqItem{
-		expireTime: time.Now().Unix() + 25,
+		expireTime: time.Now().Unix() + 3,
 		resChan:    resChan,
 	})
 }

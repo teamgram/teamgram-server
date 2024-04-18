@@ -20,6 +20,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	sessionpb "github.com/teamgram/teamgram-server/app/interface/session/session"
@@ -116,8 +117,54 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, r *sessionpb.TLS
 }
 
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, r *sessionpb.TLSessionSendHttpDataToSession) (res *sessionpb.HttpSessionData, err error) {
-	logx.WithContext(ctx).Errorf("not impl session.sendHttpDataToSession")
-	return nil, mtproto.ErrMethodNotImpl
+	logx.WithContext(ctx).Debugf("session.sendHttpDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		r.GetClient().GetServerId(),
+		r.GetClient().GetConnType(),
+		r.GetClient().GetAuthKeyId(),
+		r.GetClient().GetSessionId(),
+		r.GetClient().GetClientIp(),
+		r.GetClient().GetQuickAck(),
+		r.GetClient().GetSalt(),
+		len(r.GetClient().GetPayload()))
+
+	var (
+		sessList *authSessions
+		ok       bool
+		data     = r.GetClient()
+	)
+
+	s.mu.RLock()
+	sessList, ok = s.sessionsManager[data.GetAuthKeyId()]
+	s.mu.RUnlock()
+
+	if !ok {
+		sessList, err = newAuthSessions(data.GetAuthKeyId(), s)
+		if err != nil {
+			logx.WithContext(ctx).Errorf("session.createSession - newAuthSessions error: %v", err)
+			return nil, err
+		}
+
+		s.mu.Lock()
+		s.sessionsManager[data.GetAuthKeyId()] = sessList
+		s.mu.Unlock()
+	}
+
+	chData := make(chan interface{})
+	sessList.sessionHttpDataArrived(ctx, data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload(), chData)
+
+	timer := time.NewTimer(time.Second * 7)
+	select {
+	case cData := <-chData:
+		return &sessionpb.HttpSessionData{
+			Payload: cData.([]byte),
+		}, nil
+	case <-timer.C:
+		logx.WithContext(ctx).Errorf("chData timeout...")
+	}
+
+	return &sessionpb.HttpSessionData{
+		Payload: []byte{},
+	}, nil
 }
 
 func (s *Service) SessionQueryAuthKey(ctx context.Context, r *sessionpb.TLSessionQueryAuthKey) (*mtproto.AuthKeyInfo, error) {
