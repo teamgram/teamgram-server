@@ -161,7 +161,16 @@ func (d *Dao) GetLangPack(ctx context.Context, authKeyId int64) string {
 		logx.WithContext(ctx).Errorf("not find lang_pack - keyId = %d", authKeyId)
 		return ""
 	}
-	return cData.LangPack()
+
+	c := cData.LangPack()
+	if c == "" {
+		if strings.HasSuffix(cData.AppVersion(), " A") {
+			c = "weba"
+		} else if strings.HasSuffix(cData.AppVersion(), " Z") {
+			c = "weba"
+		}
+	}
+	return c
 }
 
 func (d *Dao) GetClient(ctx context.Context, authKeyId int64) string {
@@ -176,8 +185,10 @@ func (d *Dao) GetClient(ctx context.Context, authKeyId int64) string {
 			c = "react"
 		}
 	} else if c == "" {
-		if strings.HasSuffix(cData.AppVersion(), " Z") {
-			c = "webz"
+		if strings.HasSuffix(cData.AppVersion(), " A") {
+			c = "weba"
+		} else if strings.HasSuffix(cData.AppVersion(), " Z") {
+			c = "weba"
 		}
 	}
 	return c
