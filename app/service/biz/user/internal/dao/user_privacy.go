@@ -44,6 +44,7 @@ var (
 	userPrivacyKeyAddedByPhonePrefix    = "user_privacy_added_by_phone"
 	userPrivacyKeyVoiceMessagesPrefix   = "user_privacy_voice_messages"
 	userPrivacyKeyAboutPrefix           = "user_privacy_about"
+	userPrivacyKeyBirthdayPrefix        = "user_privacy_birthday"
 )
 
 func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
@@ -68,6 +69,8 @@ func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
 		return genUserPrivacyKeyVoiceMessagesPrefix(id)
 	case user.ABOUT:
 		return genUserPrivacyKeyAboutPrefix(id)
+	case user.BIRTHDAY:
+		return genUserPrivacyKeyBirthdayPrefix(id)
 	default:
 		return ""
 	}
@@ -111,6 +114,10 @@ func genUserPrivacyKeyVoiceMessagesPrefix(id int64) string {
 
 func genUserPrivacyKeyAboutPrefix(id int64) string {
 	return fmt.Sprintf("%s_%d", userPrivacyKeyAboutPrefix, id)
+}
+
+func genUserPrivacyKeyBirthdayPrefix(id int64) string {
+	return fmt.Sprintf("%s_%d", userPrivacyKeyBirthdayPrefix, id)
 }
 
 func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys ...int32) []*mtproto.PrivacyKeyRules {

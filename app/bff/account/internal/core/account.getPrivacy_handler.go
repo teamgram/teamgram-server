@@ -51,6 +51,13 @@ func (c *AccountCore) AccountGetPrivacy(in *mtproto.TLAccountGetPrivacy) (*mtpro
 				Users: []*mtproto.User{},
 				Chats: []*mtproto.Chat{},
 			}).To_Account_PrivacyRules()
+		} else if key == userpb.BIRTHDAY {
+			// Birthday default privacy rules is allow contacts
+			rVal = mtproto.MakeTLAccountPrivacyRules(&mtproto.Account_PrivacyRules{
+				Rules: []*mtproto.PrivacyRule{mtproto.MakeTLPrivacyValueAllowContacts(nil).To_PrivacyRule()},
+				Users: []*mtproto.User{},
+				Chats: []*mtproto.Chat{},
+			}).To_Account_PrivacyRules()
 		} else {
 			rVal = mtproto.MakeTLAccountPrivacyRules(&mtproto.Account_PrivacyRules{
 				Rules: []*mtproto.PrivacyRule{mtproto.MakeTLPrivacyValueAllowAll(nil).To_PrivacyRule()},

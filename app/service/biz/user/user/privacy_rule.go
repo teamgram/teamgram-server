@@ -32,7 +32,8 @@ const (
 	DISALLOW_USERS             = 6
 	ALLOW_CHAT_PARTICIPANTS    = 7
 	DISALLOW_CHAT_PARTICIPANTS = 8
-	ALLOW_CLOSE_FRIENDS        = 10
+	ALLOW_CLOSE_FRIENDS        = 9
+	ALLOW_PREMIUM              = 10
 )
 
 /*
@@ -61,6 +62,7 @@ const (
 	ADDED_BY_PHONE   = 8
 	VOICE_MESSAGES   = 9
 	ABOUT            = 10
+	BIRTHDAY         = 11
 )
 
 func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
@@ -85,6 +87,8 @@ func FromInputPrivacyKeyType(k *mtproto.InputPrivacyKey) int {
 		return VOICE_MESSAGES
 	case mtproto.Predicate_inputPrivacyKeyAbout:
 		return ABOUT
+	case mtproto.Predicate_inputPrivacyKeyBirthday:
+		return BIRTHDAY
 	}
 	return KEY_TYPE_INVALID
 }
@@ -111,6 +115,8 @@ func ToPrivacyKey(keyType int) (key *mtproto.PrivacyKey) {
 		key = mtproto.MakeTLPrivacyKeyVoiceMessages(nil).To_PrivacyKey()
 	case ABOUT:
 		key = mtproto.MakeTLPrivacyKeyAbout(nil).To_PrivacyKey()
+	case BIRTHDAY:
+		key = mtproto.MakeTLPrivacyKeyBirthday(nil).To_PrivacyKey()
 	default:
 		panic("type is invalid")
 	}
@@ -158,6 +164,8 @@ func ToPrivacyRuleByInput(userSelfId int64, inputRule *mtproto.InputPrivacyRule)
 		}).To_PrivacyRule()
 	case mtproto.Predicate_inputPrivacyValueAllowCloseFriends:
 		return mtproto.MakeTLPrivacyValueAllowCloseFriends(nil).To_PrivacyRule()
+	case mtproto.Predicate_inputPrivacyValueAllowPremium:
+		return mtproto.MakeTLPrivacyValueAllowPremium(nil).To_PrivacyRule()
 	default:
 		// log.Errorf("type is invalid")
 	}
