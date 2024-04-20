@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -224,6 +224,21 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	}
 
 	c.Logger.Debugf("account.setGlobalPrivacySettings - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AccountUpdateBirthday
+// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
+func (s *Service) AccountUpdateBirthday(ctx context.Context, request *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.updateBirthday - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountUpdateBirthday(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.updateBirthday - reply: %s", r.DebugString())
 	return r, err
 }
 

@@ -346,3 +346,18 @@ func (s *Service) ContactsSetBlocked(ctx context.Context, request *mtproto.TLCon
 	c.Logger.Debugf("contacts.setBlocked - reply: %s", r.DebugString())
 	return r, err
 }
+
+// ContactsGetBirthdays
+// contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
+func (s *Service) ContactsGetBirthdays(ctx context.Context, request *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.getBirthdays - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.ContactsGetBirthdays(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.getBirthdays - reply: %s", r.DebugString())
+	return r, err
+}

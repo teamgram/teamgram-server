@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package contacts_client
+package contactsclient
 
 import (
 	"context"
@@ -43,6 +43,7 @@ type ContactsClient interface {
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
 	ContactsEditCloseFriends(ctx context.Context, in *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error)
+	ContactsGetBirthdays(ctx context.Context, in *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error)
 }
 
 type defaultContactsClient struct {
@@ -207,4 +208,11 @@ func (m *defaultContactsClient) ContactsEditCloseFriends(ctx context.Context, in
 func (m *defaultContactsClient) ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsSetBlocked(ctx, in)
+}
+
+// ContactsGetBirthdays
+// contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
+func (m *defaultContactsClient) ContactsGetBirthdays(ctx context.Context, in *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsGetBirthdays(ctx, in)
 }

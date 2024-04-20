@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package account_client
+package accountclient
 
 import (
 	"context"
@@ -35,6 +35,7 @@ type AccountClient interface {
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
+	AccountUpdateBirthday(ctx context.Context, in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 	AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error)
@@ -146,6 +147,13 @@ func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Conte
 func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
+}
+
+// AccountUpdateBirthday
+// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
+func (m *defaultAccountClient) AccountUpdateBirthday(ctx context.Context, in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.AccountUpdateBirthday(ctx, in)
 }
 
 // MessagesSetDefaultHistoryTTL
