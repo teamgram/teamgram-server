@@ -1159,7 +1159,7 @@ func (s *Service) UserSetStoriesMaxId(ctx context.Context, request *user.TLUserS
 }
 
 // UserSetColor
-// user.setColor flags:# for_profile:flags.1?true color:int background_emoji_id:long = Bool;
+// user.setColor flags:# user_id:long for_profile:flags.1?true color:int background_emoji_id:long = Bool;
 func (s *Service) UserSetColor(ctx context.Context, request *user.TLUserSetColor) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.setColor - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -1170,5 +1170,35 @@ func (s *Service) UserSetColor(ctx context.Context, request *user.TLUserSetColor
 	}
 
 	c.Logger.Debugf("user.setColor - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserUpdateBirthday
+// user.updateBirthday flags:# user_id:long birthday:flags.1?Birthday = Bool;
+func (s *Service) UserUpdateBirthday(ctx context.Context, request *user.TLUserUpdateBirthday) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.updateBirthday - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserUpdateBirthday(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.updateBirthday - reply: %s", r.DebugString())
+	return r, err
+}
+
+// UserGetBirthdays
+// user.getBirthdays user_id:long = Vector<ContactBirthday>;
+func (s *Service) UserGetBirthdays(ctx context.Context, request *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getBirthdays - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserGetBirthdays(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getBirthdays - reply: %s", r.DebugString())
 	return r, err
 }

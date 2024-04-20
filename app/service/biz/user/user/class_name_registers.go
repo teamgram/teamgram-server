@@ -93,6 +93,8 @@ const (
 	Predicate_user_editCloseFriends                 = "user_editCloseFriends"
 	Predicate_user_setStoriesMaxId                  = "user_setStoriesMaxId"
 	Predicate_user_setColor                         = "user_setColor"
+	Predicate_user_updateBirthday                   = "user_updateBirthday"
+	Predicate_user_getBirthdays                     = "user_getBirthdays"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -424,6 +426,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 586812791, // 0x22fa0d77
 
 	},
+	Predicate_user_updateBirthday: {
+		0: 1484434322, // 0x587aab92
+
+	},
+	Predicate_user_getBirthdays: {
+		0: -24199258, // 0xfe8ebfa6
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -509,6 +519,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-2044429563: Predicate_user_editCloseFriends,                 // 0x86247b05
 	1391834736:  Predicate_user_setStoriesMaxId,                  // 0x52f5b670
 	586812791:   Predicate_user_setColor,                         // 0x22fa0d77
+	1484434322:  Predicate_user_updateBirthday,                   // 0x587aab92
+	-24199258:   Predicate_user_getBirthdays,                     // 0xfe8ebfa6
 
 }
 

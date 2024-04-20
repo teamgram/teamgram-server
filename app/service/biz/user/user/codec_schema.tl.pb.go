@@ -442,6 +442,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 586812791,
 		}
 	},
+	1484434322: func() mtproto.TLObject { // 0x587aab92
+		return &TLUserUpdateBirthday{
+			Constructor: 1484434322,
+		}
+	},
+	-24199258: func() mtproto.TLObject { // 0xfe8ebfa6
+		return &TLUserGetBirthdays{
+			Constructor: -24199258,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -5109,6 +5119,112 @@ func (m *TLUserSetColor) DebugString() string {
 	return dbgString
 }
 
+// TLUserUpdateBirthday
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserUpdateBirthday) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x587aab92:
+		x.UInt(0x587aab92)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetBirthday() != nil {
+			flags |= 1 << 1
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		if m.GetBirthday() != nil {
+			m.GetBirthday().Encode(x, layer)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserUpdateBirthday) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserUpdateBirthday) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x587aab92:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 1)) != 0 {
+			m3 := &mtproto.Birthday{}
+			m3.Decode(dBuf)
+			m.Birthday = m3
+		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserUpdateBirthday) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// TLUserGetBirthdays
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetBirthdays) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xfe8ebfa6:
+		x.UInt(0xfe8ebfa6)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserGetBirthdays) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetBirthdays) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfe8ebfa6:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserGetBirthdays) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
 // ----------------------------------------------------------------------------------------------------------------
 // Vector_LastSeenData
 // /////////////////////////////////////////////////////////////////////////////
@@ -5145,7 +5261,7 @@ func (m *Vector_LastSeenData) DebugString() string {
 }
 
 // Vector_ImmutableUser
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ImmutableUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5179,7 +5295,7 @@ func (m *Vector_ImmutableUser) DebugString() string {
 }
 
 // Vector_PeerPeerNotifySettings
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5213,7 +5329,7 @@ func (m *Vector_PeerPeerNotifySettings) DebugString() string {
 }
 
 // Vector_PrivacyRule
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PrivacyRule) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5247,7 +5363,7 @@ func (m *Vector_PrivacyRule) DebugString() string {
 }
 
 // Vector_PredefinedUser
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5281,7 +5397,7 @@ func (m *Vector_PredefinedUser) DebugString() string {
 }
 
 // Vector_Long
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
@@ -5305,7 +5421,7 @@ func (m *Vector_Long) DebugString() string {
 }
 
 // Vector_PeerBlocked
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerBlocked) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5339,7 +5455,7 @@ func (m *Vector_PeerBlocked) DebugString() string {
 }
 
 // Vector_ContactData
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5373,7 +5489,7 @@ func (m *Vector_ContactData) DebugString() string {
 }
 
 // Vector_InputContact
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_InputContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5407,7 +5523,7 @@ func (m *Vector_InputContact) DebugString() string {
 }
 
 // Vector_UserData
-// /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5435,6 +5551,40 @@ func (m *Vector_UserData) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserData) DebugString() string {
+	jsonm := &jsonpb.Marshaler{OrigName: true}
+	dbgString, _ := jsonm.MarshalToString(m)
+	return dbgString
+}
+
+// Vector_ContactBirthday
+///////////////////////////////////////////////////////////////////////////////
+func (m *Vector_ContactBirthday) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		v.Encode(x, layer)
+	}
+
+	return nil
+}
+
+func (m *Vector_ContactBirthday) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*mtproto.ContactBirthday, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(mtproto.ContactBirthday)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_ContactBirthday) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *Vector_ContactBirthday) DebugString() string {
 	jsonm := &jsonpb.Marshaler{OrigName: true}
 	dbgString, _ := jsonm.MarshalToString(m)
 	return dbgString

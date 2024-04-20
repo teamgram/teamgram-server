@@ -171,6 +171,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		StoriesMaxId:       userDO.StoriesMaxId,
 		Color:              makePeerColor(userDO.Color, userDO.ColorBackgroundEmojiId),
 		ProfileColor:       makePeerColor(userDO.ProfileColor, userDO.ProfileColorBackgroundEmojiId),
+		Birthday:           userDO.Birthday,
 	}).To_UserData()
 
 	return userData

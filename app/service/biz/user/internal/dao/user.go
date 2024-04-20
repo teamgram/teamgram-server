@@ -510,3 +510,29 @@ func (d *Dao) UpdateColor(ctx context.Context, id int64, forProfile bool, color 
 
 	return true
 }
+
+func (d *Dao) UpdateBirthday(ctx context.Context, id int64, birthday *mtproto.Birthday) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			var (
+				err          error
+				rowsAffected int64
+			)
+
+			rowsAffected, err = d.UsersDAO.UpdateBirthday(ctx, birthday.ToBirthdayString(), id)
+
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updateBirthday - error: %v", err)
+		return false
+	}
+
+	return true
+}

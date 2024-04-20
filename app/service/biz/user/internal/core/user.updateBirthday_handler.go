@@ -23,17 +23,13 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// AccountUpdateBirthday
-// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
-func (c *AccountCore) AccountUpdateBirthday(in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
-	rV, err := c.svcCtx.Dao.UserClient.UserUpdateBirthday(c.ctx, &user.TLUserUpdateBirthday{
-		UserId:   c.MD.UserId,
-		Birthday: in.GetBirthday(),
-	})
-	if err != nil {
-		c.Logger.Errorf("account.updateBirthday - error: %v", err)
-		return nil, err
-	}
+// UserUpdateBirthday
+// user.updateBirthday flags:# user_id:long birthday:flags.1?Birthday = Bool;
+func (c *UserCore) UserUpdateBirthday(in *user.TLUserUpdateBirthday) (*mtproto.Bool, error) {
+	rB := c.svcCtx.Dao.UpdateBirthday(
+		c.ctx,
+		in.GetUserId(),
+		in.GetBirthday())
 
-	return rV, nil
+	return mtproto.ToBool(rB), nil
 }

@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package user_client
+package userclient
 
 import (
 	"context"
@@ -99,6 +99,8 @@ type UserClient interface {
 	UserEditCloseFriends(ctx context.Context, in *user.TLUserEditCloseFriends) (*mtproto.Bool, error)
 	UserSetStoriesMaxId(ctx context.Context, in *user.TLUserSetStoriesMaxId) (*mtproto.Bool, error)
 	UserSetColor(ctx context.Context, in *user.TLUserSetColor) (*mtproto.Bool, error)
+	UserUpdateBirthday(ctx context.Context, in *user.TLUserUpdateBirthday) (*mtproto.Bool, error)
+	UserGetBirthdays(ctx context.Context, in *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error)
 }
 
 type defaultUserClient struct {
@@ -644,8 +646,22 @@ func (m *defaultUserClient) UserSetStoriesMaxId(ctx context.Context, in *user.TL
 }
 
 // UserSetColor
-// user.setColor flags:# for_profile:flags.1?true color:int background_emoji_id:long = Bool;
+// user.setColor flags:# user_id:long for_profile:flags.1?true color:int background_emoji_id:long = Bool;
 func (m *defaultUserClient) UserSetColor(ctx context.Context, in *user.TLUserSetColor) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserSetColor(ctx, in)
+}
+
+// UserUpdateBirthday
+// user.updateBirthday flags:# user_id:long birthday:flags.1?Birthday = Bool;
+func (m *defaultUserClient) UserUpdateBirthday(ctx context.Context, in *user.TLUserUpdateBirthday) (*mtproto.Bool, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdateBirthday(ctx, in)
+}
+
+// UserGetBirthdays
+// user.getBirthdays user_id:long = Vector<ContactBirthday>;
+func (m *defaultUserClient) UserGetBirthdays(ctx context.Context, in *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetBirthdays(ctx, in)
 }

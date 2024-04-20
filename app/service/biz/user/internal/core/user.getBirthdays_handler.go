@@ -23,17 +23,11 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// AccountUpdateBirthday
-// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
-func (c *AccountCore) AccountUpdateBirthday(in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
-	rV, err := c.svcCtx.Dao.UserClient.UserUpdateBirthday(c.ctx, &user.TLUserUpdateBirthday{
-		UserId:   c.MD.UserId,
-		Birthday: in.GetBirthday(),
-	})
-	if err != nil {
-		c.Logger.Errorf("account.updateBirthday - error: %v", err)
-		return nil, err
-	}
+// UserGetBirthdays
+// user.getBirthdays user_id:long = Vector<ContactBirthday>;
+func (c *UserCore) UserGetBirthdays(in *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error) {
+	// TODO: not impl
+	c.Logger.Errorf("user.getBirthdays blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return rV, nil
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }

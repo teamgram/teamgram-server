@@ -149,11 +149,11 @@ func (dao *UsersDAO) InsertTestUserTx(tx *sqlx.Tx, do *dataobject.UsersDO) (last
 }
 
 // SelectByPhoneNumber
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone = :phone limit 1
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone = :phone limit 1
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone = ? limit 1"
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone = ? limit 1"
 		do    = &dataobject.UsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
@@ -173,11 +173,11 @@ func (dao *UsersDAO) SelectByPhoneNumber(ctx context.Context, phone string) (rVa
 }
 
 // SelectById
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id = :id limit 1
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id = :id limit 1
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id = ? limit 1"
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id = ? limit 1"
 		do    = &dataobject.UsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, id)
@@ -197,11 +197,11 @@ func (dao *UsersDAO) SelectById(ctx context.Context, id int64) (rValue *dataobje
 }
 
 // SelectNextTestUserId
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id < :maxId order by id desc limit 1
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id < :maxId order by id desc limit 1
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectNextTestUserId(ctx context.Context, maxId int64) (rValue *dataobject.UsersDO, err error) {
 	var (
-		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id < ? order by id desc limit 1"
+		query = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id < ? order by id desc limit 1"
 		do    = &dataobject.UsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, maxId)
@@ -221,11 +221,11 @@ func (dao *UsersDAO) SelectNextTestUserId(ctx context.Context, maxId int64) (rVa
 }
 
 // SelectUsersByIdList
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (:id_list)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (:id_list)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -253,11 +253,11 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, id_list []int64) (
 }
 
 // SelectUsersByIdListWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (:id_list)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (:id_list)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []int64, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -291,11 +291,11 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, id_list []in
 }
 
 // SelectUsersByPhoneList
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone in (:phoneList)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone in (:phoneList)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -323,11 +323,11 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 }
 
 // SelectUsersByPhoneListWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone in (:phoneList)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone in (:phoneList)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList []string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where phone in (?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where phone in (?)"
 		a      []interface{}
 		values []dataobject.UsersDO
 	)
@@ -1162,11 +1162,11 @@ func (dao *UsersDAO) UpdateProfileColorTx(tx *sqlx.Tx, profile_color int32, prof
 }
 
 // QueryChannelParticipants
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int64, q1 string, q2 string, q3 string) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
@@ -1182,11 +1182,11 @@ func (dao *UsersDAO) QueryChannelParticipants(ctx context.Context, channelId int
 }
 
 // QueryChannelParticipantsWithCB
-// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
+// select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = :channelId and state = 0) and (first_name like :q1 or last_name like :q2 or username like :q3)
 // TODO(@benqi): sqlmap
 func (dao *UsersDAO) QueryChannelParticipantsWithCB(ctx context.Context, channelId int64, q1 string, q2 string, q3 string, cb func(i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
+		query  = "select id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, deleted, delete_reason from users where id in (select user_id from channel_participants where channel_id = ? and state = 0) and (first_name like ? or last_name like ? or username like ?)"
 		values []dataobject.UsersDO
 	)
 	err = dao.db.QueryRowsPartial(ctx, &values, query, channelId, q1, q2, q3)
@@ -1266,6 +1266,52 @@ func (dao *UsersDAO) SelectBotsWithCB(ctx context.Context, id_list []int64, cb f
 		for i := 0; i < len(rList); i++ {
 			cb(i, rList[i])
 		}
+	}
+
+	return
+}
+
+// UpdateBirthday
+// update users set birthday = :birthday where id = :id
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) UpdateBirthday(ctx context.Context, birthday string, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update users set birthday = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = dao.db.Exec(ctx, query, birthday, id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateBirthday(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateBirthday(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateBirthdayTx
+// update users set birthday = :birthday where id = :id
+// TODO(@benqi): sqlmap
+func (dao *UsersDAO) UpdateBirthdayTx(tx *sqlx.Tx, birthday string, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update users set birthday = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, birthday, id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateBirthday(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateBirthday(_), error: %v", err)
 	}
 
 	return

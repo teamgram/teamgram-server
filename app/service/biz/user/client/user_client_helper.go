@@ -4,7 +4,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package user_client
+package userclient
 
 import (
 	"context"
