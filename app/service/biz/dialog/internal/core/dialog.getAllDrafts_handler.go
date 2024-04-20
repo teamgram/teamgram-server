@@ -13,7 +13,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
-	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 // DialogGetAllDrafts
@@ -28,17 +27,18 @@ func (c *DialogCore) DialogGetAllDrafts(in *dialog.TLDialogGetAllDrafts) (*dialo
 		if v.DraftMessageData == "" {
 			return
 		}
-		draft := new(mtproto.DraftMessage)
-		if err2 := jsonx.UnmarshalFromString(v.DraftMessageData, draft); err2 != nil {
-			c.Logger.Errorf("invalid draft: %v", v)
-			return
-		}
 
-		rValues.Datas = append(rValues.Datas,
-			dialog.MakeTLUpdateDraftMessage(&dialog.PeerWithDraftMessage{
-				Peer:  mtproto.MakePeer(v.PeerType, v.PeerId),
-				Draft: draft,
-			}).To_PeerWithDraftMessage())
+		var (
+			draft *mtproto.DraftMessage
+		)
+
+		if draft != nil {
+			rValues.Datas = append(rValues.Datas,
+				dialog.MakeTLUpdateDraftMessage(&dialog.PeerWithDraftMessage{
+					Peer:  mtproto.MakePeer(v.PeerType, v.PeerId),
+					Draft: draft,
+				}).To_PeerWithDraftMessage())
+		}
 	}); err != nil {
 		c.Logger.Errorf("dialog.getAllDrafts - error: %v", err)
 		return nil, err
