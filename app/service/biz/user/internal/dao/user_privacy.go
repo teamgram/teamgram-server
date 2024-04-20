@@ -27,8 +27,6 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/mr"
 )
@@ -49,27 +47,27 @@ var (
 
 func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
 	switch keyType {
-	case user.STATUS_TIMESTAMP:
+	case mtproto.STATUS_TIMESTAMP:
 		return genUserPrivacyKeyStatusTimestampPrefix(id)
-	case user.CHAT_INVITE:
+	case mtproto.CHAT_INVITE:
 		return genUserPrivacyKeyChatInvitePrefix(id)
-	case user.PHONE_CALL:
+	case mtproto.PHONE_CALL:
 		return genUserPrivacyKeyPhoneCallPrefix(id)
-	case user.PHONE_P2P:
+	case mtproto.PHONE_P2P:
 		return genUserPrivacyKeyPhoneP2PPrefix(id)
-	case user.FORWARDS:
+	case mtproto.FORWARDS:
 		return genUserPrivacyKeyForwardsPrefix(id)
-	case user.PROFILE_PHOTO:
+	case mtproto.PROFILE_PHOTO:
 		return genUserPrivacyKeyProfilePhotoPrefix(id)
-	case user.PHONE_NUMBER:
+	case mtproto.PHONE_NUMBER:
 		return genUserPrivacyKeyPhoneNumberPrefix(id)
-	case user.ADDED_BY_PHONE:
+	case mtproto.ADDED_BY_PHONE:
 		return genUserPrivacyKeyAddedByPhonePrefix(id)
-	case user.VOICE_MESSAGES:
+	case mtproto.VOICE_MESSAGES:
 		return genUserPrivacyKeyVoiceMessagesPrefix(id)
-	case user.ABOUT:
+	case mtproto.ABOUT:
 		return genUserPrivacyKeyAboutPrefix(id)
-	case user.BIRTHDAY:
+	case mtproto.BIRTHDAY:
 		return genUserPrivacyKeyBirthdayPrefix(id)
 	default:
 		return ""
@@ -206,9 +204,9 @@ func (d *Dao) SetUserPrivacyRules(ctx context.Context, id int64, key int32, rule
 
 	cacheKeys := []string{cacheKey}
 	switch key {
-	case user.STATUS_TIMESTAMP,
-		user.PROFILE_PHOTO,
-		user.PHONE_NUMBER:
+	case mtproto.STATUS_TIMESTAMP,
+		mtproto.PROFILE_PHOTO,
+		mtproto.PHONE_NUMBER:
 		cacheKeys = append(cacheKeys, genCacheUserDataCacheKey(id))
 	}
 

@@ -92,10 +92,10 @@ func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, tt
 			} else {
 				rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 					UserId:  addUser.Id(),
-					KeyType: userpb.CHAT_INVITE,
+					KeyType: mtproto.CHAT_INVITE,
 				})
 				if len(rules.Datas) > 0 {
-					allowAddChat := userpb.CheckPrivacyIsAllow(
+					allowAddChat := mtproto.CheckPrivacyIsAllow(
 						addUser.Id(),
 						rules.Datas,
 						c.MD.UserId,

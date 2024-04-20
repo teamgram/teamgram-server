@@ -113,13 +113,13 @@ func (c *MessagesCore) MessagesForwardMessages(in *mtproto.TLMessagesForwardMess
 func (c *MessagesCore) checkForwardPrivacy(ctx context.Context, selfUserId, checkId int64) bool {
 	rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 		UserId:  selfUserId,
-		KeyType: userpb.FORWARDS,
+		KeyType: mtproto.FORWARDS,
 	})
 
 	if len(rules.Datas) == 0 {
 		return true
 	}
-	return userpb.CheckPrivacyIsAllow(
+	return mtproto.CheckPrivacyIsAllow(
 		selfUserId,
 		rules.Datas,
 		checkId,

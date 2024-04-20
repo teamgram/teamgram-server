@@ -28,12 +28,12 @@ import (
 // account.getPrivacy#dadbc950 key:InputPrivacyKey = account.PrivacyRules;
 func (c *AccountCore) AccountGetPrivacy(in *mtproto.TLAccountGetPrivacy) (*mtproto.Account_PrivacyRules, error) {
 	var (
-		key  = userpb.FromInputPrivacyKeyType(in.Key)
+		key  = mtproto.FromInputPrivacyKeyType(in.Key)
 		rVal *mtproto.Account_PrivacyRules
 	)
 
 	// TODO(@benqi): Check request valid.
-	if key == userpb.KEY_TYPE_INVALID {
+	if key == mtproto.KEY_TYPE_INVALID {
 		err := mtproto.ErrPrivacyKeyInvalid
 		c.Logger.Errorf("account.getPrivacy - error: %v", err)
 		return nil, err
@@ -45,13 +45,13 @@ func (c *AccountCore) AccountGetPrivacy(in *mtproto.TLAccountGetPrivacy) (*mtpro
 	})
 
 	if len(ruleList.GetDatas()) == 0 {
-		if key == userpb.PHONE_NUMBER {
+		if key == mtproto.PHONE_NUMBER {
 			rVal = mtproto.MakeTLAccountPrivacyRules(&mtproto.Account_PrivacyRules{
 				Rules: []*mtproto.PrivacyRule{mtproto.MakeTLPrivacyValueDisallowAll(nil).To_PrivacyRule()},
 				Users: []*mtproto.User{},
 				Chats: []*mtproto.Chat{},
 			}).To_Account_PrivacyRules()
-		} else if key == userpb.BIRTHDAY {
+		} else if key == mtproto.BIRTHDAY {
 			// Birthday default privacy rules is allow contacts
 			rVal = mtproto.MakeTLAccountPrivacyRules(&mtproto.Account_PrivacyRules{
 				Rules: []*mtproto.PrivacyRule{mtproto.MakeTLPrivacyValueAllowContacts(nil).To_PrivacyRule()},

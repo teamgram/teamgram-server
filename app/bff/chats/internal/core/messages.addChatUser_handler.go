@@ -70,11 +70,11 @@ func (c *ChatsCore) addChatUser(chatId int64, userId *mtproto.InputUser, fwdLimi
 
 		rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 			UserId:  addUser.PeerId,
-			KeyType: userpb.CHAT_INVITE,
+			KeyType: mtproto.CHAT_INVITE,
 		})
 		if len(rules.Datas) > 0 {
 			// return true
-			allowAddChat := userpb.CheckPrivacyIsAllow(
+			allowAddChat := mtproto.CheckPrivacyIsAllow(
 				addUser.PeerId,
 				rules.Datas,
 				inviterId,

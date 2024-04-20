@@ -29,17 +29,17 @@ import (
 // account.setPrivacy#c9f81ce8 key:InputPrivacyKey rules:Vector<InputPrivacyRule> = account.PrivacyRules;
 func (c *AccountCore) AccountSetPrivacy(in *mtproto.TLAccountSetPrivacy) (*mtproto.Account_PrivacyRules, error) {
 	var (
-		key = userpb.FromInputPrivacyKeyType(in.Key)
+		key = mtproto.FromInputPrivacyKeyType(in.Key)
 	)
 
 	// TODO(@benqi): Check request valid.
-	if key == userpb.KEY_TYPE_INVALID {
+	if key == mtproto.KEY_TYPE_INVALID {
 		err := mtproto.ErrPrivacyKeyInvalid
 		c.Logger.Errorf("account.setPrivacy - error: %v", err)
 		return nil, err
 	}
 
-	ruleList := userpb.ToPrivacyRuleListByInput(c.MD.UserId, in.Rules)
+	ruleList := mtproto.ToPrivacyRuleListByInput(c.MD.UserId, in.Rules)
 
 	if _, err := c.svcCtx.Dao.UserClient.UserSetPrivacy(c.ctx, &userpb.TLUserSetPrivacy{
 		UserId:  c.MD.UserId,
@@ -56,7 +56,7 @@ func (c *AccountCore) AccountSetPrivacy(in *mtproto.TLAccountSetPrivacy) (*mtpro
 		Chats: []*mtproto.Chat{}, // TODO
 	}).To_Account_PrivacyRules()
 	syncUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePrivacy(&mtproto.Update{
-		Key:   userpb.ToPrivacyKey(key),
+		Key:   mtproto.ToPrivacyKey(key),
 		Rules: ruleList,
 	}).To_Update())
 

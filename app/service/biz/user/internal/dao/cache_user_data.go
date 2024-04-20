@@ -237,13 +237,13 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 			}
 		},
 		func() {
-			rules0, _ = d.GetUserPrivacyRules(ctx, id, user.STATUS_TIMESTAMP)
+			rules0, _ = d.GetUserPrivacyRules(ctx, id, mtproto.STATUS_TIMESTAMP)
 		},
 		func() {
-			rules1, _ = d.GetUserPrivacyRules(ctx, id, user.PROFILE_PHOTO)
+			rules1, _ = d.GetUserPrivacyRules(ctx, id, mtproto.PROFILE_PHOTO)
 		},
 		func() {
-			rules2, _ = d.GetUserPrivacyRules(ctx, id, user.PHONE_NUMBER)
+			rules2, _ = d.GetUserPrivacyRules(ctx, id, mtproto.PHONE_NUMBER)
 		})
 
 	if rules0 != nil {

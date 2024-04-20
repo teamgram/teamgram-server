@@ -20,7 +20,6 @@ package dao
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
@@ -69,7 +68,7 @@ func removeAllNil(contacts []*mtproto.ContactData) []*mtproto.ContactData {
 }
 
 func makeDefaultPrivacyRules(key int32) []*mtproto.PrivacyRule {
-	if key == userpb.PHONE_NUMBER {
+	if key == mtproto.PHONE_NUMBER {
 		return phoneNumberRules
 	} else {
 		return defaultRules

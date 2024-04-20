@@ -198,10 +198,10 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		func() {
 			rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
 				UserId:  peerId,
-				KeyType: userpb.VOICE_MESSAGES,
+				KeyType: mtproto.VOICE_MESSAGES,
 			})
 			if rules != nil && len(rules.Datas) > 0 {
-				allow := userpb.CheckPrivacyIsAllow(
+				allow := mtproto.CheckPrivacyIsAllow(
 					peerId,
 					rules.Datas,
 					c.MD.UserId,

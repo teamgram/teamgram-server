@@ -104,15 +104,15 @@ func (d *Dao) CreateNewUserV2(
 	cacheUserData.CachesPrivacyKeyRules = append(
 		cacheUserData.CachesPrivacyKeyRules,
 		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
-			Key:   user.STATUS_TIMESTAMP,
+			Key:   mtproto.STATUS_TIMESTAMP,
 			Rules: defaultRules,
 		}).To_PrivacyKeyRules(),
 		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
-			Key:   user.PHONE_NUMBER,
+			Key:   mtproto.PHONE_NUMBER,
 			Rules: phoneNumberRules,
 		}).To_PrivacyKeyRules(),
 		mtproto.MakeTLPrivacyKeyRules(&mtproto.PrivacyKeyRules{
-			Key:   user.PROFILE_PHOTO,
+			Key:   mtproto.PROFILE_PHOTO,
 			Rules: defaultRules,
 		}).To_PrivacyKeyRules())
 
