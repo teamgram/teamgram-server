@@ -38,10 +38,11 @@ func (c *UserCore) UserGetGlobalPrivacySettings(in *user.TLUserGetGlobalPrivacyS
 	if err != nil {
 		c.Logger.Errorf("user.getGlobalPrivacySettings - error: %v", err)
 		return rV, nil
-	} else {
+	} else if do == nil {
 		c.Logger.Infof("user.getGlobalPrivacySettings - not found by %d", in.UserId)
 		return rV, nil
 	}
+
 	return mtproto.MakeTLGlobalPrivacySettings(&mtproto.GlobalPrivacySettings{
 		ArchiveAndMuteNewNoncontactPeers_FLAGBOOLEAN: do.ArchiveAndMuteNewNoncontactPeers,
 		ArchiveAndMuteNewNoncontactPeers_FLAGBOOL:    mtproto.ToBool(do.ArchiveAndMuteNewNoncontactPeers),
