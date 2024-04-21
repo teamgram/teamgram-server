@@ -142,9 +142,18 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterGif:
-		// TODO
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
-		return rValues, nil
+		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
+			UserId:    c.MD.UserId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			MediaType: mtproto.MEDIA_GIF,
+			Offset:    offsetId,
+			Limit:     limit,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.search - error: %v", err)
+			return rValues, nil
+		}
 	case mtproto.FilterVoice:
 		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
 		return rValues, nil
