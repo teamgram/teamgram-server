@@ -19,11 +19,12 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/model"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"time"
 )
 
 const (
@@ -33,6 +34,10 @@ const (
 // AuthExportLoginToken
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*mtproto.Auth_LoginToken, error) {
+	// TODO:
+	// 1. check api_id, api_hash
+	// 2. check except_ids
+
 	qrCode, err := c.svcCtx.Dao.GetCacheQRLoginCode(c.ctx, c.MD.AuthId)
 	if err != nil {
 		c.Logger.Errorf("getQRCode - error: %v", err)
@@ -82,8 +87,11 @@ func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*
 		}
 		rQRLoginToken = mtproto.MakeTLAuthLoginTokenSuccess(&mtproto.Auth_LoginToken{
 			Authorization: mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-				TmpSessions: nil,
-				User:        user.ToSelfUser(),
+				SetupPasswordRequired: false,
+				OtherwiseReloginDays:  nil,
+				TmpSessions:           nil,
+				FutureAuthToken:       nil,
+				User:                  user.ToSelfUser(),
 			}).To_Auth_Authorization(),
 		}).To_Auth_LoginToken()
 	default:

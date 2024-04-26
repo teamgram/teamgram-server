@@ -38,6 +38,10 @@ func (c *AuthorizationCore) AuthCheckPassword(in *mtproto.TLAuthCheckPassword) (
 	}
 
 	return mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-		User: user.ToSelfUser(),
+		SetupPasswordRequired: false,
+		OtherwiseReloginDays:  nil,
+		TmpSessions:           nil,
+		FutureAuthToken:       nil,
+		User:                  user.ToSelfUser(),
 	}).To_Auth_Authorization(), nil
 }

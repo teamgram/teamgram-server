@@ -206,7 +206,11 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	return threading2.WrapperGoFunc(
 		c.ctx,
 		mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-			User: user.ToSelfUser(),
+			SetupPasswordRequired: false,
+			OtherwiseReloginDays:  nil,
+			TmpSessions:           nil,
+			FutureAuthToken:       nil,
+			User:                  user.ToSelfUser(),
 		}).To_Auth_Authorization(),
 		func(ctx context.Context) {
 			// on event

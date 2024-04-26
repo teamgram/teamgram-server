@@ -125,6 +125,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 				//  not register, next step: auth.singIn
 				return mtproto.MakeTLAuthAuthorizationSignUpRequired(&mtproto.Auth_Authorization{
 					// TermsOfService: model.MakeTermOfService(),
+					TermsOfService: nil,
 				}).To_Auth_Authorization(), nil
 			} else {
 				c.Logger.Errorf("auth.signIn - not registered, next step auth.signIn, %v", err)
@@ -288,6 +289,10 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 		})
 
 	return mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-		User: selfUser,
+		SetupPasswordRequired: false,
+		OtherwiseReloginDays:  nil,
+		TmpSessions:           nil,
+		FutureAuthToken:       nil,
+		User:                  selfUser,
 	}).To_Auth_Authorization(), nil
 }

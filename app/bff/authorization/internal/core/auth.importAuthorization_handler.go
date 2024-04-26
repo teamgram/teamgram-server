@@ -28,8 +28,11 @@ import (
 func (c *AuthorizationCore) AuthImportAuthorization(in *mtproto.TLAuthImportAuthorization) (*mtproto.Auth_Authorization, error) {
 	// TODO: make tmp_session ????
 	rValue := mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-		TmpSessions: &types.Int32Value{Value: int32(in.GetId())},
-		User:        mtproto.MakeTLUserEmpty(nil).To_User(),
+		SetupPasswordRequired: false,
+		OtherwiseReloginDays:  nil,
+		TmpSessions:           &types.Int32Value{Value: int32(in.GetId())},
+		FutureAuthToken:       nil,
+		User:                  mtproto.MakeTLUserEmpty(nil).To_User(),
 	}).To_Auth_Authorization()
 
 	return rValue, nil

@@ -67,20 +67,6 @@ func (d *Dao) CreatePhoneCode(ctx context.Context,
 		codeData.SessionId = sessionId
 	}
 
-	//switch codeData.State {
-	//case model.CodeStateSend:
-	//	codeData.State = model.CodeStateSent
-	//case model.CodeStateSent:
-	//	codeData.State = model.CodeStateSent
-	//default:
-	//	// codeData = newCodeData()
-	//}
-	//
-	//if err = c.Dao.PutCachePhoneCode(ctx, authKeyId, phoneNumber, codeData); err != nil {
-	//	log.Errorf("putCachePhoneCode - error: %v", err)
-	//	err = mtproto.ErrInternalServerError
-	//	return
-	//}
 	return
 }
 

@@ -20,6 +20,7 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
 
@@ -33,13 +34,17 @@ func (c *AuthorizationCore) AuthLogOut(in *mtproto.TLAuthLogOut) (*mtproto.Auth_
 	})
 	if err != nil {
 		c.Logger.Errorf("auth.logOut - error: %v", err)
+		return nil, err
 	} else {
 		if c.svcCtx.Plugin != nil {
 			c.svcCtx.Plugin.OnAuthLogout(c.ctx, c.MD.UserId, c.MD.AuthId)
 		}
 	}
 
+	futureAuthToken := crypto.RandomBytes(64)
+	c.svcCtx.Dao.PutFutureAuthToken(c.ctx, futureAuthToken, c.MD.UserId)
+
 	return mtproto.MakeTLAuthLoggedOut(&mtproto.Auth_LoggedOut{
-		FutureAuthToken: nil,
+		FutureAuthToken: futureAuthToken,
 	}).To_Auth_LoggedOut(), nil
 }
