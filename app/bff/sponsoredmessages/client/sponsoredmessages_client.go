@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package sponsoredmessages_client
+package sponsoredmessagesclient
 
 import (
 	"context"
@@ -21,6 +21,7 @@ import (
 var _ *mtproto.Bool
 
 type SponsoredMessagesClient interface {
+	AccountToggleSponsoredMessages(ctx context.Context, in *mtproto.TLAccountToggleSponsoredMessages) (*mtproto.Bool, error)
 	ChannelsViewSponsoredMessage(ctx context.Context, in *mtproto.TLChannelsViewSponsoredMessage) (*mtproto.Bool, error)
 	ChannelsGetSponsoredMessages(ctx context.Context, in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error)
 	ChannelsClickSponsoredMessage(ctx context.Context, in *mtproto.TLChannelsClickSponsoredMessage) (*mtproto.Bool, error)
@@ -36,6 +37,13 @@ func NewSponsoredMessagesClient(cli zrpc.Client) SponsoredMessagesClient {
 	return &defaultSponsoredMessagesClient{
 		cli: cli,
 	}
+}
+
+// AccountToggleSponsoredMessages
+// account.toggleSponsoredMessages#b9d9a38d enabled:Bool = Bool;
+func (m *defaultSponsoredMessagesClient) AccountToggleSponsoredMessages(ctx context.Context, in *mtproto.TLAccountToggleSponsoredMessages) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
+	return client.AccountToggleSponsoredMessages(ctx, in)
 }
 
 // ChannelsViewSponsoredMessage

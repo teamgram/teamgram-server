@@ -17,6 +17,21 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/sponsoredmessages/internal/core"
 )
 
+// AccountToggleSponsoredMessages
+// account.toggleSponsoredMessages#b9d9a38d enabled:Bool = Bool;
+func (s *Service) AccountToggleSponsoredMessages(ctx context.Context, request *mtproto.TLAccountToggleSponsoredMessages) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.toggleSponsoredMessages - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AccountToggleSponsoredMessages(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.toggleSponsoredMessages - reply: %s", r.DebugString())
+	return r, err
+}
+
 // ChannelsViewSponsoredMessage
 // channels.viewSponsoredMessage#beaedb94 channel:InputChannel random_id:bytes = Bool;
 func (s *Service) ChannelsViewSponsoredMessage(ctx context.Context, request *mtproto.TLChannelsViewSponsoredMessage) (*mtproto.Bool, error) {

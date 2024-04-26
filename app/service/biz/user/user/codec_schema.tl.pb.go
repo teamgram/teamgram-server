@@ -5261,7 +5261,7 @@ func (m *Vector_LastSeenData) DebugString() string {
 }
 
 // Vector_ImmutableUser
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ImmutableUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5295,7 +5295,7 @@ func (m *Vector_ImmutableUser) DebugString() string {
 }
 
 // Vector_PeerPeerNotifySettings
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5329,7 +5329,7 @@ func (m *Vector_PeerPeerNotifySettings) DebugString() string {
 }
 
 // Vector_PrivacyRule
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PrivacyRule) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5363,7 +5363,7 @@ func (m *Vector_PrivacyRule) DebugString() string {
 }
 
 // Vector_PredefinedUser
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5397,7 +5397,7 @@ func (m *Vector_PredefinedUser) DebugString() string {
 }
 
 // Vector_Long
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.VectorLong(m.Datas)
 
@@ -5421,7 +5421,7 @@ func (m *Vector_Long) DebugString() string {
 }
 
 // Vector_PeerBlocked
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerBlocked) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5455,7 +5455,7 @@ func (m *Vector_PeerBlocked) DebugString() string {
 }
 
 // Vector_ContactData
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5489,7 +5489,7 @@ func (m *Vector_ContactData) DebugString() string {
 }
 
 // Vector_InputContact
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_InputContact) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5523,7 +5523,7 @@ func (m *Vector_InputContact) DebugString() string {
 }
 
 // Vector_UserData
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
@@ -5557,7 +5557,7 @@ func (m *Vector_UserData) DebugString() string {
 }
 
 // Vector_ContactBirthday
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactBirthday) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	x.Int(int32(mtproto.CRC32_vector))
 	x.Int(int32(len(m.Datas)))
