@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package authorization_client
+package authorizationclient
 
 import (
 	"context"
@@ -40,6 +40,7 @@ type AuthorizationClient interface {
 	AuthImportWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthImportWebTokenAuthorization) (*mtproto.Auth_Authorization, error)
 	AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error)
 	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
+	AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
 	AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
@@ -68,7 +69,7 @@ func (m *defaultAuthorizationClient) AuthSendCode(ctx context.Context, in *mtpro
 }
 
 // AuthSignUp
-// auth.signUp#80eee427 phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
+// auth.signUp#aac7b717 flags:# no_joined_notifications:flags.0?true phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
 func (m *defaultAuthorizationClient) AuthSignUp(ctx context.Context, in *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthSignUp(ctx, in)
@@ -191,6 +192,13 @@ func (m *defaultAuthorizationClient) AuthRequestFirebaseSms(ctx context.Context,
 func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthResetLoginEmail(ctx, in)
+}
+
+// AuthReportMissingCode
+// auth.reportMissingCode#cb9deff6 phone_number:string phone_code_hash:string mnc:string = Bool;
+func (m *defaultAuthorizationClient) AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthReportMissingCode(ctx, in)
 }
 
 // AccountSendVerifyEmailCode

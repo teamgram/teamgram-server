@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -33,7 +33,7 @@ func (s *Service) AuthSendCode(ctx context.Context, request *mtproto.TLAuthSendC
 }
 
 // AuthSignUp
-// auth.signUp#80eee427 phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
+// auth.signUp#aac7b717 flags:# no_joined_notifications:flags.0?true phone_number:string phone_code_hash:string first_name:string last_name:string = auth.Authorization;
 func (s *Service) AuthSignUp(ctx context.Context, request *mtproto.TLAuthSignUp) (*mtproto.Auth_Authorization, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("auth.signUp - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -299,6 +299,21 @@ func (s *Service) AuthResetLoginEmail(ctx context.Context, request *mtproto.TLAu
 	}
 
 	c.Logger.Debugf("auth.resetLoginEmail - reply: %s", r.DebugString())
+	return r, err
+}
+
+// AuthReportMissingCode
+// auth.reportMissingCode#cb9deff6 phone_number:string phone_code_hash:string mnc:string = Bool;
+func (s *Service) AuthReportMissingCode(ctx context.Context, request *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.reportMissingCode - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.AuthReportMissingCode(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.reportMissingCode - reply: %s", r.DebugString())
 	return r, err
 }
 
