@@ -93,7 +93,7 @@
     videos
 ```
 
-### 7、nstall PIKA
+### 7、Install PIKA
 ```
   default port : 9221
 
