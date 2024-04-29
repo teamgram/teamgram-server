@@ -1,0 +1,21 @@
+Http:
+  Name: interface.httpserver
+  Host: 0.0.0.0
+  Port: 8801
+  Timeout: 0
+  MaxBytes: 67108864
+  Log:
+    ServiceName: interface.httpserver
+    Mode: file
+    Path: ../logs/httpserver
+    Level: debug
+
+KeyFile: "./server_pkcs1.key"
+KeyFingerprint: "12240908862933197005"
+
+Session:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.session
+  Timeout: 0
