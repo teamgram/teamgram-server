@@ -117,7 +117,7 @@ Please report bugs, concerns, suggestions by issues, or join telegram group **[T
 ## Notes
 If need enterprise edition:
 
-- sticker/theme/wallpaper/reactions/2fa/sms/push(apns/web/fcm)/web...
+- sticker/theme/wallpaper/reactions/2fa/sms/push(apns/web/fcm)/secretchat/scheduled/...
 - channel/megagroup
 - audiocall/videocall/groupcall
 - bots
