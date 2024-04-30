@@ -13,7 +13,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: idgen status dfs media authsession biz msg sync bff session gateway
+all: idgen status dfs media authsession biz msg sync bff session gateway gnetway httpserver
 
 idgen:
 	@echo "build idgen..."
@@ -59,6 +59,14 @@ gateway:
 	@echo "build gateway..."
 	@go build -ldflags ${ldflags} -o teamgramd/bin/gateway -tags=jsoniter app/interface/gateway/cmd/gateway/*.go
 
+gnetway:
+	@echo "build gnetway..."
+	@go build -ldflags ${ldflags} -o teamgramd/bin/gnetway -tags=jsoniter app/interface/gnetway/cmd/gnetway/*.go
+
+httpserver:
+	@echo "build httpserver..."
+	@go build -ldflags ${ldflags} -o teamgramd/bin/httpserver -tags=jsoniter app/interface/httpserver/cmd/httpserver/*.go
+
 clean:
 	@rm -rf teamgramd/bin/idgen
 	@rm -rf teamgramd/bin/status
@@ -71,3 +79,5 @@ clean:
 	@rm -rf teamgramd/bin/bff
 	@rm -rf teamgramd/bin/session
 	@rm -rf teamgramd/bin/gateway
+	@rm -rf teamgramd/bin/gnetway
+	@rm -rf teamgramd/bin/httpserver

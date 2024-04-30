@@ -29,6 +29,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/gobwas/ws/wsutil"
+	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

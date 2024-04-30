@@ -22,6 +22,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/codec"
 
+	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
