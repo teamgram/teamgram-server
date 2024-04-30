@@ -55,9 +55,9 @@ const (
 	CodeStateDeleted = -1
 )
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MakeCodeType
 // by params(phoneRegistered, allowFlashCall, currentNumber) ==> sentType and nextType
-
+//
 // FIXME(@benqi): ignore it.
 func MakeCodeType(phoneRegistered, allowFlashCall, currentNumber bool) (int, int) {
 	//if phoneRegistered {
