@@ -230,8 +230,8 @@ github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/teamgram/gnet/v2 v2.2.9-teamgram.0.20240403061923-2f0705155b91 h1:J+Ue4HNtbnvyYV42MHxzGEj3nIEOAXc1Ps7tccUpXDM=
-github.com/teamgram/gnet/v2 v2.2.9-teamgram.0.20240403061923-2f0705155b91/go.mod h1:R+X5M5YBpOGMVP/92OJ02P35SbmoHjiL7GnaBhht6GE=
+github.com/teamgram/gnet/v2 v2.5.1-teamgram h1:C1ahIivGc9HnXZytHvluVzpRRZaF8Fh/e01iYrM+Q3Y=
+github.com/teamgram/gnet/v2 v2.5.1-teamgram/go.mod h1:cm9AIICvZSrQllpQG5u5st56VMJCAWbB9/qdNKlrpKM=
 github.com/teamgram/go-zero v1.6.0-teamgram h1:d9jMPw6a8R1crrMfAgT8No0b4ly4dbtXKbh0d47uqCA=
 github.com/teamgram/go-zero v1.6.0-teamgram/go.mod h1:E9GCFPb0SwsTKFBcFr9UynGvXiDMmfc6fI5F15vqvAQ=
 github.com/teamgram/marmota v0.1.19 h1:+JjS+Ls+HTk1NrhCdYDF0FHsDlnxCh7Geh/C33p3+W4=

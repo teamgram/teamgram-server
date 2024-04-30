@@ -142,9 +142,10 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// replace github.com/teamgram/proto => ../proto
 
 replace (
-	github.com/panjf2000/gnet/v2 v2.5.1 => github.com/teamgram/gnet/v2 v2.2.9-teamgram.0.20240403061923-2f0705155b91
+	// github.com/teamgram/proto => ../proto
+	// github.com/panjf2000/gnet/v2 => ../gnet
+	github.com/panjf2000/gnet/v2 v2.5.1 => github.com/teamgram/gnet/v2 v2.5.1-teamgram
 	github.com/zeromicro/go-zero v1.6.0 => github.com/teamgram/go-zero v1.6.0-teamgram
 )

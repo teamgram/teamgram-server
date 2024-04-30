@@ -18,7 +18,6 @@ package server
 import (
 	"context"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/cache"
@@ -83,12 +82,12 @@ func (s *Server) Close() {
 }
 
 func (s *Server) Serve() {
-	addrs := strings.Join(s.c.Gnetway.ToAddresses(), ",")
-	logx.Debugf("addrs: %s", addrs)
+	// addrs := strings.Join(s.c.Gnetway.ToAddresses(), ",")
+	logx.Debugf("addrs: %s", s.c.Gnetway.ToAddresses())
 
-	err := gnet.Run(
+	err := gnet.Rotate(
 		s,
-		addrs,
+		s.c.Gnetway.ToAddresses(),
 		gnet.WithMulticore(s.c.Gnetway.Multicore),
 		gnet.WithSocketRecvBuffer(s.c.Gnetway.ReceiveBuf),
 		gnet.WithSocketSendBuffer(s.c.Gnetway.SendBuf),

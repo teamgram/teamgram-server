@@ -422,7 +422,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	s.asyncRun(c.ConnID(),
+	s.asyncRun(c.ConnId(),
 		func() error {
 			/*
 				### 4.1) RSA_PAD(data, server_public_key) mentioned above is implemented as follows:
@@ -740,7 +740,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 		dhGen     *mtproto.SetClient_DHParamsAnswer
 	)
 
-	s.asyncRun(c.ConnID(),
+	s.asyncRun(c.ConnId(),
 		func() error {
 			// TODO(@benqi): authKeyId生成后要检查在数据库里是否已经存在，有非常小的概率会碰撞
 			// 如果碰撞让客户端重新再来一轮

@@ -79,7 +79,7 @@ func (c GnetwayConfig) ToAddresses() []string {
 	for _, server := range c.Server {
 		for _, address := range server.Addresses {
 			if ok, _ := container2.Contains(address, addresses); !ok {
-				addresses = append(addresses, address)
+				addresses = append(addresses, "tcp://"+address)
 			}
 		}
 	}

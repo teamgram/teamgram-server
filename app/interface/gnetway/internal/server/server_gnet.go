@@ -92,7 +92,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 		ctx.trd = nil
 	}
 
-	sessId, connId, clientIp := ctx.sessionId, c.ConnID(), ctx.clientIp
+	sessId, connId, clientIp := ctx.sessionId, c.ConnId(), ctx.clientIp
 	for _, id := range ctx.getAllAuthKeyId() {
 		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
 		if bDeleted {
@@ -144,7 +144,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		isNew     = ctx.sessionId != sessionId
 		authKeyId = mmsg.GetAuthKeyId()
 		clientIp  = ctx.clientIp
-		connId    = c.ConnID()
+		connId    = c.ConnId()
 	)
 	if isNew {
 		ctx.sessionId = sessionId
