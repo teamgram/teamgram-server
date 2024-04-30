@@ -25,8 +25,8 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 const (

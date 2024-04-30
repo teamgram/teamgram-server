@@ -19,7 +19,7 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MsgEditMessage
@@ -31,7 +31,7 @@ func (c *MsgCore) MsgEditMessage(in *msg.TLMsgEditMessage) (*mtproto.Updates, er
 	)
 
 	if in.Message.Message.EditDate == nil {
-		in.Message.Message.EditDate = &types.Int32Value{Value: int32(time.Now().Unix())}
+		in.Message.Message.EditDate = &wrapperspb.Int32Value{Value: int32(time.Now().Unix())}
 	}
 
 	switch in.PeerType {

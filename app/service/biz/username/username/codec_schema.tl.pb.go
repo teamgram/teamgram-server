@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -291,9 +291,8 @@ func (m *TLUsernameData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -473,9 +472,8 @@ func (m *TLUsernameNotExisted) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameNotExisted) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLUsernameExisted
@@ -539,9 +537,8 @@ func (m *TLUsernameExisted) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameExisted) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLUsernameExistedNotMe
@@ -605,9 +602,8 @@ func (m *TLUsernameExistedNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameExistedNotMe) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLUsernameExistedIsMe
@@ -671,9 +667,8 @@ func (m *TLUsernameExistedIsMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameExistedIsMe) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -716,9 +711,8 @@ func (m *TLUsernameGetAccountUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameGetAccountUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameCheckAccountUsername
@@ -762,9 +756,8 @@ func (m *TLUsernameCheckAccountUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameCheckAccountUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameGetChannelUsername
@@ -806,9 +799,8 @@ func (m *TLUsernameGetChannelUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameGetChannelUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameCheckChannelUsername
@@ -852,9 +844,8 @@ func (m *TLUsernameCheckChannelUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameCheckChannelUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameUpdateUsernameByPeer
@@ -900,9 +891,8 @@ func (m *TLUsernameUpdateUsernameByPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameUpdateUsernameByPeer) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameCheckUsername
@@ -944,9 +934,8 @@ func (m *TLUsernameCheckUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameCheckUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameUpdateUsername
@@ -992,9 +981,8 @@ func (m *TLUsernameUpdateUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameUpdateUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameDeleteUsername
@@ -1036,9 +1024,8 @@ func (m *TLUsernameDeleteUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameDeleteUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameResolveUsername
@@ -1080,9 +1067,8 @@ func (m *TLUsernameResolveUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameResolveUsername) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameGetListByUsernameList
@@ -1125,9 +1111,8 @@ func (m *TLUsernameGetListByUsernameList) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLUsernameGetListByUsernameList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameDeleteUsernameByPeer
@@ -1171,9 +1156,8 @@ func (m *TLUsernameDeleteUsernameByPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameDeleteUsernameByPeer) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUsernameSearch
@@ -1223,9 +1207,8 @@ func (m *TLUsernameSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUsernameSearch) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -1258,7 +1241,6 @@ func (m *Vector_UsernameData) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UsernameData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

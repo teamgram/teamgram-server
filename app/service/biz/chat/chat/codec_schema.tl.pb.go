@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -417,9 +417,8 @@ func (m *TLChatInviteAlready) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInviteAlready) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLChatInvite
@@ -446,8 +445,8 @@ func (m *TLChatInvite) GetRequestNeeded() bool  { return m.Data2.RequestNeeded }
 func (m *TLChatInvite) SetTitle(v string) { m.Data2.Title = v }
 func (m *TLChatInvite) GetTitle() string  { return m.Data2.Title }
 
-func (m *TLChatInvite) SetAbout(v *types.StringValue) { m.Data2.About = v }
-func (m *TLChatInvite) GetAbout() *types.StringValue  { return m.Data2.About }
+func (m *TLChatInvite) SetAbout(v *wrapperspb.StringValue) { m.Data2.About = v }
+func (m *TLChatInvite) GetAbout() *wrapperspb.StringValue  { return m.Data2.About }
 
 func (m *TLChatInvite) SetPhoto(v *mtproto.Photo) { m.Data2.Photo = v }
 func (m *TLChatInvite) GetPhoto() *mtproto.Photo  { return m.Data2.Photo }
@@ -529,7 +528,7 @@ func (m *TLChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 			}
 			m.SetTitle(dBuf.String())
 			if (flags & (1 << 5)) != 0 {
-				m.SetAbout(&types.StringValue{Value: dBuf.String()})
+				m.SetAbout(&wrapperspb.StringValue{Value: dBuf.String()})
 			}
 
 			m5 := &mtproto.Photo{}
@@ -552,9 +551,8 @@ func (m *TLChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLChatInvitePeek
@@ -632,9 +630,8 @@ func (m *TLChatInvitePeek) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvitePeek) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -798,9 +795,8 @@ func (m *TLChatInviteImported) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInviteImported) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -940,9 +936,8 @@ func (m *TLRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLRecentChatInviteRequesters) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1082,9 +1077,8 @@ func (m *TLUserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserChatIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -1127,9 +1121,8 @@ func (m *TLChatGetMutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMutableChat) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetChatListByIdList
@@ -1176,9 +1169,8 @@ func (m *TLChatGetChatListByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatListByIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetChatBySelfId
@@ -1222,9 +1214,8 @@ func (m *TLChatGetChatBySelfId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatBySelfId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatCreateChat2
@@ -1290,9 +1281,8 @@ func (m *TLChatCreateChat2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatCreateChat2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatDeleteChat
@@ -1336,9 +1326,8 @@ func (m *TLChatDeleteChat) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteChat) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatDeleteChatUser
@@ -1384,9 +1373,8 @@ func (m *TLChatDeleteChatUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteChatUser) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditChatTitle
@@ -1432,9 +1420,8 @@ func (m *TLChatEditChatTitle) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatTitle) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditChatAbout
@@ -1480,9 +1467,8 @@ func (m *TLChatEditChatAbout) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatAbout) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditChatPhoto
@@ -1532,9 +1518,8 @@ func (m *TLChatEditChatPhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatPhoto) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditChatAdmin
@@ -1586,9 +1571,8 @@ func (m *TLChatEditChatAdmin) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatAdmin) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditChatDefaultBannedRights
@@ -1638,9 +1622,8 @@ func (m *TLChatEditChatDefaultBannedRights) Decode(dBuf *mtproto.DecodeBuf) erro
 }
 
 func (m *TLChatEditChatDefaultBannedRights) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatAddChatUser
@@ -1699,9 +1682,8 @@ func (m *TLChatAddChatUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatAddChatUser) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetMutableChatByLink
@@ -1743,9 +1725,8 @@ func (m *TLChatGetMutableChatByLink) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMutableChatByLink) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatToggleNoForwards
@@ -1795,9 +1776,8 @@ func (m *TLChatToggleNoForwards) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatToggleNoForwards) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatMigratedToChannel
@@ -1846,9 +1826,8 @@ func (m *TLChatMigratedToChannel) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatMigratedToChannel) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetChatParticipantIdList
@@ -1890,9 +1869,8 @@ func (m *TLChatGetChatParticipantIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatParticipantIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetUsersChatIdList
@@ -1935,9 +1913,8 @@ func (m *TLChatGetUsersChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetUsersChatIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetMyChatList
@@ -1985,9 +1962,8 @@ func (m *TLChatGetMyChatList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMyChatList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatExportChatInvite
@@ -2062,15 +2038,15 @@ func (m *TLChatExportChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.RequestNeeded = true
 		}
 		if (flags & (1 << 0)) != 0 {
-			m.ExpireDate = &types.Int32Value{Value: dBuf.Int()}
+			m.ExpireDate = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			m.UsageLimit = &types.Int32Value{Value: dBuf.Int()}
+			m.UsageLimit = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 4)) != 0 {
-			m.Title = &types.StringValue{Value: dBuf.String()}
+			m.Title = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		return dBuf.GetError()
@@ -2082,9 +2058,8 @@ func (m *TLChatExportChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatExportChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetAdminsWithInvites
@@ -2128,9 +2103,8 @@ func (m *TLChatGetAdminsWithInvites) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetAdminsWithInvites) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetExportedChatInvite
@@ -2174,9 +2148,8 @@ func (m *TLChatGetExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetExportedChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetExportedChatInvites
@@ -2240,11 +2213,11 @@ func (m *TLChatGetExportedChatInvites) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Revoked = true
 		}
 		if (flags & (1 << 2)) != 0 {
-			m.OffsetDate = &types.Int32Value{Value: dBuf.Int()}
+			m.OffsetDate = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 2)) != 0 {
-			m.OffsetLink = &types.StringValue{Value: dBuf.String()}
+			m.OffsetLink = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		m.Limit = dBuf.Int()
@@ -2257,9 +2230,8 @@ func (m *TLChatGetExportedChatInvites) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetExportedChatInvites) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatCheckChatInvite
@@ -2303,9 +2275,8 @@ func (m *TLChatCheckChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatCheckChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatImportChatInvite
@@ -2349,9 +2320,8 @@ func (m *TLChatImportChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatImportChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetChatInviteImporters
@@ -2417,11 +2387,11 @@ func (m *TLChatGetChatInviteImporters) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Requested = true
 		}
 		if (flags & (1 << 1)) != 0 {
-			m.Link = &types.StringValue{Value: dBuf.String()}
+			m.Link = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		if (flags & (1 << 2)) != 0 {
-			m.Q = &types.StringValue{Value: dBuf.String()}
+			m.Q = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		m.OffsetDate = dBuf.Int()
@@ -2436,9 +2406,8 @@ func (m *TLChatGetChatInviteImporters) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatInviteImporters) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatDeleteExportedChatInvite
@@ -2484,9 +2453,8 @@ func (m *TLChatDeleteExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteExportedChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatDeleteRevokedExportedChatInvites
@@ -2532,9 +2500,8 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Decode(dBuf *mtproto.DecodeBuf)
 }
 
 func (m *TLChatDeleteRevokedExportedChatInvites) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatEditExportedChatInvite
@@ -2613,11 +2580,11 @@ func (m *TLChatEditExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 		}
 		m.Link = dBuf.String()
 		if (flags & (1 << 0)) != 0 {
-			m.ExpireDate = &types.Int32Value{Value: dBuf.Int()}
+			m.ExpireDate = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			m.UsageLimit = &types.Int32Value{Value: dBuf.Int()}
+			m.UsageLimit = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 3)) != 0 {
@@ -2626,7 +2593,7 @@ func (m *TLChatEditExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.RequestNeeded = m8
 		}
 		if (flags & (1 << 4)) != 0 {
-			m.Title = &types.StringValue{Value: dBuf.String()}
+			m.Title = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		return dBuf.GetError()
@@ -2638,9 +2605,8 @@ func (m *TLChatEditExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditExportedChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatSetChatAvailableReactions
@@ -2691,9 +2657,8 @@ func (m *TLChatSetChatAvailableReactions) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLChatSetChatAvailableReactions) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatSetHistoryTTL
@@ -2739,9 +2704,8 @@ func (m *TLChatSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSetHistoryTTL) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatSearch
@@ -2789,9 +2753,8 @@ func (m *TLChatSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSearch) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatGetRecentChatInviteRequesters
@@ -2835,9 +2798,8 @@ func (m *TLChatGetRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) er
 }
 
 func (m *TLChatGetRecentChatInviteRequesters) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatHideChatJoinRequests
@@ -2899,11 +2861,11 @@ func (m *TLChatHideChatJoinRequests) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Approved = true
 		}
 		if (flags & (1 << 1)) != 0 {
-			m.Link = &types.StringValue{Value: dBuf.String()}
+			m.Link = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
 
 		if (flags & (1 << 2)) != 0 {
-			m.UserId = &types.Int64Value{Value: dBuf.Long()}
+			m.UserId = &wrapperspb.Int64Value{Value: dBuf.Long()}
 		}
 
 		return dBuf.GetError()
@@ -2915,9 +2877,8 @@ func (m *TLChatHideChatJoinRequests) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatHideChatJoinRequests) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLChatImportChatInvite2
@@ -2961,9 +2922,8 @@ func (m *TLChatImportChatInvite2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatImportChatInvite2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -2996,9 +2956,8 @@ func (m *Vector_MutableChat) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_MutableChat) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_Long
@@ -3020,9 +2979,8 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_UserChatIdList
@@ -3054,9 +3012,8 @@ func (m *Vector_UserChatIdList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserChatIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_ChatAdminWithInvites
@@ -3088,9 +3045,8 @@ func (m *Vector_ChatAdminWithInvites) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ChatAdminWithInvites) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_ExportedChatInvite
@@ -3122,9 +3078,8 @@ func (m *Vector_ExportedChatInvite) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ExportedChatInvite) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_ChatInviteImporter
@@ -3156,7 +3111,6 @@ func (m *Vector_ChatInviteImporter) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ChatInviteImporter) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

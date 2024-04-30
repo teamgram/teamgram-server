@@ -19,8 +19,9 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // AuthImportAuthorization
@@ -30,7 +31,7 @@ func (c *AuthorizationCore) AuthImportAuthorization(in *mtproto.TLAuthImportAuth
 	rValue := mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
 		SetupPasswordRequired: false,
 		OtherwiseReloginDays:  nil,
-		TmpSessions:           &types.Int32Value{Value: int32(in.GetId())},
+		TmpSessions:           &wrapperspb.Int32Value{Value: int32(in.GetId())},
 		FutureAuthToken:       nil,
 		User:                  mtproto.MakeTLUserEmpty(nil).To_User(),
 	}).To_Auth_Authorization()

@@ -19,11 +19,12 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MessagesGetFullChat
@@ -108,7 +109,7 @@ func (c *ChatsCore) MessagesGetFullChat(in *mtproto.TLMessagesGetFullChat) (*mtp
 		})
 
 		if len(requesters.GetRecentRequesters()) > 0 {
-			chatFull.RequestsPending = &types.Int32Value{Value: requesters.GetRequestsPending()}
+			chatFull.RequestsPending = &wrapperspb.Int32Value{Value: requesters.GetRequestsPending()}
 			chatFull.RecentRequesters = requesters.GetRecentRequesters()
 		}
 	}

@@ -30,7 +30,7 @@ import (
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MessagesForwardMessages
@@ -233,8 +233,8 @@ func (c *MessagesCore) makeForwardMessages(
 
 				if m.Views != nil {
 					// Broadcast
-					// fwdFrom.ChannelId = &types.Int32Value{Value: fromPeer.PeerId}
-					fwdFrom.ChannelPost = &types.Int32Value{Value: m.Id}
+					// fwdFrom.ChannelId = &wrapperspb.Int32Value{Value: fromPeer.PeerId}
+					fwdFrom.ChannelPost = &wrapperspb.Int32Value{Value: m.Id}
 					fwdFrom.PostAuthor = m.PostAuthor
 					fwdFrom.FromId = mtproto.MakePeerChannel(fromPeer.PeerId)
 					// TODO(@benqi): saved_from_peer and saved_from_msg_id??
@@ -246,7 +246,7 @@ func (c *MessagesCore) makeForwardMessages(
 						uname, _ := c.svcCtx.Dao.UsernameClient.UsernameGetAccountUsername(c.ctx, &username.TLUsernameGetAccountUsername{
 							UserId: fromId,
 						})
-						fwdFrom.FromName = &types.StringValue{Value: uname.GetUsername()}
+						fwdFrom.FromName = &wrapperspb.StringValue{Value: uname.GetUsername()}
 					}
 					m.Post = false
 					m.PostAuthor = nil
@@ -259,7 +259,7 @@ func (c *MessagesCore) makeForwardMessages(
 					} else {
 						fwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
 					}
-					fwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+					fwdFrom.SavedFromMsgId = &wrapperspb.Int32Value{Value: m.Id}
 					m.SavedPeerId = fwdFrom.SavedFromPeer
 				} else {
 					m.SavedPeerId = nil
@@ -273,7 +273,7 @@ func (c *MessagesCore) makeForwardMessages(
 					} else {
 						m.FwdFrom.SavedFromPeer = mtproto.MakePeerUser(box.SenderUserId)
 					}
-					m.FwdFrom.SavedFromMsgId = &types.Int32Value{Value: m.Id}
+					m.FwdFrom.SavedFromMsgId = &wrapperspb.Int32Value{Value: m.Id}
 					m.SavedPeerId = m.FwdFrom.SavedFromPeer
 				} else {
 					m.FwdFrom.SavedFromPeer = nil

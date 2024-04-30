@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -135,7 +135,7 @@ func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.AuthKeyId = dBuf.Long()
 		m.ServerId = dBuf.String()
 		if (flags & (1 << 0)) != 0 {
-			m.SessionId = &types.Int64Value{Value: dBuf.Long()}
+			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
 		}
 
 		m6 := &mtproto.Updates{}
@@ -151,9 +151,8 @@ func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncUpdatesMe) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncUpdatesNotMe
@@ -203,9 +202,8 @@ func (m *TLSyncUpdatesNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncUpdatesNotMe) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncPushUpdates
@@ -253,9 +251,8 @@ func (m *TLSyncPushUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushUpdates) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncPushUpdatesIfNot
@@ -308,9 +305,8 @@ func (m *TLSyncPushUpdatesIfNot) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushUpdatesIfNot) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncPushBotUpdates
@@ -358,9 +354,8 @@ func (m *TLSyncPushBotUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushBotUpdates) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncPushRpcResult
@@ -410,9 +405,8 @@ func (m *TLSyncPushRpcResult) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushRpcResult) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSyncBroadcastUpdates
@@ -467,9 +461,8 @@ func (m *TLSyncBroadcastUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncBroadcastUpdates) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------

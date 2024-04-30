@@ -21,8 +21,8 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/minio/minio-go/v7"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // DfsUploadProfilePhotoFileV2
@@ -178,7 +178,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 	}).To_VideoSize()
 
 	if videoStartTs > 0 {
-		videoSize.VideoStartTs = &types.DoubleValue{Value: videoStartTs}
+		videoSize.VideoStartTs = &wrapperspb.DoubleValue{Value: videoStartTs}
 	}
 
 	return mtproto.MakeTLPhoto(&mtproto.Photo{

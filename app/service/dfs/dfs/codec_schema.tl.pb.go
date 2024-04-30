@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -161,7 +161,7 @@ func (m *TLDfsWriteFilePartData) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Big = true
 		}
 		if (flags & (1 << 1)) != 0 {
-			m.FileTotalParts = &types.Int32Value{Value: dBuf.Int()}
+			m.FileTotalParts = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		return dBuf.GetError()
@@ -173,9 +173,8 @@ func (m *TLDfsWriteFilePartData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsWriteFilePartData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadPhotoFileV2
@@ -223,9 +222,8 @@ func (m *TLDfsUploadPhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadPhotoFileV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadProfilePhotoFileV2
@@ -296,7 +294,7 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Video = m4
 		}
 		if (flags & (1 << 2)) != 0 {
-			m.VideoStartTs = &types.DoubleValue{Value: dBuf.Double()}
+			m.VideoStartTs = &wrapperspb.DoubleValue{Value: dBuf.Double()}
 		}
 
 		return dBuf.GetError()
@@ -308,9 +306,8 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadEncryptedFileV2
@@ -358,9 +355,8 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadEncryptedFileV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsDownloadFile
@@ -409,9 +405,8 @@ func (m *TLDfsDownloadFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsDownloadFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadDocumentFileV2
@@ -459,9 +454,8 @@ func (m *TLDfsUploadDocumentFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadDocumentFileV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadGifDocumentMedia
@@ -509,9 +503,8 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadGifDocumentMedia) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadMp4DocumentMedia
@@ -559,9 +552,8 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadWallPaperFile
@@ -617,9 +609,8 @@ func (m *TLDfsUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadWallPaperFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadThemeFile
@@ -690,9 +681,8 @@ func (m *TLDfsUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadThemeFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDfsUploadRingtoneFile
@@ -744,9 +734,8 @@ func (m *TLDfsUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadRingtoneFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------

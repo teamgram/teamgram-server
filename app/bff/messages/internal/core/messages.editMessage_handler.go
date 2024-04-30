@@ -21,10 +21,11 @@ package core
 import (
 	"time"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MessagesEditMessage
@@ -78,7 +79,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 
 	outMessage := editMessages.Datas[0].Message
 	// edit_date
-	outMessage.EditDate = &types.Int32Value{Value: int32(time.Now().Unix())}
+	outMessage.EditDate = &wrapperspb.Int32Value{Value: int32(time.Now().Unix())}
 	outMessage.EditHide = false
 
 	// entities

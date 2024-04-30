@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -426,9 +426,8 @@ func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -601,9 +600,8 @@ func (m *TLDialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogFilterExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -744,9 +742,8 @@ func (m *TLDialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogPinnedExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -894,9 +891,8 @@ func (m *TLSimpleDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSimpleDialogsData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1039,9 +1035,8 @@ func (m *TLUpdateDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdateDraftMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1195,9 +1190,8 @@ func (m *TLSavedDialogList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSavedDialogList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -1250,9 +1244,8 @@ func (m *TLDialogSaveDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogSaveDraftMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogClearDraftMessage
@@ -1298,9 +1291,8 @@ func (m *TLDialogClearDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogClearDraftMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetAllDrafts
@@ -1342,9 +1334,8 @@ func (m *TLDialogGetAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetAllDrafts) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogClearAllDrafts
@@ -1386,9 +1377,8 @@ func (m *TLDialogClearAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogClearAllDrafts) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogMarkDialogUnread
@@ -1440,9 +1430,8 @@ func (m *TLDialogMarkDialogUnread) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogMarkDialogUnread) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogToggleDialogPin
@@ -1494,9 +1483,8 @@ func (m *TLDialogToggleDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogToggleDialogPin) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogUnreadMarkList
@@ -1538,9 +1526,8 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLDialogGetDialogUnreadMarkList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogsByOffsetDate
@@ -1592,9 +1579,8 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogsByOffsetDate) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogs
@@ -1644,9 +1630,8 @@ func (m *TLDialogGetDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogsByIdList
@@ -1693,9 +1678,8 @@ func (m *TLDialogGetDialogsByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogsByIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogsCount
@@ -1745,9 +1729,8 @@ func (m *TLDialogGetDialogsCount) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogsCount) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetPinnedDialogs
@@ -1791,9 +1774,8 @@ func (m *TLDialogGetPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetPinnedDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogReorderPinnedDialogs
@@ -1848,9 +1830,8 @@ func (m *TLDialogReorderPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogReorderPinnedDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogById
@@ -1896,9 +1877,8 @@ func (m *TLDialogGetDialogById) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogById) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetTopMessage
@@ -1944,9 +1924,8 @@ func (m *TLDialogGetTopMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetTopMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogUpdateReadInbox
@@ -1994,9 +1973,8 @@ func (m *TLDialogUpdateReadInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogUpdateReadInbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogUpdateReadOutbox
@@ -2044,9 +2022,8 @@ func (m *TLDialogUpdateReadOutbox) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogUpdateReadOutbox) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogInsertOrUpdateDialog
@@ -2128,26 +2105,26 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
 		if (flags & (1 << 0)) != 0 {
-			m.TopMessage = &types.Int32Value{Value: dBuf.Int()}
+			m.TopMessage = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 1)) != 0 {
-			m.ReadOutboxMaxId = &types.Int32Value{Value: dBuf.Int()}
+			m.ReadOutboxMaxId = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 2)) != 0 {
-			m.ReadInboxMaxId = &types.Int32Value{Value: dBuf.Int()}
+			m.ReadInboxMaxId = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 3)) != 0 {
-			m.UnreadCount = &types.Int32Value{Value: dBuf.Int()}
+			m.UnreadCount = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		if (flags & (1 << 4)) != 0 {
 			m.UnreadMark = true
 		}
 		if (flags & (1 << 5)) != 0 {
-			m.Date2 = &types.Int64Value{Value: dBuf.Long()}
+			m.Date2 = &wrapperspb.Int64Value{Value: dBuf.Long()}
 		}
 
 		return dBuf.GetError()
@@ -2159,9 +2136,8 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogInsertOrUpdateDialog) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogDeleteDialog
@@ -2207,9 +2183,8 @@ func (m *TLDialogDeleteDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogDeleteDialog) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetUserPinnedMessage
@@ -2255,9 +2230,8 @@ func (m *TLDialogGetUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetUserPinnedMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogUpdateUserPinnedMessage
@@ -2305,9 +2279,8 @@ func (m *TLDialogUpdateUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLDialogUpdateUserPinnedMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogInsertOrUpdateDialogFilter
@@ -2357,9 +2330,8 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) err
 }
 
 func (m *TLDialogInsertOrUpdateDialogFilter) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogDeleteDialogFilter
@@ -2403,9 +2375,8 @@ func (m *TLDialogDeleteDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogDeleteDialogFilter) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogUpdateDialogFiltersOrder
@@ -2452,9 +2423,8 @@ func (m *TLDialogUpdateDialogFiltersOrder) Decode(dBuf *mtproto.DecodeBuf) error
 }
 
 func (m *TLDialogUpdateDialogFiltersOrder) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogFilters
@@ -2496,9 +2466,8 @@ func (m *TLDialogGetDialogFilters) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFilters) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogFolder
@@ -2542,9 +2511,8 @@ func (m *TLDialogGetDialogFolder) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFolder) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogEditPeerFolders
@@ -2594,9 +2562,8 @@ func (m *TLDialogEditPeerFolders) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogEditPeerFolders) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetChannelMessageReadParticipants
@@ -2642,9 +2609,8 @@ func (m *TLDialogGetChannelMessageReadParticipants) Decode(dBuf *mtproto.DecodeB
 }
 
 func (m *TLDialogGetChannelMessageReadParticipants) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogSetChatTheme
@@ -2692,9 +2658,8 @@ func (m *TLDialogSetChatTheme) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogSetChatTheme) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogSetHistoryTTL
@@ -2742,9 +2707,8 @@ func (m *TLDialogSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogSetHistoryTTL) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetMyDialogsData
@@ -2811,9 +2775,8 @@ func (m *TLDialogGetMyDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetMyDialogsData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetSavedDialogs
@@ -2873,9 +2836,8 @@ func (m *TLDialogGetSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetSavedDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetPinnedSavedDialogs
@@ -2917,9 +2879,8 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetPinnedSavedDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogToggleSavedDialogPin
@@ -2972,9 +2933,8 @@ func (m *TLDialogToggleSavedDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogToggleSavedDialogPin) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogReorderPinnedSavedDialogs
@@ -3041,9 +3001,8 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) erro
 }
 
 func (m *TLDialogReorderPinnedSavedDialogs) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogFilter
@@ -3087,9 +3046,8 @@ func (m *TLDialogGetDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFilter) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogGetDialogFilterBySlug
@@ -3133,9 +3091,8 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogGetDialogFilterBySlug) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLDialogCreateDialogFilter
@@ -3183,9 +3140,8 @@ func (m *TLDialogCreateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDialogCreateDialogFilter) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -3218,9 +3174,8 @@ func (m *Vector_PeerWithDraftMessage) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_PeerWithDraftMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_DialogPeer
@@ -3252,9 +3207,8 @@ func (m *Vector_DialogPeer) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_DialogPeer) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_DialogExt
@@ -3286,9 +3240,8 @@ func (m *Vector_DialogExt) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_DialogExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_DialogFilterExt
@@ -3320,9 +3273,8 @@ func (m *Vector_DialogFilterExt) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_DialogFilterExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_DialogPinnedExt
@@ -3354,9 +3306,8 @@ func (m *Vector_DialogPinnedExt) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_DialogPinnedExt) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_Long
@@ -3378,7 +3329,6 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

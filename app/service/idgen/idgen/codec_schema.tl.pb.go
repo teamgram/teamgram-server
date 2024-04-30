@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -288,9 +288,8 @@ func (m *TLIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdVal) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLIdVals
@@ -362,9 +361,8 @@ func (m *TLIdVals) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdVals) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLSeqIdVal
@@ -433,9 +431,8 @@ func (m *TLSeqIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSeqIdVal) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -615,9 +612,8 @@ func (m *TLInputId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLInputIds
@@ -686,9 +682,8 @@ func (m *TLInputIds) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputIds) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLInputSeqId
@@ -757,9 +752,8 @@ func (m *TLInputSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLInputNSeqId
@@ -833,9 +827,8 @@ func (m *TLInputNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputNSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -875,9 +868,8 @@ func (m *TLIdgenNextId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenNextId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenNextIds
@@ -919,9 +911,8 @@ func (m *TLIdgenNextIds) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenNextIds) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenGetCurrentSeqId
@@ -963,9 +954,8 @@ func (m *TLIdgenGetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetCurrentSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenSetCurrentSeqId
@@ -1009,9 +999,8 @@ func (m *TLIdgenSetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenSetCurrentSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenGetNextSeqId
@@ -1053,9 +1042,8 @@ func (m *TLIdgenGetNextSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenGetNextNSeqId
@@ -1099,9 +1087,8 @@ func (m *TLIdgenGetNextNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextNSeqId) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenGetNextIdValList
@@ -1159,9 +1146,8 @@ func (m *TLIdgenGetNextIdValList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextIdValList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLIdgenGetCurrentSeqIdList
@@ -1219,9 +1205,8 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -1244,9 +1229,8 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_IdVal
@@ -1278,7 +1262,6 @@ func (m *Vector_IdVal) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_IdVal) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

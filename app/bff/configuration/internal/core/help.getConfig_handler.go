@@ -19,9 +19,9 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/zeromicro/go-zero/core/jsonx"
+	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"time"
 )

@@ -138,7 +138,7 @@ func (c *AuthorizationCore) AuthResendCode(in *mtproto.TLAuthResendCode) (*mtpro
 				return err2
 			}
 
-			codeData2.SentCodeType = model.CodeTypeSms
+			codeData2.SentCodeType = model.SentCodeTypeSms
 			codeData2.NextCodeType = model.CodeTypeSms
 			codeData2.State = model.CodeStateSent
 			codeData2.PhoneCodeExtraData = extraData

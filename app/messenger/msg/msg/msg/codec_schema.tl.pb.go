@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -303,9 +303,8 @@ func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLContentMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -400,8 +399,8 @@ func (m *TLOutboxMessage) GetRandomId() int64  { return m.Data2.RandomId }
 func (m *TLOutboxMessage) SetMessage(v *mtproto.Message) { m.Data2.Message = v }
 func (m *TLOutboxMessage) GetMessage() *mtproto.Message  { return m.Data2.Message }
 
-func (m *TLOutboxMessage) SetScheduleDate(v *types.Int32Value) { m.Data2.ScheduleDate = v }
-func (m *TLOutboxMessage) GetScheduleDate() *types.Int32Value  { return m.Data2.ScheduleDate }
+func (m *TLOutboxMessage) SetScheduleDate(v *wrapperspb.Int32Value) { m.Data2.ScheduleDate = v }
+func (m *TLOutboxMessage) GetScheduleDate() *wrapperspb.Int32Value  { return m.Data2.ScheduleDate }
 
 func (m *TLOutboxMessage) GetPredicateName() string {
 	return Predicate_outboxMessage
@@ -477,7 +476,7 @@ func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.SetMessage(m4)
 
 			if (flags & (1 << 2)) != 0 {
-				m.SetScheduleDate(&types.Int32Value{Value: dBuf.Int()})
+				m.SetScheduleDate(&wrapperspb.Int32Value{Value: dBuf.Int()})
 			}
 
 			return dBuf.GetError()
@@ -492,9 +491,8 @@ func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLOutboxMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -635,9 +633,8 @@ func (m *TLSender) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSender) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -692,9 +689,8 @@ func (m *TLMsgSendMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgSendMultiMessage
@@ -761,9 +757,8 @@ func (m *TLMsgSendMultiMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMultiMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgPushUserMessage
@@ -819,9 +814,8 @@ func (m *TLMsgPushUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgPushUserMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgReadMessageContents
@@ -888,9 +882,8 @@ func (m *TLMsgReadMessageContents) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgReadMessageContents) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgSendMessageV2
@@ -957,9 +950,8 @@ func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMessageV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgEditMessage
@@ -1015,9 +1007,8 @@ func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgEditMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgDeleteMessages
@@ -1083,9 +1074,8 @@ func (m *TLMsgDeleteMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteMessages) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgDeleteHistory
@@ -1154,9 +1144,8 @@ func (m *TLMsgDeleteHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgDeletePhoneCallHistory
@@ -1213,9 +1202,8 @@ func (m *TLMsgDeletePhoneCallHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeletePhoneCallHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgDeleteChatHistory
@@ -1259,9 +1247,8 @@ func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteChatHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgReadHistory
@@ -1311,9 +1298,8 @@ func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgReadHistory) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgUpdatePinnedMessage
@@ -1388,9 +1374,8 @@ func (m *TLMsgUpdatePinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgUpdatePinnedMessage) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMsgUnpinAllMessages
@@ -1438,9 +1423,8 @@ func (m *TLMsgUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgUnpinAllMessages) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------

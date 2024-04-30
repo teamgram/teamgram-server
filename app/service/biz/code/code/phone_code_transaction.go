@@ -7,8 +7,9 @@
 package code
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // ToAuthSentCode
@@ -25,7 +26,7 @@ func (m *PhoneCodeTransaction) ToAuthSentCode() *mtproto.Auth_SentCode {
 		Type:          makeAuthSentCodeType(m.SentCodeType, len(m.PhoneCode), m.FlashCallPattern),
 		PhoneCodeHash: m.PhoneCodeHash,
 		NextType:      makeAuthCodeType(m.NextCodeType),
-		Timeout:       &types.Int32Value{Value: 60}, // TODO(@benqi): 默认60s
+		Timeout:       &wrapperspb.Int32Value{Value: 60}, // TODO(@benqi): 默认60s
 	}).To_Auth_SentCode()
 	if m.SentCodeType == CodeTypeApp {
 		authSentCode.Timeout = nil

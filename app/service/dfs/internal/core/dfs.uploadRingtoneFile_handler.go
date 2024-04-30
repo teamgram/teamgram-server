@@ -30,7 +30,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/ffmpegutil"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // DfsUploadRingtoneFile
@@ -106,8 +106,8 @@ func (c *DfsCore) DfsUploadRingtoneFile(in *dfs.TLDfsUploadRingtoneFile) (*mtpro
 				Duration:         float64(duration),
 				Duration_INT32:   int32(duration),
 				Duration_FLOAT64: float64(duration),
-				Title:            &types.StringValue{Value: in.GetFileName()},
-				Performer:        &types.StringValue{Value: ""}, // TODO:
+				Title:            &wrapperspb.StringValue{Value: in.GetFileName()},
+				Performer:        &wrapperspb.StringValue{Value: ""}, // TODO:
 				Waveform:         nil,
 			}).To_DocumentAttribute(),
 			mtproto.MakeTLDocumentAttributeFilename(&mtproto.DocumentAttribute{

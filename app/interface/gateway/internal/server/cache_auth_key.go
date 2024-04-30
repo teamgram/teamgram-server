@@ -24,17 +24,25 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
+type CacheV struct {
+	V *mtproto.AuthKeyInfo
+}
+
+func (c CacheV) Size() int {
+	return 1
+}
+
 func (s *Server) GetAuthKey(authKeyId int64) *mtproto.AuthKeyInfo {
 	var (
 		cacheK = strconv.Itoa(int(authKeyId))
-		value  *mtproto.AuthKeyInfo
+		value  *CacheV
 	)
 
 	if v, ok := s.cache.Get(cacheK); ok {
-		value = v.(*mtproto.AuthKeyInfo)
+		value = v.(*CacheV)
 	}
 
-	return value
+	return value.V
 }
 
 func (s *Server) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
@@ -43,5 +51,5 @@ func (s *Server) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
 	)
 
 	// TODO: expires_in
-	s.cache.Set(cacheK, keyInfo)
+	s.cache.Set(cacheK, &CacheV{V: keyInfo})
 }

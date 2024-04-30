@@ -26,7 +26,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const (
@@ -65,7 +65,7 @@ func (d *Dao) GetUserPeerSettings(ctx context.Context, id int64, peerType int32,
 				peerSettings.GeoDistance = nil
 
 				if settingsDO.GeoDistance != 0 {
-					peerSettings.GeoDistance = &types.Int32Value{Value: settingsDO.GeoDistance}
+					peerSettings.GeoDistance = &wrapperspb.Int32Value{Value: settingsDO.GeoDistance}
 				}
 			} else {
 				peerSettings.ReportSpam = false

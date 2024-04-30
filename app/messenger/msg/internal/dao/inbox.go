@@ -31,9 +31,9 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 // from outBox --> make inBox

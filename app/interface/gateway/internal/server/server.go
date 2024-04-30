@@ -39,9 +39,8 @@ var (
 )
 
 type Server struct {
-	c      *config.Config
-	server *net2.TcpServer2
-	// pool           *goroutine.Pool
+	c              *config.Config
+	server         *net2.TcpServer2
 	cache          *cache.LRUCache
 	handshake      *handshake
 	session        *Session

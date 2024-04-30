@@ -26,7 +26,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const (
@@ -63,8 +63,8 @@ func (d *Dao) GetUserNotifySettings(ctx context.Context, id int64, peerType int3
 
 					notifySettings.ShowPreviews = mtproto.BoolTrue
 					notifySettings.Silent = mtproto.BoolFalse
-					notifySettings.MuteUntil = &types.Int32Value{Value: 0}
-					notifySettings.Sound = &types.StringValue{Value: "default"}
+					notifySettings.MuteUntil = &wrapperspb.Int32Value{Value: 0}
+					notifySettings.Sound = &wrapperspb.StringValue{Value: "default"}
 				}
 			} else {
 				setPeerNotifySettingsByDO(notifySettings, do)
@@ -87,10 +87,10 @@ func setPeerNotifySettingsByDO(settings *mtproto.PeerNotifySettings, do *dataobj
 		settings.Silent = mtproto.ToBool(do.Silent == 1)
 	}
 	if do.MuteUntil != -1 {
-		settings.MuteUntil = &types.Int32Value{Value: do.MuteUntil}
+		settings.MuteUntil = &wrapperspb.Int32Value{Value: do.MuteUntil}
 	}
 	if do.Sound != "-1" {
-		settings.Sound = &types.StringValue{Value: do.Sound}
+		settings.Sound = &wrapperspb.StringValue{Value: do.Sound}
 	}
 }
 

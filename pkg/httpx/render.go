@@ -7,15 +7,15 @@
 package httpx
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/proto"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/pkg/httpx/render"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 // JSONError
@@ -45,14 +45,10 @@ func JSON(w http.ResponseWriter, data interface{}) {
 	)
 	switch data.(type) {
 	case proto.Message:
-		m := &jsonpb.Marshaler{
-			OrigName: true,
-		}
-		var buf bytes.Buffer
-		if err = m.Marshal(&buf, data.(proto.Message)); err != nil {
+		r, err = protojson.Marshal(data.(proto.Message))
+		if err != nil {
 			JSONError(w, err)
 		}
-		r = buf.Bytes()
 	default:
 		r, err = json.Marshal(data)
 	}

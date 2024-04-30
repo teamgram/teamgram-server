@@ -29,9 +29,10 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/svc"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // New new a grpc server.
@@ -42,7 +43,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 		func(ctx context.Context, key string, value []byte) {
 			logx.WithContext(ctx).Debugf("key: %s, value: %s", key, value)
 
-			switch strings.Split(key, "#")[0] {
+			switch protoreflect.FullName(strings.Split(key, "#")[0]) {
 			case proto.MessageName((*inbox.TLInboxSendUserMessageToInbox)(nil)):
 				threading.RunSafe(func() {
 					c := core.New(ctx, svcCtx)

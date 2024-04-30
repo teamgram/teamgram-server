@@ -25,7 +25,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
 
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func (m *Dao) GetVideoSizeListList(ctx context.Context, idList []int64) (sizes map[int64][]*mtproto.VideoSize) {
@@ -72,7 +72,7 @@ func getVideoSize(sz *dataobject.VideoSizesDO) *mtproto.VideoSize {
 		VideoStartTs: nil,
 	}).To_VideoSize()
 	if sz.VideoStartTs > 0 {
-		videoSize.VideoStartTs = &types.DoubleValue{Value: sz.VideoStartTs}
+		videoSize.VideoStartTs = &wrapperspb.DoubleValue{Value: sz.VideoStartTs}
 	}
 
 	return videoSize

@@ -13,8 +13,8 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/jsonx"
+	"google.golang.org/protobuf/proto"
 )
 
 type defaultSyncMqClient struct {

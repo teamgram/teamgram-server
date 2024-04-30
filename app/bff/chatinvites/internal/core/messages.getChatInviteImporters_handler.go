@@ -19,10 +19,11 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MessagesGetChatInviteImporters
@@ -31,7 +32,7 @@ func (c *ChatInvitesCore) MessagesGetChatInviteImporters(in *mtproto.TLMessagesG
 	var (
 		peer       = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		offsetPeer = mtproto.FromInputUser(c.MD.UserId, in.OffsetUser)
-		link       *types.StringValue
+		link       *wrapperspb.StringValue
 		limit      = in.GetLimit()
 	)
 

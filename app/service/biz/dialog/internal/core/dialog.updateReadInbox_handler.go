@@ -10,9 +10,10 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // DialogUpdateReadInbox
@@ -24,7 +25,7 @@ func (c *DialogCore) DialogUpdateReadInbox(in *dialog.TLDialogUpdateReadInbox) (
 		PeerId:          in.PeerId,
 		TopMessage:      nil,
 		ReadOutboxMaxId: nil,
-		ReadInboxMaxId:  &types.Int32Value{Value: in.ReadInboxId},
+		ReadInboxMaxId:  &wrapperspb.Int32Value{Value: in.ReadInboxId},
 		UnreadCount:     nil,
 		UnreadMark:      false,
 	})

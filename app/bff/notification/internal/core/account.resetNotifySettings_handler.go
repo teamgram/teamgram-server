@@ -19,10 +19,11 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // AccountResetNotifySettings
@@ -47,8 +48,8 @@ func (c *NotificationCore) AccountResetNotifySettings(in *mtproto.TLAccountReset
 			NotifySettings: mtproto.MakeTLPeerNotifySettings(&mtproto.PeerNotifySettings{
 				ShowPreviews: mtproto.BoolTrue,
 				Silent:       mtproto.BoolFalse,
-				MuteUntil:    &types.Int32Value{Value: 0},
-				Sound:        &types.StringValue{Value: "default"},
+				MuteUntil:    &wrapperspb.Int32Value{Value: 0},
+				Sound:        &wrapperspb.StringValue{Value: "default"},
 			}).To_PeerNotifySettings(),
 		}).To_Update())
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{

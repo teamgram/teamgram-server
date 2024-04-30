@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -267,9 +267,8 @@ func (m *TLSessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionEntry) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -423,9 +422,8 @@ func (m *TLUserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserSessionEntryList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -474,9 +472,8 @@ func (m *TLStatusSetSessionOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetSessionOnline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetSessionOffline
@@ -520,9 +517,8 @@ func (m *TLStatusSetSessionOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetSessionOffline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusGetUserOnlineSessions
@@ -564,9 +560,8 @@ func (m *TLStatusGetUserOnlineSessions) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusGetUserOnlineSessions) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusGetUsersOnlineSessionsList
@@ -609,9 +604,8 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(dBuf *mtproto.DecodeBuf) err
 }
 
 func (m *TLStatusGetUsersOnlineSessionsList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusGetChannelOnlineUsers
@@ -653,9 +647,8 @@ func (m *TLStatusGetChannelOnlineUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusGetChannelOnlineUsers) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetUserChannelsOnline
@@ -702,9 +695,8 @@ func (m *TLStatusSetUserChannelsOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetUserChannelsOnline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetUserChannelsOffline
@@ -751,9 +743,8 @@ func (m *TLStatusSetUserChannelsOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetUserChannelsOffline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetChannelUserOffline
@@ -797,9 +788,8 @@ func (m *TLStatusSetChannelUserOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelUserOffline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetChannelUsersOnline
@@ -846,9 +836,8 @@ func (m *TLStatusSetChannelUsersOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelUsersOnline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLStatusSetChannelOffline
@@ -890,9 +879,8 @@ func (m *TLStatusSetChannelOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelOffline) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -925,9 +913,8 @@ func (m *Vector_UserSessionEntryList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserSessionEntryList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_Long
@@ -949,7 +936,6 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

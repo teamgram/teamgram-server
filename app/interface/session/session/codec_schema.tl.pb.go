@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -237,9 +237,8 @@ func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLHttpSessionData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -405,9 +404,8 @@ func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionClientData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -558,9 +556,8 @@ func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionClientEvent) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -603,9 +600,8 @@ func (m *TLSessionQueryAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionQueryAuthKey) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionSetAuthKey
@@ -657,9 +653,8 @@ func (m *TLSessionSetAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSetAuthKey) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionCreateSession
@@ -704,9 +699,8 @@ func (m *TLSessionCreateSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionCreateSession) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionSendDataToSession
@@ -751,9 +745,8 @@ func (m *TLSessionSendDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSendDataToSession) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionSendHttpDataToSession
@@ -798,9 +791,8 @@ func (m *TLSessionSendHttpDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSendHttpDataToSession) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionCloseSession
@@ -845,9 +837,8 @@ func (m *TLSessionCloseSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionCloseSession) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionPushUpdatesData
@@ -908,9 +899,8 @@ func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionPushUpdatesData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionPushSessionUpdatesData
@@ -960,9 +950,8 @@ func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLSessionPushSessionUpdatesData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLSessionPushRpcResultData
@@ -1010,9 +999,8 @@ func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionPushRpcResultData) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------

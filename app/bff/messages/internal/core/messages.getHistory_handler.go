@@ -187,7 +187,7 @@ func (c *MessagesCore) MessagesGetHistory(in *mtproto.TLMessagesGetHistory) (*mt
 	//		Inexact:        false, // TODO: ???
 	//		Pts:            channel.Pts(),
 	//		Count:          count.V,
-	//		OffsetIdOffset: &types.Int32Value{Value: channel.TopMessage() - in.OffsetId}, // TODO: ???
+	//		OffsetIdOffset: &wrapperspb.Int32Value{Value: channel.TopMessage() - in.OffsetId}, // TODO: ???
 	//		Messages:       messages,
 	//		Chats:          mtproto.ToSafeChats(chats),
 	//		Users:          mtproto.ToSafeUsers(users),

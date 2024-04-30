@@ -19,9 +19,10 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/dfs/dfs"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // UploadSaveBigFilePart
@@ -33,7 +34,7 @@ func (c *FilesCore) UploadSaveBigFilePart(in *mtproto.TLUploadSaveBigFilePart) (
 		FilePart:       in.FilePart,
 		Bytes:          in.Bytes,
 		Big:            true,
-		FileTotalParts: &types.Int32Value{Value: in.FileTotalParts},
+		FileTotalParts: &wrapperspb.Int32Value{Value: in.FileTotalParts},
 	})
 	if err != nil {
 		c.Logger.Errorf("upload.saveFilePart - error: %v", err)

@@ -137,3 +137,5 @@ func (s *Service) IdgenGetCurrentSeqIdList(ctx context.Context, request *idgen.T
 	c.Logger.Debugf("idgen.getCurrentSeqIdList - reply: %s", r.DebugString())
 	return r, err
 }
+
+func (s *Service) mustEmbedUnimplementedMyService() {}

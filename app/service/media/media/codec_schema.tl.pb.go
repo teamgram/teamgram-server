@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -290,9 +290,8 @@ func (m *TLPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLPhotoSizeList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -451,9 +450,8 @@ func (m *TLVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLVideoSizeList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -531,7 +529,7 @@ func (m *TLMediaUploadPhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Stickers = v4
 		}
 		if (flags & (1 << 1)) != 0 {
-			m.TtlSeconds = &types.Int32Value{Value: dBuf.Int()}
+			m.TtlSeconds = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		return dBuf.GetError()
@@ -543,9 +541,8 @@ func (m *TLMediaUploadPhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadPhotoFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadProfilePhotoFile
@@ -616,7 +613,7 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Video = m4
 		}
 		if (flags & (1 << 2)) != 0 {
-			m.VideoStartTs = &types.DoubleValue{Value: dBuf.Double()}
+			m.VideoStartTs = &wrapperspb.DoubleValue{Value: dBuf.Double()}
 		}
 
 		return dBuf.GetError()
@@ -628,9 +625,8 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadProfilePhotoFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetPhoto
@@ -672,9 +668,8 @@ func (m *TLMediaGetPhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhoto) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetPhotoSizeList
@@ -716,9 +711,8 @@ func (m *TLMediaGetPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhotoSizeList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetPhotoSizeListList
@@ -761,9 +755,8 @@ func (m *TLMediaGetPhotoSizeListList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhotoSizeListList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetVideoSizeList
@@ -805,9 +798,8 @@ func (m *TLMediaGetVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetVideoSizeList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadedDocumentMedia
@@ -855,9 +847,8 @@ func (m *TLMediaUploadedDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadedDocumentMedia) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetDocument
@@ -899,9 +890,8 @@ func (m *TLMediaGetDocument) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetDocument) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetDocumentList
@@ -944,9 +934,8 @@ func (m *TLMediaGetDocumentList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetDocumentList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadEncryptedFile
@@ -994,9 +983,8 @@ func (m *TLMediaUploadEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadEncryptedFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaGetEncryptedFile
@@ -1040,9 +1028,8 @@ func (m *TLMediaGetEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetEncryptedFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadWallPaperFile
@@ -1098,9 +1085,8 @@ func (m *TLMediaUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadWallPaperFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadThemeFile
@@ -1171,9 +1157,8 @@ func (m *TLMediaUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadThemeFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadStickerFile
@@ -1250,9 +1235,8 @@ func (m *TLMediaUploadStickerFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadStickerFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLMediaUploadRingtoneFile
@@ -1310,9 +1294,8 @@ func (m *TLMediaUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadRingtoneFile) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -1345,9 +1328,8 @@ func (m *Vector_PhotoSizeList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_PhotoSizeList) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // Vector_Document
@@ -1379,7 +1361,6 @@ func (m *Vector_Document) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Document) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }

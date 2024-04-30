@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -18,15 +18,15 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-var _ *types.Int32Value
+var _ *wrapperspb.Int32Value
 var _ *mtproto.Bool
-var _ fmt.GoStringer
+var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
@@ -285,9 +285,8 @@ func (m *TLChannelDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChannelDifference) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -476,9 +475,8 @@ func (m *TLDifferenceEmpty) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceEmpty) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLDifference
@@ -594,9 +592,8 @@ func (m *TLDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifference) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLDifferenceSlice
@@ -716,9 +713,8 @@ func (m *TLDifferenceSlice) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceSlice) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // MakeTLDifferenceTooLong
@@ -787,9 +783,8 @@ func (m *TLDifferenceTooLong) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceTooLong) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -834,9 +829,8 @@ func (m *TLUpdatesGetStateV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdatesGetStateV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUpdatesGetDifferenceV2
@@ -889,7 +883,7 @@ func (m *TLUpdatesGetDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.UserId = dBuf.Long()
 		m.Pts = dBuf.Int()
 		if (flags & (1 << 0)) != 0 {
-			m.PtsTotalLimit = &types.Int32Value{Value: dBuf.Int()}
+			m.PtsTotalLimit = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		m.Date = dBuf.Long()
@@ -902,9 +896,8 @@ func (m *TLUpdatesGetDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdatesGetDifferenceV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 // TLUpdatesGetChannelDifferenceV2
@@ -954,9 +947,8 @@ func (m *TLUpdatesGetChannelDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLUpdatesGetChannelDifferenceV2) DebugString() string {
-	jsonm := &jsonpb.Marshaler{OrigName: true}
-	dbgString, _ := jsonm.MarshalToString(m)
-	return dbgString
+	v, _ := protojson.Marshal(m)
+	return string(v)
 }
 
 //----------------------------------------------------------------------------------------------------------------

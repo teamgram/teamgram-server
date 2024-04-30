@@ -28,32 +28,40 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+type CacheV struct {
+	V *mtproto.AuthKeyInfo
+}
+
+func (c CacheV) Size() int {
+	return 1
+}
+
 func (d *Dao) GetCacheAuthKey(ctx context.Context, authKeyId int64) (*mtproto.AuthKeyInfo, error) {
 	var (
 		cacheK = strconv.Itoa(int(authKeyId))
-		key    *mtproto.AuthKeyInfo
+		value  *mtproto.AuthKeyInfo
 	)
 
 	if v, ok := d.cache.Get(cacheK); ok {
-		key = v.(*mtproto.AuthKeyInfo)
+		value = v.(*CacheV).V
 	} else {
 		sessClient, err := d.session.getSessionClient(strconv.FormatInt(authKeyId, 10))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("getSessionClient error: %v, {authKeyId: %d}", err, authKeyId)
 			return nil, err
 		} else {
-			key, err = sessClient.SessionQueryAuthKey(ctx, &sessionpb.TLSessionQueryAuthKey{
+			value, err = sessClient.SessionQueryAuthKey(ctx, &sessionpb.TLSessionQueryAuthKey{
 				AuthKeyId: authKeyId,
 			})
 			if err != nil {
 				logx.WithContext(ctx).Errorf("sessionQueryAuthKey - error: %v", err)
 				return nil, err
 			}
-			d.PutAuthKey(key)
+			d.PutAuthKey(value)
 		}
 	}
 
-	return key, nil
+	return value, nil
 }
 
 func (d *Dao) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
@@ -62,5 +70,5 @@ func (d *Dao) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
 	)
 
 	// TODO: expires_in
-	d.cache.Set(cacheK, keyInfo)
+	d.cache.Set(cacheK, &CacheV{V: keyInfo})
 }

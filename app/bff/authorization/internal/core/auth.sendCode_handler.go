@@ -329,7 +329,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 			if phoneRegistered {
 				if user.GetUser().GetUserType() == userpb.UserTypeTest {
 					needSendSms = false
-					codeData2.SentCodeType = model.CodeTypeApp
+					codeData2.SentCodeType = model.SentCodeTypeApp
 					codeData2.PhoneCode = "12345"
 					codeData2.PhoneCodeExtraData = "12345"
 					c.Logger.Infof("is test server: %v", codeData2)
@@ -339,7 +339,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 					}); len(status.GetUserSessions()) > 0 {
 						c.Logger.Infof("user online")
 						needSendSms = false
-						codeData2.SentCodeType = model.CodeTypeApp
+						codeData2.SentCodeType = model.SentCodeTypeApp
 						codeData2.PhoneCodeExtraData = codeData2.PhoneCode
 					}
 				}
@@ -350,15 +350,17 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 
 			if needSendSms {
 				c.Logger.Infof("send code by sms")
-				if extraData, err2 := c.svcCtx.AuthLogic.VerifyCodeInterface.SendSmsVerifyCode(
+				extraData, err2 := c.svcCtx.AuthLogic.VerifyCodeInterface.SendSmsVerifyCode(
 					context.Background(),
 					phoneNumber,
 					codeData2.PhoneCode,
-					codeData2.PhoneCodeHash); err2 != nil {
+					codeData2.PhoneCodeHash)
+				if err2 != nil {
 					c.Logger.Errorf("send sms code error: %v", err2)
 					return err2
 				} else {
-					codeData2.SentCodeType = model.CodeTypeSms
+					// codeData2.SentCodeType = model.CodeTypeSms
+					codeData2.SentCodeType = model.SentCodeTypeSms
 					codeData2.PhoneCodeExtraData = extraData
 				}
 			}

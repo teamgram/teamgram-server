@@ -10,10 +10,11 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/types"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func makePeerNotifySettingsByDO(do *dataobject.UserNotifySettingsDO) (settings *mtproto.PeerNotifySettings) {
@@ -25,10 +26,10 @@ func makePeerNotifySettingsByDO(do *dataobject.UserNotifySettingsDO) (settings *
 		settings.Silent = mtproto.ToBool(do.Silent == 1)
 	}
 	if do.MuteUntil != -1 {
-		settings.MuteUntil = &types.Int32Value{Value: do.MuteUntil}
+		settings.MuteUntil = &wrapperspb.Int32Value{Value: do.MuteUntil}
 	}
 	if do.Sound != "-1" {
-		settings.Sound = &types.StringValue{Value: do.Sound}
+		settings.Sound = &wrapperspb.StringValue{Value: do.Sound}
 	}
 	return
 }

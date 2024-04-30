@@ -19,8 +19,8 @@
 package logic
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/teamgram/proto/mtproto"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
