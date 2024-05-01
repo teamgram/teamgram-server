@@ -40,7 +40,7 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 
 	for pipe, kList := range pipes {
 		var (
-			cmds = make([]*kv.StringStringMapCmd, len(kList))
+			cmds = make([]*kv.MapStringStringCmd, len(kList))
 		)
 
 		pipe.(kv.Pipeline).PipelinedCtx(
