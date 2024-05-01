@@ -1,0 +1,224 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package media;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/media/media";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_photoSizeList = 108083635;
+    CRC32_videoSizeList = 953261042;
+    CRC32_media_uploadPhotoFile = 1009453847;
+    CRC32_media_uploadProfilePhotoFile = -1757466844;
+    CRC32_media_getPhoto = 1702803563;
+    CRC32_media_getPhotoSizeList = -1578401979;
+    CRC32_media_getPhotoSizeListList = -77823776;
+    CRC32_media_getVideoSizeList = -998862102;
+    CRC32_media_uploadedDocumentMedia = 1331671148;
+    CRC32_media_getDocument = 1072011085;
+    CRC32_media_getDocumentList = -986721681;
+    CRC32_media_uploadEncryptedFile = -1426012517;
+    CRC32_media_getEncryptedFile = -60784431;
+    CRC32_media_uploadWallPaperFile = -1661293058;
+    CRC32_media_uploadThemeFile = 1122416736;
+    CRC32_media_uploadStickerFile = -1397349139;
+    CRC32_media_uploadRingtoneFile = 1035645449;
+}
+
+
+// PhotoSizeList <--
+//  + TL_photoSizeList
+//
+message PhotoSizeList {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 size_id = 3;
+    repeated mtproto.PhotoSize sizes = 4;
+    int32 dc_id = 5;
+}
+
+message TL_photoSizeList {
+    PhotoSizeList data2 = 1;
+}
+
+
+// VideoSizeList <--
+//  + TL_videoSizeList
+//
+message VideoSizeList {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 size_id = 3;
+    repeated mtproto.VideoSize sizes = 4;
+    int32 dc_id = 5;
+}
+
+message TL_videoSizeList {
+    VideoSizeList data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadPhotoFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    repeated mtproto.InputDocument stickers = 5;
+    google.protobuf.Int32Value ttl_seconds = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadProfilePhotoFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    mtproto.InputFile video = 5;
+    google.protobuf.DoubleValue video_start_ts = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getPhoto {
+    TLConstructor  constructor = 1;
+    int64 photo_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getPhotoSizeList {
+    TLConstructor  constructor = 1;
+    int64 size_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getPhotoSizeListList {
+    TLConstructor  constructor = 1;
+    repeated int64 id_list = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getVideoSizeList {
+    TLConstructor  constructor = 1;
+    int64 size_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadedDocumentMedia {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputMedia media = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getDocument {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getDocumentList {
+    TLConstructor  constructor = 1;
+    repeated int64 id_list = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadEncryptedFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputEncryptedFile file = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_getEncryptedFile {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+    int64 access_hash = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadWallPaperFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    string mime_type = 5;
+    mtproto.Bool admin = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadThemeFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    mtproto.InputFile thumb = 5;
+    string mime_type = 6;
+    string file_name = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadStickerFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    mtproto.InputFile thumb = 5;
+    string mime_type = 6;
+    string file_name = 7;
+    mtproto.DocumentAttribute document_attribute_sticker = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadRingtoneFile {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    mtproto.InputFile file = 4;
+    string mime_type = 5;
+    string file_name = 6;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_PhotoSizeList {
+    repeated PhotoSizeList datas = 1;
+}
+message Vector_Document {
+    repeated mtproto.Document datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCMedia {
+ rpc media_uploadPhotoFile(TL_media_uploadPhotoFile) returns (mtproto.Photo) {}
+ rpc media_uploadProfilePhotoFile(TL_media_uploadProfilePhotoFile) returns (mtproto.Photo) {}
+ rpc media_getPhoto(TL_media_getPhoto) returns (mtproto.Photo) {}
+ rpc media_getPhotoSizeList(TL_media_getPhotoSizeList) returns (PhotoSizeList) {}
+ rpc media_getPhotoSizeListList(TL_media_getPhotoSizeListList) returns (Vector_PhotoSizeList) {}
+ rpc media_getVideoSizeList(TL_media_getVideoSizeList) returns (VideoSizeList) {}
+ rpc media_uploadedDocumentMedia(TL_media_uploadedDocumentMedia) returns (mtproto.MessageMedia) {}
+ rpc media_getDocument(TL_media_getDocument) returns (mtproto.Document) {}
+ rpc media_getDocumentList(TL_media_getDocumentList) returns (Vector_Document) {}
+ rpc media_uploadEncryptedFile(TL_media_uploadEncryptedFile) returns (mtproto.EncryptedFile) {}
+ rpc media_getEncryptedFile(TL_media_getEncryptedFile) returns (mtproto.EncryptedFile) {}
+ rpc media_uploadWallPaperFile(TL_media_uploadWallPaperFile) returns (mtproto.Document) {}
+ rpc media_uploadThemeFile(TL_media_uploadThemeFile) returns (mtproto.Document) {}
+ rpc media_uploadStickerFile(TL_media_uploadStickerFile) returns (mtproto.Document) {}
+ rpc media_uploadRingtoneFile(TL_media_uploadRingtoneFile) returns (mtproto.Document) {}
+}
+

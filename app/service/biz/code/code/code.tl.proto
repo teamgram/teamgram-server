@@ -1,0 +1,111 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package code;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/code/code";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_phoneCodeTransaction = -2089576808;
+    CRC32_code_createPhoneCode = 1612963998;
+    CRC32_code_getPhoneCode = 1638179065;
+    CRC32_code_deletePhoneCode = -1498387888;
+    CRC32_code_updatePhoneCodeData = -1231746411;
+}
+
+
+// PhoneCodeTransaction <--
+//  + TL_phoneCodeTransaction
+//
+message PhoneCodeTransaction {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 auth_key_id = 3;
+    int64 session_id = 4;
+    string phone = 5;
+    bool phone_number_registered = 6;
+    string phone_code = 7;
+    string phone_code_hash = 8;
+    int32 phone_code_expired = 9;
+    string phone_code_extra_data = 10;
+    int32 sent_code_type = 11;
+    string flash_call_pattern = 12;
+    int32 next_code_type = 13;
+    int32 state = 14;
+}
+
+message TL_phoneCodeTransaction {
+    PhoneCodeTransaction data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_code_createPhoneCode {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    int64 session_id = 4;
+    string phone = 5;
+    bool phone_number_registered = 6;
+    int32 sent_code_type = 7;
+    int32 next_code_type = 8;
+    int32 state = 9;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_code_getPhoneCode {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    string phone = 4;
+    string phone_code_hash = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_code_deletePhoneCode {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    string phone = 4;
+    string phone_code_hash = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_code_updatePhoneCodeData {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    string phone = 4;
+    string phone_code_hash = 5;
+    PhoneCodeTransaction code_data = 6;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCCode {
+ rpc code_createPhoneCode(TL_code_createPhoneCode) returns (PhoneCodeTransaction) {}
+ rpc code_getPhoneCode(TL_code_getPhoneCode) returns (PhoneCodeTransaction) {}
+ rpc code_deletePhoneCode(TL_code_deletePhoneCode) returns (mtproto.Bool) {}
+ rpc code_updatePhoneCodeData(TL_code_updatePhoneCodeData) returns (mtproto.Bool) {}
+}
+

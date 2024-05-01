@@ -1,0 +1,169 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package status;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/status/status";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_sessionEntry = 392473649;
+    CRC32_userSessionEntryList = -269700200;
+    CRC32_status_setSessionOnline = 1381075919;
+    CRC32_status_setSessionOffline = 631663196;
+    CRC32_status_getUserOnlineSessions = -406788659;
+    CRC32_status_getUsersOnlineSessionsList = -2009385532;
+    CRC32_status_getChannelOnlineUsers = 1166257237;
+    CRC32_status_setUserChannelsOnline = -851901363;
+    CRC32_status_setUserChannelsOffline = 1822646698;
+    CRC32_status_setChannelUserOffline = -997471364;
+    CRC32_status_setChannelUsersOnline = -1499734793;
+    CRC32_status_setChannelOffline = 1266112245;
+}
+
+
+// SessionEntry <--
+//  + TL_sessionEntry
+//
+message SessionEntry {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    string gateway = 5;
+    int64 expired = 6;
+    int32 layer = 7;
+    int64 perm_auth_key_id = 8;
+    string client = 9;
+}
+
+message TL_sessionEntry {
+    SessionEntry data2 = 1;
+}
+
+
+// UserSessionEntryList <--
+//  + TL_userSessionEntryList
+//
+message UserSessionEntryList {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 user_id = 3;
+    repeated SessionEntry user_sessions = 4;
+}
+
+message TL_userSessionEntryList {
+    UserSessionEntryList data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setSessionOnline {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    SessionEntry session = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setSessionOffline {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_getUserOnlineSessions {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_getUsersOnlineSessionsList {
+    TLConstructor  constructor = 1;
+    repeated int64 users = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_getChannelOnlineUsers {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setUserChannelsOnline {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 channels = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setUserChannelsOffline {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 channels = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setChannelUserOffline {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+    int64 user_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setChannelUsersOnline {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+    repeated int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_status_setChannelOffline {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_UserSessionEntryList {
+    repeated UserSessionEntryList datas = 1;
+}
+message Vector_Long {
+    repeated int64 datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCStatus {
+ rpc status_setSessionOnline(TL_status_setSessionOnline) returns (mtproto.Bool) {}
+ rpc status_setSessionOffline(TL_status_setSessionOffline) returns (mtproto.Bool) {}
+ rpc status_getUserOnlineSessions(TL_status_getUserOnlineSessions) returns (UserSessionEntryList) {}
+ rpc status_getUsersOnlineSessionsList(TL_status_getUsersOnlineSessionsList) returns (Vector_UserSessionEntryList) {}
+ rpc status_getChannelOnlineUsers(TL_status_getChannelOnlineUsers) returns (Vector_Long) {}
+ rpc status_setUserChannelsOnline(TL_status_setUserChannelsOnline) returns (mtproto.Bool) {}
+ rpc status_setUserChannelsOffline(TL_status_setUserChannelsOffline) returns (mtproto.Bool) {}
+ rpc status_setChannelUserOffline(TL_status_setChannelUserOffline) returns (mtproto.Bool) {}
+ rpc status_setChannelUsersOnline(TL_status_setChannelUsersOnline) returns (mtproto.Bool) {}
+ rpc status_setChannelOffline(TL_status_setChannelOffline) returns (mtproto.Bool) {}
+}
+

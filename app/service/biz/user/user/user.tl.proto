@@ -1,0 +1,877 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/user/user";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_userImportedContacts = 1256160192;
+    CRC32_usersDataFound = 1067703239;
+    CRC32_usersIdFound = -2134594054;
+    CRC32_peerPeerNotifySettings = 1894399913;
+    CRC32_lastSeenData = -1280204321;
+    CRC32_user_getLastSeens = 2090958337;
+    CRC32_user_updateLastSeen = -46114259;
+    CRC32_user_getLastSeen = -1860581154;
+    CRC32_user_getImmutableUser = 929720132;
+    CRC32_user_getMutableUsers = -1657068585;
+    CRC32_user_getImmutableUserByPhone = -373067804;
+    CRC32_user_getImmutableUserByToken = -12709005;
+    CRC32_user_setAccountDaysTTL = -766178484;
+    CRC32_user_getAccountDaysTTL = -1299956000;
+    CRC32_user_getNotifySettings = 1085028198;
+    CRC32_user_getNotifySettingsList = -463137380;
+    CRC32_user_setNotifySettings = -907188763;
+    CRC32_user_resetNotifySettings = 235380084;
+    CRC32_user_getAllNotifySettings = 1435658357;
+    CRC32_user_getGlobalPrivacySettings = 2012672274;
+    CRC32_user_setGlobalPrivacySettings = -1934257490;
+    CRC32_user_getPrivacy = -1656708172;
+    CRC32_user_setPrivacy = -2007650929;
+    CRC32_user_checkPrivacy = -982638934;
+    CRC32_user_addPeerSettings = -891148445;
+    CRC32_user_getPeerSettings = 218296167;
+    CRC32_user_deletePeerSettings = 1586043239;
+    CRC32_user_changePhone = -8759461;
+    CRC32_user_createNewPredefinedUser = 1464414785;
+    CRC32_user_getPredefinedUser = 876047141;
+    CRC32_user_getAllPredefinedUser = -1053474843;
+    CRC32_user_updatePredefinedFirstAndLastName = 976922006;
+    CRC32_user_updatePredefinedVerified = -1158303159;
+    CRC32_user_updatePredefinedUsername = 1269284562;
+    CRC32_user_updatePredefinedCode = 1626771303;
+    CRC32_user_predefinedBindRegisteredUserId = 68106153;
+    CRC32_user_createNewUser = 2044729473;
+    CRC32_user_deleteUser = 2132777160;
+    CRC32_user_blockPeer = -2130301264;
+    CRC32_user_unBlockPeer = -555280883;
+    CRC32_user_blockedByUser = -1147140722;
+    CRC32_user_isBlockedByUser = -1934708257;
+    CRC32_user_checkBlockUserList = -1006800656;
+    CRC32_user_getBlockedList = 603964232;
+    CRC32_user_getContactSignUpNotification = -456010794;
+    CRC32_user_setContactSignUpNotification = -2053016735;
+    CRC32_user_getContentSettings = -1799115361;
+    CRC32_user_setContentSettings = -1654391189;
+    CRC32_user_deleteContact = -972979687;
+    CRC32_user_getContactList = -951332511;
+    CRC32_user_getContactIdList = -237135810;
+    CRC32_user_getContact = -613250077;
+    CRC32_user_addContact = 2042936590;
+    CRC32_user_checkContact = -2102962012;
+    CRC32_user_getImportersByPhone = 1202356754;
+    CRC32_user_deleteImportersByPhone = 390978644;
+    CRC32_user_importContacts = -1711212654;
+    CRC32_user_getCountryCode = 302016562;
+    CRC32_user_updateAbout = -620695161;
+    CRC32_user_updateFirstAndLastName = -882473492;
+    CRC32_user_updateVerified = 617163107;
+    CRC32_user_updateUsername = -179495311;
+    CRC32_user_updateProfilePhoto = 997461895;
+    CRC32_user_deleteProfilePhotos = 736322062;
+    CRC32_user_getProfilePhotos = -597245626;
+    CRC32_user_setBotCommands = 1966844182;
+    CRC32_user_isBot = -948779026;
+    CRC32_user_getBotInfo = 879114000;
+    CRC32_user_checkBots = 1935999169;
+    CRC32_user_getFullUser = -49225414;
+    CRC32_user_updateEmojiStatus = -121062696;
+    CRC32_user_getUserDataById = 62615811;
+    CRC32_user_getUserDataListByIdList = -2121142279;
+    CRC32_user_getUserDataByToken = 1057580446;
+    CRC32_user_search = 1882568397;
+    CRC32_user_updateBotData = -1174586898;
+    CRC32_user_getImmutableUserV2 = 806009420;
+    CRC32_user_getMutableUsersV2 = -1795585240;
+    CRC32_user_createNewTestUser = 1282329771;
+    CRC32_user_editCloseFriends = -2044429563;
+    CRC32_user_setStoriesMaxId = 1391834736;
+    CRC32_user_setColor = 586812791;
+    CRC32_user_updateBirthday = 1484434322;
+    CRC32_user_getBirthdays = -24199258;
+}
+
+
+// LastSeenData <--
+//  + TL_lastSeenData
+//
+message LastSeenData {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 user_id = 3;
+    int64 last_seen_at = 4;
+    int32 expires = 5;
+}
+
+message TL_lastSeenData {
+    LastSeenData data2 = 1;
+}
+
+
+// PeerPeerNotifySettings <--
+//  + TL_peerPeerNotifySettings
+//
+message PeerPeerNotifySettings {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int32 peer_type = 3;
+    int64 peer_id = 4;
+    mtproto.PeerNotifySettings settings = 5;
+}
+
+message TL_peerPeerNotifySettings {
+    PeerPeerNotifySettings data2 = 1;
+}
+
+
+// UserImportedContacts <--
+//  + TL_userImportedContacts
+//
+message UserImportedContacts {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    repeated mtproto.ImportedContact imported = 3;
+    repeated mtproto.PopularContact popular_invites = 4;
+    repeated int64 retry_contacts = 5;
+    repeated mtproto.User users = 6;
+    repeated int64 update_id_list = 7;
+}
+
+message TL_userImportedContacts {
+    UserImportedContacts data2 = 1;
+}
+
+
+// UsersFound <--
+//  + TL_usersDataFound
+//  + TL_usersIdFound
+//
+message UsersFound {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int32 count = 3;
+    repeated mtproto.UserData users = 4;
+    string next_offset = 5;
+    repeated int64 id_list = 6;
+}
+
+message TL_usersDataFound {
+    UsersFound data2 = 1;
+}
+
+message TL_usersIdFound {
+    UsersFound data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getLastSeens {
+    TLConstructor  constructor = 1;
+    repeated int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateLastSeen {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+    int64 last_seen_at = 4;
+    int32 expires = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getLastSeen {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getImmutableUser {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+    bool privacy = 4;
+    repeated int64 contacts = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getMutableUsers {
+    TLConstructor  constructor = 1;
+    repeated int64 id = 3;
+    repeated int64 to = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getImmutableUserByPhone {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getImmutableUserByToken {
+    TLConstructor  constructor = 1;
+    string token = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setAccountDaysTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 ttl = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getAccountDaysTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getNotifySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getNotifySettingsList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated mtproto.PeerUtil peers = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setNotifySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    mtproto.PeerNotifySettings settings = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_resetNotifySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getAllNotifySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getGlobalPrivacySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setGlobalPrivacySettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.GlobalPrivacySettings settings = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getPrivacy {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 key_type = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setPrivacy {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 key_type = 4;
+    repeated mtproto.PrivacyRule rules = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_checkPrivacy {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 key_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_addPeerSettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    mtproto.PeerSettings settings = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getPeerSettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_deletePeerSettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_changePhone {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string phone = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_createNewPredefinedUser {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    string first_name = 4;
+    google.protobuf.StringValue last_name = 5;
+    string username = 6;
+    string code = 7;
+    bool verified = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getPredefinedUser {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getAllPredefinedUser {
+    TLConstructor  constructor = 1;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePredefinedFirstAndLastName {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    string first_name = 4;
+    google.protobuf.StringValue last_name = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePredefinedVerified {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    bool verified = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePredefinedUsername {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    google.protobuf.StringValue username = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePredefinedCode {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    string code = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_predefinedBindRegisteredUserId {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+    int64 registered_userId = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_createNewUser {
+    TLConstructor  constructor = 1;
+    int64 secret_key_id = 3;
+    string phone = 4;
+    string country_code = 5;
+    string first_name = 6;
+    string last_name = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_deleteUser {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string reason = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_blockPeer {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_unBlockPeer {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_blockedByUser {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 peer_user_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_isBlockedByUser {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 peer_user_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_checkBlockUserList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getBlockedList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 offset = 4;
+    int32 limit = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getContactSignUpNotification {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setContactSignUpNotification {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool silent = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getContentSettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setContentSettings {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    bool sensitive_enabled = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_deleteContact {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getContactList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getContactIdList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getContact {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_addContact {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool add_phone_privacy_exception = 4;
+    int64 id = 5;
+    string first_name = 6;
+    string last_name = 7;
+    string phone = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_checkContact {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getImportersByPhone {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_deleteImportersByPhone {
+    TLConstructor  constructor = 1;
+    string phone = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_importContacts {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated mtproto.InputContact contacts = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getCountryCode {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateAbout {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string about = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateFirstAndLastName {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string first_name = 4;
+    string last_name = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateVerified {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool verified = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateUsername {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string username = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateProfilePhoto {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_deleteProfilePhotos {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getProfilePhotos {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setBotCommands {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 bot_id = 4;
+    repeated mtproto.BotCommand commands = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_isBot {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getBotInfo {
+    TLConstructor  constructor = 1;
+    int64 bot_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_checkBots {
+    TLConstructor  constructor = 1;
+    repeated int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getFullUser {
+    TLConstructor  constructor = 1;
+    int64 self_user_id = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateEmojiStatus {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 emoji_status_document_id = 4;
+    int32 emoji_status_until = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getUserDataById {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getUserDataListByIdList {
+    TLConstructor  constructor = 1;
+    repeated int64 user_id_list = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getUserDataByToken {
+    TLConstructor  constructor = 1;
+    string token = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_search {
+    TLConstructor  constructor = 1;
+    string q = 3;
+    repeated int64 excluded_contacts = 4;
+    int64 offset = 5;
+    int32 limit = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateBotData {
+    TLConstructor  constructor = 1;
+    int64 bot_id = 3;
+    mtproto.Bool bot_chat_history = 4;
+    mtproto.Bool bot_nochats = 5;
+    mtproto.Bool bot_inline_geo = 6;
+    mtproto.Bool bot_attach_menu = 7;
+    mtproto.Bool bot_inline_placeholder = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getImmutableUserV2 {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+    bool privacy = 4;
+    bool has_to = 5;
+    repeated int64 to = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getMutableUsersV2 {
+    TLConstructor  constructor = 1;
+    repeated int64 id = 3;
+    bool privacy = 4;
+    bool has_to = 5;
+    repeated int64 to = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_createNewTestUser {
+    TLConstructor  constructor = 1;
+    int64 secret_key_id = 3;
+    int64 min_id = 4;
+    int64 max_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_editCloseFriends {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setStoriesMaxId {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_setColor {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    bool for_profile = 4;
+    int32 color = 5;
+    int64 background_emoji_id = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_updateBirthday {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Birthday birthday = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getBirthdays {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_LastSeenData {
+    repeated LastSeenData datas = 1;
+}
+message Vector_ImmutableUser {
+    repeated mtproto.ImmutableUser datas = 1;
+}
+message Vector_PeerPeerNotifySettings {
+    repeated PeerPeerNotifySettings datas = 1;
+}
+message Vector_PrivacyRule {
+    repeated mtproto.PrivacyRule datas = 1;
+}
+message Vector_PredefinedUser {
+    repeated mtproto.PredefinedUser datas = 1;
+}
+message Vector_Long {
+    repeated int64 datas = 1;
+}
+message Vector_PeerBlocked {
+    repeated mtproto.PeerBlocked datas = 1;
+}
+message Vector_ContactData {
+    repeated mtproto.ContactData datas = 1;
+}
+message Vector_InputContact {
+    repeated mtproto.InputContact datas = 1;
+}
+message Vector_UserData {
+    repeated mtproto.UserData datas = 1;
+}
+message Vector_ContactBirthday {
+    repeated mtproto.ContactBirthday datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCUser {
+ rpc user_getLastSeens(TL_user_getLastSeens) returns (Vector_LastSeenData) {}
+ rpc user_updateLastSeen(TL_user_updateLastSeen) returns (mtproto.Bool) {}
+ rpc user_getLastSeen(TL_user_getLastSeen) returns (LastSeenData) {}
+ rpc user_getImmutableUser(TL_user_getImmutableUser) returns (mtproto.ImmutableUser) {}
+ rpc user_getMutableUsers(TL_user_getMutableUsers) returns (Vector_ImmutableUser) {}
+ rpc user_getImmutableUserByPhone(TL_user_getImmutableUserByPhone) returns (mtproto.ImmutableUser) {}
+ rpc user_getImmutableUserByToken(TL_user_getImmutableUserByToken) returns (mtproto.ImmutableUser) {}
+ rpc user_setAccountDaysTTL(TL_user_setAccountDaysTTL) returns (mtproto.Bool) {}
+ rpc user_getAccountDaysTTL(TL_user_getAccountDaysTTL) returns (mtproto.AccountDaysTTL) {}
+ rpc user_getNotifySettings(TL_user_getNotifySettings) returns (mtproto.PeerNotifySettings) {}
+ rpc user_getNotifySettingsList(TL_user_getNotifySettingsList) returns (Vector_PeerPeerNotifySettings) {}
+ rpc user_setNotifySettings(TL_user_setNotifySettings) returns (mtproto.Bool) {}
+ rpc user_resetNotifySettings(TL_user_resetNotifySettings) returns (mtproto.Bool) {}
+ rpc user_getAllNotifySettings(TL_user_getAllNotifySettings) returns (Vector_PeerPeerNotifySettings) {}
+ rpc user_getGlobalPrivacySettings(TL_user_getGlobalPrivacySettings) returns (mtproto.GlobalPrivacySettings) {}
+ rpc user_setGlobalPrivacySettings(TL_user_setGlobalPrivacySettings) returns (mtproto.Bool) {}
+ rpc user_getPrivacy(TL_user_getPrivacy) returns (Vector_PrivacyRule) {}
+ rpc user_setPrivacy(TL_user_setPrivacy) returns (mtproto.Bool) {}
+ rpc user_checkPrivacy(TL_user_checkPrivacy) returns (mtproto.Bool) {}
+ rpc user_addPeerSettings(TL_user_addPeerSettings) returns (mtproto.Bool) {}
+ rpc user_getPeerSettings(TL_user_getPeerSettings) returns (mtproto.PeerSettings) {}
+ rpc user_deletePeerSettings(TL_user_deletePeerSettings) returns (mtproto.Bool) {}
+ rpc user_changePhone(TL_user_changePhone) returns (mtproto.Bool) {}
+ rpc user_createNewPredefinedUser(TL_user_createNewPredefinedUser) returns (mtproto.PredefinedUser) {}
+ rpc user_getPredefinedUser(TL_user_getPredefinedUser) returns (mtproto.PredefinedUser) {}
+ rpc user_getAllPredefinedUser(TL_user_getAllPredefinedUser) returns (Vector_PredefinedUser) {}
+ rpc user_updatePredefinedFirstAndLastName(TL_user_updatePredefinedFirstAndLastName) returns (mtproto.PredefinedUser) {}
+ rpc user_updatePredefinedVerified(TL_user_updatePredefinedVerified) returns (mtproto.PredefinedUser) {}
+ rpc user_updatePredefinedUsername(TL_user_updatePredefinedUsername) returns (mtproto.PredefinedUser) {}
+ rpc user_updatePredefinedCode(TL_user_updatePredefinedCode) returns (mtproto.PredefinedUser) {}
+ rpc user_predefinedBindRegisteredUserId(TL_user_predefinedBindRegisteredUserId) returns (mtproto.Bool) {}
+ rpc user_createNewUser(TL_user_createNewUser) returns (mtproto.ImmutableUser) {}
+ rpc user_deleteUser(TL_user_deleteUser) returns (mtproto.Bool) {}
+ rpc user_blockPeer(TL_user_blockPeer) returns (mtproto.Bool) {}
+ rpc user_unBlockPeer(TL_user_unBlockPeer) returns (mtproto.Bool) {}
+ rpc user_blockedByUser(TL_user_blockedByUser) returns (mtproto.Bool) {}
+ rpc user_isBlockedByUser(TL_user_isBlockedByUser) returns (mtproto.Bool) {}
+ rpc user_checkBlockUserList(TL_user_checkBlockUserList) returns (Vector_Long) {}
+ rpc user_getBlockedList(TL_user_getBlockedList) returns (Vector_PeerBlocked) {}
+ rpc user_getContactSignUpNotification(TL_user_getContactSignUpNotification) returns (mtproto.Bool) {}
+ rpc user_setContactSignUpNotification(TL_user_setContactSignUpNotification) returns (mtproto.Bool) {}
+ rpc user_getContentSettings(TL_user_getContentSettings) returns (mtproto.account_ContentSettings) {}
+ rpc user_setContentSettings(TL_user_setContentSettings) returns (mtproto.Bool) {}
+ rpc user_deleteContact(TL_user_deleteContact) returns (mtproto.Bool) {}
+ rpc user_getContactList(TL_user_getContactList) returns (Vector_ContactData) {}
+ rpc user_getContactIdList(TL_user_getContactIdList) returns (Vector_Long) {}
+ rpc user_getContact(TL_user_getContact) returns (mtproto.ContactData) {}
+ rpc user_addContact(TL_user_addContact) returns (mtproto.Bool) {}
+ rpc user_checkContact(TL_user_checkContact) returns (mtproto.Bool) {}
+ rpc user_getImportersByPhone(TL_user_getImportersByPhone) returns (Vector_InputContact) {}
+ rpc user_deleteImportersByPhone(TL_user_deleteImportersByPhone) returns (mtproto.Bool) {}
+ rpc user_importContacts(TL_user_importContacts) returns (UserImportedContacts) {}
+ rpc user_getCountryCode(TL_user_getCountryCode) returns (mtproto.String) {}
+ rpc user_updateAbout(TL_user_updateAbout) returns (mtproto.Bool) {}
+ rpc user_updateFirstAndLastName(TL_user_updateFirstAndLastName) returns (mtproto.Bool) {}
+ rpc user_updateVerified(TL_user_updateVerified) returns (mtproto.Bool) {}
+ rpc user_updateUsername(TL_user_updateUsername) returns (mtproto.Bool) {}
+ rpc user_updateProfilePhoto(TL_user_updateProfilePhoto) returns (mtproto.Int64) {}
+ rpc user_deleteProfilePhotos(TL_user_deleteProfilePhotos) returns (mtproto.Int64) {}
+ rpc user_getProfilePhotos(TL_user_getProfilePhotos) returns (Vector_Long) {}
+ rpc user_setBotCommands(TL_user_setBotCommands) returns (mtproto.Bool) {}
+ rpc user_isBot(TL_user_isBot) returns (mtproto.Bool) {}
+ rpc user_getBotInfo(TL_user_getBotInfo) returns (mtproto.BotInfo) {}
+ rpc user_checkBots(TL_user_checkBots) returns (Vector_Long) {}
+ rpc user_getFullUser(TL_user_getFullUser) returns (mtproto.users_UserFull) {}
+ rpc user_updateEmojiStatus(TL_user_updateEmojiStatus) returns (mtproto.Bool) {}
+ rpc user_getUserDataById(TL_user_getUserDataById) returns (mtproto.UserData) {}
+ rpc user_getUserDataListByIdList(TL_user_getUserDataListByIdList) returns (Vector_UserData) {}
+ rpc user_getUserDataByToken(TL_user_getUserDataByToken) returns (mtproto.UserData) {}
+ rpc user_search(TL_user_search) returns (UsersFound) {}
+ rpc user_updateBotData(TL_user_updateBotData) returns (mtproto.Bool) {}
+ rpc user_getImmutableUserV2(TL_user_getImmutableUserV2) returns (mtproto.ImmutableUser) {}
+ rpc user_getMutableUsersV2(TL_user_getMutableUsersV2) returns (mtproto.MutableUsers) {}
+ rpc user_createNewTestUser(TL_user_createNewTestUser) returns (mtproto.ImmutableUser) {}
+ rpc user_editCloseFriends(TL_user_editCloseFriends) returns (mtproto.Bool) {}
+ rpc user_setStoriesMaxId(TL_user_setStoriesMaxId) returns (mtproto.Bool) {}
+ rpc user_setColor(TL_user_setColor) returns (mtproto.Bool) {}
+ rpc user_updateBirthday(TL_user_updateBirthday) returns (mtproto.Bool) {}
+ rpc user_getBirthdays(TL_user_getBirthdays) returns (Vector_ContactBirthday) {}
+}
+

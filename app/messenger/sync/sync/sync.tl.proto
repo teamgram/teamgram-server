@@ -1,0 +1,113 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package sync;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/messenger/sync/sync";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_sync_updatesMe = 1614568688;
+    CRC32_sync_updatesNotMe = 16458447;
+    CRC32_sync_pushUpdates = -1895114306;
+    CRC32_sync_pushUpdatesIfNot = 1074085860;
+    CRC32_sync_pushBotUpdates = -1379667968;
+    CRC32_sync_pushRpcResult = -1874085983;
+    CRC32_sync_broadcastUpdates = -169648970;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_updatesMe {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    string server_id = 5;
+    google.protobuf.Int64Value session_id = 6;
+    mtproto.Updates updates = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_updatesNotMe {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    mtproto.Updates updates = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_pushUpdates {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Updates updates = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_pushUpdatesIfNot {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 excludes = 4;
+    mtproto.Updates updates = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_pushBotUpdates {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Updates updates = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_pushRpcResult {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    string server_id = 4;
+    int64 session_id = 5;
+    int64 client_req_msg_id = 6;
+    bytes rpc_result = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_sync_broadcastUpdates {
+    TLConstructor  constructor = 1;
+    int32 broadcast_type = 3;
+    int64 chat_id = 4;
+    repeated int64 exclude_id_list = 5;
+    mtproto.Updates updates = 6;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCSync {
+ rpc sync_updatesMe(TL_sync_updatesMe) returns (mtproto.Void) {}
+ rpc sync_updatesNotMe(TL_sync_updatesNotMe) returns (mtproto.Void) {}
+ rpc sync_pushUpdates(TL_sync_pushUpdates) returns (mtproto.Void) {}
+ rpc sync_pushUpdatesIfNot(TL_sync_pushUpdatesIfNot) returns (mtproto.Void) {}
+ rpc sync_pushBotUpdates(TL_sync_pushBotUpdates) returns (mtproto.Void) {}
+ rpc sync_pushRpcResult(TL_sync_pushRpcResult) returns (mtproto.Void) {}
+ rpc sync_broadcastUpdates(TL_sync_broadcastUpdates) returns (mtproto.Void) {}
+}
+

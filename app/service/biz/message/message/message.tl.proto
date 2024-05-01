@@ -1,0 +1,291 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package message;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/message/message";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_message_getUserMessage = 2060235208;
+    CRC32_message_getUserMessageList = -749200346;
+    CRC32_message_getUserMessageListByDataIdList = 290824571;
+    CRC32_message_getUserMessageListByDataIdUserIdList = 749890097;
+    CRC32_message_getHistoryMessages = 50897728;
+    CRC32_message_getHistoryMessagesCount = 256933395;
+    CRC32_message_getPeerUserMessageId = 1940829983;
+    CRC32_message_getPeerUserMessage = 1662161426;
+    CRC32_message_searchByMediaType = -1152381832;
+    CRC32_message_search = 251910661;
+    CRC32_message_searchGlobal = 1113214626;
+    CRC32_message_searchByPinned = 721580084;
+    CRC32_message_getSearchCounter = -489963706;
+    CRC32_message_searchV2 = -356633351;
+    CRC32_message_getLastTwoPinnedMessageId = -1348859861;
+    CRC32_message_updatePinnedMessageId = -182391344;
+    CRC32_message_getPinnedMessageIdList = -637415203;
+    CRC32_message_unPinAllMessages = -368432525;
+    CRC32_message_getUnreadMentions = 1877050548;
+    CRC32_message_getUnreadMentionsCount = -1254023095;
+    CRC32_message_getSavedHistoryMessages = -60243377;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUserMessage {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUserMessageList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int32 id_list = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUserMessageListByDataIdList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    repeated int64 id_list = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUserMessageListByDataIdUserIdList {
+    TLConstructor  constructor = 1;
+    int64 id = 3;
+    repeated int64 user_id_list = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getHistoryMessages {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 offset_id = 6;
+    int32 offset_date = 7;
+    int32 add_offset = 8;
+    int32 limit = 9;
+    int32 max_id = 10;
+    int32 min_id = 11;
+    int64 hash = 12;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getHistoryMessagesCount {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getPeerUserMessageId {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 peer_user_id = 4;
+    int32 msg_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getPeerUserMessage {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 peer_user_id = 4;
+    int32 msg_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_searchByMediaType {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 media_type = 6;
+    int32 offset = 7;
+    int32 limit = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_search {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    string q = 6;
+    int32 offset = 7;
+    int32 limit = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_searchGlobal {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string q = 4;
+    int32 offset = 5;
+    int32 limit = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_searchByPinned {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getSearchCounter {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 media_type = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_searchV2 {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    string q = 6;
+    int64 from_id = 7;
+    int32 min_date = 8;
+    int32 max_date = 9;
+    int32 offset_id = 10;
+    int32 add_offset = 11;
+    int32 limit = 12;
+    int32 max_id = 13;
+    int32 min_id = 14;
+    int64 hash = 15;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getLastTwoPinnedMessageId {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_updatePinnedMessageId {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 id = 6;
+    mtproto.Bool pinned = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getPinnedMessageIdList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_unPinAllMessages {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUnreadMentions {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 offset_id = 6;
+    int32 add_offset = 7;
+    int32 limit = 8;
+    int32 min_id = 9;
+    int32 max_int = 10;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getUnreadMentionsCount {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_message_getSavedHistoryMessages {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 offset_id = 6;
+    int32 offset_date = 7;
+    int32 add_offset = 8;
+    int32 limit = 9;
+    int32 max_id = 10;
+    int32 min_id = 11;
+    int64 hash = 12;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_MessageBox {
+    repeated mtproto.MessageBox datas = 1;
+}
+message Vector_Int {
+    repeated int32 datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCMessage {
+ rpc message_getUserMessage(TL_message_getUserMessage) returns (mtproto.MessageBox) {}
+ rpc message_getUserMessageList(TL_message_getUserMessageList) returns (Vector_MessageBox) {}
+ rpc message_getUserMessageListByDataIdList(TL_message_getUserMessageListByDataIdList) returns (Vector_MessageBox) {}
+ rpc message_getUserMessageListByDataIdUserIdList(TL_message_getUserMessageListByDataIdUserIdList) returns (Vector_MessageBox) {}
+ rpc message_getHistoryMessages(TL_message_getHistoryMessages) returns (Vector_MessageBox) {}
+ rpc message_getHistoryMessagesCount(TL_message_getHistoryMessagesCount) returns (mtproto.Int32) {}
+ rpc message_getPeerUserMessageId(TL_message_getPeerUserMessageId) returns (mtproto.Int32) {}
+ rpc message_getPeerUserMessage(TL_message_getPeerUserMessage) returns (mtproto.MessageBox) {}
+ rpc message_searchByMediaType(TL_message_searchByMediaType) returns (mtproto.MessageBoxList) {}
+ rpc message_search(TL_message_search) returns (mtproto.MessageBoxList) {}
+ rpc message_searchGlobal(TL_message_searchGlobal) returns (mtproto.MessageBoxList) {}
+ rpc message_searchByPinned(TL_message_searchByPinned) returns (mtproto.MessageBoxList) {}
+ rpc message_getSearchCounter(TL_message_getSearchCounter) returns (mtproto.Int32) {}
+ rpc message_searchV2(TL_message_searchV2) returns (mtproto.MessageBoxList) {}
+ rpc message_getLastTwoPinnedMessageId(TL_message_getLastTwoPinnedMessageId) returns (Vector_Int) {}
+ rpc message_updatePinnedMessageId(TL_message_updatePinnedMessageId) returns (mtproto.Bool) {}
+ rpc message_getPinnedMessageIdList(TL_message_getPinnedMessageIdList) returns (Vector_Int) {}
+ rpc message_unPinAllMessages(TL_message_unPinAllMessages) returns (Vector_Int) {}
+ rpc message_getUnreadMentions(TL_message_getUnreadMentions) returns (Vector_MessageBox) {}
+ rpc message_getUnreadMentionsCount(TL_message_getUnreadMentionsCount) returns (mtproto.Int32) {}
+ rpc message_getSavedHistoryMessages(TL_message_getSavedHistoryMessages) returns (mtproto.MessageBoxList) {}
+}
+

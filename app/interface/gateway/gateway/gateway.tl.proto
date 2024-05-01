@@ -1,0 +1,50 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package gateway;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/interface/gateway/gateway";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_gateway_sendDataToGateway = 645953552;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_gateway_sendDataToGateway {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    int64 session_id = 4;
+    bytes payload = 5;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCGateway {
+ rpc gateway_sendDataToGateway(TL_gateway_sendDataToGateway) returns (mtproto.Bool) {}
+}
+

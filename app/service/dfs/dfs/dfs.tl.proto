@@ -1,0 +1,153 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package dfs;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/dfs/dfs";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_dfs_writeFilePartData = 440942855;
+    CRC32_dfs_uploadPhotoFileV2 = 605082018;
+    CRC32_dfs_uploadProfilePhotoFileV2 = -870473038;
+    CRC32_dfs_uploadEncryptedFileV2 = 2043921699;
+    CRC32_dfs_downloadFile = -692064706;
+    CRC32_dfs_uploadDocumentFileV2 = 1983081911;
+    CRC32_dfs_uploadGifDocumentMedia = 1103416576;
+    CRC32_dfs_uploadMp4DocumentMedia = -1566246888;
+    CRC32_dfs_uploadWallPaperFile = -1046081450;
+    CRC32_dfs_uploadThemeFile = -559525993;
+    CRC32_dfs_uploadRingtoneFile = 45335985;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_writeFilePartData {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    int64 file_id = 4;
+    int32 file_part = 5;
+    bytes bytes = 6;
+    bool big = 7;
+    google.protobuf.Int32Value file_total_parts = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadPhotoFileV2 {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputFile file = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadProfilePhotoFileV2 {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputFile file = 4;
+    mtproto.InputFile video = 5;
+    google.protobuf.DoubleValue video_start_ts = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadEncryptedFileV2 {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputEncryptedFile file = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_downloadFile {
+    TLConstructor  constructor = 1;
+    mtproto.InputFileLocation location = 3;
+    int64 offset = 4;
+    int32 limit = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadDocumentFileV2 {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputMedia media = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadGifDocumentMedia {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputMedia media = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadMp4DocumentMedia {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputMedia media = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadWallPaperFile {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputFile file = 4;
+    string mime_type = 5;
+    mtproto.Bool admin = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadThemeFile {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputFile file = 4;
+    mtproto.InputFile thumb = 5;
+    string mime_type = 6;
+    string file_name = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadRingtoneFile {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    mtproto.InputFile file = 4;
+    string mime_type = 5;
+    string file_name = 6;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCDfs {
+ rpc dfs_writeFilePartData(TL_dfs_writeFilePartData) returns (mtproto.Bool) {}
+ rpc dfs_uploadPhotoFileV2(TL_dfs_uploadPhotoFileV2) returns (mtproto.Photo) {}
+ rpc dfs_uploadProfilePhotoFileV2(TL_dfs_uploadProfilePhotoFileV2) returns (mtproto.Photo) {}
+ rpc dfs_uploadEncryptedFileV2(TL_dfs_uploadEncryptedFileV2) returns (mtproto.EncryptedFile) {}
+ rpc dfs_downloadFile(TL_dfs_downloadFile) returns (mtproto.upload_File) {}
+ rpc dfs_uploadDocumentFileV2(TL_dfs_uploadDocumentFileV2) returns (mtproto.Document) {}
+ rpc dfs_uploadGifDocumentMedia(TL_dfs_uploadGifDocumentMedia) returns (mtproto.Document) {}
+ rpc dfs_uploadMp4DocumentMedia(TL_dfs_uploadMp4DocumentMedia) returns (mtproto.Document) {}
+ rpc dfs_uploadWallPaperFile(TL_dfs_uploadWallPaperFile) returns (mtproto.Document) {}
+ rpc dfs_uploadThemeFile(TL_dfs_uploadThemeFile) returns (mtproto.Document) {}
+ rpc dfs_uploadRingtoneFile(TL_dfs_uploadRingtoneFile) returns (mtproto.Document) {}
+}
+

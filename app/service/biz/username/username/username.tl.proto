@@ -1,0 +1,196 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package username;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/username/username";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_usernameNotExisted = -885195923;
+    CRC32_usernameExisted = -1394084659;
+    CRC32_usernameExistedNotMe = -803256399;
+    CRC32_usernameExistedIsMe = -2024900751;
+    CRC32_usernameData = -1438646081;
+    CRC32_username_getAccountUsername = 154073301;
+    CRC32_username_checkAccountUsername = 1240985861;
+    CRC32_username_getChannelUsername = -2038134827;
+    CRC32_username_checkChannelUsername = 651476637;
+    CRC32_username_updateUsernameByPeer = 1718205916;
+    CRC32_username_checkUsername = 684369621;
+    CRC32_username_updateUsername = 1389777971;
+    CRC32_username_deleteUsername = -1065913464;
+    CRC32_username_resolveUsername = 2008689862;
+    CRC32_username_getListByUsernameList = 1218942797;
+    CRC32_username_deleteUsernameByPeer = 507822189;
+    CRC32_username_search = -391798010;
+}
+
+
+// UsernameData <--
+//  + TL_usernameData
+//
+message UsernameData {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    string username = 3;
+    mtproto.Peer peer = 4;
+}
+
+message TL_usernameData {
+    UsernameData data2 = 1;
+}
+
+
+// UsernameExist <--
+//  + TL_usernameNotExisted
+//  + TL_usernameExisted
+//  + TL_usernameExistedNotMe
+//  + TL_usernameExistedIsMe
+//
+message UsernameExist {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+}
+
+message TL_usernameNotExisted {
+    UsernameExist data2 = 1;
+}
+
+message TL_usernameExisted {
+    UsernameExist data2 = 1;
+}
+
+message TL_usernameExistedNotMe {
+    UsernameExist data2 = 1;
+}
+
+message TL_usernameExistedIsMe {
+    UsernameExist data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_username_getAccountUsername {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_checkAccountUsername {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    string username = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_getChannelUsername {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_checkChannelUsername {
+    TLConstructor  constructor = 1;
+    int64 channel_id = 3;
+    string username = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_updateUsernameByPeer {
+    TLConstructor  constructor = 1;
+    int32 peer_type = 3;
+    int64 peer_id = 4;
+    string username = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_checkUsername {
+    TLConstructor  constructor = 1;
+    string username = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_updateUsername {
+    TLConstructor  constructor = 1;
+    int32 peer_type = 3;
+    int64 peer_id = 4;
+    string username = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_deleteUsername {
+    TLConstructor  constructor = 1;
+    string username = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_resolveUsername {
+    TLConstructor  constructor = 1;
+    string username = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_getListByUsernameList {
+    TLConstructor  constructor = 1;
+    repeated string names = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_deleteUsernameByPeer {
+    TLConstructor  constructor = 1;
+    int32 peer_type = 3;
+    int64 peer_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_username_search {
+    TLConstructor  constructor = 1;
+    string q = 3;
+    repeated int64 excluded_contacts = 4;
+    int32 limit = 5;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_UsernameData {
+    repeated UsernameData datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCUsername {
+ rpc username_getAccountUsername(TL_username_getAccountUsername) returns (UsernameData) {}
+ rpc username_checkAccountUsername(TL_username_checkAccountUsername) returns (UsernameExist) {}
+ rpc username_getChannelUsername(TL_username_getChannelUsername) returns (UsernameData) {}
+ rpc username_checkChannelUsername(TL_username_checkChannelUsername) returns (UsernameExist) {}
+ rpc username_updateUsernameByPeer(TL_username_updateUsernameByPeer) returns (mtproto.Bool) {}
+ rpc username_checkUsername(TL_username_checkUsername) returns (UsernameExist) {}
+ rpc username_updateUsername(TL_username_updateUsername) returns (mtproto.Bool) {}
+ rpc username_deleteUsername(TL_username_deleteUsername) returns (mtproto.Bool) {}
+ rpc username_resolveUsername(TL_username_resolveUsername) returns (mtproto.Peer) {}
+ rpc username_getListByUsernameList(TL_username_getListByUsernameList) returns (Vector_UsernameData) {}
+ rpc username_deleteUsernameByPeer(TL_username_deleteUsernameByPeer) returns (mtproto.Bool) {}
+ rpc username_search(TL_username_search) returns (Vector_UsernameData) {}
+}
+

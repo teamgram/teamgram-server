@@ -1,0 +1,174 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package idgen;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/idgen/idgen";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_inputId = -1963845268;
+    CRC32_inputIds = 2133352380;
+    CRC32_inputSeqId = -850215987;
+    CRC32_inputNSeqId = 2058448257;
+    CRC32_idVal = -1065859893;
+    CRC32_idVals = 473672294;
+    CRC32_seqIdVal = 704937224;
+    CRC32_idgen_nextId = -1099886560;
+    CRC32_idgen_nextIds = 1204121518;
+    CRC32_idgen_getCurrentSeqId = -1654936704;
+    CRC32_idgen_setCurrentSeqId = -852747923;
+    CRC32_idgen_getNextSeqId = -160339608;
+    CRC32_idgen_getNextNSeqId = -1479226258;
+    CRC32_idgen_getNextIdValList = -1434062537;
+    CRC32_idgen_getCurrentSeqIdList = -769020349;
+}
+
+
+// IdVal <--
+//  + TL_idVal
+//  + TL_idVals
+//  + TL_seqIdVal
+//
+message IdVal {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 id_INT64 = 3;
+    repeated int64 id_VECTORINT64 = 4;
+}
+
+message TL_idVal {
+    IdVal data2 = 1;
+}
+
+message TL_idVals {
+    IdVal data2 = 1;
+}
+
+message TL_seqIdVal {
+    IdVal data2 = 1;
+}
+
+
+// InputId <--
+//  + TL_inputId
+//  + TL_inputIds
+//  + TL_inputSeqId
+//  + TL_inputNSeqId
+//
+message InputId {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int32 num = 3;
+    string key = 4;
+    int32 n = 5;
+}
+
+message TL_inputId {
+    InputId data2 = 1;
+}
+
+message TL_inputIds {
+    InputId data2 = 1;
+}
+
+message TL_inputSeqId {
+    InputId data2 = 1;
+}
+
+message TL_inputNSeqId {
+    InputId data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_nextId {
+    TLConstructor  constructor = 1;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_nextIds {
+    TLConstructor  constructor = 1;
+    int32 num = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_getCurrentSeqId {
+    TLConstructor  constructor = 1;
+    string key = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_setCurrentSeqId {
+    TLConstructor  constructor = 1;
+    string key = 3;
+    int64 id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_getNextSeqId {
+    TLConstructor  constructor = 1;
+    string key = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_getNextNSeqId {
+    TLConstructor  constructor = 1;
+    string key = 3;
+    int32 n = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_getNextIdValList {
+    TLConstructor  constructor = 1;
+    repeated InputId id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_idgen_getCurrentSeqIdList {
+    TLConstructor  constructor = 1;
+    repeated InputId id = 3;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_Long {
+    repeated int64 datas = 1;
+}
+message Vector_IdVal {
+    repeated IdVal datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCIdgen {
+ rpc idgen_nextId(TL_idgen_nextId) returns (mtproto.Int64) {}
+ rpc idgen_nextIds(TL_idgen_nextIds) returns (Vector_Long) {}
+ rpc idgen_getCurrentSeqId(TL_idgen_getCurrentSeqId) returns (mtproto.Int64) {}
+ rpc idgen_setCurrentSeqId(TL_idgen_setCurrentSeqId) returns (mtproto.Bool) {}
+ rpc idgen_getNextSeqId(TL_idgen_getNextSeqId) returns (mtproto.Int64) {}
+ rpc idgen_getNextNSeqId(TL_idgen_getNextNSeqId) returns (mtproto.Int64) {}
+ rpc idgen_getNextIdValList(TL_idgen_getNextIdValList) returns (Vector_IdVal) {}
+ rpc idgen_getCurrentSeqIdList(TL_idgen_getCurrentSeqIdList) returns (Vector_IdVal) {}
+}
+

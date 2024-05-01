@@ -22,7 +22,6 @@ Thumbs.db
 *.log
 *.swp
 *.swo
-*.proto
 *.tl
 
 #deploy data

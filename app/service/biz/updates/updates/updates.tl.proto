@@ -1,0 +1,128 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package updates;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/updates/updates";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_channelDifference = -853998774;
+    CRC32_differenceEmpty = -1948526002;
+    CRC32_difference = 1417839403;
+    CRC32_differenceSlice = -879338017;
+    CRC32_differenceTooLong = 896724528;
+    CRC32_updates_getStateV2 = 1173671269;
+    CRC32_updates_getDifferenceV2 = -1217698151;
+    CRC32_updates_getChannelDifferenceV2 = 1302540682;
+}
+
+
+// ChannelDifference <--
+//  + TL_channelDifference
+//
+message ChannelDifference {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    bool final = 3;
+    int32 pts = 4;
+    repeated mtproto.Message new_messages = 5;
+    repeated mtproto.Update other_updates = 6;
+}
+
+message TL_channelDifference {
+    ChannelDifference data2 = 1;
+}
+
+
+// Difference <--
+//  + TL_differenceEmpty
+//  + TL_difference
+//  + TL_differenceSlice
+//  + TL_differenceTooLong
+//
+message Difference {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    mtproto.updates_State state = 3;
+    repeated mtproto.Message new_messages = 4;
+    repeated mtproto.Update other_updates = 5;
+    mtproto.updates_State intermediate_state = 6;
+    int32 pts = 7;
+}
+
+message TL_differenceEmpty {
+    Difference data2 = 1;
+}
+
+message TL_difference {
+    Difference data2 = 1;
+}
+
+message TL_differenceSlice {
+    Difference data2 = 1;
+}
+
+message TL_differenceTooLong {
+    Difference data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_updates_getStateV2 {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    int64 user_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_updates_getDifferenceV2 {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    int64 user_id = 4;
+    int32 pts = 5;
+    google.protobuf.Int32Value pts_total_limit = 6;
+    int64 date = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_updates_getChannelDifferenceV2 {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+    int64 user_id = 4;
+    int64 channel_id = 5;
+    int32 pts = 6;
+    int32 limit = 7;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCUpdates {
+ rpc updates_getStateV2(TL_updates_getStateV2) returns (mtproto.updates_State) {}
+ rpc updates_getDifferenceV2(TL_updates_getDifferenceV2) returns (Difference) {}
+ rpc updates_getChannelDifferenceV2(TL_updates_getChannelDifferenceV2) returns (ChannelDifference) {}
+}
+

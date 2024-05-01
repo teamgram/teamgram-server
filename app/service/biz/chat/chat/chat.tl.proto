@@ -1,0 +1,486 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package chat;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/service/biz/chat/chat";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_chatInviteAlready = -1542554274;
+    CRC32_chatInvite = -613035609;
+    CRC32_chatInvitePeek = -1394351506;
+    CRC32_userChatIdList = 1342599716;
+    CRC32_recentChatInviteRequesters = 476986452;
+    CRC32_chatInviteImported = 1913672182;
+    CRC32_chat_getMutableChat = 741090770;
+    CRC32_chat_getChatListByIdList = -415173319;
+    CRC32_chat_getChatBySelfId = 1236736584;
+    CRC32_chat_createChat2 = -143374126;
+    CRC32_chat_deleteChat = 1829891102;
+    CRC32_chat_deleteChatUser = 187109333;
+    CRC32_chat_editChatTitle = -1782210905;
+    CRC32_chat_editChatAbout = 1551072376;
+    CRC32_chat_editChatPhoto = 1170384488;
+    CRC32_chat_editChatAdmin = 419816940;
+    CRC32_chat_editChatDefaultBannedRights = 1513399943;
+    CRC32_chat_addChatUser = -447397528;
+    CRC32_chat_getMutableChatByLink = -1570363509;
+    CRC32_chat_toggleNoForwards = -711644423;
+    CRC32_chat_migratedToChannel = 138390239;
+    CRC32_chat_getChatParticipantIdList = 848700073;
+    CRC32_chat_getUsersChatIdList = 792111948;
+    CRC32_chat_getMyChatList = -210408312;
+    CRC32_chat_exportChatInvite = -976256949;
+    CRC32_chat_getAdminsWithInvites = -756399662;
+    CRC32_chat_getExportedChatInvite = -571854256;
+    CRC32_chat_getExportedChatInvites = -1265690378;
+    CRC32_chat_checkChatInvite = 1938289292;
+    CRC32_chat_importChatInvite = 1491493076;
+    CRC32_chat_getChatInviteImporters = -1740221057;
+    CRC32_chat_deleteExportedChatInvite = 1445103800;
+    CRC32_chat_deleteRevokedExportedChatInvites = -804101527;
+    CRC32_chat_editExportedChatInvite = -1348907914;
+    CRC32_chat_setChatAvailableReactions = -992966286;
+    CRC32_chat_setHistoryTTL = 1023107972;
+    CRC32_chat_search = 568333563;
+    CRC32_chat_getRecentChatInviteRequesters = -19132264;
+    CRC32_chat_hideChatJoinRequests = 1051012305;
+    CRC32_chat_importChatInvite2 = -589742657;
+}
+
+
+// ChatInviteExt <--
+//  + TL_chatInviteAlready
+//  + TL_chatInvite
+//  + TL_chatInvitePeek
+//
+message ChatInviteExt {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    mtproto.MutableChat chat = 3;
+    bool request_needed = 4;
+    string title = 5;
+    google.protobuf.StringValue about = 6;
+    mtproto.Photo photo = 7;
+    int32 participants_count = 8;
+    repeated int64 participants = 9;
+    int32 expires = 10;
+}
+
+message TL_chatInviteAlready {
+    ChatInviteExt data2 = 1;
+}
+
+message TL_chatInvite {
+    ChatInviteExt data2 = 1;
+}
+
+message TL_chatInvitePeek {
+    ChatInviteExt data2 = 1;
+}
+
+
+// ChatInviteImported <--
+//  + TL_chatInviteImported
+//
+message ChatInviteImported {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    mtproto.MutableChat chat = 3;
+    RecentChatInviteRequesters requesters = 4;
+}
+
+message TL_chatInviteImported {
+    ChatInviteImported data2 = 1;
+}
+
+
+// RecentChatInviteRequesters <--
+//  + TL_recentChatInviteRequesters
+//
+message RecentChatInviteRequesters {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int32 requests_pending = 3;
+    repeated int64 recent_requesters = 4;
+}
+
+message TL_recentChatInviteRequesters {
+    RecentChatInviteRequesters data2 = 1;
+}
+
+
+// UserChatIdList <--
+//  + TL_userChatIdList
+//
+message UserChatIdList {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    int64 user_id = 3;
+    repeated int64 chat_id_list = 4;
+}
+
+message TL_userChatIdList {
+    UserChatIdList data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getMutableChat {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getChatListByIdList {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    repeated int64 id_list = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getChatBySelfId {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_createChat2 {
+    TLConstructor  constructor = 1;
+    int64 creator_id = 3;
+    repeated int64 user_id_list = 4;
+    string title = 5;
+    repeated int64 bots = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_deleteChat {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 operator_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_deleteChatUser {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 operator_id = 4;
+    int64 delete_user_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editChatTitle {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 edit_user_id = 4;
+    string title = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editChatAbout {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 edit_user_id = 4;
+    string about = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editChatPhoto {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 edit_user_id = 4;
+    mtproto.Photo chat_photo = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editChatAdmin {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 operator_id = 4;
+    int64 edit_chat_admin_id = 5;
+    mtproto.Bool is_admin = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editChatDefaultBannedRights {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 operator_id = 4;
+    mtproto.ChatBannedRights banned_rights = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_addChatUser {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 inviter_id = 4;
+    int64 user_id = 5;
+    bool is_bot = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getMutableChatByLink {
+    TLConstructor  constructor = 1;
+    string link = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_toggleNoForwards {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 operator_id = 4;
+    mtproto.Bool enabled = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_migratedToChannel {
+    TLConstructor  constructor = 1;
+    mtproto.MutableChat chat = 3;
+    int64 id = 4;
+    int64 access_hash = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getChatParticipantIdList {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getUsersChatIdList {
+    TLConstructor  constructor = 1;
+    repeated int64 id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getMyChatList {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool is_creator = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_exportChatInvite {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 admin_id = 4;
+    bool legacy_revoke_permanent = 5;
+    bool request_needed = 6;
+    google.protobuf.Int32Value expire_date = 7;
+    google.protobuf.Int32Value usage_limit = 8;
+    google.protobuf.StringValue title = 9;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getAdminsWithInvites {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getExportedChatInvite {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    string link = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getExportedChatInvites {
+    TLConstructor  constructor = 1;
+    int64 chat_id = 3;
+    int64 admin_id = 4;
+    bool revoked = 5;
+    google.protobuf.Int32Value offset_date = 6;
+    google.protobuf.StringValue offset_link = 7;
+    int32 limit = 8;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_checkChatInvite {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    string hash = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_importChatInvite {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    string hash = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getChatInviteImporters {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    bool requested = 5;
+    google.protobuf.StringValue link = 6;
+    google.protobuf.StringValue q = 7;
+    int32 offset_date = 8;
+    int64 offset_user = 9;
+    int32 limit = 10;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_deleteExportedChatInvite {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    string link = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_deleteRevokedExportedChatInvites {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    int64 admin_id = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_editExportedChatInvite {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    bool revoked = 5;
+    string link = 6;
+    google.protobuf.Int32Value expire_date = 7;
+    google.protobuf.Int32Value usage_limit = 8;
+    mtproto.Bool request_needed = 9;
+    google.protobuf.StringValue title = 10;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_setChatAvailableReactions {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    int32 available_reactions_type = 5;
+    repeated string available_reactions = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_setHistoryTTL {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    int32 ttl_period = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_search {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    string q = 4;
+    int64 offset = 5;
+    int32 limit = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_getRecentChatInviteRequesters {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_hideChatJoinRequests {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    int64 chat_id = 4;
+    bool approved = 5;
+    google.protobuf.StringValue link = 6;
+    google.protobuf.Int64Value user_id = 7;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_chat_importChatInvite2 {
+    TLConstructor  constructor = 1;
+    int64 self_id = 3;
+    string hash = 4;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+message Vector_MutableChat {
+    repeated mtproto.MutableChat datas = 1;
+}
+message Vector_Long {
+    repeated int64 datas = 1;
+}
+message Vector_UserChatIdList {
+    repeated UserChatIdList datas = 1;
+}
+message Vector_ChatAdminWithInvites {
+    repeated mtproto.ChatAdminWithInvites datas = 1;
+}
+message Vector_ExportedChatInvite {
+    repeated mtproto.ExportedChatInvite datas = 1;
+}
+message Vector_ChatInviteImporter {
+    repeated mtproto.ChatInviteImporter datas = 1;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCChat {
+ rpc chat_getMutableChat(TL_chat_getMutableChat) returns (mtproto.MutableChat) {}
+ rpc chat_getChatListByIdList(TL_chat_getChatListByIdList) returns (Vector_MutableChat) {}
+ rpc chat_getChatBySelfId(TL_chat_getChatBySelfId) returns (mtproto.MutableChat) {}
+ rpc chat_createChat2(TL_chat_createChat2) returns (mtproto.MutableChat) {}
+ rpc chat_deleteChat(TL_chat_deleteChat) returns (mtproto.MutableChat) {}
+ rpc chat_deleteChatUser(TL_chat_deleteChatUser) returns (mtproto.MutableChat) {}
+ rpc chat_editChatTitle(TL_chat_editChatTitle) returns (mtproto.MutableChat) {}
+ rpc chat_editChatAbout(TL_chat_editChatAbout) returns (mtproto.MutableChat) {}
+ rpc chat_editChatPhoto(TL_chat_editChatPhoto) returns (mtproto.MutableChat) {}
+ rpc chat_editChatAdmin(TL_chat_editChatAdmin) returns (mtproto.MutableChat) {}
+ rpc chat_editChatDefaultBannedRights(TL_chat_editChatDefaultBannedRights) returns (mtproto.MutableChat) {}
+ rpc chat_addChatUser(TL_chat_addChatUser) returns (mtproto.MutableChat) {}
+ rpc chat_getMutableChatByLink(TL_chat_getMutableChatByLink) returns (mtproto.MutableChat) {}
+ rpc chat_toggleNoForwards(TL_chat_toggleNoForwards) returns (mtproto.MutableChat) {}
+ rpc chat_migratedToChannel(TL_chat_migratedToChannel) returns (mtproto.Bool) {}
+ rpc chat_getChatParticipantIdList(TL_chat_getChatParticipantIdList) returns (Vector_Long) {}
+ rpc chat_getUsersChatIdList(TL_chat_getUsersChatIdList) returns (Vector_UserChatIdList) {}
+ rpc chat_getMyChatList(TL_chat_getMyChatList) returns (Vector_MutableChat) {}
+ rpc chat_exportChatInvite(TL_chat_exportChatInvite) returns (mtproto.ExportedChatInvite) {}
+ rpc chat_getAdminsWithInvites(TL_chat_getAdminsWithInvites) returns (Vector_ChatAdminWithInvites) {}
+ rpc chat_getExportedChatInvite(TL_chat_getExportedChatInvite) returns (mtproto.ExportedChatInvite) {}
+ rpc chat_getExportedChatInvites(TL_chat_getExportedChatInvites) returns (Vector_ExportedChatInvite) {}
+ rpc chat_checkChatInvite(TL_chat_checkChatInvite) returns (ChatInviteExt) {}
+ rpc chat_importChatInvite(TL_chat_importChatInvite) returns (mtproto.MutableChat) {}
+ rpc chat_getChatInviteImporters(TL_chat_getChatInviteImporters) returns (Vector_ChatInviteImporter) {}
+ rpc chat_deleteExportedChatInvite(TL_chat_deleteExportedChatInvite) returns (mtproto.Bool) {}
+ rpc chat_deleteRevokedExportedChatInvites(TL_chat_deleteRevokedExportedChatInvites) returns (mtproto.Bool) {}
+ rpc chat_editExportedChatInvite(TL_chat_editExportedChatInvite) returns (Vector_ExportedChatInvite) {}
+ rpc chat_setChatAvailableReactions(TL_chat_setChatAvailableReactions) returns (mtproto.MutableChat) {}
+ rpc chat_setHistoryTTL(TL_chat_setHistoryTTL) returns (mtproto.MutableChat) {}
+ rpc chat_search(TL_chat_search) returns (Vector_MutableChat) {}
+ rpc chat_getRecentChatInviteRequesters(TL_chat_getRecentChatInviteRequesters) returns (RecentChatInviteRequesters) {}
+ rpc chat_hideChatJoinRequests(TL_chat_hideChatJoinRequests) returns (RecentChatInviteRequesters) {}
+ rpc chat_importChatInvite2(TL_chat_importChatInvite2) returns (ChatInviteImported) {}
+}
+
