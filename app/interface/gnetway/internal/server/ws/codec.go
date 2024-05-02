@@ -66,6 +66,7 @@ func (w *WsCodec) Upgrade(c gnet.Conn) (ok bool, action gnet.Action) {
 		//	return
 		//},
 		OnRequest: func(uri []byte) error {
+			// TODO: check
 			return nil
 		},
 		OnHost: func(host []byte) error {
