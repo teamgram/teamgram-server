@@ -19,7 +19,7 @@
 package server
 
 import (
-	"strconv"
+	"fmt"
 
 	"github.com/teamgram/proto/mtproto"
 )
@@ -34,7 +34,7 @@ func (c CacheV) Size() int {
 
 func (s *Server) GetAuthKey(authKeyId int64) *mtproto.AuthKeyInfo {
 	var (
-		cacheK = strconv.Itoa(int(authKeyId))
+		cacheK = fmt.Sprintf("%d", authKeyId)
 		value  *CacheV
 	)
 
@@ -42,12 +42,16 @@ func (s *Server) GetAuthKey(authKeyId int64) *mtproto.AuthKeyInfo {
 		value = v.(*CacheV)
 	}
 
-	return value.V
+	if value == nil {
+		return nil
+	} else {
+		return value.V
+	}
 }
 
 func (s *Server) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
 	var (
-		cacheK = strconv.Itoa(int(keyInfo.AuthKeyId))
+		cacheK = fmt.Sprintf("%d", keyInfo.AuthKeyId)
 	)
 
 	// TODO: expires_in
