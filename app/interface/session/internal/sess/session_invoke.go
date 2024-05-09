@@ -497,8 +497,8 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
-	c.cb.sendToRpcQueue(
-		ctx,
+	c.tmpRpcApiMessageList = append(
+		c.tmpRpcApiMessageList,
 		&rpcApiMessage{
 			sessionId: c.sessionId,
 			clientIp:  clientIp,

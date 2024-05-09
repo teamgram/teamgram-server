@@ -317,8 +317,10 @@ func (s *AuthSessions) destroySession(ctx context.Context, sessionId int64) bool
 	return true
 }
 
-func (s *AuthSessions) sendToRpcQueue(ctx context.Context, rpcMessage *rpcApiMessage) {
-	s.rpcQueue.Push(rpcMessage)
+func (s *AuthSessions) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcApiMessage) {
+	if len(rpcMessage) > 0 {
+		s.rpcQueue.Push(rpcMessage)
+	}
 }
 
 func (s *AuthSessions) getPushSessionId() int64 {
@@ -519,12 +521,21 @@ func (s *AuthSessions) rpcRunLoop() {
 			return
 		} else {
 			threading.RunSafe(func() {
-				// TODO: fix panic
-				request, _ := apiRequest.(*rpcApiMessage)
-				// log.Debugf("apiRequests: %s", request.DebugString())
-				if s.onRpcRequest(context.Background(), request) {
-					s.rpcDataChan <- request
+				var (
+				// invokeFns []func()
+				)
+
+				requestList, _ := apiRequest.([]*rpcApiMessage)
+				for i := range requestList {
+					// invokeFns = append(invokeFns, func() {
+					s.onRpcRequest(context.Background(), requestList[i])
+					s.rpcDataChan <- requestList[i]
+					// })
 				}
+				//mr.FinishVoid(invokeFns...)
+				//for i := range requestList {
+				//	s.rpcDataChan <- requestList[i]
+				//}
 			})
 		}
 	}

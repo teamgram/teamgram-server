@@ -119,7 +119,7 @@ type sessionCallback interface {
 
 	destroySession(ctx context.Context, sessionId int64) bool
 
-	sendToRpcQueue(ctx context.Context, rpcMessage *rpcApiMessage)
+	sendToRpcQueue(ctx context.Context, rpcMessage []*rpcApiMessage)
 
 	onBindPushSessionId(ctx context.Context, sessionId int64)
 	setOnline(ctx context.Context)
@@ -140,43 +140,45 @@ QMap<mtpRequestId, SerializedMessage> _receivedResponses; // map of request_id -
 QList<SerializedMessage> _receivedUpdates; // list of updates that should be processed in the main thread
 */
 type session struct {
-	sessionId       int64
-	sessionState    int
-	gatewayIdList   []serverIdCtx
-	nextSeqNo       uint32
-	firstMsgId      int64
-	connState       int
-	closeDate       int64
-	lastReceiveTime int64
-	isAndroidPush   bool
-	isGeneric       bool
-	inQueue         *sessionInboundQueue
-	outQueue        *sessionOutgoingQueue
-	pendingQueue    *sessionRpcResultWaitingQueue
-	pushQueue       *sessionPushQueue
-	isHttp          bool
-	httpQueue       *httpRequestQueue
-	cb              sessionCallback
-	authSessions    *AuthSessions
+	sessionId            int64
+	sessionState         int
+	gatewayId            *serverIdCtx
+	nextSeqNo            uint32
+	firstMsgId           int64
+	connState            int
+	closeDate            int64
+	lastReceiveTime      int64
+	isAndroidPush        bool
+	isGeneric            bool
+	inQueue              *sessionInboundQueue
+	outQueue             *sessionOutgoingQueue
+	pendingQueue         *sessionRpcResultWaitingQueue
+	pushQueue            *sessionPushQueue
+	isHttp               bool
+	httpQueue            *httpRequestQueue
+	cb                   sessionCallback
+	authSessions         *AuthSessions
+	tmpRpcApiMessageList []*rpcApiMessage
 }
 
 func newSession(sessionId int64, sesses *AuthSessions) *session {
 	// var sess *sessionHandler
 	sess := &session{
-		sessionId:       sessionId,
-		gatewayIdList:   make([]serverIdCtx, 0, 1),
-		sessionState:    kSessionStateNew,
-		closeDate:       time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
-		connState:       kStateNew,
-		lastReceiveTime: time.Now().UnixNano(),
-		inQueue:         newSessionInboundQueue(),
-		outQueue:        newSessionOutgoingQueue(),
-		pendingQueue:    newSessionRpcResultWaitingQueue(),
-		pushQueue:       newSessionPushQueue(),
-		isHttp:          false,
-		httpQueue:       newHttpRequestQueue(),
-		cb:              sesses,
-		authSessions:    sesses,
+		sessionId:            sessionId,
+		gatewayId:            nil,
+		sessionState:         kSessionStateNew,
+		closeDate:            time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
+		connState:            kStateNew,
+		lastReceiveTime:      time.Now().UnixNano(),
+		inQueue:              newSessionInboundQueue(),
+		outQueue:             newSessionOutgoingQueue(),
+		pendingQueue:         newSessionRpcResultWaitingQueue(),
+		pushQueue:            newSessionPushQueue(),
+		isHttp:               false,
+		httpQueue:            newHttpRequestQueue(),
+		cb:                   sesses,
+		authSessions:         sesses,
+		tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
 	}
 
 	return sess
@@ -189,34 +191,32 @@ func (c *session) String() string {
 		c.sessionId,
 		c.sessionState,
 		c.connState,
-		c.gatewayIdList)
+		c.gatewayId)
 }
 
-func (c *session) addGatewayId(gateId string) {
-	for _, id := range c.gatewayIdList {
-		if id.Equal(gateId) {
-			return
-		}
+func (c *session) setGatewayId(gateId string) {
+	if c.gatewayId == nil {
+		c.gatewayId = &serverIdCtx{gatewayId: gateId, lastReceiveTime: time.Now().Unix()}
+	} else {
+		c.gatewayId.gatewayId = gateId
+		c.gatewayId.lastReceiveTime = time.Now().Unix()
 	}
-	c.gatewayIdList = append(c.gatewayIdList, serverIdCtx{gatewayId: gateId, lastReceiveTime: time.Now().Unix()})
 }
 
 func (c *session) getGatewayId() string {
-	if len(c.gatewayIdList) > 0 {
-		// TODO(@benqi): rand or by new lastReceiveTime
-		return c.gatewayIdList[len(c.gatewayIdList)-1].gatewayId
-	} else {
+	if c.gatewayId == nil {
 		return ""
+	} else {
+		return c.gatewayId.gatewayId
 	}
 }
 
 func (c *session) checkGatewayIdExist(gateId string) bool {
-	for _, id := range c.gatewayIdList {
-		if id.Equal(gateId) {
-			return true
-		}
+	if c.gatewayId == nil {
+		return false
 	}
-	return false
+
+	return c.gatewayId.Equal(gateId)
 }
 
 func (c *session) changeConnState(ctx context.Context, state int) {
@@ -233,7 +233,7 @@ func (c *session) changeConnState(ctx context.Context, state int) {
 func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	if c.connState != kStateOnline {
 		c.changeConnState(ctx, kStateOnline)
-		c.addGatewayId(id)
+		c.setGatewayId(id)
 	}
 }
 
@@ -311,10 +311,12 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 			c.firstMsgId = minMsgId
 		}
 		c.sessionState = kSessionStateCreated
-		// return
 	}
 
 	defer func() {
+		c.cb.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
+		c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
 
@@ -341,7 +343,6 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 		//	})
 		//}
 	}()
-
 	for _, m2 := range msgs {
 		if m2.MsgId < c.firstMsgId {
 			continue
@@ -428,22 +429,8 @@ func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, in
 }
 
 func (c *session) onSessionConnClose(ctx context.Context, id string) {
-	var (
-		idx = -1
-	)
-
-	for i, cId := range c.gatewayIdList {
-		if cId.Equal(id) {
-			idx = i
-			break
-		}
-	}
-
-	if idx != -1 {
-		c.gatewayIdList = append(c.gatewayIdList[:idx], c.gatewayIdList[idx+1:]...)
-	}
-
-	if len(c.gatewayIdList) == 0 {
+	if c.checkGatewayIdExist(id) {
+		c.gatewayId = nil
 		c.changeConnState(ctx, kStateOffline)
 	}
 }

@@ -67,7 +67,15 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 // session.sendDataToSession data:SessionClientData = Bool;
 func (s *Service) SessionSendDataToSession(ctx context.Context, request *session.TLSessionSendDataToSession) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendDataToSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		request.GetData().GetServerId(),
+		request.GetData().GetConnType(),
+		request.GetData().GetAuthKeyId(),
+		request.GetData().GetSessionId(),
+		request.GetData().GetClientIp(),
+		request.GetData().GetQuickAck(),
+		request.GetData().GetSalt(),
+		len(request.GetData().GetPayload()))
 
 	r, err := c.SessionSendDataToSession(request)
 	if err != nil {
@@ -82,7 +90,15 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendHttpDataToSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.sendHttpDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		request.GetClient().GetServerId(),
+		request.GetClient().GetConnType(),
+		request.GetClient().GetAuthKeyId(),
+		request.GetClient().GetSessionId(),
+		request.GetClient().GetClientIp(),
+		request.GetClient().GetQuickAck(),
+		request.GetClient().GetSalt(),
+		len(request.GetClient().GetPayload()))
 
 	r, err := c.SessionSendHttpDataToSession(request)
 	if err != nil {
