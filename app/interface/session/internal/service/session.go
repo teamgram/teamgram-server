@@ -279,14 +279,6 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	// TODO(@benqi): ignore TLMsgCopy
 	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
 		msgs = msgContainer.Messages
-		//for _, m2 := range msgContainer.Messages {
-		//	msgs = append(msgs, &mtproto.TLMessage2{
-		//		MsgId:  m2.MsgId,
-		//		Seqno:  m2.Seqno,
-		//		Bytes:  m2.Bytes,
-		//		Object: m2.Object,
-		//	})
-		//}
 
 		// check
 		c.inQueue.AddMsgId(msg.MsgId)
