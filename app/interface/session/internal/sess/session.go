@@ -232,7 +232,6 @@ func (c *session) changeConnState(ctx context.Context, state int) {
 
 func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	if c.connState != kStateOnline {
-		// c.sessionState = kSessionStateNew
 		c.changeConnState(ctx, kStateOnline)
 		c.addGatewayId(id)
 	}

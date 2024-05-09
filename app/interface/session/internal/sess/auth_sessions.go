@@ -148,7 +148,7 @@ type connDataCtx struct {
 }
 
 func (c *connData) DebugString() string {
-	return fmt.Sprintf("{isNew: %d, gatewayId: %s, sessionId: %d}", c.isNew, c.gatewayId, c.sessionId)
+	return fmt.Sprintf("{isNew: %v, gatewayId: %s, sessionId: %d}", c.isNew, c.gatewayId, c.sessionId)
 }
 
 // /////////////////////////////////////////////////////////////////////////////////
@@ -552,58 +552,131 @@ func (s *AuthSessions) onTimer(ctx context.Context) {
 }
 
 func (s *AuthSessions) SessionClientNew(ctx context.Context, gatewayId string, sessionId int64) error {
-	select {
-	case s.sessionDataChan <- &connDataCtx{contextx.ValueOnlyFrom(ctx), connData{true, gatewayId, sessionId}}:
-		return nil
+	cData := &connDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		connData: connData{
+			isNew:     true,
+			gatewayId: gatewayId,
+			sessionId: sessionId,
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- cData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SessionDataArrived(ctx context.Context, gatewayId, clientIp string, sessionId, salt int64, buf []byte) error {
-	select {
-	case s.sessionDataChan <- &sessionDataCtx{contextx.ValueOnlyFrom(ctx), sessionData{gatewayId, clientIp, sessionId, salt, buf}}:
-		return nil
+	sData := &sessionDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		sessionData: sessionData{
+			gatewayId: gatewayId,
+			clientIp:  clientIp,
+			sessionId: sessionId,
+			salt:      salt,
+			buf:       buf,
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- sData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SessionHttpDataArrived(ctx context.Context, gatewayId, clientIp string, sessionId, salt int64, buf []byte, resChan chan interface{}) error {
-	select {
-	case s.sessionDataChan <- &sessionHttpDataCtx{contextx.ValueOnlyFrom(ctx), sessionHttpData{gatewayId, clientIp, sessionId, salt, buf, resChan}}:
-		return nil
+	sData := &sessionHttpDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		sessionHttpData: sessionHttpData{
+			gatewayId:  gatewayId,
+			clientIp:   clientIp,
+			sessionId:  sessionId,
+			salt:       salt,
+			buf:        buf,
+			resChannel: resChan,
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- sData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SessionClientClosed(ctx context.Context, gatewayId string, sessionId int64) error {
-	select {
-	case s.sessionDataChan <- &connDataCtx{contextx.ValueOnlyFrom(ctx), connData{false, gatewayId, sessionId}}:
-		return nil
+	cData := &connDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		connData: connData{
+			isNew:     false,
+			gatewayId: gatewayId,
+			sessionId: sessionId,
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- cData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SyncRpcResultDataArrived(ctx context.Context, sessionId, clientMsgId int64, data []byte) error {
-	select {
-	case s.sessionDataChan <- &syncRpcResultDataCtx{contextx.ValueOnlyFrom(ctx), syncRpcResultData{sessionId, clientMsgId, data}}:
-		return nil
+	rData := &syncRpcResultDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		syncRpcResultData: syncRpcResultData{
+			sessionId:   sessionId,
+			clientMsgId: clientMsgId,
+			data:        data,
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- rData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SyncSessionDataArrived(ctx context.Context, sessionId int64, updates *mtproto.Updates) error {
-	select {
-	case s.sessionDataChan <- &syncSessionDataCtx{contextx.ValueOnlyFrom(ctx), syncSessionData{sessionId, &messageData{obj: updates}}}:
-		return nil
+	sData := &syncSessionDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		syncSessionData: syncSessionData{
+			sessionId: sessionId,
+			data:      &messageData{obj: updates},
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- sData:
+	default:
+	}
+
 	return nil
 }
 
 func (s *AuthSessions) SyncDataArrived(ctx context.Context, needAndroidPush bool, updates *mtproto.Updates) error {
-	select {
-	case s.sessionDataChan <- &syncDataCtx{contextx.ValueOnlyFrom(ctx), syncData{needAndroidPush, &messageData{obj: updates}}}:
-		return nil
+	sData := &syncDataCtx{
+		ctx: contextx.ValueOnlyFrom(ctx),
+		syncData: syncData{
+			needAndroidPush: needAndroidPush,
+			data:            &messageData{obj: updates},
+		},
 	}
+
+	select {
+	case s.sessionDataChan <- sData:
+	default:
+	}
+
 	return nil
 }
 
@@ -611,13 +684,12 @@ func (s *AuthSessions) SyncDataArrived(ctx context.Context, needAndroidPush bool
 func (s *AuthSessions) onSessionNew(ctx context.Context, connMsg *connData) {
 	sess, ok := s.sessions[connMsg.sessionId]
 	if !ok {
-		logx.Infof("onSessionNew - newSession, conn: %s", connMsg.DebugString())
+		logx.WithContext(ctx).Infof("onSessionNew - newSession(%d), conn: %s", s.authKeyId, connMsg.DebugString())
 		sess = newSession(connMsg.sessionId, s)
 		s.sessions[connMsg.sessionId] = sess
-		// sess.onSessionConnNew(connMsg.gatewayId)
 	} else {
 		sess.sessionState = kSessionStateNew
-		logx.Infof("onSessionNew - session found, conn: %s", connMsg.DebugString())
+		logx.WithContext(ctx).Infof("onSessionNew - session(%d) found, conn: %s", s.authKeyId, connMsg.DebugString())
 	}
 
 	sess.onSessionConnNew(ctx, connMsg.gatewayId)
