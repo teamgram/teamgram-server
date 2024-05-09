@@ -20,7 +20,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/codec"
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -78,7 +77,7 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 	x.Long(authKey.AuthKeyId())
 	x.Bytes(msgKey)
 	x.Bytes(mtpRawData)
-	msg := &codec.MTPRawMessage{Payload: x.GetBuf()}
+	msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
 
 	for _, connId := range connIdList {
 		s.eng.Trigger(connId, func(c gnet.Conn) {

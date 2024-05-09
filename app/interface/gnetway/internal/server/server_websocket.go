@@ -9,6 +9,7 @@ package server
 import (
 	"errors"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/codec"
 
 	"github.com/panjf2000/gnet/v2"
@@ -59,7 +60,7 @@ func (s *Server) onWebsocketData(ctx *connContext, c gnet.Conn) (action gnet.Act
 			return
 		}
 
-		msg2, ok := frame.(*codec.MTPRawMessage)
+		msg2, ok := frame.(*mtproto.MTPRawMessage)
 		if !ok {
 			logx.Errorf("conn(%s) recv error: msg2 not codec.MTPRawMessage type", c)
 			action = gnet.Close

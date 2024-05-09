@@ -18,6 +18,8 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/teamgram/proto/mtproto"
 )
 
 // https://core.telegram.org/mtproto#tcp-transport
@@ -41,7 +43,7 @@ func newMTProtoFullCodec() *FullCodec {
 
 // Encode encodes frames upon server responses into TCP stream.
 func (c *FullCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
-	rawMsg, ok := msg.(*MTPRawMessage)
+	rawMsg, ok := msg.(*mtproto.MTPRawMessage)
 	if !ok {
 		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
 		// log.Error(err.Error())
@@ -105,8 +107,8 @@ func (c *FullCodec) Decode(conn CodecReader) (interface{}, error) {
 	// TODO(@benqi): check crc32
 	_ = crc32
 
-	return NewMTPRawMessage(false,
-		int64(binary.LittleEndian.Uint64(buf[4:])),
-		0,
-		buf), nil
+	message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+	message.Decode(buf)
+
+	return message, nil
 }

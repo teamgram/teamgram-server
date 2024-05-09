@@ -13,6 +13,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/mtproto/crypto"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,12 +29,12 @@ import (
 // if the abridged version is used, bswap is applied to these four bytes.
 //
 
-//// Transport类型，不支持UDP
-//const (
-//	TRANSPORT_TCP  = 1 // TCP
-//	TRANSPORT_HTTP = 2 // HTTP
-//	TRANSPORT_UDP  = 3 // UDP, TODO(@benqi): 未发现有支持UDP的客户端
-//)
+// Transport类型，不支持UDP
+const (
+	TRANSPORT_TCP  = 1 // TCP
+	TRANSPORT_HTTP = 2 // HTTP
+	TRANSPORT_UDP  = 3 // UDP, TODO(@benqi): 未发现有支持UDP的客户端
+)
 
 const (
 	// ABRIDGED_FLAG -- FULL_FLAG

@@ -18,6 +18,8 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/teamgram/proto/mtproto"
 )
 
 // IntermediateCodec
@@ -44,7 +46,7 @@ func newMTProtoIntermediateCodec(crypto *AesCTR128Crypto) *IntermediateCodec {
 
 // Encode encodes frames upon server responses into TCP stream.
 func (c *IntermediateCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
-	rawMsg, ok := msg.(*MTPRawMessage)
+	rawMsg, ok := msg.(*mtproto.MTPRawMessage)
 	if !ok {
 		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
 		return nil, err
@@ -93,8 +95,8 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (interface{}, error) {
 	conn.Discard(n)
 	c.state = WAIT_PACKET_LENGTH
 
-	return NewMTPRawMessage(false,
-		int64(binary.LittleEndian.Uint64(buf)),
-		0,
-		buf), nil
+	message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+	message.Decode(buf)
+
+	return message, nil
 }

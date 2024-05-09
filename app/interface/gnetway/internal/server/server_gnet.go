@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/codec"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/ws"
 	session_client "github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
@@ -131,7 +130,7 @@ func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
 	return
 }
 
-func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, mmsg *codec.MTPRawMessage) error {
+func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, mmsg *mtproto.MTPRawMessage) error {
 	//logx.Infof("conn(%s) onEncryptedMessage: len(%d)", c.DebugString(), len(mmsg.Payload))
 	mtpRwaData, err := authKey.AesIgeDecrypt(mmsg.Payload[8:8+16], mmsg.Payload[24:])
 	if err != nil {
@@ -142,7 +141,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	var (
 		sessionId = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
 		isNew     = ctx.sessionId != sessionId
-		authKeyId = mmsg.GetAuthKeyId()
+		authKeyId = mmsg.AuthKeyId()
 		clientIp  = ctx.clientIp
 		connId    = c.ConnId()
 	)
@@ -153,7 +152,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	}
 
 	s.pool.Submit(func() {
-		sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.GetAuthKeyId(), 10))
+		sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.AuthKeyId(), 10))
 		if err2 != nil {
 			//logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", c.DebugString(), err, mmsg.GetAuthKeyId())
 			return
@@ -226,13 +225,13 @@ func (s *Server) GetConnCounts() int {
 	return s.eng.CountConnections()
 }
 
-func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *codec.MTPRawMessage) (action gnet.Action) {
+func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MTPRawMessage) (action gnet.Action) {
 	var (
 		out interface{}
 		err error
 	)
 
-	if msg2.GetAuthKeyId() == 0 {
+	if msg2.AuthKeyId() == 0 {
 		out, err = s.onHandshake(c, msg2)
 		if err != nil {
 			action = gnet.Close
@@ -245,10 +244,10 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *codec.MTPR
 		//	c.SetContext(ctx)
 		//}
 
-		authKey := ctx.getAuthKey(msg2.GetAuthKeyId())
+		authKey := ctx.getAuthKey(msg2.AuthKeyId())
 		// authKey := ctx.authKey
 		if authKey == nil {
-			key := s.GetAuthKey(msg2.GetAuthKeyId())
+			key := s.GetAuthKey(msg2.AuthKeyId())
 			if key != nil {
 				authKey = newAuthKeyUtil(key)
 				// ctx.authKey = authKey
@@ -264,13 +263,13 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *codec.MTPR
 				key3       *mtproto.AuthKeyInfo
 				key2       *mtproto.AuthKeyInfo
 			)
-			key2 = s.GetAuthKey(msg2.GetAuthKeyId())
+			key2 = s.GetAuthKey(msg2.AuthKeyId())
 			if key2 != nil {
 				authKey = newAuthKeyUtil(key2)
 			} else {
-				sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.GetAuthKeyId(), 10))
+				sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
 				if err2 != nil {
-					logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.GetAuthKeyId())
+					logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
 					//// return err2
 					//out2 := &codec.MTPRawMessage{
 					//	Payload: make([]byte, 4),
@@ -284,11 +283,11 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *codec.MTPR
 				}
 
 				if key3, err2 = sessClient.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-					AuthKeyId: msg2.GetAuthKeyId(),
+					AuthKeyId: msg2.AuthKeyId(),
 				}); err2 != nil {
 					logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
 					//// return err2
-					out2 := &codec.MTPRawMessage{
+					out2 := &mtproto.MTPRawMessage{
 						Payload: make([]byte, 4),
 					}
 					var code = int32(-404)

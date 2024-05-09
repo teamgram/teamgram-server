@@ -18,6 +18,8 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/teamgram/proto/mtproto"
 )
 
 // https://core.telegram.org/mtproto#tcp-transport
@@ -50,7 +52,7 @@ func (c *AbridgedCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error
 		return nil, nil
 	}
 
-	rm, ok := msg.(*MTPRawMessage)
+	rm, ok := msg.(*mtproto.MTPRawMessage)
 	if !ok {
 		err := fmt.Errorf("conn(%s) msg type error, only MTPRawMessage, msg: %s", conn, rm)
 		return nil, err
@@ -137,10 +139,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (interface{}, error) {
 		buf = c.Decrypt(buf)
 		conn.Discard(n)
 		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
+
+		message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+		message.Decode(buf)
+
+		return message, nil
 	case WAIT_PACKET_LENGTH_1_PACKET:
 		n = int(c.packetLen[0]&0x7f) << 2
 		if buf, err = in.readN(n); err != nil {
@@ -151,10 +154,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (interface{}, error) {
 		buf = c.Decrypt(buf)
 		conn.Discard(n)
 		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
+
+		message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+		message.Decode(buf)
+
+		return message, nil
 	case WAIT_PACKET_LENGTH_3:
 		if buf, err = in.readN(3); err != nil {
 			return nil, ErrUnexpectedEOF
@@ -179,10 +183,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (interface{}, error) {
 		buf = c.Decrypt(buf)
 		conn.Discard(n)
 		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
+
+		message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+		message.Decode(buf)
+
+		return message, nil
 	case WAIT_PACKET_LENGTH_3_PACKET:
 		n = (int(c.packetLen[1]) | int(c.packetLen[2])<<8 | int(c.packetLen[3])<<16) << 2
 		// log.Debugf("n = %d", n)
@@ -197,10 +202,11 @@ func (c *AbridgedCodec) Decode(conn CodecReader) (interface{}, error) {
 		buf = c.Decrypt(buf)
 		conn.Discard(n)
 		c.state = WAIT_PACKET_LENGTH_1
-		return NewMTPRawMessage(false,
-			int64(binary.LittleEndian.Uint64(buf)),
-			0,
-			buf), nil
+
+		message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+		message.Decode(buf)
+
+		return message, nil
 	}
 
 	// TODO(@benqi): close conn

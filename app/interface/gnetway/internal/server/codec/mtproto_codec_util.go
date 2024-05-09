@@ -17,7 +17,6 @@ package codec
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/teamgram/proto/mtproto/crypto"
 )
@@ -59,43 +58,6 @@ func (in *innerBuffer) readN(n int) (buf []byte, err error) {
 	*in = (*in)[n:]
 
 	return
-}
-
-// MTPRawMessage MTPRawMessage
-type MTPRawMessage struct {
-	IsHttp     bool
-	AuthKeyId  int64  // 由原始数据解压获得
-	QuickAckId int32  // EncryptedMessage，则可能存在
-	Payload    []byte // 原始数据
-}
-
-func NewMTPRawMessage(isHttp bool, authKeyId int64, quickAckId int32, payload []byte) *MTPRawMessage {
-	return &MTPRawMessage{
-		IsHttp:     isHttp,
-		AuthKeyId:  authKeyId,
-		QuickAckId: quickAckId,
-		Payload:    payload,
-	}
-}
-
-func (m *MTPRawMessage) String() string {
-	return fmt.Sprintf("{is_http: %v, auth_key_id: %d, quick_ack_id: %d, payload_len: %d}",
-		m.IsHttp,
-		m.AuthKeyId,
-		m.QuickAckId,
-		len(m.Payload))
-}
-
-func (m *MTPRawMessage) GetIsHttp() bool {
-	return m.IsHttp
-}
-
-func (m *MTPRawMessage) GetAuthKeyId() int64 {
-	return m.AuthKeyId
-}
-
-func (m *MTPRawMessage) GetQuickAckId() int32 {
-	return m.QuickAckId
 }
 
 // AesCTR128Crypto AesCTR128Crypto

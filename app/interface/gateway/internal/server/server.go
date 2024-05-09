@@ -97,7 +97,6 @@ func New(c config.Config) *Server {
 			}
 			return nil
 		})
-
 	// s.handshake, err = newHandshake(c.KeyFile, keyFingerprint)
 	if err != nil {
 		panic(err)

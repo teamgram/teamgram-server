@@ -33,7 +33,6 @@ import (
 	"github.com/teamgram/marmota/pkg/hex2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/codec"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/panjf2000/gnet/v2"
@@ -194,7 +193,7 @@ func newHandshake(keyFile string, keyFingerprint uint64) (*handshake, error) {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
-func (s *Server) onHandshake(c gnet.Conn, mmsg *codec.MTPRawMessage) (interface{}, error) {
+func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interface{}, error) {
 	if len(mmsg.Payload) < 8 {
 		err := fmt.Errorf("invalid data len < 8")
 		// logx.Errorf("conn(%s) onHandshake error: %v", c.DebugString(), err)
@@ -243,7 +242,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *codec.MTPRawMessage) (interface{
 		})
 
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		return &codec.MTPRawMessage{
+		return &mtproto.MTPRawMessage{
 			Payload: x.GetBuf(),
 		}, nil
 	case *mtproto.TLReqPqMulti:
@@ -262,7 +261,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *codec.MTPRawMessage) (interface{
 
 		logx.Infof("req_pq_multi: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce), hex.EncodeToString(resPQ.Nonce))
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-		return &codec.MTPRawMessage{
+		return &mtproto.MTPRawMessage{
 			Payload: x.GetBuf(),
 		}, nil
 	case *mtproto.TLReq_DHParams:
@@ -640,7 +639,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 
 			x := mtproto.NewEncodeBuf(512)
 			serializeToBuffer(x, mtproto.GenerateMessageId(), serverDHParams)
-			UnThreadSafeWrite(c, &codec.MTPRawMessage{
+			UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
 				Payload: x.GetBuf(),
 			})
 		})
@@ -775,7 +774,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 
 			x := mtproto.NewEncodeBuf(512)
 			serializeToBuffer(x, mtproto.GenerateMessageId(), dhGen)
-			UnThreadSafeWrite(c, &codec.MTPRawMessage{
+			UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
 				Payload: x.GetBuf(),
 			})
 		})
