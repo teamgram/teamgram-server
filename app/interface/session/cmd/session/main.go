@@ -12,7 +12,6 @@ package main
 
 import (
 	"github.com/teamgram/marmota/pkg/commands"
-
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/server"
 )
 

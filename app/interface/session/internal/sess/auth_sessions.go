@@ -21,7 +21,6 @@ package sess
 import (
 	"context"
 	"fmt"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
 	"math"
 	"reflect"
 	"runtime/debug"
@@ -32,12 +31,13 @@ import (
 	"github.com/teamgram/marmota/pkg/sync2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
-	"github.com/zeromicro/go-zero/core/threading"
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/threading"
 	status2 "google.golang.org/grpc/status"
 )
 
