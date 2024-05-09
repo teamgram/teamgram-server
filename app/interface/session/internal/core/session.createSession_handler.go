@@ -20,7 +20,7 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	sess "github.com/teamgram/teamgram-server/app/interface/session/internal/session"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 

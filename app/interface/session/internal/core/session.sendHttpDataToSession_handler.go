@@ -21,7 +21,7 @@ package core
 import (
 	"time"
 
-	sess "github.com/teamgram/teamgram-server/app/interface/session/internal/session"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
