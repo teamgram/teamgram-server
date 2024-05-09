@@ -58,7 +58,7 @@ type Session struct {
 	gatewayId   string
 	dispatcher  *hash.ConsistentHash
 	errNotFound error
-	sessions    map[string]session_client.SessionClient
+	sessions    map[string]sessionclient.SessionClient
 }
 
 func NewSession(c config.Config) *Session {
@@ -66,7 +66,7 @@ func NewSession(c config.Config) *Session {
 		gatewayId:   figureOutListenOn(fmt.Sprintf("%s:%d", c.Http.Host, c.Http.Port)),
 		dispatcher:  hash.NewConsistentHash(),
 		errNotFound: ErrSessionNotFound,
-		sessions:    make(map[string]session_client.SessionClient),
+		sessions:    make(map[string]sessionclient.SessionClient),
 	}
 	sess.watch(c.Session)
 
@@ -82,11 +82,11 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 		}
 
 		var (
-			addClis    []session_client.SessionClient
-			removeClis []session_client.SessionClient
+			addClis    []sessionclient.SessionClient
+			removeClis []sessionclient.SessionClient
 		)
 
-		sessions := map[string]session_client.SessionClient{}
+		sessions := map[string]sessionclient.SessionClient{}
 		for _, v := range values {
 			if old, ok := sess.sessions[v]; ok {
 				sessions[v] = old
@@ -98,7 +98,7 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 				logx.Error("watchComet NewClient(%+v) error(%v)", values, err)
 				return
 			}
-			sessionCli := session_client.NewSessionClient(cli)
+			sessionCli := sessionclient.NewSessionClient(cli)
 			sessions[v] = sessionCli
 
 			addClis = append(addClis, sessionCli)
@@ -125,16 +125,16 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 	update()
 }
 
-func (sess *Session) getSessionClient(key string) (session_client.SessionClient, error) {
+func (sess *Session) getSessionClient(key string) (sessionclient.SessionClient, error) {
 	val, ok := sess.dispatcher.Get(key)
 	if !ok {
 		return nil, ErrSessionNotFound
 	}
 
-	return val.(session_client.SessionClient), nil
+	return val.(sessionclient.SessionClient), nil
 }
 
-func (d *Dao) GetSessionClient(key string) (session_client.SessionClient, error) {
+func (d *Dao) GetSessionClient(key string) (sessionclient.SessionClient, error) {
 	return d.session.getSessionClient(key)
 }
 

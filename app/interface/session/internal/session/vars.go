@@ -4,7 +4,7 @@
 // Author: Benqi (wubenqi@gmail.com)
 //
 
-package service
+package sess
 
 const (
 	clientUnknown  = 0

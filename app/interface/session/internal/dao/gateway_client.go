@@ -16,16 +16,17 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package dao
 
 import (
 	"context"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/client"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
-	"github.com/zeromicro/go-zero/zrpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 // eGateOptions comet options.
@@ -36,13 +37,14 @@ type gatewayOptions struct {
 
 // Gateway eGateClient is a gateway.
 type Gateway struct {
-	serverId string
-	client   gateway_client.GatewayClient
-	ctx      context.Context
-	cancel   context.CancelFunc
+	serverId     string
+	client       gateway_client.GatewayClient
+	ctx          context.Context
+	cancel       context.CancelFunc
+	eGateServers map[string]*Gateway
 }
 
-// NewSession new a comet.
+// NewGateway NewSession new a comet.
 func NewGateway(c zrpc.RpcClientConf) (*Gateway, error) {
 	g := &Gateway{
 		serverId: c.Endpoints[0],

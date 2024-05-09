@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package sess
 
 import (
 	"context"
@@ -283,7 +283,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 		msgId.seqNo,
 		request)
 
-	salts, err := c.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(ctx), request.Num)
+	salts, err := c.authSessions.Dao.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(ctx), request.Num)
 	if err != nil {
 		logx.Errorf("getFutureSalts error: %v", err)
 		return

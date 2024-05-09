@@ -14,7 +14,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/config"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/server/grpc"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/service"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -36,8 +36,9 @@ func (s *Server) Initialize() error {
 	conf.MustLoad(*configFile, &c)
 
 	logx.Infov(c)
-	// ctx := svc.NewServiceContext(c)
-	s.grpcSrv = grpc.New(c.RpcServerConf, service.New(c))
+
+	ctx := svc.NewServiceContext(c)
+	s.grpcSrv = grpc.New(ctx, c.RpcServerConf)
 
 	go func() {
 		s.grpcSrv.Start()

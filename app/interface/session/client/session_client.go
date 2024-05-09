@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package session_client
+package sessionclient
 
 import (
 	"context"
@@ -51,7 +51,7 @@ func (m *defaultSessionClient) SessionQueryAuthKey(ctx context.Context, in *sess
 }
 
 // SessionSetAuthKey
-// session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt = Bool;
+// session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (m *defaultSessionClient) SessionSetAuthKey(ctx context.Context, in *session.TLSessionSetAuthKey) (*mtproto.Bool, error) {
 	client := session.NewRPCSessionClient(m.cli.Conn())
 	return client.SessionSetAuthKey(ctx, in)

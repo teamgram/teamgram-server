@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package sess
 
 import (
 	"context"
@@ -157,10 +157,10 @@ type session struct {
 	isHttp          bool
 	httpQueue       *httpRequestQueue
 	cb              sessionCallback
-	*authSessions
+	authSessions    *AuthSessions
 }
 
-func newSession(sessionId int64, sesses *authSessions) *session {
+func newSession(sessionId int64, sesses *AuthSessions) *session {
 	// var sess *sessionHandler
 	sess := &session{
 		sessionId:       sessionId,
@@ -592,7 +592,7 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 		Body:  b,
 	}
 
-	rB, err := c.SendHttpDataToGateway(
+	rB, err := c.authSessions.Dao.SendHttpDataToGateway(
 		ctx,
 		ch,
 		c.cb.getTempAuthKeyId(ctx),
@@ -628,7 +628,7 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 	)
 
 	if !c.isHttp {
-		rB, err = c.SendDataToGateway(
+		rB, err = c.authSessions.Dao.SendDataToGateway(
 			ctx,
 			gatewayId,
 			c.cb.getTempAuthKeyId(ctx),
@@ -637,7 +637,7 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 			rawMsg)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
-			rB, err = c.SendHttpDataToGateway(
+			rB, err = c.authSessions.Dao.SendHttpDataToGateway(
 				ctx,
 				ch,
 				c.cb.getTempAuthKeyId(ctx),
@@ -664,7 +664,7 @@ func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, 
 		err error
 	)
 	if !c.isHttp {
-		rB, err = c.SendDataToGateway(
+		rB, err = c.authSessions.Dao.SendDataToGateway(
 			ctx,
 			gatewayId,
 			c.cb.getTempAuthKeyId(ctx),
@@ -673,7 +673,7 @@ func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, 
 			raw)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
-			rB, err = c.SendHttpDataToGateway(
+			rB, err = c.authSessions.Dao.SendHttpDataToGateway(
 				ctx,
 				ch,
 				c.cb.getTempAuthKeyId(ctx),

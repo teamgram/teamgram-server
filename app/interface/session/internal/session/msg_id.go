@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package sess
 
 import (
 	"time"

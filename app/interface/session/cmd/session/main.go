@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -12,9 +12,10 @@ package main
 
 import (
 	"github.com/teamgram/marmota/pkg/commands"
-	session_helper "github.com/teamgram/teamgram-server/app/interface/session"
+
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/server"
 )
 
 func main() {
-	commands.Run(session_helper.New())
+	commands.Run(server.New())
 }

@@ -20,14 +20,21 @@ package svc
 
 import (
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/config"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/session"
 )
 
 type ServiceContext struct {
-	Config config.Config
+	Config      config.Config
+	SessListMgr *sess.AuthSessionsManager
+	*dao.Dao
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	d := dao.New(c)
 	return &ServiceContext{
-		Config: c,
+		Config:      c,
+		SessListMgr: sess.NewAuthSessionsManager(d),
+		Dao:         d,
 	}
 }

@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package sess
 
 import (
 	"context"
@@ -55,7 +55,7 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 	}
 
 	c.cb.setLayer(ctx, request.Layer)
-	c.PutLayer(ctx, c.cb.getAuthKeyId(ctx), request.Layer, clientIp)
+	c.authSessions.Dao.PutLayer(ctx, c.cb.getAuthKeyId(ctx), request.Layer, clientIp)
 
 	//initConnection, ok := query.(*mtproto.TLInitConnection)
 	//if !ok {
@@ -380,7 +380,7 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 	//c.cb.setLayer(request.Layer)
 	//c.cb.setClient(initConnection.LangPack)
 	//
-	c.PutInitConnection(context.Background(), c.cb.getAuthKeyId(ctx), clientIp, request)
+	c.authSessions.Dao.PutInitConnection(context.Background(), c.cb.getAuthKeyId(ctx), clientIp, request)
 	//
 	dBuf := mtproto.NewDecodeBuf(request.GetQuery())
 	query := dBuf.Object()
@@ -426,7 +426,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 			pushSessionId, err := strconv.ParseInt(registerDevice.GetToken(), 10, 64)
 			if err == nil {
 				c.cb.onBindPushSessionId(ctx, pushSessionId)
-				c.PutCachePushSessionId(ctx, c.cb.getAuthKeyId(ctx), int64(pushSessionId))
+				c.authSessions.Dao.PutCachePushSessionId(ctx, c.cb.getAuthKeyId(ctx), int64(pushSessionId))
 			}
 		}
 	case *mtproto.TLUpdatesGetState:
@@ -479,7 +479,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 
 	if c.cb.getUserId(ctx) == 0 {
 		if !checkRpcWithoutLogin(query) {
-			authUserId, _ := c.GetCacheUserID(ctx, c.cb.getAuthKeyId(ctx))
+			authUserId, _ := c.authSessions.Dao.GetCacheUserID(ctx, c.cb.getAuthKeyId(ctx))
 			if authUserId == 0 {
 				logx.Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId(ctx))
 				// 401
@@ -512,7 +512,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	defer func() {
 		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut); ok {
-			c.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
+			c.authSessions.cb.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
 		}
 	}()
 

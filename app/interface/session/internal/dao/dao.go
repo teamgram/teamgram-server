@@ -11,6 +11,7 @@ package dao
 
 import (
 	"github.com/teamgram/marmota/pkg/cache"
+	"github.com/teamgram/marmota/pkg/net/ip"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	bff_proxy_client "github.com/teamgram/teamgram-server/app/bff/bff/client"
@@ -26,15 +27,23 @@ type Dao struct {
 	authsession_client.AuthsessionClient
 	status_client.StatusClient
 	*bff_proxy_client.BFFProxyClient
+	eGateServers map[string]*Gateway
+	MyServerId   string
 }
 
 func New(c config.Config) *Dao {
-	return &Dao{
+	d := &Dao{
 		cache:             cache.NewLRUCache(1024 * 1024 * 1024),
 		AuthsessionClient: authsession_client.NewAuthsessionClient(zrpc.MustNewClient(c.AuthSession)),
 		BFFProxyClient:    bff_proxy_client.NewBFFProxyClients(c.BFFProxyClients.Clients, c.BFFProxyClients.IDMap),
 		StatusClient:      status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
+		eGateServers:      make(map[string]*Gateway),
+		MyServerId:        ip.FigureOutListenOn(c.ListenOn),
 	}
+
+	d.watchGateway(c.GatewayClient)
+
+	return d
 }
 
 func (d *Dao) Invoke(rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {

@@ -24,7 +24,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	session_client "github.com/teamgram/teamgram-server/app/interface/session/client"
+	sessionclient "github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/zeromicro/go-zero/core/discov"
@@ -41,7 +41,7 @@ type SessionOptions struct {
 // Session is a gateway.
 type Session struct {
 	serverId       string
-	client         session_client.SessionClient
+	client         sessionclient.SessionClient
 	sessionChan    []chan interface{}
 	sessionChanNum uint64
 	options        SessionOptions
@@ -141,7 +141,7 @@ func NewSession(c zrpc.RpcClientConf, options SessionOptions) (*Session, error) 
 		logx.Errorf("watchComet NewClient(%+v) error(%v)", c, err)
 		return nil, err
 	}
-	sess.client = session_client.NewSessionClient(cli)
+	sess.client = sessionclient.NewSessionClient(cli)
 	sess.ctx, sess.cancel = context.WithCancel(context.Background())
 
 	for i := uint64(0); i < options.RoutineSize; i++ {

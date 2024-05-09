@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	zrpc.DontLogContentForMethod("/session.RPCSession/SessionSendDataToSession")
+	zrpc.DontLogContentForMethod("/session.RPCSession/session_sendDataToSession")
 
 	zrpc.DontLogClientContentForMethod("/gateway.RPCGateway/gateway_sendDataToGateway")
 	zrpc.DontLogClientContentForMethod("/mtproto.RPCFiles/upload_saveFilePart")

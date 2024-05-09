@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package service
+package sess
 
 import (
 	"github.com/teamgram/proto/mtproto"
@@ -39,17 +39,4 @@ func SerializeToBuffer(x *mtproto.EncodeBuf, salt, sessionId int64, msg2 *mtprot
 	msg2.Encode(x, layer)
 
 	return nil
-}
-
-func SerializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessageRawData) []byte {
-	x := mtproto.NewEncodeBuf(32 + len(msg2.Body))
-
-	x.Long(salt)
-	x.Long(sessionId)
-	x.Long(msg2.MsgId)
-	x.Int(msg2.Seqno)
-	x.Int(msg2.Bytes)
-	x.Bytes(msg2.Body)
-
-	return x.GetBuf()
 }

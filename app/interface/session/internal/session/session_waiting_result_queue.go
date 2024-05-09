@@ -8,7 +8,7 @@
  * Author: teagramio (teagram.io@gmail.com)
  */
 
-package service
+package sess
 
 import (
 	"container/list"
