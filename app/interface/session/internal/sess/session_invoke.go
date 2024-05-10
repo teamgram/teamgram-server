@@ -497,14 +497,22 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
-	c.tmpRpcApiMessageList = append(
-		c.tmpRpcApiMessageList,
+	//c.tmpRpcApiMessageList = append(
+	//	c.tmpRpcApiMessageList[:0],
+	//	&rpcApiMessage{
+	//		sessionId: c.sessionId,
+	//		clientIp:  clientIp,
+	//		reqMsgId:  msgId.msgId,
+	//		reqMsg:    query,
+	//	})
+	c.cb.sendToRpcQueue(ctx, []*rpcApiMessage{
 		&rpcApiMessage{
 			sessionId: c.sessionId,
 			clientIp:  clientIp,
 			reqMsgId:  msgId.msgId,
 			reqMsg:    query,
-		})
+		}})
+	// c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 
 	return true
 }

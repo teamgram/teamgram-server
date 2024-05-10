@@ -314,8 +314,8 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		c.cb.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
-		c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+		//c.cb.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
+		//c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
@@ -590,7 +590,9 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 		logx.Errorf("sendHttpDirectToGateway - %v", err)
 	}
 
-	cb(rawMsg)
+	if cb != nil {
+		cb(rawMsg)
+	}
 	// c.httpTimeOut = 0
 	return rB, err
 }
@@ -637,7 +639,9 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 		logx.Errorf("sendToClient - %v", err)
 	}
 
-	cb(rawMsg)
+	if cb != nil {
+		cb(rawMsg)
+	}
 	// c.httpTimeOut = 0
 	return rB, err
 }

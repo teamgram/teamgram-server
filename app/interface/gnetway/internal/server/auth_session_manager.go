@@ -111,6 +111,10 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 					break
 				}
 			}
+			if v2.connIdList.Len() == 0 {
+				delete(v.sessionList, sessionId)
+				bDeleted = true
+			}
 			if len(v.sessionList) == 0 {
 				delete(m.sessions, authKeyId)
 			}
