@@ -21,11 +21,17 @@ package sess
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
+	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
+	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
+	status2 "google.golang.org/grpc/status"
 )
 
 //const (
@@ -118,8 +124,6 @@ type sessionCallback interface {
 	setLangpack(ctx context.Context, c string)
 
 	destroySession(ctx context.Context, sessionId int64) bool
-
-	sendToRpcQueue(ctx context.Context, rpcMessage []*rpcApiMessage)
 
 	onBindPushSessionId(ctx context.Context, sessionId int64)
 	setOnline(ctx context.Context)
@@ -237,6 +241,9 @@ func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	}
 }
 
+type idxId struct {
+}
+
 func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp string, salt int64, msg *mtproto.TLMessage2) {
 	// 1. check salt
 	if !c.checkBadServerSalt(ctx, gatewayId, salt, msg) {
@@ -314,34 +321,33 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		//c.cb.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
-		//c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+		mr.ForEach(
+			func(source chan<- interface{}) {
+				for _, m := range c.tmpRpcApiMessageList {
+					source <- m
+				}
+				c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+			},
+			func(item interface{}) {
+				request := item.(*rpcApiMessage)
+				rpcMetadata := &metadata.RpcMetadata{
+					ServerId:      c.authSessions.Dao.MyServerId,
+					ClientAddr:    request.clientIp,
+					AuthId:        c.authSessions.authKeyId,
+					SessionId:     request.sessionId,
+					ReceiveTime:   time.Now().Unix(),
+					UserId:        c.authSessions.AuthUserId,
+					ClientMsgId:   request.reqMsgId,
+					Layer:         c.authSessions.Layer,
+					Client:        c.authSessions.getClient(ctx),
+					Langpack:      c.authSessions.getLangpack(ctx),
+					PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
+				}
+				doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request, c.authSessions.rpcDataChan)
+			})
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
-
-		//pendings := make([]*outboxMsg, 0)
-		//for e := c.outQueue.oMsgs.Front(); e != nil; e = e.Next() {
-		//	if e.Value.(*outboxMsg).sent == false {
-		//		e.Value.(*outboxMsg).sent = true
-		//		pendings = append(pendings, e.Value.(*outboxMsg))
-		//	}
-		//}
-		//
-		//if len(pendings) == 1 {
-		//	c.sendRawDirectToGateway(gatewayId, pendings[0].msg)
-		//} else if len(pendings) > 1 {
-		//	msgContainer := &mtproto.TLMsgRawDataContainer{
-		//		Messages: make([]*mtproto.TLMessageRawData, 0, len(pendings)),
-		//	}
-		//	for _, m := range pendings {
-		//		msgContainer.Messages = append(msgContainer.Messages, m.msg)
-		//	}
-		//
-		//	c.sendDirectToGateway(gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
-		//		// TODO(@benqi):
-		//	})
-		//}
 	}()
 	for _, m2 := range msgs {
 		if m2.MsgId < c.firstMsgId {
@@ -729,4 +735,93 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 			}
 		}
 	}
+}
+
+/*
+// 初始化metadata
+
+	rpcMetadata := &metadata.RpcMetadata{
+		ServerId:      c.authSessions.Dao.MyServerId,
+		ClientAddr:    request.clientIp,
+		AuthId:        c.authSessions.authKeyId,
+		SessionId:     request.sessionId,
+		ReceiveTime:   time.Now().Unix(),
+		UserId:        c.authSessions.AuthUserId,
+		ClientMsgId:   request.reqMsgId,
+		Layer:         c.authSessions.Layer,
+		Client:        c.authSessions.getClient(ctx),
+		Langpack:      c.authSessions.getLangpack(ctx),
+		PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
+	}
+*/
+func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage, rpcDataChan chan interface{}) {
+	var (
+		err       error
+		rpcResult mtproto.TLObject
+	)
+
+	logx.WithContext(ctx).Debugf("doRpcRequest - {md: %s, request: %s}", md.DebugString(), request.DebugString())
+
+	// TODO(@benqi): change state.
+	switch request.reqMsg.(type) {
+	case *mtproto.TLAuthBindTempAuthKey:
+		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
+		rpcResult, err = dao.AuthsessionClient.AuthsessionBindTempAuthKey(
+			context.Background(),
+			&authsession.TLAuthsessionBindTempAuthKey{
+				PermAuthKeyId:    r.PermAuthKeyId,
+				Nonce:            r.Nonce,
+				ExpiresAt:        r.ExpiresAt,
+				EncryptedMessage: r.EncryptedMessage,
+			})
+		//
+		//if err != nil {
+		//	if s2, ok := status2.FromError(err); ok {
+		//		if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
+		//			c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
+		//			c.authSessions.cb.DeleteByAuthKeyId(c.authSessions.authKeyId)
+		//			c.authSessions.AuthUserId = 0
+		//		}
+		//	}
+		//	// err = mtproto.NewRpcError(s2)
+		//} else {
+		//	c.authSessions.Dao.PutCachePermAuthKeyId(context.Background(), c.authSessions.authKeyId, r.PermAuthKeyId)
+		//}
+	default:
+		rpcResult, err = dao.Invoke(md, request.reqMsg)
+	}
+
+	reply := &mtproto.TLRpcResult{
+		ReqMsgId: request.reqMsgId,
+		Result:   nil,
+	}
+
+	if err != nil {
+		logx.WithContext(ctx).Error(err.Error())
+
+		if s2, ok := status2.FromError(err); ok {
+			reply.Result = mtproto.NewRpcError(s2)
+		} else {
+			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
+		}
+		//
+		//if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
+		//	reply.Result = rpcErr
+		//} else {
+		//	reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
+		//}
+	} else {
+		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
+		reply.Result = rpcResult
+	}
+
+	request.rpcResult = reply
+	//
+	//if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut); ok {
+	//	logx.Infof("authLogOut - %#v", rpcMetadata)
+	//	c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
+	//}
+	logx.WithContext(ctx).Debugf("RpcResult - {md: %s, reply: %s}", md.DebugString(), request.DebugString())
+
+	rpcDataChan <- request
 }

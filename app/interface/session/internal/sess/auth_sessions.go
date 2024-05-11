@@ -27,7 +27,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/teamgram/marmota/pkg/queue2"
 	"github.com/teamgram/marmota/pkg/sync2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
@@ -42,6 +41,7 @@ import (
 )
 
 type rpcApiMessage struct {
+	traceId   int64
 	sessionId int64
 	clientIp  string
 	reqMsgId  int64
@@ -55,14 +55,28 @@ func (m *rpcApiMessage) MoveRpcResult() *mtproto.TLRpcResult {
 	return v
 }
 
+func (m *rpcApiMessage) TryGetRpcResultError() (*mtproto.TLRpcError, bool) {
+	if m.rpcResult != nil && m.rpcResult.Result != nil {
+		r := m.rpcResult.Result
+		switch t := r.(type) {
+		case *mtproto.TLRpcError:
+			return t, true
+		}
+	}
+
+	return nil, false
+}
+
 func (m *rpcApiMessage) DebugString() string {
 	if m.rpcResult == nil {
-		return fmt.Sprintf("{session_id: %d, req_msg_id: %d, req_msg: %s}",
+		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s}",
+			m.traceId,
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg.DebugString())
 	} else {
-		return fmt.Sprintf("{session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
+		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
+			m.traceId,
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg.DebugString(),
@@ -180,7 +194,6 @@ type AuthSessions struct {
 	closeChan       chan struct{}
 	sessionDataChan chan interface{} // receive from client
 	rpcDataChan     chan interface{} // rpc reply
-	rpcQueue        *queue2.SyncQueue
 	finish          sync.WaitGroup
 	running         sync2.AtomicInt32
 	state           int
@@ -201,7 +214,6 @@ func newAuthSessions(authKeyId int64, cb *AuthSessionsManager) *AuthSessions {
 		closeChan:       make(chan struct{}),
 		sessionDataChan: make(chan interface{}, 1024),
 		rpcDataChan:     make(chan interface{}, 1024),
-		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		clientType:      clientUnknown,
 		nextPushId:      0,
@@ -317,12 +329,6 @@ func (s *AuthSessions) destroySession(ctx context.Context, sessionId int64) bool
 	return true
 }
 
-func (s *AuthSessions) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcApiMessage) {
-	if len(rpcMessage) > 0 {
-		s.rpcQueue.Push(rpcMessage)
-	}
-}
-
 func (s *AuthSessions) getPushSessionId() int64 {
 	if s.pushSessionId == 0 && s.AuthUserId != 0 {
 		s.pushSessionId, _ = s.Dao.GetCachePushSessionID(context.Background(), s.AuthUserId, s.authKeyId)
@@ -432,14 +438,12 @@ func (s *AuthSessions) String() string {
 func (s *AuthSessions) Start() {
 	s.running.Set(1)
 	s.finish.Add(1)
-	go s.rpcRunLoop()
 	go s.runLoop()
 }
 
 func (s *AuthSessions) Stop() {
 	s.delOnline()
 	s.running.Set(0)
-	s.rpcQueue.Close()
 }
 
 func (s *AuthSessions) runLoop() {
@@ -497,11 +501,14 @@ func (s *AuthSessions) runLoop() {
 			default:
 				panic("receive invalid type msg")
 			}
-		case rpcMessages, _ := <-s.rpcDataChan:
-			threading.RunSafe(func() {
+		case rpcMessages, ok := <-s.rpcDataChan:
+			if ok {
+				// threading.RunSafe(func() {
 				result, _ := rpcMessages.(*rpcApiMessage)
+				logx.Debugf("onRpcDataChan - receive data: %s", result.DebugString())
 				s.onRpcResult(context.Background(), result)
-			})
+				// })
+			}
 			// case <-time.After(100 * time.Millisecond):
 		case <-ticker.C:
 			threading.RunSafe(func() {
@@ -511,34 +518,6 @@ func (s *AuthSessions) runLoop() {
 	}
 
 	logx.Info("quit runLoop...")
-}
-
-func (s *AuthSessions) rpcRunLoop() {
-	for {
-		apiRequest := s.rpcQueue.Pop()
-		if apiRequest == nil {
-			logx.Info("quit rpcRunLoop...")
-			return
-		} else {
-			threading.RunSafe(func() {
-				var (
-				// invokeFns []func()
-				)
-
-				requestList, _ := apiRequest.([]*rpcApiMessage)
-				for i := range requestList {
-					// invokeFns = append(invokeFns, func() {
-					s.onRpcRequest(context.Background(), requestList[i])
-					s.rpcDataChan <- requestList[i]
-					// })
-				}
-				//mr.FinishVoid(invokeFns...)
-				//for i := range requestList {
-				//	s.rpcDataChan <- requestList[i]
-				//}
-			})
-		}
-	}
 }
 
 func (s *AuthSessions) onTimer(ctx context.Context) {
@@ -859,7 +838,7 @@ func (s *AuthSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 func (s *AuthSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	defer func() {
 		if err := recover(); err != nil {
-			logx.Errorf("tcp_server handle panic: %v\n%s", err, debug.Stack())
+			logx.Errorf("handle panic: %v\n%s", err, debug.Stack())
 		}
 	}()
 
@@ -906,13 +885,14 @@ func (s *AuthSessions) onRpcRequest(ctx context.Context, request *rpcApiMessage)
 				EncryptedMessage: r.EncryptedMessage,
 			})
 		if err != nil {
-			s2 := status2.Convert(err)
-			if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-				s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
-				s.cb.DeleteByAuthKeyId(s.authKeyId)
-				s.AuthUserId = 0
+			if s2, ok := status2.FromError(err); ok {
+				if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
+					s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
+					s.cb.DeleteByAuthKeyId(s.authKeyId)
+					s.AuthUserId = 0
+				}
 			}
-			err = mtproto.NewRpcError(s2)
+			// err = mtproto.NewRpcError(s2)
 		} else {
 			s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
 		}
@@ -925,12 +905,19 @@ func (s *AuthSessions) onRpcRequest(ctx context.Context, request *rpcApiMessage)
 	}
 
 	if err != nil {
-		logx.Error(err.Error())
-		if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
-			reply.Result = rpcErr
+		logx.WithContext(ctx).Error(err.Error())
+
+		if s2, ok := status2.FromError(err); ok {
+			reply.Result = mtproto.NewRpcError(s2)
 		} else {
 			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
 		}
+		//
+		//if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
+		//	reply.Result = rpcErr
+		//} else {
+		//	reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
+		//}
 	} else {
 		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
 		reply.Result = rpcResult

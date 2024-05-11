@@ -20,6 +20,7 @@ package sess
 
 import (
 	"context"
+	"math/rand"
 	"reflect"
 	"strconv"
 
@@ -497,21 +498,22 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
-	//c.tmpRpcApiMessageList = append(
-	//	c.tmpRpcApiMessageList[:0],
+	c.tmpRpcApiMessageList = append(
+		c.tmpRpcApiMessageList,
+		&rpcApiMessage{
+			traceId:   rand.Int63(),
+			sessionId: c.sessionId,
+			clientIp:  clientIp,
+			reqMsgId:  msgId.msgId,
+			reqMsg:    query,
+		})
+	//c.cb.sendToRpcQueue(ctx, []*rpcApiMessage{
 	//	&rpcApiMessage{
 	//		sessionId: c.sessionId,
 	//		clientIp:  clientIp,
 	//		reqMsgId:  msgId.msgId,
 	//		reqMsg:    query,
-	//	})
-	c.cb.sendToRpcQueue(ctx, []*rpcApiMessage{
-		&rpcApiMessage{
-			sessionId: c.sessionId,
-			clientIp:  clientIp,
-			reqMsgId:  msgId.msgId,
-			reqMsg:    query,
-		}})
+	//	}})
 	// c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 
 	return true
@@ -524,7 +526,12 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		}
 	}()
 
-	if rpcErr, ok := rpcResult.rpcResult.Result.(*mtproto.TLRpcError); ok {
+	// if rpcResult.rpcResult == nil {
+	//	logx.Errorf("rpcResult is nil, reqMsgId: %v", rpcResult)
+	// } else if rpcResult.rpcResult.Result == nil {
+	//	logx.Errorf("rpcResult is nil, reqMsgId: %v", rpcResult)
+	// }
+	if rpcErr, ok := rpcResult.TryGetRpcResultError(); ok {
 		if rpcErr.GetErrorCode() == int32(mtproto.ErrNotReturnClient) {
 			logx.Infof("recv NOTRETURN_CLIENT")
 			c.pendingQueue.Add(rpcResult.reqMsgId)
@@ -532,7 +539,11 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		}
 	}
 
-	c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
+	if rpcResult != nil {
+		c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
+	} else {
+		logx.Errorf("unknown error, rpcResult is nil: %v", rpcResult)
+	}
 }
 
 func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcResult) {

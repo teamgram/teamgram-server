@@ -19,7 +19,7 @@ require (
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
-	mvdan.cc/xurls/v2 v2.4.0
+	mvdan.cc/xurls/v2 v2.5.0
 )
 
 require (
