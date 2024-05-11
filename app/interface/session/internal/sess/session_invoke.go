@@ -520,18 +520,8 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 }
 
 func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
-	defer func() {
-		if _, ok := rpcResult.reqMsg.(*mtproto.TLAuthLogOut); ok {
-			c.authSessions.cb.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
-		}
-	}()
-
-	// if rpcResult.rpcResult == nil {
-	//	logx.Errorf("rpcResult is nil, reqMsgId: %v", rpcResult)
-	// } else if rpcResult.rpcResult.Result == nil {
-	//	logx.Errorf("rpcResult is nil, reqMsgId: %v", rpcResult)
-	// }
-	if rpcErr, ok := rpcResult.TryGetRpcResultError(); ok {
+	rpcErr, ok := rpcResult.TryGetRpcResultError()
+	if ok {
 		if rpcErr.GetErrorCode() == int32(mtproto.ErrNotReturnClient) {
 			logx.Infof("recv NOTRETURN_CLIENT")
 			c.pendingQueue.Add(rpcResult.reqMsgId)
@@ -539,11 +529,29 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		}
 	}
 
-	if rpcResult != nil {
-		c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
-	} else {
-		logx.Errorf("unknown error, rpcResult is nil: %v", rpcResult)
+	switch request := rpcResult.reqMsg.(type) {
+	case *mtproto.TLAuthBindTempAuthKey:
+		if ok {
+			if rpcErr.Message() == "ENCRYPTED_MESSAGE_INVALID" {
+				c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
+				c.authSessions.cb.DeleteByAuthKeyId(c.authSessions.authKeyId)
+				c.authSessions.AuthUserId = 0
+			}
+		} else {
+			c.authSessions.Dao.PutCachePermAuthKeyId(context.Background(), c.authSessions.authKeyId, request.PermAuthKeyId)
+		}
+	default:
 	}
+
+	defer func() {
+		switch rpcResult.reqMsg.(type) {
+		case *mtproto.TLAuthLogOut:
+			c.authSessions.cb.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
+		default:
+		}
+	}()
+
+	c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
 }
 
 func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcResult) {

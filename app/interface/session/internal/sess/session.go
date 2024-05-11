@@ -737,30 +737,13 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 	}
 }
 
-/*
-// 初始化metadata
-
-	rpcMetadata := &metadata.RpcMetadata{
-		ServerId:      c.authSessions.Dao.MyServerId,
-		ClientAddr:    request.clientIp,
-		AuthId:        c.authSessions.authKeyId,
-		SessionId:     request.sessionId,
-		ReceiveTime:   time.Now().Unix(),
-		UserId:        c.authSessions.AuthUserId,
-		ClientMsgId:   request.reqMsgId,
-		Layer:         c.authSessions.Layer,
-		Client:        c.authSessions.getClient(ctx),
-		Langpack:      c.authSessions.getLangpack(ctx),
-		PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-	}
-*/
 func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage, rpcDataChan chan interface{}) {
 	var (
 		err       error
 		rpcResult mtproto.TLObject
 	)
 
-	logx.WithContext(ctx).Debugf("doRpcRequest - {md: %s, request: %s}", md.DebugString(), request.DebugString())
+	// logx.WithContext(ctx).Debugf("doRpcRequest - {md: %s, request: %s}", md.DebugString(), request.DebugString())
 
 	// TODO(@benqi): change state.
 	switch request.reqMsg.(type) {
@@ -774,19 +757,6 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 				ExpiresAt:        r.ExpiresAt,
 				EncryptedMessage: r.EncryptedMessage,
 			})
-		//
-		//if err != nil {
-		//	if s2, ok := status2.FromError(err); ok {
-		//		if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-		//			c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
-		//			c.authSessions.cb.DeleteByAuthKeyId(c.authSessions.authKeyId)
-		//			c.authSessions.AuthUserId = 0
-		//		}
-		//	}
-		//	// err = mtproto.NewRpcError(s2)
-		//} else {
-		//	c.authSessions.Dao.PutCachePermAuthKeyId(context.Background(), c.authSessions.authKeyId, r.PermAuthKeyId)
-		//}
 	default:
 		rpcResult, err = dao.Invoke(md, request.reqMsg)
 	}
@@ -804,24 +774,14 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 		} else {
 			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
 		}
-		//
-		//if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
-		//	reply.Result = rpcErr
-		//} else {
-		//	reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
-		//}
 	} else {
 		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
 		reply.Result = rpcResult
 	}
 
 	request.rpcResult = reply
-	//
-	//if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut); ok {
-	//	logx.Infof("authLogOut - %#v", rpcMetadata)
-	//	c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
-	//}
-	logx.WithContext(ctx).Debugf("RpcResult - {md: %s, reply: %s}", md.DebugString(), request.DebugString())
+
+	// logx.WithContext(ctx).Debugf("RpcResult - {md: %s, reply: %s}", md.DebugString(), request.DebugString())
 
 	rpcDataChan <- request
 }

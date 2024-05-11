@@ -29,15 +29,12 @@ import (
 
 	"github.com/teamgram/marmota/pkg/sync2"
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/threading"
-	status2 "google.golang.org/grpc/status"
 )
 
 type rpcApiMessage struct {
@@ -849,85 +846,4 @@ func (s *AuthSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage
 	} else {
 		logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
 	}
-}
-
-func (s *AuthSessions) onRpcRequest(ctx context.Context, request *rpcApiMessage) bool {
-	var (
-		err       error
-		rpcResult mtproto.TLObject
-	)
-
-	// 初始化metadata
-	rpcMetadata := &metadata.RpcMetadata{
-		ServerId:      s.Dao.MyServerId,
-		ClientAddr:    request.clientIp,
-		AuthId:        s.authKeyId,
-		SessionId:     request.sessionId,
-		ReceiveTime:   time.Now().Unix(),
-		UserId:        s.AuthUserId,
-		ClientMsgId:   request.reqMsgId,
-		Layer:         s.Layer,
-		Client:        s.getClient(ctx),
-		Langpack:      s.getLangpack(ctx),
-		PermAuthKeyId: s.getPermAuthKeyId(ctx),
-	}
-
-	// TODO(@benqi): change state.
-	switch request.reqMsg.(type) {
-	case *mtproto.TLAuthBindTempAuthKey:
-		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
-		rpcResult, err = s.Dao.AuthsessionClient.AuthsessionBindTempAuthKey(
-			context.Background(),
-			&authsession.TLAuthsessionBindTempAuthKey{
-				PermAuthKeyId:    r.PermAuthKeyId,
-				Nonce:            r.Nonce,
-				ExpiresAt:        r.ExpiresAt,
-				EncryptedMessage: r.EncryptedMessage,
-			})
-		if err != nil {
-			if s2, ok := status2.FromError(err); ok {
-				if s2.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-					s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
-					s.cb.DeleteByAuthKeyId(s.authKeyId)
-					s.AuthUserId = 0
-				}
-			}
-			// err = mtproto.NewRpcError(s2)
-		} else {
-			s.Dao.PutCachePermAuthKeyId(context.Background(), s.authKeyId, r.PermAuthKeyId)
-		}
-	default:
-		rpcResult, err = s.Dao.Invoke(rpcMetadata, request.reqMsg)
-	}
-
-	reply := &mtproto.TLRpcResult{
-		ReqMsgId: request.reqMsgId,
-	}
-
-	if err != nil {
-		logx.WithContext(ctx).Error(err.Error())
-
-		if s2, ok := status2.FromError(err); ok {
-			reply.Result = mtproto.NewRpcError(s2)
-		} else {
-			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
-		}
-		//
-		//if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
-		//	reply.Result = rpcErr
-		//} else {
-		//	reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
-		//}
-	} else {
-		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
-		reply.Result = rpcResult
-	}
-
-	request.rpcResult = reply
-
-	if _, ok := request.reqMsg.(*mtproto.TLAuthLogOut); ok {
-		logx.Infof("authLogOut - %#v", rpcMetadata)
-		s.Dao.PutCacheUserId(context.Background(), s.authKeyId, 0)
-	}
-	return true
 }
