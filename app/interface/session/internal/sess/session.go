@@ -241,9 +241,6 @@ func (c *session) onSessionConnNew(ctx context.Context, id string) {
 	}
 }
 
-type idxId struct {
-}
-
 func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp string, salt int64, msg *mtproto.TLMessage2) {
 	// 1. check salt
 	if !c.checkBadServerSalt(ctx, gatewayId, salt, msg) {
@@ -282,6 +279,7 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	var (
 		msgs []*mtproto.TLMessage2
 	)
+
 	// TODO(@benqi): ignore TLMsgCopy
 	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
 		msgs = msgContainer.Messages
@@ -321,34 +319,60 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		mr.ForEach(
-			func(source chan<- interface{}) {
-				for _, m := range c.tmpRpcApiMessageList {
-					source <- m
-				}
-				c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
-			},
-			func(item interface{}) {
-				request := item.(*rpcApiMessage)
+		if len(c.tmpRpcApiMessageList) <= 1 {
+			if len(c.tmpRpcApiMessageList) == 1 {
 				rpcMetadata := &metadata.RpcMetadata{
 					ServerId:      c.authSessions.Dao.MyServerId,
-					ClientAddr:    request.clientIp,
+					ClientAddr:    c.tmpRpcApiMessageList[0].clientIp,
 					AuthId:        c.authSessions.authKeyId,
-					SessionId:     request.sessionId,
+					SessionId:     c.tmpRpcApiMessageList[0].sessionId,
 					ReceiveTime:   time.Now().Unix(),
 					UserId:        c.authSessions.AuthUserId,
-					ClientMsgId:   request.reqMsgId,
+					ClientMsgId:   c.tmpRpcApiMessageList[0].reqMsgId,
 					Layer:         c.authSessions.Layer,
 					Client:        c.authSessions.getClient(ctx),
 					Langpack:      c.authSessions.getLangpack(ctx),
 					PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
 				}
-				doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request, c.authSessions.rpcDataChan)
-			})
+				doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, c.tmpRpcApiMessageList[0])
+			}
+		} else {
+			mr.ForEach(
+				func(source chan<- interface{}) {
+					for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
+						source <- c.tmpRpcApiMessageList[i]
+					}
+				},
+				func(item interface{}) {
+					request := item.(*rpcApiMessage)
+					rpcMetadata := &metadata.RpcMetadata{
+						ServerId:      c.authSessions.Dao.MyServerId,
+						ClientAddr:    request.clientIp,
+						AuthId:        c.authSessions.authKeyId,
+						SessionId:     request.sessionId,
+						ReceiveTime:   time.Now().Unix(),
+						UserId:        c.authSessions.AuthUserId,
+						ClientMsgId:   request.reqMsgId,
+						Layer:         c.authSessions.Layer,
+						Client:        c.authSessions.getClient(ctx),
+						Langpack:      c.authSessions.getLangpack(ctx),
+						PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
+					}
+					doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request)
+				})
+		}
+		if len(c.tmpRpcApiMessageList) > 0 {
+			for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
+				// source <- c.tmpRpcApiMessageList[i]
+				c.onRpcResult(context.Background(), c.tmpRpcApiMessageList[i])
+			}
+			c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+		}
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
 	}()
+
 	for _, m2 := range msgs {
 		if m2.MsgId < c.firstMsgId {
 			continue
@@ -737,7 +761,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 	}
 }
 
-func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage, rpcDataChan chan interface{}) {
+func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage) {
 	var (
 		err       error
 		rpcResult mtproto.TLObject
@@ -782,6 +806,4 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 	request.rpcResult = reply
 
 	// logx.WithContext(ctx).Debugf("RpcResult - {md: %s, reply: %s}", md.DebugString(), request.DebugString())
-
-	rpcDataChan <- request
 }

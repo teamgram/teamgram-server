@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"math"
 	"reflect"
-	"runtime/debug"
 	"sync"
 	"time"
 
@@ -190,7 +189,6 @@ type AuthSessions struct {
 	sessions        map[int64]*session
 	closeChan       chan struct{}
 	sessionDataChan chan interface{} // receive from client
-	rpcDataChan     chan interface{} // rpc reply
 	finish          sync.WaitGroup
 	running         sync2.AtomicInt32
 	state           int
@@ -210,7 +208,6 @@ func newAuthSessions(authKeyId int64, cb *AuthSessionsManager) *AuthSessions {
 		sessions:        make(map[int64]*session),
 		closeChan:       make(chan struct{}),
 		sessionDataChan: make(chan interface{}, 1024),
-		rpcDataChan:     make(chan interface{}, 1024),
 		finish:          sync.WaitGroup{},
 		clientType:      clientUnknown,
 		nextPushId:      0,
@@ -452,7 +449,6 @@ func (s *AuthSessions) runLoop() {
 		s.finish.Done()
 		close(s.closeChan)
 		close(s.sessionDataChan)
-		close(s.rpcDataChan)
 		s.finish.Wait()
 	}()
 
@@ -498,15 +494,6 @@ func (s *AuthSessions) runLoop() {
 			default:
 				panic("receive invalid type msg")
 			}
-		case rpcMessages, ok := <-s.rpcDataChan:
-			if ok {
-				// threading.RunSafe(func() {
-				result, _ := rpcMessages.(*rpcApiMessage)
-				logx.Debugf("onRpcDataChan - receive data: %s", result.DebugString())
-				s.onRpcResult(context.Background(), result)
-				// })
-			}
-			// case <-time.After(100 * time.Millisecond):
 		case <-ticker.C:
 			threading.RunSafe(func() {
 				s.onTimer(context.Background())
@@ -832,18 +819,18 @@ func (s *AuthSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 	}
 }
 
-func (s *AuthSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
-	defer func() {
-		if err := recover(); err != nil {
-			logx.Errorf("handle panic: %v\n%s", err, debug.Stack())
-		}
-	}()
-
-	// log.Debugf("onRpcResult - sessionId: ", rpcResult.sessionId)
-	if sess, ok := s.sessions[rpcResult.sessionId]; ok {
-		// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
-		sess.onRpcResult(ctx, rpcResult)
-	} else {
-		logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
-	}
-}
+//func (s *AuthSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
+//	defer func() {
+//		if err := recover(); err != nil {
+//			logx.Errorf("handle panic: %v\n%s", err, debug.Stack())
+//		}
+//	}()
+//
+//	// log.Debugf("onRpcResult - sessionId: ", rpcResult.sessionId)
+//	if sess, ok := s.sessions[rpcResult.sessionId]; ok {
+//		// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
+//		sess.onRpcResult(ctx, rpcResult)
+//	} else {
+//		logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
+//	}
+//}
