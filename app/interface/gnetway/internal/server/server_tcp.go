@@ -34,9 +34,10 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
 				return gnet.None
+			} else {
+				logx.Errorf("conn(%s) create codec error: %v", c, err)
+				return gnet.Close
 			}
-			logx.Errorf("conn(%s) create codec error: %v", c, err)
-			return gnet.Close
 		}
 	}
 
@@ -45,9 +46,10 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
 				return gnet.None
+			} else {
+				logx.Errorf("conn(%s) frame is error: %v", c, err)
+				action = gnet.Close
 			}
-			logx.Errorf("conn(%s) frame is error: %v", c, err)
-			action = gnet.Close
 			return
 		} else if frame == nil {
 			logx.Debugf("conn(%s) frame is nil", c)

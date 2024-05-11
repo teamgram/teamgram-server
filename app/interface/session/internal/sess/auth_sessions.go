@@ -26,9 +26,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/queue2"
 	"github.com/teamgram/marmota/pkg/sync2"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
+	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 
 	"github.com/zeromicro/go-zero/core/contextx"
@@ -190,6 +193,7 @@ type AuthSessions struct {
 	closeChan       chan struct{}
 	sessionDataChan chan interface{} // receive from client
 	rpcDataChan     chan interface{}
+	rpcQueue        *queue2.SyncQueue
 	finish          sync.WaitGroup
 	running         sync2.AtomicInt32
 	state           int
@@ -210,6 +214,7 @@ func newAuthSessions(authKeyId int64, cb *AuthSessionsManager) *AuthSessions {
 		closeChan:       make(chan struct{}),
 		sessionDataChan: make(chan interface{}, 1024),
 		rpcDataChan:     make(chan interface{}, 1024),
+		rpcQueue:        queue2.NewSyncQueue(),
 		finish:          sync.WaitGroup{},
 		clientType:      clientUnknown,
 		nextPushId:      0,
@@ -325,6 +330,10 @@ func (s *AuthSessions) destroySession(ctx context.Context, sessionId int64) bool
 	return true
 }
 
+func (s *AuthSessions) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcApiMessage) {
+	s.rpcQueue.Push(rpcMessage)
+}
+
 func (s *AuthSessions) getPushSessionId() int64 {
 	if s.pushSessionId == 0 && s.AuthUserId != 0 {
 		s.pushSessionId, _ = s.Dao.GetCachePushSessionID(context.Background(), s.AuthUserId, s.authKeyId)
@@ -434,12 +443,14 @@ func (s *AuthSessions) String() string {
 func (s *AuthSessions) Start() {
 	s.running.Set(1)
 	s.finish.Add(1)
+	go s.rpcRunLoop()
 	go s.runLoop()
 }
 
 func (s *AuthSessions) Stop() {
 	s.delOnline()
 	s.running.Set(0)
+	s.rpcQueue.Close()
 }
 
 func (s *AuthSessions) runLoop() {
@@ -515,6 +526,39 @@ func (s *AuthSessions) runLoop() {
 	}
 
 	logx.Info("quit runLoop...")
+}
+
+func (s *AuthSessions) rpcRunLoop() {
+	for {
+		apiRequest := s.rpcQueue.Pop()
+		if apiRequest == nil {
+			logx.Info("quit rpcRunLoop...")
+			return
+		} else {
+			threading.RunSafe(func() {
+				for _, request := range apiRequest.([]*rpcApiMessage) {
+					ctx := context.Background()
+					doRpcRequest(ctx,
+						s.Dao,
+						&metadata.RpcMetadata{
+							ServerId:      s.Dao.MyServerId,
+							ClientAddr:    request.clientIp,
+							AuthId:        s.authKeyId,
+							SessionId:     request.sessionId,
+							ReceiveTime:   time.Now().Unix(),
+							UserId:        s.AuthUserId,
+							ClientMsgId:   request.reqMsgId,
+							Layer:         s.Layer,
+							Client:        s.getClient(ctx),
+							Langpack:      s.getLangpack(ctx),
+							PermAuthKeyId: s.getPermAuthKeyId(ctx),
+						},
+						request)
+					s.rpcDataChan <- request
+				}
+			})
+		}
+	}
 }
 
 func (s *AuthSessions) onTimer(ctx context.Context) {
@@ -820,4 +864,42 @@ func (s *AuthSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 			}
 		}
 	}
+}
+
+func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage) {
+	var (
+		err       error
+		rpcResult mtproto.TLObject
+	)
+
+	// TODO(@benqi): change state.
+	switch request.reqMsg.(type) {
+	case *mtproto.TLAuthBindTempAuthKey:
+		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
+		rpcResult, err = dao.AuthsessionClient.AuthsessionBindTempAuthKey(
+			context.Background(),
+			&authsession.TLAuthsessionBindTempAuthKey{
+				PermAuthKeyId:    r.PermAuthKeyId,
+				Nonce:            r.Nonce,
+				ExpiresAt:        r.ExpiresAt,
+				EncryptedMessage: r.EncryptedMessage,
+			})
+	default:
+		rpcResult, err = dao.Invoke(md, request.reqMsg)
+	}
+
+	reply := &mtproto.TLRpcResult{
+		ReqMsgId: request.reqMsgId,
+		Result:   nil,
+	}
+
+	if err != nil {
+		logx.WithContext(ctx).Error(err.Error())
+		reply.Result = mtproto.NewRpcError(err)
+	} else {
+		logx.WithContext(ctx).Infof("invokeRpcRequest - rpc_result: {%s}", reflect.TypeOf(rpcResult))
+		reply.Result = rpcResult
+	}
+
+	request.rpcResult = reply
 }

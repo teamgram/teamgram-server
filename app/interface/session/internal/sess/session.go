@@ -21,13 +21,9 @@ package sess
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -142,45 +138,45 @@ QMap<mtpRequestId, SerializedMessage> _receivedResponses; // map of request_id -
 QList<SerializedMessage> _receivedUpdates; // list of updates that should be processed in the main thread
 */
 type session struct {
-	sessionId       int64
-	sessionState    int
-	gatewayId       *serverIdCtx
-	nextSeqNo       uint32
-	firstMsgId      int64
-	connState       int
-	closeDate       int64
-	lastReceiveTime int64
-	isAndroidPush   bool
-	isGeneric       bool
-	inQueue         *sessionInboundQueue
-	outQueue        *sessionOutgoingQueue
-	pendingQueue    *sessionRpcResultWaitingQueue
-	pushQueue       *sessionPushQueue
-	isHttp          bool
-	httpQueue       *httpRequestQueue
-	cb              sessionCallback
-	authSessions    *AuthSessions
-	// tmpRpcApiMessageList []*rpcApiMessage
+	sessionId            int64
+	sessionState         int
+	gatewayId            *serverIdCtx
+	nextSeqNo            uint32
+	firstMsgId           int64
+	connState            int
+	closeDate            int64
+	lastReceiveTime      int64
+	isAndroidPush        bool
+	isGeneric            bool
+	inQueue              *sessionInboundQueue
+	outQueue             *sessionOutgoingQueue
+	pendingQueue         *sessionRpcResultWaitingQueue
+	pushQueue            *sessionPushQueue
+	isHttp               bool
+	httpQueue            *httpRequestQueue
+	cb                   sessionCallback
+	authSessions         *AuthSessions
+	tmpRpcApiMessageList []*rpcApiMessage
 }
 
 func newSession(sessionId int64, sesses *AuthSessions) *session {
 	// var sess *sessionHandler
 	sess := &session{
-		sessionId:       sessionId,
-		gatewayId:       nil,
-		sessionState:    kSessionStateNew,
-		closeDate:       time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
-		connState:       kStateNew,
-		lastReceiveTime: time.Now().UnixNano(),
-		inQueue:         newSessionInboundQueue(),
-		outQueue:        newSessionOutgoingQueue(),
-		pendingQueue:    newSessionRpcResultWaitingQueue(),
-		pushQueue:       newSessionPushQueue(),
-		isHttp:          false,
-		httpQueue:       newHttpRequestQueue(),
-		cb:              sesses,
-		authSessions:    sesses,
-		// tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
+		sessionId:            sessionId,
+		gatewayId:            nil,
+		sessionState:         kSessionStateNew,
+		closeDate:            time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
+		connState:            kStateNew,
+		lastReceiveTime:      time.Now().UnixNano(),
+		inQueue:              newSessionInboundQueue(),
+		outQueue:             newSessionOutgoingQueue(),
+		pendingQueue:         newSessionRpcResultWaitingQueue(),
+		pushQueue:            newSessionPushQueue(),
+		isHttp:               false,
+		httpQueue:            newHttpRequestQueue(),
+		cb:                   sesses,
+		authSessions:         sesses,
+		tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
 	}
 
 	return sess
@@ -366,6 +362,8 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 		//	}
 		//	c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 		//}
+		c.authSessions.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
+		c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
@@ -757,42 +755,4 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 			}
 		}
 	}
-}
-
-func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage) {
-	var (
-		err       error
-		rpcResult mtproto.TLObject
-	)
-
-	// TODO(@benqi): change state.
-	switch request.reqMsg.(type) {
-	case *mtproto.TLAuthBindTempAuthKey:
-		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
-		rpcResult, err = dao.AuthsessionClient.AuthsessionBindTempAuthKey(
-			context.Background(),
-			&authsession.TLAuthsessionBindTempAuthKey{
-				PermAuthKeyId:    r.PermAuthKeyId,
-				Nonce:            r.Nonce,
-				ExpiresAt:        r.ExpiresAt,
-				EncryptedMessage: r.EncryptedMessage,
-			})
-	default:
-		rpcResult, err = dao.Invoke(md, request.reqMsg)
-	}
-
-	reply := &mtproto.TLRpcResult{
-		ReqMsgId: request.reqMsgId,
-		Result:   nil,
-	}
-
-	if err != nil {
-		logx.WithContext(ctx).Error(err.Error())
-		reply.Result = mtproto.NewRpcError(err)
-	} else {
-		logx.WithContext(ctx).Infof("invokeRpcRequest - rpc_result: {%s}", reflect.TypeOf(rpcResult))
-		reply.Result = rpcResult
-	}
-
-	request.rpcResult = reply
 }

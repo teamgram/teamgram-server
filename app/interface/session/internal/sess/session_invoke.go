@@ -20,14 +20,9 @@ package sess
 
 import (
 	"context"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
-	"github.com/zeromicro/go-zero/core/contextx"
-	"github.com/zeromicro/go-zero/core/rescue"
 	"math/rand"
 	"reflect"
 	"strconv"
-	"time"
 
 	"github.com/teamgram/proto/mtproto"
 
@@ -503,73 +498,16 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
-	//c.tmpRpcApiMessageList = append(
-	//	c.tmpRpcApiMessageList,
-	//	&rpcApiMessage{
-	//		traceId:   rand.Int63(),
-	//		sessionId: c.sessionId,
-	//		clientIp:  clientIp,
-	//		reqMsgId:  msgId.msgId,
-	//		reqMsg:    query,
-	//	})
 
-	//rpcMetadata := &metadata.RpcMetadata{
-	//	ServerId:      c.authSessions.Dao.MyServerId,
-	//	ClientAddr:    c.tmpRpcApiMessageList[0].clientIp,
-	//	AuthId:        c.authSessions.authKeyId,
-	//	SessionId:     c.tmpRpcApiMessageList[0].sessionId,
-	//	ReceiveTime:   time.Now().Unix(),
-	//	UserId:        c.authSessions.AuthUserId,
-	//	ClientMsgId:   c.tmpRpcApiMessageList[0].reqMsgId,
-	//	Layer:         c.authSessions.Layer,
-	//	Client:        c.authSessions.getClient(ctx),
-	//	Langpack:      c.authSessions.getLangpack(ctx),
-	//	PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-	//}
-	//doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, c.tmpRpcApiMessageList[0])
-
-	ctx = contextx.ValueOnlyFrom(ctx)
-	go func(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, request *rpcApiMessage, rpcData chan interface{}) {
-		defer rescue.Recover()
-		doRpcRequest(ctx, dao, md, request)
-		rpcData <- request
-	}(ctx,
-		c.authSessions.Dao,
-		&metadata.RpcMetadata{
-			ServerId:      c.authSessions.Dao.MyServerId,
-			ClientAddr:    clientIp,
-			AuthId:        c.authSessions.authKeyId,
-			SessionId:     c.sessionId,
-			ReceiveTime:   time.Now().Unix(),
-			UserId:        c.authSessions.AuthUserId,
-			ClientMsgId:   msgId.msgId,
-			Layer:         c.authSessions.Layer,
-			Client:        c.authSessions.getClient(ctx),
-			Langpack:      c.authSessions.getLangpack(ctx),
-			PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-		},
+	c.tmpRpcApiMessageList = append(
+		c.tmpRpcApiMessageList,
 		&rpcApiMessage{
 			traceId:   rand.Int63(),
 			sessionId: c.sessionId,
 			clientIp:  clientIp,
 			reqMsgId:  msgId.msgId,
 			reqMsg:    query,
-		},
-		c.authSessions.rpcDataChan)
-
-	//
-	//threading2.GoSafeContext(ctx, func(ctx context.Context) {
-	//	// doRpcRequest(ctx, )
-	//})
-
-	//c.cb.sendToRpcQueue(ctx, []*rpcApiMessage{
-	//	&rpcApiMessage{
-	//		sessionId: c.sessionId,
-	//		clientIp:  clientIp,
-	//		reqMsgId:  msgId.msgId,
-	//		reqMsg:    query,
-	//	}})
-	// c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+		})
 
 	return true
 }
