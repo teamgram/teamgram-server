@@ -189,6 +189,7 @@ type AuthSessions struct {
 	sessions        map[int64]*session
 	closeChan       chan struct{}
 	sessionDataChan chan interface{} // receive from client
+	rpcDataChan     chan interface{}
 	finish          sync.WaitGroup
 	running         sync2.AtomicInt32
 	state           int
@@ -208,6 +209,7 @@ func newAuthSessions(authKeyId int64, cb *AuthSessionsManager) *AuthSessions {
 		sessions:        make(map[int64]*session),
 		closeChan:       make(chan struct{}),
 		sessionDataChan: make(chan interface{}, 1024),
+		rpcDataChan:     make(chan interface{}, 1024),
 		finish:          sync.WaitGroup{},
 		clientType:      clientUnknown,
 		nextPushId:      0,
@@ -449,6 +451,7 @@ func (s *AuthSessions) runLoop() {
 		s.finish.Done()
 		close(s.closeChan)
 		close(s.sessionDataChan)
+		close(s.rpcDataChan)
 		s.finish.Wait()
 	}()
 
@@ -494,6 +497,16 @@ func (s *AuthSessions) runLoop() {
 			default:
 				panic("receive invalid type msg")
 			}
+		case rpcMessages, _ := <-s.rpcDataChan:
+			threading.RunSafe(func() {
+				rpcResult, _ := rpcMessages.(*rpcApiMessage)
+				if sess, ok := s.sessions[rpcResult.sessionId]; ok {
+					// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
+					sess.onRpcResult(context.Background(), rpcResult)
+				} else {
+					logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
+				}
+			})
 		case <-ticker.C:
 			threading.RunSafe(func() {
 				s.onTimer(context.Background())

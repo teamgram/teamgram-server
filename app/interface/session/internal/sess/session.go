@@ -30,7 +30,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/mr"
 )
 
 //const (
@@ -143,45 +142,45 @@ QMap<mtpRequestId, SerializedMessage> _receivedResponses; // map of request_id -
 QList<SerializedMessage> _receivedUpdates; // list of updates that should be processed in the main thread
 */
 type session struct {
-	sessionId            int64
-	sessionState         int
-	gatewayId            *serverIdCtx
-	nextSeqNo            uint32
-	firstMsgId           int64
-	connState            int
-	closeDate            int64
-	lastReceiveTime      int64
-	isAndroidPush        bool
-	isGeneric            bool
-	inQueue              *sessionInboundQueue
-	outQueue             *sessionOutgoingQueue
-	pendingQueue         *sessionRpcResultWaitingQueue
-	pushQueue            *sessionPushQueue
-	isHttp               bool
-	httpQueue            *httpRequestQueue
-	cb                   sessionCallback
-	authSessions         *AuthSessions
-	tmpRpcApiMessageList []*rpcApiMessage
+	sessionId       int64
+	sessionState    int
+	gatewayId       *serverIdCtx
+	nextSeqNo       uint32
+	firstMsgId      int64
+	connState       int
+	closeDate       int64
+	lastReceiveTime int64
+	isAndroidPush   bool
+	isGeneric       bool
+	inQueue         *sessionInboundQueue
+	outQueue        *sessionOutgoingQueue
+	pendingQueue    *sessionRpcResultWaitingQueue
+	pushQueue       *sessionPushQueue
+	isHttp          bool
+	httpQueue       *httpRequestQueue
+	cb              sessionCallback
+	authSessions    *AuthSessions
+	// tmpRpcApiMessageList []*rpcApiMessage
 }
 
 func newSession(sessionId int64, sesses *AuthSessions) *session {
 	// var sess *sessionHandler
 	sess := &session{
-		sessionId:            sessionId,
-		gatewayId:            nil,
-		sessionState:         kSessionStateNew,
-		closeDate:            time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
-		connState:            kStateNew,
-		lastReceiveTime:      time.Now().UnixNano(),
-		inQueue:              newSessionInboundQueue(),
-		outQueue:             newSessionOutgoingQueue(),
-		pendingQueue:         newSessionRpcResultWaitingQueue(),
-		pushQueue:            newSessionPushQueue(),
-		isHttp:               false,
-		httpQueue:            newHttpRequestQueue(),
-		cb:                   sesses,
-		authSessions:         sesses,
-		tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
+		sessionId:       sessionId,
+		gatewayId:       nil,
+		sessionState:    kSessionStateNew,
+		closeDate:       time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
+		connState:       kStateNew,
+		lastReceiveTime: time.Now().UnixNano(),
+		inQueue:         newSessionInboundQueue(),
+		outQueue:        newSessionOutgoingQueue(),
+		pendingQueue:    newSessionRpcResultWaitingQueue(),
+		pushQueue:       newSessionPushQueue(),
+		isHttp:          false,
+		httpQueue:       newHttpRequestQueue(),
+		cb:              sesses,
+		authSessions:    sesses,
+		// tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
 	}
 
 	return sess
@@ -318,55 +317,55 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		if len(c.tmpRpcApiMessageList) <= 1 {
-			if len(c.tmpRpcApiMessageList) == 1 {
-				rpcMetadata := &metadata.RpcMetadata{
-					ServerId:      c.authSessions.Dao.MyServerId,
-					ClientAddr:    c.tmpRpcApiMessageList[0].clientIp,
-					AuthId:        c.authSessions.authKeyId,
-					SessionId:     c.tmpRpcApiMessageList[0].sessionId,
-					ReceiveTime:   time.Now().Unix(),
-					UserId:        c.authSessions.AuthUserId,
-					ClientMsgId:   c.tmpRpcApiMessageList[0].reqMsgId,
-					Layer:         c.authSessions.Layer,
-					Client:        c.authSessions.getClient(ctx),
-					Langpack:      c.authSessions.getLangpack(ctx),
-					PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-				}
-				doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, c.tmpRpcApiMessageList[0])
-			}
-		} else {
-			mr.ForEach(
-				func(source chan<- interface{}) {
-					for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
-						source <- c.tmpRpcApiMessageList[i]
-					}
-				},
-				func(item interface{}) {
-					request := item.(*rpcApiMessage)
-					rpcMetadata := &metadata.RpcMetadata{
-						ServerId:      c.authSessions.Dao.MyServerId,
-						ClientAddr:    request.clientIp,
-						AuthId:        c.authSessions.authKeyId,
-						SessionId:     request.sessionId,
-						ReceiveTime:   time.Now().Unix(),
-						UserId:        c.authSessions.AuthUserId,
-						ClientMsgId:   request.reqMsgId,
-						Layer:         c.authSessions.Layer,
-						Client:        c.authSessions.getClient(ctx),
-						Langpack:      c.authSessions.getLangpack(ctx),
-						PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-					}
-					doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request)
-				})
-		}
-		if len(c.tmpRpcApiMessageList) > 0 {
-			for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
-				// source <- c.tmpRpcApiMessageList[i]
-				c.onRpcResult(ctx, c.tmpRpcApiMessageList[i])
-			}
-			c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
-		}
+		//if len(c.tmpRpcApiMessageList) <= 1 {
+		//	if len(c.tmpRpcApiMessageList) == 1 {
+		//		rpcMetadata := &metadata.RpcMetadata{
+		//			ServerId:      c.authSessions.Dao.MyServerId,
+		//			ClientAddr:    c.tmpRpcApiMessageList[0].clientIp,
+		//			AuthId:        c.authSessions.authKeyId,
+		//			SessionId:     c.tmpRpcApiMessageList[0].sessionId,
+		//			ReceiveTime:   time.Now().Unix(),
+		//			UserId:        c.authSessions.AuthUserId,
+		//			ClientMsgId:   c.tmpRpcApiMessageList[0].reqMsgId,
+		//			Layer:         c.authSessions.Layer,
+		//			Client:        c.authSessions.getClient(ctx),
+		//			Langpack:      c.authSessions.getLangpack(ctx),
+		//			PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
+		//		}
+		//		doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, c.tmpRpcApiMessageList[0])
+		//	}
+		//} else {
+		//	mr.ForEach(
+		//		func(source chan<- interface{}) {
+		//			for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
+		//				source <- c.tmpRpcApiMessageList[i]
+		//			}
+		//		},
+		//		func(item interface{}) {
+		//			request := item.(*rpcApiMessage)
+		//			rpcMetadata := &metadata.RpcMetadata{
+		//				ServerId:      c.authSessions.Dao.MyServerId,
+		//				ClientAddr:    request.clientIp,
+		//				AuthId:        c.authSessions.authKeyId,
+		//				SessionId:     request.sessionId,
+		//				ReceiveTime:   time.Now().Unix(),
+		//				UserId:        c.authSessions.AuthUserId,
+		//				ClientMsgId:   request.reqMsgId,
+		//				Layer:         c.authSessions.Layer,
+		//				Client:        c.authSessions.getClient(ctx),
+		//				Langpack:      c.authSessions.getLangpack(ctx),
+		//				PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
+		//			}
+		//			doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request)
+		//		})
+		//}
+		//if len(c.tmpRpcApiMessageList) > 0 {
+		//	for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
+		//		// source <- c.tmpRpcApiMessageList[i]
+		//		c.onRpcResult(ctx, c.tmpRpcApiMessageList[i])
+		//	}
+		//	c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
+		//}
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
