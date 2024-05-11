@@ -8,6 +8,7 @@ package httpx
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/teamgram/proto/mtproto"
@@ -22,13 +23,18 @@ import (
 // JSON serializes the given struct as JSON into the response body.
 // It also sets the Content-Type as "application/json".
 func JSONError(w http.ResponseWriter, err error) {
-	if rErr, ok := err.(*mtproto.TLRpcError); ok {
+	var (
+		rErr *mtproto.TLRpcError
+	)
+
+	switch {
+	case errors.As(err, &rErr):
 		httpx.WriteJson(w, http.StatusOK, render.JSON{
 			Ok:          false,
 			ErrorCode:   rErr.Code(),
 			Description: rErr.Message(),
 		})
-	} else {
+	default:
 		httpx.WriteJson(w, http.StatusOK, render.JSON{
 			Ok:          false,
 			ErrorCode:   500,

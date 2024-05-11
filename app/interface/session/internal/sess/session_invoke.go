@@ -523,7 +523,7 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	rpcErr, ok := rpcResult.TryGetRpcResultError()
 	if ok {
 		if rpcErr.GetErrorCode() == int32(mtproto.ErrNotReturnClient) {
-			logx.Infof("recv NOTRETURN_CLIENT")
+			logx.WithContext(ctx).Debugf("recv NOTRETURN_CLIENT")
 			c.pendingQueue.Add(rpcResult.reqMsgId)
 			return
 		}

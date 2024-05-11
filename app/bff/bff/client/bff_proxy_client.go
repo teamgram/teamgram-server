@@ -20,9 +20,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type BFFProxyClient struct {
@@ -84,20 +81,22 @@ func (c *BFFProxyClient) Invoke(rpcMetaData *metadata.RpcMetadata, object mtprot
 
 // InvokeContext 通用grpc转发器
 func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
+	logger := logx.WithContext(ctx)
+
 	conn, err := c.GetRpcClientByRequest(object)
 	if err != nil {
-		r, err2 := c.TryReturnFakeRpcResult(object)
-		if err2 != nil {
-			return nil, mtproto.NewRpcError(status.Convert(err2))
+		if r, err2 := c.TryReturnFakeRpcResult(object); err2 != nil {
+			return nil, mtproto.NewRpcError(err2)
+		} else {
+			return r, nil
 		}
-		return r, nil
 	}
 
 	t := mtproto.FindRPCContextTuple(object)
 	if t == nil {
 		err = fmt.Errorf("Invoke error: %v not regist!\n", object)
-		logx.Error(err.Error())
-		return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrEnterpriseIsBlocked))
+		logger.Error("FindRPCContextTuple error: %v", err)
+		return nil, mtproto.NewRpcError(mtproto.ErrEnterpriseIsBlocked)
 	}
 
 	// logx.Infof("Invoke - method: {%s}", t.Method)
@@ -109,7 +108,6 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 	// Fixed @LionPuChiPuChi, 2018-12-19
 	ctxWithTimeout, _ := context.WithTimeout(ctx, 60*time.Second)
 	ctx, _ = metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
-	logger := logx.WithContext(ctx)
 	rt := time.Now()
 
 	logger.Infof("Invoke - NewReplyFunc: {%#v}", r)
@@ -129,21 +127,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 
 	if err != nil {
 		logger.Errorf("RPC method: %s,  >> %v.Invoke(_) = _, %v: %#v", t.Method, conn.Conn(), err, reflect.TypeOf(err))
-		if nErr, ok := status.FromError(err); ok {
-			return nil, mtproto.MakeTLRpcError(&mtproto.RpcError{
-				ErrorCode:    int32(ToMTProtoErrorCod(nErr.Code())),
-				ErrorMessage: nErr.Message(),
-			})
-		} else {
-			rpcErr := new(mtproto.TLRpcError)
-			if err2 := protojson.Unmarshal([]byte(err.Error()), rpcErr); err2 == nil {
-				// log.Debugf("%v", rpcErr)
-				return nil, rpcErr
-			} else {
-				// log.Debugf("error")
-				return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternalServerError))
-			}
-		}
+		return nil, mtproto.NewRpcError(err)
 
 		//case *mysql.MySQLError:
 		//if rpcErr, ok := err.(*mtproto.TLRpcError); ok {
@@ -164,40 +148,11 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 		//	return nil, mtproto.NewRpcError(int32(mtproto.TLRpcErrorCodes_INTERNAL), "INTERNAL_SERVER_ERROR")
 		//}
 	} else {
-		// log.Debugf("Invoke - Invoke reply: {%v}\n", r)
-		reply, ok := r.(mtproto.TLObject)
-
-		if !ok {
-			err = fmt.Errorf("Invalid reply type, maybe server side bug, %v\n", reply)
-			// log.Error(err.Error())
-			return nil, mtproto.NewRpcError(status.Convert(mtproto.ErrInternalServerError))
+		if reply, ok := r.(mtproto.TLObject); !ok {
+			logger.Errorf("invalid reply type, maybe server side bug, %v", reply)
+			return nil, mtproto.NewRpcError(mtproto.ErrInternalServerError)
+		} else {
+			return reply, nil
 		}
-
-		return reply, nil
-	}
-}
-
-func ToMTProtoErrorCod(code codes.Code) codes.Code {
-	switch code {
-	case mtproto.ErrSeeOther:
-		return code
-	case mtproto.ErrBadRequest:
-		return code
-	case mtproto.ErrUnauthorized:
-		return code
-	case mtproto.ErrForbidden:
-		return code
-	case mtproto.ErrNotFound:
-		return code
-	case mtproto.ErrNotAcceptable:
-		return code
-	case mtproto.ErrFlood:
-		return code
-	case mtproto.ErrInternal:
-		return code
-	case mtproto.ErrNotReturnClient:
-		return code
-	default:
-		return mtproto.ErrInternal
 	}
 }

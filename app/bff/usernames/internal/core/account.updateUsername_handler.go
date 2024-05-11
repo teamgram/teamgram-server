@@ -75,7 +75,7 @@ func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) err
 		if len(username2) < username.MinUsernameLen ||
 			!strings2.IsAlNumString(username2) ||
 			utils.IsNumber(username2[0]) {
-			err := mtproto.ErrUsernameInvalid // mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_USERNAME_INVALID)
+			err := mtproto.ErrUsernameInvalid
 			c.Logger.Errorf("account.updateUsername - format error: %v", err)
 			return err
 		}
@@ -91,7 +91,7 @@ func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) err
 			return err
 		} else {
 			if !mtproto.FromBool(ok) {
-				err = mtproto.ErrUsernameOccupied // mtproto.NewRpcError2(mtproto.TLRpcErrorCodes_USERNAME_OCCUPIED)
+				err = mtproto.ErrUsernameOccupied
 				c.Logger.Errorf("account.updateUsername - format error: %v", err)
 				return err
 			}

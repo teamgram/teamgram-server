@@ -31,7 +31,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/mr"
-	status2 "google.golang.org/grpc/status"
 )
 
 //const (
@@ -271,7 +270,7 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	// tdesktop: code = 16, 17, 64会重发，我们不要检查container里的msgId和seqNo
 	//
 	if !c.checkBadMsgNotification(ctx, gatewayId, false, msg) {
-		logx.Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, gatewayId)
+		logx.WithContext(ctx).Errorf("badMsgNotification - {sess: %s, conn_id: %s}", c, gatewayId)
 		return
 	}
 
@@ -364,7 +363,7 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 		if len(c.tmpRpcApiMessageList) > 0 {
 			for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
 				// source <- c.tmpRpcApiMessageList[i]
-				c.onRpcResult(context.Background(), c.tmpRpcApiMessageList[i])
+				c.onRpcResult(ctx, c.tmpRpcApiMessageList[i])
 			}
 			c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 		}
@@ -767,8 +766,6 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 		rpcResult mtproto.TLObject
 	)
 
-	// logx.WithContext(ctx).Debugf("doRpcRequest - {md: %s, request: %s}", md.DebugString(), request.DebugString())
-
 	// TODO(@benqi): change state.
 	switch request.reqMsg.(type) {
 	case *mtproto.TLAuthBindTempAuthKey:
@@ -792,18 +789,11 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 
 	if err != nil {
 		logx.WithContext(ctx).Error(err.Error())
-
-		if s2, ok := status2.FromError(err); ok {
-			reply.Result = mtproto.NewRpcError(s2)
-		} else {
-			reply.Result = mtproto.NewRpcError(mtproto.StatusInternalServerError)
-		}
+		reply.Result = mtproto.NewRpcError(err)
 	} else {
-		logx.Infof("invokeRpcRequest - rpc_result: {%s}\n", reflect.TypeOf(rpcResult))
+		logx.WithContext(ctx).Infof("invokeRpcRequest - rpc_result: {%s}", reflect.TypeOf(rpcResult))
 		reply.Result = rpcResult
 	}
 
 	request.rpcResult = reply
-
-	// logx.WithContext(ctx).Debugf("RpcResult - {md: %s, reply: %s}", md.DebugString(), request.DebugString())
 }

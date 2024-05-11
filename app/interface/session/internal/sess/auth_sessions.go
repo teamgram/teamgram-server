@@ -671,17 +671,14 @@ func (s *AuthSessions) onSessionNew(ctx context.Context, connMsg *connData) {
 
 func (s *AuthSessions) onSessionData(ctx context.Context, sessionMsg *sessionData) {
 	var (
-		err error
-		// salt, sessionId int64
+		err      error
 		message2 = &mtproto.TLMessage2{}
 		now      = int32(time.Now().Unix())
 	)
 
-	// salt, sessionId, message2, err = ParseFromIncomingMessage(sessionMsg.buf)
 	err = message2.Decode(mtproto.NewDecodeBuf(sessionMsg.buf))
 	if err != nil {
 		// TODO(@benqi): close frontend conn??
-		// log.Error(err)
 		logx.WithContext(ctx).Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, s, sessionMsg.gatewayId)
 		return
 	}
@@ -723,7 +720,7 @@ func (s *AuthSessions) onSessionHttpData(ctx context.Context, sessionMsg *sessio
 	if err != nil {
 		// TODO(@benqi): close frontend conn??
 		// log.Error(err)
-		logx.Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, s, sessionMsg.gatewayId)
+		logx.WithContext(ctx).Errorf("onSessionData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, s, sessionMsg.gatewayId)
 		return
 	}
 
@@ -737,7 +734,7 @@ func (s *AuthSessions) onSessionHttpData(ctx context.Context, sessionMsg *sessio
 	}
 
 	if s.cacheSalt == nil {
-		logx.Errorf("onSessionData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", s, sessionMsg.gatewayId)
+		logx.WithContext(ctx).Errorf("onSessionData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", s, sessionMsg.gatewayId)
 		return
 	}
 
@@ -799,13 +796,6 @@ func (s *AuthSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 		}
 	}
 
-	// s.syncQueue.PushBack(new)
-	// s.updates.onUpdatesSyncData(syncMsg)
-	//var (
-	//	genericSession     *session
-	//	androidPushSession *session
-	//)
-
 	for _, sess2 := range s.sessions {
 		if sess2.isGeneric {
 			// genericSession = sess2
@@ -818,19 +808,3 @@ func (s *AuthSessions) onSyncData(ctx context.Context, syncMsg *syncData) {
 		}
 	}
 }
-
-//func (s *AuthSessions) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
-//	defer func() {
-//		if err := recover(); err != nil {
-//			logx.Errorf("handle panic: %v\n%s", err, debug.Stack())
-//		}
-//	}()
-//
-//	// log.Debugf("onRpcResult - sessionId: ", rpcResult.sessionId)
-//	if sess, ok := s.sessions[rpcResult.sessionId]; ok {
-//		// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
-//		sess.onRpcResult(ctx, rpcResult)
-//	} else {
-//		logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
-//	}
-//}
