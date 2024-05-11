@@ -43,6 +43,9 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 	for {
 		frame, err := ctx.codec.Decode(c)
 		if err != nil {
+			if errors.Is(err, codec.ErrUnexpectedEOF) {
+				return gnet.None
+			}
 			logx.Errorf("conn(%s) frame is error: %v", c, err)
 			action = gnet.Close
 			return
