@@ -18,13 +18,14 @@ package server
 import (
 	"context"
 	"encoding/binary"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/ws"
-	session_client "github.com/teamgram/teamgram-server/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/gobwas/ws/wsutil"
@@ -62,8 +63,8 @@ func (s *Server) OnShutdown(eng gnet.Engine) {
 // OnOpen fires when a new connection has been opened.
 // The parameter out is the return value which is going to be sent back to the peer.
 func (s *Server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	// s.c.Gnetway.IsTcp(c.LocalAddr().String())
 	logx.Debugf("onNewConn - conn(%s)", c)
+
 	ctx := newConnContext()
 	ctx.setClientIp(strings.Split(c.RemoteAddr().String(), ":")[0])
 	ctx.tcp = s.c.Gnetway.IsTcp(c.LocalAddr().String())
@@ -86,11 +87,6 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 		return
 	}
 
-	if ctx.trd != nil {
-		// s.timer.Del(ctx.trd)
-		ctx.trd = nil
-	}
-
 	sessId, connId, clientIp := ctx.sessionId, c.ConnId(), ctx.clientIp
 	for _, id := range ctx.getAllAuthKeyId() {
 		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
@@ -98,7 +94,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 			s.pool.Submit(func() {
 				s.sendToSessionClientClosed(id, sessId, clientIp)
 			})
-			logx.Infof("onServerConnectionClosed - sendClientClosed: {peer:%s, ctx:%s}", c, ctx.DebugString())
+			logx.Debugf("onServerConnectionClosed - sendClientClosed: {conn: %s}", c)
 		}
 	}
 
@@ -131,10 +127,9 @@ func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
 }
 
 func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, mmsg *mtproto.MTPRawMessage) error {
-	//logx.Infof("conn(%s) onEncryptedMessage: len(%d)", c.DebugString(), len(mmsg.Payload))
 	mtpRwaData, err := authKey.AesIgeDecrypt(mmsg.Payload[8:8+16], mmsg.Payload[24:])
 	if err != nil {
-		//logx.Errorf("conn(%s) decrypt error: {%v}", c.DebugString(), err)
+		logx.Errorf("conn(%s) decrypt error: {%v}", c, err)
 		return err
 	}
 
@@ -151,28 +146,31 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		// check sessionId??
 	}
 
+	if isNew {
+		isNew = s.authSessionMgr.AddNewSession(authKey, sessionId, connId)
+	}
+
 	s.pool.Submit(func() {
 		sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.AuthKeyId(), 10))
 		if err2 != nil {
-			//logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", c.DebugString(), err, mmsg.GetAuthKeyId())
+			logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", c, err, mmsg)
 			return
 		}
+		// TODO: close
 
 		if isNew {
-			if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
-				sessClient.SessionCreateSession(context.Background(),
-					&session.TLSessionCreateSession{
-						Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-							ServerId:  s.session.gatewayId,
-							AuthKeyId: authKeyId,
-							SessionId: sessionId,
-							ClientIp:  clientIp,
-						}).To_SessionClientEvent(),
-					})
-			}
+			sessClient.SessionCreateSession(context.Background(),
+				&session.TLSessionCreateSession{
+					Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+						ServerId:  s.session.gatewayId,
+						AuthKeyId: authKeyId,
+						SessionId: sessionId,
+						ClientIp:  clientIp,
+					}).To_SessionClientEvent(),
+				})
 		}
 
-		_, _ = sessClient.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
+		_, err = sessClient.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
 			Data: &session.SessionClientData{
 				ServerId:  s.session.gatewayId,
 				AuthKeyId: authKey.AuthKeyId(),
@@ -182,6 +180,9 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				ClientIp:  clientIp,
 			},
 		})
+		if err != nil {
+			logx.Errorf("session.sendDataToSession - error: %v", err)
+		}
 	})
 
 	return nil
@@ -227,8 +228,8 @@ func (s *Server) GetConnCounts() int {
 
 func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MTPRawMessage) (action gnet.Action) {
 	var (
-		out interface{}
 		err error
+		out interface{}
 	)
 
 	if msg2.AuthKeyId() == 0 {
@@ -250,22 +251,14 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 		if authKey == nil {
 			var (
 				err2       error
-				sessClient session_client.SessionClient
+				sessClient sessionclient.SessionClient
 				key3       *mtproto.AuthKeyInfo
 				key2       *mtproto.AuthKeyInfo
 			)
 			sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
 			if err2 != nil {
 				logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
-				//// return err2
-				//out2 := &codec.MTPRawMessage{
-				//	Payload: make([]byte, 4),
-				//}
-				//var code = int32(-404)
-				//binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-				//out = out2
 				action = gnet.Close
-				out = nil
 				return
 			}
 
@@ -273,16 +266,21 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 				AuthKeyId: msg2.AuthKeyId(),
 			}); err2 != nil {
 				logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
-				//// return err2
-				out2 := &mtproto.MTPRawMessage{
-					Payload: make([]byte, 4),
+				if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
+					out2 := &mtproto.MTPRawMessage{
+						Payload: make([]byte, 4),
+					}
+					var (
+						code = int32(-404)
+					)
+					binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
+					out = out2
+					action = gnet.Close
+				} else {
+					out = nil
+					action = gnet.Close
+					return
 				}
-				var code = int32(-404)
-				binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-				out = out2
-				action = gnet.Close
-				// out = nil
-				return
 			} else {
 				key2 = &mtproto.AuthKeyInfo{
 					AuthKeyId:          key3.AuthKeyId,
@@ -296,10 +294,17 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 				authKey = newAuthKeyUtil(key2)
 				ctx.putAuthKey(authKey)
 			}
-			// ctx.authKey = authKey
-			s.onEncryptedMessage(c, ctx, authKey, msg2)
+			err = s.onEncryptedMessage(c, ctx, authKey, msg2)
+			if err != nil {
+				action = gnet.Close
+				return
+			}
 		} else {
 			err = s.onEncryptedMessage(c, ctx, authKey, msg2)
+			if err != nil {
+				action = gnet.Close
+				return
+			}
 		}
 	}
 

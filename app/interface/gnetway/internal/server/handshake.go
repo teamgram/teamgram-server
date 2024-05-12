@@ -630,7 +630,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 		},
 		func(c gnet.Conn) {
 			// logx.Infof("c.UnThreadSafeWrite - conn(%s)", c.DebugString())
-			ctx.handshakeType = handshakeType
+			ctx.HandshakeType = handshakeType
 			ctx.ExpiresIn = expiresIn
 			ctx.NewNonce = newNonce
 			ctx.A = A
@@ -745,7 +745,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 			// 如果碰撞让客户端重新再来一轮
 
 			// state.Ctx, _ = proto.Marshal(authKeyMD)
-			if s.saveAuthKeyInfo(ctx, mtproto.NewAuthKeyInfo(authKeyId, authKey, ctx.handshakeType)) {
+			if s.saveAuthKeyInfo(ctx, mtproto.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
 				dhGen = mtproto.MakeTLDhGenOk(&mtproto.SetClient_DHParamsAnswer{
 					Nonce:         ctx.Nonce,
 					ServerNonce:   ctx.ServerNonce,

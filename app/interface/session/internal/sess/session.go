@@ -313,55 +313,6 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		//if len(c.tmpRpcApiMessageList) <= 1 {
-		//	if len(c.tmpRpcApiMessageList) == 1 {
-		//		rpcMetadata := &metadata.RpcMetadata{
-		//			ServerId:      c.authSessions.Dao.MyServerId,
-		//			ClientAddr:    c.tmpRpcApiMessageList[0].clientIp,
-		//			AuthId:        c.authSessions.authKeyId,
-		//			SessionId:     c.tmpRpcApiMessageList[0].sessionId,
-		//			ReceiveTime:   time.Now().Unix(),
-		//			UserId:        c.authSessions.AuthUserId,
-		//			ClientMsgId:   c.tmpRpcApiMessageList[0].reqMsgId,
-		//			Layer:         c.authSessions.Layer,
-		//			Client:        c.authSessions.getClient(ctx),
-		//			Langpack:      c.authSessions.getLangpack(ctx),
-		//			PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-		//		}
-		//		doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, c.tmpRpcApiMessageList[0])
-		//	}
-		//} else {
-		//	mr.ForEach(
-		//		func(source chan<- interface{}) {
-		//			for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
-		//				source <- c.tmpRpcApiMessageList[i]
-		//			}
-		//		},
-		//		func(item interface{}) {
-		//			request := item.(*rpcApiMessage)
-		//			rpcMetadata := &metadata.RpcMetadata{
-		//				ServerId:      c.authSessions.Dao.MyServerId,
-		//				ClientAddr:    request.clientIp,
-		//				AuthId:        c.authSessions.authKeyId,
-		//				SessionId:     request.sessionId,
-		//				ReceiveTime:   time.Now().Unix(),
-		//				UserId:        c.authSessions.AuthUserId,
-		//				ClientMsgId:   request.reqMsgId,
-		//				Layer:         c.authSessions.Layer,
-		//				Client:        c.authSessions.getClient(ctx),
-		//				Langpack:      c.authSessions.getLangpack(ctx),
-		//				PermAuthKeyId: c.authSessions.getPermAuthKeyId(ctx),
-		//			}
-		//			doRpcRequest(ctx, c.authSessions.Dao, rpcMetadata, request)
-		//		})
-		//}
-		//if len(c.tmpRpcApiMessageList) > 0 {
-		//	for i := 0; i < len(c.tmpRpcApiMessageList); i++ {
-		//		// source <- c.tmpRpcApiMessageList[i]
-		//		c.onRpcResult(ctx, c.tmpRpcApiMessageList[i])
-		//	}
-		//	c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
-		//}
 		c.authSessions.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
 		c.tmpRpcApiMessageList = c.tmpRpcApiMessageList[:0]
 

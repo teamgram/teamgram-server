@@ -49,61 +49,6 @@ func genCacheAuthKeyV2Key(id int64) string {
 	return fmt.Sprintf("%s_%d", cacheAuthKeyV2Prefix, id)
 }
 
-//
-//func (d *Dao) PutAuthKey(ctx context.Context, keyId int64, keyData *mtproto.AuthKeyInfo, expiredIn int32) (err error) {
-//	var (
-//		key = genCacheAuthKeyKey(keyId)
-//
-//		args = map[string]string{
-//			"auth_key_type":          strconv.Itoa(int(keyData.AuthKeyType)),
-//			"auth_key_id":            strconv.FormatInt(keyData.AuthKeyId, 10),
-//			"auth_key":               string(keyData.AuthKey),
-//			"perm_auth_key_id":       strconv.FormatInt(keyData.PermAuthKeyId, 10),
-//			"temp_auth_key_id":       strconv.FormatInt(keyData.TempAuthKeyId, 10),
-//			"media_temp_auth_key_id": strconv.FormatInt(keyData.MediaTempAuthKeyId, 10),
-//		}
-//	)
-//
-//	// TODO(@benqi): args error??
-//	if err = d.kv.Hmset(key, args); err != nil {
-//		logx.WithContext(ctx).Errorf("conn.Send(HMSET %s,%v) error(%v)", key, args, err)
-//		return
-//	}
-//
-//	if expiredIn > 0 {
-//		if err = d.kv.Expire(key, int(expiredIn)); err != nil {
-//			logx.WithContext(ctx).Errorf("conn.Send(EXPIRE %d,%d) error(%v)", key, expiredIn, err)
-//		}
-//	}
-//
-//	return
-//}
-//
-//func (d *Dao) UnsafeBindKeyId(ctx context.Context, keyId int64, bindType int32, bindKeyId int64) (err error) {
-//	var (
-//		key = genCacheAuthKeyKey(keyId)
-//	)
-//
-//	switch bindType {
-//	case mtproto.AuthKeyTypePerm:
-//		if err = d.kv.Hset(key, "perm_auth_key_id", strconv.FormatInt(bindKeyId, 10)); err != nil {
-//			logx.WithContext(ctx).Errorf("conn.Do(HSET %s,perm_auth_key_id,%d) error(%v)", key, bindKeyId, err)
-//		}
-//	case mtproto.AuthKeyTypeTemp:
-//		if err = d.kv.Hset(key, "temp_auth_key_id", strconv.FormatInt(bindKeyId, 10)); err != nil {
-//			logx.WithContext(ctx).Errorf("conn.Do(HSET %s,temp_auth_key_id,%d) error(%v)", key, bindKeyId, err)
-//		}
-//	case mtproto.AuthKeyTypeMediaTemp:
-//		if err = d.kv.Hset(key, "media_temp_auth_key_id", strconv.FormatInt(bindKeyId, 10)); err != nil {
-//			logx.WithContext(ctx).Errorf("conn.Do(HSET %s,media_temp_auth_key_id,%d) error(%v)", key, bindKeyId, err)
-//		}
-//	default:
-//		return
-//	}
-//
-//	return
-//}
-
 func (d *Dao) getAuthKey(ctx context.Context, keyId int64) (keyData *mtproto.AuthKeyInfo, err error) {
 	var (
 		key    = genCacheAuthKeyKey(keyId)

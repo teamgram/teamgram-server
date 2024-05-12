@@ -71,3 +71,105 @@ func serializeToBuffer2(salt, sessionId int64, seqNo int32) []byte {
 
 	return x.GetBuf()
 }
+
+func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
+	if in == nil {
+		return nil
+	}
+
+	switch r := in.(type) {
+	case *mtproto.TLDestroyAuthKey: // 所有连接都有可能
+		return nil
+	case *mtproto.TLRpcDropAnswer: // 所有连接都有可能
+		return nil
+	case *mtproto.TLGetFutureSalts: // GENERIC
+		return nil
+	case *mtproto.TLPing: // android未用
+		return nil
+	case *mtproto.TLPingDelayDisconnect: // PUSH和GENERIC
+		return nil
+	case *mtproto.TLDestroySession: // GENERIC
+		return nil
+	case *mtproto.TLMsgsStateReq: // android未用
+		return nil
+	case *mtproto.TLMsgsStateInfo: // android未用
+		return nil
+	case *mtproto.TLMsgsAllInfo: // android未用
+		return nil
+	case *mtproto.TLMsgResendReq: // 都有可能
+		return nil
+	case *mtproto.TLMsgDetailedInfo: // 都有可能
+		return nil
+	case *mtproto.TLMsgNewDetailedInfo: // 都有可能
+		return nil
+	case *mtproto.TLInvokeWithLayer:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeAfterMsg:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeAfterMsgs:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeWithoutUpdates:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeWithMessagesRange:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeWithTakeout:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInvokeWithBusinessConnection:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLInitConnection:
+		dBuf := mtproto.NewDecodeBuf(r.Query)
+		return getRpcMethod(dBuf.Object())
+	case *mtproto.TLGzipPacked:
+		return r.Obj
+	default:
+		return r
+	}
+}
+
+func tryGetPermAuthKeyId(b []byte) int64 {
+	var (
+		err  error
+		msg  = &mtproto.TLMessage2{}
+		msgs []*mtproto.TLMessage2
+	)
+
+	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	if err != nil {
+		return 0
+	}
+
+	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
+		msgs = msgContainer.Messages
+	} else {
+		msgs = append(msgs, msg)
+	}
+
+	//for i := 0; i < len(msgs); i++ {
+	//	if packed, ok := msgs[i].Object.(*mtproto.TLGzipPacked); ok {
+	//		msgs[i] = &mtproto.TLMessage2{
+	//			MsgId:  msgs[i].MsgId,
+	//			Seqno:  msgs[i].Seqno,
+	//			Bytes:  int32(len(packed.PackedData)),
+	//			Object: packed.Obj,
+	//		}
+	//	}
+	//}
+
+	for _, m2 := range msgs {
+		r := getRpcMethod(m2.Object)
+		if r != nil {
+			if request, ok := r.(*mtproto.TLAuthBindTempAuthKey); ok {
+				return request.GetPermAuthKeyId()
+			}
+		}
+	}
+
+	return 0
+}
