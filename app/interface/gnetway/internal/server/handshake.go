@@ -33,6 +33,7 @@ import (
 	"github.com/teamgram/marmota/pkg/hex2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
+	sessionclient "github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
 	"github.com/panjf2000/gnet/v2"
@@ -826,21 +827,20 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *mtproto.AuthKeyInf
 		MediaTempAuthKeyId: key.MediaTempAuthKeyId,
 	}
 
-	sessClient, err := s.session.getSessionClient(strconv.FormatInt(key.AuthKeyId, 10))
-	if err != nil {
-		logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err, key.AuthKeyId)
-		return false
-	}
-
 	// Fix by @wuyun9527, 2018-12-21
 	var (
 		rB *mtproto.Bool
 	)
-	rB, err = sessClient.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{
-		AuthKey:    keyInfo,
-		FutureSalt: serverSalt,
-		ExpiresIn:  ctx.ExpiresIn,
-	})
+	err := s.session.invokeByKey(
+		strconv.FormatInt(key.AuthKeyId, 10),
+		func(client sessionclient.SessionClient) (err error) {
+			rB, err = client.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{
+				AuthKey:    keyInfo,
+				FutureSalt: serverSalt,
+				ExpiresIn:  ctx.ExpiresIn,
+			})
+			return err
+		})
 	if err != nil {
 		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
 		return false

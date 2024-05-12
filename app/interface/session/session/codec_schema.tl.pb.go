@@ -35,14 +35,14 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -606579889
 		return o
 	},
-	825806990: func() mtproto.TLObject { // 0x3138d08e
+	-870242788: func() mtproto.TLObject { // 0xcc21261c
 		o := MakeTLSessionClientData(nil)
-		o.Data2.Constructor = 825806990
+		o.Data2.Constructor = -870242788
 		return o
 	},
-	-739769057: func() mtproto.TLObject { // 0xd3e8051f
+	-548007522: func() mtproto.TLObject { // 0xdf56119e
 		o := MakeTLSessionClientEvent(nil)
-		o.Data2.Constructor = -739769057
+		o.Data2.Constructor = -548007522
 		return o
 	},
 
@@ -77,19 +77,19 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 393200211,
 		}
 	},
-	1075152191: func() mtproto.TLObject { // 0x4015853f
+	-1050612110: func() mtproto.TLObject { // 0xc160ee72
 		return &TLSessionPushUpdatesData{
-			Constructor: 1075152191,
+			Constructor: -1050612110,
 		}
 	},
-	106898165: func() mtproto.TLObject { // 0x65f22f5
+	-434243286: func() mtproto.TLObject { // 0xe61df92a
 		return &TLSessionPushSessionUpdatesData{
-			Constructor: 106898165,
+			Constructor: -434243286,
 		}
 	},
-	556344000: func() mtproto.TLObject { // 0x212922c0
+	1627318120: func() mtproto.TLObject { // 0x60fee768
 		return &TLSessionPushRpcResultData{
-			Constructor: 556344000,
+			Constructor: 1627318120,
 		}
 	},
 }
@@ -274,7 +274,7 @@ func (m *SessionClientData) CalcByteSize(layer int32) int {
 func (m *SessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x3138d08e:
+	case 0xcc21261c:
 		m2 := MakeTLSessionClientData(m)
 		m2.Decode(dBuf)
 
@@ -329,6 +329,9 @@ func (m *TLSessionClientData) GetConnType() int32  { return m.Data2.ConnType }
 func (m *TLSessionClientData) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLSessionClientData) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
 
+func (m *TLSessionClientData) SetPermAuthKeyId(v int64) { m.Data2.PermAuthKeyId = v }
+func (m *TLSessionClientData) GetPermAuthKeyId() int64  { return m.Data2.PermAuthKeyId }
+
 func (m *TLSessionClientData) SetSessionId(v int64) { m.Data2.SessionId = v }
 func (m *TLSessionClientData) GetSessionId() int64  { return m.Data2.SessionId }
 
@@ -350,12 +353,13 @@ func (m *TLSessionClientData) GetPredicateName() string {
 
 func (m *TLSessionClientData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0x3138d08e: func() error {
-			x.UInt(0x3138d08e)
+		0xcc21261c: func() error {
+			x.UInt(0xcc21261c)
 
 			x.String(m.GetServerId())
 			x.Int(m.GetConnType())
 			x.Long(m.GetAuthKeyId())
+			x.Long(m.GetPermAuthKeyId())
 			x.Long(m.GetSessionId())
 			x.String(m.GetClientIp())
 			x.Int(m.GetQuickAck())
@@ -383,10 +387,11 @@ func (m *TLSessionClientData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x3138d08e: func() error {
+		0xcc21261c: func() error {
 			m.SetServerId(dBuf.String())
 			m.SetConnType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
+			m.SetPermAuthKeyId(dBuf.Long())
 			m.SetSessionId(dBuf.Long())
 			m.SetClientIp(dBuf.String())
 			m.SetQuickAck(dBuf.Int())
@@ -441,7 +446,7 @@ func (m *SessionClientEvent) CalcByteSize(layer int32) int {
 func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xd3e8051f:
+	case 0xdf56119e:
 		m2 := MakeTLSessionClientEvent(m)
 		m2.Decode(dBuf)
 
@@ -496,6 +501,9 @@ func (m *TLSessionClientEvent) GetConnType() int32  { return m.Data2.ConnType }
 func (m *TLSessionClientEvent) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLSessionClientEvent) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
 
+func (m *TLSessionClientEvent) SetPermAuthKeyId(v int64) { m.Data2.PermAuthKeyId = v }
+func (m *TLSessionClientEvent) GetPermAuthKeyId() int64  { return m.Data2.PermAuthKeyId }
+
 func (m *TLSessionClientEvent) SetSessionId(v int64) { m.Data2.SessionId = v }
 func (m *TLSessionClientEvent) GetSessionId() int64  { return m.Data2.SessionId }
 
@@ -508,12 +516,13 @@ func (m *TLSessionClientEvent) GetPredicateName() string {
 
 func (m *TLSessionClientEvent) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xd3e8051f: func() error {
-			x.UInt(0xd3e8051f)
+		0xdf56119e: func() error {
+			x.UInt(0xdf56119e)
 
 			x.String(m.GetServerId())
 			x.Int(m.GetConnType())
 			x.Long(m.GetAuthKeyId())
+			x.Long(m.GetPermAuthKeyId())
 			x.Long(m.GetSessionId())
 			x.String(m.GetClientIp())
 			return nil
@@ -538,10 +547,11 @@ func (m *TLSessionClientEvent) CalcByteSize(layer int32) int {
 
 func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xd3e8051f: func() error {
+		0xdf56119e: func() error {
 			m.SetServerId(dBuf.String())
 			m.SetConnType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
+			m.SetPermAuthKeyId(dBuf.Long())
 			m.SetSessionId(dBuf.Long())
 			m.SetClientIp(dBuf.String())
 			return dBuf.GetError()
@@ -846,8 +856,8 @@ func (m *TLSessionCloseSession) DebugString() string {
 
 func (m *TLSessionPushUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x4015853f:
-		x.UInt(0x4015853f)
+	case 0xc160ee72:
+		x.UInt(0xc160ee72)
 
 		// set flags
 		var flags uint32 = 0
@@ -860,6 +870,7 @@ func (m *TLSessionPushUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) err
 
 		// flags Debug by @benqi
 		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		m.GetUpdates().Encode(x, layer)
 
 	default:
@@ -875,20 +886,21 @@ func (m *TLSessionPushUpdatesData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x4015853f:
+	case 0xc160ee72:
 
 		flags := dBuf.UInt()
 		_ = flags
 
 		// flags Debug by @benqi
 		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 		if (flags & (1 << 0)) != 0 {
 			m.Notification = true
 		}
 
-		m4 := &mtproto.Updates{}
-		m4.Decode(dBuf)
-		m.Updates = m4
+		m5 := &mtproto.Updates{}
+		m5.Decode(dBuf)
+		m.Updates = m5
 
 		return dBuf.GetError()
 
@@ -908,12 +920,13 @@ func (m *TLSessionPushUpdatesData) DebugString() string {
 
 func (m *TLSessionPushSessionUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x65f22f5:
-		x.UInt(0x65f22f5)
+	case 0xe61df92a:
+		x.UInt(0xe61df92a)
 
 		// no flags
 
 		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		x.Long(m.GetSessionId())
 		m.GetUpdates().Encode(x, layer)
 
@@ -930,16 +943,17 @@ func (m *TLSessionPushSessionUpdatesData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x65f22f5:
+	case 0xe61df92a:
 
 		// not has flags
 
 		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 		m.SessionId = dBuf.Long()
 
-		m3 := &mtproto.Updates{}
-		m3.Decode(dBuf)
-		m.Updates = m3
+		m4 := &mtproto.Updates{}
+		m4.Decode(dBuf)
+		m.Updates = m4
 
 		return dBuf.GetError()
 
@@ -959,12 +973,13 @@ func (m *TLSessionPushSessionUpdatesData) DebugString() string {
 
 func (m *TLSessionPushRpcResultData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x212922c0:
-		x.UInt(0x212922c0)
+	case 0x60fee768:
+		x.UInt(0x60fee768)
 
 		// no flags
 
 		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		x.Long(m.GetSessionId())
 		x.Long(m.GetClientReqMsgId())
 		x.StringBytes(m.GetRpcResultData())
@@ -982,11 +997,12 @@ func (m *TLSessionPushRpcResultData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x212922c0:
+	case 0x60fee768:
 
 		// not has flags
 
 		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 		m.SessionId = dBuf.Long()
 		m.ClientReqMsgId = dBuf.Long()
 		m.RpcResultData = dBuf.StringBytes()

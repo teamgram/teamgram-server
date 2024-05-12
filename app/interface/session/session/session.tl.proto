@@ -21,8 +21,8 @@ option go_package = "github.com/teamgram/teamgram-server/app/interface/session/s
 
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
-    CRC32_sessionClientEvent = -739769057;
-    CRC32_sessionClientData = 825806990;
+    CRC32_sessionClientEvent = -548007522;
+    CRC32_sessionClientData = -870242788;
     CRC32_httpSessionData = -606579889;
     CRC32_session_queryAuthKey = 1798174801;
     CRC32_session_setAuthKey = 487672075;
@@ -30,9 +30,9 @@ enum TLConstructor {
     CRC32_session_sendDataToSession = -2023019028;
     CRC32_session_sendHttpDataToSession = -1142152274;
     CRC32_session_closeSession = 393200211;
-    CRC32_session_pushUpdatesData = 1075152191;
-    CRC32_session_pushSessionUpdatesData = 106898165;
-    CRC32_session_pushRpcResultData = 556344000;
+    CRC32_session_pushUpdatesData = -1050612110;
+    CRC32_session_pushSessionUpdatesData = -434243286;
+    CRC32_session_pushRpcResultData = 1627318120;
 }
 
 
@@ -59,11 +59,12 @@ message SessionClientData {
     string server_id = 3;
     int32 conn_type = 4;
     int64 auth_key_id = 5;
-    int64 session_id = 6;
-    string client_ip = 7;
-    int32 quick_ack = 8;
-    int64 salt = 9;
-    bytes payload = 10;
+    int64 perm_auth_key_id = 6;
+    int64 session_id = 7;
+    string client_ip = 8;
+    int32 quick_ack = 9;
+    int64 salt = 10;
+    bytes payload = 11;
 }
 
 message TL_sessionClientData {
@@ -80,8 +81,9 @@ message SessionClientEvent {
     string server_id = 3;
     int32 conn_type = 4;
     int64 auth_key_id = 5;
-    int64 session_id = 6;
-    string client_ip = 7;
+    int64 perm_auth_key_id = 6;
+    int64 session_id = 7;
+    string client_ip = 8;
 }
 
 message TL_sessionClientEvent {
@@ -134,25 +136,28 @@ message TL_session_closeSession {
 message TL_session_pushUpdatesData {
     TLConstructor  constructor = 1;
     int64 auth_key_id = 3;
-    bool notification = 4;
-    mtproto.Updates updates = 5;
+    int64 perm_auth_key_id = 4;
+    bool notification = 5;
+    mtproto.Updates updates = 6;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_session_pushSessionUpdatesData {
     TLConstructor  constructor = 1;
     int64 auth_key_id = 3;
-    int64 session_id = 4;
-    mtproto.Updates updates = 5;
+    int64 perm_auth_key_id = 4;
+    int64 session_id = 5;
+    mtproto.Updates updates = 6;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_session_pushRpcResultData {
     TLConstructor  constructor = 1;
     int64 auth_key_id = 3;
-    int64 session_id = 4;
-    int64 client_req_msg_id = 5;
-    bytes rpc_result_data = 6;
+    int64 perm_auth_key_id = 4;
+    int64 session_id = 5;
+    int64 client_req_msg_id = 6;
+    bytes rpc_result_data = 7;
 }
 
 

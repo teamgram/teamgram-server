@@ -124,11 +124,24 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 	update()
 }
 
-func (sess *Session) getSessionClient(key string) (sessionclient.SessionClient, error) {
+//func (sess *Session) getSessionClient(key string) (sessionclient.SessionClient, error) {
+//	val, ok := sess.dispatcher.Get(key)
+//	if !ok {
+//		return nil, ErrSessionNotFound
+//	}
+//
+//	return val.(sessionclient.SessionClient), nil
+//}
+
+func (sess *Session) invokeByKey(key string, cb func(client sessionclient.SessionClient) (err error)) error {
 	val, ok := sess.dispatcher.Get(key)
 	if !ok {
-		return nil, ErrSessionNotFound
+		return ErrSessionNotFound
 	}
 
-	return val.(sessionclient.SessionClient), nil
+	if cb == nil {
+		return nil
+	}
+
+	return cb(val.(sessionclient.SessionClient))
 }

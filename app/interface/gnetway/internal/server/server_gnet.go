@@ -92,7 +92,19 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
 		if bDeleted {
 			s.pool.Submit(func() {
-				s.sendToSessionClientClosed(id, sessId, clientIp)
+				s.session.invokeByKey(
+					strconv.FormatInt(id, 10),
+					func(client sessionclient.SessionClient) (err error) {
+						_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
+							Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+								ServerId:  s.session.gatewayId,
+								AuthKeyId: id,
+								SessionId: sessId,
+								ClientIp:  clientIp,
+							}).To_SessionClientEvent(),
+						})
+						return
+					})
 			})
 			logx.Debugf("onServerConnectionClosed - sendClientClosed: {conn: %s}", c)
 		}
@@ -146,80 +158,42 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		// check sessionId??
 	}
 
-	if isNew {
-		isNew = s.authSessionMgr.AddNewSession(authKey, sessionId, connId)
-	}
-
 	s.pool.Submit(func() {
-		sessClient, err2 := s.session.getSessionClient(strconv.FormatInt(mmsg.AuthKeyId(), 10))
-		if err2 != nil {
-			logx.Errorf("conn(%s) getSessionClient error: %v, {authKeyId: %d}", c, err, mmsg)
-			return
-		}
-		// TODO: close
+		s.session.invokeByKey(
+			strconv.FormatInt(mmsg.AuthKeyId(), 10),
+			func(client sessionclient.SessionClient) (err error) {
+				if isNew {
+					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
+						_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
+							Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+								ServerId:  s.session.gatewayId,
+								AuthKeyId: authKeyId,
+								SessionId: sessionId,
+								ClientIp:  clientIp,
+							}).To_SessionClientEvent(),
+						})
+					}
+				}
 
-		if isNew {
-			sessClient.SessionCreateSession(context.Background(),
-				&session.TLSessionCreateSession{
-					Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+				_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
+					Data: &session.SessionClientData{
 						ServerId:  s.session.gatewayId,
-						AuthKeyId: authKeyId,
+						AuthKeyId: authKey.AuthKeyId(),
 						SessionId: sessionId,
+						Salt:      int64(binary.LittleEndian.Uint64(mtpRwaData)),
+						Payload:   mtpRwaData[16:],
 						ClientIp:  clientIp,
-					}).To_SessionClientEvent(),
+					},
 				})
-		}
+				if err != nil {
+					logx.Errorf("session.sendDataToSession - error: %v", err)
+				}
 
-		_, err = sessClient.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
-			Data: &session.SessionClientData{
-				ServerId:  s.session.gatewayId,
-				AuthKeyId: authKey.AuthKeyId(),
-				SessionId: sessionId,
-				Salt:      int64(binary.LittleEndian.Uint64(mtpRwaData)),
-				Payload:   mtpRwaData[16:],
-				ClientIp:  clientIp,
-			},
-		})
-		if err != nil {
-			logx.Errorf("session.sendDataToSession - error: %v", err)
-		}
+				return
+			})
 	})
 
 	return nil
-}
-
-func (s *Server) sendToSessionClientNew(authKeyId, sessionId int64, clientIp string) {
-	c, err := s.session.getSessionClient(strconv.FormatInt(authKeyId, 10))
-	if err != nil {
-		logx.Errorf("getSessionClient error: {%v} - {authKeyId: %d}", err, authKeyId)
-		return
-	}
-
-	c.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
-		Client: &session.SessionClientEvent{
-			ServerId:  s.session.gatewayId,
-			AuthKeyId: authKeyId,
-			SessionId: sessionId,
-			ClientIp:  clientIp,
-		},
-	})
-}
-
-func (s *Server) sendToSessionClientClosed(authKeyId, sessionId int64, clientIp string) {
-	c, err := s.session.getSessionClient(strconv.FormatInt(authKeyId, 10))
-	if err != nil {
-		logx.Errorf("getSessionClient error: {%v} - {authKeyId: %d}", err, authKeyId)
-		return
-	}
-
-	c.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
-		Client: &session.SessionClientEvent{
-			ServerId:  s.session.gatewayId,
-			AuthKeyId: authKeyId,
-			SessionId: sessionId,
-			ClientIp:  clientIp,
-		},
-	})
 }
 
 func (s *Server) GetConnCounts() int {
@@ -248,21 +222,17 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 
 	if authKey == nil {
 		var (
-			err2       error
-			sessClient sessionclient.SessionClient
-			key3       *mtproto.AuthKeyInfo
-			key2       *mtproto.AuthKeyInfo
+			key3 *mtproto.AuthKeyInfo
 		)
-		sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
-		if err2 != nil {
-			logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
-			action = gnet.Close
-			return
-		}
 
-		key3, err2 = sessClient.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-			AuthKeyId: msg2.AuthKeyId(),
-		})
+		err2 := s.session.invokeByKey(
+			strconv.FormatInt(msg2.AuthKeyId(), 10),
+			func(client sessionclient.SessionClient) (err error) {
+				key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+					AuthKeyId: msg2.AuthKeyId(),
+				})
+				return
+			})
 		if err2 != nil {
 			logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
 			if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
@@ -280,7 +250,7 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 			return
 		}
 
-		key2 = &mtproto.AuthKeyInfo{
+		key2 := &mtproto.AuthKeyInfo{
 			AuthKeyId:          key3.AuthKeyId,
 			AuthKey:            key3.AuthKey,
 			AuthKeyType:        key3.AuthKeyType,
