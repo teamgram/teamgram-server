@@ -227,89 +227,76 @@ func (s *Server) GetConnCounts() int {
 }
 
 func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MTPRawMessage) (action gnet.Action) {
-	var (
-		err error
-		out interface{}
-	)
-
 	if msg2.AuthKeyId() == 0 {
-		out, err = s.onHandshake(c, msg2)
+		out, err := s.onHandshake(c, msg2)
 		if err != nil {
 			action = gnet.Close
 			return
 		}
-	} else {
-		authKey := ctx.getAuthKey(msg2.AuthKeyId())
-		if authKey == nil {
-			key := s.GetAuthKey(msg2.AuthKeyId())
-			if key != nil {
-				authKey = newAuthKeyUtil(key)
-				ctx.putAuthKey(authKey)
-			}
-		}
+		UnThreadSafeWrite(c, out)
+		return
+	}
 
-		if authKey == nil {
-			var (
-				err2       error
-				sessClient sessionclient.SessionClient
-				key3       *mtproto.AuthKeyInfo
-				key2       *mtproto.AuthKeyInfo
-			)
-			sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
-			if err2 != nil {
-				logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
-				action = gnet.Close
-				return
-			}
-
-			if key3, err2 = sessClient.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-				AuthKeyId: msg2.AuthKeyId(),
-			}); err2 != nil {
-				logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
-				if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
-					out2 := &mtproto.MTPRawMessage{
-						Payload: make([]byte, 4),
-					}
-					var (
-						code = int32(-404)
-					)
-					binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-					out = out2
-					action = gnet.Close
-				} else {
-					out = nil
-					action = gnet.Close
-					return
-				}
-			} else {
-				key2 = &mtproto.AuthKeyInfo{
-					AuthKeyId:          key3.AuthKeyId,
-					AuthKey:            key3.AuthKey,
-					AuthKeyType:        key3.AuthKeyType,
-					PermAuthKeyId:      key3.PermAuthKeyId,
-					TempAuthKeyId:      key3.TempAuthKeyId,
-					MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
-				}
-				s.PutAuthKey(key2)
-				authKey = newAuthKeyUtil(key2)
-				ctx.putAuthKey(authKey)
-			}
-			err = s.onEncryptedMessage(c, ctx, authKey, msg2)
-			if err != nil {
-				action = gnet.Close
-				return
-			}
-		} else {
-			err = s.onEncryptedMessage(c, ctx, authKey, msg2)
-			if err != nil {
-				action = gnet.Close
-				return
-			}
+	authKey := ctx.getAuthKey(msg2.AuthKeyId())
+	if authKey == nil {
+		key := s.GetAuthKey(msg2.AuthKeyId())
+		if key != nil {
+			authKey = newAuthKeyUtil(key)
+			ctx.putAuthKey(authKey)
 		}
 	}
 
-	if out != nil {
-		UnThreadSafeWrite(c, out)
+	if authKey == nil {
+		var (
+			err2       error
+			sessClient sessionclient.SessionClient
+			key3       *mtproto.AuthKeyInfo
+			key2       *mtproto.AuthKeyInfo
+		)
+		sessClient, err2 = s.session.getSessionClient(strconv.FormatInt(msg2.AuthKeyId(), 10))
+		if err2 != nil {
+			logx.Errorf("getSessionClient error: %v, {authKeyId: %d}", err2, msg2.AuthKeyId())
+			action = gnet.Close
+			return
+		}
+
+		key3, err2 = sessClient.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+			AuthKeyId: msg2.AuthKeyId(),
+		})
+		if err2 != nil {
+			logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
+			if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
+				out2 := &mtproto.MTPRawMessage{
+					Payload: make([]byte, 4),
+				}
+				var (
+					code = int32(-404)
+				)
+				binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
+				UnThreadSafeWrite(c, out2)
+			}
+
+			action = gnet.Close
+			return
+		}
+
+		key2 = &mtproto.AuthKeyInfo{
+			AuthKeyId:          key3.AuthKeyId,
+			AuthKey:            key3.AuthKey,
+			AuthKeyType:        key3.AuthKeyType,
+			PermAuthKeyId:      key3.PermAuthKeyId,
+			TempAuthKeyId:      key3.TempAuthKeyId,
+			MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
+		}
+		s.PutAuthKey(key2)
+		authKey = newAuthKeyUtil(key2)
+		ctx.putAuthKey(authKey)
+	}
+
+	err := s.onEncryptedMessage(c, ctx, authKey, msg2)
+	if err != nil {
+		action = gnet.Close
+		return
 	}
 
 	return gnet.None
