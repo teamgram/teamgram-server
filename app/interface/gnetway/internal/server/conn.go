@@ -33,14 +33,15 @@ func (m *HandshakeStateCtx) DebugString() string {
 }
 
 type connContext struct {
-	codec      codec.Codec
-	authKeys   []*authKeyUtil
-	sessionId  int64
-	handshakes []*HandshakeStateCtx
-	clientIp   string
-	tcp        bool
-	websocket  bool
-	wsCodec    *ws.WsCodec
+	codec         codec.Codec
+	authKeys      []*authKeyUtil
+	sessionId     int64
+	handshakes    []*HandshakeStateCtx
+	clientIp      string
+	tcp           bool
+	websocket     bool
+	wsCodec       *ws.WsCodec
+	permAuthKeyId int64
 }
 
 func newConnContext() *connContext {
