@@ -10,6 +10,8 @@
 package dao
 
 import (
+	"context"
+
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/marmota/pkg/net/ip"
 	"github.com/teamgram/proto/mtproto"
@@ -46,6 +48,6 @@ func New(c config.Config) *Dao {
 	return d
 }
 
-func (d *Dao) Invoke(rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
-	return d.BFFProxyClient.Invoke(rpcMetaData, object)
+func (d *Dao) InvokeContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, object mtproto.TLObject) (mtproto.TLObject, error) {
+	return d.BFFProxyClient.InvokeContext(ctx, rpcMetaData, object)
 }

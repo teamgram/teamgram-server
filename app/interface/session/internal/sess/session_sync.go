@@ -29,9 +29,9 @@ import (
 func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 	// for android, obj maybe is nil
 	if obj != nil {
-		logx.Infof("genericSession]]>> - session: %s, syncData: %s", c, obj.DebugString())
+		logx.WithContext(ctx).Infof("genericSession]]>> - session: %s, syncData: %s", c, obj.DebugString())
 	} else {
-		logx.Infof("genericSession]]>> - session: %s, syncData: nil", c)
+		logx.WithContext(ctx).Infof("genericSession]]>> - session: %s, syncData: nil", c)
 	}
 
 	gatewayId := c.getGatewayId()
@@ -46,7 +46,7 @@ func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 
 	if c.sessionOnline() {
 		if gatewayId == "" {
-			logx.Errorf("gatewayId is empty, send delay...")
+			logx.WithContext(ctx).Errorf("gatewayId is empty, send delay...")
 		} else {
 			c.sendQueueToGateway(ctx, gatewayId)
 		}

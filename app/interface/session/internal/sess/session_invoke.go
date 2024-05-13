@@ -20,17 +20,17 @@ package sess
 
 import (
 	"context"
-	"math/rand"
 	"reflect"
 	"strconv"
 
 	"github.com/teamgram/proto/mtproto"
 
+	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithLayer) {
-	logx.Infof("onInvokeWithLayer - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInvokeWithLayer - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -38,7 +38,7 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 		request.DebugString())
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeWithLayer Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithLayer Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -46,12 +46,12 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -93,7 +93,7 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 }
 
 func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsg) {
-	logx.Infof("onInvokeAfterMsg - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
+	logx.WithContext(ctx).Infof("onInvokeAfterMsg - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -101,7 +101,7 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 		request)
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeAfterMsg Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeAfterMsg Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -109,12 +109,12 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 }
 
 func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeAfterMsgs) {
-	logx.Infof("onInvokeAfterMsgs - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
+	logx.WithContext(ctx).Infof("onInvokeAfterMsgs - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -172,7 +172,7 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 		request)
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeAfterMsgs Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeAfterMsgs Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -180,12 +180,12 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -248,7 +248,7 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 }
 
 func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithoutUpdates) {
-	logx.Infof("onInvokeWithoutUpdates - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInvokeWithoutUpdates - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -256,7 +256,7 @@ func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientI
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeWithoutUpdates Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithoutUpdates Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -264,12 +264,12 @@ func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientI
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -277,7 +277,7 @@ func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientI
 }
 
 func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithMessagesRange) {
-	logx.Infof("onInvokeWithMessagesRange - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInvokeWithMessagesRange - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -285,7 +285,7 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeWithMessagesRange Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithMessagesRange Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -293,12 +293,12 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -306,7 +306,7 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 }
 
 func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithTakeout) {
-	logx.Infof("onInvokeWithTakeout - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInvokeWithTakeout - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -314,7 +314,7 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeWithTakeout Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithTakeout Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -322,12 +322,12 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -335,7 +335,7 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 }
 
 func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithBusinessConnection) {
-	logx.Infof("onInvokeWithBusinessConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInvokeWithBusinessConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -343,7 +343,7 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
 		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
@@ -351,12 +351,12 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 	dBuf := mtproto.NewDecodeBuf(request.Query)
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %v", dBuf.GetError())
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -364,7 +364,7 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 }
 
 func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
-	logx.Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -373,7 +373,7 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 
 	//initConnection, ok := query.(*mtproto.TLInitConnection)
 	//if !ok {
-	//	logx.Errorf("need initConnection, but query is : %v", query)
+	//	logx.WithContext(ctx).Errorf("need initConnection, but query is : %v", query)
 	//	c.processMsg(gatewayId, clientIp, msgId, query)
 	//	return
 	//}
@@ -386,12 +386,12 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 	dBuf := mtproto.NewDecodeBuf(request.GetQuery())
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
-		logx.Errorf("dBuf query error: %s", dBuf.GetError().Error())
+		logx.WithContext(ctx).Errorf("dBuf query error: %s", dBuf.GetError().Error())
 		return
 	}
 
 	if query == nil {
-		logx.Errorf("decode buf is nil, query: %v", query)
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
 
@@ -406,7 +406,7 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 }
 
 func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, query mtproto.TLObject) bool {
-	logx.Infof("onRpcRequest - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onRpcRequest - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -448,7 +448,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		//case *mtproto.TLAuthBindTempAuthKey:
 		//	res, err := c.AuthSessionRpcClient.AuthBindTempAuthKey(context.Background(), query.(*mtproto.TLAuthBindTempAuthKey))
 		//	if err != nil {
-		//		logx.Errorf("bindTempAuthKey error - %v", err)
+		//		logx.WithContext(ctx).Errorf("bindTempAuthKey error - %v", err)
 		//		err = mtproto.ErrInternalServerError
 		//		c.sendRpcResultToQueue(gatewayId, msgId.msgId, &mtproto.RpcError{
 		//			ErrorCode:    500,
@@ -475,14 +475,14 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 			c.cb.setOnline(ctx)
 		}
 	case *mtproto.TLUsersGetUsers:
-		// logx.Infof("user.getUsers: %s", query.DebugString())
+		// logx.WithContext(ctx).Infof("user.getUsers: %s", query.DebugString())
 	}
 
 	if c.cb.getUserId(ctx) == 0 {
 		if !checkRpcWithoutLogin(query) {
 			authUserId, _ := c.authSessions.Dao.GetCacheUserID(ctx, c.cb.getAuthKeyId(ctx))
 			if authUserId == 0 {
-				logx.Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId(ctx))
+				logx.WithContext(ctx).Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId(ctx))
 				// 401
 				rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
 					ErrorCode:    401,
@@ -502,7 +502,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	c.tmpRpcApiMessageList = append(
 		c.tmpRpcApiMessageList,
 		&rpcApiMessage{
-			traceId:   rand.Int63(),
+			ctx:       contextx.ValueOnlyFrom(ctx),
 			sessionId: c.sessionId,
 			clientIp:  clientIp,
 			reqMsgId:  msgId.msgId,
@@ -551,7 +551,7 @@ func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcRes
 	// TODO(@benqi): lookup inBoxMsg
 	msgId := c.inQueue.Lookup(rpcResult.ReqMsgId)
 	if msgId == nil {
-		logx.Errorf("not found msgId, maybe removed: %d", rpcResult.ReqMsgId)
+		logx.WithContext(ctx).Errorf("not found msgId, maybe removed: %d", rpcResult.ReqMsgId)
 		return
 	}
 
@@ -560,7 +560,7 @@ func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcRes
 	msgId.state = RECEIVED | ACKNOWLEDGED
 
 	if gatewayId == "" {
-		logx.Errorf("gatewayId is empty, send delay...")
+		logx.WithContext(ctx).Errorf("gatewayId is empty, send delay...")
 	} else {
 		c.sendQueueToGateway(ctx, gatewayId)
 	}

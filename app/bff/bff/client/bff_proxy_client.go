@@ -110,11 +110,10 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 	ctx, _ = metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
 	rt := time.Now()
 
-	logger.Infof("Invoke - NewReplyFunc: {%#v}", r)
+	logger.Debugf("Invoke - NewReplyFunc: {%#v}", r)
 	err = conn.Conn().Invoke(ctx, t.Method, object, r, grpc.Header(&header), grpc.Trailer(&trailer))
 
-	// log.Debugf("rpc %s time: %d", t.Method, time.Now().Unix()-rpcMetaData.ReceiveTime)
-	logger.Infof("rpc Invoke: {method: %s, metadata: %s,  result: {%s}, error: {%v}}, cost = %v",
+	logger.Debugf("rpc Invoke: {method: %s, metadata: %s,  result: {%s}, error: {%v}}, cost = %v",
 		t.Method,
 		rpcMetaData.DebugString(),
 		reflect.TypeOf(r),

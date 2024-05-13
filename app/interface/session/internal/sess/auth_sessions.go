@@ -40,7 +40,7 @@ import (
 )
 
 type rpcApiMessage struct {
-	traceId   int64
+	ctx       context.Context
 	sessionId int64
 	clientIp  string
 	reqMsgId  int64
@@ -69,13 +69,11 @@ func (m *rpcApiMessage) TryGetRpcResultError() (*mtproto.TLRpcError, bool) {
 func (m *rpcApiMessage) DebugString() string {
 	if m.rpcResult == nil {
 		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s}",
-			m.traceId,
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg.DebugString())
 	} else {
 		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
-			m.traceId,
 			m.sessionId,
 			m.reqMsgId,
 			m.reqMsg.DebugString(),
@@ -375,7 +373,7 @@ func (s *AuthSessions) setOnline(ctx context.Context) {
 	//setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
 	date := time.Now().Unix()
 	if (s.onlineExpired == 0 || date > s.onlineExpired-kPingAddTimeout) && s.AuthUserId != 0 {
-		logx.Infof("DEBUG] setOnline - set online: (date: %d, userId:%d, onlineExpired: %d, authKeyId: %d)",
+		logx.WithContext(ctx).Infof("DEBUG] setOnline - set online: (date: %d, userId:%d, onlineExpired: %d, authKeyId: %d)",
 			date,
 			s.AuthUserId,
 			s.onlineExpired,
@@ -398,7 +396,7 @@ func (s *AuthSessions) setOnline(ctx context.Context) {
 			})
 		s.onlineExpired = date + 60
 	} else {
-		//logx.Infof("DEBUG] setOnline - not set online: (date: %d, onlineExpired: %d, AuthUserId: %d)",
+		//logx.WithContext(ctx).Infof("DEBUG] setOnline - not set online: (date: %d, onlineExpired: %d, AuthUserId: %d)",
 		//	date,
 		//	s.onlineExpired,
 		//	s.AuthUserId)
@@ -414,7 +412,7 @@ func (s *AuthSessions) trySetOffline(ctx context.Context) {
 	}
 
 	if s.AuthUserId > 0 {
-		logx.Infof("authSessions]]>> offline: %s", s)
+		logx.WithContext(ctx).Infof("authSessions]]>> offline: %s", s)
 		s.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
 			UserId:    s.AuthUserId,
 			AuthKeyId: s.authKeyId,
@@ -513,9 +511,9 @@ func (s *AuthSessions) runLoop() {
 				rpcResult, _ := rpcMessages.(*rpcApiMessage)
 				if sess, ok := s.sessions[rpcResult.sessionId]; ok {
 					// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
-					sess.onRpcResult(context.Background(), rpcResult)
+					sess.onRpcResult(rpcResult.ctx, rpcResult)
 				} else {
-					logx.Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
+					logx.WithContext(rpcResult.ctx).Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
 				}
 			})
 		case <-ticker.C:
@@ -537,8 +535,7 @@ func (s *AuthSessions) rpcRunLoop() {
 		} else {
 			threading.RunSafe(func() {
 				for _, request := range apiRequest.([]*rpcApiMessage) {
-					ctx := context.Background()
-					doRpcRequest(ctx,
+					doRpcRequest(request.ctx,
 						s.Dao,
 						&metadata.RpcMetadata{
 							ServerId:      s.Dao.MyServerId,
@@ -549,9 +546,9 @@ func (s *AuthSessions) rpcRunLoop() {
 							UserId:        s.AuthUserId,
 							ClientMsgId:   request.reqMsgId,
 							Layer:         s.Layer,
-							Client:        s.getClient(ctx),
-							Langpack:      s.getLangpack(ctx),
-							PermAuthKeyId: s.getPermAuthKeyId(ctx),
+							Client:        s.getClient(request.ctx),
+							Langpack:      s.getLangpack(request.ctx),
+							PermAuthKeyId: s.getPermAuthKeyId(request.ctx),
 						},
 						request)
 					s.rpcDataChan <- request
@@ -885,7 +882,7 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 				EncryptedMessage: r.EncryptedMessage,
 			})
 	default:
-		rpcResult, err = dao.Invoke(md, request.reqMsg)
+		rpcResult, err = dao.InvokeContext(ctx, md, request.reqMsg)
 	}
 
 	reply := &mtproto.TLRpcResult{

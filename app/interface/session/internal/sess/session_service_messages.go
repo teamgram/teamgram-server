@@ -29,9 +29,9 @@ import (
 )
 
 // ///////////////////////////////////////////////////////////////////////////////////////
-func (c *session) checkContainer(msgId int64, seqno int32, container *mtproto.TLMsgContainer) int32 {
+func (c *session) checkContainer(ctx context.Context, msgId int64, seqno int32, container *mtproto.TLMsgContainer) int32 {
 	if c.inQueue.Lookup(msgId) != nil {
-		logx.Errorf("checkContainer - msgId collision: {msg_id: %d, seqno: %d}", msgId, seqno)
+		logx.WithContext(ctx).Errorf("checkContainer - msgId collision: {msg_id: %d, seqno: %d}", msgId, seqno)
 		return kMsgIdCollision
 	}
 	//for e := c.msgIds.Front(); e != nil; e = e.Next() {
@@ -47,16 +47,16 @@ func (c *session) checkContainer(msgId int64, seqno int32, container *mtproto.TL
 	for _, v := range container.Messages {
 		// container.Seqno >= v.Seqno
 		if v.Seqno > seqno {
-			logx.Errorf("checkContainer - v.seqno(%s) > seqno({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
+			logx.WithContext(ctx).Errorf("checkContainer - v.seqno(%s) > seqno({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
 			return kInvalidContainer
 		}
 		if v.MsgId >= msgId {
-			logx.Errorf("checkContainer - v.MsgId(%s) > msgId({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
+			logx.WithContext(ctx).Errorf("checkContainer - v.MsgId(%s) > msgId({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
 			return kInvalidContainer
 		}
 
 		if _, ok := v.Object.(*mtproto.TLMsgContainer); ok {
-			logx.Errorf("checkContainer - is container: %v", v)
+			logx.WithContext(ctx).Errorf("checkContainer - is container: %v", v)
 			return kInvalidContainer
 		}
 	}
@@ -131,7 +131,7 @@ func (c *session) onDestroyAuthKey(ctx context.Context, gatewayId string, msgId 
 }
 
 func (c *session) onPing(ctx context.Context, gatewayId string, msgId *inboxMsg, ping *mtproto.TLPing) {
-	logx.Infof("onPing - request data: {sess: %s, gatewayId: %s, msg_id: %s, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onPing - request data: {sess: %s, gatewayId: %s, msg_id: %s, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId,
@@ -150,7 +150,7 @@ func (c *session) onPing(ctx context.Context, gatewayId string, msgId *inboxMsg,
 }
 
 func (c *session) onPingDelayDisconnect(ctx context.Context, gatewayId string, msgId *inboxMsg, pingDelayDisconnect *mtproto.TLPingDelayDisconnect) {
-	logx.Infof("onPingDelayDisconnect - request data: {sess: %s, gatewayId: %s, msg_id: %s, request: {%s}}",
+	logx.WithContext(ctx).Infof("onPingDelayDisconnect - request data: {sess: %s, gatewayId: %s, msg_id: %s, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.DebugString(),
@@ -213,8 +213,8 @@ and max_wait=25000 (milliseconds) are used.
 If the client’s ping of the server takes a long time,
 it may make sense to set max_delay to a value that is comparable in magnitude to ping time.
 */
-func (c *session) onHttpWait(gatewayId string, msgId int64, seqNo int32, request *mtproto.TLHttpWait) {
-	logx.Infof("onHttpWait - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+func (c *session) onHttpWait(ctx context.Context, gatewayId string, msgId int64, seqNo int32, request *mtproto.TLHttpWait) {
+	logx.WithContext(ctx).Infof("onHttpWait - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId,
@@ -234,7 +234,7 @@ func (c *session) onHttpWait(gatewayId string, msgId int64, seqNo int32, request
 }
 
 func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLDestroySession) {
-	logx.Infof("onDestroySession - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onDestroySession - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -254,7 +254,7 @@ func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId 
 
 	if request.SessionId == c.sessionId {
 		// The result of this being applied to the current session is undefined.
-		logx.Error("the result of this being applied to the current session is undefined.")
+		logx.WithContext(ctx).Error("the result of this being applied to the current session is undefined.")
 
 		// TODO(@benqi): handle error???
 		return
@@ -276,7 +276,7 @@ func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId 
 }
 
 func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLGetFutureSalts) {
-	logx.Infof("onGetFutureSalts - request data: {sess: %s, gateway_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+	logx.WithContext(ctx).Infof("onGetFutureSalts - request data: {sess: %s, gateway_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId.msgId,
@@ -285,7 +285,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 
 	salts, err := c.authSessions.Dao.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(ctx), request.Num)
 	if err != nil {
-		logx.Errorf("getFutureSalts error: %v", err)
+		logx.WithContext(ctx).Errorf("getFutureSalts error: %v", err)
 		return
 	}
 
@@ -295,7 +295,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 		Salts:    salts,
 	}).To_FutureSalts()
 
-	logx.Infof("onGetFutureSalts - reply data: %s", futureSalts.DebugString())
+	logx.WithContext(ctx).Infof("onGetFutureSalts - reply data: %s", futureSalts.DebugString())
 	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, futureSalts)
 	msgId.state = RECEIVED | NEED_NO_ACK
 }
@@ -308,7 +308,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 //
 // and both of these responses require an acknowledgment from the client.
 func (c *session) onRpcDropAnswer(ctx context.Context, gatewayId string, msgId *inboxMsg, request *mtproto.TLRpcDropAnswer) {
-	logx.Infof("onRpcDropAnswer - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%v}}",
+	logx.WithContext(ctx).Infof("onRpcDropAnswer - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%v}}",
 		c,
 		gatewayId,
 		msgId.msgId,

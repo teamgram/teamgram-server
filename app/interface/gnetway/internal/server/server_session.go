@@ -60,7 +60,7 @@ import (
 // GatewaySendDataToGateway
 // gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGatewaySendDataToGateway) (reply *mtproto.Bool, err error) {
-	logx.Infof("ReceiveData - request: {kId: %d, sessionId: %d, payloadLen: %d}", in.AuthKeyId, in.SessionId, len(in.Payload))
+	logx.WithContext(ctx).Infof("ReceiveData - request: {kId: %d, sessionId: %d, payloadLen: %d}", in.AuthKeyId, in.SessionId, len(in.Payload))
 
 	var (
 		authKey *authKeyUtil
@@ -68,8 +68,10 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 
 	authKey, connIdList := s.authSessionMgr.FoundSessionConnIdList(in.AuthKeyId, in.SessionId)
 	if connIdList == nil {
-		logx.Errorf("ReceiveData - not found connIdList - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
+		logx.WithContext(ctx).Errorf("ReceiveData - not found connIdList - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
 		return mtproto.BoolFalse, nil
+	} else {
+		logx.WithContext(ctx).Debugf("found: {k: %v, idList: %v}", authKey, connIdList)
 	}
 
 	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
@@ -81,11 +83,11 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 
 	for _, connId := range connIdList {
 		s.eng.Trigger(connId, func(c gnet.Conn) {
-			//err2 := s.authSessionMgr.Shoot(authKey.AuthKeyId(), in.SessionId, connId, int64(binary.LittleEndian.Uint64(in.Payload[:8])), int32(binary.LittleEndian.Uint32(in.Payload[:24])), msg)
-			//if err2 != nil {
 			err2 := UnThreadSafeWrite(c, msg)
 			if err2 != nil {
-				logx.Errorf("sendToClient error: %v", err2)
+				logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
+			} else {
+				logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
 			}
 			//}
 		})

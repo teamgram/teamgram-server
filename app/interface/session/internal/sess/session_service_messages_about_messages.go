@@ -29,8 +29,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func (c *session) onMsgsAck(gatewayId string, msgId int64, seqno int32, request *mtproto.TLMsgsAck) {
-	logx.Infof("onMsgsAck - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
+func (c *session) onMsgsAck(ctx context.Context, gatewayId string, msgId int64, seqno int32, request *mtproto.TLMsgsAck) {
+	logx.WithContext(ctx).Infof("onMsgsAck - request data: {sess: %s, gatewayId: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,
 		gatewayId,
 		msgId,
@@ -335,7 +335,7 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 
 		// check container
 		if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
-			errorCode = c.checkContainer(msg.MsgId, msg.Seqno, msgContainer)
+			errorCode = c.checkContainer(ctx, msg.MsgId, msg.Seqno, msgContainer)
 			if errorCode != 0 {
 				break
 			}
