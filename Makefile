@@ -13,7 +13,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: idgen status dfs media authsession biz msg sync bff session gateway gnetway httpserver
+all: idgen status dfs media authsession biz msg sync bff session gateway gnetway
 
 idgen:
 	@echo "build idgen..."

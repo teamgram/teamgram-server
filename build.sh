@@ -52,6 +52,6 @@ echo "build gnetway ..."
 cd ${TEAMGRAMAPP}/interface/gnetway/cmd/gnetway
 go build -o ${INSTALL}/bin/gnetway
 
-echo "build httpserver ..."
-cd ${TEAMGRAMAPP}/interface/httpserver/cmd/httpserver
-go build -o ${INSTALL}/bin/httpserver
+#echo "build httpserver ..."
+#cd ${TEAMGRAMAPP}/interface/httpserver/cmd/httpserver
+#go build -o ${INSTALL}/bin/httpserver
