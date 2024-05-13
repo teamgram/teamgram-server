@@ -170,7 +170,7 @@ func newHandshake(keyFile string, keyFingerprint uint64, createdCB keyCreatedF) 
 
 // OnReqPq
 // req_pq#60469778 nonce:int128 = ResPQ;
-func (s *handshake) OnReqPq(request *mtproto.TLReqPq) (*mtproto.TLResPQ, error) {
+func (s *handshake) OnReqPq(request *mtproto.TLReqPq) (*mtproto.ResPQ, error) {
 	logx.Infof("req_pq#60469778 - {\"request\":%s", request.DebugString())
 
 	// check State and ResState
@@ -182,25 +182,25 @@ func (s *handshake) OnReqPq(request *mtproto.TLReqPq) (*mtproto.TLResPQ, error) 
 		return nil, err
 	}
 
-	resPQ := &mtproto.TLResPQ{Data2: &mtproto.ResPQ{
+	resPQ := mtproto.MakeTLResPQ(&mtproto.ResPQ{
 		Nonce:                       request.Nonce,
 		ServerNonce:                 crypto.GenerateNonce(16),
 		Pq:                          pq,
 		ServerPublicKeyFingerprints: []int64{int64(s.keyFingerprint)},
-	}}
+	}).To_ResPQ()
 
 	// 缓存客户端Nonce
 	// ctx.Nonce = request.GetNonce()
 	// ctx.ServerNonce = resPQ.GetServerNonce()
 
 	// PutCacheState(ctx.Nonce, ctx.ServerNonce, ctx)
-	logx.Infof("req_pq#60469778 reply - {\"resPQ\":%s", resPQ.DebugString())
+	logx.Infof("req_pq#60469778 reply - {\"resPQ\":%v", resPQ)
 	return resPQ, nil
 }
 
 // OnReqPqMulti
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
-func (s *handshake) OnReqPqMulti(request *mtproto.TLReqPqMulti) (*mtproto.TLResPQ, error) {
+func (s *handshake) OnReqPqMulti(request *mtproto.TLReqPqMulti) (*mtproto.ResPQ, error) {
 	logx.Infof("req_pq_multi#be7e8ef1 - {\"request\":%s", request.DebugString())
 
 	// check State and ResState
@@ -212,12 +212,12 @@ func (s *handshake) OnReqPqMulti(request *mtproto.TLReqPqMulti) (*mtproto.TLResP
 		return nil, err
 	}
 
-	resPQ := &mtproto.TLResPQ{Data2: &mtproto.ResPQ{
+	resPQ := mtproto.MakeTLResPQ(&mtproto.ResPQ{
 		Nonce:                       request.Nonce,
 		ServerNonce:                 crypto.GenerateNonce(16),
 		Pq:                          pq,
 		ServerPublicKeyFingerprints: []int64{int64(s.keyFingerprint)},
-	}}
+	}).To_ResPQ()
 
 	// 缓存客户端Nonce
 	// ctx := state.GetCtx()

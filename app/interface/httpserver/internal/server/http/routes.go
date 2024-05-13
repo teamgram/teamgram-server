@@ -27,6 +27,11 @@ func RegisterHandlers(engine *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
+				Path:    "/api",
+				Handler: apiw1(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/apiw1",
 				Handler: apiw1(serverCtx),
 			},

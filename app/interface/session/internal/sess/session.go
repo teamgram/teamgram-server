@@ -373,15 +373,15 @@ func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, in
 	case *mtproto.TLMsgsStateReq: // android未用
 		c.onMsgsStateReq(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgsStateReq))
 	case *mtproto.TLMsgsStateInfo: // android未用
-		c.onMsgsStateInfo(gatewayId, inMsg, r.(*mtproto.TLMsgsStateInfo))
+		c.onMsgsStateInfo(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgsStateInfo))
 	case *mtproto.TLMsgsAllInfo: // android未用
-		c.onMsgsAllInfo(gatewayId, inMsg, r.(*mtproto.TLMsgsAllInfo))
+		c.onMsgsAllInfo(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgsAllInfo))
 	case *mtproto.TLMsgResendReq: // 都有可能
 		c.onMsgResendReq(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgResendReq))
 	case *mtproto.TLMsgDetailedInfo: // 都有可能
-		c.onMsgDetailInfo(gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
+		c.onMsgDetailInfo(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
 	case *mtproto.TLMsgNewDetailedInfo: // 都有可能
-		c.onMsgNewDetailInfo(gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
+		c.onMsgNewDetailInfo(ctx, gatewayId, inMsg, r.(*mtproto.TLMsgDetailedInfo))
 	case *mtproto.TLInvokeWithLayer:
 		c.onInvokeWithLayer(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithLayer))
 	case *mtproto.TLInvokeAfterMsg:

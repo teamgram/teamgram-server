@@ -117,11 +117,11 @@ func (c *HttpserverCore) onUnencryptedMessage(mmsg *mtproto.MTPRawMessage) (*mtp
 			// conn.Close()
 			return nil, err
 		}
-		//ctx.putHandshakeStateCt(&HandshakeStateCtx{
-		//	State:       STATE_pq_res,
-		//	Nonce:       resPQ.GetNonce(),
-		//	ServerNonce: resPQ.GetServerNonce(),
-		//})
+		c.svcCtx.Dao.PutHandshakeStateCtx(&HandshakeStateCtx{
+			State:       STATE_pq_res,
+			Nonce:       resPQ.GetNonce(),
+			ServerNonce: resPQ.GetServerNonce(),
+		})
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReq_DHParams:
 		logx.Infof("TLReq_DHParams - {\"request\":%s", request.DebugString())
