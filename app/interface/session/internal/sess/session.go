@@ -698,10 +698,11 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 	// log.Debugf("err: %v, b: %v", err, b)
 	if err == nil && b {
 		for _, m := range pendings {
-			logx.Infof("need_no_ack: %d", m.msgId)
 			if m.state == NEED_NO_ACK {
+				logx.Infof("need_no_ack: %d", m.msgId)
 				c.outQueue.Remove(m.msgId)
 			} else {
+				logx.Infof("pending sent: %d", m.msgId)
 				m.sent = time.Now().Unix()
 			}
 		}

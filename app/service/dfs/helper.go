@@ -57,7 +57,7 @@ var (
 )
 
 func init() {
-	zrpc.DontLogContentForMethod("/dfs.RPCDfs/DfsWriteFilePartData")
+	zrpc.DontLogContentForMethod("/dfs.RPCDfs/dfs_writeFilePartData")
 }
 
 func NewDFSHelper(minio *MinioConfig, idgen zrpc.RpcClientConf, ssdb kv.KvConf) *DFSHelper {

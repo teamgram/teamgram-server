@@ -23,8 +23,8 @@ type (
 )
 
 func init() {
-	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveFilePart")
-	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/UploadSaveBigFilePart")
+	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/upload_saveFilePart")
+	zrpc.DontLogContentForMethod("/mtproto.RPCFiles/upload_saveBigFilePart")
 
 	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/dfs_writeFilePartData")
 	zrpc.DontLogClientContentForMethod("/dfs.RPCDfs/dfs_downloadFile")

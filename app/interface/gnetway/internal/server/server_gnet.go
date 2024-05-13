@@ -45,6 +45,18 @@ func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c gnet.Co
 	})
 }
 
+func (s *Server) asyncRun2(
+	connId int64,
+	execb func() (interface{}, error),
+	retcb func(c gnet.Conn, in interface{}, err error)) {
+	s.pool.Submit(func() {
+		r, err := execb()
+		s.eng.Trigger(connId, func(c gnet.Conn) {
+			retcb(c, r, err)
+		})
+	})
+}
+
 // OnBoot fires when the engine is ready for accepting connections.
 // The parameter engine has information and various utilities.
 func (s *Server) OnBoot(eng gnet.Engine) (action gnet.Action) {
@@ -205,9 +217,9 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 		out, err := s.onHandshake(c, msg2)
 		if err != nil {
 			action = gnet.Close
-			return
+		} else if out != nil {
+			UnThreadSafeWrite(c, out)
 		}
-		UnThreadSafeWrite(c, out)
 		return
 	}
 
@@ -220,54 +232,119 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 		}
 	}
 
-	if authKey == nil {
-		var (
-			key3 *mtproto.AuthKeyInfo
-		)
+	//if authKey == nil {
+	//	var (
+	//		key3 *mtproto.AuthKeyInfo
+	//	)
+	//
+	//	err2 := s.session.invokeByKey(
+	//		strconv.FormatInt(msg2.AuthKeyId(), 10),
+	//		func(client sessionclient.SessionClient) (err error) {
+	//			key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+	//				AuthKeyId: msg2.AuthKeyId(),
+	//			})
+	//			return
+	//		})
+	//	if err2 != nil {
+	//		logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
+	//		if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
+	//			out2 := &mtproto.MTPRawMessage{
+	//				Payload: make([]byte, 4),
+	//			}
+	//			var (
+	//				code = int32(-404)
+	//			)
+	//			binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
+	//			UnThreadSafeWrite(c, out2)
+	//		}
+	//
+	//		action = gnet.Close
+	//		return
+	//	}
+	//
+	//	key2 := &mtproto.AuthKeyInfo{
+	//		AuthKeyId:          key3.AuthKeyId,
+	//		AuthKey:            key3.AuthKey,
+	//		AuthKeyType:        key3.AuthKeyType,
+	//		PermAuthKeyId:      key3.PermAuthKeyId,
+	//		TempAuthKeyId:      key3.TempAuthKeyId,
+	//		MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
+	//	}
+	//	s.PutAuthKey(key2)
+	//	authKey = newAuthKeyUtil(key2)
+	//	ctx.putAuthKey(authKey)
+	//}
+	//
+	//err := s.onEncryptedMessage(c, ctx, authKey, msg2)
+	//if err != nil {
+	//	action = gnet.Close
+	//	return
+	//}
 
-		err2 := s.session.invokeByKey(
-			strconv.FormatInt(msg2.AuthKeyId(), 10),
-			func(client sessionclient.SessionClient) (err error) {
-				key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-					AuthKeyId: msg2.AuthKeyId(),
-				})
-				return
-			})
-		if err2 != nil {
-			logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
-			if errors.Is(err2, mtproto.ErrAuthKeyUnregistered) {
-				out2 := &mtproto.MTPRawMessage{
-					Payload: make([]byte, 4),
-				}
-				var (
-					code = int32(-404)
-				)
-				binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-				UnThreadSafeWrite(c, out2)
-			}
-
+	if authKey != nil {
+		err := s.onEncryptedMessage(c, ctx, authKey, msg2)
+		if err != nil {
 			action = gnet.Close
-			return
 		}
-
-		key2 := &mtproto.AuthKeyInfo{
-			AuthKeyId:          key3.AuthKeyId,
-			AuthKey:            key3.AuthKey,
-			AuthKeyType:        key3.AuthKeyType,
-			PermAuthKeyId:      key3.PermAuthKeyId,
-			TempAuthKeyId:      key3.TempAuthKeyId,
-			MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
-		}
-		s.PutAuthKey(key2)
-		authKey = newAuthKeyUtil(key2)
-		ctx.putAuthKey(authKey)
-	}
-
-	err := s.onEncryptedMessage(c, ctx, authKey, msg2)
-	if err != nil {
-		action = gnet.Close
 		return
 	}
+
+	// authKey is nil
+	s.asyncRun2(
+		c.ConnId(),
+		func() (interface{}, error) {
+			var (
+				key3 *mtproto.AuthKeyInfo
+			)
+
+			err2 := s.session.invokeByKey(
+				strconv.FormatInt(msg2.AuthKeyId(), 10),
+				func(client sessionclient.SessionClient) (err error) {
+					key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+						AuthKeyId: msg2.AuthKeyId(),
+					})
+					return
+				})
+			if err2 != nil {
+				logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
+				return nil, err2
+			}
+
+			key2 := &mtproto.AuthKeyInfo{
+				AuthKeyId:          key3.AuthKeyId,
+				AuthKey:            key3.AuthKey,
+				AuthKeyType:        key3.AuthKeyType,
+				PermAuthKeyId:      key3.PermAuthKeyId,
+				TempAuthKeyId:      key3.TempAuthKeyId,
+				MediaTempAuthKeyId: key3.MediaTempAuthKeyId,
+			}
+			s.PutAuthKey(key2)
+
+			return newAuthKeyUtil(key2), nil
+		},
+		func(c gnet.Conn, in interface{}, err error) {
+			if err != nil {
+				if errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
+					out2 := &mtproto.MTPRawMessage{
+						Payload: make([]byte, 4),
+					}
+					var (
+						code = int32(-404)
+					)
+					binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
+					UnThreadSafeWrite(c, out2)
+				}
+				c.Close()
+			} else {
+				authKey = in.(*authKeyUtil)
+				ctx2 := c.Context().(*connContext)
+				ctx2.putAuthKey(authKey)
+				err = s.onEncryptedMessage(c, ctx2, authKey, msg2)
+				if err != nil {
+					c.Close()
+				}
+			}
+		})
 
 	return gnet.None
 }
@@ -278,6 +355,11 @@ func UnThreadSafeWrite(c gnet.Conn, msg interface{}) error {
 	if ctx.codec == nil {
 		return nil
 	}
+
+	if msg == nil {
+		return nil
+	}
+
 	data, err := ctx.codec.Encode(c, msg)
 	if err != nil {
 		return err

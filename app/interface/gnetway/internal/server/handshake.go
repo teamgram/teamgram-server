@@ -201,23 +201,10 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 		return nil, err
 	}
 
-	var (
-	// ctx handshakeStateCtx
-	// ok bool
-	)
 	ctx, ok := c.Context().(*connContext)
 	if !ok {
 		return nil, fmt.Errorf("unknown error")
 	}
-	//if ctx2 := c.Context(); ctx2 != nil {
-	//	if ctx, ok = ctx2.(handshakeStateCtx); !ok {
-	//		// unknown error
-	//		// logx.Errorf("conn(%s) invalid handshakeStateCtx type", c.DebugString())
-	//		return nil, fmt.Errorf("unknown error")
-	//	}
-	//} else {
-	//	// ctx =
-	//}
 
 	_, obj, err := parseFromIncomingMessage(mmsg.Payload[8:])
 	if err != nil {
