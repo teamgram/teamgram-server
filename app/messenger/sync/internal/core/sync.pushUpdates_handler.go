@@ -28,7 +28,7 @@ func (c *SyncCore) SyncPushUpdates(in *sync.TLSyncPushUpdates) (*mtproto.Void, e
 		return nil, err
 	}
 
-	c.pushUpdatesToSession(syncTypeUser, userId, 0, 0, updates, "", notification)
+	c.pushUpdatesToSession(syncTypeUser, userId, 0, nil, nil, nil, updates, notification)
 
 	return mtproto.EmptyVoid, nil
 }

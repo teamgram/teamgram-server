@@ -33,15 +33,16 @@ const (
 )
 
 type QRCodeTransaction struct {
-	AuthKeyId int64  `json:"auth_key_id"`
-	ServerId  string `json:"server_id"`
-	SessionId int64  `json:"session_id"`
-	ApiId     int32  `json:"api_id"`
-	ApiHash   string `json:"api_hash"`
-	CodeHash  string `json:"code_hash"`
-	ExpireAt  int64  `json:"expire_at"`
-	UserId    int64  `json:"user_id"`
-	State     int    `json:"state"`
+	PermAuthKeyId int64  `json:"perm_auth_key_id"`
+	ServerId      string `json:"server_id"`
+	AuthKeyId     int64  `json:"auth_key_id"`
+	SessionId     int64  `json:"session_id"`
+	ApiId         int32  `json:"api_id"`
+	ApiHash       string `json:"api_hash"`
+	CodeHash      string `json:"code_hash"`
+	ExpireAt      int64  `json:"expire_at"`
+	UserId        int64  `json:"user_id"`
+	State         int    `json:"state"`
 }
 
 func (m *QRCodeTransaction) Token() []byte {

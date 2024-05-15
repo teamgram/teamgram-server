@@ -12,7 +12,7 @@ package sync
 
 const (
 	CRC32_UNKNOWN               TLConstructor = 0
-	CRC32_sync_updatesMe        TLConstructor = -464714686  // 0xe44d0442
+	CRC32_sync_updatesMe        TLConstructor = -444776161  // 0xe57d411f
 	CRC32_sync_updatesNotMe     TLConstructor = -1750314959 // 0x97ac5031
 	CRC32_sync_pushUpdates      TLConstructor = -1895114306 // 0x8f0ad9be
 	CRC32_sync_pushUpdatesIfNot TLConstructor = 1074085860  // 0x40053fe4

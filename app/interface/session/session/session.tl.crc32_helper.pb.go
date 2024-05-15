@@ -21,7 +21,7 @@ const (
 	CRC32_session_sendDataToSession      TLConstructor = -2023019028 // 0x876b2dec
 	CRC32_session_sendHttpDataToSession  TLConstructor = -1142152274 // 0xbbec23ae
 	CRC32_session_closeSession           TLConstructor = 393200211   // 0x176fc253
-	CRC32_session_pushUpdatesData        TLConstructor = -1050612110 // 0xc160ee72
-	CRC32_session_pushSessionUpdatesData TLConstructor = -434243286  // 0xe61df92a
-	CRC32_session_pushRpcResultData      TLConstructor = 1627318120  // 0x60fee768
+	CRC32_session_pushUpdatesData        TLConstructor = -1519069143 // 0xa574d829
+	CRC32_session_pushSessionUpdatesData TLConstructor = 1173618080  // 0x45f3fda0
+	CRC32_session_pushRpcResultData      TLConstructor = 1262947465  // 0x4b470c89
 )

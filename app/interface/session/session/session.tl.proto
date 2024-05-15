@@ -30,9 +30,9 @@ enum TLConstructor {
     CRC32_session_sendDataToSession = -2023019028;
     CRC32_session_sendHttpDataToSession = -1142152274;
     CRC32_session_closeSession = 393200211;
-    CRC32_session_pushUpdatesData = -1050612110;
-    CRC32_session_pushSessionUpdatesData = -434243286;
-    CRC32_session_pushRpcResultData = 1627318120;
+    CRC32_session_pushUpdatesData = -1519069143;
+    CRC32_session_pushSessionUpdatesData = 1173618080;
+    CRC32_session_pushRpcResultData = 1262947465;
 }
 
 
@@ -137,17 +137,16 @@ message TL_session_closeSession {
 //--------------------------------------------------------------------------------------------
 message TL_session_pushUpdatesData {
     TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 perm_auth_key_id = 4;
-    bool notification = 5;
-    mtproto.Updates updates = 6;
+    int64 perm_auth_key_id = 3;
+    bool notification = 4;
+    mtproto.Updates updates = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_session_pushSessionUpdatesData {
     TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 perm_auth_key_id = 4;
+    int64 perm_auth_key_id = 3;
+    int64 auth_key_id = 4;
     int64 session_id = 5;
     mtproto.Updates updates = 6;
 }
@@ -155,8 +154,8 @@ message TL_session_pushSessionUpdatesData {
 //--------------------------------------------------------------------------------------------
 message TL_session_pushRpcResultData {
     TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 perm_auth_key_id = 4;
+    int64 perm_auth_key_id = 3;
+    int64 auth_key_id = 4;
     int64 session_id = 5;
     int64 client_req_msg_id = 6;
     bytes rpc_result_data = 7;

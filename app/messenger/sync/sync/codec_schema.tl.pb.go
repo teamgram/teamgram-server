@@ -32,9 +32,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
 
 	// Method
-	-464714686: func() mtproto.TLObject { // 0xe44d0442
+	-444776161: func() mtproto.TLObject { // 0xe57d411f
 		return &TLSyncUpdatesMe{
-			Constructor: -464714686,
+			Constructor: -444776161,
 		}
 	},
 	-1750314959: func() mtproto.TLObject { // 0x97ac5031
@@ -90,14 +90,20 @@ func CheckClassID(classId int32) (ok bool) {
 
 func (m *TLSyncUpdatesMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xe44d0442:
-		x.UInt(0xe44d0442)
+	case 0xe57d411f:
+		x.UInt(0xe57d411f)
 
 		// set flags
 		var flags uint32 = 0
 
-		if m.GetSessionId() != nil {
+		if m.GetServerId() != nil {
 			flags |= 1 << 0
+		}
+		if m.GetAuthKeyId() != nil {
+			flags |= 1 << 1
+		}
+		if m.GetSessionId() != nil {
+			flags |= 1 << 1
 		}
 
 		x.UInt(flags)
@@ -105,7 +111,14 @@ func (m *TLSyncUpdatesMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 		// flags Debug by @benqi
 		x.Long(m.GetUserId())
 		x.Long(m.GetPermAuthKeyId())
-		x.String(m.GetServerId())
+		if m.GetServerId() != nil {
+			x.String(m.GetServerId().Value)
+		}
+
+		if m.GetAuthKeyId() != nil {
+			x.Long(m.GetAuthKeyId().Value)
+		}
+
 		if m.GetSessionId() != nil {
 			x.Long(m.GetSessionId().Value)
 		}
@@ -125,7 +138,7 @@ func (m *TLSyncUpdatesMe) CalcByteSize(layer int32) int {
 
 func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xe44d0442:
+	case 0xe57d411f:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -133,14 +146,21 @@ func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 		// flags Debug by @benqi
 		m.UserId = dBuf.Long()
 		m.PermAuthKeyId = dBuf.Long()
-		m.ServerId = dBuf.String()
 		if (flags & (1 << 0)) != 0 {
+			m.ServerId = &wrapperspb.StringValue{Value: dBuf.String()}
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			m.AuthKeyId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 1)) != 0 {
 			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
 		}
 
-		m6 := &mtproto.Updates{}
-		m6.Decode(dBuf)
-		m.Updates = m6
+		m7 := &mtproto.Updates{}
+		m7.Decode(dBuf)
+		m.Updates = m7
 
 		return dBuf.GetError()
 

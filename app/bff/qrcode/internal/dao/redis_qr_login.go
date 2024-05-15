@@ -54,10 +54,12 @@ func (d *Dao) GetCacheQRLoginCode(ctx context.Context, keyId int64) (code *model
 	code = new(model.QRCodeTransaction)
 	for k, v := range values {
 		switch k {
-		case "auth_key_id":
-			code.AuthKeyId, _ = strconv.ParseInt(v, 10, 64)
+		case "perm_auth_key_id":
+			code.PermAuthKeyId, _ = strconv.ParseInt(v, 10, 64)
 		case "session_id":
 			code.SessionId, _ = strconv.ParseInt(v, 10, 64)
+		case "auth_key_id":
+			code.AuthKeyId, _ = strconv.ParseInt(v, 10, 64)
 		case "server_id":
 			code.ServerId = v
 		case "api_id":
@@ -85,15 +87,16 @@ func (d *Dao) PutCacheQRLoginCode(ctx context.Context, keyId int64, qrCode *mode
 		key = genQRLoginCodeKey(keyId)
 
 		args = map[string]string{
-			"auth_key_id": strconv.FormatInt(qrCode.AuthKeyId, 10),
-			"session_id":  strconv.FormatInt(qrCode.SessionId, 10),
-			"server_id":   qrCode.ServerId,
-			"api_id":      strconv.Itoa(int(qrCode.ApiId)),
-			"api_hash":    qrCode.ApiHash,
-			"code_hash":   qrCode.CodeHash,
-			"expire_at":   strconv.FormatInt(qrCode.ExpireAt, 10),
-			"state":       strconv.Itoa(qrCode.State),
-			"user_id":     strconv.FormatInt(qrCode.UserId, 10),
+			"perm_auth_key_id": strconv.FormatInt(qrCode.PermAuthKeyId, 10),
+			"session_id":       strconv.FormatInt(qrCode.SessionId, 10),
+			"auth_key_id":      strconv.FormatInt(qrCode.AuthKeyId, 10),
+			"server_id":        qrCode.ServerId,
+			"api_id":           strconv.Itoa(int(qrCode.ApiId)),
+			"api_hash":         qrCode.ApiHash,
+			"code_hash":        qrCode.CodeHash,
+			"expire_at":        strconv.FormatInt(qrCode.ExpireAt, 10),
+			"state":            strconv.Itoa(qrCode.State),
+			"user_id":          strconv.FormatInt(qrCode.UserId, 10),
 		}
 	)
 

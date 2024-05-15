@@ -20,6 +20,7 @@ package core
 
 import (
 	"encoding/binary"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"strconv"
 	"time"
 
@@ -118,8 +119,9 @@ func (c *QrCodeCore) AuthAcceptLoginToken(in *mtproto.TLAuthAcceptLoginToken) (*
 		&sync.TLSyncUpdatesMe{
 			UserId:        user.Id(),
 			PermAuthKeyId: qrCode.AuthKeyId,
-			ServerId:      qrCode.ServerId,
-			SessionId:     mtproto.MakeFlagsInt64(qrCode.SessionId),
+			ServerId:      &wrapperspb.StringValue{Value: qrCode.ServerId},
+			AuthKeyId:     &wrapperspb.Int64Value{Value: qrCode.AuthKeyId},
+			SessionId:     &wrapperspb.Int64Value{Value: qrCode.SessionId},
 			Updates: mtproto.MakeTLUpdateShort(&mtproto.Updates{
 				Update: mtproto.MakeTLUpdateLoginToken(nil).To_Update(),
 				Date:   int32(time.Now().Unix()),

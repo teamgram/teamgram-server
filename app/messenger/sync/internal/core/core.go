@@ -11,6 +11,7 @@ package core
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
@@ -166,26 +167,27 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 	return needPush, nil
 }
 
-func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, clientMsgId int64, pushData *mtproto.Updates, hasServerId string, notification bool) {
-	if syncType == syncTypeUserMe && hasServerId != "" {
-		logx.Infof("pushUpdatesToSession - pushData: {server_id: %d, auth_key_id: %d}", hasServerId, authKeyId)
-		if clientMsgId != 0 {
+func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId int64, hasServerId *wrapperspb.StringValue, authKeyId, sessionId *wrapperspb.Int64Value, pushData *mtproto.Updates, notification bool) {
+	if syncType == syncTypeUserMe && hasServerId != nil {
+		logx.Infof("pushUpdatesToSession - pushData: {server_id: %v, auth_key_id: %v}", hasServerId, authKeyId)
+		if sessionId != nil {
 			c.svcCtx.Dao.PushSessionUpdatesToSession(
 				c.ctx,
-				hasServerId,
+				hasServerId.GetValue(),
 				&session.TLSessionPushSessionUpdatesData{
-					AuthKeyId: authKeyId,
-					SessionId: clientMsgId,
-					Updates:   pushData,
+					PermAuthKeyId: permAuthKeyId,
+					AuthKeyId:     authKeyId.GetValue(),
+					SessionId:     sessionId.GetValue(),
+					Updates:       pushData,
 				})
 		} else {
 			c.svcCtx.Dao.PushUpdatesToSession(
 				c.ctx,
-				hasServerId,
+				hasServerId.GetValue(),
 				&session.TLSessionPushUpdatesData{
-					AuthKeyId:    authKeyId,
-					Notification: notification,
-					Updates:      pushData,
+					PermAuthKeyId: permAuthKeyId,
+					Notification:  notification,
+					Updates:       pushData,
 				})
 		}
 	} else {
@@ -199,7 +201,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, cl
 		})
 		logx.Infof("statusList - #%v", statusList)
 		for _, sess := range statusList.GetUserSessions() {
-			if syncType == syncTypeUserNotMe && sess.AuthKeyId == authKeyId {
+			if syncType == syncTypeUserNotMe && sess.AuthKeyId == permAuthKeyId {
 				continue
 			}
 			pushExcludeList = append(pushExcludeList, sess.PermAuthKeyId)
@@ -219,9 +221,9 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, authKeyId, cl
 					c.ctx,
 					serverId,
 					&session.TLSessionPushUpdatesData{
-						AuthKeyId:    keyId,
-						Notification: notification,
-						Updates:      pushData,
+						PermAuthKeyId: keyId,
+						Notification:  notification,
+						Updates:       pushData,
 					})
 			}
 		}

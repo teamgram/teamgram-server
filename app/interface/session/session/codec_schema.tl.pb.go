@@ -77,19 +77,19 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 393200211,
 		}
 	},
-	-1050612110: func() mtproto.TLObject { // 0xc160ee72
+	-1519069143: func() mtproto.TLObject { // 0xa574d829
 		return &TLSessionPushUpdatesData{
-			Constructor: -1050612110,
+			Constructor: -1519069143,
 		}
 	},
-	-434243286: func() mtproto.TLObject { // 0xe61df92a
+	1173618080: func() mtproto.TLObject { // 0x45f3fda0
 		return &TLSessionPushSessionUpdatesData{
-			Constructor: -434243286,
+			Constructor: 1173618080,
 		}
 	},
-	1627318120: func() mtproto.TLObject { // 0x60fee768
+	1262947465: func() mtproto.TLObject { // 0x4b470c89
 		return &TLSessionPushRpcResultData{
-			Constructor: 1627318120,
+			Constructor: 1262947465,
 		}
 	},
 }
@@ -866,8 +866,8 @@ func (m *TLSessionCloseSession) DebugString() string {
 
 func (m *TLSessionPushUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xc160ee72:
-		x.UInt(0xc160ee72)
+	case 0xa574d829:
+		x.UInt(0xa574d829)
 
 		// set flags
 		var flags uint32 = 0
@@ -879,7 +879,6 @@ func (m *TLSessionPushUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) err
 		x.UInt(flags)
 
 		// flags Debug by @benqi
-		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetPermAuthKeyId())
 		m.GetUpdates().Encode(x, layer)
 
@@ -896,21 +895,20 @@ func (m *TLSessionPushUpdatesData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xc160ee72:
+	case 0xa574d829:
 
 		flags := dBuf.UInt()
 		_ = flags
 
 		// flags Debug by @benqi
-		m.AuthKeyId = dBuf.Long()
 		m.PermAuthKeyId = dBuf.Long()
 		if (flags & (1 << 0)) != 0 {
 			m.Notification = true
 		}
 
-		m5 := &mtproto.Updates{}
-		m5.Decode(dBuf)
-		m.Updates = m5
+		m4 := &mtproto.Updates{}
+		m4.Decode(dBuf)
+		m.Updates = m4
 
 		return dBuf.GetError()
 
@@ -930,13 +928,17 @@ func (m *TLSessionPushUpdatesData) DebugString() string {
 
 func (m *TLSessionPushSessionUpdatesData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xe61df92a:
-		x.UInt(0xe61df92a)
+	case 0x45f3fda0:
+		x.UInt(0x45f3fda0)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
-		x.Long(m.GetAuthKeyId())
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetPermAuthKeyId())
+		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetSessionId())
 		m.GetUpdates().Encode(x, layer)
 
@@ -953,17 +955,19 @@ func (m *TLSessionPushSessionUpdatesData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xe61df92a:
+	case 0x45f3fda0:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
-		m.AuthKeyId = dBuf.Long()
+		// flags Debug by @benqi
 		m.PermAuthKeyId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
 		m.SessionId = dBuf.Long()
 
-		m4 := &mtproto.Updates{}
-		m4.Decode(dBuf)
-		m.Updates = m4
+		m5 := &mtproto.Updates{}
+		m5.Decode(dBuf)
+		m.Updates = m5
 
 		return dBuf.GetError()
 
@@ -983,13 +987,13 @@ func (m *TLSessionPushSessionUpdatesData) DebugString() string {
 
 func (m *TLSessionPushRpcResultData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x60fee768:
-		x.UInt(0x60fee768)
+	case 0x4b470c89:
+		x.UInt(0x4b470c89)
 
 		// no flags
 
-		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetPermAuthKeyId())
+		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetSessionId())
 		x.Long(m.GetClientReqMsgId())
 		x.StringBytes(m.GetRpcResultData())
@@ -1007,12 +1011,12 @@ func (m *TLSessionPushRpcResultData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x60fee768:
+	case 0x4b470c89:
 
 		// not has flags
 
-		m.AuthKeyId = dBuf.Long()
 		m.PermAuthKeyId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
 		m.SessionId = dBuf.Long()
 		m.ClientReqMsgId = dBuf.Long()
 		m.RpcResultData = dBuf.StringBytes()

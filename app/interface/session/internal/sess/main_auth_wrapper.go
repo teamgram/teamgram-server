@@ -355,11 +355,11 @@ func (m *MainAuthWrapper) onUpdateInitConnection(ctx context.Context, clientIp s
 		}
 		if m.client.Proxy != proxy {
 			m.client.Proxy = proxy
-			clientNeedUpdate = true
+			// clientNeedUpdate = true
 		}
 		if m.client.Params != params {
 			m.client.Params = params
-			clientNeedUpdate = true
+			// clientNeedUpdate = true
 		}
 	}
 

@@ -50,7 +50,8 @@ func (c *AccountCore) AccountResetAuthorization(in *mtproto.TLAccountResetAuthor
 			&sync.TLSyncUpdatesMe{
 				UserId:        c.MD.UserId,
 				PermAuthKeyId: id,
-				ServerId:      "",
+				ServerId:      nil,
+				AuthKeyId:     nil,
 				SessionId:     nil,
 				Updates:       mtproto.MakeTLUpdatesTooLong(nil).To_Updates(),
 			})
@@ -60,7 +61,8 @@ func (c *AccountCore) AccountResetAuthorization(in *mtproto.TLAccountResetAuthor
 			&sync.TLSyncUpdatesMe{
 				UserId:        c.MD.UserId,
 				PermAuthKeyId: id,
-				ServerId:      "",
+				ServerId:      nil,
+				AuthKeyId:     nil,
 				SessionId:     nil,
 				Updates: mtproto.MakeTLUpdateAccountResetAuthorization(&mtproto.Updates{
 					UserId:    c.MD.UserId,

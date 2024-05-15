@@ -21,7 +21,7 @@ option go_package = "github.com/teamgram/teamgram-server/app/messenger/sync/sync
 
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
-    CRC32_sync_updatesMe = -464714686;
+    CRC32_sync_updatesMe = -444776161;
     CRC32_sync_updatesNotMe = -1750314959;
     CRC32_sync_pushUpdates = -1895114306;
     CRC32_sync_pushUpdatesIfNot = 1074085860;
@@ -39,9 +39,10 @@ message TL_sync_updatesMe {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
     int64 perm_auth_key_id = 4;
-    string server_id = 5;
-    google.protobuf.Int64Value session_id = 6;
-    mtproto.Updates updates = 7;
+    google.protobuf.StringValue server_id = 5;
+    google.protobuf.Int64Value auth_key_id = 6;
+    google.protobuf.Int64Value session_id = 7;
+    mtproto.Updates updates = 8;
 }
 
 //--------------------------------------------------------------------------------------------

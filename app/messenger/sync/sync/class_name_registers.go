@@ -22,7 +22,7 @@ const (
 
 var clazzNameRegisters2 = map[string]map[int]int32{
 	Predicate_sync_updatesMe: {
-		0: -464714686, // 0xe44d0442
+		0: -444776161, // 0xe57d411f
 
 	},
 	Predicate_sync_updatesNotMe: {
@@ -52,7 +52,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	-464714686:  Predicate_sync_updatesMe,        // 0xe44d0442
+	-444776161:  Predicate_sync_updatesMe,        // 0xe57d411f
 	-1750314959: Predicate_sync_updatesNotMe,     // 0x97ac5031
 	-1895114306: Predicate_sync_pushUpdates,      // 0x8f0ad9be
 	1074085860:  Predicate_sync_pushUpdatesIfNot, // 0x40053fe4

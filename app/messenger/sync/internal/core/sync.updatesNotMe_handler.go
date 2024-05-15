@@ -29,7 +29,7 @@ func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*mtproto.Void,
 		return nil, err
 	}
 
-	c.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, 0, updates, "", notification)
+	c.pushUpdatesToSession(syncTypeUserNotMe, userId, authKeyId, nil, nil, nil, updates, notification)
 
 	return mtproto.EmptyVoid, nil
 }
