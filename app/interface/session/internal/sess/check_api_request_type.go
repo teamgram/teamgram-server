@@ -62,8 +62,8 @@ import (
 func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 	switch tl.(type) {
 	// account
-	// case *mtproto.TLAccountGetPassword:
-	//	return true
+	case *mtproto.TLAccountGetPassword:
+		return true
 
 	// auth
 	case *mtproto.TLAuthSendCode,
@@ -80,7 +80,9 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthExportLoginToken,
 		*mtproto.TLAuthAcceptLoginToken,
 		*mtproto.TLAuthLogOut, // TODO: before process, try fetch usrId
-		*mtproto.TLAuthBindTempAuthKey:
+		*mtproto.TLAuthBindTempAuthKey,
+		*mtproto.TLAuthCheckPassword:
+
 		return true
 
 	// help

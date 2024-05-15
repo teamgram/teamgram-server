@@ -81,77 +81,84 @@ func (c *CacheAuthData) ToAuthState() (state int) {
 	return
 }
 
+func (c *CacheAuthData) GetClient() *authsession.ClientSession {
+	if c == nil {
+		return nil
+	}
+	return c.Client
+}
+
 func (c *CacheAuthData) AuthKeyId() int64 {
-	return c.Client.GetAuthKeyId()
+	return c.GetClient().GetAuthKeyId()
 }
 
 func (c *CacheAuthData) Layer() int32 {
-	return c.Client.GetLayer()
+	return c.GetClient().GetLayer()
 }
 
 func (c *CacheAuthData) ApiId() int32 {
-	return c.Client.GetApiId()
+	return c.GetClient().GetApiId()
 }
 
 func (c *CacheAuthData) DeviceModel() string {
-	return c.Client.GetDeviceModel()
+	return c.GetClient().GetDeviceModel()
 }
 
 func (c *CacheAuthData) SystemVersion() string {
-	return c.Client.GetSystemVersion()
+	return c.GetClient().GetSystemVersion()
 }
 
 func (c *CacheAuthData) AppVersion() string {
-	return c.Client.GetAppVersion()
+	return c.GetClient().GetAppVersion()
 }
 
 func (c *CacheAuthData) SystemLangCode() string {
-	return c.Client.GetSystemLangCode()
+	return c.GetClient().GetSystemLangCode()
 }
 
 func (c *CacheAuthData) LangPack() string {
-	return c.Client.GetLangPack()
+	return c.GetClient().GetLangPack()
 }
 
 func (c *CacheAuthData) LangCode() string {
-	return c.Client.GetLangCode()
+	return c.GetClient().GetLangCode()
 }
 
 func (c *CacheAuthData) ClientIp() string {
-	return c.Client.GetIp()
+	return c.GetClient().GetIp()
 }
 
 func (c *CacheAuthData) Proxy() string {
-	return c.Client.GetProxy()
+	return c.GetClient().GetProxy()
 }
 
 func (c *CacheAuthData) Params() string {
-	return c.Client.GetParams()
+	return c.GetClient().GetParams()
 }
 
 func (c *CacheAuthData) UserId() int64 {
-	if c.BindUser == nil {
+	if c == nil || c.BindUser == nil {
 		return 0
 	}
 	return c.BindUser.UserId
 }
 
 func (c *CacheAuthData) DateCreated() int64 {
-	if c.BindUser == nil {
+	if c == nil || c.BindUser == nil {
 		return 0
 	}
 	return c.BindUser.DateCreated
 }
 
 func (c *CacheAuthData) DateActivated() int64 {
-	if c.BindUser == nil {
+	if c == nil || c.BindUser == nil {
 		return 0
 	}
 	return c.BindUser.DateActivated
 }
 
 func (c *CacheAuthData) Hash() int64 {
-	if c.BindUser == nil {
+	if c == nil || c.BindUser == nil {
 		return 0
 	}
 	return c.BindUser.Hash

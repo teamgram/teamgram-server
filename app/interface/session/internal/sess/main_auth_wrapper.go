@@ -74,6 +74,10 @@ func (s *SessionList) destroySession(sessionId int64) bool {
 	return true
 }
 
+func (s *SessionList) changeAuthState(state int) {
+	s.state = state
+}
+
 type MainAuthWrapper struct {
 	authKeyId            int64
 	state                int
@@ -129,6 +133,26 @@ func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client
 
 	mainAuth.Start()
 	return mainAuth
+}
+
+func (m *MainAuthWrapper) changeAuthState(state int, stateData interface{}) {
+	m.state = state
+
+	switch state {
+	case mtproto.AuthStateUnknown:
+		m.AuthUserId = 0
+		m.cb.DeleteByAuthKeyId(m.authKeyId)
+	case mtproto.AuthStateLogout:
+		m.AuthUserId = 0
+		m.cb.DeleteByAuthKeyId(m.authKeyId)
+	case mtproto.AuthStateDeleted:
+		m.AuthUserId = 0
+		m.cb.DeleteByAuthKeyId(m.authKeyId)
+	case mtproto.AuthStateNormal:
+		m.AuthUserId = stateData.(int64)
+	default:
+		m.AuthUserId = 0
+	}
 }
 
 func (m *MainAuthWrapper) resetAuth(kType int, authId int64) (lastAuthId int64) {
@@ -268,6 +292,10 @@ func (m *MainAuthWrapper) onUpdateLayer(ctx context.Context, layer int32) {
 func (m *MainAuthWrapper) onUpdateInitConnection(ctx context.Context, clientIp string, initConnection *mtproto.TLInitConnection) {
 	if initConnection == nil {
 		return
+	}
+
+	if m.state < mtproto.AuthStateUnauthorized {
+		m.state = mtproto.AuthStateUnauthorized
 	}
 
 	clientNeedUpdate := false
@@ -476,24 +504,25 @@ func (m *MainAuthWrapper) String() string {
 
 func (m *MainAuthWrapper) Start() {
 	m.running.Set(true)
-	m.finish.Add(1)
 	go m.rpcRunLoop()
 	go m.runLoop()
 }
 
 func (m *MainAuthWrapper) Stop() {
-	m.delOnline()
 	m.running.Set(false)
 	m.rpcQueue.Close()
+	m.finish.Wait()
 }
 
 func (m *MainAuthWrapper) runLoop() {
+	m.finish.Add(1)
+
 	defer func() {
-		m.finish.Done()
+		m.delOnline()
 		close(m.closeChan)
 		close(m.sessionDataChan)
 		close(m.rpcDataChan)
-		m.finish.Wait()
+		m.finish.Done()
 	}()
 
 	ticker := time.NewTicker(1 * time.Second)
@@ -546,6 +575,11 @@ func (m *MainAuthWrapper) runLoop() {
 }
 
 func (m *MainAuthWrapper) rpcRunLoop() {
+	m.finish.Add(1)
+	defer func() {
+		m.finish.Done()
+	}()
+
 	for {
 		apiRequest := m.rpcQueue.Pop()
 		if apiRequest == nil {
@@ -902,8 +936,9 @@ func (m *MainAuthWrapper) onSyncData(ctx context.Context, syncMsg *syncData) {
 				logx.WithContext(ctx).Error("upds -- ", upds)
 			}
 			// m.cb.Dao.PutCacheUserId(context.Background(), m.authKeyId, 0)
-			m.cb.DeleteByAuthKeyId(m.authKeyId)
-			m.AuthUserId = 0
+			// m.cb.DeleteByAuthKeyId(m.authKeyId)
+			m.changeAuthState(mtproto.AuthStateDeleted, 0)
+			// m.AuthUserId = 0
 			return
 		}
 	}

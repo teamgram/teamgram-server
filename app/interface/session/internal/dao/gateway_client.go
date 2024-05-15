@@ -29,12 +29,6 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
-// eGateOptions comet options.
-type gatewayOptions struct {
-	RoutineSize uint64
-	RoutineChan uint64
-}
-
 // Gateway eGateClient is a gateway.
 type Gateway struct {
 	serverId     string
@@ -48,8 +42,6 @@ type Gateway struct {
 func NewGateway(c zrpc.RpcClientConf) (*Gateway, error) {
 	g := &Gateway{
 		serverId: c.Endpoints[0],
-		// client: make([]chan interface{}, options.RoutineSize),
-		// options:     options,
 	}
 
 	cli, err := zrpc.NewClient(c)

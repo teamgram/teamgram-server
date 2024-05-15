@@ -370,28 +370,20 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	}
 
 	switch c.sessList.cb.state {
-	case mtproto.AuthStateNew:
-	case mtproto.AuthStatePermBound:
-	case mtproto.AuthStateWaitInit:
-	case mtproto.AuthStateUnauthorized:
-	case mtproto.AuthStateNeedPassword:
 	case mtproto.AuthStateNormal:
-		//logx.WithContext(ctx).Errorf("not found authUserId by authKeyId: %d", c.sessList.cb.authKeyId)
-		//if !checkRpcWithoutLogin(query) {
-		//	// 401
-		//	rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
-		//		ErrorCode:    401,
-		//		ErrorMessage: "AUTH_KEY_UNREGISTERED",
-		//	}}
-		//	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcError)
-		//	msgId.state = RECEIVED | RESPONSE_GENERATED
-		//}
-		//return false
-	case mtproto.AuthStateLogout:
-		logx.WithContext(ctx).Errorf("authUserId is logout: %d", c.sessList.cb.authKeyId)
-	case mtproto.AuthStateDeleted:
+		// state is ok
+	case mtproto.AuthStateNeedPassword:
+		if !checkRpcWithoutLogin(query) {
+			c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, mtproto.NewRpcError(mtproto.ErrSessionPasswordNeeded))
+			msgId.state = RECEIVED | RESPONSE_GENERATED
+			return false
+		}
 	default:
-		logx.WithContext(ctx).Errorf("unknown state: %d", c.sessList.cb.state)
+		if !checkRpcWithoutLogin(query) {
+			c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, mtproto.NewRpcError(mtproto.ErrAuthKeyUnregistered))
+			msgId.state = RECEIVED | RESPONSE_GENERATED
+			return false
+		}
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
@@ -411,37 +403,60 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 }
 
 func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
-	rpcErr, ok := rpcResult.TryGetRpcResultError()
-	if ok {
-		if rpcErr.GetErrorCode() == int32(mtproto.ErrNotReturnClient) {
-			logx.WithContext(ctx).Debugf("recv NOTRETURN_CLIENT")
-			c.pendingQueue.Add(rpcResult.reqMsgId)
-			return
-		}
+	rpcErr, _ := rpcResult.TryGetRpcResultError()
+	if rpcErr != nil && rpcErr.GetErrorCode() == int32(mtproto.ErrNotReturnClient) {
+		logx.WithContext(ctx).Debugf("recv NOTRETURN_CLIENT")
+		c.pendingQueue.Add(rpcResult.reqMsgId)
+		return
 	}
 
 	switch request := rpcResult.reqMsg.(type) {
 	case *mtproto.TLAuthBindTempAuthKey:
-		if ok {
+		if rpcErr != nil {
 			_ = request
 			if rpcErr.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-				// c.sessList.cb.cb.Dao.PutCacheUserId(context.Background(), c.sessList.cb.authKeyId, 0)
-				c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.authId)
-				c.sessList.cb.AuthUserId = 0
+				c.sessList.cb.changeAuthState(mtproto.AuthStateUnknown, 0)
+				// c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.authId)
 			}
 		} else {
-			c.sessList.cb.cb.Dao.PutCachePermAuthKeyId(ctx, c.sessList.authId, request.PermAuthKeyId)
+			c.sessList.changeAuthState(mtproto.AuthStatePermBound)
+		}
+	case *mtproto.TLAuthLogOut:
+		c.sessList.cb.changeAuthState(mtproto.AuthStateLogout, 0)
+	case *mtproto.TLAuthSignIn:
+		if rpcErr == nil {
+			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
+			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
+				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+			}
+		} else {
+			if rpcErr.Message() == "SESSION_PASSWORD_NEEDED" {
+				c.sessList.cb.changeAuthState(mtproto.AuthStateNeedPassword, nil)
+			}
+		}
+	case *mtproto.TLAuthSignUp:
+		if rpcErr == nil {
+			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
+			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
+				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+			}
+		}
+	case *mtproto.TLAuthImportAuthorization:
+		if rpcErr == nil && c.sessList.cb.state == mtproto.AuthStateNeedPassword {
+			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
+			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
+				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+			}
+		}
+	case *mtproto.TLAuthCheckPassword:
+		if rpcErr == nil && c.sessList.cb.state == mtproto.AuthStateNeedPassword {
+			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
+			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
+				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+			}
 		}
 	default:
 	}
-
-	defer func() {
-		switch rpcResult.reqMsg.(type) {
-		case *mtproto.TLAuthLogOut:
-			c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.cb.authKeyId)
-		default:
-		}
-	}()
 
 	c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
 }
