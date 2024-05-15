@@ -65,7 +65,7 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 
 	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    fromId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    in.ChatId,
 		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{

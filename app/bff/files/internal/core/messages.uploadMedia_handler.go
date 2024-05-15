@@ -59,7 +59,7 @@ func (c *FilesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMed
 			photo *mtproto.Photo
 		)
 		photo, err = c.svcCtx.Dao.MediaClient.MediaUploadPhotoFile(c.ctx, &mediapb.TLMediaUploadPhotoFile{
-			OwnerId:    c.MD.AuthId,
+			OwnerId:    c.MD.PermAuthKeyId,
 			File:       media.File,
 			Stickers:   nil,
 			TtlSeconds: nil,
@@ -139,7 +139,7 @@ func (c *FilesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMed
 		//	stickers:flags.0?Vector<InputDocument>
 		//	ttl_seconds:flags.1?int = InputMedia;
 		documentMedia, err2 := c.svcCtx.Dao.MediaClient.MediaUploadedDocumentMedia(c.ctx, &mediapb.TLMediaUploadedDocumentMedia{
-			OwnerId: c.MD.AuthId,
+			OwnerId: c.MD.PermAuthKeyId,
 			Media:   media,
 		})
 		if err2 != nil {

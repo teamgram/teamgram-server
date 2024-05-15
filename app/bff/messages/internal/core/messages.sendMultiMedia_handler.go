@@ -196,7 +196,7 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMultiMessage(c.ctx, &msgpb.TLMsgSendMultiMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  peer.PeerType,
 		PeerId:    peer.PeerId,
 		Message:   outboxMultiMedia,

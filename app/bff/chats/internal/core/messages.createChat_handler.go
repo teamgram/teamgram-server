@@ -140,7 +140,7 @@ func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, tt
 	// TODO: add attach_data (chat and chat_participants)
 	rValue, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    chat.Chat.Id,
 		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{

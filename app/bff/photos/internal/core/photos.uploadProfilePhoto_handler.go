@@ -29,7 +29,7 @@ import (
 // photos.uploadProfilePhoto#89f30f69 flags:# file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = photos.Photo;
 func (c *PhotosCore) PhotosUploadProfilePhoto(in *mtproto.TLPhotosUploadProfilePhoto) (*mtproto.Photos_Photo, error) {
 	photo, err := c.svcCtx.Dao.MediaClient.MediaUploadProfilePhotoFile(c.ctx, &mediapb.TLMediaUploadProfilePhotoFile{
-		OwnerId:      c.MD.AuthId,
+		OwnerId:      c.MD.PermAuthKeyId,
 		File:         in.GetFile(),
 		Video:        in.GetVideo(),
 		VideoStartTs: in.GetVideoStartTs(),

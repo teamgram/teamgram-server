@@ -34,7 +34,7 @@ func (c *AccountCore) AccountResetAuthorization(in *mtproto.TLAccountResetAuthor
 
 	tKeyIdList, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionResetAuthorization(c.ctx, &authsession.TLAuthsessionResetAuthorization{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		Hash:      in.Hash,
 	})
 

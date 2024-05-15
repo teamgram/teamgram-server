@@ -85,13 +85,13 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	// 6. check can do action
 	actionType := logic.GetActionType(in)
-	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.AuthId, phoneNumber, actionType); err != nil {
+	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.PermAuthKeyId, phoneNumber, actionType); err != nil {
 		c.Logger.Errorf("check can do action - %s: %v", phoneNumber, err)
 		return nil, err
 	}
 
 	codeData, err2 := c.svcCtx.AuthLogic.DoAuthSignIn(c.ctx,
-		c.MD.AuthId,
+		c.MD.PermAuthKeyId,
 		phoneNumber,
 		phoneCode,
 		phoneCodeHash,
@@ -202,10 +202,10 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 			}
 
 			threading2.WrapperGoFunc(c.ctx, nil, func(ctx context.Context) {
-				c.onContactSignUp(ctx, c.MD.AuthId, user.Id(), phoneNumber)
+				c.onContactSignUp(ctx, c.MD.PermAuthKeyId, user.Id(), phoneNumber)
 
 				// on event
-				// c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
+				// c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.PermAuthKeyId, phoneNumber, in.PhoneCodeHash)
 				c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
 			})
 
@@ -233,7 +233,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	// Bind authKeyId and userId
 	c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		UserId:    user.User.Id,
 	})
 
@@ -248,7 +248,7 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	selfUser := user.ToSelfUser()
 
-	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.AuthId, in.PhoneNumber, phoneCodeHash)
+	c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.PermAuthKeyId, in.PhoneNumber, phoneCodeHash)
 	region, _ := c.svcCtx.Dao.GetCountryAndRegionByIp(c.MD.ClientAddr)
 
 	var (
@@ -257,12 +257,12 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	)
 
 	if len(c.svcCtx.Config.SignInServiceNotification) == 0 {
-		signInN = mtproto.MakeSignInServiceNotification(selfUser, c.MD.AuthId, c.MD.Client, region, c.MD.ClientAddr)
+		signInN = mtproto.MakeSignInServiceNotification(selfUser, c.MD.PermAuthKeyId, c.MD.Client, region, c.MD.ClientAddr)
 	} else {
 		signInN = mtproto.MakeTLUpdateServiceNotification(&mtproto.Update{
 			Popup:          false,
 			InboxDate:      mtproto.MakeFlagsInt32(int32(now.Unix())),
-			Type:           fmt.Sprintf("auth%d_%d", c.MD.AuthId, now.Unix()),
+			Type:           fmt.Sprintf("auth%d_%d", c.MD.PermAuthKeyId, now.Unix()),
 			Message_STRING: "",
 			Media:          mtproto.MakeTLMessageMediaEmpty(nil).To_MessageMedia(),
 			Entities:       nil,

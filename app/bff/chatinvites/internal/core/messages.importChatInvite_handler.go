@@ -108,7 +108,7 @@ func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportC
 			c.ctx,
 			&msgpb.TLMsgSendMessage{
 				UserId:    c.MD.UserId,
-				AuthKeyId: c.MD.AuthId,
+				AuthKeyId: c.MD.PermAuthKeyId,
 				PeerType:  mtproto.PEER_CHAT,
 				PeerId:    mChat.Id(),
 				Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{

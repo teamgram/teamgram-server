@@ -39,7 +39,7 @@ func (c *MessagesCore) MessagesUpdatePinnedMessage(in *mtproto.TLMessagesUpdateP
 
 	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgUpdatePinnedMessage(c.ctx, &msgpb.TLMsgUpdatePinnedMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		Silent:    in.Silent,
 		Unpin:     in.Unpin,
 		PmOneside: in.PmOneside,

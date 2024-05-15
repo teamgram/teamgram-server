@@ -116,14 +116,14 @@ func (c *AuthorizationCore) AuthResendCode(in *mtproto.TLAuthResendCode) (*mtpro
 
 	// 6. check can do action
 	actionType := logic.GetActionType(in)
-	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.AuthId, phoneNumber, actionType); err != nil {
+	if err = c.svcCtx.Dao.CheckCanDoAction(c.ctx, c.MD.PermAuthKeyId, phoneNumber, actionType); err != nil {
 		c.Logger.Errorf("check can do action - %s: %v", phoneNumber, err)
 		return nil, err
 	}
 
 	// codeLogic := logic.NewAuthSignLogic(s.AuthCore)
 	codeData, err2 := c.svcCtx.AuthLogic.DoAuthReSendCode(c.ctx,
-		c.MD.AuthId,
+		c.MD.PermAuthKeyId,
 		phoneNumber,
 		in.PhoneCodeHash,
 		func(codeData2 *model.PhoneCodeTransaction) error {

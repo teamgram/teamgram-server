@@ -27,7 +27,7 @@ import (
 // updates.getState#edd4882a = updates.State;
 func (c *UpdatesCore) UpdatesGetState(in *mtproto.TLUpdatesGetState) (*mtproto.Updates_State, error) {
 	rValue, err := c.svcCtx.Dao.UpdatesClient.UpdatesGetStateV2(c.ctx, &updates.TLUpdatesGetStateV2{
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		UserId:    c.MD.UserId,
 	})
 	if err != nil {

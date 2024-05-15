@@ -29,7 +29,7 @@ func (c *MessagesCore) MessagesDeleteMessages(in *mtproto.TLMessagesDeleteMessag
 	// TODO(@benqi): Check message service.
 	affectedMessages, err := c.svcCtx.Dao.MsgClient.MsgDeleteMessages(c.ctx, &msgpb.TLMsgDeleteMessages{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_EMPTY,
 		PeerId:    0,
 		Revoke:    in.Revoke,

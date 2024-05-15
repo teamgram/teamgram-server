@@ -128,7 +128,7 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *mtproto.TLMessagesGetPeerDialog
 		func() error {
 			var err2 error
 			state, err2 = c.svcCtx.Dao.UpdatesClient.UpdatesGetStateV2(c.ctx, &updates.TLUpdatesGetStateV2{
-				AuthKeyId: c.MD.AuthId,
+				AuthKeyId: c.MD.PermAuthKeyId,
 				UserId:    c.MD.UserId,
 			})
 			if err2 != nil {

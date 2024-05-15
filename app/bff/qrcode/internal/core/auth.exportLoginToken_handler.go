@@ -38,13 +38,13 @@ func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*
 	// 1. check api_id, api_hash
 	// 2. check except_ids
 
-	qrCode, err := c.svcCtx.Dao.GetCacheQRLoginCode(c.ctx, c.MD.AuthId)
+	qrCode, err := c.svcCtx.Dao.GetCacheQRLoginCode(c.ctx, c.MD.PermAuthKeyId)
 	if err != nil {
 		c.Logger.Errorf("getQRCode - error: %v", err)
 		return nil, err
 	} else if qrCode == nil {
 		qrCode = &model.QRCodeTransaction{
-			AuthKeyId: c.MD.AuthId,
+			AuthKeyId: c.MD.PermAuthKeyId,
 			SessionId: c.MD.SessionId,
 			ServerId:  c.MD.ServerId,
 			ApiId:     in.ApiId,
@@ -55,7 +55,7 @@ func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*
 			State:     model.QRCodeStateNew,
 		}
 		c.Logger.Infof("putQRCode - %#v", qrCode)
-		if err = c.svcCtx.Dao.PutCacheQRLoginCode(c.ctx, c.MD.AuthId, qrCode, qrCodeTimeout+2); err != nil {
+		if err = c.svcCtx.Dao.PutCacheQRLoginCode(c.ctx, c.MD.PermAuthKeyId, qrCode, qrCodeTimeout+2); err != nil {
 			c.Logger.Errorf("putQRCode - error: %v", err)
 			return nil, err
 		}

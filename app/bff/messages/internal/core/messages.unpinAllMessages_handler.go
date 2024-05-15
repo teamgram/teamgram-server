@@ -42,7 +42,7 @@ func (c *MessagesCore) MessagesUnpinAllMessages(in *mtproto.TLMessagesUnpinAllMe
 
 	rValues, err := c.svcCtx.Dao.MsgClient.MsgUnpinAllMessages(c.ctx, &msgpb.TLMsgUnpinAllMessages{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  peer.PeerType,
 		PeerId:    peer.PeerId,
 	})

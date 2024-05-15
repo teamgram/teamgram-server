@@ -48,7 +48,7 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 
 		// file := request.GetFile()
 		photo, err = c.svcCtx.Dao.MediaClient.MediaUploadProfilePhotoFile(c.ctx, &mediapb.TLMediaUploadProfilePhotoFile{
-			OwnerId:      c.MD.AuthId,
+			OwnerId:      c.MD.PermAuthKeyId,
 			File:         chatPhoto.GetFile(),
 			Video:        chatPhoto.GetVideo(),
 			VideoStartTs: chatPhoto.GetVideoStartTs(),
@@ -138,7 +138,7 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 
 	replyUpdates, err := c.svcCtx.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    in.ChatId,
 		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{

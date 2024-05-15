@@ -29,7 +29,7 @@ import (
 func (c *AuthorizationCore) AuthLogOut(in *mtproto.TLAuthLogOut) (*mtproto.Auth_LoggedOut, error) {
 	// unbind auth_key and user_id
 	_, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionUnbindAuthKeyUser(c.ctx, &authsession.TLAuthsessionUnbindAuthKeyUser{
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		UserId:    c.MD.UserId,
 	})
 	if err != nil {
@@ -37,7 +37,7 @@ func (c *AuthorizationCore) AuthLogOut(in *mtproto.TLAuthLogOut) (*mtproto.Auth_
 		return nil, err
 	} else {
 		if c.svcCtx.Plugin != nil {
-			c.svcCtx.Plugin.OnAuthLogout(c.ctx, c.MD.UserId, c.MD.AuthId)
+			c.svcCtx.Plugin.OnAuthLogout(c.ctx, c.MD.UserId, c.MD.PermAuthKeyId)
 		}
 	}
 

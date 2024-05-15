@@ -114,7 +114,7 @@ import (
 // AuthSendCode
 // auth.sendCode#a677244f phone_number:string api_id:int api_hash:string settings:CodeSettings = auth.SentCode;
 func (c *AuthorizationCore) AuthSendCode(in *mtproto.TLAuthSendCode) (*mtproto.Auth_SentCode, error) {
-	rValue, err := c.authSendCode(c.MD.AuthId, c.MD.SessionId, in)
+	rValue, err := c.authSendCode(c.MD.PermAuthKeyId, c.MD.SessionId, in)
 	if err != nil {
 		c.Logger.Errorf("auth.sendCode - error: {%v}", err)
 		return nil, err
@@ -286,7 +286,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 
 				// Bind authKeyId and userId
 				c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
-					AuthKeyId: c.MD.AuthId,
+					AuthKeyId: c.MD.PermAuthKeyId,
 					UserId:    user.User.Id,
 				})
 

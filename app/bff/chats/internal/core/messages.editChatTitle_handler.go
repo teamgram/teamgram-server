@@ -47,7 +47,7 @@ func (c *ChatsCore) MessagesEditChatTitle(in *mtproto.TLMessagesEditChatTitle) (
 
 	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    in.ChatId,
 		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{

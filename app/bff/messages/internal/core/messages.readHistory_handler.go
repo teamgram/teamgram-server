@@ -38,7 +38,7 @@ func (c *MessagesCore) MessagesReadHistory(in *mtproto.TLMessagesReadHistory) (*
 
 	return c.svcCtx.Dao.MsgClient.MsgReadHistory(c.ctx, &msgpb.TLMsgReadHistory{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  peer.PeerType,
 		PeerId:    peer.PeerId,
 		MaxId:     in.MaxId,

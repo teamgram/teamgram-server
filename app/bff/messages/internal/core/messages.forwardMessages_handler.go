@@ -97,7 +97,7 @@ func (c *MessagesCore) MessagesForwardMessages(in *mtproto.TLMessagesForwardMess
 
 	rUpdates, err = c.svcCtx.Dao.MsgClient.MsgSendMultiMessage(c.ctx, &msgpb.TLMsgSendMultiMessage{
 		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  toPeer.PeerType,
 		PeerId:    toPeer.PeerId,
 		Message:   fwdOutboxList,

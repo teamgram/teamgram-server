@@ -113,7 +113,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 		codeData *model.PhoneCodeTransaction
 	)
 	// phoneRegistered := auth.CheckPhoneNumberExist(phoneNumber)
-	codeData, err = c.svcCtx.AuthLogic.DoAuthSignUp(c.ctx, c.MD.AuthId, phoneNumber, phoneCode, in.PhoneCodeHash)
+	codeData, err = c.svcCtx.AuthLogic.DoAuthSignUp(c.ctx, c.MD.PermAuthKeyId, phoneNumber, phoneCode, in.PhoneCodeHash)
 	if err != nil {
 		c.Logger.Errorf(err.Error())
 		return nil, err
@@ -194,7 +194,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 
 	// bind auth_key and user_id
 	_, err = c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
-		AuthKeyId: c.MD.AuthId,
+		AuthKeyId: c.MD.PermAuthKeyId,
 		UserId:    user.User.Id,
 	})
 	if err != nil {
@@ -214,9 +214,9 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 		}).To_Auth_Authorization(),
 		func(ctx context.Context) {
 			// on event
-			c.svcCtx.AuthLogic.DeletePhoneCode(ctx, c.MD.AuthId, phoneNumber, in.PhoneCodeHash)
+			c.svcCtx.AuthLogic.DeletePhoneCode(ctx, c.MD.PermAuthKeyId, phoneNumber, in.PhoneCodeHash)
 			// c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
-			c.onContactSignUp(ctx, c.MD.AuthId, user.Id(), phoneNumber)
+			c.onContactSignUp(ctx, c.MD.PermAuthKeyId, user.Id(), phoneNumber)
 		},
 	).(*mtproto.Auth_Authorization), nil
 }
