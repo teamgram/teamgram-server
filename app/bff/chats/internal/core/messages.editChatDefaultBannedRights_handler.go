@@ -56,9 +56,9 @@ func (c *ChatsCore) MessagesEditChatDefaultBannedRights(in *mtproto.TLMessagesEd
 		}).To_Updates()
 
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-			UserId:    c.MD.UserId,
-			AuthKeyId: c.MD.AuthId,
-			Updates:   defaultBannedUpdates,
+			UserId:        c.MD.UserId,
+			PermAuthKeyId: c.MD.PermAuthKeyId,
+			Updates:       defaultBannedUpdates,
 		})
 		chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
 			if userId != c.MD.UserId {

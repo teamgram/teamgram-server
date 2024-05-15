@@ -12,8 +12,8 @@ package session
 
 const (
 	CRC32_UNKNOWN                        TLConstructor = 0
-	CRC32_sessionClientEvent             TLConstructor = -548007522  // 0xdf56119e
-	CRC32_sessionClientData              TLConstructor = -870242788  // 0xcc21261c
+	CRC32_sessionClientEvent             TLConstructor = -243320993  // 0xf17f375f
+	CRC32_sessionClientData              TLConstructor = 1101139022  // 0x41a20c4e
 	CRC32_httpSessionData                TLConstructor = -606579889  // 0xdbd8534f
 	CRC32_session_queryAuthKey           TLConstructor = 1798174801  // 0x6b2df851
 	CRC32_session_setAuthKey             TLConstructor = 487672075   // 0x1d11490b

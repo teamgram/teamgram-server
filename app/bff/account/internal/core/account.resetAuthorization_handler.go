@@ -48,20 +48,20 @@ func (c *AccountCore) AccountResetAuthorization(in *mtproto.TLAccountResetAuthor
 		c.svcCtx.Dao.SyncClient.SyncUpdatesMe(
 			c.ctx,
 			&sync.TLSyncUpdatesMe{
-				UserId:    c.MD.UserId,
-				AuthKeyId: id,
-				ServerId:  "",
-				SessionId: nil,
-				Updates:   mtproto.MakeTLUpdatesTooLong(nil).To_Updates(),
+				UserId:        c.MD.UserId,
+				PermAuthKeyId: id,
+				ServerId:      "",
+				SessionId:     nil,
+				Updates:       mtproto.MakeTLUpdatesTooLong(nil).To_Updates(),
 			})
 
 		c.svcCtx.Dao.SyncClient.SyncUpdatesMe(
 			c.ctx,
 			&sync.TLSyncUpdatesMe{
-				UserId:    c.MD.UserId,
-				AuthKeyId: id,
-				ServerId:  "",
-				SessionId: nil,
+				UserId:        c.MD.UserId,
+				PermAuthKeyId: id,
+				ServerId:      "",
+				SessionId:     nil,
 				Updates: mtproto.MakeTLUpdateAccountResetAuthorization(&mtproto.Updates{
 					UserId:    c.MD.UserId,
 					AuthKeyId: id,

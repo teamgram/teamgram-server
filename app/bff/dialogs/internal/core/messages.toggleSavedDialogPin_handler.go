@@ -86,9 +86,9 @@ func (c *DialogsCore) MessagesToggleSavedDialogPin(in *mtproto.TLMessagesToggleS
 			// TODO
 		})
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
-		Updates:   syncUpdates,
+		UserId:        c.MD.UserId,
+		PermAuthKeyId: c.MD.PermAuthKeyId,
+		Updates:       syncUpdates,
 	})
 
 	return mtproto.BoolTrue, nil

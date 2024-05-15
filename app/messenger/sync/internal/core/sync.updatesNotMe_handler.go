@@ -19,7 +19,7 @@ import (
 func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*mtproto.Void, error) {
 	var (
 		userId    = in.GetUserId()
-		authKeyId = in.GetAuthKeyId()
+		authKeyId = in.GetPermAuthKeyId()
 		updates   = in.GetUpdates()
 	)
 

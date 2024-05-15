@@ -30,9 +30,9 @@ var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	-646863312: func() mtproto.TLObject { // 0xd971a630
+	-532639977: func() mtproto.TLObject { // 0xe0408f17
 		o := MakeTLAuthKeyStateData(nil)
-		o.Data2.Constructor = -646863312
+		o.Data2.Constructor = -532639977
 		return o
 	},
 	-1701940816: func() mtproto.TLObject { // 0x9a8e71b0
@@ -192,7 +192,7 @@ func (m *AuthKeyStateData) CalcByteSize(layer int32) int {
 func (m *AuthKeyStateData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xd971a630:
+	case 0xe0408f17:
 		m2 := MakeTLAuthKeyStateData(m)
 		m2.Decode(dBuf)
 
@@ -238,23 +238,28 @@ func (m *TLAuthKeyStateData) To_AuthKeyStateData() *AuthKeyStateData {
 	return m.Data2
 }
 
+// // flags
 func (m *TLAuthKeyStateData) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLAuthKeyStateData) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
-
-func (m *TLAuthKeyStateData) SetUserId(v int64) { m.Data2.UserId = v }
-func (m *TLAuthKeyStateData) GetUserId() int64  { return m.Data2.UserId }
 
 func (m *TLAuthKeyStateData) SetKeyState(v int32) { m.Data2.KeyState = v }
 func (m *TLAuthKeyStateData) GetKeyState() int32  { return m.Data2.KeyState }
 
-func (m *TLAuthKeyStateData) SetLayer(v int32) { m.Data2.Layer = v }
-func (m *TLAuthKeyStateData) GetLayer() int32  { return m.Data2.Layer }
+func (m *TLAuthKeyStateData) SetUserId(v int64) { m.Data2.UserId = v }
+func (m *TLAuthKeyStateData) GetUserId() int64  { return m.Data2.UserId }
 
-func (m *TLAuthKeyStateData) SetClientType(v int32) { m.Data2.ClientType = v }
-func (m *TLAuthKeyStateData) GetClientType() int32  { return m.Data2.ClientType }
+func (m *TLAuthKeyStateData) SetAccessHash(v int64) { m.Data2.AccessHash = v }
+func (m *TLAuthKeyStateData) GetAccessHash() int64  { return m.Data2.AccessHash }
 
-func (m *TLAuthKeyStateData) SetAndroidPushSessionId(v int64) { m.Data2.AndroidPushSessionId = v }
-func (m *TLAuthKeyStateData) GetAndroidPushSessionId() int64  { return m.Data2.AndroidPushSessionId }
+func (m *TLAuthKeyStateData) SetClient(v *ClientSession) { m.Data2.Client = v }
+func (m *TLAuthKeyStateData) GetClient() *ClientSession  { return m.Data2.Client }
+
+func (m *TLAuthKeyStateData) SetAndroidPushSessionId(v *wrapperspb.Int64Value) {
+	m.Data2.AndroidPushSessionId = v
+}
+func (m *TLAuthKeyStateData) GetAndroidPushSessionId() *wrapperspb.Int64Value {
+	return m.Data2.AndroidPushSessionId
+}
 
 func (m *TLAuthKeyStateData) GetPredicateName() string {
 	return Predicate_authKeyStateData
@@ -262,15 +267,38 @@ func (m *TLAuthKeyStateData) GetPredicateName() string {
 
 func (m *TLAuthKeyStateData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xd971a630: func() error {
-			x.UInt(0xd971a630)
+		0xe0408f17: func() error {
+			x.UInt(0xe0408f17)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetClient() != nil {
+					flags |= 1 << 0
+				}
+				if m.GetAndroidPushSessionId() != nil {
+					flags |= 1 << 1
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
 			x.Long(m.GetAuthKeyId())
-			x.Long(m.GetUserId())
 			x.Int(m.GetKeyState())
-			x.Int(m.GetLayer())
-			x.Int(m.GetClientType())
-			x.Long(m.GetAndroidPushSessionId())
+			x.Long(m.GetUserId())
+			x.Long(m.GetAccessHash())
+			if m.GetClient() != nil {
+				m.GetClient().Encode(x, layer)
+			}
+
+			if m.GetAndroidPushSessionId() != nil {
+				x.Long(m.GetAndroidPushSessionId().Value)
+			}
+
 			return nil
 		},
 	}
@@ -293,13 +321,22 @@ func (m *TLAuthKeyStateData) CalcByteSize(layer int32) int {
 
 func (m *TLAuthKeyStateData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xd971a630: func() error {
+		0xe0408f17: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
 			m.SetAuthKeyId(dBuf.Long())
-			m.SetUserId(dBuf.Long())
 			m.SetKeyState(dBuf.Int())
-			m.SetLayer(dBuf.Int())
-			m.SetClientType(dBuf.Int())
-			m.SetAndroidPushSessionId(dBuf.Long())
+			m.SetUserId(dBuf.Long())
+			m.SetAccessHash(dBuf.Long())
+			if (flags & (1 << 0)) != 0 {
+				m5 := &ClientSession{}
+				m5.Decode(dBuf)
+				m.SetClient(m5)
+			}
+			if (flags & (1 << 1)) != 0 {
+				m.SetAndroidPushSessionId(&wrapperspb.Int64Value{Value: dBuf.Long()})
+			}
+
 			return dBuf.GetError()
 		},
 	}

@@ -71,13 +71,13 @@ func (c *session) onNewSessionCreated(ctx context.Context, gatewayId string, msg
 	newSessionCreated := mtproto.MakeTLNewSessionCreated(&mtproto.NewSession{
 		FirstMsgId: msgId,
 		UniqueId:   rand.Int63(),
-		ServerSalt: c.cb.getCacheSalt(ctx).GetSalt(),
+		ServerSalt: c.sessList.cacheSalt.GetSalt(),
 	})
 
 	logx.WithContext(ctx).Infof("onNewSessionCreated - reply: {%v}", newSessionCreated)
 
 	c.sendDirectToGateway(ctx, gatewayId, true, newSessionCreated, func(sentRaw *mtproto.TLMessageRawData) {
-		id2 := c.authSessions.getNextNotifyId()
+		id2 := c.sessList.cb.getNextNotifyId()
 		sentMsg := c.outQueue.AddNotifyMsg(id2, true, sentRaw)
 		sentMsg.sent = 0
 	})
@@ -260,7 +260,7 @@ func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId 
 		return
 	}
 
-	if c.cb.destroySession(ctx, request.GetSessionId()) {
+	if c.sessList.destroySession(request.GetSessionId()) {
 		destroySessionOk := mtproto.MakeTLDestroySessionOk(&mtproto.DestroySessionRes{
 			SessionId: request.SessionId,
 		}).To_DestroySessionRes()
@@ -283,7 +283,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 		msgId.seqNo,
 		request)
 
-	salts, err := c.authSessions.Dao.GetFutureSalts(context.Background(), c.cb.getAuthKeyId(ctx), request.Num)
+	salts, err := c.sessList.cb.cb.Dao.GetFutureSalts(context.Background(), c.sessList.authId, request.Num)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("getFutureSalts error: %v", err)
 		return

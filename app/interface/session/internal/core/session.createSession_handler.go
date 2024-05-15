@@ -20,7 +20,6 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
@@ -28,12 +27,22 @@ import (
 // session.createSession client:SessionClientEvent = Bool;
 func (c *SessionCore) SessionCreateSession(in *session.TLSessionCreateSession) (*mtproto.Bool, error) {
 	var (
-		sessList *sess.AuthSessions
-		cli      = in.GetClient()
+		cli = in.GetClient()
 	)
 
-	sessList, _ = c.svcCtx.SessListMgr.GetOrCreateAuthSessions(cli.GetAuthKeyId())
-	sessList.SessionClientNew(c.ctx, cli.GetServerId(), cli.GetSessionId())
+	if cli == nil {
+		err := mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("session.createSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth, err := c.getOrFetchMainAuthWrapper(cli.PermAuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("session.createSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth.SessionClientNew(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
 
 	return mtproto.BoolTrue, nil
 }

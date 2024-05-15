@@ -116,10 +116,10 @@ func (c *QrCodeCore) AuthAcceptLoginToken(in *mtproto.TLAuthAcceptLoginToken) (*
 	c.svcCtx.Dao.SyncClient.SyncUpdatesMe(
 		c.ctx,
 		&sync.TLSyncUpdatesMe{
-			UserId:    user.Id(),
-			AuthKeyId: qrCode.AuthKeyId,
-			ServerId:  qrCode.ServerId,
-			SessionId: mtproto.MakeFlagsInt64(qrCode.SessionId),
+			UserId:        user.Id(),
+			PermAuthKeyId: qrCode.AuthKeyId,
+			ServerId:      qrCode.ServerId,
+			SessionId:     mtproto.MakeFlagsInt64(qrCode.SessionId),
 			Updates: mtproto.MakeTLUpdateShort(&mtproto.Updates{
 				Update: mtproto.MakeTLUpdateLoginToken(nil).To_Update(),
 				Date:   int32(time.Now().Unix()),

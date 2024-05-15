@@ -70,13 +70,13 @@ func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt
 
 	valid := false
 
-	if salt == c.cb.getCacheSalt(ctx).GetSalt() {
+	if salt == c.sessList.cacheSalt.GetSalt() {
 		valid = true
 	} else {
-		if c.cb.getCacheSalt(ctx) != nil {
-			if salt == c.cb.getCacheSalt(ctx).GetSalt() {
+		if c.sessList.cacheSalt != nil {
+			if salt == c.sessList.cacheSalt.GetSalt() {
 				date := int32(time.Now().Unix())
-				if c.cb.getCacheSalt(ctx).GetValidUntil()+300 >= date {
+				if c.sessList.cacheSalt.GetValidUntil()+300 >= date {
 					valid = true
 				}
 			}
@@ -88,9 +88,9 @@ func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt
 			BadMsgId:      msg.MsgId,
 			ErrorCode:     kServerSaltIncorrect,
 			BadMsgSeqno:   msg.Seqno,
-			NewServerSalt: c.cb.getCacheSalt(ctx).GetSalt(),
+			NewServerSalt: c.sessList.cacheSalt.GetSalt(),
 		}).To_BadMsgNotification()
-		logx.WithContext(ctx).Errorf("invalid salt: %d, send badServerSalt: {%v}, cacheSalt: %v", salt, badServerSalt, c.cb.getCacheSalt(ctx))
+		logx.WithContext(ctx).Errorf("invalid salt: %d, send badServerSalt: {%v}, cacheSalt: %v", salt, badServerSalt, c.sessList.cacheLastSalt)
 
 		c.sendDirectToGateway(ctx, gatewayId, false, badServerSalt, func(sentRaw *mtproto.TLMessageRawData) {
 			// nothing do

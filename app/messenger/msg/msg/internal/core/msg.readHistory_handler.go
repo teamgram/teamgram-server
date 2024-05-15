@@ -106,9 +106,9 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 			}).To_Update())
 
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
-				UserId:    in.UserId,
-				AuthKeyId: in.AuthKeyId,
-				Updates:   syncUpdates,
+				UserId:        in.UserId,
+				PermAuthKeyId: in.AuthKeyId,
+				Updates:       syncUpdates,
 			})
 
 			if maxId > dlg.ReadOutboxMaxId {

@@ -13,7 +13,7 @@ package authsession
 const (
 	CRC32_UNKNOWN                          TLConstructor = 0
 	CRC32_clientSession                    TLConstructor = -1701940816 // 0x9a8e71b0
-	CRC32_authKeyStateData                 TLConstructor = -646863312  // 0xd971a630
+	CRC32_authKeyStateData                 TLConstructor = -532639977  // 0xe0408f17
 	CRC32_authsession_getAuthorizations    TLConstructor = 820122180   // 0x30e21244
 	CRC32_authsession_resetAuthorization   TLConstructor = -1923126106 // 0x8d5f6ca6
 	CRC32_authsession_getLayer             TLConstructor = -1473309015 // 0xa82f16a9

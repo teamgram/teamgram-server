@@ -19,7 +19,7 @@ import (
 func (c *SyncCore) SyncUpdatesMe(in *sync.TLSyncUpdatesMe) (*mtproto.Void, error) {
 	c.pushUpdatesToSession(syncTypeUserMe,
 		in.GetUserId(),
-		in.GetAuthKeyId(),
+		in.GetPermAuthKeyId(),
 		in.GetSessionId().GetValue(),
 		in.GetUpdates(),
 		in.GetServerId(),

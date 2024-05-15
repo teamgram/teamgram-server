@@ -215,8 +215,8 @@ func (c *MsgCore) sendUserMultiMessage(
 		updateNewMessageList...)
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    fromUserId,
-		AuthKeyId: fromAuthKeyId,
+		UserId:        fromUserId,
+		PermAuthKeyId: fromAuthKeyId,
 		Updates: mtproto.MakeSyncNotMeUpdates(
 			func(idList []int64) []*mtproto.User {
 				return rUpdates.Users
@@ -331,8 +331,8 @@ func (c *MsgCore) sendChatMultiMessage(
 		updateNewMessageList...)
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    fromUserId,
-		AuthKeyId: fromAuthKeyId,
+		UserId:        fromUserId,
+		PermAuthKeyId: fromAuthKeyId,
 		Updates: mtproto.MakeSyncNotMeUpdates(
 			func(idList []int64) []*mtproto.User {
 				return rUpdates.Users

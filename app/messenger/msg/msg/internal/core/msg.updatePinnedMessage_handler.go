@@ -98,9 +98,9 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*mtp
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 				c.ctx,
 				&sync.TLSyncUpdatesNotMe{
-					UserId:    in.UserId,
-					AuthKeyId: in.AuthKeyId,
-					Updates:   rUpdates,
+					UserId:        in.UserId,
+					PermAuthKeyId: in.AuthKeyId,
+					Updates:       rUpdates,
 				})
 		}
 

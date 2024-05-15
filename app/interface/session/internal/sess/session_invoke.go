@@ -39,7 +39,6 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithLayer Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -55,39 +54,7 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 		return
 	}
 
-	c.cb.setLayer(ctx, request.Layer)
-	c.authSessions.Dao.PutLayer(ctx, c.cb.getAuthKeyId(ctx), request.Layer, clientIp)
-
-	//initConnection, ok := query.(*mtproto.TLInitConnection)
-	//if !ok {
-	//	logx.Errorf("need initConnection, but query is : %v", query)
-	//	c.processMsg(gatewayId, clientIp, msgId, query)
-	//	return
-	//}
-	//
-	//c.cb.setLayer(request.Layer)
-	//c.cb.setClient(initConnection.LangPack)
-	//
-	//c.PutUploadInitConnection(context.Background(), c.cb.getAuthKeyId(), request.Layer, clientIp, initConnection)
-	//
-	//dBuf = mtproto.NewDecodeBuf(initConnection.GetQuery())
-	//query = dBuf.Object()
-	//if dBuf.GetError() != nil {
-	//	logx.Errorf("dBuf query error: %s", dBuf.GetError().Error())
-	//	return
-	//}
-	//
-	//if query == nil {
-	//	logx.Errorf("decode buf is nil, query: %v", query)
-	//	return
-	//}
-
-	//logx.Infof("processMsg - data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, query: {%s}}",
-	//	c,
-	//	gatewayId,
-	//	msgId.msgId,
-	//	msgId.seqNo,
-	//	query.DebugString())
+	c.sessList.cb.onUpdateLayer(ctx, request.Layer)
 
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
@@ -102,7 +69,6 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeAfterMsg Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -117,48 +83,6 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
-
-	//		if invokeAfterMsg.GetQuery() == nil {
-	//			logx.Errorf("invokeAfterMsg Query is nil, query: {%v}", invokeAfterMsg)
-	//			return
-	//		}
-	//
-	//		dbuf := mtproto.NewDecodeBuf(invokeAfterMsg.Query)
-	//		query := dbuf.Object()
-	//		if query == nil {
-	//			logx.Errorf("Decode query error: %s", hex.EncodeToString(invokeAfterMsg.Query))
-	//			return
-	//		}
-	//
-	//		var found = false
-	//		for j := 0; j < i; j++ {
-	//			if messages[j].MsgId == invokeAfterMsg.MsgId {
-	//				messages[i].Object = query
-	//				found = true
-	//				break
-	//			}
-	//		}
-	//
-	//		if !found {
-	//			for j := i + 1; j < len(messages); j++ {
-	//				if messages[j].MsgId == invokeAfterMsg.MsgId {
-	//					// c.messages[i].Object = query
-	//					messages[i].Object = query
-	//					found = true
-	//					messages = append(messages, messages[i])
-	//
-	//					// set messages[i] = nil, will ignore this.
-	//					messages[i] = nil
-	//					break
-	//				}
-	//			}
-	//		}
-	//
-	//		if !found {
-	//			// TODO(@benqi): backup message, wait.
-	//
-	//			messages[i].Object = query
-	//		}
 
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
@@ -173,7 +97,6 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeAfterMsgs Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -189,60 +112,63 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 		return
 	}
 
-	//		if invokeAfterMsgs.GetQuery() == nil {
-	//			logx.Errorf("invokeAfterMsgs Query is nil, query: {%v}", invokeAfterMsgs)
-	//			return
-	//		}
-	//
-	//		dbuf := mtproto.NewDecodeBuf(invokeAfterMsgs.Query)
-	//		query := dbuf.Object()
-	//		if query == nil {
-	//			logx.Errorf("Decode query error: %s", hex.EncodeToString(invokeAfterMsgs.Query))
-	//			return
-	//		}
-	//
-	//		if len(invokeAfterMsgs.MsgIds) == 0 {
-	//			// TODO(@benqi): invalid msgIds, ignore??
-	//
-	//			messages[i].Object = query
-	//		} else {
-	//			var maxMsgId = invokeAfterMsgs.MsgIds[0]
-	//			for j := 1; j < len(invokeAfterMsgs.MsgIds); j++ {
-	//				if maxMsgId > invokeAfterMsgs.MsgIds[j] {
-	//					maxMsgId = invokeAfterMsgs.MsgIds[j]
-	//				}
-	//			}
-	//
-	//
-	//			var found = false
-	//			for j := 0; j < i; j++ {
-	//				if messages[j].MsgId == maxMsgId {
-	//					messages[i].Object = query
-	//					found = true
-	//					break
-	//				}
-	//			}
-	//
-	//			if !found {
-	//				for j := i + 1; j < len(messages); j++ {
-	//					if messages[j].MsgId == maxMsgId {
-	//						// c.messages[i].Object = query
-	//						messages[i].Object = query
-	//						found = true
-	//						messages = append(messages, messages[i])
-	//
-	//						// set messages[i] = nil, will ignore this.
-	//						messages[i] = nil
-	//						break
-	//					}
-	//				}
-	//			}
-	//
-	//			if !found {
-	//				// TODO(@benqi): backup message, wait.
-	//
-	//				messages[i].Object = query
-	//			}
+	/*
+		if invokeAfterMsgs.GetQuery() == nil {
+			logx.Errorf("invokeAfterMsgs Query is nil, query: {%v}", invokeAfterMsgs)
+			return
+		}
+
+		dbuf := mtproto.NewDecodeBuf(invokeAfterMsgs.Query)
+		query := dbuf.Object()
+		if query == nil {
+			logx.Errorf("Decode query error: %s", hex.EncodeToString(invokeAfterMsgs.Query))
+			return
+		}
+
+		if len(invokeAfterMsgs.MsgIds) == 0 {
+			// TODO(@benqi): invalid msgIds, ignore??
+
+			messages[i].Object = query
+		} else {
+			var maxMsgId = invokeAfterMsgs.MsgIds[0]
+			for j := 1; j < len(invokeAfterMsgs.MsgIds); j++ {
+				if maxMsgId > invokeAfterMsgs.MsgIds[j] {
+					maxMsgId = invokeAfterMsgs.MsgIds[j]
+				}
+			}
+
+
+			var found = false
+			for j := 0; j < i; j++ {
+				if messages[j].MsgId == maxMsgId {
+					messages[i].Object = query
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				for j := i + 1; j < len(messages); j++ {
+					if messages[j].MsgId == maxMsgId {
+						// c.messages[i].Object = query
+						messages[i].Object = query
+						found = true
+						messages = append(messages, messages[i])
+
+						// set messages[i] = nil, will ignore this.
+						messages[i] = nil
+						break
+					}
+				}
+			}
+
+			if !found {
+				// TODO(@benqi): backup message, wait.
+
+				messages[i].Object = query
+			}
+		}
+	*/
 
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
@@ -257,7 +183,6 @@ func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientI
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithoutUpdates Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -286,7 +211,6 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithMessagesRange Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -315,7 +239,6 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithTakeout Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -344,7 +267,6 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
-		// pack.errMsgIDList = append(pack.errMsgIDList, msgId)
 		return
 	}
 
@@ -371,18 +293,8 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 		msgId.msgId,
 		reflect.TypeOf(request))
 
-	//initConnection, ok := query.(*mtproto.TLInitConnection)
-	//if !ok {
-	//	logx.WithContext(ctx).Errorf("need initConnection, but query is : %v", query)
-	//	c.processMsg(gatewayId, clientIp, msgId, query)
-	//	return
-	//}
-	//
-	//c.cb.setLayer(request.Layer)
-	//c.cb.setClient(initConnection.LangPack)
-	//
-	c.authSessions.Dao.PutInitConnection(context.Background(), c.cb.getAuthKeyId(ctx), clientIp, request)
-	//
+	c.sessList.cb.onUpdateInitConnection(ctx, clientIp, request)
+
 	dBuf := mtproto.NewDecodeBuf(request.GetQuery())
 	query := dBuf.Object()
 	if dBuf.GetError() != nil {
@@ -394,13 +306,6 @@ func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp stri
 		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
 		return
 	}
-
-	//logx.Infof("processMsg - data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, query: {%s}}",
-	//	c,
-	//	gatewayId,
-	//	msgId.msgId,
-	//	msgId.seqNo,
-	//	query.DebugString())
 
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
@@ -424,27 +329,15 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	case *mtproto.TLAccountRegisterDevice:
 		registerDevice, _ := query.(*mtproto.TLAccountRegisterDevice)
 		if registerDevice.TokenType == 7 {
-			pushSessionId, err := strconv.ParseInt(registerDevice.GetToken(), 10, 64)
-			if err == nil {
-				c.cb.onBindPushSessionId(ctx, pushSessionId)
-				c.authSessions.Dao.PutCachePushSessionId(ctx, c.cb.getAuthKeyId(ctx), int64(pushSessionId))
-			}
+			pushSessionId, _ := strconv.ParseInt(registerDevice.GetToken(), 10, 64)
+			c.sessList.cb.onBindPushSessionId(ctx, c.sessList, pushSessionId)
 		}
 	case *mtproto.TLUpdatesGetState:
-		if !c.isGeneric {
-			c.isGeneric = true
-			c.cb.setOnline(ctx)
-		}
+		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 	case *mtproto.TLUpdatesGetDifference:
-		if !c.isGeneric {
-			c.isGeneric = true
-			c.cb.setOnline(ctx)
-		}
+		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 	case *mtproto.TLUpdatesGetChannelDifference:
-		if !c.isGeneric {
-			c.isGeneric = true
-			c.cb.setOnline(ctx)
-		}
+		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 		//case *mtproto.TLAuthBindTempAuthKey:
 		//	res, err := c.AuthSessionRpcClient.AuthBindTempAuthKey(context.Background(), query.(*mtproto.TLAuthBindTempAuthKey))
 		//	if err != nil {
@@ -459,50 +352,55 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		//	}
 		//	msgId.state = RECEIVED | RESPONSE_GENERATED
 		//	return false
-	//case *mtproto.TLAuthSignIn:
-	//	if !c.isGeneric {
-	//		c.isGeneric = true
-	//		c.cb.setOnline()
-	//	}
-	//case *mtproto.TLAuthSignUp:
-	//	if !c.isGeneric {
-	//		c.isGeneric = true
-	//		c.cb.setOnline()
-	//	}
+
+		//case *mtproto.TLAuthSignIn:
+		//	if !c.isGeneric {
+		//		c.isGeneric = true
+		//		c.cb.setOnline()
+		//	}
+		//case *mtproto.TLAuthSignUp:
+		//	if !c.isGeneric {
+		//		c.isGeneric = true
+		//		c.cb.setOnline()
+		//	}
 	case *mtproto.TLAccountUpdateStatus:
-		if !c.isGeneric {
-			c.isGeneric = true
-			c.cb.setOnline(ctx)
-		}
+		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 	case *mtproto.TLUsersGetUsers:
 		// logx.WithContext(ctx).Infof("user.getUsers: %s", query.DebugString())
 	}
 
-	if c.cb.getUserId(ctx) == 0 {
-		if !checkRpcWithoutLogin(query) {
-			authUserId, _ := c.authSessions.Dao.GetCacheUserID(ctx, c.cb.getAuthKeyId(ctx))
-			if authUserId == 0 {
-				logx.WithContext(ctx).Errorf("not found authUserId by authKeyId: %d", c.cb.getAuthKeyId(ctx))
-				// 401
-				rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
-					ErrorCode:    401,
-					ErrorMessage: "AUTH_KEY_UNREGISTERED",
-				}}
-				c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcError)
-				msgId.state = RECEIVED | RESPONSE_GENERATED
-				return false
-			} else {
-				c.cb.setUserId(ctx, authUserId)
-			}
-		}
+	switch c.sessList.cb.state {
+	case mtproto.AuthStateNew:
+	case mtproto.AuthStatePermBound:
+	case mtproto.AuthStateWaitInit:
+	case mtproto.AuthStateUnauthorized:
+	case mtproto.AuthStateNeedPassword:
+	case mtproto.AuthStateNormal:
+		//logx.WithContext(ctx).Errorf("not found authUserId by authKeyId: %d", c.sessList.cb.authKeyId)
+		//if !checkRpcWithoutLogin(query) {
+		//	// 401
+		//	rpcError := &mtproto.TLRpcError{Data2: &mtproto.RpcError{
+		//		ErrorCode:    401,
+		//		ErrorMessage: "AUTH_KEY_UNREGISTERED",
+		//	}}
+		//	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcError)
+		//	msgId.state = RECEIVED | RESPONSE_GENERATED
+		//}
+		//return false
+	case mtproto.AuthStateLogout:
+		logx.WithContext(ctx).Errorf("authUserId is logout: %d", c.sessList.cb.authKeyId)
+	case mtproto.AuthStateDeleted:
+	default:
+		logx.WithContext(ctx).Errorf("unknown state: %d", c.sessList.cb.state)
 	}
 
 	msgId.state = RECEIVED | RPC_PROCESSING
 
-	c.tmpRpcApiMessageList = append(
-		c.tmpRpcApiMessageList,
+	c.sessList.cb.tmpRpcApiMessageList = append(
+		c.sessList.cb.tmpRpcApiMessageList,
 		&rpcApiMessage{
 			ctx:       contextx.ValueOnlyFrom(ctx),
+			sessList:  c.sessList,
 			sessionId: c.sessionId,
 			clientIp:  clientIp,
 			reqMsgId:  msgId.msgId,
@@ -525,13 +423,14 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	switch request := rpcResult.reqMsg.(type) {
 	case *mtproto.TLAuthBindTempAuthKey:
 		if ok {
+			_ = request
 			if rpcErr.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-				c.authSessions.Dao.PutCacheUserId(context.Background(), c.authSessions.authKeyId, 0)
-				c.authSessions.cb.DeleteByAuthKeyId(c.authSessions.authKeyId)
-				c.authSessions.AuthUserId = 0
+				// c.sessList.cb.cb.Dao.PutCacheUserId(context.Background(), c.sessList.cb.authKeyId, 0)
+				c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.authId)
+				c.sessList.cb.AuthUserId = 0
 			}
 		} else {
-			c.authSessions.Dao.PutCachePermAuthKeyId(context.Background(), c.authSessions.authKeyId, request.PermAuthKeyId)
+			c.sessList.cb.cb.Dao.PutCachePermAuthKeyId(ctx, c.sessList.authId, request.PermAuthKeyId)
 		}
 	default:
 	}
@@ -539,7 +438,7 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 	defer func() {
 		switch rpcResult.reqMsg.(type) {
 		case *mtproto.TLAuthLogOut:
-			c.authSessions.cb.DeleteByAuthKeyId(c.cb.getAuthKeyId(ctx))
+			c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.cb.authKeyId)
 		default:
 		}
 	}()

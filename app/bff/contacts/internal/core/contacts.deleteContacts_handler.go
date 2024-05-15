@@ -82,9 +82,9 @@ func (c *ContactsCore) ContactsDeleteContacts(in *mtproto.TLContactsDeleteContac
 	})
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
-		Updates:   rUpdates,
+		UserId:        c.MD.UserId,
+		PermAuthKeyId: c.MD.PermAuthKeyId,
+		Updates:       rUpdates,
 	})
 
 	return rUpdates, nil

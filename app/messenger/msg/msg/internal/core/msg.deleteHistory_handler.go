@@ -123,9 +123,9 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{
-				UserId:    in.UserId,
-				AuthKeyId: in.AuthKeyId,
-				Updates:   syncUpdates,
+				UserId:        in.UserId,
+				PermAuthKeyId: in.AuthKeyId,
+				Updates:       syncUpdates,
 			})
 	} else {
 		if _, err = c.svcCtx.Dao.DeleteByMessageIdList(c.ctx, in.UserId, deleteIds); err != nil {
@@ -150,9 +150,9 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{
-				UserId:    in.UserId,
-				AuthKeyId: in.AuthKeyId,
-				Updates:   syncUpdates,
+				UserId:        in.UserId,
+				PermAuthKeyId: in.AuthKeyId,
+				Updates:       syncUpdates,
 			})
 	}
 

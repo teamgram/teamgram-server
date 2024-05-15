@@ -28,6 +28,7 @@ import (
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
 
@@ -37,7 +38,6 @@ import (
 
 const (
 	authDataPrefix = "auth_data.1"
-	// authUsersTablePrefix = "auth_users"
 )
 
 func genAuthDataCacheKey(id int64) string {
@@ -59,6 +59,26 @@ type BindUser struct {
 type CacheAuthData struct {
 	Client   *authsession.ClientSession `json:"client"`
 	BindUser *BindUser                  `json:"bind_user,omitempty"`
+}
+
+func (c *CacheAuthData) ToAuthState() (state int) {
+	state = mtproto.AuthStateUnknown
+
+	if c == nil {
+		state = mtproto.AuthStateNew
+		return
+	}
+
+	if c.Client == nil {
+		state = mtproto.AuthStateWaitInit
+	} else if c.BindUser == nil {
+		state = mtproto.AuthStateUnauthorized
+	} else {
+		// TODO: need session password
+		state = mtproto.AuthStateNormal
+	}
+
+	return
 }
 
 func (c *CacheAuthData) AuthKeyId() int64 {

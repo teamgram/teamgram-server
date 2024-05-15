@@ -33,15 +33,14 @@ func (m *HandshakeStateCtx) DebugString() string {
 }
 
 type connContext struct {
-	codec         codec.Codec
-	authKeys      []*authKeyUtil
-	sessionId     int64
-	handshakes    []*HandshakeStateCtx
-	clientIp      string
-	tcp           bool
-	websocket     bool
-	wsCodec       *ws.WsCodec
-	permAuthKeyId int64
+	codec      codec.Codec
+	authKey    *authKeyUtil
+	sessionId  int64
+	handshakes []*HandshakeStateCtx
+	clientIp   string
+	tcp        bool
+	websocket  bool
+	wsCodec    *ws.WsCodec
 }
 
 func newConnContext() *connContext {
@@ -55,33 +54,12 @@ func (ctx *connContext) setClientIp(ip string) {
 	ctx.clientIp = ip
 }
 
-func (ctx *connContext) getAuthKey(id int64) *authKeyUtil {
-	for _, key := range ctx.authKeys {
-		if key.AuthKeyId() == id {
-			return key
-		}
-	}
-
-	return nil
+func (ctx *connContext) getAuthKey() *authKeyUtil {
+	return ctx.authKey
 }
 
 func (ctx *connContext) putAuthKey(k *authKeyUtil) {
-	for _, key := range ctx.authKeys {
-		if key.Equal(k) {
-			return
-		}
-	}
-
-	ctx.authKeys = append(ctx.authKeys, k)
-}
-
-func (ctx *connContext) getAllAuthKeyId() (idList []int64) {
-	idList = make([]int64, len(ctx.authKeys))
-	for i, key := range ctx.authKeys {
-		idList[i] = key.AuthKeyId()
-	}
-
-	return
+	ctx.authKey = k
 }
 
 func (ctx *connContext) getHandshakeStateCtx(nonce []byte) *HandshakeStateCtx {

@@ -53,10 +53,10 @@ func (c *NotificationCore) AccountResetNotifySettings(in *mtproto.TLAccountReset
 			}).To_PeerNotifySettings(),
 		}).To_Update())
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-			Constructor: 0,
-			UserId:      c.MD.UserId,
-			AuthKeyId:   c.MD.AuthId,
-			Updates:     syncUpdates,
+			Constructor:   0,
+			UserId:        c.MD.UserId,
+			PermAuthKeyId: c.MD.PermAuthKeyId,
+			Updates:       syncUpdates,
 		})
 	}
 

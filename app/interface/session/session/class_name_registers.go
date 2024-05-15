@@ -27,11 +27,11 @@ const (
 
 var clazzNameRegisters2 = map[string]map[int]int32{
 	Predicate_sessionClientEvent: {
-		0: -548007522, // 0xdf56119e
+		0: -243320993, // 0xf17f375f
 
 	},
 	Predicate_sessionClientData: {
-		0: -870242788, // 0xcc21261c
+		0: 1101139022, // 0x41a20c4e
 
 	},
 	Predicate_httpSessionData: {
@@ -77,8 +77,8 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	-548007522:  Predicate_sessionClientEvent,             // 0xdf56119e
-	-870242788:  Predicate_sessionClientData,              // 0xcc21261c
+	-243320993:  Predicate_sessionClientEvent,             // 0xf17f375f
+	1101139022:  Predicate_sessionClientData,              // 0x41a20c4e
 	-606579889:  Predicate_httpSessionData,                // 0xdbd8534f
 	1798174801:  Predicate_session_queryAuthKey,           // 0x6b2df851
 	487672075:   Predicate_session_setAuthKey,             // 0x1d11490b

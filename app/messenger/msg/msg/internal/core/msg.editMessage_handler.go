@@ -100,8 +100,8 @@ func (c *MsgCore) editUserOutgoingMessage(in *msg.TLMsgEditMessage) (*mtproto.Up
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
-			UserId:    in.UserId,
-			AuthKeyId: in.AuthKeyId,
+			UserId:        in.UserId,
+			PermAuthKeyId: in.AuthKeyId,
 			Updates: mtproto.MakeSyncNotMeUpdates(
 				func(idList []int64) []*mtproto.User {
 					return rUpdates.Users
@@ -163,8 +163,8 @@ func (c *MsgCore) editChatOutgoingMessage(in *msg.TLMsgEditMessage) (*mtproto.Up
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
-			UserId:    in.UserId,
-			AuthKeyId: in.AuthKeyId,
+			UserId:        in.UserId,
+			PermAuthKeyId: in.AuthKeyId,
 			Updates: mtproto.MakeSyncNotMeUpdates(
 				func(idList []int64) []*mtproto.User {
 					return rUpdates.Users

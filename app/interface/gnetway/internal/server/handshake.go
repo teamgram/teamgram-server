@@ -130,53 +130,11 @@ func init() {
 	gBigIntDH2048G = new(big.Int).SetBytes(dh2048G)
 }
 
-//type handshakeState struct {
-//	State         int32
-//	ResState      int32
-//	Nonce         []byte
-//	ServerNonce   []byte
-//	NewNonce      []byte
-//	A             []byte
-//	P             []byte
-//	handshakeType int
-//	ExpiresIn     int32
-//}
-//
-//func (m *handshakeState) DebugString() string {
-//	return fmt.Sprintf(`{"state":%d,"res_state":%d,"nonce":"%s","server_nonce":"%s"}`,
-//		m.State,
-//		m.ResState,
-//		hex.EncodeToString(m.Nonce),
-//		hex.EncodeToString(m.ServerNonce))
-//}
-//
-//type handshakeStateCtx []*handshakeState
-//
-//func (c handshakeStateCtx) getHandshakeState(nonce []byte) *handshakeState {
-//	for _, state := range c {
-//		if bytes.Equal(nonce, state.Nonce) {
-//			return state
-//		}
-//	}
-//
-//	return nil
-//}
-//
-//func (c handshakeStateCtx) putHandshakeState(state *handshakeState) handshakeStateCtx {
-//	if c == nil {
-//		return handshakeStateCtx{state}
-//	} else {
-//		return append(c, state)
-//	}
-//}
-
 type handshake struct {
-	// s              *Server
 	rsa            *crypto.RSACryptor
 	keyFingerprint uint64
 	dh2048p        []byte
 	dh2048g        []byte
-	// keyCreatedF
 }
 
 func newHandshake(keyFile string, keyFingerprint uint64) (*handshake, error) {
@@ -189,7 +147,6 @@ func newHandshake(keyFile string, keyFingerprint uint64) (*handshake, error) {
 		keyFingerprint: keyFingerprint,
 		dh2048p:        dh2048P,
 		dh2048g:        dh2048G,
-		// keyCreatedF:    createdCB,
 	}, nil
 }
 

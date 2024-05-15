@@ -99,8 +99,8 @@ func (c *MessagesCore) MessagesReadMessageContents(in *mtproto.TLMessagesReadMes
 		affected,
 		func(ctx context.Context) {
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
-				UserId:    c.MD.UserId,
-				AuthKeyId: c.MD.AuthId,
+				UserId:        c.MD.UserId,
+				PermAuthKeyId: c.MD.PermAuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadMessagesContents(&mtproto.Update{
 					Messages:  in.Id,
 					Pts_INT32: affected.Pts,

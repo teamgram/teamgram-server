@@ -22,24 +22,19 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
 // SessionPushUpdatesData
 // session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 func (c *SessionCore) SessionPushUpdatesData(in *session.TLSessionPushUpdatesData) (*mtproto.Bool, error) {
-	var (
-		sessList *sess.AuthSessions
-	)
-
-	sessList = c.svcCtx.SessListMgr.GetAuthSessions(in.AuthKeyId)
-	if sessList == nil {
-		err := fmt.Errorf("not found authKeyId(%d)", in.AuthKeyId)
+	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
+	if mainAuth == nil {
+		err := fmt.Errorf("not found authKeyId(%d)", in.PermAuthKeyId)
 		c.Logger.Errorf("session.pushUpdatesData - %v", err)
 		return nil, err
 	}
-	sessList.SyncDataArrived(c.ctx, in.Notification, in.Updates)
+	mainAuth.SyncDataArrived(c.ctx, in.Notification, in.Updates)
 
 	return mtproto.BoolTrue, nil
 }

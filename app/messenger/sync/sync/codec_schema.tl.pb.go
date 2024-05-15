@@ -32,14 +32,14 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
 
 	// Method
-	1614568688: func() mtproto.TLObject { // 0x603c5cf0
+	-464714686: func() mtproto.TLObject { // 0xe44d0442
 		return &TLSyncUpdatesMe{
-			Constructor: 1614568688,
+			Constructor: -464714686,
 		}
 	},
-	16458447: func() mtproto.TLObject { // 0xfb22cf
+	-1750314959: func() mtproto.TLObject { // 0x97ac5031
 		return &TLSyncUpdatesNotMe{
-			Constructor: 16458447,
+			Constructor: -1750314959,
 		}
 	},
 	-1895114306: func() mtproto.TLObject { // 0x8f0ad9be
@@ -57,9 +57,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1379667968,
 		}
 	},
-	-1874085983: func() mtproto.TLObject { // 0x904bb7a1
+	828180415: func() mtproto.TLObject { // 0x315d07bf
 		return &TLSyncPushRpcResult{
-			Constructor: -1874085983,
+			Constructor: 828180415,
 		}
 	},
 	-169648970: func() mtproto.TLObject { // 0xf5e35cb6
@@ -90,8 +90,8 @@ func CheckClassID(classId int32) (ok bool) {
 
 func (m *TLSyncUpdatesMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x603c5cf0:
-		x.UInt(0x603c5cf0)
+	case 0xe44d0442:
+		x.UInt(0xe44d0442)
 
 		// set flags
 		var flags uint32 = 0
@@ -104,7 +104,7 @@ func (m *TLSyncUpdatesMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 
 		// flags Debug by @benqi
 		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		x.String(m.GetServerId())
 		if m.GetSessionId() != nil {
 			x.Long(m.GetSessionId().Value)
@@ -125,14 +125,14 @@ func (m *TLSyncUpdatesMe) CalcByteSize(layer int32) int {
 
 func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x603c5cf0:
+	case 0xe44d0442:
 
 		flags := dBuf.UInt()
 		_ = flags
 
 		// flags Debug by @benqi
 		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 		m.ServerId = dBuf.String()
 		if (flags & (1 << 0)) != 0 {
 			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
@@ -160,13 +160,13 @@ func (m *TLSyncUpdatesMe) DebugString() string {
 
 func (m *TLSyncUpdatesNotMe) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xfb22cf:
-		x.UInt(0xfb22cf)
+	case 0x97ac5031:
+		x.UInt(0x97ac5031)
 
 		// no flags
 
 		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		m.GetUpdates().Encode(x, layer)
 
 	default:
@@ -182,12 +182,12 @@ func (m *TLSyncUpdatesNotMe) CalcByteSize(layer int32) int {
 
 func (m *TLSyncUpdatesNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xfb22cf:
+	case 0x97ac5031:
 
 		// not has flags
 
 		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 
 		m3 := &mtproto.Updates{}
 		m3.Decode(dBuf)
@@ -363,12 +363,13 @@ func (m *TLSyncPushBotUpdates) DebugString() string {
 
 func (m *TLSyncPushRpcResult) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x904bb7a1:
-		x.UInt(0x904bb7a1)
+	case 0x315d07bf:
+		x.UInt(0x315d07bf)
 
 		// no flags
 
 		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetPermAuthKeyId())
 		x.String(m.GetServerId())
 		x.Long(m.GetSessionId())
 		x.Long(m.GetClientReqMsgId())
@@ -387,11 +388,12 @@ func (m *TLSyncPushRpcResult) CalcByteSize(layer int32) int {
 
 func (m *TLSyncPushRpcResult) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x904bb7a1:
+	case 0x315d07bf:
 
 		// not has flags
 
 		m.AuthKeyId = dBuf.Long()
+		m.PermAuthKeyId = dBuf.Long()
 		m.ServerId = dBuf.String()
 		m.SessionId = dBuf.Long()
 		m.ClientReqMsgId = dBuf.Long()

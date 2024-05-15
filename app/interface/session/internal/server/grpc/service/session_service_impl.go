@@ -67,10 +67,12 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 // session.sendDataToSession data:SessionClientData = Bool;
 func (s *Service) SessionSendDataToSession(ctx context.Context, request *session.TLSessionSendDataToSession) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+	c.Logger.Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, key_type: %d, perm_auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
 		request.GetData().GetServerId(),
 		request.GetData().GetConnType(),
 		request.GetData().GetAuthKeyId(),
+		request.GetData().GetKeyType(),
+		request.GetData().GetPermAuthKeyId(),
 		request.GetData().GetSessionId(),
 		request.GetData().GetClientIp(),
 		request.GetData().GetQuickAck(),
@@ -90,10 +92,12 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendHttpDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+	c.Logger.Debugf("session.sendHttpDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, key_type: %d, perm_auth_key_id: %d, , session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
 		request.GetClient().GetServerId(),
 		request.GetClient().GetConnType(),
 		request.GetClient().GetAuthKeyId(),
+		request.GetClient().GetKeyType(),
+		request.GetClient().GetPermAuthKeyId(),
 		request.GetClient().GetSessionId(),
 		request.GetClient().GetClientIp(),
 		request.GetClient().GetQuickAck(),

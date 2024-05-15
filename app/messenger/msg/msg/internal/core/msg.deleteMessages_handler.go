@@ -79,8 +79,8 @@ func (c *MsgCore) deleteUserMessages(in *msg.TLMsgDeleteMessages) (*mtproto.Mess
 
 	// me
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    in.UserId,
-		AuthKeyId: in.AuthKeyId,
+		UserId:        in.UserId,
+		PermAuthKeyId: in.AuthKeyId,
 		Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
 			Messages:  in.Id,
 			Pts_INT32: pts,

@@ -21,8 +21,8 @@ option go_package = "github.com/teamgram/teamgram-server/app/interface/session/s
 
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
-    CRC32_sessionClientEvent = -548007522;
-    CRC32_sessionClientData = -870242788;
+    CRC32_sessionClientEvent = -243320993;
+    CRC32_sessionClientData = 1101139022;
     CRC32_httpSessionData = -606579889;
     CRC32_session_queryAuthKey = 1798174801;
     CRC32_session_setAuthKey = 487672075;
@@ -59,12 +59,13 @@ message SessionClientData {
     string server_id = 3;
     int32 conn_type = 4;
     int64 auth_key_id = 5;
-    int64 perm_auth_key_id = 6;
-    int64 session_id = 7;
-    string client_ip = 8;
-    int32 quick_ack = 9;
-    int64 salt = 10;
-    bytes payload = 11;
+    int32 key_type = 6;
+    int64 perm_auth_key_id = 7;
+    int64 session_id = 8;
+    string client_ip = 9;
+    int32 quick_ack = 10;
+    int64 salt = 11;
+    bytes payload = 12;
 }
 
 message TL_sessionClientData {
@@ -81,9 +82,10 @@ message SessionClientEvent {
     string server_id = 3;
     int32 conn_type = 4;
     int64 auth_key_id = 5;
-    int64 perm_auth_key_id = 6;
-    int64 session_id = 7;
-    string client_ip = 8;
+    int32 key_type = 6;
+    int64 perm_auth_key_id = 7;
+    int64 session_id = 8;
+    string client_ip = 9;
 }
 
 message TL_sessionClientEvent {

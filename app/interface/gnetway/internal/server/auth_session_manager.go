@@ -16,106 +16,45 @@
 package server
 
 import (
-	"container/list"
 	"sync"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
-
-type sessionData struct {
-	sessionId  int64
-	connIdList *list.List
-}
-
-type authSession struct {
-	authKey     *authKeyUtil
-	sessionList map[int64]sessionData
-}
 
 type authSessionManager struct {
 	rw       sync.RWMutex
-	sessions map[int64]*authSession
+	sessions map[int64]map[int64]int64
 }
 
 func NewAuthSessionManager() *authSessionManager {
 	return &authSessionManager{
-		sessions: make(map[int64]*authSession),
+		sessions: make(map[int64]map[int64]int64),
 	}
 }
 
-func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64, connId int64) (bNew bool) {
-	logx.Infof("addNewSession: auth_key_id: %d, session_id: %d, conn_id: %d",
-		authKey.AuthKeyId(),
-		sessionId,
-		connId)
-
+func (m *authSessionManager) AddNewSession(authId int64, sessionId int64, connId int64) (bNew bool) {
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
-	if v, ok := m.sessions[authKey.AuthKeyId()]; ok {
-		var (
-			// sIdx     = -1
-			cExisted = false
-		)
-		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
-					cExisted = true
-					break
-				}
-			}
-			if !cExisted {
-				v2.connIdList.PushBack(connId)
-			}
-		} else {
-			s := sessionData{
-				sessionId:  sessionId,
-				connIdList: list.New(),
-			}
-			s.connIdList.PushBack(connId)
-			v.sessionList[sessionId] = s
-			bNew = true
-		}
+	if v, ok := m.sessions[authId]; ok {
+		v[sessionId] = connId
 	} else {
-		s := sessionData{
-			sessionId:  sessionId,
-			connIdList: list.New(),
-		}
-		s.connIdList.PushBack(connId)
-
-		m.sessions[authKey.AuthKeyId()] = &authSession{
-			authKey: authKey,
-			sessionList: map[int64]sessionData{
-				sessionId: s,
-			},
+		m.sessions[authId] = map[int64]int64{
+			sessionId: connId,
 		}
 		bNew = true
 	}
+
 	return
 }
 
 func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId int64) (bDeleted bool) {
-	logx.Infof("removeSession: auth_key_id: %d, session_id: %d, conn_id: %d",
-		authKeyId,
-		sessionId,
-		connId)
-
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
 	if v, ok := m.sessions[authKeyId]; ok {
-		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
-				if e.Value.(int64) == connId {
-					v2.connIdList.Remove(e)
-					break
-				}
-			}
-			if v2.connIdList.Len() == 0 {
-				delete(v.sessionList, sessionId)
-				bDeleted = true
-			}
-			if len(v.sessionList) == 0 {
+		if _, ok2 := v[sessionId]; ok2 {
+			bDeleted = true
+			delete(v, sessionId)
+			if len(v) == 0 {
 				delete(m.sessions, authKeyId)
 			}
 		}
@@ -124,19 +63,14 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	return
 }
 
-func (m *authSessionManager) FoundSessionConnIdList(authKeyId, sessionId int64) (*authKeyUtil, []int64) {
+func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) (int64, bool) {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
 	if v, ok := m.sessions[authKeyId]; ok {
-		if v2, ok2 := v.sessionList[sessionId]; ok2 {
-			connIdList := make([]int64, 0, v2.connIdList.Len())
-			for e := v2.connIdList.Back(); e != nil; e = e.Prev() {
-				connIdList = append(connIdList, e.Value.(int64))
-			}
-			return v.authKey, connIdList
-		}
+		v2, ok2 := v[sessionId]
+		return v2, ok2
 	}
 
-	return nil, nil
+	return 0, false
 }

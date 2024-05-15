@@ -20,7 +20,6 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
@@ -28,17 +27,30 @@ import (
 // session.sendDataToSession data:SessionClientData = Bool;
 func (c *SessionCore) SessionSendDataToSession(in *session.TLSessionSendDataToSession) (*mtproto.Bool, error) {
 	var (
-		sessList *sess.AuthSessions
-		data     = in.GetData()
-		isNew    bool
+		data = in.GetData()
 	)
 
-	sessList, isNew = c.svcCtx.SessListMgr.GetOrCreateAuthSessions(data.GetAuthKeyId())
-	if isNew {
-		sessList.SessionClientNew(c.ctx, data.GetServerId(), data.GetSessionId())
+	if data == nil {
+		err := mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("session.sendDataToSession - error: %v", err)
+		return nil, err
 	}
 
-	sessList.SessionDataArrived(c.ctx, data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload())
+	mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("session.sendDataToSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth.SessionDataArrived(
+		c.ctx,
+		int(data.KeyType),
+		data.AuthKeyId,
+		data.ServerId,
+		data.ClientIp,
+		data.SessionId,
+		data.Salt,
+		data.Payload)
 
 	return mtproto.BoolTrue, nil
 }

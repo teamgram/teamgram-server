@@ -229,8 +229,8 @@ func (c *MsgCore) sendUserMessage(
 	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    fromUserId,
-		AuthKeyId: fromAuthKeyId,
+		UserId:        fromUserId,
+		PermAuthKeyId: fromAuthKeyId,
 		Updates: mtproto.MakeSyncNotMeUpdates(
 			func(idList []int64) []*mtproto.User {
 				return rUpdates.Users
@@ -353,8 +353,8 @@ func (c *MsgCore) sendChatMessage(
 	c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    fromUserId,
-		AuthKeyId: fromAuthKeyId,
+		UserId:        fromUserId,
+		PermAuthKeyId: fromAuthKeyId,
 		Updates: mtproto.MakeSyncNotMeUpdates(
 			func(idList []int64) []*mtproto.User {
 				return rUpdates.Users

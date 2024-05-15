@@ -21,7 +21,7 @@ package core
 import (
 	"time"
 
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
@@ -29,14 +29,32 @@ import (
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (c *SessionCore) SessionSendHttpDataToSession(in *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
 	var (
-		sessList *sess.AuthSessions
-		data     = in.GetClient()
+		data = in.GetClient()
 	)
 
-	sessList, _ = c.svcCtx.SessListMgr.GetOrCreateAuthSessions(data.GetAuthKeyId())
+	if data == nil {
+		err := mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+		return nil, err
+	}
 
 	chData := make(chan interface{})
-	sessList.SessionHttpDataArrived(c.ctx, data.GetServerId(), data.GetClientIp(), data.GetSessionId(), data.GetSalt(), data.GetPayload(), chData)
+	mainAuth.SessionHttpDataArrived(
+		c.ctx,
+		int(data.KeyType),
+		data.AuthKeyId,
+		data.ServerId,
+		data.ClientIp,
+		data.SessionId,
+		data.Salt,
+		data.Payload,
+		chData)
 
 	timer := time.NewTimer(time.Second * 7)
 	select {

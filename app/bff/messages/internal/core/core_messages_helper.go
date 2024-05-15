@@ -43,9 +43,9 @@ func (c *MessagesCore) doClearDraft(ctx context.Context, userId int64, authKeyId
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			ctx,
 			&sync.TLSyncUpdatesNotMe{
-				UserId:    userId,
-				AuthKeyId: authKeyId,
-				Updates:   mtproto.MakeUpdatesByUpdates(updateDraftMessage),
+				UserId:        userId,
+				PermAuthKeyId: authKeyId,
+				Updates:       mtproto.MakeUpdatesByUpdates(updateDraftMessage),
 			})
 	}
 }

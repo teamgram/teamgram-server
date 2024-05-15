@@ -35,14 +35,14 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 		o.Data2.Constructor = -606579889
 		return o
 	},
-	-870242788: func() mtproto.TLObject { // 0xcc21261c
+	1101139022: func() mtproto.TLObject { // 0x41a20c4e
 		o := MakeTLSessionClientData(nil)
-		o.Data2.Constructor = -870242788
+		o.Data2.Constructor = 1101139022
 		return o
 	},
-	-548007522: func() mtproto.TLObject { // 0xdf56119e
+	-243320993: func() mtproto.TLObject { // 0xf17f375f
 		o := MakeTLSessionClientEvent(nil)
-		o.Data2.Constructor = -548007522
+		o.Data2.Constructor = -243320993
 		return o
 	},
 
@@ -274,7 +274,7 @@ func (m *SessionClientData) CalcByteSize(layer int32) int {
 func (m *SessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xcc21261c:
+	case 0x41a20c4e:
 		m2 := MakeTLSessionClientData(m)
 		m2.Decode(dBuf)
 
@@ -329,6 +329,9 @@ func (m *TLSessionClientData) GetConnType() int32  { return m.Data2.ConnType }
 func (m *TLSessionClientData) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLSessionClientData) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
 
+func (m *TLSessionClientData) SetKeyType(v int32) { m.Data2.KeyType = v }
+func (m *TLSessionClientData) GetKeyType() int32  { return m.Data2.KeyType }
+
 func (m *TLSessionClientData) SetPermAuthKeyId(v int64) { m.Data2.PermAuthKeyId = v }
 func (m *TLSessionClientData) GetPermAuthKeyId() int64  { return m.Data2.PermAuthKeyId }
 
@@ -353,12 +356,13 @@ func (m *TLSessionClientData) GetPredicateName() string {
 
 func (m *TLSessionClientData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xcc21261c: func() error {
-			x.UInt(0xcc21261c)
+		0x41a20c4e: func() error {
+			x.UInt(0x41a20c4e)
 
 			x.String(m.GetServerId())
 			x.Int(m.GetConnType())
 			x.Long(m.GetAuthKeyId())
+			x.Int(m.GetKeyType())
 			x.Long(m.GetPermAuthKeyId())
 			x.Long(m.GetSessionId())
 			x.String(m.GetClientIp())
@@ -387,10 +391,11 @@ func (m *TLSessionClientData) CalcByteSize(layer int32) int {
 
 func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xcc21261c: func() error {
+		0x41a20c4e: func() error {
 			m.SetServerId(dBuf.String())
 			m.SetConnType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
+			m.SetKeyType(dBuf.Int())
 			m.SetPermAuthKeyId(dBuf.Long())
 			m.SetSessionId(dBuf.Long())
 			m.SetClientIp(dBuf.String())
@@ -446,7 +451,7 @@ func (m *SessionClientEvent) CalcByteSize(layer int32) int {
 func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xdf56119e:
+	case 0xf17f375f:
 		m2 := MakeTLSessionClientEvent(m)
 		m2.Decode(dBuf)
 
@@ -501,6 +506,9 @@ func (m *TLSessionClientEvent) GetConnType() int32  { return m.Data2.ConnType }
 func (m *TLSessionClientEvent) SetAuthKeyId(v int64) { m.Data2.AuthKeyId = v }
 func (m *TLSessionClientEvent) GetAuthKeyId() int64  { return m.Data2.AuthKeyId }
 
+func (m *TLSessionClientEvent) SetKeyType(v int32) { m.Data2.KeyType = v }
+func (m *TLSessionClientEvent) GetKeyType() int32  { return m.Data2.KeyType }
+
 func (m *TLSessionClientEvent) SetPermAuthKeyId(v int64) { m.Data2.PermAuthKeyId = v }
 func (m *TLSessionClientEvent) GetPermAuthKeyId() int64  { return m.Data2.PermAuthKeyId }
 
@@ -516,12 +524,13 @@ func (m *TLSessionClientEvent) GetPredicateName() string {
 
 func (m *TLSessionClientEvent) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xdf56119e: func() error {
-			x.UInt(0xdf56119e)
+		0xf17f375f: func() error {
+			x.UInt(0xf17f375f)
 
 			x.String(m.GetServerId())
 			x.Int(m.GetConnType())
 			x.Long(m.GetAuthKeyId())
+			x.Int(m.GetKeyType())
 			x.Long(m.GetPermAuthKeyId())
 			x.Long(m.GetSessionId())
 			x.String(m.GetClientIp())
@@ -547,10 +556,11 @@ func (m *TLSessionClientEvent) CalcByteSize(layer int32) int {
 
 func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xdf56119e: func() error {
+		0xf17f375f: func() error {
 			m.SetServerId(dBuf.String())
 			m.SetConnType(dBuf.Int())
 			m.SetAuthKeyId(dBuf.Long())
+			m.SetKeyType(dBuf.Int())
 			m.SetPermAuthKeyId(dBuf.Long())
 			m.SetSessionId(dBuf.Long())
 			m.SetClientIp(dBuf.String())

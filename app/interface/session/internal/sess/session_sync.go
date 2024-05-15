@@ -37,10 +37,10 @@ func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 	gatewayId := c.getGatewayId()
 
 	if c.isAndroidPush {
-		pusMsgId := c.authSessions.getNextNotifyId()
+		pusMsgId := c.sessList.cb.getNextNotifyId()
 		c.sendPushToQueue(ctx, gatewayId, pusMsgId, androidPushTooLong)
 	} else {
-		pusMsgId := c.authSessions.getNextPushId()
+		pusMsgId := c.sessList.cb.getNextPushId()
 		c.sendPushToQueue(ctx, gatewayId, pusMsgId, obj)
 	}
 
@@ -80,7 +80,7 @@ func (c *session) onSyncRpcResultData(ctx context.Context, reqMsgId int64, data 
 func (c *session) onSyncSessionData(ctx context.Context, obj mtproto.TLObject) {
 	// TODO(@benqi):
 	gatewayId := c.getGatewayId()
-	pusMsgId := c.authSessions.getNextPushId()
+	pusMsgId := c.sessList.cb.getNextPushId()
 
 	c.sendPushToQueue(ctx, gatewayId, pusMsgId, obj)
 	c.sendQueueToGateway(ctx, gatewayId)

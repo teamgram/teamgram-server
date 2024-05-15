@@ -142,9 +142,9 @@ func (c *NotificationCore) AccountUpdateNotifySettings(in *mtproto.TLAccountUpda
 	}
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.AuthId,
-		Updates:   syncNotMeUpdates,
+		UserId:        c.MD.UserId,
+		PermAuthKeyId: c.MD.PermAuthKeyId,
+		Updates:       syncNotMeUpdates,
 	})
 
 	// return

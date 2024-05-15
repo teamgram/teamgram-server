@@ -20,7 +20,6 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
 
@@ -28,15 +27,20 @@ import (
 // session.closeSession client:SessionClientEvent = Bool;
 func (c *SessionCore) SessionCloseSession(in *session.TLSessionCloseSession) (*mtproto.Bool, error) {
 	var (
-		sessList *sess.AuthSessions
-		cli      = in.GetClient()
+		cli = in.GetClient()
 	)
 
-	sessList = c.svcCtx.SessListMgr.GetAuthSessions(cli.GetAuthKeyId())
-	if sessList == nil {
+	if cli == nil {
+		err := mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("session.closeSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(cli.PermAuthKeyId)
+	if mainAuth == nil {
 		c.Logger.Errorf("session.closeSession - not found sessList by keyId: %d", cli.DebugString())
 	} else {
-		sessList.SessionClientClosed(c.ctx, cli.GetServerId(), cli.GetSessionId())
+		mainAuth.SessionClientClosed(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
 	}
 
 	return mtproto.BoolTrue, nil

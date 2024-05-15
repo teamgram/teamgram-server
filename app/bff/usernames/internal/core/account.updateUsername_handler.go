@@ -55,8 +55,8 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 			me.SetUsername(username2)
 
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-				UserId:    c.MD.UserId,
-				AuthKeyId: c.MD.AuthId,
+				UserId:        c.MD.UserId,
+				PermAuthKeyId: c.MD.PermAuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserName(&mtproto.Update{
 					UserId:    c.MD.UserId,
 					FirstName: me.FirstName(),

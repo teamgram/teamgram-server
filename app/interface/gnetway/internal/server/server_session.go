@@ -22,6 +22,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
 
 	"github.com/panjf2000/gnet/v2"
+	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -62,35 +63,47 @@ import (
 func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGatewaySendDataToGateway) (reply *mtproto.Bool, err error) {
 	logx.WithContext(ctx).Infof("ReceiveData - request: {kId: %d, sessionId: %d, payloadLen: %d}", in.AuthKeyId, in.SessionId, len(in.Payload))
 
-	var (
-		authKey *authKeyUtil
-	)
-
-	authKey, connIdList := s.authSessionMgr.FoundSessionConnIdList(in.AuthKeyId, in.SessionId)
-	if connIdList == nil {
-		logx.WithContext(ctx).Errorf("ReceiveData - not found connIdList - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
+	connId, ok := s.authSessionMgr.FoundSessionConnId(in.AuthKeyId, in.SessionId)
+	if !ok {
+		logx.WithContext(ctx).Errorf("ReceiveData - not found connId - keyId: %d, sessionId: %d", in.AuthKeyId, in.SessionId)
 		return mtproto.BoolFalse, nil
 	} else {
-		logx.WithContext(ctx).Debugf("found: {k: %v, idList: %v}", authKey, connIdList)
+		logx.WithContext(ctx).Debugf("found: {k: %v, idList: %v}", in.AuthKeyId, ok)
 	}
 
-	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
-	x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
-	x.Long(authKey.AuthKeyId())
-	x.Bytes(msgKey)
-	x.Bytes(mtpRawData)
-	msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
+	ctx = contextx.ValueOnlyFrom(ctx)
+	s.eng.Trigger(connId, func(c gnet.Conn) {
+		connCtx, _ := c.Context().(*connContext)
+		if connCtx == nil {
+			logx.WithContext(ctx).Errorf("invalid state - conn(%s) Context() is nil", c)
+			return
+		}
 
-	for _, connId := range connIdList {
-		s.eng.Trigger(connId, func(c gnet.Conn) {
-			err2 := UnThreadSafeWrite(c, msg)
-			if err2 != nil {
-				logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
-			} else {
-				logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
-			}
-			//}
-		})
-	}
+		authKey := connCtx.getAuthKey()
+		if authKey == nil {
+			logx.WithContext(ctx).Errorf("invalid state - conn(%s) auth_key is nil", c)
+			return
+		}
+
+		if in.AuthKeyId != authKey.AuthKeyId() {
+			logx.WithContext(ctx).Errorf("invalid state - conn(%s) c.keyId(%d) != in.keyId(%d) is nil", authKey.AuthKeyId(), in.AuthKeyId)
+			return
+		}
+
+		msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
+		x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+		x.Long(authKey.AuthKeyId())
+		x.Bytes(msgKey)
+		x.Bytes(mtpRawData)
+		msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
+
+		err2 := UnThreadSafeWrite(c, msg)
+		if err2 != nil {
+			logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
+		} else {
+			logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
+		}
+	})
+
 	return mtproto.BoolTrue, nil
 }

@@ -37,8 +37,8 @@ func (c *MsgCore) MsgDeletePhoneCallHistory(in *msg.TLMsgDeletePhoneCallHistory)
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
-			UserId:    in.UserId,
-			AuthKeyId: in.AuthKeyId,
+			UserId:        in.UserId,
+			PermAuthKeyId: in.AuthKeyId,
 			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
 				Messages:  msgIdList,
 				Pts_INT32: pts,

@@ -22,7 +22,7 @@ option go_package = "github.com/teamgram/teamgram-server/app/service/authsession
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
     CRC32_clientSession = -1701940816;
-    CRC32_authKeyStateData = -646863312;
+    CRC32_authKeyStateData = -532639977;
     CRC32_authsession_getAuthorizations = 820122180;
     CRC32_authsession_resetAuthorization = -1923126106;
     CRC32_authsession_getLayer = -1473309015;
@@ -53,11 +53,11 @@ message AuthKeyStateData {
     string predicate_name = 1;
     TLConstructor  constructor = 2;
     int64 auth_key_id = 3;
-    int64 user_id = 4;
-    int32 key_state = 5;
-    int32 layer = 6;
-    int32 client_type = 7;
-    int64 android_push_session_id = 8;
+    int32 key_state = 4;
+    int64 user_id = 5;
+    int64 access_hash = 6;
+    ClientSession client = 7;
+    google.protobuf.Int64Value android_push_session_id = 8;
 }
 
 message TL_authKeyStateData {

@@ -26,7 +26,7 @@ import (
 
 type ServiceContext struct {
 	Config      config.Config
-	SessListMgr *sess.AuthSessionsManager
+	MainAuthMgr *sess.MainAuthWrapperManager
 	*dao.Dao
 }
 
@@ -34,7 +34,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	d := dao.New(c)
 	return &ServiceContext{
 		Config:      c,
-		SessListMgr: sess.NewAuthSessionsManager(d),
+		MainAuthMgr: sess.NewMainAuthWrapperManager(d),
 		Dao:         d,
 	}
 }

@@ -283,9 +283,9 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
-			UserId:    user.Id(),
-			AuthKeyId: c.MD.AuthId,
-			Updates:   mtproto.MakeUpdatesByUpdates(signInN),
+			UserId:        user.Id(),
+			PermAuthKeyId: c.MD.PermAuthKeyId,
+			Updates:       mtproto.MakeUpdatesByUpdates(signInN),
 		})
 
 	return mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{

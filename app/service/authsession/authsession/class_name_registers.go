@@ -41,7 +41,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_authKeyStateData: {
-		0: -646863312, // 0xd971a630
+		0: -532639977, // 0xe0408f17
 
 	},
 	Predicate_authsession_getAuthorizations: {
@@ -128,7 +128,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 var clazzIdNameRegisters2 = map[int32]string{
 	-1701940816: Predicate_clientSession,                    // 0x9a8e71b0
-	-646863312:  Predicate_authKeyStateData,                 // 0xd971a630
+	-532639977:  Predicate_authKeyStateData,                 // 0xe0408f17
 	820122180:   Predicate_authsession_getAuthorizations,    // 0x30e21244
 	-1923126106: Predicate_authsession_resetAuthorization,   // 0x8d5f6ca6
 	-1473309015: Predicate_authsession_getLayer,             // 0xa82f16a9

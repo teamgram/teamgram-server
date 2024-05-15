@@ -74,9 +74,9 @@ func (c *DraftsCore) MessagesClearAllDrafts(in *mtproto.TLMessagesClearAllDrafts
 		}
 
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-			UserId:    c.MD.UserId,
-			AuthKeyId: c.MD.AuthId,
-			Updates:   syncUpdates,
+			UserId:        c.MD.UserId,
+			PermAuthKeyId: c.MD.PermAuthKeyId,
+			Updates:       syncUpdates,
 		})
 	}
 

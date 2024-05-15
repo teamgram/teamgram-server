@@ -96,33 +96,33 @@ func (c serverIdCtx) Equal(id string) bool {
 	return c.gatewayId == id
 }
 
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////
-type sessionCallback interface {
-	getCacheSalt(ctx context.Context) *mtproto.TLFutureSalt
-
-	getAuthKeyId(ctx context.Context) int64
-	getTempAuthKeyId(ctx context.Context) int64
-	getPermAuthKeyId(ctx context.Context) int64
-	setPermAuthKeyId(ctx context.Context, kId int64)
-
-	getUserId(ctx context.Context) int64
-	setUserId(ctx context.Context, userId int64)
-
-	getLayer(ctx context.Context) int32
-	setLayer(ctx context.Context, layer int32)
-
-	getClient(ctx context.Context) string
-	setClient(ctx context.Context, c string)
-
-	getLangpack(ctx context.Context) string
-	setLangpack(ctx context.Context, c string)
-
-	destroySession(ctx context.Context, sessionId int64) bool
-
-	onBindPushSessionId(ctx context.Context, sessionId int64)
-	setOnline(ctx context.Context)
-	trySetOffline(ctx context.Context)
-}
+//// ////////////////////////////////////////////////////////////////////////////////////////////////////////
+//type sessionCallback interface {
+//	getCacheSalt(ctx context.Context) *mtproto.TLFutureSalt
+//
+//	getAuthKeyId(ctx context.Context) int64
+//	getTempAuthKeyId(ctx context.Context) int64
+//	getPermAuthKeyId(ctx context.Context) int64
+//	setPermAuthKeyId(ctx context.Context, kId int64)
+//
+//	getUserId(ctx context.Context) int64
+//	setUserId(ctx context.Context, userId int64)
+//
+//	getLayer(ctx context.Context) int32
+//	setLayer(ctx context.Context, layer int32)
+//
+//	getClient(ctx context.Context) string
+//	setClient(ctx context.Context, c string)
+//
+//	getLangpack(ctx context.Context) string
+//	setLangpack(ctx context.Context, c string)
+//
+//	destroySession(ctx context.Context, sessionId int64) bool
+//
+//	onBindPushSessionId(ctx context.Context, sessionId int64)
+//	setOnline(ctx context.Context)
+//	trySetOffline(ctx context.Context)
+//}
 
 /*
 * tdesktop's SessionData:
@@ -138,45 +138,40 @@ QMap<mtpRequestId, SerializedMessage> _receivedResponses; // map of request_id -
 QList<SerializedMessage> _receivedUpdates; // list of updates that should be processed in the main thread
 */
 type session struct {
-	sessionId            int64
-	sessionState         int
-	gatewayId            *serverIdCtx
-	nextSeqNo            uint32
-	firstMsgId           int64
-	connState            int
-	closeDate            int64
-	lastReceiveTime      int64
-	isAndroidPush        bool
-	isGeneric            bool
-	inQueue              *sessionInboundQueue
-	outQueue             *sessionOutgoingQueue
-	pendingQueue         *sessionRpcResultWaitingQueue
-	pushQueue            *sessionPushQueue
-	isHttp               bool
-	httpQueue            *httpRequestQueue
-	cb                   sessionCallback
-	authSessions         *AuthSessions
-	tmpRpcApiMessageList []*rpcApiMessage
+	sessionId       int64
+	sessionState    int
+	gatewayId       *serverIdCtx
+	nextSeqNo       uint32
+	firstMsgId      int64
+	connState       int
+	closeDate       int64
+	lastReceiveTime int64
+	isAndroidPush   bool
+	isGeneric       bool
+	inQueue         *sessionInboundQueue
+	outQueue        *sessionOutgoingQueue
+	pendingQueue    *sessionRpcResultWaitingQueue
+	pushQueue       *sessionPushQueue
+	isHttp          bool
+	httpQueue       *httpRequestQueue
+	sessList        *SessionList
 }
 
-func newSession(sessionId int64, sesses *AuthSessions) *session {
-	// var sess *sessionHandler
+func newSession(sessionId int64, sessList *SessionList) *session {
 	sess := &session{
-		sessionId:            sessionId,
-		gatewayId:            nil,
-		sessionState:         kSessionStateNew,
-		closeDate:            time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
-		connState:            kStateNew,
-		lastReceiveTime:      time.Now().UnixNano(),
-		inQueue:              newSessionInboundQueue(),
-		outQueue:             newSessionOutgoingQueue(),
-		pendingQueue:         newSessionRpcResultWaitingQueue(),
-		pushQueue:            newSessionPushQueue(),
-		isHttp:               false,
-		httpQueue:            newHttpRequestQueue(),
-		cb:                   sesses,
-		authSessions:         sesses,
-		tmpRpcApiMessageList: make([]*rpcApiMessage, 0, 16),
+		sessionId:       sessionId,
+		gatewayId:       nil,
+		sessionState:    kSessionStateNew,
+		closeDate:       time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout,
+		connState:       kStateNew,
+		lastReceiveTime: time.Now().UnixNano(),
+		inQueue:         newSessionInboundQueue(),
+		outQueue:        newSessionOutgoingQueue(),
+		pendingQueue:    newSessionRpcResultWaitingQueue(),
+		pushQueue:       newSessionPushQueue(),
+		isHttp:          false,
+		httpQueue:       newHttpRequestQueue(),
+		sessList:        sessList,
 	}
 
 	return sess
@@ -184,8 +179,8 @@ func newSession(sessionId int64, sesses *AuthSessions) *session {
 
 func (c *session) String() string {
 	return fmt.Sprintf("{user_id: %d, auth_key_id: %d, session_id: %d, state: %d, conn_state: %d, conn_id_list: %#v}",
-		c.authSessions.AuthUserId,
-		c.authSessions.authKeyId,
+		c.sessList.cb.AuthUserId,
+		c.sessList.authId,
 		c.sessionId,
 		c.sessionState,
 		c.connState,
@@ -221,9 +216,9 @@ func (c *session) changeConnState(ctx context.Context, state int) {
 	c.connState = state
 	if c.isAndroidPush || c.isGeneric {
 		if state == kStateOnline {
-			c.cb.setOnline(ctx)
+			c.sessList.cb.setOnline(ctx)
 		} else if state == kStateOffline {
-			c.cb.trySetOffline(ctx)
+			c.sessList.cb.trySetOffline(ctx)
 		}
 	}
 }
@@ -313,8 +308,8 @@ func (c *session) onSessionMessageData(ctx context.Context, gatewayId, clientIp 
 	}
 
 	defer func() {
-		c.authSessions.sendToRpcQueue(ctx, c.tmpRpcApiMessageList)
-		c.tmpRpcApiMessageList = []*rpcApiMessage{}
+		c.sessList.cb.sendToRpcQueue(ctx, c.sessList.cb.tmpRpcApiMessageList)
+		c.sessList.cb.tmpRpcApiMessageList = []*rpcApiMessage{}
 
 		c.sendQueueToGateway(ctx, gatewayId)
 		c.inQueue.Shrink()
@@ -481,7 +476,7 @@ func (c *session) sendRpcResultToQueue(ctx context.Context, gatewayId string, re
 		Result:   result,
 	}
 	x := mtproto.NewEncodeBuf(500)
-	rpcResult.Encode(x, c.cb.getLayer(ctx))
+	rpcResult.Encode(x, c.sessList.cb.Layer())
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(true),
 		Seqno: c.generateMessageSeqNo(true),
@@ -510,14 +505,14 @@ func (c *session) sendPushRpcResultToQueue(gatewayId string, reqMsgId int64, res
 
 func (c *session) sendPushToQueue(ctx context.Context, gatewayId string, pushMsgId int64, pushMsg mtproto.TLObject) {
 	x := mtproto.NewEncodeBuf(512)
-	pushMsg.Encode(x, c.cb.getLayer(ctx))
+	pushMsg.Encode(x, c.sessList.cb.Layer())
 	rawBytes := x.GetBuf()
 	if x.GetOffset() > 256 {
 		gzipPacked := &mtproto.TLGzipPacked{
 			PackedData: rawBytes,
 		}
 		x2 := mtproto.NewEncodeBuf(512)
-		gzipPacked.Encode(x2, c.cb.getLayer(ctx))
+		gzipPacked.Encode(x2, c.sessList.cb.Layer())
 		rawBytes = x2.GetBuf()
 	}
 
@@ -532,7 +527,7 @@ func (c *session) sendPushToQueue(ctx context.Context, gatewayId string, pushMsg
 
 func (c *session) sendRawToQueue(ctx context.Context, gatewayId string, msgId int64, confirm bool, rawMsg mtproto.TLObject) {
 	x := mtproto.NewEncodeBuf(512)
-	rawMsg.Encode(x, c.cb.getLayer(ctx))
+	rawMsg.Encode(x, c.sessList.cb.Layer())
 	b := x.GetBuf()
 	rawMsg2 := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -545,8 +540,8 @@ func (c *session) sendRawToQueue(ctx context.Context, gatewayId string, msgId in
 
 func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
 	x := mtproto.NewEncodeBuf(512)
-	salt := c.cb.getCacheSalt(ctx).GetSalt()
-	obj.Encode(x, c.cb.getLayer(ctx))
+	salt := c.sessList.cacheSalt.GetSalt()
+	obj.Encode(x, c.sessList.cb.Layer())
 	b := x.GetBuf()
 	rawMsg := &mtproto.TLMessageRawData{
 		MsgId: nextMessageId(false),
@@ -555,10 +550,10 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 		Body:  b,
 	}
 
-	rB, err := c.authSessions.Dao.SendHttpDataToGateway(
+	rB, err := c.sessList.cb.cb.Dao.SendHttpDataToGateway(
 		ctx,
 		ch,
-		c.cb.getTempAuthKeyId(ctx),
+		c.sessList.authId,
 		salt,
 		c.sessionId,
 		rawMsg)
@@ -576,8 +571,8 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 
 func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
 	x := mtproto.NewEncodeBuf(512)
-	salt := c.cb.getCacheSalt(ctx).GetSalt()
-	obj.Encode(x, c.cb.getLayer(ctx))
+	salt := c.sessList.cacheSalt.GetSalt()
+	obj.Encode(x, c.sessList.cb.Layer())
 	b := x.GetBuf()
 
 	rawMsg := &mtproto.TLMessageRawData{
@@ -593,19 +588,19 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 	)
 
 	if !c.isHttp {
-		rB, err = c.authSessions.Dao.SendDataToGateway(
+		rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
 			ctx,
 			gatewayId,
-			c.cb.getTempAuthKeyId(ctx),
+			c.sessList.authId,
 			salt,
 			c.sessionId,
 			rawMsg)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
-			rB, err = c.authSessions.Dao.SendHttpDataToGateway(
+			rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
 				ctx,
 				ch,
-				c.cb.getTempAuthKeyId(ctx),
+				c.sessList.authId,
 				salt,
 				c.sessionId,
 				rawMsg)
@@ -624,26 +619,26 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 }
 
 func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, raw *mtproto.TLMessageRawData) (bool, error) {
-	salt := c.cb.getCacheSalt(ctx).GetSalt()
+	salt := c.sessList.cacheSalt.GetSalt()
 
 	var (
 		rB  bool
 		err error
 	)
 	if !c.isHttp {
-		rB, err = c.authSessions.Dao.SendDataToGateway(
+		rB, err = c.sessList.cb.cb.Dao.SendDataToGateway(
 			ctx,
 			gatewayId,
-			c.cb.getTempAuthKeyId(ctx),
+			c.sessList.authId,
 			salt,
 			c.sessionId,
 			raw)
 	} else {
 		if ch := c.httpQueue.Pop(); ch != nil {
-			rB, err = c.authSessions.Dao.SendHttpDataToGateway(
+			rB, err = c.sessList.cb.cb.Dao.SendHttpDataToGateway(
 				ctx,
 				ch,
-				c.cb.getTempAuthKeyId(ctx),
+				c.sessList.authId,
 				salt,
 				c.sessionId,
 				raw)

@@ -58,8 +58,8 @@ func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*mtproto.M
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 			c.ctx,
 			&sync.TLSyncUpdatesNotMe{
-				UserId:    in.UserId,
-				AuthKeyId: in.AuthKeyId,
+				UserId:        in.UserId,
+				PermAuthKeyId: in.AuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePinnedMessages(&mtproto.Update{
 					Pinned:    false,
 					Peer_PEER: peer.ToPeer(),

@@ -136,7 +136,7 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 
 					return nil
 				})
-			if errors.Is(err, sqlc.ErrNotFound) {
+			if err != nil && errors.Is(err, sqlc.ErrNotFound) {
 				kInfo2, _ := d.getAuthKey(ctx, authKeyId)
 				if kInfo2 != nil {
 					kInfo.AuthKeyType = kInfo2.AuthKeyType

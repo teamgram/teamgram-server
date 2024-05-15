@@ -36,8 +36,8 @@ func (c *SessionCore) SessionSetAuthKey(in *session.TLSessionSetAuthKey) (*mtpro
 		c.ctx,
 		&authsession.TLAuthsessionSetAuthKey{
 			AuthKey:    in.AuthKey,
-			FutureSalt: in.FutureSalt,
-			ExpiresIn:  in.ExpiresIn,
+			FutureSalt: in.GetFutureSalt(),
+			ExpiresIn:  in.GetExpiresIn(),
 		})
 	if err != nil {
 		c.Logger.Errorf("session.setAuthKey - error: %v", err)
