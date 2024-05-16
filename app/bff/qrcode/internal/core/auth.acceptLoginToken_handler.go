@@ -20,7 +20,6 @@ package core
 
 import (
 	"encoding/binary"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 	"strconv"
 	"time"
 
@@ -29,6 +28,8 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // AuthAcceptLoginToken

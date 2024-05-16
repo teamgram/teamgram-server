@@ -11,7 +11,6 @@ package core
 
 import (
 	"context"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
@@ -21,6 +20,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type SyncType int
