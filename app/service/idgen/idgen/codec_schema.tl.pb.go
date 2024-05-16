@@ -288,8 +288,12 @@ func (m *TLIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdVal) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLIdVals
@@ -361,8 +365,12 @@ func (m *TLIdVals) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdVals) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLSeqIdVal
@@ -431,8 +439,12 @@ func (m *TLSeqIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSeqIdVal) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -612,8 +624,12 @@ func (m *TLInputId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLInputIds
@@ -682,8 +698,12 @@ func (m *TLInputIds) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputIds) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLInputSeqId
@@ -752,8 +772,12 @@ func (m *TLInputSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLInputNSeqId
@@ -827,8 +851,12 @@ func (m *TLInputNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInputNSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -868,8 +896,12 @@ func (m *TLIdgenNextId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenNextId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenNextIds
@@ -911,8 +943,12 @@ func (m *TLIdgenNextIds) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenNextIds) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenGetCurrentSeqId
@@ -954,8 +990,12 @@ func (m *TLIdgenGetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetCurrentSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenSetCurrentSeqId
@@ -999,8 +1039,12 @@ func (m *TLIdgenSetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenSetCurrentSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenGetNextSeqId
@@ -1042,8 +1086,12 @@ func (m *TLIdgenGetNextSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenGetNextNSeqId
@@ -1087,8 +1135,12 @@ func (m *TLIdgenGetNextNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextNSeqId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenGetNextIdValList
@@ -1146,8 +1198,12 @@ func (m *TLIdgenGetNextIdValList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetNextIdValList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLIdgenGetCurrentSeqIdList
@@ -1205,11 +1261,14 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
-// ----------------------------------------------------------------------------------------------------------------
 // Vector_Long
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -1229,8 +1288,12 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_IdVal
@@ -1262,6 +1325,10 @@ func (m *Vector_IdVal) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_IdVal) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }

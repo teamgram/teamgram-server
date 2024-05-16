@@ -237,8 +237,12 @@ func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLHttpSessionData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -414,8 +418,12 @@ func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionClientData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -576,8 +584,12 @@ func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionClientEvent) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -620,8 +632,12 @@ func (m *TLSessionQueryAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionQueryAuthKey) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionSetAuthKey
@@ -673,8 +689,12 @@ func (m *TLSessionSetAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSetAuthKey) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionCreateSession
@@ -719,8 +739,12 @@ func (m *TLSessionCreateSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionCreateSession) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionSendDataToSession
@@ -765,8 +789,12 @@ func (m *TLSessionSendDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSendDataToSession) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionSendHttpDataToSession
@@ -811,8 +839,12 @@ func (m *TLSessionSendHttpDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionSendHttpDataToSession) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionCloseSession
@@ -857,8 +889,12 @@ func (m *TLSessionCloseSession) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionCloseSession) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionPushUpdatesData
@@ -919,8 +955,12 @@ func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionPushUpdatesData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionPushSessionUpdatesData
@@ -978,8 +1018,12 @@ func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLSessionPushSessionUpdatesData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSessionPushRpcResultData
@@ -1029,8 +1073,10 @@ func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionPushRpcResultData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

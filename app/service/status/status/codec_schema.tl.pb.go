@@ -267,8 +267,12 @@ func (m *TLSessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSessionEntry) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -422,8 +426,12 @@ func (m *TLUserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserSessionEntryList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -472,8 +480,12 @@ func (m *TLStatusSetSessionOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetSessionOnline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetSessionOffline
@@ -517,8 +529,12 @@ func (m *TLStatusSetSessionOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetSessionOffline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusGetUserOnlineSessions
@@ -560,8 +576,12 @@ func (m *TLStatusGetUserOnlineSessions) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusGetUserOnlineSessions) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusGetUsersOnlineSessionsList
@@ -604,8 +624,12 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(dBuf *mtproto.DecodeBuf) err
 }
 
 func (m *TLStatusGetUsersOnlineSessionsList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusGetChannelOnlineUsers
@@ -647,8 +671,12 @@ func (m *TLStatusGetChannelOnlineUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusGetChannelOnlineUsers) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetUserChannelsOnline
@@ -695,8 +723,12 @@ func (m *TLStatusSetUserChannelsOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetUserChannelsOnline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetUserChannelsOffline
@@ -743,8 +775,12 @@ func (m *TLStatusSetUserChannelsOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetUserChannelsOffline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetChannelUserOffline
@@ -788,8 +824,12 @@ func (m *TLStatusSetChannelUserOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelUserOffline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetChannelUsersOnline
@@ -836,8 +876,12 @@ func (m *TLStatusSetChannelUsersOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelUsersOnline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLStatusSetChannelOffline
@@ -879,11 +923,14 @@ func (m *TLStatusSetChannelOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLStatusSetChannelOffline) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
-// ----------------------------------------------------------------------------------------------------------------
 // Vector_UserSessionEntryList
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserSessionEntryList) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -913,8 +960,12 @@ func (m *Vector_UserSessionEntryList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserSessionEntryList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_Long
@@ -936,6 +987,10 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }

@@ -290,8 +290,12 @@ func (m *TLPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLPhotoSizeList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -450,8 +454,12 @@ func (m *TLVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLVideoSizeList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -541,8 +549,12 @@ func (m *TLMediaUploadPhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadPhotoFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadProfilePhotoFile
@@ -625,8 +637,12 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadProfilePhotoFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetPhoto
@@ -668,8 +684,12 @@ func (m *TLMediaGetPhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhoto) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetPhotoSizeList
@@ -711,8 +731,12 @@ func (m *TLMediaGetPhotoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhotoSizeList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetPhotoSizeListList
@@ -755,8 +779,12 @@ func (m *TLMediaGetPhotoSizeListList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetPhotoSizeListList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetVideoSizeList
@@ -798,8 +826,12 @@ func (m *TLMediaGetVideoSizeList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetVideoSizeList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadedDocumentMedia
@@ -847,8 +879,12 @@ func (m *TLMediaUploadedDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadedDocumentMedia) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetDocument
@@ -890,8 +926,12 @@ func (m *TLMediaGetDocument) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetDocument) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetDocumentList
@@ -934,8 +974,12 @@ func (m *TLMediaGetDocumentList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetDocumentList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadEncryptedFile
@@ -983,8 +1027,12 @@ func (m *TLMediaUploadEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadEncryptedFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaGetEncryptedFile
@@ -1028,8 +1076,12 @@ func (m *TLMediaGetEncryptedFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaGetEncryptedFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadWallPaperFile
@@ -1085,8 +1137,12 @@ func (m *TLMediaUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadWallPaperFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadThemeFile
@@ -1157,8 +1213,12 @@ func (m *TLMediaUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadThemeFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadStickerFile
@@ -1235,8 +1295,12 @@ func (m *TLMediaUploadStickerFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadStickerFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMediaUploadRingtoneFile
@@ -1294,11 +1358,14 @@ func (m *TLMediaUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMediaUploadRingtoneFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
-// ----------------------------------------------------------------------------------------------------------------
 // Vector_PhotoSizeList
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PhotoSizeList) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -1328,8 +1395,12 @@ func (m *Vector_PhotoSizeList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_PhotoSizeList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_Document
@@ -1361,6 +1432,10 @@ func (m *Vector_Document) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Document) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }

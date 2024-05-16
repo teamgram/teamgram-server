@@ -98,8 +98,10 @@ func (m *TLGatewaySendDataToGateway) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLGatewaySendDataToGateway) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

@@ -171,8 +171,12 @@ func (m *TLSyncUpdatesMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncUpdatesMe) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncUpdatesNotMe
@@ -222,8 +226,12 @@ func (m *TLSyncUpdatesNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncUpdatesNotMe) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncPushUpdates
@@ -271,8 +279,12 @@ func (m *TLSyncPushUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushUpdates) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncPushUpdatesIfNot
@@ -325,8 +337,12 @@ func (m *TLSyncPushUpdatesIfNot) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushUpdatesIfNot) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncPushBotUpdates
@@ -374,8 +390,12 @@ func (m *TLSyncPushBotUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushBotUpdates) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncPushRpcResult
@@ -427,8 +447,12 @@ func (m *TLSyncPushRpcResult) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncPushRpcResult) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLSyncBroadcastUpdates
@@ -483,8 +507,10 @@ func (m *TLSyncBroadcastUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSyncBroadcastUpdates) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

@@ -303,8 +303,12 @@ func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLContentMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -491,8 +495,12 @@ func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLOutboxMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -633,8 +641,12 @@ func (m *TLSender) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLSender) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -689,8 +701,12 @@ func (m *TLMsgSendMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgSendMultiMessage
@@ -757,8 +773,12 @@ func (m *TLMsgSendMultiMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMultiMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgPushUserMessage
@@ -814,8 +834,12 @@ func (m *TLMsgPushUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgPushUserMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgReadMessageContents
@@ -882,8 +906,12 @@ func (m *TLMsgReadMessageContents) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgReadMessageContents) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgSendMessageV2
@@ -950,8 +978,12 @@ func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgSendMessageV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgEditMessage
@@ -1007,8 +1039,12 @@ func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgEditMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgDeleteMessages
@@ -1074,8 +1110,12 @@ func (m *TLMsgDeleteMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteMessages) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgDeleteHistory
@@ -1144,8 +1184,12 @@ func (m *TLMsgDeleteHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteHistory) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgDeletePhoneCallHistory
@@ -1202,8 +1246,12 @@ func (m *TLMsgDeletePhoneCallHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeletePhoneCallHistory) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgDeleteChatHistory
@@ -1247,8 +1295,12 @@ func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgDeleteChatHistory) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgReadHistory
@@ -1298,8 +1350,12 @@ func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgReadHistory) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgUpdatePinnedMessage
@@ -1374,8 +1430,12 @@ func (m *TLMsgUpdatePinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgUpdatePinnedMessage) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLMsgUnpinAllMessages
@@ -1423,8 +1483,10 @@ func (m *TLMsgUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLMsgUnpinAllMessages) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

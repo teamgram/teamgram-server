@@ -285,8 +285,12 @@ func (m *TLChannelDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChannelDifference) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -475,8 +479,12 @@ func (m *TLDifferenceEmpty) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceEmpty) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLDifference
@@ -592,8 +600,12 @@ func (m *TLDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifference) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLDifferenceSlice
@@ -713,8 +725,12 @@ func (m *TLDifferenceSlice) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceSlice) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLDifferenceTooLong
@@ -783,8 +799,12 @@ func (m *TLDifferenceTooLong) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDifferenceTooLong) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -829,8 +849,12 @@ func (m *TLUpdatesGetStateV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdatesGetStateV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLUpdatesGetDifferenceV2
@@ -896,8 +920,12 @@ func (m *TLUpdatesGetDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUpdatesGetDifferenceV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLUpdatesGetChannelDifferenceV2
@@ -947,8 +975,10 @@ func (m *TLUpdatesGetChannelDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLUpdatesGetChannelDifferenceV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

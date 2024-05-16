@@ -51,7 +51,7 @@ func JSON(w http.ResponseWriter, data interface{}) {
 	)
 	switch data.(type) {
 	case proto.Message:
-		r, err = protojson.Marshal(data.(proto.Message))
+		r, err = protojson.MarshalOptions{UseProtoNames: true}.Marshal(data.(proto.Message))
 		if err != nil {
 			JSONError(w, err)
 		}

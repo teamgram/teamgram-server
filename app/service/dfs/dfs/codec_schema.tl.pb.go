@@ -173,8 +173,12 @@ func (m *TLDfsWriteFilePartData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsWriteFilePartData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadPhotoFileV2
@@ -222,8 +226,12 @@ func (m *TLDfsUploadPhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadPhotoFileV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadProfilePhotoFileV2
@@ -306,8 +314,12 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadEncryptedFileV2
@@ -355,8 +367,12 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadEncryptedFileV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsDownloadFile
@@ -405,8 +421,12 @@ func (m *TLDfsDownloadFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsDownloadFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadDocumentFileV2
@@ -454,8 +474,12 @@ func (m *TLDfsUploadDocumentFileV2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadDocumentFileV2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadGifDocumentMedia
@@ -503,8 +527,12 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadGifDocumentMedia) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadMp4DocumentMedia
@@ -552,8 +580,12 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadWallPaperFile
@@ -609,8 +641,12 @@ func (m *TLDfsUploadWallPaperFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadWallPaperFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadThemeFile
@@ -681,8 +717,12 @@ func (m *TLDfsUploadThemeFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadThemeFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLDfsUploadRingtoneFile
@@ -734,8 +774,10 @@ func (m *TLDfsUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLDfsUploadRingtoneFile) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------

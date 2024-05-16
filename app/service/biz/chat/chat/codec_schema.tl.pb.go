@@ -417,8 +417,12 @@ func (m *TLChatInviteAlready) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInviteAlready) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLChatInvite
@@ -551,8 +555,12 @@ func (m *TLChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // MakeTLChatInvitePeek
@@ -630,8 +638,12 @@ func (m *TLChatInvitePeek) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInvitePeek) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -795,8 +807,12 @@ func (m *TLChatInviteImported) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatInviteImported) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -936,8 +952,12 @@ func (m *TLRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLRecentChatInviteRequesters) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1077,8 +1097,12 @@ func (m *TLUserChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserChatIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -1121,8 +1145,12 @@ func (m *TLChatGetMutableChat) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMutableChat) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetChatListByIdList
@@ -1169,8 +1197,12 @@ func (m *TLChatGetChatListByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatListByIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetChatBySelfId
@@ -1214,8 +1246,12 @@ func (m *TLChatGetChatBySelfId) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatBySelfId) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatCreateChat2
@@ -1281,8 +1317,12 @@ func (m *TLChatCreateChat2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatCreateChat2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatDeleteChat
@@ -1326,8 +1366,12 @@ func (m *TLChatDeleteChat) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteChat) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatDeleteChatUser
@@ -1373,8 +1417,12 @@ func (m *TLChatDeleteChatUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteChatUser) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditChatTitle
@@ -1420,8 +1468,12 @@ func (m *TLChatEditChatTitle) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatTitle) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditChatAbout
@@ -1467,8 +1519,12 @@ func (m *TLChatEditChatAbout) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatAbout) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditChatPhoto
@@ -1518,8 +1574,12 @@ func (m *TLChatEditChatPhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatPhoto) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditChatAdmin
@@ -1571,8 +1631,12 @@ func (m *TLChatEditChatAdmin) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditChatAdmin) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditChatDefaultBannedRights
@@ -1622,8 +1686,12 @@ func (m *TLChatEditChatDefaultBannedRights) Decode(dBuf *mtproto.DecodeBuf) erro
 }
 
 func (m *TLChatEditChatDefaultBannedRights) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatAddChatUser
@@ -1682,8 +1750,12 @@ func (m *TLChatAddChatUser) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatAddChatUser) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetMutableChatByLink
@@ -1725,8 +1797,12 @@ func (m *TLChatGetMutableChatByLink) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMutableChatByLink) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatToggleNoForwards
@@ -1776,8 +1852,12 @@ func (m *TLChatToggleNoForwards) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatToggleNoForwards) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatMigratedToChannel
@@ -1826,8 +1906,12 @@ func (m *TLChatMigratedToChannel) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatMigratedToChannel) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetChatParticipantIdList
@@ -1869,8 +1953,12 @@ func (m *TLChatGetChatParticipantIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatParticipantIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetUsersChatIdList
@@ -1913,8 +2001,12 @@ func (m *TLChatGetUsersChatIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetUsersChatIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetMyChatList
@@ -1962,8 +2054,12 @@ func (m *TLChatGetMyChatList) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetMyChatList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatExportChatInvite
@@ -2058,8 +2154,12 @@ func (m *TLChatExportChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatExportChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetAdminsWithInvites
@@ -2103,8 +2203,12 @@ func (m *TLChatGetAdminsWithInvites) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetAdminsWithInvites) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetExportedChatInvite
@@ -2148,8 +2252,12 @@ func (m *TLChatGetExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetExportedChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetExportedChatInvites
@@ -2230,8 +2338,12 @@ func (m *TLChatGetExportedChatInvites) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetExportedChatInvites) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatCheckChatInvite
@@ -2275,8 +2387,12 @@ func (m *TLChatCheckChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatCheckChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatImportChatInvite
@@ -2320,8 +2436,12 @@ func (m *TLChatImportChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatImportChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetChatInviteImporters
@@ -2406,8 +2526,12 @@ func (m *TLChatGetChatInviteImporters) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatGetChatInviteImporters) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatDeleteExportedChatInvite
@@ -2453,8 +2577,12 @@ func (m *TLChatDeleteExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatDeleteExportedChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatDeleteRevokedExportedChatInvites
@@ -2500,8 +2628,12 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Decode(dBuf *mtproto.DecodeBuf)
 }
 
 func (m *TLChatDeleteRevokedExportedChatInvites) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatEditExportedChatInvite
@@ -2605,8 +2737,12 @@ func (m *TLChatEditExportedChatInvite) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatEditExportedChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatSetChatAvailableReactions
@@ -2657,8 +2793,12 @@ func (m *TLChatSetChatAvailableReactions) Decode(dBuf *mtproto.DecodeBuf) error 
 }
 
 func (m *TLChatSetChatAvailableReactions) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatSetHistoryTTL
@@ -2704,8 +2844,12 @@ func (m *TLChatSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSetHistoryTTL) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatSearch
@@ -2753,8 +2897,12 @@ func (m *TLChatSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatSearch) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatGetRecentChatInviteRequesters
@@ -2798,8 +2946,12 @@ func (m *TLChatGetRecentChatInviteRequesters) Decode(dBuf *mtproto.DecodeBuf) er
 }
 
 func (m *TLChatGetRecentChatInviteRequesters) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatHideChatJoinRequests
@@ -2877,8 +3029,12 @@ func (m *TLChatHideChatJoinRequests) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatHideChatJoinRequests) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLChatImportChatInvite2
@@ -2922,11 +3078,14 @@ func (m *TLChatImportChatInvite2) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLChatImportChatInvite2) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
-// ----------------------------------------------------------------------------------------------------------------
 // Vector_MutableChat
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_MutableChat) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -2956,8 +3115,12 @@ func (m *Vector_MutableChat) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_MutableChat) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_Long
@@ -2979,8 +3142,12 @@ func (m *Vector_Long) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_Long) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_UserChatIdList
@@ -3012,8 +3179,12 @@ func (m *Vector_UserChatIdList) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_UserChatIdList) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_ChatAdminWithInvites
@@ -3045,8 +3216,12 @@ func (m *Vector_ChatAdminWithInvites) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ChatAdminWithInvites) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_ExportedChatInvite
@@ -3078,8 +3253,12 @@ func (m *Vector_ExportedChatInvite) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ExportedChatInvite) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // Vector_ChatInviteImporter
@@ -3111,6 +3290,10 @@ func (m *Vector_ChatInviteImporter) CalcByteSize(layer int32) int {
 }
 
 func (m *Vector_ChatInviteImporter) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }

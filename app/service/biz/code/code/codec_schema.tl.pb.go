@@ -277,8 +277,12 @@ func (m *TLPhoneCodeTransaction) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLPhoneCodeTransaction) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -344,8 +348,12 @@ func (m *TLCodeCreatePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLCodeCreatePhoneCode) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLCodeGetPhoneCode
@@ -391,8 +399,12 @@ func (m *TLCodeGetPhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLCodeGetPhoneCode) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLCodeDeletePhoneCode
@@ -438,8 +450,12 @@ func (m *TLCodeDeletePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLCodeDeletePhoneCode) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
 
 // TLCodeUpdatePhoneCodeData
@@ -491,8 +507,10 @@ func (m *TLCodeUpdatePhoneCodeData) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLCodeUpdatePhoneCodeData) DebugString() string {
-	v, _ := protojson.Marshal(m)
-	return string(v)
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
 }
-
-//----------------------------------------------------------------------------------------------------------------
