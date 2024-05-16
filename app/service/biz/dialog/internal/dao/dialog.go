@@ -8,6 +8,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -96,7 +97,7 @@ func (d *Dao) GetDialogByPeerDialogId(ctx context.Context, userId, peerDialogId 
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("dialog.getDialogById - error: %v", err)
-		if err == sqlc.ErrNotFound {
+		if errors.Is(err, sqlc.ErrNotFound) {
 			err = mtproto.ErrPeerIdInvalid
 		}
 		return nil, err

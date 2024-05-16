@@ -8,6 +8,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
@@ -89,7 +90,7 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 		})
 
 	if err != nil {
-		if err == sqlc.ErrNotFound {
+		if errors.Is(err, sqlc.ErrNotFound) {
 			err = mtproto.ErrChatIdInvalid
 		}
 		return nil, err

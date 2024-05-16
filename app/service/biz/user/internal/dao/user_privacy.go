@@ -20,6 +20,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/teamgram/marmota/pkg/hack"
@@ -187,7 +188,7 @@ func (d *Dao) GetUserPrivacyRules(ctx context.Context, id int64, key int32) (*mt
 	)
 
 	if err != nil {
-		if err == sqlc.ErrNotFound {
+		if errors.Is(err, sqlc.ErrNotFound) {
 			return nil, nil
 		}
 		return nil, err

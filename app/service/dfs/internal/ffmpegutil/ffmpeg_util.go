@@ -20,6 +20,7 @@ package ffmpegutil
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -218,7 +219,7 @@ func (trans *FFmpegUtil) GetFirstFrame(iFilePath string) (bytes []byte, err erro
 		// log.Debugf("data: %d", data)
 		// Handle error and data...
 		if err != nil {
-			if err == io.ErrClosedPipe {
+			if errors.Is(err, io.ErrClosedPipe) {
 				//
 			} else {
 				logx.Errorf("readPipe error: %v", err)
@@ -233,7 +234,7 @@ func (trans *FFmpegUtil) GetFirstFrame(iFilePath string) (bytes []byte, err erro
 	err = <-done
 	// Handle error...
 	if err != nil {
-		if err == io.ErrClosedPipe {
+		if errors.Is(err, io.ErrClosedPipe) {
 			//
 		} else {
 			logx.Errorf("getFirstFrameByPipe error: %v", err)
@@ -286,7 +287,7 @@ func (trans *FFmpegUtil) GetFirstFrameByPipe(iPipeData []byte) (bytes []byte, er
 		// log.Debugf("data: %d", data)
 		// Handle error and data...
 		if err != nil {
-			if err == io.ErrClosedPipe {
+			if errors.Is(err, io.ErrClosedPipe) {
 				//
 			} else {
 				logx.Errorf("readPipe error: %v", err)
@@ -304,7 +305,7 @@ func (trans *FFmpegUtil) GetFirstFrameByPipe(iPipeData []byte) (bytes []byte, er
 		_ = n
 		// log.Debugf("data: %d", data)
 		if err != nil {
-			if err == io.ErrClosedPipe {
+			if errors.Is(err, io.ErrClosedPipe) {
 				//
 			} else {
 				logx.Errorf("writePipe error: %v", err)
@@ -321,7 +322,7 @@ func (trans *FFmpegUtil) GetFirstFrameByPipe(iPipeData []byte) (bytes []byte, er
 	err = <-done
 	// Handle error...
 	if err != nil {
-		if err == io.ErrClosedPipe {
+		if errors.Is(err, io.ErrClosedPipe) {
 			//
 		} else {
 			logx.Errorf("getFirstFrameByPipe error: %v", err)
