@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type DevicesDAO struct {
 	db *sqlx.DB
 }
 
 func NewDevicesDAO(db *sqlx.DB) *DevicesDAO {
-	return &DevicesDAO{db}
+	return &DevicesDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
@@ -159,7 +165,7 @@ func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, token_type int3
 // UpdateState
 // update devices set state = :state where auth_key_id = :auth_key_id and user_id = :user_id and token_type
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateState(ctx context.Context, state bool, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateState(ctx context.Context, state int32, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where auth_key_id = ? and user_id = ? and token_type"
 		rResult sql.Result
@@ -179,10 +185,10 @@ func (dao *DevicesDAO) UpdateState(ctx context.Context, state bool, auth_key_id 
 	return
 }
 
-// update devices set state = :state where auth_key_id = :auth_key_id and user_id = :user_id and token_type
 // UpdateStateTx
+// update devices set state = :state where auth_key_id = :auth_key_id and user_id = :user_id and token_type
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state bool, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state int32, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where auth_key_id = ? and user_id = ? and token_type"
 		rResult sql.Result
@@ -205,7 +211,7 @@ func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state bool, auth_key_id int64,
 // UpdateStateById
 // update devices set state = :state where id = :id
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateById(ctx context.Context, state bool, id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateById(ctx context.Context, state int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where id = ?"
 		rResult sql.Result
@@ -225,10 +231,10 @@ func (dao *DevicesDAO) UpdateStateById(ctx context.Context, state bool, id int64
 	return
 }
 
-// update devices set state = :state where id = :id
 // UpdateStateByIdTx
+// update devices set state = :state where id = :id
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateByIdTx(tx *sqlx.Tx, state bool, id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateByIdTx(tx *sqlx.Tx, state int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where id = ?"
 		rResult sql.Result
@@ -251,7 +257,7 @@ func (dao *DevicesDAO) UpdateStateByIdTx(tx *sqlx.Tx, state bool, id int64) (row
 // UpdateStateByToken
 // update devices set state = :state where token_type = :token_type and token = :token
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state bool, token_type int32, token string) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state int32, token_type int32, token string) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where token_type = ? and token = ?"
 		rResult sql.Result
@@ -271,10 +277,10 @@ func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state bool, token
 	return
 }
 
-// update devices set state = :state where token_type = :token_type and token = :token
 // UpdateStateByTokenTx
+// update devices set state = :state where token_type = :token_type and token = :token
 // TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateByTokenTx(tx *sqlx.Tx, state bool, token_type int32, token string) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateByTokenTx(tx *sqlx.Tx, state int32, token_type int32, token string) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where token_type = ? and token = ?"
 		rResult sql.Result

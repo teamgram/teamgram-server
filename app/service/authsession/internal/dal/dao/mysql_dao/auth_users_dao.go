@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type AuthUsersDAO struct {
 	db *sqlx.DB
 }
 
 func NewAuthUsersDAO(db *sqlx.DB) *AuthUsersDAO {
-	return &AuthUsersDAO{db}
+	return &AuthUsersDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdates
@@ -191,8 +197,8 @@ func (dao *AuthUsersDAO) DeleteByHashList(ctx context.Context, idList []int64) (
 	return
 }
 
-// update auth_users set deleted = 1, date_created = 0, date_actived = 0 where id in (:idList)
 // DeleteByHashListTx
+// update auth_users set deleted = 1, date_created = 0, date_actived = 0 where id in (:idList)
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) DeleteByHashListTx(tx *sqlx.Tx, idList []int64) (rowsAffected int64, err error) {
 	var (
@@ -295,8 +301,8 @@ func (dao *AuthUsersDAO) Delete(ctx context.Context, auth_key_id int64, user_id 
 	return
 }
 
-// update auth_users set deleted = 1, date_actived = 0 where auth_key_id = :auth_key_id and user_id = :user_id
 // DeleteTx
+// update auth_users set deleted = 1, date_actived = 0 where auth_key_id = :auth_key_id and user_id = :user_id
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) DeleteTx(tx *sqlx.Tx, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
 	var (
@@ -341,8 +347,8 @@ func (dao *AuthUsersDAO) DeleteUser(ctx context.Context, user_id int64) (rowsAff
 	return
 }
 
-// update auth_users set deleted = 1, date_actived = 0 where user_id = :user_id
 // DeleteUserTx
+// update auth_users set deleted = 1, date_actived = 0 where user_id = :user_id
 // TODO(@benqi): sqlmap
 func (dao *AuthUsersDAO) DeleteUserTx(tx *sqlx.Tx, user_id int64) (rowsAffected int64, err error) {
 	var (

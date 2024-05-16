@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type AuthKeyInfosDAO struct {
 	db *sqlx.DB
 }
 
 func NewAuthKeyInfosDAO(db *sqlx.DB) *AuthKeyInfosDAO {
-	return &AuthKeyInfosDAO{db}
+	return &AuthKeyInfosDAO{
+		db: db,
+	}
 }
 
 // Insert

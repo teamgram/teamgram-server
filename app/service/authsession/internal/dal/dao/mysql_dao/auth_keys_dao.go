@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,8 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/authsession/internal/dal/dataobject"
@@ -21,13 +23,17 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
 
 type AuthKeysDAO struct {
 	db *sqlx.DB
 }
 
 func NewAuthKeysDAO(db *sqlx.DB) *AuthKeysDAO {
-	return &AuthKeysDAO{db}
+	return &AuthKeysDAO{
+		db: db,
+	}
 }
 
 // Insert
