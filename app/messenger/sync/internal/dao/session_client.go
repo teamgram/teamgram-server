@@ -32,6 +32,11 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
+type sessionDataCtx struct {
+	ctx     context.Context
+	updates any
+}
+
 // SessionOptions comet options.
 type SessionOptions struct {
 	RoutineSize uint64
@@ -42,7 +47,7 @@ type SessionOptions struct {
 type Session struct {
 	serverId       string
 	client         sessionclient.SessionClient
-	sessionChan    []chan interface{}
+	sessionChan    []chan sessionDataCtx
 	sessionChanNum uint64
 	options        SessionOptions
 	ctx            context.Context
@@ -50,29 +55,29 @@ type Session struct {
 }
 
 // process
-func (c *Session) process(sessionChan chan interface{}) {
+func (c *Session) process(sessionChan chan sessionDataCtx) {
 	var err error
 	for {
 		select {
-		case updates, ok := <-sessionChan:
+		case sessionData, ok := <-sessionChan:
 			if !ok {
 				logx.Errorf("process error")
 				return
 			}
 
-			switch r := updates.(type) {
+			switch r := sessionData.updates.(type) {
 			case *session.TLSessionPushSessionUpdatesData:
-				_, err = c.client.SessionPushSessionUpdatesData(context.Background(), r)
+				_, err = c.client.SessionPushSessionUpdatesData(sessionData.ctx, r)
 				if err != nil {
 					logx.Errorf("c.client.PushSessionUpdates(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
 				}
 			case *session.TLSessionPushUpdatesData:
-				_, err = c.client.SessionPushUpdatesData(context.Background(), r)
+				_, err = c.client.SessionPushUpdatesData(sessionData.ctx, r)
 				if err != nil {
 					logx.Errorf("c.client.PushUpdates(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
 				}
 			case *session.TLSessionPushRpcResultData:
-				_, err = c.client.SessionPushRpcResultData(context.Background(), r)
+				_, err = c.client.SessionPushRpcResultData(sessionData.ctx, r)
 				if err != nil {
 					logx.Errorf("c.client.PushRpcResult(%s, %v, reply) serverId:%d error(%v)", r, c.serverId, err)
 				}
@@ -112,19 +117,19 @@ func (c *Session) Close() (err error) {
 
 func (c *Session) PushUpdates(ctx context.Context, msg *session.TLSessionPushUpdatesData) (err error) {
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
-	c.sessionChan[idx] <- msg
+	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
 }
 
 func (c *Session) PushSessionUpdates(ctx context.Context, msg *session.TLSessionPushSessionUpdatesData) (err error) {
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
-	c.sessionChan[idx] <- msg
+	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
 }
 
 func (c *Session) PushRpcResult(ctx context.Context, msg *session.TLSessionPushRpcResultData) (err error) {
 	idx := atomic.AddUint64(&c.sessionChanNum, 1) % c.options.RoutineSize
-	c.sessionChan[idx] <- msg
+	c.sessionChan[idx] <- sessionDataCtx{ctx: ctx, updates: msg}
 	return
 }
 
@@ -132,7 +137,7 @@ func (c *Session) PushRpcResult(ctx context.Context, msg *session.TLSessionPushR
 func NewSession(c zrpc.RpcClientConf, options SessionOptions) (*Session, error) {
 	sess := &Session{
 		serverId:    c.Endpoints[0],
-		sessionChan: make([]chan interface{}, options.RoutineSize),
+		sessionChan: make([]chan sessionDataCtx, options.RoutineSize),
 		options:     options,
 	}
 
@@ -145,7 +150,7 @@ func NewSession(c zrpc.RpcClientConf, options SessionOptions) (*Session, error) 
 	sess.ctx, sess.cancel = context.WithCancel(context.Background())
 
 	for i := uint64(0); i < options.RoutineSize; i++ {
-		sess.sessionChan[i] = make(chan interface{}, options.RoutineChan)
+		sess.sessionChan[i] = make(chan sessionDataCtx, options.RoutineChan)
 		go sess.process(sess.sessionChan[i])
 	}
 	return sess, nil
@@ -197,7 +202,7 @@ func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *se
 		// log.Info("push updates to serverId: (%s, %s)", serverId, msg.DebugString())
 		return c.PushUpdates(ctx, msg)
 	} else {
-		logx.Errorf("not found k: %s, %v", serverId, d.sessionServers)
+		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
 	return
@@ -208,7 +213,7 @@ func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, 
 		// logx.Info("push session updates to serverId: (%s, %s)", serverId, msg.DebugString())
 		return c.PushSessionUpdates(ctx, msg)
 	} else {
-		logx.Errorf("not found k: %s, %v", serverId, d.sessionServers)
+		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
 	return
@@ -219,7 +224,7 @@ func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *
 		// log.Debugf("push rpc result to serverId: (%s, %s)", serverId, msg.DebugString())
 		return c.PushRpcResult(ctx, msg)
 	} else {
-		logx.Errorf("not found k: %s, %v", serverId, d.sessionServers)
+		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
 	return

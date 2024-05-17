@@ -169,7 +169,7 @@ func (c *SyncCore) processUpdates(syncType SyncType, userId int64, isBot bool, u
 
 func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId int64, hasServerId *wrapperspb.StringValue, authKeyId, sessionId *wrapperspb.Int64Value, pushData *mtproto.Updates, notification bool) {
 	if syncType == syncTypeUserMe && hasServerId != nil {
-		logx.Infof("pushUpdatesToSession - pushData: {server_id: %v, auth_key_id: %v}", hasServerId, authKeyId)
+		c.Logger.Debugf("pushUpdatesToSession - pushData: {server_id: %v, auth_key_id: %v}", hasServerId, authKeyId)
 		if sessionId != nil {
 			c.svcCtx.Dao.PushSessionUpdatesToSession(
 				c.ctx,
@@ -199,7 +199,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 		statusList, _ := c.svcCtx.Dao.StatusClient.StatusGetUserOnlineSessions(c.ctx, &status.TLStatusGetUserOnlineSessions{
 			UserId: userId,
 		})
-		logx.Infof("statusList - #%v", statusList)
+		c.Logger.Debugf("statusList - #%v", statusList)
 		for _, sess := range statusList.GetUserSessions() {
 			if syncType == syncTypeUserNotMe && sess.AuthKeyId == permAuthKeyId {
 				continue
@@ -213,7 +213,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 			}
 		}
 
-		logx.Infof("serverIdKeyIdList - #%v", serverIdKeyIdList)
+		c.Logger.Debugf("serverIdKeyIdList - #%v", serverIdKeyIdList)
 		for serverId, keyIdList := range serverIdKeyIdList {
 			for _, keyId := range keyIdList {
 				// log.Debugf("serverIdKeyIdList - #%v", serverIdKeyIdList)
@@ -230,7 +230,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 
 		if syncType == syncTypeUser {
 			if c.svcCtx.Dao.PushClient != nil {
-				c.Logger.Infof("push PushClient...")
+				c.Logger.Debugf("push PushClient...")
 				c.svcCtx.Dao.PushClient.SyncPushUpdatesIfNot(c.ctx, &sync.TLSyncPushUpdatesIfNot{
 					UserId:   userId,
 					Excludes: pushExcludeList,
