@@ -123,7 +123,8 @@ func (c *MsgCore) sendUserMessage(
 	fromAuthKeyId int64,
 	toUserId int64,
 	outBox *msg.OutboxMessage,
-	cb func(did int64, inboxMsg *mtproto.Message) error) (*mtproto.Updates, error) {
+	cb func(did int64, inboxMsg *mtproto.Message) error,
+) (*mtproto.Updates, error) {
 	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx, &userpb.TLUserGetMutableUsers{
 		Id: []int64{fromUserId, toUserId},
 	})

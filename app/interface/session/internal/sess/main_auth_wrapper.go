@@ -616,24 +616,37 @@ func (m *MainAuthWrapper) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcA
 }
 
 func (m *MainAuthWrapper) onTimer(ctx context.Context) {
-	//for _, sess := range s.sessions {
-	//	if (sess.isGeneric && sess.sessionOnline()) ||
-	//		sess.isAndroidPush && sess.sessionOnline() {
-	//		s.setOnline(ctx)
-	//	}
-	//
-	//	sess.onTimer(ctx)
-	//}
-	//
-	//for _, sess := range s.sessions {
-	//	if !sess.sessionClosed() {
-	//		return
-	//	}
-	//}
-	//
-	//go func() {
-	//	s.cb.DeleteByAuthKeyId(s.authKeyId)
-	//}()
+	if m.mainUpdatesSession != nil || m.androidPushSession != nil {
+		m.setOnline(ctx)
+	}
+
+	for _, sess := range m.mainAuth.sessions {
+		sess.onTimer(ctx)
+	}
+	for _, sess := range m.tempAuth.sessions {
+		sess.onTimer(ctx)
+	}
+	for _, sess := range m.mediaTempAuth.sessions {
+		sess.onTimer(ctx)
+	}
+
+	for _, sess := range m.mainAuth.sessions {
+		if !sess.sessionClosed() {
+			return
+		}
+	}
+	for _, sess := range m.tempAuth.sessions {
+		if !sess.sessionClosed() {
+			return
+		}
+	}
+	for _, sess := range m.mediaTempAuth.sessions {
+		if !sess.sessionClosed() {
+			return
+		}
+	}
+
+	m.cb.DeleteByAuthKeyId(m.authKeyId)
 }
 
 func (m *MainAuthWrapper) SessionClientNew(ctx context.Context, kType int, kId int64, gatewayId string, sessionId int64) error {
