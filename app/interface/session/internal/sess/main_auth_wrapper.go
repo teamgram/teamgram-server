@@ -616,7 +616,8 @@ func (m *MainAuthWrapper) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcA
 }
 
 func (m *MainAuthWrapper) onTimer(ctx context.Context) {
-	if m.mainUpdatesSession != nil || m.androidPushSession != nil {
+	if (m.mainUpdatesSession != nil && m.mainUpdatesSession.sessionOnline()) ||
+		(m.androidPushSession != nil && m.androidPushSession.sessionOnline()) {
 		m.setOnline(ctx)
 	}
 
