@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package gnet
 
 import (
 	"context"
@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/ws"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/ws"
 	"github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 
@@ -61,7 +61,7 @@ func (s *Server) asyncRun2(
 // OnBoot fires when the engine is ready for accepting connections.
 // The parameter engine has information and various utilities.
 func (s *Server) OnBoot(eng gnet.Engine) (action gnet.Action) {
-	logx.Debugf("gnetway server is listening")
+	logx.Infof("gnetway server is listening")
 	s.eng = eng
 	return gnet.None
 }
@@ -70,7 +70,7 @@ func (s *Server) OnBoot(eng gnet.Engine) (action gnet.Action) {
 // all event-loops and connections are closed.
 func (s *Server) OnShutdown(eng gnet.Engine) {
 	_ = eng
-	logx.Debugf("gnetway server shutdown")
+	logx.Infof("gnetway server shutdown")
 }
 
 // OnOpen fires when a new connection has been opened.
@@ -119,12 +119,12 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	}
 
 	s.pool.Submit(func() {
-		s.session.invokeByKey(
+		s.svcCtx.Session.InvokeByKey(
 			strconv.FormatInt(ctx.authKey.PermAuthKeyId(), 10),
 			func(client sessionclient.SessionClient) (err error) {
 				_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
 					Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-						ServerId:      s.session.gatewayId,
+						ServerId:      s.svcCtx.GatewayId,
 						AuthKeyId:     ctx.authKey.AuthKeyId(),
 						KeyType:       int32(ctx.authKey.AuthKeyType()),
 						PermAuthKeyId: ctx.authKey.PermAuthKeyId(),
@@ -194,14 +194,14 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	}
 
 	s.pool.Submit(func() {
-		s.session.invokeByKey(
+		s.svcCtx.Dao.Session.InvokeByKey(
 			strconv.FormatInt(permAuthKeyId, 10),
 			func(client sessionclient.SessionClient) (err error) {
 				if isNew {
 					if s.authSessionMgr.AddNewSession(authKey.AuthKeyId(), sessionId, connId) {
 						_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
 							Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-								ServerId:      s.session.gatewayId,
+								ServerId:      s.svcCtx.GatewayId,
 								AuthKeyId:     authKey.AuthKeyId(),
 								KeyType:       int32(authKey.AuthKeyType()),
 								PermAuthKeyId: permAuthKeyId,
@@ -214,7 +214,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 
 				_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
 					Data: &session.SessionClientData{
-						ServerId:      s.session.gatewayId,
+						ServerId:      s.svcCtx.GatewayId,
 						AuthKeyId:     authKey.AuthKeyId(),
 						KeyType:       int32(authKey.AuthKeyType()),
 						PermAuthKeyId: permAuthKeyId,
@@ -279,7 +279,7 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 				key3 *mtproto.AuthKeyInfo
 			)
 
-			err2 := s.session.invokeByKey(
+			err2 := s.svcCtx.Dao.Session.InvokeByKey(
 				strconv.FormatInt(msg2.AuthKeyId(), 10),
 				func(client sessionclient.SessionClient) (err error) {
 					key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{

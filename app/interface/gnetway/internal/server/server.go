@@ -1,4 +1,4 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright 2022 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,92 +12,60 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// Author: teamgramio (teamgram.io@gmail.com)
+//
 
 package server
 
 import (
-	"context"
-	"strconv"
-	"time"
+	"flag"
 
-	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/grpc"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
 
-	"github.com/panjf2000/gnet/v2"
-	"github.com/panjf2000/gnet/v2/pkg/logging"
-	"github.com/panjf2000/gnet/v2/pkg/pool/goroutine"
+	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 var (
-	//etcdPrefix is a etcd globe key prefix
-	endpoints string
+	configFile = flag.String("f", "etc/gateway.yaml", "the config file")
 )
 
 type Server struct {
-	gnet.BuiltinEventEngine
-	eng            gnet.Engine
-	pool           *goroutine.Pool
-	cache          *cache.LRUCache
-	c              *config.Config
-	handshake      *handshake
-	session        *Session
-	authSessionMgr *authSessionManager
+	grpcSrv *zrpc.RpcServer
+	server  *gnet.Server
 }
 
-func New(c config.Config) *Server {
-	var (
-		err error
-		s   = new(Server)
-	)
+func (s *Server) Initialize() error {
+	var c config.Config
+	conf.MustLoad(*configFile, &c)
 
-	s.authSessionMgr = NewAuthSessionManager()
+	logx.Infov(c)
 
-	keyFingerprint, err := strconv.ParseUint(c.KeyFingerprint, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	s.handshake, err = newHandshake(c.KeyFile, keyFingerprint)
-	if err != nil {
-		panic(err)
-	}
-
-	s.cache = cache.NewLRUCache(10 * 1024 * 1024) // cache capacity: 10MB
-	s.pool = goroutine.Default()
-
-	s.session = NewSession(c)
-
-	s.c = &c
+	ctx := svc.NewServiceContext(c)
+	s.server = gnet.New(ctx, c)
+	s.grpcSrv = grpc.New(ctx, c.RpcServerConf, s.server)
 
 	go func() {
-		s.Serve()
+		s.grpcSrv.Start()
 	}()
-	return s
+
+	return nil
 }
 
-func (s *Server) Close() {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	logx.Debugf("stop engine... error: %v", s.eng.Stop(ctx))
+func (s *Server) RunLoop() {
+	// s.server.Serve()
+	//if err := s.server.Serve(); err != nil {
+	//	logx.Errorf("run server error: %v, quit...", err)
+	//	commands.GSignal <- syscall.SIGQUIT
+	//}
 }
 
-func (s *Server) Serve() {
-	// addrs := strings.Join(s.c.Gnetway.ToAddresses(), ",")
-	logx.Debugf("addrs: %s", s.c.Gnetway.ToAddresses())
-
-	err := gnet.Rotate(
-		s,
-		s.c.Gnetway.ToAddresses(),
-		gnet.WithMulticore(s.c.Gnetway.Multicore),
-		gnet.WithSocketRecvBuffer(s.c.Gnetway.ReceiveBuf),
-		gnet.WithSocketSendBuffer(s.c.Gnetway.SendBuf),
-		gnet.WithLockOSThread(true),
-		gnet.WithReuseAddr(true),
-		gnet.WithTicker(true),
-		gnet.WithLogLevel(logging.DebugLevel),
-		gnet.WithLogger(NewLogger()))
-	if err != nil {
-		logx.Error(err)
-		panic(err)
-	}
+func (s *Server) Destroy() {
+	s.grpcSrv.Stop()
+	s.server.Close()
 }

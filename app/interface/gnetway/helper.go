@@ -11,7 +11,7 @@
 package gnetway_helper
 
 import (
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/server"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )

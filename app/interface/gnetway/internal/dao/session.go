@@ -4,12 +4,10 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package server
+package dao
 
 import (
 	"errors"
-	"os"
-	"strings"
 
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
 	sessionclient "github.com/teamgram/teamgram-server/app/interface/session/client"
@@ -17,41 +15,13 @@ import (
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/hash"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/netx"
 	"github.com/zeromicro/go-zero/core/stringx"
 	"github.com/zeromicro/go-zero/zrpc"
-)
-
-const (
-	allEths  = "0.0.0.0"
-	envPodIp = "POD_IP"
 )
 
 var (
 	ErrSessionNotFound = errors.New("not found session")
 )
-
-func figureOutListenOn(listenOn string) string {
-	fields := strings.Split(listenOn, ":")
-	if len(fields) == 0 {
-		return listenOn
-	}
-
-	host := fields[0]
-	if len(host) > 0 && host != allEths {
-		return listenOn
-	}
-
-	ip := os.Getenv(envPodIp)
-	if len(ip) == 0 {
-		ip = netx.InternalIp()
-	}
-	if len(ip) == 0 {
-		return listenOn
-	}
-
-	return strings.Join(append([]string{ip}, fields[1:]...), ":")
-}
 
 type Session struct {
 	gatewayId   string
@@ -62,7 +32,6 @@ type Session struct {
 
 func NewSession(c config.Config) *Session {
 	sess := &Session{
-		gatewayId:   figureOutListenOn(c.ListenOn),
 		dispatcher:  hash.NewConsistentHash(),
 		errNotFound: ErrSessionNotFound,
 		sessions:    make(map[string]sessionclient.SessionClient),
@@ -133,7 +102,7 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 //	return val.(sessionclient.SessionClient), nil
 //}
 
-func (sess *Session) invokeByKey(key string, cb func(client sessionclient.SessionClient) (err error)) error {
+func (sess *Session) InvokeByKey(key string, cb func(client sessionclient.SessionClient) (err error)) error {
 	val, ok := sess.dispatcher.Get(key)
 	if !ok {
 		return ErrSessionNotFound

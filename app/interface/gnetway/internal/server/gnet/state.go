@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package gnet
 
 const (
 	STATE_ERROR              = 0x0000

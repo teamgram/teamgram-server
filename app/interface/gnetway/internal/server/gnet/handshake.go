@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package server
+package gnet
 
 import (
 	"bytes"
@@ -775,7 +775,7 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *mtproto.AuthKeyInf
 	var (
 		rB *mtproto.Bool
 	)
-	err := s.session.invokeByKey(
+	err := s.svcCtx.Dao.Session.InvokeByKey(
 		strconv.FormatInt(key.AuthKeyId, 10),
 		func(client sessionclient.SessionClient) (err error) {
 			rB, err = client.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{

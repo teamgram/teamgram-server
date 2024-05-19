@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package server
+package gnet
 
 import (
 	"context"
@@ -25,38 +25,6 @@ import (
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
-
-/*
-   bool error = false;
-   if (length <= 24 + 32) {
-       int32_t code = data->readInt32(&error);
-       if (code == 0) {
-           if (LOGS_ENABLED) DEBUG_D("mtproto noop");
-       } else if (code == -1) {
-           int32_t ackId = data->readInt32(&error);
-           if (!error) {
-               onConnectionQuickAckReceived(connection, ackId & (~(1 << 31)));
-           }
-       } else {
-           Datacenter *datacenter = connection->getDatacenter();
-           if (LOGS_ENABLED) DEBUG_W("mtproto error = %d", code);
-           if (code == -444 && connection->getConnectionType() == ConnectionTypeGeneric && !proxyAddress.empty() && !proxySecret.empty()) {
-               if (delegate != nullptr) {
-                   delegate->onProxyError(instanceNum);
-               }
-           } else if (code == -404 && (datacenter->isCdnDatacenter || PFS_ENABLED)) {
-               if (!datacenter->isHandshaking(connection->isMediaConnection)) {
-                   datacenter->clearAuthKey(connection->isMediaConnection ? HandshakeTypeMediaTemp : HandshakeTypeTemp);
-                   datacenter->beginHandshake(connection->isMediaConnection ? HandshakeTypeMediaTemp : HandshakeTypeTemp, true);
-                   if (LOGS_ENABLED) DEBUG_D("connection(%p, account%u, dc%u, type %d) reset auth key due to -404 error", connection, instanceNum, datacenter->getDatacenterId(), connection->getConnectionType());
-               }
-           } else {
-               connection->reconnect();
-           }
-       }
-       return;
-   }
-*/
 
 // GatewaySendDataToGateway
 // gateway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;

@@ -4,7 +4,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package server
+package gnet
 
 import (
 	"github.com/panjf2000/gnet/v2/pkg/logging"
