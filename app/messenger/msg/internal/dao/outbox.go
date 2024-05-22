@@ -248,30 +248,6 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 			}
 
 			result.Data = outMsgBox
-
-			//// TODO(@benqi): unread_count and unread_mentions_count
-			//cMap := map[string]interface{}{
-			//	"top_message": int32(outBoxMsgId),
-			//	"date2":       int32(time.Now().Unix()),
-			//	"unread_mark": 0,
-			//}
-			//
-			//// TODO(@benqi): clear draft
-			//if true {
-			//	cMap["draft_message_data"] = "null"
-			//	cMap["draft_type"] = 0
-			//}
-			//
-			//// TODO(@benqi): FIXME
-			//// var rowsAffected int64
-			//_, result.Err = d.ChatParticipantsDAO.UpdateOutboxDialogTx(tx, cMap, fromId, peer.PeerId)
-			//// log.Debugf("update box %d", rowsAffected)
-			//
-			//if result.Err != nil {
-			//	logx.WithContext(ctx).Errorf("%v", result)
-			//	return
-			//}
-			//result.Data = outMsgBox
 		default:
 			result.Err = fmt.Errorf("fatal error - invalid peer_type: %v", peer)
 			logx.WithContext(ctx).Errorf("%v", result)

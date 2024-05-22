@@ -264,8 +264,7 @@ func (c *MsgCore) sendChatOutgoingMessage(userId, authKeyId, peerChatId int64, o
 					Message: inbox.MakeTLInboxMessageData(&inbox.InboxMessageData{
 						RandomId:        outBox.RandomId,
 						DialogMessageId: did,
-						// MessageDataId:   mid,
-						Message: inboxMsg,
+						Message:         inboxMsg,
 					}).To_InboxMessageData(),
 				})
 			if err != nil {
