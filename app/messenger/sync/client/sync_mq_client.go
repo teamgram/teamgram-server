@@ -8,7 +8,8 @@ package sync_client
 
 import (
 	"context"
-	"fmt"
+	"strconv"
+
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
@@ -27,7 +28,7 @@ func NewSyncMqClient(cli *kafka.Producer) SyncClient {
 	}
 }
 
-func (m *defaultSyncMqClient) sendMessage(ctx context.Context, k string, in interface{}) (*mtproto.Void, error) {
+func (m *defaultSyncMqClient) sendMessage(ctx context.Context, method, k string, in interface{}) (*mtproto.Void, error) {
 	var (
 		b   []byte
 		err error
@@ -38,7 +39,7 @@ func (m *defaultSyncMqClient) sendMessage(ctx context.Context, k string, in inte
 		return nil, err
 	}
 
-	_, _, err = m.cli.SendMessage(ctx, k, b)
+	_, _, err = m.cli.SendMessageV2(ctx, method, k, b)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,8 @@ func (m *defaultSyncMqClient) sendMessage(ctx context.Context, k string, in inte
 func (m *defaultSyncMqClient) SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 
@@ -60,7 +62,8 @@ func (m *defaultSyncMqClient) SyncUpdatesMe(ctx context.Context, in *sync.TLSync
 func (m *defaultSyncMqClient) SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 
@@ -69,7 +72,8 @@ func (m *defaultSyncMqClient) SyncUpdatesNotMe(ctx context.Context, in *sync.TLS
 func (m *defaultSyncMqClient) SyncPushUpdates(ctx context.Context, in *sync.TLSyncPushUpdates) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 
@@ -78,7 +82,8 @@ func (m *defaultSyncMqClient) SyncPushUpdates(ctx context.Context, in *sync.TLSy
 func (m *defaultSyncMqClient) SyncPushUpdatesIfNot(ctx context.Context, in *sync.TLSyncPushUpdatesIfNot) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 
@@ -87,7 +92,8 @@ func (m *defaultSyncMqClient) SyncPushUpdatesIfNot(ctx context.Context, in *sync
 func (m *defaultSyncMqClient) SyncPushBotUpdates(ctx context.Context, in *sync.TLSyncPushBotUpdates) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 
@@ -96,7 +102,8 @@ func (m *defaultSyncMqClient) SyncPushBotUpdates(ctx context.Context, in *sync.T
 func (m *defaultSyncMqClient) SyncPushRpcResult(ctx context.Context, in *sync.TLSyncPushRpcResult) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetAuthKeyId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetAuthKeyId(), 10),
 		in)
 }
 
@@ -105,6 +112,7 @@ func (m *defaultSyncMqClient) SyncPushRpcResult(ctx context.Context, in *sync.TL
 func (m *defaultSyncMqClient) SyncBroadcastUpdates(ctx context.Context, in *sync.TLSyncBroadcastUpdates) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetChatId(), 10),
 		in)
 }

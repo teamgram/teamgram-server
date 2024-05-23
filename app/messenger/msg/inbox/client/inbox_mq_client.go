@@ -20,7 +20,7 @@ package inbox_client
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/proto/mtproto"
@@ -40,7 +40,7 @@ func NewInboxMqClient(cli *kafka.Producer) InboxClient {
 	}
 }
 
-func (m *defaultInboxMqClient) sendMessage(ctx context.Context, k string, in interface{}) (*mtproto.Void, error) {
+func (m *defaultInboxMqClient) sendMessage(ctx context.Context, method, k string, in interface{}) (*mtproto.Void, error) {
 	var (
 		b   []byte
 		err error
@@ -51,7 +51,7 @@ func (m *defaultInboxMqClient) sendMessage(ctx context.Context, k string, in int
 		return nil, err
 	}
 
-	_, _, err = m.cli.SendMessage(ctx, k, b)
+	_, _, err = m.cli.SendMessageV2(ctx, method, k, b)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,8 @@ func (m *defaultInboxMqClient) sendMessage(ctx context.Context, k string, in int
 func (m *defaultInboxMqClient) InboxSendUserMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerUserId(), 10),
 		in)
 }
 
@@ -73,7 +74,8 @@ func (m *defaultInboxMqClient) InboxSendUserMessageToInbox(ctx context.Context, 
 func (m *defaultInboxMqClient) InboxSendChatMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerChatId(), 10),
 		in)
 }
 
@@ -82,7 +84,8 @@ func (m *defaultInboxMqClient) InboxSendChatMessageToInbox(ctx context.Context, 
 func (m *defaultInboxMqClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerUserId(), 10),
 		in)
 }
 
@@ -91,7 +94,8 @@ func (m *defaultInboxMqClient) InboxSendUserMultiMessageToInbox(ctx context.Cont
 func (m *defaultInboxMqClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerChatId(), 10),
 		in)
 }
 
@@ -100,7 +104,8 @@ func (m *defaultInboxMqClient) InboxSendChatMultiMessageToInbox(ctx context.Cont
 func (m *defaultInboxMqClient) InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerUserId(), 10),
 		in)
 }
 
@@ -109,7 +114,8 @@ func (m *defaultInboxMqClient) InboxEditUserMessageToInbox(ctx context.Context, 
 func (m *defaultInboxMqClient) InboxEditChatMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChatMessageToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerChatId(), 10),
 		in)
 }
 
@@ -118,7 +124,8 @@ func (m *defaultInboxMqClient) InboxEditChatMessageToInbox(ctx context.Context, 
 func (m *defaultInboxMqClient) InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerId(), 10),
 		in)
 }
 
@@ -127,7 +134,8 @@ func (m *defaultInboxMqClient) InboxDeleteMessagesToInbox(ctx context.Context, i
 func (m *defaultInboxMqClient) InboxDeleteUserHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteUserHistoryToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerUserId(), 10),
 		in)
 }
 
@@ -136,7 +144,8 @@ func (m *defaultInboxMqClient) InboxDeleteUserHistoryToInbox(ctx context.Context
 func (m *defaultInboxMqClient) InboxDeleteChatHistoryToInbox(ctx context.Context, in *inbox.TLInboxDeleteChatHistoryToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerChatId(), 10),
 		in)
 }
 
@@ -145,7 +154,8 @@ func (m *defaultInboxMqClient) InboxDeleteChatHistoryToInbox(ctx context.Context
 func (m *defaultInboxMqClient) InboxReadUserMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadUserMediaUnreadToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerUserId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerUserId(), 10),
 		in)
 }
 
@@ -154,7 +164,8 @@ func (m *defaultInboxMqClient) InboxReadUserMediaUnreadToInbox(ctx context.Conte
 func (m *defaultInboxMqClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, in *inbox.TLInboxReadChatMediaUnreadToInbox) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerChatId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerChatId(), 10),
 		in)
 }
 
@@ -163,7 +174,8 @@ func (m *defaultInboxMqClient) InboxReadChatMediaUnreadToInbox(ctx context.Conte
 func (m *defaultInboxMqClient) InboxUpdateHistoryReaded(ctx context.Context, in *inbox.TLInboxUpdateHistoryReaded) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerId(), 10),
 		in)
 }
 
@@ -172,7 +184,8 @@ func (m *defaultInboxMqClient) InboxUpdateHistoryReaded(ctx context.Context, in 
 func (m *defaultInboxMqClient) InboxUpdatePinnedMessage(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessage) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerId(), 10),
 		in)
 }
 
@@ -181,6 +194,7 @@ func (m *defaultInboxMqClient) InboxUpdatePinnedMessage(ctx context.Context, in 
 func (m *defaultInboxMqClient) InboxUnpinAllMessages(ctx context.Context, in *inbox.TLInboxUnpinAllMessages) (*mtproto.Void, error) {
 	return m.sendMessage(
 		ctx,
-		fmt.Sprintf("%s#%d", proto.MessageName(in), in.GetPeerId()),
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetPeerId(), 10),
 		in)
 }

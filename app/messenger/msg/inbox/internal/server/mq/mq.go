@@ -22,7 +22,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
@@ -40,10 +39,10 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 	s := kafka.MustKafkaConsumer(&conf)
 	s.RegisterHandlers(
 		conf.Topics[0],
-		func(ctx context.Context, key string, value []byte) {
-			logx.WithContext(ctx).Debugf("key: %s, value: %s", key, value)
+		func(ctx context.Context, method, key string, value []byte) {
+			logx.WithContext(ctx).Debugf("method: %s,s key: %s, value: %s", method, key, value)
 
-			switch protoreflect.FullName(strings.Split(key, "#")[0]) {
+			switch protoreflect.FullName(method) {
 			case proto.MessageName((*inbox.TLInboxSendUserMessageToInbox)(nil)):
 				threading.RunSafe(func() {
 					c := core.New(ctx, svcCtx)

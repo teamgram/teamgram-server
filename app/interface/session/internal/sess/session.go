@@ -28,13 +28,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-//const (
-//	kConnUnknown = 0
-//	kTcpConn     = 1
-//	kHttpConn    = 2
-//	kPushConn    = 3
-//)
-
 const (
 	kDefaultPingTimeout  = 60
 	kPingAddTimeout      = 15
@@ -95,34 +88,6 @@ type serverIdCtx struct {
 func (c serverIdCtx) Equal(id string) bool {
 	return c.gatewayId == id
 }
-
-//// ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//type sessionCallback interface {
-//	getCacheSalt(ctx context.Context) *mtproto.TLFutureSalt
-//
-//	getAuthKeyId(ctx context.Context) int64
-//	getTempAuthKeyId(ctx context.Context) int64
-//	getPermAuthKeyId(ctx context.Context) int64
-//	setPermAuthKeyId(ctx context.Context, kId int64)
-//
-//	getUserId(ctx context.Context) int64
-//	setUserId(ctx context.Context, userId int64)
-//
-//	getLayer(ctx context.Context) int32
-//	setLayer(ctx context.Context, layer int32)
-//
-//	getClient(ctx context.Context) string
-//	setClient(ctx context.Context, c string)
-//
-//	getLangpack(ctx context.Context) string
-//	setLangpack(ctx context.Context, c string)
-//
-//	destroySession(ctx context.Context, sessionId int64) bool
-//
-//	onBindPushSessionId(ctx context.Context, sessionId int64)
-//	setOnline(ctx context.Context)
-//	trySetOffline(ctx context.Context)
-//}
 
 /*
 * tdesktop's SessionData:

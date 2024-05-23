@@ -50,7 +50,7 @@ func (d *Dao) makeMessageInBox(fromId int64, peer *mtproto.PeerUtil, toUserId in
 		DialogId2:         did.B,
 		DialogMessageId:   dialogMessageId,
 		RandomId:          clientRandomId,
-		MessageFilterType: int32(mtproto.GetMediaType(message)),
+		MessageFilterType: mtproto.GetMediaType(message),
 	}
 }
 
@@ -517,9 +517,7 @@ func (d *Dao) EditChatInboxMessage(ctx context.Context, fromId int64, peerChatId
 		Pts:               d.IDGenClient2.NextPtsId(ctx, toId),
 		PtsCount:          1,
 		MessageFilterType: 0,
-		// MessageBoxType:    0,
-		// MessageType:       0,
-		Message: message,
+		Message:           message,
 	}
 	return
 }

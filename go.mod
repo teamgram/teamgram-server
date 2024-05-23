@@ -13,7 +13,7 @@ require (
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/panjf2000/gnet/v2 v2.5.1
 	github.com/stretchr/testify v1.9.0
-	github.com/teamgram/marmota v0.1.20-0.20240517123858-486d8c8a1c4a
+	github.com/teamgram/marmota v0.1.20-0.20240523100305-7d6b2627c274
 	github.com/teamgram/proto v0.179.4-0.20240516021943-02ca66331123
 	github.com/zeromicro/go-zero v1.6.3
 	google.golang.org/grpc v1.62.1
