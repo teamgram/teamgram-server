@@ -32,7 +32,6 @@ import (
 // messages.editMessage#48f71778 flags:# no_webpage:flags.1?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
 func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	var (
-		hasBot       = c.MD.IsBot
 		peer         = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		editMessages *message.Vector_MessageBox
 		err          error
@@ -108,7 +107,17 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		}
 		outMessage.Message = in.Message.Value
 		outMessage.Entities = nil
-		outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, hasBot)
+		outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
+			hasBot := c.MD.IsBot
+			if !hasBot {
+				//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+				//	Id: peer.PeerId,
+				//})
+				//hasBot = mtproto.FromBool(isBot)
+			}
+
+			return hasBot
+		})
 	}
 
 	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessage(c.ctx, &msgpb.TLMsgEditMessage{

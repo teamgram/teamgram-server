@@ -257,7 +257,7 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 }
 
 // TODO(@benqi): mention...
-func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, noWebpage bool, message *mtproto.Message, hasBot bool) (*mtproto.Message, error) {
+func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, noWebpage bool, message *mtproto.Message, hasBot func() bool) (*mtproto.Message, error) {
 	var (
 		entities mtproto.MessageEntitySlice
 		idxList  []int
@@ -393,7 +393,7 @@ func (c *MessagesCore) fixMessageEntities(fromId int64, peer *mtproto.PeerUtil, 
 		entities = append(entities, hashtag)
 	}
 
-	if hasBot {
+	if hasBot != nil && hasBot() {
 		tags = mention.GetTags('/', message.Message)
 		for _, tag := range tags {
 			if len(idxList) == 0 {

@@ -33,8 +33,7 @@ import (
 // messages.sendMessage#d9d75a4 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true peer:InputPeer reply_to_msg_id:flags.0?int message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	var (
-		hasBot = c.MD.IsBot
-		peer   = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
+		peer = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 	)
 
 	if !peer.IsChatOrUser() {
@@ -43,17 +42,8 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		return nil, err
 	}
 
-	if peer.IsUser() {
-		if peer.IsSelfUser(c.MD.UserId) {
-			peer.PeerType = mtproto.PEER_USER
-		} else {
-			if !c.MD.IsBot {
-				isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
-					Id: peer.PeerId,
-				})
-				hasBot = mtproto.FromBool(isBot)
-			}
-		}
+	if peer.IsUser() && peer.IsSelfUser(c.MD.UserId) {
+		peer.PeerType = mtproto.PEER_USER
 	}
 
 	if in.Message == "" {
@@ -162,7 +152,17 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		}
 	}
 
-	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, hasBot)
+	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
+		hasBot := c.MD.IsBot
+		if !hasBot {
+			isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+				Id: peer.PeerId,
+			})
+			hasBot = mtproto.FromBool(isBot)
+		}
+
+		return hasBot
+	})
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,

@@ -31,9 +31,7 @@ import (
 // MessagesSendMedia
 // messages.sendMedia#e25ff8e0 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true peer:InputPeer reply_to_msg_id:flags.0?int media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
 func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
-	// peer
 	var (
-		hasBot     = c.MD.IsBot
 		peer       *mtproto.PeerUtil
 		linkChatId int64
 		err        error
@@ -147,7 +145,17 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		return nil, err
 	}
 
-	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, hasBot)
+	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, func() bool {
+		hasBot := c.MD.IsBot
+		if !hasBot {
+			//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+			//	Id: peer.PeerId,
+			//})
+			//hasBot = mtproto.FromBool(isBot)
+		}
+
+		return hasBot
+	})
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,

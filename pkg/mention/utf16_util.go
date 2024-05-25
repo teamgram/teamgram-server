@@ -40,6 +40,7 @@ const (
 	surrSelf = 0x10000
 )
 
+// EncodeStringToUTF16Index returns the UTF-16 encoding of the Unicode code point sequence s.
 // Encode returns the UTF-16 encoding of the Unicode code point sequence s.
 func EncodeStringToUTF16Index(s string) []int {
 	var (
