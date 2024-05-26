@@ -186,7 +186,7 @@ func (m *MainAuthWrapper) setOnline(ctx context.Context) {
 
 		// s.setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
 		m.cb.Dao.StatusClient.StatusSetSessionOnline(
-			context.Background(),
+			ctx,
 			&status.TLStatusSetSessionOnline{
 				UserId: m.AuthUserId,
 				Session: &status.SessionEntry{
@@ -218,7 +218,7 @@ func (m *MainAuthWrapper) trySetOffline(ctx context.Context) {
 
 	if m.AuthUserId > 0 {
 		logx.WithContext(ctx).Infof("authSessions]]>> offline: %s", m)
-		m.cb.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
+		m.cb.Dao.StatusClient.StatusSetSessionOffline(ctx, &status.TLStatusSetSessionOffline{
 			UserId:    m.AuthUserId,
 			AuthKeyId: m.authKeyId,
 		})
@@ -226,11 +226,11 @@ func (m *MainAuthWrapper) trySetOffline(ctx context.Context) {
 	m.onlineExpired = 0
 }
 
-func (m *MainAuthWrapper) delOnline() {
+func (m *MainAuthWrapper) delOnline(ctx context.Context) {
 	if m.AuthUserId > 0 {
 		logx.Infof("authSessions]]>> delOnline: %s", m)
 
-		m.cb.Dao.StatusClient.StatusSetSessionOffline(context.Background(), &status.TLStatusSetSessionOffline{
+		m.cb.Dao.StatusClient.StatusSetSessionOffline(ctx, &status.TLStatusSetSessionOffline{
 			UserId:    m.AuthUserId,
 			AuthKeyId: m.authKeyId,
 		})
@@ -518,7 +518,7 @@ func (m *MainAuthWrapper) runLoop() {
 	defer func() {
 		if (m.mainUpdatesSession != nil && m.mainUpdatesSession.sessionOnline()) ||
 			(m.androidPushSession != nil && m.androidPushSession.sessionOnline()) {
-			m.delOnline()
+			m.delOnline(context.Background())
 		}
 		m.finish.Done()
 		close(m.closeChan)
@@ -974,7 +974,7 @@ func doRpcRequest(ctx context.Context, dao *dao.Dao, md *metadata.RpcMetadata, r
 	case *mtproto.TLAuthBindTempAuthKey:
 		r := request.reqMsg.(*mtproto.TLAuthBindTempAuthKey)
 		rpcResult, err = dao.AuthsessionClient.AuthsessionBindTempAuthKey(
-			context.Background(),
+			ctx,
 			&authsession.TLAuthsessionBindTempAuthKey{
 				PermAuthKeyId:    r.PermAuthKeyId,
 				Nonce:            r.Nonce,
