@@ -12,6 +12,7 @@ import (
 	"math"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/queue2"
@@ -92,6 +93,7 @@ type MainAuthWrapper struct {
 	sessionDataChan      chan interface{} // receive from client
 	rpcDataChan          chan interface{}
 	rpcQueue             *queue2.SyncQueue
+	finish               sync.WaitGroup
 	running              *syncx.AtomicBool
 	onlineExpired        int64
 	clientType           int
@@ -120,6 +122,7 @@ func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client
 		sessionDataChan:      make(chan interface{}, 1024),
 		rpcDataChan:          make(chan interface{}, 1024),
 		rpcQueue:             queue2.NewSyncQueue(),
+		finish:               sync.WaitGroup{},
 		running:              syncx.NewAtomicBool(),
 		cb:                   cb,
 		tmpRpcApiMessageList: make([]*rpcApiMessage, 0),
@@ -501,6 +504,7 @@ func (m *MainAuthWrapper) String() string {
 
 func (m *MainAuthWrapper) Start() {
 	m.running.Set(true)
+	m.finish.Add(1)
 	go m.rpcRunLoop()
 	go m.runLoop()
 }
@@ -514,11 +518,13 @@ func (m *MainAuthWrapper) runLoop() {
 	defer func() {
 		if (m.mainUpdatesSession != nil && m.mainUpdatesSession.sessionOnline()) ||
 			(m.androidPushSession != nil && m.androidPushSession.sessionOnline()) {
-			m.setOnline(context.Background())
+			m.delOnline()
 		}
+		m.finish.Done()
 		close(m.closeChan)
 		close(m.sessionDataChan)
 		close(m.rpcDataChan)
+		m.finish.Wait()
 	}()
 
 	ticker := time.NewTicker(1 * time.Second)
