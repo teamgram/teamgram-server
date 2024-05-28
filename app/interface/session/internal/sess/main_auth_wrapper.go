@@ -135,19 +135,25 @@ func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client
 	return mainAuth
 }
 
-func (m *MainAuthWrapper) changeAuthState(state int, stateData interface{}) {
+func (m *MainAuthWrapper) changeAuthState(ctx context.Context, state int, stateData interface{}) {
 	m.state = state
 
 	switch state {
 	case mtproto.AuthStateUnknown:
-		m.AuthUserId = 0
+		// m.delOnline(ctx)
+		// m.AuthUserId = 0
 		m.cb.DeleteByAuthKeyId(m.authKeyId)
+		m.Stop()
 	case mtproto.AuthStateLogout:
-		m.AuthUserId = 0
+		// m.delOnline(ctx)
+		// m.AuthUserId = 0
 		m.cb.DeleteByAuthKeyId(m.authKeyId)
+		m.Stop()
 	case mtproto.AuthStateDeleted:
-		m.AuthUserId = 0
+		// m.delOnline(ctx)
+		// m.AuthUserId = 0
 		m.cb.DeleteByAuthKeyId(m.authKeyId)
+		m.Stop()
 	case mtproto.AuthStateNormal:
 		m.AuthUserId = stateData.(int64)
 	default:
@@ -511,7 +517,7 @@ func (m *MainAuthWrapper) Start() {
 
 func (m *MainAuthWrapper) Stop() {
 	m.running.Set(false)
-	m.rpcQueue.Close()
+	// m.rpcQueue.Close()
 }
 
 func (m *MainAuthWrapper) runLoop() {
@@ -521,6 +527,7 @@ func (m *MainAuthWrapper) runLoop() {
 			m.delOnline(context.Background())
 		}
 		m.finish.Done()
+		m.rpcQueue.Close()
 		close(m.closeChan)
 		close(m.sessionDataChan)
 		close(m.rpcDataChan)
@@ -613,11 +620,6 @@ func (m *MainAuthWrapper) sendToRpcQueue(ctx context.Context, rpcMessage []*rpcA
 }
 
 func (m *MainAuthWrapper) onTimer(ctx context.Context) {
-	if (m.mainUpdatesSession != nil && m.mainUpdatesSession.sessionOnline()) ||
-		(m.androidPushSession != nil && m.androidPushSession.sessionOnline()) {
-		m.setOnline(ctx)
-	}
-
 	for _, sess := range m.mainAuth.sessions {
 		sess.onTimer(ctx)
 	}
@@ -626,6 +628,11 @@ func (m *MainAuthWrapper) onTimer(ctx context.Context) {
 	}
 	for _, sess := range m.mediaTempAuth.sessions {
 		sess.onTimer(ctx)
+	}
+
+	if (m.mainUpdatesSession != nil && m.mainUpdatesSession.sessionOnline()) ||
+		(m.androidPushSession != nil && m.androidPushSession.sessionOnline()) {
+		m.setOnline(ctx)
 	}
 
 	for _, sess := range m.mainAuth.sessions {
@@ -645,6 +652,7 @@ func (m *MainAuthWrapper) onTimer(ctx context.Context) {
 	}
 
 	m.cb.DeleteByAuthKeyId(m.authKeyId)
+	m.Stop()
 }
 
 func (m *MainAuthWrapper) SessionClientNew(ctx context.Context, kType int, kId int64, gatewayId string, sessionId int64) error {
@@ -948,7 +956,7 @@ func (m *MainAuthWrapper) onSyncData(ctx context.Context, syncMsg *syncData) {
 			}
 			// m.cb.Dao.PutCacheUserId(context.Background(), m.authKeyId, 0)
 			// m.cb.DeleteByAuthKeyId(m.authKeyId)
-			m.changeAuthState(mtproto.AuthStateDeleted, 0)
+			m.changeAuthState(ctx, mtproto.AuthStateDeleted, 0)
 			// m.AuthUserId = 0
 			return
 		}

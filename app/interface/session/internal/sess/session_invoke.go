@@ -415,44 +415,44 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		if rpcErr != nil {
 			_ = request
 			if rpcErr.Message() == "ENCRYPTED_MESSAGE_INVALID" {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateUnknown, 0)
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateUnknown, 0)
 				// c.sessList.cb.cb.DeleteByAuthKeyId(c.sessList.authId)
 			}
 		} else {
 			c.sessList.changeAuthState(mtproto.AuthStatePermBound)
 		}
 	case *mtproto.TLAuthLogOut:
-		c.sessList.cb.changeAuthState(mtproto.AuthStateLogout, 0)
+		c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateLogout, 0)
 	case *mtproto.TLAuthSignIn:
 		if rpcErr == nil {
 			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
 			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		} else {
 			if rpcErr.Message() == "SESSION_PASSWORD_NEEDED" {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateNeedPassword, nil)
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNeedPassword, nil)
 			}
 		}
 	case *mtproto.TLAuthSignUp:
 		if rpcErr == nil {
 			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
 			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		}
 	case *mtproto.TLAuthImportAuthorization:
 		if rpcErr == nil && c.sessList.cb.state == mtproto.AuthStateNeedPassword {
 			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
 			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		}
 	case *mtproto.TLAuthCheckPassword:
 		if rpcErr == nil && c.sessList.cb.state == mtproto.AuthStateNeedPassword {
 			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
 			if authAuthorization.GetPredicateName() == mtproto.Predicate_auth_authorization {
-				c.sessList.cb.changeAuthState(mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		}
 	default:

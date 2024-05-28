@@ -40,13 +40,7 @@ func (m *MainAuthWrapperManager) GetMainAuthWrapper(mainAuthKeyId int64) *MainAu
 func (m *MainAuthWrapperManager) DeleteByAuthKeyId(mainAuthKeyId int64) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if mainAuth, ok := m.authMgr[mainAuthKeyId]; ok {
-		delete(m.authMgr, mainAuthKeyId)
-
-		go func() {
-			mainAuth.Stop()
-		}()
-	}
+	delete(m.authMgr, mainAuthKeyId)
 }
 
 func (m *MainAuthWrapperManager) AllocMainAuthWrapper(mainAuth *MainAuthWrapper) *MainAuthWrapper {

@@ -16,13 +16,13 @@ import (
 func New(ctx *svc.ServiceContext, c rest.RestConf) *rest.Server {
 	srv := rest.MustNewServer(c)
 
-	go func() {
-		defer srv.Stop()
+	go func(s *rest.Server, c *svc.ServiceContext) {
+		defer s.Stop()
 
-		RegisterHandlers(srv, ctx)
+		RegisterHandlers(s, c)
 
-		srv.Start()
-	}()
+		s.Start()
+	}(srv, ctx)
 
 	return srv
 }
