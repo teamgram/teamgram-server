@@ -32,9 +32,13 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	d := dao.New(c)
+	mainAuthMgr := sess.NewMainAuthWrapperManager(d)
+	d.RpcShardingManager.RegisterCB(mainAuthMgr.OnShardingCB)
+	d.RpcShardingManager.Start()
+
 	return &ServiceContext{
 		Config:      c,
-		MainAuthMgr: sess.NewMainAuthWrapperManager(d),
+		MainAuthMgr: mainAuthMgr,
 		Dao:         d,
 	}
 }

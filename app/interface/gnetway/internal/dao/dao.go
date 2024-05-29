@@ -11,11 +11,11 @@ import (
 )
 
 type Dao struct {
-	Session *Session
+	*ShardingSessionClient
 }
 
 func New(c config.Config) *Dao {
 	return &Dao{
-		Session: NewSession(c),
+		ShardingSessionClient: NewShardingSessionClient(c),
 	}
 }

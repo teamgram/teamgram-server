@@ -31,16 +31,19 @@ type Dao struct {
 	*bff_proxy_client.BFFProxyClient
 	eGateServers map[string]*Gateway
 	MyServerId   string
+	*RpcShardingManager
 }
 
 func New(c config.Config) *Dao {
+	myServerId := ip.FigureOutListenOn(c.ListenOn)
 	d := &Dao{
-		cache:             cache.NewLRUCache(1024 * 1024 * 1024),
-		AuthsessionClient: authsession_client.NewAuthsessionClient(zrpc.MustNewClient(c.AuthSession)),
-		BFFProxyClient:    bff_proxy_client.NewBFFProxyClients(c.BFFProxyClients.Clients, c.BFFProxyClients.IDMap),
-		StatusClient:      status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
-		eGateServers:      make(map[string]*Gateway),
-		MyServerId:        ip.FigureOutListenOn(c.ListenOn),
+		cache:              cache.NewLRUCache(1024 * 1024 * 1024),
+		AuthsessionClient:  authsession_client.NewAuthsessionClient(zrpc.MustNewClient(c.AuthSession)),
+		BFFProxyClient:     bff_proxy_client.NewBFFProxyClients(c.BFFProxyClients.Clients, c.BFFProxyClients.IDMap),
+		StatusClient:       status_client.NewStatusClient(zrpc.MustNewClient(c.StatusClient)),
+		eGateServers:       make(map[string]*Gateway),
+		MyServerId:         myServerId,
+		RpcShardingManager: NewRpcShardingManager(myServerId, c.Etcd),
 	}
 
 	d.watchGateway(c.GatewayClient)

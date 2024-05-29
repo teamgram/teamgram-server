@@ -7,6 +7,7 @@
 package sess
 
 import (
+	"strconv"
 	"sync"
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
@@ -53,5 +54,17 @@ func (m *MainAuthWrapperManager) AllocMainAuthWrapper(mainAuth *MainAuthWrapper)
 	} else {
 		m.authMgr[mainAuth.authKeyId] = mainAuth
 		return mainAuth
+	}
+}
+
+func (m *MainAuthWrapperManager) OnShardingCB(sharding *dao.RpcShardingManager, oldList, addList []string, removeList []string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	for k, v := range m.authMgr {
+		if !sharding.ShardingVIsListenOn(strconv.FormatInt(k, 10)) {
+			delete(m.authMgr, k)
+			v.Stop()
+		}
 	}
 }

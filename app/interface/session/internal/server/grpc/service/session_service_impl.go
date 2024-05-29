@@ -54,6 +54,10 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.createSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
+	if err := s.checkShardingV(ctx, request.GetClient().GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionCreateSession(request)
 	if err != nil {
 		return nil, err
@@ -78,6 +82,10 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 		request.GetData().GetQuickAck(),
 		request.GetData().GetSalt(),
 		len(request.GetData().GetPayload()))
+
+	if err := s.checkShardingV(ctx, request.GetData().GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
 
 	r, err := c.SessionSendDataToSession(request)
 	if err != nil {
@@ -104,6 +112,10 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *ses
 		request.GetClient().GetSalt(),
 		len(request.GetClient().GetPayload()))
 
+	if err := s.checkShardingV(ctx, request.GetClient().GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionSendHttpDataToSession(request)
 	if err != nil {
 		return nil, err
@@ -118,6 +130,10 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *ses
 func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSessionCloseSession) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.closeSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	if err := s.checkShardingV(ctx, request.GetClient().GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
 
 	r, err := c.SessionCloseSession(request)
 	if err != nil {
@@ -134,6 +150,10 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.T
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushUpdatesData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
+	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionPushUpdatesData(request)
 	if err != nil {
 		return nil, err
@@ -149,6 +169,10 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushSessionUpdatesData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
 
+	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionPushSessionUpdatesData(request)
 	if err != nil {
 		return nil, err
@@ -163,6 +187,10 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 func (s *Service) SessionPushRpcResultData(ctx context.Context, request *session.TLSessionPushRpcResultData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushRpcResultData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
+		return nil, err
+	}
 
 	r, err := c.SessionPushRpcResultData(request)
 	if err != nil {

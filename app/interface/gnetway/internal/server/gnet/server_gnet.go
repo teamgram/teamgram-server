@@ -119,7 +119,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	}
 
 	s.pool.Submit(func() {
-		s.svcCtx.Session.InvokeByKey(
+		s.svcCtx.ShardingSessionClient.InvokeByKey(
 			strconv.FormatInt(ctx.authKey.PermAuthKeyId(), 10),
 			func(client sessionclient.SessionClient) (err error) {
 				_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
@@ -194,7 +194,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	}
 
 	s.pool.Submit(func() {
-		s.svcCtx.Dao.Session.InvokeByKey(
+		s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
 			strconv.FormatInt(permAuthKeyId, 10),
 			func(client sessionclient.SessionClient) (err error) {
 				if isNew {
@@ -279,7 +279,7 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, msg2 *mtproto.MT
 				key3 *mtproto.AuthKeyInfo
 			)
 
-			err2 := s.svcCtx.Dao.Session.InvokeByKey(
+			err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
 				strconv.FormatInt(msg2.AuthKeyId(), 10),
 				func(client sessionclient.SessionClient) (err error) {
 					key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{

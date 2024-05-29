@@ -23,37 +23,31 @@ var (
 	ErrSessionNotFound = errors.New("not found session")
 )
 
-type Session struct {
-	gatewayId   string
-	dispatcher  *hash.ConsistentHash
-	errNotFound error
-	sessions    map[string]sessionclient.SessionClient
+type ShardingSessionClient struct {
+	gatewayId  string
+	dispatcher *hash.ConsistentHash
+	sessions   map[string]sessionclient.SessionClient
 }
 
-func NewSession(c config.Config) *Session {
-	sess := &Session{
-		dispatcher:  hash.NewConsistentHash(),
-		errNotFound: ErrSessionNotFound,
-		sessions:    make(map[string]sessionclient.SessionClient),
+func NewShardingSessionClient(c config.Config) *ShardingSessionClient {
+	sess := &ShardingSessionClient{
+		dispatcher: hash.NewConsistentHash(),
+		sessions:   make(map[string]sessionclient.SessionClient),
 	}
 	sess.watch(c.Session)
 
 	return sess
 }
 
-func (sess *Session) watch(c zrpc.RpcClientConf) {
+func (sess *ShardingSessionClient) watch(c zrpc.RpcClientConf) {
 	sub, _ := discov.NewSubscriber(c.Etcd.Hosts, c.Etcd.Key)
 	update := func() {
-		values := sub.Values()
-		if len(values) == 0 {
-			return
-		}
-
 		var (
-			addClis    []sessionclient.SessionClient
-			removeClis []sessionclient.SessionClient
+			addClis    []string
+			removeClis []string
 		)
 
+		values := sub.Values()
 		sessions := map[string]sessionclient.SessionClient{}
 		for _, v := range values {
 			if old, ok := sess.sessions[v]; ok {
@@ -69,12 +63,12 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 			sessionCli := sessionclient.NewSessionClient(cli)
 			sessions[v] = sessionCli
 
-			addClis = append(addClis, sessionCli)
+			addClis = append(addClis, v)
 		}
 
-		for key, old := range sess.sessions {
+		for key, _ := range sess.sessions {
 			if !stringx.Contains(values, key) {
-				removeClis = append(removeClis, old)
+				removeClis = append(removeClis, key)
 			}
 		}
 
@@ -93,17 +87,13 @@ func (sess *Session) watch(c zrpc.RpcClientConf) {
 	update()
 }
 
-//func (sess *Session) getSessionClient(key string) (sessionclient.SessionClient, error) {
-//	val, ok := sess.dispatcher.Get(key)
-//	if !ok {
-//		return nil, ErrSessionNotFound
-//	}
-//
-//	return val.(sessionclient.SessionClient), nil
-//}
-
-func (sess *Session) InvokeByKey(key string, cb func(client sessionclient.SessionClient) (err error)) error {
+func (sess *ShardingSessionClient) InvokeByKey(key string, cb func(client sessionclient.SessionClient) (err error)) error {
 	val, ok := sess.dispatcher.Get(key)
+	if !ok {
+		return ErrSessionNotFound
+	}
+
+	cli, ok := sess.sessions[val.(string)]
 	if !ok {
 		return ErrSessionNotFound
 	}
@@ -112,5 +102,5 @@ func (sess *Session) InvokeByKey(key string, cb func(client sessionclient.Sessio
 		return nil
 	}
 
-	return cb(val.(sessionclient.SessionClient))
+	return cb(cli)
 }
