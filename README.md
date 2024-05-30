@@ -14,6 +14,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server implementation w
 - private chat
 - basic group
 - contacts
+- web
 
 ## Architecture
 ![Architecture](docs/image/architecture-001.png)
