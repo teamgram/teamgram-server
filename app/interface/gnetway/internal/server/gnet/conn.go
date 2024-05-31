@@ -43,12 +43,24 @@ type connContext struct {
 	websocket  bool
 	wsCodec    *ws.WsCodec
 	logx.Logger
+	newSession bool
+	nextSeqNo  int32
 }
 
 func newConnContext() *connContext {
 	return &connContext{
 		codec:    nil,
 		clientIp: "",
+	}
+}
+
+func (ctx *connContext) generateMessageSeqNo(increment bool) int32 {
+	value := ctx.nextSeqNo
+	if increment {
+		ctx.nextSeqNo++
+		return int32(value*2 + 1)
+	} else {
+		return int32(value * 2)
 	}
 }
 

@@ -17,6 +17,8 @@ package gnet
 
 import (
 	"github.com/teamgram/proto/mtproto"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func parseFromIncomingMessage(b []byte) (msgId int64, obj mtproto.TLObject, err error) {
@@ -76,6 +78,7 @@ func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
 	if in == nil {
 		return nil
 	}
+	logx.Debugf("rpc: %s", in.DebugString())
 
 	switch r := in.(type) {
 	case *mtproto.TLDestroyAuthKey: // 所有连接都有可能

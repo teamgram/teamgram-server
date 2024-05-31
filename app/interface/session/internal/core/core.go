@@ -12,6 +12,7 @@ package core
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/svc"
@@ -42,12 +43,28 @@ func (c *SessionCore) getOrFetchMainAuthWrapper(mainAuthId int64) (*sess.MainAut
 		return mainAuth, nil
 	}
 
-	kData, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionGetAuthStateData(c.ctx, &authsession.TLAuthsessionGetAuthStateData{
-		AuthKeyId: mainAuthId,
-	})
-	if err != nil {
-		c.Logger.Errorf("session.createSession - error: %v", err)
-		return nil, err
+	var (
+		kData *authsession.AuthKeyStateData
+		err   error
+	)
+
+	if mainAuthId == 0 {
+		kData = authsession.MakeTLAuthKeyStateData(&authsession.AuthKeyStateData{
+			AuthKeyId:            0,
+			KeyState:             mtproto.AuthStateNew,
+			UserId:               0,
+			AccessHash:           0,
+			Client:               nil,
+			AndroidPushSessionId: nil,
+		}).To_AuthKeyStateData()
+	} else {
+		kData, err = c.svcCtx.Dao.AuthsessionClient.AuthsessionGetAuthStateData(c.ctx, &authsession.TLAuthsessionGetAuthStateData{
+			AuthKeyId: mainAuthId,
+		})
+		if err != nil {
+			c.Logger.Errorf("getOrFetchMainAuthWrapper - error: %v", err)
+			return nil, err
+		}
 	}
 
 	mainAuth = c.svcCtx.MainAuthMgr.AllocMainAuthWrapper(sess.NewMainAuthWrapper(

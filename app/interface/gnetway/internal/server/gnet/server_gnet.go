@@ -167,25 +167,27 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 
 	var (
 		permAuthKeyId = authKey.PermAuthKeyId()
+		salt          = int64(binary.LittleEndian.Uint64(mtpRwaData))
+		sessionId     = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
 	)
 
 	if permAuthKeyId == 0 {
 		permAuthKeyId = tryGetPermAuthKeyId(mtpRwaData[16:])
 		if permAuthKeyId == 0 {
-			return nil
+			// return nil
 		} else {
 			clone := proto.Clone(authKey.keyData).(*mtproto.AuthKeyInfo)
 			clone.PermAuthKeyId = permAuthKeyId
 			authKey.keyData = clone
 			s.PutAuthKey(clone)
 		}
+
 	}
 
 	var (
-		sessionId = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
-		isNew     = ctx.sessionId != sessionId
-		clientIp  = ctx.clientIp
-		connId    = c.ConnId()
+		isNew    = ctx.sessionId != sessionId
+		clientIp = ctx.clientIp
+		connId   = c.ConnId()
 	)
 	if isNew {
 		ctx.sessionId = sessionId
@@ -219,7 +221,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 						KeyType:       int32(authKey.AuthKeyType()),
 						PermAuthKeyId: permAuthKeyId,
 						SessionId:     sessionId,
-						Salt:          int64(binary.LittleEndian.Uint64(mtpRwaData)),
+						Salt:          salt,
 						Payload:       mtpRwaData[16:],
 						ClientIp:      clientIp,
 					},

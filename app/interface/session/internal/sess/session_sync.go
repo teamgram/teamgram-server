@@ -50,22 +50,6 @@ func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 		} else {
 			c.sendQueueToGateway(ctx, gatewayId)
 		}
-
-		//	syncMessage := &pendingMessage{
-		//		messageId: nextMessageId(false),
-		//		confirm:   true,
-		//		// tl:        obj,
-		//	}
-		//	if c.isAndroidPush {
-		//		syncMessage.tl = androidPushTooLong
-		//	} else {
-		//		syncMessage.tl = obj
-		//	}
-		//	c.syncMessages = append(c.syncMessages, syncMessage)
-		//
-		//	log.Debugf("genericSession]]>> - sendPending {sess: {%s}, pushObj: {%s}", c, reflect.TypeOf(obj))
-		//	c.sendPendingMessagesToClient(c.getConnId(), c.syncMessages)
-		//	c.syncMessages = []*pendingMessage{}
 	}
 }
 
