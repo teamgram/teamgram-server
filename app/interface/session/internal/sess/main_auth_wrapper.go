@@ -530,7 +530,6 @@ func (m *MainAuthWrapper) runLoop() {
 		m.rpcQueue.Close()
 		close(m.closeChan)
 		close(m.sessionDataChan)
-		close(m.rpcDataChan)
 		m.finish.Wait()
 	}()
 
