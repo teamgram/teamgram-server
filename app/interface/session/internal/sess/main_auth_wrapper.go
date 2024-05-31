@@ -584,6 +584,9 @@ func (m *MainAuthWrapper) runLoop() {
 }
 
 func (m *MainAuthWrapper) rpcRunLoop() {
+	defer func() {
+		close(m.rpcDataChan)
+	}()
 	for {
 		apiRequest := m.rpcQueue.Pop()
 		if apiRequest == nil {
