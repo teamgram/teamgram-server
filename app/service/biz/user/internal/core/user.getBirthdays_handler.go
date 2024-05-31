@@ -29,5 +29,9 @@ func (c *UserCore) UserGetBirthdays(in *user.TLUserGetBirthdays) (*user.Vector_C
 	// TODO: not impl
 	c.Logger.Errorf("user.getBirthdays blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	rV := &user.Vector_ContactBirthday{
+		Datas: make([]*mtproto.ContactBirthday, 0),
+	}
+
+	return rV, nil
 }

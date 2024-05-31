@@ -410,7 +410,7 @@ func (m *MainAuthWrapper) onSetMainUpdatesSession(ctx context.Context, sess *ses
 	if !sess.isGeneric {
 		sess.isGeneric = true
 	}
-	if m.mainUpdatesSession == nil {
+	if m.mainUpdatesSession == nil || m.mainUpdatesSession.sessionId != sess.sessionId {
 		m.mainUpdatesSession = sess
 	}
 	m.setOnline(ctx)
