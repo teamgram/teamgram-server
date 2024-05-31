@@ -25,7 +25,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	statuspb "github.com/teamgram/teamgram-server/app/service/status/status"
 
@@ -272,37 +271,37 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 		// TODO:
 		//  At all times, the future auth token database should contain at most 20 tokens:
 		//  evict older tokens as new tokens are added to stay below this limit.
-		for _, v := range request.Settings.GetLogoutTokens() {
-			id, _ := c.svcCtx.Dao.GetFutureAuthToken(c.ctx, v)
-			if id == user.Id() {
-				// Check SESSION_PASSWORD_NEEDED
-				if c.svcCtx.Plugin != nil {
-					if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, user.User.Id) {
-						err = mtproto.ErrSessionPasswordNeeded
-						c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
-						return nil, err
-					}
-				}
-
-				// Bind authKeyId and userId
-				c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
-					AuthKeyId: c.MD.PermAuthKeyId,
-					UserId:    user.User.Id,
-				})
-
-				// Del
-				c.svcCtx.Dao.DelFutureAuthToken(c.ctx, v)
-				return mtproto.MakeTLAuthSentCodeSuccess(&mtproto.Auth_SentCode{
-					Authorization: mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
-						SetupPasswordRequired: false,
-						OtherwiseReloginDays:  nil,
-						TmpSessions:           nil,
-						FutureAuthToken:       nil,
-						User:                  user.ToSelfUser(),
-					}).To_Auth_Authorization(),
-				}).To_Auth_SentCode(), nil
-			}
-		}
+		//for _, v := range request.Settings.GetLogoutTokens() {
+		//	id, _ := c.svcCtx.Dao.GetFutureAuthToken(c.ctx, v)
+		//	if id == user.Id() {
+		//		// Check SESSION_PASSWORD_NEEDED
+		//		if c.svcCtx.Plugin != nil {
+		//			if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, user.User.Id) {
+		//				err = mtproto.ErrSessionPasswordNeeded
+		//				c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
+		//				return nil, err
+		//			}
+		//		}
+		//
+		//		// Bind authKeyId and userId
+		//		c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
+		//			AuthKeyId: c.MD.PermAuthKeyId,
+		//			UserId:    user.User.Id,
+		//		})
+		//
+		//		// Del
+		//		c.svcCtx.Dao.DelFutureAuthToken(c.ctx, v)
+		//		return mtproto.MakeTLAuthSentCodeSuccess(&mtproto.Auth_SentCode{
+		//			Authorization: mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
+		//				SetupPasswordRequired: false,
+		//				OtherwiseReloginDays:  nil,
+		//				TmpSessions:           nil,
+		//				FutureAuthToken:       nil,
+		//				User:                  user.ToSelfUser(),
+		//			}).To_Auth_Authorization(),
+		//		}).To_Auth_SentCode(), nil
+		//	}
+		//}
 	}
 	// phoneRegistered = user != nil
 
