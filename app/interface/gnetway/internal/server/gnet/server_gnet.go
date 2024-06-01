@@ -19,6 +19,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -85,6 +86,7 @@ func (s *Server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	if ctx.websocket {
 		ctx.wsCodec = new(ws.WsCodec)
 	}
+	ctx.closeDate = time.Now().Unix() + 10
 	c.SetContext(ctx)
 
 	return
@@ -142,7 +144,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 // OnTraffic fires when a local socket receives data from the peer.
 func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	ctx := c.Context().(*connContext)
-
+	ctx.closeDate = time.Now().Unix() + 200 + rand.Int63()%10
 	if ctx.websocket {
 		return s.onWebsocketData(ctx, c)
 	} else {
@@ -153,8 +155,22 @@ func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 // OnTick fires immediately after the engine starts and will fire again
 // following the duration specified by the delay return value.
 func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
-	logx.Statf("conn count: %d", s.eng.CountConnections())
-	delay = time.Second * 5
+	s.tickNumber = s.tickNumber + 1
+	if s.tickNumber%5 == 0 {
+		logx.Statf("conn count: %d", s.eng.CountConnections())
+	}
+	delay = time.Second * 1
+	now := time.Now().Unix()
+
+	s.eng.Iterate(func(c gnet.Conn) {
+		ctx, _ := c.Context().(*connContext)
+		if ctx == nil {
+			return
+		}
+		if now >= ctx.closeDate {
+			c.Close()
+		}
+	})
 	return
 }
 

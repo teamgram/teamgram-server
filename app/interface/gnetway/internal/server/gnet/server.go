@@ -44,6 +44,7 @@ type Server struct {
 	handshake      *handshake
 	authSessionMgr *authSessionManager
 	svcCtx         *svc.ServiceContext
+	tickNumber     int64
 }
 
 func New(svcCtx *svc.ServiceContext, c config.Config) *Server {

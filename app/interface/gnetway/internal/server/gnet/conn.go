@@ -45,6 +45,7 @@ type connContext struct {
 	logx.Logger
 	newSession bool
 	nextSeqNo  int32
+	closeDate  int64
 }
 
 func newConnContext() *connContext {
@@ -58,9 +59,9 @@ func (ctx *connContext) generateMessageSeqNo(increment bool) int32 {
 	value := ctx.nextSeqNo
 	if increment {
 		ctx.nextSeqNo++
-		return int32(value*2 + 1)
+		return value*2 + 1
 	} else {
-		return int32(value * 2)
+		return value * 2
 	}
 }
 
