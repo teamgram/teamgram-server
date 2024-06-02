@@ -16,24 +16,12 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
+package plugin
 
 import (
-	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/config"
-	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/dao"
-	"github.com/teamgram/teamgram-server/app/bff/qrcode/plugin"
+	"context"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-	Plugin plugin.QrcodePlugin
-}
-
-func NewServiceContext(c config.Config, plugin plugin.QrcodePlugin) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
-		Plugin: plugin,
-	}
+type QrcodePlugin interface {
+	CheckSessionPasswordNeeded(ctx context.Context, userId int64) bool
 }

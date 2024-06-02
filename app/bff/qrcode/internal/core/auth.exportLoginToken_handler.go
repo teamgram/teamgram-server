@@ -19,12 +19,15 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/qrcode/internal/model"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -86,6 +89,16 @@ func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*
 			c.Logger.Errorf("auth.exportLoginToken - error: %v", err)
 			return nil, err
 		}
+		if c.svcCtx.Plugin != nil {
+			if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, user.User.Id) {
+				// hack
+				// err = mtproto.ErrSessionPasswordNeeded
+				err = status.Error(mtproto.ErrUnauthorized, fmt.Sprintf("SESSION_PASSWORD_NEEDED_%d", user.Id()))
+				c.Logger.Infof("auth.exportLoginToken - registered, next step auth.checkPassword: %v", err)
+				return nil, err
+			}
+		}
+
 		rQRLoginToken = mtproto.MakeTLAuthLoginTokenSuccess(&mtproto.Auth_LoginToken{
 			Authorization: mtproto.MakeTLAuthAuthorization(&mtproto.Auth_Authorization{
 				SetupPasswordRequired: false,

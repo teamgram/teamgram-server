@@ -22,6 +22,7 @@ import (
 	"context"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/teamgram/proto/mtproto"
 
@@ -423,6 +424,38 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		}
 	case *mtproto.TLAuthLogOut:
 		c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateLogout, 0)
+	case *mtproto.TLAuthSendCode:
+		if rpcErr == nil {
+			authSentCode, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_SentCode)
+			if authSentCode.GetPredicateName() == mtproto.Predicate_auth_sentCodeSuccess {
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authSentCode.GetAuthorization().GetUser().GetId())
+			}
+		} else {
+			// hack
+			errMsg := rpcErr.Message()
+			if strings.HasPrefix(errMsg, "SESSION_PASSWORD_NEEDED_") {
+				vId := errMsg[len("SESSION_PASSWORD_NEEDED_"):]
+				hackId, _ := strconv.ParseInt(vId, 10, 64)
+				rpcErr.SetErrorMessage("SESSION_PASSWORD_NEEDED")
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNeedPassword, hackId)
+			}
+		}
+	case *mtproto.TLAuthExportLoginToken:
+		if rpcErr == nil {
+			authLoginToken, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_LoginToken)
+			if authLoginToken.GetPredicateName() == mtproto.Predicate_auth_loginTokenSuccess {
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authLoginToken.GetAuthorization().GetUser().GetId())
+			}
+		} else {
+			// hack
+			errMsg := rpcErr.Message()
+			if strings.HasPrefix(errMsg, "SESSION_PASSWORD_NEEDED_") {
+				vId := errMsg[len("SESSION_PASSWORD_NEEDED_"):]
+				hackId, _ := strconv.ParseInt(vId, 10, 64)
+				rpcErr.SetErrorMessage("SESSION_PASSWORD_NEEDED")
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNeedPassword, hackId)
+			}
+		}
 	case *mtproto.TLAuthSignIn:
 		if rpcErr == nil {
 			authAuthorization, _ := rpcResult.rpcResult.Result.(*mtproto.Auth_Authorization)
@@ -430,8 +463,13 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		} else {
-			if rpcErr.Message() == "SESSION_PASSWORD_NEEDED" {
-				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNeedPassword, nil)
+			// hack
+			errMsg := rpcErr.Message()
+			if strings.HasPrefix(errMsg, "SESSION_PASSWORD_NEEDED_") {
+				vId := errMsg[len("SESSION_PASSWORD_NEEDED_"):]
+				hackId, _ := strconv.ParseInt(vId, 10, 64)
+				rpcErr.SetErrorMessage("SESSION_PASSWORD_NEEDED")
+				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNeedPassword, hackId)
 			}
 		}
 	case *mtproto.TLAuthSignUp:

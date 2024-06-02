@@ -35,6 +35,8 @@ import (
 	"github.com/teamgram/teamgram-server/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/pkg/env2"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
+
+	"google.golang.org/grpc/status"
 )
 
 /*
@@ -240,7 +242,9 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 	// Check SESSION_PASSWORD_NEEDED
 	if c.svcCtx.Plugin != nil {
 		if c.svcCtx.Plugin.CheckSessionPasswordNeeded(c.ctx, user.User.Id) {
-			err = mtproto.ErrSessionPasswordNeeded
+			// hack
+			// err = mtproto.ErrSessionPasswordNeeded
+			err = status.Error(mtproto.ErrUnauthorized, fmt.Sprintf("SESSION_PASSWORD_NEEDED_%d", user.Id()))
 			c.Logger.Infof("auth.signIn - registered, next step auth.checkPassword: %v", err)
 			return nil, err
 		}

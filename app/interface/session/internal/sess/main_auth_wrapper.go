@@ -154,6 +154,8 @@ func (m *MainAuthWrapper) changeAuthState(ctx context.Context, state int, stateD
 		// m.AuthUserId = 0
 		m.cb.DeleteByAuthKeyId(m.authKeyId)
 		m.Stop()
+	case mtproto.AuthStateNeedPassword:
+		m.AuthUserId = stateData.(int64)
 	case mtproto.AuthStateNormal:
 		m.AuthUserId = stateData.(int64)
 	default:
