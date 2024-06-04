@@ -10,7 +10,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server implementation w
   - Intermediate
   - Padded intermediate
   - Full
-- API Layer: 179
+- API Layer: 181
 - private chat
 - basic group
 - contacts
