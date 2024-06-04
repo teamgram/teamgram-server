@@ -50,6 +50,9 @@ MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefault
 MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
 MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error)
+MessagesEditFactCheck(ctx context.Context, in *mtproto.TLMessagesEditFactCheck) (*mtproto.Updates, error)
+MessagesDeleteFactCheck(ctx context.Context, in *mtproto.TLMessagesDeleteFactCheck) (*mtproto.Updates, error)
+MessagesGetFactCheck(ctx context.Context, in *mtproto.TLMessagesGetFactCheck) (*mtproto.Vector_FactCheck, error)
 ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
 
@@ -267,6 +270,27 @@ func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, i
 func (m *defaultMessagesClient) MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesGetAvailableEffects(ctx, in)
+}
+
+// MessagesEditFactCheck
+// messages.editFactCheck#589ee75 peer:InputPeer msg_id:int text:TextWithEntities = Updates;
+func (m *defaultMessagesClient) MessagesEditFactCheck(ctx context.Context, in *mtproto.TLMessagesEditFactCheck) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesEditFactCheck(ctx, in)
+}
+
+// MessagesDeleteFactCheck
+// messages.deleteFactCheck#d1da940c peer:InputPeer msg_id:int = Updates;
+func (m *defaultMessagesClient) MessagesDeleteFactCheck(ctx context.Context, in *mtproto.TLMessagesDeleteFactCheck) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesDeleteFactCheck(ctx, in)
+}
+
+// MessagesGetFactCheck
+// messages.getFactCheck#b9cdc5ee peer:InputPeer msg_id:Vector<int> = Vector<FactCheck>;
+func (m *defaultMessagesClient) MessagesGetFactCheck(ctx context.Context, in *mtproto.TLMessagesGetFactCheck) (*mtproto.Vector_FactCheck, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesGetFactCheck(ctx, in)
 }
 
 // ChannelsGetSendAs

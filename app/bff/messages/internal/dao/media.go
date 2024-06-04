@@ -192,7 +192,7 @@ func GetMessageMedia(ctx context.Context, d MediaHelper, ownerId int64, media *m
 			Geo:       mtproto.MakeGeoPointByInput(venue.GetGeoPoint()),
 			Title:     venue.GetTitle(),
 			Address:   venue.GetAddress(),
-			Provider:  venue.GetProvider(),
+			Provider:  venue.GetProvider_STRING(),
 			VenueId:   venue.GetVenueId(),
 			VenueType: venue.GetVenueType(),
 		}).To_MessageMedia()

@@ -190,7 +190,7 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 			Geo:       mtproto.MakeGeoPointByInput(venue.GetGeoPoint()),
 			Title:     venue.GetTitle(),
 			Address:   venue.GetAddress(),
-			Provider:  venue.GetProvider(),
+			Provider:  venue.GetProvider_STRING(),
 			VenueId:   venue.GetVenueId(),
 			VenueType: venue.GetVenueType(),
 		}).To_MessageMedia()

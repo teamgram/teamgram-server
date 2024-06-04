@@ -453,6 +453,51 @@ func (s *Service) MessagesGetAvailableEffects(ctx context.Context, request *mtpr
 	return r, err
 }
 
+// MessagesEditFactCheck
+// messages.editFactCheck#589ee75 peer:InputPeer msg_id:int text:TextWithEntities = Updates;
+func (s *Service) MessagesEditFactCheck(ctx context.Context, request *mtproto.TLMessagesEditFactCheck) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.editFactCheck - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesEditFactCheck(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.editFactCheck - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesDeleteFactCheck
+// messages.deleteFactCheck#d1da940c peer:InputPeer msg_id:int = Updates;
+func (s *Service) MessagesDeleteFactCheck(ctx context.Context, request *mtproto.TLMessagesDeleteFactCheck) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.deleteFactCheck - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesDeleteFactCheck(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.deleteFactCheck - reply: %s", r.DebugString())
+	return r, err
+}
+
+// MessagesGetFactCheck
+// messages.getFactCheck#b9cdc5ee peer:InputPeer msg_id:Vector<int> = Vector<FactCheck>;
+func (s *Service) MessagesGetFactCheck(ctx context.Context, request *mtproto.TLMessagesGetFactCheck) (*mtproto.Vector_FactCheck, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getFactCheck - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.MessagesGetFactCheck(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getFactCheck - reply: %s", r.DebugString())
+	return r, err
+}
+
 // ChannelsGetSendAs
 // channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
 func (s *Service) ChannelsGetSendAs(ctx context.Context, request *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {

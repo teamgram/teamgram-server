@@ -173,13 +173,12 @@ func (c *FilesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMed
 		//	venue_id:string
 		//	venue_type:string = InputMedia;
 		venue := media.To_InputMediaVenue()
-
 		// messageMediaVenue#2ec0533f geo:GeoPoint title:string address:string provider:string venue_id:string venue_type:string = MessageMedia;
 		messageMedia = mtproto.MakeTLMessageMediaVenue(&mtproto.MessageMedia{
 			Geo:       mtproto.MakeGeoPointByInput(venue.GetGeoPoint()),
 			Title:     venue.GetTitle(),
 			Address:   venue.GetAddress(),
-			Provider:  venue.GetProvider(),
+			Provider:  venue.GetProvider_STRING(),
 			VenueId:   venue.GetVenueId(),
 			VenueType: venue.GetVenueType(),
 		}).To_MessageMedia()

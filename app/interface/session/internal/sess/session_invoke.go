@@ -207,7 +207,7 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 		c,
 		gatewayId,
 		msgId.msgId,
-		msgId.msgId,
+		msgId.seqNo,
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
@@ -235,7 +235,7 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 		c,
 		gatewayId,
 		msgId.msgId,
-		msgId.msgId,
+		msgId.seqNo,
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
@@ -263,11 +263,72 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 		c,
 		gatewayId,
 		msgId.msgId,
-		msgId.msgId,
+		msgId.seqNo,
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
 		logx.WithContext(ctx).Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
+		return
+	}
+
+	dBuf := mtproto.NewDecodeBuf(request.Query)
+	query := dBuf.Object()
+	if dBuf.GetError() != nil {
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
+		return
+	}
+
+	if query == nil {
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
+		return
+	}
+
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+}
+
+func (c *session) onInvokeWithGooglePlayIntegrity(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithGooglePlayIntegrity) {
+	logx.WithContext(ctx).Infof("onInvokeWithGooglePlayIntegrity - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, nonce: %s, token: %s, request: {%s}}",
+		c,
+		gatewayId,
+		msgId.msgId,
+		msgId.seqNo,
+		request.Nonce,
+		request.Token,
+		reflect.TypeOf(request))
+
+	if request.GetQuery() == nil {
+		logx.WithContext(ctx).Errorf("onInvokeWithGooglePlayIntegrity Query is nil, query: {%s}", request.DebugString())
+		return
+	}
+
+	dBuf := mtproto.NewDecodeBuf(request.Query)
+	query := dBuf.Object()
+	if dBuf.GetError() != nil {
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
+		return
+	}
+
+	if query == nil {
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
+		return
+	}
+
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+}
+
+// onInvokeWithApnsSecret
+func (c *session) onInvokeWithApnsSecret(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithApnsSecret) {
+	logx.WithContext(ctx).Infof("onInvokeWithApnsSecret - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, nonce: %s, secret: %s, request: {%s}}",
+		c,
+		gatewayId,
+		msgId.msgId,
+		msgId.seqNo,
+		request.Nonce,
+		request.Secret,
+		reflect.TypeOf(request))
+
+	if request.GetQuery() == nil {
+		logx.WithContext(ctx).Errorf("invokeWithApnsSecret Query is nil, query: {%s}", request.DebugString())
 		return
 	}
 
