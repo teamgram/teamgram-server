@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package messages_client
+package messagesclient
 
 import (
 	"context"
@@ -21,35 +21,38 @@ import (
 var _ *mtproto.Bool
 
 type MessagesClient interface {
-	MessagesGetMessages(ctx context.Context, in *mtproto.TLMessagesGetMessages) (*mtproto.Messages_Messages, error)
-	MessagesGetHistory(ctx context.Context, in *mtproto.TLMessagesGetHistory) (*mtproto.Messages_Messages, error)
-	MessagesSearch(ctx context.Context, in *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error)
-	MessagesReadHistory(ctx context.Context, in *mtproto.TLMessagesReadHistory) (*mtproto.Messages_AffectedMessages, error)
-	MessagesDeleteHistory(ctx context.Context, in *mtproto.TLMessagesDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
-	MessagesDeleteMessages(ctx context.Context, in *mtproto.TLMessagesDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
-	MessagesReceivedMessages(ctx context.Context, in *mtproto.TLMessagesReceivedMessages) (*mtproto.Vector_ReceivedNotifyMessage, error)
-	MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error)
-	MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error)
-	MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error)
-	MessagesReadMessageContents(ctx context.Context, in *mtproto.TLMessagesReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
-	MessagesGetMessagesViews(ctx context.Context, in *mtproto.TLMessagesGetMessagesViews) (*mtproto.Messages_MessageViews, error)
-	MessagesSearchGlobal(ctx context.Context, in *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error)
-	MessagesGetMessageEditData(ctx context.Context, in *mtproto.TLMessagesGetMessageEditData) (*mtproto.Messages_MessageEditData, error)
-	MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error)
-	MessagesGetUnreadMentions(ctx context.Context, in *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error)
-	MessagesReadMentions(ctx context.Context, in *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error)
-	MessagesGetRecentLocations(ctx context.Context, in *mtproto.TLMessagesGetRecentLocations) (*mtproto.Messages_Messages, error)
-	MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error)
-	MessagesUpdatePinnedMessage(ctx context.Context, in *mtproto.TLMessagesUpdatePinnedMessage) (*mtproto.Updates, error)
-	MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error)
-	MessagesUnpinAllMessages(ctx context.Context, in *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
-	MessagesGetSearchResultsCalendar(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error)
-	MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error)
-	MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
-	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
-	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
-	MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
-	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
+MessagesGetMessages(ctx context.Context, in *mtproto.TLMessagesGetMessages) (*mtproto.Messages_Messages, error)
+MessagesGetHistory(ctx context.Context, in *mtproto.TLMessagesGetHistory) (*mtproto.Messages_Messages, error)
+MessagesSearch(ctx context.Context, in *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error)
+MessagesReadHistory(ctx context.Context, in *mtproto.TLMessagesReadHistory) (*mtproto.Messages_AffectedMessages, error)
+MessagesDeleteHistory(ctx context.Context, in *mtproto.TLMessagesDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
+MessagesDeleteMessages(ctx context.Context, in *mtproto.TLMessagesDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
+MessagesReceivedMessages(ctx context.Context, in *mtproto.TLMessagesReceivedMessages) (*mtproto.Vector_ReceivedNotifyMessage, error)
+MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error)
+MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error)
+MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error)
+MessagesReadMessageContents(ctx context.Context, in *mtproto.TLMessagesReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
+MessagesGetMessagesViews(ctx context.Context, in *mtproto.TLMessagesGetMessagesViews) (*mtproto.Messages_MessageViews, error)
+MessagesSearchGlobal(ctx context.Context, in *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error)
+MessagesGetMessageEditData(ctx context.Context, in *mtproto.TLMessagesGetMessageEditData) (*mtproto.Messages_MessageEditData, error)
+MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error)
+MessagesGetUnreadMentions(ctx context.Context, in *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error)
+MessagesReadMentions(ctx context.Context, in *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error)
+MessagesGetRecentLocations(ctx context.Context, in *mtproto.TLMessagesGetRecentLocations) (*mtproto.Messages_Messages, error)
+MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error)
+MessagesUpdatePinnedMessage(ctx context.Context, in *mtproto.TLMessagesUpdatePinnedMessage) (*mtproto.Updates, error)
+MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error)
+MessagesUnpinAllMessages(ctx context.Context, in *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
+MessagesGetSearchResultsCalendar(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error)
+MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error)
+MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
+MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
+MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
+MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
+MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error)
+ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
+ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
+
 }
 
 type defaultMessagesClient struct {
@@ -61,6 +64,7 @@ func NewMessagesClient(cli zrpc.Client) MessagesClient {
 		cli: cli,
 	}
 }
+
 
 // MessagesGetMessages
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
@@ -112,21 +116,21 @@ func (m *defaultMessagesClient) MessagesReceivedMessages(ctx context.Context, in
 }
 
 // MessagesSendMessage
-// messages.sendMessage#280d096f flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMessage#983f9745 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMessage(ctx, in)
 }
 
 // MessagesSendMedia
-// messages.sendMedia#72ccc23d flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMedia#7852834e flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMedia(ctx, in)
 }
 
 // MessagesForwardMessages
-// messages.forwardMessages#c661bbc4 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.forwardMessages#d5039208 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut = Updates;
 func (m *defaultMessagesClient) MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesForwardMessages(ctx, in)
@@ -147,7 +151,7 @@ func (m *defaultMessagesClient) MessagesGetMessagesViews(ctx context.Context, in
 }
 
 // MessagesSearchGlobal
-// messages.searchGlobal#4bc6589a flags:# folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (m *defaultMessagesClient) MessagesSearchGlobal(ctx context.Context, in *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSearchGlobal(ctx, in)
@@ -161,7 +165,7 @@ func (m *defaultMessagesClient) MessagesGetMessageEditData(ctx context.Context, 
 }
 
 // MessagesEditMessage
-// messages.editMessage#48f71778 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int = Updates;
+// messages.editMessage#dfd14005 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int quick_reply_shortcut_id:flags.17?int = Updates;
 func (m *defaultMessagesClient) MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesEditMessage(ctx, in)
@@ -189,7 +193,7 @@ func (m *defaultMessagesClient) MessagesGetRecentLocations(ctx context.Context, 
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#456e8987 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer = Updates;
+// messages.sendMultiMedia#37b74355 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMultiMedia(ctx, in)
@@ -258,9 +262,24 @@ func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, i
 	return client.MessagesGetOutboxReadDate(ctx, in)
 }
 
+// MessagesGetAvailableEffects
+// messages.getAvailableEffects#dea20a39 hash:int = messages.AvailableEffects;
+func (m *defaultMessagesClient) MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesGetAvailableEffects(ctx, in)
+}
+
 // ChannelsGetSendAs
 // channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
 func (m *defaultMessagesClient) ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.ChannelsGetSendAs(ctx, in)
 }
+
+// ChannelsSearchPosts
+// channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+func (m *defaultMessagesClient) ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.ChannelsSearchPosts(ctx, in)
+}
+
