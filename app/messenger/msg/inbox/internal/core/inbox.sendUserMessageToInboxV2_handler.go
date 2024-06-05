@@ -44,7 +44,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 		if in.FromId == in.PeerUserId {
 			peer2 := in.GetInbox().GetMessage().GetSavedPeerId()
 			if peer2 == nil {
-				c.Logger.Errorf("inbox.sendUserMessageToInbox - error: sendToSelfUser")
+				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: sendToSelfUser")
 			} else {
 				peer := mtproto.FromPeer(peer2)
 				c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
@@ -54,7 +54,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 						PeerType:   peer.PeerType,
 						PeerId:     peer.PeerId,
 						Pinned:     0,
-						TopMessage: in.GetInbox().GetMessage().GetId(),
+						TopMessage: in.GetInbox().GetMessageId(),
 					})
 			}
 
@@ -68,7 +68,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			in.GetInbox().GetRandomId(),
 			in.GetInbox().GetMessage())
 		if err != nil {
-			c.Logger.Errorf("inbox.sendUserMessageToInbox - error: %v", err)
+			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
 			return nil, err
 		}
 
@@ -83,7 +83,31 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			//}
 		}
 
-		pushUpdates := c.makeUpdateNewMessageListUpdates(in.PeerUserId, inBox)
+		var (
+			pushUpdates = mtproto.MakeEmptyUpdates()
+			inBoxHelper = mtproto.MakeBoxListByBoxListUsers([]*mtproto.MessageBox{inBox}, in.GetUsers())
+		)
+
+		inBoxHelper.Visit(
+			inBox.UserId,
+			func(messageList []*mtproto.Message) {
+				for _, m := range messageList {
+					pushUpdates.PushFrontUpdate(mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+						Message_MESSAGE: m,
+						Pts_INT32:       inBox.Pts,
+						PtsCount:        inBox.PtsCount,
+					}).To_Update())
+				}
+			},
+			func(users []*mtproto.User, rawIdList []int64) {
+				pushUpdates.PushUser(users...)
+			},
+			func(chats []*mtproto.Chat, rawIdList []int64) {
+				pushUpdates.PushChat(chats...)
+			},
+			func(chats []*mtproto.Chat, rawIdList []int64) {
+				pushUpdates.PushChat(chats...)
+			})
 
 		var (
 			isBot = false
@@ -112,7 +136,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			})
 		}
 		if err != nil {
-			c.Logger.Errorf("inbox.sendUserMessageToInbox - error: %v", err)
+			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
 		}
 	}
 
