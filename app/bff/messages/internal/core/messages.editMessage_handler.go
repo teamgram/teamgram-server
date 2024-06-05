@@ -69,7 +69,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 
 	// TODO(@benqi): check
 	// editMessage := editMessages[0]
-	if editMessages.Datas[0].UserId != c.MD.UserId {
+	if editMessages.Datas[0].SenderUserId != c.MD.UserId {
 		err = mtproto.ErrMessageAuthorRequired
 		c.Logger.Errorf("messages.editMessage - emptyMessage(%d)", in.Id)
 		return nil, err
