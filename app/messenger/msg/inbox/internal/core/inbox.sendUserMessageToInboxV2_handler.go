@@ -21,38 +21,45 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 )
 
 // InboxSendUserMessageToInboxV2
 // inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
 func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
-	//if in.FromId == in.PeerUserId {
-	//	peer2 := in.GetMessage().GetMessage().GetSavedPeerId()
-	//	if peer2 == nil {
-	//		c.Logger.Errorf("inbox.sendUserMessageToInbox - error: sendToSelfUser")
-	//	} else {
-	//		peer := mtproto.FromPeer(peer2)
-	//		c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
-	//			c.ctx,
-	//			&dataobject.SavedDialogsDO{
-	//				UserId:     in.FromId,
-	//				PeerType:   peer.PeerType,
-	//				PeerId:     peer.PeerId,
-	//				Pinned:     0,
-	//				TopMessage: in.GetMessage().GetMessage().GetId(),
-	//			})
-	//	}
-	//
-	//	return mtproto.EmptyVoid, nil
-	//}
-
 	if in.Out {
-		c.svcCtx.Dao.SendMessageToOutboxV1(
+		err := c.svcCtx.Dao.SendMessageToOutboxV1(
 			c.ctx,
 			in.FromId,
 			mtproto.MakeUserPeerUtil(in.PeerUserId),
 			in.GetInbox())
+		if err != nil {
+			// TODO: handle error
+			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+			return nil, err
+		}
+
+		// TODO: handle sendToSelfUser
+		if in.FromId == in.PeerUserId {
+			peer2 := in.GetInbox().GetMessage().GetSavedPeerId()
+			if peer2 == nil {
+				c.Logger.Errorf("inbox.sendUserMessageToInbox - error: sendToSelfUser")
+			} else {
+				peer := mtproto.FromPeer(peer2)
+				c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
+					c.ctx,
+					&dataobject.SavedDialogsDO{
+						UserId:     in.FromId,
+						PeerType:   peer.PeerType,
+						PeerId:     peer.PeerId,
+						Pinned:     0,
+						TopMessage: in.GetInbox().GetMessage().GetId(),
+					})
+			}
+
+			return mtproto.EmptyVoid, nil
+		}
 	} else {
 		inBox, err := c.svcCtx.Dao.SendUserMessageToInbox(c.ctx,
 			in.FromId,
