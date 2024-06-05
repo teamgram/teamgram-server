@@ -33,6 +33,7 @@ import (
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/pkg/deduplication"
 	"github.com/zeromicro/go-zero/core/stores/kv"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type ServiceContext struct {
@@ -54,6 +55,7 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 			DialogClient:       dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 			MsgPlugin:          plugin,
 			MessageDeDuplicate: deduplication.NewMessageDeDuplicate(kv.NewStore(c.KV)),
+			Redis:              redis.MustNewRedis(c.Redis2),
 		},
 	}
 }

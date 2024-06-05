@@ -112,6 +112,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 589079137,
 		}
 	},
+	-1328190640: func() mtproto.TLObject { // 0xb0d56b50
+		return &TLInboxSendUserMessageToInboxV2{
+			Constructor: -1328190640,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1252,6 +1257,101 @@ func (m *TLInboxUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLInboxUnpinAllMessages) DebugString() string {
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
+}
+
+// TLInboxSendUserMessageToInboxV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xb0d56b50:
+		x.UInt(0xb0d56b50)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetOut() == true {
+			flags |= 1 << 0
+		}
+
+		if m.GetUsers() != nil {
+			flags |= 1 << 1
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Long(m.GetFromId())
+		x.Long(m.GetPeerUserId())
+		m.GetInbox().Encode(x, layer)
+		if m.GetUsers() != nil {
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetUsers())))
+			for _, v := range m.GetUsers() {
+				v.Encode(x, layer)
+			}
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxSendUserMessageToInboxV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xb0d56b50:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.Out = true
+		}
+		m.FromId = dBuf.Long()
+		m.PeerUserId = dBuf.Long()
+
+		m6 := &mtproto.MessageBox{}
+		m6.Decode(dBuf)
+		m.Inbox = m6
+
+		if (flags & (1 << 1)) != 0 {
+			c7 := dBuf.Int()
+			if c7 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 7, c7)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 7, c7)
+			}
+			l7 := dBuf.Int()
+			v7 := make([]*mtproto.ImmutableUser, l7)
+			for i := int32(0); i < l7; i++ {
+				v7[i] = &mtproto.ImmutableUser{}
+				v7[i].Decode(dBuf)
+			}
+			m.Users = v7
+		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLInboxSendUserMessageToInboxV2) DebugString() string {
 	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
 	if err != nil {
 		return "protojson error: " + err.Error()

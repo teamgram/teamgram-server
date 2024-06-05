@@ -40,7 +40,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 	s.RegisterHandlers(
 		conf.Topics[0],
 		func(ctx context.Context, method, key string, value []byte) {
-			logx.WithContext(ctx).Debugf("method: %s,s key: %s, value: %s", method, key, value)
+			logx.WithContext(ctx).Debugf("method: %s, key: %s, value: %s", method, key, value)
 
 			switch protoreflect.FullName(method) {
 			case proto.MessageName((*inbox.TLInboxSendUserMessageToInbox)(nil)):
@@ -224,6 +224,19 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 					c.Logger.Debugf("inbox.unpinAllMessages - request: %s", r.DebugString())
 
 					c.InboxUnpinAllMessages(r)
+				})
+			case proto.MessageName((*inbox.TLInboxSendUserMessageToInboxV2)(nil)):
+				threading.RunSafe(func() {
+					c := core.New(ctx, svcCtx)
+
+					r := new(inbox.TLInboxSendUserMessageToInboxV2)
+					if err := json.Unmarshal(value, r); err != nil {
+						c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+						return
+					}
+					c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - request: %s", r.DebugString())
+
+					c.InboxSendUserMessageToInboxV2(r)
 				})
 			default:
 				err := fmt.Errorf("invalid key: %s", key)

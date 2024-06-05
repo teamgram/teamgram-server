@@ -27,6 +27,7 @@ const (
 	Predicate_inbox_updateHistoryReaded         = "inbox_updateHistoryReaded"
 	Predicate_inbox_updatePinnedMessage         = "inbox_updatePinnedMessage"
 	Predicate_inbox_unpinAllMessages            = "inbox_unpinAllMessages"
+	Predicate_inbox_sendUserMessageToInboxV2    = "inbox_sendUserMessageToInboxV2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -94,6 +95,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 589079137, // 0x231ca261
 
 	},
+	Predicate_inbox_sendUserMessageToInboxV2: {
+		0: -1328190640, // 0xb0d56b50
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -113,6 +118,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1010283296: Predicate_inbox_updateHistoryReaded,         // 0xc3c84ce0
 	-1452528908: Predicate_inbox_updatePinnedMessage,         // 0xa96c2af4
 	589079137:   Predicate_inbox_unpinAllMessages,            // 0x231ca261
+	-1328190640: Predicate_inbox_sendUserMessageToInboxV2,    // 0xb0d56b50
 
 }
 

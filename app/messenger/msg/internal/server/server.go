@@ -68,6 +68,7 @@ func (s *Server) Initialize() error {
 					InboxClient:     c.InboxClient,
 					DialogClient:    c.BizServiceClient,
 					MessageSharding: c.MessageSharding,
+					Redis2:          c.Redis2,
 				}, nil))
 	})
 

@@ -16,7 +16,7 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package inbox_client
+package inboxclient
 
 import (
 	"context"
@@ -196,5 +196,15 @@ func (m *defaultInboxMqClient) InboxUnpinAllMessages(ctx context.Context, in *in
 		ctx,
 		string(proto.MessageName(in)),
 		strconv.FormatInt(in.GetPeerId(), 10),
+		in)
+}
+
+// InboxSendUserMessageToInboxV2
+// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
+func (m *defaultInboxMqClient) InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }

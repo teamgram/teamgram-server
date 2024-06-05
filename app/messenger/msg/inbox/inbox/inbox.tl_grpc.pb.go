@@ -43,6 +43,7 @@ const (
 	RPCInbox_InboxUpdateHistoryReaded_FullMethodName         = "/inbox.RPCInbox/inbox_updateHistoryReaded"
 	RPCInbox_InboxUpdatePinnedMessage_FullMethodName         = "/inbox.RPCInbox/inbox_updatePinnedMessage"
 	RPCInbox_InboxUnpinAllMessages_FullMethodName            = "/inbox.RPCInbox/inbox_unpinAllMessages"
+	RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName    = "/inbox.RPCInbox/inbox_sendUserMessageToInboxV2"
 )
 
 // RPCInboxClient is the client API for RPCInbox service.
@@ -63,6 +64,7 @@ type RPCInboxClient interface {
 	InboxUpdateHistoryReaded(ctx context.Context, in *TLInboxUpdateHistoryReaded, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxUpdatePinnedMessage(ctx context.Context, in *TLInboxUpdatePinnedMessage, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxUnpinAllMessages(ctx context.Context, in *TLInboxUnpinAllMessages, opts ...grpc.CallOption) (*mtproto.Void, error)
+	InboxSendUserMessageToInboxV2(ctx context.Context, in *TLInboxSendUserMessageToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error)
 }
 
 type rPCInboxClient struct {
@@ -199,6 +201,15 @@ func (c *rPCInboxClient) InboxUnpinAllMessages(ctx context.Context, in *TLInboxU
 	return out, nil
 }
 
+func (c *rPCInboxClient) InboxSendUserMessageToInboxV2(ctx context.Context, in *TLInboxSendUserMessageToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error) {
+	out := new(mtproto.Void)
+	err := c.cc.Invoke(ctx, RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCInboxServer is the server API for RPCInbox service.
 // All implementations should embed UnimplementedRPCInboxServer
 // for forward compatibility
@@ -217,6 +228,7 @@ type RPCInboxServer interface {
 	InboxUpdateHistoryReaded(context.Context, *TLInboxUpdateHistoryReaded) (*mtproto.Void, error)
 	InboxUpdatePinnedMessage(context.Context, *TLInboxUpdatePinnedMessage) (*mtproto.Void, error)
 	InboxUnpinAllMessages(context.Context, *TLInboxUnpinAllMessages) (*mtproto.Void, error)
+	InboxSendUserMessageToInboxV2(context.Context, *TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error)
 }
 
 // UnimplementedRPCInboxServer should be embedded to have forward compatible implementations.
@@ -264,6 +276,9 @@ func (UnimplementedRPCInboxServer) InboxUpdatePinnedMessage(context.Context, *TL
 }
 func (UnimplementedRPCInboxServer) InboxUnpinAllMessages(context.Context, *TLInboxUnpinAllMessages) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxUnpinAllMessages not implemented")
+}
+func (UnimplementedRPCInboxServer) InboxSendUserMessageToInboxV2(context.Context, *TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InboxSendUserMessageToInboxV2 not implemented")
 }
 
 // UnsafeRPCInboxServer may be embedded to opt out of forward compatibility for this service.
@@ -529,6 +544,24 @@ func _RPCInbox_InboxUnpinAllMessages_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCInbox_InboxSendUserMessageToInboxV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLInboxSendUserMessageToInboxV2)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCInboxServer).InboxSendUserMessageToInboxV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCInboxServer).InboxSendUserMessageToInboxV2(ctx, req.(*TLInboxSendUserMessageToInboxV2))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCInbox_ServiceDesc is the grpc.ServiceDesc for RPCInbox service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -591,6 +624,10 @@ var RPCInbox_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inbox_unpinAllMessages",
 			Handler:    _RPCInbox_InboxUnpinAllMessages_Handler,
+		},
+		{
+			MethodName: "inbox_sendUserMessageToInboxV2",
+			Handler:    _RPCInbox_InboxSendUserMessageToInboxV2_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

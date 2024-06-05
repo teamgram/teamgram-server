@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,10 +13,11 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
+	"github.com/teamgram/proto/mtproto"
 )
+
 
 // InboxSendUserMessageToInbox
 // inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
@@ -109,7 +110,7 @@ func (s *Service) InboxEditChatMessageToInbox(ctx context.Context, request *inbo
 }
 
 // InboxDeleteMessagesToInbox
-// inbox.deleteMessagesToInbox from_id:long id:Vector<long> = Void;
+// inbox.deleteMessagesToInbox from_id:long peer_type:int peer_id:long id:Vector<long> = Void;
 func (s *Service) InboxDeleteMessagesToInbox(ctx context.Context, request *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.deleteMessagesToInbox - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
@@ -227,3 +228,19 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 	c.Logger.Debugf("inbox.unpinAllMessages - reply: %s", r.DebugString())
 	return r, err
 }
+
+// InboxSendUserMessageToInboxV2
+// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
+func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.InboxSendUserMessageToInboxV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - reply: %s", r.DebugString())
+	return r, err
+}
+
