@@ -29,6 +29,7 @@ IdgenClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.idgen
+
 BizServiceClient:
   Etcd:
     Hosts:
@@ -39,7 +40,12 @@ InboxClient:
   Topic:   "Inbox-T"
   Brokers:
     - 127.0.0.1:9092
+
 SyncClient:
   Topic:   "Sync-T"
   Brokers:
     - 127.0.0.1:9092
+
+Redis2:
+  Host: 127.0.0.1:6379
+  Type: node
