@@ -29,7 +29,7 @@ import (
 func GetFileExtName(filePath string) string {
 	var ext = path.Ext(filePath)
 	if ext == "" {
-		ext = "partial"
+		ext = ".partial"
 	}
 	return strings.ToLower(ext)
 }
