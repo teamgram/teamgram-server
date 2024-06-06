@@ -10,10 +10,11 @@
 package dao
 
 import (
-	"github.com/minio/minio-go/v7"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
+
+	"github.com/minio/minio-go/v7"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -37,5 +38,11 @@ func NewDFSHelper(minio *minio_util.MinioConfig, idgen zrpc.RpcClientConf, ssdb 
 		minio:        minio_util.MustNewMinioClient(minio),
 		IDGenClient2: idgen_client.NewIDGenClient2(zrpc.MustNewClient(idgen)),
 		ssdb:         kv.NewStore(ssdb),
+	}
+}
+
+func NewMinioHelper(minio *minio_util.MinioConfig) minio_util.MinioHelper {
+	return &Dao{
+		minio: minio_util.MustNewMinioClient(minio),
 	}
 }

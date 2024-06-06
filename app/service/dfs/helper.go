@@ -31,6 +31,7 @@ type (
 var (
 	New               = service.New
 	NewServiceContext = svc.NewServiceContext
+	NewMinioHelper    = dao.NewMinioHelper
 )
 
 //func New(c Config) *service.Service {
@@ -40,6 +41,7 @@ var (
 type (
 	MinioConfig = minio_util.MinioConfig
 	DFSHelper   = dao.Dao
+	MinioHelper = minio_util.MinioHelper
 )
 
 // imaging - imaging

@@ -16,9 +16,12 @@
 package minio_util
 
 import (
+	"context"
+	"io"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"log"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type MinioConfig struct {
@@ -41,7 +44,18 @@ func MustNewMinioClient(c *MinioConfig) *minio.Core {
 			Secure: c.UseSSL,
 		})
 	if err != nil {
-		log.Fatal(err)
+		logx.Must(err)
 	}
 	return core
+}
+
+type MinioHelper interface {
+	GetFileObject(ctx context.Context, bucket, path string) (*minio.Object, error)
+	GetFile(ctx context.Context, bucket, path string, offset int64, limit int32) (bytes []byte, err error)
+	PutPhotoFile(ctx context.Context, path string, buf []byte) (n minio.UploadInfo, err error)
+	PutPhotoFileV2(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error)
+	PutVideoFile(ctx context.Context, path string, buf []byte) (n minio.UploadInfo, err error)
+	PutDocumentFile(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error)
+	FPutDocumentFile(ctx context.Context, path string, r string) (n minio.UploadInfo, err error)
+	PutEncryptedFile(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error)
 }
