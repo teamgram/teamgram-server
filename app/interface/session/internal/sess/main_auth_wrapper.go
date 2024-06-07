@@ -547,33 +547,47 @@ func (m *MainAuthWrapper) runLoop() {
 		case sessionMsg, _ := <-m.sessionDataChan:
 			switch ctxData := sessionMsg.(type) {
 			case *sessionDataCtx:
-				m.onSessionData(ctxData.ctx, &ctxData.sessionData)
+				threading.RunSafe(func() {
+					m.onSessionData(ctxData.ctx, &ctxData.sessionData)
+				})
 			case *sessionHttpDataCtx:
-				m.onSessionHttpData(ctxData.ctx, &ctxData.sessionHttpData)
+				threading.RunSafe(func() {
+					m.onSessionHttpData(ctxData.ctx, &ctxData.sessionHttpData)
+				})
 			case *syncRpcResultDataCtx:
-				m.onSyncRpcResultData(ctxData.ctx, &ctxData.syncRpcResultData)
+				threading.RunSafe(func() {
+					m.onSyncRpcResultData(ctxData.ctx, &ctxData.syncRpcResultData)
+				})
 			case *syncDataCtx:
-				m.onSyncData(ctxData.ctx, &ctxData.syncData)
+				threading.RunSafe(func() {
+					m.onSyncData(ctxData.ctx, &ctxData.syncData)
+				})
 			case *syncSessionDataCtx:
-				m.onSyncSessionData(ctxData.ctx, &ctxData.syncSessionData)
+				threading.RunSafe(func() {
+					m.onSyncSessionData(ctxData.ctx, &ctxData.syncSessionData)
+				})
 			case *connDataCtx:
-				if ctxData.isNew {
-					m.onSessionNew(ctxData.ctx, &ctxData.connData)
-				} else {
-					m.onSessionClosed(ctxData.ctx, &ctxData.connData)
-				}
+				threading.RunSafe(func() {
+					if ctxData.isNew {
+						m.onSessionNew(ctxData.ctx, &ctxData.connData)
+					} else {
+						m.onSessionClosed(ctxData.ctx, &ctxData.connData)
+					}
+				})
 			default:
 				panic("receive invalid type msg")
 			}
 		case rpcMessages, _ := <-m.rpcDataChan:
-			rpcResult, _ := rpcMessages.(*rpcApiMessage)
-			_ = rpcResult
-			if sess, ok := rpcResult.sessList.sessions[rpcResult.sessionId]; ok {
-				// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
-				sess.onRpcResult(rpcResult.ctx, rpcResult)
-			} else {
-				logx.WithContext(rpcResult.ctx).Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
-			}
+			threading.RunSafe(func() {
+				rpcResult, _ := rpcMessages.(*rpcApiMessage)
+				_ = rpcResult
+				if sess, ok := rpcResult.sessList.sessions[rpcResult.sessionId]; ok {
+					// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
+					sess.onRpcResult(rpcResult.ctx, rpcResult)
+				} else {
+					logx.WithContext(rpcResult.ctx).Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
+				}
+			})
 		case <-ticker.C:
 			threading.RunSafe(func() {
 				m.onTimer(context.Background())
