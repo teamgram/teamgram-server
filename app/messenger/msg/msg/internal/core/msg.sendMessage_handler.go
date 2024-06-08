@@ -160,33 +160,40 @@ func (c *MsgCore) sendUserMessage(
 	//	}
 	//}
 
-	rUpdates, _, err := c.svcCtx.Dao.DoIdempotent(
+	var (
+		rUpdates         *mtproto.Updates
+		notSYncMe        = false
+		updateNewMessage *mtproto.Update
+	)
+
+	cached, err := c.svcCtx.Dao.DoIdempotent(
 		ctx,
 		fromUserId,
 		outBox.RandomId,
-		func(ctx context.Context) (*mtproto.Updates, error) {
+		&rUpdates,
+		func(ctx context.Context, v any) error {
 			box, ok, err := c.svcCtx.Dao.SendUserMessage(ctx, fromUserId, toUserId, outBox)
 			if err != nil {
 				c.Logger.Error(err.Error())
-				return nil, err
+				return err
 			}
 
 			if ok && cb != nil {
 				err = cb(box.DialogMessageId, box.ToMessage(fromUserId))
 				if err != nil {
 					c.Logger.Error(err.Error())
-					return nil, err
+					return err
 				}
 			}
 
-			updateNewMessage := mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+			updateNewMessage = mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
 				Pts_INT32:       box.Pts,
 				PtsCount:        box.PtsCount,
 				RandomId:        box.RandomId,
 				Message_MESSAGE: box.Message,
 			}).To_Update()
 
-			rUpdates := mtproto.MakeReplyUpdates(
+			*v.(**mtproto.Updates) = mtproto.MakeReplyUpdates(
 				func(idList []int64) []*mtproto.User {
 					// TODO: check
 					//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
@@ -212,13 +219,18 @@ func (c *MsgCore) sendUserMessage(
 				},
 				updateNewMessage)
 
+			notSYncMe = !ok
 			if !ok {
 				// dup
-				return rUpdates, nil
+				return nil
 			}
 
 			// c.svcCtx.Dao.MessageDeDuplicate.PutDuplicateMessage(ctx, fromUserId, outBox.RandomId, rUpdates)
 
+			return nil
+		})
+	if err == nil {
+		if !cached && notSYncMe {
 			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        fromUserId,
 				PermAuthKeyId: fromAuthKeyId,
@@ -235,9 +247,8 @@ func (c *MsgCore) sendUserMessage(
 					},
 					updateNewMessage),
 			})
-
-			return rUpdates, nil
-		})
+		}
+	}
 
 	return rUpdates, err
 }
@@ -403,17 +414,19 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 
 	var (
 		updateNewMessage *mtproto.Update
+		rUpdates         *mtproto.Updates
 	)
 
-	rUpdates, ok, err := c.svcCtx.Dao.DoIdempotent(
+	cached, err := c.svcCtx.Dao.DoIdempotent(
 		c.ctx,
 		fromUserId,
 		outBox.RandomId,
-		func(ctx context.Context) (*mtproto.Updates, error) {
+		&rUpdates,
+		func(ctx context.Context, v any) error {
 			box, err := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox)
 			if err != nil {
 				c.Logger.Error(err.Error())
-				return nil, err
+				return err
 			}
 
 			blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(c.ctx, &userpb.TLUserBlockedByUser{
@@ -432,7 +445,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 					Users:      users.Datas,
 				})
 			if err2 != nil {
-				return nil, err2
+				return err2
 			}
 
 			if !mtproto.FromBool(blocked) {
@@ -447,7 +460,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 						Users:      users.Datas,
 					})
 				if err2 != nil {
-					return nil, err2
+					return err2
 				}
 			}
 
@@ -458,7 +471,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				Message_MESSAGE: box.Message,
 			}).To_Update()
 
-			rUpdates := mtproto.MakeReplyUpdates(
+			*v.(**mtproto.Updates) = mtproto.MakeReplyUpdates(
 				func(idList []int64) []*mtproto.User {
 					// TODO: check
 					//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
@@ -484,10 +497,10 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				},
 				updateNewMessage)
 
-			return rUpdates, nil
+			return nil
 		})
 
-	if ok {
+	if err == nil && !cached {
 		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 			UserId:        fromUserId,
 			PermAuthKeyId: fromAuthKeyId,

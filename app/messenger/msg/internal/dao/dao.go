@@ -14,7 +14,6 @@ import (
 	"fmt"
 
 	"github.com/teamgram/marmota/pkg/idempotent"
-	"github.com/teamgram/proto/mtproto"
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
@@ -42,19 +41,13 @@ type Dao struct {
 	*redis.Redis
 }
 
-func (d *Dao) DoIdempotent(ctx context.Context, senderUserId, deDuplicateId int64, cb func(ctx context.Context) (*mtproto.Updates, error)) (*mtproto.Updates, bool, error) {
-	v, ok, err := idempotent.DoIdempotent(
+func (d *Dao) DoIdempotent(ctx context.Context, senderUserId, deDuplicateId int64, v any, cb func(ctx context.Context, v any) error) (bool, error) {
+	return idempotent.DoIdempotent(
 		ctx,
 		d.Redis,
 		fmt.Sprintf("%d@%d", senderUserId, deDuplicateId),
+		v,
 		5,
 		90,
-		func() (any, error) {
-			return cb(ctx)
-		})
-	if err != nil {
-		return nil, false, err
-	}
-
-	return v.(*mtproto.Updates), ok, nil
+		cb)
 }
