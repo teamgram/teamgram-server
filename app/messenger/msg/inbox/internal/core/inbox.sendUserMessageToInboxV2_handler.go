@@ -128,6 +128,27 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 				PtsCount:        inBox.PtsCount,
 			}).To_Update())
 
+		if in.PeerType == mtproto.PEER_CHAT {
+			switch inBox.GetMessage().GetAction().GetPredicateName() {
+			case mtproto.Predicate_messageActionChatMigrateTo:
+				c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
+					c.ctx,
+					0,
+					inBox.MessageId,
+					in.UserId,
+					mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerId))
+
+				pushUpdates.PushFrontUpdate(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
+					FolderId:         nil,
+					Peer_PEER:        mtproto.MakePeerChat(in.PeerId),
+					MaxId:            inBox.MessageId,
+					StillUnreadCount: 0,
+					Pts_INT32:        c.svcCtx.Dao.NextPtsId(c.ctx, in.UserId),
+					PtsCount:         1,
+				}).To_Update())
+			}
+		}
+
 		var (
 			isBot = false
 		)
