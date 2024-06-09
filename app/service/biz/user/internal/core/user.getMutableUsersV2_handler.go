@@ -24,10 +24,20 @@ import (
 )
 
 // UserGetMutableUsersV2
-// user.getImmutableUserV2 flags:# id:long privacy:flags.0?true contacts:flags.1?Vector<long> reverse_contacts:flags.2?Vector<long> = ImmutableUser;
+// user.getMutableUsersV2 id:Vector<long> to:Vector<long> = Vector<ImmutableUser>;
 func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*mtproto.MutableUsers, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.getMutableUsersV2 blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Debugf("%#v", in)
+	userList := c.svcCtx.Dao.GetMutableUsersV2(
+		c.ctx,
+		in.Id,
+		in.Privacy,
+		in.HasTo,
+		in.To)
+	if userList == nil {
+		userList = []*mtproto.ImmutableUser{}
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLMutableUsers(&mtproto.MutableUsers{
+		Users: userList,
+	}).To_MutableUsers(), nil
 }

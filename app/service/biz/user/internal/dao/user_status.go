@@ -34,12 +34,6 @@ const (
 	userPresencesKeyPrefix = "user_presences"
 )
 
-var (
-	GenUserPresencesKey   = genUserPresencesKey
-	IsUserPresencesKey    = isUserPresencesKey
-	ParseUserPresencesKey = parseUserPresencesKey
-)
-
 func genUserPresencesKey(userId int64) string {
 	return fmt.Sprintf("%s_%d", userPresencesKeyPrefix, userId)
 }

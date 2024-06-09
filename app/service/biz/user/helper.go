@@ -12,31 +12,18 @@ package user_helper
 
 import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/config"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/svc"
 )
 
 type (
-	Dao             = dao.Dao
-	CacheUserData   = dao.CacheUserData
-	UserContactsDO  = dataobject.UserContactsDO
-	UserPresencesDO = dataobject.UserPresencesDO
+	Dao           = dao.Dao
+	CacheUserData = dao.CacheUserData
 )
 
 var (
-	GenCacheUserDataCacheKey   = dao.GenCacheUserDataCacheKey
-	ParseCacheUserDataCacheKey = dao.ParseCacheUserDataCacheKey
-	IsCacheUserDataCacheKey    = dao.IsCacheUserDataCacheKey
-
-	GenUserPresencesKey   = dao.GenUserPresencesKey
-	IsUserPresencesKey    = dao.IsUserPresencesKey
-	ParseUserPresencesKey = dao.ParseUserPresencesKey
-
-	GenContactCacheKey   = dao.GenContactCacheKey
-	IsContactCacheKey    = dao.IsContactCacheKey
-	ParseContactCacheKey = dao.ParseContactCacheKey
+	GenCacheUserDataCacheKey = dao.GenCacheUserDataCacheKey
 )
 
 type (

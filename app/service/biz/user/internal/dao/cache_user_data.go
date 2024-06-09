@@ -30,9 +30,7 @@ const (
 )
 
 var (
-	GenCacheUserDataCacheKey   = genCacheUserDataCacheKey
-	ParseCacheUserDataCacheKey = parseCacheUserDataCacheKey
-	IsCacheUserDataCacheKey    = isCacheUserDataCacheKey
+	GenCacheUserDataCacheKey = genCacheUserDataCacheKey
 )
 
 func genCacheUserDataCacheKey(id int64) string {
@@ -263,4 +261,51 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 	// stories_hiddens:Vector<long>
 
 	return cacheData, nil
+}
+
+func (d *Dao) GetCacheUserDataListByIdList(ctx context.Context, idList []int64) []*CacheUserData {
+	var (
+		keyList   = make([]string, 0, len(idList))
+		cDataList = make([]*CacheUserData, 0, len(idList))
+	)
+
+	for _, id := range idList {
+		keyList = append(keyList, genCacheUserDataCacheKey(id))
+	}
+
+	d.CachedConn.QueryRows(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
+			vList := make(map[string]interface{}, len(keys))
+
+			// TODO: mr
+			for _, key := range keys {
+				id := parseCacheUserDataCacheKey(key)
+				if cacheData, err2 := d.GetNoCacheUserData(ctx, id); err2 != nil {
+					continue
+				} else {
+					vList[key] = cacheData
+					cDataList = append(cDataList, cacheData)
+				}
+			}
+
+			return vList, nil
+		},
+		func(k, v string) (interface{}, error) {
+			var (
+				c   *CacheUserData
+				err error
+			)
+			err = jsonx.UnmarshalFromString(v, &c)
+			if err != nil {
+				return nil, err
+			}
+
+			cDataList = append(cDataList, c)
+
+			return c, nil
+		},
+		keyList...)
+
+	return cDataList
 }

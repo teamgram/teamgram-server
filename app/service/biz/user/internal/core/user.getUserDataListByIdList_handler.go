@@ -30,13 +30,9 @@ func (c *UserCore) UserGetUserDataListByIdList(in *user.TLUserGetUserDataListByI
 		Datas: []*mtproto.UserData{},
 	}
 
-	for _, id := range in.UserIdList {
-		cacheData := c.svcCtx.Dao.GetCacheUserData(c.ctx, id)
-		if cacheData == nil {
-			c.Logger.Errorf("user.getUserDataById - error: not found userId(%d)", id)
-			continue
-		}
-		users.Datas = append(users.Datas, cacheData.GetUserData())
+	cDataList := c.svcCtx.Dao.GetCacheUserDataListByIdList(c.ctx, in.UserIdList)
+	for _, cData := range cDataList {
+		users.Datas = append(users.Datas, cData.GetUserData())
 	}
 
 	return users, nil

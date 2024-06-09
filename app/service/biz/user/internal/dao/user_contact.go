@@ -29,6 +29,8 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
@@ -37,9 +39,7 @@ const (
 )
 
 var (
-	GenContactCacheKey   = genContactCacheKey
-	IsContactCacheKey    = isContactCacheKey
-	ParseContactCacheKey = parseContactCacheKey
+	GenContactCacheKey = genContactCacheKey
 )
 
 type ContactItem struct {
@@ -109,52 +109,6 @@ func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactI
 	}
 
 	return d.getContactListByIdList(ctx, id, idList2)
-}
-
-func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []*mtproto.ContactData {
-	contactList := make([]*mtproto.ContactData, len(idList))
-	mr.ForEach(
-		func(source chan<- interface{}) {
-			for i, v := range idList {
-				source <- idxId{i, v}
-			}
-		},
-		func(item interface{}) {
-			idx := item.(idxId)
-			do := new(dataobject.UserContactsDO)
-			err := d.CachedConn.QueryRow(
-				ctx,
-				do,
-				genContactCacheKey(id, idx.id),
-				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
-					do2, _ := d.UserContactsDAO.SelectContact(ctx, id, idx.id)
-					if do2 == nil {
-						return sqlc.ErrNotFound
-					}
-					*v.(*dataobject.UserContactsDO) = *do2
-					return nil
-				})
-			if err == nil {
-				contactList[idx.idx] = mtproto.MakeTLContactData(&mtproto.ContactData{
-					UserId:        id,
-					ContactUserId: do.ContactUserId,
-					FirstName:     mtproto.MakeFlagsString(do.ContactFirstName),
-					LastName:      mtproto.MakeFlagsString(do.ContactLastName),
-					MutualContact: do.Mutual,
-					Phone:         mtproto.MakeFlagsString(do.ContactPhone),
-					CloseFriend:   do.CloseFriend,
-				}).To_ContactData()
-			}
-		})
-
-	for _, v := range contactList {
-		if v == nil {
-			// has hole, internal error
-			return nil
-		}
-	}
-
-	return contactList
 }
 
 func (d *Dao) DeleteUserContact(ctx context.Context, id int64, contactId int64) {
@@ -288,4 +242,88 @@ func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList [
 	}
 
 	return closeFriendList
+}
+
+func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []*mtproto.ContactData {
+	var (
+		cKeys = make([]string, 0, len(idList))
+	)
+
+	for _, v := range idList {
+		cKeys = append(cKeys, genContactCacheKey(id, v))
+	}
+
+	return d.getContactListByKeyList(ctx, cKeys...)
+}
+
+func (d *Dao) getReverseContactListByIdList(ctx context.Context, id int64, idList []int64) []*mtproto.ContactData {
+	var (
+		cKeys = make([]string, 0, len(idList))
+	)
+
+	for _, v := range idList {
+		cKeys = append(cKeys, genContactCacheKey(v, id))
+	}
+
+	return d.getContactListByKeyList(ctx, cKeys...)
+}
+
+func (d *Dao) getContactListByKeyList(ctx context.Context, cKeys ...string) []*mtproto.ContactData {
+	var (
+		contactList = make([]*mtproto.ContactData, len(cKeys))
+	)
+
+	if len(cKeys) == 0 {
+		return contactList
+	}
+
+	d.CachedConn.QueryRows(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
+			noCaches := make(map[string]interface{}, len(keys))
+			for _, key := range keys {
+				id0, id1 := parseContactCacheKey(key)
+				contact, _ := d.UserContactsDAO.SelectContact(ctx, id0, id1)
+				if contact == nil {
+					// return sqlc.ErrNotFound
+					continue
+				}
+				noCaches[key] = contact
+				contactList = append(contactList, mtproto.MakeTLContactData(&mtproto.ContactData{
+					UserId:        contact.OwnerUserId,
+					ContactUserId: contact.ContactUserId,
+					FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+					LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+					MutualContact: contact.Mutual,
+					Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+					CloseFriend:   contact.CloseFriend,
+				}).To_ContactData())
+			}
+			return noCaches, nil
+		},
+		func(k, v string) (interface{}, error) {
+			var (
+				contact *dataobject.UserContactsDO
+			)
+
+			err := jsonx.UnmarshalFromString(v, &contact)
+			if err != nil {
+				return nil, err
+			}
+
+			contactList = append(contactList, mtproto.MakeTLContactData(&mtproto.ContactData{
+				UserId:        contact.OwnerUserId,
+				ContactUserId: contact.ContactUserId,
+				FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+				LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+				MutualContact: contact.Mutual,
+				Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+				CloseFriend:   contact.CloseFriend,
+			}).To_ContactData())
+
+			return contact, nil
+		},
+		cKeys...)
+
+	return removeAllNil(contactList)
 }

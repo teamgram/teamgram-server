@@ -30,6 +30,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 
+	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/mr"
 )
@@ -535,4 +536,410 @@ func (d *Dao) UpdateBirthday(ctx context.Context, id int64, birthday *mtproto.Bi
 	}
 
 	return true
+}
+
+func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, contacts []int64) []*mtproto.ImmutableUser {
+	logger := logx.WithContext(ctx)
+
+	logger.Infof("getCacheImmutableUserList - request: {id: %v, contacts: %v}", idList2, contacts)
+
+	id2 := make([]int64, 0, len(idList2)+len(contacts))
+	for _, v := range idList2 {
+		if ok, _ := container2.Contains(v, id2); !ok {
+			id2 = append(id2, v)
+		}
+	}
+	for _, v := range contacts {
+		if ok, _ := container2.Contains(v, id2); !ok {
+			id2 = append(id2, v)
+		}
+	}
+
+	if len(id2) == 0 {
+		return []*mtproto.ImmutableUser{}
+	}
+
+	if len(id2) == 1 {
+		immutableUser, _ := d.GetImmutableUser(ctx, id2[0], false)
+		if immutableUser != nil {
+			return []*mtproto.ImmutableUser{immutableUser}
+		} else {
+			return []*mtproto.ImmutableUser{}
+		}
+	}
+
+	// len(id) > 1
+
+	cDataList := d.GetCacheUserDataListByIdList(ctx, id2)
+	if len(cDataList) == 0 {
+		return []*mtproto.ImmutableUser{}
+	}
+
+	var (
+		keyList   = make([]string, 0, len(id2))
+		cUserList = make([]*mtproto.ImmutableUser, 0, len(cDataList))
+		mUsers    = make(map[int64]*mtproto.ImmutableUser, len(cDataList))
+	)
+
+	for _, cData := range cDataList {
+		id := cData.GetUserData().GetId()
+
+		cUser := mtproto.MakeTLImmutableUser(&mtproto.ImmutableUser{
+			User:             cData.GetUserData(),
+			LastSeenAt:       0,
+			Contacts:         nil,
+			KeysPrivacyRules: cData.CachesPrivacyKeyRules,
+		}).To_ImmutableUser()
+
+		cUserList = append(cUserList, cUser)
+		mUsers[id] = cUser
+
+		// LastSeenAt
+		keyList = append(keyList, genUserPresencesKey(cData.GetUserData().GetId()))
+
+		// contacts
+		var (
+			myContacts []int64
+		)
+		if ok, _ := container2.Contains(id, contacts); ok {
+			myContacts = idList2
+		} else {
+			if len(contacts) == 0 {
+				myContacts = idList2
+			} else {
+				myContacts = contacts
+			}
+		}
+
+		cIdList := cData.GetContactIdList()
+		if len(cIdList) == 0 {
+			continue
+		}
+		for _, v := range myContacts {
+			if ok, _ := container2.Contains(v, cIdList); ok && v != id {
+				keyList = append(keyList, genContactCacheKey(id, v))
+			}
+		}
+	}
+	logger.Infof("getCacheImmutableUserList - cDataList: %d", len(cDataList))
+
+	d.CachedConn.QueryRows(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
+			noCaches := make(map[string]interface{}, len(keys))
+			for _, key := range keys {
+				logger.Infof("getCacheImmutableUserList - noCache: %v", keys)
+				if isUserPresencesKey(key) {
+					lastSeenAt, err := d.UserPresencesDAO.Select(ctx, parseUserPresencesKey(key))
+					if err != nil {
+						continue
+					}
+					if lastSeenAt != nil {
+						noCaches[key] = lastSeenAt
+
+						if cUser, ok := mUsers[lastSeenAt.UserId]; ok {
+							cUser.LastSeenAt = lastSeenAt.LastSeenAt
+						}
+					}
+				} else {
+					id0, id1 := parseContactCacheKey(key)
+					contact, _ := d.UserContactsDAO.SelectContact(ctx, id0, id1)
+					if contact == nil {
+						// return sqlc.ErrNotFound
+						continue
+					}
+					noCaches[key] = contact
+					if cUser, ok := mUsers[contact.OwnerUserId]; ok {
+						cUser.Contacts = append(cUser.Contacts, mtproto.MakeTLContactData(&mtproto.ContactData{
+							UserId:        contact.OwnerUserId,
+							ContactUserId: contact.ContactUserId,
+							FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+							LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+							MutualContact: contact.Mutual,
+							Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+							CloseFriend:   contact.CloseFriend,
+						}).To_ContactData())
+					}
+				}
+			}
+
+			return noCaches, nil
+		},
+		func(k, v string) (interface{}, error) {
+			logger.Infof("getCacheImmutableUserList - cache: {k: %s, v: %d}", k, len(v))
+
+			if isUserPresencesKey(k) {
+				var (
+					lastSeenAt *dataobject.UserPresencesDO
+				)
+				err := jsonx.UnmarshalFromString(v, &lastSeenAt)
+				if err != nil {
+					return nil, err
+				}
+
+				if cUser, ok := mUsers[lastSeenAt.UserId]; ok {
+					cUser.LastSeenAt = lastSeenAt.LastSeenAt
+				}
+
+				return lastSeenAt, nil
+			} else {
+				var (
+					contact *dataobject.UserContactsDO
+				)
+
+				err := jsonx.UnmarshalFromString(v, &contact)
+				if err != nil {
+					return nil, err
+				}
+
+				if cUser, ok := mUsers[contact.OwnerUserId]; ok {
+					cUser.Contacts = append(cUser.Contacts, mtproto.MakeTLContactData(&mtproto.ContactData{
+						UserId:        contact.OwnerUserId,
+						ContactUserId: contact.ContactUserId,
+						FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+						LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+						MutualContact: contact.Mutual,
+						Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+						CloseFriend:   contact.CloseFriend,
+					}).To_ContactData())
+				}
+
+				return contact, nil
+			}
+		},
+		keyList...)
+
+	logger.Infof("getCacheImmutableUserList - cUserList: %d", len(cUserList))
+
+	return cUserList
+}
+
+func (d *Dao) GetImmutableUserV2(ctx context.Context, id int64, privacy bool, hasReverseContacts bool, reverseContacts []int64) (*mtproto.ImmutableUser, error) {
+	cacheUserData := d.GetCacheUserData(ctx, id)
+
+	if cacheUserData == nil {
+		err := mtproto.ErrUserIdInvalid
+		logx.WithContext(ctx).Errorf("user.getImmutableUser - error: %v", err)
+		return nil, err
+	}
+	userData := cacheUserData.UserData
+	immutableUser := mtproto.MakeTLImmutableUser(&mtproto.ImmutableUser{
+		User:             userData,
+		LastSeenAt:       0,
+		Contacts:         nil,
+		KeysPrivacyRules: nil,
+		ReverseContacts:  nil,
+	}).To_ImmutableUser()
+
+	if userData.Deleted {
+		return immutableUser, nil
+	}
+
+	if userData.UserType == user.UserTypeUnknown ||
+		userData.UserType == user.UserTypeBot ||
+		userData.UserType == user.UserTypeDeleted {
+		// not load these data
+		return immutableUser, nil
+	}
+
+	var (
+		rIdList []int64
+	)
+
+	if hasReverseContacts && len(cacheUserData.ReverseContactIdList) > 0 {
+		if len(reverseContacts) == 0 {
+			rIdList = cacheUserData.ReverseContactIdList
+		} else {
+			for _, id2 := range reverseContacts {
+				if ok, _ := container2.Contains(id2, cacheUserData.ReverseContactIdList); ok && id2 != id {
+					rIdList = append(rIdList, id2)
+				}
+			}
+		}
+	}
+
+	fns := []func(){
+		func() {
+			lastSeenAt, _ := d.GetLastSeenAt(ctx, id)
+			if lastSeenAt != nil {
+				immutableUser.LastSeenAt = lastSeenAt.LastSeenAt
+			}
+		},
+	}
+
+	if len(rIdList) > 0 {
+		fns = append(
+			fns,
+			func() {
+				immutableUser.ReverseContacts = d.getReverseContactListByIdList(ctx, id, rIdList)
+			})
+
+	}
+
+	if len(fns) == 1 {
+		fns[0]()
+	} else {
+		mr.FinishVoid(fns...)
+	}
+
+	if privacy {
+		immutableUser.KeysPrivacyRules = cacheUserData.CachesPrivacyKeyRules
+	}
+
+	return immutableUser, nil
+}
+
+func (d *Dao) GetMutableUsersV2(ctx context.Context, idList2 []int64, privacy bool, hasTo bool, to []int64) []*mtproto.ImmutableUser {
+	if len(idList2) == 0 {
+		return []*mtproto.ImmutableUser{}
+	}
+
+	if len(idList2) == 1 {
+		immutableUser, _ := d.GetImmutableUserV2(ctx, idList2[0], privacy, hasTo, to)
+		if immutableUser != nil {
+			return []*mtproto.ImmutableUser{immutableUser}
+		} else {
+			return []*mtproto.ImmutableUser{}
+		}
+	}
+
+	cDataList := d.GetCacheUserDataListByIdList(ctx, idList2)
+	if len(cDataList) == 0 {
+		return []*mtproto.ImmutableUser{}
+	}
+
+	var (
+		keyList   = make([]string, 0, len(idList2))
+		cUserList = make([]*mtproto.ImmutableUser, 0, len(cDataList))
+		mUsers    = make(map[int64]*mtproto.ImmutableUser, len(cDataList))
+	)
+
+	for _, cData := range cDataList {
+		id := cData.GetUserData().GetId()
+
+		cUser := mtproto.MakeTLImmutableUser(&mtproto.ImmutableUser{
+			User:             cData.GetUserData(),
+			LastSeenAt:       0,
+			Contacts:         nil,
+			ReverseContacts:  nil,
+			KeysPrivacyRules: nil,
+		}).To_ImmutableUser()
+		if privacy {
+			cUser.KeysPrivacyRules = cData.CachesPrivacyKeyRules
+		}
+
+		cUserList = append(cUserList, cUser)
+		mUsers[id] = cUser
+
+		// LastSeenAt
+		keyList = append(keyList, genUserPresencesKey(cData.GetUserData().GetId()))
+
+		// contacts
+		var (
+			rContacts []int64
+		)
+
+		if hasTo && len(cData.ReverseContactIdList) > 0 {
+			if len(to) == 0 {
+				rContacts = cData.ReverseContactIdList
+			} else {
+				for _, rId := range to {
+					if ok, _ := container2.Contains(rId, cData.ReverseContactIdList); ok {
+						rContacts = append(rContacts, rId)
+					}
+				}
+			}
+		}
+
+		for _, v := range rContacts {
+			keyList = append(keyList, genContactCacheKey(v, id))
+		}
+	}
+
+	d.CachedConn.QueryRows(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
+			noCaches := make(map[string]interface{}, len(keys))
+			for _, key := range keys {
+				//logger.Infof("getCacheImmutableUserList - noCache: %v", keys)
+				if isUserPresencesKey(key) {
+					lastSeenAt, err := d.UserPresencesDAO.Select(ctx, parseUserPresencesKey(key))
+					if err != nil {
+						continue
+					}
+					if lastSeenAt != nil {
+						noCaches[key] = lastSeenAt
+
+						if cUser, ok := mUsers[lastSeenAt.UserId]; ok {
+							cUser.LastSeenAt = lastSeenAt.LastSeenAt
+						}
+					}
+				} else {
+					id0, id1 := parseContactCacheKey(key)
+					contact, _ := d.UserContactsDAO.SelectContact(ctx, id0, id1)
+					if contact == nil {
+						// return sqlc.ErrNotFound
+						continue
+					}
+					noCaches[key] = contact
+					if cUser, ok := mUsers[contact.ContactUserId]; ok {
+						cUser.ReverseContacts = append(cUser.ReverseContacts, mtproto.MakeTLContactData(&mtproto.ContactData{
+							UserId:        contact.OwnerUserId,
+							ContactUserId: contact.ContactUserId,
+							FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+							LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+							MutualContact: contact.Mutual,
+							Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+							CloseFriend:   contact.CloseFriend,
+						}).To_ContactData())
+					}
+				}
+			}
+
+			return noCaches, nil
+		},
+		func(k, v string) (interface{}, error) {
+			//logger.Infof("getCacheImmutableUserList - cache: {k: %s, v: %d}", k, len(v))
+			if isUserPresencesKey(k) {
+				var (
+					lastSeenAt *dataobject.UserPresencesDO
+				)
+				err := jsonx.UnmarshalFromString(v, &lastSeenAt)
+				if err != nil {
+					return nil, err
+				}
+
+				if cUser, ok := mUsers[lastSeenAt.UserId]; ok {
+					cUser.LastSeenAt = lastSeenAt.LastSeenAt
+				}
+
+				return lastSeenAt, nil
+			} else {
+				var (
+					contact *dataobject.UserContactsDO
+				)
+
+				err := jsonx.UnmarshalFromString(v, &contact)
+				if err != nil {
+					return nil, err
+				}
+
+				if cUser, ok := mUsers[contact.ContactUserId]; ok {
+					cUser.ReverseContacts = append(cUser.ReverseContacts, mtproto.MakeTLContactData(&mtproto.ContactData{
+						UserId:        contact.OwnerUserId,
+						ContactUserId: contact.ContactUserId,
+						FirstName:     mtproto.MakeFlagsString(contact.ContactFirstName),
+						LastName:      mtproto.MakeFlagsString(contact.ContactLastName),
+						MutualContact: contact.Mutual,
+						Phone:         mtproto.MakeFlagsString(contact.ContactPhone),
+						CloseFriend:   contact.CloseFriend,
+					}).To_ContactData())
+				}
+
+				return contact, nil
+			}
+		},
+		keyList...)
+
+	return cUserList
 }
