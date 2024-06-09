@@ -66,15 +66,20 @@ func (d *Dao) getCacheFileInfo(ctx context.Context, id int64) (ownerId, fileId i
 		s   string
 	)
 
-	s, err = d.ssdb.Get(key)
+	s, err = d.ssdb.GetCtx(ctx, key)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("getCacheFileInfo(%s) error(%v)", key, err)
+		return
+	} else if s == "" {
+		err = model.ErrorDfsFileNotFound
+		logx.WithContext(ctx).Infof("getCacheFileInfo(%s) error(%v)", key, err)
 		return
 	}
 
 	v := strings.Split(s, "_")
 	if len(v) != 2 {
-		logx.WithContext(ctx).Errorf("split error(len(%v)!=2)", s)
+		err = model.ErrorDfsFileNotFound
+		logx.WithContext(ctx).Infof("split error(len(%v)!=2)", s)
 		return
 	}
 
@@ -100,7 +105,7 @@ func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset 
 	cacheFile, _ = d.GetCacheDfsFileInfo(ctx, id)
 	if cacheFile != nil {
 		r := d.NewSSDBReader(cacheFile)
-		r.Seek(int64(offset), io.SeekStart)
+		r.Seek(offset, io.SeekStart)
 		// TODO(@benqi: check limit)
 		bytes = make([]byte, limit)
 		n, err = r.Read(bytes)

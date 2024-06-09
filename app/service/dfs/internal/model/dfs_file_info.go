@@ -19,9 +19,14 @@
 package model
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 	"time"
+)
+
+var (
+	ErrorDfsFileNotFound = fmt.Errorf("dfs file not found")
 )
 
 type DfsFileInfo struct {

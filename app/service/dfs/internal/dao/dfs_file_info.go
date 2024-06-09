@@ -55,6 +55,10 @@ func (d *Dao) GetFileInfo(ctx context.Context, ownerId, fileId int64) (fileInfo 
 	if values, err = d.ssdb.HgetallCtx(ctx, k); err != nil {
 		logx.WithContext(ctx).Errorf("conn.Do(HGETALL %s) error(%v)", k, err)
 		return
+	} else if len(values) == 0 {
+		err = model.ErrorDfsFileNotFound
+		logx.WithContext(ctx).Infof("conn.Do(HGETALL %s) is error(%v)", k, err)
+		return
 	}
 
 	fileInfo = &model.DfsFileInfo{
@@ -103,7 +107,7 @@ func (d *Dao) GetFileInfo(ctx context.Context, ownerId, fileId int64) (fileInfo 
 
 		fileInfo2.FileTotalParts, fileInfo2.LastFilePartSize, err = d.getFileTotalPartsByFile(ctx, fileInfo.Creator, fileInfo.FileId)
 		if err != nil {
-			logx.WithContext(ctx).Error("conn.Do(HLEN %s) error(%v)", k, err)
+			logx.WithContext(ctx).Errorf("conn.Do(HLEN %s) error(%v)", k, err)
 			return
 		}
 
@@ -124,12 +128,16 @@ func (d *Dao) getFileTotalPartsByFile(ctx context.Context, ownerId, fileId int64
 		bBuf string
 	)
 	if fileTotalParts, err = d.ssdb.HlenCtx(ctx, k); err != nil {
-		logx.WithContext(ctx).Errorf("conn.Do(HLEN %s) error(%v)", k, err)
+		logx.WithContext(ctx).Errorf("getFileTotalPartsByFile: conn.Do(HLEN %s) error(%v)", k, err)
+		return
+	} else if fileTotalParts == 0 {
+		err = model.ErrorDfsFileNotFound
+		logx.WithContext(ctx).Infof("getFileTotalPartsByFile: conn.Do(HLEN %s) error(%v)", k, err)
 		return
 	}
 
 	if bBuf, err = d.ssdb.HgetCtx(ctx, k, strconv.Itoa(fileTotalParts-1)); err != nil {
-		logx.WithContext(ctx).Errorf("conn.Do(HGET %s %d) error(%v)", k, err, fileTotalParts-1)
+		logx.WithContext(ctx).Errorf("getFileTotalPartsByFile: conn.Do(HGET %s %d) error(%v), fileTotalParts(%d)", k, err, fileTotalParts-1)
 		return
 	}
 
