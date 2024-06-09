@@ -18,6 +18,8 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 // MsgSendMessage
@@ -53,7 +55,7 @@ func (c *MsgCore) MsgSendMessage(in *msg.TLMsgSendMessage) (*mtproto.Updates, er
 			return nil, err
 		}
 	} else {
-		rUpdates, err = c.sendChatOutgoingMessage(in.UserId, in.AuthKeyId, in.PeerId, outBox)
+		rUpdates, err = c.sendChatOutgoingMessageV2(in.UserId, in.AuthKeyId, in.PeerId, outBox)
 		if err != nil {
 			c.Logger.Errorf("msg.sendMessage - error: %v", err)
 			return nil, err
@@ -144,21 +146,6 @@ func (c *MsgCore) sendUserMessage(
 		// 1. check blocked
 		// 2. span
 	}
-
-	//// handle duplicateMessage
-	//hasDuplicateMessage, err := c.svcCtx.Dao.MessageDeDuplicate.HasDuplicateMessage(ctx, fromUserId, outBox.RandomId)
-	//if err != nil {
-	//	c.Logger.Errorf("checkDuplicateMessage error - %v", err)
-	//	return nil, err
-	//} else if hasDuplicateMessage {
-	//	rUpdates, err2 := c.svcCtx.Dao.MessageDeDuplicate.GetDuplicateMessage(ctx, fromUserId, outBox.RandomId)
-	//	if err2 != nil {
-	//		c.Logger.Errorf("checkDuplicateMessage error - %v", err2)
-	//		return nil, err2
-	//	} else if rUpdates != nil {
-	//		return rUpdates, nil
-	//	}
-	//}
 
 	var (
 		rUpdates         *mtproto.Updates
@@ -377,8 +364,15 @@ func (c *MsgCore) sendChatMessage(
 }
 
 func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
+	var (
+		idHelper = mtproto.NewIDListHelper(fromUserId, toUserId)
+	)
+
+	idHelper.PickByMessage(outBox.GetMessage())
+
 	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: []int64{fromUserId, toUserId},
+		Id: idHelper.UserIdList,
+		To: []int64{fromUserId, toUserId},
 	})
 	if err != nil {
 		c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
@@ -413,11 +407,11 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 	}
 
 	var (
-		updateNewMessage *mtproto.Update
-		rUpdates         *mtproto.Updates
+		// updateNewMessage *mtproto.Update
+		rUpdates *mtproto.Updates
 	)
 
-	cached, err := c.svcCtx.Dao.DoIdempotent(
+	_, err = c.svcCtx.Dao.DoIdempotent(
 		c.ctx,
 		fromUserId,
 		outBox.RandomId,
@@ -437,12 +431,14 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 			_, err2 := c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
-					UserId:     fromUserId,
-					Out:        true,
-					FromId:     fromUserId,
-					PeerUserId: toUserId,
-					Inbox:      box,
-					Users:      users.Datas,
+					UserId:   fromUserId,
+					Out:      true,
+					FromId:   fromUserId,
+					PeerType: mtproto.PEER_USER,
+					PeerId:   toUserId,
+					Inbox:    box,
+					Users:    users.GetUserListByIdList(fromUserId, idHelper.UserIdList...),
+					Chats:    nil,
 				})
 			if err2 != nil {
 				return err2
@@ -452,24 +448,19 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				_, err2 = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
 					c.ctx,
 					&inbox.TLInboxSendUserMessageToInboxV2{
-						UserId:     toUserId,
-						Out:        false,
-						FromId:     fromUserId,
-						PeerUserId: toUserId,
-						Inbox:      box,
-						Users:      users.Datas,
+						UserId:   toUserId,
+						Out:      false,
+						FromId:   fromUserId,
+						PeerType: mtproto.PEER_USER,
+						PeerId:   toUserId,
+						Inbox:    box,
+						Users:    users.GetUserListByIdList(toUserId, idHelper.UserIdList...),
+						Chats:    nil,
 					})
 				if err2 != nil {
 					return err2
 				}
 			}
-
-			updateNewMessage = mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
-				Pts_INT32:       box.Pts,
-				PtsCount:        box.PtsCount,
-				RandomId:        box.RandomId,
-				Message_MESSAGE: box.Message,
-			}).To_Update()
 
 			*v.(**mtproto.Updates) = mtproto.MakeReplyUpdates(
 				func(idList []int64) []*mtproto.User {
@@ -481,15 +472,157 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 					return users.GetUserListByIdList(fromUserId, idList...)
 				},
 				func(idList []int64) []*mtproto.Chat {
-					if len(idList) > 0 {
-						chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(ctx,
-							&chatpb.TLChatGetChatListByIdList{
-								IdList: idList,
-							})
-						return chats.GetChatListByIdList(fromUserId, idList...)
-					} else {
-						return []*mtproto.Chat{}
-					}
+					return []*mtproto.Chat{}
+				},
+				func(idList []int64) []*mtproto.Chat {
+					// TODO
+					return []*mtproto.Chat{}
+				},
+				mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+					Pts_INT32:       box.Pts,
+					PtsCount:        box.PtsCount,
+					RandomId:        box.RandomId,
+					Message_MESSAGE: box.Message,
+				}).To_Update())
+
+			return nil
+		})
+	if err != nil {
+		c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
+		return nil, err
+	}
+
+	return rUpdates, nil
+
+	//if err == nil && !cached {
+	//	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+	//		UserId:        fromUserId,
+	//		PermAuthKeyId: fromAuthKeyId,
+	//		Updates: mtproto.MakeSyncNotMeUpdates(
+	//			func(idList []int64) []*mtproto.User {
+	//				return rUpdates.Users
+	//			},
+	//			func(idList []int64) []*mtproto.Chat {
+	//				return nil
+	//			},
+	//			func(idList []int64) []*mtproto.Chat {
+	//				return nil
+	//			},
+	//			updateNewMessage),
+	//	})
+	//}
+	//
+	//return rUpdates, nil
+}
+
+func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
+	var (
+		chat      *mtproto.MutableChat
+		sUserList *mtproto.MutableUsers
+		idHelper  = mtproto.NewIDListHelper(fromUserId)
+	)
+	idHelper.PickByMessage(outBox.GetMessage())
+
+	err := mr.Finish(
+		func() error {
+			var (
+				err error
+			)
+			chat, err = c.svcCtx.Dao.ChatClient.ChatGetMutableChat(
+				c.ctx,
+				&chatpb.TLChatGetMutableChat{
+					ChatId: peerChatId,
+				})
+			if err != nil {
+				c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err)
+			}
+			return err
+		},
+		func() error {
+			var (
+				err error
+			)
+			sUserList, err = c.svcCtx.Dao.UserClient.UserGetMutableUsersV2(
+				c.ctx,
+				&userpb.TLUserGetMutableUsersV2{
+					Id:      idHelper.UserIdList,
+					Privacy: true,
+					HasTo:   true,
+					To:      nil,
+				})
+			if err != nil {
+				c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err)
+			}
+
+			return err
+		})
+	if err != nil {
+		// c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err)
+		return nil, err
+	}
+
+	if _, ok := chat.GetImmutableChatParticipant(fromUserId); !ok {
+		c.Logger.Errorf("msg.sendChatOutgoingMessageV2 - error: ErrChatParticipantNotExists")
+		err = mtproto.ErrChatWriteForbidden
+		return nil, err
+	}
+
+	var (
+		updateNewMessage *mtproto.Update
+		rUpdates         *mtproto.Updates
+	)
+
+	cached, err := c.svcCtx.Dao.DoIdempotent(
+		c.ctx,
+		fromUserId,
+		outBox.RandomId,
+		&rUpdates,
+		func(ctx context.Context, v any) error {
+			box, err2 := c.svcCtx.Dao.SendChatMessageV2(ctx, fromUserId, peerChatId, outBox)
+			if err2 != nil {
+				c.Logger.Error(err2.Error())
+				return err
+			}
+
+			chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
+				if !participant.IsChatMemberStateNormal() {
+					return nil
+				}
+				if err2 != nil {
+					return nil
+				}
+
+				_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(ctx, &inbox.TLInboxSendUserMessageToInboxV2{
+					UserId:   participant.UserId,
+					Out:      participant.UserId == fromUserId,
+					FromId:   fromUserId,
+					PeerType: mtproto.PEER_CHAT,
+					PeerId:   peerChatId,
+					Inbox:    box,
+					Users:    sUserList.GetUserListByIdList(participant.UserId, idHelper.UserIdList...),
+					Chats:    []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
+				})
+				return nil
+			})
+
+			if err2 != nil {
+				c.Logger.Error(err2.Error())
+				return err
+			}
+
+			updateNewMessage = mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+				Pts_INT32:       box.Pts,
+				PtsCount:        box.PtsCount,
+				RandomId:        box.RandomId,
+				Message_MESSAGE: box.Message,
+			}).To_Update()
+
+			*v.(**mtproto.Updates) = mtproto.MakeReplyUpdates(
+				func(idList []int64) []*mtproto.User {
+					return sUserList.GetUserListByIdList(fromUserId, idList...)
+				},
+				func(idList []int64) []*mtproto.Chat {
+					return []*mtproto.Chat{chat.ToUnsafeChat(fromUserId)}
 				},
 				func(idList []int64) []*mtproto.Chat {
 					// TODO

@@ -96,7 +96,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_inbox_sendUserMessageToInboxV2: {
-		0: -1328190640, // 0xb0d56b50
+		0: 1197217891, // 0x475c1863
 
 	},
 }
@@ -118,7 +118,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1010283296: Predicate_inbox_updateHistoryReaded,         // 0xc3c84ce0
 	-1452528908: Predicate_inbox_updatePinnedMessage,         // 0xa96c2af4
 	589079137:   Predicate_inbox_unpinAllMessages,            // 0x231ca261
-	-1328190640: Predicate_inbox_sendUserMessageToInboxV2,    // 0xb0d56b50
+	1197217891:  Predicate_inbox_sendUserMessageToInboxV2,    // 0x475c1863
 
 }
 

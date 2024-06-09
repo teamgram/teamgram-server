@@ -338,6 +338,11 @@ func (d *Dao) SendChatMessage(ctx context.Context, fromId, chatId int64, outBox 
 	return d.sendMessageToOutbox(ctx, fromId, peer, outBox)
 }
 
+func (d *Dao) SendChatMessageV2(ctx context.Context, fromId, chatId int64, outBox *msg.OutboxMessage) (*mtproto.MessageBox, error) {
+	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_CHAT, PeerId: chatId}
+	return d.sendMessageToOutboxV2(ctx, fromId, peer, outBox)
+}
+
 func (d *Dao) SendChatMultiMessage(ctx context.Context, fromId, chatId int64, outBoxList []*msg.OutboxMessage) ([]*mtproto.MessageBox, error) {
 	var (
 		boxList []*mtproto.MessageBox

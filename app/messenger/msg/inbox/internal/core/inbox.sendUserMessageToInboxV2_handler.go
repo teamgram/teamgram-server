@@ -29,11 +29,12 @@ import (
 // inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
 func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
 	if in.Out {
+		inBox := in.GetInbox()
 		err := c.svcCtx.Dao.SendMessageToOutboxV1(
 			c.ctx,
 			in.FromId,
-			mtproto.MakeUserPeerUtil(in.PeerUserId),
-			in.GetInbox())
+			mtproto.MakePeerUtil(in.PeerType, in.PeerId),
+			inBox)
 		if err != nil {
 			// TODO: handle error
 			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
@@ -41,8 +42,8 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 		}
 
 		// TODO: handle sendToSelfUser
-		if in.FromId == in.PeerUserId {
-			peer2 := in.GetInbox().GetMessage().GetSavedPeerId()
+		if in.PeerType == mtproto.PEER_USER && in.FromId == in.PeerId {
+			peer2 := inBox.GetMessage().GetSavedPeerId()
 			if peer2 == nil {
 				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: sendToSelfUser")
 			} else {
@@ -54,22 +55,57 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 						PeerType:   peer.PeerType,
 						PeerId:     peer.PeerId,
 						Pinned:     0,
-						TopMessage: in.GetInbox().GetMessageId(),
+						TopMessage: inBox.GetMessageId(),
 					})
 			}
-
-			return mtproto.EmptyVoid, nil
 		}
+
+		_, err = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+			UserId:        inBox.UserId,
+			PermAuthKeyId: in.FromAuthKeyId,
+			Updates: mtproto.MakeUpdatesByUpdatesUsersChats(
+				in.Users,
+				in.Chats,
+				mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+					Message_MESSAGE: inBox.GetMessage(),
+					Pts_INT32:       inBox.Pts,
+					PtsCount:        inBox.PtsCount,
+				}).To_Update()),
+		})
 	} else {
-		inBox, err := c.svcCtx.Dao.SendUserMessageToInbox(c.ctx,
-			in.FromId,
-			in.PeerUserId,
-			in.GetInbox().GetDialogMessageId(),
-			in.GetInbox().GetRandomId(),
-			in.GetInbox().GetMessage())
-		if err != nil {
-			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
-			return nil, err
+		var (
+			inBox *mtproto.MessageBox
+			err   error
+		)
+
+		switch in.PeerType {
+		case mtproto.PEER_USER:
+			inBox, err = c.svcCtx.Dao.SendUserMessageToInbox(c.ctx,
+				in.FromId,
+				in.PeerId,
+				in.GetInbox().GetDialogMessageId(),
+				in.GetInbox().GetRandomId(),
+				in.GetInbox().GetMessage())
+			if err != nil {
+				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+				return nil, err
+			}
+		case mtproto.PEER_CHAT:
+			inBox, err = c.svcCtx.Dao.SendChatMessageToInbox(c.ctx,
+				in.FromId,
+				in.PeerId,
+				in.UserId,
+				in.GetInbox().GetDialogMessageId(),
+				in.GetInbox().GetRandomId(),
+				in.GetInbox().GetMessage())
+			if err != nil {
+				c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
+				return nil, err
+			}
+		default:
+			c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: invalid peerType")
+			return mtproto.EmptyVoid, nil
+
 		}
 
 		if inBox.DialogMessageId == 1 &&
@@ -83,38 +119,21 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			//}
 		}
 
-		var (
-			pushUpdates = mtproto.MakeEmptyUpdates()
-			inBoxHelper = mtproto.MakeBoxListByBoxListUsers([]*mtproto.MessageBox{inBox}, in.GetUsers())
-		)
-
-		inBoxHelper.Visit(
-			inBox.UserId,
-			func(messageList []*mtproto.Message) {
-				for _, m := range messageList {
-					pushUpdates.PushFrontUpdate(mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
-						Message_MESSAGE: m,
-						Pts_INT32:       inBox.Pts,
-						PtsCount:        inBox.PtsCount,
-					}).To_Update())
-				}
-			},
-			func(users []*mtproto.User, rawIdList []int64) {
-				pushUpdates.PushUser(users...)
-			},
-			func(chats []*mtproto.Chat, rawIdList []int64) {
-				pushUpdates.PushChat(chats...)
-			},
-			func(chats []*mtproto.Chat, rawIdList []int64) {
-				pushUpdates.PushChat(chats...)
-			})
+		pushUpdates := mtproto.MakeUpdatesByUpdatesUsersChats(
+			in.Users,
+			in.Chats,
+			mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+				Message_MESSAGE: inBox.GetMessage(),
+				Pts_INT32:       inBox.Pts,
+				PtsCount:        inBox.PtsCount,
+			}).To_Update())
 
 		var (
 			isBot = false
 		)
 
-		for _, u := range pushUpdates.GetUsers() {
-			if u.GetId() == in.PeerUserId {
+		for _, u := range in.GetUsers() {
+			if u.GetId() == in.UserId {
 				isBot = u.GetBot()
 				break
 			}

@@ -24,6 +24,7 @@ import (
 )
 
 // UserGetImmutableUserV2
+// user.getImmutableUserV2 flags:# id:long privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = ImmutableUser;
 // user.getImmutableUserV2 flags:# id:long privacy:flags.0?true contacts:flags.1?Vector<long> reverse_contacts:flags.2?Vector<long> = ImmutableUser;
 func (c *UserCore) UserGetImmutableUserV2(in *user.TLUserGetImmutableUserV2) (*mtproto.ImmutableUser, error) {
 	rV, err := c.svcCtx.Dao.GetImmutableUserV2(
