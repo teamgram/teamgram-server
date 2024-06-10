@@ -88,13 +88,15 @@ func (s *Server) Initialize() error {
 		// qrcode_helper
 		mtproto.RegisterRPCQrCodeServer(
 			grpcServer,
-			qrcode_helper.New(qrcode_helper.Config{
-				RpcServerConf:     c.RpcServerConf,
-				KV:                c.KV,
-				UserClient:        c.BizServiceClient,
-				AuthSessionClient: c.AuthSessionClient,
-				SyncClient:        c.SyncClient,
-			}))
+			qrcode_helper.New(
+				qrcode_helper.Config{
+					RpcServerConf:     c.RpcServerConf,
+					KV:                c.KV,
+					UserClient:        c.BizServiceClient,
+					AuthSessionClient: c.AuthSessionClient,
+					SyncClient:        c.SyncClient,
+				},
+				nil))
 
 		// miscellaneous_helper
 		mtproto.RegisterRPCMiscellaneousServer(
