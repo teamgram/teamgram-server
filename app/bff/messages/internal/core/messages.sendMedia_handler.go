@@ -145,17 +145,17 @@ func (c *MessagesCore) MessagesSendMedia(in *mtproto.TLMessagesSendMedia) (*mtpr
 		return nil, err
 	}
 
-	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, func() bool {
-		hasBot := c.MD.IsBot
-		if !hasBot {
-			//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
-			//	Id: peer.PeerId,
-			//})
-			//hasBot = mtproto.FromBool(isBot)
-		}
-
-		return hasBot
-	})
+	//outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, func() bool {
+	//	hasBot := c.MD.IsBot
+	//	if !hasBot {
+	//		//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+	//		//	Id: peer.PeerId,
+	//		//})
+	//		//hasBot = mtproto.FromBool(isBot)
+	//	}
+	//
+	//	return hasBot
+	//})
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,

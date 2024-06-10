@@ -15,11 +15,11 @@ import (
 
 	"github.com/teamgram/marmota/pkg/idempotent"
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
-	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
+	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/pkg/deduplication"
 
@@ -36,9 +36,9 @@ type Dao struct {
 	SyncClient    sync_client.SyncClient
 	BotSyncClient sync_client.SyncClient
 	dialog_client.DialogClient
-	plugin.MsgPlugin
 	deduplication.MessageDeDuplicate
 	*redis.Redis
+	username_client.UsernameClient
 }
 
 func (d *Dao) DoIdempotent(ctx context.Context, senderUserId, deDuplicateId int64, v any, cb func(ctx context.Context, v any) error) (bool, error) {

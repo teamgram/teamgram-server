@@ -11,10 +11,10 @@ package core
 
 import (
 	"context"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/plugin"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
@@ -406,6 +406,23 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 		// 2. span
 	}
 
+	outBox.Message = plugin.RemakeMessage(
+		c.ctx,
+		c.svcCtx.MsgPlugin,
+		outBox.Message,
+		fromUserId,
+		outBox.NoWebpage,
+		func() bool {
+			hasBot := false
+			users.Visit(func(it *mtproto.ImmutableUser) {
+				if it.IsBot() {
+					hasBot = true
+				}
+			})
+
+			return hasBot
+		})
+
 	var (
 		// updateNewMessage *mtproto.Update
 		rUpdates *mtproto.Updates
@@ -493,26 +510,6 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 	}
 
 	return rUpdates, nil
-
-	//if err == nil && !cached {
-	//	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-	//		UserId:        fromUserId,
-	//		PermAuthKeyId: fromAuthKeyId,
-	//		Updates: mtproto.MakeSyncNotMeUpdates(
-	//			func(idList []int64) []*mtproto.User {
-	//				return rUpdates.Users
-	//			},
-	//			func(idList []int64) []*mtproto.Chat {
-	//				return nil
-	//			},
-	//			func(idList []int64) []*mtproto.Chat {
-	//				return nil
-	//			},
-	//			updateNewMessage),
-	//	})
-	//}
-	//
-	//return rUpdates, nil
 }
 
 func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
@@ -566,6 +563,24 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 		err = mtproto.ErrChatWriteForbidden
 		return nil, err
 	}
+
+	outBox.Message = plugin.RemakeMessage(
+		c.ctx,
+		c.svcCtx.MsgPlugin,
+		outBox.Message,
+		fromUserId,
+		outBox.NoWebpage,
+		func() bool {
+			hasBot := false
+			chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
+				if participant.IsBot {
+					hasBot = true
+				}
+				return nil
+			})
+
+			return hasBot
+		})
 
 	var (
 		updateNewMessage *mtproto.Update

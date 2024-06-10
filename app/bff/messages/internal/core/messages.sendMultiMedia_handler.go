@@ -183,17 +183,17 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 			c.Logger.Errorf("messages.sendMultiMedia: %v", err)
 			return nil, err
 		}
-		outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, func() bool {
-			hasBot := c.MD.IsBot
-			if !hasBot {
-				//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
-				//	Id: peer.PeerId,
-				//})
-				//hasBot = mtproto.FromBool(isBot)
-			}
-
-			return hasBot
-		})
+		//outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, true, outMessage, func() bool {
+		//	hasBot := c.MD.IsBot
+		//	if !hasBot {
+		//		//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+		//		//	Id: peer.PeerId,
+		//		//})
+		//		//hasBot = mtproto.FromBool(isBot)
+		//	}
+		//
+		//	return hasBot
+		//})
 		outboxMultiMedia = append(outboxMultiMedia, msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
 			NoWebpage:    true,
 			Background:   in.Background,

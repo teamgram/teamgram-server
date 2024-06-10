@@ -112,8 +112,8 @@ func (c *MsgCore) readMediaUnreadMessageContents(in *msg.TLMsgReadMessageContent
 func (c *MsgCore) readReactionUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
 	for _, m := range in.Id {
 		if m.Reaction {
-			if c.svcCtx.Dao.MsgPlugin != nil {
-				c.svcCtx.Dao.MsgPlugin.ReadReactionUnreadMessage(c.ctx, in.UserId, m.Id)
+			if c.svcCtx.MsgPlugin != nil {
+				c.svcCtx.MsgPlugin.ReadReactionUnreadMessage(c.ctx, in.UserId, m.Id)
 			}
 		}
 	}

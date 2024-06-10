@@ -107,17 +107,17 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		}
 		outMessage.Message = in.Message.Value
 		outMessage.Entities = nil
-		outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
-			hasBot := c.MD.IsBot
-			if !hasBot {
-				//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
-				//	Id: peer.PeerId,
-				//})
-				//hasBot = mtproto.FromBool(isBot)
-			}
-
-			return hasBot
-		})
+		//outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
+		//	hasBot := c.MD.IsBot
+		//	if !hasBot {
+		//		//isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+		//		//	Id: peer.PeerId,
+		//		//})
+		//		//hasBot = mtproto.FromBool(isBot)
+		//	}
+		//
+		//	return hasBot
+		//})
 	}
 
 	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessage(c.ctx, &msgpb.TLMsgEditMessage{

@@ -23,8 +23,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
-	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/threading"
 )
@@ -152,17 +150,17 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 		}
 	}
 
-	outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
-		hasBot := c.MD.IsBot
-		if !hasBot {
-			isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
-				Id: peer.PeerId,
-			})
-			hasBot = mtproto.FromBool(isBot)
-		}
-
-		return hasBot
-	})
+	//outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
+	//	hasBot := c.MD.IsBot
+	//	if !hasBot {
+	//		isBot, _ := c.svcCtx.Dao.UserClient.UserIsBot(c.ctx, &userpb.TLUserIsBot{
+	//			Id: peer.PeerId,
+	//		})
+	//		hasBot = mtproto.FromBool(isBot)
+	//	}
+	//
+	//	return hasBot
+	//})
 	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,
