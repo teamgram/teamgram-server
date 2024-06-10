@@ -441,11 +441,6 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				return err
 			}
 
-			blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(c.ctx, &userpb.TLUserBlockedByUser{
-				UserId:     toUserId,
-				PeerUserId: fromUserId,
-			})
-
 			_, err2 := c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
@@ -463,22 +458,29 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				return err2
 			}
 
-			if !mtproto.FromBool(blocked) {
-				_, err2 = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
-					c.ctx,
-					&inbox.TLInboxSendUserMessageToInboxV2{
-						UserId:        toUserId,
-						Out:           false,
-						FromId:        fromUserId,
-						FromAuthKeyId: fromAuthKeyId,
-						PeerType:      mtproto.PEER_USER,
-						PeerId:        toUserId,
-						Inbox:         box,
-						Users:         users.GetUserListByIdList(toUserId, idHelper.UserIdList...),
-						Chats:         nil,
-					})
-				if err2 != nil {
-					return err2
+			if fromUserId != toUserId {
+				blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(c.ctx, &userpb.TLUserBlockedByUser{
+					UserId:     toUserId,
+					PeerUserId: fromUserId,
+				})
+
+				if !mtproto.FromBool(blocked) {
+					_, err2 = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+						c.ctx,
+						&inbox.TLInboxSendUserMessageToInboxV2{
+							UserId:        toUserId,
+							Out:           false,
+							FromId:        fromUserId,
+							FromAuthKeyId: fromAuthKeyId,
+							PeerType:      mtproto.PEER_USER,
+							PeerId:        toUserId,
+							Inbox:         box,
+							Users:         users.GetUserListByIdList(toUserId, idHelper.UserIdList...),
+							Chats:         nil,
+						})
+					if err2 != nil {
+						return err2
+					}
 				}
 			}
 
