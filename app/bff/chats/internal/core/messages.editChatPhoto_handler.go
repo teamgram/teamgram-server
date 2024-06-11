@@ -31,7 +31,6 @@ import (
 // messages.editChatPhoto#35ddd674 chat_id:long photo:InputChatPhoto = Updates;
 func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (*mtproto.Updates, error) {
 	var (
-		// photoId int64 = 0
 		action *mtproto.MessageAction
 		err    error
 	)
@@ -46,7 +45,6 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 	case mtproto.Predicate_inputChatUploadedPhoto:
 		// inputChatUploadedPhoto#c642724e flags:# file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = InputChatPhoto;
 
-		// file := request.GetFile()
 		photo, err = c.svcCtx.Dao.MediaClient.MediaUploadProfilePhotoFile(c.ctx, &mediapb.TLMediaUploadProfilePhotoFile{
 			OwnerId:      c.MD.PermAuthKeyId,
 			File:         chatPhoto.GetFile(),
@@ -57,69 +55,25 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 			c.Logger.Errorf("messages.editChatPhoto - error: %v", err)
 			return nil, err
 		}
+
 		action = mtproto.MakeMessageActionChatEditPhoto(photo)
 	case mtproto.Predicate_inputChatPhoto:
 		// inputChatPhoto#8953ad37 id:InputPhoto = InputChatPhoto;
 
-		// TODO: android
-		/*
-			inputMessagesFilterChatPhotos - Return only chat photo changes
+		id := in.GetPhoto().GetId()
+		if id.GetPredicateName() == mtproto.Predicate_inputPhotoEmpty {
+			action = mtproto.MakeTLMessageActionChatDeletePhoto(nil).To_MessageAction()
+		} else {
+			photo, err = c.svcCtx.Dao.MediaClient.MediaGetPhoto(c.ctx, &mediapb.TLMediaGetPhoto{
+				PhotoId: id.GetId(),
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.editChatPhoto - error: %v", err)
+				return nil, err
+			}
 
-			body: { messages_search
-			  flags: 0 [INT],
-			  peer: { inputPeerChat
-			    chat_id: 518812270 [INT],
-			  },
-			  q: "" [STRING],
-			  from_id: [ SKIPPED BY BIT 0 IN FIELD flags ],
-			  top_msg_id: [ SKIPPED BY BIT 1 IN FIELD flags ],
-			  filter: { inputMessagesFilterChatPhotos },
-			  min_date: 0 [INT],
-			  max_date: 0 [INT],
-			  offset_id: 57963 [INT],
-			  add_offset: 0 [INT],
-			  limit: 100 [INT],
-			  max_id: 0 [INT],
-			  min_id: 0 [INT],
-			  hash: 0 [INT],
-			},
-		*/
-
-		//switch chatPhoto.GetPredicateName() {
-		//case mtproto.Predicate_inputPhotoEmpty:
-		//	// inputPhotoEmpty#1cd7bf0d = InputPhoto;
-		//	photos, err := s.UserFacade.GetCacheUserPhotos(ctx, md.UserId)
-		//	if err != nil {
-		//		log.Errorf("photos.updateProfilePhoto - error: %v", err)
-		//		return nil, mtproto.ErrInternalServerError
-		//	}
-		//	photos.RemovePhotoId(photos.GetDefaultPhotoId(), func(id int64) *mtproto.Photo {
-		//		photo := media_client.GetPhoto(id)
-		//		return photo
-		//	})
-		//
-		//	err = s.UserFacade.PutCacheUserPhotos(ctx, md.UserId, photos)
-		//	if err != nil {
-		//		log.Errorf("photos.updateProfilePhoto - error: %v", err)
-		//	}
-		//
-		//	photos2 = mtproto.MakeTLPhotosPhoto(&mtproto.Photos_Photo{
-		//		Photo: photos.Photo,
-		//		Users: []*mtproto.User{},
-		//	}).To_Photos_Photo()
-		//case mtproto.Predicate_inputPhoto:
-		//	// inputPhoto#3bb3b94a id:long access_hash:long file_reference:bytes = InputPhoto;
-		//
-		//	id := request.GetId().To_InputPhoto()
-		//	// TODO(@benqi): check inputPhoto.access_hash
-		//
-		//	photo2 := media_client.GetPhoto(id.GetId())
-		//	photos2 = mtproto.MakeTLPhotosPhoto(&mtproto.Photos_Photo{
-		//		Photo: photo2,
-		//		Users: []*mtproto.User{},
-		//	}).To_Photos_Photo()
-		//default:
-		//}
+			action = mtproto.MakeMessageActionChatEditPhoto(photo)
+		}
 	default:
 		err = mtproto.ErrInputRequestInvalid
 		c.Logger.Errorf("messages.editChatPhoto - error: %v", err)
