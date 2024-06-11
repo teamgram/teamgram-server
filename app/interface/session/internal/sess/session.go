@@ -508,6 +508,10 @@ func (c *session) sendRawToQueue(ctx context.Context, gatewayId string, msgId in
 }
 
 func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface{}, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+	if c.connState != kStateOnline {
+		return false, nil
+	}
+
 	x := mtproto.NewEncodeBuf(512)
 	salt := c.sessList.cacheSalt.GetSalt()
 	obj.Encode(x, c.sessList.cb.Layer())
@@ -539,6 +543,10 @@ func (c *session) sendHttpDirectToGateway(ctx context.Context, ch chan interface
 }
 
 func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, confirm bool, obj mtproto.TLObject, cb func(sentRaw *mtproto.TLMessageRawData)) (bool, error) {
+	if c.connState != kStateOnline {
+		return false, nil
+	}
+
 	x := mtproto.NewEncodeBuf(512)
 	salt := c.sessList.cacheSalt.GetSalt()
 	obj.Encode(x, c.sessList.cb.Layer())
@@ -588,6 +596,10 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 }
 
 func (c *session) sendRawDirectToGateway(ctx context.Context, gatewayId string, raw *mtproto.TLMessageRawData) (bool, error) {
+	if c.connState != kStateOnline {
+		return false, nil
+	}
+
 	salt := c.sessList.cacheSalt.GetSalt()
 
 	var (

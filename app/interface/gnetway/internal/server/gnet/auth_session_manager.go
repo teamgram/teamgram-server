@@ -16,17 +16,34 @@
 package gnet
 
 import (
+	"container/list"
 	"sync"
 )
 
+type sessionData struct {
+	sessionId  int64
+	connIdList *list.List
+	// pendingHttpDataList *list.List
+}
+
+type authSession struct {
+	// authKey     *authKeyUtil
+	sessionList map[int64]sessionData
+}
+
 type authSessionManager struct {
 	rw       sync.RWMutex
-	sessions map[int64]map[int64]int64
+	sessions map[int64]*authSession
 }
+
+//type authSessionManager struct {
+//	rw       sync.RWMutex
+//	sessions map[int64]map[int64]int64
+//}
 
 func NewAuthSessionManager() *authSessionManager {
 	return &authSessionManager{
-		sessions: make(map[int64]map[int64]int64),
+		sessions: make(map[int64]*authSession),
 	}
 }
 
@@ -34,15 +51,50 @@ func (m *authSessionManager) AddNewSession(authId int64, sessionId int64, connId
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
+	m.rw.Lock()
+	defer m.rw.Unlock()
+
 	if v, ok := m.sessions[authId]; ok {
-		v[sessionId] = connId
+		var (
+			// sIdx     = -1
+			cExisted = false
+		)
+		if v2, ok2 := v.sessionList[sessionId]; ok2 {
+			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
+				if e.Value.(int64) == connId {
+					cExisted = true
+					break
+				}
+			}
+			if !cExisted {
+				v2.connIdList.PushBack(connId)
+			}
+		} else {
+			s := sessionData{
+				sessionId:  sessionId,
+				connIdList: list.New(),
+				// pendingHttpDataList: list.New(),
+			}
+			s.connIdList.PushBack(connId)
+			v.sessionList[sessionId] = s
+			bNew = true
+		}
 	} else {
-		m.sessions[authId] = map[int64]int64{
-			sessionId: connId,
+		s := sessionData{
+			sessionId:  sessionId,
+			connIdList: list.New(),
+			// pendingHttpDataList: list.New(),
+		}
+		s.connIdList.PushBack(connId)
+
+		m.sessions[authId] = &authSession{
+			// authKey: authKey,
+			sessionList: map[int64]sessionData{
+				sessionId: s,
+			},
 		}
 		bNew = true
 	}
-
 	return
 }
 
@@ -51,10 +103,18 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	defer m.rw.Unlock()
 
 	if v, ok := m.sessions[authKeyId]; ok {
-		if _, ok2 := v[sessionId]; ok2 {
-			bDeleted = true
-			delete(v, sessionId)
-			if len(v) == 0 {
+		if v2, ok2 := v.sessionList[sessionId]; ok2 {
+			for e := v2.connIdList.Front(); e != nil; e = e.Next() {
+				if e.Value.(int64) == connId {
+					v2.connIdList.Remove(e)
+					break
+				}
+			}
+			if v2.connIdList.Len() == 0 {
+				delete(v.sessionList, sessionId)
+				bDeleted = true
+			}
+			if len(v.sessionList) == 0 {
 				delete(m.sessions, authKeyId)
 			}
 		}
@@ -63,14 +123,19 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	return
 }
 
-func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) (int64, bool) {
+func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) []int64 {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
 	if v, ok := m.sessions[authKeyId]; ok {
-		v2, ok2 := v[sessionId]
-		return v2, ok2
+		if v2, ok2 := v.sessionList[sessionId]; ok2 {
+			connIdList := make([]int64, 0, v2.connIdList.Len())
+			for e := v2.connIdList.Back(); e != nil; e = e.Prev() {
+				connIdList = append(connIdList, e.Value.(int64))
+			}
+			return connIdList
+		}
 	}
 
-	return 0, false
+	return nil
 }
