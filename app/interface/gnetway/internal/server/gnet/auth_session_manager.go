@@ -18,6 +18,8 @@ package gnet
 import (
 	"container/list"
 	"sync"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type sessionData struct {
@@ -27,7 +29,7 @@ type sessionData struct {
 }
 
 type authSession struct {
-	// authKey     *authKeyUtil
+	authKey     *authKeyUtil
 	sessionList map[int64]sessionData
 }
 
@@ -36,25 +38,22 @@ type authSessionManager struct {
 	sessions map[int64]*authSession
 }
 
-//type authSessionManager struct {
-//	rw       sync.RWMutex
-//	sessions map[int64]map[int64]int64
-//}
-
 func NewAuthSessionManager() *authSessionManager {
 	return &authSessionManager{
 		sessions: make(map[int64]*authSession),
 	}
 }
 
-func (m *authSessionManager) AddNewSession(authId int64, sessionId int64, connId int64) (bNew bool) {
-	m.rw.Lock()
-	defer m.rw.Unlock()
+func (m *authSessionManager) AddNewSession(authKey *authKeyUtil, sessionId int64, connId int64) (bNew bool) {
+	logx.Debugf("addNewSession: auth_key_id: %d, session_id: %d, conn_id: %d",
+		authKey.AuthKeyId(),
+		sessionId,
+		connId)
 
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
-	if v, ok := m.sessions[authId]; ok {
+	if v, ok := m.sessions[authKey.AuthKeyId()]; ok {
 		var (
 			// sIdx     = -1
 			cExisted = false
@@ -87,8 +86,8 @@ func (m *authSessionManager) AddNewSession(authId int64, sessionId int64, connId
 		}
 		s.connIdList.PushBack(connId)
 
-		m.sessions[authId] = &authSession{
-			// authKey: authKey,
+		m.sessions[authKey.AuthKeyId()] = &authSession{
+			authKey: authKey,
 			sessionList: map[int64]sessionData{
 				sessionId: s,
 			},
@@ -99,6 +98,11 @@ func (m *authSessionManager) AddNewSession(authId int64, sessionId int64, connId
 }
 
 func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId int64) (bDeleted bool) {
+	logx.Debugf("removeSession: auth_key_id: %d, session_id: %d, conn_id: %d",
+		authKeyId,
+		sessionId,
+		connId)
+
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
@@ -123,7 +127,7 @@ func (m *authSessionManager) RemoveSession(authKeyId, sessionId int64, connId in
 	return
 }
 
-func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) []int64 {
+func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) (*authKeyUtil, []int64) {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
@@ -133,9 +137,9 @@ func (m *authSessionManager) FoundSessionConnId(authKeyId, sessionId int64) []in
 			for e := v2.connIdList.Back(); e != nil; e = e.Prev() {
 				connIdList = append(connIdList, e.Value.(int64))
 			}
-			return connIdList
+			return v.authKey, connIdList
 		}
 	}
 
-	return nil
+	return nil, nil
 }

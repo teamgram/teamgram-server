@@ -216,7 +216,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 			strconv.FormatInt(permAuthKeyId, 10),
 			func(client sessionclient.SessionClient) (err error) {
 				if isNew {
-					if s.authSessionMgr.AddNewSession(authKey.AuthKeyId(), sessionId, connId) {
+					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
 						_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
 							Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
 								ServerId:      s.svcCtx.GatewayId,
