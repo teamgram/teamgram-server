@@ -20,6 +20,10 @@ import (
 	"github.com/teamgram/proto/mtproto/crypto"
 )
 
+type AuthKeyUtil = authKeyUtil
+
+var NewAuthKeyUtil = newAuthKeyUtil
+
 type authKeyUtil struct {
 	keyData *mtproto.AuthKeyInfo
 	key     *crypto.AuthKey
