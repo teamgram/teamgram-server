@@ -119,7 +119,7 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	if firstByte == ABRIDGED_FLAG {
 		logx.Debugf("conn(%s) mtproto abridged version.", conn)
 		conn.Discard(1)
-		return new(AbridgedCodec), nil
+		return newMTProtoAbridgedCodec(nil), nil
 	}
 
 	var (
@@ -152,14 +152,14 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	if firstInt == INTERMEDIATE_FLAG {
 		logx.Debugf("conn(%s) intermediate version.", conn)
 		conn.Discard(4)
-		return new(IntermediateCodec), nil
+		return newMTProtoIntermediateCodec(nil), nil
 	}
 
 	// check intermediate version
 	if firstInt == PADDED_INTERMEDIATE_FLAG {
 		logx.Debugf("conn(%s) padded intermediate version.", conn)
 		conn.Discard(4)
-		return new(PaddedIntermediateCodec), nil
+		return newMTProtoPaddedIntermediateCodec(nil), nil
 	}
 
 	// check PVrG

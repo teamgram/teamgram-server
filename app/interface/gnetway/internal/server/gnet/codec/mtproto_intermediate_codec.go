@@ -69,12 +69,15 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (interface{}, error) {
 	)
 
 	in, _ = conn.Peek(-1)
+	if len(in) == 0 {
+		return nil, nil
+	}
 
 	if c.state == WAIT_PACKET_LENGTH {
 		if buf, err = in.readN(4); err != nil {
 			return nil, ErrUnexpectedEOF
 		}
-		conn.Discard(1)
+		conn.Discard(4)
 		buf = c.Decrypt(buf)
 		c.packetLen = binary.LittleEndian.Uint32(buf)
 		c.state = WAIT_PACKET

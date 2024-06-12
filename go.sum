@@ -233,8 +233,8 @@ github.com/teamgram/go-zero v1.6.3-teamgram.0.20240501021520-e02614df0dd3 h1:WD7
 github.com/teamgram/go-zero v1.6.3-teamgram.0.20240501021520-e02614df0dd3/go.mod h1:I90LWzrHQLRobJcWP0KR8xG8xS2oubRTC5R4HgJyThY=
 github.com/teamgram/marmota v0.1.21-0.20240608073012-7188b47ff250 h1:oQCQA+w988W3A8XJ2zVNzn+aahJ+rLNQwpAECq4t7fo=
 github.com/teamgram/marmota v0.1.21-0.20240608073012-7188b47ff250/go.mod h1:9hPRqKisBEuKfra9GKKsa0Ci+RrQacZtfQzhmPhM+mg=
-github.com/teamgram/proto v0.181.1-0.20240609050057-c59f1491e49e h1:i8CX1ywazUc7iSvgSYaGNEtTi4aNqYM52BbSCaob4t8=
-github.com/teamgram/proto v0.181.1-0.20240609050057-c59f1491e49e/go.mod h1:PKSdPOcYG7iwP6LJHGDtf51oOWikG0NpbbGMFArFt5o=
+github.com/teamgram/proto v0.181.1-0.20240612062014-170037cb84cb h1:Lg0WkdBBPMAJ8KQbTqULPctOfZVvTQtvk1u6mFMVO0w=
+github.com/teamgram/proto v0.181.1-0.20240612062014-170037cb84cb/go.mod h1:PKSdPOcYG7iwP6LJHGDtf51oOWikG0NpbbGMFArFt5o=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
