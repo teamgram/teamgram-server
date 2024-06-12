@@ -20,7 +20,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server implementation w
 ![Architecture](docs/image/architecture-001.png)
 
 ## Installing Teamgram 
-`Teamgram` relies on open source high-performance components: 
+`Teamgram` relies on high-performance components: 
 
 - **mysql5.7**
 - [redis](https://redis.io/)
