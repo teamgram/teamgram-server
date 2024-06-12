@@ -178,7 +178,7 @@ func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
 func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, mmsg *mtproto.MTPRawMessage) error {
 	mtpRwaData, err := authKey.AesIgeDecrypt(mmsg.Payload[8:8+16], mmsg.Payload[24:])
 	if err != nil {
-		logx.Debugf("conn(%s) decrypt data(%d) error: {%v}, payload: %s", c, len(mmsg.Payload)-24, err, hex.EncodeToString(mmsg.Payload))
+		logx.Errorf("conn(%s) decrypt data(%d) error: {%v}, payload: %s", c, len(mmsg.Payload)-24, err, hex.EncodeToString(mmsg.Payload))
 		return err
 	}
 
