@@ -92,6 +92,18 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 		}
 	}
 
+	// hack: layer > 177, android's createChat method use old messages.createChat#34A818
+	if rpcMetaData.Client == "android" && rpcMetaData.Layer >= 177 {
+		if createChat, ok := object.(*mtproto.TLMessagesCreateChat34A818); ok {
+			object = &mtproto.TLMessagesCreateChat92CEDDD4{
+				Constructor: mtproto.CRC32_messages_createChat92CEDDD4,
+				Users:       createChat.Users,
+				Title:       createChat.Title,
+				TtlPeriod:   createChat.TtlPeriod,
+			}
+		}
+	}
+
 	t := mtproto.FindRPCContextTuple(object)
 	if t == nil {
 		err = fmt.Errorf("Invoke error: %v not regist!\n", object)
