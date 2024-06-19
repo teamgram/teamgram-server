@@ -227,9 +227,9 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 
 	// TODO: Stories
 	if c.svcCtx.Dao.Plugin != nil {
-		userFull.StoriesPinnedAvailable = c.svcCtx.Dao.Plugin.GetStoriesPinnedAvailable(c.ctx, peerId)
-		userFull.BlockedMyStoriesFrom = c.svcCtx.Dao.Plugin.GetBlockedMyStoriesFrom(c.ctx, peerId)
-		userFull.Stories_FLAGPEERSTORIES = c.svcCtx.Dao.Plugin.GetActiveStories(c.ctx, peerId)
+		userFull.StoriesPinnedAvailable = c.svcCtx.Dao.Plugin.GetStoriesPinnedAvailable(c.ctx, peerId, c.MD.UserId)
+		userFull.BlockedMyStoriesFrom = c.svcCtx.Dao.Plugin.GetBlockedMyStoriesFrom(c.ctx, peerId, c.MD.UserId)
+		userFull.Stories_FLAGPEERSTORIES = c.svcCtx.Dao.Plugin.GetActiveStories(c.ctx, peerId, c.MD.UserId)
 	}
 
 	if c.MD.UserId != peerId {
