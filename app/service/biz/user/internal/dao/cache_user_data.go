@@ -51,12 +51,10 @@ func isCacheUserDataCacheKey(k string) bool {
 }
 
 type CacheUserData struct {
-	UserData                 *mtproto.UserData          `json:"user_data"`
-	ContactIdList            []int64                    `json:"contact_id_list"`
-	CachesPrivacyKeyRules    []*mtproto.PrivacyKeyRules `json:"caches_privacy_key_rules"`
-	ReverseContactIdList     []int64                    `json:"reverse_contact_id_list"`
-	StoriesHiddenList        []int64                    `json:"stories_hidden_list"`
-	ReverseStoriesHiddenList []int64                    `json:"reverse_stories_hidden_list"`
+	UserData              *mtproto.UserData          `json:"user_data"`
+	ContactIdList         []int64                    `json:"contact_id_list"`
+	CachesPrivacyKeyRules []*mtproto.PrivacyKeyRules `json:"caches_privacy_key_rules"`
+	ReverseContactIdList  []int64                    `json:"reverse_contact_id_list"`
 }
 
 func NewCacheUserData() *CacheUserData {
