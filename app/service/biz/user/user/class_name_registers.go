@@ -95,6 +95,7 @@ const (
 	Predicate_user_setColor                         = "user_setColor"
 	Predicate_user_updateBirthday                   = "user_updateBirthday"
 	Predicate_user_getBirthdays                     = "user_getBirthdays"
+	Predicate_user_setStoriesHidden                 = "user_setStoriesHidden"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -434,6 +435,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -24199258, // 0xfe8ebfa6
 
 	},
+	Predicate_user_setStoriesHidden: {
+		0: -138012584, // 0xf7c61858
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -521,6 +526,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	586812791:   Predicate_user_setColor,                         // 0x22fa0d77
 	1484434322:  Predicate_user_updateBirthday,                   // 0x587aab92
 	-24199258:   Predicate_user_getBirthdays,                     // 0xfe8ebfa6
+	-138012584:  Predicate_user_setStoriesHidden,                 // 0xf7c61858
 
 }
 

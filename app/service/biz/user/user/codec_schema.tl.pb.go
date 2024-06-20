@@ -452,6 +452,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -24199258,
 		}
 	},
+	-138012584: func() mtproto.TLObject { // 0xf7c61858
+		return &TLUserSetStoriesHidden{
+			Constructor: -138012584,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -5469,6 +5474,61 @@ func (m *TLUserGetBirthdays) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *TLUserGetBirthdays) DebugString() string {
+	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
+	if err != nil {
+		return "protojson error: " + err.Error()
+	} else {
+		return string(v)
+	}
+}
+
+// TLUserSetStoriesHidden
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSetStoriesHidden) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xf7c61858:
+		x.UInt(0xf7c61858)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetId())
+		m.GetHidden().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSetStoriesHidden) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSetStoriesHidden) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xf7c61858:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Id = dBuf.Long()
+
+		m3 := &mtproto.Bool{}
+		m3.Decode(dBuf)
+		m.Hidden = m3
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+func (m *TLUserSetStoriesHidden) DebugString() string {
 	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
 	if err != nil {
 		return "protojson error: " + err.Error()

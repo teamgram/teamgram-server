@@ -13,10 +13,9 @@ package service
 import (
 	"context"
 
-	"github.com/teamgram/teamgram-server/app/bff/messages/internal/core"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/bff/messages/internal/core"
 )
-
 
 // MessagesGetMessages
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
@@ -527,4 +526,3 @@ func (s *Service) ChannelsSearchPosts(ctx context.Context, request *mtproto.TLCh
 	c.Logger.Debugf("channels.searchPosts - reply: %s", r.DebugString())
 	return r, err
 }
-

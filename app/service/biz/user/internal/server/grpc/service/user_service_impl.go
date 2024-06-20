@@ -1202,3 +1202,18 @@ func (s *Service) UserGetBirthdays(ctx context.Context, request *user.TLUserGetB
 	c.Logger.Debugf("user.getBirthdays - reply: %s", r.DebugString())
 	return r, err
 }
+
+// UserSetStoriesHidden
+// user.setStoriesHidden user_id:long  id:long hidden:Bool = Bool;
+func (s *Service) UserSetStoriesHidden(ctx context.Context, request *user.TLUserSetStoriesHidden) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setStoriesHidden - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+
+	r, err := c.UserSetStoriesHidden(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setStoriesHidden - reply: %s", r.DebugString())
+	return r, err
+}

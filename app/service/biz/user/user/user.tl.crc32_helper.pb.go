@@ -96,4 +96,5 @@ const (
 	CRC32_user_setColor                         TLConstructor = 586812791   // 0x22fa0d77
 	CRC32_user_updateBirthday                   TLConstructor = 1484434322  // 0x587aab92
 	CRC32_user_getBirthdays                     TLConstructor = -24199258   // 0xfe8ebfa6
+	CRC32_user_setStoriesHidden                 TLConstructor = -138012584  // 0xf7c61858
 )

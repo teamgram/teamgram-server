@@ -105,6 +105,7 @@ enum TLConstructor {
     CRC32_user_setColor = 586812791;
     CRC32_user_updateBirthday = 1484434322;
     CRC32_user_getBirthdays = -24199258;
+    CRC32_user_setStoriesHidden = -138012584;
 }
 
 
@@ -752,6 +753,14 @@ message TL_user_getBirthdays {
     int64 user_id = 3;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_setStoriesHidden {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 id = 4;
+    mtproto.Bool hidden = 5;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -873,5 +882,6 @@ service RPCUser {
  rpc user_setColor(TL_user_setColor) returns (mtproto.Bool) {}
  rpc user_updateBirthday(TL_user_updateBirthday) returns (mtproto.Bool) {}
  rpc user_getBirthdays(TL_user_getBirthdays) returns (Vector_ContactBirthday) {}
+ rpc user_setStoriesHidden(TL_user_setStoriesHidden) returns (mtproto.Bool) {}
 }
 

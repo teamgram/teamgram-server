@@ -21,41 +21,40 @@ import (
 var _ *mtproto.Bool
 
 type MessagesClient interface {
-MessagesGetMessages(ctx context.Context, in *mtproto.TLMessagesGetMessages) (*mtproto.Messages_Messages, error)
-MessagesGetHistory(ctx context.Context, in *mtproto.TLMessagesGetHistory) (*mtproto.Messages_Messages, error)
-MessagesSearch(ctx context.Context, in *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error)
-MessagesReadHistory(ctx context.Context, in *mtproto.TLMessagesReadHistory) (*mtproto.Messages_AffectedMessages, error)
-MessagesDeleteHistory(ctx context.Context, in *mtproto.TLMessagesDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
-MessagesDeleteMessages(ctx context.Context, in *mtproto.TLMessagesDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
-MessagesReceivedMessages(ctx context.Context, in *mtproto.TLMessagesReceivedMessages) (*mtproto.Vector_ReceivedNotifyMessage, error)
-MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error)
-MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error)
-MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error)
-MessagesReadMessageContents(ctx context.Context, in *mtproto.TLMessagesReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
-MessagesGetMessagesViews(ctx context.Context, in *mtproto.TLMessagesGetMessagesViews) (*mtproto.Messages_MessageViews, error)
-MessagesSearchGlobal(ctx context.Context, in *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error)
-MessagesGetMessageEditData(ctx context.Context, in *mtproto.TLMessagesGetMessageEditData) (*mtproto.Messages_MessageEditData, error)
-MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error)
-MessagesGetUnreadMentions(ctx context.Context, in *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error)
-MessagesReadMentions(ctx context.Context, in *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error)
-MessagesGetRecentLocations(ctx context.Context, in *mtproto.TLMessagesGetRecentLocations) (*mtproto.Messages_Messages, error)
-MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error)
-MessagesUpdatePinnedMessage(ctx context.Context, in *mtproto.TLMessagesUpdatePinnedMessage) (*mtproto.Updates, error)
-MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error)
-MessagesUnpinAllMessages(ctx context.Context, in *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
-MessagesGetSearchResultsCalendar(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error)
-MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error)
-MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
-MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
-MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
-MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
-MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error)
-MessagesEditFactCheck(ctx context.Context, in *mtproto.TLMessagesEditFactCheck) (*mtproto.Updates, error)
-MessagesDeleteFactCheck(ctx context.Context, in *mtproto.TLMessagesDeleteFactCheck) (*mtproto.Updates, error)
-MessagesGetFactCheck(ctx context.Context, in *mtproto.TLMessagesGetFactCheck) (*mtproto.Vector_FactCheck, error)
-ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
-ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
-
+	MessagesGetMessages(ctx context.Context, in *mtproto.TLMessagesGetMessages) (*mtproto.Messages_Messages, error)
+	MessagesGetHistory(ctx context.Context, in *mtproto.TLMessagesGetHistory) (*mtproto.Messages_Messages, error)
+	MessagesSearch(ctx context.Context, in *mtproto.TLMessagesSearch) (*mtproto.Messages_Messages, error)
+	MessagesReadHistory(ctx context.Context, in *mtproto.TLMessagesReadHistory) (*mtproto.Messages_AffectedMessages, error)
+	MessagesDeleteHistory(ctx context.Context, in *mtproto.TLMessagesDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
+	MessagesDeleteMessages(ctx context.Context, in *mtproto.TLMessagesDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
+	MessagesReceivedMessages(ctx context.Context, in *mtproto.TLMessagesReceivedMessages) (*mtproto.Vector_ReceivedNotifyMessage, error)
+	MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error)
+	MessagesSendMedia(ctx context.Context, in *mtproto.TLMessagesSendMedia) (*mtproto.Updates, error)
+	MessagesForwardMessages(ctx context.Context, in *mtproto.TLMessagesForwardMessages) (*mtproto.Updates, error)
+	MessagesReadMessageContents(ctx context.Context, in *mtproto.TLMessagesReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
+	MessagesGetMessagesViews(ctx context.Context, in *mtproto.TLMessagesGetMessagesViews) (*mtproto.Messages_MessageViews, error)
+	MessagesSearchGlobal(ctx context.Context, in *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error)
+	MessagesGetMessageEditData(ctx context.Context, in *mtproto.TLMessagesGetMessageEditData) (*mtproto.Messages_MessageEditData, error)
+	MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error)
+	MessagesGetUnreadMentions(ctx context.Context, in *mtproto.TLMessagesGetUnreadMentions) (*mtproto.Messages_Messages, error)
+	MessagesReadMentions(ctx context.Context, in *mtproto.TLMessagesReadMentions) (*mtproto.Messages_AffectedHistory, error)
+	MessagesGetRecentLocations(ctx context.Context, in *mtproto.TLMessagesGetRecentLocations) (*mtproto.Messages_Messages, error)
+	MessagesSendMultiMedia(ctx context.Context, in *mtproto.TLMessagesSendMultiMedia) (*mtproto.Updates, error)
+	MessagesUpdatePinnedMessage(ctx context.Context, in *mtproto.TLMessagesUpdatePinnedMessage) (*mtproto.Updates, error)
+	MessagesGetSearchCounters(ctx context.Context, in *mtproto.TLMessagesGetSearchCounters) (*mtproto.Vector_Messages_SearchCounter, error)
+	MessagesUnpinAllMessages(ctx context.Context, in *mtproto.TLMessagesUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
+	MessagesGetSearchResultsCalendar(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsCalendar) (*mtproto.Messages_SearchResultsCalendar, error)
+	MessagesGetSearchResultsPositions(ctx context.Context, in *mtproto.TLMessagesGetSearchResultsPositions) (*mtproto.Messages_SearchResultsPositions, error)
+	MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error)
+	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
+	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
+	MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
+	MessagesGetAvailableEffects(ctx context.Context, in *mtproto.TLMessagesGetAvailableEffects) (*mtproto.Messages_AvailableEffects, error)
+	MessagesEditFactCheck(ctx context.Context, in *mtproto.TLMessagesEditFactCheck) (*mtproto.Updates, error)
+	MessagesDeleteFactCheck(ctx context.Context, in *mtproto.TLMessagesDeleteFactCheck) (*mtproto.Updates, error)
+	MessagesGetFactCheck(ctx context.Context, in *mtproto.TLMessagesGetFactCheck) (*mtproto.Vector_FactCheck, error)
+	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
+	ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
 }
 
 type defaultMessagesClient struct {
@@ -67,7 +66,6 @@ func NewMessagesClient(cli zrpc.Client) MessagesClient {
 		cli: cli,
 	}
 }
-
 
 // MessagesGetMessages
 // messages.getMessages#63c66506 id:Vector<InputMessage> = messages.Messages;
@@ -306,4 +304,3 @@ func (m *defaultMessagesClient) ChannelsSearchPosts(ctx context.Context, in *mtp
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.ChannelsSearchPosts(ctx, in)
 }
-

@@ -105,6 +105,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserSetColor":                         RPCContextTuple{"/mtproto.RPCUser/user_setColor", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserUpdateBirthday":                   RPCContextTuple{"/mtproto.RPCUser/user_updateBirthday", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetBirthdays":                     RPCContextTuple{"/mtproto.RPCUser/user_getBirthdays", func() interface{} { return new(Vector_ContactBirthday) }},
+	"TLUserSetStoriesHidden":                 RPCContextTuple{"/mtproto.RPCUser/user_setStoriesHidden", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

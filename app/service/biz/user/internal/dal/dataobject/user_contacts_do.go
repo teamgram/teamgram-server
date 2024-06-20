@@ -19,6 +19,7 @@ type UserContactsDO struct {
 	ContactLastName  string `db:"contact_last_name" json:"contact_last_name"`
 	Mutual           bool   `db:"mutual" json:"mutual"`
 	CloseFriend      bool   `db:"close_friend" json:"close_friend"`
+	StoriesHidden    bool   `db:"stories_hidden" json:"stories_hidden"`
 	IsDeleted        bool   `db:"is_deleted" json:"is_deleted"`
 	Date2            int64  `db:"date2" json:"date2"`
 }

@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	contactKeyPrefix = "user_contact.1"
+	contactKeyPrefix = "user_contact.2"
 )
 
 var (

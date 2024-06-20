@@ -108,6 +108,7 @@ const (
 	RPCUser_UserSetColor_FullMethodName                         = "/user.RPCUser/user_setColor"
 	RPCUser_UserUpdateBirthday_FullMethodName                   = "/user.RPCUser/user_updateBirthday"
 	RPCUser_UserGetBirthdays_FullMethodName                     = "/user.RPCUser/user_getBirthdays"
+	RPCUser_UserSetStoriesHidden_FullMethodName                 = "/user.RPCUser/user_setStoriesHidden"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -193,6 +194,7 @@ type RPCUserClient interface {
 	UserSetColor(ctx context.Context, in *TLUserSetColor, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserUpdateBirthday(ctx context.Context, in *TLUserUpdateBirthday, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetBirthdays(ctx context.Context, in *TLUserGetBirthdays, opts ...grpc.CallOption) (*Vector_ContactBirthday, error)
+	UserSetStoriesHidden(ctx context.Context, in *TLUserSetStoriesHidden, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCUserClient struct {
@@ -914,6 +916,15 @@ func (c *rPCUserClient) UserGetBirthdays(ctx context.Context, in *TLUserGetBirth
 	return out, nil
 }
 
+func (c *rPCUserClient) UserSetStoriesHidden(ctx context.Context, in *TLUserSetStoriesHidden, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserSetStoriesHidden_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility
@@ -997,6 +1008,7 @@ type RPCUserServer interface {
 	UserSetColor(context.Context, *TLUserSetColor) (*mtproto.Bool, error)
 	UserUpdateBirthday(context.Context, *TLUserUpdateBirthday) (*mtproto.Bool, error)
 	UserGetBirthdays(context.Context, *TLUserGetBirthdays) (*Vector_ContactBirthday, error)
+	UserSetStoriesHidden(context.Context, *TLUserSetStoriesHidden) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have forward compatible implementations.
@@ -1239,6 +1251,9 @@ func (UnimplementedRPCUserServer) UserUpdateBirthday(context.Context, *TLUserUpd
 }
 func (UnimplementedRPCUserServer) UserGetBirthdays(context.Context, *TLUserGetBirthdays) (*Vector_ContactBirthday, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetBirthdays not implemented")
+}
+func (UnimplementedRPCUserServer) UserSetStoriesHidden(context.Context, *TLUserSetStoriesHidden) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSetStoriesHidden not implemented")
 }
 
 // UnsafeRPCUserServer may be embedded to opt out of forward compatibility for this service.
@@ -2674,6 +2689,24 @@ func _RPCUser_UserGetBirthdays_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserSetStoriesHidden_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSetStoriesHidden)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSetStoriesHidden(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSetStoriesHidden_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSetStoriesHidden(ctx, req.(*TLUserSetStoriesHidden))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2996,6 +3029,10 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getBirthdays",
 			Handler:    _RPCUser_UserGetBirthdays_Handler,
+		},
+		{
+			MethodName: "user_setStoriesHidden",
+			Handler:    _RPCUser_UserSetStoriesHidden_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

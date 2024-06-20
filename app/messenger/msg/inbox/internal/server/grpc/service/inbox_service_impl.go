@@ -13,11 +13,10 @@ package service
 import (
 	"context"
 
+	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
-	"github.com/teamgram/proto/mtproto"
 )
-
 
 // InboxSendUserMessageToInbox
 // inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
@@ -243,4 +242,3 @@ func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *in
 	c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - reply: %s", r.DebugString())
 	return r, err
 }
-
