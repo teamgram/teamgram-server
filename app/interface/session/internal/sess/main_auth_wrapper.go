@@ -878,46 +878,46 @@ func (m *MainAuthWrapper) onSessionData(ctx context.Context, sessionMsg *session
 }
 
 func (m *MainAuthWrapper) onSessionHttpData(ctx context.Context, sessionMsg *sessionHttpData) {
-	sList := m.getSessionList(sessionMsg.authType)
-
-	if sList.authId == 0 {
-		m.resetAuth(sessionMsg.authType, sessionMsg.authId)
-	} else if sList.authId != sessionMsg.authId {
-		m.resetAuth(sessionMsg.authType, sessionMsg.authId)
-	}
-
-	message2 := new(mtproto.TLMessage2)
-	err := message2.Decode(mtproto.NewDecodeBuf(sessionMsg.buf))
-	if err != nil {
-		// TODO(@benqi): close frontend conn??
-		logx.WithContext(ctx).Errorf("onSessionHttpData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, m, sessionMsg.gatewayId)
-		return
-	}
-
-	// TODO(@benqi): load onNew
-	if sList.cacheSalt == nil {
-		sList.cacheSalt, sList.cacheLastSalt, _ = m.cb.Dao.GetOrFetchNewSalt(ctx, sList.authId)
-	} else {
-		if int32(time.Now().Unix()) >= sList.cacheSalt.GetValidUntil() {
-			sList.cacheSalt, sList.cacheLastSalt, _ = m.cb.Dao.GetOrFetchNewSalt(ctx, sList.authId)
-		}
-	}
-
-	if sList.cacheSalt == nil {
-		logx.WithContext(ctx).Infof("onSessionHttpData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", m, sessionMsg.gatewayId)
-		return
-	}
-
-	sess, ok := sList.sessions[sessionMsg.sessionId]
-	if !ok {
-		sess = newSession(sessionMsg.sessionId, sList)
-		sList.sessions[sessionMsg.sessionId] = sess
-	}
-
-	sess.isHttp = true
-	sess.httpQueue.Push(sessionMsg.resChannel)
-	sess.onSessionConnNew(ctx, sessionMsg.gatewayId)
-	sess.onSessionMessageData(ctx, sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
+	//sList := m.getSessionList(sessionMsg.authType)
+	//
+	//if sList.authId == 0 {
+	//	m.resetAuth(sessionMsg.authType, sessionMsg.authId)
+	//} else if sList.authId != sessionMsg.authId {
+	//	m.resetAuth(sessionMsg.authType, sessionMsg.authId)
+	//}
+	//
+	//message2 := new(mtproto.TLMessage2)
+	//err := message2.Decode(mtproto.NewDecodeBuf(sessionMsg.buf))
+	//if err != nil {
+	//	// TODO(@benqi): close frontend conn??
+	//	logx.WithContext(ctx).Errorf("onSessionHttpData - error: {%s}, data: {sessions: %s, gate_id: %d}", err, m, sessionMsg.gatewayId)
+	//	return
+	//}
+	//
+	//// TODO(@benqi): load onNew
+	//if sList.cacheSalt == nil {
+	//	sList.cacheSalt, sList.cacheLastSalt, _ = m.cb.Dao.GetOrFetchNewSalt(ctx, sList.authId)
+	//} else {
+	//	if int32(time.Now().Unix()) >= sList.cacheSalt.GetValidUntil() {
+	//		sList.cacheSalt, sList.cacheLastSalt, _ = m.cb.Dao.GetOrFetchNewSalt(ctx, sList.authId)
+	//	}
+	//}
+	//
+	//if sList.cacheSalt == nil {
+	//	logx.WithContext(ctx).Infof("onSessionHttpData - getOrFetchNewSalt nil error, data: {sessions: %s, conn_id: %s}", m, sessionMsg.gatewayId)
+	//	return
+	//}
+	//
+	//sess, ok := sList.sessions[sessionMsg.sessionId]
+	//if !ok {
+	//	sess = newSession(sessionMsg.sessionId, sList)
+	//	sList.sessions[sessionMsg.sessionId] = sess
+	//}
+	//
+	//sess.isHttp = true
+	//sess.httpQueue.Push(sessionMsg.resChannel)
+	//sess.onSessionConnNew(ctx, sessionMsg.gatewayId)
+	//sess.onSessionMessageData(ctx, sessionMsg.gatewayId, sessionMsg.clientIp, sessionMsg.salt, message2)
 }
 
 func (m *MainAuthWrapper) onSessionClosed(ctx context.Context, connMsg *connData) {

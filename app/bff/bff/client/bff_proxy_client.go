@@ -115,10 +115,26 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 	r := t.NewReplyFunc()
 	// logx.Infof("Invoke - NewReplyFunc: {%#v}, t: {%v}", r, reflect.TypeOf(r))
 
-	var header, trailer metadata.MD
+	var (
+		header, trailer metadata.MD
+		ctxWithTimeout  context.Context
+	)
 
 	// Fixed @LionPuChiPuChi, 2018-12-19
-	ctxWithTimeout, _ := context.WithTimeout(context.Background(), 60*time.Second)
+	// hack
+	switch object.(type) {
+	case *mtproto.TLMessagesSendMedia:
+		ctxWithTimeout, _ = context.WithTimeout(context.Background(), 60*time.Second)
+	case *mtproto.TLMessagesSendMultiMedia:
+		ctxWithTimeout, _ = context.WithTimeout(context.Background(), 60*time.Second)
+	case *mtproto.TLMessagesUploadMedia:
+		ctxWithTimeout, _ = context.WithTimeout(context.Background(), 60*time.Second)
+	case *mtproto.TLMessagesEditMessage:
+		ctxWithTimeout, _ = context.WithTimeout(context.Background(), 60*time.Second)
+	default:
+		ctxWithTimeout, _ = context.WithTimeout(context.Background(), 5*time.Second)
+	}
+
 	ctx2, _ := metadata.RpcMetadataToOutgoing(ctxWithTimeout, rpcMetaData)
 	rt := time.Now()
 
