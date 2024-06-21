@@ -95,7 +95,7 @@ func (sess *RpcShardingManager) Start() {
 
 		sess.shardingList = shardingList
 
-		if sess.cb != nil {
+		if len(removeList) > 0 && sess.cb != nil {
 			sess.cb(sess, oldList, addList, removeList)
 		}
 	}

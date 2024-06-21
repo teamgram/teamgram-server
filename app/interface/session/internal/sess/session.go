@@ -117,9 +117,9 @@ type session struct {
 	outQueue        *sessionOutgoingQueue
 	pendingQueue    *sessionRpcResultWaitingQueue
 	pushQueue       *sessionPushQueue
-	// isHttp          bool
-	// httpQueue *httpRequestQueue
-	sessList *SessionList
+	sessList        *SessionList
+	// isHttp       bool
+	// httpQueue    *httpRequestQueue
 }
 
 func newSession(sessionId int64, sessList *SessionList) *session {
@@ -134,9 +134,9 @@ func newSession(sessionId int64, sessList *SessionList) *session {
 		outQueue:        newSessionOutgoingQueue(),
 		pendingQueue:    newSessionRpcResultWaitingQueue(),
 		pushQueue:       newSessionPushQueue(),
-		// isHttp:          false,
-		// httpQueue: newHttpRequestQueue(),
-		sessList: sessList,
+		sessList:        sessList,
+		// isHttp:       false,
+		// httpQueue:    newHttpRequestQueue(),
 	}
 
 	return sess
