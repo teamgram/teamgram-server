@@ -367,7 +367,7 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 		}).To_BadMsgNotification()
 		logx.WithContext(ctx).Error("errorCode - ", errorCode, ", msg: ", reflect.TypeOf(msg.Object))
 		c.sendDirectToGateway(ctx, gatewayId, false, badMsgNotification, func(sentRaw *mtproto.TLMessageRawData) {
-			//
+			// nothing do
 		})
 		return false
 	}
@@ -790,7 +790,7 @@ func (c *session) notifyMsgsStateInfo(ctx context.Context, gatewayId string, inM
 		Info:     string([]byte{inMsg.state}),
 	})
 	c.sendDirectToGateway(ctx, gatewayId, false, msgsStateInfo, func(sentRaw *mtproto.TLMessageRawData) {
-
+		// nothing do
 	})
 }
 

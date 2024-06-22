@@ -646,6 +646,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 		pendings = make([]*outboxMsg, 0)
 		b        = false
 		err      error
+		sentTime = time.Now().Unix()
 	)
 	for e := c.outQueue.oMsgs.Front(); e != nil; e = e.Next() {
 		if e.Value.(*outboxMsg).sent == 0 || time.Now().Unix() >= e.Value.(*outboxMsg).sent+waitMsgAcksTimeout {
@@ -656,31 +657,75 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 	if len(pendings) == 1 {
 		logx.WithContext(ctx).Infof("sendRawDirectToGateway - pendings[0]")
 		b, err = c.sendRawDirectToGateway(ctx, gatewayId, pendings[0].msg)
-	} else if len(pendings) > 1 {
-		msgContainer := &mtproto.TLMsgRawDataContainer{
-			Messages: make([]*mtproto.TLMessageRawData, 0, len(pendings)),
-		}
-		for _, m := range pendings {
-			msgContainer.Messages = append(msgContainer.Messages, m.msg)
+		// log.Debugf("err: %v, b: %v", err, b)
+		if err != nil || b {
+			return
 		}
 
-		logx.WithContext(ctx).Infof("sendRawDirectToGateway - TLMsgRawDataContainer")
-		b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
-			// TODO(@benqi):
-		})
-
-		// TODO(@benqi): setOffline
-	}
-
-	// log.Debugf("err: %v, b: %v", err, b)
-	if err == nil && b {
 		for _, m := range pendings {
 			if m.state == NEED_NO_ACK {
 				logx.WithContext(ctx).Infof("need_no_ack: %d", m.msgId)
 				c.outQueue.Remove(m.msgId)
 			} else {
 				logx.WithContext(ctx).Infof("pending sent: %d", m.msgId)
-				m.sent = time.Now().Unix()
+				m.sent = sentTime
+			}
+		}
+	} else if len(pendings) > 1 {
+		var (
+			split = 16
+		)
+		for i := 0; i < len(pendings)/split; i++ {
+			msgContainer := &mtproto.TLMsgRawDataContainer{
+				Messages: make([]*mtproto.TLMessageRawData, 0, split),
+			}
+			for _, m := range pendings[i*split : (i+1)*split] {
+				msgContainer.Messages = append(msgContainer.Messages, m.msg)
+			}
+			logx.WithContext(ctx).Infof("sendRawDirectToGateway - TLMsgRawDataContainer")
+			b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+				// TODO(@benqi):
+				// nothing do
+			})
+			// log.Debugf("err: %v, b: %v", err, b)
+			if err != nil || b {
+				continue
+			}
+
+			for _, m := range pendings[i*split : (i+1)*split] {
+				if m.state == NEED_NO_ACK {
+					logx.WithContext(ctx).Infof("need_no_ack: %d", m.msgId)
+					c.outQueue.Remove(m.msgId)
+				} else {
+					logx.WithContext(ctx).Infof("pending sent: %d", m.msgId)
+					m.sent = sentTime
+				}
+			}
+		}
+		if (len(pendings) % split) > 0 {
+			msgContainer := &mtproto.TLMsgRawDataContainer{
+				Messages: make([]*mtproto.TLMessageRawData, 0, split),
+			}
+			for _, m := range pendings[split*(len(pendings)/split):] {
+				msgContainer.Messages = append(msgContainer.Messages, m.msg)
+			}
+			logx.WithContext(ctx).Infof("sendRawDirectToGateway - TLMsgRawDataContainer")
+			b, err = c.sendDirectToGateway(ctx, gatewayId, false, msgContainer, func(sentRaw *mtproto.TLMessageRawData) {
+				// TODO(@benqi):
+				// nothing do
+			})
+			// log.Debugf("err: %v, b: %v", err, b)
+			if err != nil || b {
+				return
+			}
+			for _, m := range pendings[split*(len(pendings)/split):] {
+				if m.state == NEED_NO_ACK {
+					logx.WithContext(ctx).Infof("need_no_ack: %d", m.msgId)
+					c.outQueue.Remove(m.msgId)
+				} else {
+					logx.WithContext(ctx).Infof("pending sent: %d", m.msgId)
+					m.sent = sentTime
+				}
 			}
 		}
 	}
