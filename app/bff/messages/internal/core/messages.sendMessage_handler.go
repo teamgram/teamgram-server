@@ -114,9 +114,9 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 			QuoteOffset:            nil,
 		}).To_MessageReplyHeader()
 	} else if in.GetReplyTo() != nil {
+		replyTo := in.GetReplyTo()
 		switch in.ReplyTo.PredicateName {
 		case mtproto.Predicate_inputReplyToMessage:
-			replyTo := in.GetReplyTo()
 			outMessage.ReplyTo = mtproto.MakeTLMessageReplyHeader(&mtproto.MessageReplyHeader{
 				ReplyToScheduled:       false,
 				ForumTopic:             false,
@@ -147,6 +147,28 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 
 		case mtproto.Predicate_inputReplyToStory:
 			// TODO:
+			var (
+				rPeer  *mtproto.PeerUtil
+				userId int64
+			)
+
+			if replyTo.GetUserId() != nil {
+				rPeer = mtproto.FromInputUser(c.MD.UserId, replyTo.GetUserId())
+				userId = rPeer.PeerId
+			} else if replyTo.GetPeer() != nil {
+				rPeer = mtproto.FromInputPeer2(c.MD.UserId, replyTo.GetPeer())
+				if rPeer.IsUser() {
+					userId = peer.PeerId
+				}
+			}
+
+			if rPeer != nil {
+				outMessage.ReplyTo = mtproto.MakeTLMessageReplyStoryHeader(&mtproto.MessageReplyHeader{
+					UserId:  userId,
+					Peer:    rPeer.ToPeer(),
+					StoryId: replyTo.GetStoryId(),
+				}).To_MessageReplyHeader()
+			}
 		}
 	}
 
