@@ -658,7 +658,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 		logx.WithContext(ctx).Infof("sendRawDirectToGateway - pendings[0]")
 		b, err = c.sendRawDirectToGateway(ctx, gatewayId, pendings[0].msg)
 		// log.Debugf("err: %v, b: %v", err, b)
-		if err != nil || b {
+		if err != nil || !b {
 			return
 		}
 
@@ -688,7 +688,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 				// nothing do
 			})
 			// log.Debugf("err: %v, b: %v", err, b)
-			if err != nil || b {
+			if err != nil || !b {
 				continue
 			}
 
@@ -715,7 +715,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 				// nothing do
 			})
 			// log.Debugf("err: %v, b: %v", err, b)
-			if err != nil || b {
+			if err != nil || !b {
 				return
 			}
 			for _, m := range pendings[split*(len(pendings)/split):] {
