@@ -52,7 +52,7 @@ inputMediaDice#e66fbf7b emoticon:string = InputMedia;
 //	return mtproto.MakeTLMessageMediaEmpty(nil).To_MessageMedia(), nil
 //}
 
-func GetMessageMedia(ctx context.Context, d MediaHelper, ownerId int64, media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
+func GetMessageMedia(ctx context.Context, d MediaHelper, userId, ownerId int64, media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
 	var (
 		now = int32(time.Now().Unix())
 	)
@@ -261,6 +261,6 @@ func GetMessageMedia(ctx context.Context, d MediaHelper, ownerId int64, media *m
 	return
 }
 
-func (d *Dao) GetMessageMedia(ctx context.Context, ownerId int64, media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
-	return GetMessageMedia(ctx, d, ownerId, media)
+func (d *Dao) GetMessageMedia(ctx context.Context, userId, ownerId int64, media *mtproto.InputMedia) (messageMedia *mtproto.MessageMedia, err error) {
+	return GetMessageMedia(ctx, d, userId, ownerId, media)
 }
