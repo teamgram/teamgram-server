@@ -47,13 +47,16 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		return nil, err
 	}
 
-	mutableUsers, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: []int64{c.MD.UserId, peerId},
+	mutableUsers, err := c.svcCtx.Dao.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+		Id:      []int64{c.MD.UserId, peerId},
+		Privacy: true,
+		HasTo:   true,
+		To:      []int64{c.MD.UserId},
 	})
 	if err != nil {
 		c.Logger.Errorf("users.getFullUser - error: %v", err)
 		return nil, err
-	} else if len(mutableUsers.Datas) == 0 {
+	} else if len(mutableUsers.GetUsers()) == 0 {
 		err = mtproto.ErrInternalServerError
 		c.Logger.Errorf("users.getFullUser - error: %v", err)
 		return nil, err
