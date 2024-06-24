@@ -48,7 +48,7 @@ func (c *QrCodeCore) AuthExportLoginToken(in *mtproto.TLAuthExportLoginToken) (*
 	} else if qrCode == nil {
 		qrCode = &model.QRCodeTransaction{
 			PermAuthKeyId: c.MD.PermAuthKeyId,
-			AuthKeyId:     c.MD.PermAuthKeyId,
+			AuthKeyId:     c.MD.AuthId,
 			SessionId:     c.MD.SessionId,
 			ServerId:      c.MD.ServerId,
 			ApiId:         in.ApiId,

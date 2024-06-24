@@ -119,7 +119,7 @@ func (c *QrCodeCore) AuthAcceptLoginToken(in *mtproto.TLAuthAcceptLoginToken) (*
 		c.ctx,
 		&sync.TLSyncUpdatesMe{
 			UserId:        user.Id(),
-			PermAuthKeyId: qrCode.AuthKeyId,
+			PermAuthKeyId: qrCode.PermAuthKeyId,
 			ServerId:      &wrapperspb.StringValue{Value: qrCode.ServerId},
 			AuthKeyId:     &wrapperspb.Int64Value{Value: qrCode.AuthKeyId},
 			SessionId:     &wrapperspb.Int64Value{Value: qrCode.SessionId},

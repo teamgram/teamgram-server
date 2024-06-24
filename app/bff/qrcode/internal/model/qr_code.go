@@ -47,7 +47,7 @@ type QRCodeTransaction struct {
 
 func (m *QRCodeTransaction) Token() []byte {
 	token := make([]byte, 8, 24)
-	binary.BigEndian.PutUint64(token, uint64(m.AuthKeyId))
+	binary.BigEndian.PutUint64(token, uint64(m.PermAuthKeyId))
 	m2 := md5.New()
 	io.WriteString(m2, strconv.Itoa(int(m.AuthKeyId)))
 	io.WriteString(m2, m.CodeHash)
