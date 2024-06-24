@@ -87,7 +87,7 @@ func (w *WsCodec) Upgrade(c gnet.Conn) (ok bool, action gnet.Action) {
 			return
 		}
 		buf.Next(skipN)
-		logx.Errorf("conn[%v] [err=%v]", c.RemoteAddr().String(), err.Error())
+		logx.Errorf("conn[%v] req[%s][err=%v]", c.RemoteAddr().String(), buf.String(), err.Error())
 		action = gnet.Close
 		return
 	}
