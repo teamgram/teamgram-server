@@ -29,7 +29,7 @@ func (c *UserCore) UserDeleteProfilePhotos(in *user.TLUserDeleteProfilePhotos) (
 	}
 
 	if mainPhotoId > 0 {
-		if b, _ := container2.Contains(mainPhotoId, in.GetId()); b {
+		if b := container2.ContainsInt64(in.GetId(), mainPhotoId); b {
 			c.svcCtx.Dao.UserProfilePhotosDAO.Delete(c.ctx, meId, in.GetId())
 		} else {
 			nextMainId, _ := c.svcCtx.Dao.UserProfilePhotosDAO.SelectNext(c.ctx, meId, in.Id)

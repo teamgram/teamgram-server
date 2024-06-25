@@ -48,7 +48,7 @@ func (c *ChatsCore) MessagesGetAllChats(in *mtproto.TLMessagesGetAllChats) (*mtp
 	)
 
 	for _, id := range dList.GetChats() {
-		if ok, _ := container2.Contains(id, in.ExceptIds); !ok {
+		if ok := container2.ContainsInt64(in.ExceptIds, id); !ok {
 			idList = append(idList, id)
 		}
 	}

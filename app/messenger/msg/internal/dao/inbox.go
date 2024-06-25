@@ -117,7 +117,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 		if message2.GetAction().GetPredicateName() == mtproto.Predicate_messageActionGroupCall {
 			call := message2.GetAction()
 			if call != nil && len(call.Users) > 0 {
-				if ok, _ := container2.Contains(toUserId, call.Users); ok {
+				if ok := container2.ContainsInt64(call.Users, toUserId); ok {
 					message.MediaUnread = true
 					message.Mentioned = true
 				}

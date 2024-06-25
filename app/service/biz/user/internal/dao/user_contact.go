@@ -100,7 +100,7 @@ func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactI
 
 	idList2 := make([]int64, 0, len(idList))
 	for _, id2 := range contactId {
-		if ok, _ := container2.Contains(id2, idList); ok {
+		if ok := container2.ContainsInt64(idList, id2); ok {
 			idList2 = append(idList2, id2)
 		}
 	}

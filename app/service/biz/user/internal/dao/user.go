@@ -305,7 +305,7 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 
 			idList2 := make([]int64, 0, len(idList))
 			for _, id2 := range contacts {
-				if ok, _ := container2.Contains(id2, idList); ok && id2 != id {
+				if ok := container2.ContainsInt64(idList, id2); ok && id2 != id {
 					idList2 = append(idList2, id2)
 				}
 			}
@@ -384,12 +384,12 @@ func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
 func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, contacts []int64) []*mtproto.ImmutableUser {
 	id := make([]int64, 0, len(idList2)+len(contacts))
 	for _, v := range idList2 {
-		if ok, _ := container2.Contains(v, id); !ok {
+		if ok := container2.ContainsInt64(id, v); !ok {
 			id = append(id, v)
 		}
 	}
 	for _, v := range contacts {
-		if ok, _ := container2.Contains(v, id); !ok {
+		if ok := container2.ContainsInt64(id, v); !ok {
 			id = append(id, v)
 		}
 	}
@@ -421,7 +421,7 @@ func (d *Dao) GetCacheImmutableUserList(ctx context.Context, idList2 []int64, co
 				err error
 			)
 
-			if ok, _ := container2.Contains(id[idx], contacts); ok {
+			if ok := container2.ContainsInt64(contacts, id[idx]); ok {
 				mUsers[idx], err = d.GetImmutableUser(ctx, id[idx], true, idList2...)
 				if err != nil {
 					logx.WithContext(ctx).Errorf("getImmutableUser - error: %v", err)
@@ -542,12 +542,12 @@ func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, 
 
 	id2 := make([]int64, 0, len(idList2)+len(contacts))
 	for _, v := range idList2 {
-		if ok, _ := container2.Contains(v, id2); !ok {
+		if ok := container2.ContainsInt64(id2, v); !ok {
 			id2 = append(id2, v)
 		}
 	}
 	for _, v := range contacts {
-		if ok, _ := container2.Contains(v, id2); !ok {
+		if ok := container2.ContainsInt64(id2, v); !ok {
 			id2 = append(id2, v)
 		}
 	}
@@ -598,7 +598,7 @@ func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, 
 		var (
 			myContacts []int64
 		)
-		if ok, _ := container2.Contains(id, contacts); ok {
+		if ok := container2.ContainsInt64(contacts, id); ok {
 			myContacts = idList2
 		} else {
 			if len(contacts) == 0 {
@@ -613,7 +613,7 @@ func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, 
 			continue
 		}
 		for _, v := range myContacts {
-			if ok, _ := container2.Contains(v, cIdList); ok && v != id {
+			if ok := container2.ContainsInt64(cIdList, v); ok && v != id {
 				keyList = append(keyList, genContactCacheKey(id, v))
 			}
 		}
@@ -748,7 +748,7 @@ func (d *Dao) GetImmutableUserV2(ctx context.Context, id int64, privacy bool, ha
 			rIdList = cacheUserData.ReverseContactIdList
 		} else {
 			for _, id2 := range reverseContacts {
-				if ok, _ := container2.Contains(id2, cacheUserData.ReverseContactIdList); ok && id2 != id {
+				if ok := container2.ContainsInt64(cacheUserData.ReverseContactIdList, id2); ok && id2 != id {
 					rIdList = append(rIdList, id2)
 				}
 			}
@@ -841,7 +841,7 @@ func (d *Dao) GetMutableUsersV2(ctx context.Context, idList2 []int64, privacy bo
 				rContacts = cData.ReverseContactIdList
 			} else {
 				for _, rId := range to {
-					if ok, _ := container2.Contains(rId, cData.ReverseContactIdList); ok {
+					if ok := container2.ContainsInt64(cData.ReverseContactIdList, rId); ok {
 						rContacts = append(rContacts, rId)
 					}
 				}

@@ -20,7 +20,7 @@ import (
 func (c *UserCore) UserCheckContact(in *user.TLUserCheckContact) (*mtproto.Bool, error) {
 	cacheUserData := c.svcCtx.Dao.GetCacheUserData(c.ctx, in.GetUserId())
 	//_, idList := c.svcCtx.Dao.GetUserContactIdList(c.ctx, in.GetUserId())
-	isContact, _ := container2.Contains(in.GetId(), cacheUserData.GetContactIdList())
+	isContact := container2.ContainsInt64(cacheUserData.GetContactIdList(), in.GetId())
 
 	return mtproto.ToBool(isContact), nil
 }
