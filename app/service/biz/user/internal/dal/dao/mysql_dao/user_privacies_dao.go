@@ -190,7 +190,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyList(ctx context.Context, userId int64
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
@@ -215,7 +215,7 @@ func (dao *UserPrivaciesDAO) SelectPrivacyListWithCB(ctx context.Context, userId
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPrivacyList(_), error: %v", err)
@@ -250,7 +250,7 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyList(ctx context.Context, idList 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)
@@ -278,7 +278,7 @@ func (dao *UserPrivaciesDAO) SelectUsersPrivacyListWithCB(ctx context.Context, i
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersPrivacyList(_), error: %v", err)

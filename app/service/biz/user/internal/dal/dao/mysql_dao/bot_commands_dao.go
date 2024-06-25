@@ -255,7 +255,7 @@ func (dao *BotCommandsDAO) SelectListByIdList(ctx context.Context, idList []int3
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
@@ -279,7 +279,7 @@ func (dao *BotCommandsDAO) SelectListByIdListWithCB(ctx context.Context, idList 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)

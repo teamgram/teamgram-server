@@ -158,7 +158,7 @@ func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
@@ -182,7 +182,7 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)

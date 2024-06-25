@@ -149,7 +149,7 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdList(ctx context.Context, idLis
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeIdList(_), error: %v", err)
@@ -173,7 +173,7 @@ func (dao *PhotoSizesDAO) SelectListByPhotoSizeIdListWithCB(ctx context.Context,
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhotoSizeIdList(_), error: %v", err)

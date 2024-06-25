@@ -227,7 +227,7 @@ func (dao *UsersDAO) SelectUsersByIdList(ctx context.Context, idList []int64) (r
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByIdList(_), error: %v", err)
@@ -251,7 +251,7 @@ func (dao *UsersDAO) SelectUsersByIdListWithCB(ctx context.Context, idList []int
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByIdList(_), error: %v", err)
@@ -282,7 +282,7 @@ func (dao *UsersDAO) SelectUsersByPhoneList(ctx context.Context, phoneList []str
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByPhoneList(_), error: %v", err)
@@ -306,7 +306,7 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectUsersByPhoneList(_), error: %v", err)
@@ -387,7 +387,7 @@ func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idLi
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, q2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
@@ -412,7 +412,7 @@ func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, q2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)

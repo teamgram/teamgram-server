@@ -416,7 +416,7 @@ func (dao *DialogsDAO) SelectPeerDialogList(ctx context.Context, userId int64, i
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
@@ -441,7 +441,7 @@ func (dao *DialogsDAO) SelectPeerDialogListWithCB(ctx context.Context, userId in
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPeerDialogList(_), error: %v", err)
@@ -1474,7 +1474,7 @@ func (dao *DialogsDAO) SelectDialogsByPeerType(ctx context.Context, userId int64
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByPeerType(_), error: %v", err)
@@ -1499,7 +1499,7 @@ func (dao *DialogsDAO) SelectDialogsByPeerTypeWithCB(ctx context.Context, userId
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByPeerType(_), error: %v", err)

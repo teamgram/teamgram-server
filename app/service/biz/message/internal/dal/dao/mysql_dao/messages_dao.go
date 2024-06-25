@@ -142,7 +142,7 @@ func (dao *MessagesDAO) SelectByMessageIdList(ctx context.Context, userId int64,
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByMessageIdList(_), error: %v", err)
@@ -167,7 +167,7 @@ func (dao *MessagesDAO) SelectByMessageIdListWithCB(ctx context.Context, userId 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByMessageIdList(_), error: %v", err)
@@ -277,7 +277,7 @@ func (dao *MessagesDAO) SelectByMessageDataIdUserIdList(ctx context.Context, tab
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, dialogMessageId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, dialogMessageId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByMessageDataIdUserIdList(_), error: %v", err)
@@ -302,7 +302,7 @@ func (dao *MessagesDAO) SelectByMessageDataIdUserIdListWithCB(ctx context.Contex
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, dialogMessageId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, dialogMessageId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByMessageDataIdUserIdList(_), error: %v", err)
@@ -599,7 +599,7 @@ func (dao *MessagesDAO) SelectDialogLastMessageIdNotIdList(ctx context.Context, 
 		return
 	}
 
-	err = dao.db.QueryRowsPartial(ctx, &rValue, query, userId, dialogId1, dialogId2)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, userId, dialogId1, dialogId2)
 
 	if err != nil {
 		if !errors.Is(err, sqlx.ErrNotFound) {
@@ -626,7 +626,7 @@ func (dao *MessagesDAO) SelectDialogsByMessageIdList(ctx context.Context, userId
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByMessageIdList(_), error: %v", err)
@@ -651,7 +651,7 @@ func (dao *MessagesDAO) SelectDialogsByMessageIdListWithCB(ctx context.Context, 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDialogsByMessageIdList(_), error: %v", err)

@@ -150,7 +150,7 @@ func (dao *DocumentsDAO) SelectByDocumentIdList(ctx context.Context, idList []in
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
@@ -174,7 +174,7 @@ func (dao *DocumentsDAO) SelectByDocumentIdListWithCB(ctx context.Context, idLis
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByDocumentIdList(_), error: %v", err)
@@ -205,7 +205,7 @@ func (dao *DocumentsDAO) SelectByIdList(ctx context.Context, idList []int64) (rL
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
@@ -229,7 +229,7 @@ func (dao *DocumentsDAO) SelectByIdListWithCB(ctx context.Context, idList []int6
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)

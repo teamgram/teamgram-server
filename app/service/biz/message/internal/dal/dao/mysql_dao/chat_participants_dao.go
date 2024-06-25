@@ -895,7 +895,7 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdList(ctx context.Context, user
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatIdList(_), error: %v", err)
@@ -920,7 +920,7 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatIdList(_), error: %v", err)

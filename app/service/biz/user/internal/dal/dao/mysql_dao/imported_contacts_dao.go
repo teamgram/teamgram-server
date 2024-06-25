@@ -150,7 +150,7 @@ func (dao *ImportedContactsDAO) SelectListByImportedList(ctx context.Context, us
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)
@@ -175,7 +175,7 @@ func (dao *ImportedContactsDAO) SelectListByImportedListWithCB(ctx context.Conte
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByImportedList(_), error: %v", err)

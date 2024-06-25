@@ -127,7 +127,7 @@ func (dao *UserPresencesDAO) SelectList(ctx context.Context, idList []int64) (rL
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -151,7 +151,7 @@ func (dao *UserPresencesDAO) SelectListWithCB(ctx context.Context, idList []int6
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)

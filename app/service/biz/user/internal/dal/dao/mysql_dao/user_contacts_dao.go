@@ -151,7 +151,7 @@ func (dao *UserContactsDAO) SelectListByPhoneList(ctx context.Context, ownerUser
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, ownerUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
@@ -176,7 +176,7 @@ func (dao *UserContactsDAO) SelectListByPhoneListWithCB(ctx context.Context, own
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, ownerUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByPhoneList(_), error: %v", err)
@@ -331,7 +331,7 @@ func (dao *UserContactsDAO) SelectListByIdList(ctx context.Context, ownerUserId 
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, ownerUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
@@ -356,7 +356,7 @@ func (dao *UserContactsDAO) SelectListByIdListWithCB(ctx context.Context, ownerU
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, ownerUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, ownerUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByIdList(_), error: %v", err)
@@ -391,7 +391,7 @@ func (dao *UserContactsDAO) SelectListByOwnerListAndContactList(ctx context.Cont
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
@@ -419,7 +419,7 @@ func (dao *UserContactsDAO) SelectListByOwnerListAndContactListWithCB(ctx contex
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByOwnerListAndContactList(_), error: %v", err)
@@ -718,7 +718,7 @@ func (dao *UserContactsDAO) SelectReverseListByIdList(ctx context.Context, conta
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, contactUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)
@@ -743,7 +743,7 @@ func (dao *UserContactsDAO) SelectReverseListByIdListWithCB(ctx context.Context,
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query, contactUserId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, contactUserId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectReverseListByIdList(_), error: %v", err)

@@ -226,7 +226,7 @@ func (dao *PopularContactsDAO) SelectImportersList(ctx context.Context, phoneLis
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
@@ -250,7 +250,7 @@ func (dao *PopularContactsDAO) SelectImportersListWithCB(ctx context.Context, ph
 		return
 	}
 
-	err = dao.db.QueryRowPartial(ctx, &values, query)
+	err = dao.db.QueryRowsPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectImportersList(_), error: %v", err)
