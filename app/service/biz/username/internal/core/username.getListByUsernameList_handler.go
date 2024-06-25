@@ -24,7 +24,7 @@ func (c *UsernameCore) UsernameGetListByUsernameList(in *username.TLUsernameGetL
 		}
 	)
 
-	if _, err := c.svcCtx.Dao.UsernameDAO.SelectListWithCB(c.ctx, in.Names, func(i int, v *dataobject.UsernameDO) {
+	if _, err := c.svcCtx.Dao.UsernameDAO.SelectListWithCB(c.ctx, in.Names, func(sz, i int, v *dataobject.UsernameDO) {
 		var (
 			peer *mtproto.Peer
 		)

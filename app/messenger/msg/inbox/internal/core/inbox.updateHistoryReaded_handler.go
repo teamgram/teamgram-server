@@ -84,7 +84,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 			c.ctx,
 			replyId.UserId,
 			[]int64{mtproto.MakePeerDialogId(in.PeerType, in.PeerId)},
-			func(i int, v *dataobject.DialogsDO) {
+			func(sz, i int, v *dataobject.DialogsDO) {
 				if v.ReadOutboxMaxId < replyId.UserMessageBoxId {
 					c.svcCtx.Dao.DialogsDAO.UpdateReadOutboxMaxId(
 						c.ctx,

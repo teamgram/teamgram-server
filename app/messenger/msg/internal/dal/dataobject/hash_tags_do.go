@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -11,11 +11,11 @@
 package dataobject
 
 type HashTagsDO struct {
-	Id               int64  `db:"id"`
-	UserId           int64  `db:"user_id"`
-	PeerType         int32  `db:"peer_type"`
-	PeerId           int64  `db:"peer_id"`
-	HashTag          string `db:"hash_tag"`
-	HashTagMessageId int32  `db:"hash_tag_message_id"`
-	Deleted          bool   `db:"deleted"`
+	Id               int64  `db:"id" json:"id"`
+	UserId           int64  `db:"user_id" json:"user_id"`
+	PeerType         int32  `db:"peer_type" json:"peer_type"`
+	PeerId           int64  `db:"peer_id" json:"peer_id"`
+	HashTag          string `db:"hash_tag" json:"hash_tag"`
+	HashTagMessageId int32  `db:"hash_tag_message_id" json:"hash_tag_message_id"`
+	Deleted          bool   `db:"deleted" json:"deleted"`
 }

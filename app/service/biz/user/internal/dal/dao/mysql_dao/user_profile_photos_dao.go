@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type UserProfilePhotosDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewUserProfilePhotosDAO(db *sqlx.DB) *UserProfilePhotosDAO {
 
 // InsertOrUpdate
 // insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
-// TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
@@ -66,7 +67,6 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdate(ctx context.Context, do *dataobj
 
 // InsertOrUpdateTx
 // insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0
-// TODO(@benqi): sqlmap
 func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserProfilePhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_profile_photos(user_id, photo_id, date2, deleted) values (:user_id, :photo_id, :date2, 0) on duplicate key update date2 = values(date2), deleted = 0"
@@ -94,10 +94,9 @@ func (dao *UserProfilePhotosDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Us
 
 // SelectList
 // select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
-// TODO(@benqi): sqlmap
-func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) (rList []int64, err error) {
+func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, userId int64) (rList []int64, err error) {
 	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
@@ -108,18 +107,18 @@ func (dao *UserProfilePhotosDAO) SelectList(ctx context.Context, user_id int64) 
 
 // SelectListWithCB
 // select photo_id from user_profile_photos where user_id = :user_id and deleted = 0 order by date2 desc
-// TODO(@benqi): sqlmap
-func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
+func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) (rList []int64, err error) {
 	var query = "select photo_id from user_profile_photos where user_id = ? and deleted = 0 order by date2 desc"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectList(_), error: %v", err)
 	}
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, rList[i])
 		}
 	}
 
@@ -128,28 +127,19 @@ func (dao *UserProfilePhotosDAO) SelectListWithCB(ctx context.Context, user_id i
 
 // SelectNext
 // select photo_id from user_profile_photos where user_id = :user_id and photo_id not in (:id_list) and deleted = 0 order by date2 desc limit 1
-// TODO(@benqi): sqlmap
-func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, user_id int64, id_list []int64) (rValue int64, err error) {
+func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, userId int64, idList []int64) (rValue int64, err error) {
 	var (
-		query = "select photo_id from user_profile_photos where user_id = ? and photo_id not in (?) and deleted = 0 order by date2 desc limit 1"
-		a     []interface{}
+		query = fmt.Sprintf("select photo_id from user_profile_photos where user_id = ? and photo_id not in (%s) and deleted = 0 order by date2 desc limit 1", sqlx.InInt64List(idList))
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		return
 	}
 
-	query, a, err = sqlx.In(query, user_id, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectNext(_), error: %v", err)
-		return
-	}
-
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, a...)
+	err = dao.db.QueryRowsPartial(ctx, &rValue, query, userId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("get in SelectNext(_), error: %v", err)
 			return
 		} else {
@@ -162,25 +152,17 @@ func (dao *UserProfilePhotosDAO) SelectNext(ctx context.Context, user_id int64, 
 
 // Delete
 // update user_profile_photos set deleted = 1, date2 = 0 where user_id = :user_id and photo_id in (:id_list)
-// TODO(@benqi): sqlmap
-func (dao *UserProfilePhotosDAO) Delete(ctx context.Context, user_id int64, id_list []int64) (rowsAffected int64, err error) {
+func (dao *UserProfilePhotosDAO) Delete(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (?)"
-		a       []interface{}
+		query   = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		return
 	}
 
-	query, a, err = sqlx.In(query, user_id, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in Delete(_), error: %v", err)
-		return
-	}
-	rResult, err = dao.db.Exec(ctx, query, a...)
+	rResult, err = dao.db.Exec(ctx, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
@@ -197,25 +179,17 @@ func (dao *UserProfilePhotosDAO) Delete(ctx context.Context, user_id int64, id_l
 
 // DeleteTx
 // update user_profile_photos set deleted = 1, date2 = 0 where user_id = :user_id and photo_id in (:id_list)
-// TODO(@benqi): sqlmap
-func (dao *UserProfilePhotosDAO) DeleteTx(tx *sqlx.Tx, user_id int64, id_list []int64) (rowsAffected int64, err error) {
+func (dao *UserProfilePhotosDAO) DeleteTx(tx *sqlx.Tx, userId int64, idList []int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (?)"
-		a       []interface{}
+		query   = fmt.Sprintf("update user_profile_photos set deleted = 1, date2 = 0 where user_id = ? and photo_id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		return
 	}
 
-	query, a, err = sqlx.In(query, user_id, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(tx.Context()).Errorf("sqlx.In in Delete(_), error: %v", err)
-		return
-	}
-	rResult, err = tx.Exec(query, a...)
+	rResult, err = tx.Exec(query, userId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)

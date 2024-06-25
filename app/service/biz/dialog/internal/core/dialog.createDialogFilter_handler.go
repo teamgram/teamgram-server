@@ -50,7 +50,7 @@ func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFil
 			_, err := c.svcCtx.Dao.DialogFiltersDAO.SelectListWithCB(
 				c.ctx,
 				in.UserId,
-				func(i int, v *dataobject.DialogFiltersDO) {
+				func(sz, i int, v *dataobject.DialogFiltersDO) {
 					dialogFilter := &dialog.DialogFilterExt{
 						Id:           v.DialogFilterId,
 						DialogFilter: nil,

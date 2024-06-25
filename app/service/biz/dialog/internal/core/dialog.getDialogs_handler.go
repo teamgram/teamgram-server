@@ -95,14 +95,14 @@ func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Ve
 			c.svcCtx.Dao.DialogsDAO.SelectExcludePinnedDialogsWithCB(
 				c.ctx,
 				meId,
-				func(i int, v *dataobject.DialogsDO) {
+				func(sz, i int, v *dataobject.DialogsDO) {
 					dList = append(dList, makeDialog(v))
 				})
 		} else {
 			c.svcCtx.Dao.DialogsDAO.SelectExcludeFolderPinnedDialogsWithCB(
 				c.ctx,
 				meId,
-				func(i int, v *dataobject.DialogsDO) {
+				func(sz, i int, v *dataobject.DialogsDO) {
 					dList = append(dList, makeDialog(v))
 				})
 		}
@@ -111,7 +111,7 @@ func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Ve
 			c.ctx,
 			in.GetUserId(),
 			in.GetFolderId(),
-			func(i int, v *dataobject.DialogsDO) {
+			func(sz, i int, v *dataobject.DialogsDO) {
 				dList = append(dList, makeDialog(v))
 			})
 	}

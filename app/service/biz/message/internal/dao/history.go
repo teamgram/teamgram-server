@@ -30,7 +30,7 @@ func (d *Dao) GetOffsetIdBackwardHistoryMessages(ctx context.Context, userId int
 			did.B,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -57,7 +57,7 @@ func (d *Dao) GetOffsetIdForwardHistoryMessages(ctx context.Context, userId int6
 			did.B,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -83,7 +83,7 @@ func (d *Dao) GetOffsetDateBackwardHistoryMessages(ctx context.Context, userId i
 			did.B,
 			int64(offsetDate),
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -109,7 +109,7 @@ func (d *Dao) GetOffsetDateForwardHistoryMessages(ctx context.Context, userId in
 			did.B,
 			int64(offsetDate),
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -136,7 +136,7 @@ func (d *Dao) GetOffsetIdBackwardUnreadMentions(ctx context.Context, userId int6
 			did.B,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -160,7 +160,7 @@ func (d *Dao) GetOffsetIdForwardUnreadMentions(ctx context.Context, userId int64
 			did.B,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList

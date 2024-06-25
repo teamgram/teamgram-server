@@ -236,7 +236,7 @@ func (m *Dao) GetDocumentListByIdList(ctx context.Context, idList []int64) []*mt
 	missDoList, _ := m.DocumentsDAO.SelectByDocumentIdListWithCB(
 		ctx,
 		idList2,
-		func(i int, v *dataobject.DocumentsDO) {
+		func(sz, i int, v *dataobject.DocumentsDO) {
 			if v.ThumbId != 0 {
 				thumbSizeIdList = append(thumbSizeIdList, v.ThumbId)
 			}

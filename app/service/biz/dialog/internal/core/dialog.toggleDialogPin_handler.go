@@ -30,7 +30,7 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 	_, err := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(c.ctx,
 		in.UserId,
 		[]int64{peerDialogId},
-		func(i int, v *dataobject.DialogsDO) {
+		func(sz, i int, v *dataobject.DialogsDO) {
 			dialogDO = v
 			folderId = v.FolderId
 		})

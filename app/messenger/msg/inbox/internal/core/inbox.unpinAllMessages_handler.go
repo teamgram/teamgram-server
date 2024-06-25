@@ -43,7 +43,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 			peer.PeerId,
 			dialogId.A,
 			dialogId.B,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				idList = append(idList, v.UserMessageBoxId)
 			})
 		if len(idList) == 0 {
@@ -70,7 +70,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 		c.svcCtx.Dao.ChatParticipantsDAO.SelectListWithCB(
 			c.ctx,
 			peer.PeerId,
-			func(i int, v *dataobject.ChatParticipantsDO) {
+			func(sz, i int, v *dataobject.ChatParticipantsDO) {
 				if v.UserId == in.UserId {
 					return
 				}
@@ -83,7 +83,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 					v.UserId,
 					dialogId.A,
 					dialogId.B,
-					func(i int, v *dataobject.MessagesDO) {
+					func(sz, i int, v *dataobject.MessagesDO) {
 						idList = append(idList, v.UserMessageBoxId)
 					})
 

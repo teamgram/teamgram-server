@@ -37,7 +37,7 @@ func (m *Dao) GetVideoSizeListList(ctx context.Context, idList []int64) (sizes m
 	m.VideoSizesDAO.SelectListByVideoSizeIdListWithCB(
 		ctx,
 		idList,
-		func(i int, v *dataobject.VideoSizesDO) {
+		func(sz, i int, v *dataobject.VideoSizesDO) {
 			szList, ok := sizes[v.VideoSizeId]
 			if !ok {
 				szList = []*mtproto.VideoSize{}
@@ -56,7 +56,7 @@ func (m *Dao) GetVideoSizeList(ctx context.Context, sizeId int64) (sizes []*mtpr
 	m.VideoSizesDAO.SelectListByVideoSizeIdWithCB(
 		ctx,
 		sizeId,
-		func(i int, v *dataobject.VideoSizesDO) {
+		func(sz, i int, v *dataobject.VideoSizesDO) {
 			sizes = append(sizes, getVideoSize(v))
 		})
 

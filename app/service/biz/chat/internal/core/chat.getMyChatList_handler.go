@@ -26,7 +26,7 @@ func (c *ChatCore) ChatGetMyChatList(in *chat.TLChatGetMyChatList) (*chat.Vector
 		c.svcCtx.Dao.ChatParticipantsDAO.SelectMyAdminListWithCB(
 			c.ctx,
 			in.UserId,
-			func(i int, v int64) {
+			func(sz, i int, v int64) {
 				chat, err := c.svcCtx.Dao.GetMutableChat(c.ctx, v, in.UserId)
 				if err != nil {
 					c.Logger.Errorf("chat.getMyChatList - error: %v", err)

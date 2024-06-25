@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,9 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
@@ -21,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type UnregisteredContactsDAO struct {
 	db *sqlx.DB
 }
 
 func NewUnregisteredContactsDAO(db *sqlx.DB) *UnregisteredContactsDAO {
-	return &UnregisteredContactsDAO{db}
+	return &UnregisteredContactsDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
 // insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)
-// TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UnregisteredContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)"
@@ -60,7 +67,6 @@ func (dao *UnregisteredContactsDAO) InsertOrUpdate(ctx context.Context, do *data
 
 // InsertOrUpdateTx
 // insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)
-// TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UnregisteredContactsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into unregistered_contacts(phone, importer_user_id, import_first_name, import_last_name) values (:phone, :importer_user_id, :import_first_name, :import_last_name) on duplicate key update import_first_name = values(import_first_name), import_last_name = values(import_last_name)"
@@ -88,7 +94,6 @@ func (dao *UnregisteredContactsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject
 
 // SelectImportersByPhone
 // select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = :phone and imported = 0
-// TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) SelectImportersByPhone(ctx context.Context, phone string) (rList []dataobject.UnregisteredContactsDO, err error) {
 	var (
 		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
@@ -108,8 +113,7 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhone(ctx context.Context, 
 
 // SelectImportersByPhoneWithCB
 // select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = :phone and imported = 0
-// TODO(@benqi): sqlmap
-func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Context, phone string, cb func(i int, v *dataobject.UnregisteredContactsDO)) (rList []dataobject.UnregisteredContactsDO, err error) {
+func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Context, phone string, cb func(sz, i int, v *dataobject.UnregisteredContactsDO)) (rList []dataobject.UnregisteredContactsDO, err error) {
 	var (
 		query  = "select id, importer_user_id, phone, import_first_name, import_last_name from unregistered_contacts where phone = ? and imported = 0"
 		values []dataobject.UnregisteredContactsDO
@@ -124,8 +128,9 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Con
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -134,13 +139,13 @@ func (dao *UnregisteredContactsDAO) SelectImportersByPhoneWithCB(ctx context.Con
 
 // UpdateContactName
 // update unregistered_contacts set import_first_name = :import_first_name, import_last_name = :import_last_name where id = :id
-// TODO(@benqi): sqlmap
-func (dao *UnregisteredContactsDAO) UpdateContactName(ctx context.Context, import_first_name string, import_last_name string, id int64) (rowsAffected int64, err error) {
+func (dao *UnregisteredContactsDAO) UpdateContactName(ctx context.Context, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set import_first_name = ?, import_last_name = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, import_first_name, import_last_name, id)
+
+	rResult, err = dao.db.Exec(ctx, query, importFirstName, importLastName, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateContactName(_), error: %v", err)
@@ -155,15 +160,14 @@ func (dao *UnregisteredContactsDAO) UpdateContactName(ctx context.Context, impor
 	return
 }
 
-// update unregistered_contacts set import_first_name = :import_first_name, import_last_name = :import_last_name where id = :id
 // UpdateContactNameTx
-// TODO(@benqi): sqlmap
-func (dao *UnregisteredContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, import_first_name string, import_last_name string, id int64) (rowsAffected int64, err error) {
+// update unregistered_contacts set import_first_name = :import_first_name, import_last_name = :import_last_name where id = :id
+func (dao *UnregisteredContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, importFirstName string, importLastName string, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set import_first_name = ?, import_last_name = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, import_first_name, import_last_name, id)
+	rResult, err = tx.Exec(query, importFirstName, importLastName, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateContactName(_), error: %v", err)
@@ -180,25 +184,17 @@ func (dao *UnregisteredContactsDAO) UpdateContactNameTx(tx *sqlx.Tx, import_firs
 
 // DeleteContacts
 // update unregistered_contacts set imported = 1 where id in (:id_list)
-// TODO(@benqi): sqlmap
-func (dao *UnregisteredContactsDAO) DeleteContacts(ctx context.Context, id_list []int64) (rowsAffected int64, err error) {
+func (dao *UnregisteredContactsDAO) DeleteContacts(ctx context.Context, idList []int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update unregistered_contacts set imported = 1 where id in (?)"
-		a       []interface{}
+		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		return
 	}
 
-	query, a, err = sqlx.In(query, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in DeleteContacts(_), error: %v", err)
-		return
-	}
-	rResult, err = dao.db.Exec(ctx, query, a...)
+	rResult, err = dao.db.Exec(ctx, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in DeleteContacts(_), error: %v", err)
@@ -213,27 +209,19 @@ func (dao *UnregisteredContactsDAO) DeleteContacts(ctx context.Context, id_list 
 	return
 }
 
-// update unregistered_contacts set imported = 1 where id in (:id_list)
 // DeleteContactsTx
-// TODO(@benqi): sqlmap
-func (dao *UnregisteredContactsDAO) DeleteContactsTx(tx *sqlx.Tx, id_list []int64) (rowsAffected int64, err error) {
+// update unregistered_contacts set imported = 1 where id in (:id_list)
+func (dao *UnregisteredContactsDAO) DeleteContactsTx(tx *sqlx.Tx, idList []int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update unregistered_contacts set imported = 1 where id in (?)"
-		a       []interface{}
+		query   = fmt.Sprintf("update unregistered_contacts set imported = 1 where id in (%s)", sqlx.InInt64List(idList))
 		rResult sql.Result
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		return
 	}
 
-	query, a, err = sqlx.In(query, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(tx.Context()).Errorf("sqlx.In in DeleteContacts(_), error: %v", err)
-		return
-	}
-	rResult, err = tx.Exec(query, a...)
+	rResult, err = tx.Exec(query)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in DeleteContacts(_), error: %v", err)
@@ -250,12 +238,12 @@ func (dao *UnregisteredContactsDAO) DeleteContactsTx(tx *sqlx.Tx, id_list []int6
 
 // DeleteImportersByPhone
 // update unregistered_contacts set imported = 1 where phone = :phone
-// TODO(@benqi): sqlmap
 func (dao *UnregisteredContactsDAO) DeleteImportersByPhone(ctx context.Context, phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set imported = 1 where phone = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = dao.db.Exec(ctx, query, phone)
 
 	if err != nil {
@@ -271,9 +259,8 @@ func (dao *UnregisteredContactsDAO) DeleteImportersByPhone(ctx context.Context, 
 	return
 }
 
-// update unregistered_contacts set imported = 1 where phone = :phone
 // DeleteImportersByPhoneTx
-// TODO(@benqi): sqlmap
+// update unregistered_contacts set imported = 1 where phone = :phone
 func (dao *UnregisteredContactsDAO) DeleteImportersByPhoneTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update unregistered_contacts set imported = 1 where phone = ?"

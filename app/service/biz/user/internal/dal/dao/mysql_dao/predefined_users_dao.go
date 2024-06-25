@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type PredefinedUsersDAO struct {
 	db *sqlx.DB
 }
 
 func NewPredefinedUsersDAO(db *sqlx.DB) *PredefinedUsersDAO {
-	return &PredefinedUsersDAO{db}
+	return &PredefinedUsersDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) Insert(ctx context.Context, do *dataobject.PredefinedUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
@@ -62,7 +67,6 @@ func (dao *PredefinedUsersDAO) Insert(ctx context.Context, do *dataobject.Predef
 
 // InsertTx
 // insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into predefined_users(first_name, last_name, username, phone, code, verified) values (:first_name, :last_name, :username, :phone, :code, :verified)"
@@ -90,7 +94,6 @@ func (dao *PredefinedUsersDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PredefinedUs
 
 // SelectByPhone
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = :phone and deleted = 0 limit 1
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) (rValue *dataobject.PredefinedUsersDO, err error) {
 	var (
 		query = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where phone = ? and deleted = 0 limit 1"
@@ -99,7 +102,7 @@ func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) 
 	err = dao.db.QueryRowPartial(ctx, do, query, phone)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByPhone(_), error: %v", err)
 			return
 		} else {
@@ -114,7 +117,6 @@ func (dao *PredefinedUsersDAO) SelectByPhone(ctx context.Context, phone string) 
 
 // SelectPredefinedUsersAll
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
 		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
@@ -134,8 +136,7 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAll(ctx context.Context) (rL
 
 // SelectPredefinedUsersAllWithCB
 // select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc
-// TODO(@benqi): sqlmap
-func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(i int, v *dataobject.PredefinedUsersDO)) (rList []dataobject.PredefinedUsersDO, err error) {
+func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Context, cb func(sz, i int, v *dataobject.PredefinedUsersDO)) (rList []dataobject.PredefinedUsersDO, err error) {
 	var (
 		query  = "select id, phone, first_name, last_name, username, code, verified, registered_user_id from predefined_users where deleted = 0 order by username asc"
 		values []dataobject.PredefinedUsersDO
@@ -150,8 +151,9 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Contex
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -160,12 +162,12 @@ func (dao *PredefinedUsersDAO) SelectPredefinedUsersAllWithCB(ctx context.Contex
 
 // Delete
 // update predefined_users set deleted = 0 where phone = :phone
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) Delete(ctx context.Context, phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update predefined_users set deleted = 0 where phone = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = dao.db.Exec(ctx, query, phone)
 
 	if err != nil {
@@ -181,9 +183,8 @@ func (dao *PredefinedUsersDAO) Delete(ctx context.Context, phone string) (rowsAf
 	return
 }
 
-// update predefined_users set deleted = 0 where phone = :phone
 // DeleteTx
-// TODO(@benqi): sqlmap
+// update predefined_users set deleted = 0 where phone = :phone
 func (dao *PredefinedUsersDAO) DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected int64, err error) {
 	var (
 		query   = "update predefined_users set deleted = 0 where phone = ?"
@@ -206,7 +207,6 @@ func (dao *PredefinedUsersDAO) DeleteTx(tx *sqlx.Tx, phone string) (rowsAffected
 
 // Update
 // update predefined_users set %s where phone = :phone
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) Update(ctx context.Context, cMap map[string]interface{}, phone string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -239,7 +239,6 @@ func (dao *PredefinedUsersDAO) Update(ctx context.Context, cMap map[string]inter
 
 // UpdateTx
 // update predefined_users set %s where phone = :phone
-// TODO(@benqi): sqlmap
 func (dao *PredefinedUsersDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, phone string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))

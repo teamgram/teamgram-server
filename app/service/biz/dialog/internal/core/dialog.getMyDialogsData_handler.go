@@ -53,7 +53,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 						ctx,
 						in.UserId,
 						[]int32{mtproto.PEER_USER},
-						func(i int, v *dataobject.DialogsDO) {
+						func(sz, i int, v *dataobject.DialogsDO) {
 							idList = append(idList, v.PeerId)
 						})
 					if err2 != nil {
@@ -83,7 +83,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 						ctx,
 						in.UserId,
 						[]int32{mtproto.PEER_CHAT},
-						func(i int, v *dataobject.DialogsDO) {
+						func(sz, i int, v *dataobject.DialogsDO) {
 							idList = append(idList, v.PeerId)
 						})
 					if err2 != nil {
@@ -113,7 +113,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 						ctx,
 						in.UserId,
 						[]int32{mtproto.PEER_CHANNEL},
-						func(i int, v *dataobject.DialogsDO) {
+						func(sz, i int, v *dataobject.DialogsDO) {
 							idList = append(idList, v.PeerId)
 						})
 					if err2 != nil {

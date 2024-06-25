@@ -369,7 +369,7 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 		ctx,
 		userId,
 		msgIds,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			if dialogId == nil {
 				dialogId = &mtproto.DialogID{
 					A: v.DialogId1,
@@ -536,7 +536,7 @@ func (d *Dao) DeletePhoneCallHistory(ctx context.Context, userId int64) ([]int32
 		mtproto.MEDIA_PHONE_CALL,
 		math.MaxInt32,
 		math.MaxInt32,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			did := mtproto.DialogID{A: v.DialogId1, B: v.DialogId2}
 			if v2, ok := dialogIdMap[did]; !ok {
 				dialogIdMap[did] = []int32{v.UserMessageBoxId}

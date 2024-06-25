@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type AuthKeyInfosDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewAuthKeyInfosDAO(db *sqlx.DB) *AuthKeyInfosDAO {
 
 // Insert
 // insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
-// TODO(@benqi): sqlmap
 func (dao *AuthKeyInfosDAO) Insert(ctx context.Context, do *dataobject.AuthKeyInfosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
@@ -66,7 +67,6 @@ func (dao *AuthKeyInfosDAO) Insert(ctx context.Context, do *dataobject.AuthKeyIn
 
 // InsertTx
 // insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
-// TODO(@benqi): sqlmap
 func (dao *AuthKeyInfosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeyInfosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_key_infos(auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
@@ -94,16 +94,15 @@ func (dao *AuthKeyInfosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeyInfosDO)
 
 // SelectByAuthKeyId
 // select auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_key_infos where auth_key_id = :auth_key_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthKeyInfosDO, err error) {
+func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthKeyInfosDO, err error) {
 	var (
 		query = "select auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_key_infos where auth_key_id = ? limit 1"
 		do    = &dataobject.AuthKeyInfosDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
@@ -118,8 +117,7 @@ func (dao *AuthKeyInfosDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id i
 
 // UpdateCustomMap
 // update auth_key_infos set %s where auth_key_id = :auth_key_id
-// TODO(@benqi): sqlmap
-func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, auth_key_id int64) (rowsAffected int64, err error) {
+func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, authKeyId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -132,7 +130,7 @@ func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, auth_key_id)
+	aValues = append(aValues, authKeyId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -151,8 +149,7 @@ func (dao *AuthKeyInfosDAO) UpdateCustomMap(ctx context.Context, cMap map[string
 
 // UpdateCustomMapTx
 // update auth_key_infos set %s where auth_key_id = :auth_key_id
-// TODO(@benqi): sqlmap
-func (dao *AuthKeyInfosDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, auth_key_id int64) (rowsAffected int64, err error) {
+func (dao *AuthKeyInfosDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, authKeyId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -165,7 +162,7 @@ func (dao *AuthKeyInfosDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]inter
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, auth_key_id)
+	aValues = append(aValues, authKeyId)
 
 	rResult, err = tx.Exec(query, aValues...)
 

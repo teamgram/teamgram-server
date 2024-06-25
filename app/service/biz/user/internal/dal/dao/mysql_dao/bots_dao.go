@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,27 +24,31 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type BotsDAO struct {
 	db *sqlx.DB
 }
 
 func NewBotsDAO(db *sqlx.DB) *BotsDAO {
-	return &BotsDAO{db}
+	return &BotsDAO{
+		db: db,
+	}
 }
 
 // Select
 // select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id = :bot_id
-// TODO(@benqi): sqlmap
-func (dao *BotsDAO) Select(ctx context.Context, bot_id int64) (rValue *dataobject.BotsDO, err error) {
+func (dao *BotsDAO) Select(ctx context.Context, botId int64) (rValue *dataobject.BotsDO, err error) {
 	var (
 		query = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id = ?"
 		do    = &dataobject.BotsDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, bot_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, botId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
@@ -58,13 +63,12 @@ func (dao *BotsDAO) Select(ctx context.Context, bot_id int64) (rValue *dataobjec
 
 // SelectByToken
 // select bot_id from bots where token = :token
-// TODO(@benqi): sqlmap
 func (dao *BotsDAO) SelectByToken(ctx context.Context, token string) (rValue int64, err error) {
 	var query = "select bot_id from bots where token = ?"
 	err = dao.db.QueryRowPartial(ctx, &rValue, query, token)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("get in SelectByToken(_), error: %v", err)
 			return
 		} else {
@@ -77,25 +81,17 @@ func (dao *BotsDAO) SelectByToken(ctx context.Context, token string) (rValue int
 
 // SelectByIdList
 // select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (:id_list)
-// TODO(@benqi): sqlmap
-func (dao *BotsDAO) SelectByIdList(ctx context.Context, id_list []int32) (rList []dataobject.BotsDO, err error) {
+func (dao *BotsDAO) SelectByIdList(ctx context.Context, idList []int32) (rList []dataobject.BotsDO, err error) {
 	var (
-		query  = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (%s)", sqlx.InInt32List(idList))
 		values []dataobject.BotsDO
 	)
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		rList = []dataobject.BotsDO{}
 		return
 	}
 
-	query, a, err = sqlx.In(query, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
@@ -109,25 +105,17 @@ func (dao *BotsDAO) SelectByIdList(ctx context.Context, id_list []int32) (rList 
 
 // SelectByIdListWithCB
 // select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (:id_list)
-// TODO(@benqi): sqlmap
-func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, cb func(i int, v *dataobject.BotsDO)) (rList []dataobject.BotsDO, err error) {
+func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, idList []int32, cb func(sz, i int, v *dataobject.BotsDO)) (rList []dataobject.BotsDO, err error) {
 	var (
-		query  = "select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder from bots where bot_id in (%s)", sqlx.InInt32List(idList))
 		values []dataobject.BotsDO
 	)
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		rList = []dataobject.BotsDO{}
 		return
 	}
 
-	query, a, err = sqlx.In(query, id_list)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectByIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByIdList(_), error: %v", err)
@@ -137,8 +125,9 @@ func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, c
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -147,8 +136,7 @@ func (dao *BotsDAO) SelectByIdListWithCB(ctx context.Context, id_list []int32, c
 
 // Update
 // update bots set %s where bot_id = :bot_id
-// TODO(@benqi): sqlmap
-func (dao *BotsDAO) Update(ctx context.Context, cMap map[string]interface{}, bot_id int64) (rowsAffected int64, err error) {
+func (dao *BotsDAO) Update(ctx context.Context, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -161,7 +149,7 @@ func (dao *BotsDAO) Update(ctx context.Context, cMap map[string]interface{}, bot
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, bot_id)
+	aValues = append(aValues, botId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -180,8 +168,7 @@ func (dao *BotsDAO) Update(ctx context.Context, cMap map[string]interface{}, bot
 
 // UpdateTx
 // update bots set %s where bot_id = :bot_id
-// TODO(@benqi): sqlmap
-func (dao *BotsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bot_id int64) (rowsAffected int64, err error) {
+func (dao *BotsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, botId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -194,7 +181,7 @@ func (dao *BotsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, bot_id in
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, bot_id)
+	aValues = append(aValues, botId)
 
 	rResult, err = tx.Exec(query, aValues...)
 

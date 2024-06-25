@@ -50,7 +50,7 @@ func (d *Dao) getChatData(ctx context.Context, chatId int64) (*ChatCacheData, er
 	)
 
 	getChatDataIdListF := func(id int64) {
-		d.ChatParticipantsDAO.SelectListWithCB(ctx, id, func(i int, v *dataobject.ChatParticipantsDO) {
+		d.ChatParticipantsDAO.SelectListWithCB(ctx, id, func(sz, i int, v *dataobject.ChatParticipantsDO) {
 			chatData.ChatParticipantIdList = append(chatData.ChatParticipantIdList, v.UserId)
 			if v.State == 0 && v.IsBot {
 				chatData.BotIdList = append(chatData.BotIdList, v.UserId)

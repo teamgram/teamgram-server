@@ -34,7 +34,7 @@ func (c *MessageCore) MessageSearchGlobal(in *message.TLMessageSearchGlobal) (*m
 		in.UserId,
 		offset, "%"+in.Q+"%",
 		in.Limit,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			rValues = append(rValues, c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))
 		})
 	_ = rList

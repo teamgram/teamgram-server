@@ -54,7 +54,7 @@ func (c *DialogCore) DialogGetSavedDialogs(in *dialog.TLDialogGetSavedDialogs) (
 			meId,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.SavedDialogsDO) {
+			func(sz, i int, v *dataobject.SavedDialogsDO) {
 				dList.Dialogs = append(dList.Dialogs, c.svcCtx.Dao.MakeSavedDialog(v))
 			})
 		dList.Count = int32(c.svcCtx.Dao.CommonDAO.CalcSize(
@@ -71,7 +71,7 @@ func (c *DialogCore) DialogGetSavedDialogs(in *dialog.TLDialogGetSavedDialogs) (
 			meId,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.SavedDialogsDO) {
+			func(sz, i int, v *dataobject.SavedDialogsDO) {
 				dList.Dialogs = append(dList.Dialogs, c.svcCtx.Dao.MakeSavedDialog(v))
 			})
 		dList.Count = int32(c.svcCtx.Dao.CommonDAO.CalcSize(

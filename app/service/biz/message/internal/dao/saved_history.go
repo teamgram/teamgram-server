@@ -25,7 +25,7 @@ func (d *Dao) GetOffsetIdBackwardSavedHistoryMessages(ctx context.Context, userI
 			savedPeerId.PeerId,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -48,7 +48,7 @@ func (d *Dao) GetOffsetIdForwardSavedHistoryMessages(ctx context.Context, userId
 			savedPeerId.PeerId,
 			offsetId,
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -70,7 +70,7 @@ func (d *Dao) GetOffsetDateBackwardSavedHistoryMessages(ctx context.Context, use
 			savedPeerId.PeerId,
 			int64(offsetDate),
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList
@@ -92,7 +92,7 @@ func (d *Dao) GetOffsetDateForwardSavedHistoryMessages(ctx context.Context, user
 			savedPeerId.PeerId,
 			int64(offsetDate),
 			limit,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				messages = append(messages, d.MakeMessageBox(ctx, userId, v))
 			})
 		_ = rList

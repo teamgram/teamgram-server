@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,9 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
@@ -21,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type PhotosDAO struct {
 	db *sqlx.DB
 }
 
 func NewPhotosDAO(db *sqlx.DB) *PhotosDAO {
-	return &PhotosDAO{db}
+	return &PhotosDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
-// TODO(@benqi): sqlmap
 func (dao *PhotosDAO) Insert(ctx context.Context, do *dataobject.PhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
@@ -60,7 +67,6 @@ func (dao *PhotosDAO) Insert(ctx context.Context, do *dataobject.PhotosDO) (last
 
 // InsertTx
 // insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)
-// TODO(@benqi): sqlmap
 func (dao *PhotosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotosDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into photos(photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext) values (:photo_id, :access_hash, :has_stickers, :dc_id, :date2, :has_video, :input_file_name, :ext)"
@@ -88,16 +94,15 @@ func (dao *PhotosDAO) InsertTx(tx *sqlx.Tx, do *dataobject.PhotosDO) (lastInsert
 
 // SelectByPhotoId
 // select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = :photo_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *PhotosDAO) SelectByPhotoId(ctx context.Context, photo_id int64) (rValue *dataobject.PhotosDO, err error) {
+func (dao *PhotosDAO) SelectByPhotoId(ctx context.Context, photoId int64) (rValue *dataobject.PhotosDO, err error) {
 	var (
 		query = "select id, photo_id, access_hash, has_stickers, dc_id, date2, has_video, input_file_name, ext from photos where photo_id = ? limit 1"
 		do    = &dataobject.PhotosDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, photo_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, photoId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByPhotoId(_), error: %v", err)
 			return
 		} else {

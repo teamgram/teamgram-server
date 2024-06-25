@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,9 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/service/media/internal/dal/dataobject"
@@ -21,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type VideoSizesDAO struct {
 	db *sqlx.DB
 }
 
 func NewVideoSizesDAO(db *sqlx.DB) *VideoSizesDAO {
-	return &VideoSizesDAO{db}
+	return &VideoSizesDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into video_sizes(video_size_id, size_type, width, height, file_size, video_start_ts, file_path) values (:video_size_id, :size_type, :width, :height, :file_size, :video_start_ts, :file_path)
-// TODO(@benqi): sqlmap
 func (dao *VideoSizesDAO) Insert(ctx context.Context, do *dataobject.VideoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into video_sizes(video_size_id, size_type, width, height, file_size, video_start_ts, file_path) values (:video_size_id, :size_type, :width, :height, :file_size, :video_start_ts, :file_path)"
@@ -60,7 +67,6 @@ func (dao *VideoSizesDAO) Insert(ctx context.Context, do *dataobject.VideoSizesD
 
 // InsertTx
 // insert into video_sizes(video_size_id, size_type, width, height, file_size, video_start_ts, file_path) values (:video_size_id, :size_type, :width, :height, :file_size, :video_start_ts, :file_path)
-// TODO(@benqi): sqlmap
 func (dao *VideoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.VideoSizesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into video_sizes(video_size_id, size_type, width, height, file_size, video_start_ts, file_path) values (:video_size_id, :size_type, :width, :height, :file_size, :video_start_ts, :file_path)"
@@ -88,13 +94,12 @@ func (dao *VideoSizesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.VideoSizesDO) (la
 
 // SelectListByVideoSizeId
 // select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id = :video_size_id order by id asc
-// TODO(@benqi): sqlmap
-func (dao *VideoSizesDAO) SelectListByVideoSizeId(ctx context.Context, video_size_id int64) (rList []dataobject.VideoSizesDO, err error) {
+func (dao *VideoSizesDAO) SelectListByVideoSizeId(ctx context.Context, videoSizeId int64) (rList []dataobject.VideoSizesDO, err error) {
 	var (
 		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id = ? order by id asc"
 		values []dataobject.VideoSizesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, video_size_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeId(_), error: %v", err)
@@ -108,13 +113,12 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeId(ctx context.Context, video_siz
 
 // SelectListByVideoSizeIdWithCB
 // select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id = :video_size_id order by id asc
-// TODO(@benqi): sqlmap
-func (dao *VideoSizesDAO) SelectListByVideoSizeIdWithCB(ctx context.Context, video_size_id int64, cb func(i int, v *dataobject.VideoSizesDO)) (rList []dataobject.VideoSizesDO, err error) {
+func (dao *VideoSizesDAO) SelectListByVideoSizeIdWithCB(ctx context.Context, videoSizeId int64, cb func(sz, i int, v *dataobject.VideoSizesDO)) (rList []dataobject.VideoSizesDO, err error) {
 	var (
 		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id = ? order by id asc"
 		values []dataobject.VideoSizesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, video_size_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, videoSizeId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeId(_), error: %v", err)
@@ -124,8 +128,9 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdWithCB(ctx context.Context, vid
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -134,11 +139,9 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdWithCB(ctx context.Context, vid
 
 // SelectListByVideoSizeIdList
 // select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (:idList) order by id asc
-// TODO(@benqi): sqlmap
 func (dao *VideoSizesDAO) SelectListByVideoSizeIdList(ctx context.Context, idList []int64) (rList []dataobject.VideoSizesDO, err error) {
 	var (
-		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (?) order by id asc"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 		values []dataobject.VideoSizesDO
 	)
 	if len(idList) == 0 {
@@ -146,13 +149,7 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdList(ctx context.Context, idLis
 		return
 	}
 
-	query, a, err = sqlx.In(query, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByVideoSizeIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
@@ -166,11 +163,9 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdList(ctx context.Context, idLis
 
 // SelectListByVideoSizeIdListWithCB
 // select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (:idList) order by id asc
-// TODO(@benqi): sqlmap
-func (dao *VideoSizesDAO) SelectListByVideoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.VideoSizesDO)) (rList []dataobject.VideoSizesDO, err error) {
+func (dao *VideoSizesDAO) SelectListByVideoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *dataobject.VideoSizesDO)) (rList []dataobject.VideoSizesDO, err error) {
 	var (
-		query  = "select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (?) order by id asc"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, video_size_id, size_type, width, height, file_size, video_start_ts, file_path from video_sizes where video_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 		values []dataobject.VideoSizesDO
 	)
 	if len(idList) == 0 {
@@ -178,13 +173,7 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdListWithCB(ctx context.Context,
 		return
 	}
 
-	query, a, err = sqlx.In(query, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByVideoSizeIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByVideoSizeIdList(_), error: %v", err)
@@ -194,8 +183,9 @@ func (dao *VideoSizesDAO) SelectListByVideoSizeIdListWithCB(ctx context.Context,
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 

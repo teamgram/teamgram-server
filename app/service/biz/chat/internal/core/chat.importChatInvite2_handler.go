@@ -92,7 +92,7 @@ func (c *ChatCore) ChatImportChatInvite2(in *chat.TLChatImportChatInvite2) (*cha
 		c.svcCtx.Dao.ChatInviteParticipantsDAO.SelectRecentRequestedListWithCB(
 			c.ctx,
 			mChat.Id(),
-			func(i int, v *dataobject.ChatInviteParticipantsDO) {
+			func(sz, i int, v *dataobject.ChatInviteParticipantsDO) {
 				requesters.RequestsPending += 1
 				requesters.RecentRequesters = append(requesters.RecentRequesters, v.UserId)
 			})

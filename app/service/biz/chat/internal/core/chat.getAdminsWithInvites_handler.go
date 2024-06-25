@@ -52,7 +52,7 @@ func (c *ChatCore) ChatGetAdminsWithInvites(in *chat.TLChatGetAdminsWithInvites)
 	c.svcCtx.Dao.ChatInvitesDAO.SelectListByChatIdWithCB(
 		c.ctx,
 		in.ChatId,
-		func(i int, v *dataobject.ChatInvitesDO) {
+		func(sz, i int, v *dataobject.ChatInvitesDO) {
 			var (
 				admin *mtproto.ChatAdminWithInvites
 			)

@@ -351,7 +351,7 @@ func (m *Dao) GetCachePhotoData(ctx context.Context, photoId int64) (*CachePhoto
 			_, err = m.PhotoSizesDAO.SelectListByPhotoSizeIdWithCB(
 				ctx,
 				photoId,
-				func(i int, v *dataobject.PhotoSizesDO) {
+				func(sz, i int, v *dataobject.PhotoSizesDO) {
 					cData.SizeList = append(cData.SizeList, v)
 				})
 			if err != nil {
@@ -362,7 +362,7 @@ func (m *Dao) GetCachePhotoData(ctx context.Context, photoId int64) (*CachePhoto
 				m.VideoSizesDAO.SelectListByVideoSizeIdWithCB(
 					ctx,
 					photoId,
-					func(i int, v *dataobject.VideoSizesDO) {
+					func(sz, i int, v *dataobject.VideoSizesDO) {
 						cData.VideoSizeList = append(cData.VideoSizeList, v)
 					})
 			}

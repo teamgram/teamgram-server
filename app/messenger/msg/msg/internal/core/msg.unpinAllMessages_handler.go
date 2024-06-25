@@ -37,7 +37,7 @@ func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*mtproto.M
 			in.UserId,
 			dialogId.A,
 			dialogId.B,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				idList = append(idList, v.UserMessageBoxId)
 			})
 		if err != nil {

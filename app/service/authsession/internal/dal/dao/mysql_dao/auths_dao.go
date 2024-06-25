@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type AuthsDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewAuthsDAO(db *sqlx.DB) *AuthsDAO {
 
 // InsertOrUpdateLayer
 // insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
-// TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdateLayer(ctx context.Context, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
@@ -66,7 +67,6 @@ func (dao *AuthsDAO) InsertOrUpdateLayer(ctx context.Context, do *dataobject.Aut
 
 // InsertOrUpdateLayerTx
 // insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)
-// TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdateLayerTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auths(auth_key_id, layer, api_id, params, client_ip, date_active) values (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active) on duplicate key update layer = values(layer), client_ip = values(client_ip), date_active = values(date_active)"
@@ -94,7 +94,6 @@ func (dao *AuthsDAO) InsertOrUpdateLayerTx(tx *sqlx.Tx, do *dataobject.AuthsDO) 
 
 // InsertOrUpdate
 // insert into auths(auth_key_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, proxy, params, client_ip, date_active) values (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active) on duplicate key update api_id = values(api_id), device_model = values(device_model), system_version = values(system_version), app_version = values(app_version), system_lang_code = values(system_lang_code), lang_pack = values(lang_pack), lang_code = values(lang_code), proxy = values(proxy), params = values(params), client_ip = values(client_ip), date_active = values(date_active)
-// TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auths(auth_key_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, proxy, params, client_ip, date_active) values (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active) on duplicate key update api_id = values(api_id), device_model = values(device_model), system_version = values(system_version), app_version = values(app_version), system_lang_code = values(system_lang_code), lang_pack = values(lang_pack), lang_code = values(lang_code), proxy = values(proxy), params = values(params), client_ip = values(client_ip), date_active = values(date_active)"
@@ -122,7 +121,6 @@ func (dao *AuthsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.AuthsDO)
 
 // InsertOrUpdateTx
 // insert into auths(auth_key_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, proxy, params, client_ip, date_active) values (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active) on duplicate key update api_id = values(api_id), device_model = values(device_model), system_version = values(system_version), app_version = values(app_version), system_lang_code = values(system_lang_code), lang_pack = values(lang_pack), lang_code = values(lang_code), proxy = values(proxy), params = values(params), client_ip = values(client_ip), date_active = values(date_active)
-// TODO(@benqi): sqlmap
 func (dao *AuthsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auths(auth_key_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, proxy, params, client_ip, date_active) values (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active) on duplicate key update api_id = values(api_id), device_model = values(device_model), system_version = values(system_version), app_version = values(app_version), system_lang_code = values(system_lang_code), lang_pack = values(lang_pack), lang_code = values(lang_code), proxy = values(proxy), params = values(params), client_ip = values(client_ip), date_active = values(date_active)"
@@ -150,11 +148,9 @@ func (dao *AuthsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.AuthsDO) (last
 
 // SelectSessions
 // select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (:idList)
-// TODO(@benqi): sqlmap
 func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList []dataobject.AuthsDO, err error) {
 	var (
-		query  = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (%s)", sqlx.InInt64List(idList))
 		values []dataobject.AuthsDO
 	)
 	if len(idList) == 0 {
@@ -162,13 +158,7 @@ func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList 
 		return
 	}
 
-	query, a, err = sqlx.In(query, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectSessions(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
@@ -182,11 +172,9 @@ func (dao *AuthsDAO) SelectSessions(ctx context.Context, idList []int64) (rList 
 
 // SelectSessionsWithCB
 // select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (:idList)
-// TODO(@benqi): sqlmap
-func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, cb func(i int, v *dataobject.AuthsDO)) (rList []dataobject.AuthsDO, err error) {
+func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *dataobject.AuthsDO)) (rList []dataobject.AuthsDO, err error) {
 	var (
-		query  = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id in (%s)", sqlx.InInt64List(idList))
 		values []dataobject.AuthsDO
 	)
 	if len(idList) == 0 {
@@ -194,13 +182,7 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 		return
 	}
 
-	query, a, err = sqlx.In(query, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectSessions(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectSessions(_), error: %v", err)
@@ -210,8 +192,9 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -220,16 +203,15 @@ func (dao *AuthsDAO) SelectSessionsWithCB(ctx context.Context, idList []int64, c
 
 // SelectByAuthKeyId
 // select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id = :auth_key_id and deleted = 0 limit 1
-// TODO(@benqi): sqlmap
-func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthsDO, err error) {
+func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthsDO, err error) {
 	var (
 		query = "select auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active from auths where auth_key_id = ? and deleted = 0 limit 1"
 		do    = &dataobject.AuthsDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {
@@ -244,13 +226,12 @@ func (dao *AuthsDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (
 
 // SelectLayer
 // select layer from auths where auth_key_id = :auth_key_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *AuthsDAO) SelectLayer(ctx context.Context, auth_key_id int64) (rValue int32, err error) {
+func (dao *AuthsDAO) SelectLayer(ctx context.Context, authKeyId int64) (rValue int32, err error) {
 	var query = "select layer from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("get in SelectLayer(_), error: %v", err)
 			return
 		} else {
@@ -263,13 +244,12 @@ func (dao *AuthsDAO) SelectLayer(ctx context.Context, auth_key_id int64) (rValue
 
 // SelectLangCode
 // select lang_code from auths where auth_key_id = :auth_key_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *AuthsDAO) SelectLangCode(ctx context.Context, auth_key_id int64) (rValue string, err error) {
+func (dao *AuthsDAO) SelectLangCode(ctx context.Context, authKeyId int64) (rValue string, err error) {
 	var query = "select lang_code from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("get in SelectLangCode(_), error: %v", err)
 			return
 		} else {
@@ -282,13 +262,12 @@ func (dao *AuthsDAO) SelectLangCode(ctx context.Context, auth_key_id int64) (rVa
 
 // SelectLangPack
 // select lang_pack from auths where auth_key_id = :auth_key_id limit 1
-// TODO(@benqi): sqlmap
-func (dao *AuthsDAO) SelectLangPack(ctx context.Context, auth_key_id int64) (rValue string, err error) {
+func (dao *AuthsDAO) SelectLangPack(ctx context.Context, authKeyId int64) (rValue string, err error) {
 	var query = "select lang_pack from auths where auth_key_id = ? limit 1"
-	err = dao.db.QueryRowPartial(ctx, &rValue, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, &rValue, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("get in SelectLangPack(_), error: %v", err)
 			return
 		} else {

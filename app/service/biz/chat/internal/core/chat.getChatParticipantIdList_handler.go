@@ -25,7 +25,7 @@ func (c *ChatCore) ChatGetChatParticipantIdList(in *chat.TLChatGetChatParticipan
 	c.svcCtx.Dao.ChatParticipantsDAO.SelectListWithCB(
 		c.ctx,
 		in.ChatId,
-		func(i int, v *dataobject.ChatParticipantsDO) {
+		func(sz, i int, v *dataobject.ChatParticipantsDO) {
 			if v.State != mtproto.ChatMemberStateNormal {
 				return
 			}

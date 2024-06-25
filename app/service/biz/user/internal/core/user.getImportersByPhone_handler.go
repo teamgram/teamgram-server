@@ -34,7 +34,7 @@ func (c *UserCore) UserGetImportersByPhone(in *user.TLUserGetImportersByPhone) (
 	c.svcCtx.Dao.UnregisteredContactsDAO.SelectImportersByPhoneWithCB(
 		c.ctx,
 		in.Phone,
-		func(i int, v *dataobject.UnregisteredContactsDO) {
+		func(sz, i int, v *dataobject.UnregisteredContactsDO) {
 			contacts.Datas = append(contacts.Datas, mtproto.MakeTLInputPhoneContact(&mtproto.InputContact{
 				ClientId:  v.ImporterUserId,
 				Phone:     "",

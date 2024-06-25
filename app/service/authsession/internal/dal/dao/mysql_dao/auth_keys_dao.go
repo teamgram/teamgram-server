@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type AuthKeysDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewAuthKeysDAO(db *sqlx.DB) *AuthKeysDAO {
 
 // Insert
 // insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)
-// TODO(@benqi): sqlmap
 func (dao *AuthKeysDAO) Insert(ctx context.Context, do *dataobject.AuthKeysDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
@@ -66,7 +67,6 @@ func (dao *AuthKeysDAO) Insert(ctx context.Context, do *dataobject.AuthKeysDO) (
 
 // InsertTx
 // insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)
-// TODO(@benqi): sqlmap
 func (dao *AuthKeysDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeysDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into auth_keys(auth_key_id, body) values (:auth_key_id, :body)"
@@ -94,16 +94,15 @@ func (dao *AuthKeysDAO) InsertTx(tx *sqlx.Tx, do *dataobject.AuthKeysDO) (lastIn
 
 // SelectByAuthKeyId
 // select auth_key_id, body from auth_keys where auth_key_id = :auth_key_id
-// TODO(@benqi): sqlmap
-func (dao *AuthKeysDAO) SelectByAuthKeyId(ctx context.Context, auth_key_id int64) (rValue *dataobject.AuthKeysDO, err error) {
+func (dao *AuthKeysDAO) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthKeysDO, err error) {
 	var (
 		query = "select auth_key_id, body from auth_keys where auth_key_id = ?"
 		do    = &dataobject.AuthKeysDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByAuthKeyId(_), error: %v", err)
 			return
 		} else {

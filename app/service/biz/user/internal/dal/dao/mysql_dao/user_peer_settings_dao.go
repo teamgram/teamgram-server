@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type UserPeerSettingsDAO struct {
 	db *sqlx.DB
 }
 
 func NewUserPeerSettingsDAO(db *sqlx.DB) *UserPeerSettingsDAO {
-	return &UserPeerSettingsDAO{db}
+	return &UserPeerSettingsDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
 // insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
-// TODO(@benqi): sqlmap
 func (dao *UserPeerSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
@@ -62,7 +67,6 @@ func (dao *UserPeerSettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 
 // InsertOrUpdateTx
 // insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0
-// TODO(@benqi): sqlmap
 func (dao *UserPeerSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserPeerSettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_peer_settings(user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance) values (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance) on duplicate key update report_spam = values(report_spam), add_contact = values(add_contact), block_contact = values(block_contact), share_contact = values(share_contact), need_contacts_exception = values(need_contacts_exception), report_geo = values(report_geo), autoarchived = values(autoarchived), geo_distance = values(geo_distance), hide = 0"
@@ -90,16 +94,15 @@ func (dao *UserPeerSettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Use
 
 // Select
 // select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hide = 0
-// TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) Select(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rValue *dataobject.UserPeerSettingsDO, err error) {
+func (dao *UserPeerSettingsDAO) Select(ctx context.Context, userId int64, peerType int32, peerId int64) (rValue *dataobject.UserPeerSettingsDO, err error) {
 	var (
 		query = "select user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance from user_peer_settings where user_id = ? and peer_type = ? and peer_id = ? and hide = 0"
 		do    = &dataobject.UserPeerSettingsDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, user_id, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, userId, peerType, peerId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
@@ -114,8 +117,7 @@ func (dao *UserPeerSettingsDAO) Select(ctx context.Context, user_id int64, peer_
 
 // Update
 // update user_peer_settings set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) Update(ctx context.Context, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UserPeerSettingsDAO) Update(ctx context.Context, cMap map[string]interface{}, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -128,9 +130,9 @@ func (dao *UserPeerSettingsDAO) Update(ctx context.Context, cMap map[string]inte
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, peer_type)
-	aValues = append(aValues, peer_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, peerType)
+	aValues = append(aValues, peerId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -149,8 +151,7 @@ func (dao *UserPeerSettingsDAO) Update(ctx context.Context, cMap map[string]inte
 
 // UpdateTx
 // update user_peer_settings set %s where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -163,9 +164,9 @@ func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, peer_type)
-	aValues = append(aValues, peer_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, peerType)
+	aValues = append(aValues, peerId)
 
 	rResult, err = tx.Exec(query, aValues...)
 
@@ -184,13 +185,13 @@ func (dao *UserPeerSettingsDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{
 
 // Delete
 // update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) Delete(ctx context.Context, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UserPeerSettingsDAO) Delete(ctx context.Context, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, peer_type, peer_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Delete(_), error: %v", err)
@@ -205,15 +206,14 @@ func (dao *UserPeerSettingsDAO) Delete(ctx context.Context, user_id int64, peer_
 	return
 }
 
-// update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
 // DeleteTx
-// TODO(@benqi): sqlmap
-func (dao *UserPeerSettingsDAO) DeleteTx(tx *sqlx.Tx, user_id int64, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+// update user_peer_settings set hide = 1 where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (dao *UserPeerSettingsDAO) DeleteTx(tx *sqlx.Tx, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_peer_settings set hide = 1 where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, peer_type, peer_id)
+	rResult, err = tx.Exec(query, userId, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Delete(_), error: %v", err)

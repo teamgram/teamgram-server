@@ -33,7 +33,7 @@ func (c *InboxCore) InboxSendChatMessageToInbox(in *inbox.TLInboxSendChatMessage
 	_, err := c.svcCtx.Dao.ChatParticipantsDAO.SelectListWithCB(
 		c.ctx,
 		in.PeerChatId,
-		func(i int, v *dataobject.ChatParticipantsDO) {
+		func(sz, i int, v *dataobject.ChatParticipantsDO) {
 			if v.UserId == in.FromId {
 				return
 			}

@@ -27,14 +27,14 @@ func (c *DialogCore) DialogGetPinnedDialogs(in *dialog.TLDialogGetPinnedDialogs)
 		c.svcCtx.Dao.DialogsDAO.SelectPinnedDialogsWithCB(
 			c.ctx,
 			meId,
-			func(i int, v *dataobject.DialogsDO) {
+			func(sz, i int, v *dataobject.DialogsDO) {
 				dList = append(dList, makeDialog(v))
 			})
 	} else {
 		c.svcCtx.Dao.DialogsDAO.SelectFolderPinnedDialogsWithCB(
 			c.ctx,
 			meId,
-			func(i int, v *dataobject.DialogsDO) {
+			func(sz, i int, v *dataobject.DialogsDO) {
 				dList = append(dList, makeDialog(v))
 			})
 	}

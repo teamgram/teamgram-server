@@ -48,7 +48,7 @@ func (c *ChatCore) ChatSearch(in *chat.TLChatSearch) (*chat.Vector_MutableChat, 
 		c.ctx,
 		q,
 		in.Limit,
-		func(i int, v int64) {
+		func(sz, i int, v int64) {
 			chat, err := c.svcCtx.Dao.GetExcludeParticipantsMutableChat(c.ctx, v)
 			if err != nil {
 				c.Logger.Errorf("chat.search - error: %v", err)

@@ -124,7 +124,7 @@ func (c *ChatCore) ChatGetChatInviteImporters(in *chat.TLChatGetChatInviteImport
 		c.svcCtx.Dao.ChatInviteParticipantsDAO.SelectRecentRequestedListWithCB(
 			c.ctx,
 			in.GetChatId(),
-			func(i int, v *dataobject.ChatInviteParticipantsDO) {
+			func(sz, i int, v *dataobject.ChatInviteParticipantsDO) {
 				rInvites = append(rInvites, mtproto.MakeTLChatInviteImporter(&mtproto.ChatInviteImporter{
 					Requested:  v.Requested,
 					UserId:     v.UserId,
@@ -141,7 +141,7 @@ func (c *ChatCore) ChatGetChatInviteImporters(in *chat.TLChatGetChatInviteImport
 			c.ctx,
 			link,
 			requested,
-			func(i int, v *dataobject.ChatInviteParticipantsDO) {
+			func(sz, i int, v *dataobject.ChatInviteParticipantsDO) {
 				rInvites = append(rInvites, mtproto.MakeTLChatInviteImporter(&mtproto.ChatInviteImporter{
 					Requested:  v.Requested,
 					UserId:     v.UserId,

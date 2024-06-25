@@ -60,7 +60,7 @@ func (c *ChatCore) ChatHideChatJoinRequests(in *chat.TLChatHideChatJoinRequests)
 	c.svcCtx.Dao.ChatInviteParticipantsDAO.SelectRecentRequestedListWithCB(
 		c.ctx,
 		in.ChatId,
-		func(i int, v *dataobject.ChatInviteParticipantsDO) {
+		func(sz, i int, v *dataobject.ChatInviteParticipantsDO) {
 			if joinId != v.UserId {
 				requesters.RequestsPending += 1
 				requesters.RecentRequesters = append(requesters.RecentRequesters, v.UserId)

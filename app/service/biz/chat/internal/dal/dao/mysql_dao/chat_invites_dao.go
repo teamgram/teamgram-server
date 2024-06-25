@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type ChatInvitesDAO struct {
 	db *sqlx.DB
 }
 
 func NewChatInvitesDAO(db *sqlx.DB) *ChatInvitesDAO {
-	return &ChatInvitesDAO{db}
+	return &ChatInvitesDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into chat_invites(chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2) values (:chat_id, :admin_id, :link, :permanent, :revoked, :request_needed, :start_date, :expire_date, :usage_limit, :usage2, :requested, :title, :date2)
-// TODO(@benqi): sqlmap
 func (dao *ChatInvitesDAO) Insert(ctx context.Context, do *dataobject.ChatInvitesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_invites(chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2) values (:chat_id, :admin_id, :link, :permanent, :revoked, :request_needed, :start_date, :expire_date, :usage_limit, :usage2, :requested, :title, :date2)"
@@ -62,7 +67,6 @@ func (dao *ChatInvitesDAO) Insert(ctx context.Context, do *dataobject.ChatInvite
 
 // InsertTx
 // insert into chat_invites(chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2) values (:chat_id, :admin_id, :link, :permanent, :revoked, :request_needed, :start_date, :expire_date, :usage_limit, :usage2, :requested, :title, :date2)
-// TODO(@benqi): sqlmap
 func (dao *ChatInvitesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInvitesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_invites(chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2) values (:chat_id, :admin_id, :link, :permanent, :revoked, :request_needed, :start_date, :expire_date, :usage_limit, :usage2, :requested, :title, :date2)"
@@ -90,13 +94,12 @@ func (dao *ChatInvitesDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatInvitesDO) (
 
 // SelectListByAdminId
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = :chat_id and admin_id = :admin_id
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) SelectListByAdminId(ctx context.Context, chat_id int64, admin_id int64) (rList []dataobject.ChatInvitesDO, err error) {
+func (dao *ChatInvitesDAO) SelectListByAdminId(ctx context.Context, chatId int64, adminId int64) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ? and admin_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id, admin_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByAdminId(_), error: %v", err)
@@ -110,13 +113,12 @@ func (dao *ChatInvitesDAO) SelectListByAdminId(ctx context.Context, chat_id int6
 
 // SelectListByAdminIdWithCB
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = :chat_id and admin_id = :admin_id
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chat_id int64, admin_id int64, cb func(i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
+func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chatId int64, adminId int64, cb func(sz, i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ? and admin_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id, admin_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId, adminId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByAdminId(_), error: %v", err)
@@ -126,8 +128,9 @@ func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chat_i
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -136,7 +139,6 @@ func (dao *ChatInvitesDAO) SelectListByAdminIdWithCB(ctx context.Context, chat_i
 
 // SelectByLink
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where link = :link
-// TODO(@benqi): sqlmap
 func (dao *ChatInvitesDAO) SelectByLink(ctx context.Context, link string) (rValue *dataobject.ChatInvitesDO, err error) {
 	var (
 		query = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where link = ?"
@@ -145,7 +147,7 @@ func (dao *ChatInvitesDAO) SelectByLink(ctx context.Context, link string) (rValu
 	err = dao.db.QueryRowPartial(ctx, do, query, link)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByLink(_), error: %v", err)
 			return
 		} else {
@@ -160,7 +162,6 @@ func (dao *ChatInvitesDAO) SelectByLink(ctx context.Context, link string) (rValu
 
 // SelectAll
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites
-// TODO(@benqi): sqlmap
 func (dao *ChatInvitesDAO) SelectAll(ctx context.Context) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
@@ -180,8 +181,7 @@ func (dao *ChatInvitesDAO) SelectAll(ctx context.Context) (rList []dataobject.Ch
 
 // SelectAllWithCB
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
+func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(sz, i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites"
 		values []dataobject.ChatInvitesDO
@@ -196,8 +196,9 @@ func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(i int, v
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -206,13 +207,12 @@ func (dao *ChatInvitesDAO) SelectAllWithCB(ctx context.Context, cb func(i int, v
 
 // SelectListByChatId
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) SelectListByChatId(ctx context.Context, chat_id int64) (rList []dataobject.ChatInvitesDO, err error) {
+func (dao *ChatInvitesDAO) SelectListByChatId(ctx context.Context, chatId int64) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatId(_), error: %v", err)
@@ -226,13 +226,12 @@ func (dao *ChatInvitesDAO) SelectListByChatId(ctx context.Context, chat_id int64
 
 // SelectListByChatIdWithCB
 // select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chat_id int64, cb func(i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
+func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v *dataobject.ChatInvitesDO)) (rList []dataobject.ChatInvitesDO, err error) {
 	var (
 		query  = "select id, chat_id, admin_id, link, permanent, revoked, request_needed, start_date, expire_date, usage_limit, usage2, requested, title, date2 from chat_invites where chat_id = ?"
 		values []dataobject.ChatInvitesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatId(_), error: %v", err)
@@ -242,8 +241,9 @@ func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chat_id
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -252,8 +252,7 @@ func (dao *ChatInvitesDAO) SelectListByChatIdWithCB(ctx context.Context, chat_id
 
 // Update
 // update chat_invites set %s where chat_id = :chat_id and link = :link
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) Update(ctx context.Context, cMap map[string]interface{}, chat_id int64, link string) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) Update(ctx context.Context, cMap map[string]interface{}, chatId int64, link string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -266,7 +265,7 @@ func (dao *ChatInvitesDAO) Update(ctx context.Context, cMap map[string]interface
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, chatId)
 	aValues = append(aValues, link)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
@@ -286,8 +285,7 @@ func (dao *ChatInvitesDAO) Update(ctx context.Context, cMap map[string]interface
 
 // UpdateTx
 // update chat_invites set %s where chat_id = :chat_id and link = :link
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, chat_id int64, link string) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, chatId int64, link string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -300,7 +298,7 @@ func (dao *ChatInvitesDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, ch
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, chatId)
 	aValues = append(aValues, link)
 
 	rResult, err = tx.Exec(query, aValues...)
@@ -320,13 +318,12 @@ func (dao *ChatInvitesDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, ch
 
 // DeleteByLink
 // delete from chat_invites where chat_id = :chat_id and link = :link
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) DeleteByLink(ctx context.Context, chat_id int64, link string) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) DeleteByLink(ctx context.Context, chatId int64, link string) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invites where chat_id = ? and link = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, chat_id, link)
+	rResult, err = dao.db.Exec(ctx, query, chatId, link)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in DeleteByLink(_), error: %v", err)
@@ -343,13 +340,12 @@ func (dao *ChatInvitesDAO) DeleteByLink(ctx context.Context, chat_id int64, link
 
 // DeleteByLinkTx
 // delete from chat_invites where chat_id = :chat_id and link = :link
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) DeleteByLinkTx(tx *sqlx.Tx, chat_id int64, link string) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) DeleteByLinkTx(tx *sqlx.Tx, chatId int64, link string) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invites where chat_id = ? and link = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, chat_id, link)
+	rResult, err = tx.Exec(query, chatId, link)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in DeleteByLink(_), error: %v", err)
@@ -366,13 +362,12 @@ func (dao *ChatInvitesDAO) DeleteByLinkTx(tx *sqlx.Tx, chat_id int64, link strin
 
 // DeleteByRevoked
 // delete from chat_invites where chat_id = :chat_id and admin_id = :admin_id and revoked = 1
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) DeleteByRevoked(ctx context.Context, chat_id int64, admin_id int64) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) DeleteByRevoked(ctx context.Context, chatId int64, adminId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invites where chat_id = ? and admin_id = ? and revoked = 1"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, chat_id, admin_id)
+	rResult, err = dao.db.Exec(ctx, query, chatId, adminId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in DeleteByRevoked(_), error: %v", err)
@@ -389,13 +384,12 @@ func (dao *ChatInvitesDAO) DeleteByRevoked(ctx context.Context, chat_id int64, a
 
 // DeleteByRevokedTx
 // delete from chat_invites where chat_id = :chat_id and admin_id = :admin_id and revoked = 1
-// TODO(@benqi): sqlmap
-func (dao *ChatInvitesDAO) DeleteByRevokedTx(tx *sqlx.Tx, chat_id int64, admin_id int64) (rowsAffected int64, err error) {
+func (dao *ChatInvitesDAO) DeleteByRevokedTx(tx *sqlx.Tx, chatId int64, adminId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from chat_invites where chat_id = ? and admin_id = ? and revoked = 1"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, chat_id, admin_id)
+	rResult, err = tx.Exec(query, chatId, adminId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in DeleteByRevoked(_), error: %v", err)

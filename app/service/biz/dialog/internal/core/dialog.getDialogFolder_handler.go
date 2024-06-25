@@ -28,7 +28,7 @@ func (c *DialogCore) DialogGetDialogFolder(in *dialog.TLDialogGetDialogFolder) (
 		c.ctx,
 		meId,
 		folderId,
-		func(i int, v *dataobject.DialogsDO) {
+		func(sz, i int, v *dataobject.DialogsDO) {
 			if i == 0 {
 				dialogExt = &dialog.DialogExt{
 					Dialog: mtproto.MakeTLDialogFolder(&mtproto.Dialog{

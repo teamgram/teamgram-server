@@ -142,7 +142,7 @@ func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, h
 	d.AuthUsersDAO.SelectListByUserIdWithCB(
 		ctx,
 		userId,
-		func(i int, v *dataobject.AuthUsersDO) {
+		func(sz, i int, v *dataobject.AuthUsersDO) {
 			if hash == 0 {
 				if authKeyId == v.AuthKeyId {
 					return

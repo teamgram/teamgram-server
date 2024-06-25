@@ -24,7 +24,7 @@ func (c *ChatCore) ChatGetUsersChatIdList(in *chat.TLChatGetUsersChatIdList) (*c
 	c.svcCtx.Dao.ChatParticipantsDAO.SelectUsersChatIdListWithCB(
 		c.ctx,
 		in.Id,
-		func(i int, v *dataobject.ChatParticipantsDO) {
+		func(sz, i int, v *dataobject.ChatParticipantsDO) {
 			found := false
 			for _, ch := range rValueList {
 				if ch.UserId == v.UserId {

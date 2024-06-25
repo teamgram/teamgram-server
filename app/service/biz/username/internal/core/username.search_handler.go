@@ -38,7 +38,7 @@ func (c *UsernameCore) UsernameSearch(in *username.TLUsernameSearch) (*username.
 		q2,
 		in.ExcludedContacts,
 		in.Limit,
-		func(i int, v *dataobject.UsernameDO) {
+		func(sz, i int, v *dataobject.UsernameDO) {
 			switch v.PeerType {
 			case mtproto.PEER_USER:
 				rValList.Datas = append(rValList.Datas, username.MakeTLUsernameData(&username.UsernameData{

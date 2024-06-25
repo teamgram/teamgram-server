@@ -26,7 +26,7 @@ func (c *MessageCore) MessageGetUserMessageList(in *message.TLMessageGetUserMess
 		c.ctx,
 		in.UserId,
 		in.IdList,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			rValueList.Datas = append(rValueList.GetDatas(), c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))
 		})
 

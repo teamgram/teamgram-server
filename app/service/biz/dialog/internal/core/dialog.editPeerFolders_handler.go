@@ -27,7 +27,7 @@ func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (
 	c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(c.ctx,
 		in.UserId,
 		in.PeerDialogList,
-		func(i int, v *dataobject.DialogsDO) {
+		func(sz, i int, v *dataobject.DialogsDO) {
 			if in.FolderId == 0 {
 				if v.Pinned > 0 {
 					dialogPinnedList = append(dialogPinnedList, &dialog.DialogPinnedExt{
@@ -51,7 +51,7 @@ func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (
 		if in.FolderId == 0 {
 			c.svcCtx.Dao.DialogsDAO.SelectPinnedDialogsWithCB(c.ctx,
 				in.UserId,
-				func(i int, v *dataobject.DialogsDO) {
+				func(sz, i int, v *dataobject.DialogsDO) {
 					dialogPinnedList = append(dialogPinnedList, &dialog.DialogPinnedExt{
 						Order:    v.FolderPinned,
 						PeerType: v.PeerType,
@@ -61,7 +61,7 @@ func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (
 		} else {
 			c.svcCtx.Dao.DialogsDAO.SelectFolderPinnedDialogsWithCB(c.ctx,
 				in.UserId,
-				func(i int, v *dataobject.DialogsDO) {
+				func(sz, i int, v *dataobject.DialogsDO) {
 					dialogPinnedList = append(dialogPinnedList, &dialog.DialogPinnedExt{
 						Order:    v.FolderPinned,
 						PeerType: v.PeerType,

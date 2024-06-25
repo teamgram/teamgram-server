@@ -52,7 +52,7 @@ func (c *InboxCore) InboxReadChatMediaUnreadToInbox(in *inbox.TLInboxReadChatMed
 			c.ctx,
 			tableName,
 			idList,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, v.UserId, v.UserMessageBoxId)
 
 				// TODO: batch handle

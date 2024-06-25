@@ -12,6 +12,6 @@
 ./dalgen.sh user_peer_settings
 ./dalgen.sh user_presences
 ./dalgen.sh user_privacies
+./dalgen.sh user_profile_photos
 ./dalgen.sh user_settings
 ./dalgen.sh users
-./dalgen.sh user_profile_photos

@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type DevicesDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewDevicesDAO(db *sqlx.DB) *DevicesDAO {
 
 // InsertOrUpdate
 // insert into devices(auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids) values (:auth_key_id, :user_id, :token_type, :token, :app_sandbox, :secret, :other_uids) on duplicate key update token = values(token), secret = values(secret), other_uids = values(other_uids), state = 0
-// TODO(@benqi): sqlmap
 func (dao *DevicesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.DevicesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into devices(auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids) values (:auth_key_id, :user_id, :token_type, :token, :app_sandbox, :secret, :other_uids) on duplicate key update token = values(token), secret = values(secret), other_uids = values(other_uids), state = 0"
@@ -66,7 +67,6 @@ func (dao *DevicesDAO) InsertOrUpdate(ctx context.Context, do *dataobject.Device
 
 // InsertOrUpdateTx
 // insert into devices(auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids) values (:auth_key_id, :user_id, :token_type, :token, :app_sandbox, :secret, :other_uids) on duplicate key update token = values(token), secret = values(secret), other_uids = values(other_uids), state = 0
-// TODO(@benqi): sqlmap
 func (dao *DevicesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DevicesDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into devices(auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids) values (:auth_key_id, :user_id, :token_type, :token, :app_sandbox, :secret, :other_uids) on duplicate key update token = values(token), secret = values(secret), other_uids = values(other_uids), state = 0"
@@ -94,16 +94,15 @@ func (dao *DevicesDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.DevicesDO) (
 
 // Select
 // select id, auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids from devices where auth_key_id = :auth_key_id and user_id = :user_id and token_type = :token_type and state = 0
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) Select(ctx context.Context, auth_key_id int64, user_id int64, token_type int32) (rValue *dataobject.DevicesDO, err error) {
+func (dao *DevicesDAO) Select(ctx context.Context, authKeyId int64, userId int64, tokenType int32) (rValue *dataobject.DevicesDO, err error) {
 	var (
 		query = "select id, auth_key_id, user_id, token_type, token, app_sandbox, secret, other_uids from devices where auth_key_id = ? and user_id = ? and token_type = ? and state = 0"
 		do    = &dataobject.DevicesDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, auth_key_id, user_id, token_type)
+	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId, userId, tokenType)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {
@@ -118,13 +117,12 @@ func (dao *DevicesDAO) Select(ctx context.Context, auth_key_id int64, user_id in
 
 // SelectListById
 // select id, auth_key_id, user_id, token_type, token from devices where token_type = :token_type and token = :token and state = 1
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) SelectListById(ctx context.Context, token_type int32, token string) (rList []dataobject.DevicesDO, err error) {
+func (dao *DevicesDAO) SelectListById(ctx context.Context, tokenType int32, token string) (rList []dataobject.DevicesDO, err error) {
 	var (
 		query  = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
 		values []dataobject.DevicesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, token_type, token)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, tokenType, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListById(_), error: %v", err)
@@ -138,13 +136,12 @@ func (dao *DevicesDAO) SelectListById(ctx context.Context, token_type int32, tok
 
 // SelectListByIdWithCB
 // select id, auth_key_id, user_id, token_type, token from devices where token_type = :token_type and token = :token and state = 1
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, token_type int32, token string, cb func(i int, v *dataobject.DevicesDO)) (rList []dataobject.DevicesDO, err error) {
+func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, tokenType int32, token string, cb func(sz, i int, v *dataobject.DevicesDO)) (rList []dataobject.DevicesDO, err error) {
 	var (
 		query  = "select id, auth_key_id, user_id, token_type, token from devices where token_type = ? and token = ? and state = 1"
 		values []dataobject.DevicesDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, token_type, token)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, tokenType, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListById(_), error: %v", err)
@@ -154,8 +151,9 @@ func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, token_type int3
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -164,13 +162,13 @@ func (dao *DevicesDAO) SelectListByIdWithCB(ctx context.Context, token_type int3
 
 // UpdateState
 // update devices set state = :state where auth_key_id = :auth_key_id and user_id = :user_id and token_type
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateState(ctx context.Context, state int32, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateState(ctx context.Context, state int32, authKeyId int64, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where auth_key_id = ? and user_id = ? and token_type"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, state, auth_key_id, user_id)
+
+	rResult, err = dao.db.Exec(ctx, query, state, authKeyId, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateState(_), error: %v", err)
@@ -187,13 +185,12 @@ func (dao *DevicesDAO) UpdateState(ctx context.Context, state int32, auth_key_id
 
 // UpdateStateTx
 // update devices set state = :state where auth_key_id = :auth_key_id and user_id = :user_id and token_type
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state int32, auth_key_id int64, user_id int64) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state int32, authKeyId int64, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where auth_key_id = ? and user_id = ? and token_type"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, state, auth_key_id, user_id)
+	rResult, err = tx.Exec(query, state, authKeyId, userId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateState(_), error: %v", err)
@@ -210,12 +207,12 @@ func (dao *DevicesDAO) UpdateStateTx(tx *sqlx.Tx, state int32, auth_key_id int64
 
 // UpdateStateById
 // update devices set state = :state where id = :id
-// TODO(@benqi): sqlmap
 func (dao *DevicesDAO) UpdateStateById(ctx context.Context, state int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where id = ?"
 		rResult sql.Result
 	)
+
 	rResult, err = dao.db.Exec(ctx, query, state, id)
 
 	if err != nil {
@@ -233,7 +230,6 @@ func (dao *DevicesDAO) UpdateStateById(ctx context.Context, state int32, id int6
 
 // UpdateStateByIdTx
 // update devices set state = :state where id = :id
-// TODO(@benqi): sqlmap
 func (dao *DevicesDAO) UpdateStateByIdTx(tx *sqlx.Tx, state int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where id = ?"
@@ -256,13 +252,13 @@ func (dao *DevicesDAO) UpdateStateByIdTx(tx *sqlx.Tx, state int32, id int64) (ro
 
 // UpdateStateByToken
 // update devices set state = :state where token_type = :token_type and token = :token
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state int32, token_type int32, token string) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state int32, tokenType int32, token string) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where token_type = ? and token = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, state, token_type, token)
+
+	rResult, err = dao.db.Exec(ctx, query, state, tokenType, token)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateStateByToken(_), error: %v", err)
@@ -279,13 +275,12 @@ func (dao *DevicesDAO) UpdateStateByToken(ctx context.Context, state int32, toke
 
 // UpdateStateByTokenTx
 // update devices set state = :state where token_type = :token_type and token = :token
-// TODO(@benqi): sqlmap
-func (dao *DevicesDAO) UpdateStateByTokenTx(tx *sqlx.Tx, state int32, token_type int32, token string) (rowsAffected int64, err error) {
+func (dao *DevicesDAO) UpdateStateByTokenTx(tx *sqlx.Tx, state int32, tokenType int32, token string) (rowsAffected int64, err error) {
 	var (
 		query   = "update devices set state = ? where token_type = ? and token = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, state, token_type, token)
+	rResult, err = tx.Exec(query, state, tokenType, token)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateStateByToken(_), error: %v", err)

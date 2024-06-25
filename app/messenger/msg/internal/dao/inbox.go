@@ -323,7 +323,7 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, peer 
 			ctx,
 			d.MessagesDAO.CalcTableName(peer.PeerId),
 			deleteMsgDataIds,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				doDeleteMessageF(v)
 			})
 		if err != nil {
@@ -347,7 +347,7 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, peer 
 				ctx,
 				tableName,
 				deleteMsgDataIds,
-				func(i int, v *dataobject.MessagesDO) {
+				func(sz, i int, v *dataobject.MessagesDO) {
 					doDeleteMessageF(v)
 				})
 		}

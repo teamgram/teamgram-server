@@ -277,7 +277,7 @@ func (d *Dao) UnbindAuthUser(ctx context.Context, authKeyId int64, userId int64)
 		d.AuthUsersDAO.SelectAuthKeyIdsWithCB(
 			ctx,
 			userId,
-			func(i int, v *dataobject.AuthUsersDO) {
+			func(sz, i int, v *dataobject.AuthUsersDO) {
 				idList = append(idList, genAuthDataCacheKey(v.AuthKeyId))
 			})
 		if len(idList) > 0 {

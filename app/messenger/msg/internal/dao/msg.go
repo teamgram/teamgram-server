@@ -42,7 +42,7 @@ func (d *Dao) GetLastMessageAndIdListByDialog(ctx context.Context, userId int64,
 		userId,
 		dialogId.A,
 		dialogId.B,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			if i == 0 {
 				var (
 					m = new(mtproto.Message)
@@ -95,7 +95,7 @@ func (d *Dao) GetMessageIdListByDialog(ctx context.Context, userId int64, peer *
 		userId,
 		dialogId.A,
 		dialogId.B,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			idList = append(idList, v.UserMessageBoxId)
 		})
 

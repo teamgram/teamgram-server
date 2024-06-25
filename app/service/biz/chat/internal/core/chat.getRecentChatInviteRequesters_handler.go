@@ -34,7 +34,7 @@ func (c *ChatCore) ChatGetRecentChatInviteRequesters(in *chat.TLChatGetRecentCha
 	doList, _ := c.svcCtx.Dao.ChatInviteParticipantsDAO.SelectRecentRequestedListWithCB(
 		c.ctx,
 		in.GetChatId(),
-		func(i int, v *dataobject.ChatInviteParticipantsDO) {
+		func(sz, i int, v *dataobject.ChatInviteParticipantsDO) {
 			rValue.RecentRequesters = append(rValue.RecentRequesters, v.UserId)
 		})
 

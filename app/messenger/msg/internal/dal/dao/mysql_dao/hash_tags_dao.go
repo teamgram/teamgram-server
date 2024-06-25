@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,9 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
@@ -21,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type HashTagsDAO struct {
 	db *sqlx.DB
 }
 
 func NewHashTagsDAO(db *sqlx.DB) *HashTagsDAO {
-	return &HashTagsDAO{db}
+	return &HashTagsDAO{
+		db: db,
+	}
 }
 
 // InsertOrUpdate
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
-// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
@@ -60,7 +67,6 @@ func (dao *HashTagsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.HashT
 
 // InsertOrUpdateTx
 // insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
-// TODO(@benqi): sqlmap
 func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
@@ -88,10 +94,9 @@ func (dao *HashTagsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.HashTagsDO)
 
 // SelectPeerHashTagList
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
-// TODO(@benqi): sqlmap
-func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string) (rList []int32, err error) {
+func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
@@ -102,18 +107,18 @@ func (dao *HashTagsDAO) SelectPeerHashTagList(ctx context.Context, user_id int64
 
 // SelectPeerHashTagListWithCB
 // select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
-// TODO(@benqi): sqlmap
-func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, user_id int64, peer_type int32, peer_id int64, hash_tag string, cb func(i int, v int32)) (rList []int32, err error) {
+func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int32)) (rList []int32, err error) {
 	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id, peer_type, peer_id, hash_tag)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectPeerHashTagList(_), error: %v", err)
 	}
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, rList[i])
 		}
 	}
 
@@ -122,13 +127,13 @@ func (dao *HashTagsDAO) SelectPeerHashTagListWithCB(ctx context.Context, user_id
 
 // DeleteHashTagMessageId
 // update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
-// TODO(@benqi): sqlmap
-func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, user_id int64, hash_tag_message_id int32) (rowsAffected int64, err error) {
+func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, userId int64, hashTagMessageId int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, hash_tag_message_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, hashTagMessageId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in DeleteHashTagMessageId(_), error: %v", err)
@@ -143,15 +148,14 @@ func (dao *HashTagsDAO) DeleteHashTagMessageId(ctx context.Context, user_id int6
 	return
 }
 
-// update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
 // DeleteHashTagMessageIdTx
-// TODO(@benqi): sqlmap
-func (dao *HashTagsDAO) DeleteHashTagMessageIdTx(tx *sqlx.Tx, user_id int64, hash_tag_message_id int32) (rowsAffected int64, err error) {
+// update hash_tags set deleted = 1 where user_id = :user_id and hash_tag_message_id = :hash_tag_message_id
+func (dao *HashTagsDAO) DeleteHashTagMessageIdTx(tx *sqlx.Tx, userId int64, hashTagMessageId int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update hash_tags set deleted = 1 where user_id = ? and hash_tag_message_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, hash_tag_message_id)
+	rResult, err = tx.Exec(query, userId, hashTagMessageId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in DeleteHashTagMessageId(_), error: %v", err)

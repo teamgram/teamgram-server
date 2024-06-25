@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type ChatParticipantsDAO struct {
 	db *sqlx.DB
 }
 
 func NewChatParticipantsDAO(db *sqlx.DB) *ChatParticipantsDAO {
-	return &ChatParticipantsDAO{db}
+	return &ChatParticipantsDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”)
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')"
@@ -62,7 +67,6 @@ func (dao *ChatParticipantsDAO) Insert(ctx context.Context, do *dataobject.ChatP
 
 // InsertTx
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”)
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')"
@@ -90,7 +94,6 @@ func (dao *ChatParticipantsDAO) InsertTx(tx *sqlx.Tx, do *dataobject.ChatPartici
 
 // InsertBulk
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”)
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertBulk(ctx context.Context, doList []*dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')"
@@ -122,7 +125,6 @@ func (dao *ChatParticipantsDAO) InsertBulk(ctx context.Context, doList []*dataob
 
 // InsertBulkTx
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”)
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '')"
@@ -154,7 +156,6 @@ func (dao *ChatParticipantsDAO) InsertBulkTx(tx *sqlx.Tx, doList []*dataobject.C
 
 // InsertOrUpdate
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '') on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0"
@@ -182,7 +183,6 @@ func (dao *ChatParticipantsDAO) InsertOrUpdate(ctx context.Context, do *dataobje
 
 // InsertOrUpdateTx
 // insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, ”) on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0
-// TODO(@benqi): sqlmap
 func (dao *ChatParticipantsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.ChatParticipantsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into chat_participants(chat_id, user_id, participant_type, inviter_user_id, invited_at, draft_message_data) values (:chat_id, :user_id, :participant_type, :inviter_user_id, :invited_at, '') on duplicate key update participant_type = values(participant_type), inviter_user_id = values(inviter_user_id), invited_at = values(invited_at), state = 0, kicked_at = 0, left_at = 0"
@@ -210,13 +210,12 @@ func (dao *ChatParticipantsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Cha
 
 // SelectList
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectList(ctx context.Context, chat_id int64) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectList(ctx context.Context, chatId int64) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -230,13 +229,12 @@ func (dao *ChatParticipantsDAO) SelectList(ctx context.Context, chat_id int64) (
 
 // SelectListWithCB
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chat_id int64, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chatId int64, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, chat_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -246,8 +244,9 @@ func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chat_id in
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -256,16 +255,15 @@ func (dao *ChatParticipantsDAO) SelectListWithCB(ctx context.Context, chat_id in
 
 // SelectByParticipant
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = :chat_id and user_id = :user_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectByParticipant(ctx context.Context, chat_id int64, user_id int64) (rValue *dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectByParticipant(ctx context.Context, chatId int64, userId int64) (rValue *dataobject.ChatParticipantsDO, err error) {
 	var (
 		query = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where chat_id = ? and user_id = ?"
 		do    = &dataobject.ChatParticipantsDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, chat_id, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, chatId, userId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByParticipant(_), error: %v", err)
 			return
 		} else {
@@ -280,13 +278,13 @@ func (dao *ChatParticipantsDAO) SelectByParticipant(ctx context.Context, chat_id
 
 // Update
 // update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) Update(ctx context.Context, participant_type int32, inviter_user_id int64, invited_at int64, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) Update(ctx context.Context, participantType int32, inviterUserId int64, invitedAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0 where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, participant_type, inviter_user_id, invited_at, id)
+
+	rResult, err = dao.db.Exec(ctx, query, participantType, inviterUserId, invitedAt, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Update(_), error: %v", err)
@@ -301,15 +299,14 @@ func (dao *ChatParticipantsDAO) Update(ctx context.Context, participant_type int
 	return
 }
 
-// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
 // UpdateTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateTx(tx *sqlx.Tx, participant_type int32, inviter_user_id int64, invited_at int64, id int64) (rowsAffected int64, err error) {
+// update chat_participants set participant_type = :participant_type, inviter_user_id = :inviter_user_id, invited_at = :invited_at, state = 0, kicked_at = 0, left_at = 0 where id = :id
+func (dao *ChatParticipantsDAO) UpdateTx(tx *sqlx.Tx, participantType int32, inviterUserId int64, invitedAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ?, inviter_user_id = ?, invited_at = ?, state = 0, kicked_at = 0, left_at = 0 where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, participant_type, inviter_user_id, invited_at, id)
+	rResult, err = tx.Exec(query, participantType, inviterUserId, invitedAt, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Update(_), error: %v", err)
@@ -326,13 +323,13 @@ func (dao *ChatParticipantsDAO) UpdateTx(tx *sqlx.Tx, participant_type int32, in
 
 // UpdateKicked
 // update chat_participants set state = 2, kicked_at = :kicked_at where id = :id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateKicked(ctx context.Context, kicked_at int64, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateKicked(ctx context.Context, kickedAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set state = 2, kicked_at = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, kicked_at, id)
+
+	rResult, err = dao.db.Exec(ctx, query, kickedAt, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateKicked(_), error: %v", err)
@@ -347,15 +344,14 @@ func (dao *ChatParticipantsDAO) UpdateKicked(ctx context.Context, kicked_at int6
 	return
 }
 
-// update chat_participants set state = 2, kicked_at = :kicked_at where id = :id
 // UpdateKickedTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateKickedTx(tx *sqlx.Tx, kicked_at int64, id int64) (rowsAffected int64, err error) {
+// update chat_participants set state = 2, kicked_at = :kicked_at where id = :id
+func (dao *ChatParticipantsDAO) UpdateKickedTx(tx *sqlx.Tx, kickedAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set state = 2, kicked_at = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, kicked_at, id)
+	rResult, err = tx.Exec(query, kickedAt, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateKicked(_), error: %v", err)
@@ -372,13 +368,13 @@ func (dao *ChatParticipantsDAO) UpdateKickedTx(tx *sqlx.Tx, kicked_at int64, id 
 
 // UpdateLeft
 // update chat_participants set state = 1, left_at = :left_at where id = :id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateLeft(ctx context.Context, left_at int64, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateLeft(ctx context.Context, leftAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set state = 1, left_at = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, left_at, id)
+
+	rResult, err = dao.db.Exec(ctx, query, leftAt, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateLeft(_), error: %v", err)
@@ -393,15 +389,14 @@ func (dao *ChatParticipantsDAO) UpdateLeft(ctx context.Context, left_at int64, i
 	return
 }
 
-// update chat_participants set state = 1, left_at = :left_at where id = :id
 // UpdateLeftTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateLeftTx(tx *sqlx.Tx, left_at int64, id int64) (rowsAffected int64, err error) {
+// update chat_participants set state = 1, left_at = :left_at where id = :id
+func (dao *ChatParticipantsDAO) UpdateLeftTx(tx *sqlx.Tx, leftAt int64, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set state = 1, left_at = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, left_at, id)
+	rResult, err = tx.Exec(query, leftAt, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateLeft(_), error: %v", err)
@@ -418,13 +413,13 @@ func (dao *ChatParticipantsDAO) UpdateLeftTx(tx *sqlx.Tx, left_at int64, id int6
 
 // UpdatePinnedMsgId
 // update chat_participants set pinned_msg_id = :pinned_msg_id where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdatePinnedMsgId(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdatePinnedMsgId(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set pinned_msg_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdatePinnedMsgId(_), error: %v", err)
@@ -439,15 +434,14 @@ func (dao *ChatParticipantsDAO) UpdatePinnedMsgId(ctx context.Context, user_id i
 	return
 }
 
-// update chat_participants set pinned_msg_id = :pinned_msg_id where user_id = :user_id and chat_id = :chat_id
 // UpdatePinnedMsgIdTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set pinned_msg_id = :pinned_msg_id where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set pinned_msg_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdatePinnedMsgId(_), error: %v", err)
@@ -464,13 +458,13 @@ func (dao *ChatParticipantsDAO) UpdatePinnedMsgIdTx(tx *sqlx.Tx, user_id int64, 
 
 // UpdateParticipantType
 // update chat_participants set participant_type = :participant_type where id = :id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateParticipantType(ctx context.Context, participant_type int32, id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateParticipantType(ctx context.Context, participantType int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, participant_type, id)
+
+	rResult, err = dao.db.Exec(ctx, query, participantType, id)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateParticipantType(_), error: %v", err)
@@ -485,15 +479,14 @@ func (dao *ChatParticipantsDAO) UpdateParticipantType(ctx context.Context, parti
 	return
 }
 
-// update chat_participants set participant_type = :participant_type where id = :id
 // UpdateParticipantTypeTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateParticipantTypeTx(tx *sqlx.Tx, participant_type int32, id int64) (rowsAffected int64, err error) {
+// update chat_participants set participant_type = :participant_type where id = :id
+func (dao *ChatParticipantsDAO) UpdateParticipantTypeTx(tx *sqlx.Tx, participantType int32, id int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set participant_type = ? where id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, participant_type, id)
+	rResult, err = tx.Exec(query, participantType, id)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateParticipantType(_), error: %v", err)
@@ -510,13 +503,13 @@ func (dao *ChatParticipantsDAO) UpdateParticipantTypeTx(tx *sqlx.Tx, participant
 
 // SaveDraft
 // update chat_participants set draft_type = 2, draft_message_data = :draft_message_data where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SaveDraft(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) SaveDraft(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set draft_type = 2, draft_message_data = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in SaveDraft(_), error: %v", err)
@@ -531,15 +524,14 @@ func (dao *ChatParticipantsDAO) SaveDraft(ctx context.Context, user_id int64, ch
 	return
 }
 
-// update chat_participants set draft_type = 2, draft_message_data = :draft_message_data where user_id = :user_id and chat_id = :chat_id
 // SaveDraftTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SaveDraftTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set draft_type = 2, draft_message_data = :draft_message_data where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) SaveDraftTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set draft_type = 2, draft_message_data = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in SaveDraft(_), error: %v", err)
@@ -556,13 +548,13 @@ func (dao *ChatParticipantsDAO) SaveDraftTx(tx *sqlx.Tx, user_id int64, chat_id 
 
 // ClearDraft
 // update chat_participants set draft_type = 0, draft_message_data = ” where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) ClearDraft(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) ClearDraft(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set draft_type = 0, draft_message_data = '' where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in ClearDraft(_), error: %v", err)
@@ -577,15 +569,14 @@ func (dao *ChatParticipantsDAO) ClearDraft(ctx context.Context, user_id int64, c
 	return
 }
 
-// update chat_participants set draft_type = 0, draft_message_data = ” where user_id = :user_id and chat_id = :chat_id
 // ClearDraftTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) ClearDraftTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set draft_type = 0, draft_message_data = ” where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) ClearDraftTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set draft_type = 0, draft_message_data = '' where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in ClearDraft(_), error: %v", err)
@@ -602,13 +593,12 @@ func (dao *ChatParticipantsDAO) ClearDraftTx(tx *sqlx.Tx, user_id int64, chat_id
 
 // SelectDraftList
 // select user_id, chat_id, draft_type, draft_message_data from chat_participants where user_id = :user_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectDraftList(ctx context.Context, user_id int64) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectDraftList(ctx context.Context, userId int64) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select user_id, chat_id, draft_type, draft_message_data from chat_participants where user_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDraftList(_), error: %v", err)
@@ -622,13 +612,12 @@ func (dao *ChatParticipantsDAO) SelectDraftList(ctx context.Context, user_id int
 
 // SelectDraftListWithCB
 // select user_id, chat_id, draft_type, draft_message_data from chat_participants where user_id = :user_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectDraftListWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectDraftListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select user_id, chat_id, draft_type, draft_message_data from chat_participants where user_id = ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectDraftList(_), error: %v", err)
@@ -638,8 +627,9 @@ func (dao *ChatParticipantsDAO) SelectDraftListWithCB(ctx context.Context, user_
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -648,8 +638,7 @@ func (dao *ChatParticipantsDAO) SelectDraftListWithCB(ctx context.Context, user_
 
 // UpdateOutboxDialog
 // update chat_participants set unread_count = 0, %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateOutboxDialog(ctx context.Context, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateOutboxDialog(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -662,8 +651,8 @@ func (dao *ChatParticipantsDAO) UpdateOutboxDialog(ctx context.Context, cMap map
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -682,8 +671,7 @@ func (dao *ChatParticipantsDAO) UpdateOutboxDialog(ctx context.Context, cMap map
 
 // UpdateOutboxDialogTx
 // update chat_participants set unread_count = 0, %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -696,8 +684,8 @@ func (dao *ChatParticipantsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap map[strin
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = tx.Exec(query, aValues...)
 
@@ -716,13 +704,13 @@ func (dao *ChatParticipantsDAO) UpdateOutboxDialogTx(tx *sqlx.Tx, cMap map[strin
 
 // UpdateUnreadByPeer
 // update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateUnreadByPeer(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateUnreadByPeer(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateUnreadByPeer(_), error: %v", err)
@@ -737,15 +725,14 @@ func (dao *ChatParticipantsDAO) UpdateUnreadByPeer(ctx context.Context, user_id 
 	return
 }
 
-// update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and chat_id = :chat_id
 // UpdateUnreadByPeerTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateUnreadByPeerTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = :read_inbox_max_id where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) UpdateUnreadByPeerTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set unread_count = 0, unread_mark = 0, read_inbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateUnreadByPeer(_), error: %v", err)
@@ -762,13 +749,13 @@ func (dao *ChatParticipantsDAO) UpdateUnreadByPeerTx(tx *sqlx.Tx, user_id int64,
 
 // UpdateReadOutboxMaxIdByPeer
 // update chat_participants set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeer(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeer(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set read_outbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateReadOutboxMaxIdByPeer(_), error: %v", err)
@@ -783,15 +770,14 @@ func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeer(ctx context.Context,
 	return
 }
 
-// update chat_participants set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and chat_id = :chat_id
 // UpdateReadOutboxMaxIdByPeerTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeerTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set read_outbox_max_id = :read_outbox_max_id where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeerTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set read_outbox_max_id = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateReadOutboxMaxIdByPeer(_), error: %v", err)
@@ -808,13 +794,12 @@ func (dao *ChatParticipantsDAO) UpdateReadOutboxMaxIdByPeerTx(tx *sqlx.Tx, user_
 
 // SelectByOffsetId
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = :user_id and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = :userId2) and deactivated = 0) and top_message < :top_message and (state = 0 or state = 2) order by top_message desc limit :limit
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectByOffsetId(ctx context.Context, user_id int64, userId2 int32, limit int32) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectByOffsetId(ctx context.Context, userId int64, userId2 int32, limit int32) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = ? and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = ?) and deactivated = 0) and top_message < ? and (state = 0 or state = 2) order by top_message desc limit ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, userId2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByOffsetId(_), error: %v", err)
@@ -828,13 +813,12 @@ func (dao *ChatParticipantsDAO) SelectByOffsetId(ctx context.Context, user_id in
 
 // SelectByOffsetIdWithCB
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = :user_id and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = :userId2) and deactivated = 0) and top_message < :top_message and (state = 0 or state = 2) order by top_message desc limit :limit
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectByOffsetIdWithCB(ctx context.Context, user_id int64, userId2 int32, limit int32, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectByOffsetIdWithCB(ctx context.Context, userId int64, userId2 int32, limit int32, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = ? and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = ?) and deactivated = 0) and top_message < ? and (state = 0 or state = 2) order by top_message desc limit ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, userId2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectByOffsetId(_), error: %v", err)
@@ -844,8 +828,9 @@ func (dao *ChatParticipantsDAO) SelectByOffsetIdWithCB(ctx context.Context, user
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -854,13 +839,12 @@ func (dao *ChatParticipantsDAO) SelectByOffsetIdWithCB(ctx context.Context, user
 
 // SelectExcludePinnedByOffsetId
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = :user_id and is_pinned = 0 and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = :userId2) and deactivated = 0) and top_message < :top_message and (state = 0 or state = 2) order by top_message desc limit :limit
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetId(ctx context.Context, user_id int64, userId2 int32, limit int32) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetId(ctx context.Context, userId int64, userId2 int32, limit int32) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = ? and is_pinned = 0 and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = ?) and deactivated = 0) and top_message < ? and (state = 0 or state = 2) order by top_message desc limit ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, userId2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedByOffsetId(_), error: %v", err)
@@ -874,13 +858,12 @@ func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetId(ctx context.Contex
 
 // SelectExcludePinnedByOffsetIdWithCB
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = :user_id and is_pinned = 0 and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = :userId2) and deactivated = 0) and top_message < :top_message and (state = 0 or state = 2) order by top_message desc limit :limit
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetIdWithCB(ctx context.Context, user_id int64, userId2 int32, limit int32, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetIdWithCB(ctx context.Context, userId int64, userId2 int32, limit int32, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, state, date2 from chat_participants where user_id = ? and is_pinned = 0 and chat_id in (select id from chats where id in (select chat_id from chat_participants where user_id = ?) and deactivated = 0) and top_message < ? and (state = 0 or state = 2) order by top_message desc limit ?"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id, userId2, limit)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, userId2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectExcludePinnedByOffsetId(_), error: %v", err)
@@ -890,8 +873,9 @@ func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetIdWithCB(ctx context.
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -900,11 +884,9 @@ func (dao *ChatParticipantsDAO) SelectExcludePinnedByOffsetIdWithCB(ctx context.
 
 // SelectListByChatIdList
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = :user_id and chat_id in (:idList) order by top_message desc
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectListByChatIdList(ctx context.Context, user_id int64, idList []int32) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectListByChatIdList(ctx context.Context, userId int64, idList []int32) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and chat_id in (?) order by top_message desc"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and chat_id in (%s) order by top_message desc", sqlx.InInt32List(idList))
 		values []dataobject.ChatParticipantsDO
 	)
 
@@ -913,13 +895,7 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdList(ctx context.Context, user
 		return
 	}
 
-	query, a, err = sqlx.In(query, user_id, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByChatIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatIdList(_), error: %v", err)
@@ -933,11 +909,9 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdList(ctx context.Context, user
 
 // SelectListByChatIdListWithCB
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = :user_id and chat_id in (:idList) order by top_message desc
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context, user_id int64, idList []int32, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context, userId int64, idList []int32, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
-		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and chat_id in (?) order by top_message desc"
-		a      []interface{}
+		query  = fmt.Sprintf("select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and chat_id in (%s) order by top_message desc", sqlx.InInt32List(idList))
 		values []dataobject.ChatParticipantsDO
 	)
 
@@ -946,13 +920,7 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context
 		return
 	}
 
-	query, a, err = sqlx.In(query, user_id, idList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectListByChatIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectListByChatIdList(_), error: %v", err)
@@ -962,8 +930,9 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -972,13 +941,13 @@ func (dao *ChatParticipantsDAO) SelectListByChatIdListWithCB(ctx context.Context
 
 // UpdatePinned
 // update chat_participants set is_pinned = :is_pinned where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdatePinned(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdatePinned(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set is_pinned = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdatePinned(_), error: %v", err)
@@ -993,15 +962,14 @@ func (dao *ChatParticipantsDAO) UpdatePinned(ctx context.Context, user_id int64,
 	return
 }
 
-// update chat_participants set is_pinned = :is_pinned where user_id = :user_id and chat_id = :chat_id
 // UpdatePinnedTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdatePinnedTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set is_pinned = :is_pinned where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) UpdatePinnedTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set is_pinned = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdatePinned(_), error: %v", err)
@@ -1018,13 +986,12 @@ func (dao *ChatParticipantsDAO) UpdatePinnedTx(tx *sqlx.Tx, user_id int64, chat_
 
 // SelectPinnedDialogs
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = :user_id and is_pinned = 1 and state = 0
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectPinnedDialogs(ctx context.Context, user_id int64) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectPinnedDialogs(ctx context.Context, userId int64) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and is_pinned = 1 and state = 0"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
@@ -1038,13 +1005,12 @@ func (dao *ChatParticipantsDAO) SelectPinnedDialogs(ctx context.Context, user_id
 
 // SelectPinnedDialogsWithCB
 // select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = :user_id and is_pinned = 1 and state = 0
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectPinnedDialogsWithCB(ctx context.Context, user_id int64, cb func(i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
+func (dao *ChatParticipantsDAO) SelectPinnedDialogsWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *dataobject.ChatParticipantsDO)) (rList []dataobject.ChatParticipantsDO, err error) {
 	var (
 		query  = "select id, user_id, chat_id, participant_type, is_pinned, top_message, pinned_msg_id, read_inbox_max_id, read_outbox_max_id, unread_count, unread_mentions_count, unread_mark, draft_type, draft_message_data, inviter_user_id, invited_at, date2 from chat_participants where user_id = ? and is_pinned = 1 and state = 0"
 		values []dataobject.ChatParticipantsDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectPinnedDialogs(_), error: %v", err)
@@ -1054,8 +1020,9 @@ func (dao *ChatParticipantsDAO) SelectPinnedDialogsWithCB(ctx context.Context, u
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -1064,8 +1031,7 @@ func (dao *ChatParticipantsDAO) SelectPinnedDialogsWithCB(ctx context.Context, u
 
 // UpdateInboxDialog
 // update chat_participants set unread_count = unread_count + 1, %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateInboxDialog(ctx context.Context, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateInboxDialog(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1078,8 +1044,8 @@ func (dao *ChatParticipantsDAO) UpdateInboxDialog(ctx context.Context, cMap map[
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -1098,8 +1064,7 @@ func (dao *ChatParticipantsDAO) UpdateInboxDialog(ctx context.Context, cMap map[
 
 // UpdateInboxDialogTx
 // update chat_participants set unread_count = unread_count + 1, %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1112,8 +1077,8 @@ func (dao *ChatParticipantsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = tx.Exec(query, aValues...)
 
@@ -1132,13 +1097,13 @@ func (dao *ChatParticipantsDAO) UpdateInboxDialogTx(tx *sqlx.Tx, cMap map[string
 
 // UpdateMarkDialogUnread
 // update chat_participants set unread_mark = :unread_mark where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateMarkDialogUnread(ctx context.Context, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateMarkDialogUnread(ctx context.Context, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set unread_mark = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, user_id, chat_id)
+
+	rResult, err = dao.db.Exec(ctx, query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateMarkDialogUnread(_), error: %v", err)
@@ -1153,15 +1118,14 @@ func (dao *ChatParticipantsDAO) UpdateMarkDialogUnread(ctx context.Context, user
 	return
 }
 
-// update chat_participants set unread_mark = :unread_mark where user_id = :user_id and chat_id = :chat_id
 // UpdateMarkDialogUnreadTx
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateMarkDialogUnreadTx(tx *sqlx.Tx, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+// update chat_participants set unread_mark = :unread_mark where user_id = :user_id and chat_id = :chat_id
+func (dao *ChatParticipantsDAO) UpdateMarkDialogUnreadTx(tx *sqlx.Tx, userId int64, chatId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update chat_participants set unread_mark = ? where user_id = ? and chat_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, user_id, chat_id)
+	rResult, err = tx.Exec(query, userId, chatId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateMarkDialogUnread(_), error: %v", err)
@@ -1178,10 +1142,9 @@ func (dao *ChatParticipantsDAO) UpdateMarkDialogUnreadTx(tx *sqlx.Tx, user_id in
 
 // SelectMarkDialogUnreadList
 // select chat_id from chat_participants where user_id = :user_id and unread_mark = 1 and state = 0
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadList(ctx context.Context, user_id int64) (rList []int64, err error) {
+func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadList(ctx context.Context, userId int64) (rList []int64, err error) {
 	var query = "select chat_id from chat_participants where user_id = ? and unread_mark = 1 and state = 0"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectMarkDialogUnreadList(_), error: %v", err)
@@ -1192,18 +1155,18 @@ func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadList(ctx context.Context, 
 
 // SelectMarkDialogUnreadListWithCB
 // select chat_id from chat_participants where user_id = :user_id and unread_mark = 1 and state = 0
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadListWithCB(ctx context.Context, user_id int64, cb func(i int, v int64)) (rList []int64, err error) {
+func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v int64)) (rList []int64, err error) {
 	var query = "select chat_id from chat_participants where user_id = ? and unread_mark = 1 and state = 0"
-	err = dao.db.QueryRowsPartial(ctx, &rList, query, user_id)
+	err = dao.db.QueryRowsPartial(ctx, &rList, query, userId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("select in SelectMarkDialogUnreadList(_), error: %v", err)
 	}
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, rList[i])
 		}
 	}
 
@@ -1212,8 +1175,7 @@ func (dao *ChatParticipantsDAO) SelectMarkDialogUnreadListWithCB(ctx context.Con
 
 // UpdateCustomMap
 // update chat_participants set %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateCustomMap(ctx context.Context, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1226,8 +1188,8 @@ func (dao *ChatParticipantsDAO) UpdateCustomMap(ctx context.Context, cMap map[st
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = dao.db.Exec(ctx, query, aValues...)
 
@@ -1246,8 +1208,7 @@ func (dao *ChatParticipantsDAO) UpdateCustomMap(ctx context.Context, cMap map[st
 
 // UpdateCustomMapTx
 // update chat_participants set %s where user_id = :user_id and chat_id = :chat_id
-// TODO(@benqi): sqlmap
-func (dao *ChatParticipantsDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, user_id int64, chat_id int64) (rowsAffected int64, err error) {
+func (dao *ChatParticipantsDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]interface{}, userId int64, chatId int64) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
 	for k, v := range cMap {
@@ -1260,8 +1221,8 @@ func (dao *ChatParticipantsDAO) UpdateCustomMapTx(tx *sqlx.Tx, cMap map[string]i
 		rResult sql.Result
 	)
 
-	aValues = append(aValues, user_id)
-	aValues = append(aValues, chat_id)
+	aValues = append(aValues, userId)
+	aValues = append(aValues, chatId)
 
 	rResult, err = tx.Exec(query, aValues...)
 

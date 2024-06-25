@@ -84,7 +84,7 @@ func (c *MessageCore) MessageSearchV2(in *message.TLMessageSearchV2) (*mtproto.M
 		in.FromId,
 		math.MaxInt32,
 		in.Limit,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))
 		})
 

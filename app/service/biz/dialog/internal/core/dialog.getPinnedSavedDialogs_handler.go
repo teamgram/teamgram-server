@@ -38,7 +38,7 @@ func (c *DialogCore) DialogGetPinnedSavedDialogs(in *dialog.TLDialogGetPinnedSav
 	c.svcCtx.Dao.SavedDialogsDAO.SelectPinnedDialogsWithCB(
 		c.ctx,
 		meId,
-		func(i int, v *dataobject.SavedDialogsDO) {
+		func(sz, i int, v *dataobject.SavedDialogsDO) {
 			dList.Dialogs = append(dList.Dialogs, c.svcCtx.Dao.MakeSavedDialog(v))
 		})
 	dList.Count = int32(len(dList.Dialogs))

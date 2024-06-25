@@ -37,7 +37,7 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 	c.svcCtx.Dao.BotCommandsDAO.SelectListWithCB(
 		c.ctx,
 		in.BotId,
-		func(i int, v *dataobject.BotCommandsDO) {
+		func(sz, i int, v *dataobject.BotCommandsDO) {
 			botInfo.Commands = append(botInfo.Commands, mtproto.MakeTLBotCommand(&mtproto.BotCommand{
 				Command:     v.Command,
 				Description: v.Description,

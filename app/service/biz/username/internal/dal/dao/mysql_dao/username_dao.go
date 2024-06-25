@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  *   Created from by 'dalgen'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2024-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -23,18 +24,22 @@ import (
 )
 
 var _ *sql.Result
+var _ = fmt.Sprintf
+var _ = strings.Join
+var _ = errors.Is
 
 type UsernameDAO struct {
 	db *sqlx.DB
 }
 
 func NewUsernameDAO(db *sqlx.DB) *UsernameDAO {
-	return &UsernameDAO{db}
+	return &UsernameDAO{
+		db: db,
+	}
 }
 
 // Insert
 // insert into username(peer_type, peer_id, username, deleted) values (:peer_type, :peer_id, :username, 0)
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) Insert(ctx context.Context, do *dataobject.UsernameDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into username(peer_type, peer_id, username, deleted) values (:peer_type, :peer_id, :username, 0)"
@@ -62,7 +67,6 @@ func (dao *UsernameDAO) Insert(ctx context.Context, do *dataobject.UsernameDO) (
 
 // InsertTx
 // insert into username(peer_type, peer_id, username, deleted) values (:peer_type, :peer_id, :username, 0)
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsernameDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into username(peer_type, peer_id, username, deleted) values (:peer_type, :peer_id, :username, 0)"
@@ -90,11 +94,9 @@ func (dao *UsernameDAO) InsertTx(tx *sqlx.Tx, do *dataobject.UsernameDO) (lastIn
 
 // SelectList
 // select username, peer_type, peer_id from username where username in (:nameList)
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query  = "select username, peer_type, peer_id from username where username in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username in (%s)", sqlx.InStringList(nameList))
 		values []dataobject.UsernameDO
 	)
 	if len(nameList) == 0 {
@@ -102,13 +104,7 @@ func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rLis
 		return
 	}
 
-	query, a, err = sqlx.In(query, nameList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -122,11 +118,9 @@ func (dao *UsernameDAO) SelectList(ctx context.Context, nameList []string) (rLis
 
 // SelectListWithCB
 // select username, peer_type, peer_id from username where username in (:nameList)
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string, cb func(i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string, cb func(sz, i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query  = "select username, peer_type, peer_id from username where username in (?)"
-		a      []interface{}
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username in (%s)", sqlx.InStringList(nameList))
 		values []dataobject.UsernameDO
 	)
 	if len(nameList) == 0 {
@@ -134,13 +128,7 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 		return
 	}
 
-	query, a, err = sqlx.In(query, nameList)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SelectList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -150,8 +138,9 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 
@@ -160,7 +149,6 @@ func (dao *UsernameDAO) SelectListWithCB(ctx context.Context, nameList []string,
 
 // SelectByUsername
 // select username, peer_type, peer_id, deleted from username where username = :username
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) SelectByUsername(ctx context.Context, username string) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select username, peer_type, peer_id, deleted from username where username = ?"
@@ -169,7 +157,7 @@ func (dao *UsernameDAO) SelectByUsername(ctx context.Context, username string) (
 	err = dao.db.QueryRowPartial(ctx, do, query, username)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByUsername(_), error: %v", err)
 			return
 		} else {
@@ -184,7 +172,6 @@ func (dao *UsernameDAO) SelectByUsername(ctx context.Context, username string) (
 
 // Update
 // update username set %s where username = :username
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) Update(ctx context.Context, cMap map[string]interface{}, username string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -217,7 +204,6 @@ func (dao *UsernameDAO) Update(ctx context.Context, cMap map[string]interface{},
 
 // UpdateTx
 // update username set %s where username = :username
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, username string) (rowsAffected int64, err error) {
 	names := make([]string, 0, len(cMap))
 	aValues := make([]interface{}, 0, len(cMap))
@@ -250,7 +236,6 @@ func (dao *UsernameDAO) UpdateTx(tx *sqlx.Tx, cMap map[string]interface{}, usern
 
 // Delete
 // delete from username where username = :username
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) Delete(ctx context.Context, username string) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from username where username = ?"
@@ -273,7 +258,6 @@ func (dao *UsernameDAO) Delete(ctx context.Context, username string) (rowsAffect
 
 // DeleteTx
 // delete from username where username = :username
-// TODO(@benqi): sqlmap
 func (dao *UsernameDAO) DeleteTx(tx *sqlx.Tx, username string) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from username where username = ?"
@@ -296,13 +280,12 @@ func (dao *UsernameDAO) DeleteTx(tx *sqlx.Tx, username string) (rowsAffected int
 
 // Delete2
 // delete from username where peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) Delete2(ctx context.Context, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UsernameDAO) Delete2(ctx context.Context, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from username where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, peer_type, peer_id)
+	rResult, err = dao.db.Exec(ctx, query, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in Delete2(_), error: %v", err)
@@ -319,13 +302,12 @@ func (dao *UsernameDAO) Delete2(ctx context.Context, peer_type int32, peer_id in
 
 // Delete2Tx
 // delete from username where peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) Delete2Tx(tx *sqlx.Tx, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UsernameDAO) Delete2Tx(tx *sqlx.Tx, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "delete from username where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, peer_type, peer_id)
+	rResult, err = tx.Exec(query, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in Delete2(_), error: %v", err)
@@ -342,16 +324,15 @@ func (dao *UsernameDAO) Delete2Tx(tx *sqlx.Tx, peer_type int32, peer_id int64) (
 
 // SelectByPeer
 // select peer_type, peer_id, username from username where peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peer_type int32, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peerType int32, peerId int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = ? and peer_id = ?"
 		do    = &dataobject.UsernameDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, peer_type, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peerType, peerId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByPeer(_), error: %v", err)
 			return
 		} else {
@@ -366,16 +347,15 @@ func (dao *UsernameDAO) SelectByPeer(ctx context.Context, peer_type int32, peer_
 
 // SelectByUserId
 // select peer_type, peer_id, username from username where peer_type = 2 and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peerId int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = 2 and peer_id = ?"
 		do    = &dataobject.UsernameDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peerId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByUserId(_), error: %v", err)
 			return
 		} else {
@@ -390,16 +370,15 @@ func (dao *UsernameDAO) SelectByUserId(ctx context.Context, peer_id int64) (rVal
 
 // SelectByChannelId
 // select peer_type, peer_id, username from username where peer_type = 4 and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SelectByChannelId(ctx context.Context, peer_id int64) (rValue *dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SelectByChannelId(ctx context.Context, peerId int64) (rValue *dataobject.UsernameDO, err error) {
 	var (
 		query = "select peer_type, peer_id, username from username where peer_type = 4 and peer_id = ?"
 		do    = &dataobject.UsernameDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, peer_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, peerId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in SelectByChannelId(_), error: %v", err)
 			return
 		} else {
@@ -414,13 +393,13 @@ func (dao *UsernameDAO) SelectByChannelId(ctx context.Context, peer_id int64) (r
 
 // UpdateUsername
 // update username set username = :username where peer_type = :peer_type and peer_id = :peer_id
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) UpdateUsername(ctx context.Context, username string, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+func (dao *UsernameDAO) UpdateUsername(ctx context.Context, username string, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update username set username = ? where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = dao.db.Exec(ctx, query, username, peer_type, peer_id)
+
+	rResult, err = dao.db.Exec(ctx, query, username, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("exec in UpdateUsername(_), error: %v", err)
@@ -435,15 +414,14 @@ func (dao *UsernameDAO) UpdateUsername(ctx context.Context, username string, pee
 	return
 }
 
-// update username set username = :username where peer_type = :peer_type and peer_id = :peer_id
 // UpdateUsernameTx
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peer_type int32, peer_id int64) (rowsAffected int64, err error) {
+// update username set username = :username where peer_type = :peer_type and peer_id = :peer_id
+func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update username set username = ? where peer_type = ? and peer_id = ?"
 		rResult sql.Result
 	)
-	rResult, err = tx.Exec(query, username, peer_type, peer_id)
+	rResult, err = tx.Exec(query, username, peerType, peerId)
 
 	if err != nil {
 		logx.WithContext(tx.Context()).Errorf("exec in UpdateUsername(_), error: %v", err)
@@ -460,26 +438,18 @@ func (dao *UsernameDAO) UpdateUsernameTx(tx *sqlx.Tx, username string, peer_type
 
 // SearchByQueryNotIdList
 // select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, id_list []int64, limit int32) (rList []dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idList []int64, limit int32) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query  = "select username, peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
-		a      []interface{}
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
 		values []dataobject.UsernameDO
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
 
-	query, a, err = sqlx.In(query, q2, id_list, limit)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
@@ -493,26 +463,18 @@ func (dao *UsernameDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, i
 
 // SearchByQueryNotIdListWithCB
 // select username, peer_type, peer_id from username where username like :q2 and peer_id not in (:id_list) limit :limit
-// TODO(@benqi): sqlmap
-func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, id_list []int64, limit int32, cb func(i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
+func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, idList []int64, limit int32, cb func(sz, i int, v *dataobject.UsernameDO)) (rList []dataobject.UsernameDO, err error) {
 	var (
-		query  = "select username, peer_type, peer_id from username where username like ? and peer_id not in (?) limit ?"
-		a      []interface{}
+		query  = fmt.Sprintf("select username, peer_type, peer_id from username where username like ? and peer_id not in (%s) limit ?", sqlx.InInt64List(idList))
 		values []dataobject.UsernameDO
 	)
 
-	if len(id_list) == 0 {
+	if len(idList) == 0 {
 		rList = []dataobject.UsernameDO{}
 		return
 	}
 
-	query, a, err = sqlx.In(query, q2, id_list, limit)
-	if err != nil {
-		// r sql.Result
-		logx.WithContext(ctx).Errorf("sqlx.In in SearchByQueryNotIdList(_), error: %v", err)
-		return
-	}
-	err = dao.db.QueryRowsPartial(ctx, &values, query, a...)
+	err = dao.db.QueryRowPartial(ctx, &values, query, q2, limit)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SearchByQueryNotIdList(_), error: %v", err)
@@ -522,8 +484,9 @@ func (dao *UsernameDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 str
 	rList = values
 
 	if cb != nil {
-		for i := 0; i < len(rList); i++ {
-			cb(i, &rList[i])
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
 		}
 	}
 

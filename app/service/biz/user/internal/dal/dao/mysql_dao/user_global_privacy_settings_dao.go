@@ -13,6 +13,7 @@ package mysql_dao
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,6 +26,7 @@ import (
 var _ *sql.Result
 var _ = fmt.Sprintf
 var _ = strings.Join
+var _ = errors.Is
 
 type UserGlobalPrivacySettingsDAO struct {
 	db *sqlx.DB
@@ -38,7 +40,6 @@ func NewUserGlobalPrivacySettingsDAO(db *sqlx.DB) *UserGlobalPrivacySettingsDAO 
 
 // InsertOrUpdate
 // insert into user_global_privacy_settings(user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium) values (:user_id, :archive_and_mute_new_noncontact_peers, :keep_archived_unmuted, :keep_archived_folders, :hide_read_marks, :new_noncontact_peers_require_premium) on duplicate key update archive_and_mute_new_noncontact_peers = values(archive_and_mute_new_noncontact_peers), keep_archived_unmuted = values(keep_archived_unmuted), keep_archived_folders = values(keep_archived_folders), hide_read_marks = values(hide_read_marks), new_noncontact_peers_require_premium = values(new_noncontact_peers_require_premium)
-// TODO(@benqi): sqlmap
 func (dao *UserGlobalPrivacySettingsDAO) InsertOrUpdate(ctx context.Context, do *dataobject.UserGlobalPrivacySettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_global_privacy_settings(user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium) values (:user_id, :archive_and_mute_new_noncontact_peers, :keep_archived_unmuted, :keep_archived_folders, :hide_read_marks, :new_noncontact_peers_require_premium) on duplicate key update archive_and_mute_new_noncontact_peers = values(archive_and_mute_new_noncontact_peers), keep_archived_unmuted = values(keep_archived_unmuted), keep_archived_folders = values(keep_archived_folders), hide_read_marks = values(hide_read_marks), new_noncontact_peers_require_premium = values(new_noncontact_peers_require_premium)"
@@ -66,7 +67,6 @@ func (dao *UserGlobalPrivacySettingsDAO) InsertOrUpdate(ctx context.Context, do 
 
 // InsertOrUpdateTx
 // insert into user_global_privacy_settings(user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium) values (:user_id, :archive_and_mute_new_noncontact_peers, :keep_archived_unmuted, :keep_archived_folders, :hide_read_marks, :new_noncontact_peers_require_premium) on duplicate key update archive_and_mute_new_noncontact_peers = values(archive_and_mute_new_noncontact_peers), keep_archived_unmuted = values(keep_archived_unmuted), keep_archived_folders = values(keep_archived_folders), hide_read_marks = values(hide_read_marks), new_noncontact_peers_require_premium = values(new_noncontact_peers_require_premium)
-// TODO(@benqi): sqlmap
 func (dao *UserGlobalPrivacySettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.UserGlobalPrivacySettingsDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
 		query = "insert into user_global_privacy_settings(user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium) values (:user_id, :archive_and_mute_new_noncontact_peers, :keep_archived_unmuted, :keep_archived_folders, :hide_read_marks, :new_noncontact_peers_require_premium) on duplicate key update archive_and_mute_new_noncontact_peers = values(archive_and_mute_new_noncontact_peers), keep_archived_unmuted = values(keep_archived_unmuted), keep_archived_folders = values(keep_archived_folders), hide_read_marks = values(hide_read_marks), new_noncontact_peers_require_premium = values(new_noncontact_peers_require_premium)"
@@ -94,16 +94,15 @@ func (dao *UserGlobalPrivacySettingsDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *datao
 
 // Select
 // select id, user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium from user_global_privacy_settings where user_id = :user_id
-// TODO(@benqi): sqlmap
-func (dao *UserGlobalPrivacySettingsDAO) Select(ctx context.Context, user_id int64) (rValue *dataobject.UserGlobalPrivacySettingsDO, err error) {
+func (dao *UserGlobalPrivacySettingsDAO) Select(ctx context.Context, userId int64) (rValue *dataobject.UserGlobalPrivacySettingsDO, err error) {
 	var (
 		query = "select id, user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium from user_global_privacy_settings where user_id = ?"
 		do    = &dataobject.UserGlobalPrivacySettingsDO{}
 	)
-	err = dao.db.QueryRowPartial(ctx, do, query, user_id)
+	err = dao.db.QueryRowPartial(ctx, do, query, userId)
 
 	if err != nil {
-		if err != sqlx.ErrNotFound {
+		if !errors.Is(err, sqlx.ErrNotFound) {
 			logx.WithContext(ctx).Errorf("queryx in Select(_), error: %v", err)
 			return
 		} else {

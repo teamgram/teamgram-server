@@ -99,7 +99,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 			c.ctx,
 			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.PeerId),
 			[]int64{in.DialogMessageId},
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				doUpdatePinnedMessageF(peer, v)
 			})
 	case mtproto.PEER_CHAT:
@@ -120,7 +120,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 				c.ctx,
 				tableName,
 				[]int64{in.DialogMessageId},
-				func(i int, v *dataobject.MessagesDO) {
+				func(sz, i int, v *dataobject.MessagesDO) {
 					doUpdatePinnedMessageF(peer, v)
 				})
 		}

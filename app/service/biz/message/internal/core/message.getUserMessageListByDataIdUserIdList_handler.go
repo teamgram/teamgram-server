@@ -49,7 +49,7 @@ func (c *MessageCore) MessageGetUserMessageListByDataIdUserIdList(in *message.TL
 			k,
 			in.GetId(),
 			v,
-			func(i int, v *dataobject.MessagesDO) {
+			func(sz, i int, v *dataobject.MessagesDO) {
 				rValueList.Datas = append(rValueList.Datas, c.svcCtx.Dao.MakeMessageBox(c.ctx, 0, v))
 			})
 	}

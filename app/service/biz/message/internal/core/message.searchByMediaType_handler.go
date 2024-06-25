@@ -51,7 +51,7 @@ func (c *MessageCore) searchByMediaType(
 		mediaType,
 		offset,
 		limit,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, userId, v))
 		})
 
@@ -69,7 +69,7 @@ func (c *MessageCore) searchByPhoneCall(userId int64, offset, limit int32) (boxL
 		mtproto.MEDIA_PHONE_CALL,
 		offset,
 		limit,
-		func(i int, v *dataobject.MessagesDO) {
+		func(sz, i int, v *dataobject.MessagesDO) {
 			boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, userId, v))
 		})
 

@@ -50,7 +50,7 @@ func (c *MessageCore) MessageSearch(in *message.TLMessageSearch) (*mtproto.Messa
 					c.ctx,
 					in.UserId,
 					idList,
-					func(i int, v *dataobject.MessagesDO) {
+					func(sz, i int, v *dataobject.MessagesDO) {
 						boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))
 					})
 			}
@@ -64,7 +64,7 @@ func (c *MessageCore) MessageSearch(in *message.TLMessageSearch) (*mtproto.Messa
 				in.Offset,
 				"%"+q+"%",
 				in.Limit,
-				func(i int, v *dataobject.MessagesDO) {
+				func(sz, i int, v *dataobject.MessagesDO) {
 					boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, v))
 				})
 		}

@@ -28,15 +28,18 @@ func (c *DialogCore) DialogClearAllDrafts(in *dialog.TLDialogClearAllDrafts) (*d
 		}
 	)
 
-	if _, err = c.svcCtx.Dao.DialogsDAO.SelectAllDraftsWithCB(c.ctx, in.UserId, func(i int, v *dataobject.DialogsDO) {
-		rValues.Datas = append(rValues.Datas,
-			dialog.MakeTLUpdateDraftMessage(&dialog.PeerWithDraftMessage{
-				Peer: mtproto.MakePeer(v.PeerType, v.PeerId),
-				Draft: mtproto.MakeTLDraftMessageEmpty(&mtproto.DraftMessage{
-					Date_FLAGINT32: mtproto.MakeFlagsInt32(int32(time.Now().Unix())),
-				}).To_DraftMessage(),
-			}).To_PeerWithDraftMessage())
-	}); err != nil {
+	if _, err = c.svcCtx.Dao.DialogsDAO.SelectAllDraftsWithCB(
+		c.ctx,
+		in.UserId,
+		func(sz, i int, v *dataobject.DialogsDO) {
+			rValues.Datas = append(rValues.Datas,
+				dialog.MakeTLUpdateDraftMessage(&dialog.PeerWithDraftMessage{
+					Peer: mtproto.MakePeer(v.PeerType, v.PeerId),
+					Draft: mtproto.MakeTLDraftMessageEmpty(&mtproto.DraftMessage{
+						Date_FLAGINT32: mtproto.MakeFlagsInt32(int32(time.Now().Unix())),
+					}).To_DraftMessage(),
+				}).To_PeerWithDraftMessage())
+		}); err != nil {
 		c.Logger.Errorf("dialog.getAllDrafts - error: %v", err)
 		return nil, err
 	}
