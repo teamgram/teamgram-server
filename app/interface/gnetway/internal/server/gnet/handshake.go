@@ -154,7 +154,7 @@ func newHandshake(keyFile string, keyFingerprint uint64) (*handshake, error) {
 func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interface{}, error) {
 	if len(mmsg.Payload) < 8 {
 		err := fmt.Errorf("invalid data len < 8")
-		// logx.Errorf("conn(%s) onHandshake error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) onHandshake error: %v", c, err)
 		return nil, err
 	}
 
@@ -165,7 +165,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 
 	_, obj, err := parseFromIncomingMessage(mmsg.Payload[8:])
 	if err != nil {
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -175,7 +175,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 	case *mtproto.TLReqPq:
 		resPQ, err := s.onReqPq(c, request)
 		if err != nil {
-			// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 			// conn.Close()
 			return nil, err
 		}
@@ -193,7 +193,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 	case *mtproto.TLReqPqMulti:
 		resPQ, err := s.onReqPqMulti(c, request)
 		if err != nil {
-			// logx.Errorf("onHandshake error: onReqPqMulti conn(%s)}", err, c.DebugString())
+			// logx.Errorf("onHandshake error: onReqPqMulti conn(%s)}", err, c)
 			// conn.Close()
 			return nil, err
 		}
@@ -211,43 +211,43 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 		}, nil
 	case *mtproto.TLReq_DHParams:
 		if ctx == nil {
-			// logx.Errorf("conn(%s), ctx is nil", c.DebugString())
+			// logx.Errorf("conn(%s), ctx is nil", c)
 			return nil, fmt.Errorf("unknown error")
 		}
 
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
 			_, err = s.onReqDHParams(c, state, obj.(*mtproto.TLReq_DHParams))
 			if err != nil {
-				// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// conn.Close()
 				return nil, err
 			}
 			// state.State = STATE_DH_params_res
 			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
 		} else {
-			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return nil, conn.Close()
-			// logx.Errorf("conn(%s), state is nil", c.DebugString())
+			// logx.Errorf("conn(%s), state is nil", c)
 			err = fmt.Errorf("state error")
 			return nil, err
 		}
 	case *mtproto.TLSetClient_DHParams:
 		if ctx == nil {
-			// logx.Errorf("conn(%s), ctx is nil", c.DebugString())
+			// logx.Errorf("conn(%s), ctx is nil", c)
 			return nil, fmt.Errorf("unknown error")
 		}
 
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
 			_, err = s.onSetClientDHParams(c, state, obj.(*mtproto.TLSetClient_DHParams))
 			if err != nil {
-				//log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				//log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// return conn.Close()
 				return nil, err
 			}
 			// state.State = STATE_dh_gen_res
 			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
 		} else {
-			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return conn.Close()
 			return nil, err
 		}
@@ -256,7 +256,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 		//return nil, err
 		return nil, nil
 	default:
-		// logx.Errorf("conn(%s), invalid handshake type", c.DebugString())
+		// logx.Errorf("conn(%s), invalid handshake type", c)
 		err = fmt.Errorf("invalid handshake type")
 		return nil, err
 	}
@@ -266,14 +266,14 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 
 // req_pq#60469778 nonce:int128 = ResPQ;
 func (s *Server) onReqPq(c gnet.Conn, request *mtproto.TLReqPq) (*mtproto.ResPQ, error) {
-	// logx.Infof("req_pq#60469778 - conn(%s) request: %s", c.DebugString(), request.DebugString())
+	// logx.Infof("req_pq#60469778 - conn(%s) request: %s", c, request)
 
 	// check State and ResState
 
 	// 检查数据是否合法
 	if request.GetNonce() == nil || len(request.GetNonce()) != 16 {
 		err := fmt.Errorf("onReqPq - invalid nonce: %v", request)
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -284,20 +284,20 @@ func (s *Server) onReqPq(c gnet.Conn, request *mtproto.TLReqPq) (*mtproto.ResPQ,
 		ServerPublicKeyFingerprints: []int64{int64(s.handshake.keyFingerprint)},
 	}).To_ResPQ()
 
-	// logx.Infof("req_pq#60469778 - conn(%s) reply: {\"resPQ\":%s", c.DebugString(), resPQ.DebugString())
+	// logx.Infof("req_pq#60469778 - conn(%s) reply: {\"resPQ\":%s", c, resPQ)
 	return resPQ, nil
 }
 
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
 func (s *Server) onReqPqMulti(c gnet.Conn, request *mtproto.TLReqPqMulti) (*mtproto.ResPQ, error) {
-	// logx.Infof("req_pq_multi#be7e8ef1 request - conn(%s) request: %s", c.DebugString(), request.DebugString())
+	// logx.Infof("req_pq_multi#be7e8ef1 request - conn(%s) request: %s", c, request)
 
 	// check State and ResState
 
 	// 检查数据是否合法
 	if request.GetNonce() == nil || len(request.GetNonce()) != 16 {
 		err := fmt.Errorf("onReqPqMulti - invalid nonce: %v", request)
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -308,13 +308,13 @@ func (s *Server) onReqPqMulti(c gnet.Conn, request *mtproto.TLReqPqMulti) (*mtpr
 		ServerPublicKeyFingerprints: []int64{int64(s.handshake.keyFingerprint)},
 	}).To_ResPQ()
 
-	// logx.Infof("req_pq_multi#be7e8ef1 - conn(%s) reply: %s", c.DebugString(), resPQ.DebugString())
+	// logx.Infof("req_pq_multi#be7e8ef1 - conn(%s) reply: %s", c, resPQ)
 	return resPQ, nil
 }
 
 // req_DH_params#d712e4be nonce:int128 server_nonce:int128 p:string q:string public_key_fingerprint:long encrypted_data:string = Server_DH_Params;
 func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtproto.TLReq_DHParams) (*mtproto.Server_DH_Params, error) {
-	// logx.Infof("req_DH_params#d712e4be - conn(%s) state: {%s}, request: %s", c.DebugString(), ctx.DebugString(), request.DebugString())
+	// logx.Infof("req_DH_params#d712e4be - conn(%s) state: {%s}, request: %s", c, ctx, request)
 
 	var (
 		err            error
@@ -332,7 +332,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 		err = fmt.Errorf("onReq_DHParams - Invalid Nonce, req: %s, back: %s",
 			hex2.HexDump(request.Nonce),
 			hex2.HexDump(ctx.Nonce))
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -341,27 +341,27 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 		err = fmt.Errorf("onReq_DHParams - Wrong ServerNonce, req: %s, back: %s",
 			hex2.HexDump(request.ServerNonce),
 			hex2.HexDump(ctx.ServerNonce))
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
 	// check P
 	if !bytes.Equal([]byte(request.P), p) {
 		err = fmt.Errorf("onReq_DHParams - Invalid p valuee")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
 	// check Q
 	if !bytes.Equal([]byte(request.Q), q) {
 		err = fmt.Errorf("onReq_DHParams - Invalid q value")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
 	if request.PublicKeyFingerprint != int64(s.handshake.keyFingerprint) {
 		err = fmt.Errorf("onReq_DHParams - Invalid PublicKeyFingerprint value")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -574,7 +574,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			return nil
 		},
 		func(c gnet.Conn) {
-			// logx.Infof("c.UnThreadSafeWrite - conn(%s)", c.DebugString())
+			// logx.Infof("c.UnThreadSafeWrite - conn(%s)", c)
 			ctx.HandshakeType = handshakeType
 			ctx.ExpiresIn = expiresIn
 			ctx.NewNonce = newNonce
@@ -594,21 +594,21 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 
 // set_client_DH_params#f5045f1f nonce:int128 server_nonce:int128 encrypted_data:string = Set_client_DH_params_answer;
 func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtproto.TLSetClient_DHParams) (*mtproto.SetClient_DHParamsAnswer, error) {
-	logx.Infof("set_client_DH_params#f5045f1f conn(%s) - state: {%s}, request: %s", c, ctx.DebugString(), request.DebugString())
+	logx.Infof("set_client_DH_params#f5045f1f conn(%s) - state: {%s}, request: %s", c, ctx, request)
 
 	// TODO(@benqi): Impl SetClient_DHParams logic
 	// 客户端传输数据解析
 	// Nonce
 	if !bytes.Equal(request.Nonce, ctx.Nonce) {
 		err := fmt.Errorf("onSetClientDHParams - Wrong Nonce")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
 	// ServerNonce
 	if !bytes.Equal(request.ServerNonce, ctx.ServerNonce) {
 		err := fmt.Errorf("onSetClientDHParams - Wrong ServerNonce")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -628,7 +628,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	decryptedData, err := d.Decrypt(bEncryptedData)
 	if err != nil {
 		err := fmt.Errorf("onSetClientDHParams - AES256IGECryptor descrypt error")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -642,19 +642,19 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 		return nil, err
 	}
 
-	// logx.Infof("onSetClientDHParams conn(%s) - client_DHInnerData: %#v", c.DebugString(), clientDHInnerData.String())
+	// logx.Infof("onSetClientDHParams conn(%s) - client_DHInnerData: %#v", c, clientDHInnerData.String())
 
 	//
 	if !bytes.Equal(clientDHInnerData.GetNonce(), ctx.Nonce) {
 		err := fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's Nonce")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
 	// ServerNonce
 	if !bytes.Equal(clientDHInnerData.GetServerNonce(), ctx.ServerNonce) {
 		err := fmt.Errorf("onSetClientDHParams - Wrong client_DHInnerData's ServerNonce")
-		// logx.Errorf("conn(%s) error: %v", c.DebugString(), err)
+		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
 
@@ -700,7 +700,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 				//ctx.AuthKeyId = authKeyId
 				//ctx.AuthKey = authKey
 
-				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx.DebugString(), dhGen.DebugString())
+				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
 				return nil
 			} else {
 				// TODO(@benqi): dhGenFail
@@ -710,7 +710,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 					NewNonceHash2: calcNewNonceHash(ctx.NewNonce, authKey, 0x02),
 				}).To_SetClient_DHParamsAnswer()
 
-				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%v}, reply: %s", c, ctx.DebugString(), dhGen.DebugString())
+				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%v}, reply: %s", c, ctx, dhGen)
 				return nil
 			}
 		},
@@ -729,7 +729,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 
 // msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
 func (s *Server) onMsgsAck(c gnet.Conn, state *HandshakeStateCtx, request *mtproto.TLMsgsAck) error {
-	logx.Infof("msgs_ack#62d6b459 conn(%s) - state: {%s}, request: %s", c, state.DebugString(), request.DebugString())
+	logx.Infof("msgs_ack#62d6b459 conn(%s) - state: {%s}, request: %s", c, state, request)
 
 	switch state.State {
 	case STATE_pq_res:

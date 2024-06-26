@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -152,17 +151,6 @@ func (m *HttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *HttpSessionData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_httpSessionData:
-		t := m.To_HttpSessionData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_HttpSessionData
 func (m *HttpSessionData) To_HttpSessionData() *TLHttpSessionData {
 	m.PredicateName = Predicate_httpSessionData
@@ -236,15 +224,6 @@ func (m *TLHttpSessionData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLHttpSessionData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // SessionClientData <--
 //  + TL_SessionClientData
@@ -286,17 +265,6 @@ func (m *SessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *SessionClientData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_sessionClientData:
-		t := m.To_SessionClientData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_SessionClientData
@@ -417,15 +385,6 @@ func (m *TLSessionClientData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSessionClientData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // SessionClientEvent <--
 //  + TL_SessionClientEvent
@@ -467,17 +426,6 @@ func (m *SessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *SessionClientEvent) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_sessionClientEvent:
-		t := m.To_SessionClientEvent()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_SessionClientEvent
@@ -583,15 +531,6 @@ func (m *TLSessionClientEvent) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSessionClientEvent) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLSessionQueryAuthKey
 ///////////////////////////////////////////////////////////////////////////////
@@ -629,15 +568,6 @@ func (m *TLSessionQueryAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLSessionQueryAuthKey) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLSessionSetAuthKey
@@ -688,15 +618,6 @@ func (m *TLSessionSetAuthKey) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLSessionSetAuthKey) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLSessionCreateSession
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -736,15 +657,6 @@ func (m *TLSessionCreateSession) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLSessionCreateSession) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLSessionSendDataToSession
@@ -788,15 +700,6 @@ func (m *TLSessionSendDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLSessionSendDataToSession) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLSessionSendHttpDataToSession
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -838,15 +741,6 @@ func (m *TLSessionSendHttpDataToSession) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLSessionSendHttpDataToSession) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLSessionCloseSession
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -886,15 +780,6 @@ func (m *TLSessionCloseSession) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLSessionCloseSession) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLSessionPushUpdatesData
@@ -954,15 +839,6 @@ func (m *TLSessionPushUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLSessionPushUpdatesData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLSessionPushSessionUpdatesData
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1017,15 +893,6 @@ func (m *TLSessionPushSessionUpdatesData) Decode(dBuf *mtproto.DecodeBuf) error 
 	return dBuf.GetError()
 }
 
-func (m *TLSessionPushSessionUpdatesData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLSessionPushRpcResultData
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1070,13 +937,4 @@ func (m *TLSessionPushRpcResultData) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLSessionPushRpcResultData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

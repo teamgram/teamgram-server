@@ -582,7 +582,7 @@ func (m *MainAuthWrapper) runLoop() {
 				rpcResult, _ := rpcMessages.(*rpcApiMessage)
 				_ = rpcResult
 				if sess, ok := rpcResult.sessList.sessions[rpcResult.sessionId]; ok {
-					// log.Debugf("onRpcResult result: %s", rpcResult.DebugString())
+					// log.Debugf("onRpcResult result: %s", rpcResult)
 					sess.onRpcResult(rpcResult.ctx, rpcResult)
 				} else {
 					logx.WithContext(rpcResult.ctx).Errorf("onRpcResult - not found rpcSession by sessionId: %d", rpcResult.sessionId)
@@ -825,12 +825,12 @@ func (m *MainAuthWrapper) onSessionNew(ctx context.Context, connMsg *connData) {
 
 	sess, ok := sList.sessions[connMsg.sessionId]
 	if !ok {
-		logx.WithContext(ctx).Infof("onSessionNew - newSession(%d), conn: %s", m.authKeyId, connMsg.DebugString())
+		logx.WithContext(ctx).Infof("onSessionNew - newSession(%d), conn: %s", m.authKeyId, connMsg)
 		sess = newSession(connMsg.sessionId, sList)
 		sList.sessions[connMsg.sessionId] = sess
 	} else {
 		sess.sessionState = kSessionStateNew
-		logx.WithContext(ctx).Infof("onSessionNew - session(%d) found, conn: %s", m.authKeyId, connMsg.DebugString())
+		logx.WithContext(ctx).Infof("onSessionNew - session(%d) found, conn: %s", m.authKeyId, connMsg)
 	}
 
 	sess.onSessionConnNew(ctx, connMsg.gatewayId)
@@ -924,9 +924,9 @@ func (m *MainAuthWrapper) onSessionClosed(ctx context.Context, connMsg *connData
 	sList := m.getSessionList(connMsg.authType)
 
 	if sess, ok := sList.sessions[connMsg.sessionId]; !ok {
-		logx.WithContext(ctx).Errorf("onSessionClosed - session conn closed -  conn: %s", connMsg.DebugString())
+		logx.WithContext(ctx).Errorf("onSessionClosed - session conn closed -  conn: %s", connMsg)
 	} else {
-		logx.WithContext(ctx).Infof("onSessionClosed - conn: %s, sess: %s", connMsg.DebugString(), sess)
+		logx.WithContext(ctx).Infof("onSessionClosed - conn: %s, sess: %s", connMsg, sess)
 		sess.onSessionConnClose(ctx, connMsg.gatewayId)
 	}
 }

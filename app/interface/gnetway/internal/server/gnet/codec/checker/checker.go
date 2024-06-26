@@ -64,7 +64,7 @@ func main() {
 		if id == 0 {
 			msgId, obj, _ := parseFromIncomingMessage(data[8:])
 			fmt.Println("msgId:", msgId)
-			fmt.Println("obj:", obj.DebugString())
+			fmt.Println("obj:", obj)
 		} else {
 			k, ok := kDataList[id]
 			if ok {

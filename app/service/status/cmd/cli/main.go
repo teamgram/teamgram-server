@@ -39,6 +39,6 @@ func main() {
 		},
 	})
 	for _, rV := range rList.GetDatas() {
-		logx.Infof("rV : %s", rV.DebugString())
+		logx.Infof("rV : %s", rV)
 	}
 }

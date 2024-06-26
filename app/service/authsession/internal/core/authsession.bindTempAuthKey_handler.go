@@ -134,7 +134,7 @@ func (c *AuthsessionCore) AuthsessionBindTempAuthKey(in *authsession.TLAuthsessi
 	} else {
 		// bind_auth_key_inner#75a3f765 nonce:long temp_auth_key_id:long perm_auth_key_id:long temp_session_id:long expires_at:int = BindAuthKeyInner;
 		// bind
-		c.Logger.Infof("auth.bindTempAuthKey - bind_auth_key_inner: %s", bindAuthKeyInner.DebugString())
+		c.Logger.Infof("auth.bindTempAuthKey - bind_auth_key_inner: %s", bindAuthKeyInner)
 		tempKeyData, err2 := c.svcCtx.Dao.QueryAuthKeyV2(c.ctx, bindAuthKeyInner.GetTempAuthKeyId())
 		if err2 != nil {
 			c.Logger.Errorf("auth.bindTempAuthKey - invalid innerData")

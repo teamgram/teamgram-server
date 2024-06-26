@@ -126,7 +126,7 @@ func (c *MessagesCore) MessagesGetMessagesViews(in *mtproto.TLMessagesGetMessage
 		//	log.Errorf("messages.getMessagesViews#5784d3e - error: boxMsgList empty by id(%v) type", request.Id)
 		//	return nil, mtproto.ErrMsgIdInvalid
 		//}
-		// log.Debugf("user boxMsgList: %s", boxMsgList.DebugString())
+		// log.Debugf("user boxMsgList: %s", boxMsgList)
 
 		boxMsgList.Walk(func(idx int, v *mtproto.MessageBox) {
 			fwdFrom := v.Message.GetFwdFrom()
@@ -171,7 +171,7 @@ func (c *MessagesCore) MessagesGetMessagesViews(in *mtproto.TLMessagesGetMessage
 		//	return nil, err
 		//}
 		//
-		////log.Debugf("messages.getMessagesViews#5784d3e - channel boxMsgList: %s", boxMsgList.DebugString())
+		////log.Debugf("messages.getMessagesViews#5784d3e - channel boxMsgList: %s", boxMsgList)
 		//
 		//if channel.Megagroup() {
 		//	boxMsgList.Walk(func(idx int, v *mtproto.MessageBox) {

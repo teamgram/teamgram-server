@@ -47,11 +47,11 @@ func (c *session) checkContainer(ctx context.Context, msgId int64, seqno int32, 
 	for _, v := range container.Messages {
 		// container.Seqno >= v.Seqno
 		if v.Seqno > seqno {
-			logx.WithContext(ctx).Errorf("checkContainer - v.seqno(%s) > seqno({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
+			logx.WithContext(ctx).Errorf("checkContainer - v.seqno(%s) > seqno({msg_id: %d, seqno: %d})", v, msgId, seqno)
 			return kInvalidContainer
 		}
 		if v.MsgId >= msgId {
-			logx.WithContext(ctx).Errorf("checkContainer - v.MsgId(%s) > msgId({msg_id: %d, seqno: %d})", v.DebugString(), msgId, seqno)
+			logx.WithContext(ctx).Errorf("checkContainer - v.MsgId(%s) > msgId({msg_id: %d, seqno: %d})", v, msgId, seqno)
 			return kInvalidContainer
 		}
 
@@ -119,7 +119,7 @@ func (c *session) onDestroyAuthKey(ctx context.Context, gatewayId string, msgId 
 		gatewayId,
 		msgId.msgId,
 		msgId.seqNo,
-		destroyAuthKey.DebugString())
+		destroyAuthKey)
 
 	//// TODO(@benqi): FIXME
 	// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
@@ -135,8 +135,8 @@ func (c *session) onPing(ctx context.Context, gatewayId string, msgId *inboxMsg,
 		c,
 		gatewayId,
 		msgId,
-		msgId.DebugString(),
-		ping.DebugString())
+		msgId,
+		ping)
 
 	pong := &mtproto.TLPong{Data2: &mtproto.Pong{
 		MsgId:  msgId.msgId,
@@ -153,8 +153,8 @@ func (c *session) onPingDelayDisconnect(ctx context.Context, gatewayId string, m
 	logx.WithContext(ctx).Infof("onPingDelayDisconnect - request data: {sess: %s, gatewayId: %s, msg_id: %s, request: {%s}}",
 		c,
 		gatewayId,
-		msgId.DebugString(),
-		pingDelayDisconnect.DebugString())
+		msgId,
+		pingDelayDisconnect)
 
 	pong := &mtproto.TLPong{Data2: &mtproto.Pong{
 		MsgId:  msgId.msgId,
@@ -219,7 +219,7 @@ func (c *session) onHttpWait(ctx context.Context, gatewayId string, msgId int64,
 		gatewayId,
 		msgId,
 		seqNo,
-		request.DebugString())
+		request)
 
 	_ = request.GetMaxDelay()
 	_ = request.GetWaitAfter()
@@ -295,7 +295,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 		Salts:    salts,
 	}).To_FutureSalts()
 
-	logx.WithContext(ctx).Infof("onGetFutureSalts - reply data: %s", futureSalts.DebugString())
+	logx.WithContext(ctx).Infof("onGetFutureSalts - reply data: %s", futureSalts)
 	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, futureSalts)
 	msgId.state = RECEIVED | NEED_NO_ACK
 }

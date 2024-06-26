@@ -32,7 +32,7 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 		k := getUserKey(id)
 		pipe, err := c.svcCtx.Dao.KV.GetPipeline(k)
 		if err != nil {
-			c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in.DebugString(), err)
+			c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in, err)
 			continue
 		}
 		pipes[pipe] = append(pipes[pipe], k)
@@ -56,7 +56,7 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 		for i := 0; i < len(kList); i++ {
 			rMap, err := cmds[i].Result()
 			if err != nil {
-				c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in.DebugString(), err)
+				c.Logger.Errorf("status.getUsersOnlineSessionsList(%s) error(%v)", in, err)
 				return nil, err
 			}
 

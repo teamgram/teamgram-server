@@ -32,6 +32,6 @@ func (s *Service) GatewaySendDataToGateway(ctx context.Context, request *gateway
 		return nil, err
 	}
 
-	logx.WithContext(ctx).Debugf("gateway.sendDataToGateway - reply: %s", r.DebugString())
+	logx.WithContext(ctx).Debugf("gateway.sendDataToGateway - reply: %s", r)
 	return r, err
 }

@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -172,17 +171,6 @@ func (m *ContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *ContentMessage) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_contentMessage:
-		t := m.To_ContentMessage()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_ContentMessage
 func (m *ContentMessage) To_ContentMessage() *TLContentMessage {
 	m.PredicateName = Predicate_contentMessage
@@ -302,15 +290,6 @@ func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLContentMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // OutboxMessage <--
 //  + TL_OutboxMessage
@@ -352,17 +331,6 @@ func (m *OutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *OutboxMessage) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_outboxMessage:
-		t := m.To_OutboxMessage()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_OutboxMessage
@@ -494,15 +462,6 @@ func (m *TLOutboxMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLOutboxMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // Sender <--
 //  + TL_Sender
@@ -544,17 +503,6 @@ func (m *Sender) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *Sender) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_sender:
-		t := m.To_Sender()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_Sender
@@ -640,15 +588,6 @@ func (m *TLSender) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSender) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLMsgSendMessage
 ///////////////////////////////////////////////////////////////////////////////
@@ -698,15 +637,6 @@ func (m *TLMsgSendMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgSendMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgSendMultiMessage
@@ -772,15 +702,6 @@ func (m *TLMsgSendMultiMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgSendMultiMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgPushUserMessage
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -831,15 +752,6 @@ func (m *TLMsgPushUserMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgPushUserMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgReadMessageContents
@@ -905,15 +817,6 @@ func (m *TLMsgReadMessageContents) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgReadMessageContents) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgSendMessageV2
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -977,15 +880,6 @@ func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgSendMessageV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgEditMessage
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1036,15 +930,6 @@ func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgEditMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgDeleteMessages
@@ -1107,15 +992,6 @@ func (m *TLMsgDeleteMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgDeleteMessages) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgDeleteHistory
@@ -1183,15 +1059,6 @@ func (m *TLMsgDeleteHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgDeleteHistory) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgDeletePhoneCallHistory
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1245,15 +1112,6 @@ func (m *TLMsgDeletePhoneCallHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgDeletePhoneCallHistory) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgDeleteChatHistory
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1292,15 +1150,6 @@ func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgDeleteChatHistory) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgReadHistory
@@ -1347,15 +1196,6 @@ func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgReadHistory) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLMsgUpdatePinnedMessage
@@ -1429,15 +1269,6 @@ func (m *TLMsgUpdatePinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLMsgUpdatePinnedMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLMsgUnpinAllMessages
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1480,13 +1311,4 @@ func (m *TLMsgUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLMsgUnpinAllMessages) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

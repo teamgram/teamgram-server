@@ -46,12 +46,12 @@ func (m *rpcApiMessage) DebugString() string {
 		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s}",
 			m.sessionId,
 			m.reqMsgId,
-			m.reqMsg.DebugString())
+			m.reqMsg)
 	} else {
 		return fmt.Sprintf("{trace_id: %d, session_id: %d, req_msg_id: %d, req_msg: %s, rpc_result: %s}",
 			m.sessionId,
 			m.reqMsgId,
-			m.reqMsg.DebugString(),
-			m.rpcResult.Result.DebugString())
+			m.reqMsg,
+			m.rpcResult.Result)
 	}
 }

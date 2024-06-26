@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -152,17 +151,6 @@ func (m *SessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *SessionEntry) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_sessionEntry:
-		t := m.To_SessionEntry()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_SessionEntry
 func (m *SessionEntry) To_SessionEntry() *TLSessionEntry {
 	m.PredicateName = Predicate_sessionEntry
@@ -266,15 +254,6 @@ func (m *TLSessionEntry) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSessionEntry) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // UserSessionEntryList <--
 //  + TL_UserSessionEntryList
@@ -316,17 +295,6 @@ func (m *UserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *UserSessionEntryList) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_userSessionEntryList:
-		t := m.To_UserSessionEntryList()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_UserSessionEntryList
@@ -425,15 +393,6 @@ func (m *TLUserSessionEntryList) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUserSessionEntryList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLStatusSetSessionOnline
 ///////////////////////////////////////////////////////////////////////////////
@@ -479,15 +438,6 @@ func (m *TLStatusSetSessionOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetSessionOnline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusSetSessionOffline
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -528,15 +478,6 @@ func (m *TLStatusSetSessionOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetSessionOffline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusGetUserOnlineSessions
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -573,15 +514,6 @@ func (m *TLStatusGetUserOnlineSessions) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLStatusGetUserOnlineSessions) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLStatusGetUsersOnlineSessionsList
@@ -623,15 +555,6 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(dBuf *mtproto.DecodeBuf) err
 	return dBuf.GetError()
 }
 
-func (m *TLStatusGetUsersOnlineSessionsList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusGetChannelOnlineUsers
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -668,15 +591,6 @@ func (m *TLStatusGetChannelOnlineUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLStatusGetChannelOnlineUsers) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLStatusSetUserChannelsOnline
@@ -722,15 +636,6 @@ func (m *TLStatusSetUserChannelsOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetUserChannelsOnline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusSetUserChannelsOffline
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -774,15 +679,6 @@ func (m *TLStatusSetUserChannelsOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetUserChannelsOffline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusSetChannelUserOffline
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -821,15 +717,6 @@ func (m *TLStatusSetChannelUserOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLStatusSetChannelUserOffline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLStatusSetChannelUsersOnline
@@ -875,15 +762,6 @@ func (m *TLStatusSetChannelUsersOnline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetChannelUsersOnline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLStatusSetChannelOffline
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -922,15 +800,6 @@ func (m *TLStatusSetChannelOffline) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLStatusSetChannelOffline) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_UserSessionEntryList
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserSessionEntryList) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -959,15 +828,6 @@ func (m *Vector_UserSessionEntryList) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_UserSessionEntryList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_Long
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -984,13 +844,4 @@ func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_Long) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_Long) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

@@ -29,7 +29,7 @@ import (
 func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 	// for android, obj maybe is nil
 	if obj != nil {
-		logx.WithContext(ctx).Infof("session]]>> - session: %s, syncData: %s", c, obj.DebugString())
+		logx.WithContext(ctx).Infof("session]]>> - session: %s, syncData: %s", c, obj)
 	} else {
 		logx.WithContext(ctx).Infof("session]]>> - session: %s, syncData: nil", c)
 	}

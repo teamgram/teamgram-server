@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -517,17 +516,6 @@ func (m *LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *LastSeenData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_lastSeenData:
-		t := m.To_LastSeenData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_LastSeenData
 func (m *LastSeenData) To_LastSeenData() *TLLastSeenData {
 	m.PredicateName = Predicate_lastSeenData
@@ -611,15 +599,6 @@ func (m *TLLastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLLastSeenData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // PeerPeerNotifySettings <--
 //  + TL_PeerPeerNotifySettings
@@ -661,17 +640,6 @@ func (m *PeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *PeerPeerNotifySettings) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_peerPeerNotifySettings:
-		t := m.To_PeerPeerNotifySettings()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_PeerPeerNotifySettings
@@ -761,15 +729,6 @@ func (m *TLPeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLPeerPeerNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // UserImportedContacts <--
 //  + TL_UserImportedContacts
@@ -811,17 +770,6 @@ func (m *UserImportedContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *UserImportedContacts) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_userImportedContacts:
-		t := m.To_UserImportedContacts()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_UserImportedContacts
@@ -976,15 +924,6 @@ func (m *TLUserImportedContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUserImportedContacts) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // UsersFound <--
 //  + TL_UsersDataFound
@@ -1033,20 +972,6 @@ func (m *UsersFound) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *UsersFound) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_usersDataFound:
-		t := m.To_UsersDataFound()
-		return t.DebugString()
-	case Predicate_usersIdFound:
-		t := m.To_UsersIdFound()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_UsersDataFound
@@ -1158,15 +1083,6 @@ func (m *TLUsersDataFound) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsersDataFound) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLUsersIdFound
 func MakeTLUsersIdFound(data2 *UsersFound) *TLUsersIdFound {
 	if data2 == nil {
@@ -1235,15 +1151,6 @@ func (m *TLUsersIdFound) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsersIdFound) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLUserGetLastSeens
 ///////////////////////////////////////////////////////////////////////////////
@@ -1282,15 +1189,6 @@ func (m *TLUserGetLastSeens) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetLastSeens) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateLastSeen
@@ -1335,15 +1233,6 @@ func (m *TLUserUpdateLastSeen) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateLastSeen) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetLastSeen
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1380,15 +1269,6 @@ func (m *TLUserGetLastSeen) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetLastSeen) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetImmutableUser
@@ -1447,15 +1327,6 @@ func (m *TLUserGetImmutableUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetImmutableUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetMutableUsers
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1499,15 +1370,6 @@ func (m *TLUserGetMutableUsers) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetMutableUsers) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetImmutableUserByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1546,15 +1408,6 @@ func (m *TLUserGetImmutableUserByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetImmutableUserByPhone) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetImmutableUserByToken
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1591,15 +1444,6 @@ func (m *TLUserGetImmutableUserByToken) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetImmutableUserByToken) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetAccountDaysTTL
@@ -1642,15 +1486,6 @@ func (m *TLUserSetAccountDaysTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetAccountDaysTTL) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetAccountDaysTTL
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1687,15 +1522,6 @@ func (m *TLUserGetAccountDaysTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetAccountDaysTTL) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetNotifySettings
@@ -1738,15 +1564,6 @@ func (m *TLUserGetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetNotifySettingsList
@@ -1806,15 +1623,6 @@ func (m *TLUserGetNotifySettingsList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetNotifySettingsList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserSetNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1863,15 +1671,6 @@ func (m *TLUserSetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserResetNotifySettings
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1908,15 +1707,6 @@ func (m *TLUserResetNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserResetNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetAllNotifySettings
@@ -1957,15 +1747,6 @@ func (m *TLUserGetAllNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetAllNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetGlobalPrivacySettings
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2002,15 +1783,6 @@ func (m *TLUserGetGlobalPrivacySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetGlobalPrivacySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetGlobalPrivacySettings
@@ -2057,15 +1829,6 @@ func (m *TLUserSetGlobalPrivacySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetGlobalPrivacySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetPrivacy
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2104,15 +1867,6 @@ func (m *TLUserGetPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetPrivacy) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetPrivacy
@@ -2174,15 +1928,6 @@ func (m *TLUserSetPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetPrivacy) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserCheckPrivacy
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2229,15 +1974,6 @@ func (m *TLUserCheckPrivacy) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserCheckPrivacy) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserAddPeerSettings
@@ -2288,15 +2024,6 @@ func (m *TLUserAddPeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserAddPeerSettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetPeerSettings
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2337,15 +2064,6 @@ func (m *TLUserGetPeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetPeerSettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserDeletePeerSettings
@@ -2390,15 +2108,6 @@ func (m *TLUserDeletePeerSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserDeletePeerSettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserChangePhone
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2437,15 +2146,6 @@ func (m *TLUserChangePhone) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserChangePhone) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserCreateNewPredefinedUser
@@ -2517,15 +2217,6 @@ func (m *TLUserCreateNewPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserCreateNewPredefinedUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetPredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2564,15 +2255,6 @@ func (m *TLUserGetPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetPredefinedUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetAllPredefinedUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2606,15 +2288,6 @@ func (m *TLUserGetAllPredefinedUser) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetAllPredefinedUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdatePredefinedFirstAndLastName
@@ -2674,15 +2347,6 @@ func (m *TLUserUpdatePredefinedFirstAndLastName) Decode(dBuf *mtproto.DecodeBuf)
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdatePredefinedFirstAndLastName) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUpdatePredefinedVerified
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2732,15 +2396,6 @@ func (m *TLUserUpdatePredefinedVerified) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserUpdatePredefinedVerified) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdatePredefinedUsername
@@ -2798,15 +2453,6 @@ func (m *TLUserUpdatePredefinedUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdatePredefinedUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUpdatePredefinedCode
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2847,15 +2493,6 @@ func (m *TLUserUpdatePredefinedCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdatePredefinedCode) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserPredefinedBindRegisteredUserId
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2894,15 +2531,6 @@ func (m *TLUserPredefinedBindRegisteredUserId) Decode(dBuf *mtproto.DecodeBuf) e
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserPredefinedBindRegisteredUserId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserCreateNewUser
@@ -2951,15 +2579,6 @@ func (m *TLUserCreateNewUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserCreateNewUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserDeleteUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2998,15 +2617,6 @@ func (m *TLUserDeleteUser) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserDeleteUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserBlockPeer
@@ -3051,15 +2661,6 @@ func (m *TLUserBlockPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserBlockPeer) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUnBlockPeer
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3102,15 +2703,6 @@ func (m *TLUserUnBlockPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUnBlockPeer) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserBlockedByUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3151,15 +2743,6 @@ func (m *TLUserBlockedByUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserBlockedByUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserIsBlockedByUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3198,15 +2781,6 @@ func (m *TLUserIsBlockedByUser) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserIsBlockedByUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserCheckBlockUserList
@@ -3252,15 +2826,6 @@ func (m *TLUserCheckBlockUserList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserCheckBlockUserList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetBlockedList
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3303,15 +2868,6 @@ func (m *TLUserGetBlockedList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetBlockedList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetContactSignUpNotification
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3348,15 +2904,6 @@ func (m *TLUserGetContactSignUpNotification) Decode(dBuf *mtproto.DecodeBuf) err
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetContactSignUpNotification) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetContactSignUpNotification
@@ -3403,15 +2950,6 @@ func (m *TLUserSetContactSignUpNotification) Decode(dBuf *mtproto.DecodeBuf) err
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetContactSignUpNotification) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetContentSettings
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3448,15 +2986,6 @@ func (m *TLUserGetContentSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetContentSettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetContentSettings
@@ -3510,15 +3039,6 @@ func (m *TLUserSetContentSettings) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetContentSettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserDeleteContact
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3559,15 +3079,6 @@ func (m *TLUserDeleteContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserDeleteContact) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetContactList
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3604,15 +3115,6 @@ func (m *TLUserGetContactList) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetContactList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetContactIdList
@@ -3653,15 +3155,6 @@ func (m *TLUserGetContactIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetContactIdList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetContact
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3700,15 +3193,6 @@ func (m *TLUserGetContact) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetContact) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserAddContact
@@ -3763,15 +3247,6 @@ func (m *TLUserAddContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserAddContact) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserCheckContact
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3812,15 +3287,6 @@ func (m *TLUserCheckContact) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserCheckContact) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetImportersByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3859,15 +3325,6 @@ func (m *TLUserGetImportersByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetImportersByPhone) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserDeleteImportersByPhone
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3904,15 +3361,6 @@ func (m *TLUserDeleteImportersByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserDeleteImportersByPhone) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserImportContacts
@@ -3972,15 +3420,6 @@ func (m *TLUserImportContacts) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserImportContacts) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetCountryCode
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4017,15 +3456,6 @@ func (m *TLUserGetCountryCode) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetCountryCode) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateAbout
@@ -4068,15 +3498,6 @@ func (m *TLUserUpdateAbout) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateAbout) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUpdateFirstAndLastName
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4117,15 +3538,6 @@ func (m *TLUserUpdateFirstAndLastName) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserUpdateFirstAndLastName) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateVerified
@@ -4172,15 +3584,6 @@ func (m *TLUserUpdateVerified) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateVerified) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUpdateUsername
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4221,15 +3624,6 @@ func (m *TLUserUpdateUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserUpdateProfilePhoto
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4268,15 +3662,6 @@ func (m *TLUserUpdateProfilePhoto) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserUpdateProfilePhoto) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserDeleteProfilePhotos
@@ -4322,15 +3707,6 @@ func (m *TLUserDeleteProfilePhotos) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserDeleteProfilePhotos) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetProfilePhotos
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4367,15 +3743,6 @@ func (m *TLUserGetProfilePhotos) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetProfilePhotos) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetBotCommands
@@ -4437,15 +3804,6 @@ func (m *TLUserSetBotCommands) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetBotCommands) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserIsBot
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4484,15 +3842,6 @@ func (m *TLUserIsBot) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserIsBot) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetBotInfo
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4529,15 +3878,6 @@ func (m *TLUserGetBotInfo) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetBotInfo) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserCheckBots
@@ -4579,15 +3919,6 @@ func (m *TLUserCheckBots) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserCheckBots) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetFullUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4626,15 +3957,6 @@ func (m *TLUserGetFullUser) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetFullUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateEmojiStatus
@@ -4679,15 +4001,6 @@ func (m *TLUserUpdateEmojiStatus) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateEmojiStatus) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetUserDataById
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4724,15 +4037,6 @@ func (m *TLUserGetUserDataById) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetUserDataById) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetUserDataListByIdList
@@ -4774,15 +4078,6 @@ func (m *TLUserGetUserDataListByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetUserDataListByIdList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetUserDataByToken
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -4819,15 +4114,6 @@ func (m *TLUserGetUserDataByToken) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetUserDataByToken) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSearch
@@ -4876,15 +4162,6 @@ func (m *TLUserSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserSearch) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateBotData
@@ -4991,15 +4268,6 @@ func (m *TLUserUpdateBotData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateBotData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetImmutableUserV2
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -5064,15 +4332,6 @@ func (m *TLUserGetImmutableUserV2) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetImmutableUserV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserGetMutableUsersV2
@@ -5145,15 +4404,6 @@ func (m *TLUserGetMutableUsersV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserGetMutableUsersV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserCreateNewTestUser
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -5194,15 +4444,6 @@ func (m *TLUserCreateNewTestUser) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserCreateNewTestUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserEditCloseFriends
@@ -5248,15 +4489,6 @@ func (m *TLUserEditCloseFriends) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserEditCloseFriends) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserSetStoriesMaxId
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -5295,15 +4527,6 @@ func (m *TLUserSetStoriesMaxId) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserSetStoriesMaxId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetColor
@@ -5359,15 +4582,6 @@ func (m *TLUserSetColor) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserSetColor) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserUpdateBirthday
@@ -5426,15 +4640,6 @@ func (m *TLUserUpdateBirthday) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserUpdateBirthday) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUserGetBirthdays
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -5471,15 +4676,6 @@ func (m *TLUserGetBirthdays) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUserGetBirthdays) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUserSetStoriesHidden
@@ -5528,15 +4724,6 @@ func (m *TLUserSetStoriesHidden) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUserSetStoriesHidden) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_LastSeenData
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_LastSeenData) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5563,15 +4750,6 @@ func (m *Vector_LastSeenData) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_LastSeenData) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_LastSeenData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_ImmutableUser
@@ -5602,15 +4780,6 @@ func (m *Vector_ImmutableUser) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_ImmutableUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_PeerPeerNotifySettings
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerPeerNotifySettings) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5637,15 +4806,6 @@ func (m *Vector_PeerPeerNotifySettings) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_PeerPeerNotifySettings) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_PeerPeerNotifySettings) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_PrivacyRule
@@ -5676,15 +4836,6 @@ func (m *Vector_PrivacyRule) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_PrivacyRule) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_PredefinedUser
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PredefinedUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5713,15 +4864,6 @@ func (m *Vector_PredefinedUser) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_PredefinedUser) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_Long
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5738,15 +4880,6 @@ func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_Long) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_Long) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_PeerBlocked
@@ -5777,15 +4910,6 @@ func (m *Vector_PeerBlocked) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_PeerBlocked) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_ContactData
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactData) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5812,15 +4936,6 @@ func (m *Vector_ContactData) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_ContactData) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_ContactData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_InputContact
@@ -5851,15 +4966,6 @@ func (m *Vector_InputContact) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_InputContact) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_UserData
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UserData) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5888,15 +4994,6 @@ func (m *Vector_UserData) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_UserData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_ContactBirthday
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_ContactBirthday) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -5923,13 +5020,4 @@ func (m *Vector_ContactBirthday) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_ContactBirthday) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_ContactBirthday) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

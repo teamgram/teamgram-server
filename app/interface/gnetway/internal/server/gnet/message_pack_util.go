@@ -78,7 +78,7 @@ func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
 	if in == nil {
 		return nil
 	}
-	logx.Debugf("rpc: %s", in.DebugString())
+	logx.Debugf("rpc: %s", in)
 
 	switch r := in.(type) {
 	case *mtproto.TLDestroyAuthKey: // 所有连接都有可能

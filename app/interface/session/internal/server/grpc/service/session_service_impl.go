@@ -22,14 +22,14 @@ import (
 // session.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (s *Service) SessionQueryAuthKey(ctx context.Context, request *session.TLSessionQueryAuthKey) (*mtproto.AuthKeyInfo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.queryAuthKey - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.queryAuthKey - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.SessionQueryAuthKey(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.queryAuthKey - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.queryAuthKey - reply: %s", r)
 	return r, err
 }
 
@@ -37,14 +37,14 @@ func (s *Service) SessionQueryAuthKey(ctx context.Context, request *session.TLSe
 // session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (s *Service) SessionSetAuthKey(ctx context.Context, request *session.TLSessionSetAuthKey) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.setAuthKey - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.setAuthKey - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.SessionSetAuthKey(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.setAuthKey - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.setAuthKey - reply: %s", r)
 	return r, err
 }
 
@@ -52,7 +52,7 @@ func (s *Service) SessionSetAuthKey(ctx context.Context, request *session.TLSess
 // session.createSession client:SessionClientEvent = Bool;
 func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLSessionCreateSession) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.createSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.createSession - metadata: %s, request: %s", c.MD, request)
 
 	if err := s.checkShardingV(ctx, request.GetClient().GetPermAuthKeyId()); err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.createSession - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.createSession - reply: %s", r)
 	return r, err
 }
 
@@ -92,7 +92,7 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.sendDataToSession - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.sendDataToSession - reply: %s", r)
 	return r, err
 }
 
@@ -121,7 +121,7 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *ses
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.sendHttpDataToSession - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.sendHttpDataToSession - reply: %s", r)
 	return r, err
 }
 
@@ -129,7 +129,7 @@ func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *ses
 // session.closeSession client:SessionClientEvent = Bool;
 func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSessionCloseSession) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.closeSession - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.closeSession - metadata: %s, request: %s", c.MD, request)
 
 	if err := s.checkShardingV(ctx, request.GetClient().GetPermAuthKeyId()); err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSe
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.closeSession - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.closeSession - reply: %s", r)
 	return r, err
 }
 
@@ -148,7 +148,7 @@ func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSe
 // session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.TLSessionPushUpdatesData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.pushUpdatesData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.pushUpdatesData - metadata: %s, request: %s", c.MD, request)
 
 	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.T
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.pushUpdatesData - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.pushUpdatesData - reply: %s", r)
 	return r, err
 }
 
@@ -167,7 +167,7 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.T
 // session.pushSessionUpdatesData auth_key_id:long session_id:long updates:Updates = Bool;
 func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *session.TLSessionPushSessionUpdatesData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.pushSessionUpdatesData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.pushSessionUpdatesData - metadata: %s, request: %s", c.MD, request)
 
 	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.pushSessionUpdatesData - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.pushSessionUpdatesData - reply: %s", r)
 	return r, err
 }
 
@@ -186,7 +186,7 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 // session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 func (s *Service) SessionPushRpcResultData(ctx context.Context, request *session.TLSessionPushRpcResultData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.pushRpcResultData - metadata: %s, request: %s", c.MD.DebugString(), request.DebugString())
+	c.Logger.Debugf("session.pushRpcResultData - metadata: %s, request: %s", c.MD, request)
 
 	if err := s.checkShardingV(ctx, request.GetPermAuthKeyId()); err != nil {
 		return nil, err
@@ -197,6 +197,6 @@ func (s *Service) SessionPushRpcResultData(ctx context.Context, request *session
 		return nil, err
 	}
 
-	c.Logger.Debugf("session.pushRpcResultData - reply: %s", r.DebugString())
+	c.Logger.Debugf("session.pushRpcResultData - reply: %s", r)
 	return r, err
 }

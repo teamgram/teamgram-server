@@ -78,7 +78,7 @@ func (c *HttpserverCore) HttpserverApiw1(in *mtproto.MTPRawMessage) (*mtproto.MT
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 func (c *HttpserverCore) onUnencryptedMessage(mmsg *mtproto.MTPRawMessage) (*mtproto.MTPRawMessage, error) {
-	// logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+	// logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 	if len(mmsg.Payload) < 8 {
 		err := fmt.Errorf("invalid data len < 8")
 		logx.Error(err.Error())
@@ -96,10 +96,10 @@ func (c *HttpserverCore) onUnencryptedMessage(mmsg *mtproto.MTPRawMessage) (*mtp
 
 	switch request := obj.(type) {
 	case *mtproto.TLReqPq:
-		logx.Infof("TLReqPq - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReqPq - {\"request\":%s", request)
 		resPQ, err := c.svcCtx.Dao.Handshake.OnReqPq(request)
 		if err != nil {
-			// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, ctx.DebugString(), mmsg.DebugString())
+			// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, ctx, mmsg)
 			// conn.Close()
 			return nil, err
 		}
@@ -110,10 +110,10 @@ func (c *HttpserverCore) onUnencryptedMessage(mmsg *mtproto.MTPRawMessage) (*mtp
 		})
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReqPqMulti:
-		logx.Infof("TLReqPqMulti - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReqPqMulti - {\"request\":%s", request)
 		resPQ, err := c.svcCtx.Dao.Handshake.OnReqPqMulti(request)
 		if err != nil {
-			// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 			// conn.Close()
 			return nil, err
 		}
@@ -124,36 +124,36 @@ func (c *HttpserverCore) onUnencryptedMessage(mmsg *mtproto.MTPRawMessage) (*mtp
 		})
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReq_DHParams:
-		logx.Infof("TLReq_DHParams - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReq_DHParams - {\"request\":%s", request)
 		if state := c.svcCtx.Dao.GetHandshakeStateCtx(request.Nonce); state != nil {
 			resServerDHParam, err := c.svcCtx.Dao.Handshake.OnReqDHParams(state, obj.(*mtproto.TLReq_DHParams))
 			if err != nil {
-				// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// conn.Close()
 				return nil, err
 			}
 			state.State = STATE_DH_params_res
 			serializeToBuffer(x, mtproto.GenerateMessageId(), resServerDHParam)
 		} else {
-			// logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			// logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return conn.Close()
 		}
 	case *mtproto.TLSetClient_DHParams:
-		logx.Infof("TLSetClient_DHParams - {\"request\":%s", request.DebugString())
+		logx.Infof("TLSetClient_DHParams - {\"request\":%s", request)
 		if state := c.svcCtx.Dao.GetHandshakeStateCtx(request.Nonce); state != nil {
 			resSetClientDHParamsAnswer, err := c.svcCtx.Dao.Handshake.OnSetClientDHParams(state, obj.(*mtproto.TLSetClient_DHParams))
 			if err != nil {
-				// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				// logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// return conn.Close()
 			}
 			state.State = STATE_dh_gen_res
 			serializeToBuffer(x, mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
 		} else {
-			// logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			// logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return conn.Close()
 		}
 	case *mtproto.TLMsgsAck:
-		logx.Infof("TLMsgsAck - {\"request\":%s", request.DebugString())
+		logx.Infof("TLMsgsAck - {\"request\":%s", request)
 		//err = s.onMsgsAck(state, obj.(*mtproto.TLMsgsAck))
 		//return nil, err
 		return nil, err

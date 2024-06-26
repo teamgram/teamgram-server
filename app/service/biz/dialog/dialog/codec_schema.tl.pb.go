@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -312,17 +311,6 @@ func (m *DialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *DialogExt) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_dialogExt:
-		t := m.To_DialogExt()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_DialogExt
 func (m *DialogExt) To_DialogExt() *TLDialogExt {
 	m.PredicateName = Predicate_dialogExt
@@ -425,15 +413,6 @@ func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLDialogExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // DialogFilterExt <--
 //  + TL_DialogFilterExt
@@ -475,17 +454,6 @@ func (m *DialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *DialogFilterExt) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_dialogFilterExt:
-		t := m.To_DialogFilterExt()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_DialogFilterExt
@@ -603,15 +571,6 @@ func (m *TLDialogFilterExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLDialogFilterExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // DialogPinnedExt <--
 //  + TL_DialogPinnedExt
@@ -653,17 +612,6 @@ func (m *DialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *DialogPinnedExt) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_dialogPinnedExt:
-		t := m.To_DialogPinnedExt()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_DialogPinnedExt
@@ -749,15 +697,6 @@ func (m *TLDialogPinnedExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLDialogPinnedExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // DialogsData <--
 //  + TL_SimpleDialogsData
@@ -799,17 +738,6 @@ func (m *DialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *DialogsData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_simpleDialogsData:
-		t := m.To_SimpleDialogsData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_SimpleDialogsData
@@ -902,15 +830,6 @@ func (m *TLSimpleDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSimpleDialogsData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // PeerWithDraftMessage <--
 //  + TL_UpdateDraftMessage
@@ -952,17 +871,6 @@ func (m *PeerWithDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *PeerWithDraftMessage) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_updateDraftMessage:
-		t := m.To_UpdateDraftMessage()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_UpdateDraftMessage
@@ -1050,15 +958,6 @@ func (m *TLUpdateDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUpdateDraftMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // SavedDialogList <--
 //  + TL_SavedDialogList
@@ -1100,17 +999,6 @@ func (m *SavedDialogList) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *SavedDialogList) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_savedDialogList:
-		t := m.To_SavedDialogList()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_SavedDialogList
@@ -1209,15 +1097,6 @@ func (m *TLSavedDialogList) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSavedDialogList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLDialogSaveDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
@@ -1267,15 +1146,6 @@ func (m *TLDialogSaveDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogSaveDraftMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogClearDraftMessage
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1318,15 +1188,6 @@ func (m *TLDialogClearDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogClearDraftMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetAllDrafts
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1365,15 +1226,6 @@ func (m *TLDialogGetAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetAllDrafts) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogClearAllDrafts
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1410,15 +1262,6 @@ func (m *TLDialogClearAllDrafts) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogClearAllDrafts) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogMarkDialogUnread
@@ -1469,15 +1312,6 @@ func (m *TLDialogMarkDialogUnread) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogMarkDialogUnread) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogToggleDialogPin
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1526,15 +1360,6 @@ func (m *TLDialogToggleDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogToggleDialogPin) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogUnreadMarkList
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1571,15 +1396,6 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(dBuf *mtproto.DecodeBuf) error 
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetDialogUnreadMarkList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogGetDialogsByOffsetDate
@@ -1630,15 +1446,6 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetDialogsByOffsetDate) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1685,15 +1492,6 @@ func (m *TLDialogGetDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogsByIdList
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1735,15 +1533,6 @@ func (m *TLDialogGetDialogsByIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetDialogsByIdList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogGetDialogsCount
@@ -1792,15 +1581,6 @@ func (m *TLDialogGetDialogsCount) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetDialogsCount) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetPinnedDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1839,15 +1619,6 @@ func (m *TLDialogGetPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetPinnedDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogReorderPinnedDialogs
@@ -1901,15 +1672,6 @@ func (m *TLDialogReorderPinnedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogReorderPinnedDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogById
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1952,15 +1714,6 @@ func (m *TLDialogGetDialogById) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetDialogById) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetTopMessage
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2001,15 +1754,6 @@ func (m *TLDialogGetTopMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetTopMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogUpdateReadInbox
@@ -2056,15 +1800,6 @@ func (m *TLDialogUpdateReadInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogUpdateReadInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogUpdateReadOutbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2107,15 +1842,6 @@ func (m *TLDialogUpdateReadOutbox) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogUpdateReadOutbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogInsertOrUpdateDialog
@@ -2227,15 +1953,6 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogInsertOrUpdateDialog) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogDeleteDialog
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2276,15 +1993,6 @@ func (m *TLDialogDeleteDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogDeleteDialog) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogGetUserPinnedMessage
@@ -2329,15 +2037,6 @@ func (m *TLDialogGetUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetUserPinnedMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogUpdateUserPinnedMessage
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2380,15 +2079,6 @@ func (m *TLDialogUpdateUserPinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error 
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogUpdateUserPinnedMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogInsertOrUpdateDialogFilter
@@ -2437,15 +2127,6 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) err
 	return dBuf.GetError()
 }
 
-func (m *TLDialogInsertOrUpdateDialogFilter) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogDeleteDialogFilter
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2484,15 +2165,6 @@ func (m *TLDialogDeleteDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogDeleteDialogFilter) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogUpdateDialogFiltersOrder
@@ -2538,15 +2210,6 @@ func (m *TLDialogUpdateDialogFiltersOrder) Decode(dBuf *mtproto.DecodeBuf) error
 	return dBuf.GetError()
 }
 
-func (m *TLDialogUpdateDialogFiltersOrder) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogFilters
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2583,15 +2246,6 @@ func (m *TLDialogGetDialogFilters) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetDialogFilters) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogGetDialogFolder
@@ -2632,15 +2286,6 @@ func (m *TLDialogGetDialogFolder) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetDialogFolder) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogEditPeerFolders
@@ -2689,15 +2334,6 @@ func (m *TLDialogEditPeerFolders) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogEditPeerFolders) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetChannelMessageReadParticipants
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2738,15 +2374,6 @@ func (m *TLDialogGetChannelMessageReadParticipants) Decode(dBuf *mtproto.DecodeB
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetChannelMessageReadParticipants) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogSetChatTheme
@@ -2793,15 +2420,6 @@ func (m *TLDialogSetChatTheme) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogSetChatTheme) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogSetHistoryTTL
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2844,15 +2462,6 @@ func (m *TLDialogSetHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogSetHistoryTTL) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogGetMyDialogsData
@@ -2918,15 +2527,6 @@ func (m *TLDialogGetMyDialogsData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetMyDialogsData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetSavedDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2983,15 +2583,6 @@ func (m *TLDialogGetSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetSavedDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetPinnedSavedDialogs
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3028,15 +2619,6 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetPinnedSavedDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogToggleSavedDialogPin
@@ -3086,15 +2668,6 @@ func (m *TLDialogToggleSavedDialogPin) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogToggleSavedDialogPin) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogReorderPinnedSavedDialogs
@@ -3160,15 +2733,6 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(dBuf *mtproto.DecodeBuf) erro
 	return dBuf.GetError()
 }
 
-func (m *TLDialogReorderPinnedSavedDialogs) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogFilter
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3209,15 +2773,6 @@ func (m *TLDialogGetDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogGetDialogFilter) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLDialogGetDialogFilterBySlug
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -3256,15 +2811,6 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLDialogGetDialogFilterBySlug) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLDialogCreateDialogFilter
@@ -3311,15 +2857,6 @@ func (m *TLDialogCreateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLDialogCreateDialogFilter) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_PeerWithDraftMessage
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_PeerWithDraftMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -3346,15 +2883,6 @@ func (m *Vector_PeerWithDraftMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_PeerWithDraftMessage) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_PeerWithDraftMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_DialogPeer
@@ -3385,15 +2913,6 @@ func (m *Vector_DialogPeer) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_DialogPeer) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_DialogExt
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -3420,15 +2939,6 @@ func (m *Vector_DialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_DialogExt) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_DialogExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_DialogFilterExt
@@ -3459,15 +2969,6 @@ func (m *Vector_DialogFilterExt) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_DialogFilterExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_DialogPinnedExt
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_DialogPinnedExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -3496,15 +2997,6 @@ func (m *Vector_DialogPinnedExt) CalcByteSize(layer int32) int {
 	return 0
 }
 
-func (m *Vector_DialogPinnedExt) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_Long
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -3521,13 +3013,4 @@ func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_Long) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_Long) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

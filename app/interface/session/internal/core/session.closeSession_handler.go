@@ -38,7 +38,7 @@ func (c *SessionCore) SessionCloseSession(in *session.TLSessionCloseSession) (*m
 
 	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(cli.PermAuthKeyId)
 	if mainAuth == nil {
-		c.Logger.Errorf("session.closeSession - not found sessList by keyId: %d", cli.DebugString())
+		c.Logger.Errorf("session.closeSession - not found sessList by keyId: %d", cli)
 	} else {
 		mainAuth.SessionClientClosed(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
 	}

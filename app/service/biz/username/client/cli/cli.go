@@ -35,7 +35,7 @@ func main() {
 		if err != nil {
 			logx.Errorf("username.getAccountUsername - error: %v", err)
 		} else {
-			logx.Infof("username.getAccountUsername - reply: %v", rValue.DebugString())
+			logx.Infof("username.getAccountUsername - reply: %v", rValue)
 		}
 	}
 }

@@ -35,7 +35,7 @@ func (c *session) onMsgsAck(ctx context.Context, gatewayId string, msgId int64, 
 		gatewayId,
 		msgId,
 		seqno,
-		request.DebugString())
+		request)
 
 	c.outQueue.OnMsgsAck(request.GetMsgIds(), func(inMsgId int64) {
 		// Notes: ignore notifyId
@@ -435,7 +435,7 @@ func (c *session) onMsgsStateReq(ctx context.Context, gatewayId string, msgId *i
 		gatewayId,
 		msgId.msgId,
 		msgId.seqNo,
-		request.DebugString())
+		request)
 
 	// Request for Message Status Information
 	//

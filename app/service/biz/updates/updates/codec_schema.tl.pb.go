@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -130,17 +129,6 @@ func (m *ChannelDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *ChannelDifference) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_channelDifference:
-		t := m.To_ChannelDifference()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_ChannelDifference
@@ -284,15 +272,6 @@ func (m *TLChannelDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLChannelDifference) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // Difference <--
 //  + TL_DifferenceEmpty
@@ -355,26 +334,6 @@ func (m *Difference) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *Difference) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_differenceEmpty:
-		t := m.To_DifferenceEmpty()
-		return t.DebugString()
-	case Predicate_difference:
-		t := m.To_Difference()
-		return t.DebugString()
-	case Predicate_differenceSlice:
-		t := m.To_DifferenceSlice()
-		return t.DebugString()
-	case Predicate_differenceTooLong:
-		t := m.To_DifferenceTooLong()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_DifferenceEmpty
@@ -475,15 +434,6 @@ func (m *TLDifferenceEmpty) Decode(dBuf *mtproto.DecodeBuf) error {
 		return f()
 	} else {
 		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLDifferenceEmpty) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
 	}
 }
 
@@ -596,15 +546,6 @@ func (m *TLDifference) Decode(dBuf *mtproto.DecodeBuf) error {
 		return f()
 	} else {
 		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLDifference) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
 	}
 }
 
@@ -724,15 +665,6 @@ func (m *TLDifferenceSlice) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLDifferenceSlice) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLDifferenceTooLong
 func MakeTLDifferenceTooLong(data2 *Difference) *TLDifferenceTooLong {
 	if data2 == nil {
@@ -798,15 +730,6 @@ func (m *TLDifferenceTooLong) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLDifferenceTooLong) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLUpdatesGetStateV2
 ///////////////////////////////////////////////////////////////////////////////
@@ -846,15 +769,6 @@ func (m *TLUpdatesGetStateV2) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUpdatesGetStateV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUpdatesGetDifferenceV2
@@ -919,15 +833,6 @@ func (m *TLUpdatesGetDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUpdatesGetDifferenceV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUpdatesGetChannelDifferenceV2
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -972,13 +877,4 @@ func (m *TLUpdatesGetChannelDifferenceV2) Decode(dBuf *mtproto.DecodeBuf) error 
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUpdatesGetChannelDifferenceV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

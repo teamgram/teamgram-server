@@ -72,7 +72,7 @@ func (c *ChatsCore) MessagesGetMessageReadParticipants2C6F97B7(in *mtproto.TLMes
 				IdList: []int64{mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)},
 			})
 			for _, d := range dialogList.GetDatas() {
-				// c.Logger.Infof("messages.getMessageReadParticipants - dialog: %s", d.DebugString())
+				// c.Logger.Infof("messages.getMessageReadParticipants - dialog: %s", d)
 				if d.GetDialog().GetReadInboxMaxId() >= v.MessageId {
 					rValueList = append(rValueList, v.UserId)
 				}

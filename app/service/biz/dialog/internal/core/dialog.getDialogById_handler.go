@@ -22,7 +22,7 @@ func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dia
 		c.Logger.Errorf("dialog.getDialogById - error: %v", err)
 		return nil, err
 	} else if dialogDO == nil {
-		c.Logger.Errorf("dialog.getDialogById - error: not found dialog (%s)", in.DebugString())
+		c.Logger.Errorf("dialog.getDialogById - error: not found dialog (%s)", in)
 		return nil, mtproto.ErrPeerIdInvalid
 	}
 

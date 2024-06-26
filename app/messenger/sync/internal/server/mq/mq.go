@@ -40,7 +40,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Error(err.Error())
 						return
 					}
-					c.Logger.Debugf("sync.updatesMe - request: %s", r.DebugString())
+					c.Logger.Debugf("sync.updatesMe - request: %s", r)
 
 					c.SyncUpdatesMe(r)
 				})
@@ -53,7 +53,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Error(err.Error())
 						return
 					}
-					c.Logger.Debugf("sync.updatesNotMe - request: %s", r.DebugString())
+					c.Logger.Debugf("sync.updatesNotMe - request: %s", r)
 
 					c.SyncUpdatesNotMe(r)
 				})
@@ -66,7 +66,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Error(err.Error())
 						return
 					}
-					c.Logger.Debugf("sync.pushUpdates - request: %s", r.DebugString())
+					c.Logger.Debugf("sync.pushUpdates - request: %s", r)
 
 					c.SyncPushUpdates(r)
 				})
@@ -79,7 +79,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Error(err.Error())
 						return
 					}
-					c.Logger.Debugf("sync.pushRpcResult - request: %s", r.DebugString())
+					c.Logger.Debugf("sync.pushRpcResult - request: %s", r)
 
 					c.SyncPushRpcResult(r)
 				})
@@ -92,7 +92,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Error(err.Error())
 						return
 					}
-					c.Logger.Debugf("sync.broadcastUpdates - request: %s", r.DebugString())
+					c.Logger.Debugf("sync.broadcastUpdates - request: %s", r)
 
 					c.SyncBroadcastUpdates(r)
 				})

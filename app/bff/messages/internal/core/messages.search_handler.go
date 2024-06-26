@@ -96,11 +96,11 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 	switch filterType {
 	case mtproto.FilterPhotos:
 		// TODO
-		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		// c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterVideo:
 		// TODO
-		// c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		// c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterPhotoVideo:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
@@ -155,7 +155,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterVoice:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterMusic:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
@@ -210,16 +210,16 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			return rValues, nil
 		}
 	case mtproto.FilterRoundVideo:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterMyMentions:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterGeo:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterContacts:
-		c.Logger.Errorf("messages.search - invalid filter: %s", in.DebugString())
+		c.Logger.Errorf("messages.search - invalid filter: %s", in)
 		return rValues, nil
 	case mtproto.FilterPinned:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByPinned(c.ctx, &message.TLMessageSearchByPinned{

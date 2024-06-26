@@ -185,7 +185,7 @@ func (ctx *connContext) encryptedMessageAble() bool {
 func (ctx *connContext) DebugString() string {
 	s := make([]string, 0, 4)
 	s = append(s, fmt.Sprintf(`"state":%d`, ctx.state))
-	// s = append(s, fmt.Sprintf(`"handshake_ctx":%s`, ctx.handshakeCtx.DebugString()))
+	// s = append(s, fmt.Sprintf(`"handshake_ctx":%s`, ctx.handshakeCtx))
 	//if ctx.authKey != nil {
 	//	s = append(s, fmt.Sprintf(`"auth_key_id":%d`, ctx.authKey.AuthKeyId()))
 	//}
@@ -198,7 +198,7 @@ func (s *Server) OnNewConnection(conn *net2.TcpConnection) {
 	ctx := newConnContext()
 	ctx.setClientIp(strings.Split(conn.RemoteAddr().String(), ":")[0])
 
-	logx.Infof("onNewConnection - {peer: %s, ctx: {%s}}", conn, ctx.DebugString())
+	logx.Infof("onNewConnection - {peer: %s, ctx: {%s}}", conn, ctx)
 	conn.Context = ctx
 }
 
@@ -212,7 +212,7 @@ func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface
 
 	ctx, _ := conn.Context.(*connContext)
 
-	logx.Infof("onConnectionDataArrived - receive data: {peer: %s, ctx: %s, msg: %s}", conn, ctx.DebugString(), msg2.DebugString())
+	logx.Infof("onConnectionDataArrived - receive data: {peer: %s, ctx: %s, msg: %s}", conn, ctx, msg2)
 
 	if msg2.ConnType() == codec.TRANSPORT_HTTP {
 		ctx.isHttp = true
@@ -222,7 +222,7 @@ func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface
 	if msg2.AuthKeyId() == 0 {
 		//if ctx.getState() == STATE_AUTH_KEY {
 		//	err = fmt.Errorf("invalid state STATE_AUTH_KEY: %d", ctx.getState())
-		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx, msg2)
 		//	conn.Close()
 		//} else {
 		//	err = s.onUnencryptedRawMessage(ctx, conn, msg2)
@@ -231,7 +231,7 @@ func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface
 	} else {
 		//if !ctx.encryptedMessageAble() {
 		//	err = fmt.Errorf("invalid state: {state: %d, handshakeState: {%v}}", ctx.state, ctx.handshakeCtx)
-		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+		//	logx.Error("process msg error: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx, msg2)
 		//	conn.Close()
 		//} else {
 		//	if ctx.state != STATE_AUTH_KEY {
@@ -254,7 +254,7 @@ func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface
 			// key := s.GetAuthKey(msg2.AuthKeyId())
 			if key == nil {
 				err = fmt.Errorf("invalid auth_key_id: {%d}", msg2.AuthKeyId())
-				logx.Error("invalid auth_key_id: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx.DebugString(), msg2.DebugString())
+				logx.Error("invalid auth_key_id: {%v} - {peer: %s, ctx: %s, msg: %s}", err, conn, ctx, msg2)
 				var code = int32(-404)
 				cData := make([]byte, 4)
 				binary.LittleEndian.PutUint32(cData, uint32(code))
@@ -275,7 +275,7 @@ func (s *Server) OnConnectionDataArrived(conn *net2.TcpConnection, msg interface
 
 func (s *Server) OnConnectionClosed(conn *net2.TcpConnection) {
 	ctx, _ := conn.Context.(*connContext)
-	logx.Info("onServerConnectionClosed - {peer:%s, ctx:%s}", conn, ctx.DebugString())
+	logx.Info("onServerConnectionClosed - {peer:%s, ctx:%s}", conn, ctx)
 
 	if ctx.trd != nil {
 		s.timer.Del(ctx.trd)
@@ -287,14 +287,14 @@ func (s *Server) OnConnectionClosed(conn *net2.TcpConnection) {
 		bDeleted := s.authSessionMgr.RemoveSession(id, sessId, connId)
 		if bDeleted {
 			s.sendToSessionClientClosed(id, ctx.sessionId, ctx.getClientIp(conn.Codec().Context()))
-			logx.Infof("onServerConnectionClosed - sendClientClosed: {peer:%s, ctx:%s}", conn, ctx.DebugString())
+			logx.Infof("onServerConnectionClosed - sendClientClosed: {peer:%s, ctx:%s}", conn, ctx)
 		}
 	}
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection, mmsg *mtproto.MTPRawMessage) error {
-	logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+	logx.Info("receive unencryptedRawMessage: {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 
 	if len(mmsg.Payload) < 8 {
 		err := fmt.Errorf("invalid data len < 8")
@@ -312,10 +312,10 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 
 	switch request := obj.(type) {
 	case *mtproto.TLReqPq:
-		logx.Infof("TLReqPq - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReqPq - {\"request\":%s", request)
 		resPQ, err := s.handshake.onReqPq(request)
 		if err != nil {
-			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 			conn.Close()
 			return err
 		}
@@ -326,10 +326,10 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 		})
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReqPqMulti:
-		logx.Infof("TLReqPqMulti - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReqPqMulti - {\"request\":%s", request)
 		resPQ, err := s.handshake.onReqPqMulti(request)
 		if err != nil {
-			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+			logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 			conn.Close()
 			return err
 		}
@@ -340,36 +340,36 @@ func (s *Server) onUnencryptedMessage(ctx *connContext, conn *net2.TcpConnection
 		})
 		serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
 	case *mtproto.TLReq_DHParams:
-		logx.Infof("TLReq_DHParams - {\"request\":%s", request.DebugString())
+		logx.Infof("TLReq_DHParams - {\"request\":%s", request)
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
 			resServerDHParam, err := s.handshake.onReqDHParams(state, obj.(*mtproto.TLReq_DHParams))
 			if err != nil {
-				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				conn.Close()
 				return err
 			}
 			state.State = STATE_DH_params_res
 			serializeToBuffer(x, mtproto.GenerateMessageId(), resServerDHParam)
 		} else {
-			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			return conn.Close()
 		}
 	case *mtproto.TLSetClient_DHParams:
-		logx.Infof("TLSetClient_DHParams - {\"request\":%s", request.DebugString())
+		logx.Infof("TLSetClient_DHParams - {\"request\":%s", request)
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
 			resSetClientDHParamsAnswer, err := s.handshake.onSetClientDHParams(state, obj.(*mtproto.TLSetClient_DHParams))
 			if err != nil {
-				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx.DebugString(), mmsg.DebugString())
+				logx.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				return conn.Close()
 			}
 			state.State = STATE_dh_gen_res
 			serializeToBuffer(x, mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
 		} else {
-			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx.DebugString(), mmsg.DebugString())
+			logx.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			return conn.Close()
 		}
 	case *mtproto.TLMsgsAck:
-		logx.Infof("TLMsgsAck - {\"request\":%s", request.DebugString())
+		logx.Infof("TLMsgsAck - {\"request\":%s", request)
 		//err = s.onMsgsAck(state, obj.(*mtproto.TLMsgsAck))
 		//return nil, err
 		return nil

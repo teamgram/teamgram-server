@@ -143,7 +143,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 
 	logger.Debugf("rpc Invoke: {method: %s, metadata: %s, result: {%s}, error: {%s}}, cost = %v",
 		t.Method,
-		rpcMetaData.DebugString(),
+		rpcMetaData,
 		reflect.TypeOf(r),
 		err,
 		time.Since(rt))
@@ -153,7 +153,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 	// log.Debugf("Invoke - error: {%v}", err)
 
 	if err != nil {
-		logger.Errorf("RPC Invoke error: {method: %s, metadata: %s, error: %s}", t.Method, rpcMetaData.DebugString(), err)
+		logger.Errorf("RPC Invoke error: {method: %s, metadata: %s, error: %s}", t.Method, rpcMetaData, err)
 		return nil, mtproto.NewRpcError(err)
 
 		//case *mysql.MySQLError:

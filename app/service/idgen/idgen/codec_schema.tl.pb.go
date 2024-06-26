@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -181,23 +180,6 @@ func (m *IdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *IdVal) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_idVal:
-		t := m.To_IdVal()
-		return t.DebugString()
-	case Predicate_idVals:
-		t := m.To_IdVals()
-		return t.DebugString()
-	case Predicate_seqIdVal:
-		t := m.To_SeqIdVal()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_IdVal
 func (m *IdVal) To_IdVal() *TLIdVal {
 	m.PredicateName = Predicate_idVal
@@ -287,15 +269,6 @@ func (m *TLIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLIdVal) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLIdVals
 func MakeTLIdVals(data2 *IdVal) *TLIdVals {
 	if data2 == nil {
@@ -364,15 +337,6 @@ func (m *TLIdVals) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLIdVals) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLSeqIdVal
 func MakeTLSeqIdVal(data2 *IdVal) *TLSeqIdVal {
 	if data2 == nil {
@@ -438,15 +402,6 @@ func (m *TLSeqIdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLSeqIdVal) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // InputId <--
 //  + TL_InputId
@@ -509,26 +464,6 @@ func (m *InputId) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *InputId) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_inputId:
-		t := m.To_InputId()
-		return t.DebugString()
-	case Predicate_inputIds:
-		t := m.To_InputIds()
-		return t.DebugString()
-	case Predicate_inputSeqId:
-		t := m.To_InputSeqId()
-		return t.DebugString()
-	case Predicate_inputNSeqId:
-		t := m.To_InputNSeqId()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_InputId
@@ -623,15 +558,6 @@ func (m *TLInputId) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLInputId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLInputIds
 func MakeTLInputIds(data2 *InputId) *TLInputIds {
 	if data2 == nil {
@@ -697,15 +623,6 @@ func (m *TLInputIds) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLInputIds) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLInputSeqId
 func MakeTLInputSeqId(data2 *InputId) *TLInputSeqId {
 	if data2 == nil {
@@ -768,15 +685,6 @@ func (m *TLInputSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 		return f()
 	} else {
 		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLInputSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
 	}
 }
 
@@ -850,15 +758,6 @@ func (m *TLInputNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLInputNSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLIdgenNextId
 ///////////////////////////////////////////////////////////////////////////////
@@ -893,15 +792,6 @@ func (m *TLIdgenNextId) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLIdgenNextId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLIdgenNextIds
@@ -942,15 +832,6 @@ func (m *TLIdgenNextIds) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLIdgenNextIds) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLIdgenGetCurrentSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -987,15 +868,6 @@ func (m *TLIdgenGetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLIdgenGetCurrentSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLIdgenSetCurrentSeqId
@@ -1038,15 +910,6 @@ func (m *TLIdgenSetCurrentSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLIdgenSetCurrentSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLIdgenGetNextSeqId
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1083,15 +946,6 @@ func (m *TLIdgenGetNextSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLIdgenGetNextSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLIdgenGetNextNSeqId
@@ -1132,15 +986,6 @@ func (m *TLIdgenGetNextNSeqId) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLIdgenGetNextNSeqId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLIdgenGetNextIdValList
@@ -1197,15 +1042,6 @@ func (m *TLIdgenGetNextIdValList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLIdgenGetNextIdValList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLIdgenGetCurrentSeqIdList
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1260,15 +1096,6 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLIdgenGetCurrentSeqIdList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_Long
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_Long) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -1285,15 +1112,6 @@ func (m *Vector_Long) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_Long) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_Long) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // Vector_IdVal
@@ -1322,13 +1140,4 @@ func (m *Vector_IdVal) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_IdVal) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_IdVal) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

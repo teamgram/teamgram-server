@@ -65,7 +65,7 @@ func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportC
 	mChat := chatInviteImported.GetChat()
 
 	if chatInviteImported.GetRequesters() != nil {
-		//c.Logger.Errorf("error: %v, chat: %s", err, mChat.DebugString())
+		//c.Logger.Errorf("error: %v, chat: %s", err, mChat)
 		//if nErr, ok := status.FromError(err); ok {
 		//	if nErr.Message() == "INVITE_REQUEST_SENT" {
 		requesters := chatInviteImported.GetRequesters()

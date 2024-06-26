@@ -22,7 +22,7 @@ func (c *MessageCore) MessageGetUserMessage(in *message.TLMessageGetUserMessage)
 		c.Logger.Errorf("message.getUserMessage - error: %v", err)
 		return nil, err
 	} else if myDO == nil {
-		c.Logger.Errorf("message.getUserMessage - error: not found message(%s)", in.DebugString())
+		c.Logger.Errorf("message.getUserMessage - error: not found message(%s)", in)
 		return nil, mtproto.ErrMessageIdInvalid
 	}
 	return c.svcCtx.Dao.MakeMessageBox(c.ctx, in.UserId, myDO), nil

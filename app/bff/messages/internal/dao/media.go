@@ -78,7 +78,7 @@ func GetMessageMedia(ctx context.Context, d MediaHelper, userId, ownerId int64, 
 			TtlSeconds: nil,
 		})
 		if err != nil {
-			logx.WithContext(ctx).Errorf("UploadPhoto error: %v, by %s", err, media.DebugString())
+			logx.WithContext(ctx).Errorf("UploadPhoto error: %v, by %s", err, media)
 			return
 		}
 

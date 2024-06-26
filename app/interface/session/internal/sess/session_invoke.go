@@ -36,10 +36,10 @@ func (c *session) onInvokeWithLayer(ctx context.Context, gatewayId, clientIp str
 		gatewayId,
 		msgId.msgId,
 		msgId.seqNo,
-		request.DebugString())
+		request)
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithLayer Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithLayer Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -69,7 +69,7 @@ func (c *session) onInvokeAfterMsg(ctx context.Context, gatewayId, clientIp stri
 		request)
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeAfterMsg Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeAfterMsg Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (c *session) onInvokeAfterMsgs(ctx context.Context, gatewayId, clientIp str
 		request)
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeAfterMsgs Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeAfterMsgs Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -183,7 +183,7 @@ func (c *session) onInvokeWithoutUpdates(ctx context.Context, gatewayId, clientI
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithoutUpdates Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithoutUpdates Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -211,7 +211,7 @@ func (c *session) onInvokeWithMessagesRange(ctx context.Context, gatewayId, clie
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithMessagesRange Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithMessagesRange Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -239,7 +239,7 @@ func (c *session) onInvokeWithTakeout(ctx context.Context, gatewayId, clientIp s
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithTakeout Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithTakeout Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -267,7 +267,7 @@ func (c *session) onInvokeWithBusinessConnection(ctx context.Context, gatewayId,
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithBusinessConnection Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -297,7 +297,7 @@ func (c *session) onInvokeWithGooglePlayIntegrity(ctx context.Context, gatewayId
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("onInvokeWithGooglePlayIntegrity Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("onInvokeWithGooglePlayIntegrity Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -328,7 +328,7 @@ func (c *session) onInvokeWithApnsSecret(ctx context.Context, gatewayId, clientI
 		reflect.TypeOf(request))
 
 	if request.GetQuery() == nil {
-		logx.WithContext(ctx).Errorf("invokeWithApnsSecret Query is nil, query: {%s}", request.DebugString())
+		logx.WithContext(ctx).Errorf("invokeWithApnsSecret Query is nil, query: {%s}", request)
 		return
 	}
 
@@ -428,7 +428,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 	case *mtproto.TLAccountUpdateStatus:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 	case *mtproto.TLUsersGetUsers:
-		// logx.WithContext(ctx).Infof("user.getUsers: %s", query.DebugString())
+		// logx.WithContext(ctx).Infof("user.getUsers: %s", query)
 	}
 
 	switch c.sessList.cb.state {

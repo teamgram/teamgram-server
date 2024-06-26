@@ -24,7 +24,7 @@ func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOfflin
 		getUserKey(in.GetUserId()),
 		strconv.FormatInt(in.GetAuthKeyId(), 10))
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in.DebugString(), err)
+		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in, err)
 		return nil, err
 	}
 

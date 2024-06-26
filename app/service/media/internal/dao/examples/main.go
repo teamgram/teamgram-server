@@ -41,7 +41,7 @@ func main() {
 func GetCacheDocument(svcCtx *svc.ServiceContext) {
 	ctx := context.Background()
 
-	// fmt.Println(document.DebugString())
+	// fmt.Println(document)
 
 	var (
 		document2 *mtproto.Document
@@ -57,5 +57,5 @@ func GetCacheDocument(svcCtx *svc.ServiceContext) {
 			return nil
 		})
 
-	fmt.Println(document2.DebugString())
+	fmt.Println(document2)
 }

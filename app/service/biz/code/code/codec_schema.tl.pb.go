@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -115,17 +114,6 @@ func (m *PhoneCodeTransaction) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *PhoneCodeTransaction) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_phoneCodeTransaction:
-		t := m.To_PhoneCodeTransaction()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_PhoneCodeTransaction
@@ -276,15 +264,6 @@ func (m *TLPhoneCodeTransaction) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLPhoneCodeTransaction) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLCodeCreatePhoneCode
 ///////////////////////////////////////////////////////////////////////////////
@@ -347,15 +326,6 @@ func (m *TLCodeCreatePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLCodeCreatePhoneCode) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLCodeGetPhoneCode
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -398,15 +368,6 @@ func (m *TLCodeGetPhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLCodeGetPhoneCode) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLCodeDeletePhoneCode
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -447,15 +408,6 @@ func (m *TLCodeDeletePhoneCode) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLCodeDeletePhoneCode) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLCodeUpdatePhoneCodeData
@@ -504,13 +456,4 @@ func (m *TLCodeUpdatePhoneCodeData) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLCodeUpdatePhoneCodeData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

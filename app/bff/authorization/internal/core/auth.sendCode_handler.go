@@ -370,7 +370,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 			}
 
 			//if user.User.UserType == userpb.UserTypeTest {
-			//	c.Logger.Infof("test user: %s, %s", phoneNumber, user.DebugString())
+			//	c.Logger.Infof("test user: %s, %s", phoneNumber, user)
 			//	codeData2.SentCodeType = model.CodeTypeApp
 			//	codeData2.PhoneCode = "12345"
 			//	codeData2.PhoneCodeExtraData = "12345"

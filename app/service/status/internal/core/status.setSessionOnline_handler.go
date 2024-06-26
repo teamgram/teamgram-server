@@ -33,7 +33,7 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		strconv.FormatInt(sess.GetAuthKeyId(), 10),
 		string(sessData))
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
+		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
 		return nil, err
 	}
 
@@ -42,7 +42,7 @@ func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline)
 		userK,
 		c.svcCtx.Config.StatusExpire)
 	if err != nil {
-		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in.DebugString(), err)
+		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
 		return nil, err
 	}
 

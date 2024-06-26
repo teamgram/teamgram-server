@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -177,17 +176,6 @@ func (m *InboxMessageData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *InboxMessageData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_inboxMessageData:
-		t := m.To_InboxMessageData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_InboxMessageData
 func (m *InboxMessageData) To_InboxMessageData() *TLInboxMessageData {
 	m.PredicateName = Predicate_inboxMessageData
@@ -275,15 +263,6 @@ func (m *TLInboxMessageData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLInboxMessageData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // InboxMessageId <--
 //  + TL_InboxMessageId
@@ -325,17 +304,6 @@ func (m *InboxMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *InboxMessageId) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_inboxMessageId:
-		t := m.To_InboxMessageId()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_InboxMessageId
@@ -416,15 +384,6 @@ func (m *TLInboxMessageId) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLInboxMessageId) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLInboxSendUserMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
@@ -472,15 +431,6 @@ func (m *TLInboxSendUserMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLInboxSendUserMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxSendChatMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -525,15 +475,6 @@ func (m *TLInboxSendChatMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxSendChatMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxSendUserMultiMessageToInbox
@@ -595,15 +536,6 @@ func (m *TLInboxSendUserMultiMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) err
 	return dBuf.GetError()
 }
 
-func (m *TLInboxSendUserMultiMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxSendChatMultiMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -663,15 +595,6 @@ func (m *TLInboxSendChatMultiMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) err
 	return dBuf.GetError()
 }
 
-func (m *TLInboxSendChatMultiMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxEditUserMessageToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -716,15 +639,6 @@ func (m *TLInboxEditUserMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxEditUserMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxEditChatMessageToInbox
@@ -773,15 +687,6 @@ func (m *TLInboxEditChatMessageToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLInboxEditChatMessageToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxDeleteMessagesToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -827,15 +732,6 @@ func (m *TLInboxDeleteMessagesToInbox) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxDeleteMessagesToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxDeleteUserHistoryToInbox
@@ -893,15 +789,6 @@ func (m *TLInboxDeleteUserHistoryToInbox) Decode(dBuf *mtproto.DecodeBuf) error 
 	return dBuf.GetError()
 }
 
-func (m *TLInboxDeleteUserHistoryToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxDeleteChatHistoryToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -942,15 +829,6 @@ func (m *TLInboxDeleteChatHistoryToInbox) Decode(dBuf *mtproto.DecodeBuf) error 
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxDeleteChatHistoryToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxReadUserMediaUnreadToInbox
@@ -1012,15 +890,6 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Decode(dBuf *mtproto.DecodeBuf) erro
 	return dBuf.GetError()
 }
 
-func (m *TLInboxReadUserMediaUnreadToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxReadChatMediaUnreadToInbox
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1080,15 +949,6 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(dBuf *mtproto.DecodeBuf) erro
 	return dBuf.GetError()
 }
 
-func (m *TLInboxReadChatMediaUnreadToInbox) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxUpdateHistoryReaded
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1133,15 +993,6 @@ func (m *TLInboxUpdateHistoryReaded) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxUpdateHistoryReaded) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxUpdatePinnedMessage
@@ -1203,15 +1054,6 @@ func (m *TLInboxUpdatePinnedMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLInboxUpdatePinnedMessage) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLInboxUnpinAllMessages
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1254,15 +1096,6 @@ func (m *TLInboxUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxUnpinAllMessages) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLInboxSendUserMessageToInboxV2
@@ -1377,13 +1210,4 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLInboxSendUserMessageToInboxV2) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

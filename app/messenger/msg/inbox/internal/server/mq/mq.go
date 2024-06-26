@@ -52,7 +52,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.sendUserMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.sendUserMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.sendUserMessageToInbox - request: %s", r)
 
 					c.InboxSendUserMessageToInbox(r)
 				})
@@ -65,7 +65,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.sendChatMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.sendChatMessageToInbox - request: %s", r)
 
 					c.InboxSendChatMessageToInbox(r)
 				})
@@ -78,7 +78,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.sendUserMultiMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.sendUserMultiMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.sendUserMultiMessageToInbox - request: %s", r)
 
 					c.InboxSendUserMultiMessageToInbox(r)
 				})
@@ -91,7 +91,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.sendChatMultiMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.sendChatMultiMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.sendChatMultiMessageToInbox - request: %s", r)
 
 					c.InboxSendChatMultiMessageToInbox(r)
 				})
@@ -104,7 +104,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.editUserMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.editUserMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.editUserMessageToInbox - request: %s", r)
 
 					c.InboxEditUserMessageToInbox(r)
 				})
@@ -117,7 +117,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.editChatMessageToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.editChatMessageToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.editChatMessageToInbox - request: %s", r)
 
 					c.InboxEditChatMessageToInbox(r)
 				})
@@ -130,7 +130,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.deleteMessagesToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.deleteMessagesToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.deleteMessagesToInbox - request: %s", r)
 
 					c.InboxDeleteMessagesToInbox(r)
 				})
@@ -143,7 +143,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.deleteUserHistoryToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.deleteUserHistoryToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.deleteUserHistoryToInbox - request: %s", r)
 
 					c.InboxDeleteUserHistoryToInbox(r)
 				})
@@ -156,7 +156,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.deleteChatHistoryToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.deleteChatHistoryToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.deleteChatHistoryToInbox - request: %s", r)
 
 					c.InboxDeleteChatHistoryToInbox(r)
 				})
@@ -169,7 +169,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.readUserMediaUnreadToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.readUserMediaUnreadToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.readUserMediaUnreadToInbox - request: %s", r)
 
 					c.InboxReadUserMediaUnreadToInbox(r)
 				})
@@ -182,7 +182,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.readChatMediaUnreadToInbox - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.readChatMediaUnreadToInbox - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.readChatMediaUnreadToInbox - request: %s", r)
 
 					c.InboxReadChatMediaUnreadToInbox(r)
 				})
@@ -195,7 +195,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.updateHistoryReaded - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.updateHistoryReaded - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.updateHistoryReaded - request: %s", r)
 
 					c.InboxUpdateHistoryReaded(r)
 				})
@@ -208,7 +208,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.updatePinnedMessage - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.updatePinnedMessage - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.updatePinnedMessage - request: %s", r)
 
 					c.InboxUpdatePinnedMessage(r)
 				})
@@ -221,7 +221,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.unpinAllMessages - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.unpinAllMessages - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.unpinAllMessages - request: %s", r)
 
 					c.InboxUnpinAllMessages(r)
 				})
@@ -234,7 +234,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 						c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: %v", err)
 						return
 					}
-					c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - request: %s", r.DebugString())
+					c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - request: %s", r)
 
 					c.InboxSendUserMessageToInboxV2(r)
 				})

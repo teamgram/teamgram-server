@@ -206,7 +206,7 @@ func newHandshake(keyFile string, keyFingerprint uint64, createdCB keyCreatedF) 
 
 // req_pq#60469778 nonce:int128 = ResPQ;
 func (s *handshake) onReqPq(request *mtproto.TLReqPq) (*mtproto.TLResPQ, error) {
-	logx.Infof("req_pq#60469778 - {\"request\":%s", request.DebugString())
+	logx.Infof("req_pq#60469778 - {\"request\":%s", request)
 
 	// check State and ResState
 
@@ -229,13 +229,13 @@ func (s *handshake) onReqPq(request *mtproto.TLReqPq) (*mtproto.TLResPQ, error) 
 	// ctx.ServerNonce = resPQ.GetServerNonce()
 
 	// PutCacheState(ctx.Nonce, ctx.ServerNonce, ctx)
-	logx.Infof("req_pq#60469778 reply - {\"resPQ\":%s", resPQ.DebugString())
+	logx.Infof("req_pq#60469778 reply - {\"resPQ\":%s", resPQ)
 	return resPQ, nil
 }
 
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
 func (s *handshake) onReqPqMulti(request *mtproto.TLReqPqMulti) (*mtproto.TLResPQ, error) {
-	logx.Infof("req_pq_multi#be7e8ef1 - {\"request\":%s", request.DebugString())
+	logx.Infof("req_pq_multi#be7e8ef1 - {\"request\":%s", request)
 
 	// check State and ResState
 
@@ -260,13 +260,13 @@ func (s *handshake) onReqPqMulti(request *mtproto.TLReqPqMulti) (*mtproto.TLResP
 
 	// PutCacheState(ctx.Nonce, ctx.ServerNonce, ctx)
 
-	logx.Infof("req_pq_multi#be7e8ef1 - reply: %s", resPQ.DebugString())
+	logx.Infof("req_pq_multi#be7e8ef1 - reply: %s", resPQ)
 	return resPQ, nil
 }
 
 // req_DH_params#d712e4be nonce:int128 server_nonce:int128 p:string q:string public_key_fingerprint:long encrypted_data:string = Server_DH_Params;
 func (s *handshake) onReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLReq_DHParams) (*mtproto.Server_DH_Params, error) {
-	logx.Infof("req_DH_params#d712e4be - state: {%s}, request: %s", ctx.DebugString(), request.DebugString())
+	logx.Infof("req_DH_params#d712e4be - state: {%s}, request: %s", ctx, request)
 
 	var (
 		err error
@@ -514,14 +514,14 @@ func (s *handshake) onReqDHParams(ctx *HandshakeStateCtx, request *mtproto.TLReq
 		EncryptedAnswer: hack.String(tmpEncryptedAnswer),
 	}}
 
-	logx.Infof("onReq_DHParams - state: {%s}, reply: %s", ctx.DebugString(), serverDHParamsOk.DebugString())
+	logx.Infof("onReq_DHParams - state: {%s}, reply: %s", ctx, serverDHParamsOk)
 
 	return serverDHParamsOk.To_Server_DH_Params(), nil
 }
 
 // set_client_DH_params#f5045f1f nonce:int128 server_nonce:int128 encrypted_data:string = Set_client_DH_params_answer;
 func (s *handshake) onSetClientDHParams(ctx *HandshakeStateCtx, request *mtproto.TLSetClient_DHParams) (*mtproto.SetClient_DHParamsAnswer, error) {
-	logx.Infof("set_client_DH_params#f5045f1f - state: {%s}, request: %s", ctx.DebugString(), request.DebugString())
+	logx.Infof("set_client_DH_params#f5045f1f - state: {%s}, request: %s", ctx, request)
 
 	// TODO(@benqi): Impl SetClient_DHParams logic
 	// 客户端传输数据解析
@@ -622,7 +622,7 @@ func (s *handshake) onSetClientDHParams(ctx *HandshakeStateCtx, request *mtproto
 		//ctx.AuthKeyId = authKeyId
 		//ctx.AuthKey = authKey
 
-		logx.Infof("onSetClient_DHParams - ctx: {%s}, reply: %s", ctx.DebugString(), dhGenOk.DebugString())
+		logx.Infof("onSetClient_DHParams - ctx: {%s}, reply: %s", ctx, dhGenOk)
 		return dhGenOk.To_SetClient_DHParamsAnswer(), nil
 	} else {
 		// TODO(@benqi): dhGenFail
@@ -632,14 +632,14 @@ func (s *handshake) onSetClientDHParams(ctx *HandshakeStateCtx, request *mtproto
 			NewNonceHash2: calcNewNonceHash(ctx.NewNonce, authKey, 0x02),
 		}}
 
-		logx.Infof("onSetClient_DHParams - ctx: {%v}, reply: %s", ctx.DebugString(), dhGenRetry.DebugString())
+		logx.Infof("onSetClient_DHParams - ctx: {%v}, reply: %s", ctx, dhGenRetry)
 		return dhGenRetry.To_SetClient_DHParamsAnswer(), nil
 	}
 }
 
 // msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
 func (s *handshake) onMsgsAck(state *HandshakeStateCtx, request *mtproto.TLMsgsAck) error {
-	logx.Infof("msgs_ack#62d6b459 - state: {%s}, request: %s", state.DebugString(), request.DebugString())
+	logx.Infof("msgs_ack#62d6b459 - state: {%s}, request: %s", state, request)
 
 	switch state.State {
 	case STATE_pq_res:

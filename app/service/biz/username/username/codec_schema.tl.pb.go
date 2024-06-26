@@ -18,7 +18,6 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -177,17 +176,6 @@ func (m *UsernameData) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *UsernameData) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_usernameData:
-		t := m.To_UsernameData()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
-}
-
 // To_UsernameData
 func (m *UsernameData) To_UsernameData() *TLUsernameData {
 	m.PredicateName = Predicate_usernameData
@@ -290,15 +278,6 @@ func (m *TLUsernameData) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsernameData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // UsernameExist <--
 //  + TL_UsernameNotExisted
@@ -361,26 +340,6 @@ func (m *UsernameExist) Decode(dBuf *mtproto.DecodeBuf) error {
 		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
 	}
 	return dBuf.GetError()
-}
-
-func (m *UsernameExist) DebugString() string {
-	switch m.PredicateName {
-	case Predicate_usernameNotExisted:
-		t := m.To_UsernameNotExisted()
-		return t.DebugString()
-	case Predicate_usernameExisted:
-		t := m.To_UsernameExisted()
-		return t.DebugString()
-	case Predicate_usernameExistedNotMe:
-		t := m.To_UsernameExistedNotMe()
-		return t.DebugString()
-	case Predicate_usernameExistedIsMe:
-		t := m.To_UsernameExistedIsMe()
-		return t.DebugString()
-
-	default:
-		return "{}"
-	}
 }
 
 // To_UsernameNotExisted
@@ -475,15 +434,6 @@ func (m *TLUsernameNotExisted) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsernameNotExisted) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLUsernameExisted
 func MakeTLUsernameExisted(data2 *UsernameExist) *TLUsernameExisted {
 	if data2 == nil {
@@ -541,15 +491,6 @@ func (m *TLUsernameExisted) Decode(dBuf *mtproto.DecodeBuf) error {
 		return f()
 	} else {
 		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
-	}
-}
-
-func (m *TLUsernameExisted) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
 	}
 }
 
@@ -613,15 +554,6 @@ func (m *TLUsernameExistedNotMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsernameExistedNotMe) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // MakeTLUsernameExistedIsMe
 func MakeTLUsernameExistedIsMe(data2 *UsernameExist) *TLUsernameExistedIsMe {
 	if data2 == nil {
@@ -682,15 +614,6 @@ func (m *TLUsernameExistedIsMe) Decode(dBuf *mtproto.DecodeBuf) error {
 	}
 }
 
-func (m *TLUsernameExistedIsMe) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 //----------------------------------------------------------------------------------------------------------------
 // TLUsernameGetAccountUsername
 ///////////////////////////////////////////////////////////////////////////////
@@ -728,15 +651,6 @@ func (m *TLUsernameGetAccountUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameGetAccountUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameCheckAccountUsername
@@ -779,15 +693,6 @@ func (m *TLUsernameCheckAccountUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameCheckAccountUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUsernameGetChannelUsername
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -824,15 +729,6 @@ func (m *TLUsernameGetChannelUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameGetChannelUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameCheckChannelUsername
@@ -873,15 +769,6 @@ func (m *TLUsernameCheckChannelUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameCheckChannelUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameUpdateUsernameByPeer
@@ -926,15 +813,6 @@ func (m *TLUsernameUpdateUsernameByPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameUpdateUsernameByPeer) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUsernameCheckUsername
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -971,15 +849,6 @@ func (m *TLUsernameCheckUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameCheckUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameUpdateUsername
@@ -1024,15 +893,6 @@ func (m *TLUsernameUpdateUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameUpdateUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUsernameDeleteUsername
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1071,15 +931,6 @@ func (m *TLUsernameDeleteUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameDeleteUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUsernameResolveUsername
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1116,15 +967,6 @@ func (m *TLUsernameResolveUsername) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameResolveUsername) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameGetListByUsernameList
@@ -1166,15 +1008,6 @@ func (m *TLUsernameGetListByUsernameList) Decode(dBuf *mtproto.DecodeBuf) error 
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameGetListByUsernameList) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // TLUsernameDeleteUsernameByPeer
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1213,15 +1046,6 @@ func (m *TLUsernameDeleteUsernameByPeer) Decode(dBuf *mtproto.DecodeBuf) error {
 		// log.Errorf("")
 	}
 	return dBuf.GetError()
-}
-
-func (m *TLUsernameDeleteUsernameByPeer) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }
 
 // TLUsernameSearch
@@ -1270,15 +1094,6 @@ func (m *TLUsernameSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-func (m *TLUsernameSearch) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
-}
-
 // Vector_UsernameData
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_UsernameData) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -1305,13 +1120,4 @@ func (m *Vector_UsernameData) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *Vector_UsernameData) CalcByteSize(layer int32) int {
 	return 0
-}
-
-func (m *Vector_UsernameData) DebugString() string {
-	v, err := protojson.MarshalOptions{UseProtoNames: true}.Marshal(m)
-	if err != nil {
-		return "protojson error: " + err.Error()
-	} else {
-		return string(v)
-	}
 }

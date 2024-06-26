@@ -199,7 +199,7 @@ func (d *Dao) watch(c zrpc.RpcClientConf) {
 
 func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushUpdatesData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// log.Info("push updates to serverId: (%s, %s)", serverId, msg.DebugString())
+		// log.Info("push updates to serverId: (%s, %s)", serverId, msg)
 		return c.PushUpdates(ctx, msg)
 	} else {
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
@@ -210,7 +210,7 @@ func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *se
 
 func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushSessionUpdatesData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// logx.Info("push session updates to serverId: (%s, %s)", serverId, msg.DebugString())
+		// logx.Info("push session updates to serverId: (%s, %s)", serverId, msg)
 		return c.PushSessionUpdates(ctx, msg)
 	} else {
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
@@ -221,7 +221,7 @@ func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, 
 
 func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *session.TLSessionPushRpcResultData) (err error) {
 	if c, ok := d.sessionServers[serverId]; ok {
-		// log.Debugf("push rpc result to serverId: (%s, %s)", serverId, msg.DebugString())
+		// log.Debugf("push rpc result to serverId: (%s, %s)", serverId, msg)
 		return c.PushRpcResult(ctx, msg)
 	} else {
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
