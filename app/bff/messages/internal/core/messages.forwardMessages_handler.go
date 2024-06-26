@@ -297,6 +297,9 @@ func (c *MessagesCore) makeForwardMessages(
 		}
 		m.ReplyTo = nil
 		m.Reactions = nil
+		if m.ReplyMarkup != nil {
+			m.ReplyMarkup = m.ReplyMarkup.ToForwardMessage()
+		}
 
 		fwdOutboxList = append(fwdOutboxList, &msgpb.OutboxMessage{
 			NoWebpage:    true,
