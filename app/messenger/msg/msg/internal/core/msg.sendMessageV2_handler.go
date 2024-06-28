@@ -15,10 +15,10 @@ import (
 )
 
 // MsgSendMessageV2
-// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = UpdateList;
-func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.UpdateList, error) {
+// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error) {
 	var (
-		rUpdates *mtproto.UpdateList
+		rUpdates *mtproto.Updates
 		err      error
 		// outBox   = in.GetMessage()
 		peer = mtproto.MakePeerUtil(in.PeerType, in.PeerId)

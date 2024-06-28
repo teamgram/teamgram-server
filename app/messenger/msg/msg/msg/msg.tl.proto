@@ -28,7 +28,7 @@ enum TLConstructor {
     CRC32_msg_sendMultiMessage = -1727589428;
     CRC32_msg_pushUserMessage = 902887962;
     CRC32_msg_readMessageContents = 673481940;
-    CRC32_msg_sendMessageV2 = 770211174;
+    CRC32_msg_sendMessageV2 = -188056380;
     CRC32_msg_editMessage = -2129725231;
     CRC32_msg_deleteMessages = 568855069;
     CRC32_msg_deleteHistory = 1975576778;
@@ -240,7 +240,7 @@ service RPCMsg {
  rpc msg_sendMultiMessage(TL_msg_sendMultiMessage) returns (mtproto.Updates) {}
  rpc msg_pushUserMessage(TL_msg_pushUserMessage) returns (mtproto.Bool) {}
  rpc msg_readMessageContents(TL_msg_readMessageContents) returns (mtproto.messages_AffectedMessages) {}
- rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.UpdateList) {}
+ rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.Updates) {}
  rpc msg_editMessage(TL_msg_editMessage) returns (mtproto.Updates) {}
  rpc msg_deleteMessages(TL_msg_deleteMessages) returns (mtproto.messages_AffectedMessages) {}
  rpc msg_deleteHistory(TL_msg_deleteHistory) returns (mtproto.messages_AffectedHistory) {}

@@ -52,7 +52,7 @@ type RPCMsgClient interface {
 	MsgSendMultiMessage(ctx context.Context, in *TLMsgSendMultiMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
-	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.UpdateList, error)
+	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgEditMessage(ctx context.Context, in *TLMsgEditMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *TLMsgDeleteMessages, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedHistory, error)
@@ -107,8 +107,8 @@ func (c *rPCMsgClient) MsgReadMessageContents(ctx context.Context, in *TLMsgRead
 	return out, nil
 }
 
-func (c *rPCMsgClient) MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.UpdateList, error) {
-	out := new(mtproto.UpdateList)
+func (c *rPCMsgClient) MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error) {
+	out := new(mtproto.Updates)
 	err := c.cc.Invoke(ctx, RPCMsg_MsgSendMessageV2_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -196,7 +196,7 @@ type RPCMsgServer interface {
 	MsgSendMultiMessage(context.Context, *TLMsgSendMultiMessage) (*mtproto.Updates, error)
 	MsgPushUserMessage(context.Context, *TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(context.Context, *TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
-	MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.UpdateList, error)
+	MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.Updates, error)
 	MsgEditMessage(context.Context, *TLMsgEditMessage) (*mtproto.Updates, error)
 	MsgDeleteMessages(context.Context, *TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(context.Context, *TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
@@ -223,7 +223,7 @@ func (UnimplementedRPCMsgServer) MsgPushUserMessage(context.Context, *TLMsgPushU
 func (UnimplementedRPCMsgServer) MsgReadMessageContents(context.Context, *TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgReadMessageContents not implemented")
 }
-func (UnimplementedRPCMsgServer) MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.UpdateList, error) {
+func (UnimplementedRPCMsgServer) MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.Updates, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgSendMessageV2 not implemented")
 }
 func (UnimplementedRPCMsgServer) MsgEditMessage(context.Context, *TLMsgEditMessage) (*mtproto.Updates, error) {

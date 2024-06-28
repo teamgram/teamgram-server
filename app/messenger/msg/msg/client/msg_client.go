@@ -26,7 +26,7 @@ type MsgClient interface {
 	MsgSendMultiMessage(ctx context.Context, in *msg.TLMsgSendMultiMessage) (*mtproto.Updates, error)
 	MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
-	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.UpdateList, error)
+	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error)
 	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
@@ -76,8 +76,8 @@ func (m *defaultMsgClient) MsgReadMessageContents(ctx context.Context, in *msg.T
 }
 
 // MsgSendMessageV2
-// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = UpdateList;
-func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.UpdateList, error) {
+// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error) {
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgSendMessageV2(ctx, in)
 }

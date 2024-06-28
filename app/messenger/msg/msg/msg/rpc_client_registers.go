@@ -30,7 +30,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLMsgSendMultiMessage":       RPCContextTuple{"/mtproto.RPCMsg/msg_sendMultiMessage", func() interface{} { return new(mtproto.Updates) }},
 	"TLMsgPushUserMessage":        RPCContextTuple{"/mtproto.RPCMsg/msg_pushUserMessage", func() interface{} { return new(mtproto.Bool) }},
 	"TLMsgReadMessageContents":    RPCContextTuple{"/mtproto.RPCMsg/msg_readMessageContents", func() interface{} { return new(mtproto.Messages_AffectedMessages) }},
-	"TLMsgSendMessageV2":          RPCContextTuple{"/mtproto.RPCMsg/msg_sendMessageV2", func() interface{} { return new(mtproto.UpdateList) }},
+	"TLMsgSendMessageV2":          RPCContextTuple{"/mtproto.RPCMsg/msg_sendMessageV2", func() interface{} { return new(mtproto.Updates) }},
 	"TLMsgEditMessage":            RPCContextTuple{"/mtproto.RPCMsg/msg_editMessage", func() interface{} { return new(mtproto.Updates) }},
 	"TLMsgDeleteMessages":         RPCContextTuple{"/mtproto.RPCMsg/msg_deleteMessages", func() interface{} { return new(mtproto.Messages_AffectedMessages) }},
 	"TLMsgDeleteHistory":          RPCContextTuple{"/mtproto.RPCMsg/msg_deleteHistory", func() interface{} { return new(mtproto.Messages_AffectedHistory) }},

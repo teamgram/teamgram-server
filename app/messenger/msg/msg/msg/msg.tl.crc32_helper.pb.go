@@ -19,7 +19,7 @@ const (
 	CRC32_msg_sendMultiMessage       TLConstructor = -1727589428 // 0x990713cc
 	CRC32_msg_pushUserMessage        TLConstructor = 902887962   // 0x35d0fa1a
 	CRC32_msg_readMessageContents    TLConstructor = 673481940   // 0x282484d4
-	CRC32_msg_sendMessageV2          TLConstructor = 770211174   // 0x2de87d66
+	CRC32_msg_sendMessageV2          TLConstructor = -188056380  // 0xf4ca7cc4
 	CRC32_msg_editMessage            TLConstructor = -2129725231 // 0x810ef8d1
 	CRC32_msg_deleteMessages         TLConstructor = 568855069   // 0x21e80a1d
 	CRC32_msg_deleteHistory          TLConstructor = 1975576778  // 0x75c0e8ca

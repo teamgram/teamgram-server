@@ -66,9 +66,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 673481940,
 		}
 	},
-	770211174: func() mtproto.TLObject { // 0x2de87d66
+	-188056380: func() mtproto.TLObject { // 0xf4ca7cc4
 		return &TLMsgSendMessageV2{
-			Constructor: 770211174,
+			Constructor: -188056380,
 		}
 	},
 	-2129725231: func() mtproto.TLObject { // 0x810ef8d1
@@ -822,8 +822,8 @@ func (m *TLMsgReadMessageContents) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLMsgSendMessageV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x2de87d66:
-		x.UInt(0x2de87d66)
+	case 0xf4ca7cc4:
+		x.UInt(0xf4ca7cc4)
 
 		// no flags
 
@@ -851,7 +851,7 @@ func (m *TLMsgSendMessageV2) CalcByteSize(layer int32) int {
 
 func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x2de87d66:
+	case 0xf4ca7cc4:
 
 		// not has flags
 

@@ -79,8 +79,8 @@ func (s *Service) MsgReadMessageContents(ctx context.Context, request *msg.TLMsg
 }
 
 // MsgSendMessageV2
-// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = UpdateList;
-func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMessageV2) (*mtproto.UpdateList, error) {
+// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMessageV2) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("msg.sendMessageV2 - metadata: %s, request: %s", c.MD, request)
 
