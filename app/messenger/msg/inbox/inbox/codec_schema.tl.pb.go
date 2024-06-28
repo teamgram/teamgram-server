@@ -111,9 +111,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 589079137,
 		}
 	},
-	1197217891: func() mtproto.TLObject { // 0x475c1863
+	-209599207: func() mtproto.TLObject { // 0xf381c519
 		return &TLInboxSendUserMessageToInboxV2{
-			Constructor: 1197217891,
+			Constructor: -209599207,
 		}
 	},
 }
@@ -1103,8 +1103,8 @@ func (m *TLInboxUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x475c1863:
-		x.UInt(0x475c1863)
+	case 0xf381c519:
+		x.UInt(0xf381c519)
 
 		// set flags
 		var flags uint32 = 0
@@ -1128,7 +1128,13 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int
 		x.Long(m.GetFromAuthKeyId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
-		m.GetInbox().Encode(x, layer)
+
+		x.Int(int32(mtproto.CRC32_vector))
+		x.Int(int32(len(m.GetBoxList())))
+		for _, v := range m.GetBoxList() {
+			v.Encode(x, layer)
+		}
+
 		if m.GetUsers() != nil {
 			x.Int(int32(mtproto.CRC32_vector))
 			x.Int(int32(len(m.GetUsers())))
@@ -1157,7 +1163,7 @@ func (m *TLInboxSendUserMessageToInboxV2) CalcByteSize(layer int32) int {
 
 func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x475c1863:
+	case 0xf381c519:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1171,10 +1177,18 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 		m.FromAuthKeyId = dBuf.Long()
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
-
-		m8 := &mtproto.MessageBox{}
-		m8.Decode(dBuf)
-		m.Inbox = m8
+		c8 := dBuf.Int()
+		if c8 != int32(mtproto.CRC32_vector) {
+			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 8, c8)
+			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 8, c8)
+		}
+		l8 := dBuf.Int()
+		v8 := make([]*mtproto.MessageBox, l8)
+		for i := int32(0); i < l8; i++ {
+			v8[i] = &mtproto.MessageBox{}
+			v8[i].Decode(dBuf)
+		}
+		m.BoxList = v8
 
 		if (flags & (1 << 1)) != 0 {
 			c9 := dBuf.Int()

@@ -119,7 +119,7 @@ func (c *MsgCore) MsgPushUserMessage(in *msg.TLMsgPushUserMessage) (*mtproto.Boo
 				FromAuthKeyId: 0,
 				PeerType:      mtproto.PEER_USER,
 				PeerId:        peer.PeerId,
-				Inbox:         box,
+				BoxList:       []*mtproto.MessageBox{box},
 				Users:         users.GetUserListByIdList(peer.PeerId, idHelper.UserIdList...),
 				Chats:         nil,
 			})

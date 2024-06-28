@@ -151,7 +151,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 					FromAuthKeyId: fromAuthKeyId,
 					PeerType:      mtproto.PEER_USER,
 					PeerId:        toUserId,
-					Inbox:         box,
+					BoxList:       []*mtproto.MessageBox{box},
 					Users:         users.GetUserListByIdList(fromUserId, idHelper.UserIdList...),
 					Chats:         nil,
 				})
@@ -175,7 +175,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 							FromAuthKeyId: fromAuthKeyId,
 							PeerType:      mtproto.PEER_USER,
 							PeerId:        toUserId,
-							Inbox:         box,
+							BoxList:       []*mtproto.MessageBox{box},
 							Users:         users.GetUserListByIdList(toUserId, idHelper.UserIdList...),
 							Chats:         nil,
 						})
@@ -319,7 +319,7 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 					FromAuthKeyId: fromAuthKeyId,
 					PeerType:      mtproto.PEER_CHAT,
 					PeerId:        peerChatId,
-					Inbox:         box,
+					BoxList:       []*mtproto.MessageBox{box},
 					Users:         sUserList.GetUserListByIdList(participant.UserId, idHelper.UserIdList...),
 					Chats:         []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
 				})

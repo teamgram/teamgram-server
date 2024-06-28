@@ -37,7 +37,7 @@ enum TLConstructor {
     CRC32_inbox_updateHistoryReaded = -1010283296;
     CRC32_inbox_updatePinnedMessage = -1452528908;
     CRC32_inbox_unpinAllMessages = 589079137;
-    CRC32_inbox_sendUserMessageToInboxV2 = 1197217891;
+    CRC32_inbox_sendUserMessageToInboxV2 = -209599207;
 }
 
 
@@ -204,7 +204,7 @@ message TL_inbox_sendUserMessageToInboxV2 {
     int64 fromAuthKeyId = 6;
     int32 peer_type = 7;
     int64 peer_id = 8;
-    mtproto.MessageBox inbox = 9;
+    repeated mtproto.MessageBox box_list = 9;
     repeated mtproto.User users = 10;
     repeated mtproto.Chat chats = 11;
 }
