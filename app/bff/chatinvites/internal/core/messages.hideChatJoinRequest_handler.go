@@ -98,20 +98,22 @@ func (c *ChatInvitesCore) MessagesHideChatJoinRequest(in *mtproto.TLMessagesHide
 
 	if in.GetApproved() {
 		// TODO: found link
-		rUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(
+		rUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
 			c.ctx,
-			&msgpb.TLMsgSendMessage{
+			&msgpb.TLMsgSendMessageV2{
 				UserId:    c.MD.UserId,
 				AuthKeyId: c.MD.PermAuthKeyId,
 				PeerType:  mtproto.PEER_CHAT,
 				PeerId:    mChat.Id(),
-				Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-					NoWebpage:    true,
-					Background:   false,
-					RandomId:     rand.Int63(),
-					Message:      mChat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatJoinedByRequest()),
-					ScheduleDate: nil,
-				}).To_OutboxMessage(),
+				Message: []*msgpb.OutboxMessage{
+					msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+						NoWebpage:    true,
+						Background:   false,
+						RandomId:     rand.Int63(),
+						Message:      mChat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatJoinedByRequest()),
+						ScheduleDate: nil,
+					}).To_OutboxMessage(),
+				},
 			})
 		if err != nil {
 			c.Logger.Errorf("messages.importChatInvite - error: %v", err)

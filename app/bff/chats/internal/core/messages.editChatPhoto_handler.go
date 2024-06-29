@@ -90,19 +90,23 @@ func (c *ChatsCore) MessagesEditChatPhoto(in *mtproto.TLMessagesEditChatPhoto) (
 		return nil, err
 	}
 
-	replyUpdates, err := c.svcCtx.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  mtproto.PEER_CHAT,
-		PeerId:    in.ChatId,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-			NoWebpage:    true,
-			Background:   false,
-			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(c.MD.UserId, action),
-			ScheduleDate: nil,
-		}).To_OutboxMessage(),
-	})
+	replyUpdates, err := c.svcCtx.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    c.MD.UserId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  mtproto.PEER_CHAT,
+			PeerId:    in.ChatId,
+			Message: []*msgpb.OutboxMessage{
+				msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+					NoWebpage:    true,
+					Background:   false,
+					RandomId:     rand.Int63(),
+					Message:      chat.MakeMessageService(c.MD.UserId, action),
+					ScheduleDate: nil,
+				}).To_OutboxMessage(),
+			},
+		})
 	if err != nil {
 		c.Logger.Errorf("messages.editChatPhoto - error: %v", err)
 		return nil, err

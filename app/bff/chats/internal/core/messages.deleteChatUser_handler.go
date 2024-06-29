@@ -63,19 +63,23 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 		fromId = chat.Creator()
 	}
 
-	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
-		UserId:    fromId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  mtproto.PEER_CHAT,
-		PeerId:    in.ChatId,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-			NoWebpage:    true,
-			Background:   false,
-			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
-			ScheduleDate: nil,
-		}).To_OutboxMessage(),
-	})
+	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    fromId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  mtproto.PEER_CHAT,
+			PeerId:    in.ChatId,
+			Message: []*msgpb.OutboxMessage{
+				msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+					NoWebpage:    true,
+					Background:   false,
+					RandomId:     rand.Int63(),
+					Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
+					ScheduleDate: nil,
+				}).To_OutboxMessage(),
+			},
+		})
 	if err != nil {
 		c.Logger.Errorf("messages.deleteChatUser - error: %v", err)
 		return nil, err

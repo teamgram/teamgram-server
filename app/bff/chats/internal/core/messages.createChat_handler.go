@@ -138,18 +138,20 @@ func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, tt
 	}
 
 	// TODO: add attach_data (chat and chat_participants)
-	rValue, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
+	rValue, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(c.ctx, &msgpb.TLMsgSendMessageV2{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    chat.Chat.Id,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-			NoWebpage:    true,
-			Background:   false,
-			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatCreate(chatTitle, append(userAddList, botAddList...))),
-			ScheduleDate: nil,
-		}).To_OutboxMessage(),
+		Message: []*msgpb.OutboxMessage{
+			msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+				NoWebpage:    true,
+				Background:   false,
+				RandomId:     rand.Int63(),
+				Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatCreate(chatTitle, append(userAddList, botAddList...))),
+				ScheduleDate: nil,
+			}).To_OutboxMessage(),
+		},
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.createChat - error: %v", err)

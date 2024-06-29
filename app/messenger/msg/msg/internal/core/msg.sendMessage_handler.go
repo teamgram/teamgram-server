@@ -11,6 +11,7 @@ package core
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
@@ -133,7 +134,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 	_, err = c.svcCtx.Dao.DoIdempotent(
 		c.ctx,
 		fromUserId,
-		outBox.RandomId,
+		strconv.FormatInt(outBox.RandomId, 10),
 		&rUpdates,
 		func(ctx context.Context, v any) error {
 			box, err := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
@@ -295,7 +296,7 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 	_, err = c.svcCtx.Dao.DoIdempotent(
 		c.ctx,
 		fromUserId,
-		outBox.RandomId,
+		strconv.FormatInt(outBox.RandomId, 10),
 		&rUpdates,
 		func(ctx context.Context, v any) error {
 			box, err2 := c.svcCtx.Dao.SendChatMessageV2(ctx, fromUserId, peerChatId, outBox)

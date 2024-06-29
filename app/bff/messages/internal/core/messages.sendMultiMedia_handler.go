@@ -203,13 +203,15 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 		}).To_OutboxMessage())
 	}
 
-	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMultiMessage(c.ctx, &msgpb.TLMsgSendMultiMessage{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  peer.PeerType,
-		PeerId:    peer.PeerId,
-		Message:   outboxMultiMedia,
-	})
+	rUpdate, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    c.MD.UserId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			Message:   outboxMultiMedia,
+		})
 
 	if err != nil {
 		c.Logger.Errorf("messages.sendMedia#c8f16791 - error: %v", err)

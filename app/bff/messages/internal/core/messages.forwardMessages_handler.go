@@ -95,13 +95,15 @@ func (c *MessagesCore) MessagesForwardMessages(in *mtproto.TLMessagesForwardMess
 		return nil, err
 	}
 
-	rUpdates, err = c.svcCtx.Dao.MsgClient.MsgSendMultiMessage(c.ctx, &msgpb.TLMsgSendMultiMessage{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  toPeer.PeerType,
-		PeerId:    toPeer.PeerId,
-		Message:   fwdOutboxList,
-	})
+	rUpdates, err = c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    c.MD.UserId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  toPeer.PeerType,
+			PeerId:    toPeer.PeerId,
+			Message:   fwdOutboxList,
+		})
 	if err != nil {
 		c.Logger.Errorf("messages.forwardMessages - error: %v", err)
 		return nil, err

@@ -118,19 +118,23 @@ func (c *ChatsCore) addChatUser(chatId int64, userId *mtproto.InputUser, fwdLimi
 		fromId = chat.Creator()
 	}
 
-	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
-		UserId:    fromId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  mtproto.PEER_CHAT,
-		PeerId:    chatId,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-			NoWebpage:    true,
-			Background:   false,
-			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatAddUser(addUser.PeerId)),
-			ScheduleDate: nil,
-		}).To_OutboxMessage(),
-	})
+	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    fromId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  mtproto.PEER_CHAT,
+			PeerId:    chatId,
+			Message: []*msgpb.OutboxMessage{
+				msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+					NoWebpage:    true,
+					Background:   false,
+					RandomId:     rand.Int63(),
+					Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatAddUser(addUser.PeerId)),
+					ScheduleDate: nil,
+				}).To_OutboxMessage(),
+			},
+		})
 
 	if err != nil {
 		c.Logger.Errorf("addChatUser error: %v", err)

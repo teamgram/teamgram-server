@@ -41,11 +41,11 @@ type Dao struct {
 	username_client.UsernameClient
 }
 
-func (d *Dao) DoIdempotent(ctx context.Context, senderUserId, deDuplicateId int64, v any, cb func(ctx context.Context, v any) error) (bool, error) {
+func (d *Dao) DoIdempotent(ctx context.Context, senderUserId int64, deDuplicateKey string, v any, cb func(ctx context.Context, v any) error) (bool, error) {
 	return idempotent.DoIdempotent(
 		ctx,
 		d.Redis,
-		fmt.Sprintf("%d@%d", senderUserId, deDuplicateId),
+		fmt.Sprintf("idempotent#%d@%s", senderUserId, deDuplicateKey),
 		v,
 		5,
 		90,

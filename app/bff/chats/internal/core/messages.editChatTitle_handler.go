@@ -45,19 +45,23 @@ func (c *ChatsCore) MessagesEditChatTitle(in *mtproto.TLMessagesEditChatTitle) (
 		return nil, err
 	}
 
-	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
-		UserId:    c.MD.UserId,
-		AuthKeyId: c.MD.PermAuthKeyId,
-		PeerType:  mtproto.PEER_CHAT,
-		PeerId:    in.ChatId,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-			NoWebpage:    true,
-			Background:   false,
-			RandomId:     rand.Int63(),
-			Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatEditTitle(in.Title)),
-			ScheduleDate: nil,
-		}).To_OutboxMessage(),
-	})
+	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+		c.ctx,
+		&msgpb.TLMsgSendMessageV2{
+			UserId:    c.MD.UserId,
+			AuthKeyId: c.MD.PermAuthKeyId,
+			PeerType:  mtproto.PEER_CHAT,
+			PeerId:    in.ChatId,
+			Message: []*msgpb.OutboxMessage{
+				msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+					NoWebpage:    true,
+					Background:   false,
+					RandomId:     rand.Int63(),
+					Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatEditTitle(in.Title)),
+					ScheduleDate: nil,
+				}).To_OutboxMessage(),
+			},
+		})
 	if err != nil {
 		c.Logger.Errorf("messages.editChatTitle - error: %v", err)
 		return nil, err
