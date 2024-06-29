@@ -81,11 +81,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 649568574,
 		}
 	},
-	-283155749: func() mtproto.TLObject { // 0xef1f62db
-		return &TLMsgDeleteChatHistory{
-			Constructor: -283155749,
-		}
-	},
 	1510960658: func() mtproto.TLObject { // 0x5a0f6e12
 		return &TLMsgReadHistory{
 			Constructor: 1510960658,
@@ -981,46 +976,6 @@ func (m *TLMsgDeletePhoneCallHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 		if (flags & (1 << 1)) != 0 {
 			m.Revoke = true
 		}
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-// TLMsgDeleteChatHistory
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgDeleteChatHistory) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0xef1f62db:
-		x.UInt(0xef1f62db)
-
-		// no flags
-
-		x.Long(m.GetChatId())
-		x.Long(m.GetDeleteUserId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLMsgDeleteChatHistory) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0xef1f62db:
-
-		// not has flags
-
-		m.ChatId = dBuf.Long()
-		m.DeleteUserId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

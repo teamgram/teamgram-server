@@ -123,21 +123,6 @@ func (s *Service) MsgDeletePhoneCallHistory(ctx context.Context, request *msg.TL
 	return r, err
 }
 
-// MsgDeleteChatHistory
-// msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
-func (s *Service) MsgDeleteChatHistory(ctx context.Context, request *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.deleteChatHistory - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.MsgDeleteChatHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("msg.deleteChatHistory - reply: %s", r)
-	return r, err
-}
-
 // MsgReadHistory
 // msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (s *Service) MsgReadHistory(ctx context.Context, request *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
