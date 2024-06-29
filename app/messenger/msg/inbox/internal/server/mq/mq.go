@@ -43,58 +43,6 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 			logx.WithContext(ctx).Debugf("method: %s, key: %s, value: %s", method, key, value)
 
 			switch protoreflect.FullName(method) {
-			case proto.MessageName((*inbox.TLInboxSendUserMessageToInbox)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
-
-					r := new(inbox.TLInboxSendUserMessageToInbox)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Errorf("inbox.sendUserMessageToInbox - error: %v", err)
-						return
-					}
-					c.Logger.Debugf("inbox.sendUserMessageToInbox - request: %s", r)
-
-					c.InboxSendUserMessageToInbox(r)
-				})
-			case proto.MessageName((*inbox.TLInboxSendChatMessageToInbox)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
-
-					r := new(inbox.TLInboxSendChatMessageToInbox)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err)
-						return
-					}
-					c.Logger.Debugf("inbox.sendChatMessageToInbox - request: %s", r)
-
-					c.InboxSendChatMessageToInbox(r)
-				})
-			case proto.MessageName((*inbox.TLInboxSendUserMultiMessageToInbox)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
-
-					r := new(inbox.TLInboxSendUserMultiMessageToInbox)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Errorf("inbox.sendUserMultiMessageToInbox - error: %v", err)
-						return
-					}
-					c.Logger.Debugf("inbox.sendUserMultiMessageToInbox - request: %s", r)
-
-					c.InboxSendUserMultiMessageToInbox(r)
-				})
-			case proto.MessageName((*inbox.TLInboxSendChatMultiMessageToInbox)(nil)):
-				threading.RunSafe(func() {
-					c := core.New(ctx, svcCtx)
-
-					r := new(inbox.TLInboxSendChatMultiMessageToInbox)
-					if err := json.Unmarshal(value, r); err != nil {
-						c.Logger.Errorf("inbox.sendChatMultiMessageToInbox - error: %v", err)
-						return
-					}
-					c.Logger.Debugf("inbox.sendChatMultiMessageToInbox - request: %s", r)
-
-					c.InboxSendChatMultiMessageToInbox(r)
-				})
 			case proto.MessageName((*inbox.TLInboxEditUserMessageToInbox)(nil)):
 				threading.RunSafe(func() {
 					c := core.New(ctx, svcCtx)

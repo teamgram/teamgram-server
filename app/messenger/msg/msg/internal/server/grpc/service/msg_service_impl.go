@@ -18,36 +18,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 )
 
-// MsgSendMessage
-// msg.sendMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
-func (s *Service) MsgSendMessage(ctx context.Context, request *msg.TLMsgSendMessage) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.sendMessage - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.MsgSendMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("msg.sendMessage - reply: %s", r)
-	return r, err
-}
-
-// MsgSendMultiMessage
-// msg.sendMultiMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
-func (s *Service) MsgSendMultiMessage(ctx context.Context, request *msg.TLMsgSendMultiMessage) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.sendMultiMessage - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.MsgSendMultiMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("msg.sendMultiMessage - reply: %s", r)
-	return r, err
-}
-
 // MsgPushUserMessage
 // msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
 func (s *Service) MsgPushUserMessage(ctx context.Context, request *msg.TLMsgPushUserMessage) (*mtproto.Bool, error) {

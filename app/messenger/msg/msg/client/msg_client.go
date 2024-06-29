@@ -22,8 +22,6 @@ import (
 var _ *mtproto.Bool
 
 type MsgClient interface {
-	MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*mtproto.Updates, error)
-	MsgSendMultiMessage(ctx context.Context, in *msg.TLMsgSendMultiMessage) (*mtproto.Updates, error)
 	MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error)
@@ -45,20 +43,6 @@ func NewMsgClient(cli zrpc.Client) MsgClient {
 	return &defaultMsgClient{
 		cli: cli,
 	}
-}
-
-// MsgSendMessage
-// msg.sendMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
-func (m *defaultMsgClient) MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*mtproto.Updates, error) {
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgSendMessage(ctx, in)
-}
-
-// MsgSendMultiMessage
-// msg.sendMultiMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
-func (m *defaultMsgClient) MsgSendMultiMessage(ctx context.Context, in *msg.TLMsgSendMultiMessage) (*mtproto.Updates, error) {
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgSendMultiMessage(ctx, in)
 }
 
 // MsgPushUserMessage

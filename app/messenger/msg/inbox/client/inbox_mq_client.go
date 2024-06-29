@@ -59,46 +59,6 @@ func (m *defaultInboxMqClient) sendMessage(ctx context.Context, method, k string
 	return mtproto.EmptyVoid, nil
 }
 
-// InboxSendUserMessageToInbox
-// inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
-func (m *defaultInboxMqClient) InboxSendUserMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(
-		ctx,
-		string(proto.MessageName(in)),
-		strconv.FormatInt(in.GetPeerUserId(), 10),
-		in)
-}
-
-// InboxSendChatMessageToInbox
-// inbox.sendChatMessageToInbox from_id:long peer_chat_id:long message:InboxMessageData = Void;
-func (m *defaultInboxMqClient) InboxSendChatMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(
-		ctx,
-		string(proto.MessageName(in)),
-		strconv.FormatInt(in.GetPeerChatId(), 10),
-		in)
-}
-
-// InboxSendUserMultiMessageToInbox
-// inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
-func (m *defaultInboxMqClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(
-		ctx,
-		string(proto.MessageName(in)),
-		strconv.FormatInt(in.GetPeerUserId(), 10),
-		in)
-}
-
-// InboxSendChatMultiMessageToInbox
-// inbox.sendChatMultiMessageToInbox from_id:long peer_chat_id:long message:Vector<InboxMessageData> = Void;
-func (m *defaultInboxMqClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
-	return m.sendMessage(
-		ctx,
-		string(proto.MessageName(in)),
-		strconv.FormatInt(in.GetPeerChatId(), 10),
-		in)
-}
-
 // InboxEditUserMessageToInbox
 // inbox.editUserMessageToInbox from_id:long peer_user_id:long message:Message = Void;
 func (m *defaultInboxMqClient) InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*mtproto.Void, error) {

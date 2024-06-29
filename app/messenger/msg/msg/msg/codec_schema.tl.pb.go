@@ -46,16 +46,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	},
 
 	// Method
-	1218652155: func() mtproto.TLObject { // 0x48a327fb
-		return &TLMsgSendMessage{
-			Constructor: 1218652155,
-		}
-	},
-	-1727589428: func() mtproto.TLObject { // 0x990713cc
-		return &TLMsgSendMultiMessage{
-			Constructor: -1727589428,
-		}
-	},
 	902887962: func() mtproto.TLObject { // 0x35d0fa1a
 		return &TLMsgPushUserMessage{
 			Constructor: 902887962,
@@ -589,119 +579,6 @@ func (m *TLSender) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-// TLMsgSendMessage
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgSendMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0x48a327fb:
-		x.UInt(0x48a327fb)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-		m.GetMessage().Encode(x, layer)
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLMsgSendMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgSendMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x48a327fb:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-
-		m5 := &OutboxMessage{}
-		m5.Decode(dBuf)
-		m.Message = m5
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-// TLMsgSendMultiMessage
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgSendMultiMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0x990713cc:
-		x.UInt(0x990713cc)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-
-		x.Int(int32(mtproto.CRC32_vector))
-		x.Int(int32(len(m.GetMessage())))
-		for _, v := range m.GetMessage() {
-			v.Encode(x, layer)
-		}
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLMsgSendMultiMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgSendMultiMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x990713cc:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		c5 := dBuf.Int()
-		if c5 != int32(mtproto.CRC32_vector) {
-			// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 5, c5)
-			return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 5, c5)
-		}
-		l5 := dBuf.Int()
-		v5 := make([]*OutboxMessage, l5)
-		for i := int32(0); i < l5; i++ {
-			v5[i] = &OutboxMessage{}
-			v5[i].Decode(dBuf)
-		}
-		m.Message = v5
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
 // TLMsgPushUserMessage
 ///////////////////////////////////////////////////////////////////////////////
 

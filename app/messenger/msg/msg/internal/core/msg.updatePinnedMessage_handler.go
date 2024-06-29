@@ -66,18 +66,20 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*mtp
 		}).To_Update()
 
 		if !in.GetUnpin() && !in.PmOneside && !peer.IsSelfUser(in.UserId) {
-			rUpdates, err = c.MsgSendMessage(&msg.TLMsgSendMessage{
+			rUpdates, err = c.MsgSendMessageV2(&msg.TLMsgSendMessageV2{
 				UserId:    in.UserId,
 				AuthKeyId: in.AuthKeyId,
 				PeerType:  peer.PeerType,
 				PeerId:    peer.PeerId,
-				Message: msg.MakeTLOutboxMessage(&msg.OutboxMessage{
-					NoWebpage:    false,
-					Background:   false,
-					RandomId:     rand.Int63(),
-					Message:      mtproto.MakePinnedMessageService(in.GetSilent(), in.UserId, peer, in.GetId()),
-					ScheduleDate: nil,
-				}).To_OutboxMessage(),
+				Message: []*msg.OutboxMessage{
+					msg.MakeTLOutboxMessage(&msg.OutboxMessage{
+						NoWebpage:    false,
+						Background:   false,
+						RandomId:     rand.Int63(),
+						Message:      mtproto.MakePinnedMessageService(in.GetSilent(), in.UserId, peer, in.GetId()),
+						ScheduleDate: nil,
+					}).To_OutboxMessage(),
+				},
 			})
 			if err != nil {
 				c.Logger.Errorf("msg.updatePinnedMessage - error: err", err)

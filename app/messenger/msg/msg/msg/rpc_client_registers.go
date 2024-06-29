@@ -26,8 +26,6 @@ type RPCContextTuple struct {
 }
 
 var rpcContextRegisters = map[string]RPCContextTuple{
-	"TLMsgSendMessage":            RPCContextTuple{"/mtproto.RPCMsg/msg_sendMessage", func() interface{} { return new(mtproto.Updates) }},
-	"TLMsgSendMultiMessage":       RPCContextTuple{"/mtproto.RPCMsg/msg_sendMultiMessage", func() interface{} { return new(mtproto.Updates) }},
 	"TLMsgPushUserMessage":        RPCContextTuple{"/mtproto.RPCMsg/msg_pushUserMessage", func() interface{} { return new(mtproto.Bool) }},
 	"TLMsgReadMessageContents":    RPCContextTuple{"/mtproto.RPCMsg/msg_readMessageContents", func() interface{} { return new(mtproto.Messages_AffectedMessages) }},
 	"TLMsgSendMessageV2":          RPCContextTuple{"/mtproto.RPCMsg/msg_sendMessageV2", func() interface{} { return new(mtproto.Updates) }},

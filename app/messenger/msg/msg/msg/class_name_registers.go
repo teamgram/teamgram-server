@@ -14,8 +14,6 @@ const (
 	Predicate_sender                     = "sender"
 	Predicate_outboxMessage              = "outboxMessage"
 	Predicate_contentMessage             = "contentMessage"
-	Predicate_msg_sendMessage            = "msg_sendMessage"
-	Predicate_msg_sendMultiMessage       = "msg_sendMultiMessage"
 	Predicate_msg_pushUserMessage        = "msg_pushUserMessage"
 	Predicate_msg_readMessageContents    = "msg_readMessageContents"
 	Predicate_msg_sendMessageV2          = "msg_sendMessageV2"
@@ -40,14 +38,6 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_contentMessage: {
 		0: -1301595468, // 0xb26b3ab4
-
-	},
-	Predicate_msg_sendMessage: {
-		0: 1218652155, // 0x48a327fb
-
-	},
-	Predicate_msg_sendMultiMessage: {
-		0: -1727589428, // 0x990713cc
 
 	},
 	Predicate_msg_pushUserMessage: {
@@ -100,8 +90,6 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1513645242:  Predicate_sender,                     // 0x5a3864ba
 	1402283185:  Predicate_outboxMessage,              // 0x539524b1
 	-1301595468: Predicate_contentMessage,             // 0xb26b3ab4
-	1218652155:  Predicate_msg_sendMessage,            // 0x48a327fb
-	-1727589428: Predicate_msg_sendMultiMessage,       // 0x990713cc
 	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
 	673481940:   Predicate_msg_readMessageContents,    // 0x282484d4
 	-188056380:  Predicate_msg_sendMessageV2,          // 0xf4ca7cc4

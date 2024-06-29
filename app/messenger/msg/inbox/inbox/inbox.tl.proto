@@ -23,10 +23,6 @@ enum TLConstructor {
     CRC32_UNKNOWN = 0;
     CRC32_inboxMessageData = 1002286548;
     CRC32_inboxMessageId = -963460705;
-    CRC32_inbox_sendUserMessageToInbox = -208741709;
-    CRC32_inbox_sendChatMessageToInbox = -1760197438;
-    CRC32_inbox_sendUserMultiMessageToInbox = -1782288007;
-    CRC32_inbox_sendChatMultiMessageToInbox = -694455924;
     CRC32_inbox_editUserMessageToInbox = 1559967656;
     CRC32_inbox_editChatMessageToInbox = 2031122959;
     CRC32_inbox_deleteMessagesToInbox = -2061734348;
@@ -74,38 +70,6 @@ message TL_inboxMessageId {
 
 
 
-
-//--------------------------------------------------------------------------------------------
-message TL_inbox_sendUserMessageToInbox {
-    TLConstructor  constructor = 1;
-    int64 from_id = 3;
-    int64 peer_user_id = 4;
-    InboxMessageData message = 5;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_inbox_sendChatMessageToInbox {
-    TLConstructor  constructor = 1;
-    int64 from_id = 3;
-    int64 peer_chat_id = 4;
-    InboxMessageData message = 5;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_inbox_sendUserMultiMessageToInbox {
-    TLConstructor  constructor = 1;
-    int64 from_id = 3;
-    int64 peer_user_id = 4;
-    repeated InboxMessageData message = 5;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_inbox_sendChatMultiMessageToInbox {
-    TLConstructor  constructor = 1;
-    int64 from_id = 3;
-    int64 peer_chat_id = 4;
-    repeated InboxMessageData message = 5;
-}
 
 //--------------------------------------------------------------------------------------------
 message TL_inbox_editUserMessageToInbox {
@@ -218,10 +182,6 @@ message TL_inbox_sendUserMessageToInboxV2 {
 // rpc
 
 service RPCInbox {
- rpc inbox_sendUserMessageToInbox(TL_inbox_sendUserMessageToInbox) returns (mtproto.Void) {}
- rpc inbox_sendChatMessageToInbox(TL_inbox_sendChatMessageToInbox) returns (mtproto.Void) {}
- rpc inbox_sendUserMultiMessageToInbox(TL_inbox_sendUserMultiMessageToInbox) returns (mtproto.Void) {}
- rpc inbox_sendChatMultiMessageToInbox(TL_inbox_sendChatMultiMessageToInbox) returns (mtproto.Void) {}
  rpc inbox_editUserMessageToInbox(TL_inbox_editUserMessageToInbox) returns (mtproto.Void) {}
  rpc inbox_editChatMessageToInbox(TL_inbox_editChatMessageToInbox) returns (mtproto.Void) {}
  rpc inbox_deleteMessagesToInbox(TL_inbox_deleteMessagesToInbox) returns (mtproto.Void) {}

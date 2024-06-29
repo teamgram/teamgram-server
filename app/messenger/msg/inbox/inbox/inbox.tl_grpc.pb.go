@@ -29,31 +29,23 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RPCInbox_InboxSendUserMessageToInbox_FullMethodName      = "/inbox.RPCInbox/inbox_sendUserMessageToInbox"
-	RPCInbox_InboxSendChatMessageToInbox_FullMethodName      = "/inbox.RPCInbox/inbox_sendChatMessageToInbox"
-	RPCInbox_InboxSendUserMultiMessageToInbox_FullMethodName = "/inbox.RPCInbox/inbox_sendUserMultiMessageToInbox"
-	RPCInbox_InboxSendChatMultiMessageToInbox_FullMethodName = "/inbox.RPCInbox/inbox_sendChatMultiMessageToInbox"
-	RPCInbox_InboxEditUserMessageToInbox_FullMethodName      = "/inbox.RPCInbox/inbox_editUserMessageToInbox"
-	RPCInbox_InboxEditChatMessageToInbox_FullMethodName      = "/inbox.RPCInbox/inbox_editChatMessageToInbox"
-	RPCInbox_InboxDeleteMessagesToInbox_FullMethodName       = "/inbox.RPCInbox/inbox_deleteMessagesToInbox"
-	RPCInbox_InboxDeleteUserHistoryToInbox_FullMethodName    = "/inbox.RPCInbox/inbox_deleteUserHistoryToInbox"
-	RPCInbox_InboxDeleteChatHistoryToInbox_FullMethodName    = "/inbox.RPCInbox/inbox_deleteChatHistoryToInbox"
-	RPCInbox_InboxReadUserMediaUnreadToInbox_FullMethodName  = "/inbox.RPCInbox/inbox_readUserMediaUnreadToInbox"
-	RPCInbox_InboxReadChatMediaUnreadToInbox_FullMethodName  = "/inbox.RPCInbox/inbox_readChatMediaUnreadToInbox"
-	RPCInbox_InboxUpdateHistoryReaded_FullMethodName         = "/inbox.RPCInbox/inbox_updateHistoryReaded"
-	RPCInbox_InboxUpdatePinnedMessage_FullMethodName         = "/inbox.RPCInbox/inbox_updatePinnedMessage"
-	RPCInbox_InboxUnpinAllMessages_FullMethodName            = "/inbox.RPCInbox/inbox_unpinAllMessages"
-	RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName    = "/inbox.RPCInbox/inbox_sendUserMessageToInboxV2"
+	RPCInbox_InboxEditUserMessageToInbox_FullMethodName     = "/inbox.RPCInbox/inbox_editUserMessageToInbox"
+	RPCInbox_InboxEditChatMessageToInbox_FullMethodName     = "/inbox.RPCInbox/inbox_editChatMessageToInbox"
+	RPCInbox_InboxDeleteMessagesToInbox_FullMethodName      = "/inbox.RPCInbox/inbox_deleteMessagesToInbox"
+	RPCInbox_InboxDeleteUserHistoryToInbox_FullMethodName   = "/inbox.RPCInbox/inbox_deleteUserHistoryToInbox"
+	RPCInbox_InboxDeleteChatHistoryToInbox_FullMethodName   = "/inbox.RPCInbox/inbox_deleteChatHistoryToInbox"
+	RPCInbox_InboxReadUserMediaUnreadToInbox_FullMethodName = "/inbox.RPCInbox/inbox_readUserMediaUnreadToInbox"
+	RPCInbox_InboxReadChatMediaUnreadToInbox_FullMethodName = "/inbox.RPCInbox/inbox_readChatMediaUnreadToInbox"
+	RPCInbox_InboxUpdateHistoryReaded_FullMethodName        = "/inbox.RPCInbox/inbox_updateHistoryReaded"
+	RPCInbox_InboxUpdatePinnedMessage_FullMethodName        = "/inbox.RPCInbox/inbox_updatePinnedMessage"
+	RPCInbox_InboxUnpinAllMessages_FullMethodName           = "/inbox.RPCInbox/inbox_unpinAllMessages"
+	RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName   = "/inbox.RPCInbox/inbox_sendUserMessageToInboxV2"
 )
 
 // RPCInboxClient is the client API for RPCInbox service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RPCInboxClient interface {
-	InboxSendUserMessageToInbox(ctx context.Context, in *TLInboxSendUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxSendChatMessageToInbox(ctx context.Context, in *TLInboxSendChatMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxSendUserMultiMessageToInbox(ctx context.Context, in *TLInboxSendUserMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
-	InboxSendChatMultiMessageToInbox(ctx context.Context, in *TLInboxSendChatMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(ctx context.Context, in *TLInboxEditUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(ctx context.Context, in *TLInboxEditChatMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(ctx context.Context, in *TLInboxDeleteMessagesToInbox, opts ...grpc.CallOption) (*mtproto.Void, error)
@@ -73,42 +65,6 @@ type rPCInboxClient struct {
 
 func NewRPCInboxClient(cc grpc.ClientConnInterface) RPCInboxClient {
 	return &rPCInboxClient{cc}
-}
-
-func (c *rPCInboxClient) InboxSendUserMessageToInbox(ctx context.Context, in *TLInboxSendUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, RPCInbox_InboxSendUserMessageToInbox_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCInboxClient) InboxSendChatMessageToInbox(ctx context.Context, in *TLInboxSendChatMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, RPCInbox_InboxSendChatMessageToInbox_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *TLInboxSendUserMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, RPCInbox_InboxSendUserMultiMessageToInbox_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCInboxClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *TLInboxSendChatMultiMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
-	out := new(mtproto.Void)
-	err := c.cc.Invoke(ctx, RPCInbox_InboxSendChatMultiMessageToInbox_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *rPCInboxClient) InboxEditUserMessageToInbox(ctx context.Context, in *TLInboxEditUserMessageToInbox, opts ...grpc.CallOption) (*mtproto.Void, error) {
@@ -214,10 +170,6 @@ func (c *rPCInboxClient) InboxSendUserMessageToInboxV2(ctx context.Context, in *
 // All implementations should embed UnimplementedRPCInboxServer
 // for forward compatibility
 type RPCInboxServer interface {
-	InboxSendUserMessageToInbox(context.Context, *TLInboxSendUserMessageToInbox) (*mtproto.Void, error)
-	InboxSendChatMessageToInbox(context.Context, *TLInboxSendChatMessageToInbox) (*mtproto.Void, error)
-	InboxSendUserMultiMessageToInbox(context.Context, *TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error)
-	InboxSendChatMultiMessageToInbox(context.Context, *TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(context.Context, *TLInboxEditUserMessageToInbox) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(context.Context, *TLInboxEditChatMessageToInbox) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(context.Context, *TLInboxDeleteMessagesToInbox) (*mtproto.Void, error)
@@ -235,18 +187,6 @@ type RPCInboxServer interface {
 type UnimplementedRPCInboxServer struct {
 }
 
-func (UnimplementedRPCInboxServer) InboxSendUserMessageToInbox(context.Context, *TLInboxSendUserMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendUserMessageToInbox not implemented")
-}
-func (UnimplementedRPCInboxServer) InboxSendChatMessageToInbox(context.Context, *TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChatMessageToInbox not implemented")
-}
-func (UnimplementedRPCInboxServer) InboxSendUserMultiMessageToInbox(context.Context, *TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendUserMultiMessageToInbox not implemented")
-}
-func (UnimplementedRPCInboxServer) InboxSendChatMultiMessageToInbox(context.Context, *TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InboxSendChatMultiMessageToInbox not implemented")
-}
 func (UnimplementedRPCInboxServer) InboxEditUserMessageToInbox(context.Context, *TLInboxEditUserMessageToInbox) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxEditUserMessageToInbox not implemented")
 }
@@ -290,78 +230,6 @@ type UnsafeRPCInboxServer interface {
 
 func RegisterRPCInboxServer(s grpc.ServiceRegistrar, srv RPCInboxServer) {
 	s.RegisterService(&RPCInbox_ServiceDesc, srv)
-}
-
-func _RPCInbox_InboxSendUserMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendUserMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendUserMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCInbox_InboxSendUserMessageToInbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendUserMessageToInbox(ctx, req.(*TLInboxSendUserMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCInbox_InboxSendChatMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendChatMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendChatMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCInbox_InboxSendChatMessageToInbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendChatMessageToInbox(ctx, req.(*TLInboxSendChatMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCInbox_InboxSendUserMultiMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendUserMultiMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendUserMultiMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCInbox_InboxSendUserMultiMessageToInbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendUserMultiMessageToInbox(ctx, req.(*TLInboxSendUserMultiMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCInbox_InboxSendChatMultiMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLInboxSendChatMultiMessageToInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCInboxServer).InboxSendChatMultiMessageToInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCInbox_InboxSendChatMultiMessageToInbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCInboxServer).InboxSendChatMultiMessageToInbox(ctx, req.(*TLInboxSendChatMultiMessageToInbox))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _RPCInbox_InboxEditUserMessageToInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -569,22 +437,6 @@ var RPCInbox_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "inbox.RPCInbox",
 	HandlerType: (*RPCInboxServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "inbox_sendUserMessageToInbox",
-			Handler:    _RPCInbox_InboxSendUserMessageToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_sendChatMessageToInbox",
-			Handler:    _RPCInbox_InboxSendChatMessageToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_sendUserMultiMessageToInbox",
-			Handler:    _RPCInbox_InboxSendUserMultiMessageToInbox_Handler,
-		},
-		{
-			MethodName: "inbox_sendChatMultiMessageToInbox",
-			Handler:    _RPCInbox_InboxSendChatMultiMessageToInbox_Handler,
-		},
 		{
 			MethodName: "inbox_editUserMessageToInbox",
 			Handler:    _RPCInbox_InboxEditUserMessageToInbox_Handler,

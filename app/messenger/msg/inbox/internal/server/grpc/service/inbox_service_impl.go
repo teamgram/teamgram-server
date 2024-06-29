@@ -18,66 +18,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/internal/core"
 )
 
-// InboxSendUserMessageToInbox
-// inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
-func (s *Service) InboxSendUserMessageToInbox(ctx context.Context, request *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("inbox.sendUserMessageToInbox - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.InboxSendUserMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("inbox.sendUserMessageToInbox - reply: %s", r)
-	return r, err
-}
-
-// InboxSendChatMessageToInbox
-// inbox.sendChatMessageToInbox from_id:long peer_chat_id:long message:InboxMessageData = Void;
-func (s *Service) InboxSendChatMessageToInbox(ctx context.Context, request *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("inbox.sendChatMessageToInbox - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.InboxSendChatMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("inbox.sendChatMessageToInbox - reply: %s", r)
-	return r, err
-}
-
-// InboxSendUserMultiMessageToInbox
-// inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
-func (s *Service) InboxSendUserMultiMessageToInbox(ctx context.Context, request *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("inbox.sendUserMultiMessageToInbox - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.InboxSendUserMultiMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("inbox.sendUserMultiMessageToInbox - reply: %s", r)
-	return r, err
-}
-
-// InboxSendChatMultiMessageToInbox
-// inbox.sendChatMultiMessageToInbox from_id:long peer_chat_id:long message:Vector<InboxMessageData> = Void;
-func (s *Service) InboxSendChatMultiMessageToInbox(ctx context.Context, request *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("inbox.sendChatMultiMessageToInbox - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.InboxSendChatMultiMessageToInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("inbox.sendChatMultiMessageToInbox - reply: %s", r)
-	return r, err
-}
-
 // InboxEditUserMessageToInbox
 // inbox.editUserMessageToInbox from_id:long peer_user_id:long message:Message = Void;
 func (s *Service) InboxEditUserMessageToInbox(ctx context.Context, request *inbox.TLInboxEditUserMessageToInbox) (*mtproto.Void, error) {

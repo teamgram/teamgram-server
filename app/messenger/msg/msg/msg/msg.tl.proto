@@ -24,8 +24,6 @@ enum TLConstructor {
     CRC32_sender = 1513645242;
     CRC32_outboxMessage = 1402283185;
     CRC32_contentMessage = -1301595468;
-    CRC32_msg_sendMessage = 1218652155;
-    CRC32_msg_sendMultiMessage = -1727589428;
     CRC32_msg_pushUserMessage = 902887962;
     CRC32_msg_readMessageContents = 673481940;
     CRC32_msg_sendMessageV2 = -188056380;
@@ -94,26 +92,6 @@ message TL_sender {
 
 
 
-
-//--------------------------------------------------------------------------------------------
-message TL_msg_sendMessage {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    OutboxMessage message = 7;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_msg_sendMultiMessage {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    repeated OutboxMessage message = 7;
-}
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_pushUserMessage {
@@ -236,8 +214,6 @@ message TL_msg_unpinAllMessages {
 // rpc
 
 service RPCMsg {
- rpc msg_sendMessage(TL_msg_sendMessage) returns (mtproto.Updates) {}
- rpc msg_sendMultiMessage(TL_msg_sendMultiMessage) returns (mtproto.Updates) {}
  rpc msg_pushUserMessage(TL_msg_pushUserMessage) returns (mtproto.Bool) {}
  rpc msg_readMessageContents(TL_msg_readMessageContents) returns (mtproto.messages_AffectedMessages) {}
  rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.Updates) {}

@@ -29,8 +29,6 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RPCMsg_MsgSendMessage_FullMethodName            = "/msg.RPCMsg/msg_sendMessage"
-	RPCMsg_MsgSendMultiMessage_FullMethodName       = "/msg.RPCMsg/msg_sendMultiMessage"
 	RPCMsg_MsgPushUserMessage_FullMethodName        = "/msg.RPCMsg/msg_pushUserMessage"
 	RPCMsg_MsgReadMessageContents_FullMethodName    = "/msg.RPCMsg/msg_readMessageContents"
 	RPCMsg_MsgSendMessageV2_FullMethodName          = "/msg.RPCMsg/msg_sendMessageV2"
@@ -48,8 +46,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RPCMsgClient interface {
-	MsgSendMessage(ctx context.Context, in *TLMsgSendMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
-	MsgSendMultiMessage(ctx context.Context, in *TLMsgSendMultiMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error)
@@ -69,24 +65,6 @@ type rPCMsgClient struct {
 
 func NewRPCMsgClient(cc grpc.ClientConnInterface) RPCMsgClient {
 	return &rPCMsgClient{cc}
-}
-
-func (c *rPCMsgClient) MsgSendMessage(ctx context.Context, in *TLMsgSendMessage, opts ...grpc.CallOption) (*mtproto.Updates, error) {
-	out := new(mtproto.Updates)
-	err := c.cc.Invoke(ctx, RPCMsg_MsgSendMessage_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCMsgClient) MsgSendMultiMessage(ctx context.Context, in *TLMsgSendMultiMessage, opts ...grpc.CallOption) (*mtproto.Updates, error) {
-	out := new(mtproto.Updates)
-	err := c.cc.Invoke(ctx, RPCMsg_MsgSendMultiMessage_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *rPCMsgClient) MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage, opts ...grpc.CallOption) (*mtproto.Bool, error) {
@@ -192,8 +170,6 @@ func (c *rPCMsgClient) MsgUnpinAllMessages(ctx context.Context, in *TLMsgUnpinAl
 // All implementations should embed UnimplementedRPCMsgServer
 // for forward compatibility
 type RPCMsgServer interface {
-	MsgSendMessage(context.Context, *TLMsgSendMessage) (*mtproto.Updates, error)
-	MsgSendMultiMessage(context.Context, *TLMsgSendMultiMessage) (*mtproto.Updates, error)
 	MsgPushUserMessage(context.Context, *TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(context.Context, *TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.Updates, error)
@@ -211,12 +187,6 @@ type RPCMsgServer interface {
 type UnimplementedRPCMsgServer struct {
 }
 
-func (UnimplementedRPCMsgServer) MsgSendMessage(context.Context, *TLMsgSendMessage) (*mtproto.Updates, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MsgSendMessage not implemented")
-}
-func (UnimplementedRPCMsgServer) MsgSendMultiMessage(context.Context, *TLMsgSendMultiMessage) (*mtproto.Updates, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MsgSendMultiMessage not implemented")
-}
 func (UnimplementedRPCMsgServer) MsgPushUserMessage(context.Context, *TLMsgPushUserMessage) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgPushUserMessage not implemented")
 }
@@ -260,42 +230,6 @@ type UnsafeRPCMsgServer interface {
 
 func RegisterRPCMsgServer(s grpc.ServiceRegistrar, srv RPCMsgServer) {
 	s.RegisterService(&RPCMsg_ServiceDesc, srv)
-}
-
-func _RPCMsg_MsgSendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLMsgSendMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCMsgServer).MsgSendMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCMsg_MsgSendMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCMsgServer).MsgSendMessage(ctx, req.(*TLMsgSendMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCMsg_MsgSendMultiMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLMsgSendMultiMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCMsgServer).MsgSendMultiMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCMsg_MsgSendMultiMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCMsgServer).MsgSendMultiMessage(ctx, req.(*TLMsgSendMultiMessage))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _RPCMsg_MsgPushUserMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -503,14 +437,6 @@ var RPCMsg_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "msg.RPCMsg",
 	HandlerType: (*RPCMsgServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "msg_sendMessage",
-			Handler:    _RPCMsg_MsgSendMessage_Handler,
-		},
-		{
-			MethodName: "msg_sendMultiMessage",
-			Handler:    _RPCMsg_MsgSendMultiMessage_Handler,
-		},
 		{
 			MethodName: "msg_pushUserMessage",
 			Handler:    _RPCMsg_MsgPushUserMessage_Handler,

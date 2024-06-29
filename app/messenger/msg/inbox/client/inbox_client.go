@@ -22,10 +22,6 @@ import (
 var _ *mtproto.Bool
 
 type InboxClient interface {
-	InboxSendUserMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error)
-	InboxSendChatMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error)
-	InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error)
-	InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error)
 	InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*mtproto.Void, error)
 	InboxEditChatMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChatMessageToInbox) (*mtproto.Void, error)
 	InboxDeleteMessagesToInbox(ctx context.Context, in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error)
@@ -47,34 +43,6 @@ func NewInboxClient(cli zrpc.Client) InboxClient {
 	return &defaultInboxClient{
 		cli: cli,
 	}
-}
-
-// InboxSendUserMessageToInbox
-// inbox.sendUserMessageToInbox from_id:long peer_user_id:long message:InboxMessageData = Void;
-func (m *defaultInboxClient) InboxSendUserMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendUserMessageToInbox(ctx, in)
-}
-
-// InboxSendChatMessageToInbox
-// inbox.sendChatMessageToInbox from_id:long peer_chat_id:long message:InboxMessageData = Void;
-func (m *defaultInboxClient) InboxSendChatMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendChatMessageToInbox(ctx, in)
-}
-
-// InboxSendUserMultiMessageToInbox
-// inbox.sendUserMultiMessageToInbox from_id:long peer_user_id:long message:Vector<InboxMessageData> = Void;
-func (m *defaultInboxClient) InboxSendUserMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendUserMultiMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendUserMultiMessageToInbox(ctx, in)
-}
-
-// InboxSendChatMultiMessageToInbox
-// inbox.sendChatMultiMessageToInbox from_id:long peer_chat_id:long message:Vector<InboxMessageData> = Void;
-func (m *defaultInboxClient) InboxSendChatMultiMessageToInbox(ctx context.Context, in *inbox.TLInboxSendChatMultiMessageToInbox) (*mtproto.Void, error) {
-	client := inbox.NewRPCInboxClient(m.cli.Conn())
-	return client.InboxSendChatMultiMessageToInbox(ctx, in)
 }
 
 // InboxEditUserMessageToInbox

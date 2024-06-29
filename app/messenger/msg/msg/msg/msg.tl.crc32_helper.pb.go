@@ -15,8 +15,6 @@ const (
 	CRC32_sender                     TLConstructor = 1513645242  // 0x5a3864ba
 	CRC32_outboxMessage              TLConstructor = 1402283185  // 0x539524b1
 	CRC32_contentMessage             TLConstructor = -1301595468 // 0xb26b3ab4
-	CRC32_msg_sendMessage            TLConstructor = 1218652155  // 0x48a327fb
-	CRC32_msg_sendMultiMessage       TLConstructor = -1727589428 // 0x990713cc
 	CRC32_msg_pushUserMessage        TLConstructor = 902887962   // 0x35d0fa1a
 	CRC32_msg_readMessageContents    TLConstructor = 673481940   // 0x282484d4
 	CRC32_msg_sendMessageV2          TLConstructor = -188056380  // 0xf4ca7cc4
