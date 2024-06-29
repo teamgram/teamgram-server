@@ -29,6 +29,7 @@ type MsgClient interface {
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error)
+	MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error)
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*mtproto.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
@@ -91,6 +92,13 @@ func (m *defaultMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDe
 func (m *defaultMsgClient) MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error) {
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgDeletePhoneCallHistory(ctx, in)
+}
+
+// MsgDeleteChatHistory
+// msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
+func (m *defaultMsgClient) MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error) {
+	client := msg.NewRPCMsgClient(m.cli.Conn())
+	return client.MsgDeleteChatHistory(ctx, in)
 }
 
 // MsgReadHistory
