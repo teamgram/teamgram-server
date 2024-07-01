@@ -7,7 +7,7 @@ require (
 	github.com/chai2010/webp v1.1.2-0.20220219151144-e81c7511b15a
 	github.com/disintegration/imaging v1.6.2
 	github.com/gobwas/httphead v0.1.0
-	github.com/gobwas/ws v1.3.2
+	github.com/gobwas/ws v1.4.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/minio/minio-go/v7 v7.0.49
 	github.com/nyaruka/phonenumbers v1.3.0

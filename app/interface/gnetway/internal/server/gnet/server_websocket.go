@@ -67,7 +67,7 @@ func (s *Server) onWebsocketData(ctx *connContext, c gnet.Conn) (action gnet.Act
 			return
 		}
 
-		logx.Infof("conn(%s) recv frame: %s", c, msg2.String())
+		logx.Infof("conn(%s) recv frame: %s", c, msg2)
 
 		action = s.onMTPRawMessage(ctx, c, msg2)
 		if action == gnet.Close {
