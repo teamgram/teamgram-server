@@ -19,23 +19,16 @@
 package core
 
 import (
-	"context"
 	"fmt"
 	"time"
 
-	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/proto/mtproto/crypto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 	"github.com/teamgram/teamgram-server/pkg/code/conf"
-	"github.com/teamgram/teamgram-server/pkg/env2"
-	"github.com/teamgram/teamgram-server/pkg/phonenumber"
-
 	"google.golang.org/grpc/status"
 )
 
@@ -122,96 +115,16 @@ func (c *AuthorizationCore) AuthSignIn(in *mtproto.TLAuthSignIn) (*mtproto.Auth_
 
 	// signIn successful, check phoneRegistered.
 	if !codeData.PhoneNumberRegistered {
-		if !env2.PredefinedUser2 {
-			if c.MD.Layer >= 104 {
-				//  not register, next step: auth.singIn
-				return mtproto.MakeTLAuthAuthorizationSignUpRequired(&mtproto.Auth_Authorization{
-					// TermsOfService: model.MakeTermOfService(),
-					TermsOfService: nil,
-				}).To_Auth_Authorization(), nil
-			} else {
-				c.Logger.Errorf("auth.signIn - not registered, next step auth.signIn, %v", err)
-				err = mtproto.ErrPhoneNumberUnoccupied
-				return nil, err
-			}
+		if c.MD.Layer >= 104 {
+			//  not register, next step: auth.singIn
+			return mtproto.MakeTLAuthAuthorizationSignUpRequired(&mtproto.Auth_Authorization{
+				// TermsOfService: model.MakeTermOfService(),
+				TermsOfService: nil,
+			}).To_Auth_Authorization(), nil
 		} else {
-			predefinedUser, err3 := c.svcCtx.Dao.UserClient.UserGetPredefinedUser(c.ctx, &userpb.TLUserGetPredefinedUser{
-				Phone: phoneNumber,
-			})
-			if err3 != nil {
-				c.Logger.Errorf("auth.signIn - not registered, next step auth.signIn, %v", err3)
-				err = mtproto.ErrPhoneNumberUnoccupied
-				return nil, err
-			}
-
-			key := crypto.CreateAuthKey()
-			_, err = c.svcCtx.Dao.AuthsessionClient.AuthsessionSetAuthKey(c.ctx, &authsession.TLAuthsessionSetAuthKey{
-				AuthKey: &mtproto.AuthKeyInfo{
-					AuthKeyId:          key.AuthKeyId(),
-					AuthKey:            key.AuthKey(),
-					AuthKeyType:        mtproto.AuthKeyTypePerm,
-					PermAuthKeyId:      key.AuthKeyId(),
-					TempAuthKeyId:      0,
-					MediaTempAuthKeyId: 0,
-				},
-			})
-			if err != nil {
-				c.Logger.Errorf("create user secret key error")
-				err = mtproto.ErrPhoneNumberUnoccupied
-				return nil, err
-			}
-
-			// 3.2. check phone_number
-			// 客户端发送的手机号格式为: "+86 111 1111 1111"，归一化
-			// We need getRegionCode from phone_number
-			pNumber, _ := phonenumber.MakePhoneNumberHelper(phoneNumber, "")
-
-			// TODO: check
-			user, err3 := c.svcCtx.UserClient.UserCreateNewUser(c.ctx, &userpb.TLUserCreateNewUser{
-				SecretKeyId: key.AuthKeyId(),
-				Phone:       phoneNumber,
-				CountryCode: pNumber.GetRegionCode(),
-				FirstName:   predefinedUser.GetFirstName().GetValue(),
-				LastName:    predefinedUser.GetLastName().GetValue(),
-			})
-			if err3 != nil {
-				c.Logger.Errorf("create new user error: %v", err3)
-				err = mtproto.ErrPhoneNumberUnoccupied
-				return nil, err
-			}
-
-			c.svcCtx.Dao.UserClient.UserPredefinedBindRegisteredUserId(c.ctx, &userpb.TLUserPredefinedBindRegisteredUserId{
-				Phone:            phoneNumber,
-				RegisteredUserId: user.User.Id,
-			})
-			if predefinedUser.GetUsername().GetValue() != "" {
-				// TODO(@benqi): setUsername
-				c.svcCtx.Dao.UserClient.UserUpdateUsername(c.ctx, &userpb.TLUserUpdateUsername{
-					UserId:   user.Id(),
-					Username: predefinedUser.GetUsername().GetValue(),
-				})
-				c.svcCtx.Dao.UsernameClient.UsernameUpdateUsername(c.ctx, &username.TLUsernameUpdateUsername{
-					PeerType: mtproto.PEER_USER,
-					PeerId:   user.Id(),
-					Username: predefinedUser.GetUsername().GetValue(),
-				})
-			}
-			if predefinedUser.Verified {
-				c.svcCtx.Dao.UserClient.UserUpdateVerified(c.ctx, &userpb.TLUserUpdateVerified{
-					UserId:   user.Id(),
-					Verified: mtproto.ToBool(predefinedUser.Verified),
-				})
-			}
-
-			threading2.WrapperGoFunc(c.ctx, nil, func(ctx context.Context) {
-				c.onContactSignUp(ctx, c.MD.PermAuthKeyId, user.Id(), phoneNumber)
-
-				// on event
-				// c.svcCtx.AuthLogic.DeletePhoneCode(c.ctx, c.MD.PermAuthKeyId, phoneNumber, in.PhoneCodeHash)
-				c.pushSignInMessage(ctx, user.Id(), codeData.PhoneCode)
-			})
-
-			codeData.PhoneNumberRegistered = true
+			c.Logger.Errorf("auth.signIn - not registered, next step auth.signIn, %v", err)
+			err = mtproto.ErrPhoneNumberUnoccupied
+			return nil, err
 		}
 	}
 

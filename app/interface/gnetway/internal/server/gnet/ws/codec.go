@@ -114,6 +114,7 @@ func (w *WsCodec) ReadBufferBytes(c gnet.Conn) gnet.Action {
 	w.Buf.Write(buf)
 	return gnet.None
 }
+
 func (w *WsCodec) Decode(c gnet.Conn) (outs []wsutil.Message, err error) {
 	logx.Debug("do Decode")
 	messages, err := w.readWsMessages()

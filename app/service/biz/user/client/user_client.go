@@ -45,14 +45,6 @@ type UserClient interface {
 	UserGetPeerSettings(ctx context.Context, in *user.TLUserGetPeerSettings) (*mtproto.PeerSettings, error)
 	UserDeletePeerSettings(ctx context.Context, in *user.TLUserDeletePeerSettings) (*mtproto.Bool, error)
 	UserChangePhone(ctx context.Context, in *user.TLUserChangePhone) (*mtproto.Bool, error)
-	UserCreateNewPredefinedUser(ctx context.Context, in *user.TLUserCreateNewPredefinedUser) (*mtproto.PredefinedUser, error)
-	UserGetPredefinedUser(ctx context.Context, in *user.TLUserGetPredefinedUser) (*mtproto.PredefinedUser, error)
-	UserGetAllPredefinedUser(ctx context.Context, in *user.TLUserGetAllPredefinedUser) (*user.Vector_PredefinedUser, error)
-	UserUpdatePredefinedFirstAndLastName(ctx context.Context, in *user.TLUserUpdatePredefinedFirstAndLastName) (*mtproto.PredefinedUser, error)
-	UserUpdatePredefinedVerified(ctx context.Context, in *user.TLUserUpdatePredefinedVerified) (*mtproto.PredefinedUser, error)
-	UserUpdatePredefinedUsername(ctx context.Context, in *user.TLUserUpdatePredefinedUsername) (*mtproto.PredefinedUser, error)
-	UserUpdatePredefinedCode(ctx context.Context, in *user.TLUserUpdatePredefinedCode) (*mtproto.PredefinedUser, error)
-	UserPredefinedBindRegisteredUserId(ctx context.Context, in *user.TLUserPredefinedBindRegisteredUserId) (*mtproto.Bool, error)
 	UserCreateNewUser(ctx context.Context, in *user.TLUserCreateNewUser) (*mtproto.ImmutableUser, error)
 	UserDeleteUser(ctx context.Context, in *user.TLUserDeleteUser) (*mtproto.Bool, error)
 	UserBlockPeer(ctx context.Context, in *user.TLUserBlockPeer) (*mtproto.Bool, error)
@@ -273,62 +265,6 @@ func (m *defaultUserClient) UserDeletePeerSettings(ctx context.Context, in *user
 func (m *defaultUserClient) UserChangePhone(ctx context.Context, in *user.TLUserChangePhone) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserChangePhone(ctx, in)
-}
-
-// UserCreateNewPredefinedUser
-// user.createNewPredefinedUser flags:# phone:string first_name:string last_name:flags.0?string username:string code:string verified:flags.1?true = PredefinedUser;
-func (m *defaultUserClient) UserCreateNewPredefinedUser(ctx context.Context, in *user.TLUserCreateNewPredefinedUser) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserCreateNewPredefinedUser(ctx, in)
-}
-
-// UserGetPredefinedUser
-// user.getPredefinedUser phone:string = PredefinedUser;
-func (m *defaultUserClient) UserGetPredefinedUser(ctx context.Context, in *user.TLUserGetPredefinedUser) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserGetPredefinedUser(ctx, in)
-}
-
-// UserGetAllPredefinedUser
-// user.getAllPredefinedUser = Vector<PredefinedUser>;
-func (m *defaultUserClient) UserGetAllPredefinedUser(ctx context.Context, in *user.TLUserGetAllPredefinedUser) (*user.Vector_PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserGetAllPredefinedUser(ctx, in)
-}
-
-// UserUpdatePredefinedFirstAndLastName
-// user.updatePredefinedFirstAndLastName flags:# phone:string first_name:string last_name:flags.0?string = PredefinedUser;
-func (m *defaultUserClient) UserUpdatePredefinedFirstAndLastName(ctx context.Context, in *user.TLUserUpdatePredefinedFirstAndLastName) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserUpdatePredefinedFirstAndLastName(ctx, in)
-}
-
-// UserUpdatePredefinedVerified
-// user.updatePredefinedVerified flags:# phone:string verified:flags.1?true = PredefinedUser;
-func (m *defaultUserClient) UserUpdatePredefinedVerified(ctx context.Context, in *user.TLUserUpdatePredefinedVerified) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserUpdatePredefinedVerified(ctx, in)
-}
-
-// UserUpdatePredefinedUsername
-// user.updatePredefinedUsername flags:# phone:string username:flags.1?string = PredefinedUser;
-func (m *defaultUserClient) UserUpdatePredefinedUsername(ctx context.Context, in *user.TLUserUpdatePredefinedUsername) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserUpdatePredefinedUsername(ctx, in)
-}
-
-// UserUpdatePredefinedCode
-// user.updatePredefinedCode phone:string code:string = PredefinedUser;
-func (m *defaultUserClient) UserUpdatePredefinedCode(ctx context.Context, in *user.TLUserUpdatePredefinedCode) (*mtproto.PredefinedUser, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserUpdatePredefinedCode(ctx, in)
-}
-
-// UserPredefinedBindRegisteredUserId
-// user.predefinedBindRegisteredUserId phone:string registered_userId:long = Bool;
-func (m *defaultUserClient) UserPredefinedBindRegisteredUserId(ctx context.Context, in *user.TLUserPredefinedBindRegisteredUserId) (*mtproto.Bool, error) {
-	client := user.NewRPCUserClient(m.cli.Conn())
-	return client.UserPredefinedBindRegisteredUserId(ctx, in)
 }
 
 // UserCreateNewUser

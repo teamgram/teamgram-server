@@ -49,14 +49,6 @@ enum TLConstructor {
     CRC32_user_getPeerSettings = 218296167;
     CRC32_user_deletePeerSettings = 1586043239;
     CRC32_user_changePhone = -8759461;
-    CRC32_user_createNewPredefinedUser = 1464414785;
-    CRC32_user_getPredefinedUser = 876047141;
-    CRC32_user_getAllPredefinedUser = -1053474843;
-    CRC32_user_updatePredefinedFirstAndLastName = 976922006;
-    CRC32_user_updatePredefinedVerified = -1158303159;
-    CRC32_user_updatePredefinedUsername = 1269284562;
-    CRC32_user_updatePredefinedCode = 1626771303;
-    CRC32_user_predefinedBindRegisteredUserId = 68106153;
     CRC32_user_createNewUser = 2044729473;
     CRC32_user_deleteUser = 2132777160;
     CRC32_user_blockPeer = -2130301264;
@@ -346,64 +338,6 @@ message TL_user_changePhone {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
     string phone = 4;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_createNewPredefinedUser {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    string first_name = 4;
-    google.protobuf.StringValue last_name = 5;
-    string username = 6;
-    string code = 7;
-    bool verified = 8;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_getPredefinedUser {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_getAllPredefinedUser {
-    TLConstructor  constructor = 1;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_updatePredefinedFirstAndLastName {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    string first_name = 4;
-    google.protobuf.StringValue last_name = 5;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_updatePredefinedVerified {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    bool verified = 4;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_updatePredefinedUsername {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    google.protobuf.StringValue username = 4;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_updatePredefinedCode {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    string code = 4;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_user_predefinedBindRegisteredUserId {
-    TLConstructor  constructor = 1;
-    string phone = 3;
-    int64 registered_userId = 4;
 }
 
 //--------------------------------------------------------------------------------------------
@@ -776,9 +710,6 @@ message Vector_PeerPeerNotifySettings {
 message Vector_PrivacyRule {
     repeated mtproto.PrivacyRule datas = 1;
 }
-message Vector_PredefinedUser {
-    repeated mtproto.PredefinedUser datas = 1;
-}
 message Vector_Long {
     repeated int64 datas = 1;
 }
@@ -826,14 +757,6 @@ service RPCUser {
  rpc user_getPeerSettings(TL_user_getPeerSettings) returns (mtproto.PeerSettings) {}
  rpc user_deletePeerSettings(TL_user_deletePeerSettings) returns (mtproto.Bool) {}
  rpc user_changePhone(TL_user_changePhone) returns (mtproto.Bool) {}
- rpc user_createNewPredefinedUser(TL_user_createNewPredefinedUser) returns (mtproto.PredefinedUser) {}
- rpc user_getPredefinedUser(TL_user_getPredefinedUser) returns (mtproto.PredefinedUser) {}
- rpc user_getAllPredefinedUser(TL_user_getAllPredefinedUser) returns (Vector_PredefinedUser) {}
- rpc user_updatePredefinedFirstAndLastName(TL_user_updatePredefinedFirstAndLastName) returns (mtproto.PredefinedUser) {}
- rpc user_updatePredefinedVerified(TL_user_updatePredefinedVerified) returns (mtproto.PredefinedUser) {}
- rpc user_updatePredefinedUsername(TL_user_updatePredefinedUsername) returns (mtproto.PredefinedUser) {}
- rpc user_updatePredefinedCode(TL_user_updatePredefinedCode) returns (mtproto.PredefinedUser) {}
- rpc user_predefinedBindRegisteredUserId(TL_user_predefinedBindRegisteredUserId) returns (mtproto.Bool) {}
  rpc user_createNewUser(TL_user_createNewUser) returns (mtproto.ImmutableUser) {}
  rpc user_deleteUser(TL_user_deleteUser) returns (mtproto.Bool) {}
  rpc user_blockPeer(TL_user_blockPeer) returns (mtproto.Bool) {}

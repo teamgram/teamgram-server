@@ -30,7 +30,6 @@ import (
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/pkg/env2"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
 )
 
@@ -144,25 +143,9 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	}
 
 	var (
-		firstName      = in.FirstName
-		lastName       = in.LastName
-		username       string
-		predefinedUser *mtproto.PredefinedUser
+		firstName = in.FirstName
+		lastName  = in.LastName
 	)
-
-	if env2.PredefinedUser {
-		predefinedUser, _ = c.svcCtx.Dao.UserClient.UserGetPredefinedUser(c.ctx, &userpb.TLUserGetPredefinedUser{
-			Phone: phoneNumber,
-		})
-		if predefinedUser == nil {
-			c.Logger.Errorf("check predefinedUsers error - %v", err)
-			err = mtproto.ErrPhoneNumberInvalid
-			return nil, err
-		}
-		firstName = predefinedUser.GetFirstName().GetValue()
-		lastName = predefinedUser.GetLastName().GetValue()
-		username = predefinedUser.GetUsername().GetValue()
-	}
 
 	// Create new user
 	if user, err = c.svcCtx.UserClient.UserCreateNewUser(c.ctx, &userpb.TLUserCreateNewUser{
@@ -174,19 +157,6 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	}); err != nil {
 		c.Logger.Errorf("createNewUser error: %v", err)
 		return nil, err
-	}
-
-	if env2.PredefinedUser {
-		c.svcCtx.Dao.UserClient.UserPredefinedBindRegisteredUserId(c.ctx, &userpb.TLUserPredefinedBindRegisteredUserId{
-			Phone:            phoneNumber,
-			RegisteredUserId: user.User.Id,
-		})
-		if username != "" {
-			// TODO(@benqi): setUsername
-			//s.UserFacade.UpdateUsername(ctx, user.Id, username)
-			//s.UsernameFacade.UpdateUsername(ctx, model2.PEER_USER, user.Id, username)
-			//s.UserFacade.UpdateVerified(ctx, user.Id, predefinedUser.Verified)
-		}
 	}
 
 	// TODO(@benqi): remove to createNewUser
