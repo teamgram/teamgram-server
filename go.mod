@@ -8,13 +8,14 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/gobwas/httphead v0.1.0
 	github.com/gobwas/ws v1.3.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/minio/minio-go/v7 v7.0.49
 	github.com/nyaruka/phonenumbers v1.3.0
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/panjf2000/gnet/v2 v2.5.1
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21-0.20240630154811-bc96ee0e5ee4
-	github.com/teamgram/proto v0.181.1-0.20240626134001-b387ef003356
+	github.com/teamgram/proto v0.181.1-0.20240701004721-aeb6507771cd
 	github.com/zeromicro/go-zero v1.6.3
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
