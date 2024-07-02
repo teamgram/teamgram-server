@@ -29,6 +29,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/pkg/code/conf"
+
 	"google.golang.org/grpc/status"
 )
 
