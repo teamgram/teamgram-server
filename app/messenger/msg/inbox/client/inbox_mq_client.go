@@ -168,3 +168,13 @@ func (m *defaultInboxMqClient) InboxSendUserMessageToInboxV2(ctx context.Context
 		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
+
+// InboxEditMessageToInboxV2
+// inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long fromAuthKeyId:long peer_type:int peer_id:long box:MessageBox users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
+func (m *defaultInboxMqClient) InboxEditMessageToInboxV2(ctx context.Context, in *inbox.TLInboxEditMessageToInboxV2) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
+		in)
+}

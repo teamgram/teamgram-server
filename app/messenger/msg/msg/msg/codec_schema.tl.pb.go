@@ -66,6 +66,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -2129725231,
 		}
 	},
+	1778278369: func() mtproto.TLObject { // 0x69fe5fe1
+		return &TLMsgEditMessageV2{
+			Constructor: 1778278369,
+		}
+	},
 	568855069: func() mtproto.TLObject { // 0x21e80a1d
 		return &TLMsgDeleteMessages{
 			Constructor: 568855069,
@@ -800,6 +805,63 @@ func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 		m6 := &OutboxMessage{}
 		m6.Decode(dBuf)
 		m.Message = m6
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLMsgEditMessageV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMsgEditMessageV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x69fe5fe1:
+		x.UInt(0x69fe5fe1)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetAuthKeyId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetEditType())
+		m.GetNewMessage().Encode(x, layer)
+		m.GetDstMessage().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMsgEditMessageV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMsgEditMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x69fe5fe1:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.EditType = dBuf.Int()
+
+		m6 := &OutboxMessage{}
+		m6.Decode(dBuf)
+		m.NewMessage = m6
+
+		m7 := &mtproto.MessageBox{}
+		m7.Decode(dBuf)
+		m.DstMessage = m7
 
 		return dBuf.GetError()
 

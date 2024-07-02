@@ -28,6 +28,7 @@ enum TLConstructor {
     CRC32_msg_readMessageContents = 673481940;
     CRC32_msg_sendMessageV2 = -188056380;
     CRC32_msg_editMessage = -2129725231;
+    CRC32_msg_editMessageV2 = 1778278369;
     CRC32_msg_deleteMessages = 568855069;
     CRC32_msg_deleteHistory = 1975576778;
     CRC32_msg_deletePhoneCallHistory = 649568574;
@@ -136,6 +137,18 @@ message TL_msg_editMessage {
 }
 
 //--------------------------------------------------------------------------------------------
+message TL_msg_editMessageV2 {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    int32 peer_type = 5;
+    int64 peer_id = 6;
+    int32 edit_type = 7;
+    OutboxMessage new_message = 8;
+    mtproto.MessageBox dst_message = 9;
+}
+
+//--------------------------------------------------------------------------------------------
 message TL_msg_deleteMessages {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
@@ -218,6 +231,7 @@ service RPCMsg {
  rpc msg_readMessageContents(TL_msg_readMessageContents) returns (mtproto.messages_AffectedMessages) {}
  rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.Updates) {}
  rpc msg_editMessage(TL_msg_editMessage) returns (mtproto.Updates) {}
+ rpc msg_editMessageV2(TL_msg_editMessageV2) returns (mtproto.Updates) {}
  rpc msg_deleteMessages(TL_msg_deleteMessages) returns (mtproto.messages_AffectedMessages) {}
  rpc msg_deleteHistory(TL_msg_deleteHistory) returns (mtproto.messages_AffectedHistory) {}
  rpc msg_deletePhoneCallHistory(TL_msg_deletePhoneCallHistory) returns (mtproto.messages_AffectedFoundMessages) {}

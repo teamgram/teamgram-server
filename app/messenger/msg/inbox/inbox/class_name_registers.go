@@ -24,6 +24,7 @@ const (
 	Predicate_inbox_updatePinnedMessage        = "inbox_updatePinnedMessage"
 	Predicate_inbox_unpinAllMessages           = "inbox_unpinAllMessages"
 	Predicate_inbox_sendUserMessageToInboxV2   = "inbox_sendUserMessageToInboxV2"
+	Predicate_inbox_editMessageToInboxV2       = "inbox_editMessageToInboxV2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -79,6 +80,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -209599207, // 0xf381c519
 
 	},
+	Predicate_inbox_editMessageToInboxV2: {
+		0: 597039781, // 0x23961aa5
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -95,6 +100,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1452528908: Predicate_inbox_updatePinnedMessage,        // 0xa96c2af4
 	589079137:   Predicate_inbox_unpinAllMessages,           // 0x231ca261
 	-209599207:  Predicate_inbox_sendUserMessageToInboxV2,   // 0xf381c519
+	597039781:   Predicate_inbox_editMessageToInboxV2,       // 0x23961aa5
 
 }
 

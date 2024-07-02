@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package msg_client
+package msgclient
 
 import (
 	"context"
@@ -26,6 +26,7 @@ type MsgClient interface {
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error)
 	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error)
+	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error)
@@ -67,10 +68,17 @@ func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSe
 }
 
 // MsgEditMessage
-// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:OutboxMessage = Updates;
+// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int message:OutboxMessage = Updates;
 func (m *defaultMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error) {
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgEditMessage(ctx, in)
+}
+
+// MsgEditMessageV2
+// msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
+func (m *defaultMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*mtproto.Updates, error) {
+	client := msg.NewRPCMsgClient(m.cli.Conn())
+	return client.MsgEditMessageV2(ctx, in)
 }
 
 // MsgDeleteMessages

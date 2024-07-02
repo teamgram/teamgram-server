@@ -186,6 +186,19 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 
 					c.InboxSendUserMessageToInboxV2(r)
 				})
+			case proto.MessageName((*inbox.TLInboxEditMessageToInboxV2)(nil)):
+				threading.RunSafe(func() {
+					c := core.New(ctx, svcCtx)
+
+					r := new(inbox.TLInboxEditMessageToInboxV2)
+					if err := json.Unmarshal(value, r); err != nil {
+						c.Logger.Errorf("inbox.editMessageToInboxV2 - error: %v", err)
+						return
+					}
+					c.Logger.Debugf("inbox.editMessageToInboxV2 - request: %s", r)
+
+					c.InboxEditMessageToInboxV2(r)
+				})
 			default:
 				err := fmt.Errorf("invalid key: %s", key)
 				logx.Error(err.Error())

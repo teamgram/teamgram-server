@@ -96,6 +96,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -209599207,
 		}
 	},
+	597039781: func() mtproto.TLObject { // 0x23961aa5
+		return &TLInboxEditMessageToInboxV2{
+			Constructor: 597039781,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -987,6 +992,132 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 				v10[i].Decode(dBuf)
 			}
 			m.Chats = v10
+		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLInboxEditMessageToInboxV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxEditMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x23961aa5:
+		x.UInt(0x23961aa5)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetOut() == true {
+			flags |= 1 << 0
+		}
+
+		if m.GetDstMessage() != nil {
+			flags |= 1 << 1
+		}
+		if m.GetUsers() != nil {
+			flags |= 1 << 2
+		}
+		if m.GetChats() != nil {
+			flags |= 1 << 3
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Long(m.GetFromId())
+		x.Long(m.GetFromAuthKeyId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		m.GetNewMessage().Encode(x, layer)
+		if m.GetDstMessage() != nil {
+			m.GetDstMessage().Encode(x, layer)
+		}
+
+		if m.GetUsers() != nil {
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetUsers())))
+			for _, v := range m.GetUsers() {
+				v.Encode(x, layer)
+			}
+		}
+		if m.GetChats() != nil {
+			x.Int(int32(mtproto.CRC32_vector))
+			x.Int(int32(len(m.GetChats())))
+			for _, v := range m.GetChats() {
+				v.Encode(x, layer)
+			}
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxEditMessageToInboxV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxEditMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x23961aa5:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.Out = true
+		}
+		m.FromId = dBuf.Long()
+		m.FromAuthKeyId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+
+		m8 := &mtproto.MessageBox{}
+		m8.Decode(dBuf)
+		m.NewMessage = m8
+
+		if (flags & (1 << 1)) != 0 {
+			m9 := &mtproto.MessageBox{}
+			m9.Decode(dBuf)
+			m.DstMessage = m9
+		}
+		if (flags & (1 << 2)) != 0 {
+			c10 := dBuf.Int()
+			if c10 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 10, c10)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 10, c10)
+			}
+			l10 := dBuf.Int()
+			v10 := make([]*mtproto.User, l10)
+			for i := int32(0); i < l10; i++ {
+				v10[i] = &mtproto.User{}
+				v10[i].Decode(dBuf)
+			}
+			m.Users = v10
+		}
+		if (flags & (1 << 3)) != 0 {
+			c11 := dBuf.Int()
+			if c11 != int32(mtproto.CRC32_vector) {
+				// dBuf.err = fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 11, c11)
+				return fmt.Errorf("invalid mtproto.CRC32_vector, c%d: %d", 11, c11)
+			}
+			l11 := dBuf.Int()
+			v11 := make([]*mtproto.Chat, l11)
+			for i := int32(0); i < l11; i++ {
+				v11[i] = &mtproto.Chat{}
+				v11[i].Decode(dBuf)
+			}
+			m.Chats = v11
 		}
 		return dBuf.GetError()
 

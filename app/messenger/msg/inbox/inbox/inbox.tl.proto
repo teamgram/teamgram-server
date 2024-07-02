@@ -34,6 +34,7 @@ enum TLConstructor {
     CRC32_inbox_updatePinnedMessage = -1452528908;
     CRC32_inbox_unpinAllMessages = 589079137;
     CRC32_inbox_sendUserMessageToInboxV2 = -209599207;
+    CRC32_inbox_editMessageToInboxV2 = 597039781;
 }
 
 
@@ -173,6 +174,21 @@ message TL_inbox_sendUserMessageToInboxV2 {
     repeated mtproto.Chat chats = 11;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_inbox_editMessageToInboxV2 {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    bool out = 4;
+    int64 from_id = 5;
+    int64 fromAuthKeyId = 6;
+    int32 peer_type = 7;
+    int64 peer_id = 8;
+    mtproto.MessageBox new_message = 9;
+    mtproto.MessageBox dst_message = 10;
+    repeated mtproto.User users = 11;
+    repeated mtproto.Chat chats = 12;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -193,5 +209,6 @@ service RPCInbox {
  rpc inbox_updatePinnedMessage(TL_inbox_updatePinnedMessage) returns (mtproto.Void) {}
  rpc inbox_unpinAllMessages(TL_inbox_unpinAllMessages) returns (mtproto.Void) {}
  rpc inbox_sendUserMessageToInboxV2(TL_inbox_sendUserMessageToInboxV2) returns (mtproto.Void) {}
+ rpc inbox_editMessageToInboxV2(TL_inbox_editMessageToInboxV2) returns (mtproto.Void) {}
 }
 

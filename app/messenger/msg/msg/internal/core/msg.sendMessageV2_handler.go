@@ -167,7 +167,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				return err
 			}
 
-			_, err2 := c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+			_, err2 := c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
 					UserId:        fromUserId,
@@ -191,7 +191,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 				})
 
 				if !mtproto.FromBool(blocked) {
-					_, err2 = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+					_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 						c.ctx,
 						&inbox.TLInboxSendUserMessageToInboxV2{
 							UserId:        toUserId,
@@ -477,7 +477,7 @@ func (c *MsgCore) sendUserOutgoingMessageList(fromUserId, fromAuthKeyId, toUserI
 				}).To_Update())
 			}
 
-			_, err2 := c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+			_, err2 := c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
 					UserId:        fromUserId,
@@ -501,7 +501,7 @@ func (c *MsgCore) sendUserOutgoingMessageList(fromUserId, fromAuthKeyId, toUserI
 				})
 
 				if !mtproto.FromBool(blocked) {
-					_, err2 = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+					_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 						c.ctx,
 						&inbox.TLInboxSendUserMessageToInboxV2{
 							UserId:        toUserId,

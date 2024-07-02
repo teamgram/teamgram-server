@@ -19,6 +19,7 @@
 package core
 
 import (
+	"google.golang.org/protobuf/proto"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
@@ -34,6 +35,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 	var (
 		peer         = mtproto.FromInputPeer2(c.MD.UserId, in.Peer)
 		editMessages *message.Vector_MessageBox
+		dstMessage   *mtproto.MessageBox
 		err          error
 	)
 
@@ -75,6 +77,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		return nil, err
 	}
 	// ...
+	dstMessage = proto.Clone(editMessages.Datas[0]).(*mtproto.MessageBox)
 
 	outMessage := editMessages.Datas[0].Message
 	// edit_date
@@ -120,18 +123,20 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		//})
 	}
 
-	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessage(c.ctx, &msgpb.TLMsgEditMessage{
+	rUpdates, err := c.svcCtx.Dao.MsgClient.MsgEditMessageV2(c.ctx, &msgpb.TLMsgEditMessageV2{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  peer.PeerType,
 		PeerId:    peer.PeerId,
-		Message: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+		EditType:  0,
+		NewMessage: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
 			NoWebpage:    in.NoWebpage,
 			Background:   false,
 			RandomId:     0,
 			Message:      outMessage,
 			ScheduleDate: in.ScheduleDate,
 		}).To_OutboxMessage(),
+		DstMessage: dstMessage,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.editMessage - error: %v", err)

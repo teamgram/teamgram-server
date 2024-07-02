@@ -786,3 +786,72 @@ func (d *Dao) sendMessageToOutboxV2(ctx context.Context, fromId int64, peer *mtp
 
 	return outMsgBox, nil
 }
+
+func (d *Dao) EditUserOutboxMessageV2(ctx context.Context, fromId, toId int64, newMessage *msg.OutboxMessage, dstMessage *mtproto.MessageBox) (*mtproto.MessageBox, error) {
+	return d.editOutboxMessageV2(ctx, fromId, mtproto.PEER_USER, toId, newMessage, dstMessage)
+}
+
+func (d *Dao) EditChatOutboxMessageV2(ctx context.Context, fromId, toId int64, newMessage *msg.OutboxMessage, dstMessage *mtproto.MessageBox) (*mtproto.MessageBox, error) {
+	return d.editOutboxMessageV2(ctx, fromId, mtproto.PEER_CHAT, toId, newMessage, dstMessage)
+}
+
+func (d *Dao) editOutboxMessageV2(ctx context.Context, fromId int64, peerType int32, peerId int64, newMessage *msg.OutboxMessage, dstMessage *mtproto.MessageBox) (*mtproto.MessageBox, error) {
+	var (
+		pts            = d.IDGenClient2.NextPtsId(ctx, fromId)
+		ptsCount int32 = 1
+		message        = newMessage.Message
+	)
+
+	if pts == 0 {
+		logx.WithContext(ctx).Errorf("NextPtsId error: %v", fromId)
+		err := mtproto.ErrInternalServerError
+		return nil, err
+	}
+	//if _, err := d.MessagesDAO.UpdateEditMessage(ctx, string(mData), message.Message, fromId, message.Id); err != nil {
+	//	return nil, err
+	//}
+
+	//// d.HashTagsDAO.DeleteHashTagMessageId(ctx, fromId, message.Id)
+	//for _, entity := range message.GetEntities() {
+	//	if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
+	//		if entity.GetUrl() != "" {
+	//			d.HashTagsDAO.InsertOrUpdate(ctx, &dataobject.HashTagsDO{
+	//				UserId:           fromId,
+	//				PeerType:         peerType,
+	//				PeerId:           peerId,
+	//				HashTag:          entity.GetUrl(),
+	//				HashTagMessageId: dstMessage.MessageId,
+	//			})
+	//		}
+	//	}
+	//}
+
+	return mtproto.MakeTLMessageBox(&mtproto.MessageBox{
+		UserId:            dstMessage.UserId,
+		MessageId:         dstMessage.MessageId,
+		SenderUserId:      dstMessage.SenderUserId,
+		PeerType:          dstMessage.PeerType,
+		PeerId:            dstMessage.PeerId,
+		RandomId:          dstMessage.RandomId,
+		DialogId1:         dstMessage.DialogId1,
+		DialogId2:         dstMessage.DialogId2,
+		DialogMessageId:   dstMessage.DialogMessageId,
+		MessageFilterType: dstMessage.MessageFilterType,
+		Message:           message,
+		Mentioned:         dstMessage.Mentioned,
+		MediaUnread:       dstMessage.MediaUnread,
+		Pinned:            dstMessage.Pinned,
+		Pts:               pts,
+		PtsCount:          ptsCount,
+		Views:             dstMessage.Views,
+		ReplyOwnerId:      dstMessage.ReplyOwnerId,
+		Forwards:          dstMessage.Forwards,
+		Reaction:          dstMessage.Reaction,
+		CommentGroupId:    dstMessage.CommentGroupId,
+		CommentGroupMsgId: dstMessage.CommentGroupMsgId,
+		ReplyToMsgId:      dstMessage.ReplyToMsgId,
+		ReplyToTopId:      dstMessage.ReplyToTopId,
+		TtlPeriod:         dstMessage.TtlPeriod,
+		HasReaction:       dstMessage.HasReaction,
+	}).To_MessageBox(), nil
+}

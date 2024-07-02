@@ -33,6 +33,7 @@ type InboxClient interface {
 	InboxUpdatePinnedMessage(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessage) (*mtproto.Void, error)
 	InboxUnpinAllMessages(ctx context.Context, in *inbox.TLInboxUnpinAllMessages) (*mtproto.Void, error)
 	InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error)
+	InboxEditMessageToInboxV2(ctx context.Context, in *inbox.TLInboxEditMessageToInboxV2) (*mtproto.Void, error)
 }
 
 type defaultInboxClient struct {
@@ -116,8 +117,15 @@ func (m *defaultInboxClient) InboxUnpinAllMessages(ctx context.Context, in *inbo
 }
 
 // InboxSendUserMessageToInboxV2
-// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
+// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long fromAuthKeyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
 func (m *defaultInboxClient) InboxSendUserMessageToInboxV2(ctx context.Context, in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
 	client := inbox.NewRPCInboxClient(m.cli.Conn())
 	return client.InboxSendUserMessageToInboxV2(ctx, in)
+}
+
+// InboxEditMessageToInboxV2
+// inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long fromAuthKeyId:long peer_type:int peer_id:long box:MessageBox users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
+func (m *defaultInboxClient) InboxEditMessageToInboxV2(ctx context.Context, in *inbox.TLInboxEditMessageToInboxV2) (*mtproto.Void, error) {
+	client := inbox.NewRPCInboxClient(m.cli.Conn())
+	return client.InboxEditMessageToInboxV2(ctx, in)
 }

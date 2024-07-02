@@ -25,4 +25,5 @@ const (
 	CRC32_inbox_updatePinnedMessage        TLConstructor = -1452528908 // 0xa96c2af4
 	CRC32_inbox_unpinAllMessages           TLConstructor = 589079137   // 0x231ca261
 	CRC32_inbox_sendUserMessageToInboxV2   TLConstructor = -209599207  // 0xf381c519
+	CRC32_inbox_editMessageToInboxV2       TLConstructor = 597039781   // 0x23961aa5
 )

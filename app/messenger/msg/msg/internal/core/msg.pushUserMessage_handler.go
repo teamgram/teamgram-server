@@ -110,7 +110,7 @@ func (c *MsgCore) MsgPushUserMessage(in *msg.TLMsgPushUserMessage) (*mtproto.Boo
 			return nil, err
 		}
 
-		_, err = c.svcCtx.Dao.InboxSendUserMessageToInboxV2(
+		_, err = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 			c.ctx,
 			&inbox.TLInboxSendUserMessageToInboxV2{
 				UserId:        peer.PeerId,
