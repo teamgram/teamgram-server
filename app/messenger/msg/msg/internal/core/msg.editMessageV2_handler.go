@@ -38,6 +38,12 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*mtproto.Updates
 		dstMessage = in.DstMessage
 	)
 
+	if dstMessage == nil {
+		err = mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("msg.editMessage - error: request(%s) error - %v", in, err)
+		return nil, err
+	}
+
 	switch in.PeerType {
 	case mtproto.PEER_USER:
 		rUpdates, err = c.editUserOutgoingMessageV2(in.UserId, in.AuthKeyId, in.PeerId, newMessage, dstMessage)
