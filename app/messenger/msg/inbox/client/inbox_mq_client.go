@@ -178,3 +178,23 @@ func (m *defaultInboxMqClient) InboxEditMessageToInboxV2(ctx context.Context, in
 		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
+
+// InboxReadInboxHistory
+// inbox.readInboxHistory user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int = Void;
+func (m *defaultInboxMqClient) InboxReadInboxHistory(ctx context.Context, in *inbox.TLInboxReadInboxHistory) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
+		in)
+}
+
+// InboxReadOutboxHistory
+// inbox.readOutboxHistory user_id:long peer_type:int peer_id:long max_dialog_message_id:long = Void;
+func (m *defaultInboxMqClient) InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
+		in)
+}

@@ -41,6 +41,8 @@ const (
 	RPCInbox_InboxUnpinAllMessages_FullMethodName           = "/inbox.RPCInbox/inbox_unpinAllMessages"
 	RPCInbox_InboxSendUserMessageToInboxV2_FullMethodName   = "/inbox.RPCInbox/inbox_sendUserMessageToInboxV2"
 	RPCInbox_InboxEditMessageToInboxV2_FullMethodName       = "/inbox.RPCInbox/inbox_editMessageToInboxV2"
+	RPCInbox_InboxReadInboxHistory_FullMethodName           = "/inbox.RPCInbox/inbox_readInboxHistory"
+	RPCInbox_InboxReadOutboxHistory_FullMethodName          = "/inbox.RPCInbox/inbox_readOutboxHistory"
 )
 
 // RPCInboxClient is the client API for RPCInbox service.
@@ -59,6 +61,8 @@ type RPCInboxClient interface {
 	InboxUnpinAllMessages(ctx context.Context, in *TLInboxUnpinAllMessages, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxSendUserMessageToInboxV2(ctx context.Context, in *TLInboxSendUserMessageToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxEditMessageToInboxV2(ctx context.Context, in *TLInboxEditMessageToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error)
+	InboxReadInboxHistory(ctx context.Context, in *TLInboxReadInboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error)
+	InboxReadOutboxHistory(ctx context.Context, in *TLInboxReadOutboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error)
 }
 
 type rPCInboxClient struct {
@@ -177,6 +181,24 @@ func (c *rPCInboxClient) InboxEditMessageToInboxV2(ctx context.Context, in *TLIn
 	return out, nil
 }
 
+func (c *rPCInboxClient) InboxReadInboxHistory(ctx context.Context, in *TLInboxReadInboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error) {
+	out := new(mtproto.Void)
+	err := c.cc.Invoke(ctx, RPCInbox_InboxReadInboxHistory_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCInboxClient) InboxReadOutboxHistory(ctx context.Context, in *TLInboxReadOutboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error) {
+	out := new(mtproto.Void)
+	err := c.cc.Invoke(ctx, RPCInbox_InboxReadOutboxHistory_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCInboxServer is the server API for RPCInbox service.
 // All implementations should embed UnimplementedRPCInboxServer
 // for forward compatibility
@@ -193,6 +215,8 @@ type RPCInboxServer interface {
 	InboxUnpinAllMessages(context.Context, *TLInboxUnpinAllMessages) (*mtproto.Void, error)
 	InboxSendUserMessageToInboxV2(context.Context, *TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error)
 	InboxEditMessageToInboxV2(context.Context, *TLInboxEditMessageToInboxV2) (*mtproto.Void, error)
+	InboxReadInboxHistory(context.Context, *TLInboxReadInboxHistory) (*mtproto.Void, error)
+	InboxReadOutboxHistory(context.Context, *TLInboxReadOutboxHistory) (*mtproto.Void, error)
 }
 
 // UnimplementedRPCInboxServer should be embedded to have forward compatible implementations.
@@ -234,6 +258,12 @@ func (UnimplementedRPCInboxServer) InboxSendUserMessageToInboxV2(context.Context
 }
 func (UnimplementedRPCInboxServer) InboxEditMessageToInboxV2(context.Context, *TLInboxEditMessageToInboxV2) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxEditMessageToInboxV2 not implemented")
+}
+func (UnimplementedRPCInboxServer) InboxReadInboxHistory(context.Context, *TLInboxReadInboxHistory) (*mtproto.Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InboxReadInboxHistory not implemented")
+}
+func (UnimplementedRPCInboxServer) InboxReadOutboxHistory(context.Context, *TLInboxReadOutboxHistory) (*mtproto.Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InboxReadOutboxHistory not implemented")
 }
 
 // UnsafeRPCInboxServer may be embedded to opt out of forward compatibility for this service.
@@ -463,6 +493,42 @@ func _RPCInbox_InboxEditMessageToInboxV2_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCInbox_InboxReadInboxHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLInboxReadInboxHistory)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCInboxServer).InboxReadInboxHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCInbox_InboxReadInboxHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCInboxServer).InboxReadInboxHistory(ctx, req.(*TLInboxReadInboxHistory))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCInbox_InboxReadOutboxHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLInboxReadOutboxHistory)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCInboxServer).InboxReadOutboxHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCInbox_InboxReadOutboxHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCInboxServer).InboxReadOutboxHistory(ctx, req.(*TLInboxReadOutboxHistory))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCInbox_ServiceDesc is the grpc.ServiceDesc for RPCInbox service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -517,6 +583,14 @@ var RPCInbox_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inbox_editMessageToInboxV2",
 			Handler:    _RPCInbox_InboxEditMessageToInboxV2_Handler,
+		},
+		{
+			MethodName: "inbox_readInboxHistory",
+			Handler:    _RPCInbox_InboxReadInboxHistory_Handler,
+		},
+		{
+			MethodName: "inbox_readOutboxHistory",
+			Handler:    _RPCInbox_InboxReadOutboxHistory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

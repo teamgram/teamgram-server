@@ -96,6 +96,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1510960658,
 		}
 	},
+	263827974: func() mtproto.TLObject { // 0xfb9b206
+		return &TLMsgReadHistoryV2{
+			Constructor: 263827974,
+		}
+	},
 	-441560663: func() mtproto.TLObject { // 0xe5ae51a9
 		return &TLMsgUpdatePinnedMessage{
 			Constructor: -441560663,
@@ -1121,6 +1126,52 @@ func (m *TLMsgReadHistory) CalcByteSize(layer int32) int {
 func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
 	case 0x5a0f6e12:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MaxId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLMsgReadHistoryV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMsgReadHistoryV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xfb9b206:
+		x.UInt(0xfb9b206)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetAuthKeyId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetMaxId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMsgReadHistoryV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMsgReadHistoryV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfb9b206:
 
 		// not has flags
 

@@ -33,8 +33,10 @@ enum TLConstructor {
     CRC32_inbox_updateHistoryReaded = -1010283296;
     CRC32_inbox_updatePinnedMessage = -1452528908;
     CRC32_inbox_unpinAllMessages = 589079137;
-    CRC32_inbox_sendUserMessageToInboxV2 = -209599207;
-    CRC32_inbox_editMessageToInboxV2 = 597039781;
+    CRC32_inbox_sendUserMessageToInboxV2 = 2043341160;
+    CRC32_inbox_editMessageToInboxV2 = -625238423;
+    CRC32_inbox_readInboxHistory = -465427029;
+    CRC32_inbox_readOutboxHistory = 477116106;
 }
 
 
@@ -166,7 +168,7 @@ message TL_inbox_sendUserMessageToInboxV2 {
     int64 user_id = 3;
     bool out = 4;
     int64 from_id = 5;
-    int64 fromAuthKeyId = 6;
+    int64 from_auth_keyId = 6;
     int32 peer_type = 7;
     int64 peer_id = 8;
     repeated mtproto.MessageBox box_list = 9;
@@ -180,13 +182,36 @@ message TL_inbox_editMessageToInboxV2 {
     int64 user_id = 3;
     bool out = 4;
     int64 from_id = 5;
-    int64 fromAuthKeyId = 6;
+    int64 from_auth_keyId = 6;
     int32 peer_type = 7;
     int64 peer_id = 8;
     mtproto.MessageBox new_message = 9;
     mtproto.MessageBox dst_message = 10;
     repeated mtproto.User users = 11;
     repeated mtproto.Chat chats = 12;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_inbox_readInboxHistory {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    int32 peer_type = 5;
+    int64 peer_id = 6;
+    int32 pts = 7;
+    int32 pts_count = 8;
+    int32 unread_count = 9;
+    int32 read_inbox_max_id = 10;
+    int32 max_id = 11;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_inbox_readOutboxHistory {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int64 max_dialog_message_id = 6;
 }
 
 
@@ -210,5 +235,7 @@ service RPCInbox {
  rpc inbox_unpinAllMessages(TL_inbox_unpinAllMessages) returns (mtproto.Void) {}
  rpc inbox_sendUserMessageToInboxV2(TL_inbox_sendUserMessageToInboxV2) returns (mtproto.Void) {}
  rpc inbox_editMessageToInboxV2(TL_inbox_editMessageToInboxV2) returns (mtproto.Void) {}
+ rpc inbox_readInboxHistory(TL_inbox_readInboxHistory) returns (mtproto.Void) {}
+ rpc inbox_readOutboxHistory(TL_inbox_readOutboxHistory) returns (mtproto.Void) {}
 }
 

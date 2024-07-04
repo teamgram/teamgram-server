@@ -25,6 +25,8 @@ const (
 	Predicate_inbox_unpinAllMessages           = "inbox_unpinAllMessages"
 	Predicate_inbox_sendUserMessageToInboxV2   = "inbox_sendUserMessageToInboxV2"
 	Predicate_inbox_editMessageToInboxV2       = "inbox_editMessageToInboxV2"
+	Predicate_inbox_readInboxHistory           = "inbox_readInboxHistory"
+	Predicate_inbox_readOutboxHistory          = "inbox_readOutboxHistory"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -77,11 +79,19 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_inbox_sendUserMessageToInboxV2: {
-		0: -209599207, // 0xf381c519
+		0: 2043341160, // 0x79cae968
 
 	},
 	Predicate_inbox_editMessageToInboxV2: {
-		0: 597039781, // 0x23961aa5
+		0: -625238423, // 0xdabb9e69
+
+	},
+	Predicate_inbox_readInboxHistory: {
+		0: -465427029, // 0xe44225ab
+
+	},
+	Predicate_inbox_readOutboxHistory: {
+		0: 477116106, // 0x1c7036ca
 
 	},
 }
@@ -99,8 +109,10 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1010283296: Predicate_inbox_updateHistoryReaded,        // 0xc3c84ce0
 	-1452528908: Predicate_inbox_updatePinnedMessage,        // 0xa96c2af4
 	589079137:   Predicate_inbox_unpinAllMessages,           // 0x231ca261
-	-209599207:  Predicate_inbox_sendUserMessageToInboxV2,   // 0xf381c519
-	597039781:   Predicate_inbox_editMessageToInboxV2,       // 0x23961aa5
+	2043341160:  Predicate_inbox_sendUserMessageToInboxV2,   // 0x79cae968
+	-625238423:  Predicate_inbox_editMessageToInboxV2,       // 0xdabb9e69
+	-465427029:  Predicate_inbox_readInboxHistory,           // 0xe44225ab
+	477116106:   Predicate_inbox_readOutboxHistory,          // 0x1c7036ca
 
 }
 

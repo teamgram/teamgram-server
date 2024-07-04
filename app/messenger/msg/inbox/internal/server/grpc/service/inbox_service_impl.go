@@ -169,7 +169,7 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 }
 
 // InboxSendUserMessageToInboxV2
-// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long fromAuthKeyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
+// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
 func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - metadata: {%s}, request: {%s}", c.MD, request)
@@ -184,7 +184,7 @@ func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *in
 }
 
 // InboxEditMessageToInboxV2
-// inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long fromAuthKeyId:long peer_type:int peer_id:long box:MessageBox users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
+// inbox.editMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long new_message:MessageBox dst_message:flags.1?MessageBox users:flags.2?Vector<User> chats:flags.3?Vector<Chat> = Void;
 func (s *Service) InboxEditMessageToInboxV2(ctx context.Context, request *inbox.TLInboxEditMessageToInboxV2) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.editMessageToInboxV2 - metadata: {%s}, request: {%s}", c.MD, request)
@@ -195,5 +195,35 @@ func (s *Service) InboxEditMessageToInboxV2(ctx context.Context, request *inbox.
 	}
 
 	c.Logger.Debugf("inbox.editMessageToInboxV2 - reply: {%s}", r)
+	return r, err
+}
+
+// InboxReadInboxHistory
+// inbox.readInboxHistory user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int = Void;
+func (s *Service) InboxReadInboxHistory(ctx context.Context, request *inbox.TLInboxReadInboxHistory) (*mtproto.Void, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("inbox.readInboxHistory - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.InboxReadInboxHistory(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("inbox.readInboxHistory - reply: {%s}", r)
+	return r, err
+}
+
+// InboxReadOutboxHistory
+// inbox.readOutboxHistory user_id:long peer_type:int peer_id:long max_dialog_message_id:long = Void;
+func (s *Service) InboxReadOutboxHistory(ctx context.Context, request *inbox.TLInboxReadOutboxHistory) (*mtproto.Void, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("inbox.readOutboxHistory - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.InboxReadOutboxHistory(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("inbox.readOutboxHistory - reply: {%s}", r)
 	return r, err
 }

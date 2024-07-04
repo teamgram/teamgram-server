@@ -32,6 +32,7 @@ type MsgClient interface {
 	MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error)
 	MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error)
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error)
+	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*mtproto.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
 }
@@ -114,6 +115,13 @@ func (m *defaultMsgClient) MsgDeleteChatHistory(ctx context.Context, in *msg.TLM
 func (m *defaultMsgClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgReadHistory(ctx, in)
+}
+
+// MsgReadHistoryV2
+// msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
+func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error) {
+	client := msg.NewRPCMsgClient(m.cli.Conn())
+	return client.MsgReadHistoryV2(ctx, in)
 }
 
 // MsgUpdatePinnedMessage

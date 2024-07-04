@@ -91,14 +91,24 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 589079137,
 		}
 	},
-	-209599207: func() mtproto.TLObject { // 0xf381c519
+	2043341160: func() mtproto.TLObject { // 0x79cae968
 		return &TLInboxSendUserMessageToInboxV2{
-			Constructor: -209599207,
+			Constructor: 2043341160,
 		}
 	},
-	597039781: func() mtproto.TLObject { // 0x23961aa5
+	-625238423: func() mtproto.TLObject { // 0xdabb9e69
 		return &TLInboxEditMessageToInboxV2{
-			Constructor: 597039781,
+			Constructor: -625238423,
+		}
+	},
+	-465427029: func() mtproto.TLObject { // 0xe44225ab
+		return &TLInboxReadInboxHistory{
+			Constructor: -465427029,
+		}
+	},
+	477116106: func() mtproto.TLObject { // 0x1c7036ca
+		return &TLInboxReadOutboxHistory{
+			Constructor: 477116106,
 		}
 	},
 }
@@ -878,8 +888,8 @@ func (m *TLInboxUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xf381c519:
-		x.UInt(0xf381c519)
+	case 0x79cae968:
+		x.UInt(0x79cae968)
 
 		// set flags
 		var flags uint32 = 0
@@ -938,7 +948,7 @@ func (m *TLInboxSendUserMessageToInboxV2) CalcByteSize(layer int32) int {
 
 func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xf381c519:
+	case 0x79cae968:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1006,8 +1016,8 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 
 func (m *TLInboxEditMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x23961aa5:
-		x.UInt(0x23961aa5)
+	case 0xdabb9e69:
+		x.UInt(0xdabb9e69)
 
 		// set flags
 		var flags uint32 = 0
@@ -1067,7 +1077,7 @@ func (m *TLInboxEditMessageToInboxV2) CalcByteSize(layer int32) int {
 
 func (m *TLInboxEditMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x23961aa5:
+	case 0xdabb9e69:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1119,6 +1129,104 @@ func (m *TLInboxEditMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 			}
 			m.Chats = v11
 		}
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLInboxReadInboxHistory
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxReadInboxHistory) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xe44225ab:
+		x.UInt(0xe44225ab)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetAuthKeyId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetPts())
+		x.Int(m.GetPtsCount())
+		x.Int(m.GetUnreadCount())
+		x.Int(m.GetReadInboxMaxId())
+		x.Int(m.GetMaxId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxReadInboxHistory) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxReadInboxHistory) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xe44225ab:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.Pts = dBuf.Int()
+		m.PtsCount = dBuf.Int()
+		m.UnreadCount = dBuf.Int()
+		m.ReadInboxMaxId = dBuf.Int()
+		m.MaxId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLInboxReadOutboxHistory
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxReadOutboxHistory) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x1c7036ca:
+		x.UInt(0x1c7036ca)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Long(m.GetMaxDialogMessageId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxReadOutboxHistory) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxReadOutboxHistory) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x1c7036ca:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MaxDialogMessageId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

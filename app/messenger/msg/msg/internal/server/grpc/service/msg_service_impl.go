@@ -168,6 +168,21 @@ func (s *Service) MsgReadHistory(ctx context.Context, request *msg.TLMsgReadHist
 	return r, err
 }
 
+// MsgReadHistoryV2
+// msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
+func (s *Service) MsgReadHistoryV2(ctx context.Context, request *msg.TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.readHistoryV2 - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MsgReadHistoryV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.readHistoryV2 - reply: {%s}", r)
+	return r, err
+}
+
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (s *Service) MsgUpdatePinnedMessage(ctx context.Context, request *msg.TLMsgUpdatePinnedMessage) (*mtproto.Updates, error) {

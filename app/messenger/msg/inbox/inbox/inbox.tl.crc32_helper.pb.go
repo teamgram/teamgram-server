@@ -24,6 +24,8 @@ const (
 	CRC32_inbox_updateHistoryReaded        TLConstructor = -1010283296 // 0xc3c84ce0
 	CRC32_inbox_updatePinnedMessage        TLConstructor = -1452528908 // 0xa96c2af4
 	CRC32_inbox_unpinAllMessages           TLConstructor = 589079137   // 0x231ca261
-	CRC32_inbox_sendUserMessageToInboxV2   TLConstructor = -209599207  // 0xf381c519
-	CRC32_inbox_editMessageToInboxV2       TLConstructor = 597039781   // 0x23961aa5
+	CRC32_inbox_sendUserMessageToInboxV2   TLConstructor = 2043341160  // 0x79cae968
+	CRC32_inbox_editMessageToInboxV2       TLConstructor = -625238423  // 0xdabb9e69
+	CRC32_inbox_readInboxHistory           TLConstructor = -465427029  // 0xe44225ab
+	CRC32_inbox_readOutboxHistory          TLConstructor = 477116106   // 0x1c7036ca
 )

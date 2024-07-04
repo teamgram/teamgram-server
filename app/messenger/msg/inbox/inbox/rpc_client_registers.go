@@ -38,6 +38,8 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLInboxUnpinAllMessages":           RPCContextTuple{"/mtproto.RPCInbox/inbox_unpinAllMessages", func() interface{} { return new(mtproto.Void) }},
 	"TLInboxSendUserMessageToInboxV2":   RPCContextTuple{"/mtproto.RPCInbox/inbox_sendUserMessageToInboxV2", func() interface{} { return new(mtproto.Void) }},
 	"TLInboxEditMessageToInboxV2":       RPCContextTuple{"/mtproto.RPCInbox/inbox_editMessageToInboxV2", func() interface{} { return new(mtproto.Void) }},
+	"TLInboxReadInboxHistory":           RPCContextTuple{"/mtproto.RPCInbox/inbox_readInboxHistory", func() interface{} { return new(mtproto.Void) }},
+	"TLInboxReadOutboxHistory":          RPCContextTuple{"/mtproto.RPCInbox/inbox_readOutboxHistory", func() interface{} { return new(mtproto.Void) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

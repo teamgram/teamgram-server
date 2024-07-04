@@ -199,6 +199,32 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 
 					c.InboxEditMessageToInboxV2(r)
 				})
+			case proto.MessageName((*inbox.TLInboxReadInboxHistory)(nil)):
+				threading.RunSafe(func() {
+					c := core.New(ctx, svcCtx)
+
+					r := new(inbox.TLInboxReadInboxHistory)
+					if err := json.Unmarshal(value, r); err != nil {
+						c.Logger.Errorf("inbox.readInboxHistory - error: %v", err)
+						return
+					}
+					c.Logger.Debugf("inbox.readInboxHistory - request: %s", r)
+
+					c.InboxReadInboxHistory(r)
+				})
+			case proto.MessageName((*inbox.TLInboxReadOutboxHistory)(nil)):
+				threading.RunSafe(func() {
+					c := core.New(ctx, svcCtx)
+
+					r := new(inbox.TLInboxReadOutboxHistory)
+					if err := json.Unmarshal(value, r); err != nil {
+						c.Logger.Errorf("inbox.readOutboxHistory - error: %v", err)
+						return
+					}
+					c.Logger.Debugf("inbox.readOutboxHistory - request: %s", r)
+
+					c.InboxReadOutboxHistory(r)
+				})
 			default:
 				err := fmt.Errorf("invalid key: %s", key)
 				logx.Error(err.Error())
