@@ -111,6 +111,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 477116106,
 		}
 	},
+	-356170942: func() mtproto.TLObject { // 0xeac54342
+		return &TLInboxReadMediaUnreadToInboxV2{
+			Constructor: -356170942,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1227,6 +1232,50 @@ func (m *TLInboxReadOutboxHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
 		m.MaxDialogMessageId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLInboxReadMediaUnreadToInboxV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxReadMediaUnreadToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xeac54342:
+		x.UInt(0xeac54342)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Long(m.GetDialogMessageId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxReadMediaUnreadToInboxV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxReadMediaUnreadToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xeac54342:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.DialogMessageId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

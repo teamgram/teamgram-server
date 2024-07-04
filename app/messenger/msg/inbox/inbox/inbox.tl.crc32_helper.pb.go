@@ -28,4 +28,5 @@ const (
 	CRC32_inbox_editMessageToInboxV2       TLConstructor = -625238423  // 0xdabb9e69
 	CRC32_inbox_readInboxHistory           TLConstructor = -465427029  // 0xe44225ab
 	CRC32_inbox_readOutboxHistory          TLConstructor = 477116106   // 0x1c7036ca
+	CRC32_inbox_readMediaUnreadToInboxV2   TLConstructor = -356170942  // 0xeac54342
 )

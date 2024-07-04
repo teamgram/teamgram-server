@@ -29,9 +29,9 @@ var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	-1301595468: func() mtproto.TLObject { // 0xb26b3ab4
+	-1922780877: func() mtproto.TLObject { // 0x8d64b133
 		o := MakeTLContentMessage(nil)
-		o.Data2.Constructor = -1301595468
+		o.Data2.Constructor = -1922780877
 		return o
 	},
 	1402283185: func() mtproto.TLObject { // 0x539524b1
@@ -161,7 +161,7 @@ func (m *ContentMessage) CalcByteSize(layer int32) int {
 func (m *ContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0xb26b3ab4:
+	case 0x8d64b133:
 		m2 := MakeTLContentMessage(m)
 		m2.Decode(dBuf)
 
@@ -212,14 +212,17 @@ func (m *TLContentMessage) GetMediaUnread() bool  { return m.Data2.MediaUnread }
 func (m *TLContentMessage) SetReaction(v bool) { m.Data2.Reaction = v }
 func (m *TLContentMessage) GetReaction() bool  { return m.Data2.Reaction }
 
+func (m *TLContentMessage) SetSendUserId(v int64) { m.Data2.SendUserId = v }
+func (m *TLContentMessage) GetSendUserId() int64  { return m.Data2.SendUserId }
+
 func (m *TLContentMessage) GetPredicateName() string {
 	return Predicate_contentMessage
 }
 
 func (m *TLContentMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xb26b3ab4: func() error {
-			x.UInt(0xb26b3ab4)
+		0x8d64b133: func() error {
+			x.UInt(0x8d64b133)
 
 			// set flags
 			var getFlags = func() uint32 {
@@ -243,6 +246,7 @@ func (m *TLContentMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
 			x.UInt(flags)
 			x.Int(m.GetId())
 			x.Long(m.GetDialogMessageId())
+			x.Long(m.GetSendUserId())
 			return nil
 		},
 	}
@@ -265,7 +269,7 @@ func (m *TLContentMessage) CalcByteSize(layer int32) int {
 
 func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0xb26b3ab4: func() error {
+		0x8d64b133: func() error {
 			var flags = dBuf.UInt()
 			_ = flags
 			m.SetId(dBuf.Int())
@@ -279,6 +283,7 @@ func (m *TLContentMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 			if (flags & (1 << 2)) != 0 {
 				m.SetReaction(true)
 			}
+			m.SetSendUserId(dBuf.Long())
 			return dBuf.GetError()
 		},
 	}

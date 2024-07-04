@@ -227,3 +227,18 @@ func (s *Service) InboxReadOutboxHistory(ctx context.Context, request *inbox.TLI
 	c.Logger.Debugf("inbox.readOutboxHistory - reply: {%s}", r)
 	return r, err
 }
+
+// InboxReadMediaUnreadToInboxV2
+// inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long id:Vector<InboxMessageId> = Void;
+func (s *Service) InboxReadMediaUnreadToInboxV2(ctx context.Context, request *inbox.TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("inbox.readMediaUnreadToInboxV2 - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.InboxReadMediaUnreadToInboxV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("inbox.readMediaUnreadToInboxV2 - reply: {%s}", r)
+	return r, err
+}

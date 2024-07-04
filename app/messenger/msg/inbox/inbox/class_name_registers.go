@@ -27,6 +27,7 @@ const (
 	Predicate_inbox_editMessageToInboxV2       = "inbox_editMessageToInboxV2"
 	Predicate_inbox_readInboxHistory           = "inbox_readInboxHistory"
 	Predicate_inbox_readOutboxHistory          = "inbox_readOutboxHistory"
+	Predicate_inbox_readMediaUnreadToInboxV2   = "inbox_readMediaUnreadToInboxV2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -94,6 +95,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 477116106, // 0x1c7036ca
 
 	},
+	Predicate_inbox_readMediaUnreadToInboxV2: {
+		0: -356170942, // 0xeac54342
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -113,6 +118,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-625238423:  Predicate_inbox_editMessageToInboxV2,       // 0xdabb9e69
 	-465427029:  Predicate_inbox_readInboxHistory,           // 0xe44225ab
 	477116106:   Predicate_inbox_readOutboxHistory,          // 0x1c7036ca
+	-356170942:  Predicate_inbox_readMediaUnreadToInboxV2,   // 0xeac54342
 
 }
 

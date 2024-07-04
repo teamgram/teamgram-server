@@ -43,6 +43,7 @@ const (
 	RPCInbox_InboxEditMessageToInboxV2_FullMethodName       = "/inbox.RPCInbox/inbox_editMessageToInboxV2"
 	RPCInbox_InboxReadInboxHistory_FullMethodName           = "/inbox.RPCInbox/inbox_readInboxHistory"
 	RPCInbox_InboxReadOutboxHistory_FullMethodName          = "/inbox.RPCInbox/inbox_readOutboxHistory"
+	RPCInbox_InboxReadMediaUnreadToInboxV2_FullMethodName   = "/inbox.RPCInbox/inbox_readMediaUnreadToInboxV2"
 )
 
 // RPCInboxClient is the client API for RPCInbox service.
@@ -63,6 +64,7 @@ type RPCInboxClient interface {
 	InboxEditMessageToInboxV2(ctx context.Context, in *TLInboxEditMessageToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxReadInboxHistory(ctx context.Context, in *TLInboxReadInboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error)
 	InboxReadOutboxHistory(ctx context.Context, in *TLInboxReadOutboxHistory, opts ...grpc.CallOption) (*mtproto.Void, error)
+	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *TLInboxReadMediaUnreadToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error)
 }
 
 type rPCInboxClient struct {
@@ -199,6 +201,15 @@ func (c *rPCInboxClient) InboxReadOutboxHistory(ctx context.Context, in *TLInbox
 	return out, nil
 }
 
+func (c *rPCInboxClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, in *TLInboxReadMediaUnreadToInboxV2, opts ...grpc.CallOption) (*mtproto.Void, error) {
+	out := new(mtproto.Void)
+	err := c.cc.Invoke(ctx, RPCInbox_InboxReadMediaUnreadToInboxV2_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCInboxServer is the server API for RPCInbox service.
 // All implementations should embed UnimplementedRPCInboxServer
 // for forward compatibility
@@ -217,6 +228,7 @@ type RPCInboxServer interface {
 	InboxEditMessageToInboxV2(context.Context, *TLInboxEditMessageToInboxV2) (*mtproto.Void, error)
 	InboxReadInboxHistory(context.Context, *TLInboxReadInboxHistory) (*mtproto.Void, error)
 	InboxReadOutboxHistory(context.Context, *TLInboxReadOutboxHistory) (*mtproto.Void, error)
+	InboxReadMediaUnreadToInboxV2(context.Context, *TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error)
 }
 
 // UnimplementedRPCInboxServer should be embedded to have forward compatible implementations.
@@ -264,6 +276,9 @@ func (UnimplementedRPCInboxServer) InboxReadInboxHistory(context.Context, *TLInb
 }
 func (UnimplementedRPCInboxServer) InboxReadOutboxHistory(context.Context, *TLInboxReadOutboxHistory) (*mtproto.Void, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InboxReadOutboxHistory not implemented")
+}
+func (UnimplementedRPCInboxServer) InboxReadMediaUnreadToInboxV2(context.Context, *TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InboxReadMediaUnreadToInboxV2 not implemented")
 }
 
 // UnsafeRPCInboxServer may be embedded to opt out of forward compatibility for this service.
@@ -529,6 +544,24 @@ func _RPCInbox_InboxReadOutboxHistory_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCInbox_InboxReadMediaUnreadToInboxV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLInboxReadMediaUnreadToInboxV2)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCInboxServer).InboxReadMediaUnreadToInboxV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCInbox_InboxReadMediaUnreadToInboxV2_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCInboxServer).InboxReadMediaUnreadToInboxV2(ctx, req.(*TLInboxReadMediaUnreadToInboxV2))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCInbox_ServiceDesc is the grpc.ServiceDesc for RPCInbox service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -591,6 +624,10 @@ var RPCInbox_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "inbox_readOutboxHistory",
 			Handler:    _RPCInbox_InboxReadOutboxHistory_Handler,
+		},
+		{
+			MethodName: "inbox_readMediaUnreadToInboxV2",
+			Handler:    _RPCInbox_InboxReadMediaUnreadToInboxV2_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

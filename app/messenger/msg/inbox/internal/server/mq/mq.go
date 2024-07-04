@@ -225,6 +225,19 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 
 					c.InboxReadOutboxHistory(r)
 				})
+			case proto.MessageName((*inbox.TLInboxReadMediaUnreadToInboxV2)(nil)):
+				threading.RunSafe(func() {
+					c := core.New(ctx, svcCtx)
+
+					r := new(inbox.TLInboxReadMediaUnreadToInboxV2)
+					if err := json.Unmarshal(value, r); err != nil {
+						c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 - error: %v", err)
+						return
+					}
+					c.Logger.Debugf("inbox.readMediaUnreadToInboxV2 - request: %s", r)
+
+					c.InboxReadMediaUnreadToInboxV2(r)
+				})
 			default:
 				err := fmt.Errorf("invalid key: %s", key)
 				logx.Error(err.Error())

@@ -39,7 +39,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_contentMessage: {
-		0: -1301595468, // 0xb26b3ab4
+		0: -1922780877, // 0x8d64b133
 
 	},
 	Predicate_msg_pushUserMessage: {
@@ -99,7 +99,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 var clazzIdNameRegisters2 = map[int32]string{
 	1513645242:  Predicate_sender,                     // 0x5a3864ba
 	1402283185:  Predicate_outboxMessage,              // 0x539524b1
-	-1301595468: Predicate_contentMessage,             // 0xb26b3ab4
+	-1922780877: Predicate_contentMessage,             // 0x8d64b133
 	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
 	673481940:   Predicate_msg_readMessageContents,    // 0x282484d4
 	-188056380:  Predicate_msg_sendMessageV2,          // 0xf4ca7cc4

@@ -36,6 +36,7 @@ type InboxClient interface {
 	InboxEditMessageToInboxV2(ctx context.Context, in *inbox.TLInboxEditMessageToInboxV2) (*mtproto.Void, error)
 	InboxReadInboxHistory(ctx context.Context, in *inbox.TLInboxReadInboxHistory) (*mtproto.Void, error)
 	InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*mtproto.Void, error)
+	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error)
 }
 
 type defaultInboxClient struct {
@@ -144,4 +145,11 @@ func (m *defaultInboxClient) InboxReadInboxHistory(ctx context.Context, in *inbo
 func (m *defaultInboxClient) InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*mtproto.Void, error) {
 	client := inbox.NewRPCInboxClient(m.cli.Conn())
 	return client.InboxReadOutboxHistory(ctx, in)
+}
+
+// InboxReadMediaUnreadToInboxV2
+// inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long id:Vector<InboxMessageId> = Void;
+func (m *defaultInboxClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error) {
+	client := inbox.NewRPCInboxClient(m.cli.Conn())
+	return client.InboxReadMediaUnreadToInboxV2(ctx, in)
 }

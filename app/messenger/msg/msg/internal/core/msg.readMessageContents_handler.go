@@ -43,68 +43,76 @@ func (c *MsgCore) MsgReadMessageContents(in *msg.TLMsgReadMessageContents) (*mtp
 }
 
 func (c *MsgCore) readMentionedMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
+	var (
+		ptsCount int32 = 0
+	)
+
 	switch in.PeerType {
 	case mtproto.PEER_USER:
 		return 0, nil
 	case mtproto.PEER_CHAT:
 		for _, m := range in.Id {
 			if m.Mentioned {
+				ptsCount++
 				c.svcCtx.Dao.MessagesDAO.UpdateMentionedAndMediaUnread(c.ctx, in.UserId, m.Id) //UpdateMentioned()
 			}
 		}
-		return 0, nil
+
+		return ptsCount, nil
 	default:
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("DeleteMessages - error: %v", err)
+
 		return 0, err
 	}
 }
 
 func (c *MsgCore) readMediaUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
+	var (
+		ptsCount int32 = 0
+	)
+
 	switch in.PeerType {
 	case mtproto.PEER_USER:
-		id := make([]*inbox.InboxMessageId, 0, len(in.Id))
+		// id := make([]*inbox.InboxMessageId, 0, len(in.Id))
 		for _, m := range in.Id {
 			if m.MediaUnread {
+				ptsCount++
 				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-				id = append(id, &inbox.InboxMessageId{
-					Id:              m.GetId(),
-					DialogMessageId: m.GetDialogMessageId(),
-				})
+				if in.UserId != in.PeerId {
+					c.svcCtx.Dao.InboxClient.InboxReadMediaUnreadToInboxV2(
+						c.ctx, &inbox.TLInboxReadMediaUnreadToInboxV2{
+							UserId:          in.PeerId,
+							PeerType:        mtproto.PEER_USER,
+							PeerId:          in.UserId,
+							DialogMessageId: m.DialogMessageId,
+						})
+				}
 			}
 		}
 
-		if in.UserId != in.PeerId {
-			c.svcCtx.Dao.InboxClient.InboxReadUserMediaUnreadToInbox(c.ctx, &inbox.TLInboxReadUserMediaUnreadToInbox{
-				FromId:     in.UserId,
-				PeerUserId: in.PeerId,
-				Id:         id,
-			})
-		}
-
-		return int32(len(id)), nil
+		return ptsCount, nil
 	case mtproto.PEER_CHAT:
 		// TODO: update sender
-		id := make([]*inbox.InboxMessageId, 0, len(in.Id))
 		for _, m := range in.Id {
-			c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
-			id = append(id, &inbox.InboxMessageId{
-				Id:              m.GetId(),
-				DialogMessageId: m.GetDialogMessageId(),
-			})
-		}
-		if len(id) > 0 {
-			c.svcCtx.Dao.InboxClient.InboxReadChatMediaUnreadToInbox(c.ctx, &inbox.TLInboxReadChatMediaUnreadToInbox{
-				FromId:     in.UserId,
-				PeerChatId: in.PeerId,
-				Id:         id,
-			})
+			if m.MediaUnread {
+				ptsCount++
+				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, in.UserId, m.Id)
+				c.svcCtx.Dao.InboxClient.InboxReadMediaUnreadToInboxV2(
+					c.ctx, &inbox.TLInboxReadMediaUnreadToInboxV2{
+						UserId:          m.SendUserId,
+						PeerType:        mtproto.PEER_CHAT,
+						PeerId:          in.PeerId,
+						DialogMessageId: m.DialogMessageId,
+					})
+			}
 		}
 
-		return int32(len(id)), nil
+		return ptsCount, nil
 	default:
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("DeleteMessages - error: %v", err)
+
 		return 0, err
 	}
 }

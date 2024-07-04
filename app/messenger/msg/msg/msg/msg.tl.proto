@@ -23,7 +23,7 @@ enum TLConstructor {
     CRC32_UNKNOWN = 0;
     CRC32_sender = 1513645242;
     CRC32_outboxMessage = 1402283185;
-    CRC32_contentMessage = -1301595468;
+    CRC32_contentMessage = -1922780877;
     CRC32_msg_pushUserMessage = 902887962;
     CRC32_msg_readMessageContents = 673481940;
     CRC32_msg_sendMessageV2 = -188056380;
@@ -51,6 +51,7 @@ message ContentMessage {
     bool mentioned = 5;
     bool media_unread = 6;
     bool reaction = 7;
+    int64 send_user_id = 8;
 }
 
 message TL_contentMessage {

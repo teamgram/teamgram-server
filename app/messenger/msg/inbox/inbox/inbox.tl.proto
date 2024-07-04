@@ -37,6 +37,7 @@ enum TLConstructor {
     CRC32_inbox_editMessageToInboxV2 = -625238423;
     CRC32_inbox_readInboxHistory = -465427029;
     CRC32_inbox_readOutboxHistory = 477116106;
+    CRC32_inbox_readMediaUnreadToInboxV2 = -356170942;
 }
 
 
@@ -214,6 +215,15 @@ message TL_inbox_readOutboxHistory {
     int64 max_dialog_message_id = 6;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_inbox_readMediaUnreadToInboxV2 {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int64 dialog_message_id = 6;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -237,5 +247,6 @@ service RPCInbox {
  rpc inbox_editMessageToInboxV2(TL_inbox_editMessageToInboxV2) returns (mtproto.Void) {}
  rpc inbox_readInboxHistory(TL_inbox_readInboxHistory) returns (mtproto.Void) {}
  rpc inbox_readOutboxHistory(TL_inbox_readOutboxHistory) returns (mtproto.Void) {}
+ rpc inbox_readMediaUnreadToInboxV2(TL_inbox_readMediaUnreadToInboxV2) returns (mtproto.Void) {}
 }
 

@@ -62,18 +62,21 @@ func (c *MessagesCore) MessagesReadMessageContents(in *mtproto.TLMessagesReadMes
 		if m.Message.GetMentioned() {
 			contents = append(contents, &msgpb.ContentMessage{
 				Id:              m.MessageId,
+				SendUserId:      m.SenderUserId,
 				DialogMessageId: m.DialogMessageId,
 				Mentioned:       true,
 			})
 		} else if m.Message.GetMediaUnread() {
 			contents = append(contents, &msgpb.ContentMessage{
 				Id:              m.MessageId,
+				SendUserId:      m.SenderUserId,
 				DialogMessageId: m.DialogMessageId,
 				MediaUnread:     true,
 			})
 		} else if m.GetMessage().GetReactions() != nil {
 			contents = append(contents, &msgpb.ContentMessage{
 				Id:              m.MessageId,
+				SendUserId:      m.SenderUserId,
 				DialogMessageId: m.DialogMessageId,
 				Reaction:        true,
 			})

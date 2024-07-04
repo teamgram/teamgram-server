@@ -198,3 +198,13 @@ func (m *defaultInboxMqClient) InboxReadOutboxHistory(ctx context.Context, in *i
 		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
+
+// InboxReadMediaUnreadToInboxV2
+// inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long id:Vector<InboxMessageId> = Void;
+func (m *defaultInboxMqClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
+		in)
+}
