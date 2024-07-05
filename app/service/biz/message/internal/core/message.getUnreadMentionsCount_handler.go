@@ -25,7 +25,7 @@ func (c *MessageCore) MessageGetUnreadMentionsCount(in *message.TLMessageGetUnre
 	case mtproto.PEER_CHAT:
 		sz = c.svcCtx.Dao.CommonDAO.CalcSize(
 			c.ctx,
-			c.svcCtx.Dao.CalcTableName(in.UserId),
+			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),
 			map[string]interface{}{
 				"user_id":      in.UserId,
 				"peer_type":    mtproto.PEER_CHAT,

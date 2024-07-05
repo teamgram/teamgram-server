@@ -54,8 +54,38 @@ func (c *MsgCore) readMentionedMessageContents(in *msg.TLMsgReadMessageContents)
 		for _, m := range in.Id {
 			if m.Mentioned {
 				ptsCount++
-				c.svcCtx.Dao.MessagesDAO.UpdateMentionedAndMediaUnread(c.ctx, in.UserId, m.Id) //UpdateMentioned()
 			}
+		}
+		if ptsCount > 0 {
+			sz := c.svcCtx.Dao.CommonDAO.CalcSize(
+				c.ctx,
+				c.svcCtx.Dao.MessagesDAO.CalcTableName(in.UserId),
+				map[string]interface{}{
+					"user_id":   in.UserId,
+					"peer_type": mtproto.PEER_CHAT,
+					"peer_id":   in.PeerId,
+					"mentioned": 1,
+					"deleted":   0,
+				})
+			for _, m := range in.Id {
+				if m.Mentioned {
+					c.svcCtx.Dao.MessagesDAO.UpdateMentionedAndMediaUnread(c.ctx, in.UserId, m.Id)
+					//UpdateMentioned()
+				}
+			}
+
+			sz = sz - int(ptsCount)
+			if sz < 0 {
+				sz = 0
+			}
+			c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+				c.ctx,
+				map[string]interface{}{
+					"unread_mentions_count": sz,
+				},
+				in.UserId,
+				mtproto.PEER_CHAT,
+				in.PeerId)
 		}
 
 		return ptsCount, nil

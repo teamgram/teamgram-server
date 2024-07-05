@@ -41,19 +41,29 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *DialogCore {
 // ////////////////////////////////////////////////////////////////////////////////////
 func makeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	dialog2 := mtproto.MakeTLDialog(&mtproto.Dialog{
-		Pinned:              false,
-		UnreadMark:          dialogDO.UnreadMark, // TODO(@benqi)
-		Peer:                mtproto.MakePeer(dialogDO.PeerType, dialogDO.PeerId),
-		TopMessage:          dialogDO.TopMessage,
-		ReadInboxMaxId:      dialogDO.ReadInboxMaxId,
-		ReadOutboxMaxId:     dialogDO.ReadOutboxMaxId,
-		UnreadCount:         dialogDO.UnreadCount,
-		UnreadMentionsCount: 0,
-		NotifySettings:      nil,
-		Pts:                 nil,
-		Draft:               nil,
-		FolderId:            mtproto.MakeFlagsInt32(dialogDO.FolderId),
+		Pinned:               false,
+		UnreadMark:           dialogDO.UnreadMark, // TODO(@benqi)
+		ViewForumAsMessages:  false,
+		Peer:                 mtproto.MakePeer(dialogDO.PeerType, dialogDO.PeerId),
+		TopMessage:           dialogDO.TopMessage,
+		ReadInboxMaxId:       dialogDO.ReadInboxMaxId,
+		ReadOutboxMaxId:      dialogDO.ReadOutboxMaxId,
+		UnreadCount:          dialogDO.UnreadCount,
+		UnreadMentionsCount:  dialogDO.UnreadMentionsCount,
+		UnreadReactionsCount: dialogDO.UnreadReactionsCount,
+		NotifySettings:       nil,
+		Pts:                  nil,
+		Draft:                nil,
+		FolderId:             mtproto.MakeFlagsInt32(dialogDO.FolderId),
+		TtlPeriod:            nil,
 	}).To_Dialog()
+	// fix unreadCount
+	if dialog2.UnreadMentionsCount < 0 {
+		dialog2.UnreadMentionsCount = 0
+	}
+	if dialogDO.UnreadReactionsCount < 0 {
+		dialog2.UnreadReactionsCount = 0
+	}
 
 	order := dialogDO.Date2
 	// pinned

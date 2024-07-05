@@ -24,6 +24,7 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	dialog2 := mtproto.MakeTLDialog(&mtproto.Dialog{
 		Pinned:               false,
 		UnreadMark:           dialogDO.UnreadMark, // TODO(@benqi)
+		ViewForumAsMessages:  false,
 		Peer:                 mtproto.MakePeer(dialogDO.PeerType, dialogDO.PeerId),
 		TopMessage:           dialogDO.TopMessage,
 		ReadInboxMaxId:       dialogDO.ReadInboxMaxId,
@@ -35,7 +36,16 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		Pts:                  nil,
 		Draft:                nil,
 		FolderId:             mtproto.MakeFlagsInt32(dialogDO.FolderId),
+		TtlPeriod:            nil,
 	}).To_Dialog()
+
+	// fix unreadCount
+	if dialog2.UnreadMentionsCount < 0 {
+		dialog2.UnreadMentionsCount = 0
+	}
+	if dialogDO.UnreadReactionsCount < 0 {
+		dialog2.UnreadReactionsCount = 0
+	}
 
 	// pinned
 	if dialogDO.FolderId == 0 {
