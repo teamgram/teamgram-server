@@ -289,6 +289,10 @@ func (c *MsgCore) editChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 					Chats:         []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
 				})
 		} else {
+			toUsers := make([]*mtproto.User, 0, sUserList.Length())
+			sUserList.Visit(func(it *mtproto.ImmutableUser) {
+				toUsers = append(toUsers, it.ToUser(participant.UserId))
+			})
 			_, err2 = c.svcCtx.Dao.InboxClient.InboxEditMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxEditMessageToInboxV2{
@@ -300,7 +304,7 @@ func (c *MsgCore) editChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 					PeerId:        peerChatId,
 					NewMessage:    outBox,
 					DstMessage:    nil,
-					Users:         sUserList.GetUserListByIdList(participant.UserId, idHelper.UserIdList...),
+					Users:         toUsers,
 					Chats:         []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
 				})
 		}

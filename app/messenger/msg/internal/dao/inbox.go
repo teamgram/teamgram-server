@@ -201,14 +201,30 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 			)
 
 			dialogDO := &dataobject.DialogsDO{
-				UserId:           inBox.UserId,
-				PeerType:         peer.PeerType,
-				PeerId:           peer.PeerId,
-				PeerDialogId:     mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId),
-				TopMessage:       inBoxMsgId,
-				UnreadCount:      1,
-				DraftMessageData: "null",
-				Date2:            date,
+				UserId:               inBox.UserId,
+				PeerType:             peer.PeerType,
+				PeerId:               peer.PeerId,
+				PeerDialogId:         mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId),
+				Pinned:               0,
+				TopMessage:           inBoxMsgId,
+				PinnedMsgId:          0,
+				ReadInboxMaxId:       0,
+				ReadOutboxMaxId:      0,
+				UnreadCount:          1,
+				UnreadMentionsCount:  0,
+				UnreadReactionsCount: 0,
+				UnreadMark:           false,
+				DraftType:            0,
+				DraftMessageData:     "null",
+				FolderId:             0,
+				FolderPinned:         0,
+				HasScheduled:         false,
+				TtlPeriod:            0,
+				ThemeEmoticon:        "",
+				Date2:                date,
+			}
+			if inBox.Mentioned {
+				dialogDO.UnreadMentionsCount = 1
 			}
 
 			lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)

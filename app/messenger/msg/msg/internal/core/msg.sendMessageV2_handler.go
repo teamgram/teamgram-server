@@ -337,6 +337,10 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 					return nil
 				}
 
+				toUsers := make([]*mtproto.User, 0, sUserList.Length())
+				sUserList.Visit(func(it *mtproto.ImmutableUser) {
+					toUsers = append(toUsers, it.ToUser(participant.UserId))
+				})
 				_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(ctx, &inbox.TLInboxSendUserMessageToInboxV2{
 					UserId:        participant.UserId,
 					Out:           participant.UserId == fromUserId,
@@ -345,7 +349,7 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 					PeerType:      mtproto.PEER_CHAT,
 					PeerId:        peerChatId,
 					BoxList:       []*mtproto.MessageBox{box},
-					Users:         sUserList.GetUserListByIdList(participant.UserId, idHelper.UserIdList...),
+					Users:         toUsers,
 					Chats:         []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
 				})
 				return nil
@@ -669,6 +673,10 @@ func (c *MsgCore) sendChatOutgoingMessageList(fromUserId, fromAuthKeyId, peerCha
 					return nil
 				}
 
+				toUsers := make([]*mtproto.User, 0, sUserList.Length())
+				sUserList.Visit(func(it *mtproto.ImmutableUser) {
+					toUsers = append(toUsers, it.ToUser(participant.UserId))
+				})
 				_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(ctx, &inbox.TLInboxSendUserMessageToInboxV2{
 					UserId:        participant.UserId,
 					Out:           participant.UserId == fromUserId,
@@ -677,7 +685,7 @@ func (c *MsgCore) sendChatOutgoingMessageList(fromUserId, fromAuthKeyId, peerCha
 					PeerType:      mtproto.PEER_CHAT,
 					PeerId:        peerChatId,
 					BoxList:       boxList,
-					Users:         sUserList.GetUserListByIdList(participant.UserId, idHelper.UserIdList...),
+					Users:         toUsers,
 					Chats:         []*mtproto.Chat{chat.ToUnsafeChat(participant.UserId)},
 				})
 				return nil
