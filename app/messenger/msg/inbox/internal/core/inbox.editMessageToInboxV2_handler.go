@@ -19,6 +19,7 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
@@ -83,7 +84,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 		}
 	} else {
 		var (
-			newMessage = in.NewMessage
+			newMessage = in.NewMessage.Message
 			dstMessage *mtproto.Message
 			pts        int32
 			ptsCount   int32 = 1
@@ -101,45 +102,59 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			return mtproto.EmptyVoid, nil
 		}
 
-		// message.Id
-		newMessage.Message.Out = false
-		newMessage.Message.Id = dstMessageDO.UserMessageBoxId
+		// newMessage.MessageId = dstMessageDO.UserMessageBoxId
 
-		jsonx.UnmarshalFromString(dstMessageDO.MessageData, &dstMessage)
-		// peerMessage, _ := mtproto.DecodeMessage(int(peerMsgDO.MessageType), []byte(peerMsgDO.MessageData))
-		newMessage.Message.FromId = dstMessage.FromId
-		newMessage.Message.PeerId = dstMessage.PeerId
-		newMessage.Message.ReplyTo = dstMessage.ReplyTo
-		mData, _ := jsonx.Marshal(newMessage.Message)
-		_, err := c.svcCtx.Dao.MessagesDAO.UpdateEditMessage(c.ctx, string(mData), newMessage.Message.Message, in.UserId, dstMessageDO.UserMessageBoxId)
+		err := jsonx.UnmarshalFromString(dstMessageDO.MessageData, &dstMessage)
 		if err != nil {
 			c.Logger.Errorf("inbox.editMessageToInboxV2 - error: %v", err)
 			return nil, err
 		}
 
-		// HashTagsDAO
-		for _, entity := range dstMessage.GetEntities() {
-			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
-				if entity.GetUrl() != "" {
-					c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageId(c.ctx, in.UserId, in.DstMessage.MessageId)
-					break
+		tR := sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+			// HashTagsDAO
+			for _, entity := range dstMessage.Entities {
+				if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
+					if entity.GetUrl() != "" {
+						c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageIdTx(tx, in.UserId, dstMessage.Id)
+						break
+					}
 				}
 			}
-		}
 
-		// c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageId(c.ctx, in.FromId, in.NewMessage.MessageId)
-		for _, entity := range in.NewMessage.Message.GetEntities() {
-			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
-				if entity.GetUrl() != "" {
-					c.svcCtx.Dao.HashTagsDAO.InsertOrUpdate(c.ctx, &dataobject.HashTagsDO{
-						UserId:           in.UserId,
-						PeerType:         in.PeerType,
-						PeerId:           in.PeerId,
-						HashTag:          entity.GetUrl(),
-						HashTagMessageId: in.NewMessage.MessageId,
-					})
+			dstMessage.Message = newMessage.Message
+			dstMessage.Media = newMessage.Media
+			dstMessage.ReplyMarkup = newMessage.ReplyMarkup
+			dstMessage.Entities = newMessage.Entities
+			dstMessage.EditDate = newMessage.EditDate
+			dstMessage.EditHide = newMessage.EditHide
+
+			newMessage = dstMessage
+
+			mData, _ := jsonx.Marshal(newMessage)
+			_, err = c.svcCtx.Dao.MessagesDAO.UpdateEditMessageTx(tx, string(mData), newMessage.Message, in.UserId, newMessage.Id)
+			if err != nil {
+				c.Logger.Errorf("inbox.editMessageToInboxV2 - error: %v", err)
+				result.Err = err
+				return
+			}
+
+			// c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageId(c.ctx, in.FromId, in.NewMessage.MessageId)
+			for _, entity := range in.NewMessage.Message.GetEntities() {
+				if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
+					if entity.GetUrl() != "" {
+						c.svcCtx.Dao.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
+							UserId:           in.UserId,
+							PeerType:         in.PeerType,
+							PeerId:           in.PeerId,
+							HashTag:          entity.GetUrl(),
+							HashTagMessageId: newMessage.Id,
+						})
+					}
 				}
 			}
+		})
+		if tR.Err != nil {
+			return nil, tR.Err
 		}
 
 		var (
@@ -159,7 +174,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			mtproto.MakeTLUpdateEditMessage(&mtproto.Update{
 				Pts_INT32:       pts,
 				PtsCount:        ptsCount,
-				Message_MESSAGE: in.NewMessage.Message,
+				Message_MESSAGE: newMessage,
 			}).To_Update())
 
 		if isBot {
