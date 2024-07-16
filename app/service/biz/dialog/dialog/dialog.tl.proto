@@ -65,6 +65,7 @@ enum TLConstructor {
     CRC32_dialog_getDialogFilter = -209189348;
     CRC32_dialog_getDialogFilterBySlug = 1313177583;
     CRC32_dialog_createDialogFilter = -959749265;
+    CRC32_dialog_updateUnreadCount = 732705613;
 }
 
 
@@ -476,6 +477,17 @@ message TL_dialog_createDialogFilter {
     DialogFilterExt dialog_filter = 4;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_dialog_updateUnreadCount {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    google.protobuf.Int32Value unread_count = 6;
+    google.protobuf.Int32Value unread_mentions_count = 7;
+    google.protobuf.Int32Value unread_reactions_count = 8;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -541,5 +553,6 @@ service RPCDialog {
  rpc dialog_getDialogFilter(TL_dialog_getDialogFilter) returns (DialogFilterExt) {}
  rpc dialog_getDialogFilterBySlug(TL_dialog_getDialogFilterBySlug) returns (DialogFilterExt) {}
  rpc dialog_createDialogFilter(TL_dialog_createDialogFilter) returns (DialogFilterExt) {}
+ rpc dialog_updateUnreadCount(TL_dialog_updateUnreadCount) returns (mtproto.Bool) {}
 }
 

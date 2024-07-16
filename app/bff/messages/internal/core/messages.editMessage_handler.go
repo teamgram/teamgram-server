@@ -128,7 +128,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  peer.PeerType,
 		PeerId:    peer.PeerId,
-		EditType:  0,
+		EditType:  msgpb.EditTypeNormal,
 		NewMessage: msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
 			NoWebpage:    in.NoWebpage,
 			Background:   false,

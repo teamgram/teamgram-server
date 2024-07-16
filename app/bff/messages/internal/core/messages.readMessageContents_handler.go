@@ -53,7 +53,11 @@ func (c *MessagesCore) MessagesReadMessageContents(in *mtproto.TLMessagesReadMes
 	if messages.Datas[0].PeerType == mtproto.PEER_CHAT {
 		peer = mtproto.MakeChatPeerUtil(messages.Datas[0].Message.GetPeerId().GetChatId())
 	} else {
-		peer = mtproto.MakeUserPeerUtil(messages.Datas[0].SenderUserId)
+		if messages.Datas[0].SenderUserId == c.MD.UserId {
+			peer = mtproto.MakeUserPeerUtil(messages.Datas[0].PeerId)
+		} else {
+			peer = mtproto.MakeUserPeerUtil(messages.Datas[0].SenderUserId)
+		}
 	}
 	contents := make([]*msgpb.ContentMessage, 0, len(messages.GetDatas()))
 	for _, m := range messages.GetDatas() {

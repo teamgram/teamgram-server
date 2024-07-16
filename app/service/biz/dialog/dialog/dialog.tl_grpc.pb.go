@@ -67,6 +67,7 @@ const (
 	RPCDialog_DialogGetDialogFilter_FullMethodName                   = "/dialog.RPCDialog/dialog_getDialogFilter"
 	RPCDialog_DialogGetDialogFilterBySlug_FullMethodName             = "/dialog.RPCDialog/dialog_getDialogFilterBySlug"
 	RPCDialog_DialogCreateDialogFilter_FullMethodName                = "/dialog.RPCDialog/dialog_createDialogFilter"
+	RPCDialog_DialogUpdateUnreadCount_FullMethodName                 = "/dialog.RPCDialog/dialog_updateUnreadCount"
 )
 
 // RPCDialogClient is the client API for RPCDialog service.
@@ -111,6 +112,7 @@ type RPCDialogClient interface {
 	DialogGetDialogFilter(ctx context.Context, in *TLDialogGetDialogFilter, opts ...grpc.CallOption) (*DialogFilterExt, error)
 	DialogGetDialogFilterBySlug(ctx context.Context, in *TLDialogGetDialogFilterBySlug, opts ...grpc.CallOption) (*DialogFilterExt, error)
 	DialogCreateDialogFilter(ctx context.Context, in *TLDialogCreateDialogFilter, opts ...grpc.CallOption) (*DialogFilterExt, error)
+	DialogUpdateUnreadCount(ctx context.Context, in *TLDialogUpdateUnreadCount, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCDialogClient struct {
@@ -463,6 +465,15 @@ func (c *rPCDialogClient) DialogCreateDialogFilter(ctx context.Context, in *TLDi
 	return out, nil
 }
 
+func (c *rPCDialogClient) DialogUpdateUnreadCount(ctx context.Context, in *TLDialogUpdateUnreadCount, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCDialog_DialogUpdateUnreadCount_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCDialogServer is the server API for RPCDialog service.
 // All implementations should embed UnimplementedRPCDialogServer
 // for forward compatibility
@@ -505,6 +516,7 @@ type RPCDialogServer interface {
 	DialogGetDialogFilter(context.Context, *TLDialogGetDialogFilter) (*DialogFilterExt, error)
 	DialogGetDialogFilterBySlug(context.Context, *TLDialogGetDialogFilterBySlug) (*DialogFilterExt, error)
 	DialogCreateDialogFilter(context.Context, *TLDialogCreateDialogFilter) (*DialogFilterExt, error)
+	DialogUpdateUnreadCount(context.Context, *TLDialogUpdateUnreadCount) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCDialogServer should be embedded to have forward compatible implementations.
@@ -624,6 +636,9 @@ func (UnimplementedRPCDialogServer) DialogGetDialogFilterBySlug(context.Context,
 }
 func (UnimplementedRPCDialogServer) DialogCreateDialogFilter(context.Context, *TLDialogCreateDialogFilter) (*DialogFilterExt, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DialogCreateDialogFilter not implemented")
+}
+func (UnimplementedRPCDialogServer) DialogUpdateUnreadCount(context.Context, *TLDialogUpdateUnreadCount) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DialogUpdateUnreadCount not implemented")
 }
 
 // UnsafeRPCDialogServer may be embedded to opt out of forward compatibility for this service.
@@ -1321,6 +1336,24 @@ func _RPCDialog_DialogCreateDialogFilter_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCDialog_DialogUpdateUnreadCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDialogUpdateUnreadCount)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDialogServer).DialogUpdateUnreadCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCDialog_DialogUpdateUnreadCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDialogServer).DialogUpdateUnreadCount(ctx, req.(*TLDialogUpdateUnreadCount))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCDialog_ServiceDesc is the grpc.ServiceDesc for RPCDialog service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1479,6 +1512,10 @@ var RPCDialog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "dialog_createDialogFilter",
 			Handler:    _RPCDialog_DialogCreateDialogFilter_Handler,
+		},
+		{
+			MethodName: "dialog_updateUnreadCount",
+			Handler:    _RPCDialog_DialogUpdateUnreadCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

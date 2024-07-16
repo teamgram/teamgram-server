@@ -375,4 +375,20 @@
                 user_id = :user_id AND peer_type IN (:peerTypeList) AND deleted = 0
         </sql>
     </operation>
+
+    <operation name="UpdateUnreadCount">
+        <params>
+            <param name="unreadCount" type="int32" />
+            <param name="unreadMentionsCount" type="int32" />
+            <param name="unreadReactionsCount" type="int32" />
+        </params>
+        <sql>
+            UPDATE
+                dialogs
+            SET
+                unread_count = unread_count + (:unreadCount), unread_mentions_count = unread_mentions_count + (:unreadMentionsCount), unread_reactions_count = unread_reactions_count + (:unreadReactionsCount)
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
 </table>

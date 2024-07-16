@@ -251,6 +251,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -959749265,
 		}
 	},
+	732705613: func() mtproto.TLObject { // 0x2bac334d
+		return &TLDialogUpdateUnreadCount{
+			Constructor: 732705613,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -2848,6 +2853,87 @@ func (m *TLDialogCreateDialogFilter) Decode(dBuf *mtproto.DecodeBuf) error {
 		m2 := &DialogFilterExt{}
 		m2.Decode(dBuf)
 		m.DialogFilter = m2
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLDialogUpdateUnreadCount
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogUpdateUnreadCount) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x2bac334d:
+		x.UInt(0x2bac334d)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetUnreadCount() != nil {
+			flags |= 1 << 0
+		}
+		if m.GetUnreadMentionsCount() != nil {
+			flags |= 1 << 1
+		}
+		if m.GetUnreadReactionsCount() != nil {
+			flags |= 1 << 2
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		if m.GetUnreadCount() != nil {
+			x.Int(m.GetUnreadCount().Value)
+		}
+
+		if m.GetUnreadMentionsCount() != nil {
+			x.Int(m.GetUnreadMentionsCount().Value)
+		}
+
+		if m.GetUnreadReactionsCount() != nil {
+			x.Int(m.GetUnreadReactionsCount().Value)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogUpdateUnreadCount) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogUpdateUnreadCount) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x2bac334d:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.UnreadCount = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			m.UnreadMentionsCount = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.UnreadReactionsCount = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
 
 		return dBuf.GetError()
 

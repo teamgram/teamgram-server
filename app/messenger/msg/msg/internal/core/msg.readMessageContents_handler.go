@@ -148,6 +148,15 @@ func (c *MsgCore) readMediaUnreadMessageContents(in *msg.TLMsgReadMessageContent
 }
 
 func (c *MsgCore) readReactionUnreadMessageContents(in *msg.TLMsgReadMessageContents) (int32, error) {
+	var (
+		unreadReactionsCount int32
+	)
+
+	for _, m := range in.Id {
+		if m.Reaction {
+			unreadReactionsCount++
+		}
+	}
 	for _, m := range in.Id {
 		if m.Reaction {
 			if c.svcCtx.MsgPlugin != nil {
@@ -156,5 +165,15 @@ func (c *MsgCore) readReactionUnreadMessageContents(in *msg.TLMsgReadMessageCont
 		}
 	}
 
+	if unreadReactionsCount > 0 {
+		c.svcCtx.Dao.DialogsDAO.UpdateUnreadCount(
+			c.ctx,
+			0,
+			0,
+			-unreadReactionsCount,
+			in.UserId,
+			in.PeerType,
+			in.PeerId)
+	}
 	return 0, nil
 }

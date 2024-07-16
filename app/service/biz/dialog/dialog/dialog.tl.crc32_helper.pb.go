@@ -56,4 +56,5 @@ const (
 	CRC32_dialog_getDialogFilter                   TLConstructor = -209189348  // 0xf388061c
 	CRC32_dialog_getDialogFilterBySlug             TLConstructor = 1313177583  // 0x4e457fef
 	CRC32_dialog_createDialogFilter                TLConstructor = -959749265  // 0xc6cb636f
+	CRC32_dialog_updateUnreadCount                 TLConstructor = 732705613   // 0x2bac334d
 )

@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package dialog_client
+package dialogclient
 
 import (
 	"context"
@@ -60,6 +60,7 @@ type DialogClient interface {
 	DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error)
 	DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error)
 	DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error)
+	DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error)
 }
 
 type defaultDialogClient struct {
@@ -336,4 +337,11 @@ func (m *defaultDialogClient) DialogGetDialogFilterBySlug(ctx context.Context, i
 func (m *defaultDialogClient) DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogCreateDialogFilter(ctx, in)
+}
+
+// DialogUpdateUnreadCount
+// dialog.updateUnreadCount user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
+func (m *defaultDialogClient) DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error) {
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogUpdateUnreadCount(ctx, in)
 }
