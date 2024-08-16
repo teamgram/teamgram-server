@@ -192,14 +192,13 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	if permAuthKeyId == 0 {
 		permAuthKeyId = tryGetPermAuthKeyId(mtpRwaData[16:])
 		if permAuthKeyId == 0 {
-			// return nil
+			return nil
 		} else {
 			clone := proto.Clone(authKey.keyData).(*mtproto.AuthKeyInfo)
 			clone.PermAuthKeyId = permAuthKeyId
 			authKey.keyData = clone
 			s.PutAuthKey(clone)
 		}
-
 	}
 
 	var (
