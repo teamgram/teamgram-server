@@ -57,7 +57,7 @@ func (c *DfsCore) DfsUploadThemeFile(in *dfs.TLDfsUploadThemeFile) (*mtproto.Doc
 		return nil, err
 	}
 
-	fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, in.GetCreator(), file.Id)
+	fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, in.GetCreator(), file.Id_INT64)
 	if err != nil {
 		c.Logger.Errorf("dfs.uploadThemeFile - error: %v", err)
 		return nil, err
@@ -85,7 +85,7 @@ func (c *DfsCore) DfsUploadThemeFile(in *dfs.TLDfsUploadThemeFile) (*mtproto.Doc
 			// secretId       = int64(extType2)<<32 | int64(rand.Uint32())
 			r *dao.SSDBReader
 		)
-		r, err = c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), thumbFile.Id, thumbFile.Parts)
+		r, err = c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), thumbFile.Id_INT64, thumbFile.Parts)
 		if err != nil {
 			c.Logger.Errorf("dfs.uploadThemeFile - %v", err)
 			return nil, mtproto.ErrThemeFileInvalid

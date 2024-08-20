@@ -55,11 +55,11 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 	)
 
 	// getFirstFrame
-	tmpFileName := fmt.Sprintf("http://127.0.0.1:11701/dfs/file/%d_%d.mp4", creatorId, file.GetId())
+	tmpFileName := fmt.Sprintf("http://127.0.0.1:11701/dfs/file/%d_%d.mp4", creatorId, file.GetId_INT64())
 	thumbData, err = c.svcCtx.FFmpegUtil.GetFirstFrame(tmpFileName)
 	if thumbData == nil || err != nil {
 		// upload mp4 file
-		fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, creatorId, file.Id)
+		fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, creatorId, file.Id_INT64)
 		if err != nil {
 			c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
 			return nil, err
@@ -162,7 +162,7 @@ func (c *DfsCore) DfsUploadMp4DocumentMedia(in *dfs.TLDfsUploadMp4DocumentMedia)
 		}
 
 		// upload mp4 file
-		fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, creatorId, file.Id)
+		fileInfo, err := c.svcCtx.Dao.GetFileInfo(c.ctx, creatorId, file.Id_INT64)
 		if err != nil {
 			c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err)
 			return nil, err

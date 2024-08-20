@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package configuration_client
+package configurationclient
 
 import (
 	"context"
@@ -30,7 +30,6 @@ type ConfigurationClient interface {
 	HelpGetSupportName(ctx context.Context, in *mtproto.TLHelpGetSupportName) (*mtproto.Help_SupportName, error)
 	HelpDismissSuggestion(ctx context.Context, in *mtproto.TLHelpDismissSuggestion) (*mtproto.Bool, error)
 	HelpGetCountriesList(ctx context.Context, in *mtproto.TLHelpGetCountriesList) (*mtproto.Help_CountriesList, error)
-	HelpGetTimezonesList(ctx context.Context, in *mtproto.TLHelpGetTimezonesList) (*mtproto.Help_TimezonesList, error)
 	HelpGetAppChangelog(ctx context.Context, in *mtproto.TLHelpGetAppChangelog) (*mtproto.Updates, error)
 	HelpGetAppConfig98914110(ctx context.Context, in *mtproto.TLHelpGetAppConfig98914110) (*mtproto.JSONValue, error)
 }
@@ -106,13 +105,6 @@ func (m *defaultConfigurationClient) HelpDismissSuggestion(ctx context.Context, 
 func (m *defaultConfigurationClient) HelpGetCountriesList(ctx context.Context, in *mtproto.TLHelpGetCountriesList) (*mtproto.Help_CountriesList, error) {
 	client := mtproto.NewRPCConfigurationClient(m.cli.Conn())
 	return client.HelpGetCountriesList(ctx, in)
-}
-
-// HelpGetTimezonesList
-// help.getTimezonesList#49b30240 hash:int = help.TimezonesList;
-func (m *defaultConfigurationClient) HelpGetTimezonesList(ctx context.Context, in *mtproto.TLHelpGetTimezonesList) (*mtproto.Help_TimezonesList, error) {
-	client := mtproto.NewRPCConfigurationClient(m.cli.Conn())
-	return client.HelpGetTimezonesList(ctx, in)
 }
 
 // HelpGetAppChangelog

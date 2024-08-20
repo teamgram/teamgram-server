@@ -146,7 +146,7 @@ func (m *defaultAuthorizationClient) AuthRecoverPassword(ctx context.Context, in
 }
 
 // AuthResendCode
-// auth.resendCode#3ef1a9bf phone_number:string phone_code_hash:string = auth.SentCode;
+// auth.resendCode#cae47523 flags:# phone_number:string phone_code_hash:string reason:flags.0?string = auth.SentCode;
 func (m *defaultAuthorizationClient) AuthResendCode(ctx context.Context, in *mtproto.TLAuthResendCode) (*mtproto.Auth_SentCode, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthResendCode(ctx, in)
@@ -181,7 +181,7 @@ func (m *defaultAuthorizationClient) AuthImportWebTokenAuthorization(ctx context
 }
 
 // AuthRequestFirebaseSms
-// auth.requestFirebaseSms#89464b50 flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string ios_push_secret:flags.1?string = Bool;
+// auth.requestFirebaseSms#8e39261e flags:# phone_number:string phone_code_hash:string safety_net_token:flags.0?string play_integrity_token:flags.2?string ios_push_secret:flags.1?string = Bool;
 func (m *defaultAuthorizationClient) AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthRequestFirebaseSms(ctx, in)

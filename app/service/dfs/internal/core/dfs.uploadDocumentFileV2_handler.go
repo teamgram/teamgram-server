@@ -39,7 +39,7 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 	extType := model.GetStorageFileTypeConstructor(ext)
 	accessHash := int64(extType)<<32 | int64(rand.Uint32())
 
-	r, err := c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), file.Id, file.Parts)
+	r, err := c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), file.Id_INT64, file.Parts)
 	if err != nil {
 		c.Logger.Errorf("dfs.uploadDocumentFile - %v", err)
 		return nil, mtproto.ErrMediaInvalid

@@ -20,6 +20,9 @@ package server
 
 import (
 	"flag"
+	privacysettingshelper "github.com/teamgram/teamgram-server/app/bff/privacysettings"
+	savedmessagedialogshelper "github.com/teamgram/teamgram-server/app/bff/savedmessagedialogs"
+	userprofilehelper "github.com/teamgram/teamgram-server/app/bff/userprofile"
 
 	"github.com/teamgram/proto/mtproto"
 	account_helper "github.com/teamgram/teamgram-server/app/bff/account"
@@ -37,7 +40,6 @@ import (
 	miscellaneous_helper "github.com/teamgram/teamgram-server/app/bff/miscellaneous"
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
-	photos_helper "github.com/teamgram/teamgram-server/app/bff/photos"
 	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
@@ -286,17 +288,6 @@ func (s *Server) Initialize() error {
 				ChatClient:        c.BizServiceClient,
 				SyncClient:        c.SyncClient,
 			}))
-
-		// photos_helper
-		mtproto.RegisterRPCPhotosServer(
-			grpcServer,
-			photos_helper.New(photos_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				MediaClient:   c.MediaClient,
-				UserClient:    c.BizServiceClient,
-				SyncClient:    c.SyncClient,
-			}))
-
 		// usernames_helper
 		mtproto.RegisterRPCUsernamesServer(
 			grpcServer,
@@ -307,6 +298,40 @@ func (s *Server) Initialize() error {
 				ChatClient:     c.BizServiceClient,
 				SyncClient:     c.SyncClient,
 			}, nil))
+
+		// privacysettingshelper
+		mtproto.RegisterRPCPrivacySettingsServer(
+			grpcServer,
+			privacysettingshelper.New(privacysettingshelper.Config{
+				RpcServerConf:     c.RpcServerConf,
+				UserClient:        c.BizServiceClient,
+				AuthsessionClient: c.AuthSessionClient,
+				ChatClient:        c.BizServiceClient,
+				SyncClient:        c.SyncClient,
+			}))
+
+		// savedmessagedialogshelper
+		mtproto.RegisterRPCSavedMessageDialogsServer(
+			grpcServer,
+			savedmessagedialogshelper.New(savedmessagedialogshelper.Config{
+				RpcServerConf: c.RpcServerConf,
+				UpdatesClient: c.BizServiceClient,
+				UserClient:    c.BizServiceClient,
+				ChatClient:    c.BizServiceClient,
+				DialogClient:  c.BizServiceClient,
+				SyncClient:    c.SyncClient,
+				MessageClient: c.BizServiceClient,
+			}))
+
+		// userprofilehelper
+		mtproto.RegisterRPCUserProfileServer(
+			grpcServer,
+			userprofilehelper.New(userprofilehelper.Config{
+				RpcServerConf: c.RpcServerConf,
+				MediaClient:   c.MediaClient,
+				UserClient:    c.BizServiceClient,
+				SyncClient:    c.SyncClient,
+			}))
 	})
 
 	// logx.Must(err)

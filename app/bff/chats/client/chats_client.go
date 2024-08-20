@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package chats_client
+package chatsclient
 
 import (
 	"context"
@@ -36,6 +36,7 @@ type ChatsClient interface {
 	MessagesDeleteChat(ctx context.Context, in *mtproto.TLMessagesDeleteChat) (*mtproto.Bool, error)
 	MessagesGetMessageReadParticipants31C1C44F(ctx context.Context, in *mtproto.TLMessagesGetMessageReadParticipants31C1C44F) (*mtproto.Vector_ReadParticipantDate, error)
 	ChannelsConvertToGigagroup(ctx context.Context, in *mtproto.TLChannelsConvertToGigagroup) (*mtproto.Updates, error)
+	ChannelsSetEmojiStickers(ctx context.Context, in *mtproto.TLChannelsSetEmojiStickers) (*mtproto.Bool, error)
 	MessagesAddChatUserF24753E3(ctx context.Context, in *mtproto.TLMessagesAddChatUserF24753E3) (*mtproto.Updates, error)
 	MessagesCreateChat34A818(ctx context.Context, in *mtproto.TLMessagesCreateChat34A818) (*mtproto.Updates, error)
 	MessagesGetAllChats(ctx context.Context, in *mtproto.TLMessagesGetAllChats) (*mtproto.Messages_Chats, error)
@@ -156,6 +157,13 @@ func (m *defaultChatsClient) MessagesGetMessageReadParticipants31C1C44F(ctx cont
 func (m *defaultChatsClient) ChannelsConvertToGigagroup(ctx context.Context, in *mtproto.TLChannelsConvertToGigagroup) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCChatsClient(m.cli.Conn())
 	return client.ChannelsConvertToGigagroup(ctx, in)
+}
+
+// ChannelsSetEmojiStickers
+// channels.setEmojiStickers#3cd930b7 channel:InputChannel stickerset:InputStickerSet = Bool;
+func (m *defaultChatsClient) ChannelsSetEmojiStickers(ctx context.Context, in *mtproto.TLChannelsSetEmojiStickers) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCChatsClient(m.cli.Conn())
+	return client.ChannelsSetEmojiStickers(ctx, in)
 }
 
 // MessagesAddChatUserF24753E3

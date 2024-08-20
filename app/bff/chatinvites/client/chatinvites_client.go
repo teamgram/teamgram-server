@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package chatinvites_client
+package chatinvitesclient
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func NewChatInvitesClient(cli zrpc.Client) ChatInvitesClient {
 }
 
 // MessagesExportChatInvite
-// messages.exportChatInvite#a02ce5d5 flags:# legacy_revoke_permanent:flags.2?true request_needed:flags.3?true peer:InputPeer expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
+// messages.exportChatInvite#a455de90 flags:# legacy_revoke_permanent:flags.2?true request_needed:flags.3?true peer:InputPeer expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string subscription_pricing:flags.5?StarsSubscriptionPricing = ExportedChatInvite;
 func (m *defaultChatInvitesClient) MessagesExportChatInvite(ctx context.Context, in *mtproto.TLMessagesExportChatInvite) (*mtproto.ExportedChatInvite, error) {
 	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
 	return client.MessagesExportChatInvite(ctx, in)
@@ -111,7 +111,7 @@ func (m *defaultChatInvitesClient) MessagesGetAdminsWithInvites(ctx context.Cont
 }
 
 // MessagesGetChatInviteImporters
-// messages.getChatInviteImporters#df04dd4e flags:# requested:flags.0?true peer:InputPeer link:flags.1?string q:flags.2?string offset_date:int offset_user:InputUser limit:int = messages.ChatInviteImporters;
+// messages.getChatInviteImporters#df04dd4e flags:# requested:flags.0?true subscription_expired:flags.3?true peer:InputPeer link:flags.1?string q:flags.2?string offset_date:int offset_user:InputUser limit:int = messages.ChatInviteImporters;
 func (m *defaultChatInvitesClient) MessagesGetChatInviteImporters(ctx context.Context, in *mtproto.TLMessagesGetChatInviteImporters) (*mtproto.Messages_ChatInviteImporters, error) {
 	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
 	return client.MessagesGetChatInviteImporters(ctx, in)

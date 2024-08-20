@@ -21,14 +21,14 @@ import (
 // users.getUsers#d91a548 id:Vector<InputUser> = Vector<User>;
 func (s *Service) UsersGetUsers(ctx context.Context, request *mtproto.TLUsersGetUsers) (*mtproto.Vector_User, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getUsers - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("users.getUsers - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.UsersGetUsers(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.getUsers - reply: %s", r)
+	c.Logger.Debugf("users.getUsers - reply: {%s}", r)
 	return r, err
 }
 
@@ -36,29 +36,14 @@ func (s *Service) UsersGetUsers(ctx context.Context, request *mtproto.TLUsersGet
 // users.getFullUser#b60f5918 id:InputUser = users.UserFull;
 func (s *Service) UsersGetFullUser(ctx context.Context, request *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getFullUser - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("users.getFullUser - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.UsersGetFullUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.getFullUser - reply: %s", r)
-	return r, err
-}
-
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, request *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.UsersGetIsPremiumRequiredToContact(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - reply: %s", r)
+	c.Logger.Debugf("users.getFullUser - reply: {%s}", r)
 	return r, err
 }
 
@@ -66,14 +51,14 @@ func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, reques
 // contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
 func (s *Service) ContactsResolvePhone(ctx context.Context, request *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("contacts.resolvePhone - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("contacts.resolvePhone - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.ContactsResolvePhone(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("contacts.resolvePhone - reply: %s", r)
+	c.Logger.Debugf("contacts.resolvePhone - reply: {%s}", r)
 	return r, err
 }
 
@@ -81,13 +66,13 @@ func (s *Service) ContactsResolvePhone(ctx context.Context, request *mtproto.TLC
 // users.getMe id:long token:string = User;
 func (s *Service) UsersGetMe(ctx context.Context, request *mtproto.TLUsersGetMe) (*mtproto.User, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getMe - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("users.getMe - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.UsersGetMe(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.getMe - reply: %s", r)
+	c.Logger.Debugf("users.getMe - reply: {%s}", r)
 	return r, err
 }

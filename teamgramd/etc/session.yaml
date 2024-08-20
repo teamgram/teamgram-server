@@ -88,3 +88,6 @@ BFFProxyClients:
     "/mtproto.RPCPhotos": "bff.bff"
     "/mtproto.RPCUsernames": "bff.bff"
     #"/mtproto.RPCWallpapers": "bff.bff"
+    "/mtproto.SavedMessageDialogs": "bff.bff"
+    "/mtproto.PrivacySettings": "bff.bff"
+    "/mtproto.UserProfile": "bff.bff"

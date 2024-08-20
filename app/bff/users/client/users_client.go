@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package users_client
+package usersclient
 
 import (
 	"context"
@@ -23,7 +23,6 @@ var _ *mtproto.Bool
 type UsersClient interface {
 	UsersGetUsers(ctx context.Context, in *mtproto.TLUsersGetUsers) (*mtproto.Vector_User, error)
 	UsersGetFullUser(ctx context.Context, in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error)
-	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error)
 	ContactsResolvePhone(ctx context.Context, in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error)
 	UsersGetMe(ctx context.Context, in *mtproto.TLUsersGetMe) (*mtproto.User, error)
 }
@@ -50,13 +49,6 @@ func (m *defaultUsersClient) UsersGetUsers(ctx context.Context, in *mtproto.TLUs
 func (m *defaultUsersClient) UsersGetFullUser(ctx context.Context, in *mtproto.TLUsersGetFullUser) (*mtproto.Users_UserFull, error) {
 	client := mtproto.NewRPCUsersClient(m.cli.Conn())
 	return client.UsersGetFullUser(ctx, in)
-}
-
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (m *defaultUsersClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
-	client := mtproto.NewRPCUsersClient(m.cli.Conn())
-	return client.UsersGetIsPremiumRequiredToContact(ctx, in)
 }
 
 // ContactsResolvePhone

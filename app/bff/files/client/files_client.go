@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package files_client
+package filesclient
 
 import (
 	"context"
@@ -24,7 +24,6 @@ type FilesClient interface {
 	MessagesGetDocumentByHash(ctx context.Context, in *mtproto.TLMessagesGetDocumentByHash) (*mtproto.Document, error)
 	MessagesUploadMedia(ctx context.Context, in *mtproto.TLMessagesUploadMedia) (*mtproto.MessageMedia, error)
 	MessagesUploadEncryptedFile(ctx context.Context, in *mtproto.TLMessagesUploadEncryptedFile) (*mtproto.EncryptedFile, error)
-	MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error)
 	UploadSaveFilePart(ctx context.Context, in *mtproto.TLUploadSaveFilePart) (*mtproto.Bool, error)
 	UploadGetFile(ctx context.Context, in *mtproto.TLUploadGetFile) (*mtproto.Upload_File, error)
 	UploadSaveBigFilePart(ctx context.Context, in *mtproto.TLUploadSaveBigFilePart) (*mtproto.Bool, error)
@@ -54,7 +53,7 @@ func (m *defaultFilesClient) MessagesGetDocumentByHash(ctx context.Context, in *
 }
 
 // MessagesUploadMedia
-// messages.uploadMedia#519bc2b1 peer:InputPeer media:InputMedia = MessageMedia;
+// messages.uploadMedia#14967978 flags:# business_connection_id:flags.0?string peer:InputPeer media:InputMedia = MessageMedia;
 func (m *defaultFilesClient) MessagesUploadMedia(ctx context.Context, in *mtproto.TLMessagesUploadMedia) (*mtproto.MessageMedia, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.MessagesUploadMedia(ctx, in)
@@ -65,13 +64,6 @@ func (m *defaultFilesClient) MessagesUploadMedia(ctx context.Context, in *mtprot
 func (m *defaultFilesClient) MessagesUploadEncryptedFile(ctx context.Context, in *mtproto.TLMessagesUploadEncryptedFile) (*mtproto.EncryptedFile, error) {
 	client := mtproto.NewRPCFilesClient(m.cli.Conn())
 	return client.MessagesUploadEncryptedFile(ctx, in)
-}
-
-// MessagesGetExtendedMedia
-// messages.getExtendedMedia#84f80814 peer:InputPeer id:Vector<int> = Updates;
-func (m *defaultFilesClient) MessagesGetExtendedMedia(ctx context.Context, in *mtproto.TLMessagesGetExtendedMedia) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCFilesClient(m.cli.Conn())
-	return client.MessagesGetExtendedMedia(ctx, in)
 }
 
 // UploadSaveFilePart

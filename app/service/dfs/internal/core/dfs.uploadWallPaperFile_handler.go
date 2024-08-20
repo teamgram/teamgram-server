@@ -60,7 +60,7 @@ func (c *DfsCore) DfsUploadWallPaperFile(in *dfs.TLDfsUploadWallPaperFile) (*mtp
 		return nil, err
 	}
 
-	r, err = c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), file.Id, file.Parts)
+	r, err = c.svcCtx.Dao.OpenFile(c.ctx, in.GetCreator(), file.Id_INT64, file.Parts)
 	if err != nil {
 		c.Logger.Errorf("dfs.uploadWallPaperFile - %v", err)
 		return nil, mtproto.ErrWallpaperFileInvalid

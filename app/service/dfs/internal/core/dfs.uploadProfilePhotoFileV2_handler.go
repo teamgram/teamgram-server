@@ -82,7 +82,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 		r *dao.SSDBReader
 	)
 
-	r, err = c.svcCtx.Dao.OpenFile(c.ctx, creatorId, video.Id, video.Parts)
+	r, err = c.svcCtx.Dao.OpenFile(c.ctx, creatorId, video.Id_INT64, video.Parts)
 	if err != nil {
 		c.Logger.Errorf("dfs.uploadVideoSizeList - %v", err)
 		return nil, mtproto.ErrMediaInvalid
@@ -106,7 +106,7 @@ func (c *DfsCore) uploadVideoSizeListV2(creatorId int64, video *mtproto.InputFil
 		// videoId = idgen.GetUUID()
 		// ext         = model.GetFileExtName(video.GetName())
 		// extType     = model.GetStorageFileTypeConstructor(ext)
-		tmpFileName = fmt.Sprintf("http://127.0.0.1:11701/dfs/file/%d_%d.mp4", creatorId, video.GetId())
+		tmpFileName = fmt.Sprintf("http://127.0.0.1:11701/dfs/file/%d_%d.mp4", creatorId, video.GetId_INT64())
 	)
 
 	videoMp4Data, _, err = c.svcCtx.FFmpegUtil.ConvertToMp4ByPipe(tmpFileName, 800, 800)
@@ -200,7 +200,7 @@ func (c *DfsCore) uploadPhotoSizeListV2(creatorId int64, file *mtproto.InputFile
 		r         *dao.SSDBReader
 	)
 
-	r, err = c.svcCtx.Dao.OpenFile(c.ctx, creatorId, file.Id, file.Parts)
+	r, err = c.svcCtx.Dao.OpenFile(c.ctx, creatorId, file.Id_INT64, file.Parts)
 	if err != nil {
 		c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
 		return nil, mtproto.ErrMediaInvalid

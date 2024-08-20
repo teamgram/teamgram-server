@@ -21,10 +21,6 @@ import (
 var _ *mtproto.Bool
 
 type AccountClient interface {
-	AccountUpdateProfile(ctx context.Context, in *mtproto.TLAccountUpdateProfile) (*mtproto.User, error)
-	AccountUpdateStatus(ctx context.Context, in *mtproto.TLAccountUpdateStatus) (*mtproto.Bool, error)
-	AccountGetPrivacy(ctx context.Context, in *mtproto.TLAccountGetPrivacy) (*mtproto.Account_PrivacyRules, error)
-	AccountSetPrivacy(ctx context.Context, in *mtproto.TLAccountSetPrivacy) (*mtproto.Account_PrivacyRules, error)
 	AccountDeleteAccount(ctx context.Context, in *mtproto.TLAccountDeleteAccount) (*mtproto.Bool, error)
 	AccountGetAccountTTL(ctx context.Context, in *mtproto.TLAccountGetAccountTTL) (*mtproto.AccountDaysTTL, error)
 	AccountSetAccountTTL(ctx context.Context, in *mtproto.TLAccountSetAccountTTL) (*mtproto.Bool, error)
@@ -33,12 +29,6 @@ type AccountClient interface {
 	AccountResetAuthorization(ctx context.Context, in *mtproto.TLAccountResetAuthorization) (*mtproto.Bool, error)
 	AccountSendConfirmPhoneCode(ctx context.Context, in *mtproto.TLAccountSendConfirmPhoneCode) (*mtproto.Auth_SentCode, error)
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
-	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-	AccountUpdateBirthday(ctx context.Context, in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error)
-	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
-	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
-	AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error)
 }
 
 type defaultAccountClient struct {
@@ -49,34 +39,6 @@ func NewAccountClient(cli zrpc.Client) AccountClient {
 	return &defaultAccountClient{
 		cli: cli,
 	}
-}
-
-// AccountUpdateProfile
-// account.updateProfile#78515775 flags:# first_name:flags.0?string last_name:flags.1?string about:flags.2?string = User;
-func (m *defaultAccountClient) AccountUpdateProfile(ctx context.Context, in *mtproto.TLAccountUpdateProfile) (*mtproto.User, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdateProfile(ctx, in)
-}
-
-// AccountUpdateStatus
-// account.updateStatus#6628562c offline:Bool = Bool;
-func (m *defaultAccountClient) AccountUpdateStatus(ctx context.Context, in *mtproto.TLAccountUpdateStatus) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdateStatus(ctx, in)
-}
-
-// AccountGetPrivacy
-// account.getPrivacy#dadbc950 key:InputPrivacyKey = account.PrivacyRules;
-func (m *defaultAccountClient) AccountGetPrivacy(ctx context.Context, in *mtproto.TLAccountGetPrivacy) (*mtproto.Account_PrivacyRules, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountGetPrivacy(ctx, in)
-}
-
-// AccountSetPrivacy
-// account.setPrivacy#c9f81ce8 key:InputPrivacyKey rules:Vector<InputPrivacyRule> = account.PrivacyRules;
-func (m *defaultAccountClient) AccountSetPrivacy(ctx context.Context, in *mtproto.TLAccountSetPrivacy) (*mtproto.Account_PrivacyRules, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountSetPrivacy(ctx, in)
 }
 
 // AccountDeleteAccount
@@ -133,46 +95,4 @@ func (m *defaultAccountClient) AccountSendConfirmPhoneCode(ctx context.Context, 
 func (m *defaultAccountClient) AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountConfirmPhone(ctx, in)
-}
-
-// AccountGetGlobalPrivacySettings
-// account.getGlobalPrivacySettings#eb2b4cf6 = GlobalPrivacySettings;
-func (m *defaultAccountClient) AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountGetGlobalPrivacySettings(ctx, in)
-}
-
-// AccountSetGlobalPrivacySettings
-// account.setGlobalPrivacySettings#1edaaac2 settings:GlobalPrivacySettings = GlobalPrivacySettings;
-func (m *defaultAccountClient) AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountSetGlobalPrivacySettings(ctx, in)
-}
-
-// AccountUpdateBirthday
-// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
-func (m *defaultAccountClient) AccountUpdateBirthday(ctx context.Context, in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdateBirthday(ctx, in)
-}
-
-// MessagesSetDefaultHistoryTTL
-// messages.setDefaultHistoryTTL#9eb51445 period:int = Bool;
-func (m *defaultAccountClient) MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.MessagesSetDefaultHistoryTTL(ctx, in)
-}
-
-// MessagesGetDefaultHistoryTTL
-// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
-func (m *defaultAccountClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.MessagesGetDefaultHistoryTTL(ctx, in)
-}
-
-// AccountUpdateVerified
-// account.updateVerified flags:# id:long verified:flags.0?true = User;
-func (m *defaultAccountClient) AccountUpdateVerified(ctx context.Context, in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error) {
-	client := mtproto.NewRPCAccountClient(m.cli.Conn())
-	return client.AccountUpdateVerified(ctx, in)
 }

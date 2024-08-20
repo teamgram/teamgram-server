@@ -43,7 +43,6 @@ type ContactsClient interface {
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
 	ContactsEditCloseFriends(ctx context.Context, in *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error)
-	ContactsGetBirthdays(ctx context.Context, in *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error)
 }
 
 type defaultContactsClient struct {
@@ -141,7 +140,7 @@ func (m *defaultContactsClient) ContactsSearch(ctx context.Context, in *mtproto.
 }
 
 // ContactsGetTopPeers
-// contacts.getTopPeers#973478b6 flags:# correspondents:flags.0?true bots_pm:flags.1?true bots_inline:flags.2?true phone_calls:flags.3?true forward_users:flags.4?true forward_chats:flags.5?true groups:flags.10?true channels:flags.15?true offset:int limit:int hash:long = contacts.TopPeers;
+// contacts.getTopPeers#973478b6 flags:# correspondents:flags.0?true bots_pm:flags.1?true bots_inline:flags.2?true phone_calls:flags.3?true forward_users:flags.4?true forward_chats:flags.5?true groups:flags.10?true channels:flags.15?true bots_app:flags.16?true offset:int limit:int hash:long = contacts.TopPeers;
 func (m *defaultContactsClient) ContactsGetTopPeers(ctx context.Context, in *mtproto.TLContactsGetTopPeers) (*mtproto.Contacts_TopPeers, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsGetTopPeers(ctx, in)
@@ -208,11 +207,4 @@ func (m *defaultContactsClient) ContactsEditCloseFriends(ctx context.Context, in
 func (m *defaultContactsClient) ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsSetBlocked(ctx, in)
-}
-
-// ContactsGetBirthdays
-// contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
-func (m *defaultContactsClient) ContactsGetBirthdays(ctx context.Context, in *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error) {
-	client := mtproto.NewRPCContactsClient(m.cli.Conn())
-	return client.ContactsGetBirthdays(ctx, in)
 }
