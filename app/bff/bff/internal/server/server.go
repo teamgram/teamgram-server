@@ -20,9 +20,6 @@ package server
 
 import (
 	"flag"
-	privacysettingshelper "github.com/teamgram/teamgram-server/app/bff/privacysettings"
-	savedmessagedialogshelper "github.com/teamgram/teamgram-server/app/bff/savedmessagedialogs"
-	userprofilehelper "github.com/teamgram/teamgram-server/app/bff/userprofile"
 
 	"github.com/teamgram/proto/mtproto"
 	account_helper "github.com/teamgram/teamgram-server/app/bff/account"
@@ -41,11 +38,14 @@ import (
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
 	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
+	privacysettingshelper "github.com/teamgram/teamgram-server/app/bff/privacysettings"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
+	savedmessagedialogshelper "github.com/teamgram/teamgram-server/app/bff/savedmessagedialogs"
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
+	userprofilehelper "github.com/teamgram/teamgram-server/app/bff/userprofile"
 	users_helper "github.com/teamgram/teamgram-server/app/bff/users"
 
 	"github.com/zeromicro/go-zero/core/conf"
