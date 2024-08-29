@@ -53,7 +53,7 @@ func (d *Dao) SetCacheFileInfo(ctx context.Context, id int64, dfsFileInfo *model
 func (d *Dao) GetCacheDfsFileInfo(ctx context.Context, id int64) (*model.DfsFileInfo, error) {
 	ownerId, fileId, err := d.getCacheFileInfo(ctx, id)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("getCacheFileInfo (%d, %d) error(%v)", id, err)
+		logx.WithContext(ctx).Errorf("getCacheFileInfo (%d) error(%v)", id, err)
 		return nil, err
 	}
 
