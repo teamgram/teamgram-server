@@ -88,7 +88,7 @@ func (s *Server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	if ctx.websocket {
 		ctx.wsCodec = new(ws.WsCodec)
 	}
-	ctx.closeDate = time.Now().Unix() + 10
+	ctx.closeDate = time.Now().Unix() + 30
 	c.SetContext(ctx)
 
 	return
@@ -146,7 +146,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 // OnTraffic fires when a local socket receives data from the peer.
 func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	ctx := c.Context().(*connContext)
-	ctx.closeDate = time.Now().Unix() + 200 + rand.Int63()%10
+	ctx.closeDate = time.Now().Unix() + 300 + rand.Int63()%10
 	if ctx.websocket {
 		return s.onWebsocketData(ctx, c)
 	} else {
@@ -170,6 +170,7 @@ func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
 			return
 		}
 		if now >= ctx.closeDate {
+			logx.Debugf("close conn(%s) by timeout", c)
 			c.Close()
 		}
 	})
@@ -192,7 +193,8 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	if permAuthKeyId == 0 {
 		permAuthKeyId = tryGetPermAuthKeyId(mtpRwaData[16:])
 		if permAuthKeyId == 0 {
-			return nil
+			logx.Debugf("not get key_id(%s)", c)
+			// return nil
 		} else {
 			clone := proto.Clone(authKey.keyData).(*mtproto.AuthKeyInfo)
 			clone.PermAuthKeyId = permAuthKeyId
