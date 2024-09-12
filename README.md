@@ -154,3 +154,7 @@ please PM the **[author](https://t.me/benqi)**
 ## Give a Star! ⭐
 
 If you like or are using this project to learn or start your solution, please give it a star. Thanks!
+
+## Visitors Count
+
+<img align="left" src = "https://profile-counter.glitch.me/teamgram-server/count.svg" alt="Loading" />
