@@ -84,6 +84,8 @@ services:
 
   mysql:
     image: mysql:5.7
+    # arm64v8/mysql:5.7
+    # image: mysql/mysql-server:5.7
     container_name: mysql
     environment:
       # 时区上海 - Time zone Shanghai (Change if needed)
