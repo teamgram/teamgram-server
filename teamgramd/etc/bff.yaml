@@ -2,7 +2,7 @@ Name: bff.bff
 ListenOn: 127.0.0.1:20010
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: bff.bff
 Timeout: 0
 Log:
@@ -23,43 +23,43 @@ Code:
 BizServiceClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.biz_service
 AuthSessionClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.authsession
 MediaClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.media
   Timeout: 0
 IdgenClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.idgen
 MsgClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: messenger.msg
   Timeout: 0
 DfsClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.dfs
   Timeout: 0
 StatusClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.status
 
 SyncClient:
   Topic:   "Sync-T"
   Brokers:
-    - 127.0.0.1:9092
+    - kafka:9092

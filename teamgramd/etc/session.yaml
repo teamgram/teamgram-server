@@ -2,35 +2,35 @@ Name: interface.session
 ListenOn: 127.0.0.1:20120
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: interface.session
 Log:
   Mode: file
   Path: ../logs/session
   Level: debug
 Cache:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 AuthSession:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.authsession
 StatusClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.status
 GatewayClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: interface.gateway
 
 BFFProxyClients:
   Clients:
     - Etcd:
         Hosts:
-          - 127.0.0.1:2379
+          - etcd:2379
         Key: bff.bff
       Timeout: 0
   IDMap:

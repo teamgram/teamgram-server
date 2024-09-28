@@ -39,7 +39,7 @@ type uploadPartsState struct {
 func init() {
 	var err error
 	minioCore, err = minio.NewCore(
-		"127.0.0.1:9000",
+		"minio:9000",
 		&minio.Options{
 			Creds:  credentials.NewStaticV4("TLXH0OZVP0AKOJAZ8DIT", "9Sw+Xbhc3aWvxQ78rRgUkTQQLLZ24SyelA+B6Rwe", ""),
 			Secure: false,

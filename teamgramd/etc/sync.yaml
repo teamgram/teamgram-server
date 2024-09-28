@@ -2,7 +2,7 @@ Name: messenger.sync
 ListenOn: 127.0.0.1:20420
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: messenger.sync
 Log:
   Mode: file
@@ -13,7 +13,7 @@ SyncConsumer:
   Topics:
     - "Sync-T"
   Brokers:
-    - 127.0.0.1:9092
+    - kafka:9092
   Group: "Sync-MainCommunity-S"
 
 Routine:
@@ -26,34 +26,34 @@ Mysql:
   Idle: 64
   IdleTimeout: 4h
 Cache:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 KV:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 
 IdgenClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.idgen
 StatusClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.status
 SessionClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: interface.session
 
 ChannelClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.biz_service
 ChatClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.biz_service
 

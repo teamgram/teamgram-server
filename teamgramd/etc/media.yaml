@@ -2,7 +2,7 @@ Name: service.media
 ListenOn: 127.0.0.1:20650
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: service.media
 Timeout: 0
 Log:
@@ -15,10 +15,10 @@ Mysql:
   Idle: 64
   IdleTimeout: 4h
 Cache:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 Dfs:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.dfs
   Timeout: 0

@@ -2,8 +2,8 @@ Name: service.status
 ListenOn: 127.0.0.1:20670
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: service.status
 Status:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 StatusExpire: 90

@@ -2,7 +2,7 @@ Name: messenger.msg
 ListenOn: 127.0.0.1:20030
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: messenger.msg
 Timeout: 0
 Log:
@@ -15,37 +15,37 @@ Mysql:
   Idle: 64
   IdleTimeout: 4h
 KV:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 
 InboxConsumer:
   Topics:
     - "Inbox-T"
   Brokers:
-    - 127.0.0.1:9092
+    - kafka:9092
   Group: "Inbox-MainCommunity-S"
 
 IdgenClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.idgen
 
 BizServiceClient:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: service.biz_service
 
 InboxClient:
   Topic:   "Inbox-T"
   Brokers:
-    - 127.0.0.1:9092
+    - kafka:9092
 
 SyncClient:
   Topic:   "Sync-T"
   Brokers:
-    - 127.0.0.1:9092
+    - kafka:9092
 
 Redis2:
-  Host: 127.0.0.1:6379
+  Host: redis:6379
   Type: node

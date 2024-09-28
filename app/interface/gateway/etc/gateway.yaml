@@ -2,7 +2,7 @@ Name: interface.gateway
 ListenOn: 127.0.0.1:20110
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: interface.gateway
 KeyFile: "./server_pkcs1.key"
 KeyFingerprint: "12240908862933197005"
@@ -18,5 +18,5 @@ Server:
 Session:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: interface.session

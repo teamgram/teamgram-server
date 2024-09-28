@@ -2,7 +2,7 @@ Name: service.authsession
 ListenOn: 127.0.0.1:20450
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: service.authsession
 Log:
   Mode: file
@@ -14,6 +14,6 @@ Mysql:
   Idle: 64
   IdleTimeout: 4h
 Cache:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 KV:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379

@@ -2,7 +2,7 @@ Name: interface.gateway
 ListenOn: 127.0.0.1:20110
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - etcd:2379
   Key: interface.gateway
 Log:
   Mode: file
@@ -29,5 +29,5 @@ Gnetway:
 Session:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - etcd:2379
     Key: interface.session
