@@ -222,20 +222,14 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 
 				return nil
 			default:
-				logx.Debugf("unknown msg: %v", unknown)
-				return fmt.Errorf("unknown msg")
+				if permAuthKeyId == 0 {
+					logx.Errorf("recv unknown msg: %v, ignore it", unknownMsg)
+					return fmt.Errorf("unknown msg")
+				} else {
+					// ignore it
+				}
 			}
 		}
-		//permAuthKeyId = tryGetPermAuthKeyId(mtpRwaData[16:])
-		//if permAuthKeyId == 0 {
-		//	logx.Debugf("not get key_id(%s)", c)
-		//	// return nil
-		//} else {
-		//	clone := proto.Clone(authKey.keyData).(*mtproto.AuthKeyInfo)
-		//	clone.PermAuthKeyId = permAuthKeyId
-		//	authKey.keyData = clone
-		//	s.PutAuthKey(clone)
-		//}
 	}
 
 	var (
