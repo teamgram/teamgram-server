@@ -16,10 +16,29 @@
 package gnet
 
 import (
+	"time"
+
+	"github.com/teamgram/marmota/pkg/sync2"
 	"github.com/teamgram/proto/mtproto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+var msgIdSeq = sync2.NewAtomicInt64(0)
+
+func nextMessageId(isRpc bool) int64 {
+	unixNano := time.Now().UnixNano()
+	ts := unixNano / 1e9
+	ms := (unixNano % 1e9) / 1e6
+	sid := msgIdSeq.Add(1) & 0x1ffff
+	msgIdSeq.CompareAndSwap(0x1ffff, 0)
+	last := 1
+	if !isRpc {
+		last = 3
+	}
+	msgId := ts<<32 | int64(ms)<<21 | sid<<3 | int64(last)
+	return msgId
+}
 
 func parseFromIncomingMessage(b []byte) (msgId int64, obj mtproto.TLObject, err error) {
 	dBuf := mtproto.NewDecodeBuf(b)
@@ -48,6 +67,16 @@ func serializeToBuffer(x *mtproto.EncodeBuf, msgId int64, obj mtproto.TLObject) 
 	return nil
 }
 
+func serializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessage2) []byte {
+	x := mtproto.NewEncodeBuf(512)
+
+	x.Long(salt)
+	x.Long(sessionId)
+	msg2.Encode(x, 0)
+
+	return x.GetBuf()
+}
+
 const (
 	kMsgContainerBufLen = 8
 )
@@ -61,18 +90,18 @@ var (
 	}()
 )
 
-func serializeToBuffer2(salt, sessionId int64, seqNo int32) []byte {
-	x := mtproto.NewEncodeBuf(512)
-
-	x.Long(salt)
-	x.Long(sessionId)
-	x.Long(mtproto.GenerateMessageId())
-	x.Int(seqNo)
-	x.Int(kMsgContainerBufLen)
-	x.Bytes(kMsgContainerBuf)
-
-	return x.GetBuf()
-}
+//func serializeToBuffer2(salt, sessionId int64, seqNo int32) []byte {
+//	x := mtproto.NewEncodeBuf(512)
+//
+//	x.Long(salt)
+//	x.Long(sessionId)
+//	x.Long(mtproto.GenerateMessageId())
+//	x.Int(seqNo)
+//	x.Int(kMsgContainerBufLen)
+//	x.Bytes(kMsgContainerBuf)
+//
+//	return x.GetBuf()
+//}
 
 func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
 	if in == nil {
@@ -134,6 +163,34 @@ func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
 	default:
 		return r
 	}
+}
+
+func tryGetUnknownTLObject(b []byte) (rList []mtproto.TLObject) {
+	var (
+		err  error
+		msg  = &mtproto.TLMessage2{}
+		msgs []*mtproto.TLMessage2
+	)
+
+	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	if err != nil {
+		return
+	}
+
+	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
+		msgs = msgContainer.Messages
+	} else {
+		msgs = append(msgs, msg)
+	}
+
+	for _, m2 := range msgs {
+		r := getRpcMethod(m2.Object)
+		if r != nil {
+			rList = append(rList, r)
+		}
+	}
+
+	return
 }
 
 func tryGetPermAuthKeyId(b []byte) int64 {
