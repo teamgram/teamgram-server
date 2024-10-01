@@ -30,7 +30,7 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 		var (
 			err error
 		)
-		ctx.codec, err = codec.CreateMTProtoCodec(c)
+		ctx.codec, err = codec.CreateCodec(c)
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
 				return gnet.None

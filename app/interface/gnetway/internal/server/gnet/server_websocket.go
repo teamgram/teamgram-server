@@ -40,7 +40,7 @@ func (s *Server) onWebsocketData(ctx *connContext, c gnet.Conn) (action gnet.Act
 		ws.Conn.Buffer = message.Payload
 
 		if ctx.codec == nil {
-			ctx.codec, err = codec.CreateMTProtoCodec(&ctx.wsCodec.Conn)
+			ctx.codec, err = codec.CreateCodec(&ctx.wsCodec.Conn)
 			if err != nil {
 				if errors.Is(err, codec.ErrUnexpectedEOF) {
 					return gnet.None

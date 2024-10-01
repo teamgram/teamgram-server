@@ -10,8 +10,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"errors"
+	"flag"
 	"fmt"
-
+	
 	"github.com/teamgram/proto/mtproto/crypto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -76,6 +77,14 @@ var (
 	Err0x02010316NotSupport = errors.New("0x02010316 transport not support")
 )
 
+var (
+	isMTProto bool // 是否使用MTProto - true为官方mtproto协议，false为定制协议（当前实现为ntproto）
+)
+
+func init() {
+	flag.BoolVar(&isMTProto, "mtproto", true, "mtproto")
+}
+
 // var ErrShortBuffer = io.ErrShortBuffer
 
 type CodecReader interface {
@@ -105,6 +114,14 @@ type Codec interface {
 	Encode(conn CodecWriter, msg interface{}) ([]byte, error)
 	Decode(conn CodecReader) (interface{}, error)
 	// FirstBytes() int
+}
+
+func CreateCodec(conn CodecReader) (Codec, error) {
+	if isMTProto {
+		return CreateMTProtoCodec(conn)
+	} else {
+		return CreateMyProtoCodec(conn)
+	}
 }
 
 func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
@@ -248,6 +265,81 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	}
 
 	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))
+	// TODO: check dcId
+
+	//if secondInt == PROXY_FLAG {
+	//	c.remoteIp = ip.IntToIP(firstInt)
+	//}
+
+	conn.Discard(64)
+
+	logx.Infof("conn(%s) mtproto obfuscated version, {protocol_type: %d, dc_id: %d}", conn, protocolType, dcId)
+	return newMTProtoObfuscatedCodec(d, e, protocolType, dcId), nil
+}
+
+func CreateMyProtoCodec(conn CodecReader) (Codec, error) {
+	// 5. app version.
+
+	// bytes
+	// |  0-3  |  4-7   |     8-11     | 12-15 |    16-63    |
+	// |  val  |  val2  | 0xefefefefef |       |            |
+	//
+	// temp
+	// |    0 ~ 47       |
+	// | 63 ~ 16 (bytes)  |
+	//
+	// encrypt_key_: 16 ~ 47 (bytes)
+	// encrypt_iv_ : 48 ~ 63 (bytes)
+	// decrypt_key_: 0  ~ 31 (temp)
+	// decrypt_iv_ : 32 ~ 47 (temp)
+	//
+
+	var (
+		obfuscatedBuf []byte
+	)
+
+	bytes, err := conn.Peek(64)
+	if err != nil {
+		return nil, ErrUnexpectedEOF
+	} else {
+		obfuscatedBuf = bytes
+	}
+
+	var (
+		tmp [64]byte
+	)
+
+	// 生成decrypt_key
+	for i := 0; i < 48; i++ {
+		// tmp[i] = obfuscatedBuf[55-i]
+		tmp[i] = obfuscatedBuf[63-i]
+	}
+
+	e, err := crypto.NewAesCTR128Encrypt(tmp[:32], tmp[32:48])
+	if err != nil {
+		return nil, err
+	}
+
+	// d, err := crypto.NewAesCTR128Encrypt(obfuscatedBuf[8:40], obfuscatedBuf[40:56])
+	d, err := crypto.NewAesCTR128Encrypt(obfuscatedBuf[16:48], obfuscatedBuf[48:64])
+	if err != nil {
+		return nil, err
+	}
+
+	d.Encrypt(obfuscatedBuf)
+
+	// protocolType := binary.BigEndian.Uint32(obfuscatedBuf[56:])
+	protocolType := binary.BigEndian.Uint32(obfuscatedBuf[8:])
+	if protocolType != ABRIDGED_INT32_FLAG &&
+		protocolType != INTERMEDIATE_FLAG &&
+		protocolType != PADDED_INTERMEDIATE_FLAG {
+		return nil, fmt.Errorf("conn(%s) mtproto buf[8:12]'s byte != 0xef, received: %s",
+			conn,
+			hex.EncodeToString(obfuscatedBuf[8:12]))
+	}
+
+	// dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))
+	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[12:]))
 	// TODO: check dcId
 
 	conn.Discard(64)
