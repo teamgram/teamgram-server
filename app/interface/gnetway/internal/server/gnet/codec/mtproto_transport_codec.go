@@ -12,7 +12,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	
+
 	"github.com/teamgram/proto/mtproto/crypto"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -282,10 +282,10 @@ func CreateMyProtoCodec(conn CodecReader) (Codec, error) {
 
 	// bytes
 	// |  0-3  |  4-7   |     8-11     | 12-15 |    16-63    |
-	// |  val  |  val2  | 0xefefefefef |       |            |
+	// |  val  |  val2  | 0xefefefefef |       |             |
 	//
 	// temp
-	// |    0 ~ 47       |
+	// |    0 ~ 47        |
 	// | 63 ~ 16 (bytes)  |
 	//
 	// encrypt_key_: 16 ~ 47 (bytes)
