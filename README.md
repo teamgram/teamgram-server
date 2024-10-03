@@ -10,7 +10,7 @@ Open source [mtproto](https://core.telegram.org/mtproto) server implementation w
   - Intermediate
   - Padded intermediate
   - Full
-- API Layer: 186
+- API Layer: 188
 - private chat
 - basic group
 - contacts
@@ -38,7 +38,7 @@ If you have the above components, it is recommended to use them directly. If not
 
 
 ### Source code deployment
-#### Install [Go environment](https://go.dev/doc/install). Make sure Go version is at least 1.17.
+#### Install [Go environment](https://go.dev/doc/install). Make sure Go version is at least 1.19.
 
 
 #### Get source code　
