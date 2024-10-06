@@ -25,8 +25,11 @@ import (
 // MessagesGetDefaultHistoryTTL
 // messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
 func (c *PrivacySettingsCore) MessagesGetDefaultHistoryTTL(in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getDefaultHistoryTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	rV := mtproto.MakeTLDefaultHistoryTTL(&mtproto.DefaultHistoryTTL{
+		Period: 0,
+	}).To_DefaultHistoryTTL()
+
+	return rV, nil
 }
