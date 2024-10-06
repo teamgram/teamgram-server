@@ -43,6 +43,12 @@ func (c *MessagesCore) MessagesGetMessages(in *mtproto.TLMessagesGetMessages) (*
 		switch id.PredicateName {
 		case mtproto.Predicate_inputMessageID:
 			idList = append(idList, id.Id)
+		case mtproto.Predicate_inputMessageReplyTo:
+			idList = append(idList, id.Id)
+		case mtproto.Predicate_inputMessagePinned:
+			// TODO: not impl
+		case mtproto.Predicate_inputMessageCallbackQuery:
+			// TODO: not impl
 		default:
 			// client not use: inputMessageReplyTo, inputMessagePinned
 			err := mtproto.ErrInputConstructorInvalid
