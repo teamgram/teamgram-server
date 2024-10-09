@@ -88,7 +88,7 @@ func (d *Dao) CreateNewUserV2(
 		FirstName:      firstName,
 		LastName:       lastName,
 		CountryCode:    countryCode,
-		AccountDaysTtl: 180,
+		AccountDaysTtl: 548,
 	}
 	if lastInsertId, _, err2 := d.UsersDAO.Insert(ctx, userDO); err2 != nil {
 		if sqlx.IsDuplicate(err2) {

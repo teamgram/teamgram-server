@@ -27,12 +27,21 @@ import (
 // account.setAccountTTL#2442485e ttl:AccountDaysTTL = Bool;
 func (c *AccountCore) AccountSetAccountTTL(in *mtproto.TLAccountSetAccountTTL) (*mtproto.Bool, error) {
 	// TODO(@benqi): Check ttl
+	// 1 * 30 * 24 * 60 * 60,
+	// 3 * 30 * 24 * 60 * 60,
+	// 6 * 30 * 24 * 60 * 60,
+	// 365 * 24 * 60 * 60,
+	// 548 * 24 * 60 * 60,
+	// 730 * 24 * 60 * 60
+
 	ttl := in.GetTtl().GetDays()
 	switch ttl {
 	case 30:
 	case 90:
-	case 182:
+	case 180:
 	case 365:
+	case 548:
+	case 730:
 	default:
 		err := mtproto.ErrTtlDaysInvalid
 		c.Logger.Errorf("account.setAccountTTL - error: %v", err)

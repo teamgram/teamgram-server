@@ -22,11 +22,22 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
+/**
+# auth.importLoginToken
+
+Login using a redirected login token, generated in case of DC mismatch during QR code login.
+
+For more info, see login via QR code.
+
+**/
+
 // AuthImportLoginToken
 // auth.importLoginToken#95ac5ce4 token:bytes = auth.LoginToken;
 func (c *QrCodeCore) AuthImportLoginToken(in *mtproto.TLAuthImportLoginToken) (*mtproto.Auth_LoginToken, error) {
 	// TODO: not impl
+	// teamgram does not implement multi-datacenter support, so this method is not implemented.
+
 	c.Logger.Errorf("auth.importLoginToken - method not impl")
 
-	return nil, mtproto.ErrAuthTokenInvalid
+	return nil, mtproto.ErrAuthTokenAlreadyAccepted
 }
