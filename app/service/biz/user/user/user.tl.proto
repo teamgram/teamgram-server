@@ -98,6 +98,7 @@ enum TLConstructor {
     CRC32_user_updateBirthday = 1484434322;
     CRC32_user_getBirthdays = -24199258;
     CRC32_user_setStoriesHidden = -138012584;
+    CRC32_user_updatePersonalChannel = -940065072;
 }
 
 
@@ -695,6 +696,13 @@ message TL_user_setStoriesHidden {
     mtproto.Bool hidden = 5;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePersonalChannel {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 channel_id = 4;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -806,5 +814,6 @@ service RPCUser {
  rpc user_updateBirthday(TL_user_updateBirthday) returns (mtproto.Bool) {}
  rpc user_getBirthdays(TL_user_getBirthdays) returns (Vector_ContactBirthday) {}
  rpc user_setStoriesHidden(TL_user_setStoriesHidden) returns (mtproto.Bool) {}
+ rpc user_updatePersonalChannel(TL_user_updatePersonalChannel) returns (mtproto.Bool) {}
 }
 

@@ -94,6 +94,7 @@ type UserClient interface {
 	UserUpdateBirthday(ctx context.Context, in *user.TLUserUpdateBirthday) (*mtproto.Bool, error)
 	UserGetBirthdays(ctx context.Context, in *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error)
 	UserSetStoriesHidden(ctx context.Context, in *user.TLUserSetStoriesHidden) (*mtproto.Bool, error)
+	UserUpdatePersonalChannel(ctx context.Context, in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error)
 }
 
 type defaultUserClient struct {
@@ -604,8 +605,15 @@ func (m *defaultUserClient) UserGetBirthdays(ctx context.Context, in *user.TLUse
 }
 
 // UserSetStoriesHidden
-// user.setStoriesHidden user_id:long  id:long hidden:Bool = Bool;
+// user.setStoriesHidden user_id:long id:long hidden:Bool = Bool;
 func (m *defaultUserClient) UserSetStoriesHidden(ctx context.Context, in *user.TLUserSetStoriesHidden) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserSetStoriesHidden(ctx, in)
+}
+
+// UserUpdatePersonalChannel
+// user.updatePersonalChannel user_id:long channel_id:long = Bool;
+func (m *defaultUserClient) UserUpdatePersonalChannel(ctx context.Context, in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdatePersonalChannel(ctx, in)
 }

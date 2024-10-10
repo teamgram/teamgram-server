@@ -89,4 +89,5 @@ const (
 	CRC32_user_updateBirthday               TLConstructor = 1484434322  // 0x587aab92
 	CRC32_user_getBirthdays                 TLConstructor = -24199258   // 0xfe8ebfa6
 	CRC32_user_setStoriesHidden             TLConstructor = -138012584  // 0xf7c61858
+	CRC32_user_updatePersonalChannel        TLConstructor = -940065072  // 0xc7f7bed0
 )
