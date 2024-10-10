@@ -256,12 +256,15 @@ func (s *Server) Initialize() error {
 		// users_helper
 		mtproto.RegisterRPCUsersServer(
 			grpcServer,
-			users_helper.New(users_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				UserClient:    c.BizServiceClient,
-				ChatClient:    c.BizServiceClient,
-				DialogClient:  c.BizServiceClient,
-			}, nil))
+			users_helper.New(
+				users_helper.Config{
+					RpcServerConf: c.RpcServerConf,
+					UserClient:    c.BizServiceClient,
+					ChatClient:    c.BizServiceClient,
+					DialogClient:  c.BizServiceClient,
+				},
+				nil,
+				nil))
 
 		// nsfw_helper
 		mtproto.RegisterRPCNsfwServer(
