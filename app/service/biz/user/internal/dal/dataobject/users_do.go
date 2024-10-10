@@ -41,6 +41,7 @@ type UsersDO struct {
 	ProfileColor                     int32  `db:"profile_color" json:"profile_color"`
 	ProfileColorBackgroundEmojiId    int64  `db:"profile_color_background_emoji_id" json:"profile_color_background_emoji_id"`
 	Birthday                         string `db:"birthday" json:"birthday"`
+	PersonalChannelId                int64  `db:"personal_channel_id" json:"personal_channel_id"`
 	Deleted                          bool   `db:"deleted" json:"deleted"`
 	DeleteReason                     string `db:"delete_reason" json:"delete_reason"`
 }
