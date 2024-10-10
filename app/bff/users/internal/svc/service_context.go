@@ -29,9 +29,9 @@ type ServiceContext struct {
 	*dao.Dao
 }
 
-func NewServiceContext(c config.Config, plugin plugin.StoryPlugin) *ServiceContext {
+func NewServiceContext(c config.Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
-		Dao:    dao.New(c, plugin),
+		Dao:    dao.New(c, plugin1, plugin2),
 	}
 }

@@ -24,6 +24,7 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/zeromicro/go-zero/core/mr"
 )
@@ -104,6 +105,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		Stories_FLAGPEERSTORIES: nil,
 		Stories_FLAGUSERSTORIES: nil,
 		Birthday:                nil,
+		PersonalChannelId:       nil,
 	}).To_UserFull()
 
 	// PremiumGifts
@@ -229,10 +231,24 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 	// TODO: WallPaper
 
 	// TODO: Stories
-	if c.svcCtx.Dao.Plugin != nil {
-		userFull.StoriesPinnedAvailable = c.svcCtx.Dao.Plugin.GetStoriesPinnedAvailable(c.ctx, peerId, c.MD.UserId)
-		userFull.BlockedMyStoriesFrom = c.svcCtx.Dao.Plugin.GetBlockedMyStoriesFrom(c.ctx, peerId, c.MD.UserId)
-		userFull.Stories_FLAGPEERSTORIES = c.svcCtx.Dao.Plugin.GetActiveStories(c.ctx, peerId, c.MD.UserId)
+	if c.svcCtx.Dao.StoryPlugin != nil {
+		userFull.StoriesPinnedAvailable = c.svcCtx.Dao.StoryPlugin.GetStoriesPinnedAvailable(c.ctx, peerId, c.MD.UserId)
+		userFull.BlockedMyStoriesFrom = c.svcCtx.Dao.StoryPlugin.GetBlockedMyStoriesFrom(c.ctx, peerId, c.MD.UserId)
+		userFull.Stories_FLAGPEERSTORIES = c.svcCtx.Dao.StoryPlugin.GetActiveStories(c.ctx, peerId, c.MD.UserId)
+	}
+
+	chats := make([]*mtproto.Chat, 0)
+
+	if c.svcCtx.Dao.PersonalChannelPlugin != nil {
+		personalChannelId := user.GetUser().GetPersonalChannelId()
+		if personalChannelId != 0 {
+			userFull.PersonalChannelId = mtproto.MakeFlagsInt64(personalChannelId)
+			pChannel, topMessageId := c.svcCtx.Dao.PersonalChannelPlugin.GetPersonalChannel(c.ctx, personalChannelId, c.MD.UserId)
+			if pChannel != nil {
+				userFull.PersonalChannelMessage = &wrapperspb.Int32Value{Value: topMessageId}
+				chats = append(chats, pChannel)
+			}
+		}
 	}
 
 	if c.MD.UserId != peerId {
@@ -243,7 +259,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 
 	return mtproto.MakeTLUsersUserFull(&mtproto.Users_UserFull{
 		FullUser: userFull,
-		Chats:    []*mtproto.Chat{},
+		Chats:    chats,
 		Users:    []*mtproto.User{user.ToUnsafeUser(me)},
 	}).To_Users_UserFull(), nil
 }

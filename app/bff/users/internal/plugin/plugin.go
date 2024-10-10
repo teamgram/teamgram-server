@@ -35,3 +35,7 @@ type StoryPlugin interface {
 	// stories	flags.25?PeerStories	Active stories »
 	GetActiveStories(ctx context.Context, peerUserId, toSelfUserId int64) *mtproto.PeerStories
 }
+
+type PersonalChannelPlugin interface {
+	GetPersonalChannel(ctx context.Context, channelId, toSelfUserId int64) (*mtproto.Chat, int32)
+}
