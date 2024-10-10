@@ -20,13 +20,20 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // AccountUpdatePersonalChannel
 // account.updatePersonalChannel#d94305e0 channel:InputChannel = Bool;
 func (c *UserProfileCore) AccountUpdatePersonalChannel(in *mtproto.TLAccountUpdatePersonalChannel) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.updatePersonalChannel blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	rV, err := c.svcCtx.Dao.UserClient.UserUpdatePersonalChannel(c.ctx, &user.TLUserUpdatePersonalChannel{
+		UserId:    c.MD.UserId,
+		ChannelId: in.GetChannel().GetChannelId(),
+	})
+	if err != nil {
+		c.Logger.Errorf("account.updatePersonalChannel - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return rV, nil
 }
