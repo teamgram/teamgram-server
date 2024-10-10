@@ -940,3 +940,24 @@ func (d *Dao) GetMutableUsersV2(ctx context.Context, idList2 []int64, privacy bo
 
 	return cUserList
 }
+
+func (d *Dao) UpdatePersonalChannel(ctx context.Context, id int64, personalChanelId int64) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.UsersDAO.UpdatePersonalChannelId(ctx, personalChanelId, id)
+
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updatePersonalChannel - error: %v", err)
+		return false
+	}
+
+	return true
+}

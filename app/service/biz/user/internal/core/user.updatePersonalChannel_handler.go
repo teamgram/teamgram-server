@@ -26,8 +26,10 @@ import (
 // UserUpdatePersonalChannel
 // user.updatePersonalChannel user_id:long channel_id:long = Bool;
 func (c *UserCore) UserUpdatePersonalChannel(in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("user.updatePersonalChannel blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	rB := c.svcCtx.Dao.UpdatePersonalChannel(
+		c.ctx,
+		in.GetUserId(),
+		in.GetChannelId())
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.ToBool(rB), nil
 }
