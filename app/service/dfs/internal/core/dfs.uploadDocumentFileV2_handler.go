@@ -190,14 +190,16 @@ func (c *DfsCore) DfsUploadDocumentFileV2(in *dfs.TLDfsUploadDocumentFileV2) (*m
 		document,
 		func(ctx context.Context) {
 			if isThumb {
-				_, err2 := c.svcCtx.Dao.PutDocumentFile(ctx,
+				_, err2 := c.svcCtx.Dao.PutDocumentFile(
+					ctx,
 					fmt.Sprintf("%d.dat", documentId),
 					bytes.NewReader(cacheData))
 				if err2 != nil {
 					c.Logger.Errorf("dfs.uploadDocumentFile - error: %v", err2)
 				}
 			} else {
-				_, err2 := c.svcCtx.Dao.PutDocumentFile(ctx,
+				_, err2 := c.svcCtx.Dao.PutDocumentFile(
+					ctx,
 					fmt.Sprintf("%d.dat", documentId),
 					c.svcCtx.Dao.NewSSDBReader(r.DfsFileInfo))
 				if err2 != nil {

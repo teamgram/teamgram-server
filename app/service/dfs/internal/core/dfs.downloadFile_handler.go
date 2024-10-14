@@ -45,7 +45,7 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 		//	id:long
 		//	access_hash:long = InputFileLocation;
 
-		bytes, err = c.svcCtx.Dao.GetCacheFile(c.ctx, "encryptedfiles", location.GetId(), offset, limit)
+		bytes, err = c.svcCtx.Dao.GetCacheFile(c.ctx, location.GetId(), offset, limit, c.svcCtx.Dao.MinioUtil.GetEncryptedFile)
 		if err != nil {
 			c.Logger.Errorf("download file: %v", err)
 			err = nil
@@ -61,10 +61,10 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 
 		if location.GetThumbSize() == "" {
 			// fileLocation := location.To_InputDocumentFileLocation()
-			bytes, err = c.svcCtx.Dao.GetCacheFile(c.ctx, "documents", location.GetId(), offset, limit)
+			bytes, err = c.svcCtx.Dao.GetCacheFile(c.ctx, location.GetId(), offset, limit, c.svcCtx.Dao.MinioUtil.GetDocumentFile)
 			if err != nil {
 				path := fmt.Sprintf("%d.dat", location.GetId())
-				bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "documents", path, offset, limit)
+				bytes, err = c.svcCtx.Dao.GetDocumentFile(c.ctx, path, offset, limit)
 				if err != nil {
 					c.Logger.Errorf("download file: %v", err)
 					err = nil
@@ -78,10 +78,10 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 			isVideo := mtproto.PhotoSizeIsVideo(location.GetThumbSize())
 			c.Logger.Infof("path: %s", path)
 			if isVideo {
-				bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "videos", path, offset, limit)
+				bytes, err = c.svcCtx.Dao.GetVideoFile(c.ctx, path, offset, limit)
 				sType = int32(mtproto.CRC32_storage_fileMp4)
 			} else {
-				bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "photos", path, offset, limit)
+				bytes, err = c.svcCtx.Dao.GetPhotoFile(c.ctx, path, offset, limit)
 				sType = int32(mtproto.CRC32_storage_fileJpeg)
 			}
 			if err != nil {
@@ -115,10 +115,10 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 		path := fmt.Sprintf("%s/%d.dat", location.GetThumbSize(), location.GetId())
 		// log.Debugf("path: %s", path)
 		if isVideo {
-			bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "videos", path, offset, limit)
+			bytes, err = c.svcCtx.Dao.GetVideoFile(c.ctx, path, offset, limit)
 			sType = int32(mtproto.CRC32_storage_fileMp4)
 		} else {
-			bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "photos", path, offset, limit)
+			bytes, err = c.svcCtx.Dao.GetPhotoFile(c.ctx, path, offset, limit)
 			sType = int32(location.GetAccessHash() >> 32)
 		}
 		if err != nil {
@@ -139,7 +139,7 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 			path = fmt.Sprintf("a/%d.dat", location.GetPhotoId())
 		}
 		// log.Debugf("path: %s", path)
-		bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "photos", path, offset, limit)
+		bytes, err = c.svcCtx.Dao.GetPhotoFile(c.ctx, path, offset, limit)
 		if err != nil {
 			c.Logger.Infof("download file: %v", err)
 			err = nil
@@ -151,7 +151,7 @@ func (c *DfsCore) DfsDownloadFile(in *dfs.TLDfsDownloadFile) (*mtproto.Upload_Fi
 
 		path := fmt.Sprintf("m/%d.dat", location.GetId())
 		c.Logger.Infof("path: %s", path)
-		bytes, err = c.svcCtx.Dao.GetFile(c.ctx, "photos", path, offset, limit)
+		bytes, err = c.svcCtx.Dao.GetPhotoFile(c.ctx, path, offset, limit)
 		if err != nil {
 			c.Logger.Infof("download file: %v", err)
 			err = nil

@@ -141,7 +141,8 @@ func (c *DfsCore) DfsUploadWallPaperFile(in *dfs.TLDfsUploadWallPaperFile) (*mtp
 	c.svcCtx.Dao.SetCacheFileInfo(c.ctx, documentId, r.DfsFileInfo)
 
 	go func() {
-		_, err2 := c.svcCtx.Dao.PutDocumentFile(context.Background(),
+		_, err2 := c.svcCtx.Dao.PutDocumentFile(
+			context.Background(),
 			fmt.Sprintf("%d.dat", documentId),
 			bytes.NewReader(cacheData))
 		if err2 != nil {

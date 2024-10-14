@@ -41,7 +41,7 @@ var (
 type (
 	MinioConfig = minio_util.MinioConfig
 	DFSHelper   = dao.Dao
-	MinioHelper = minio_util.MinioHelper
+	MinioHelper = minio_util.MinioUtil
 )
 
 // imaging - imaging

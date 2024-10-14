@@ -19,11 +19,13 @@
 package core
 
 import (
+	"os"
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
+
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"google.golang.org/protobuf/proto"
-	"io/ioutil"
-	"time"
 )
 
 const (
@@ -39,7 +41,7 @@ const (
 var config mtproto.TLConfig
 
 func init() {
-	configData, err := ioutil.ReadFile(configFile)
+	configData, err := os.ReadFile(configFile)
 	if err != nil {
 		panic(err)
 		return

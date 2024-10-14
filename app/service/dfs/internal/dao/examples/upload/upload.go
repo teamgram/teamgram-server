@@ -20,7 +20,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 
 	"github.com/teamgram/marmota/pkg/commands"
@@ -60,9 +59,9 @@ func (s *Server) RunLoop() {
 	}()
 
 	logx.Infof("aaaa", "aa")
-	// buf, err := ioutil.ReadFile("./test001.jpeg")
+	// buf, err := os.ReadFile("./test001.jpeg")
 	// ../../../../../../../tools/gif2mp4/safe_image.gif
-	buf, err := ioutil.ReadFile("../../../../../../../tools/gif2mp4/safe_image.gif")
+	buf, err := os.ReadFile("../../../../../../../tools/gif2mp4/safe_image.gif")
 	if err != nil {
 		logx.Error("open error: %v", err)
 		return

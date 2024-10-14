@@ -97,7 +97,13 @@ func (d *Dao) getCacheFileInfo(ctx context.Context, id int64) (ownerId, fileId i
 	return
 }
 
-func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset int64, limit int32) (bytes []byte, err error) {
+func (d *Dao) GetCacheFile(
+	ctx context.Context,
+	id int64,
+	offset int64,
+	limit int32,
+	takeF func(ctx context.Context, path string, offset int64, limit int32) (bytes []byte, err error),
+) (bytes []byte, err error) {
 	var (
 		cacheFile *model.DfsFileInfo
 		n         int
@@ -110,8 +116,7 @@ func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset 
 		bytes = make([]byte, limit)
 		n, err = r.Read(bytes)
 		if err != nil {
-			logx.WithContext(ctx).Errorf("getCacheFile(bucket: %s, id: %d, offset: %d, limit: %d) error :%v",
-				bucket,
+			logx.WithContext(ctx).Errorf("getCacheFile(id: %d, offset: %d, limit: %d) error :%v",
 				id,
 				offset,
 				limit,
@@ -121,10 +126,9 @@ func (d *Dao) GetCacheFile(ctx context.Context, bucket string, id int64, offset 
 		bytes = bytes[:n]
 	} else {
 		path := fmt.Sprintf("%d.dat", id)
-		bytes, err = d.GetFile(ctx, bucket, path, offset, limit)
+		bytes, err = takeF(ctx, path, offset, limit)
 		if err != nil {
-			logx.WithContext(ctx).Errorf("getCacheFile(bucket: %s, id: %d: %d, offset: %d, limit: %d) error :%v",
-				bucket,
+			logx.WithContext(ctx).Errorf("getCacheFile(id: %d: %d, offset: %d, limit: %d) error :%v",
 				id,
 				offset,
 				limit,
