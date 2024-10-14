@@ -49,3 +49,4 @@ teamgramd/logs/*
 /app/service/biz/username/cmd/username/username
 /app/service/media/internal/dao/examples/examples
 /app/service/status/cmd/cli/cli
+/app/service/dfs/internal/dao/examples/gif/testdata/
