@@ -183,9 +183,28 @@ func (m *MinioUtil) PutVideoFile(ctx context.Context, path string, buf []byte) (
 	options := s3PutOptions(false, contentType)
 	n, err = m.minio.Client.PutObject(ctx, m.c.Bucket.Videos, path, bytes.NewReader(buf), int64(len(buf)), options)
 	if err != nil {
-		logx.WithContext(ctx).Errorf("PutPhotoFile (%s) error: %v", path, err)
+		logx.WithContext(ctx).Errorf("PutVideoFile (%s) error: %v", path, err)
 	}
 
+	return
+}
+
+func (m *MinioUtil) PutVideoFileV2(ctx context.Context, path string, r io.Reader) (n minio.UploadInfo, err error) {
+	var (
+		contentType string
+	)
+
+	if ext := filepath.Ext(path); model.IsFileExtImage(ext) {
+		contentType = model.GetImageMimeType(ext)
+	} else {
+		contentType = "binary/octet-stream"
+	}
+
+	options := s3PutOptions(false, contentType)
+	n, err = m.minio.Client.PutObject(ctx, m.c.Bucket.Videos, path, r, -1, options)
+	if err != nil {
+		logx.Errorf("PutVideoFileV2 (%s) error: %v", path, err)
+	}
 	return
 }
 
