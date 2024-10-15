@@ -259,7 +259,6 @@ func (c *DfsCore) uploadHasThumbGifMp4Media(creatorId int64, media *mtproto.Inpu
 	}).To_Document()
 
 	return document, nil
-
 }
 
 func (c *DfsCore) uploadGifMp4Media(creatorId int64, media *mtproto.InputMedia) (*mtproto.Document, error) {
@@ -356,18 +355,18 @@ func (c *DfsCore) uploadGifMp4Media(creatorId int64, media *mtproto.InputMedia) 
 		VideoThumbs:   nil,
 		DcId:          1,
 		Attributes: []*mtproto.DocumentAttribute{
-			//mtproto.MakeTLDocumentAttributeImageSize(&mtproto.DocumentAttribute{
-			//	W: imgSize.W,
-			//	H: imgSize.H,
-			//}).To_DocumentAttribute(),
 			mtproto.MakeTLDocumentAttributeVideo(&mtproto.DocumentAttribute{
 				RoundMessage:      false,
 				SupportsStreaming: true,
+				Nosound:           false,
 				Duration:          float64(duration), // gif.mp4's duration
 				Duration_INT32:    duration,
 				Duration_FLOAT64:  float64(duration),
 				W:                 int32(gifThumb.Bounds().Dx()),
 				H:                 int32(gifThumb.Bounds().Dy()),
+				PreloadPrefixSize: nil,
+				VideoStartTs:      nil,
+				VideoCodec:        nil,
 			}).To_DocumentAttribute(),
 			mtproto.MakeTLDocumentAttributeFilename(&mtproto.DocumentAttribute{
 				FileName: media.GetFile().GetName() + ".mp4",
