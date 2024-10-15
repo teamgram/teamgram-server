@@ -39,10 +39,10 @@ func NewMessageReadOutboxDAO(db *sqlx.DB) *MessageReadOutboxDAO {
 }
 
 // InsertOrUpdate
-// insert into message_read_outbox(user_id, message_id, peer_type, peer_id, read_user_id, read_date) values (:user_id, :message_id, :peer_type, :peer_id, :read_user_id, :read_date) on duplicate key update read_date = values(read_date)
+// insert into message_read_outbox(user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date) values (:user_id, :peer_dialog_id, :read_user_id, :read_outbox_max_id, :read_outbox_max_date) on duplicate key update read_outbox_max_date = values(read_outbox_max_date)
 func (dao *MessageReadOutboxDAO) InsertOrUpdate(ctx context.Context, do *dataobject.MessageReadOutboxDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into message_read_outbox(user_id, message_id, peer_type, peer_id, read_user_id, read_date) values (:user_id, :message_id, :peer_type, :peer_id, :read_user_id, :read_date) on duplicate key update read_date = values(read_date)"
+		query = "insert into message_read_outbox(user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date) values (:user_id, :peer_dialog_id, :read_user_id, :read_outbox_max_id, :read_outbox_max_date) on duplicate key update read_outbox_max_date = values(read_outbox_max_date)"
 		r     sql.Result
 	)
 
@@ -66,10 +66,10 @@ func (dao *MessageReadOutboxDAO) InsertOrUpdate(ctx context.Context, do *dataobj
 }
 
 // InsertOrUpdateTx
-// insert into message_read_outbox(user_id, message_id, peer_type, peer_id, read_user_id, read_date) values (:user_id, :message_id, :peer_type, :peer_id, :read_user_id, :read_date) on duplicate key update read_date = values(read_date)
+// insert into message_read_outbox(user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date) values (:user_id, :peer_dialog_id, :read_user_id, :read_outbox_max_id, :read_outbox_max_date) on duplicate key update read_outbox_max_date = values(read_outbox_max_date)
 func (dao *MessageReadOutboxDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.MessageReadOutboxDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into message_read_outbox(user_id, message_id, peer_type, peer_id, read_user_id, read_date) values (:user_id, :message_id, :peer_type, :peer_id, :read_user_id, :read_date) on duplicate key update read_date = values(read_date)"
+		query = "insert into message_read_outbox(user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date) values (:user_id, :peer_dialog_id, :read_user_id, :read_outbox_max_id, :read_outbox_max_date) on duplicate key update read_outbox_max_date = values(read_outbox_max_date)"
 		r     sql.Result
 	)
 
@@ -93,13 +93,13 @@ func (dao *MessageReadOutboxDAO) InsertOrUpdateTx(tx *sqlx.Tx, do *dataobject.Me
 }
 
 // SelectList
-// select id, user_id, message_id, peer_type, peer_id, read_user_id, read_date from message_read_outbox where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and message_id = :message_id
-func (dao *MessageReadOutboxDAO) SelectList(ctx context.Context, userId int64, peerType int32, peerId int32, messageId int32) (rList []dataobject.MessageReadOutboxDO, err error) {
+// select id, user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date from message_read_outbox where user_id = :user_id and read_user_id = :read_user_id and read_outbox_max_id >= :read_outbox_max_id order by read_outbox_max_id asc limit 1
+func (dao *MessageReadOutboxDAO) SelectList(ctx context.Context, userId int64, readUserId int64, readOutboxMaxId int32) (rList []dataobject.MessageReadOutboxDO, err error) {
 	var (
-		query  = "select id, user_id, message_id, peer_type, peer_id, read_user_id, read_date from message_read_outbox where user_id = ? and peer_type = ? and peer_id = ? and message_id = ?"
+		query  = "select id, user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date from message_read_outbox where user_id = ? and read_user_id = ? and read_outbox_max_id >= ? order by read_outbox_max_id asc limit 1"
 		values []dataobject.MessageReadOutboxDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, peerType, peerId, messageId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)
@@ -112,13 +112,13 @@ func (dao *MessageReadOutboxDAO) SelectList(ctx context.Context, userId int64, p
 }
 
 // SelectListWithCB
-// select id, user_id, message_id, peer_type, peer_id, read_user_id, read_date from message_read_outbox where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and message_id = :message_id
-func (dao *MessageReadOutboxDAO) SelectListWithCB(ctx context.Context, userId int64, peerType int32, peerId int32, messageId int32, cb func(sz, i int, v *dataobject.MessageReadOutboxDO)) (rList []dataobject.MessageReadOutboxDO, err error) {
+// select id, user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date from message_read_outbox where user_id = :user_id and read_user_id = :read_user_id and read_outbox_max_id >= :read_outbox_max_id order by read_outbox_max_id asc limit 1
+func (dao *MessageReadOutboxDAO) SelectListWithCB(ctx context.Context, userId int64, readUserId int64, readOutboxMaxId int32, cb func(sz, i int, v *dataobject.MessageReadOutboxDO)) (rList []dataobject.MessageReadOutboxDO, err error) {
 	var (
-		query  = "select id, user_id, message_id, peer_type, peer_id, read_user_id, read_date from message_read_outbox where user_id = ? and peer_type = ? and peer_id = ? and message_id = ?"
+		query  = "select id, user_id, peer_dialog_id, read_user_id, read_outbox_max_id, read_outbox_max_date from message_read_outbox where user_id = ? and read_user_id = ? and read_outbox_max_id >= ? order by read_outbox_max_id asc limit 1"
 		values []dataobject.MessageReadOutboxDO
 	)
-	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, peerType, peerId, messageId)
+	err = dao.db.QueryRowsPartial(ctx, &values, query, userId, readUserId, readOutboxMaxId)
 
 	if err != nil {
 		logx.WithContext(ctx).Errorf("queryx in SelectList(_), error: %v", err)

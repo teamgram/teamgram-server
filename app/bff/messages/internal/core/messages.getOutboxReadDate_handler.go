@@ -63,7 +63,7 @@ func (c *MessagesCore) MessagesGetOutboxReadDate(in *mtproto.TLMessagesGetOutbox
 			if msgBox.PeerType != mtproto.PEER_USER {
 				c.Logger.Errorf("messages.getOutboxReadDate - only user peer is supported")
 				return mtproto.ErrPeerIdInvalid
-			} else if msgBox.UserId != peer.PeerId {
+			} else if msgBox.GetPeerId() != peer.PeerId {
 				c.Logger.Errorf("messages.getOutboxReadDate - only user peer is supported")
 				return mtproto.ErrPeerIdInvalid
 			}
@@ -85,7 +85,7 @@ func (c *MessagesCore) MessagesGetOutboxReadDate(in *mtproto.TLMessagesGetOutbox
 			}
 
 			// rList = rV.GetDatas()
-			if len(rList.GetDatas()) == 1 {
+			if len(rList.GetDatas()) != 1 {
 				c.Logger.Errorf("messages.getOutboxReadDate - len(rList) == 0")
 				return mtproto.ErrMessageNotReadYet
 			} else {

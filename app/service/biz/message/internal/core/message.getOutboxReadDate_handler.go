@@ -20,14 +20,40 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/message/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 )
 
 // MessageGetOutboxReadDate
 // message.getOutboxReadDate user_id:long peer_type:int peer_id:long msg_id:int = Vector<ReadParticipantDate>;
 func (c *MessageCore) MessageGetOutboxReadDate(in *message.TLMessageGetOutboxReadDate) (*message.Vector_ReadParticipantDate, error) {
-	// TODO: not impl
-	c.Logger.Errorf("message.getOutboxReadDate blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	var (
+		dateList []*mtproto.ReadParticipantDate
+	)
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	_, err := c.svcCtx.Dao.MessageReadOutboxDAO.SelectListWithCB(
+		c.ctx,
+		in.UserId,
+		in.PeerId,
+		in.MsgId,
+		func(sz, i int, v *dataobject.MessageReadOutboxDO) {
+			if i == 0 {
+				dateList = []*mtproto.ReadParticipantDate{
+					mtproto.MakeTLReadParticipantDate(&mtproto.ReadParticipantDate{
+						UserId: v.ReadUserId,
+						Date:   int32(v.ReadOutboxMaxDate),
+					}).To_ReadParticipantDate(),
+				}
+			}
+		})
+	if err != nil {
+		c.Logger.Errorf("message.getOutboxReadDate - error: %v", err)
+		return nil, err
+	} else if dateList == nil {
+		dateList = []*mtproto.ReadParticipantDate{}
+	}
+
+	return &message.Vector_ReadParticipantDate{
+		Datas: dateList,
+	}, nil
 }

@@ -23,6 +23,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	"time"
 )
 
 // InboxReadOutboxHistory
@@ -43,6 +44,17 @@ func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (
 			return nil, err
 		}
 		c.Logger.Infof("inbox.readOutboxHistory: %v", replyId)
+
+		// TODO: check if the message is already read
+		c.svcCtx.Dao.MessageReadOutboxDAO.InsertOrUpdate(
+			c.ctx,
+			&dataobject.MessageReadOutboxDO{
+				UserId:            in.UserId,
+				PeerDialogId:      mtproto.MakePeerDialogId(in.PeerType, in.PeerId),
+				ReadUserId:        in.PeerId,
+				ReadOutboxMaxId:   replyId.UserMessageBoxId,
+				ReadOutboxMaxDate: time.Now().Unix(),
+			})
 
 		c.svcCtx.Dao.DialogsDAO.UpdateReadOutboxMaxId(
 			c.ctx,

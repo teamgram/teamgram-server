@@ -30,14 +30,12 @@ func New(c Config, plugin plugin.MessagePlugin) *service.Service {
 type (
 	MessagesDAO = mysql_dao.MessagesDAO
 	MessagesDO  = dataobject.MessagesDO
-	// ChannelMessagesDAO   = mysql_dao.ChannelMessagesDAO
-	// ChannelMessagesDO    = dataobject.ChannelMessagesDO
-	// ScheduledMessagesDAO = mysql_dao.ScheduledMessagesDAO
-	// ScheduledMessagesDO  = dataobject.ScheduledMessagesDO
+
+	MessageReadOutboxDAO = mysql_dao.MessageReadOutboxDAO
+	MessageReadOutboxDO  = dataobject.MessageReadOutboxDO
 )
 
 var (
-	NewMessagesDAO = mysql_dao.NewMessagesDAO
-	// NewChannelMessagesDAO   = mysql_dao.NewChannelMessagesDAO
-	// NewScheduledMessagesDAO = mysql_dao.NewScheduledMessagesDAO
+	NewMessagesDAO          = mysql_dao.NewMessagesDAO
+	NewMessageReadOutboxDAO = mysql_dao.NewMessageReadOutboxDAO
 )

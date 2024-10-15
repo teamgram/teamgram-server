@@ -33,8 +33,8 @@
             WHERE
                 user_id = :user_id AND pinned > 0 AND deleted = 0
             ORDER BY pinned DESC
-            ]]>
-        </sql>
+`            ]]>
+`        </sql>
     </operation>
 
     <operation name="SelectExcludePinnedDialogs" result_set="list">
