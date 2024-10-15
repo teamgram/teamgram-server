@@ -41,7 +41,7 @@ func (c *MessagesCore) MessagesReadHistory(in *mtproto.TLMessagesReadHistory) (*
 	//	maxId = math.MaxInt32
 	//}
 
-	return c.svcCtx.Dao.MsgClient.MsgReadHistoryV2(
+	rV, err := c.svcCtx.Dao.MsgClient.MsgReadHistoryV2(
 		c.ctx,
 		&msgpb.TLMsgReadHistoryV2{
 			UserId:    c.MD.UserId,
@@ -50,13 +50,10 @@ func (c *MessagesCore) MessagesReadHistory(in *mtproto.TLMessagesReadHistory) (*
 			PeerId:    peer.PeerId,
 			MaxId:     maxId,
 		})
-	//return c.svcCtx.Dao.MsgClient.MsgReadHistory(
-	//	c.ctx,
-	//	&msgpb.TLMsgReadHistory{
-	//		UserId:    c.MD.UserId,
-	//		AuthKeyId: c.MD.PermAuthKeyId,
-	//		PeerType:  peer.PeerType,
-	//		PeerId:    peer.PeerId,
-	//		MaxId:     maxId,
-	//	})
+	if err != nil {
+		c.Logger.Errorf("messages.readHistory - error: %v", err)
+		return nil, err
+	}
+
+	return rV, nil
 }
