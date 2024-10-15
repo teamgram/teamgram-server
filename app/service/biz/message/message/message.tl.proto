@@ -42,6 +42,7 @@ enum TLConstructor {
     CRC32_message_getUnreadMentions = 1877050548;
     CRC32_message_getUnreadMentionsCount = -1254023095;
     CRC32_message_getSavedHistoryMessages = -60243377;
+    CRC32_message_getOutboxReadDate = -1353708502;
 }
 
 
@@ -251,6 +252,15 @@ message TL_message_getSavedHistoryMessages {
     int64 hash = 12;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_message_getOutboxReadDate {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 peer_type = 4;
+    int64 peer_id = 5;
+    int32 msg_id = 6;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -259,6 +269,9 @@ message Vector_MessageBox {
 }
 message Vector_Int {
     repeated int32 datas = 1;
+}
+message Vector_ReadParticipantDate {
+    repeated mtproto.ReadParticipantDate datas = 1;
 }
 
 
@@ -287,5 +300,6 @@ service RPCMessage {
  rpc message_getUnreadMentions(TL_message_getUnreadMentions) returns (Vector_MessageBox) {}
  rpc message_getUnreadMentionsCount(TL_message_getUnreadMentionsCount) returns (mtproto.Int32) {}
  rpc message_getSavedHistoryMessages(TL_message_getSavedHistoryMessages) returns (mtproto.MessageBoxList) {}
+ rpc message_getOutboxReadDate(TL_message_getOutboxReadDate) returns (Vector_ReadParticipantDate) {}
 }
 

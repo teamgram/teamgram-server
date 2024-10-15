@@ -8,7 +8,7 @@
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package message_client
+package messageclient
 
 import (
 	"context"
@@ -43,6 +43,7 @@ type MessageClient interface {
 	MessageGetUnreadMentions(ctx context.Context, in *message.TLMessageGetUnreadMentions) (*message.Vector_MessageBox, error)
 	MessageGetUnreadMentionsCount(ctx context.Context, in *message.TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
 	MessageGetSavedHistoryMessages(ctx context.Context, in *message.TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error)
+	MessageGetOutboxReadDate(ctx context.Context, in *message.TLMessageGetOutboxReadDate) (*message.Vector_ReadParticipantDate, error)
 }
 
 type defaultMessageClient struct {
@@ -200,4 +201,11 @@ func (m *defaultMessageClient) MessageGetUnreadMentionsCount(ctx context.Context
 func (m *defaultMessageClient) MessageGetSavedHistoryMessages(ctx context.Context, in *message.TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error) {
 	client := message.NewRPCMessageClient(m.cli.Conn())
 	return client.MessageGetSavedHistoryMessages(ctx, in)
+}
+
+// MessageGetOutboxReadDate
+// message.getOutboxReadDate user_id:long peer_type:int peer_id:long msg_id:int = Vector<ReadParticipantDate>;
+func (m *defaultMessageClient) MessageGetOutboxReadDate(ctx context.Context, in *message.TLMessageGetOutboxReadDate) (*message.Vector_ReadParticipantDate, error) {
+	client := message.NewRPCMessageClient(m.cli.Conn())
+	return client.MessageGetOutboxReadDate(ctx, in)
 }

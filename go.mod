@@ -14,7 +14,7 @@ require (
 	github.com/panjf2000/gnet/v2 v2.5.9
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
-	github.com/teamgram/proto v0.189.2-0.20241015024424-d2fdd5c3ce82
+	github.com/teamgram/proto v0.189.2-0.20241015144103-1ec79a3f7dd5
 	github.com/zeromicro/go-zero v1.7.2
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1

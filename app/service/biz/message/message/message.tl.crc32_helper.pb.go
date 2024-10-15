@@ -33,4 +33,5 @@ const (
 	CRC32_message_getUnreadMentions                    TLConstructor = 1877050548  // 0x6fe184b4
 	CRC32_message_getUnreadMentionsCount               TLConstructor = -1254023095 // 0xb5412049
 	CRC32_message_getSavedHistoryMessages              TLConstructor = -60243377   // 0xfc68c24f
+	CRC32_message_getOutboxReadDate                    TLConstructor = -1353708502 // 0xaf500c2a
 )

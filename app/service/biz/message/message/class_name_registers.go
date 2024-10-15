@@ -32,6 +32,7 @@ const (
 	Predicate_message_getUnreadMentions                    = "message_getUnreadMentions"
 	Predicate_message_getUnreadMentionsCount               = "message_getUnreadMentionsCount"
 	Predicate_message_getSavedHistoryMessages              = "message_getSavedHistoryMessages"
+	Predicate_message_getOutboxReadDate                    = "message_getOutboxReadDate"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -119,6 +120,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -60243377, // 0xfc68c24f
 
 	},
+	Predicate_message_getOutboxReadDate: {
+		0: -1353708502, // 0xaf500c2a
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -143,6 +148,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1877050548:  Predicate_message_getUnreadMentions,                    // 0x6fe184b4
 	-1254023095: Predicate_message_getUnreadMentionsCount,               // 0xb5412049
 	-60243377:   Predicate_message_getSavedHistoryMessages,              // 0xfc68c24f
+	-1353708502: Predicate_message_getOutboxReadDate,                    // 0xaf500c2a
 
 }
 

@@ -50,6 +50,7 @@ const (
 	RPCMessage_MessageGetUnreadMentions_FullMethodName                    = "/message.RPCMessage/message_getUnreadMentions"
 	RPCMessage_MessageGetUnreadMentionsCount_FullMethodName               = "/message.RPCMessage/message_getUnreadMentionsCount"
 	RPCMessage_MessageGetSavedHistoryMessages_FullMethodName              = "/message.RPCMessage/message_getSavedHistoryMessages"
+	RPCMessage_MessageGetOutboxReadDate_FullMethodName                    = "/message.RPCMessage/message_getOutboxReadDate"
 )
 
 // RPCMessageClient is the client API for RPCMessage service.
@@ -77,6 +78,7 @@ type RPCMessageClient interface {
 	MessageGetUnreadMentions(ctx context.Context, in *TLMessageGetUnreadMentions, opts ...grpc.CallOption) (*Vector_MessageBox, error)
 	MessageGetUnreadMentionsCount(ctx context.Context, in *TLMessageGetUnreadMentionsCount, opts ...grpc.CallOption) (*mtproto.Int32, error)
 	MessageGetSavedHistoryMessages(ctx context.Context, in *TLMessageGetSavedHistoryMessages, opts ...grpc.CallOption) (*mtproto.MessageBoxList, error)
+	MessageGetOutboxReadDate(ctx context.Context, in *TLMessageGetOutboxReadDate, opts ...grpc.CallOption) (*Vector_ReadParticipantDate, error)
 }
 
 type rPCMessageClient struct {
@@ -276,6 +278,15 @@ func (c *rPCMessageClient) MessageGetSavedHistoryMessages(ctx context.Context, i
 	return out, nil
 }
 
+func (c *rPCMessageClient) MessageGetOutboxReadDate(ctx context.Context, in *TLMessageGetOutboxReadDate, opts ...grpc.CallOption) (*Vector_ReadParticipantDate, error) {
+	out := new(Vector_ReadParticipantDate)
+	err := c.cc.Invoke(ctx, RPCMessage_MessageGetOutboxReadDate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCMessageServer is the server API for RPCMessage service.
 // All implementations should embed UnimplementedRPCMessageServer
 // for forward compatibility
@@ -301,6 +312,7 @@ type RPCMessageServer interface {
 	MessageGetUnreadMentions(context.Context, *TLMessageGetUnreadMentions) (*Vector_MessageBox, error)
 	MessageGetUnreadMentionsCount(context.Context, *TLMessageGetUnreadMentionsCount) (*mtproto.Int32, error)
 	MessageGetSavedHistoryMessages(context.Context, *TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error)
+	MessageGetOutboxReadDate(context.Context, *TLMessageGetOutboxReadDate) (*Vector_ReadParticipantDate, error)
 }
 
 // UnimplementedRPCMessageServer should be embedded to have forward compatible implementations.
@@ -369,6 +381,9 @@ func (UnimplementedRPCMessageServer) MessageGetUnreadMentionsCount(context.Conte
 }
 func (UnimplementedRPCMessageServer) MessageGetSavedHistoryMessages(context.Context, *TLMessageGetSavedHistoryMessages) (*mtproto.MessageBoxList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MessageGetSavedHistoryMessages not implemented")
+}
+func (UnimplementedRPCMessageServer) MessageGetOutboxReadDate(context.Context, *TLMessageGetOutboxReadDate) (*Vector_ReadParticipantDate, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MessageGetOutboxReadDate not implemented")
 }
 
 // UnsafeRPCMessageServer may be embedded to opt out of forward compatibility for this service.
@@ -760,6 +775,24 @@ func _RPCMessage_MessageGetSavedHistoryMessages_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCMessage_MessageGetOutboxReadDate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLMessageGetOutboxReadDate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCMessageServer).MessageGetOutboxReadDate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCMessage_MessageGetOutboxReadDate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCMessageServer).MessageGetOutboxReadDate(ctx, req.(*TLMessageGetOutboxReadDate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCMessage_ServiceDesc is the grpc.ServiceDesc for RPCMessage service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -850,6 +883,10 @@ var RPCMessage_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "message_getSavedHistoryMessages",
 			Handler:    _RPCMessage_MessageGetSavedHistoryMessages_Handler,
+		},
+		{
+			MethodName: "message_getOutboxReadDate",
+			Handler:    _RPCMessage_MessageGetOutboxReadDate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

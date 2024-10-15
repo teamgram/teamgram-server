@@ -136,6 +136,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -60243377,
 		}
 	},
+	-1353708502: func() mtproto.TLObject { // 0xaf500c2a
+		return &TLMessageGetOutboxReadDate{
+			Constructor: -1353708502,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1119,6 +1124,50 @@ func (m *TLMessageGetSavedHistoryMessages) Decode(dBuf *mtproto.DecodeBuf) error
 	return dBuf.GetError()
 }
 
+// TLMessageGetOutboxReadDate
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMessageGetOutboxReadDate) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xaf500c2a:
+		x.UInt(0xaf500c2a)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetMsgId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMessageGetOutboxReadDate) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMessageGetOutboxReadDate) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xaf500c2a:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MsgId = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
 // Vector_MessageBox
 // /////////////////////////////////////////////////////////////////////////////
 func (m *Vector_MessageBox) Encode(x *mtproto.EncodeBuf, layer int32) error {
@@ -1162,5 +1211,33 @@ func (m *Vector_Int) Decode(dBuf *mtproto.DecodeBuf) error {
 }
 
 func (m *Vector_Int) CalcByteSize(layer int32) int {
+	return 0
+}
+
+// Vector_ReadParticipantDate
+// /////////////////////////////////////////////////////////////////////////////
+func (m *Vector_ReadParticipantDate) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	x.Int(int32(mtproto.CRC32_vector))
+	x.Int(int32(len(m.Datas)))
+	for _, v := range m.Datas {
+		v.Encode(x, layer)
+	}
+
+	return nil
+}
+
+func (m *Vector_ReadParticipantDate) Decode(dBuf *mtproto.DecodeBuf) error {
+	dBuf.Int() // TODO(@benqi): Check crc32 invalid
+	l1 := dBuf.Int()
+	m.Datas = make([]*mtproto.ReadParticipantDate, l1)
+	for i := int32(0); i < l1; i++ {
+		m.Datas[i] = new(mtproto.ReadParticipantDate)
+		(*m.Datas[i]).Decode(dBuf)
+	}
+
+	return dBuf.GetError()
+}
+
+func (m *Vector_ReadParticipantDate) CalcByteSize(layer int32) int {
 	return 0
 }
