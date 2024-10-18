@@ -95,6 +95,7 @@ type UserClient interface {
 	UserGetBirthdays(ctx context.Context, in *user.TLUserGetBirthdays) (*user.Vector_ContactBirthday, error)
 	UserSetStoriesHidden(ctx context.Context, in *user.TLUserSetStoriesHidden) (*mtproto.Bool, error)
 	UserUpdatePersonalChannel(ctx context.Context, in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error)
+	UserGetUserIdByPhone(ctx context.Context, in *user.TLUserGetUserIdByPhone) (*mtproto.Int64, error)
 }
 
 type defaultUserClient struct {
@@ -616,4 +617,11 @@ func (m *defaultUserClient) UserSetStoriesHidden(ctx context.Context, in *user.T
 func (m *defaultUserClient) UserUpdatePersonalChannel(ctx context.Context, in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserUpdatePersonalChannel(ctx, in)
+}
+
+// UserGetUserIdByPhone
+// user.getUserIdByPhone phone:string = Int64;
+func (m *defaultUserClient) UserGetUserIdByPhone(ctx context.Context, in *user.TLUserGetUserIdByPhone) (*mtproto.Int64, error) {
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetUserIdByPhone(ctx, in)
 }

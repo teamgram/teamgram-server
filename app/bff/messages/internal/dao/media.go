@@ -134,11 +134,11 @@ func GetMessageMedia(ctx context.Context, d MediaHelper, userId, ownerId int64, 
 
 		phoneNumber, err := phonenumber.CheckAndGetPhoneNumber(contact.GetPhoneNumber())
 		if err == nil {
-			contactUser, _ := d.UserGetImmutableUserByPhone(ctx, &userpb.TLUserGetImmutableUserByPhone{
+			cId, _ := d.UserGetUserIdByPhone(ctx, &userpb.TLUserGetUserIdByPhone{
 				Phone: phoneNumber,
 			})
-			if contactUser != nil {
-				messageMedia.UserId = contactUser.Id()
+			if cId != nil {
+				messageMedia.UserId = cId.GetV()
 			}
 		}
 	case mtproto.Predicate_inputMediaUploadedDocument:

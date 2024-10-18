@@ -20,13 +20,69 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // ContactsResolvePhone
 // contacts.resolvePhone#8af94344 phone:string = contacts.ResolvedPeer;
 func (c *UsersCore) ContactsResolvePhone(in *mtproto.TLContactsResolvePhone) (*mtproto.Contacts_ResolvedPeer, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.resolvePhone blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	id, err := c.svcCtx.Dao.UserClient.UserGetUserIdByPhone(c.ctx, &userpb.TLUserGetUserIdByPhone{
+		Phone: in.GetPhone(),
+	})
+	if err != nil {
+		c.Logger.Errorf("contacts.resolvePhone - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	var (
+		allow = false
+	)
+
+	contactList, err := c.svcCtx.Dao.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+		Id:      []int64{id.GetV(), c.MD.UserId},
+		Privacy: true,
+		HasTo:   true,
+		To:      []int64{c.MD.UserId},
+	})
+	if err != nil {
+		c.Logger.Errorf("contacts.resolvePhone - error: %v", err)
+		return nil, mtproto.ErrPhoneNotOccupied
+	}
+
+	me, _ := contactList.GetImmutableUser(c.MD.UserId)
+	resolved, _ := contactList.GetImmutableUser(id.GetV())
+
+	if me == nil || resolved == nil {
+		err = mtproto.ErrInternalServerError
+		c.Logger.Errorf("users.getFullUser - error: %v", err)
+		return nil, err
+	}
+
+	rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
+		UserId:  id.GetV(),
+		KeyType: mtproto.ADDED_BY_PHONE,
+	})
+	if rules != nil && len(rules.Datas) > 0 {
+		allow = mtproto.CheckPrivacyIsAllow(
+			c.MD.UserId,
+			rules.Datas,
+			id.GetV(),
+			func(id, checkId int64) bool {
+				contact, _ := resolved.CheckContact(checkId)
+				return contact
+			},
+			func(checkId int64, idList []int64) bool {
+				return false
+			})
+	}
+	if !allow {
+		c.Logger.Errorf("contacts.resolvePhone - error: %v", err)
+		return nil, mtproto.ErrPhoneNotOccupied
+	}
+
+	return mtproto.MakeTLContactsResolvedPeer(&mtproto.Contacts_ResolvedPeer{
+		Peer:  mtproto.MakePeerUser(id.GetV()),
+		Chats: []*mtproto.Chat{},
+		Users: []*mtproto.User{resolved.ToUnsafeUser(me)},
+	}).To_Contacts_ResolvedPeer(), nil
 }

@@ -27,6 +27,7 @@ import (
 
 const (
 	cacheUserDataKeyPrefix = "user_data.2"
+	cachePhoneUserPrefix   = "phone_user.1"
 )
 
 var (
@@ -35,6 +36,10 @@ var (
 
 func genCacheUserDataCacheKey(id int64) string {
 	return fmt.Sprintf("%s#%d", cacheUserDataKeyPrefix, id)
+}
+
+func genCachePhoneUserKey(id string) string {
+	return fmt.Sprintf("%s#%s", cachePhoneUserPrefix, id)
 }
 
 func parseCacheUserDataCacheKey(k string) int64 {
@@ -309,4 +314,34 @@ func (d *Dao) GetCacheUserDataListByIdList(ctx context.Context, idList []int64) 
 		keyList...)
 
 	return cDataList
+}
+
+func (d *Dao) GetUserIdByPhone(ctx context.Context, phone string) (int64, error) {
+	var (
+		id int64
+	)
+
+	err := d.CachedConn.QueryRow(
+		ctx,
+		&id,
+		genCachePhoneUserKey(phone),
+		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+			do, err := d.UsersDAO.SelectByPhoneNumber(ctx, phone)
+			if err != nil {
+				return err
+			} else if do == nil {
+				return mtproto.ErrPhoneNotOccupied
+			}
+
+			*v.(*int64) = do.Id
+
+			return nil
+		})
+
+	if err != nil {
+		// logx.WithContext(ctx).Errorf("GetUserIdByPhone(%s) - error: %v", phone, err)
+		return 0, err
+	}
+
+	return id, nil
 }

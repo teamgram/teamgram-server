@@ -121,11 +121,11 @@ func (c *FilesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (messageMed
 
 		phoneNumber, err := phonenumber.CheckAndGetPhoneNumber(contact.GetPhoneNumber())
 		if err == nil {
-			contactUser, _ := c.svcCtx.Dao.UserClient.UserGetImmutableUserByPhone(c.ctx, &userpb.TLUserGetImmutableUserByPhone{
+			cId, _ := c.svcCtx.Dao.UserClient.UserGetUserIdByPhone(c.ctx, &userpb.TLUserGetUserIdByPhone{
 				Phone: phoneNumber,
 			})
-			if contactUser != nil {
-				messageMedia.UserId = contactUser.Id()
+			if cId != nil {
+				messageMedia.UserId = cId.GetV()
 			}
 		}
 	case mtproto.Predicate_inputMediaUploadedDocument:

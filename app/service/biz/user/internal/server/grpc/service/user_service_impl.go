@@ -1112,3 +1112,18 @@ func (s *Service) UserUpdatePersonalChannel(ctx context.Context, request *user.T
 	c.Logger.Debugf("user.updatePersonalChannel - reply: {%s}", r)
 	return r, err
 }
+
+// UserGetUserIdByPhone
+// user.getUserIdByPhone phone:string = Int64;
+func (s *Service) UserGetUserIdByPhone(ctx context.Context, request *user.TLUserGetUserIdByPhone) (*mtproto.Int64, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getUserIdByPhone - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserGetUserIdByPhone(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getUserIdByPhone - reply: {%s}", r)
+	return r, err
+}

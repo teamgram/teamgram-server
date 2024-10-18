@@ -421,6 +421,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -940065072,
 		}
 	},
+	-72645694: func() mtproto.TLObject { // 0xfbab83c2
+		return &TLUserGetUserIdByPhone{
+			Constructor: -72645694,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4336,6 +4341,44 @@ func (m *TLUserUpdatePersonalChannel) Decode(dBuf *mtproto.DecodeBuf) error {
 
 		m.UserId = dBuf.Long()
 		m.ChannelId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserGetUserIdByPhone
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetUserIdByPhone) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xfbab83c2:
+		x.UInt(0xfbab83c2)
+
+		// no flags
+
+		x.String(m.GetPhone())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserGetUserIdByPhone) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetUserIdByPhone) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfbab83c2:
+
+		// not has flags
+
+		m.Phone = dBuf.String()
 		return dBuf.GetError()
 
 	default:

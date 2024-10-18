@@ -102,6 +102,7 @@ const (
 	RPCUser_UserGetBirthdays_FullMethodName                 = "/user.RPCUser/user_getBirthdays"
 	RPCUser_UserSetStoriesHidden_FullMethodName             = "/user.RPCUser/user_setStoriesHidden"
 	RPCUser_UserUpdatePersonalChannel_FullMethodName        = "/user.RPCUser/user_updatePersonalChannel"
+	RPCUser_UserGetUserIdByPhone_FullMethodName             = "/user.RPCUser/user_getUserIdByPhone"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -181,6 +182,7 @@ type RPCUserClient interface {
 	UserGetBirthdays(ctx context.Context, in *TLUserGetBirthdays, opts ...grpc.CallOption) (*Vector_ContactBirthday, error)
 	UserSetStoriesHidden(ctx context.Context, in *TLUserSetStoriesHidden, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserUpdatePersonalChannel(ctx context.Context, in *TLUserUpdatePersonalChannel, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserGetUserIdByPhone(ctx context.Context, in *TLUserGetUserIdByPhone, opts ...grpc.CallOption) (*mtproto.Int64, error)
 }
 
 type rPCUserClient struct {
@@ -848,6 +850,15 @@ func (c *rPCUserClient) UserUpdatePersonalChannel(ctx context.Context, in *TLUse
 	return out, nil
 }
 
+func (c *rPCUserClient) UserGetUserIdByPhone(ctx context.Context, in *TLUserGetUserIdByPhone, opts ...grpc.CallOption) (*mtproto.Int64, error) {
+	out := new(mtproto.Int64)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetUserIdByPhone_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility
@@ -925,6 +936,7 @@ type RPCUserServer interface {
 	UserGetBirthdays(context.Context, *TLUserGetBirthdays) (*Vector_ContactBirthday, error)
 	UserSetStoriesHidden(context.Context, *TLUserSetStoriesHidden) (*mtproto.Bool, error)
 	UserUpdatePersonalChannel(context.Context, *TLUserUpdatePersonalChannel) (*mtproto.Bool, error)
+	UserGetUserIdByPhone(context.Context, *TLUserGetUserIdByPhone) (*mtproto.Int64, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have forward compatible implementations.
@@ -1149,6 +1161,9 @@ func (UnimplementedRPCUserServer) UserSetStoriesHidden(context.Context, *TLUserS
 }
 func (UnimplementedRPCUserServer) UserUpdatePersonalChannel(context.Context, *TLUserUpdatePersonalChannel) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserUpdatePersonalChannel not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetUserIdByPhone(context.Context, *TLUserGetUserIdByPhone) (*mtproto.Int64, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetUserIdByPhone not implemented")
 }
 
 // UnsafeRPCUserServer may be embedded to opt out of forward compatibility for this service.
@@ -2476,6 +2491,24 @@ func _RPCUser_UserUpdatePersonalChannel_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserGetUserIdByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetUserIdByPhone)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetUserIdByPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetUserIdByPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetUserIdByPhone(ctx, req.(*TLUserGetUserIdByPhone))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2774,6 +2807,10 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_updatePersonalChannel",
 			Handler:    _RPCUser_UserUpdatePersonalChannel_Handler,
+		},
+		{
+			MethodName: "user_getUserIdByPhone",
+			Handler:    _RPCUser_UserGetUserIdByPhone_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
