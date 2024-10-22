@@ -91,7 +91,13 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 			dlgDO.UnreadMark = false
 		}
 
-		c.svcCtx.Dao.DialogsDAO.InsertIgnore(c.ctx, dlgDO)
+		c.svcCtx.Dao.CachedConn.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				_, _, err2 := c.svcCtx.Dao.DialogsDAO.InsertIgnore(c.ctx, dlgDO)
+				return 0, 0, err2
+			},
+			dialog.GetDialogCacheKey(dlgDO.UserId, dlgDO.PeerDialogId))
 	}
 
 	return mtproto.BoolTrue, nil

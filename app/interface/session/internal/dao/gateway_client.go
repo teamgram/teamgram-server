@@ -47,8 +47,8 @@ func NewGateway(c zrpc.RpcClientConf) (*Gateway, error) {
 
 	cli, err := zrpc.NewClient(
 		c,
-		zrpc.WithDialOption(grpc.WithReadBufferSize(64*1024*1024)),
-		zrpc.WithDialOption(grpc.WithWriteBufferSize(64*1024*1024)))
+		zrpc.WithDialOption(grpc.WithReadBufferSize(16*1024*1024)),
+		zrpc.WithDialOption(grpc.WithWriteBufferSize(16*1024*1024)))
 	if err != nil {
 		logx.Errorf("watchComet NewClient(%+v) error(%v)", c, err)
 		return nil, err
