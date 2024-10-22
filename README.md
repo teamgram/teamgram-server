@@ -38,7 +38,7 @@ If you have the above components, it is recommended to use them directly. If not
 
 
 ### Source code deployment
-#### Install [Go environment](https://go.dev/doc/install). Make sure Go version is at least 1.19.
+#### Install [Go environment](https://go.dev/doc/install). Make sure Go version is at least 1.21.
 
 
 #### Get source code　
