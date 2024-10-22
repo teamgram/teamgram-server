@@ -16,6 +16,31 @@ import (
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
+func (d *Dao) GetNoCachePinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	_, err := d.DialogsDAO.SelectPinnedDialogsWithCB(
+		ctx,
+		userId,
+		func(sz, i int, v *dataobject.DialogsDO) {
+			if i == 0 {
+				dialogIdList = make([]int64, 0, sz)
+			}
+			dialogIdList = append(dialogIdList, v.PeerDialogId)
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
 func (d *Dao) GetPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
 	var (
 		dialogIdList []int64
@@ -46,6 +71,31 @@ func (d *Dao) GetPinnedDialogIdList(ctx context.Context, userId int64) ([]int64,
 			*v.(*[]int64) = idList
 
 			return nil
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
+func (d *Dao) GetNoCacheNotPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	_, err := d.DialogsDAO.SelectExcludePinnedDialogsWithCB(
+		ctx,
+		userId,
+		func(sz, i int, v *dataobject.DialogsDO) {
+			if i == 0 {
+				dialogIdList = make([]int64, 0, sz)
+			}
+			dialogIdList = append(dialogIdList, v.PeerDialogId)
 		})
 	if err != nil {
 		return nil, err
@@ -100,6 +150,31 @@ func (d *Dao) GetNotPinnedDialogIdList(ctx context.Context, userId int64) ([]int
 	return dialogIdList, nil
 }
 
+func (d *Dao) GetNoCacheFolderPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	_, err := d.DialogsDAO.SelectFolderPinnedDialogsWithCB(
+		ctx,
+		userId,
+		func(sz, i int, v *dataobject.DialogsDO) {
+			if i == 0 {
+				dialogIdList = make([]int64, 0, sz)
+			}
+			dialogIdList = append(dialogIdList, v.PeerDialogId)
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
 func (d *Dao) GetFolderPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
 	var (
 		dialogIdList []int64
@@ -130,6 +205,31 @@ func (d *Dao) GetFolderPinnedDialogIdList(ctx context.Context, userId int64) ([]
 			*v.(*[]int64) = idList
 
 			return nil
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
+func (d *Dao) GetNoCacheFolderNotPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	_, err := d.DialogsDAO.SelectExcludeFolderPinnedDialogsWithCB(
+		ctx,
+		userId,
+		func(sz, i int, v *dataobject.DialogsDO) {
+			if i == 0 {
+				dialogIdList = make([]int64, 0, sz)
+			}
+			dialogIdList = append(dialogIdList, v.PeerDialogId)
 		})
 	if err != nil {
 		return nil, err

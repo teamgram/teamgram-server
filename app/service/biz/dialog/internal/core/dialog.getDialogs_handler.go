@@ -90,19 +90,23 @@ func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Ve
 
 	// excludePinned
 	if folderId == 0 {
-		idList, _ := c.svcCtx.Dao.GetNotPinnedDialogIdList(c.ctx, meId)
+		// idList, _ := c.svcCtx.Dao.GetNotPinnedDialogIdList(c.ctx, meId)
+		idList, _ := c.svcCtx.Dao.GetNoCacheNotPinnedDialogIdList(c.ctx, meId)
 		dlgExtIdList = append(dlgExtIdList, idList...)
 	} else {
-		idList, _ := c.svcCtx.Dao.GetFolderNotPinnedDialogIdList(c.ctx, meId)
+		// idList, _ := c.svcCtx.Dao.GetFolderNotPinnedDialogIdList(c.ctx, meId)
+		idList, _ := c.svcCtx.Dao.GetNoCacheFolderNotPinnedDialogIdList(c.ctx, meId)
 		dlgExtIdList = append(dlgExtIdList, idList...)
 	}
 
 	if !excludePinned {
 		if folderId == 0 {
-			idList, _ := c.svcCtx.Dao.GetPinnedDialogIdList(c.ctx, meId)
+			// idList, _ := c.svcCtx.Dao.GetPinnedDialogIdList(c.ctx, meId)
+			idList, _ := c.svcCtx.Dao.GetNoCachePinnedDialogIdList(c.ctx, meId)
 			dlgExtIdList = append(dlgExtIdList, idList...)
 		} else {
-			idList, _ := c.svcCtx.Dao.GetFolderPinnedDialogIdList(c.ctx, meId)
+			// idList, _ := c.svcCtx.Dao.GetFolderPinnedDialogIdList(c.ctx, meId)
+			idList, _ := c.svcCtx.Dao.GetNoCacheFolderPinnedDialogIdList(c.ctx, meId)
 			dlgExtIdList = append(dlgExtIdList, idList...)
 		}
 	}
