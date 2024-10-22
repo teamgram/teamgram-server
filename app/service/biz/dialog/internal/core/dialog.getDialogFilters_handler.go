@@ -30,7 +30,7 @@ func (c *DialogCore) DialogGetDialogFilters(in *dialog.TLDialogGetDialogFilters)
 	c.svcCtx.Dao.CachedConn.QueryRow(
 		c.ctx,
 		&dialogFilterExtList,
-		dialog.GenDialogFilterCacheKey(in.UserId),
+		dialog.GetDialogFilterCacheKey(in.UserId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			// vList :=
 			var (

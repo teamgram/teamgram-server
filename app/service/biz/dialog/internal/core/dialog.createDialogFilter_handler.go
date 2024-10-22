@@ -42,7 +42,7 @@ func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFil
 	c.svcCtx.Dao.CachedConn.QueryRow(
 		c.ctx,
 		&dialogFilterExtList,
-		dialog.GenDialogFilterCacheKey(in.UserId),
+		dialog.GetDialogFilterCacheKey(in.UserId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			var (
 				vList []*dialog.DialogFilterExt
@@ -114,7 +114,7 @@ func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFil
 				Deleted:        false,
 			})
 		},
-		dialog.GenDialogFilterCacheKey(in.UserId))
+		dialog.GetDialogFilterCacheKey(in.UserId))
 
 	return dialogExt, nil
 }

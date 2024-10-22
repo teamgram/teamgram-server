@@ -10,11 +10,12 @@
 package core
 
 import (
+	"context"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
 )
 
 // DialogToggleDialogPin
@@ -23,27 +24,15 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 	var (
 		peerDialogId = mtproto.MakePeerDialogId(in.PeerType, in.PeerId)
 		pinned       int64
-		folderId     int32
-		dialogDO     *dataobject.DialogsDO
 	)
 
-	_, err := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(c.ctx,
-		in.UserId,
-		[]int64{peerDialogId},
-		func(sz, i int, v *dataobject.DialogsDO) {
-			dialogDO = v
-			folderId = v.FolderId
-		})
+	dlgExt, err := c.svcCtx.Dao.GetDialogByPeerDialogId(c.ctx, in.GetUserId(), peerDialogId)
 	if err != nil {
 		c.Logger.Errorf("dialog.toggleDialogPin - error: %v", err)
 		return nil, err
 	}
 
-	if dialogDO == nil {
-		err = mtproto.ErrPeerIdInvalid
-		c.Logger.Errorf("dialog.toggleDialogPin - error: %v", err)
-		return nil, err
-	}
+	folderId := dlgExt.GetDialog().GetFolderId().GetValue()
 
 	if mtproto.FromBool(in.Pinned) {
 		pinned = time.Now().Unix() << 32
@@ -52,9 +41,23 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 	}
 
 	if folderId == 0 {
-		c.svcCtx.Dao.DialogsDAO.UpdatePeerDialogListPinned(c.ctx, pinned, in.UserId, []int64{peerDialogId})
+		c.svcCtx.Dao.CachedConn.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				c.svcCtx.Dao.DialogsDAO.UpdatePeerDialogListPinned(c.ctx, pinned, in.UserId, []int64{peerDialogId})
+				return 0, 0, nil
+			},
+			dialog.GetDialogCacheKey(in.GetUserId(), peerDialogId),
+			dialog.GetPinnedDialogListCacheKey(in.GetUserId()))
 	} else {
-		c.svcCtx.Dao.DialogsDAO.UpdateFolderPeerDialogListPinned(c.ctx, pinned, in.UserId, []int64{peerDialogId})
+		c.svcCtx.Dao.CachedConn.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				c.svcCtx.Dao.DialogsDAO.UpdateFolderPeerDialogListPinned(c.ctx, pinned, in.UserId, []int64{peerDialogId})
+				return 0, 0, nil
+			},
+			dialog.GetDialogCacheKey(in.GetUserId(), peerDialogId),
+			dialog.GetFolderPinnedDialogListCacheKey(in.GetUserId()))
 	}
 
 	return &mtproto.Int32{

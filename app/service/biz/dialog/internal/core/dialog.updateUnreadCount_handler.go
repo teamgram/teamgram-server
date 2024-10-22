@@ -19,6 +19,9 @@
 package core
 
 import (
+	"context"
+	
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
@@ -32,14 +35,24 @@ func (c *DialogCore) DialogUpdateUnreadCount(in *dialog.TLDialogUpdateUnreadCoun
 		unreadReactionsCount = in.GetUnreadReactionsCount().GetValue()
 	)
 
-	c.svcCtx.Dao.DialogsDAO.UpdateUnreadCount(
+	_, _, err := c.svcCtx.Dao.CachedConn.Exec(
 		c.ctx,
-		unreadCount,
-		unreadMentionsCount,
-		unreadReactionsCount,
-		in.UserId,
-		in.PeerType,
-		in.PeerId)
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err := c.svcCtx.Dao.DialogsDAO.UpdateUnreadCount(
+				c.ctx,
+				unreadCount,
+				unreadMentionsCount,
+				unreadReactionsCount,
+				in.UserId,
+				in.PeerType,
+				in.PeerId)
+			return 0, 0, err
+		},
+		dialog.GetDialogCacheKeyByPeer(in.UserId, in.PeerType, in.PeerId))
+	if err != nil {
+		c.Logger.Errorf("dialog.updateUnreadCount - error: %v", err)
+		return nil, err
+	}
 
 	return mtproto.BoolTrue, nil
 }

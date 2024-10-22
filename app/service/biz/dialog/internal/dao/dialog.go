@@ -92,7 +92,7 @@ func (d *Dao) GetDialogByPeerDialogId(ctx context.Context, userId, peerDialogId 
 	err := d.CachedConn.QueryRow(
 		ctx,
 		&dlgExt,
-		dialog.GenDialogCacheKey(userId, peerDialogId),
+		dialog.GetDialogCacheKey(userId, peerDialogId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			dialogDO, err := d.DialogsDAO.SelectByPeerDialogId(ctx, userId, peerDialogId)
 			if err != nil {

@@ -26,7 +26,7 @@ func (c *DialogCore) DialogDeleteDialogFilter(in *dialog.TLDialogDeleteDialogFil
 			_, err := c.svcCtx.Dao.DialogFiltersDAO.Clear(ctx, in.UserId, in.Id)
 			return 0, 0, err
 		},
-		dialog.GenDialogFilterCacheKey(in.UserId))
+		dialog.GetDialogFilterCacheKey(in.UserId))
 
 	return mtproto.BoolTrue, nil
 }

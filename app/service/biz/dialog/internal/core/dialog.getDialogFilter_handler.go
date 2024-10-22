@@ -20,10 +20,12 @@ package core
 
 import (
 	"context"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
+
 	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
@@ -37,7 +39,7 @@ func (c *DialogCore) DialogGetDialogFilter(in *dialog.TLDialogGetDialogFilter) (
 	err := c.svcCtx.Dao.CachedConn.QueryRow(
 		c.ctx,
 		&dialogFilterExtList,
-		dialog.GenDialogFilterCacheKey(in.UserId),
+		dialog.GetDialogFilterCacheKey(in.UserId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			// vList :=
 			var (

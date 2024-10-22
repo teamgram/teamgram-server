@@ -49,7 +49,7 @@ func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertO
 
 			return 0, 0, err2
 		},
-		dialog.GenDialogFilterCacheKey(in.UserId))
+		dialog.GetDialogFilterCacheKey(in.UserId))
 
 	return mtproto.BoolTrue, nil
 }

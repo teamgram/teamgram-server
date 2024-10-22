@@ -45,7 +45,7 @@ func (c *DialogCore) DialogUpdateDialogFiltersOrder(in *dialog.TLDialogUpdateDia
 
 			return 0, 0, tR.Err
 		},
-		dialog.GenDialogFilterCacheKey(in.UserId))
+		dialog.GetDialogFilterCacheKey(in.UserId))
 
 	return mtproto.BoolTrue, nil
 }

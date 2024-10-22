@@ -58,7 +58,8 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 
 			return 0, r, err
 		},
-		dialog.GenCacheKeyByPeerType(in.UserId, in.PeerType))
+		dialog.GetCacheKeyByPeerType(in.UserId, in.PeerType),
+		dialog.GetDialogCacheKeyByPeer(in.UserId, in.PeerType, in.PeerId))
 	if err != nil {
 		c.Logger.Errorf("dialog.insertOrUpdateDialog - error: %v", err)
 		return nil, err

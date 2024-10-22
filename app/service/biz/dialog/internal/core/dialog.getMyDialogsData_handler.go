@@ -44,7 +44,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
 				c.ctx,
 				&uIdList,
-				dialog.GenConversationsCacheKey(in.UserId),
+				dialog.GetConversationsCacheKey(in.UserId),
 				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 					var (
 						idList []int64
@@ -74,7 +74,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
 				c.ctx,
 				&cIdList,
-				dialog.GenChatsCacheKey(in.UserId),
+				dialog.GetChatsCacheKey(in.UserId),
 				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 					var (
 						idList []int64
@@ -104,7 +104,7 @@ func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData)
 			err2 := c.svcCtx.Dao.CachedConn.QueryRow(
 				c.ctx,
 				&chIdList,
-				dialog.GenChannelsCacheKey(in.UserId),
+				dialog.GetChannelsCacheKey(in.UserId),
 				func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 					var (
 						idList []int64

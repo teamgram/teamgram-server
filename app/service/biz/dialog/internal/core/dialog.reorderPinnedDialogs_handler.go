@@ -10,10 +10,12 @@
 package core
 
 import (
+	"context"
+	"time"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
-	"time"
 )
 
 // DialogReorderPinnedDialogs
@@ -25,54 +27,75 @@ func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinned
 		folderId    = in.GetFolderId()
 		idList      = in.GetIdList()
 		orderPinned = time.Now().Unix()
+		keyList     = make([]string, 0, len(idList)+1)
 	)
+	for _, id := range idList {
+		keyList = append(keyList, dialog.GetDialogCacheKey(in.GetUserId(), id))
+	}
 
-	sqlx.TxWrapper(
-		c.ctx,
-		c.svcCtx.Dao.DB,
-		func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-			if folderId == 0 {
-				if force {
-					_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
-						tx,
-						userId,
-						idList)
-					if result.Err != nil {
-						return
-					}
-				}
+	if folderId == 0 {
+		c.svcCtx.Dao.CachedConn.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				tR := sqlx.TxWrapper(
+					ctx,
+					conn,
+					func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+						if force {
+							_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
+								tx,
+								userId,
+								idList)
+							if result.Err != nil {
+								return
+							}
+						}
 
-				for _, id := range idList {
-					_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdatePeerDialogListPinnedTx(
-						tx,
-						orderPinned<<32,
-						in.UserId, []int64{id})
-					if result.Err != nil {
-						return
-					}
-					orderPinned -= 1
-				}
-			} else {
-				if force {
-					_, result.Err = c.svcCtx.DialogsDAO.UpdateFolderUnPinnedNotIdListTx(
-						tx,
-						userId,
-						idList)
-					if result.Err != nil {
-						return
-					}
-				}
+						for _, id := range idList {
+							_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdatePeerDialogListPinnedTx(
+								tx,
+								orderPinned<<32,
+								in.UserId, []int64{id})
+							if result.Err != nil {
+								return
+							}
+							orderPinned -= 1
+						}
+					})
+				return 0, 0, tR.Err
+			},
+			append(keyList, dialog.GetPinnedDialogListCacheKey(in.GetUserId()))...)
+	} else {
+		c.svcCtx.Dao.CachedConn.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				tR := sqlx.TxWrapper(
+					c.ctx,
+					c.svcCtx.Dao.DB,
+					func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+						if force {
+							_, result.Err = c.svcCtx.DialogsDAO.UpdateFolderUnPinnedNotIdListTx(
+								tx,
+								userId,
+								idList)
+							if result.Err != nil {
+								return
+							}
+						}
 
-				for _, id := range idList {
-					_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateFolderPeerDialogListPinnedTx(
-						tx,
-						orderPinned<<32,
-						in.UserId,
-						[]int64{id})
-					orderPinned -= 1
-				}
-			}
-		})
+						for _, id := range idList {
+							_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateFolderPeerDialogListPinnedTx(
+								tx,
+								orderPinned<<32,
+								in.UserId,
+								[]int64{id})
+							orderPinned -= 1
+						}
+					})
+				return 0, 0, tR.Err
+			},
+			append(keyList, dialog.GetFolderPinnedDialogListCacheKey(in.GetUserId()))...)
+	}
 
 	return mtproto.BoolTrue, nil
 }

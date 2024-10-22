@@ -38,17 +38,9 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorder
 		switch peer.PredicateName {
 		case mtproto.Predicate_inputDialogPeer:
 			p := mtproto.FromInputPeer2(c.MD.UserId, peer.Peer)
-			switch p.PeerType {
-			case mtproto.PEER_SELF,
-				mtproto.PEER_USER,
-				mtproto.PEER_CHAT,
-				mtproto.PEER_CHANNEL:
-				peerDialogIdList = append(peerDialogIdList, p.PeerId)
-			default:
-				err := mtproto.ErrPeerIdInvalid
-				c.Logger.Errorf("messages.reorderPinnedDialogs - error: %v", err)
-				return nil, err
-			}
+			peerDialogIdList = append(peerDialogIdList, mtproto.MakePeerDialogId(p.PeerType, p.PeerId))
+		case mtproto.Predicate_inputDialogPeerFolder:
+			c.Logger.Info("messages.reorderPinnedDialogs - inputDialogPeerFolder %s", peer)
 		default:
 			err := mtproto.ErrPeerIdInvalid
 			c.Logger.Errorf("messages.reorderPinnedDialogs - error: %v", err)

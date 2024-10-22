@@ -26,7 +26,8 @@ func (c *DialogCore) DialogDeleteDialog(in *dialog.TLDialogDeleteDialog) (*mtpro
 			r, err := c.svcCtx.Dao.DialogsDAO.Delete(ctx, in.UserId, in.PeerType, in.PeerId)
 			return 0, r, err
 		},
-		dialog.GenCacheKeyByPeerType(in.UserId, in.PeerType))
+		dialog.GetCacheKeyByPeerType(in.UserId, in.PeerType),
+		dialog.GetDialogCacheKeyByPeer(in.UserId, in.PeerType, in.PeerId))
 
 	return mtproto.BoolTrue, nil
 }
