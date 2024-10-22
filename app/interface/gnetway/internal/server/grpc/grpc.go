@@ -24,6 +24,10 @@ func New(svcCtx *svc.ServiceContext, c zrpc.RpcServerConf, srv gateway.RPCGatewa
 	s, err := zrpc.NewServer(c, func(grpcServer *grpc.Server) {
 		gateway.RegisterRPCGatewayServer(grpcServer, service.New(svcCtx, srv))
 	})
+	s.AddOptions(
+		grpc.WriteBufferSize(64*1024*1024),
+		grpc.ReadBufferSize(64*1024*1024))
+
 	logx.Must(err)
 	return s
 }

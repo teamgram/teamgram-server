@@ -20,10 +20,10 @@ package dao
 
 import (
 	"context"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/client"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
+	"google.golang.org/grpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -44,7 +44,10 @@ func NewGateway(c zrpc.RpcClientConf) (*Gateway, error) {
 		serverId: c.Endpoints[0],
 	}
 
-	cli, err := zrpc.NewClient(c)
+	cli, err := zrpc.NewClient(
+		c,
+		zrpc.WithDialOption(grpc.WithReadBufferSize(64*1024*1024)),
+		zrpc.WithDialOption(grpc.WithWriteBufferSize(64*1024*1024)))
 	if err != nil {
 		logx.Errorf("watchComet NewClient(%+v) error(%v)", c, err)
 		return nil, err
