@@ -21,7 +21,6 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/container2"
@@ -31,6 +30,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -267,7 +267,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 			logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, err, dialogDO)
 			return 0, 0, err
 		},
-		dialog.GetDialogCacheKeyByPeer(inBox.UserId, peer.PeerType, peer.PeerId))
+		dialog.GetDialogCacheKey(dialogDO.UserId, dialogDO.PeerDialogId))
 
 	inBox.Pts = d.IDGenClient2.NextPtsId(ctx, toUserId)
 	inBox.PtsCount = 1
