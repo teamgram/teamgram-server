@@ -30,6 +30,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
@@ -85,6 +86,10 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 		err = mtproto.ErrInternalServerError
 		return nil, false, err
 	}
+
+	var (
+		dialogDO *dataobject.DialogsDO
+	)
 
 	// A, B
 	tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
@@ -170,7 +175,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 
 		switch peer.PeerType {
 		case mtproto.PEER_USER:
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:           fromId,
 				PeerType:         peer.PeerType,
 				PeerId:           peer.PeerId,
@@ -180,44 +185,10 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				DraftMessageData: "null",
 				Date2:            int64(outMsgBox.Message.Date),
 			}
-			if dialogMessageId > 1 {
-				//// if box_id > 1, then dialogs already created.
-				//
-				//// TODO(@benqi): unread_count and unread_mentions_count
-				//cMap := map[string]interface{}{
-				//	"top_message": dialogDO.TopMessage,
-				//	"date2":       dialogDO.Date2,
-				//	"unread_mark": 0,
-				//}
-				//
-				//// TODO(@benqi): clear draft
-				//if true {
-				//	cMap["draft_message_data"] = "null"
-				//	cMap["draft_type"] = 0
-				//}
-
-				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(
-					tx,
-					dialogDO.TopMessage,
-					dialogDO.Date2,
-					fromId,
-					mtproto.PEER_USER,
-					peer.PeerId)
-				// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
-				if result.Err != nil {
-					return
-				}
-				// again handle rowsAffected == 0
-				if rowsAffected == 0 {
-					_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-				}
-			} else {
-				_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-			}
 
 			result.Data = outMsgBox
 		case mtproto.PEER_CHAT:
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:           fromId,
 				PeerType:         peer.PeerType,
 				PeerId:           peer.PeerId,
@@ -226,25 +197,6 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				UnreadCount:      0,
 				DraftMessageData: "null",
 				Date2:            int64(outMsgBox.Message.Date),
-			}
-
-			if dialogMessageId > 1 {
-				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(tx,
-					dialogDO.TopMessage,
-					dialogDO.Date2,
-					fromId,
-					mtproto.PEER_CHAT,
-					peer.PeerId)
-				// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
-				if result.Err != nil {
-					return
-				}
-				// again handle rowsAffected == 0
-				if rowsAffected == 0 {
-					_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-				}
-			} else {
-				_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
 			}
 
 			result.Data = outMsgBox
@@ -277,6 +229,28 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 
 	switch tR.Data.(type) {
 	case *mtproto.MessageBox:
+		// TODO: use rpc
+		d.CachedConn.Exec(
+			ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				rowsAffected, err2 := d.DialogsDAO.UpdateOutboxDialog(
+					ctx,
+					dialogDO.TopMessage,
+					dialogDO.Date2,
+					fromId,
+					peer.PeerType,
+					peer.PeerId)
+				if err2 != nil {
+					return 0, 0, err2
+				}
+				// again handle rowsAffected == 0
+				if rowsAffected == 0 {
+					_, _, err2 = d.DialogsDAO.InsertIgnore(ctx, dialogDO)
+				}
+				return 0, 0, nil
+			},
+			dialog.GetDialogCacheKeyByPeer(fromId, peer.PeerType, peer.PeerId))
+
 		outBox = tR.Data.(*mtproto.MessageBox)
 		outBox.Pts = pts // d.IDGenClient2.NextPtsId(ctx, fromId)
 		outBox.PtsCount = 1
@@ -428,18 +402,26 @@ func (d *Dao) DeleteMessages(ctx context.Context, userId int64, msgIds []int32) 
 		if result.Err != nil {
 			return
 		}
-		topMessage, _ := getLastTopMessage(topMessageIndex)
-		d.DialogsDAO.UpdateOutboxDialogTx(
-			tx,
-			topMessage,
-			time.Now().Unix(),
-			userId,
-			peer.PeerType,
-			peer.PeerId)
 	})
 	if tR.Err != nil {
 		return nil, nil, tR.Err
 	}
+
+	topMessage, _ := getLastTopMessage(topMessageIndex)
+	d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err2 := d.DialogsDAO.UpdateOutboxDialog(
+				ctx,
+				topMessage,
+				time.Now().Unix(),
+				userId,
+				peer.PeerType,
+				peer.PeerId)
+
+			return 0, 0, err2
+		},
+		dialog.GetDialogCacheKeyByPeer(userId, peer.PeerType, peer.PeerId))
 
 	for i := 0; i < len(msgDOList); i++ {
 		deletedMsgDataIdList = append(deletedMsgDataIdList, msgDOList[i].DialogMessageId)
@@ -562,10 +544,22 @@ func (d *Dao) DeletePhoneCallHistory(ctx context.Context, userId int64) ([]int32
 		if err != nil {
 			continue
 		}
+
+		// TODO: performance optimization
 		lastMessageId, _ := d.MessagesDAO.SelectDialogLastMessageId(ctx, userId, dialogId.A, dialogId.B)
-		d.DialogsDAO.UpdateCustomMap(ctx, map[string]interface{}{
-			"top_message": lastMessageId,
-		}, userId, mtproto.PEER_USER, mtproto.GetPeerIdByDialogId(userId, dialogId))
+		d.CachedConn.Exec(
+			ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				_, err2 := d.DialogsDAO.UpdateCustomMap(
+					ctx,
+					map[string]interface{}{
+						"top_message": lastMessageId,
+					},
+					userId,
+					mtproto.PEER_USER, mtproto.GetPeerIdByDialogId(userId, dialogId))
+				return 0, 0, err2
+			},
+			dialog.GetDialogCacheKeyByPeer(userId, mtproto.PEER_USER, mtproto.GetPeerIdByDialogId(userId, dialogId)))
 	}
 
 	return deletedIdList, deletedMsgDataIdList, nil
@@ -575,11 +569,15 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 	message := outMsgBox.Message
 	mData, _ := jsonx.Marshal(outMsgBox.GetMessage())
 	outBoxMsgId := outMsgBox.MessageId
-	dialogMessageId := outMsgBox.DialogMessageId
+	// dialogMessageId := outMsgBox.DialogMessageId
 
 	var (
 		savedPeerUtil *mtproto.PeerUtil
+		outBoxDO      *dataobject.MessagesDO
+
+		dialogDO *dataobject.DialogsDO
 	)
+
 	if message.GetSavedPeerId() != nil {
 		savedPeerUtil = mtproto.FromPeer(message.GetSavedPeerId())
 	} else {
@@ -587,7 +585,7 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 	}
 
 	tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		outBoxDO := &dataobject.MessagesDO{
+		outBoxDO = &dataobject.MessagesDO{
 			UserId:            outMsgBox.UserId,
 			UserMessageBoxId:  outMsgBox.MessageId,
 			DialogId1:         outMsgBox.DialogId1,
@@ -627,7 +625,7 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 
 		switch peer.PeerType {
 		case mtproto.PEER_USER:
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:           fromId,
 				PeerType:         peer.PeerType,
 				PeerId:           peer.PeerId,
@@ -637,27 +635,10 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 				DraftMessageData: "null",
 				Date2:            int64(outMsgBox.Message.Date),
 			}
-			if dialogMessageId > 1 {
-				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(
-					tx,
-					dialogDO.TopMessage,
-					dialogDO.Date2,
-					fromId,
-					mtproto.PEER_USER,
-					peer.PeerId)
-				// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
-				if result.Err != nil {
-					return
-				}
-				// again handle rowsAffected == 0
-				if rowsAffected == 0 {
-					_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-				}
-			} else {
-				_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-			}
+
+			result.Data = outMsgBox
 		case mtproto.PEER_CHAT:
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:           fromId,
 				PeerType:         peer.PeerType,
 				PeerId:           peer.PeerId,
@@ -666,25 +647,6 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 				UnreadCount:      0,
 				DraftMessageData: "null",
 				Date2:            int64(outMsgBox.Message.Date),
-			}
-
-			if dialogMessageId > 1 {
-				rowsAffected, result.Err = d.DialogsDAO.UpdateOutboxDialogTx(tx,
-					dialogDO.TopMessage,
-					dialogDO.Date2,
-					fromId,
-					mtproto.PEER_CHAT,
-					peer.PeerId)
-				// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
-				if result.Err != nil {
-					return
-				}
-				// again handle rowsAffected == 0
-				if rowsAffected == 0 {
-					_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
-				}
-			} else {
-				_, _, result.Err = d.DialogsDAO.InsertIgnoreTx(tx, dialogDO)
 			}
 
 			result.Data = outMsgBox
@@ -708,6 +670,28 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 			}
 		}
 	})
+
+	d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.DialogsDAO.UpdateOutboxDialog(ctx,
+				dialogDO.TopMessage,
+				dialogDO.Date2,
+				fromId,
+				peer.PeerType,
+				peer.PeerId)
+			// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
+			if err != nil {
+				return 0, 0, err
+			}
+			// again handle rowsAffected == 0
+			if rowsAffected == 0 {
+				_, _, err = d.DialogsDAO.InsertIgnore(ctx, dialogDO)
+			}
+
+			return 0, 0, err
+		},
+		dialog.GetDialogCacheKeyByPeer(fromId, peer.PeerType, peer.PeerId))
 
 	return tR.Err
 }

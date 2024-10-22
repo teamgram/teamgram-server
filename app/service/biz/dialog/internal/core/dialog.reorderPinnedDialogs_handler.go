@@ -64,7 +64,7 @@ func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinned
 					})
 				return 0, 0, tR.Err
 			},
-			append(keyList, dialog.GetPinnedDialogListCacheKey(in.GetUserId()))...)
+			append(keyList, dialog.GetPinnedDialogIdListCacheKey(in.GetUserId()))...)
 	} else {
 		c.svcCtx.Dao.CachedConn.Exec(
 			c.ctx,
@@ -94,7 +94,7 @@ func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinned
 					})
 				return 0, 0, tR.Err
 			},
-			append(keyList, dialog.GetFolderPinnedDialogListCacheKey(in.GetUserId()))...)
+			append(keyList, dialog.GetFolderPinnedDialogIdListCacheKey(in.GetUserId()))...)
 	}
 
 	return mtproto.BoolTrue, nil

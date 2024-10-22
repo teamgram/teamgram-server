@@ -12,7 +12,6 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
 )
 
 // android client request source code
@@ -83,40 +82,33 @@ import (
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.Vector_DialogExt, error) {
 	var (
-		dList         dialog.DialogExtList
 		excludePinned = mtproto.FromBool(in.GetExcludePinned())
 		folderId      = in.GetFolderId()
 		meId          = in.GetUserId()
+		dlgExtIdList  []int64
 	)
 
-	if excludePinned {
-		if folderId == 0 {
-			_ = dList
-			c.svcCtx.Dao.DialogsDAO.SelectExcludePinnedDialogsWithCB(
-				c.ctx,
-				meId,
-				func(sz, i int, v *dataobject.DialogsDO) {
-					dList = append(dList, c.svcCtx.Dao.MakeDialog(v))
-				})
-		} else {
-			c.svcCtx.Dao.DialogsDAO.SelectExcludeFolderPinnedDialogsWithCB(
-				c.ctx,
-				meId,
-				func(sz, i int, v *dataobject.DialogsDO) {
-					dList = append(dList, c.svcCtx.Dao.MakeDialog(v))
-				})
-		}
+	// excludePinned
+	if folderId == 0 {
+		idList, _ := c.svcCtx.Dao.GetNotPinnedDialogIdList(c.ctx, meId)
+		dlgExtIdList = append(dlgExtIdList, idList...)
 	} else {
-		c.svcCtx.Dao.DialogsDAO.SelectDialogsWithCB(
-			c.ctx,
-			in.GetUserId(),
-			in.GetFolderId(),
-			func(sz, i int, v *dataobject.DialogsDO) {
-				dList = append(dList, c.svcCtx.Dao.MakeDialog(v))
-			})
+		idList, _ := c.svcCtx.Dao.GetFolderNotPinnedDialogIdList(c.ctx, meId)
+		dlgExtIdList = append(dlgExtIdList, idList...)
 	}
 
+	if !excludePinned {
+		if folderId == 0 {
+			idList, _ := c.svcCtx.Dao.GetPinnedDialogIdList(c.ctx, meId)
+			dlgExtIdList = append(dlgExtIdList, idList...)
+		} else {
+			idList, _ := c.svcCtx.Dao.GetFolderPinnedDialogIdList(c.ctx, meId)
+			dlgExtIdList = append(dlgExtIdList, idList...)
+		}
+	}
+
+	dlgExtList, _ := c.svcCtx.Dao.GetDialogListByIdList(c.ctx, meId, dlgExtIdList)
 	return &dialog.Vector_DialogExt{
-		Datas: dList,
+		Datas: dlgExtList,
 	}, nil
 }

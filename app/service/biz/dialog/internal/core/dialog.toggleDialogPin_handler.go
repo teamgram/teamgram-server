@@ -48,7 +48,7 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 				return 0, 0, nil
 			},
 			dialog.GetDialogCacheKey(in.GetUserId(), peerDialogId),
-			dialog.GetPinnedDialogListCacheKey(in.GetUserId()))
+			dialog.GetPinnedDialogIdListCacheKey(in.GetUserId()))
 	} else {
 		c.svcCtx.Dao.CachedConn.Exec(
 			c.ctx,
@@ -57,7 +57,7 @@ func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (
 				return 0, 0, nil
 			},
 			dialog.GetDialogCacheKey(in.GetUserId(), peerDialogId),
-			dialog.GetFolderPinnedDialogListCacheKey(in.GetUserId()))
+			dialog.GetFolderPinnedDialogIdListCacheKey(in.GetUserId()))
 	}
 
 	return &mtproto.Int32{

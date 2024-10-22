@@ -29,8 +29,10 @@ const (
 )
 
 var (
-	cachePinnedDialogListPrefix       = "pinned_dialog_list.1"
-	cacheFolderPinnedDialogListPrefix = "folder_pinned_dialog_list.1"
+	cachePinnedDialogIdListPrefix       = "pinned_dialog_id_list.1"
+	cacheFolderPinnedDialogIdListPrefix = "folder_pinned_dialog_id_list.1"
+	cacheDialogIdListPrefix             = "dialog_id_list.1"
+	cacheFolderDialogIdListPrefix       = "folder_dialog_id_list.1"
 )
 
 func GetCacheOneKey(prefix string, k int64) string {
@@ -77,7 +79,7 @@ func ParseCacheThreeKey(k, prefix string) (int64, int64, int64) {
 		}
 		v1, _ := strconv.ParseInt(v[0], 10, 64)
 		v2, _ := strconv.ParseInt(v[1], 10, 64)
-		v3, _ := strconv.ParseInt(v[1], 10, 64)
+		v3, _ := strconv.ParseInt(v[2], 10, 64)
 
 		return v1, v2, v3
 	}
@@ -85,12 +87,19 @@ func ParseCacheThreeKey(k, prefix string) (int64, int64, int64) {
 	return 0, 0, 0
 }
 
-func GetPinnedDialogListCacheKey(userId int64) string {
-	return GetCacheOneKey(cachePinnedDialogListPrefix, userId)
+func GetPinnedDialogIdListCacheKey(userId int64) string {
+	return GetCacheOneKey(cachePinnedDialogIdListPrefix, userId)
+}
+func GetNotPinnedDialogIdListCacheKey(userId int64) string {
+	return GetCacheOneKey(cacheDialogIdListPrefix, userId)
 }
 
-func GetFolderPinnedDialogListCacheKey(userId int64) string {
-	return GetCacheOneKey(cacheFolderPinnedDialogListPrefix, userId)
+func GetFolderPinnedDialogIdListCacheKey(userId int64) string {
+	return GetCacheOneKey(cacheFolderPinnedDialogIdListPrefix, userId)
+}
+
+func GetFolderNotPinnedDialogIdListCacheKey(userId int64) string {
+	return GetCacheOneKey(cacheFolderDialogIdListPrefix, userId)
 }
 
 func GetDialogCacheKey(userId, peerDialogId int64) string {

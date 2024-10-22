@@ -24,13 +24,55 @@ func (d *Dao) GetPinnedDialogIdList(ctx context.Context, userId int64) ([]int64,
 	err := d.CachedConn.QueryRow(
 		ctx,
 		&dialogIdList,
-		dialog.GetPinnedDialogListCacheKey(userId),
+		dialog.GetPinnedDialogIdListCacheKey(userId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			var (
 				idList []int64
 			)
 
 			_, err := d.DialogsDAO.SelectPinnedDialogsWithCB(
+				ctx,
+				userId,
+				func(sz, i int, v *dataobject.DialogsDO) {
+					if i == 0 {
+						idList = make([]int64, 0, sz)
+					}
+					idList = append(idList, v.PeerDialogId)
+				})
+			if err != nil {
+				return err
+			}
+
+			*v.(*[]int64) = idList
+
+			return nil
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
+func (d *Dao) GetNotPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	err := d.CachedConn.QueryRow(
+		ctx,
+		&dialogIdList,
+		dialog.GetNotPinnedDialogIdListCacheKey(userId),
+		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+			var (
+				idList []int64
+			)
+
+			_, err := d.DialogsDAO.SelectExcludePinnedDialogsWithCB(
 				ctx,
 				userId,
 				func(sz, i int, v *dataobject.DialogsDO) {
@@ -66,13 +108,55 @@ func (d *Dao) GetFolderPinnedDialogIdList(ctx context.Context, userId int64) ([]
 	err := d.CachedConn.QueryRow(
 		ctx,
 		&dialogIdList,
-		dialog.GetFolderPinnedDialogListCacheKey(userId),
+		dialog.GetFolderPinnedDialogIdListCacheKey(userId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			var (
 				idList []int64
 			)
 
 			_, err := d.DialogsDAO.SelectFolderPinnedDialogsWithCB(
+				ctx,
+				userId,
+				func(sz, i int, v *dataobject.DialogsDO) {
+					if i == 0 {
+						idList = make([]int64, 0, sz)
+					}
+					idList = append(idList, v.PeerDialogId)
+				})
+			if err != nil {
+				return err
+			}
+
+			*v.(*[]int64) = idList
+
+			return nil
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if dialogIdList == nil {
+		dialogIdList = make([]int64, 0)
+	}
+
+	return dialogIdList, nil
+}
+
+func (d *Dao) GetFolderNotPinnedDialogIdList(ctx context.Context, userId int64) ([]int64, error) {
+	var (
+		dialogIdList []int64
+	)
+
+	err := d.CachedConn.QueryRow(
+		ctx,
+		&dialogIdList,
+		dialog.GetFolderNotPinnedDialogIdListCacheKey(userId),
+		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
+			var (
+				idList []int64
+			)
+
+			_, err := d.DialogsDAO.SelectExcludeFolderPinnedDialogsWithCB(
 				ctx,
 				userId,
 				func(sz, i int, v *dataobject.DialogsDO) {

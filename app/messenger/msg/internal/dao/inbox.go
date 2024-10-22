@@ -21,6 +21,7 @@ package dao
 import (
 	"context"
 	"fmt"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/container2"
@@ -60,6 +61,8 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 		dialogId   = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
 		date       = time.Now().Unix()
 		message    = proto.Clone(message2).(*mtproto.Message)
+
+		dialogDO *dataobject.DialogsDO
 	)
 
 	if peer.PeerType == mtproto.PEER_USER {
@@ -176,12 +179,12 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 
 		switch peer.PeerType {
 		case mtproto.PEER_USER:
-			var (
-				lastInsertId int64
-				rowsAffected int64
-			)
+			//var (
+			//	lastInsertId int64
+			//	rowsAffected int64
+			//)
 
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:           inBox.UserId,
 				PeerType:         peer.PeerType,
 				PeerId:           fromId,
@@ -192,15 +195,15 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 				Date2:            date,
 			}
 
-			lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
-			logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
+			//lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
+			//logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
 		case mtproto.PEER_CHAT:
-			var (
-				lastInsertId int64
-				rowsAffected int64
-			)
+			//var (
+			//	lastInsertId int64
+			//	rowsAffected int64
+			//)
 
-			dialogDO := &dataobject.DialogsDO{
+			dialogDO = &dataobject.DialogsDO{
 				UserId:               inBox.UserId,
 				PeerType:             peer.PeerType,
 				PeerId:               peer.PeerId,
@@ -227,11 +230,11 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 				dialogDO.UnreadMentionsCount = 1
 			}
 
-			lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
-			logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
-			if result.Err != nil {
-				return
-			}
+			//lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
+			//logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
+			//if result.Err != nil {
+			//	return
+			//}
 		default:
 			result.Err = fmt.Errorf("fatal error - invalid peer_type: %v", peer)
 		}
@@ -256,6 +259,15 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 	if tR.Err != nil {
 		return nil, tR.Err
 	}
+
+	d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			lastInsertId, rowsAffected, err := d.DialogsDAO.InsertOrUpdate(ctx, dialogDO)
+			logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, err, dialogDO)
+			return 0, 0, err
+		},
+		dialog.GetDialogCacheKeyByPeer(inBox.UserId, peer.PeerType, peer.PeerId))
 
 	inBox.Pts = d.IDGenClient2.NextPtsId(ctx, toUserId)
 	inBox.PtsCount = 1
@@ -426,25 +438,32 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, peer 
 			}
 		}
 
-		tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-			_, result.Err = d.MessagesDAO.DeleteMessagesByMessageIdListTx(tx, userId, msgIds)
-			if result.Err != nil {
-				return
-			}
-			if dlgDO != nil {
-				_, result.Err = d.DialogsDAO.UpdateCustomMapTx(
-					tx,
-					map[string]interface{}{
-						"top_message":  dlgDO.TopMessage,
-						"unread_count": dlgDO.UnreadCount,
-					},
-					userId,
-					dlgDO.PeerType,
-					dlgDO.PeerId)
-			}
-		})
-		if tR.Err != nil {
-			return tR.Err
+		// tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+		_, err2 := d.MessagesDAO.DeleteMessagesByMessageIdList(ctx, userId, msgIds)
+		if err2 != nil {
+			// return
+		}
+		if dlgDO != nil {
+			d.CachedConn.Exec(
+				ctx,
+				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+					_, err2 = d.DialogsDAO.UpdateCustomMap(
+						ctx,
+						map[string]interface{}{
+							"top_message":  dlgDO.TopMessage,
+							"unread_count": dlgDO.UnreadCount,
+						},
+						userId,
+						dlgDO.PeerType,
+						dlgDO.PeerId)
+
+					return 0, 0, err2
+				},
+				dialog.GetDialogCacheKeyByPeer(userId, dlgDO.PeerType, dlgDO.PeerId))
+		}
+		//})
+		if err2 != nil {
+			return err2
 		}
 
 		if cb != nil {

@@ -60,6 +60,7 @@ func (s *Server) Initialize() error {
 				msg_helper.Config{
 					RpcServerConf:   c.RpcServerConf,
 					Mysql:           c.Mysql,
+					Cache:           c.Cache,
 					KV:              c.KV,
 					IdgenClient:     c.IdgenClient,
 					UserClient:      c.BizServiceClient,
@@ -81,6 +82,7 @@ func (s *Server) Initialize() error {
 		RpcServerConf:   c.RpcServerConf,
 		InboxConsumer:   c.InboxConsumer,
 		Mysql:           c.Mysql,
+		Cache:           c.Cache,
 		KV:              c.KV,
 		IdgenClient:     c.IdgenClient,
 		UserClient:      c.BizServiceClient,

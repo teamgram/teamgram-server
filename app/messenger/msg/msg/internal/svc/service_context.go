@@ -21,6 +21,7 @@ package svc
 import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dao"
@@ -33,6 +34,7 @@ import (
 	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/pkg/deduplication"
+
 	"github.com/zeromicro/go-zero/core/stores/kv"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )
@@ -50,6 +52,7 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 		MsgPlugin: plugin,
 		Dao: &dao.Dao{
 			Mysql:              dao.NewMysqlDao(db, c.MessageSharding),
+			CachedConn:         sqlc.NewConn(db, c.Cache),
 			IDGenClient2:       idgen_client.NewIDGenClient2(rpcx.GetCachedRpcClient(c.IdgenClient)),
 			UserClient:         user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
 			InboxClient:        inbox_client.NewInboxMqClient(kafka.MustKafkaProducer(c.InboxClient)),

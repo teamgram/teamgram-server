@@ -14,6 +14,8 @@ Mysql:
   Active: 64
   Idle: 64
   IdleTimeout: 4h
+Cache:
+  - Host: localhost:6379
 KV:
   - Host: 127.0.0.1:6379
 

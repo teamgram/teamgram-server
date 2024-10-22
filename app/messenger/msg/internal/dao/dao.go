@@ -14,6 +14,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/marmota/pkg/idempotent"
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
@@ -28,7 +29,7 @@ import (
 
 type Dao struct {
 	*Mysql
-	//KV kv.Store
+	sqlc.CachedConn
 	idgen_client.IDGenClient2
 	user_client.UserClient
 	chat_client.ChatClient
