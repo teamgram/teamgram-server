@@ -19,10 +19,14 @@
 package core
 
 import (
+	"context"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // InboxSendUserMessageToInboxV2
@@ -134,12 +138,18 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			if in.PeerType == mtproto.PEER_CHAT {
 				switch inBox.GetMessage().GetAction().GetPredicateName() {
 				case mtproto.Predicate_messageActionChatMigrateTo:
-					c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
+					c.svcCtx.Dao.CachedConn.Exec(
 						c.ctx,
-						0,
-						inBox.MessageId,
-						in.UserId,
-						mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerId))
+						func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+							_, err2 := c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
+								c.ctx,
+								0,
+								inBox.MessageId,
+								in.UserId,
+								mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerId))
+							return 0, 0, err2
+						},
+						dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerId)))
 
 					pushUpdates.PushFrontUpdate(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
 						FolderId:         nil,

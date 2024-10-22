@@ -13,11 +13,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MsgReadHistory
@@ -83,7 +85,19 @@ func (c *MsgCore) MsgReadHistory(in *msg.TLMsgReadHistory) (*mtproto.Messages_Af
 		}
 	}
 
-	c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(c.ctx, unreadCount, maxId, in.UserId, peerDialogId)
+	c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err2 := c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
+				c.ctx,
+				unreadCount,
+				maxId,
+				in.UserId,
+				peerDialogId)
+
+			return 0, 0, err2
+		},
+		dialog.GetDialogCacheKey(in.UserId, peerDialogId))
 
 	//
 	pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId)

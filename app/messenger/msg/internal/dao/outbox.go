@@ -247,6 +247,7 @@ func (d *Dao) sendMessageToOutbox(ctx context.Context, fromId int64, peer *mtpro
 				if rowsAffected == 0 {
 					_, _, err2 = d.DialogsDAO.InsertIgnore(ctx, dialogDO)
 				}
+
 				return 0, 0, nil
 			},
 			dialog.GetDialogCacheKeyByPeer(fromId, peer.PeerType, peer.PeerId))

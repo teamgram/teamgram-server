@@ -10,9 +10,13 @@
 package core
 
 import (
+	"context"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MsgReadMessageContents
@@ -78,14 +82,22 @@ func (c *MsgCore) readMentionedMessageContents(in *msg.TLMsgReadMessageContents)
 			if sz < 0 {
 				sz = 0
 			}
-			c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+
+			c.svcCtx.Dao.CachedConn.Exec(
 				c.ctx,
-				map[string]interface{}{
-					"unread_mentions_count": sz,
+				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+					_, err2 := c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+						c.ctx,
+						map[string]interface{}{
+							"unread_mentions_count": sz,
+						},
+						in.UserId,
+						mtproto.PEER_CHAT,
+						in.PeerId)
+
+					return 0, 0, err2
 				},
-				in.UserId,
-				mtproto.PEER_CHAT,
-				in.PeerId)
+				dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(mtproto.PEER_CHAT, in.PeerId)))
 		}
 
 		return ptsCount, nil
@@ -166,14 +178,21 @@ func (c *MsgCore) readReactionUnreadMessageContents(in *msg.TLMsgReadMessageCont
 	}
 
 	if unreadReactionsCount > 0 {
-		c.svcCtx.Dao.DialogsDAO.UpdateUnreadCount(
+		c.svcCtx.Dao.CachedConn.Exec(
 			c.ctx,
-			0,
-			0,
-			-unreadReactionsCount,
-			in.UserId,
-			in.PeerType,
-			in.PeerId)
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				_, err2 := c.svcCtx.Dao.DialogsDAO.UpdateUnreadCount(
+					c.ctx,
+					0,
+					0,
+					-unreadReactionsCount,
+					in.UserId,
+					in.PeerType,
+					in.PeerId)
+
+				return 0, 0, err2
+			},
+			dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(in.PeerType, in.PeerId)))
 	}
 	return 0, nil
 }

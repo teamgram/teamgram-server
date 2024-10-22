@@ -10,11 +10,15 @@
 package core
 
 import (
+	"context"
+	"math/rand"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
-	"math/rand"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MsgUpdatePinnedMessage
@@ -50,9 +54,31 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*mtp
 					pinnedMsgId = idList[0]
 				}
 			}
-			c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(c.ctx, pinnedMsgId, in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+			c.svcCtx.Dao.CachedConn.Exec(
+				c.ctx,
+				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+					_, err := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
+						ctx,
+						pinnedMsgId,
+						in.UserId,
+						mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+
+					return 0, 0, err
+				},
+				dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
 		} else {
-			c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(c.ctx, in.Id, in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+			c.svcCtx.Dao.CachedConn.Exec(
+				c.ctx,
+				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+					_, err := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
+						ctx,
+						in.Id,
+						in.UserId,
+						mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+
+					return 0, 0, err
+				},
+				dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
 		}
 
 		// pinned

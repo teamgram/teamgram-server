@@ -10,11 +10,15 @@
 package core
 
 import (
+	"context"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // MsgUnpinAllMessages
@@ -49,7 +53,18 @@ func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*mtproto.M
 			return nil, mtproto.ErrMsgIdInvalid
 		}
 
-		c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(c.ctx, 0, in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+		c.svcCtx.Dao.Exec(
+			c.ctx,
+			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+				_, err2 := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
+					c.ctx,
+					0,
+					in.UserId,
+					mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+
+				return 0, 0, err2
+			},
+			dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
 		c.svcCtx.Dao.MessagesDAO.UpdateUnPinnedByIdList(c.ctx, in.UserId, idList)
 
 		// update

@@ -20,12 +20,12 @@ package dao
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 func (d *Dao) DeleteByMessageIdList(ctx context.Context, userId int64, idList []int32) (rowsAffected int64, err error) {

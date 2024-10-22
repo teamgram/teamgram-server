@@ -20,13 +20,14 @@ package dao
 
 import (
 	"context"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/client"
 	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
-	"google.golang.org/grpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
+	"google.golang.org/grpc"
 )
 
 // Gateway eGateClient is a gateway.

@@ -35,7 +35,8 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 
 	pubListenOn := ip.FigureOutListenOn(c.ListenOn)
-	sharding := dao.NewRpcShardingManager(pubListenOn, c.Etcd, func(sharding *dao.RpcShardingManager, oldList, addList, removeList []string) {
+	sharding := dao.NewRpcShardingManager(pubListenOn, c.Etcd)
+	sharding.RegisterCB(func(sharding *dao.RpcShardingManager, oldList, addList, removeList []string) {
 		for i := 0; i < 100; i++ {
 			k := fmt.Sprintf("127.0.0.%d:8080", i)
 			if sharding.ShardingVIsListenOn(k) {
