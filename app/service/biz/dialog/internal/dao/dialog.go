@@ -20,6 +20,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+// MakeDialog
+// ////////////////////////////////////////////////////////////////////////////////////
 func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	dialog2 := mtproto.MakeTLDialog(&mtproto.Dialog{
 		Pinned:               false,
@@ -38,7 +40,6 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		FolderId:             mtproto.MakeFlagsInt32(dialogDO.FolderId),
 		TtlPeriod:            nil,
 	}).To_Dialog()
-
 	// fix unreadCount
 	if dialog2.UnreadMentionsCount < 0 {
 		dialog2.UnreadMentionsCount = 0
@@ -47,11 +48,18 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		dialog2.UnreadReactionsCount = 0
 	}
 
+	order := dialogDO.Date2
 	// pinned
 	if dialogDO.FolderId == 0 {
 		dialog2.Pinned = dialogDO.Pinned > 0
+		if dialog2.Pinned {
+			order = dialogDO.Pinned
+		}
 	} else {
 		dialog2.Pinned = dialogDO.FolderPinned > 0
+		if dialog2.Pinned {
+			order = dialogDO.FolderPinned
+		}
 	}
 
 	// draft message.
@@ -72,12 +80,14 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		//
 	}).To_PeerNotifySettings()
 
-	return &dialog.DialogExt{
-		Order:          dialogDO.Date2,
+	return dialog.MakeTLDialogExt(&dialog.DialogExt{
+		Order:          order,
 		Dialog:         dialog2,
 		AvailableMinId: 0,
 		Date:           dialogDO.Date2,
-	}
+		ThemeEmoticon:  dialogDO.ThemeEmoticon,
+		TtlPeriod:      dialogDO.TtlPeriod,
+	}).To_DialogExt()
 }
 
 func (d *Dao) GetDialog(ctx context.Context, userId int64, peerType int32, peerId int64) (*dialog.DialogExt, error) {

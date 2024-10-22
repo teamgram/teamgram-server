@@ -19,28 +19,28 @@ import (
 // dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogsByIdList(in *dialog.TLDialogGetDialogsByIdList) (*dialog.Vector_DialogExt, error) {
 	var (
-		dList dialog.DialogExtList
-		meId  = in.GetUserId()
-		// peerId := mtproto.MakePeerDialogId()
+		meId   = in.GetUserId()
+		idList = in.GetIdList()
 	)
 
-	doList, _ := c.svcCtx.Dao.DialogsDAO.SelectPeerDialogList(
-		c.ctx,
-		meId,
-		in.IdList)
+	dlgExtList, err := c.svcCtx.Dao.GetDialogListByIdList(c.ctx, meId, idList)
+	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsByIdList - error: %v", err)
+		return nil, err
+	}
 
-	for _, id := range in.IdList {
+	for _, id := range idList {
 		found := false
-		for i := 0; i < len(doList); i++ {
-			if doList[i].PeerDialogId == id {
+		for _, dlgExt := range dlgExtList {
+			peer := mtproto.FromPeer(dlgExt.GetDialog().GetPeer())
+			if mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId) == id {
 				found = true
-				dList = append(dList, makeDialog(&doList[i]))
 				break
 			}
 		}
 		if !found {
 			peerType, peerId := mtproto.GetPeerUtilByPeerDialogId(id)
-			dList = append(dList, makeDialog(&dataobject.DialogsDO{
+			dlgExtList = append(dlgExtList, c.svcCtx.Dao.MakeDialog(&dataobject.DialogsDO{
 				UserId:           in.UserId,
 				PeerType:         peerType,
 				PeerId:           peerId,
@@ -63,6 +63,6 @@ func (c *DialogCore) DialogGetDialogsByIdList(in *dialog.TLDialogGetDialogsByIdL
 	}
 
 	return &dialog.Vector_DialogExt{
-		Datas: dList,
+		Datas: dlgExtList,
 	}, nil
 }
