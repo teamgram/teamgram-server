@@ -1,5 +1,3 @@
-version: "3"
-
 ######## 项目依赖的环境，启动项目之前要先启动此环境 #######
 ######## The environment that the project depends on, starting this environment before starting the project #######
 
