@@ -14,25 +14,19 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-const (
-	dialogKeyPrefix = "dialog.1"
-)
-
-const (
-	dialogFiltersKeyPrefix = "dialog_filters"
-)
-
-const (
-	conversationsKeyPrefix = "user_conversations.1"
-	chatsKeyPrefix         = "user_chats.1"
-	channelsKeyPrefix      = "user_channels.1"
-)
-
 var (
+	dialogKeyPrefix = "dialog.1"
+
 	cachePinnedDialogIdListPrefix       = "pinned_dialog_id_list.1"
 	cacheFolderPinnedDialogIdListPrefix = "folder_pinned_dialog_id_list.1"
 	cacheDialogIdListPrefix             = "dialog_id_list.1"
 	cacheFolderDialogIdListPrefix       = "folder_dialog_id_list.1"
+
+	dialogFiltersKeyPrefix = "dialog_filters"
+
+	conversationsKeyPrefix = "user_conversations.1"
+	chatsKeyPrefix         = "user_chats.1"
+	channelsKeyPrefix      = "user_channels.1"
 )
 
 func GetCacheOneKey(prefix string, k int64) string {
