@@ -21,10 +21,10 @@ package core
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type MsgCore struct {

@@ -42,9 +42,7 @@ enum TLConstructor {
     CRC32_dialog_reorderPinnedDialogs = -18664089;
     CRC32_dialog_getDialogById = -1587594251;
     CRC32_dialog_getTopMessage = -92425614;
-    CRC32_dialog_updateReadInbox = 489158840;
-    CRC32_dialog_updateReadOutbox = 1483799934;
-    CRC32_dialog_insertOrUpdateDialog = 382601889;
+    CRC32_dialog_insertOrUpdateDialog = 1563133986;
     CRC32_dialog_deleteDialog = 28515811;
     CRC32_dialog_getUserPinnedMessage = -1885617487;
     CRC32_dialog_updateUserPinnedMessage = 371388970;
@@ -289,24 +287,6 @@ message TL_dialog_getTopMessage {
 }
 
 //--------------------------------------------------------------------------------------------
-message TL_dialog_updateReadInbox {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int32 peer_type = 4;
-    int64 peer_id = 5;
-    int32 read_inbox_id = 6;
-}
-
-//--------------------------------------------------------------------------------------------
-message TL_dialog_updateReadOutbox {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int32 peer_type = 4;
-    int64 peer_id = 5;
-    int32 read_outbox_id = 6;
-}
-
-//--------------------------------------------------------------------------------------------
 message TL_dialog_insertOrUpdateDialog {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
@@ -318,6 +298,7 @@ message TL_dialog_insertOrUpdateDialog {
     google.protobuf.Int32Value unread_count = 9;
     bool unread_mark = 10;
     google.protobuf.Int64Value date2 = 11;
+    google.protobuf.Int32Value pinned_msg_id = 12;
 }
 
 //--------------------------------------------------------------------------------------------
@@ -530,8 +511,6 @@ service RPCDialog {
  rpc dialog_reorderPinnedDialogs(TL_dialog_reorderPinnedDialogs) returns (mtproto.Bool) {}
  rpc dialog_getDialogById(TL_dialog_getDialogById) returns (DialogExt) {}
  rpc dialog_getTopMessage(TL_dialog_getTopMessage) returns (mtproto.Int32) {}
- rpc dialog_updateReadInbox(TL_dialog_updateReadInbox) returns (mtproto.Bool) {}
- rpc dialog_updateReadOutbox(TL_dialog_updateReadOutbox) returns (mtproto.Bool) {}
  rpc dialog_insertOrUpdateDialog(TL_dialog_insertOrUpdateDialog) returns (mtproto.Bool) {}
  rpc dialog_deleteDialog(TL_dialog_deleteDialog) returns (mtproto.Bool) {}
  rpc dialog_getUserPinnedMessage(TL_dialog_getUserPinnedMessage) returns (mtproto.Int32) {}

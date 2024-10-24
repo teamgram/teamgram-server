@@ -19,11 +19,10 @@ import (
 )
 
 // DialogInsertOrUpdateDialog
-// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date:int = Bool;
+// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true pinned_msg_id:flags.6?int date2:flags.5?long = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	var (
 		cMap = make(map[string]interface{}, 0)
-		// date = time.Now().Unix()
 	)
 
 	if in.GetTopMessage() != nil {
@@ -42,6 +41,10 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 	if in.GetUnreadMark() {
 		cMap["unread_mark"] = 1
 	}
+	if in.GetPinnedMsgId() != nil {
+		cMap["pinned_msg_id"] = in.GetPinnedMsgId().GetValue()
+	}
+
 	cMap["deleted"] = 0
 
 	_, rowsAffected, err := c.svcCtx.Dao.CachedConn.Exec(
@@ -59,7 +62,6 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 
 			return 0, r, err
 		},
-		dialog.GetCacheKeyByPeerType(in.UserId, in.PeerType),
 		dialog.GetDialogCacheKeyByPeer(in.UserId, in.PeerType, in.PeerId))
 	if err != nil {
 		c.Logger.Errorf("dialog.insertOrUpdateDialog - error: %v", err)
@@ -91,6 +93,9 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 		if in.GetUnreadMark() {
 			dlgDO.UnreadMark = false
 		}
+		if in.GetPinnedMsgId() != nil {
+			dlgDO.PinnedMsgId = in.GetPinnedMsgId().GetValue()
+		}
 
 		c.svcCtx.Dao.CachedConn.Exec(
 			c.ctx,
@@ -98,7 +103,7 @@ func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdat
 				_, _, err2 := c.svcCtx.Dao.DialogsDAO.InsertIgnore(c.ctx, dlgDO)
 				return 0, 0, err2
 			},
-			dialog.GetDialogCacheKey(dlgDO.UserId, dlgDO.PeerDialogId))
+			dialog.GetCacheKeyByPeerType(dlgDO.UserId, dlgDO.PeerType))
 	}
 
 	return mtproto.BoolTrue, nil

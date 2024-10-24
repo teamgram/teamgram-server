@@ -33,9 +33,7 @@ const (
 	CRC32_dialog_reorderPinnedDialogs              TLConstructor = -18664089   // 0xfee33567
 	CRC32_dialog_getDialogById                     TLConstructor = -1587594251 // 0xa15f3bf5
 	CRC32_dialog_getTopMessage                     TLConstructor = -92425614   // 0xfa7db272
-	CRC32_dialog_updateReadInbox                   TLConstructor = 489158840   // 0x1d27f8b8
-	CRC32_dialog_updateReadOutbox                  TLConstructor = 1483799934  // 0x5870fd7e
-	CRC32_dialog_insertOrUpdateDialog              TLConstructor = 382601889   // 0x16ce0aa1
+	CRC32_dialog_insertOrUpdateDialog              TLConstructor = 1563133986  // 0x5d2b8822
 	CRC32_dialog_deleteDialog                      TLConstructor = 28515811    // 0x1b31de3
 	CRC32_dialog_getUserPinnedMessage              TLConstructor = -1885617487 // 0x8f9bc2b1
 	CRC32_dialog_updateUserPinnedMessage           TLConstructor = 371388970   // 0x1622f22a

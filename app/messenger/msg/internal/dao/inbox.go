@@ -195,14 +195,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 				Date2:            date,
 			}
 
-			//lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
-			//logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
 		case mtproto.PEER_CHAT:
-			//var (
-			//	lastInsertId int64
-			//	rowsAffected int64
-			//)
-
 			dialogDO = &dataobject.DialogsDO{
 				UserId:               inBox.UserId,
 				PeerType:             peer.PeerType,
@@ -230,11 +223,6 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 				dialogDO.UnreadMentionsCount = 1
 			}
 
-			//lastInsertId, rowsAffected, result.Err = d.DialogsDAO.InsertOrUpdateTx(tx, dialogDO)
-			//logx.WithContext(ctx).Infof("lastInsertId:%d, rowsAffected: %d, result: %v, do: %v", lastInsertId, rowsAffected, result, dialogDO)
-			//if result.Err != nil {
-			//	return
-			//}
 		default:
 			result.Err = fmt.Errorf("fatal error - invalid peer_type: %v", peer)
 		}

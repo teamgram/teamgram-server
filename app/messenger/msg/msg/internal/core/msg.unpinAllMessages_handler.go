@@ -10,15 +10,14 @@
 package core
 
 import (
-	"context"
-
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MsgUnpinAllMessages
@@ -53,18 +52,21 @@ func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*mtproto.M
 			return nil, mtproto.ErrMsgIdInvalid
 		}
 
-		c.svcCtx.Dao.Exec(
+		c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 			c.ctx,
-			func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-				_, err2 := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
-					c.ctx,
-					0,
-					in.UserId,
-					mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+			&dialog.TLDialogInsertOrUpdateDialog{
+				UserId:          in.UserId,
+				PeerType:        peer.PeerType,
+				PeerId:          peer.PeerId,
+				TopMessage:      nil,
+				ReadOutboxMaxId: nil,
+				ReadInboxMaxId:  nil,
+				UnreadCount:     nil,
+				UnreadMark:      false,
+				PinnedMsgId:     &wrapperspb.Int32Value{Value: 0},
+				Date2:           nil,
+			})
 
-				return 0, 0, err2
-			},
-			dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
 		c.svcCtx.Dao.MessagesDAO.UpdateUnPinnedByIdList(c.ctx, in.UserId, idList)
 
 		// update

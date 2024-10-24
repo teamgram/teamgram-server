@@ -41,8 +41,6 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLDialogReorderPinnedDialogs":              RPCContextTuple{"/mtproto.RPCDialog/dialog_reorderPinnedDialogs", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogGetDialogById":                     RPCContextTuple{"/mtproto.RPCDialog/dialog_getDialogById", func() interface{} { return new(DialogExt) }},
 	"TLDialogGetTopMessage":                     RPCContextTuple{"/mtproto.RPCDialog/dialog_getTopMessage", func() interface{} { return new(mtproto.Int32) }},
-	"TLDialogUpdateReadInbox":                   RPCContextTuple{"/mtproto.RPCDialog/dialog_updateReadInbox", func() interface{} { return new(mtproto.Bool) }},
-	"TLDialogUpdateReadOutbox":                  RPCContextTuple{"/mtproto.RPCDialog/dialog_updateReadOutbox", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogInsertOrUpdateDialog":              RPCContextTuple{"/mtproto.RPCDialog/dialog_insertOrUpdateDialog", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogDeleteDialog":                      RPCContextTuple{"/mtproto.RPCDialog/dialog_deleteDialog", func() interface{} { return new(mtproto.Bool) }},
 	"TLDialogGetUserPinnedMessage":              RPCContextTuple{"/mtproto.RPCDialog/dialog_getUserPinnedMessage", func() interface{} { return new(mtproto.Int32) }},

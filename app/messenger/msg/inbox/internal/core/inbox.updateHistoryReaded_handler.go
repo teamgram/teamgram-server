@@ -19,13 +19,13 @@
 package core
 
 import (
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InboxUpdateHistoryReaded
@@ -59,6 +59,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 				ReadInboxMaxId:  nil,
 				UnreadCount:     nil,
 				UnreadMark:      false,
+				PinnedMsgId:     nil,
 				Date2:           nil,
 			})
 		c.Logger.Infof("inbox.updateHistoryReaded: (%d, %d, %d)",
@@ -108,6 +109,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 							ReadInboxMaxId:  nil,
 							UnreadCount:     nil,
 							UnreadMark:      false,
+							PinnedMsgId:     nil,
 							Date2:           nil,
 						})
 					c.Logger.Infof("inbox.updateHistoryReaded: (%d, %d, %d)",
@@ -115,7 +117,6 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 						replyId.PeerId,
 						mtproto.MakePeerDialogId(in.PeerType, in.PeerId))
 
-					// topMessage := c.svcCtx.Dao.DialogsDAO.Select
 					c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 						UserId: replyId.UserId,
 						Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{

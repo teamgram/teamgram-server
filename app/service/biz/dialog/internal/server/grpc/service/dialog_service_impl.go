@@ -243,38 +243,8 @@ func (s *Service) DialogGetTopMessage(ctx context.Context, request *dialog.TLDia
 	return r, err
 }
 
-// DialogUpdateReadInbox
-// dialog.updateReadInbox user_id:long peer_type:int peer_id:long read_inbox_id:int = Bool;
-func (s *Service) DialogUpdateReadInbox(ctx context.Context, request *dialog.TLDialogUpdateReadInbox) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.updateReadInbox - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.DialogUpdateReadInbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.updateReadInbox - reply: {%s}", r)
-	return r, err
-}
-
-// DialogUpdateReadOutbox
-// dialog.updateReadOutbox user_id:long peer_type:int peer_id:long read_outbox_id:int = Bool;
-func (s *Service) DialogUpdateReadOutbox(ctx context.Context, request *dialog.TLDialogUpdateReadOutbox) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.updateReadOutbox - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.DialogUpdateReadOutbox(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.updateReadOutbox - reply: {%s}", r)
-	return r, err
-}
-
 // DialogInsertOrUpdateDialog
-// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long = Bool;
+// dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long pinned_msg_id:flags.6?int = Bool;
 func (s *Service) DialogInsertOrUpdateDialog(ctx context.Context, request *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.insertOrUpdateDialog - metadata: {%s}, request: {%s}", c.MD, request)
@@ -589,7 +559,7 @@ func (s *Service) DialogCreateDialogFilter(ctx context.Context, request *dialog.
 }
 
 // DialogUpdateUnreadCount
-// dialog.updateUnreadCount user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
+// dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (s *Service) DialogUpdateUnreadCount(ctx context.Context, request *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.updateUnreadCount - metadata: {%s}, request: {%s}", c.MD, request)

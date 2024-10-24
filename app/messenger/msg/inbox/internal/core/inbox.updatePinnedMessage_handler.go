@@ -19,16 +19,15 @@
 package core
 
 import (
-	"context"
-
 	"github.com/teamgram/marmota/pkg/container2/sets"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InboxUpdatePinnedMessage
@@ -57,24 +56,25 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 			}
 		} else {
 			pinnedMsgId = v.UserMessageBoxId
-			// c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(c.ctx, v.UserMessageBoxId, v.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
 		}
 
 		c.svcCtx.Dao.MessagesDAO.UpdatePinned(c.ctx, !in.GetUnpin(), v.UserId, v.UserMessageBoxId)
 
 		if peer.PeerType == mtproto.PEER_USER {
-			c.svcCtx.Dao.CachedConn.Exec(
+			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 				c.ctx,
-				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-					_, err2 := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
-						c.ctx,
-						pinnedMsgId,
-						v.UserId,
-						mtproto.MakePeerDialogId(peer.PeerType, in.UserId))
-
-					return 0, 0, err2
-				},
-				dialog.GetDialogCacheKey(v.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
+				&dialog.TLDialogInsertOrUpdateDialog{
+					UserId:          v.UserId,
+					PeerType:        peer.PeerType,
+					PeerId:          in.UserId,
+					TopMessage:      nil,
+					ReadOutboxMaxId: nil,
+					ReadInboxMaxId:  nil,
+					UnreadCount:     nil,
+					UnreadMark:      false,
+					PinnedMsgId:     &wrapperspb.Int32Value{Value: pinnedMsgId},
+					Date2:           nil,
+				})
 
 			// sync
 			c.svcCtx.Dao.SyncClient.SyncPushUpdates(
@@ -91,18 +91,21 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 						}).To_Update()),
 				})
 		} else {
-			c.svcCtx.Dao.CachedConn.Exec(
+			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 				c.ctx,
-				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-					_, err2 := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
-						c.ctx,
-						pinnedMsgId,
-						v.UserId,
-						mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
+				&dialog.TLDialogInsertOrUpdateDialog{
+					UserId:          v.UserId,
+					PeerType:        peer.PeerType,
+					PeerId:          peer.PeerId,
+					TopMessage:      nil,
+					ReadOutboxMaxId: nil,
+					ReadInboxMaxId:  nil,
+					UnreadCount:     nil,
+					UnreadMark:      false,
+					PinnedMsgId:     &wrapperspb.Int32Value{Value: pinnedMsgId},
+					Date2:           nil,
+				})
 
-					return 0, 0, err2
-				},
-				dialog.GetDialogCacheKey(v.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
 			// sync
 			c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,

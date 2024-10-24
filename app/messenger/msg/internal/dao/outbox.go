@@ -22,7 +22,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 	"math"
 	"time"
 
@@ -36,6 +35,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func makeMessageBoxByDO(boxDO *dataobject.MessagesDO) *mtproto.MessageBox {
@@ -636,6 +636,7 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 			ReadInboxMaxId:  nil,
 			UnreadCount:     &wrapperspb.Int32Value{Value: 0},
 			UnreadMark:      false,
+			PinnedMsgId:     nil,
 			Date2:           &wrapperspb.Int64Value{Value: int64(outMsgBox.Message.Date)},
 		})
 

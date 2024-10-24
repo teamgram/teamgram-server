@@ -44,8 +44,6 @@ const (
 	RPCDialog_DialogReorderPinnedDialogs_FullMethodName              = "/dialog.RPCDialog/dialog_reorderPinnedDialogs"
 	RPCDialog_DialogGetDialogById_FullMethodName                     = "/dialog.RPCDialog/dialog_getDialogById"
 	RPCDialog_DialogGetTopMessage_FullMethodName                     = "/dialog.RPCDialog/dialog_getTopMessage"
-	RPCDialog_DialogUpdateReadInbox_FullMethodName                   = "/dialog.RPCDialog/dialog_updateReadInbox"
-	RPCDialog_DialogUpdateReadOutbox_FullMethodName                  = "/dialog.RPCDialog/dialog_updateReadOutbox"
 	RPCDialog_DialogInsertOrUpdateDialog_FullMethodName              = "/dialog.RPCDialog/dialog_insertOrUpdateDialog"
 	RPCDialog_DialogDeleteDialog_FullMethodName                      = "/dialog.RPCDialog/dialog_deleteDialog"
 	RPCDialog_DialogGetUserPinnedMessage_FullMethodName              = "/dialog.RPCDialog/dialog_getUserPinnedMessage"
@@ -89,8 +87,6 @@ type RPCDialogClient interface {
 	DialogReorderPinnedDialogs(ctx context.Context, in *TLDialogReorderPinnedDialogs, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogGetDialogById(ctx context.Context, in *TLDialogGetDialogById, opts ...grpc.CallOption) (*DialogExt, error)
 	DialogGetTopMessage(ctx context.Context, in *TLDialogGetTopMessage, opts ...grpc.CallOption) (*mtproto.Int32, error)
-	DialogUpdateReadInbox(ctx context.Context, in *TLDialogUpdateReadInbox, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	DialogUpdateReadOutbox(ctx context.Context, in *TLDialogUpdateReadOutbox, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogInsertOrUpdateDialog(ctx context.Context, in *TLDialogInsertOrUpdateDialog, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogDeleteDialog(ctx context.Context, in *TLDialogDeleteDialog, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	DialogGetUserPinnedMessage(ctx context.Context, in *TLDialogGetUserPinnedMessage, opts ...grpc.CallOption) (*mtproto.Int32, error)
@@ -252,24 +248,6 @@ func (c *rPCDialogClient) DialogGetDialogById(ctx context.Context, in *TLDialogG
 func (c *rPCDialogClient) DialogGetTopMessage(ctx context.Context, in *TLDialogGetTopMessage, opts ...grpc.CallOption) (*mtproto.Int32, error) {
 	out := new(mtproto.Int32)
 	err := c.cc.Invoke(ctx, RPCDialog_DialogGetTopMessage_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCDialogClient) DialogUpdateReadInbox(ctx context.Context, in *TLDialogUpdateReadInbox, opts ...grpc.CallOption) (*mtproto.Bool, error) {
-	out := new(mtproto.Bool)
-	err := c.cc.Invoke(ctx, RPCDialog_DialogUpdateReadInbox_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCDialogClient) DialogUpdateReadOutbox(ctx context.Context, in *TLDialogUpdateReadOutbox, opts ...grpc.CallOption) (*mtproto.Bool, error) {
-	out := new(mtproto.Bool)
-	err := c.cc.Invoke(ctx, RPCDialog_DialogUpdateReadOutbox_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -493,8 +471,6 @@ type RPCDialogServer interface {
 	DialogReorderPinnedDialogs(context.Context, *TLDialogReorderPinnedDialogs) (*mtproto.Bool, error)
 	DialogGetDialogById(context.Context, *TLDialogGetDialogById) (*DialogExt, error)
 	DialogGetTopMessage(context.Context, *TLDialogGetTopMessage) (*mtproto.Int32, error)
-	DialogUpdateReadInbox(context.Context, *TLDialogUpdateReadInbox) (*mtproto.Bool, error)
-	DialogUpdateReadOutbox(context.Context, *TLDialogUpdateReadOutbox) (*mtproto.Bool, error)
 	DialogInsertOrUpdateDialog(context.Context, *TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error)
 	DialogDeleteDialog(context.Context, *TLDialogDeleteDialog) (*mtproto.Bool, error)
 	DialogGetUserPinnedMessage(context.Context, *TLDialogGetUserPinnedMessage) (*mtproto.Int32, error)
@@ -567,12 +543,6 @@ func (UnimplementedRPCDialogServer) DialogGetDialogById(context.Context, *TLDial
 }
 func (UnimplementedRPCDialogServer) DialogGetTopMessage(context.Context, *TLDialogGetTopMessage) (*mtproto.Int32, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DialogGetTopMessage not implemented")
-}
-func (UnimplementedRPCDialogServer) DialogUpdateReadInbox(context.Context, *TLDialogUpdateReadInbox) (*mtproto.Bool, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DialogUpdateReadInbox not implemented")
-}
-func (UnimplementedRPCDialogServer) DialogUpdateReadOutbox(context.Context, *TLDialogUpdateReadOutbox) (*mtproto.Bool, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DialogUpdateReadOutbox not implemented")
 }
 func (UnimplementedRPCDialogServer) DialogInsertOrUpdateDialog(context.Context, *TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DialogInsertOrUpdateDialog not implemented")
@@ -918,42 +888,6 @@ func _RPCDialog_DialogGetTopMessage_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RPCDialogServer).DialogGetTopMessage(ctx, req.(*TLDialogGetTopMessage))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCDialog_DialogUpdateReadInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLDialogUpdateReadInbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCDialogServer).DialogUpdateReadInbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCDialog_DialogUpdateReadInbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCDialogServer).DialogUpdateReadInbox(ctx, req.(*TLDialogUpdateReadInbox))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCDialog_DialogUpdateReadOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLDialogUpdateReadOutbox)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCDialogServer).DialogUpdateReadOutbox(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCDialog_DialogUpdateReadOutbox_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCDialogServer).DialogUpdateReadOutbox(ctx, req.(*TLDialogUpdateReadOutbox))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1420,14 +1354,6 @@ var RPCDialog_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "dialog_getTopMessage",
 			Handler:    _RPCDialog_DialogGetTopMessage_Handler,
-		},
-		{
-			MethodName: "dialog_updateReadInbox",
-			Handler:    _RPCDialog_DialogUpdateReadInbox_Handler,
-		},
-		{
-			MethodName: "dialog_updateReadOutbox",
-			Handler:    _RPCDialog_DialogUpdateReadOutbox_Handler,
 		},
 		{
 			MethodName: "dialog_insertOrUpdateDialog",

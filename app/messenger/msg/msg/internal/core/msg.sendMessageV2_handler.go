@@ -11,7 +11,6 @@ package core
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/timex"
 	"strconv"
 	"strings"
 
@@ -23,6 +22,7 @@ import (
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 
 	"github.com/zeromicro/go-zero/core/mr"
+	"github.com/zeromicro/go-zero/core/timex"
 )
 
 // MsgSendMessageV2

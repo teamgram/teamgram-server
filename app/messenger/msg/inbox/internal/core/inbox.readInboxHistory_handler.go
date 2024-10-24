@@ -20,12 +20,13 @@ package core
 
 import (
 	"fmt"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InboxReadInboxHistory
@@ -60,6 +61,7 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 			ReadInboxMaxId:  &wrapperspb.Int32Value{Value: maxId},
 			UnreadCount:     &wrapperspb.Int32Value{Value: unreadCount},
 			UnreadMark:      false,
+			PinnedMsgId:     nil,
 			Date2:           nil,
 		})
 

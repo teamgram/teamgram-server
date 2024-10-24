@@ -10,15 +10,15 @@
 package core
 
 import (
-	"context"
 	"math/rand"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // MsgUpdatePinnedMessage
@@ -54,31 +54,36 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*mtp
 					pinnedMsgId = idList[0]
 				}
 			}
-			c.svcCtx.Dao.CachedConn.Exec(
-				c.ctx,
-				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-					_, err := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
-						ctx,
-						pinnedMsgId,
-						in.UserId,
-						mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
 
-					return 0, 0, err
-				},
-				dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
+			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+				c.ctx,
+				&dialog.TLDialogInsertOrUpdateDialog{
+					UserId:          in.UserId,
+					PeerType:        peer.PeerType,
+					PeerId:          peer.PeerId,
+					TopMessage:      nil,
+					ReadOutboxMaxId: nil,
+					ReadInboxMaxId:  nil,
+					UnreadCount:     nil,
+					UnreadMark:      false,
+					PinnedMsgId:     &wrapperspb.Int32Value{Value: pinnedMsgId},
+					Date2:           nil,
+				})
 		} else {
-			c.svcCtx.Dao.CachedConn.Exec(
+			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 				c.ctx,
-				func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-					_, err := c.svcCtx.Dao.DialogsDAO.UpdatePinnedMsgId(
-						ctx,
-						in.Id,
-						in.UserId,
-						mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId))
-
-					return 0, 0, err
-				},
-				dialog.GetDialogCacheKey(in.UserId, mtproto.MakePeerDialogId(peer.PeerType, peer.PeerId)))
+				&dialog.TLDialogInsertOrUpdateDialog{
+					UserId:          in.UserId,
+					PeerType:        peer.PeerType,
+					PeerId:          peer.PeerId,
+					TopMessage:      nil,
+					ReadOutboxMaxId: nil,
+					ReadInboxMaxId:  nil,
+					UnreadCount:     nil,
+					UnreadMark:      false,
+					PinnedMsgId:     &wrapperspb.Int32Value{Value: in.Id},
+					Date2:           nil,
+				})
 		}
 
 		// pinned

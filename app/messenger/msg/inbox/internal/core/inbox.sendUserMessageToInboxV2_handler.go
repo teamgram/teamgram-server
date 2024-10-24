@@ -19,13 +19,13 @@
 package core
 
 import (
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InboxSendUserMessageToInboxV2
@@ -148,6 +148,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 							ReadInboxMaxId:  &wrapperspb.Int32Value{Value: inBox.MessageId},
 							UnreadCount:     &wrapperspb.Int32Value{Value: 0},
 							UnreadMark:      false,
+							PinnedMsgId:     nil,
 							Date2:           nil,
 						})
 

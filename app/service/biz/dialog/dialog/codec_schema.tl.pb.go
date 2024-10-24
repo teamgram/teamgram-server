@@ -136,19 +136,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -92425614,
 		}
 	},
-	489158840: func() mtproto.TLObject { // 0x1d27f8b8
-		return &TLDialogUpdateReadInbox{
-			Constructor: 489158840,
-		}
-	},
-	1483799934: func() mtproto.TLObject { // 0x5870fd7e
-		return &TLDialogUpdateReadOutbox{
-			Constructor: 1483799934,
-		}
-	},
-	382601889: func() mtproto.TLObject { // 0x16ce0aa1
+	1563133986: func() mtproto.TLObject { // 0x5d2b8822
 		return &TLDialogInsertOrUpdateDialog{
-			Constructor: 382601889,
+			Constructor: 1563133986,
 		}
 	},
 	28515811: func() mtproto.TLObject { // 0x1b31de3
@@ -1761,101 +1751,13 @@ func (m *TLDialogGetTopMessage) Decode(dBuf *mtproto.DecodeBuf) error {
 	return dBuf.GetError()
 }
 
-// TLDialogUpdateReadInbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLDialogUpdateReadInbox) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0x1d27f8b8:
-		x.UInt(0x1d27f8b8)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-		x.Int(m.GetReadInboxId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLDialogUpdateReadInbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLDialogUpdateReadInbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x1d27f8b8:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		m.ReadInboxId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-// TLDialogUpdateReadOutbox
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLDialogUpdateReadOutbox) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0x5870fd7e:
-		x.UInt(0x5870fd7e)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-		x.Int(m.GetReadOutboxId())
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLDialogUpdateReadOutbox) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLDialogUpdateReadOutbox) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x5870fd7e:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		m.ReadOutboxId = dBuf.Int()
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
 // TLDialogInsertOrUpdateDialog
 ///////////////////////////////////////////////////////////////////////////////
 
 func (m *TLDialogInsertOrUpdateDialog) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x16ce0aa1:
-		x.UInt(0x16ce0aa1)
+	case 0x5d2b8822:
+		x.UInt(0x5d2b8822)
 
 		// set flags
 		var flags uint32 = 0
@@ -1877,6 +1779,9 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(x *mtproto.EncodeBuf, layer int32)
 		}
 		if m.GetDate2() != nil {
 			flags |= 1 << 5
+		}
+		if m.GetPinnedMsgId() != nil {
+			flags |= 1 << 6
 		}
 
 		x.UInt(flags)
@@ -1905,6 +1810,10 @@ func (m *TLDialogInsertOrUpdateDialog) Encode(x *mtproto.EncodeBuf, layer int32)
 			x.Long(m.GetDate2().Value)
 		}
 
+		if m.GetPinnedMsgId() != nil {
+			x.Int(m.GetPinnedMsgId().Value)
+		}
+
 	default:
 		// log.Errorf("")
 	}
@@ -1918,7 +1827,7 @@ func (m *TLDialogInsertOrUpdateDialog) CalcByteSize(layer int32) int {
 
 func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x16ce0aa1:
+	case 0x5d2b8822:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1948,6 +1857,10 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(dBuf *mtproto.DecodeBuf) error {
 		}
 		if (flags & (1 << 5)) != 0 {
 			m.Date2 = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 6)) != 0 {
+			m.PinnedMsgId = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
 		return dBuf.GetError()

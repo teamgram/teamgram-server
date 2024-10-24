@@ -32,8 +32,6 @@ const (
 	Predicate_dialog_reorderPinnedDialogs              = "dialog_reorderPinnedDialogs"
 	Predicate_dialog_getDialogById                     = "dialog_getDialogById"
 	Predicate_dialog_getTopMessage                     = "dialog_getTopMessage"
-	Predicate_dialog_updateReadInbox                   = "dialog_updateReadInbox"
-	Predicate_dialog_updateReadOutbox                  = "dialog_updateReadOutbox"
 	Predicate_dialog_insertOrUpdateDialog              = "dialog_insertOrUpdateDialog"
 	Predicate_dialog_deleteDialog                      = "dialog_deleteDialog"
 	Predicate_dialog_getUserPinnedMessage              = "dialog_getUserPinnedMessage"
@@ -143,16 +141,8 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -92425614, // 0xfa7db272
 
 	},
-	Predicate_dialog_updateReadInbox: {
-		0: 489158840, // 0x1d27f8b8
-
-	},
-	Predicate_dialog_updateReadOutbox: {
-		0: 1483799934, // 0x5870fd7e
-
-	},
 	Predicate_dialog_insertOrUpdateDialog: {
-		0: 382601889, // 0x16ce0aa1
+		0: 1563133986, // 0x5d2b8822
 
 	},
 	Predicate_dialog_deleteDialog: {
@@ -263,9 +253,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-18664089:   Predicate_dialog_reorderPinnedDialogs,              // 0xfee33567
 	-1587594251: Predicate_dialog_getDialogById,                     // 0xa15f3bf5
 	-92425614:   Predicate_dialog_getTopMessage,                     // 0xfa7db272
-	489158840:   Predicate_dialog_updateReadInbox,                   // 0x1d27f8b8
-	1483799934:  Predicate_dialog_updateReadOutbox,                  // 0x5870fd7e
-	382601889:   Predicate_dialog_insertOrUpdateDialog,              // 0x16ce0aa1
+	1563133986:  Predicate_dialog_insertOrUpdateDialog,              // 0x5d2b8822
 	28515811:    Predicate_dialog_deleteDialog,                      // 0x1b31de3
 	-1885617487: Predicate_dialog_getUserPinnedMessage,              // 0x8f9bc2b1
 	371388970:   Predicate_dialog_updateUserPinnedMessage,           // 0x1622f22a
