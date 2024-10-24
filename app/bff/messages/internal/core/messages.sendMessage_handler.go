@@ -23,6 +23,7 @@ import (
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/threading"
 )
@@ -56,6 +57,24 @@ func (c *MessagesCore) MessagesSendMessage(in *mtproto.TLMessagesSendMessage) (*
 	//	return
 	//}
 
+	// messages.sendMessage#983f9745 flags:#
+	//no_webpage:flags.1?true
+	//silent:flags.5?true
+	//background:flags.6?true
+	//clear_draft:flags.7?true
+	//noforwards:flags.14?true
+	//update_stickersets_order:flags.15?true
+	//invert_media:flags.16?true
+	//peer:InputPeer
+	//reply_to:flags.0?InputReplyTo
+	//message:string
+	//random_id:long
+	//reply_markup:flags.2?ReplyMarkup
+	//entities:flags.3?Vector<MessageEntity>
+	//schedule_date:flags.10?int
+	//send_as:flags.13?InputPeer
+	//quick_reply_shortcut:flags.17?InputQuickReplyShortcut
+	//effect:flags.18?long = Updates;
 	outMessage := mtproto.MakeTLMessage(&mtproto.Message{
 		Out:                  true,
 		Mentioned:            false,

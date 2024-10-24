@@ -22,6 +22,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"math"
 	"time"
 
@@ -570,13 +571,9 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 	message := outMsgBox.Message
 	mData, _ := jsonx.Marshal(outMsgBox.GetMessage())
 	outBoxMsgId := outMsgBox.MessageId
-	// dialogMessageId := outMsgBox.DialogMessageId
 
 	var (
 		savedPeerUtil *mtproto.PeerUtil
-		outBoxDO      *dataobject.MessagesDO
-
-		dialogDO *dataobject.DialogsDO
 	)
 
 	if message.GetSavedPeerId() != nil {
@@ -586,81 +583,37 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 	}
 
 	tR := sqlx.TxWrapper(ctx, d.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		outBoxDO = &dataobject.MessagesDO{
-			UserId:            outMsgBox.UserId,
-			UserMessageBoxId:  outMsgBox.MessageId,
-			DialogId1:         outMsgBox.DialogId1,
-			DialogId2:         outMsgBox.DialogId2,
-			DialogMessageId:   outMsgBox.DialogMessageId,
-			SenderUserId:      outMsgBox.UserId,
-			PeerType:          peer.PeerType,
-			PeerId:            peer.PeerId,
-			RandomId:          outMsgBox.RandomId,
-			MessageFilterType: outMsgBox.MessageFilterType,
-			MessageData:       hack.String(mData),
-			Message:           message.GetMessage(),
-			Mentioned:         false,
-			MediaUnread:       message.GetMediaUnread(),
-			Date2:             int64(outMsgBox.Message.Date),
-			SavedPeerType:     savedPeerUtil.PeerType,
-			SavedPeerId:       savedPeerUtil.PeerId,
-			Deleted:           false,
-		}
-
-		lastInsertId, rowsAffected, err := d.MessagesDAO.InsertOrReturnIdTx(tx, outBoxDO)
+		_, _, err := d.MessagesDAO.InsertOrReturnIdTx(
+			tx,
+			&dataobject.MessagesDO{
+				UserId:            outMsgBox.UserId,
+				UserMessageBoxId:  outMsgBox.MessageId,
+				DialogId1:         outMsgBox.DialogId1,
+				DialogId2:         outMsgBox.DialogId2,
+				DialogMessageId:   outMsgBox.DialogMessageId,
+				SenderUserId:      outMsgBox.UserId,
+				PeerType:          peer.PeerType,
+				PeerId:            peer.PeerId,
+				RandomId:          outMsgBox.RandomId,
+				MessageFilterType: outMsgBox.MessageFilterType,
+				MessageData:       hack.String(mData),
+				Message:           message.GetMessage(),
+				Mentioned:         false,
+				MediaUnread:       message.GetMediaUnread(),
+				Date2:             int64(outMsgBox.Message.Date),
+				SavedPeerType:     savedPeerUtil.PeerType,
+				SavedPeerId:       savedPeerUtil.PeerId,
+				Deleted:           false,
+			})
 		if err != nil {
 			result.Err = err
-			return
-		}
-
-		if rowsAffected == 0 {
-			// TODO(@benqi): random_id已经存在
-			if lastInsertId > 0 {
-				result.Data = lastInsertId
-				return
-			} else {
-				result.Err = errors.New("insert error")
-				return
-			}
-		}
-
-		switch peer.PeerType {
-		case mtproto.PEER_USER:
-			dialogDO = &dataobject.DialogsDO{
-				UserId:           fromId,
-				PeerType:         peer.PeerType,
-				PeerId:           peer.PeerId,
-				PeerDialogId:     mtproto.MakePeerDialogId(mtproto.PEER_USER, peer.PeerId),
-				TopMessage:       outBoxMsgId,
-				UnreadCount:      0,
-				DraftMessageData: "null",
-				Date2:            int64(outMsgBox.Message.Date),
-			}
-
-			result.Data = outMsgBox
-		case mtproto.PEER_CHAT:
-			dialogDO = &dataobject.DialogsDO{
-				UserId:           fromId,
-				PeerType:         peer.PeerType,
-				PeerId:           peer.PeerId,
-				PeerDialogId:     mtproto.MakePeerDialogId(mtproto.PEER_CHAT, peer.PeerId),
-				TopMessage:       outBoxMsgId,
-				UnreadCount:      0,
-				DraftMessageData: "null",
-				Date2:            int64(outMsgBox.Message.Date),
-			}
-
-			result.Data = outMsgBox
-		default:
-			result.Err = fmt.Errorf("fatal error - invalid peer_type: %v", peer)
-			logx.WithContext(ctx).Errorf("%v", result)
 			return
 		}
 
 		for _, entity := range message.GetEntities() {
 			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 				if entity.GetUrl() != "" {
-					d.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
+					_, _, err = d.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
 						UserId:           outMsgBox.UserId,
 						PeerType:         peer.PeerType,
 						PeerId:           peer.PeerId,
@@ -672,27 +625,19 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 		}
 	})
 
-	d.CachedConn.Exec(
+	d.DialogClient.DialogInsertOrUpdateDialog(
 		ctx,
-		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-			rowsAffected, err := d.DialogsDAO.UpdateOutboxDialog(ctx,
-				dialogDO.TopMessage,
-				dialogDO.Date2,
-				fromId,
-				peer.PeerType,
-				peer.PeerId)
-			// log.Infof("rowsAffected = %d, %v", rowsAffected, dialogDO)
-			if err != nil {
-				return 0, 0, err
-			}
-			// again handle rowsAffected == 0
-			if rowsAffected == 0 {
-				_, _, err = d.DialogsDAO.InsertIgnore(ctx, dialogDO)
-			}
-
-			return 0, 0, err
-		},
-		dialog.GetDialogCacheKeyByPeer(fromId, peer.PeerType, peer.PeerId))
+		&dialog.TLDialogInsertOrUpdateDialog{
+			UserId:          fromId,
+			PeerType:        peer.PeerType,
+			PeerId:          peer.PeerId,
+			TopMessage:      &wrapperspb.Int32Value{Value: outBoxMsgId},
+			ReadOutboxMaxId: nil,
+			ReadInboxMaxId:  nil,
+			UnreadCount:     &wrapperspb.Int32Value{Value: 0},
+			UnreadMark:      false,
+			Date2:           &wrapperspb.Int64Value{Value: int64(outMsgBox.Message.Date)},
+		})
 
 	return tR.Err
 }

@@ -11,6 +11,7 @@ package core
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/timex"
 	"strconv"
 	"strings"
 
@@ -36,7 +37,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates
 
 	// TODO: check request valid
 
-	if len(in.Message) == 0 {
+	if len(outBoxList) == 0 {
 		err = mtproto.ErrMessageIdsEmpty
 		c.Logger.Errorf("msg.sendMessageV2 - error: %v", err)
 		return nil, err
@@ -93,6 +94,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates
 func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
 	var (
 		idHelper = mtproto.NewIDListHelper(fromUserId, toUserId)
+		since2   = timex.Now()
 	)
 
 	idHelper.PickByMessage(outBox.GetMessage())
@@ -105,6 +107,8 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 		c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
 		return nil, err
 	}
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: user.getMutableUsers")
 
 	sender, _ := users.GetImmutableUser(fromUserId)
 	if sender == nil || sender.Deleted() {
@@ -150,8 +154,9 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 			return hasBot
 		})
 
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: outBox.Message = plugin.RemakeMessage(")
+
 	var (
-		// updateNewMessage *mtproto.Update
 		rUpdates *mtproto.Updates
 	)
 
@@ -161,12 +166,14 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 		strconv.FormatInt(outBox.RandomId, 10),
 		&rUpdates,
 		func(ctx context.Context, v any) error {
+			c.Logger.WithDuration(timex.Since(since2)).Infof("end: begin '_, err = c.svcCtx.Dao.DoIdempotent('")
 			box, err := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
 			if err != nil {
 				c.Logger.Error(err.Error())
 				return err
 			}
 
+			c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.SendUserMessageV2")
 			_, err2 := c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
@@ -185,12 +192,14 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 			}
 
 			if fromUserId != toUserId {
+				c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(")
 				blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(c.ctx, &userpb.TLUserBlockedByUser{
 					UserId:     toUserId,
 					PeerUserId: fromUserId,
 				})
 
 				if !mtproto.FromBool(blocked) {
+					c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.UserClient.UserBlockedByUser")
 					_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 						c.ctx,
 						&inbox.TLInboxSendUserMessageToInboxV2{
@@ -233,6 +242,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 					Message_MESSAGE: box.Message,
 				}).To_Update())
 
+			c.Logger.WithDuration(timex.Since(since2)).Infof("end: *v.(**mtproto.Updates)")
 			return nil
 		})
 	if err != nil {
@@ -240,6 +250,7 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 		return nil, err
 	}
 
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: '_, err = c.svcCtx.Dao.DoIdempotent('")
 	return rUpdates, nil
 }
 

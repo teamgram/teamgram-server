@@ -19,10 +19,9 @@
 package core
 
 import (
-	"context"
 	"fmt"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
@@ -33,10 +32,9 @@ import (
 // inbox.readInboxHistory user_id:long auth_key_id:long peer_type:int peer_id:long unread_count:int read_inbox_max_id:int max_id:int = Void;
 func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*mtproto.Void, error) {
 	var (
-		maxId        = in.MaxId
-		did          = mtproto.MakeDialogId(in.UserId, in.PeerType, in.PeerId)
-		peerDialogId = mtproto.MakePeerDialogId(in.PeerType, in.PeerId)
-		unreadCount  int32
+		maxId       = in.MaxId
+		did         = mtproto.MakeDialogId(in.UserId, in.PeerType, in.PeerId)
+		unreadCount int32
 	)
 
 	if maxId > in.ReadInboxMaxId {
@@ -51,19 +49,19 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 		}
 	}
 
-	c.svcCtx.Dao.CachedConn.Exec(
+	c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 		c.ctx,
-		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-			_, err := c.svcCtx.Dao.DialogsDAO.UpdateReadInboxMaxId(
-				ctx,
-				unreadCount,
-				maxId,
-				in.UserId,
-				peerDialogId)
-
-			return 0, 0, err
-		},
-		dialog.GetDialogCacheKey(in.UserId, peerDialogId))
+		&dialog.TLDialogInsertOrUpdateDialog{
+			UserId:          in.UserId,
+			PeerType:        in.PeerType,
+			PeerId:          in.PeerId,
+			TopMessage:      nil,
+			ReadOutboxMaxId: nil,
+			ReadInboxMaxId:  &wrapperspb.Int32Value{Value: maxId},
+			UnreadCount:     &wrapperspb.Int32Value{Value: unreadCount},
+			UnreadMark:      false,
+			Date2:           nil,
+		})
 
 	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
