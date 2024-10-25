@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="drafts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO drafts
+                (user_id, peer_dialog_id, draft_type, draft_message_data, date2)
+            VALUES
+                (:user_id, :peer_dialog_id, :draft_type, :draft_message_data, :date2)
+            ON DUPLICATE KEY UPDATE
+                draft_type = VALUES(draft_type),
+                draft_message_data = VALUES(draft_message_data),
+                date2 = VALUES(date2)
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, peer_dialog_id, draft_type, draft_message_data, date2
+            FROM
+                drafts
+            WHERE
+                user_id=:user_id AND peer_dialog_id=:peer_dialog_id
+        </sql>
+    </operation>
+
+    <operation name="SelectIdList" result_set="single_list">
+        <sql>
+            SELECT
+                peer_dialog_id
+            FROM
+                drafts
+            WHERE
+                user_id=:user_id
+        </sql>
+    </operation>
+
+    <operation name="SelectByIdList">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, peer_dialog_id, draft_type, draft_message_data, date2
+            FROM
+                drafts
+            WHERE
+                user_id=:user_id AND peer_dialog_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="ClearByIdList">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                drafts
+            SET
+                draft_type = 0, draft_message_data = 'null'
+            WHERE
+                user_id=:user_id AND peer_dialog_id IN (:idList)
+        </sql>
+    </operation>
+</table>
