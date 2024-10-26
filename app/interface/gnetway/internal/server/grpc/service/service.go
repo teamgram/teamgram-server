@@ -11,7 +11,7 @@
 package service
 
 import (
-	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/gateway"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
 )
 

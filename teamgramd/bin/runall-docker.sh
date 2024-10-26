@@ -40,10 +40,6 @@ echo "run session ..."
 nohup ./session -f=../etc2/session.yaml >> ../logs/session.log  2>&1 &
 sleep 1
 
-#echo "run gateway ..."
-#nohup ./gateway -f=../etc2/gateway.yaml >> ../logs/gateway.log  2>&1 &
-#sleep 1
-
 echo "run gnetway ..."
 nohup ./gnetway -f=../etc2/gnetway.yaml >> ../logs/gnetway.log  2>&1 &
 sleep 1

@@ -10,7 +10,7 @@
 package grpc
 
 import (
-	"github.com/teamgram/teamgram-server/app/interface/gateway/gateway"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/gateway"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
 

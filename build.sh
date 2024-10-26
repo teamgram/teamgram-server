@@ -44,10 +44,6 @@ echo "build session ..."
 cd ${TEAMGRAMAPP}/interface/session/cmd/session
 go build -o ${INSTALL}/bin/session
 
-echo "build gateway ..."
-cd ${TEAMGRAMAPP}/interface/gateway/cmd/gateway
-go build -o ${INSTALL}/bin/gateway
-
 echo "build gnetway ..."
 cd ${TEAMGRAMAPP}/interface/gnetway/cmd/gnetway
 go build -o ${INSTALL}/bin/gnetway
