@@ -27,6 +27,9 @@ var (
 	conversationsKeyPrefix = "user_conversations.1"
 	chatsKeyPrefix         = "user_chats.1"
 	channelsKeyPrefix      = "user_channels.1"
+
+	allDraftIdListPrefix = "all_draft_id_list.1"
+	draftKeyPrefix       = "draft.1"
 )
 
 func GetCacheOneKey(prefix string, k int64) string {
@@ -135,4 +138,12 @@ func GetCacheKeyByPeerType(userId int64, peerType int32) string {
 	}
 
 	return ""
+}
+
+func GetAllDraftIdListCacheKey(userId int64) string {
+	return GetCacheOneKey(allDraftIdListPrefix, userId)
+}
+
+func GetDraftCacheKey(userId, peerDialogId int64) string {
+	return GetCacheTwoKey(draftKeyPrefix, userId, peerDialogId)
 }
