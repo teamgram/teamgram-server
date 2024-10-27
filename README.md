@@ -33,6 +33,7 @@ Privatization deployment Before `Teamgram`, please make sure that the above five
 
 - [Centos9 Stream Build and Install](docs/install-centos-9.md) [@A Feel]
 - [CentOS7 teamgram-server环境搭建](docs/install-centos-7.md) [@saeipi]
+- [Fedora 40 Build and Install](docs/install-fedora.md) [@lingyicute]
 
 If you have the above components, it is recommended to use them directly. If not, it is recommended to use `docker-compose-env.yaml`.
 
