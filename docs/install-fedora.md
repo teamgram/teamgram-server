@@ -2,6 +2,8 @@
 
 ## by @lingyicute
 
+## 简体中文 | [English](./install-fedora-en.md) 
+
 ## 依赖安装与运行（以下全部操作使用root用户执行，请注意权限和安全性）
 
 ### 安装 MySQL 服务器
