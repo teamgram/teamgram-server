@@ -595,7 +595,7 @@ func (m *MainAuthWrapper) runLoop() {
 		}
 	}
 
-	logx.Info("quit runLoop...")
+	logx.Infof("%s -> quit runLoop...", m)
 }
 
 func (m *MainAuthWrapper) rpcRunLoop() {
@@ -605,7 +605,7 @@ func (m *MainAuthWrapper) rpcRunLoop() {
 	for {
 		apiRequest := m.rpcQueue.Pop()
 		if apiRequest == nil {
-			logx.Info("quit rpcRunLoop...")
+			logx.Infof("%s -> quit rpcRunLoop...", m)
 			return
 		} else {
 			threading.RunSafe(func() {
