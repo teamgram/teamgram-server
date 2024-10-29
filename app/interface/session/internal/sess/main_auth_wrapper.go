@@ -507,7 +507,7 @@ func (m *MainAuthWrapper) getSessionListById(authId int64) (sList *SessionList) 
 }
 
 func (m *MainAuthWrapper) String() string {
-	return fmt.Sprintf("{auth_key_id: %d, user_id: %d, layer: %d}", m.authKeyId, m.AuthUserId, m.Layer)
+	return fmt.Sprintf("{auth_key_id: %d, user_id: %d, layer: %d}", m.authKeyId, m.AuthUserId, m.Layer())
 }
 
 func (m *MainAuthWrapper) Start() {
