@@ -1,0 +1,31 @@
+syntax="proto3";
+import "mtproto_meta.proto";
+
+package brpc;
+option java_package="com.brpc.policy";
+option java_outer_classname="BaiduRpcProto";
+
+option go_package = "github.com/teamgram/teamgram-server/pkg/net2/brpc";
+
+message RpcMeta {
+    RpcRequestMeta request = 1;
+    RpcResponseMeta response = 2;
+    int32 compress_type = 3;
+    int64 correlation_id = 4;
+    int32 attachment_size = 5;
+    MTProtoMeta mtproto_meta = 9;
+}
+
+message RpcRequestMeta {
+    string service_name = 1;
+    string method_name = 2;
+    int64 log_id = 3;
+    int64 trace_id = 4;
+    int64 span_id = 5;
+    int64 parent_span_id = 6;
+}
+
+message RpcResponseMeta {
+    int32 error_code = 1;
+    string error_text = 2;
+}

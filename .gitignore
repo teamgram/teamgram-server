@@ -50,3 +50,5 @@ teamgramd/logs/*
 /app/service/media/internal/dao/examples/examples
 /app/service/status/cmd/cli/cli
 /app/service/dfs/internal/dao/examples/gif/testdata/
+/pkg/net2/examples/client/client
+/pkg/net2/examples/server/server
