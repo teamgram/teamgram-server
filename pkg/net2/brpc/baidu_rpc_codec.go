@@ -50,6 +50,35 @@ func (m *BaiduRpcMessage) String() string {
 	return fmt.Sprintf("{meta={%v}, payload_size=%d, attachment_size=%d}", m.Meta, len(m.Payload), len(m.Attachment))
 }
 
+func (m *BaiduRpcMessage) Encode() ([][]byte, error) {
+	var (
+		headBuf = make([]byte, 12)
+	)
+
+	if len(m.Attachment) > 0 {
+		m.Meta.AttachmentSize = int32(len(m.Attachment))
+	}
+
+	metaData, err := proto.Marshal(m.Meta)
+	if err != nil {
+		return nil, err
+	}
+
+	// pSize := len(msg.Payload) + len(msg.Attachment) + proto.Size(msg.Meta)
+	copy(headBuf[:4], brpcMagicNumber)
+	binary.LittleEndian.PutUint32(headBuf[4:], uint32(12+len(m.Payload)+len(m.Attachment)+len(metaData)))
+	binary.LittleEndian.PutUint32(headBuf[8:], uint32(len(metaData)))
+
+	bufList := make([][]byte, 0, 4)
+
+	bufList = append(bufList, headBuf)
+	bufList = append(bufList, m.Payload)
+	bufList = append(bufList, m.Attachment)
+	bufList = append(bufList, metaData)
+
+	return bufList, nil
+}
+
 type BaiduRpcCodec struct {
 	// headBuf [12]byte
 }
@@ -58,33 +87,8 @@ func NewBaiduRpcCodec() *BaiduRpcCodec {
 	return new(BaiduRpcCodec)
 }
 
-func (codec *BaiduRpcCodec) Encode(c gnet.Conn, msg *BaiduRpcMessage) ([][]byte, error) {
-	var (
-		headBuf = make([]byte, 12)
-	)
-
-	if len(msg.Attachment) > 0 {
-		msg.Meta.AttachmentSize = int32(len(msg.Attachment))
-	}
-
-	metaData, err := proto.Marshal(msg.Meta)
-	if err != nil {
-		return nil, err
-	}
-
-	// pSize := len(msg.Payload) + len(msg.Attachment) + proto.Size(msg.Meta)
-	copy(headBuf[:4], brpcMagicNumber)
-	binary.LittleEndian.PutUint32(headBuf[4:], uint32(12+len(msg.Payload)+len(msg.Attachment)+len(metaData)))
-	binary.LittleEndian.PutUint32(headBuf[8:], uint32(len(metaData)))
-
-	bufList := make([][]byte, 0, 4)
-
-	bufList = append(bufList, headBuf)
-	bufList = append(bufList, msg.Payload)
-	bufList = append(bufList, msg.Attachment)
-	bufList = append(bufList, metaData)
-
-	return bufList, nil
+func (codec *BaiduRpcCodec) Encode(msg *BaiduRpcMessage) ([][]byte, error) {
+	return msg.Encode()
 }
 
 func (codec *BaiduRpcCodec) Decode(c gnet.Conn) (*BaiduRpcMessage, error) {

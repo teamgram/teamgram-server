@@ -76,7 +76,7 @@ func (ev *clientEvents) OnTick() (delay time.Duration, action gnet.Action) {
 		msg.Meta.CorrelationId = 1
 		msg.Meta.CompressType = 1
 
-		vList, _ := brpc.NewBaiduRpcCodec().Encode(c, msg)
+		vList, _ := msg.Encode()
 		c.AsyncWritev(vList, func(c gnet.Conn, err error) error {
 			fmt.Println("cb: ", c.ConnId())
 			return nil

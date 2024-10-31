@@ -52,3 +52,5 @@ teamgramd/logs/*
 /app/service/dfs/internal/dao/examples/gif/testdata/
 /pkg/net2/examples/client/client
 /pkg/net2/examples/server/server
+/pkg/net2/brpc/benchmarks/echoserver/echoserver
+/pkg/net2/brpc/benchmarks/echoserver/testdata/test.data

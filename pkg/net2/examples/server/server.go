@@ -77,7 +77,7 @@ func (s *simpleServer) OnTraffic(c gnet.Conn) (action gnet.Action) {
 		}
 
 		fmt.Println("connId: ", c.ConnId(), ", ", msg.String())
-		vList, _ := codec.Encode(c, msg)
+		vList, _ := msg.Encode()
 		_, _ = c.Writev(vList)
 	}
 
