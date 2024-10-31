@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/bwmarrin/snowflake v0.3.1-0.20221123153919-bc74ab286f15
 	github.com/chai2010/webp v1.1.2-0.20240612091223-aa1b379218b7
-	github.com/disintegration/imaging v1.6.2
+	github.com/disintegration/imaging v1.6.3-0.20201218193011-d40f48ce0f09
 	github.com/gobwas/httphead v0.1.0
 	github.com/gobwas/ws v1.4.0
 	github.com/minio/minio-go/v7 v7.0.49
@@ -14,7 +14,7 @@ require (
 	github.com/panjf2000/gnet/v2 v2.5.9
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
-	github.com/teamgram/proto v0.190.0
+	github.com/teamgram/proto v0.192.0
 	github.com/zeromicro/go-zero v1.7.2
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1

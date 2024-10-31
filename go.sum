@@ -32,8 +32,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
-github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
-github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
+github.com/disintegration/imaging v1.6.3-0.20201218193011-d40f48ce0f09 h1:MJFqtdxTq94XqUgg7DcGCaOIXrDTJE/tPHK66Jshguc=
+github.com/disintegration/imaging v1.6.3-0.20201218193011-d40f48ce0f09/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/eapache/go-resiliency v1.6.0 h1:CqGDTLtpwuWKn6Nj3uNUdflaq+/kIPsg0gfNzHton30=
@@ -231,8 +231,8 @@ github.com/teamgram/go-zero v1.7.2-teamgram h1:ezc3Fv53zRhzGVO3YXvUyIQMDoU8D5p7d
 github.com/teamgram/go-zero v1.7.2-teamgram/go.mod h1:wH35V+0ehCKlYR0g499QayGWnCa1OlmNc5OK1t9p9i0=
 github.com/teamgram/marmota v0.1.21 h1:pr/vCycvGgR3uGJcK2iRY8y3W4PJTfrZejuNmoosNXY=
 github.com/teamgram/marmota v0.1.21/go.mod h1:oXbZpp9kgLcy23rfSr2r9cZq+KX6MHwo396nx00kU1g=
-github.com/teamgram/proto v0.190.0 h1:8yn0QLqePq72yzDml70FzXrlMkebTN05ej35aoKQAls=
-github.com/teamgram/proto v0.190.0/go.mod h1:2kh2MYCsaGya7ZENGFXDds5YdRhWVmKBq5bJvprtWto=
+github.com/teamgram/proto v0.192.0 h1:Fst9TXRagIWQREOJq1gAo+3Wpwviwht7g+1EryTL0CQ=
+github.com/teamgram/proto v0.192.0/go.mod h1:2kh2MYCsaGya7ZENGFXDds5YdRhWVmKBq5bJvprtWto=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

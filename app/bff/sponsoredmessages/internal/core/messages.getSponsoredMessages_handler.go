@@ -22,9 +22,9 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (c *SponsoredMessagesCore) ChannelsGetSponsoredMessages(in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
+// MessagesGetSponsoredMessages
+// messages.getSponsoredMessages#9bd2f439 peer:InputPeer = messages.SponsoredMessages;
+func (c *SponsoredMessagesCore) MessagesGetSponsoredMessages(in *mtproto.TLMessagesGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
 	// disable SponsoredMessages
 
 	return mtproto.MakeTLMessagesSponsoredMessages(&mtproto.Messages_SponsoredMessages{

@@ -22,14 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (c *SponsoredMessagesCore) ChannelsGetSponsoredMessages(in *mtproto.TLChannelsGetSponsoredMessages) (*mtproto.Messages_SponsoredMessages, error) {
-	// disable SponsoredMessages
+// MessagesReportSponsoredMessage
+// messages.reportSponsoredMessage#1af3dbb8 peer:InputPeer random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
+func (c *SponsoredMessagesCore) MessagesReportSponsoredMessage(in *mtproto.TLMessagesReportSponsoredMessage) (*mtproto.Channels_SponsoredMessageReportResult, error) {
+	// TODO: not impl
+	c.Logger.Errorf("messages.reportSponsoredMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return mtproto.MakeTLMessagesSponsoredMessages(&mtproto.Messages_SponsoredMessages{
-		Messages: []*mtproto.SponsoredMessage{},
-		Chats:    []*mtproto.Chat{},
-		Users:    []*mtproto.User{},
-	}).To_Messages_SponsoredMessages(), nil
+	return nil, mtproto.ErrEnterpriseIsBlocked
 }
