@@ -141,6 +141,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2095024780,
 		}
 	},
+	-9853198: func() mtproto.TLObject { // 0xff69a6f2
+		return &TLAuthsessionSetAndroidPushSessionId{
+			Constructor: -9853198,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1319,6 +1324,46 @@ func (m *TLAuthsessionSetInitConnection) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.LangCode = dBuf.String()
 		m.Proxy = dBuf.String()
 		m.Params = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLAuthsessionSetAndroidPushSessionId
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLAuthsessionSetAndroidPushSessionId) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xff69a6f2:
+		x.UInt(0xff69a6f2)
+
+		// no flags
+
+		x.Long(m.GetAuthKeyId())
+		x.Long(m.GetSessionId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLAuthsessionSetAndroidPushSessionId) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLAuthsessionSetAndroidPushSessionId) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xff69a6f2:
+
+		// not has flags
+
+		m.AuthKeyId = dBuf.Long()
+		m.SessionId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

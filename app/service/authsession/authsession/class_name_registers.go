@@ -11,28 +11,29 @@
 package authsession
 
 const (
-	Predicate_clientSession                    = "clientSession"
-	Predicate_authKeyStateData                 = "authKeyStateData"
-	Predicate_authsession_getAuthorizations    = "authsession_getAuthorizations"
-	Predicate_authsession_resetAuthorization   = "authsession_resetAuthorization"
-	Predicate_authsession_getLayer             = "authsession_getLayer"
-	Predicate_authsession_getLangPack          = "authsession_getLangPack"
-	Predicate_authsession_getClient            = "authsession_getClient"
-	Predicate_authsession_getLangCode          = "authsession_getLangCode"
-	Predicate_authsession_getUserId            = "authsession_getUserId"
-	Predicate_authsession_getPushSessionId     = "authsession_getPushSessionId"
-	Predicate_authsession_getFutureSalts       = "authsession_getFutureSalts"
-	Predicate_authsession_queryAuthKey         = "authsession_queryAuthKey"
-	Predicate_authsession_setAuthKey           = "authsession_setAuthKey"
-	Predicate_authsession_bindAuthKeyUser      = "authsession_bindAuthKeyUser"
-	Predicate_authsession_unbindAuthKeyUser    = "authsession_unbindAuthKeyUser"
-	Predicate_authsession_getPermAuthKeyId     = "authsession_getPermAuthKeyId"
-	Predicate_authsession_bindTempAuthKey      = "authsession_bindTempAuthKey"
-	Predicate_authsession_setClientSessionInfo = "authsession_setClientSessionInfo"
-	Predicate_authsession_getAuthorization     = "authsession_getAuthorization"
-	Predicate_authsession_getAuthStateData     = "authsession_getAuthStateData"
-	Predicate_authsession_setLayer             = "authsession_setLayer"
-	Predicate_authsession_setInitConnection    = "authsession_setInitConnection"
+	Predicate_clientSession                       = "clientSession"
+	Predicate_authKeyStateData                    = "authKeyStateData"
+	Predicate_authsession_getAuthorizations       = "authsession_getAuthorizations"
+	Predicate_authsession_resetAuthorization      = "authsession_resetAuthorization"
+	Predicate_authsession_getLayer                = "authsession_getLayer"
+	Predicate_authsession_getLangPack             = "authsession_getLangPack"
+	Predicate_authsession_getClient               = "authsession_getClient"
+	Predicate_authsession_getLangCode             = "authsession_getLangCode"
+	Predicate_authsession_getUserId               = "authsession_getUserId"
+	Predicate_authsession_getPushSessionId        = "authsession_getPushSessionId"
+	Predicate_authsession_getFutureSalts          = "authsession_getFutureSalts"
+	Predicate_authsession_queryAuthKey            = "authsession_queryAuthKey"
+	Predicate_authsession_setAuthKey              = "authsession_setAuthKey"
+	Predicate_authsession_bindAuthKeyUser         = "authsession_bindAuthKeyUser"
+	Predicate_authsession_unbindAuthKeyUser       = "authsession_unbindAuthKeyUser"
+	Predicate_authsession_getPermAuthKeyId        = "authsession_getPermAuthKeyId"
+	Predicate_authsession_bindTempAuthKey         = "authsession_bindTempAuthKey"
+	Predicate_authsession_setClientSessionInfo    = "authsession_setClientSessionInfo"
+	Predicate_authsession_getAuthorization        = "authsession_getAuthorization"
+	Predicate_authsession_getAuthStateData        = "authsession_getAuthStateData"
+	Predicate_authsession_setLayer                = "authsession_setLayer"
+	Predicate_authsession_setInitConnection       = "authsession_setInitConnection"
+	Predicate_authsession_setAndroidPushSessionId = "authsession_setAndroidPushSessionId"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -124,31 +125,36 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 2095024780, // 0x7cdf8a8c
 
 	},
+	Predicate_authsession_setAndroidPushSessionId: {
+		0: -9853198, // 0xff69a6f2
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
-	-1701940816: Predicate_clientSession,                    // 0x9a8e71b0
-	-532639977:  Predicate_authKeyStateData,                 // 0xe0408f17
-	820122180:   Predicate_authsession_getAuthorizations,    // 0x30e21244
-	-1923126106: Predicate_authsession_resetAuthorization,   // 0x8d5f6ca6
-	-1473309015: Predicate_authsession_getLayer,             // 0xa82f16a9
-	700170598:   Predicate_authsession_getLangPack,          // 0x29bbc166
-	1616401854:  Predicate_authsession_getClient,            // 0x605855be
-	1486468441:  Predicate_authsession_getLangCode,          // 0x5899b559
-	1464409260:  Predicate_authsession_getUserId,            // 0x57491cac
-	-1279119039: Predicate_authsession_getPushSessionId,     // 0xb3c23141
-	-1194371051: Predicate_authsession_getFutureSalts,       // 0xb8cf5815
-	1421293608:  Predicate_authsession_queryAuthKey,         // 0x54b73828
-	1049889937:  Predicate_authsession_setAuthKey,           // 0x3e940c91
-	198050851:   Predicate_authsession_bindAuthKeyUser,      // 0xbce0423
-	123258440:   Predicate_authsession_unbindAuthKeyUser,    // 0x758c648
-	-1871420202: Predicate_authsession_getPermAuthKeyId,     // 0x907464d6
-	1620004742:  Predicate_authsession_bindTempAuthKey,      // 0x608f4f86
-	47841172:    Predicate_authsession_setClientSessionInfo, // 0x2d9ff94
-	1851660579:  Predicate_authsession_getAuthorization,     // 0x6e5e1923
-	1331573041:  Predicate_authsession_getAuthStateData,     // 0x4f5e3131
-	1147475077:  Predicate_authsession_setLayer,             // 0x44651485
-	2095024780:  Predicate_authsession_setInitConnection,    // 0x7cdf8a8c
+	-1701940816: Predicate_clientSession,                       // 0x9a8e71b0
+	-532639977:  Predicate_authKeyStateData,                    // 0xe0408f17
+	820122180:   Predicate_authsession_getAuthorizations,       // 0x30e21244
+	-1923126106: Predicate_authsession_resetAuthorization,      // 0x8d5f6ca6
+	-1473309015: Predicate_authsession_getLayer,                // 0xa82f16a9
+	700170598:   Predicate_authsession_getLangPack,             // 0x29bbc166
+	1616401854:  Predicate_authsession_getClient,               // 0x605855be
+	1486468441:  Predicate_authsession_getLangCode,             // 0x5899b559
+	1464409260:  Predicate_authsession_getUserId,               // 0x57491cac
+	-1279119039: Predicate_authsession_getPushSessionId,        // 0xb3c23141
+	-1194371051: Predicate_authsession_getFutureSalts,          // 0xb8cf5815
+	1421293608:  Predicate_authsession_queryAuthKey,            // 0x54b73828
+	1049889937:  Predicate_authsession_setAuthKey,              // 0x3e940c91
+	198050851:   Predicate_authsession_bindAuthKeyUser,         // 0xbce0423
+	123258440:   Predicate_authsession_unbindAuthKeyUser,       // 0x758c648
+	-1871420202: Predicate_authsession_getPermAuthKeyId,        // 0x907464d6
+	1620004742:  Predicate_authsession_bindTempAuthKey,         // 0x608f4f86
+	47841172:    Predicate_authsession_setClientSessionInfo,    // 0x2d9ff94
+	1851660579:  Predicate_authsession_getAuthorization,        // 0x6e5e1923
+	1331573041:  Predicate_authsession_getAuthStateData,        // 0x4f5e3131
+	1147475077:  Predicate_authsession_setLayer,                // 0x44651485
+	2095024780:  Predicate_authsession_setInitConnection,       // 0x7cdf8a8c
+	-9853198:    Predicate_authsession_setAndroidPushSessionId, // 0xff69a6f2
 
 }
 

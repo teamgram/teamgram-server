@@ -47,6 +47,6 @@ func (c *AuthsessionCore) AuthsessionGetAuthStateData(in *authsession.TLAuthsess
 		UserId:               cData.UserId(),
 		AccessHash:           0,
 		Client:               cData.GetClient(),
-		AndroidPushSessionId: nil,
+		AndroidPushSessionId: mtproto.MakeFlagsInt64(cData.AndroidPushSessionId()),
 	}).To_AuthKeyStateData(), nil
 }

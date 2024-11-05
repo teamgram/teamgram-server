@@ -38,15 +38,11 @@ func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuth
 	}
 
 	clientSession.AuthKeyId = keyData.PermAuthKeyId
-	r := c.svcCtx.Dao.SetClientSessionInfo(c.ctx, clientSession)
+	err = c.svcCtx.Dao.SetClientSessionInfo(c.ctx, clientSession)
+	if err != nil {
+		c.Logger.Errorf("setClientSessionInfo - error: %v", err)
+		return nil, err
+	}
 
-	//c.svcCtx.Dao.CachedConn.Exec(
-	//	c.ctx,
-	//	func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-	//
-	//		return 0, 0, nil
-	//	},
-	//	"")
-
-	return mtproto.ToBool(r), nil
+	return mtproto.BoolTrue, nil
 }

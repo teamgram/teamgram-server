@@ -193,7 +193,7 @@ func (m *MainAuthWrapper) setOnline(ctx context.Context) {
 			m.authKeyId)
 
 		// s.setOnlineTTL(s.AuthUserId, s.authKeyId, getServerID(), s.Layer, 60)
-		m.cb.Dao.StatusClient.StatusSetSessionOnline(
+		_, _ = m.cb.Dao.StatusClient.StatusSetSessionOnline(
 			ctx,
 			&status.TLStatusSetSessionOnline{
 				UserId: m.AuthUserId,
@@ -290,7 +290,7 @@ func (m *MainAuthWrapper) onUpdateLayer(ctx context.Context, layer int32) {
 		m.client.Layer = layer
 	}
 
-	m.cb.Dao.AuthsessionClient.AuthsessionSetLayer(ctx, &authsession.TLAuthsessionSetLayer{
+	_, _ = m.cb.Dao.AuthsessionClient.AuthsessionSetLayer(ctx, &authsession.TLAuthsessionSetLayer{
 		AuthKeyId: m.authKeyId,
 		Ip:        "",
 		Layer:     layer,
@@ -391,6 +391,14 @@ func (m *MainAuthWrapper) onUpdateInitConnection(ctx context.Context, clientIp s
 func (m *MainAuthWrapper) onBindPushSessionId(ctx context.Context, sList *SessionList, sessionId int64) {
 	if m.pushSessionId == 0 {
 		m.pushSessionId = sessionId
+
+		// setAndroidPushSessionId
+		_, _ = m.cb.Dao.AuthsessionClient.AuthsessionSetAndroidPushSessionId(
+			ctx,
+			&authsession.TLAuthsessionSetAndroidPushSessionId{
+				AuthKeyId: m.authKeyId,
+				SessionId: sessionId,
+			})
 	}
 
 	sess := m.androidPushSession
@@ -398,12 +406,11 @@ func (m *MainAuthWrapper) onBindPushSessionId(ctx context.Context, sList *Sessio
 		sess, _ = sList.sessions[sessionId]
 	}
 	if sess == nil {
-		logx.WithContext(ctx).Errorf("onBindPushSessionId - unknown error(auth_key_id: %d, session_id: %d)", sList.authId, sessionId)
-		return
-	} else {
-		sess.isAndroidPush = true
-		m.androidPushSession = sess
+		sess = newSession(sessionId, sList)
 	}
+
+	sess.isAndroidPush = true
+	m.androidPushSession = sess
 
 	m.setOnline(ctx)
 }

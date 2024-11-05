@@ -10,6 +10,9 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
@@ -30,16 +33,15 @@ func (c *AuthsessionCore) AuthsessionGetPushSessionId(in *authsession.TLAuthsess
 		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
-	sessionId := c.svcCtx.Dao.GetPushSessionId(
-		c.ctx,
-		in.GetUserId(),
-		keyData.PermAuthKeyId,
-		in.GetTokenType())
-	if sessionId == 0 {
-		c.Logger.Errorf("not found pushSessionId(%d,%d)", in.GetUserId(), keyData.PermAuthKeyId)
+	cData, err := c.svcCtx.GetCacheAuthData(c.ctx, keyData.PermAuthKeyId)
+	if err != nil {
+		if !errors.Is(err, sqlc.ErrNotFound) {
+			c.Logger.Errorf("authsession.getAuthStateData - error: %v", err)
+			return nil, err
+		}
 	}
 
 	return mtproto.MakeTLInt64(&mtproto.Int64{
-		V: sessionId,
+		V: cData.AndroidPushSessionId(),
 	}).To_Int64(), nil
 }

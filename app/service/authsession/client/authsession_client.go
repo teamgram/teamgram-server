@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package authsession_client
+package authsessionclient
 
 import (
 	"context"
@@ -42,6 +42,7 @@ type AuthsessionClient interface {
 	AuthsessionGetAuthStateData(ctx context.Context, in *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error)
 	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error)
 	AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
+	AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error)
 }
 
 type defaultAuthsessionClient struct {
@@ -192,4 +193,11 @@ func (m *defaultAuthsessionClient) AuthsessionSetLayer(ctx context.Context, in *
 func (m *defaultAuthsessionClient) AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error) {
 	client := authsession.NewRPCAuthsessionClient(m.cli.Conn())
 	return client.AuthsessionSetInitConnection(ctx, in)
+}
+
+// AuthsessionSetAndroidPushSessionId
+// authsession.setAndroidPushSessionId auth_key_id:long session_id:long = Bool;
+func (m *defaultAuthsessionClient) AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error) {
+	client := authsession.NewRPCAuthsessionClient(m.cli.Conn())
+	return client.AuthsessionSetAndroidPushSessionId(ctx, in)
 }

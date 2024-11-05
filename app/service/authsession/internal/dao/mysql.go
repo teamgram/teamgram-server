@@ -28,7 +28,6 @@ type Mysql struct {
 	*mysql_dao.AuthKeysDAO
 	*mysql_dao.AuthUsersDAO
 	*mysql_dao.AuthsDAO
-	*mysql_dao.DevicesDAO
 	*mysql_dao.AuthKeyInfosDAO
 	*sqlx.CommonDAO
 }
@@ -39,7 +38,6 @@ func newMysqlDao(db *sqlx.DB) *Mysql {
 		AuthKeysDAO:     mysql_dao.NewAuthKeysDAO(db),
 		AuthUsersDAO:    mysql_dao.NewAuthUsersDAO(db),
 		AuthsDAO:        mysql_dao.NewAuthsDAO(db),
-		DevicesDAO:      mysql_dao.NewDevicesDAO(db),
 		AuthKeyInfosDAO: mysql_dao.NewAuthKeyInfosDAO(db),
 		CommonDAO:       sqlx.NewCommonDAO(db),
 	}

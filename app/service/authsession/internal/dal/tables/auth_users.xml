@@ -16,7 +16,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived
+                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
             FROM
                 auth_users
             WHERE
@@ -24,10 +24,21 @@
         </sql>
     </operation>
 
+    <operation name="UpdateAndroidPushSessionId">
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                android_push_session_id = :android_push_session_id, deleted = 0
+            WHERE
+                auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+
     <operation name="SelectAuthKeyIds" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived
+                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
             FROM
                 auth_users
             WHERE
@@ -52,7 +63,7 @@
     <operation name="SelectListByUserId" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived
+                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
             FROM
                 auth_users
             WHERE

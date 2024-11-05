@@ -22,7 +22,6 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"strconv"
 	"strings"
 	"time"
 
@@ -37,7 +36,7 @@ import (
 )
 
 const (
-	authDataPrefix = "auth_data.1"
+	authDataPrefix = "auth_data.2"
 )
 
 func genAuthDataCacheKey(id int64) string {
@@ -50,10 +49,11 @@ func genAuthDataCacheKey(id int64) string {
 //}
 
 type BindUser struct {
-	UserId        int64
-	Hash          int64
-	DateCreated   int64
-	DateActivated int64
+	UserId               int64 `json:"user_id"`
+	Hash                 int64 `json:"hash"`
+	DateCreated          int64 `json:"date_created"`
+	DateActivated        int64 `json:"date_activated"`
+	AndroidPushSessionId int64 `json:"android_push_sessionId"`
 }
 
 type CacheAuthData struct {
@@ -164,6 +164,13 @@ func (c *CacheAuthData) Hash() int64 {
 	return c.BindUser.Hash
 }
 
+func (c *CacheAuthData) AndroidPushSessionId() int64 {
+	if c == nil || c.BindUser == nil {
+		return 0
+	}
+	return c.BindUser.AndroidPushSessionId
+}
+
 func (d *Dao) GetApiLayer(ctx context.Context, authKeyId int64) int32 {
 	cData, err := d.GetCacheAuthData(ctx, authKeyId)
 	if err != nil {
@@ -232,16 +239,6 @@ func (d *Dao) GetAuthKeyUserId(ctx context.Context, authKeyId int64) int64 {
 	return cData.UserId()
 }
 
-func (d *Dao) GetPushSessionId(ctx context.Context, userId int64, authKeyId int64, tokenType int32) int64 {
-	do, _ := d.DevicesDAO.Select(ctx, authKeyId, userId, tokenType)
-	if do == nil {
-		logx.WithContext(ctx).Errorf("not find token - keyId = %d", authKeyId)
-		return 0
-	}
-	sessionId, _ := strconv.ParseInt(do.Token, 10, 64)
-	return sessionId
-}
-
 func (d *Dao) BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) int64 {
 	now := time.Now().Unix()
 	authUsersDO := &dataobject.AuthUsersDO{
@@ -302,7 +299,7 @@ func (d *Dao) UnbindAuthUser(ctx context.Context, authKeyId int64, userId int64)
 	return err == nil
 }
 
-func (d *Dao) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) bool {
+func (d *Dao) SetClientSessionInfo(ctx context.Context, session *authsession.ClientSession) error {
 	_, _, err := d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
@@ -328,7 +325,7 @@ func (d *Dao) SetClientSessionInfo(ctx context.Context, session *authsession.Cli
 		},
 		genAuthDataCacheKey(session.GetAuthKeyId()))
 
-	return err == nil
+	return err
 }
 
 func (d *Dao) SetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) error {
@@ -377,6 +374,23 @@ func (d *Dao) SetInitConnection(ctx context.Context, i *authsession.TLAuthsessio
 	return err
 }
 
+func (d *Dao) SetAndroidPushSessionId(ctx context.Context, keyId, sessionId int64) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err2 := d.AuthUsersDAO.UpdateAndroidPushSessionId(
+				ctx,
+				sessionId,
+				keyId)
+
+			return 0, 0, err2
+		},
+		genAuthDataCacheKey(keyId))
+
+	return err
+
+}
+
 func (d *Dao) GetCacheAuthData(ctx context.Context, authKeyId int64) (*CacheAuthData, error) {
 	var (
 		cData *CacheAuthData
@@ -421,10 +435,11 @@ func (d *Dao) GetCacheAuthData(ctx context.Context, authKeyId int64) (*CacheAuth
 					do, _ := d.AuthUsersDAO.Select(ctx, authKeyId)
 					if do != nil {
 						cacheAuthData.BindUser = &BindUser{
-							UserId:        do.UserId,
-							Hash:          do.Hash,
-							DateCreated:   do.DateCreated,
-							DateActivated: do.DateActived,
+							UserId:               do.UserId,
+							Hash:                 do.Hash,
+							DateCreated:          do.DateCreated,
+							DateActivated:        do.DateActived,
+							AndroidPushSessionId: do.AndroidPushSessionId,
 						}
 					}
 					return nil
