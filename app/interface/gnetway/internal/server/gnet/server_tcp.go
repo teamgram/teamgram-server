@@ -16,9 +16,9 @@
 package gnet
 
 import (
+	"encoding/binary"
 	"errors"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/codec"
 
 	"github.com/panjf2000/gnet/v2"
@@ -42,7 +42,7 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 	}
 
 	for {
-		frame, err := ctx.codec.Decode(c)
+		needAck, frame, err := ctx.codec.Decode(c)
 		if err != nil {
 			if errors.Is(err, codec.ErrUnexpectedEOF) {
 				return gnet.None
@@ -53,19 +53,18 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 			return
 		} else if frame == nil {
 			logx.Debugf("conn(%s) frame is nil", c)
-			return
+			break
 		}
 
-		msg2, ok := frame.(*mtproto.MTPRawMessage)
-		if !ok {
-			logx.Errorf("conn(%s) recv error: msg2 not codec.MTPRawMessage type", c)
-			action = gnet.Close
-			return
-		}
+		//msg2, ok := frame.(*mtproto.MTPRawMessage)
+		//if !ok {
+		//	logx.Errorf("conn(%s) recv error: msg2 not codec.MTPRawMessage type", c)
+		//	action = gnet.Close
+		//	return
+		//}
+		// logx.Infof("conn(%s) recv frame: %s", c, msg2.String())
 
-		logx.Infof("conn(%s) recv frame: %s", c, msg2.String())
-
-		action = s.onMTPRawMessage(ctx, c, msg2)
+		action = s.onMTPRawMessage(ctx, c, int64(binary.LittleEndian.Uint64(frame)), needAck, frame)
 		if action == gnet.Close {
 			return
 		}

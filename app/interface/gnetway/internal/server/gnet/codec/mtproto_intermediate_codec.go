@@ -60,7 +60,7 @@ func (c *IntermediateCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, e
 }
 
 // Decode decodes frames from TCP stream via specific implementation.
-func (c *IntermediateCodec) Decode(conn CodecReader) (interface{}, error) {
+func (c *IntermediateCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var (
 		buf []byte
 		n   int
@@ -70,14 +70,14 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (interface{}, error) {
 
 	in, _ = conn.Peek(-1)
 	if len(in) == 0 {
-		return nil, nil
+		return false, nil, nil
 	}
 
 	if c.state == WAIT_PACKET_LENGTH {
 		if buf, err = in.readN(4); err != nil {
-			return nil, ErrUnexpectedEOF
+			return false, nil, ErrUnexpectedEOF
 		}
-		conn.Discard(4)
+		_, _ = conn.Discard(4)
 		buf = c.Decrypt(buf)
 		c.packetLen = binary.LittleEndian.Uint32(buf)
 		c.state = WAIT_PACKET
@@ -88,18 +88,18 @@ func (c *IntermediateCodec) Decode(conn CodecReader) (interface{}, error) {
 	n = int(c.packetLen & 0xffffff)
 	if n > MAX_MTPRORO_FRAME_SIZE {
 		// TODO(@benqi): close conn
-		return nil, fmt.Errorf("too large data(%d)", n)
+		return false, nil, fmt.Errorf("too large data(%d)", n)
 	}
 
 	if buf, err = in.readN(n); err != nil {
-		return nil, ErrUnexpectedEOF
+		return false, nil, ErrUnexpectedEOF
 	}
 	buf = c.Decrypt(buf)
-	conn.Discard(n)
+	_, _ = conn.Discard(n)
 	c.state = WAIT_PACKET_LENGTH
 
-	message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf)), 0, TRANSPORT_TCP)
-	message.Decode(buf)
+	// message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf)), 0, TRANSPORT_TCP)
+	// _ = message.Decode(buf)
 
-	return message, nil
+	return false, buf, nil
 }

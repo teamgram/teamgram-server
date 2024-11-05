@@ -70,7 +70,7 @@ func (c *FullCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
 }
 
 // Decode decodes frames from TCP stream via specific implementation.
-func (c *FullCodec) Decode(conn CodecReader) (interface{}, error) {
+func (c *FullCodec) Decode(conn CodecReader) (bool, []byte, error) {
 	var (
 		size int
 		buf  []byte
@@ -82,7 +82,7 @@ func (c *FullCodec) Decode(conn CodecReader) (interface{}, error) {
 	in, _ = conn.Peek(-1)
 
 	if buf, err = in.readN(4); err != nil {
-		return nil, ErrUnexpectedEOF
+		return false, nil, ErrUnexpectedEOF
 	}
 	size += 4
 
@@ -90,14 +90,14 @@ func (c *FullCodec) Decode(conn CodecReader) (interface{}, error) {
 	// Check bufLen
 	if n < 12 {
 		err = fmt.Errorf("invalid len: %d", size)
-		return nil, err
+		return false, nil, err
 	}
 
 	if buf, err = in.readN(n); err != nil {
-		return nil, ErrUnexpectedEOF
+		return false, nil, ErrUnexpectedEOF
 	}
 	size += n
-	conn.Discard(size)
+	_, _ = conn.Discard(size)
 
 	seq := binary.LittleEndian.Uint32(buf[:4])
 	// TODO(@benqi): check seqNum, save last seq_num
@@ -107,8 +107,8 @@ func (c *FullCodec) Decode(conn CodecReader) (interface{}, error) {
 	// TODO(@benqi): check crc32
 	_ = crc32
 
-	message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
-	message.Decode(buf)
+	// message := mtproto.NewMTPRawMessage(int64(binary.LittleEndian.Uint64(buf[4:])), 0, TRANSPORT_TCP)
+	// _ = message.Decode(buf)
 
-	return message, nil
+	return false, buf, nil
 }

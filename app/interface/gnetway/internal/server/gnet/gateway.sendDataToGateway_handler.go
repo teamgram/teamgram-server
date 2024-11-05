@@ -47,7 +47,7 @@ func (s *Server) GatewaySendDataToGateway(ctx context.Context, in *gateway.TLGat
 	x.Bytes(mtpRawData)
 	msg := &mtproto.MTPRawMessage{Payload: x.GetBuf()}
 
-	s.pool.Submit(func() {
+	_ = s.pool.Submit(func() {
 		for _, connId := range connIdList {
 			s.eng.Trigger(connId, func(c gnet.Conn) {
 				connCtx, _ := c.Context().(*connContext)

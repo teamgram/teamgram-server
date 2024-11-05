@@ -151,8 +151,8 @@ func newHandshake(keyFile string, keyFingerprint uint64) (*handshake, error) {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
-func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interface{}, error) {
-	if len(mmsg.Payload) < 8 {
+func (s *Server) onHandshake(c gnet.Conn, mmsg []byte) (interface{}, error) {
+	if len(mmsg) < 8 {
 		err := fmt.Errorf("invalid data len < 8")
 		// logx.Errorf("conn(%s) onHandshake error: %v", c, err)
 		return nil, err
@@ -163,7 +163,7 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg *mtproto.MTPRawMessage) (interfac
 		return nil, fmt.Errorf("unknown error")
 	}
 
-	_, obj, err := parseFromIncomingMessage(mmsg.Payload[8:])
+	_, obj, err := parseFromIncomingMessage(mmsg[8:])
 	if err != nil {
 		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
@@ -583,8 +583,8 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			ctx.State = STATE_DH_params_res
 
 			x := mtproto.NewEncodeBuf(512)
-			serializeToBuffer(x, mtproto.GenerateMessageId(), serverDHParams)
-			UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
+			_ = serializeToBuffer(x, mtproto.GenerateMessageId(), serverDHParams)
+			_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
 				Payload: x.GetBuf(),
 			})
 		})

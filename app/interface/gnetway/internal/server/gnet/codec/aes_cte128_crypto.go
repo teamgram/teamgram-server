@@ -16,49 +16,8 @@
 package codec
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/mtproto/crypto"
 )
-
-var (
-	isClientType = false
-)
-
-const (
-	ERROR                       = -1
-	INVALID                     = 0
-	WAIT_FIRST_PACKET           = 1
-	WAIT_PACKET_LENGTH_1        = 2
-	WAIT_PACKET_LENGTH_1_PACKET = 3
-	WAIT_PACKET_LENGTH_3        = 4
-	WAIT_PACKET_LENGTH_3_PACKET = 5
-	WAIT_PACKET_LENGTH          = 6
-	WAIT_PACKET                 = 7
-)
-
-const (
-	MAX_MTPRORO_FRAME_SIZE = 16777216
-)
-
-//var (
-//	errUnexpectedEOF = errors.New("there is no enough data")
-//)
-
-// innerBuffer
-type innerBuffer []byte
-
-func (in *innerBuffer) readN(n int) (buf []byte, err error) {
-	if n <= 0 {
-		return nil, errors.New("zero or negative length is invalid")
-	} else if n > len(*in) {
-		return nil, errors.New("exceeding buffer length")
-	}
-	buf = (*in)[:n]
-	*in = (*in)[n:]
-
-	return
-}
 
 // AesCTR128Crypto AesCTR128Crypto
 type AesCTR128Crypto struct {
