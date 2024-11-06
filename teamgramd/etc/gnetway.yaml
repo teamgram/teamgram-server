@@ -9,6 +9,9 @@ Log:
   Path: ../logs/gnetway
   Level: debug
 
+RSAKey:
+  - KeyFile: "./server_pkcs1.key"
+    KeyFingerprint: "12240908862933197005"
 KeyFile: "./server_pkcs1.key"
 KeyFingerprint: "12240908862933197005"
 MaxProc: 4

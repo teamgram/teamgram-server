@@ -17,7 +17,6 @@ package gnet
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/cache"
@@ -49,20 +48,12 @@ type Server struct {
 
 func New(svcCtx *svc.ServiceContext, c config.Config) *Server {
 	var (
-		err error
-		s   = new(Server)
+		s = new(Server)
 	)
 
 	s.authSessionMgr = NewAuthSessionManager()
 
-	keyFingerprint, err := strconv.ParseUint(c.KeyFingerprint, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	s.handshake, err = newHandshake(c.KeyFile, keyFingerprint)
-	if err != nil {
-		panic(err)
-	}
+	s.handshake = mustNewHandshake(c.RSAKey)
 
 	s.cache = cache.NewLRUCache(10 * 1024 * 1024) // cache capacity: 10MB
 	s.pool = goroutine.Default()

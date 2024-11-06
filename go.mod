@@ -15,6 +15,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
 	github.com/teamgram/proto v0.192.0
+	github.com/valyala/bytebufferpool v1.0.0
 	github.com/zeromicro/go-zero v1.7.2
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1
@@ -94,7 +95,6 @@ require (
 	github.com/rs/xid v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.15 // indirect
@@ -142,7 +142,7 @@ require (
 
 replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.5.9 => github.com/teamgram/gnet/v2 v2.5.9-teamgram
+	github.com/panjf2000/gnet/v2 v2.5.9 => github.com/teamgram/gnet/v2 v2.5.9-teamgram.0.20241106010240-4cc87b8d7ec1
 	// github.com/teamgram/marmota => ../marmota
 	// github.com/teamgram/proto => ../proto
 	github.com/zeromicro/go-zero v1.7.2 => github.com/teamgram/go-zero v1.7.2-teamgram

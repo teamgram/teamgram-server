@@ -16,11 +16,14 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	// MaxProc        int
+	RSAKey  []RSAKey
+	Gnetway *GnetwayConfig
+	Session zrpc.RpcClientConf
+}
+
+type RSAKey struct {
 	KeyFile        string
 	KeyFingerprint string
-	Gnetway        *GnetwayConfig
-	Session        zrpc.RpcClientConf
 }
 
 type GnetwayServer struct {

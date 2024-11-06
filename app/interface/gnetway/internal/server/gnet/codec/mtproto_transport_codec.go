@@ -193,14 +193,14 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	// check intermediate version
 	if firstInt == INTERMEDIATE_FLAG {
 		logx.Debugf("conn(%s) intermediate version.", conn)
-		conn.Discard(4)
+		_, _ = conn.Discard(4)
 		return newMTProtoIntermediateCodec(nil), nil
 	}
 
 	// check intermediate version
 	if firstInt == PADDED_INTERMEDIATE_FLAG {
 		logx.Debugf("conn(%s) padded intermediate version.", conn)
-		conn.Discard(4)
+		_, _ = conn.Discard(4)
 		return newMTProtoPaddedIntermediateCodec(nil), nil
 	}
 
