@@ -142,7 +142,7 @@ require (
 
 replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.5.9 => github.com/teamgram/gnet/v2 v2.5.9-teamgram.0.20241107051400-6aaa49f64649
+	github.com/panjf2000/gnet/v2 v2.5.9 => github.com/teamgram/gnet/v2 v2.5.9-teamgram.0.20241109082827-c3181f410c96
 	// github.com/teamgram/marmota => ../marmota
 	// github.com/teamgram/proto => ../proto
 	github.com/zeromicro/go-zero v1.7.2 => github.com/teamgram/go-zero v1.7.2-teamgram
