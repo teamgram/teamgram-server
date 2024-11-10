@@ -11,9 +11,10 @@ package core
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/idgen/idgen"
-	"strconv"
 )
 
 // IdgenGetCurrentSeqId
