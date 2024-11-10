@@ -20,7 +20,7 @@ package dao
 
 import (
 	"flag"
-	"github.com/oschwald/geoip2-golang"
+
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/config"
@@ -31,6 +31,8 @@ import (
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
 	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	status_client "github.com/teamgram/teamgram-server/app/service/status/client"
+
+	"github.com/oschwald/geoip2-golang"
 	"github.com/zeromicro/go-zero/core/stores/kv"
 )
 

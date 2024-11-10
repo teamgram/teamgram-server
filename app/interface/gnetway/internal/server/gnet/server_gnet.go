@@ -34,6 +34,7 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/timex"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -179,6 +180,8 @@ func (s *Server) OnTick() (delay time.Duration, action gnet.Action) {
 }
 
 func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *authKeyUtil, needAck bool, mmsg []byte) error {
+	since := timex.Now()
+
 	mtpRwaData, err := authKey.AesIgeDecrypt(mmsg[8:8+16], mmsg[24:])
 	if err != nil {
 		logx.Errorf("conn(%s) decrypt data(%d) error: {%v}, payload: %s", c, len(mmsg)-24, err, hex.EncodeToString(mmsg))
@@ -244,6 +247,10 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	}
 
 	_ = s.pool.Submit(func() {
+		defer func() {
+			logx.WithDuration(timex.Since(since)).Infof("onEncryptedMessage: %s", c)
+		}()
+
 		_ = s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
 			strconv.FormatInt(permAuthKeyId, 10),
 			func(client sessionclient.SessionClient) (err error) {
@@ -316,63 +323,63 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 			if err != nil {
 				action = gnet.Close
 			}
-			return
-		}
-		if len(msg2) > 32 {
-			logx.Debugf("conn(%s) data: %s", c, hex.EncodeToString(msg2[:32]))
-		}
+		} else {
+			if len(msg2) > 32 {
+				logx.Debugf("conn(%s) data: %s", c, hex.EncodeToString(msg2[:32]))
+			}
 
-		msg2Clone := make([]byte, len(msg2))
-		copy(msg2Clone, msg2)
+			msg2Clone := make([]byte, len(msg2))
+			copy(msg2Clone, msg2)
 
-		s.asyncRun2(
-			c.ConnId(),
-			msg2Clone,
-			func(mmsg []byte) (interface{}, error) {
-				var (
-					key3 *mtproto.AuthKeyInfo
-				)
+			s.asyncRun2(
+				c.ConnId(),
+				msg2Clone,
+				func(mmsg []byte) (interface{}, error) {
+					var (
+						key3 *mtproto.AuthKeyInfo
+					)
 
-				err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-					strconv.FormatInt(authKeyId, 10),
-					func(client sessionclient.SessionClient) (err error) {
-						key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-							AuthKeyId: authKeyId,
+					err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
+						strconv.FormatInt(authKeyId, 10),
+						func(client sessionclient.SessionClient) (err error) {
+							key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+								AuthKeyId: authKeyId,
+							})
+							return
 						})
-						return
-					})
-				if err2 != nil {
-					logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
-					return nil, err2
-				} else {
-					s.PutAuthKey(key3)
-				}
+					if err2 != nil {
+						logx.Errorf("conn(%s) sessionQueryAuthKey error: %v", c, err2)
+						return nil, err2
+					} else {
+						s.PutAuthKey(key3)
+					}
 
-				return newAuthKeyUtil(key3), nil
-			},
-			func(c2 gnet.Conn, mmsg []byte, in interface{}, err error) {
-				if err != nil {
-					if errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
-						out2 := &mtproto.MTPRawMessage{
-							Payload: make([]byte, 4),
-						}
-						var (
-							code = int32(-404)
-						)
-						binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
-						_ = UnThreadSafeWrite(c2, out2)
-					}
-					_ = c2.Close()
-				} else {
-					authKey2 := in.(*authKeyUtil)
-					ctx2 := c2.Context().(*connContext)
-					ctx2.putAuthKey(authKey2)
-					err = s.onEncryptedMessage(c2, ctx2, authKey2, needAck, mmsg)
+					return newAuthKeyUtil(key3), nil
+				},
+				func(c2 gnet.Conn, mmsg []byte, in interface{}, err error) {
 					if err != nil {
+						if errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
+							out2 := &mtproto.MTPRawMessage{
+								Payload: make([]byte, 4),
+							}
+							var (
+								code = int32(-404)
+							)
+							binary.LittleEndian.PutUint32(out2.Payload, uint32(code))
+							_ = UnThreadSafeWrite(c2, out2)
+						}
 						_ = c2.Close()
+					} else {
+						authKey2 := in.(*authKeyUtil)
+						ctx2 := c2.Context().(*connContext)
+						ctx2.putAuthKey(authKey2)
+						err = s.onEncryptedMessage(c2, ctx2, authKey2, needAck, mmsg)
+						if err != nil {
+							_ = c2.Close()
+						}
 					}
-				}
-			})
+				})
+		}
 	}
 
 	return gnet.None

@@ -66,6 +66,16 @@ func checkPhoneNumberInvalid(phone string) (string, error) {
 		return phone[1:], nil
 	}
 
+	// fragment
+	if strings.HasPrefix(phone, "+888") {
+		if len(phone) == 12 {
+			// +888 0888 0080
+			return phone[1:], nil
+		} else {
+			return "", mtproto.ErrPhoneNumberInvalid
+		}
+	}
+
 	// 3.2. check phone_number
 	// 客户端发送的手机号格式为: "+86 111 1111 1111"，归一化
 	// We need getRegionCode from phone_number
