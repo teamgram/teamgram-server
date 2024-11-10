@@ -30,7 +30,6 @@ import (
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/pkg/phonenumber"
 )
 
 /*
@@ -80,13 +79,12 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	// 3.2. check phone_number
 	// 客户端发送的手机号格式为: "+86 111 1111 1111"，归一化
 	// We need getRegionCode from phone_number
-	pNumber, err := phonenumber.MakePhoneNumberHelper(in.PhoneNumber, "")
+	reginCode, phoneNumber, err := checkPhoneNumberInvalid(in.PhoneNumber)
 	if err != nil {
 		c.Logger.Errorf("check phone_number error - %v", err)
 		err = mtproto.ErrPhoneNumberInvalid
 		return nil, err
 	}
-	phoneNumber := pNumber.GetNormalizeDigits()
 
 	if in.PhoneCodeHash == "" {
 		c.Logger.Errorf("check phone_code_hash error - empty")
@@ -151,7 +149,7 @@ func (c *AuthorizationCore) AuthSignUp(in *mtproto.TLAuthSignUp) (*mtproto.Auth_
 	if user, err = c.svcCtx.UserClient.UserCreateNewUser(c.ctx, &userpb.TLUserCreateNewUser{
 		SecretKeyId: key.AuthKeyId(),
 		Phone:       phoneNumber,
-		CountryCode: pNumber.GetRegionCode(),
+		CountryCode: reginCode,
 		FirstName:   firstName,
 		LastName:    lastName,
 	}); err != nil {

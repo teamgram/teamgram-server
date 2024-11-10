@@ -52,27 +52,34 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *AuthorizationCore {
 	}
 }
 
-func checkPhoneNumberInvalid(phone string) (string, error) {
+func checkPhoneNumberInvalid(phone string) (string, string, error) {
 	// 3. check number
 	// 3.1. empty
 	if phone == "" {
 		// log.Errorf("check phone_number error - empty")
-		return "", mtproto.ErrPhoneNumberInvalid
+		return "", "", mtproto.ErrPhoneNumberInvalid
 	}
 
 	phone = strings.ReplaceAll(phone, " ", "")
 	if phone == "+42400" ||
 		phone == "+42777" {
-		return phone[1:], nil
+		return "", phone[1:], nil
 	}
 
 	// fragment
 	if strings.HasPrefix(phone, "+888") {
 		if len(phone) == 12 {
 			// +888 0888 0080
-			return phone[1:], nil
+			return "", phone[1:], nil
 		} else {
-			return "", mtproto.ErrPhoneNumberInvalid
+			return "", "", mtproto.ErrPhoneNumberInvalid
+		}
+	} else if strings.HasPrefix(phone, "888") {
+		if len(phone) == 11 {
+			// +888 0888 0080
+			return "", phone, nil
+		} else {
+			return "", "", mtproto.ErrPhoneNumberInvalid
 		}
 	}
 
@@ -83,10 +90,10 @@ func checkPhoneNumberInvalid(phone string) (string, error) {
 	if err != nil {
 		// log.Errorf("check phone_number error - %v", err)
 		// err = mtproto.ErrPhoneNumberInvalid
-		return "", mtproto.ErrPhoneNumberInvalid
+		return "", "", mtproto.ErrPhoneNumberInvalid
 	}
 
-	return pNumber.GetNormalizeDigits(), nil
+	return pNumber.GetRegionCode(), pNumber.GetNormalizeDigits(), nil
 }
 
 const (
