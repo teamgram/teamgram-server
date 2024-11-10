@@ -25,6 +25,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/timex"
 	"math/big"
 	"strconv"
 	"time"
@@ -303,6 +304,11 @@ func (s *Server) onHandshake(c gnet.Conn, mmsg []byte) (interface{}, error) {
 
 // req_pq#60469778 nonce:int128 = ResPQ;
 func (s *Server) onReqPq(c gnet.Conn, request *mtproto.TLReqPq) (*mtproto.ResPQ, error) {
+	since := timex.Now()
+	defer func() {
+		logx.WithDuration(timex.Since(since)).Infof("onReqPq: %s", c)
+	}()
+
 	// logx.Infof("req_pq#60469778 - conn(%s) request: %s", c, request)
 
 	// check State and ResState
@@ -327,6 +333,11 @@ func (s *Server) onReqPq(c gnet.Conn, request *mtproto.TLReqPq) (*mtproto.ResPQ,
 
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
 func (s *Server) onReqPqMulti(c gnet.Conn, request *mtproto.TLReqPqMulti) (*mtproto.ResPQ, error) {
+	since := timex.Now()
+	defer func() {
+		logx.WithDuration(timex.Since(since)).Infof("onReqPqMulti: %s", c)
+	}()
+
 	// logx.Infof("req_pq_multi#be7e8ef1 request - conn(%s) request: %s", c, request)
 
 	// check State and ResState
@@ -351,6 +362,11 @@ func (s *Server) onReqPqMulti(c gnet.Conn, request *mtproto.TLReqPqMulti) (*mtpr
 
 // req_DH_params#d712e4be nonce:int128 server_nonce:int128 p:string q:string public_key_fingerprint:long encrypted_data:string = Server_DH_Params;
 func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtproto.TLReq_DHParams) (*mtproto.Server_DH_Params, error) {
+	since := timex.Now()
+	defer func() {
+		logx.WithDuration(timex.Since(since)).Infof("onReqDHParams: %s", c)
+	}()
+
 	// logx.Infof("req_DH_params#d712e4be - conn(%s) state: {%s}, request: %s", c, ctx, request)
 
 	var (
@@ -403,9 +419,12 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 		return nil, err
 	}
 
+	since2 := timex.Now()
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	s.asyncRun(c.ConnId(),
 		func() error {
+			logx.WithDuration(timex.Since(since2)).Infof("s.asyncRun(c.ConnId()")
 			/*
 				### 4.1) RSA_PAD(data, server_public_key) mentioned above is implemented as follows:
 
@@ -445,6 +464,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 				logx.Error("need len(encryptedPQInnerData) < 256")
 				return fmt.Errorf("process Req_DHParams - len(encryptedPQInnerData) != 256")
 			}
+			logx.WithDuration(timex.Since(since2)).Infof("innerData := rsa.Decrypt([]byte(request.EncryptedData))")
 
 			// void Datacenter::aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length) {
 			// Datacenter::aesIgeEncryption(
@@ -611,6 +631,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 
 			e := crypto.NewAES256IGECryptor(tmpAesKeyAndIV[:32], tmpAesKeyAndIV[32:64])
 			tmpEncryptedAnswer, _ = e.Encrypt(tmpEncryptedAnswer)
+			logx.WithDuration(timex.Since(since2)).Infof("tmpEncryptedAnswer, _ = e.Encrypt(tmpEncryptedAnswer)")
 
 			serverDHParams = mtproto.MakeTLServer_DHParamsOk(&mtproto.Server_DH_Params{
 				Nonce:           request.Nonce,
@@ -621,6 +642,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			return nil
 		},
 		func(c gnet.Conn) {
+			logx.WithDuration(timex.Since(since2)).Infof("func(c gnet.Conn) {")
 			// logx.Infof("c.UnThreadSafeWrite - conn(%s)", c)
 			ctx.HandshakeType = handshakeType
 			ctx.ExpiresIn = expiresIn
@@ -634,6 +656,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 			_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
 				Payload: x.GetBuf(),
 			})
+			logx.WithDuration(timex.Since(since2)).Infof("_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{")
 		})
 
 	return nil, nil
@@ -641,6 +664,11 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtp
 
 // set_client_DH_params#f5045f1f nonce:int128 server_nonce:int128 encrypted_data:string = Set_client_DH_params_answer;
 func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mtproto.TLSetClient_DHParams) (*mtproto.SetClient_DHParamsAnswer, error) {
+	since := timex.Now()
+	defer func() {
+		logx.WithDuration(timex.Since(since)).Infof("onSetClientDHParams: %s", c)
+	}()
+
 	logx.Infof("set_client_DH_params#f5045f1f conn(%s) - state: {%s}, request: %s", c, ctx, request)
 
 	// TODO(@benqi): Impl SetClient_DHParams logic
@@ -678,6 +706,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
+	logx.WithDuration(timex.Since(since)).Infof("decryptedData, err := d.Decrypt(bEncryptedData): %s", c)
 
 	// TODO(@benqi): 检查签名是否合法
 	dBuf := mtproto.NewDecodeBuf(decryptedData[20:])
@@ -724,6 +753,8 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	authKeyAuxHash = append(authKeyAuxHash, sha1D[:]...)
 	sha1E := sha1.Sum(authKeyAuxHash[:len(authKeyAuxHash)-12])
 	authKeyAuxHash = append(authKeyAuxHash, sha1E[:]...)
+
+	logx.WithDuration(timex.Since(since)).Infof("authKeyAuxHash = append(authKeyAuxHash, sha1E[:]...): %s", c)
 
 	// 至此key已经创建成功
 	var (
@@ -776,6 +807,11 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 
 // msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
 func (s *Server) onMsgsAck(c gnet.Conn, state *HandshakeStateCtx, request *mtproto.TLMsgsAck) error {
+	since := timex.Now()
+	defer func() {
+		logx.WithDuration(timex.Since(since)).Infof("onMsgsAck: %s", c)
+	}()
+
 	logx.Infof("msgs_ack#62d6b459 conn(%s) - state: {%s}, request: %s", c, state, request)
 
 	switch state.State {
