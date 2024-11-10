@@ -25,7 +25,6 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/timex"
 	"math/big"
 	"strconv"
 	"time"
@@ -40,6 +39,7 @@ import (
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/timex"
 )
 
 const (
