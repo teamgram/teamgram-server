@@ -10,8 +10,10 @@
 package core
 
 import (
+	"context"
 	"time"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dao"
@@ -36,10 +38,6 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 		popularContactMap = make(map[string]*mtproto.TLPopularContact, len(contacts))
 		updList           = make([]int64, 0, len(contacts))
 		idList            = make([]int64, 0, len(contacts))
-		//keys              = []string{
-		//	genCacheUserDataCacheKey(do.OwnerUserId),
-		//	genContactCacheKey(do.OwnerUserId, do.ContactUserId),
-		//}
 	)
 
 	importContacts := make(map[string]*contactItem)
@@ -96,7 +94,7 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 	phoneList = phoneList[0:0]
 	for _, c2 := range importContacts {
 		if c2.Unregistered {
-			go func() {
+			threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
 				// 1. 未注册 - popular inviter
 				unregisteredContactsDO := &dataobject.UnregisteredContactsDO{
 					Phone:           c2.C.Phone,
@@ -104,8 +102,18 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 					ImportFirstName: c2.C.FirstName,
 					ImportLastName:  c2.C.LastName,
 				}
-				c.svcCtx.Dao.UnregisteredContactsDAO.InsertOrUpdate(c.ctx, unregisteredContactsDO)
-			}()
+				_, _, _ = c.svcCtx.Dao.UnregisteredContactsDAO.InsertOrUpdate(ctx, unregisteredContactsDO)
+			})
+			////func() {
+			//	// 1. 未注册 - popular inviter
+			//	unregisteredContactsDO := &dataobject.UnregisteredContactsDO{
+			//		Phone:           c2.C.Phone,
+			//		ImporterUserId:  in.UserId,
+			//		ImportFirstName: c2.C.FirstName,
+			//		ImportLastName:  c2.C.LastName,
+			//	}
+			//	_, _, _ = c.svcCtx.Dao.UnregisteredContactsDAO.InsertOrUpdate(c.ctx, unregisteredContactsDO)
+			//// }()
 
 			//popularContactsDO := &dataobject.PopularContactsDO{
 			//	Phone:     c2.c.Phone,
@@ -136,7 +144,9 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 				}
 
 				// 联系人已经存在，刷新first_name, last_name
-				c.svcCtx.Dao.UserContactsDAO.UpdateContactName(c.ctx, userContactsDO.ContactFirstName,
+				_, _ = c.svcCtx.Dao.UserContactsDAO.UpdateContactName(
+					c.ctx,
+					userContactsDO.ContactFirstName,
 					userContactsDO.ContactLastName,
 					userContactsDO.OwnerUserId,
 					userContactsDO.ContactUserId)
@@ -148,15 +158,15 @@ func (c *UserCore) UserImportContacts(in *user.TLUserImportContacts) (*user.User
 					// need update to contact
 					updList = append(updList, c2.ImportContactId)
 
-					c.svcCtx.Dao.UserContactsDAO.UpdateMutual(c.ctx, true, userContactsDO.ContactUserId, userContactsDO.OwnerUserId)
+					_, _ = c.svcCtx.Dao.UserContactsDAO.UpdateMutual(c.ctx, true, userContactsDO.ContactUserId, userContactsDO.OwnerUserId)
 				} else {
 					importedContactsDO := &dataobject.ImportedContactsDO{
 						UserId:         userContactsDO.ContactUserId,
 						ImportedUserId: userContactsDO.OwnerUserId,
 					}
-					c.svcCtx.Dao.ImportedContactsDAO.InsertOrUpdate(c.ctx, importedContactsDO)
+					_, _, _ = c.svcCtx.Dao.ImportedContactsDAO.InsertOrUpdate(c.ctx, importedContactsDO)
 				}
-				c.svcCtx.Dao.UserContactsDAO.InsertOrUpdate(c.ctx, userContactsDO)
+				_, _, _ = c.svcCtx.Dao.UserContactsDAO.InsertOrUpdate(c.ctx, userContactsDO)
 			}
 
 			c.Logger.Infof("userContactsDO - %v", userContactsDO)

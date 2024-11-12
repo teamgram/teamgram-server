@@ -18,7 +18,7 @@
     <operation name="SelectContact">
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -28,7 +28,7 @@
     <operation name="SelectByContactId">
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -41,7 +41,7 @@
         </params>
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -51,7 +51,7 @@
     <operation name="SelectAllUserContacts" result_set="list">
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -61,7 +61,7 @@
     <operation name="SelectUserContacts" result_set="list">
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -84,7 +84,7 @@
         </params>
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -98,7 +98,7 @@
         </params>
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE
@@ -180,7 +180,7 @@
         </params>
         <sql>
             SELECT
-                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted
+                id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, date2, is_deleted
             FROM
                 user_contacts
             WHERE

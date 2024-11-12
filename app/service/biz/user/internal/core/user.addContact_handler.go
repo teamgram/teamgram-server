@@ -48,6 +48,7 @@ func (c *UserCore) UserAddContact(in *user.TLUserAddContact) (*mtproto.Bool, err
 	// not contact
 	if needCheckMutual {
 		mutual := c.svcCtx.Dao.GetUserContact(c.ctx, in.Id, in.UserId)
+		c.Logger.Debugf("needCheckMutual - %s", mutual)
 		if mutual != nil {
 			meDO.Mutual = true
 			changeMutual = true
