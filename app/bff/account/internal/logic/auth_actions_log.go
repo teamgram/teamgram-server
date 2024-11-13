@@ -20,6 +20,7 @@ package logic
 
 import (
 	"github.com/teamgram/proto/mtproto"
+
 	"google.golang.org/protobuf/proto"
 )
 

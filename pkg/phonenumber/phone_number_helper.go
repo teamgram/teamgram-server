@@ -21,8 +21,9 @@ package phonenumber
 import (
 	"errors"
 	"fmt"
-	"github.com/teamgram/proto/mtproto"
 	"strings"
+
+	"github.com/teamgram/proto/mtproto"
 
 	"github.com/nyaruka/phonenumbers"
 )
