@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/dao"
+	"github.com/teamgram/teamgram-server/app/bff/account/internal/dao"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/model"
 	"github.com/teamgram/teamgram-server/pkg/code"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -46,19 +46,16 @@ func (m *AuthLogic) DoAuthSendCode(
 	authKeyId int64,
 	sessionId int64,
 	phoneNumber string,
-	phoneRegistered,
 	allowFlashCall,
 	currentNumber bool,
-	apiId int32,
-	apiHash string,
 	cb func(codeData *model.PhoneCodeTransaction) error) (codeData *model.PhoneCodeTransaction, err error) {
 
-	sentCodeType, nextCodeType := model.MakeCodeType(phoneRegistered, allowFlashCall, currentNumber)
+	sentCodeType, nextCodeType := model.MakeCodeType(false, allowFlashCall, currentNumber)
 	if codeData, err = m.Dao.CreatePhoneCode(ctx,
 		authKeyId,
 		sessionId,
 		phoneNumber,
-		phoneRegistered,
+		false,
 		sentCodeType,
 		nextCodeType,
 		model.CodeStateSend); err != nil {
@@ -166,7 +163,7 @@ func (m *AuthLogic) DoAuthCancelCode(ctx context.Context, authKeyId int64, phone
 	return m.Dao.DeletePhoneCode(ctx, authKeyId, phoneNumber, phoneCodeHash)
 }
 
-func (m *AuthLogic) DoAuthSignIn(ctx context.Context,
+func (m *AuthLogic) DoAuthChangePhone(ctx context.Context,
 	authKeyId int64,
 	phoneNumber,
 	phoneCode,
@@ -187,7 +184,7 @@ func (m *AuthLogic) DoAuthSignIn(ctx context.Context,
 	// check state invalid.
 	if codeData.State != model.CodeStateOk &&
 		codeData.State != model.CodeStateSent &&
-		codeData.State != model.CodeStateSignIn {
+		codeData.State != model.CodeStateChangePhone {
 		logx.WithContext(ctx).Errorf("error - invalid codeData state: %v", codeData)
 		err = mtproto.ErrInternalServerError
 		return
@@ -228,7 +225,7 @@ func (m *AuthLogic) DoAuthSignIn(ctx context.Context,
 	if codeData.PhoneNumberRegistered {
 		codeData.State = model.CodeStateOk
 	} else {
-		codeData.State = model.CodeStateSignIn
+		codeData.State = model.CodeStateChangePhone
 	}
 
 	err = m.Dao.UpdatePhoneCodeData(ctx, authKeyId, phoneNumber, phoneCodeHash, codeData)

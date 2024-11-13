@@ -71,13 +71,14 @@ const (
 )
 
 const (
-	CodeStateOk      = 1
-	CodeStateSend    = 2
-	CodeStateSent    = 3
-	CodeStateReSent  = 6
-	CodeStateSignIn  = 4
-	CodeStateSignUp  = 5
-	CodeStateDeleted = -1
+	CodeStateOk          = 1
+	CodeStateSend        = 2
+	CodeStateSent        = 3
+	CodeStateReSent      = 6
+	CodeStateSignIn      = 4
+	CodeStateSignUp      = 5
+	CodeStateChangePhone = 6
+	CodeStateDeleted     = -1
 )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

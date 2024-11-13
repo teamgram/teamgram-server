@@ -25,7 +25,7 @@ import (
 	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/logic"
-	"github.com/teamgram/teamgram-server/app/bff/authorization/internal/model"
+	"github.com/teamgram/teamgram-server/app/bff/authorization/model"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	statuspb "github.com/teamgram/teamgram-server/app/service/status/status"
@@ -277,13 +277,13 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 			id, _ := c.svcCtx.Dao.GetFutureAuthToken(c.ctx, v)
 			if id == user.Id() {
 				// Bind authKeyId and userId
-				c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
+				_, _ = c.svcCtx.Dao.AuthsessionClient.AuthsessionBindAuthKeyUser(c.ctx, &authsession.TLAuthsessionBindAuthKeyUser{
 					AuthKeyId: c.MD.PermAuthKeyId,
 					UserId:    user.User.Id,
 				})
 
 				// Del
-				c.svcCtx.Dao.DelFutureAuthToken(c.ctx, v)
+				_ = c.svcCtx.Dao.DelFutureAuthToken(c.ctx, v)
 
 				// Check SESSION_PASSWORD_NEEDED
 				if c.svcCtx.Plugin != nil {
@@ -338,9 +338,9 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *mt
 					codeData2.PhoneCodeExtraData = "12345"
 					c.Logger.Infof("is test server: %v", codeData2)
 				} else {
-					if status, _ := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &statuspb.TLStatusGetUserOnlineSessions{
+					if status2, _ := c.svcCtx.StatusClient.StatusGetUserOnlineSessions(c.ctx, &statuspb.TLStatusGetUserOnlineSessions{
 						UserId: user.User.Id,
-					}); len(status.GetUserSessions()) > 0 {
+					}); len(status2.GetUserSessions()) > 0 {
 						c.Logger.Infof("user online")
 						needSendSms = false
 						codeData2.SentCodeType = model.SentCodeTypeApp

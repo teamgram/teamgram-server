@@ -21,16 +21,28 @@ package svc
 import (
 	"github.com/teamgram/teamgram-server/app/bff/account/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/account/internal/dao"
+	"github.com/teamgram/teamgram-server/app/bff/account/internal/logic"
+	"github.com/teamgram/teamgram-server/app/bff/account/plugin"
+	"github.com/teamgram/teamgram-server/pkg/code"
 )
 
 type ServiceContext struct {
 	Config config.Config
 	*dao.Dao
+	*logic.AuthLogic
+	Plugin plugin.AuthorizationPlugin
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, code2 code.VerifyCodeInterface, plugin plugin.AuthorizationPlugin) *ServiceContext {
+	d := dao.New(c)
+	if code2 == nil {
+		code2 = code.NewVerifyCode(c.Code)
+	}
+
 	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
+		Config:    c,
+		Dao:       dao.New(c),
+		AuthLogic: logic.NewAuthSignLogic(d, code2),
+		Plugin:    plugin,
 	}
 }

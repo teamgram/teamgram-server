@@ -20,13 +20,21 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // AccountDeleteAccount
 // account.deleteAccount#418d4e0b reason:string = Bool;
 func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (*mtproto.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.deleteAccount blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// TODO(@benqi): 1. Clear account data 2. Kickoff other client
+	rV, err := c.svcCtx.UserClient.UserDeleteUser(c.ctx, &user.TLUserDeleteUser{
+		UserId: c.MD.UserId,
+		Reason: in.Reason,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.deleteAccount - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return rV, nil
 }

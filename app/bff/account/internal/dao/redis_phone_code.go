@@ -31,11 +31,11 @@ import (
 
 const (
 	phoneCodeTimeout int64 = 90 // salt timeout
-	cachePhonePrefix       = "phone_codes"
+	cachePhonePrefix       = "phone_codes.1"
 )
 
 func genCachePhoneCodeKey(authKeyId int64, phoneNumber string) string {
-	return fmt.Sprintf("%s_%d_%s", cachePhonePrefix, authKeyId, phoneNumber)
+	return fmt.Sprintf("%s#%d_%s", cachePhonePrefix, authKeyId, phoneNumber)
 }
 
 func (d *Dao) GetCachePhoneCode(ctx context.Context, authKeyId int64, phoneNumber string) (*model.PhoneCodeTransaction, error) {

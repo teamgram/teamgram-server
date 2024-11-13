@@ -284,13 +284,16 @@ func (s *Server) Initialize() error {
 		// account_helper
 		mtproto.RegisterRPCAccountServer(
 			grpcServer,
-			account_helper.New(account_helper.Config{
-				RpcServerConf:     c.RpcServerConf,
-				UserClient:        c.BizServiceClient,
-				AuthsessionClient: c.AuthSessionClient,
-				ChatClient:        c.BizServiceClient,
-				SyncClient:        c.SyncClient,
-			}))
+			account_helper.New(
+				account_helper.Config{
+					RpcServerConf:     c.RpcServerConf,
+					UserClient:        c.BizServiceClient,
+					AuthsessionClient: c.AuthSessionClient,
+					ChatClient:        c.BizServiceClient,
+					SyncClient:        c.SyncClient,
+				},
+				nil,
+				nil))
 		// usernames_helper
 		mtproto.RegisterRPCUsernamesServer(
 			grpcServer,

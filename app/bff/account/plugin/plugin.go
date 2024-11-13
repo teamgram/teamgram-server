@@ -16,21 +16,12 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package config
+package plugin
 
 import (
-	kafka "github.com/teamgram/marmota/pkg/mq"
-	"github.com/teamgram/teamgram-server/pkg/code/conf"
-	"github.com/zeromicro/go-zero/core/stores/kv"
-	"github.com/zeromicro/go-zero/zrpc"
+	"context"
 )
 
-type Config struct {
-	zrpc.RpcServerConf
-	KV                kv.KvConf
-	Code              *conf.SmsVerifyCodeConfig
-	UserClient        zrpc.RpcClientConf
-	AuthsessionClient zrpc.RpcClientConf
-	ChatClient        zrpc.RpcClientConf
-	SyncClient        *kafka.KafkaProducerConf
+type AuthorizationPlugin interface {
+	CheckPhoneNumberBanned(ctx context.Context, phoneNumber string) (bool, error)
 }

@@ -961,3 +961,28 @@ func (d *Dao) UpdatePersonalChannel(ctx context.Context, id int64, personalChane
 
 	return true
 }
+
+func (d *Dao) UpdatePhoneNumber(ctx context.Context, id int64, phoneNumber string) error {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err := d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+				"phone": phoneNumber, // TODO(@benqi): country_code
+			}, id)
+
+			// TODO: UpdatePhoneByContactId
+			// c.svcCtx.Dao.UserContactsDAO.UpdatePhoneByContactId(c.ctx, in.Phone, in.UserId)
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, 0, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updatePersonalChannel - error: %v", err)
+		return err
+	}
+
+	return nil
+}

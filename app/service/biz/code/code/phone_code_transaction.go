@@ -23,12 +23,12 @@ func (m *PhoneCodeTransaction) ToAuthSentCode() *mtproto.Auth_SentCode {
 	// TODO(@benqi): only use sms
 
 	authSentCode := mtproto.MakeTLAuthSentCode(&mtproto.Auth_SentCode{
-		Type:          makeAuthSentCodeType(m.SentCodeType, len(m.PhoneCode), m.FlashCallPattern),
+		Type:          makeAuthSentCodeType(int(m.SentCodeType), len(m.PhoneCode), m.FlashCallPattern),
 		PhoneCodeHash: m.PhoneCodeHash,
-		NextType:      makeAuthCodeType(m.NextCodeType),
+		NextType:      makeAuthCodeType(int(m.NextCodeType)),
 		Timeout:       &wrapperspb.Int32Value{Value: 60}, // TODO(@benqi): 默认60s
 	}).To_Auth_SentCode()
-	if m.SentCodeType == CodeTypeApp {
+	if m.SentCodeType == SentCodeTypeApp {
 		authSentCode.Timeout = nil
 	}
 	return authSentCode

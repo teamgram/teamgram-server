@@ -14,12 +14,14 @@ import (
 	"github.com/teamgram/teamgram-server/app/bff/account/internal/config"
 	"github.com/teamgram/teamgram-server/app/bff/account/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/bff/account/internal/svc"
+	"github.com/teamgram/teamgram-server/app/bff/account/plugin"
+	"github.com/teamgram/teamgram-server/pkg/code"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+func New(c Config, code2 code.VerifyCodeInterface, plugin plugin.AuthorizationPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, code2, plugin))
 }

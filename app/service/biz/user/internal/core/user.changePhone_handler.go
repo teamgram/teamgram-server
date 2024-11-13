@@ -17,11 +17,11 @@ import (
 // UserChangePhone
 // user.changePhone user_id:int phone:string = Bool;
 func (c *UserCore) UserChangePhone(in *user.TLUserChangePhone) (*mtproto.Bool, error) {
-	c.svcCtx.Dao.UsersDAO.UpdateUser(c.ctx, map[string]interface{}{
-		"phone": in.Phone, // TODO(@benqi): country_code
-	}, in.UserId)
-
-	c.svcCtx.Dao.UserContactsDAO.UpdatePhoneByContactId(c.ctx, in.Phone, in.UserId)
+	err := c.svcCtx.Dao.UpdatePhoneNumber(c.ctx, in.UserId, in.Phone)
+	if err != nil {
+		c.Logger.Errorf("user.changePhone - error: %v", err)
+		return nil, err
+	}
 
 	return mtproto.BoolTrue, nil
 }
