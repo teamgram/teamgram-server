@@ -49,11 +49,11 @@ func (m *DialogsDataHelper) fix() {
 			case mtproto.PEER_USER:
 				for _, v := range m.Users {
 					if v.Id == p.PeerId {
-						if v.Deleted {
-							topMessage = nil
-						} else {
-							users = append(users, v)
-						}
+						//if v.Deleted {
+						//	topMessage = nil
+						//} else {
+						users = append(users, v)
+						//}
 						found = true
 						break
 					}
@@ -62,11 +62,11 @@ func (m *DialogsDataHelper) fix() {
 				for _, v := range m.Chats {
 					if v.Id == p.PeerId {
 						// TODO: check chatEmpty/chatForbidden
-						if v.Deactivated || v.Left {
-							topMessage = nil
-						} else {
-							chats = append(chats, v)
-						}
+						//if v.Deactivated || v.Left {
+						//	topMessage = nil
+						//} else {
+						chats = append(chats, v)
+						//}
 						found = true
 						break
 					}
@@ -75,11 +75,11 @@ func (m *DialogsDataHelper) fix() {
 				for _, v := range m.Chats {
 					if v.Id == p.PeerId {
 						// TODO: check channelForbidden
-						if v.Left {
-							topMessage = nil
-						} else {
-							chats = append(chats, v)
-						}
+						//if v.Left {
+						//	topMessage = nil
+						//} else {
+						chats = append(chats, v)
+						//}
 						found = true
 						break
 					}

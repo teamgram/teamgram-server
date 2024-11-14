@@ -53,7 +53,6 @@ func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (
 		AuthKeyId: 0,
 		Hash:      0,
 	})
-
 	if err != nil {
 		c.Logger.Errorf("account.resetAuthorization#df77f3bc - error: %v", err)
 		return nil, err
@@ -65,7 +64,6 @@ func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (
 			UserId:    c.MD.UserId,
 			AuthKeyId: id,
 		}).To_Updates()
-
 		_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesMe(
 			c.ctx,
 			&sync.TLSyncUpdatesMe{
