@@ -50,7 +50,7 @@ enum TLConstructor {
     CRC32_user_deletePeerSettings = 1586043239;
     CRC32_user_changePhone = -8759461;
     CRC32_user_createNewUser = 2044729473;
-    CRC32_user_deleteUser = 2132777160;
+    CRC32_user_deleteUser = 1651358992;
     CRC32_user_blockPeer = -2130301264;
     CRC32_user_unBlockPeer = -555280883;
     CRC32_user_blockedByUser = -1147140722;
@@ -357,6 +357,7 @@ message TL_user_deleteUser {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
     string reason = 4;
+    string phone = 5;
 }
 
 //--------------------------------------------------------------------------------------------

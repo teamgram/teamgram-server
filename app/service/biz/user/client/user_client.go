@@ -277,7 +277,7 @@ func (m *defaultUserClient) UserCreateNewUser(ctx context.Context, in *user.TLUs
 }
 
 // UserDeleteUser
-// user.deleteUser user_id:long reason:string = Bool;
+// user.deleteUser user_id:long reason:string phone:string = Bool;
 func (m *defaultUserClient) UserDeleteUser(ctx context.Context, in *user.TLUserDeleteUser) (*mtproto.Bool, error) {
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserDeleteUser(ctx, in)

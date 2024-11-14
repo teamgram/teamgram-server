@@ -176,9 +176,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 2044729473,
 		}
 	},
-	2132777160: func() mtproto.TLObject { // 0x7f1f98c8
+	1651358992: func() mtproto.TLObject { // 0x626dbd10
 		return &TLUserDeleteUser{
-			Constructor: 2132777160,
+			Constructor: 1651358992,
 		}
 	},
 	-2130301264: func() mtproto.TLObject { // 0x81062eb0
@@ -2169,13 +2169,14 @@ func (m *TLUserCreateNewUser) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLUserDeleteUser) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x7f1f98c8:
-		x.UInt(0x7f1f98c8)
+	case 0x626dbd10:
+		x.UInt(0x626dbd10)
 
 		// no flags
 
 		x.Long(m.GetUserId())
 		x.String(m.GetReason())
+		x.String(m.GetPhone())
 
 	default:
 		// log.Errorf("")
@@ -2190,12 +2191,13 @@ func (m *TLUserDeleteUser) CalcByteSize(layer int32) int {
 
 func (m *TLUserDeleteUser) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x7f1f98c8:
+	case 0x626dbd10:
 
 		// not has flags
 
 		m.UserId = dBuf.Long()
 		m.Reason = dBuf.String()
+		m.Phone = dBuf.String()
 		return dBuf.GetError()
 
 	default:

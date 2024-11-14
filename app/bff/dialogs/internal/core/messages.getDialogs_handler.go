@@ -130,9 +130,12 @@ func (c *DialogsCore) MessagesGetDialogs(in *mtproto.TLMessagesGetDialogs) (*mtp
 			return msgList
 		},
 		func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.User {
-			users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx,
-				&userpb.TLUserGetMutableUsers{
-					Id: id,
+			users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsersV2(c.ctx,
+				&userpb.TLUserGetMutableUsersV2{
+					Id:      id,
+					Privacy: true,
+					HasTo:   true,
+					To:      []int64{selfUserId},
 				})
 
 			return users.GetUserListByIdList(c.MD.UserId, id...)

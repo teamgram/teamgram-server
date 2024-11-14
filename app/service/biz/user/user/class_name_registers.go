@@ -210,7 +210,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_user_deleteUser: {
-		0: 2132777160, // 0x7f1f98c8
+		0: 1651358992, // 0x626dbd10
 
 	},
 	Predicate_user_blockPeer: {
@@ -441,7 +441,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1586043239:  Predicate_user_deletePeerSettings,           // 0x5e891967
 	-8759461:    Predicate_user_changePhone,                  // 0xff7a575b
 	2044729473:  Predicate_user_createNewUser,                // 0x79e01881
-	2132777160:  Predicate_user_deleteUser,                   // 0x7f1f98c8
+	1651358992:  Predicate_user_deleteUser,                   // 0x626dbd10
 	-2130301264: Predicate_user_blockPeer,                    // 0x81062eb0
 	-555280883:  Predicate_user_unBlockPeer,                  // 0xdee7160d
 	-1147140722: Predicate_user_blockedByUser,                // 0xbba0058e

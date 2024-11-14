@@ -197,12 +197,13 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 
 	userData := d.MakeUserDataByDO(do)
 	if do.Restricted {
-		jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
+		_ = jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
 	}
 	cacheData.UserData = userData
 
 	if do.UserType == user.UserTypeUnknown ||
-		do.UserType == user.UserTypeDeleted {
+		do.UserType == user.UserTypeDeleted ||
+		do.Deleted {
 		return cacheData, nil
 	}
 
@@ -279,7 +280,7 @@ func (d *Dao) GetCacheUserDataListByIdList(ctx context.Context, idList []int64) 
 		keyList = append(keyList, genCacheUserDataCacheKey(id))
 	}
 
-	d.CachedConn.QueryRows(
+	_ = d.CachedConn.QueryRows(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
 			vList := make(map[string]interface{}, len(keys))

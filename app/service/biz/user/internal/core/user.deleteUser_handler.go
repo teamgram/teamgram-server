@@ -24,11 +24,12 @@ import (
 )
 
 // UserDeleteUser
-// user.deleteUser user_id:long reason:string = Bool;
+// user.deleteUser user_id:long reason:string phone:string = Bool;
 func (c *UserCore) UserDeleteUser(in *user.TLUserDeleteUser) (*mtproto.Bool, error) {
 	rB := c.svcCtx.Dao.DeleteUser(
 		c.ctx,
 		in.GetUserId(),
+		in.GetPhone(),
 		in.GetReason())
 
 	return mtproto.ToBool(rB), nil

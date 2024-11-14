@@ -279,7 +279,6 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 	if userData.Deleted {
 		return immutableUser, nil
 	}
-
 	if userData.UserType == user.UserTypeUnknown ||
 		userData.UserType == user.UserTypeBot ||
 		userData.UserType == user.UserTypeDeleted {
@@ -357,7 +356,7 @@ func (d *Dao) UpdateUserEmojiStatus(ctx context.Context, id int64, emojiStatusDo
 	return true
 }
 
-func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
+func (d *Dao) DeleteUser(ctx context.Context, id int64, phoneNumber string, reason string) bool {
 	_, _, err := d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
@@ -372,7 +371,8 @@ func (d *Dao) DeleteUser(ctx context.Context, id int64, reason string) bool {
 
 			return 0, rowsAffected, nil
 		},
-		genCacheUserDataCacheKey(id))
+		genCacheUserDataCacheKey(id),
+		genCachePhoneUserKey(phoneNumber))
 	if err != nil {
 		logx.WithContext(ctx).Errorf("DeleteUser - error: %v", err)
 		return false
@@ -589,6 +589,17 @@ func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, 
 		}).To_ImmutableUser()
 
 		cUserList = append(cUserList, cUser)
+
+		if cUser.Deleted() {
+			continue
+		}
+		if cData.GetUserData().GetUserType() == user.UserTypeUnknown ||
+			cData.GetUserData().GetUserType() == user.UserTypeBot ||
+			cData.GetUserData().GetUserType() == user.UserTypeDeleted {
+			// not load these data
+			continue
+		}
+
 		mUsers[id] = cUser
 
 		// LastSeenAt
@@ -620,7 +631,7 @@ func (d *Dao) GetCacheImmutableUserListV2(ctx context.Context, idList2 []int64, 
 	}
 	logger.Infof("getCacheImmutableUserList - cDataList: %d", len(cDataList))
 
-	d.CachedConn.QueryRows(
+	_ = d.CachedConn.QueryRows(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
 			noCaches := make(map[string]interface{}, len(keys))
@@ -731,7 +742,6 @@ func (d *Dao) GetImmutableUserV2(ctx context.Context, id int64, privacy bool, ha
 	if userData.Deleted {
 		return immutableUser, nil
 	}
-
 	if userData.UserType == user.UserTypeUnknown ||
 		userData.UserType == user.UserTypeBot ||
 		userData.UserType == user.UserTypeDeleted {
@@ -826,6 +836,16 @@ func (d *Dao) GetMutableUsersV2(ctx context.Context, idList2 []int64, privacy bo
 		}
 
 		cUserList = append(cUserList, cUser)
+
+		if cUser.Deleted() {
+			continue
+		}
+		if cData.GetUserData().GetUserType() == user.UserTypeUnknown ||
+			cData.GetUserData().GetUserType() == user.UserTypeBot ||
+			cData.GetUserData().GetUserType() == user.UserTypeDeleted {
+			continue
+		}
+
 		mUsers[id] = cUser
 
 		// LastSeenAt
@@ -853,7 +873,7 @@ func (d *Dao) GetMutableUsersV2(ctx context.Context, idList2 []int64, privacy bo
 		}
 	}
 
-	d.CachedConn.QueryRows(
+	_ = d.CachedConn.QueryRows(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB, keys ...string) (map[string]interface{}, error) {
 			noCaches := make(map[string]interface{}, len(keys))
@@ -978,7 +998,8 @@ func (d *Dao) UpdatePhoneNumber(ctx context.Context, id int64, phoneNumber strin
 
 			return 0, 0, nil
 		},
-		genCacheUserDataCacheKey(id))
+		genCacheUserDataCacheKey(id),
+		genCachePhoneUserKey(phoneNumber))
 	if err != nil {
 		logx.WithContext(ctx).Errorf("updatePersonalChannel - error: %v", err)
 		return err

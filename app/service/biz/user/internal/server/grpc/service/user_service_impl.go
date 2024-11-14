@@ -379,7 +379,7 @@ func (s *Service) UserCreateNewUser(ctx context.Context, request *user.TLUserCre
 }
 
 // UserDeleteUser
-// user.deleteUser user_id:long reason:string = Bool;
+// user.deleteUser user_id:long reason:string phone:string = Bool;
 func (s *Service) UserDeleteUser(ctx context.Context, request *user.TLUserDeleteUser) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.deleteUser - metadata: {%s}, request: {%s}", c.MD, request)

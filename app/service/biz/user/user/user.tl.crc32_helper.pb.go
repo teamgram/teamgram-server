@@ -41,7 +41,7 @@ const (
 	CRC32_user_deletePeerSettings           TLConstructor = 1586043239  // 0x5e891967
 	CRC32_user_changePhone                  TLConstructor = -8759461    // 0xff7a575b
 	CRC32_user_createNewUser                TLConstructor = 2044729473  // 0x79e01881
-	CRC32_user_deleteUser                   TLConstructor = 2132777160  // 0x7f1f98c8
+	CRC32_user_deleteUser                   TLConstructor = 1651358992  // 0x626dbd10
 	CRC32_user_blockPeer                    TLConstructor = -2130301264 // 0x81062eb0
 	CRC32_user_unBlockPeer                  TLConstructor = -555280883  // 0xdee7160d
 	CRC32_user_blockedByUser                TLConstructor = -1147140722 // 0xbba0058e
