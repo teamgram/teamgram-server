@@ -8,6 +8,7 @@
                 (:auth_key_id, :user_id, :hash, :date_created, :date_actived)
             ON DUPLICATE KEY UPDATE
                 hash = VALUES(hash),
+                user_id = VALUES(user_id),
                 date_actived = VALUES(date_actived),
                 deleted = 0
         </sql>
@@ -21,6 +22,7 @@
                 auth_users
             WHERE
                 auth_key_id = :auth_key_id AND deleted = 0
+            ORDER BY id DESC LIMIT 1
         </sql>
     </operation>
 
@@ -29,7 +31,7 @@
             UPDATE
                 auth_users
             SET
-                android_push_session_id = :android_push_session_id, deleted = 0
+                android_push_session_id = :android_push_session_id
             WHERE
                 auth_key_id = :auth_key_id
         </sql>

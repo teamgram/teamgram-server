@@ -39,10 +39,10 @@ func NewAuthUsersDAO(db *sqlx.DB) *AuthUsersDAO {
 }
 
 // InsertOrUpdates
-// insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), date_actived = values(date_actived), deleted = 0
+// insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), user_id = values(user_id), date_actived = values(date_actived), deleted = 0
 func (dao *AuthUsersDAO) InsertOrUpdates(ctx context.Context, do *dataobject.AuthUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), date_actived = values(date_actived), deleted = 0"
+		query = "insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), user_id = values(user_id), date_actived = values(date_actived), deleted = 0"
 		r     sql.Result
 	)
 
@@ -66,10 +66,10 @@ func (dao *AuthUsersDAO) InsertOrUpdates(ctx context.Context, do *dataobject.Aut
 }
 
 // InsertOrUpdatesTx
-// insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), date_actived = values(date_actived), deleted = 0
+// insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), user_id = values(user_id), date_actived = values(date_actived), deleted = 0
 func (dao *AuthUsersDAO) InsertOrUpdatesTx(tx *sqlx.Tx, do *dataobject.AuthUsersDO) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), date_actived = values(date_actived), deleted = 0"
+		query = "insert into auth_users(auth_key_id, user_id, hash, date_created, date_actived) values (:auth_key_id, :user_id, :hash, :date_created, :date_actived) on duplicate key update hash = values(hash), user_id = values(user_id), date_actived = values(date_actived), deleted = 0"
 		r     sql.Result
 	)
 
@@ -93,10 +93,10 @@ func (dao *AuthUsersDAO) InsertOrUpdatesTx(tx *sqlx.Tx, do *dataobject.AuthUsers
 }
 
 // Select
-// select id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id from auth_users where auth_key_id = :auth_key_id and deleted = 0
+// select id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id from auth_users where auth_key_id = :auth_key_id and deleted = 0 order by id desc limit 1
 func (dao *AuthUsersDAO) Select(ctx context.Context, authKeyId int64) (rValue *dataobject.AuthUsersDO, err error) {
 	var (
-		query = "select id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id from auth_users where auth_key_id = ? and deleted = 0"
+		query = "select id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id from auth_users where auth_key_id = ? and deleted = 0 order by id desc limit 1"
 		do    = &dataobject.AuthUsersDO{}
 	)
 	err = dao.db.QueryRowPartial(ctx, do, query, authKeyId)
@@ -116,10 +116,10 @@ func (dao *AuthUsersDAO) Select(ctx context.Context, authKeyId int64) (rValue *d
 }
 
 // UpdateAndroidPushSessionId
-// update auth_users set android_push_session_id = :android_push_session_id, deleted = 0 where auth_key_id = :auth_key_id
+// update auth_users set android_push_session_id = :android_push_session_id where auth_key_id = :auth_key_id
 func (dao *AuthUsersDAO) UpdateAndroidPushSessionId(ctx context.Context, androidPushSessionId int64, authKeyId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update auth_users set android_push_session_id = ?, deleted = 0 where auth_key_id = ?"
+		query   = "update auth_users set android_push_session_id = ? where auth_key_id = ?"
 		rResult sql.Result
 	)
 
@@ -139,10 +139,10 @@ func (dao *AuthUsersDAO) UpdateAndroidPushSessionId(ctx context.Context, android
 }
 
 // UpdateAndroidPushSessionIdTx
-// update auth_users set android_push_session_id = :android_push_session_id, deleted = 0 where auth_key_id = :auth_key_id
+// update auth_users set android_push_session_id = :android_push_session_id where auth_key_id = :auth_key_id
 func (dao *AuthUsersDAO) UpdateAndroidPushSessionIdTx(tx *sqlx.Tx, androidPushSessionId int64, authKeyId int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update auth_users set android_push_session_id = ?, deleted = 0 where auth_key_id = ?"
+		query   = "update auth_users set android_push_session_id = ? where auth_key_id = ?"
 		rResult sql.Result
 	)
 	rResult, err = tx.Exec(query, androidPushSessionId, authKeyId)
