@@ -14,8 +14,9 @@ require (
 	github.com/panjf2000/gnet/v2 v2.5.9
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
-	github.com/teamgram/proto v0.192.0
-	github.com/valyala/bytebufferpool v1.0.0
+	github.com/teamgram/proto v0.0.0-20241118014852-013cb379c332
+	github.com/teamgram/proto/v2 v2.0.0-20241118014852-013cb379c332
+	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.7.2
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1
@@ -31,7 +32,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
@@ -67,7 +68,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
