@@ -43,7 +43,7 @@ enum TLConstructor {
     CRC32_authsession_getAuthStateData = 1331573041;
     CRC32_authsession_setLayer = 1147475077;
     CRC32_authsession_setInitConnection = 2095024780;
-    CRC32_authsession_setAndroidPushSessionId = -9853198;
+    CRC32_authsession_setAndroidPushSessionId = -1834474692;
 }
 
 
@@ -242,8 +242,9 @@ message TL_authsession_setInitConnection {
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setAndroidPushSessionId {
     TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 session_id = 4;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    int64 session_id = 5;
 }
 
 

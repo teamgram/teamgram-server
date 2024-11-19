@@ -126,7 +126,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_authsession_setAndroidPushSessionId: {
-		0: -9853198, // 0xff69a6f2
+		0: -1834474692, // 0x92a8233c
 
 	},
 }
@@ -154,7 +154,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1331573041:  Predicate_authsession_getAuthStateData,        // 0x4f5e3131
 	1147475077:  Predicate_authsession_setLayer,                // 0x44651485
 	2095024780:  Predicate_authsession_setInitConnection,       // 0x7cdf8a8c
-	-9853198:    Predicate_authsession_setAndroidPushSessionId, // 0xff69a6f2
+	-1834474692: Predicate_authsession_setAndroidPushSessionId, // 0x92a8233c
 
 }
 

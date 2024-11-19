@@ -22,7 +22,6 @@
                 auth_users
             WHERE
                 auth_key_id = :auth_key_id AND deleted = 0
-            ORDER BY id DESC LIMIT 1
         </sql>
     </operation>
 
@@ -33,7 +32,7 @@
             SET
                 android_push_session_id = :android_push_session_id
             WHERE
-                auth_key_id = :auth_key_id
+                auth_key_id = :auth_key_id AND user_id = :user_id
         </sql>
     </operation>
 

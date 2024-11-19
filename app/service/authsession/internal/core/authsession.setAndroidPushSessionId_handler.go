@@ -39,7 +39,7 @@ func (c *AuthsessionCore) AuthsessionSetAndroidPushSessionId(in *authsession.TLA
 		return nil, mtproto.ErrAuthKeyPermEmpty
 	}
 
-	err = c.svcCtx.Dao.SetAndroidPushSessionId(c.ctx, keyData.PermAuthKeyId, in.GetSessionId())
+	err = c.svcCtx.Dao.SetAndroidPushSessionId(c.ctx, in.GetUserId(), keyData.PermAuthKeyId, in.GetSessionId())
 	if err != nil {
 		c.Logger.Errorf("setAndroidPushSessionId(%d) is error: %v", inKeyId, err)
 		return nil, err

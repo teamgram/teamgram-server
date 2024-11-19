@@ -396,6 +396,7 @@ func (m *MainAuthWrapper) onBindPushSessionId(ctx context.Context, sList *Sessio
 		_, _ = m.cb.Dao.AuthsessionClient.AuthsessionSetAndroidPushSessionId(
 			ctx,
 			&authsession.TLAuthsessionSetAndroidPushSessionId{
+				UserId:    m.AuthUserId,
 				AuthKeyId: m.authKeyId,
 				SessionId: sessionId,
 			})

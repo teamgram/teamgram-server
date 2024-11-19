@@ -374,14 +374,15 @@ func (d *Dao) SetInitConnection(ctx context.Context, i *authsession.TLAuthsessio
 	return err
 }
 
-func (d *Dao) SetAndroidPushSessionId(ctx context.Context, keyId, sessionId int64) error {
+func (d *Dao) SetAndroidPushSessionId(ctx context.Context, userId, keyId, sessionId int64) error {
 	_, _, err := d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 			_, err2 := d.AuthUsersDAO.UpdateAndroidPushSessionId(
 				ctx,
 				sessionId,
-				keyId)
+				keyId,
+				userId)
 
 			return 0, 0, err2
 		},
