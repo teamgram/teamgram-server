@@ -52,7 +52,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 					c.Logger.Errorf("inbox.sendUserMessageToInboxV2 - error: sendToSelfUser")
 				} else {
 					peer := mtproto.FromPeer(peer2)
-					c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
+					_, _, _ = c.svcCtx.Dao.SavedDialogsDAO.InsertOrUpdate(
 						c.ctx,
 						&dataobject.SavedDialogsDO{
 							UserId:     in.FromId,
@@ -137,7 +137,7 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 			if in.PeerType == mtproto.PEER_CHAT {
 				switch inBox.GetMessage().GetAction().GetPredicateName() {
 				case mtproto.Predicate_messageActionChatMigrateTo:
-					c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+					_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 						c.ctx,
 						&dialog.TLDialogInsertOrUpdateDialog{
 							UserId:          in.UserId,

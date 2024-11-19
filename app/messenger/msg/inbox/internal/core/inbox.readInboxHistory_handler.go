@@ -50,7 +50,7 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 		}
 	}
 
-	c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+	_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 		c.ctx,
 		&dialog.TLDialogInsertOrUpdateDialog{
 			UserId:          in.UserId,
@@ -65,7 +65,7 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 			Date2:           nil,
 		})
 
-	c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
+	_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
 			UserId:        in.UserId,

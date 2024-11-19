@@ -29,13 +29,13 @@ import (
 // InboxDeleteMessagesToInbox
 // inbox.deleteMessagesToInbox from_id:long id:Vector<int> = Void;
 func (c *InboxCore) InboxDeleteMessagesToInbox(in *inbox.TLInboxDeleteMessagesToInbox) (*mtproto.Void, error) {
-	c.svcCtx.Dao.DeleteInboxMessages(
+	_ = c.svcCtx.Dao.DeleteInboxMessages(
 		c.ctx,
 		in.FromId,
 		mtproto.MakePeerUtil(in.PeerType, in.PeerId),
 		in.Id,
 		func(ctx context.Context, userId int64, idList []int32) {
-			c.svcCtx.Dao.SyncClient.SyncPushUpdates(ctx, &sync.TLSyncPushUpdates{
+			_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(ctx, &sync.TLSyncPushUpdates{
 				UserId: userId,
 				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
 					Messages:  idList,

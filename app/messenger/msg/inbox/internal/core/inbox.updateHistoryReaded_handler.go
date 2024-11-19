@@ -48,7 +48,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 		}
 		c.Logger.Infof("inbox.updateHistoryReaded: %v", replyId)
 
-		c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+		_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 			c.ctx,
 			&dialog.TLDialogInsertOrUpdateDialog{
 				UserId:          in.PeerId,
@@ -67,7 +67,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 			in.PeerId,
 			mtproto.MakePeerDialogId(in.PeerType, in.FromId))
 
-		c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 			UserId: in.PeerId,
 			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
 				Peer_PEER: mtproto.MakePeerUser(in.FromId),
@@ -92,13 +92,13 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 		}
 		c.Logger.Infof("inbox.updateHistoryReaded: %v", replyId)
 
-		c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
+		_, _ = c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
 			c.ctx,
 			replyId.UserId,
 			[]int64{mtproto.MakePeerDialogId(in.PeerType, in.PeerId)},
 			func(sz, i int, v *dataobject.DialogsDO) {
 				if v.ReadOutboxMaxId < replyId.UserMessageBoxId {
-					c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+					_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 						c.ctx,
 						&dialog.TLDialogInsertOrUpdateDialog{
 							UserId:          replyId.UserId,
@@ -117,7 +117,7 @@ func (c *InboxCore) InboxUpdateHistoryReaded(in *inbox.TLInboxUpdateHistoryReade
 						replyId.PeerId,
 						mtproto.MakePeerDialogId(in.PeerType, in.PeerId))
 
-					c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+					_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 						UserId: replyId.UserId,
 						Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
 							Peer_PEER: mtproto.MakePeerChat(in.PeerId),

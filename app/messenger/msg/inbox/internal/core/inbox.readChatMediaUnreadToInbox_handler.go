@@ -48,16 +48,16 @@ func (c *InboxCore) InboxReadChatMediaUnreadToInbox(in *inbox.TLInboxReadChatMed
 	}
 
 	for tableName, _ := range tables {
-		c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
+		_, _ = c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 			c.ctx,
 			tableName,
 			idList,
 			func(sz, i int, v *dataobject.MessagesDO) {
-				c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, v.UserId, v.UserMessageBoxId)
+				_, _ = c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, v.UserId, v.UserMessageBoxId)
 
 				// TODO: batch handle
 				pts := c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, v.UserId)
-				c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+				_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 					UserId: v.UserId,
 					Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadMessagesContents(&mtproto.Update{
 						Messages:  []int32{v.UserMessageBoxId},

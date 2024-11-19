@@ -45,7 +45,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 		for _, entity := range in.DstMessage.Message.GetEntities() {
 			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 				if entity.GetUrl() != "" {
-					c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageId(c.ctx, in.UserId, in.DstMessage.MessageId)
+					_, _ = c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageId(c.ctx, in.UserId, in.DstMessage.MessageId)
 					break
 				}
 			}
@@ -55,7 +55,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 		for _, entity := range in.NewMessage.Message.GetEntities() {
 			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 				if entity.GetUrl() != "" {
-					c.svcCtx.Dao.HashTagsDAO.InsertOrUpdate(c.ctx, &dataobject.HashTagsDO{
+					_, _, _ = c.svcCtx.Dao.HashTagsDAO.InsertOrUpdate(c.ctx, &dataobject.HashTagsDO{
 						UserId:           in.UserId,
 						PeerType:         in.PeerType,
 						PeerId:           in.PeerId,
@@ -115,7 +115,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			for _, entity := range dstMessage.Entities {
 				if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 					if entity.GetUrl() != "" {
-						c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageIdTx(tx, in.UserId, dstMessage.Id)
+						_, _ = c.svcCtx.Dao.HashTagsDAO.DeleteHashTagMessageIdTx(tx, in.UserId, dstMessage.Id)
 						break
 					}
 				}
@@ -142,7 +142,7 @@ func (c *InboxCore) InboxEditMessageToInboxV2(in *inbox.TLInboxEditMessageToInbo
 			for _, entity := range in.NewMessage.Message.GetEntities() {
 				if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 					if entity.GetUrl() != "" {
-						c.svcCtx.Dao.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
+						_, _, _ = c.svcCtx.Dao.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
 							UserId:           in.UserId,
 							PeerType:         in.PeerType,
 							PeerId:           in.PeerId,

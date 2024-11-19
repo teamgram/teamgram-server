@@ -230,7 +230,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 		for _, entity := range message.GetEntities() {
 			if entity.GetPredicateName() == mtproto.Predicate_messageEntityHashtag {
 				if entity.GetUrl() != "" {
-					d.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
+					_, _, _ = d.HashTagsDAO.InsertOrUpdateTx(tx, &dataobject.HashTagsDO{
 						UserId:           inBox.UserId,
 						PeerType:         peer.PeerType,
 						PeerId:           peer.PeerId,
@@ -248,7 +248,7 @@ func (d *Dao) sendMessageToInbox(ctx context.Context, fromId int64, peer *mtprot
 		return nil, tR.Err
 	}
 
-	d.CachedConn.Exec(
+	_, _, _ = d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
 			lastInsertId, rowsAffected, err := d.DialogsDAO.InsertOrUpdate(ctx, dialogDO)

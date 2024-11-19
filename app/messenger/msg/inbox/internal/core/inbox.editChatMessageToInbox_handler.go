@@ -73,7 +73,7 @@ func (c *InboxCore) InboxEditChatMessageToInbox(in *inbox.TLInboxEditChatMessage
 				Message_MESSAGE: inBox.Message,
 			}).To_Update())
 
-		c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 			UserId:  toId,
 			Updates: pushUpdates,
 		})

@@ -58,10 +58,10 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 			pinnedMsgId = v.UserMessageBoxId
 		}
 
-		c.svcCtx.Dao.MessagesDAO.UpdatePinned(c.ctx, !in.GetUnpin(), v.UserId, v.UserMessageBoxId)
+		_, _ = c.svcCtx.Dao.MessagesDAO.UpdatePinned(c.ctx, !in.GetUnpin(), v.UserId, v.UserMessageBoxId)
 
 		if peer.PeerType == mtproto.PEER_USER {
-			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+			_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 				c.ctx,
 				&dialog.TLDialogInsertOrUpdateDialog{
 					UserId:          v.UserId,
@@ -77,7 +77,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 				})
 
 			// sync
-			c.svcCtx.Dao.SyncClient.SyncPushUpdates(
+			_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,
 				&sync.TLSyncPushUpdates{
 					UserId: v.UserId,
@@ -91,7 +91,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 						}).To_Update()),
 				})
 		} else {
-			c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+			_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 				c.ctx,
 				&dialog.TLDialogInsertOrUpdateDialog{
 					UserId:          v.UserId,
@@ -107,7 +107,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 				})
 
 			// sync
-			c.svcCtx.Dao.SyncClient.SyncPushUpdates(
+			_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 				c.ctx,
 				&sync.TLSyncPushUpdates{
 					UserId: v.UserId,
@@ -125,7 +125,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 
 	switch peer.PeerType {
 	case mtproto.PEER_USER:
-		c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
+		_, _ = c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 			c.ctx,
 			c.svcCtx.Dao.MessagesDAO.CalcTableName(in.PeerId),
 			[]int64{in.DialogMessageId},
@@ -146,7 +146,7 @@ func (c *InboxCore) InboxUpdatePinnedMessage(in *inbox.TLInboxUpdatePinnedMessag
 		}
 
 		for tableName, _ := range tables {
-			c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
+			_, _ = c.svcCtx.Dao.MessagesDAO.SelectByMessageDataIdListWithCB(
 				c.ctx,
 				tableName,
 				[]int64{in.DialogMessageId},

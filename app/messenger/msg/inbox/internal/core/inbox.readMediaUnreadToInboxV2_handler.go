@@ -31,9 +31,13 @@ func (c *InboxCore) InboxReadMediaUnreadToInboxV2(in *inbox.TLInboxReadMediaUnre
 	if err != nil {
 		c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 - error: %v", err)
 		return nil, err
+	} else if unreadDO == nil {
+		err = mtproto.ErrPeerIdInvalid
+		c.Logger.Errorf("inbox.readMediaUnreadToInboxV2 - error: %v", err)
+		return nil, err
 	}
 
-	if !unreadDO.MediaUnread || !unreadDO.MediaUnread {
+	if !unreadDO.MediaUnread {
 		return mtproto.EmptyVoid, nil
 	}
 	_, err = c.svcCtx.Dao.MessagesDAO.UpdateMediaUnread(c.ctx, unreadDO.UserId, unreadDO.UserMessageBoxId)
@@ -48,7 +52,7 @@ func (c *InboxCore) InboxReadMediaUnreadToInboxV2(in *inbox.TLInboxReadMediaUnre
 		return nil, mtproto.ErrInternalServerError
 	}
 
-	c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+	_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 		UserId: in.UserId,
 		Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadMessagesContents(&mtproto.Update{
 			Messages:  []int32{unreadDO.UserMessageBoxId},

@@ -54,7 +54,7 @@ func New(svcCtx *svc.ServiceContext, conf kafka.KafkaConsumerConf) *kafka.Consum
 					}
 					c.Logger.Debugf("inbox.editUserMessageToInbox - request: %s", r)
 
-					c.InboxEditUserMessageToInbox(r)
+					_, _ = c.InboxEditUserMessageToInbox(r)
 				})
 			case proto.MessageName((*inbox.TLInboxEditChatMessageToInbox)(nil)):
 				threading.RunSafe(func() {

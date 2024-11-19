@@ -38,7 +38,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 	switch peer.PeerType {
 	case mtproto.PEER_USER:
 		dialogId := mtproto.MakeDialogId(peer.PeerId, peer.PeerType, in.UserId)
-		c.svcCtx.Dao.MessagesDAO.SelectPinnedListWithCB(
+		_, _ = c.svcCtx.Dao.MessagesDAO.SelectPinnedListWithCB(
 			c.ctx,
 			peer.PeerId,
 			dialogId.A,
@@ -52,7 +52,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 
 		pts = c.svcCtx.Dao.IDGenClient2.NextNPtsId(c.ctx, peer.PeerId, len(idList))
 		ptsCount = int32(len(idList))
-		c.svcCtx.Dao.SyncClient.SyncPushUpdates(
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
 			&sync.TLSyncPushUpdates{
 				UserId: peer.PeerId,
@@ -67,7 +67,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 	case mtproto.PEER_CHAT:
 		// TODO: 性能优化
 		dialogId := mtproto.MakeDialogId(0, peer.PeerType, in.PeerId)
-		c.svcCtx.Dao.ChatParticipantsDAO.SelectListWithCB(
+		_, _ = c.svcCtx.Dao.ChatParticipantsDAO.SelectListWithCB(
 			c.ctx,
 			peer.PeerId,
 			func(sz, i int, v *dataobject.ChatParticipantsDO) {
@@ -78,7 +78,7 @@ func (c *InboxCore) InboxUnpinAllMessages(in *inbox.TLInboxUnpinAllMessages) (*m
 					return
 				}
 
-				c.svcCtx.Dao.MessagesDAO.SelectPinnedListWithCB(
+				_, _ = c.svcCtx.Dao.MessagesDAO.SelectPinnedListWithCB(
 					c.ctx,
 					v.UserId,
 					dialogId.A,

@@ -83,7 +83,7 @@ func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (
 			in.UserId,
 			mtproto.MakePeerDialogId(in.PeerType, in.PeerId))
 
-		c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 			UserId: in.UserId,
 			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
 				Peer_PEER: mtproto.MakePeerUser(in.PeerId),
@@ -107,13 +107,13 @@ func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (
 		}
 		c.Logger.Infof("inbox.readOutboxHistory: %v", replyId)
 
-		c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
+		_, _ = c.svcCtx.Dao.DialogsDAO.SelectPeerDialogListWithCB(
 			c.ctx,
 			replyId.UserId,
 			[]int64{mtproto.MakePeerDialogId(in.PeerType, in.PeerId)},
 			func(sz, i int, v *dataobject.DialogsDO) {
 				if v.ReadOutboxMaxId < replyId.UserMessageBoxId {
-					c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+					_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 						c.ctx,
 						&dialog.TLDialogInsertOrUpdateDialog{
 							UserId:          replyId.UserId,
@@ -132,7 +132,7 @@ func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (
 						replyId.PeerId,
 						mtproto.MakePeerDialogId(in.PeerType, in.PeerId))
 
-					c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+					_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 						UserId: in.UserId,
 						Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryOutbox(&mtproto.Update{
 							Peer_PEER: mtproto.MakePeerChat(in.PeerId),

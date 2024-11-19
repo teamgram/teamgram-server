@@ -66,7 +66,7 @@ func (c *InboxCore) InboxDeleteUserHistoryToInbox(in *inbox.TLInboxDeleteUserHis
 			TtlPeriod:   nil,
 		}).To_Message()
 
-		c.svcCtx.Dao.EditUserOutboxMessage(c.ctx, in.PeerUserId, in.FromId, clearHistoryMessage)
+		_, _ = c.svcCtx.Dao.EditUserOutboxMessage(c.ctx, in.PeerUserId, in.FromId, clearHistoryMessage)
 
 		pushUpdates := mtproto.MakeUpdatesByUpdates(
 			mtproto.MakeTLUpdateDeleteMessages(&mtproto.Update{
@@ -86,7 +86,7 @@ func (c *InboxCore) InboxDeleteUserHistoryToInbox(in *inbox.TLInboxDeleteUserHis
 				PtsCount:        1,
 			}).To_Update(),
 		)
-		c.svcCtx.Dao.SyncClient.SyncPushUpdates(
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(
 			c.ctx,
 			&sync.TLSyncPushUpdates{
 				UserId:  in.PeerUserId,
