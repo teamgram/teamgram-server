@@ -36,7 +36,7 @@ func (q *sessionRpcResultWaitingQueue) Add(msgId int64) {
 	logx.Infof("add msgId: %d", msgId)
 	q.q.PushBack(&rpcResultWaiting{
 		msgId: msgId,
-		date:  time.Now().Unix() + 5,
+		date:  time.Now().Unix() + 30,
 	})
 }
 

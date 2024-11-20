@@ -103,7 +103,7 @@ func (m *defaultSyncMqClient) SyncPushRpcResult(ctx context.Context, in *sync.TL
 	return m.sendMessage(
 		ctx,
 		string(proto.MessageName(in)),
-		strconv.FormatInt(in.GetAuthKeyId(), 10),
+		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
 

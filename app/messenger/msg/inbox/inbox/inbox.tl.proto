@@ -33,9 +33,9 @@ enum TLConstructor {
     CRC32_inbox_updateHistoryReaded = -1010283296;
     CRC32_inbox_updatePinnedMessage = -1452528908;
     CRC32_inbox_unpinAllMessages = 589079137;
-    CRC32_inbox_sendUserMessageToInboxV2 = 2043341160;
+    CRC32_inbox_sendUserMessageToInboxV2 = 96302370;
     CRC32_inbox_editMessageToInboxV2 = -625238423;
-    CRC32_inbox_readInboxHistory = -465427029;
+    CRC32_inbox_readInboxHistory = 32978549;
     CRC32_inbox_readOutboxHistory = 477116106;
     CRC32_inbox_readMediaUnreadToInboxV2 = -356170942;
 }
@@ -175,6 +175,11 @@ message TL_inbox_sendUserMessageToInboxV2 {
     repeated mtproto.MessageBox box_list = 9;
     repeated mtproto.User users = 10;
     repeated mtproto.Chat chats = 11;
+    google.protobuf.Int32Value layer = 12;
+    google.protobuf.StringValue server_id = 13;
+    google.protobuf.Int64Value session_id = 14;
+    google.protobuf.Int64Value client_req_msg_id = 15;
+    google.protobuf.Int64Value auth_key_id = 16;
 }
 
 //--------------------------------------------------------------------------------------------
@@ -204,6 +209,10 @@ message TL_inbox_readInboxHistory {
     int32 unread_count = 9;
     int32 read_inbox_max_id = 10;
     int32 max_id = 11;
+    google.protobuf.Int32Value layer = 12;
+    google.protobuf.StringValue server_id = 13;
+    google.protobuf.Int64Value session_id = 14;
+    google.protobuf.Int64Value client_req_msg_id = 15;
 }
 
 //--------------------------------------------------------------------------------------------

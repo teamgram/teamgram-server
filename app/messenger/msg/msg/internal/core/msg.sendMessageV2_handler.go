@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
@@ -53,7 +54,14 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates
 	switch peer.PeerType {
 	case mtproto.PEER_USER:
 		if len(outBoxList) == 1 {
-			rUpdates, err = c.sendUserOutgoingMessageV2(in.UserId, in.AuthKeyId, in.PeerId, outBoxList[0])
+			if kUseV3 {
+				threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
+					_, _ = c.sendUserOutgoingMessageV3(ctx, in.UserId, in.AuthKeyId, in.PeerId, outBoxList[0])
+				})
+				err = mtproto.ErrPushRpcClient
+			} else {
+				rUpdates, err = c.sendUserOutgoingMessageV2(in.UserId, in.AuthKeyId, in.PeerId, outBoxList[0])
+			}
 			if err != nil {
 				c.Logger.Errorf("msg.sendMessageV2 - error: %v", err)
 				return nil, err
@@ -728,4 +736,174 @@ func (c *MsgCore) sendChatOutgoingMessageList(fromUserId, fromAuthKeyId, peerCha
 	}
 
 	return rUpdates, nil
+}
+
+func (c *MsgCore) sendUserOutgoingMessageV3(ctx context.Context, fromUserId, fromAuthKeyId, toUserId int64, outBox *msg.OutboxMessage) (*mtproto.Updates, error) {
+	var (
+		idHelper = mtproto.NewIDListHelper(fromUserId, toUserId)
+		since2   = timex.Now()
+	)
+
+	idHelper.PickByMessage(outBox.GetMessage())
+
+	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx, &userpb.TLUserGetMutableUsers{
+		Id: idHelper.UserIdList,
+		To: []int64{fromUserId, toUserId},
+	})
+	if err != nil {
+		c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
+		return nil, err
+	}
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: user.getMutableUsers")
+
+	sender, _ := users.GetImmutableUser(fromUserId)
+	if sender == nil || sender.Deleted() {
+		err = mtproto.ErrInputUserDeactivated
+		c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
+		return nil, err
+	}
+
+	// TODO(@benqi): check
+	// if sender.Restricted() {
+	//	err = mtproto.ErrUserRestricted
+	//	return
+	// }
+
+	peerUser, _ := users.GetImmutableUser(toUserId)
+	if peerUser == nil || peerUser.Deleted() {
+		err = mtproto.ErrInputUserDeactivated
+		c.Logger.Errorf("msg.sendUserOutgoingMessage - error: %v", err)
+		return nil, err
+	}
+
+	sendMe := fromUserId == toUserId
+	if !sendMe {
+		// TODO(@benqi)
+		// 1. check blocked
+		// 2. span
+	}
+
+	outBox.Message = plugin.RemakeMessage(
+		ctx,
+		c.svcCtx.MsgPlugin,
+		outBox.Message,
+		fromUserId,
+		outBox.NoWebpage,
+		func() bool {
+			hasBot := false
+			users.Visit(func(it *mtproto.ImmutableUser) {
+				if it.IsBot() {
+					hasBot = true
+				}
+			})
+
+			return hasBot
+		})
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: outBox.Message = plugin.RemakeMessage(")
+
+	//var (
+	//	rUpdates *mtproto.Updates
+	//)
+
+	//_, err = c.svcCtx.Dao.DoIdempotent(
+	//	c.ctx,
+	//	fromUserId,
+	//	strconv.FormatInt(outBox.RandomId, 10),
+	//	&rUpdates,
+	//	func(ctx context.Context, v any) error {
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: begin '_, err = c.svcCtx.Dao.DoIdempotent('")
+	box, err2 := c.svcCtx.Dao.SendUserMessageV3(ctx, fromUserId, toUserId, outBox, true)
+	if err2 != nil {
+		c.Logger.Error(err2.Error())
+		return nil, err2
+	}
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.SendUserMessageV2")
+	_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
+		ctx,
+		&inbox.TLInboxSendUserMessageToInboxV2{
+			UserId:         fromUserId,
+			Out:            true,
+			FromId:         fromUserId,
+			FromAuthKeyId:  fromAuthKeyId,
+			PeerType:       mtproto.PEER_USER,
+			PeerId:         toUserId,
+			BoxList:        []*mtproto.MessageBox{box},
+			Users:          users.GetUserListByIdList(fromUserId, idHelper.UserIdList...),
+			Chats:          nil,
+			Layer:          mtproto.MakeFlagsInt32(c.MD.Layer),
+			ServerId:       mtproto.MakeFlagsString(c.MD.ServerId),
+			SessionId:      mtproto.MakeFlagsInt64(c.MD.SessionId),
+			ClientReqMsgId: mtproto.MakeFlagsInt64(c.MD.ClientMsgId),
+			AuthKeyId:      mtproto.MakeFlagsInt64(c.MD.PermAuthKeyId),
+		})
+	if err2 != nil {
+		return nil, err2
+	}
+
+	if fromUserId != toUserId {
+		c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(")
+		blocked, _ := c.svcCtx.Dao.UserClient.UserBlockedByUser(ctx, &userpb.TLUserBlockedByUser{
+			UserId:     toUserId,
+			PeerUserId: fromUserId,
+		})
+
+		if !mtproto.FromBool(blocked) {
+			c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.UserClient.UserBlockedByUser")
+			_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
+				ctx,
+				&inbox.TLInboxSendUserMessageToInboxV2{
+					UserId:        toUserId,
+					Out:           false,
+					FromId:        fromUserId,
+					FromAuthKeyId: fromAuthKeyId,
+					PeerType:      mtproto.PEER_USER,
+					PeerId:        toUserId,
+					BoxList:       []*mtproto.MessageBox{box},
+					Users:         users.GetUserListByIdList(toUserId, idHelper.UserIdList...),
+					Chats:         nil,
+				})
+			if err2 != nil {
+				return nil, err2
+			}
+		}
+	}
+
+	//rUpdates = mtproto.MakeReplyUpdates(
+	//	func(idList []int64) []*mtproto.User {
+	//		// TODO: check
+	//		//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
+	//		//	&userpb.TLUserGetMutableUsers{
+	//		//		Id: idList,
+	//		//	})
+	//		return users.GetUserListByIdList(fromUserId, idList...)
+	//	},
+	//	func(idList []int64) []*mtproto.Chat {
+	//		return []*mtproto.Chat{}
+	//	},
+	//	func(idList []int64) []*mtproto.Chat {
+	//		// TODO
+	//		return []*mtproto.Chat{}
+	//	},
+	//	mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+	//		Pts_INT32:       box.Pts,
+	//		PtsCount:        box.PtsCount,
+	//		RandomId:        box.RandomId,
+	//		Message_MESSAGE: box.Message,
+	//	}).To_Update())
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: *v.(**mtproto.Updates)")
+	//	return nil
+	//})
+	//if err != nil {
+	//	c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err)
+	//	return nil, err
+	//}
+
+	c.Logger.WithDuration(timex.Since(since2)).Infof("end: '_, err = c.svcCtx.Dao.DoIdempotent('")
+	//return rUpdates, nil
+
+	return nil, mtproto.ErrPushRpcClient
 }

@@ -19,10 +19,10 @@
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/updates/updates"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"

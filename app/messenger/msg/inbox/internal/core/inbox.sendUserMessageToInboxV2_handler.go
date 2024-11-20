@@ -32,8 +32,27 @@ import (
 // inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long peer_user_id:long inbox:MessageBox users:flags.1?Vector<ImmutableUser> = Void;
 func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
 	if in.Out {
+		isUseV3 := false
+		if in.GetLayer() != nil {
+			isUseV3 = true
+		}
+		if !isUseV3 && in.GetServerId() != nil {
+			isUseV3 = true
+		}
+		if !isUseV3 && in.GetSessionId() != nil {
+			isUseV3 = true
+		}
+		if !isUseV3 && in.GetClientReqMsgId() != nil {
+			isUseV3 = true
+		}
+
 		//boxList := in.GetBoxList()
 		for _, inBox := range in.GetBoxList() {
+			if isUseV3 {
+				inBox.Pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.FromId)
+				inBox.PtsCount = 1
+			}
+
 			err := c.svcCtx.Dao.SendMessageToOutboxV1(
 				c.ctx,
 				in.FromId,
@@ -76,6 +95,50 @@ func (c *InboxCore) InboxSendUserMessageToInboxV2(in *inbox.TLInboxSendUserMessa
 						PtsCount:        inBox.PtsCount,
 					}).To_Update()),
 			})
+		}
+
+		if isUseV3 {
+			if len(in.GetBoxList()) == 1 {
+				box := in.BoxList[0]
+
+				rpcResult := &mtproto.TLRpcResult{
+					ReqMsgId: in.GetClientReqMsgId().GetValue(),
+					Result: mtproto.MakeReplyUpdates(
+						func(idList []int64) []*mtproto.User {
+							// TODO: check
+							//users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
+							//	&userpb.TLUserGetMutableUsers{
+							//		Id: idList,
+							//	})
+							return in.Users
+						},
+						func(idList []int64) []*mtproto.Chat {
+							return []*mtproto.Chat{}
+						},
+						func(idList []int64) []*mtproto.Chat {
+							// TODO
+							return []*mtproto.Chat{}
+						},
+						mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
+							Pts_INT32:       box.Pts,
+							PtsCount:        box.PtsCount,
+							RandomId:        box.RandomId,
+							Message_MESSAGE: box.Message,
+						}).To_Update()),
+				}
+				// push
+				x := mtproto.NewEncodeBuf(512)
+				_ = rpcResult.Encode(x, in.GetLayer().GetValue())
+				_, _ = c.svcCtx.Dao.SyncClient.SyncPushRpcResult(c.ctx, &sync.TLSyncPushRpcResult{
+					UserId:         box.UserId,
+					AuthKeyId:      in.GetAuthKeyId().GetValue(),
+					PermAuthKeyId:  in.GetAuthKeyId().GetValue(),
+					ServerId:       in.GetServerId().GetValue(),
+					SessionId:      in.GetSessionId().GetValue(),
+					ClientReqMsgId: in.GetClientReqMsgId().GetValue(),
+					RpcResult:      x.GetBuf(),
+				})
+			}
 		}
 	} else {
 		for _, inbox2 := range in.GetBoxList() {

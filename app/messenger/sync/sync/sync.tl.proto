@@ -26,7 +26,7 @@ enum TLConstructor {
     CRC32_sync_pushUpdates = -1895114306;
     CRC32_sync_pushUpdatesIfNot = 1074085860;
     CRC32_sync_pushBotUpdates = -1379667968;
-    CRC32_sync_pushRpcResult = 828180415;
+    CRC32_sync_pushRpcResult = 27907250;
     CRC32_sync_broadcastUpdates = -169648970;
 }
 
@@ -78,12 +78,13 @@ message TL_sync_pushBotUpdates {
 //--------------------------------------------------------------------------------------------
 message TL_sync_pushRpcResult {
     TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 perm_auth_key_id = 4;
-    string server_id = 5;
-    int64 session_id = 6;
-    int64 client_req_msg_id = 7;
-    bytes rpc_result = 8;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    int64 perm_auth_key_id = 5;
+    string server_id = 6;
+    int64 session_id = 7;
+    int64 client_req_msg_id = 8;
+    bytes rpc_result = 9;
 }
 
 //--------------------------------------------------------------------------------------------

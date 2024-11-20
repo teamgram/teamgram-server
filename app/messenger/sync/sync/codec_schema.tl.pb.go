@@ -56,9 +56,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1379667968,
 		}
 	},
-	828180415: func() mtproto.TLObject { // 0x315d07bf
+	27907250: func() mtproto.TLObject { // 0x1a9d4b2
 		return &TLSyncPushRpcResult{
-			Constructor: 828180415,
+			Constructor: 27907250,
 		}
 	},
 	-169648970: func() mtproto.TLObject { // 0xf5e35cb6
@@ -357,11 +357,12 @@ func (m *TLSyncPushBotUpdates) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLSyncPushRpcResult) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x315d07bf:
-		x.UInt(0x315d07bf)
+	case 0x1a9d4b2:
+		x.UInt(0x1a9d4b2)
 
 		// no flags
 
+		x.Long(m.GetUserId())
 		x.Long(m.GetAuthKeyId())
 		x.Long(m.GetPermAuthKeyId())
 		x.String(m.GetServerId())
@@ -382,10 +383,11 @@ func (m *TLSyncPushRpcResult) CalcByteSize(layer int32) int {
 
 func (m *TLSyncPushRpcResult) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x315d07bf:
+	case 0x1a9d4b2:
 
 		// not has flags
 
+		m.UserId = dBuf.Long()
 		m.AuthKeyId = dBuf.Long()
 		m.PermAuthKeyId = dBuf.Long()
 		m.ServerId = dBuf.String()

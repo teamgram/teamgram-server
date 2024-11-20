@@ -19,10 +19,13 @@
 package core
 
 import (
+	"context"
 	"math"
 
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
+	"github.com/teamgram/teamgram-server/app/messenger/msg/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 )
 
@@ -36,10 +39,10 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*mtproto.Message
 
 	dlg, err := c.svcCtx.Dao.DialogsDAO.SelectDialog(c.ctx, in.UserId, in.PeerType, in.PeerId)
 	if err != nil {
-		c.Logger.Errorf("messages.readHistory - error: invalid peer %v", err)
+		c.Logger.Errorf("msg.readHistoryV2 - error: invalid peer %v", err)
 		return nil, mtproto.ErrInternalServerError
 	} else if dlg == nil {
-		c.Logger.Errorf("messages.readHistory - error: not found dialog, request: %s", in)
+		c.Logger.Errorf("msg.readHistoryV2 - error: not found dialog, request: %s", in)
 		return nil, mtproto.ErrPeerIdInvalid
 	}
 
@@ -52,29 +55,46 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*mtproto.Message
 	}
 
 	// inbox readed
-	if dlg.ReadInboxMaxId >= maxId || dlg.UnreadCount == 0 {
+	// if dlg.ReadInboxMaxId >= maxId || dlg.UnreadCount == 0 {
+	if dlg.ReadInboxMaxId >= maxId {
+		c.Logger.Debugf("dlg: %#v", dlg)
 		pts = c.svcCtx.Dao.IDGenClient2.CurrentPtsId(c.ctx, in.UserId)
 		ptsCount = 0
+		_ = ptsCount
+
 		return mtproto.MakeTLMessagesAffectedMessages(&mtproto.Messages_AffectedMessages{
 			Pts:      pts,
 			PtsCount: 0,
 		}).To_Messages_AffectedMessages(), nil
 	}
 
-	maxInboxMsg, err3 := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(c.ctx, in.UserId, maxId)
+	if kUseV3 {
+		return c.msgReadHistoryV3(c.ctx, in, maxId, dlg)
+	} else {
+		return c.msgReadHistoryV2(c.ctx, in, maxId, dlg)
+	}
+}
+
+func (c *MsgCore) msgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2, maxId int32, dlg *dataobject.DialogsDO) (*mtproto.Messages_AffectedMessages, error) {
+	var (
+		pts, ptsCount int32
+		// maxId         = in.MaxId
+	)
+
+	maxInboxMsg, err3 := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(ctx, in.UserId, maxId)
 	if err3 != nil {
-		c.Logger.Errorf("messages.readHistory - error: not found dialog(%d,%d), error is %v", in.UserId, maxId, err3)
+		c.Logger.Errorf("msg.readHistoryV2 - error: not found dialog(%d,%d), error is %v", in.UserId, maxId, err3)
 		return nil, mtproto.ErrInternalServerError
 	} else if maxInboxMsg == nil {
-		c.Logger.Errorf("messages.readHistory - error: not found dialog(%d,%d)", in.UserId, maxId)
+		c.Logger.Errorf("msg.readHistoryV2 - error: not found dialog(%d,%d)", in.UserId, maxId)
 		return nil, mtproto.ErrMsgIdInvalid
 	}
 
-	pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId)
+	pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(ctx, in.UserId)
 	ptsCount = 1
 
-	c.svcCtx.Dao.InboxClient.InboxReadInboxHistory(
-		c.ctx,
+	_, _ = c.svcCtx.Dao.InboxClient.InboxReadInboxHistory(
+		ctx,
 		&inbox.TLInboxReadInboxHistory{
 			UserId:         in.UserId,
 			AuthKeyId:      in.AuthKeyId,
@@ -89,8 +109,8 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*mtproto.Message
 
 	switch in.PeerType {
 	case mtproto.PEER_USER:
-		c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
-			c.ctx,
+		_, _ = c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
+			ctx,
 			&inbox.TLInboxReadOutboxHistory{
 				UserId:             maxInboxMsg.SenderUserId,
 				PeerType:           in.PeerType,
@@ -98,8 +118,8 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*mtproto.Message
 				MaxDialogMessageId: maxInboxMsg.DialogMessageId,
 			})
 	case mtproto.PEER_CHAT:
-		c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
-			c.ctx,
+		_, _ = c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
+			ctx,
 			&inbox.TLInboxReadOutboxHistory{
 				UserId:             maxInboxMsg.SenderUserId,
 				PeerType:           in.PeerType,
@@ -112,4 +132,67 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*mtproto.Message
 		Pts:      pts,
 		PtsCount: ptsCount,
 	}).To_Messages_AffectedMessages(), nil
+}
+
+func (c *MsgCore) msgReadHistoryV3(ctx context.Context, in *msg.TLMsgReadHistoryV2, maxId int32, dlg *dataobject.DialogsDO) (*mtproto.Messages_AffectedMessages, error) {
+	var (
+		pts, ptsCount int32
+		// maxId         = in.MaxId
+	)
+
+	maxInboxMsg, err3 := c.svcCtx.Dao.MessagesDAO.SelectByMessageId(ctx, in.UserId, maxId)
+	if err3 != nil {
+		c.Logger.Errorf("msg.readHistoryV2 - error: not found dialog(%d,%d), error is %v", in.UserId, maxId, err3)
+		return nil, mtproto.ErrInternalServerError
+	} else if maxInboxMsg == nil {
+		c.Logger.Errorf("msg.readHistoryV2 - error: not found dialog(%d,%d)", in.UserId, maxId)
+		return nil, mtproto.ErrMsgIdInvalid
+	}
+
+	return threading2.WrapperGoFunc(
+		ctx,
+		(*mtproto.Messages_AffectedMessages)(nil),
+		func(ctx context.Context) {
+			pts = 0
+			ptsCount = 1
+
+			_, _ = c.svcCtx.Dao.InboxClient.InboxReadInboxHistory(
+				ctx,
+				&inbox.TLInboxReadInboxHistory{
+					UserId:         in.UserId,
+					AuthKeyId:      in.AuthKeyId,
+					PeerType:       in.PeerType,
+					PeerId:         in.PeerId,
+					Pts:            pts,
+					PtsCount:       ptsCount,
+					UnreadCount:    dlg.UnreadCount,
+					ReadInboxMaxId: dlg.ReadInboxMaxId,
+					MaxId:          maxId,
+					Layer:          mtproto.MakeFlagsInt32(c.MD.Layer),
+					ServerId:       mtproto.MakeFlagsString(c.MD.ServerId),
+					SessionId:      mtproto.MakeFlagsInt64(c.MD.SessionId),
+					ClientReqMsgId: mtproto.MakeFlagsInt64(c.MD.ClientMsgId),
+				})
+
+			switch in.PeerType {
+			case mtproto.PEER_USER:
+				_, _ = c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
+					ctx,
+					&inbox.TLInboxReadOutboxHistory{
+						UserId:             maxInboxMsg.SenderUserId,
+						PeerType:           in.PeerType,
+						PeerId:             in.UserId,
+						MaxDialogMessageId: maxInboxMsg.DialogMessageId,
+					})
+			case mtproto.PEER_CHAT:
+				_, _ = c.svcCtx.Dao.InboxClient.InboxReadOutboxHistory(
+					ctx,
+					&inbox.TLInboxReadOutboxHistory{
+						UserId:             maxInboxMsg.SenderUserId,
+						PeerType:           in.PeerType,
+						PeerId:             in.PeerId,
+						MaxDialogMessageId: maxInboxMsg.DialogMessageId,
+					})
+			}
+		}).(*mtproto.Messages_AffectedMessages), mtproto.ErrPushRpcClient
 }

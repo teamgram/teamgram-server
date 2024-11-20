@@ -80,7 +80,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_inbox_sendUserMessageToInboxV2: {
-		0: 2043341160, // 0x79cae968
+		0: 96302370, // 0x5bd7522
 
 	},
 	Predicate_inbox_editMessageToInboxV2: {
@@ -88,7 +88,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_inbox_readInboxHistory: {
-		0: -465427029, // 0xe44225ab
+		0: 32978549, // 0x1f73675
 
 	},
 	Predicate_inbox_readOutboxHistory: {
@@ -114,9 +114,9 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1010283296: Predicate_inbox_updateHistoryReaded,        // 0xc3c84ce0
 	-1452528908: Predicate_inbox_updatePinnedMessage,        // 0xa96c2af4
 	589079137:   Predicate_inbox_unpinAllMessages,           // 0x231ca261
-	2043341160:  Predicate_inbox_sendUserMessageToInboxV2,   // 0x79cae968
+	96302370:    Predicate_inbox_sendUserMessageToInboxV2,   // 0x5bd7522
 	-625238423:  Predicate_inbox_editMessageToInboxV2,       // 0xdabb9e69
-	-465427029:  Predicate_inbox_readInboxHistory,           // 0xe44225ab
+	32978549:    Predicate_inbox_readInboxHistory,           // 0x1f73675
 	477116106:   Predicate_inbox_readOutboxHistory,          // 0x1c7036ca
 	-356170942:  Predicate_inbox_readMediaUnreadToInboxV2,   // 0xeac54342
 

@@ -14,6 +14,7 @@ import (
 	"context"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -50,6 +51,10 @@ func NewMsgClient(cli zrpc.Client) MsgClient {
 // MsgPushUserMessage
 // msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
 func (m *defaultMsgClient) MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgPushUserMessage(ctx, in)
 }
@@ -57,6 +62,10 @@ func (m *defaultMsgClient) MsgPushUserMessage(ctx context.Context, in *msg.TLMsg
 // MsgReadMessageContents
 // msg.readMessageContents user_id:long auth_key_id:long peer_type:int peer_id:long id:Vector<ContentMessage> = messages.AffectedMessages;
 func (m *defaultMsgClient) MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgReadMessageContents(ctx, in)
 }
@@ -64,6 +73,10 @@ func (m *defaultMsgClient) MsgReadMessageContents(ctx context.Context, in *msg.T
 // MsgSendMessageV2
 // msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgSendMessageV2(ctx, in)
 }
@@ -71,6 +84,10 @@ func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSe
 // MsgEditMessage
 // msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int message:OutboxMessage = Updates;
 func (m *defaultMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgEditMessage(ctx, in)
 }
@@ -78,6 +95,10 @@ func (m *defaultMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEdit
 // MsgEditMessageV2
 // msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
 func (m *defaultMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*mtproto.Updates, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgEditMessageV2(ctx, in)
 }
@@ -85,6 +106,10 @@ func (m *defaultMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEd
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (m *defaultMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgDeleteMessages(ctx, in)
 }
@@ -92,6 +117,10 @@ func (m *defaultMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgD
 // MsgDeleteHistory
 // msg.deleteHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long just_clear:flags.0?true revoke:flags.1?true max_id:int = messages.AffectedHistory;
 func (m *defaultMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgDeleteHistory(ctx, in)
 }
@@ -99,6 +128,10 @@ func (m *defaultMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDe
 // MsgDeletePhoneCallHistory
 // msg.deletePhoneCallHistory flags:# user_id:long auth_key_id:long revoke:flags.1?true = messages.AffectedFoundMessages;
 func (m *defaultMsgClient) MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgDeletePhoneCallHistory(ctx, in)
 }
@@ -106,6 +139,10 @@ func (m *defaultMsgClient) MsgDeletePhoneCallHistory(ctx context.Context, in *ms
 // MsgDeleteChatHistory
 // msg.deleteChatHistory chat_id:long delete_user_id:long = Bool;
 func (m *defaultMsgClient) MsgDeleteChatHistory(ctx context.Context, in *msg.TLMsgDeleteChatHistory) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgDeleteChatHistory(ctx, in)
 }
@@ -113,6 +150,10 @@ func (m *defaultMsgClient) MsgDeleteChatHistory(ctx context.Context, in *msg.TLM
 // MsgReadHistory
 // msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (m *defaultMsgClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgReadHistory(ctx, in)
 }
@@ -120,6 +161,10 @@ func (m *defaultMsgClient) MsgReadHistory(ctx context.Context, in *msg.TLMsgRead
 // MsgReadHistoryV2
 // msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgReadHistoryV2(ctx, in)
 }
@@ -127,6 +172,10 @@ func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgRe
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (m *defaultMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*mtproto.Updates, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgUpdatePinnedMessage(ctx, in)
 }
@@ -134,6 +183,10 @@ func (m *defaultMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.T
 // MsgUnpinAllMessages
 // msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;
 func (m *defaultMsgClient) MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgUnpinAllMessages(ctx, in)
 }

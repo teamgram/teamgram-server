@@ -940,18 +940,27 @@ func (m *MainAuthWrapper) onSessionClosed(ctx context.Context, connMsg *connData
 }
 
 func (m *MainAuthWrapper) onSyncRpcResultData(ctx context.Context, syncMsg *syncRpcResultData) {
-	logx.WithContext(ctx).Infof("onSyncRpcResultData - receive data: {sess: %s}",
-		m)
+	logx.WithContext(ctx).Infof("onSyncRpcResultData - receive data: {sess: %s}, data: {auth_id: %d, session_id: %d, client_msg_id: %d}",
+		m,
+		syncMsg.authId,
+		syncMsg.sessionId,
+		syncMsg.clientMsgId)
 
-	sList := m.getSessionListById(syncMsg.authId)
-	if sList == nil {
-		logx.WithContext(ctx).Errorf("onSyncRpcResultData - not found sessionList by authId: %d", syncMsg.authId)
-		return
+	var (
+		sess *session
+	)
+	sess, _ = m.mainAuth.sessions[syncMsg.sessionId]
+	if sess == nil {
+		sess, _ = m.tempAuth.sessions[syncMsg.sessionId]
+	}
+	if sess == nil {
+		sess, _ = m.mediaTempAuth.sessions[syncMsg.sessionId]
 	}
 
-	sess, _ := sList.sessions[syncMsg.sessionId]
 	if sess != nil {
 		sess.onSyncRpcResultData(ctx, syncMsg.clientMsgId, syncMsg.data)
+	} else {
+		logx.WithContext(ctx).Errorf("onSyncRpcResultData - not found session by sessionId: %d", syncMsg.sessionId)
 	}
 }
 

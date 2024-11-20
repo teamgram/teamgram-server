@@ -65,6 +65,49 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 			Date2:           nil,
 		})
 
+	isUseV3 := false
+	if in.GetLayer() != nil {
+		isUseV3 = true
+	}
+	if !isUseV3 && in.GetServerId() != nil {
+		isUseV3 = true
+	}
+	if !isUseV3 && in.GetSessionId() != nil {
+		isUseV3 = true
+	}
+	if !isUseV3 && in.GetClientReqMsgId() != nil {
+		isUseV3 = true
+	}
+
+	var (
+		pts      = in.Pts
+		ptsCount = in.PtsCount
+	)
+	if isUseV3 {
+		pts = c.svcCtx.Dao.IDGenClient2.NextPtsId(c.ctx, in.UserId)
+		ptsCount = 1
+
+		rpcResult := &mtproto.TLRpcResult{
+			ReqMsgId: in.GetClientReqMsgId().GetValue(),
+			Result: mtproto.MakeTLMessagesAffectedMessages(&mtproto.Messages_AffectedMessages{
+				Pts:      pts,
+				PtsCount: ptsCount,
+			}).To_Messages_AffectedMessages(),
+		}
+		// push
+		x := mtproto.NewEncodeBuf(512)
+		_ = rpcResult.Encode(x, in.GetLayer().GetValue())
+		_, _ = c.svcCtx.Dao.SyncClient.SyncPushRpcResult(c.ctx, &sync.TLSyncPushRpcResult{
+			UserId:         in.UserId,
+			AuthKeyId:      in.AuthKeyId,
+			PermAuthKeyId:  in.AuthKeyId,
+			ServerId:       in.GetServerId().GetValue(),
+			SessionId:      in.GetSessionId().GetValue(),
+			ClientReqMsgId: in.GetClientReqMsgId().GetValue(),
+			RpcResult:      x.GetBuf(),
+		})
+	}
+
 	_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(
 		c.ctx,
 		&sync.TLSyncUpdatesNotMe{
@@ -73,8 +116,8 @@ func (c *InboxCore) InboxReadInboxHistory(in *inbox.TLInboxReadInboxHistory) (*m
 			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateReadHistoryInbox(&mtproto.Update{
 				Peer_PEER: mtproto.MakePeer(in.PeerType, in.PeerId),
 				MaxId:     maxId,
-				Pts_INT32: in.Pts,
-				PtsCount:  in.PtsCount,
+				Pts_INT32: pts,
+				PtsCount:  ptsCount,
 			}).To_Update()),
 		})
 

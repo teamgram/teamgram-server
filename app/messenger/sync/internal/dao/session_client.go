@@ -227,5 +227,4 @@ func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
-	return
 }

@@ -55,7 +55,7 @@ func (c *session) onSyncData(ctx context.Context, obj mtproto.TLObject) {
 
 func (c *session) onSyncRpcResultData(ctx context.Context, reqMsgId int64, data []byte) {
 	// TODO(@benqi):
-	// log.Debugf("genericSession]]>> - %v", cntl)
+	logx.WithContext(ctx).Debugf("onSyncRpcResultData]]>> - %s", data)
 	c.pendingQueue.Remove(reqMsgId)
 	gatewayId := c.getGatewayId()
 	c.sendPushRpcResultToQueue(gatewayId, reqMsgId, data)

@@ -64,7 +64,7 @@ func (c *InboxCore) InboxReadOutboxHistory(in *inbox.TLInboxReadOutboxHistory) (
 			return nil, err2
 		}
 
-		c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
+		_, _ = c.svcCtx.Dao.DialogClient.DialogInsertOrUpdateDialog(
 			c.ctx,
 			&dialog.TLDialogInsertOrUpdateDialog{
 				UserId:          in.UserId,

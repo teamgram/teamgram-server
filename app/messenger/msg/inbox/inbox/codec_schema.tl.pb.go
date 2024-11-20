@@ -91,9 +91,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 589079137,
 		}
 	},
-	2043341160: func() mtproto.TLObject { // 0x79cae968
+	96302370: func() mtproto.TLObject { // 0x5bd7522
 		return &TLInboxSendUserMessageToInboxV2{
-			Constructor: 2043341160,
+			Constructor: 96302370,
 		}
 	},
 	-625238423: func() mtproto.TLObject { // 0xdabb9e69
@@ -101,9 +101,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -625238423,
 		}
 	},
-	-465427029: func() mtproto.TLObject { // 0xe44225ab
+	32978549: func() mtproto.TLObject { // 0x1f73675
 		return &TLInboxReadInboxHistory{
-			Constructor: -465427029,
+			Constructor: 32978549,
 		}
 	},
 	477116106: func() mtproto.TLObject { // 0x1c7036ca
@@ -893,8 +893,8 @@ func (m *TLInboxUnpinAllMessages) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x79cae968:
-		x.UInt(0x79cae968)
+	case 0x5bd7522:
+		x.UInt(0x5bd7522)
 
 		// set flags
 		var flags uint32 = 0
@@ -908,6 +908,21 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int
 		}
 		if m.GetChats() != nil {
 			flags |= 1 << 2
+		}
+		if m.GetLayer() != nil {
+			flags |= 1 << 3
+		}
+		if m.GetServerId() != nil {
+			flags |= 1 << 4
+		}
+		if m.GetSessionId() != nil {
+			flags |= 1 << 5
+		}
+		if m.GetClientReqMsgId() != nil {
+			flags |= 1 << 6
+		}
+		if m.GetAuthKeyId() != nil {
+			flags |= 1 << 7
 		}
 
 		x.UInt(flags)
@@ -939,6 +954,25 @@ func (m *TLInboxSendUserMessageToInboxV2) Encode(x *mtproto.EncodeBuf, layer int
 				v.Encode(x, layer)
 			}
 		}
+		if m.GetLayer() != nil {
+			x.Int(m.GetLayer().Value)
+		}
+
+		if m.GetServerId() != nil {
+			x.String(m.GetServerId().Value)
+		}
+
+		if m.GetSessionId() != nil {
+			x.Long(m.GetSessionId().Value)
+		}
+
+		if m.GetClientReqMsgId() != nil {
+			x.Long(m.GetClientReqMsgId().Value)
+		}
+
+		if m.GetAuthKeyId() != nil {
+			x.Long(m.GetAuthKeyId().Value)
+		}
 
 	default:
 		// log.Errorf("")
@@ -953,7 +987,7 @@ func (m *TLInboxSendUserMessageToInboxV2) CalcByteSize(layer int32) int {
 
 func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x79cae968:
+	case 0x5bd7522:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1008,6 +1042,26 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 			}
 			m.Chats = v10
 		}
+		if (flags & (1 << 3)) != 0 {
+			m.Layer = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
+		if (flags & (1 << 4)) != 0 {
+			m.ServerId = &wrapperspb.StringValue{Value: dBuf.String()}
+		}
+
+		if (flags & (1 << 5)) != 0 {
+			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 6)) != 0 {
+			m.ClientReqMsgId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 7)) != 0 {
+			m.AuthKeyId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
 		return dBuf.GetError()
 
 	default:
@@ -1147,11 +1201,28 @@ func (m *TLInboxEditMessageToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLInboxReadInboxHistory) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xe44225ab:
-		x.UInt(0xe44225ab)
+	case 0x1f73675:
+		x.UInt(0x1f73675)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
+		if m.GetLayer() != nil {
+			flags |= 1 << 3
+		}
+		if m.GetServerId() != nil {
+			flags |= 1 << 4
+		}
+		if m.GetSessionId() != nil {
+			flags |= 1 << 5
+		}
+		if m.GetClientReqMsgId() != nil {
+			flags |= 1 << 6
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetUserId())
 		x.Long(m.GetAuthKeyId())
 		x.Int(m.GetPeerType())
@@ -1161,6 +1232,21 @@ func (m *TLInboxReadInboxHistory) Encode(x *mtproto.EncodeBuf, layer int32) erro
 		x.Int(m.GetUnreadCount())
 		x.Int(m.GetReadInboxMaxId())
 		x.Int(m.GetMaxId())
+		if m.GetLayer() != nil {
+			x.Int(m.GetLayer().Value)
+		}
+
+		if m.GetServerId() != nil {
+			x.String(m.GetServerId().Value)
+		}
+
+		if m.GetSessionId() != nil {
+			x.Long(m.GetSessionId().Value)
+		}
+
+		if m.GetClientReqMsgId() != nil {
+			x.Long(m.GetClientReqMsgId().Value)
+		}
 
 	default:
 		// log.Errorf("")
@@ -1175,10 +1261,12 @@ func (m *TLInboxReadInboxHistory) CalcByteSize(layer int32) int {
 
 func (m *TLInboxReadInboxHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xe44225ab:
+	case 0x1f73675:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
+		// flags Debug by @benqi
 		m.UserId = dBuf.Long()
 		m.AuthKeyId = dBuf.Long()
 		m.PeerType = dBuf.Int()
@@ -1188,6 +1276,22 @@ func (m *TLInboxReadInboxHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 		m.UnreadCount = dBuf.Int()
 		m.ReadInboxMaxId = dBuf.Int()
 		m.MaxId = dBuf.Int()
+		if (flags & (1 << 3)) != 0 {
+			m.Layer = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
+		if (flags & (1 << 4)) != 0 {
+			m.ServerId = &wrapperspb.StringValue{Value: dBuf.String()}
+		}
+
+		if (flags & (1 << 5)) != 0 {
+			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 6)) != 0 {
+			m.ClientReqMsgId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
 		return dBuf.GetError()
 
 	default:

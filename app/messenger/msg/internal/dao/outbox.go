@@ -295,6 +295,11 @@ func (d *Dao) SendUserMessageV2(ctx context.Context, fromId, toId int64, outBox 
 	return d.sendMessageToOutboxV2(ctx, fromId, peer, outBox, out)
 }
 
+func (d *Dao) SendUserMessageV3(ctx context.Context, fromId, toId int64, outBox *msg.OutboxMessage, out bool) (*mtproto.MessageBox, error) {
+	peer := &mtproto.PeerUtil{PeerType: mtproto.PEER_USER, PeerId: toId}
+	return d.sendMessageToOutboxV3(ctx, fromId, peer, outBox, out)
+}
+
 func (d *Dao) SendUserMultiMessage(ctx context.Context, fromId, toId int64, outBoxList []*msg.OutboxMessage) ([]*mtproto.MessageBox, error) {
 	var (
 		boxList []*mtproto.MessageBox
@@ -625,7 +630,7 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 		}
 	})
 
-	d.DialogClient.DialogInsertOrUpdateDialog(
+	_, err := d.DialogClient.DialogInsertOrUpdateDialog(
 		ctx,
 		&dialog.TLDialogInsertOrUpdateDialog{
 			UserId:          fromId,
@@ -639,6 +644,9 @@ func (d *Dao) SendMessageToOutboxV1(ctx context.Context, fromId int64, peer *mtp
 			PinnedMsgId:     nil,
 			Date2:           &wrapperspb.Int64Value{Value: int64(outMsgBox.Message.Date)},
 		})
+	if err != nil {
+		// return i
+	}
 
 	return tR.Err
 }
@@ -669,6 +677,82 @@ func (d *Dao) sendMessageToOutboxV2(ctx context.Context, fromId int64, peer *mtp
 		pts = int32(idList[2].Id)
 
 		if dialogMessageId == 0 || outBoxMsgId == 0 || pts == 0 {
+			logx.WithContext(ctx).Errorf("GetNextIdList error: %v", idList)
+			err = mtproto.ErrInternalServerError
+			return nil, err
+		}
+	} else {
+		dialogMessageId = d.IDGenClient2.NextId(ctx)
+		if dialogMessageId == 0 {
+			err = mtproto.ErrInternalServerError
+			logx.WithContext(ctx).Errorf("NextId error: %v", dialogMessageId)
+			return nil, err
+
+		}
+	}
+
+	message.Out = out
+	message.Id = outBoxMsgId
+	message.MediaUnread = mtproto.CheckHasMediaUnread(message)
+	outMsgBox := mtproto.MakeTLMessageBox(&mtproto.MessageBox{
+		UserId:            fromId,
+		MessageId:         outBoxMsgId,
+		SenderUserId:      fromId,
+		PeerType:          peer.PeerType,
+		PeerId:            peer.PeerId,
+		RandomId:          outboxMessage.RandomId,
+		DialogId1:         dialogId.A,
+		DialogId2:         dialogId.B,
+		DialogMessageId:   dialogMessageId,
+		MessageFilterType: mtproto.GetMediaType(message),
+		Message:           message,
+		Mentioned:         false,
+		MediaUnread:       false,
+		Pinned:            false,
+		Pts:               pts,
+		PtsCount:          1,
+		Views:             0,
+		ReplyOwnerId:      0,
+		Forwards:          0,
+		Reaction:          "",
+		CommentGroupId:    0,
+		CommentGroupMsgId: 0,
+		ReplyToMsgId:      0,
+		ReplyToTopId:      0,
+		TtlPeriod:         0,
+		HasReaction:       false,
+	}).To_MessageBox()
+
+	return outMsgBox, nil
+}
+
+func (d *Dao) sendMessageToOutboxV3(ctx context.Context, fromId int64, peer *mtproto.PeerUtil, outboxMessage *msg.OutboxMessage, out bool) (*mtproto.MessageBox, error) {
+	var (
+		dialogId        = mtproto.MakeDialogId(fromId, peer.PeerType, peer.PeerId)
+		err             error
+		message         = outboxMessage.Message
+		outBoxMsgId     int32
+		dialogMessageId int64
+		pts             int32
+	)
+
+	if out {
+		idList := d.IDGenClient2.GetNextIdList(
+			ctx,
+			idgen_client.MakeIDTypeNextId(),
+			idgen_client.MakeIDTypeNgen(idgen_client.IDTypeMessageBox, fromId))
+		// idgen_client.MakeIDTypeNgen(idgen_client.IDTypePts, fromId))
+		if len(idList) != 2 {
+			err = mtproto.ErrInternalServerError
+			return nil, err
+		}
+
+		dialogMessageId = idList[0].Id
+		outBoxMsgId = int32(idList[1].Id)
+		// pts = int32(idList[2].Id)
+
+		// if dialogMessageId == 0 || outBoxMsgId == 0 || pts == 0 {
+		if dialogMessageId == 0 || outBoxMsgId == 0 {
 			logx.WithContext(ctx).Errorf("GetNextIdList error: %v", idList)
 			err = mtproto.ErrInternalServerError
 			return nil, err
