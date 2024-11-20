@@ -153,21 +153,6 @@ func (s *Service) MsgDeleteChatHistory(ctx context.Context, request *msg.TLMsgDe
 	return r, err
 }
 
-// MsgReadHistory
-// msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
-func (s *Service) MsgReadHistory(ctx context.Context, request *msg.TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.readHistory - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MsgReadHistory(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("msg.readHistory - reply: {%s}", r)
-	return r, err
-}
-
 // MsgReadHistoryV2
 // msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 func (s *Service) MsgReadHistoryV2(ctx context.Context, request *msg.TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error) {

@@ -38,7 +38,6 @@ const (
 	RPCMsg_MsgDeleteHistory_FullMethodName          = "/msg.RPCMsg/msg_deleteHistory"
 	RPCMsg_MsgDeletePhoneCallHistory_FullMethodName = "/msg.RPCMsg/msg_deletePhoneCallHistory"
 	RPCMsg_MsgDeleteChatHistory_FullMethodName      = "/msg.RPCMsg/msg_deleteChatHistory"
-	RPCMsg_MsgReadHistory_FullMethodName            = "/msg.RPCMsg/msg_readHistory"
 	RPCMsg_MsgReadHistoryV2_FullMethodName          = "/msg.RPCMsg/msg_readHistoryV2"
 	RPCMsg_MsgUpdatePinnedMessage_FullMethodName    = "/msg.RPCMsg/msg_updatePinnedMessage"
 	RPCMsg_MsgUnpinAllMessages_FullMethodName       = "/msg.RPCMsg/msg_unpinAllMessages"
@@ -57,7 +56,6 @@ type RPCMsgClient interface {
 	MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *TLMsgDeletePhoneCallHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedFoundMessages, error)
 	MsgDeleteChatHistory(ctx context.Context, in *TLMsgDeleteChatHistory, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	MsgReadHistory(ctx context.Context, in *TLMsgReadHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *TLMsgUpdatePinnedMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *TLMsgUnpinAllMessages, opts ...grpc.CallOption) (*mtproto.Messages_AffectedHistory, error)
@@ -152,15 +150,6 @@ func (c *rPCMsgClient) MsgDeleteChatHistory(ctx context.Context, in *TLMsgDelete
 	return out, nil
 }
 
-func (c *rPCMsgClient) MsgReadHistory(ctx context.Context, in *TLMsgReadHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error) {
-	out := new(mtproto.Messages_AffectedMessages)
-	err := c.cc.Invoke(ctx, RPCMsg_MsgReadHistory_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *rPCMsgClient) MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error) {
 	out := new(mtproto.Messages_AffectedMessages)
 	err := c.cc.Invoke(ctx, RPCMsg_MsgReadHistoryV2_FullMethodName, in, out, opts...)
@@ -201,7 +190,6 @@ type RPCMsgServer interface {
 	MsgDeleteHistory(context.Context, *TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
 	MsgDeletePhoneCallHistory(context.Context, *TLMsgDeletePhoneCallHistory) (*mtproto.Messages_AffectedFoundMessages, error)
 	MsgDeleteChatHistory(context.Context, *TLMsgDeleteChatHistory) (*mtproto.Bool, error)
-	MsgReadHistory(context.Context, *TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error)
 	MsgReadHistoryV2(context.Context, *TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error)
 	MsgUpdatePinnedMessage(context.Context, *TLMsgUpdatePinnedMessage) (*mtproto.Updates, error)
 	MsgUnpinAllMessages(context.Context, *TLMsgUnpinAllMessages) (*mtproto.Messages_AffectedHistory, error)
@@ -237,9 +225,6 @@ func (UnimplementedRPCMsgServer) MsgDeletePhoneCallHistory(context.Context, *TLM
 }
 func (UnimplementedRPCMsgServer) MsgDeleteChatHistory(context.Context, *TLMsgDeleteChatHistory) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgDeleteChatHistory not implemented")
-}
-func (UnimplementedRPCMsgServer) MsgReadHistory(context.Context, *TLMsgReadHistory) (*mtproto.Messages_AffectedMessages, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MsgReadHistory not implemented")
 }
 func (UnimplementedRPCMsgServer) MsgReadHistoryV2(context.Context, *TLMsgReadHistoryV2) (*mtproto.Messages_AffectedMessages, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgReadHistoryV2 not implemented")
@@ -424,24 +409,6 @@ func _RPCMsg_MsgDeleteChatHistory_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCMsg_MsgReadHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLMsgReadHistory)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCMsgServer).MsgReadHistory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCMsg_MsgReadHistory_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCMsgServer).MsgReadHistory(ctx, req.(*TLMsgReadHistory))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RPCMsg_MsgReadHistoryV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TLMsgReadHistoryV2)
 	if err := dec(in); err != nil {
@@ -538,10 +505,6 @@ var RPCMsg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "msg_deleteChatHistory",
 			Handler:    _RPCMsg_MsgDeleteChatHistory_Handler,
-		},
-		{
-			MethodName: "msg_readHistory",
-			Handler:    _RPCMsg_MsgReadHistory_Handler,
 		},
 		{
 			MethodName: "msg_readHistoryV2",
