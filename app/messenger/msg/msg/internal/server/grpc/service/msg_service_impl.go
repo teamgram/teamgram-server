@@ -63,21 +63,6 @@ func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMe
 	return r, err
 }
 
-// MsgEditMessage
-// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int message:OutboxMessage = Updates;
-func (s *Service) MsgEditMessage(ctx context.Context, request *msg.TLMsgEditMessage) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.editMessage - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MsgEditMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("msg.editMessage - reply: {%s}", r)
-	return r, err
-}
-
 // MsgEditMessageV2
 // msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
 func (s *Service) MsgEditMessageV2(ctx context.Context, request *msg.TLMsgEditMessageV2) (*mtproto.Updates, error) {

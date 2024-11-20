@@ -32,7 +32,6 @@ const (
 	RPCMsg_MsgPushUserMessage_FullMethodName        = "/msg.RPCMsg/msg_pushUserMessage"
 	RPCMsg_MsgReadMessageContents_FullMethodName    = "/msg.RPCMsg/msg_readMessageContents"
 	RPCMsg_MsgSendMessageV2_FullMethodName          = "/msg.RPCMsg/msg_sendMessageV2"
-	RPCMsg_MsgEditMessage_FullMethodName            = "/msg.RPCMsg/msg_editMessage"
 	RPCMsg_MsgEditMessageV2_FullMethodName          = "/msg.RPCMsg/msg_editMessageV2"
 	RPCMsg_MsgDeleteMessages_FullMethodName         = "/msg.RPCMsg/msg_deleteMessages"
 	RPCMsg_MsgDeleteHistory_FullMethodName          = "/msg.RPCMsg/msg_deleteHistory"
@@ -50,7 +49,6 @@ type RPCMsgClient interface {
 	MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error)
-	MsgEditMessage(ctx context.Context, in *TLMsgEditMessage, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgEditMessageV2(ctx context.Context, in *TLMsgEditMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *TLMsgDeleteMessages, opts ...grpc.CallOption) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory, opts ...grpc.CallOption) (*mtproto.Messages_AffectedHistory, error)
@@ -90,15 +88,6 @@ func (c *rPCMsgClient) MsgReadMessageContents(ctx context.Context, in *TLMsgRead
 func (c *rPCMsgClient) MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2, opts ...grpc.CallOption) (*mtproto.Updates, error) {
 	out := new(mtproto.Updates)
 	err := c.cc.Invoke(ctx, RPCMsg_MsgSendMessageV2_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *rPCMsgClient) MsgEditMessage(ctx context.Context, in *TLMsgEditMessage, opts ...grpc.CallOption) (*mtproto.Updates, error) {
-	out := new(mtproto.Updates)
-	err := c.cc.Invoke(ctx, RPCMsg_MsgEditMessage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +173,6 @@ type RPCMsgServer interface {
 	MsgPushUserMessage(context.Context, *TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(context.Context, *TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.Updates, error)
-	MsgEditMessage(context.Context, *TLMsgEditMessage) (*mtproto.Updates, error)
 	MsgEditMessageV2(context.Context, *TLMsgEditMessageV2) (*mtproto.Updates, error)
 	MsgDeleteMessages(context.Context, *TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(context.Context, *TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
@@ -207,9 +195,6 @@ func (UnimplementedRPCMsgServer) MsgReadMessageContents(context.Context, *TLMsgR
 }
 func (UnimplementedRPCMsgServer) MsgSendMessageV2(context.Context, *TLMsgSendMessageV2) (*mtproto.Updates, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgSendMessageV2 not implemented")
-}
-func (UnimplementedRPCMsgServer) MsgEditMessage(context.Context, *TLMsgEditMessage) (*mtproto.Updates, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MsgEditMessage not implemented")
 }
 func (UnimplementedRPCMsgServer) MsgEditMessageV2(context.Context, *TLMsgEditMessageV2) (*mtproto.Updates, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MsgEditMessageV2 not implemented")
@@ -297,24 +282,6 @@ func _RPCMsg_MsgSendMessageV2_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RPCMsgServer).MsgSendMessageV2(ctx, req.(*TLMsgSendMessageV2))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RPCMsg_MsgEditMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLMsgEditMessage)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCMsgServer).MsgEditMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCMsg_MsgEditMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCMsgServer).MsgEditMessage(ctx, req.(*TLMsgEditMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -481,10 +448,6 @@ var RPCMsg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "msg_sendMessageV2",
 			Handler:    _RPCMsg_MsgSendMessageV2_Handler,
-		},
-		{
-			MethodName: "msg_editMessage",
-			Handler:    _RPCMsg_MsgEditMessage_Handler,
 		},
 		{
 			MethodName: "msg_editMessageV2",

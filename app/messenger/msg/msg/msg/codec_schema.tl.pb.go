@@ -61,11 +61,6 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -188056380,
 		}
 	},
-	-2129725231: func() mtproto.TLObject { // 0x810ef8d1
-		return &TLMsgEditMessage{
-			Constructor: -2129725231,
-		}
-	},
 	1778278369: func() mtproto.TLObject { // 0x69fe5fe1
 		return &TLMsgEditMessageV2{
 			Constructor: 1778278369,
@@ -758,58 +753,6 @@ func (m *TLMsgSendMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
 			v5[i].Decode(dBuf)
 		}
 		m.Message = v5
-
-		return dBuf.GetError()
-
-	default:
-		// log.Errorf("")
-	}
-	return dBuf.GetError()
-}
-
-// TLMsgEditMessage
-///////////////////////////////////////////////////////////////////////////////
-
-func (m *TLMsgEditMessage) Encode(x *mtproto.EncodeBuf, layer int32) error {
-	switch uint32(m.Constructor) {
-	case 0x810ef8d1:
-		x.UInt(0x810ef8d1)
-
-		// no flags
-
-		x.Long(m.GetUserId())
-		x.Long(m.GetAuthKeyId())
-		x.Int(m.GetPeerType())
-		x.Long(m.GetPeerId())
-		x.Int(m.GetEditType())
-		m.GetMessage().Encode(x, layer)
-
-	default:
-		// log.Errorf("")
-	}
-
-	return nil
-}
-
-func (m *TLMsgEditMessage) CalcByteSize(layer int32) int {
-	return 0
-}
-
-func (m *TLMsgEditMessage) Decode(dBuf *mtproto.DecodeBuf) error {
-	switch uint32(m.Constructor) {
-	case 0x810ef8d1:
-
-		// not has flags
-
-		m.UserId = dBuf.Long()
-		m.AuthKeyId = dBuf.Long()
-		m.PeerType = dBuf.Int()
-		m.PeerId = dBuf.Long()
-		m.EditType = dBuf.Int()
-
-		m6 := &OutboxMessage{}
-		m6.Decode(dBuf)
-		m.Message = m6
 
 		return dBuf.GetError()
 

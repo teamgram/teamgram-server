@@ -17,7 +17,6 @@ const (
 	Predicate_msg_pushUserMessage        = "msg_pushUserMessage"
 	Predicate_msg_readMessageContents    = "msg_readMessageContents"
 	Predicate_msg_sendMessageV2          = "msg_sendMessageV2"
-	Predicate_msg_editMessage            = "msg_editMessage"
 	Predicate_msg_editMessageV2          = "msg_editMessageV2"
 	Predicate_msg_deleteMessages         = "msg_deleteMessages"
 	Predicate_msg_deleteHistory          = "msg_deleteHistory"
@@ -51,10 +50,6 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 	},
 	Predicate_msg_sendMessageV2: {
 		0: -188056380, // 0xf4ca7cc4
-
-	},
-	Predicate_msg_editMessage: {
-		0: -2129725231, // 0x810ef8d1
 
 	},
 	Predicate_msg_editMessageV2: {
@@ -98,7 +93,6 @@ var clazzIdNameRegisters2 = map[int32]string{
 	902887962:   Predicate_msg_pushUserMessage,        // 0x35d0fa1a
 	673481940:   Predicate_msg_readMessageContents,    // 0x282484d4
 	-188056380:  Predicate_msg_sendMessageV2,          // 0xf4ca7cc4
-	-2129725231: Predicate_msg_editMessage,            // 0x810ef8d1
 	1778278369:  Predicate_msg_editMessageV2,          // 0x69fe5fe1
 	568855069:   Predicate_msg_deleteMessages,         // 0x21e80a1d
 	1975576778:  Predicate_msg_deleteHistory,          // 0x75c0e8ca

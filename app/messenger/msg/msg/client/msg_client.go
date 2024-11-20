@@ -26,7 +26,6 @@ type MsgClient interface {
 	MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*mtproto.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*mtproto.Messages_AffectedMessages, error)
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*mtproto.Updates, error)
-	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error)
 	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*mtproto.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*mtproto.Messages_AffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*mtproto.Messages_AffectedHistory, error)
@@ -78,17 +77,6 @@ func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSe
 	}
 	client := msg.NewRPCMsgClient(m.cli.Conn())
 	return client.MsgSendMessageV2(ctx, in)
-}
-
-// MsgEditMessage
-// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int message:OutboxMessage = Updates;
-func (m *defaultMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*mtproto.Updates, error) {
-	md := metadata.RpcMetadataFromIncoming(ctx)
-	if md != nil {
-		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
-	}
-	client := msg.NewRPCMsgClient(m.cli.Conn())
-	return client.MsgEditMessage(ctx, in)
 }
 
 // MsgEditMessageV2
