@@ -39,8 +39,8 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates
 	// TODO: check request valid
 
 	if len(outBoxList) == 0 {
-		err = mtproto.ErrMessageIdsEmpty
-		c.Logger.Errorf("msg.sendMessageV2 - error: %v", err)
+		err = mtproto.ErrInputRequestInvalid
+		c.Logger.Errorf("msg.sendMessageV2: {%s} - error: len(outBoxList) == 0", in)
 		return nil, err
 	}
 
