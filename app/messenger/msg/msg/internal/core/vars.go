@@ -7,5 +7,9 @@
 package core
 
 var (
-	kUseV3 = true
+	kUseV3 bool
 )
+
+func init() {
+	kUseV3 = false
+}
