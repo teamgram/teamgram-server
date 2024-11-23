@@ -357,4 +357,26 @@
                 id=:id
         </sql>
     </operation>
+
+    <operation name="UpdateAuthorizationTTL">
+        <sql>
+            UPDATE
+                users
+            SET
+                authorization_ttl_days = :authorization_ttl_days
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectAuthorizationTTL">
+        <sql>
+            SELECT
+                authorization_ttl_days
+            FROM
+                users
+            WHERE
+                id=:id
+        </sql>
+    </operation>
 </table>

@@ -100,6 +100,8 @@ enum TLConstructor {
     CRC32_user_setStoriesHidden = -138012584;
     CRC32_user_updatePersonalChannel = -940065072;
     CRC32_user_getUserIdByPhone = -72645694;
+    CRC32_user_setAuthorizationTTL = -702417936;
+    CRC32_user_getAuthorizationTTL = -563197636;
 }
 
 
@@ -711,6 +713,19 @@ message TL_user_getUserIdByPhone {
     string phone = 3;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_setAuthorizationTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 ttl = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getAuthorizationTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -824,5 +839,7 @@ service RPCUser {
  rpc user_setStoriesHidden(TL_user_setStoriesHidden) returns (mtproto.Bool) {}
  rpc user_updatePersonalChannel(TL_user_updatePersonalChannel) returns (mtproto.Bool) {}
  rpc user_getUserIdByPhone(TL_user_getUserIdByPhone) returns (mtproto.Int64) {}
+ rpc user_setAuthorizationTTL(TL_user_setAuthorizationTTL) returns (mtproto.Bool) {}
+ rpc user_getAuthorizationTTL(TL_user_getAuthorizationTTL) returns (mtproto.AccountDaysTTL) {}
 }
 

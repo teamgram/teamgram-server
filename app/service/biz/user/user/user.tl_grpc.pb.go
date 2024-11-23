@@ -103,6 +103,8 @@ const (
 	RPCUser_UserSetStoriesHidden_FullMethodName             = "/user.RPCUser/user_setStoriesHidden"
 	RPCUser_UserUpdatePersonalChannel_FullMethodName        = "/user.RPCUser/user_updatePersonalChannel"
 	RPCUser_UserGetUserIdByPhone_FullMethodName             = "/user.RPCUser/user_getUserIdByPhone"
+	RPCUser_UserSetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_setAuthorizationTTL"
+	RPCUser_UserGetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_getAuthorizationTTL"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -183,6 +185,8 @@ type RPCUserClient interface {
 	UserSetStoriesHidden(ctx context.Context, in *TLUserSetStoriesHidden, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserUpdatePersonalChannel(ctx context.Context, in *TLUserUpdatePersonalChannel, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetUserIdByPhone(ctx context.Context, in *TLUserGetUserIdByPhone, opts ...grpc.CallOption) (*mtproto.Int64, error)
+	UserSetAuthorizationTTL(ctx context.Context, in *TLUserSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.AccountDaysTTL, error)
 }
 
 type rPCUserClient struct {
@@ -859,6 +863,24 @@ func (c *rPCUserClient) UserGetUserIdByPhone(ctx context.Context, in *TLUserGetU
 	return out, nil
 }
 
+func (c *rPCUserClient) UserSetAuthorizationTTL(ctx context.Context, in *TLUserSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserSetAuthorizationTTL_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.AccountDaysTTL, error) {
+	out := new(mtproto.AccountDaysTTL)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetAuthorizationTTL_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility
@@ -937,6 +959,8 @@ type RPCUserServer interface {
 	UserSetStoriesHidden(context.Context, *TLUserSetStoriesHidden) (*mtproto.Bool, error)
 	UserUpdatePersonalChannel(context.Context, *TLUserUpdatePersonalChannel) (*mtproto.Bool, error)
 	UserGetUserIdByPhone(context.Context, *TLUserGetUserIdByPhone) (*mtproto.Int64, error)
+	UserSetAuthorizationTTL(context.Context, *TLUserSetAuthorizationTTL) (*mtproto.Bool, error)
+	UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have forward compatible implementations.
@@ -1164,6 +1188,12 @@ func (UnimplementedRPCUserServer) UserUpdatePersonalChannel(context.Context, *TL
 }
 func (UnimplementedRPCUserServer) UserGetUserIdByPhone(context.Context, *TLUserGetUserIdByPhone) (*mtproto.Int64, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetUserIdByPhone not implemented")
+}
+func (UnimplementedRPCUserServer) UserSetAuthorizationTTL(context.Context, *TLUserSetAuthorizationTTL) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSetAuthorizationTTL not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetAuthorizationTTL not implemented")
 }
 
 // UnsafeRPCUserServer may be embedded to opt out of forward compatibility for this service.
@@ -2509,6 +2539,42 @@ func _RPCUser_UserGetUserIdByPhone_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserSetAuthorizationTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSetAuthorizationTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSetAuthorizationTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSetAuthorizationTTL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSetAuthorizationTTL(ctx, req.(*TLUserSetAuthorizationTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserGetAuthorizationTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetAuthorizationTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetAuthorizationTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetAuthorizationTTL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetAuthorizationTTL(ctx, req.(*TLUserGetAuthorizationTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2811,6 +2877,14 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getUserIdByPhone",
 			Handler:    _RPCUser_UserGetUserIdByPhone_Handler,
+		},
+		{
+			MethodName: "user_setAuthorizationTTL",
+			Handler:    _RPCUser_UserSetAuthorizationTTL_Handler,
+		},
+		{
+			MethodName: "user_getAuthorizationTTL",
+			Handler:    _RPCUser_UserGetAuthorizationTTL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

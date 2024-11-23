@@ -39,6 +39,8 @@ func (c *AccountCore) AccountSetAccountTTL(in *mtproto.TLAccountSetAccountTTL) (
 	case 30:
 	case 90:
 	case 180:
+	case 182:
+	case 183:
 	case 365:
 	case 548:
 	case 730:

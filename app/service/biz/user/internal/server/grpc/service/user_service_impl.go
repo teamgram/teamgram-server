@@ -1127,3 +1127,33 @@ func (s *Service) UserGetUserIdByPhone(ctx context.Context, request *user.TLUser
 	c.Logger.Debugf("user.getUserIdByPhone - reply: {%s}", r)
 	return r, err
 }
+
+// UserSetAuthorizationTTL
+// user.setAuthorizationTTL user_id:long ttl:int = Bool;
+func (s *Service) UserSetAuthorizationTTL(ctx context.Context, request *user.TLUserSetAuthorizationTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setAuthorizationTTL - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserSetAuthorizationTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setAuthorizationTTL - reply: {%s}", r)
+	return r, err
+}
+
+// UserGetAuthorizationTTL
+// user.getAuthorizationTTL user_id:long = AccountDaysTTL;
+func (s *Service) UserGetAuthorizationTTL(ctx context.Context, request *user.TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getAuthorizationTTL - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserGetAuthorizationTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getAuthorizationTTL - reply: {%s}", r)
+	return r, err
+}

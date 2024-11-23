@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,30 +23,17 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
-	value := in.GetAuthorizationTtlDays()
-	switch value {
-	case 30:
-	case 90:
-	case 180:
-	case 182:
-	case 183:
-	case 365:
-	case 548:
-	case 730:
-	default:
-		// err := mtproto.ErrTtlDaysInvalid
-		c.Logger.Errorf("account.setAuthorizationTTL - error: %s", in)
-		// return nil, err
+// UserGetAuthorizationTTL
+// user.getAuthorizationTTL user_id:long = AccountDaysTTL;
+func (c *UserCore) UserGetAuthorizationTTL(in *user.TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error) {
+	userDO, _ := c.svcCtx.Dao.UsersDAO.SelectAuthorizationTTL(c.ctx, in.UserId)
+	if userDO == nil {
+		err := mtproto.ErrUserIdInvalid
+		c.Logger.Errorf("user.getAccountDaysTTL - error: %v", err)
+		return nil, err
 	}
 
-	_, _ = c.svcCtx.Dao.UserClient.UserSetAuthorizationTTL(
-		c.ctx,
-		&user.TLUserSetAuthorizationTTL{
-			UserId: c.MD.UserId,
-			Ttl:    in.AuthorizationTtlDays,
-		})
-	return mtproto.BoolTrue, nil
+	return mtproto.MakeTLAccountDaysTTL(&mtproto.AccountDaysTTL{
+		Days: userDO.AuthorizationTtlDays,
+	}).To_AccountDaysTTL(), nil
 }

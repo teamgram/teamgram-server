@@ -91,4 +91,6 @@ const (
 	CRC32_user_setStoriesHidden             TLConstructor = -138012584  // 0xf7c61858
 	CRC32_user_updatePersonalChannel        TLConstructor = -940065072  // 0xc7f7bed0
 	CRC32_user_getUserIdByPhone             TLConstructor = -72645694   // 0xfbab83c2
+	CRC32_user_setAuthorizationTTL          TLConstructor = -702417936  // 0xd621f3f0
+	CRC32_user_getAuthorizationTTL          TLConstructor = -563197636  // 0xde6e493c
 )

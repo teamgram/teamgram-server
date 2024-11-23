@@ -1258,3 +1258,71 @@ func (dao *UsersDAO) UpdatePersonalChannelIdTx(tx *sqlx.Tx, personalChannelId in
 
 	return
 }
+
+// UpdateAuthorizationTTL
+// update users set authorization_ttl_days = :authorization_ttl_days where id = :id
+func (dao *UsersDAO) UpdateAuthorizationTTL(ctx context.Context, authorizationTtlDays int32, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update users set authorization_ttl_days = ? where id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = dao.db.Exec(ctx, query, authorizationTtlDays, id)
+
+	if err != nil {
+		logx.WithContext(ctx).Errorf("exec in UpdateAuthorizationTTL(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("rowsAffected in UpdateAuthorizationTTL(_), error: %v", err)
+	}
+
+	return
+}
+
+// UpdateAuthorizationTTLTx
+// update users set authorization_ttl_days = :authorization_ttl_days where id = :id
+func (dao *UsersDAO) UpdateAuthorizationTTLTx(tx *sqlx.Tx, authorizationTtlDays int32, id int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update users set authorization_ttl_days = ? where id = ?"
+		rResult sql.Result
+	)
+	rResult, err = tx.Exec(query, authorizationTtlDays, id)
+
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("exec in UpdateAuthorizationTTL(_), error: %v", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		logx.WithContext(tx.Context()).Errorf("rowsAffected in UpdateAuthorizationTTL(_), error: %v", err)
+	}
+
+	return
+}
+
+// SelectAuthorizationTTL
+// select authorization_ttl_days from users where id = :id
+func (dao *UsersDAO) SelectAuthorizationTTL(ctx context.Context, id int64) (rValue *dataobject.UsersDO, err error) {
+	var (
+		query = "select authorization_ttl_days from users where id = ?"
+		do    = &dataobject.UsersDO{}
+	)
+	err = dao.db.QueryRowPartial(ctx, do, query, id)
+
+	if err != nil {
+		if !errors.Is(err, sqlx.ErrNotFound) {
+			logx.WithContext(ctx).Errorf("queryx in SelectAuthorizationTTL(_), error: %v", err)
+			return
+		} else {
+			err = nil
+		}
+	} else {
+		rValue = do
+	}
+
+	return
+}

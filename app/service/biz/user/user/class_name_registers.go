@@ -90,6 +90,8 @@ const (
 	Predicate_user_setStoriesHidden             = "user_setStoriesHidden"
 	Predicate_user_updatePersonalChannel        = "user_updatePersonalChannel"
 	Predicate_user_getUserIdByPhone             = "user_getUserIdByPhone"
+	Predicate_user_setAuthorizationTTL          = "user_setAuthorizationTTL"
+	Predicate_user_getAuthorizationTTL          = "user_getAuthorizationTTL"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -409,6 +411,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -72645694, // 0xfbab83c2
 
 	},
+	Predicate_user_setAuthorizationTTL: {
+		0: -702417936, // 0xd621f3f0
+
+	},
+	Predicate_user_getAuthorizationTTL: {
+		0: -563197636, // 0xde6e493c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -491,6 +501,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-138012584:  Predicate_user_setStoriesHidden,             // 0xf7c61858
 	-940065072:  Predicate_user_updatePersonalChannel,        // 0xc7f7bed0
 	-72645694:   Predicate_user_getUserIdByPhone,             // 0xfbab83c2
+	-702417936:  Predicate_user_setAuthorizationTTL,          // 0xd621f3f0
+	-563197636:  Predicate_user_getAuthorizationTTL,          // 0xde6e493c
 
 }
 
