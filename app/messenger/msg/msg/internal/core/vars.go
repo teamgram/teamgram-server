@@ -6,10 +6,14 @@
 
 package core
 
+import (
+	"flag"
+)
+
 var (
 	kUseV3 bool
 )
 
 func init() {
-	kUseV3 = false
+	flag.BoolVar(&kUseV3, "usev3", false, "use v3")
 }
