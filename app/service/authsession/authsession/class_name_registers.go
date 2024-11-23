@@ -34,6 +34,7 @@ const (
 	Predicate_authsession_setLayer                = "authsession_setLayer"
 	Predicate_authsession_setInitConnection       = "authsession_setInitConnection"
 	Predicate_authsession_setAndroidPushSessionId = "authsession_setAndroidPushSessionId"
+	Predicate_authsession_setAuthorizationTTL     = "authsession_setAuthorizationTTL"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -129,6 +130,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1834474692, // 0x92a8233c
 
 	},
+	Predicate_authsession_setAuthorizationTTL: {
+		0: -1157649540, // 0xbaffab7c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -155,6 +160,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1147475077:  Predicate_authsession_setLayer,                // 0x44651485
 	2095024780:  Predicate_authsession_setInitConnection,       // 0x7cdf8a8c
 	-1834474692: Predicate_authsession_setAndroidPushSessionId, // 0x92a8233c
+	-1157649540: Predicate_authsession_setAuthorizationTTL,     // 0xbaffab7c
 
 }
 

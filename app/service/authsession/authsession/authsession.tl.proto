@@ -44,6 +44,7 @@ enum TLConstructor {
     CRC32_authsession_setLayer = 1147475077;
     CRC32_authsession_setInitConnection = 2095024780;
     CRC32_authsession_setAndroidPushSessionId = -1834474692;
+    CRC32_authsession_setAuthorizationTTL = -1157649540;
 }
 
 
@@ -247,6 +248,14 @@ message TL_authsession_setAndroidPushSessionId {
     int64 session_id = 5;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_authsession_setAuthorizationTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int64 auth_key_id = 4;
+    int32 authorization_ttl_days = 5;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -280,5 +289,6 @@ service RPCAuthsession {
  rpc authsession_setLayer(TL_authsession_setLayer) returns (mtproto.Bool) {}
  rpc authsession_setInitConnection(TL_authsession_setInitConnection) returns (mtproto.Bool) {}
  rpc authsession_setAndroidPushSessionId(TL_authsession_setAndroidPushSessionId) returns (mtproto.Bool) {}
+ rpc authsession_setAuthorizationTTL(TL_authsession_setAuthorizationTTL) returns (mtproto.Bool) {}
 }
 

@@ -319,7 +319,7 @@ func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *aut
 }
 
 // AuthsessionSetAndroidPushSessionId
-// authsession.setAndroidPushSessionId auth_key_id:long session_id:long = Bool;
+// authsession.setAndroidPushSessionId user_id:long auth_key_id:long session_id:long = Bool;
 func (s *Service) AuthsessionSetAndroidPushSessionId(ctx context.Context, request *authsession.TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("authsession.setAndroidPushSessionId - metadata: {%s}, request: {%s}", c.MD, request)
@@ -330,5 +330,20 @@ func (s *Service) AuthsessionSetAndroidPushSessionId(ctx context.Context, reques
 	}
 
 	c.Logger.Debugf("authsession.setAndroidPushSessionId - reply: {%s}", r)
+	return r, err
+}
+
+// AuthsessionSetAuthorizationTTL
+// authsession.setAuthorizationTTL user_id:long auth_key_id:long authorization_ttl_days:int = Bool;
+func (s *Service) AuthsessionSetAuthorizationTTL(ctx context.Context, request *authsession.TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("authsession.setAuthorizationTTL - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AuthsessionSetAuthorizationTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("authsession.setAuthorizationTTL - reply: {%s}", r)
 	return r, err
 }

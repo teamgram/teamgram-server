@@ -11,23 +11,14 @@
 package dataobject
 
 type AuthUsersDO struct {
-	Id                   int64  `db:"id" json:"id"`
-	AuthKeyId            int64  `db:"auth_key_id" json:"auth_key_id"`
-	UserId               int64  `db:"user_id" json:"user_id"`
-	Hash                 int64  `db:"hash" json:"hash"`
-	Layer                int32  `db:"layer" json:"layer"`
-	DeviceModel          string `db:"device_model" json:"device_model"`
-	Platform             string `db:"platform" json:"platform"`
-	SystemVersion        string `db:"system_version" json:"system_version"`
-	ApiId                int32  `db:"api_id" json:"api_id"`
-	AppName              string `db:"app_name" json:"app_name"`
-	AppVersion           string `db:"app_version" json:"app_version"`
-	DateCreated          int64  `db:"date_created" json:"date_created"`
-	DateActived          int64  `db:"date_actived" json:"date_actived"`
-	Ip                   string `db:"ip" json:"ip"`
-	Country              string `db:"country" json:"country"`
-	Region               string `db:"region" json:"region"`
-	State                int32  `db:"state" json:"state"`
-	AndroidPushSessionId int64  `db:"android_push_session_id" json:"android_push_session_id"`
-	Deleted              bool   `db:"deleted" json:"deleted"`
+	Id                   int64 `db:"id" json:"id"`
+	AuthKeyId            int64 `db:"auth_key_id" json:"auth_key_id"`
+	UserId               int64 `db:"user_id" json:"user_id"`
+	Hash                 int64 `db:"hash" json:"hash"`
+	DateCreated          int64 `db:"date_created" json:"date_created"`
+	DateActive           int64 `db:"date_active" json:"date_active"`
+	State                int32 `db:"state" json:"state"`
+	AndroidPushSessionId int64 `db:"android_push_session_id" json:"android_push_session_id"`
+	AuthorizationTtlDays int32 `db:"authorization_ttl_days" json:"authorization_ttl_days"`
+	Deleted              bool  `db:"deleted" json:"deleted"`
 }

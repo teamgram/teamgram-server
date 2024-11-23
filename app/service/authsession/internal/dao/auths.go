@@ -246,7 +246,7 @@ func (d *Dao) BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64
 		UserId:      userId,
 		Hash:        rand.Int63(),
 		DateCreated: now,
-		DateActived: now,
+		DateActive:  now,
 	}
 
 	_, _, err := d.CachedConn.Exec(
@@ -439,7 +439,7 @@ func (d *Dao) GetCacheAuthData(ctx context.Context, authKeyId int64) (*CacheAuth
 							UserId:               do.UserId,
 							Hash:                 do.Hash,
 							DateCreated:          do.DateCreated,
-							DateActivated:        do.DateActived,
+							DateActivated:        do.DateActive,
 							AndroidPushSessionId: do.AndroidPushSessionId,
 						}
 					}

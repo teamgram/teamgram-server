@@ -3,13 +3,13 @@
     <operation name="InsertOrUpdates">
         <sql>
             INSERT INTO auth_users
-                (auth_key_id, user_id, hash, date_created, date_actived)
+                (auth_key_id, user_id, hash, date_created, date_active)
             VALUES
-                (:auth_key_id, :user_id, :hash, :date_created, :date_actived)
+                (:auth_key_id, :user_id, :hash, :date_created, :date_active)
             ON DUPLICATE KEY UPDATE
                 hash = VALUES(hash),
                 user_id = VALUES(user_id),
-                date_actived = VALUES(date_actived),
+                date_active = VALUES(date_active),
                 deleted = 0
         </sql>
     </operation>
@@ -17,7 +17,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
             FROM
                 auth_users
             WHERE
@@ -36,10 +36,21 @@
         </sql>
     </operation>
 
+    <operation name="UpdateAuthorizationTTL">
+        <sql>
+            UPDATE
+                auth_users
+            SET
+                authorization_ttl_days = :authorization_ttl_days
+            WHERE
+                auth_key_id = :auth_key_id
+        </sql>
+    </operation>
+
     <operation name="SelectAuthKeyIds" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
             FROM
                 auth_users
             WHERE
@@ -55,7 +66,7 @@
             UPDATE
                 auth_users
             SET
-                deleted = 1, date_created = 0, date_actived = 0
+                deleted = 1, date_created = 0, date_active = 0
             WHERE
                 id IN (:idList)
         </sql>
@@ -64,7 +75,7 @@
     <operation name="SelectListByUserId" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_actived, android_push_session_id
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
             FROM
                 auth_users
             WHERE
@@ -77,7 +88,7 @@
             UPDATE
                 auth_users
             SET
-                deleted = 1, date_actived = 0
+                deleted = 1, date_active = 0
             WHERE
                 auth_key_id = :auth_key_id AND user_id = :user_id
         </sql>
@@ -88,7 +99,7 @@
             UPDATE
                 auth_users
             SET
-                deleted = 1, date_actived = 0
+                deleted = 1, date_active = 0
             WHERE
                 user_id = :user_id
         </sql>

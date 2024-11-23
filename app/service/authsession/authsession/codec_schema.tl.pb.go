@@ -146,6 +146,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1834474692,
 		}
 	},
+	-1157649540: func() mtproto.TLObject { // 0xbaffab7c
+		return &TLAuthsessionSetAuthorizationTTL{
+			Constructor: -1157649540,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1366,6 +1371,48 @@ func (m *TLAuthsessionSetAndroidPushSessionId) Decode(dBuf *mtproto.DecodeBuf) e
 		m.UserId = dBuf.Long()
 		m.AuthKeyId = dBuf.Long()
 		m.SessionId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLAuthsessionSetAuthorizationTTL
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLAuthsessionSetAuthorizationTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xbaffab7c:
+		x.UInt(0xbaffab7c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetAuthKeyId())
+		x.Int(m.GetAuthorizationTtlDays())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLAuthsessionSetAuthorizationTTL) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLAuthsessionSetAuthorizationTTL) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xbaffab7c:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
+		m.AuthorizationTtlDays = dBuf.Int()
 		return dBuf.GetError()
 
 	default:

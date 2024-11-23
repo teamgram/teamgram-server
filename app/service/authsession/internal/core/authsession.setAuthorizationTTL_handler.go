@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,16 +23,18 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
 
-// AccountSetAuthorizationTTL
-// account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
-func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
-	_, _ = c.svcCtx.Dao.AuthsessionClient.AuthsessionSetAuthorizationTTL(
+// AuthsessionSetAuthorizationTTL
+// authsession.setAuthorizationTTL user_id:long auth_key_id:long authorization_ttl_days:int = Bool;
+func (c *AuthsessionCore) AuthsessionSetAuthorizationTTL(in *authsession.TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error) {
+	if in.UserId == 0 {
+		c.Logger.Errorf("invalid user_id: %d", in.UserId)
+		return nil, mtproto.ErrUserIdInvalid
+	}
+
+	_, _ = c.svcCtx.Dao.AuthUsersDAO.UpdateAuthorizationTTL(
 		c.ctx,
-		&authsession.TLAuthsessionSetAuthorizationTTL{
-			UserId:               c.MD.UserId,
-			AuthKeyId:            c.MD.PermAuthKeyId,
-			AuthorizationTtlDays: in.AuthorizationTtlDays,
-		})
+		in.AuthorizationTtlDays,
+		in.AuthKeyId)
 
 	return mtproto.BoolTrue, nil
 }
