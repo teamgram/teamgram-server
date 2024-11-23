@@ -14,7 +14,7 @@ require (
 	github.com/panjf2000/gnet/v2 v2.5.9
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
-	github.com/teamgram/proto v0.0.0-20241118014852-013cb379c332
+	github.com/teamgram/proto v0.193.0
 	github.com/teamgram/proto/v2 v2.0.0-20241118014852-013cb379c332
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.7.2
