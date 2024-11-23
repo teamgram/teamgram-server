@@ -50,7 +50,6 @@ const (
 	RPCAuthsession_AuthsessionSetLayer_FullMethodName                = "/authsession.RPCAuthsession/authsession_setLayer"
 	RPCAuthsession_AuthsessionSetInitConnection_FullMethodName       = "/authsession.RPCAuthsession/authsession_setInitConnection"
 	RPCAuthsession_AuthsessionSetAndroidPushSessionId_FullMethodName = "/authsession.RPCAuthsession/authsession_setAndroidPushSessionId"
-	RPCAuthsession_AuthsessionSetAuthorizationTTL_FullMethodName     = "/authsession.RPCAuthsession/authsession_setAuthorizationTTL"
 )
 
 // RPCAuthsessionClient is the client API for RPCAuthsession service.
@@ -78,7 +77,6 @@ type RPCAuthsessionClient interface {
 	AuthsessionSetLayer(ctx context.Context, in *TLAuthsessionSetLayer, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	AuthsessionSetInitConnection(ctx context.Context, in *TLAuthsessionSetInitConnection, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	AuthsessionSetAndroidPushSessionId(ctx context.Context, in *TLAuthsessionSetAndroidPushSessionId, opts ...grpc.CallOption) (*mtproto.Bool, error)
-	AuthsessionSetAuthorizationTTL(ctx context.Context, in *TLAuthsessionSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCAuthsessionClient struct {
@@ -278,15 +276,6 @@ func (c *rPCAuthsessionClient) AuthsessionSetAndroidPushSessionId(ctx context.Co
 	return out, nil
 }
 
-func (c *rPCAuthsessionClient) AuthsessionSetAuthorizationTTL(ctx context.Context, in *TLAuthsessionSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error) {
-	out := new(mtproto.Bool)
-	err := c.cc.Invoke(ctx, RPCAuthsession_AuthsessionSetAuthorizationTTL_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RPCAuthsessionServer is the server API for RPCAuthsession service.
 // All implementations should embed UnimplementedRPCAuthsessionServer
 // for forward compatibility
@@ -312,7 +301,6 @@ type RPCAuthsessionServer interface {
 	AuthsessionSetLayer(context.Context, *TLAuthsessionSetLayer) (*mtproto.Bool, error)
 	AuthsessionSetInitConnection(context.Context, *TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
 	AuthsessionSetAndroidPushSessionId(context.Context, *TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error)
-	AuthsessionSetAuthorizationTTL(context.Context, *TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCAuthsessionServer should be embedded to have forward compatible implementations.
@@ -381,9 +369,6 @@ func (UnimplementedRPCAuthsessionServer) AuthsessionSetInitConnection(context.Co
 }
 func (UnimplementedRPCAuthsessionServer) AuthsessionSetAndroidPushSessionId(context.Context, *TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthsessionSetAndroidPushSessionId not implemented")
-}
-func (UnimplementedRPCAuthsessionServer) AuthsessionSetAuthorizationTTL(context.Context, *TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AuthsessionSetAuthorizationTTL not implemented")
 }
 
 // UnsafeRPCAuthsessionServer may be embedded to opt out of forward compatibility for this service.
@@ -775,24 +760,6 @@ func _RPCAuthsession_AuthsessionSetAndroidPushSessionId_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCAuthsession_AuthsessionSetAuthorizationTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TLAuthsessionSetAuthorizationTTL)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RPCAuthsessionServer).AuthsessionSetAuthorizationTTL(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RPCAuthsession_AuthsessionSetAuthorizationTTL_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCAuthsessionServer).AuthsessionSetAuthorizationTTL(ctx, req.(*TLAuthsessionSetAuthorizationTTL))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // RPCAuthsession_ServiceDesc is the grpc.ServiceDesc for RPCAuthsession service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -883,10 +850,6 @@ var RPCAuthsession_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "authsession_setAndroidPushSessionId",
 			Handler:    _RPCAuthsession_AuthsessionSetAndroidPushSessionId_Handler,
-		},
-		{
-			MethodName: "authsession_setAuthorizationTTL",
-			Handler:    _RPCAuthsession_AuthsessionSetAuthorizationTTL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

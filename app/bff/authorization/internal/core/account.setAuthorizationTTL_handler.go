@@ -20,19 +20,11 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 )
 
 // AccountSetAuthorizationTTL
 // account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
 func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *mtproto.TLAccountSetAuthorizationTTL) (*mtproto.Bool, error) {
-	_, _ = c.svcCtx.Dao.AuthsessionClient.AuthsessionSetAuthorizationTTL(
-		c.ctx,
-		&authsession.TLAuthsessionSetAuthorizationTTL{
-			UserId:               c.MD.UserId,
-			AuthKeyId:            c.MD.PermAuthKeyId,
-			AuthorizationTtlDays: in.AuthorizationTtlDays,
-		})
 
 	return mtproto.BoolTrue, nil
 }

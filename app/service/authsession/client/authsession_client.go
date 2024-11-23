@@ -44,7 +44,6 @@ type AuthsessionClient interface {
 	AuthsessionSetLayer(ctx context.Context, in *authsession.TLAuthsessionSetLayer) (*mtproto.Bool, error)
 	AuthsessionSetInitConnection(ctx context.Context, in *authsession.TLAuthsessionSetInitConnection) (*mtproto.Bool, error)
 	AuthsessionSetAndroidPushSessionId(ctx context.Context, in *authsession.TLAuthsessionSetAndroidPushSessionId) (*mtproto.Bool, error)
-	AuthsessionSetAuthorizationTTL(ctx context.Context, in *authsession.TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error)
 }
 
 type defaultAuthsessionClient struct {
@@ -286,15 +285,4 @@ func (m *defaultAuthsessionClient) AuthsessionSetAndroidPushSessionId(ctx contex
 	}
 	client := authsession.NewRPCAuthsessionClient(m.cli.Conn())
 	return client.AuthsessionSetAndroidPushSessionId(ctx, in)
-}
-
-// AuthsessionSetAuthorizationTTL
-// authsession.setAuthorizationTTL user_id:long auth_key_id:long authorization_ttl_days:int = Bool;
-func (m *defaultAuthsessionClient) AuthsessionSetAuthorizationTTL(ctx context.Context, in *authsession.TLAuthsessionSetAuthorizationTTL) (*mtproto.Bool, error) {
-	md := metadata.RpcMetadataFromIncoming(ctx)
-	if md != nil {
-		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
-	}
-	client := authsession.NewRPCAuthsessionClient(m.cli.Conn())
-	return client.AuthsessionSetAuthorizationTTL(ctx, in)
 }

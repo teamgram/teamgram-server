@@ -17,7 +17,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id
             FROM
                 auth_users
             WHERE
@@ -36,21 +36,10 @@
         </sql>
     </operation>
 
-    <operation name="UpdateAuthorizationTTL">
-        <sql>
-            UPDATE
-                auth_users
-            SET
-                authorization_ttl_days = :authorization_ttl_days
-            WHERE
-                auth_key_id = :auth_key_id
-        </sql>
-    </operation>
-
     <operation name="SelectAuthKeyIds" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id
             FROM
                 auth_users
             WHERE
@@ -75,7 +64,7 @@
     <operation name="SelectListByUserId" result_set="list">
         <sql>
             SELECT
-                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id, authorization_ttl_days
+                id, auth_key_id, user_id, hash, date_created, date_active, android_push_session_id
             FROM
                 auth_users
             WHERE

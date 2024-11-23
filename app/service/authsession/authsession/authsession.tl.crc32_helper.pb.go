@@ -35,5 +35,4 @@ const (
 	CRC32_authsession_setLayer                TLConstructor = 1147475077  // 0x44651485
 	CRC32_authsession_setInitConnection       TLConstructor = 2095024780  // 0x7cdf8a8c
 	CRC32_authsession_setAndroidPushSessionId TLConstructor = -1834474692 // 0x92a8233c
-	CRC32_authsession_setAuthorizationTTL     TLConstructor = -1157649540 // 0xbaffab7c
 )
