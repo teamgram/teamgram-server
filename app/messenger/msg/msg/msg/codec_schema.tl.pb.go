@@ -86,6 +86,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -283155749,
 		}
 	},
+	1510960658: func() mtproto.TLObject { // 0x5a0f6e12
+		return &TLMsgReadHistory{
+			Constructor: 1510960658,
+		}
+	},
 	263827974: func() mtproto.TLObject { // 0xfb9b206
 		return &TLMsgReadHistoryV2{
 			Constructor: 263827974,
@@ -1031,6 +1036,52 @@ func (m *TLMsgDeleteChatHistory) Decode(dBuf *mtproto.DecodeBuf) error {
 
 		m.ChatId = dBuf.Long()
 		m.DeleteUserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLMsgReadHistory
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMsgReadHistory) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x5a0f6e12:
+		x.UInt(0x5a0f6e12)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Long(m.GetAuthKeyId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetMaxId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMsgReadHistory) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMsgReadHistory) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x5a0f6e12:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.AuthKeyId = dBuf.Long()
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.MaxId = dBuf.Int()
 		return dBuf.GetError()
 
 	default:

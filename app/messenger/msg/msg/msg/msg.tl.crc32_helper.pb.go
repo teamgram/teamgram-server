@@ -23,6 +23,7 @@ const (
 	CRC32_msg_deleteHistory          TLConstructor = 1975576778  // 0x75c0e8ca
 	CRC32_msg_deletePhoneCallHistory TLConstructor = 649568574   // 0x26b7a13e
 	CRC32_msg_deleteChatHistory      TLConstructor = -283155749  // 0xef1f62db
+	CRC32_msg_readHistory            TLConstructor = 1510960658  // 0x5a0f6e12
 	CRC32_msg_readHistoryV2          TLConstructor = 263827974   // 0xfb9b206
 	CRC32_msg_updatePinnedMessage    TLConstructor = -441560663  // 0xe5ae51a9
 	CRC32_msg_unpinAllMessages       TLConstructor = -1199153371 // 0xb8865f25
