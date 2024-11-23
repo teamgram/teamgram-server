@@ -37,6 +37,7 @@ import (
 	miscellaneous_helper "github.com/teamgram/teamgram-server/app/bff/miscellaneous"
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
+	passport_helper "github.com/teamgram/teamgram-server/app/bff/passport"
 	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
 	privacysettingshelper "github.com/teamgram/teamgram-server/app/bff/privacysettings"
 	qrcode_helper "github.com/teamgram/teamgram-server/app/bff/qrcode"
@@ -171,6 +172,15 @@ func (s *Server) Initialize() error {
 				UserClient:    c.BizServiceClient,
 				MediaClient:   c.MediaClient,
 			}, nil, nil))
+
+		// passport_helper
+		mtproto.RegisterRPCPassportServer(
+			grpcServer,
+			passport_helper.New(passport_helper.Config{
+				RpcServerConf:     c.RpcServerConf,
+				AuthsessionClient: c.AuthSessionClient,
+				UserClient:        c.BizServiceClient,
+			}))
 
 		// updates_helper
 		mtproto.RegisterRPCUpdatesServer(

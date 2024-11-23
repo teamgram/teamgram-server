@@ -54,7 +54,7 @@ BFFProxyClients:
     "/mtproto.RPCFiles": "bff.bff"
     #"/mtproto.RPCWebPage": "bff.bff"
     #"/mtproto.RPCSecretChats": "bff.bff"
-    #"/mtproto.RPCPassport": "bff.bff"
+    "/mtproto.RPCPassport": "bff.bff"
     "/mtproto.RPCUpdates": "bff.bff"
     #"/mtproto.RPCInlineBot": "bff.bff"
     #"/mtproto.RPCBots": "bff.bff"
