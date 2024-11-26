@@ -11,7 +11,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.49
 	github.com/nyaruka/phonenumbers v1.3.0
 	github.com/oschwald/geoip2-golang v1.8.0
-	github.com/panjf2000/gnet/v2 v2.5.9
+	github.com/panjf2000/gnet/v2 v2.6.2
 	github.com/stretchr/testify v1.9.0
 	github.com/teamgram/marmota v0.1.21
 	github.com/teamgram/proto v0.193.1-0.20241123074011-8fc5f17f5f53
@@ -143,7 +143,7 @@ require (
 
 replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.5.9 => github.com/teamgram/gnet/v2 v2.5.9-teamgram.0.20241126071929-9eb8bdf0b326
+	github.com/panjf2000/gnet/v2 v2.6.2 => github.com/teamgram/gnet/v2 v2.6.2-teamgram
 	// github.com/teamgram/marmota => ../marmota
 	// github.com/teamgram/proto/v2 => ../proto/v2
 	github.com/zeromicro/go-zero v1.7.2 => github.com/teamgram/go-zero v1.7.2-teamgram
