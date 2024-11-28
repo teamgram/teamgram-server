@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	
+
 	"github.com/teamgram/marmota/pkg/bytes2"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 )
