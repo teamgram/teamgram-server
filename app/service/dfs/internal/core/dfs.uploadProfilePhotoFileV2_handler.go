@@ -228,6 +228,11 @@ func (c *DfsCore) uploadPhotoSizeListV2(creatorId int64, file *mtproto.InputFile
 		accessHash = int64(extType)<<32 | int64(rand.Uint32())
 	)
 
+	_, err = c.svcCtx.Dao.PutPhotoFile(c.ctx, fmt.Sprintf("0/%d.dat", photoId), cacheData)
+	if err != nil {
+		c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
+	}
+
 	err = imaging.ReSizeImage(cacheData, ext, isABC, func(szType string, localId int, w, h int32, b []byte) error {
 		// secretId := int64(extType)<<32 | int64(rand.Uint32())
 		path := fmt.Sprintf("%s/%d.dat", szType, photoId)

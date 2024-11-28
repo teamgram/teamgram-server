@@ -44,6 +44,7 @@ const (
 	RPCMedia_MediaUploadThemeFile_FullMethodName        = "/media.RPCMedia/media_uploadThemeFile"
 	RPCMedia_MediaUploadStickerFile_FullMethodName      = "/media.RPCMedia/media_uploadStickerFile"
 	RPCMedia_MediaUploadRingtoneFile_FullMethodName     = "/media.RPCMedia/media_uploadRingtoneFile"
+	RPCMedia_MediaUploadedProfilePhoto_FullMethodName   = "/media.RPCMedia/media_uploadedProfilePhoto"
 )
 
 // RPCMediaClient is the client API for RPCMedia service.
@@ -65,6 +66,7 @@ type RPCMediaClient interface {
 	MediaUploadThemeFile(ctx context.Context, in *TLMediaUploadThemeFile, opts ...grpc.CallOption) (*mtproto.Document, error)
 	MediaUploadStickerFile(ctx context.Context, in *TLMediaUploadStickerFile, opts ...grpc.CallOption) (*mtproto.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *TLMediaUploadRingtoneFile, opts ...grpc.CallOption) (*mtproto.Document, error)
+	MediaUploadedProfilePhoto(ctx context.Context, in *TLMediaUploadedProfilePhoto, opts ...grpc.CallOption) (*mtproto.Photo, error)
 }
 
 type rPCMediaClient struct {
@@ -210,6 +212,15 @@ func (c *rPCMediaClient) MediaUploadRingtoneFile(ctx context.Context, in *TLMedi
 	return out, nil
 }
 
+func (c *rPCMediaClient) MediaUploadedProfilePhoto(ctx context.Context, in *TLMediaUploadedProfilePhoto, opts ...grpc.CallOption) (*mtproto.Photo, error) {
+	out := new(mtproto.Photo)
+	err := c.cc.Invoke(ctx, RPCMedia_MediaUploadedProfilePhoto_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCMediaServer is the server API for RPCMedia service.
 // All implementations should embed UnimplementedRPCMediaServer
 // for forward compatibility
@@ -229,6 +240,7 @@ type RPCMediaServer interface {
 	MediaUploadThemeFile(context.Context, *TLMediaUploadThemeFile) (*mtproto.Document, error)
 	MediaUploadStickerFile(context.Context, *TLMediaUploadStickerFile) (*mtproto.Document, error)
 	MediaUploadRingtoneFile(context.Context, *TLMediaUploadRingtoneFile) (*mtproto.Document, error)
+	MediaUploadedProfilePhoto(context.Context, *TLMediaUploadedProfilePhoto) (*mtproto.Photo, error)
 }
 
 // UnimplementedRPCMediaServer should be embedded to have forward compatible implementations.
@@ -279,6 +291,9 @@ func (UnimplementedRPCMediaServer) MediaUploadStickerFile(context.Context, *TLMe
 }
 func (UnimplementedRPCMediaServer) MediaUploadRingtoneFile(context.Context, *TLMediaUploadRingtoneFile) (*mtproto.Document, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MediaUploadRingtoneFile not implemented")
+}
+func (UnimplementedRPCMediaServer) MediaUploadedProfilePhoto(context.Context, *TLMediaUploadedProfilePhoto) (*mtproto.Photo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MediaUploadedProfilePhoto not implemented")
 }
 
 // UnsafeRPCMediaServer may be embedded to opt out of forward compatibility for this service.
@@ -562,6 +577,24 @@ func _RPCMedia_MediaUploadRingtoneFile_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCMedia_MediaUploadedProfilePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLMediaUploadedProfilePhoto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCMediaServer).MediaUploadedProfilePhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCMedia_MediaUploadedProfilePhoto_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCMediaServer).MediaUploadedProfilePhoto(ctx, req.(*TLMediaUploadedProfilePhoto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCMedia_ServiceDesc is the grpc.ServiceDesc for RPCMedia service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -628,6 +661,10 @@ var RPCMedia_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "media_uploadRingtoneFile",
 			Handler:    _RPCMedia_MediaUploadRingtoneFile_Handler,
+		},
+		{
+			MethodName: "media_uploadedProfilePhoto",
+			Handler:    _RPCMedia_MediaUploadedProfilePhoto_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

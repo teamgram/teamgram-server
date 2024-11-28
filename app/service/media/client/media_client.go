@@ -2,18 +2,19 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package media_client
+package mediaclient
 
 import (
 	"context"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/media/media"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -37,6 +38,7 @@ type MediaClient interface {
 	MediaUploadThemeFile(ctx context.Context, in *media.TLMediaUploadThemeFile) (*mtproto.Document, error)
 	MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*mtproto.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error)
+	MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*mtproto.Photo, error)
 }
 
 type defaultMediaClient struct {
@@ -52,6 +54,10 @@ func NewMediaClient(cli zrpc.Client) MediaClient {
 // MediaUploadPhotoFile
 // media.uploadPhotoFile flags:# owner_id:long file:InputFile stickers:flags.0?Vector<InputDocument> ttl_seconds:flags.1?int = Photo;
 func (m *defaultMediaClient) MediaUploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*mtproto.Photo, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadPhotoFile(ctx, in)
 }
@@ -59,6 +65,10 @@ func (m *defaultMediaClient) MediaUploadPhotoFile(ctx context.Context, in *media
 // MediaUploadProfilePhotoFile
 // media.uploadProfilePhotoFile flags:# owner_id:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 func (m *defaultMediaClient) MediaUploadProfilePhotoFile(ctx context.Context, in *media.TLMediaUploadProfilePhotoFile) (*mtproto.Photo, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadProfilePhotoFile(ctx, in)
 }
@@ -66,6 +76,10 @@ func (m *defaultMediaClient) MediaUploadProfilePhotoFile(ctx context.Context, in
 // MediaGetPhoto
 // media.getPhoto photo_id:long = Photo;
 func (m *defaultMediaClient) MediaGetPhoto(ctx context.Context, in *media.TLMediaGetPhoto) (*mtproto.Photo, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetPhoto(ctx, in)
 }
@@ -73,6 +87,10 @@ func (m *defaultMediaClient) MediaGetPhoto(ctx context.Context, in *media.TLMedi
 // MediaGetPhotoSizeList
 // media.getPhotoSizeList size_id:long = PhotoSizeList;
 func (m *defaultMediaClient) MediaGetPhotoSizeList(ctx context.Context, in *media.TLMediaGetPhotoSizeList) (*media.PhotoSizeList, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetPhotoSizeList(ctx, in)
 }
@@ -80,6 +98,10 @@ func (m *defaultMediaClient) MediaGetPhotoSizeList(ctx context.Context, in *medi
 // MediaGetPhotoSizeListList
 // media.getPhotoSizeListList id_list:Vector<long> = Vector<PhotoSizeList>;
 func (m *defaultMediaClient) MediaGetPhotoSizeListList(ctx context.Context, in *media.TLMediaGetPhotoSizeListList) (*media.Vector_PhotoSizeList, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetPhotoSizeListList(ctx, in)
 }
@@ -87,6 +109,10 @@ func (m *defaultMediaClient) MediaGetPhotoSizeListList(ctx context.Context, in *
 // MediaGetVideoSizeList
 // media.getVideoSizeList size_id:long = VideoSizeList;
 func (m *defaultMediaClient) MediaGetVideoSizeList(ctx context.Context, in *media.TLMediaGetVideoSizeList) (*media.VideoSizeList, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetVideoSizeList(ctx, in)
 }
@@ -94,6 +120,10 @@ func (m *defaultMediaClient) MediaGetVideoSizeList(ctx context.Context, in *medi
 // MediaUploadedDocumentMedia
 // media.uploadedDocumentMedia owner_id:long media:InputMedia = MessageMedia;
 func (m *defaultMediaClient) MediaUploadedDocumentMedia(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*mtproto.MessageMedia, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadedDocumentMedia(ctx, in)
 }
@@ -101,6 +131,10 @@ func (m *defaultMediaClient) MediaUploadedDocumentMedia(ctx context.Context, in 
 // MediaGetDocument
 // media.getDocument id:long = Document;
 func (m *defaultMediaClient) MediaGetDocument(ctx context.Context, in *media.TLMediaGetDocument) (*mtproto.Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetDocument(ctx, in)
 }
@@ -108,6 +142,10 @@ func (m *defaultMediaClient) MediaGetDocument(ctx context.Context, in *media.TLM
 // MediaGetDocumentList
 // media.getDocumentList id_list:Vector<long> = Vector<Document>;
 func (m *defaultMediaClient) MediaGetDocumentList(ctx context.Context, in *media.TLMediaGetDocumentList) (*media.Vector_Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetDocumentList(ctx, in)
 }
@@ -115,6 +153,10 @@ func (m *defaultMediaClient) MediaGetDocumentList(ctx context.Context, in *media
 // MediaUploadEncryptedFile
 // media.uploadEncryptedFile owner_id:long file:InputEncryptedFile = EncryptedFile;
 func (m *defaultMediaClient) MediaUploadEncryptedFile(ctx context.Context, in *media.TLMediaUploadEncryptedFile) (*mtproto.EncryptedFile, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadEncryptedFile(ctx, in)
 }
@@ -122,6 +164,10 @@ func (m *defaultMediaClient) MediaUploadEncryptedFile(ctx context.Context, in *m
 // MediaGetEncryptedFile
 // media.getEncryptedFile id:long access_hash:long = EncryptedFile;
 func (m *defaultMediaClient) MediaGetEncryptedFile(ctx context.Context, in *media.TLMediaGetEncryptedFile) (*mtproto.EncryptedFile, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaGetEncryptedFile(ctx, in)
 }
@@ -129,6 +175,10 @@ func (m *defaultMediaClient) MediaGetEncryptedFile(ctx context.Context, in *medi
 // MediaUploadWallPaperFile
 // media.uploadWallPaperFile owner_id:long file:InputFile mime_type:string admin:Bool = Document;
 func (m *defaultMediaClient) MediaUploadWallPaperFile(ctx context.Context, in *media.TLMediaUploadWallPaperFile) (*mtproto.Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadWallPaperFile(ctx, in)
 }
@@ -136,6 +186,10 @@ func (m *defaultMediaClient) MediaUploadWallPaperFile(ctx context.Context, in *m
 // MediaUploadThemeFile
 // media.uploadThemeFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 func (m *defaultMediaClient) MediaUploadThemeFile(ctx context.Context, in *media.TLMediaUploadThemeFile) (*mtproto.Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadThemeFile(ctx, in)
 }
@@ -143,6 +197,10 @@ func (m *defaultMediaClient) MediaUploadThemeFile(ctx context.Context, in *media
 // MediaUploadStickerFile
 // media.uploadStickerFile flags:# owner_id:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string document_attribute_sticker:DocumentAttribute = Document;
 func (m *defaultMediaClient) MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*mtproto.Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadStickerFile(ctx, in)
 }
@@ -150,6 +208,21 @@ func (m *defaultMediaClient) MediaUploadStickerFile(ctx context.Context, in *med
 // MediaUploadRingtoneFile
 // media.uploadRingtoneFile flags:# owner_id:long file:InputFile mime_type:string file_name:string = Document;
 func (m *defaultMediaClient) MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*mtproto.Document, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := media.NewRPCMediaClient(m.cli.Conn())
 	return client.MediaUploadRingtoneFile(ctx, in)
+}
+
+// MediaUploadedProfilePhoto
+// media.uploadedProfilePhoto owner_id:long photo_id:long = Photo;
+func (m *defaultMediaClient) MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*mtproto.Photo, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := media.NewRPCMediaClient(m.cli.Conn())
+	return client.MediaUploadedProfilePhoto(ctx, in)
 }

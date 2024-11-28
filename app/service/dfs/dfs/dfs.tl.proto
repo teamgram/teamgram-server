@@ -32,6 +32,7 @@ enum TLConstructor {
     CRC32_dfs_uploadWallPaperFile = -1046081450;
     CRC32_dfs_uploadThemeFile = -559525993;
     CRC32_dfs_uploadRingtoneFile = 45335985;
+    CRC32_dfs_uploadedProfilePhoto = -1549129612;
 }
 
 
@@ -129,6 +130,13 @@ message TL_dfs_uploadRingtoneFile {
     string file_name = 6;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_dfs_uploadedProfilePhoto {
+    TLConstructor  constructor = 1;
+    int64 creator = 3;
+    int64 photo_id = 4;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -149,5 +157,6 @@ service RPCDfs {
  rpc dfs_uploadWallPaperFile(TL_dfs_uploadWallPaperFile) returns (mtproto.Document) {}
  rpc dfs_uploadThemeFile(TL_dfs_uploadThemeFile) returns (mtproto.Document) {}
  rpc dfs_uploadRingtoneFile(TL_dfs_uploadRingtoneFile) returns (mtproto.Document) {}
+ rpc dfs_uploadedProfilePhoto(TL_dfs_uploadedProfilePhoto) returns (mtproto.Photo) {}
 }
 

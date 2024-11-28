@@ -29,4 +29,5 @@ const (
 	CRC32_media_uploadThemeFile        TLConstructor = 1122416736  // 0x42e6b860
 	CRC32_media_uploadStickerFile      TLConstructor = -1397349139 // 0xacb624ed
 	CRC32_media_uploadRingtoneFile     TLConstructor = 1035645449  // 0x3dbab209
+	CRC32_media_uploadedProfilePhoto   TLConstructor = -1982768686 // 0x89d159d2
 )

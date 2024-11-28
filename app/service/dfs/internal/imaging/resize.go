@@ -93,6 +93,20 @@ func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, l
 		logx.Errorf("decode r(%d) error: %v", len(rb), err)
 		return
 	}
+	if isABC {
+		if img.Bounds().Dx() >= mtproto.PhotoSZDSize && img.Bounds().Dy() >= mtproto.PhotoSZDSize {
+			if img.Bounds().Dx() != img.Bounds().Dy() {
+				img = imaging.Fill(img, mtproto.PhotoSZDSize, mtproto.PhotoSZDSize, imaging.Center, imaging.Lanczos)
+			}
+		} else if img.Bounds().Dx() <= mtproto.PhotoSZCSize && img.Bounds().Dy() <= mtproto.PhotoSZCSize {
+			img = imaging.Fill(img, mtproto.PhotoSZCSize, mtproto.PhotoSZCSize, imaging.Center, imaging.Lanczos)
+		} else {
+			if img.Bounds().Dx() != img.Bounds().Dy() {
+				img = imaging.Fill(img, mtproto.PhotoSZCSize, mtproto.PhotoSZCSize, imaging.Center, imaging.Lanczos)
+			}
+		}
+	}
+
 	imgSz := makeResizeInfo(img)
 
 	var (
@@ -109,11 +123,9 @@ func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, l
 
 	for _, sz := range szList {
 		rsz = sz.Size
-		if !isABC {
-			if rsz >= imgSz.size {
-				rsz = imgSz.size
-				willBreak = true
-			}
+		if rsz >= imgSz.size {
+			rsz = imgSz.size
+			willBreak = true
 		}
 
 		// TODO(@benqi): FIXME

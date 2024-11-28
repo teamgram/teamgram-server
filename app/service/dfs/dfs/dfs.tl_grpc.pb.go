@@ -40,6 +40,7 @@ const (
 	RPCDfs_DfsUploadWallPaperFile_FullMethodName      = "/dfs.RPCDfs/dfs_uploadWallPaperFile"
 	RPCDfs_DfsUploadThemeFile_FullMethodName          = "/dfs.RPCDfs/dfs_uploadThemeFile"
 	RPCDfs_DfsUploadRingtoneFile_FullMethodName       = "/dfs.RPCDfs/dfs_uploadRingtoneFile"
+	RPCDfs_DfsUploadedProfilePhoto_FullMethodName     = "/dfs.RPCDfs/dfs_uploadedProfilePhoto"
 )
 
 // RPCDfsClient is the client API for RPCDfs service.
@@ -57,6 +58,7 @@ type RPCDfsClient interface {
 	DfsUploadWallPaperFile(ctx context.Context, in *TLDfsUploadWallPaperFile, opts ...grpc.CallOption) (*mtproto.Document, error)
 	DfsUploadThemeFile(ctx context.Context, in *TLDfsUploadThemeFile, opts ...grpc.CallOption) (*mtproto.Document, error)
 	DfsUploadRingtoneFile(ctx context.Context, in *TLDfsUploadRingtoneFile, opts ...grpc.CallOption) (*mtproto.Document, error)
+	DfsUploadedProfilePhoto(ctx context.Context, in *TLDfsUploadedProfilePhoto, opts ...grpc.CallOption) (*mtproto.Photo, error)
 }
 
 type rPCDfsClient struct {
@@ -166,6 +168,15 @@ func (c *rPCDfsClient) DfsUploadRingtoneFile(ctx context.Context, in *TLDfsUploa
 	return out, nil
 }
 
+func (c *rPCDfsClient) DfsUploadedProfilePhoto(ctx context.Context, in *TLDfsUploadedProfilePhoto, opts ...grpc.CallOption) (*mtproto.Photo, error) {
+	out := new(mtproto.Photo)
+	err := c.cc.Invoke(ctx, RPCDfs_DfsUploadedProfilePhoto_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCDfsServer is the server API for RPCDfs service.
 // All implementations should embed UnimplementedRPCDfsServer
 // for forward compatibility
@@ -181,6 +192,7 @@ type RPCDfsServer interface {
 	DfsUploadWallPaperFile(context.Context, *TLDfsUploadWallPaperFile) (*mtproto.Document, error)
 	DfsUploadThemeFile(context.Context, *TLDfsUploadThemeFile) (*mtproto.Document, error)
 	DfsUploadRingtoneFile(context.Context, *TLDfsUploadRingtoneFile) (*mtproto.Document, error)
+	DfsUploadedProfilePhoto(context.Context, *TLDfsUploadedProfilePhoto) (*mtproto.Photo, error)
 }
 
 // UnimplementedRPCDfsServer should be embedded to have forward compatible implementations.
@@ -219,6 +231,9 @@ func (UnimplementedRPCDfsServer) DfsUploadThemeFile(context.Context, *TLDfsUploa
 }
 func (UnimplementedRPCDfsServer) DfsUploadRingtoneFile(context.Context, *TLDfsUploadRingtoneFile) (*mtproto.Document, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DfsUploadRingtoneFile not implemented")
+}
+func (UnimplementedRPCDfsServer) DfsUploadedProfilePhoto(context.Context, *TLDfsUploadedProfilePhoto) (*mtproto.Photo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DfsUploadedProfilePhoto not implemented")
 }
 
 // UnsafeRPCDfsServer may be embedded to opt out of forward compatibility for this service.
@@ -430,6 +445,24 @@ func _RPCDfs_DfsUploadRingtoneFile_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCDfs_DfsUploadedProfilePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLDfsUploadedProfilePhoto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCDfsServer).DfsUploadedProfilePhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCDfs_DfsUploadedProfilePhoto_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCDfsServer).DfsUploadedProfilePhoto(ctx, req.(*TLDfsUploadedProfilePhoto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCDfs_ServiceDesc is the grpc.ServiceDesc for RPCDfs service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -480,6 +513,10 @@ var RPCDfs_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "dfs_uploadRingtoneFile",
 			Handler:    _RPCDfs_DfsUploadRingtoneFile_Handler,
+		},
+		{
+			MethodName: "dfs_uploadedProfilePhoto",
+			Handler:    _RPCDfs_DfsUploadedProfilePhoto_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

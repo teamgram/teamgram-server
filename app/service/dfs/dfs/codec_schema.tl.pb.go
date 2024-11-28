@@ -86,6 +86,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 45335985,
 		}
 	},
+	-1549129612: func() mtproto.TLObject { // 0xa3aa2874
+		return &TLDfsUploadedProfilePhoto{
+			Constructor: -1549129612,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -674,6 +679,46 @@ func (m *TLDfsUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 
 		m.MimeType = dBuf.String()
 		m.FileName = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLDfsUploadedProfilePhoto
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDfsUploadedProfilePhoto) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xa3aa2874:
+		x.UInt(0xa3aa2874)
+
+		// no flags
+
+		x.Long(m.GetCreator())
+		x.Long(m.GetPhotoId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDfsUploadedProfilePhoto) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDfsUploadedProfilePhoto) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xa3aa2874:
+
+		// not has flags
+
+		m.Creator = dBuf.Long()
+		m.PhotoId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

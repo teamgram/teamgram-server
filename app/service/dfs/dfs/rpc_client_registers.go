@@ -37,6 +37,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLDfsUploadWallPaperFile":      RPCContextTuple{"/mtproto.RPCDfs/dfs_uploadWallPaperFile", func() interface{} { return new(mtproto.Document) }},
 	"TLDfsUploadThemeFile":          RPCContextTuple{"/mtproto.RPCDfs/dfs_uploadThemeFile", func() interface{} { return new(mtproto.Document) }},
 	"TLDfsUploadRingtoneFile":       RPCContextTuple{"/mtproto.RPCDfs/dfs_uploadRingtoneFile", func() interface{} { return new(mtproto.Document) }},
+	"TLDfsUploadedProfilePhoto":     RPCContextTuple{"/mtproto.RPCDfs/dfs_uploadedProfilePhoto", func() interface{} { return new(mtproto.Photo) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

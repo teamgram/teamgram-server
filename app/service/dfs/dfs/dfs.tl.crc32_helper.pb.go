@@ -23,4 +23,5 @@ const (
 	CRC32_dfs_uploadWallPaperFile      TLConstructor = -1046081450 // 0xc1a61056
 	CRC32_dfs_uploadThemeFile          TLConstructor = -559525993  // 0xdea64f97
 	CRC32_dfs_uploadRingtoneFile       TLConstructor = 45335985    // 0x2b3c5b1
+	CRC32_dfs_uploadedProfilePhoto     TLConstructor = -1549129612 // 0xa3aa2874
 )

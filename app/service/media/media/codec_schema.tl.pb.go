@@ -116,6 +116,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1035645449,
 		}
 	},
+	-1982768686: func() mtproto.TLObject { // 0x89d159d2
+		return &TLMediaUploadedProfilePhoto{
+			Constructor: -1982768686,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -1182,6 +1187,46 @@ func (m *TLMediaUploadRingtoneFile) Decode(dBuf *mtproto.DecodeBuf) error {
 
 		m.MimeType = dBuf.String()
 		m.FileName = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLMediaUploadedProfilePhoto
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLMediaUploadedProfilePhoto) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x89d159d2:
+		x.UInt(0x89d159d2)
+
+		// no flags
+
+		x.Long(m.GetOwnerId())
+		x.Long(m.GetPhotoId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLMediaUploadedProfilePhoto) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLMediaUploadedProfilePhoto) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x89d159d2:
+
+		// not has flags
+
+		m.OwnerId = dBuf.Long()
+		m.PhotoId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

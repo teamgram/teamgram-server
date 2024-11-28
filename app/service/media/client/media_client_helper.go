@@ -4,7 +4,7 @@
 // Author: Benqi (wubenqi@gmail.com)
 //
 
-package media_client
+package mediaclient
 
 import (
 	"github.com/zeromicro/go-zero/zrpc"

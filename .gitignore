@@ -56,3 +56,4 @@ teamgramd/logs/*
 /pkg/net2/brpc/benchmarks/echoserver/testdata/test.data
 /app/interface/gnetway2
 /v2/
+app/service/dfs/internal/imaging/abc/abc

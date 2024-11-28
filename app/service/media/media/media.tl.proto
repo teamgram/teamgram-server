@@ -38,6 +38,7 @@ enum TLConstructor {
     CRC32_media_uploadThemeFile = 1122416736;
     CRC32_media_uploadStickerFile = -1397349139;
     CRC32_media_uploadRingtoneFile = 1035645449;
+    CRC32_media_uploadedProfilePhoto = -1982768686;
 }
 
 
@@ -190,6 +191,13 @@ message TL_media_uploadRingtoneFile {
     string file_name = 6;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_media_uploadedProfilePhoto {
+    TLConstructor  constructor = 1;
+    int64 owner_id = 3;
+    int64 photo_id = 4;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -220,5 +228,6 @@ service RPCMedia {
  rpc media_uploadThemeFile(TL_media_uploadThemeFile) returns (mtproto.Document) {}
  rpc media_uploadStickerFile(TL_media_uploadStickerFile) returns (mtproto.Document) {}
  rpc media_uploadRingtoneFile(TL_media_uploadRingtoneFile) returns (mtproto.Document) {}
+ rpc media_uploadedProfilePhoto(TL_media_uploadedProfilePhoto) returns (mtproto.Photo) {}
 }
 

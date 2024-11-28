@@ -22,6 +22,7 @@ const (
 	Predicate_dfs_uploadWallPaperFile      = "dfs_uploadWallPaperFile"
 	Predicate_dfs_uploadThemeFile          = "dfs_uploadThemeFile"
 	Predicate_dfs_uploadRingtoneFile       = "dfs_uploadRingtoneFile"
+	Predicate_dfs_uploadedProfilePhoto     = "dfs_uploadedProfilePhoto"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -69,6 +70,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 45335985, // 0x2b3c5b1
 
 	},
+	Predicate_dfs_uploadedProfilePhoto: {
+		0: -1549129612, // 0xa3aa2874
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -83,6 +88,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-1046081450: Predicate_dfs_uploadWallPaperFile,      // 0xc1a61056
 	-559525993:  Predicate_dfs_uploadThemeFile,          // 0xdea64f97
 	45335985:    Predicate_dfs_uploadRingtoneFile,       // 0x2b3c5b1
+	-1549129612: Predicate_dfs_uploadedProfilePhoto,     // 0xa3aa2874
 
 }
 

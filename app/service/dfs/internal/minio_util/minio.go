@@ -96,6 +96,36 @@ func (m *MinioUtil) GetFileObject(ctx context.Context, bucket, path string) (*mi
 	return object, nil
 }
 
+func (m *MinioUtil) GetPhotoFileData(ctx context.Context, path string) ([]byte, error) {
+	object, err := m.minio.Client.GetObject(ctx, m.c.Bucket.Photos, path, minio.GetObjectOptions{})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("GetFileObject error: %v")
+		return nil, err
+	}
+	defer func() {
+		_ = object.Close()
+	}()
+
+	stat, err := object.Stat()
+	if err != nil {
+		logx.WithContext(ctx).Errorf("GetFileObject error: %v")
+		return nil, err
+	}
+
+	data := make([]byte, stat.Size)
+	n, err := object.Read(data)
+	_ = err
+	data = data[:n]
+	if n > 0 {
+		err = nil
+	} else {
+		logx.WithContext(ctx).Errorf("GetFile (%s) error: %v", path, err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (m *MinioUtil) GetFile(ctx context.Context, bucket, path string, offset int64, limit int32) (bytes []byte, err error) {
 	var (
 		object *minio.Object
