@@ -17,10 +17,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/teamgram/marmota/pkg/bytes2"
-	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"os"
 	"path/filepath"
+	
+	"github.com/teamgram/marmota/pkg/bytes2"
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 )
 
 var imageFile = flag.String("image", "", "convert image file")
