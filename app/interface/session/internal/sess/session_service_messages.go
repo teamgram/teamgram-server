@@ -164,7 +164,8 @@ func (c *session) onPingDelayDisconnect(ctx context.Context, gatewayId string, m
 	c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, pong)
 	msgId.state = RECEIVED | NEED_NO_ACK
 
-	willCloseDate := time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
+	// willCloseDate := time.Now().Unix() + int64(pingDelayDisconnect.DisconnectDelay) + kPingAddTimeout
+	willCloseDate := time.Now().Unix() + kDefaultPingTimeout + kPingAddTimeout
 	if willCloseDate > c.closeDate {
 		c.closeDate = willCloseDate
 	}
