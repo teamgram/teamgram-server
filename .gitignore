@@ -57,3 +57,4 @@ teamgramd/logs/*
 /app/interface/gnetway2
 /v2/
 app/service/dfs/internal/imaging/abc/abc
+v2
