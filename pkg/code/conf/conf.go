@@ -26,13 +26,3 @@ type SmsVerifyCodeConfig struct {
 	Secret        string
 	RegionId      string
 }
-
-type WebrtcConfig struct {
-	Turn     bool
-	Stun     bool
-	Ip       string
-	Ipv6     string
-	Port     int
-	Username string
-	Password string
-}
