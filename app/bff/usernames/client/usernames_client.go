@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package usernames_client
+package usernamesclient
 
 import (
 	"context"
@@ -53,7 +53,7 @@ func (m *defaultUsernamesClient) AccountUpdateUsername(ctx context.Context, in *
 }
 
 // ContactsResolveUsername
-// contacts.resolveUsername#f93ccba3 username:string = contacts.ResolvedPeer;
+// contacts.resolveUsername#725afbbc flags:# username:string referer:flags.0?string = contacts.ResolvedPeer;
 func (m *defaultUsernamesClient) ContactsResolveUsername(ctx context.Context, in *mtproto.TLContactsResolveUsername) (*mtproto.Contacts_ResolvedPeer, error) {
 	client := mtproto.NewRPCUsernamesClient(m.cli.Conn())
 	return client.ContactsResolveUsername(ctx, in)

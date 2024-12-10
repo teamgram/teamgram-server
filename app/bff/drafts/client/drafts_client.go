@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package drafts_client
+package draftsclient
 
 import (
 	"context"
@@ -37,7 +37,7 @@ func NewDraftsClient(cli zrpc.Client) DraftsClient {
 }
 
 // MessagesSaveDraft
-// messages.saveDraft#bc39e14b flags:# no_webpage:flags.1?true reply_to_msg_id:flags.0?int peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> = Bool;
+// messages.saveDraft#d372c5ce flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long = Bool;
 func (m *defaultDraftsClient) MessagesSaveDraft(ctx context.Context, in *mtproto.TLMessagesSaveDraft) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCDraftsClient(m.cli.Conn())
 	return client.MessagesSaveDraft(ctx, in)

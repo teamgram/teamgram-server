@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package updates_client
+package updatesclient
 
 import (
 	"context"
@@ -44,7 +44,7 @@ func (m *defaultUpdatesClient) UpdatesGetState(ctx context.Context, in *mtproto.
 }
 
 // UpdatesGetDifference
-// updates.getDifference#25939651 flags:# pts:int pts_total_limit:flags.0?int date:int qts:int = updates.Difference;
+// updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (m *defaultUpdatesClient) UpdatesGetDifference(ctx context.Context, in *mtproto.TLUpdatesGetDifference) (*mtproto.Updates_Difference, error) {
 	client := mtproto.NewRPCUpdatesClient(m.cli.Conn())
 	return client.UpdatesGetDifference(ctx, in)

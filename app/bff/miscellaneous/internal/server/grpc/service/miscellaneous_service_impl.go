@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -21,14 +21,14 @@ import (
 // help.saveAppLog#6f02f748 events:Vector<InputAppEvent> = Bool;
 func (s *Service) HelpSaveAppLog(ctx context.Context, request *mtproto.TLHelpSaveAppLog) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.saveAppLog - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("help.saveAppLog - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.HelpSaveAppLog(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("help.saveAppLog - reply: %s", r)
+	c.Logger.Debugf("help.saveAppLog - reply: {%s}", r)
 	return r, err
 }
 
@@ -36,13 +36,13 @@ func (s *Service) HelpSaveAppLog(ctx context.Context, request *mtproto.TLHelpSav
 // help.test#c0e202f7 = Bool;
 func (s *Service) HelpTest(ctx context.Context, request *mtproto.TLHelpTest) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.test - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("help.test - metadata: {%s}, request: {%s}", c.MD, request)
 
 	r, err := c.HelpTest(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("help.test - reply: %s", r)
+	c.Logger.Debugf("help.test - reply: {%s}", r)
 	return r, err
 }

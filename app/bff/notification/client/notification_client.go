@@ -2,13 +2,13 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2022 Teamgram Authors.
+ * Copyright 2024 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
  */
 
-package notification_client
+package notificationclient
 
 import (
 	"context"
@@ -83,7 +83,7 @@ func (m *defaultNotificationClient) AccountUpdateDeviceLocked(ctx context.Contex
 }
 
 // AccountGetNotifyExceptions
-// account.getNotifyExceptions#53577479 flags:# compare_sound:flags.1?true peer:flags.0?InputNotifyPeer = Updates;
+// account.getNotifyExceptions#53577479 flags:# compare_sound:flags.1?true compare_stories:flags.2?true peer:flags.0?InputNotifyPeer = Updates;
 func (m *defaultNotificationClient) AccountGetNotifyExceptions(ctx context.Context, in *mtproto.TLAccountGetNotifyExceptions) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCNotificationClient(m.cli.Conn())
 	return client.AccountGetNotifyExceptions(ctx, in)
