@@ -66,6 +66,7 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 
 		action = s.onMTPRawMessage(ctx, c, int64(binary.LittleEndian.Uint64(frame)), needAck, frame)
 		if action == gnet.Close {
+			logx.Errorf("conn(%s) onMTPRawMessage - error: action == gnet.Close", c)
 			return
 		}
 	}
