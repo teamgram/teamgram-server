@@ -97,7 +97,7 @@
             FROM
                 users
             WHERE
-                (username LIKE :q OR first_name LIKE :q2 OR last_name LIKE :q2) AND id NOT IN(:id_list) LIMIT :limit
+                (username LIKE :q OR first_name LIKE :q2 OR last_name LIKE :q2) AND id NOT IN(:id_list) AND deleted=0 LIMIT :limit
         </sql>
     </operation>
 
@@ -113,7 +113,7 @@
             FROM
                 users
             WHERE
-                username LIKE :q2 AND id NOT IN(:id_list) LIMIT :limit
+                username LIKE :q2 AND id NOT IN(:id_list) AND deleted=0 LIMIT :limit
         </sql>
     </operation>
 

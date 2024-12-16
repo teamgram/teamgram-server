@@ -23,6 +23,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 )
 
 // AccountDeleteAccount
@@ -34,6 +35,17 @@ func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (
 	if err != nil {
 		c.Logger.Errorf("account.deleteAccount - error: %v", err)
 		return nil, err
+	}
+
+	if me.Username != "" {
+		_, err = c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
+			Constructor: 0,
+			Username:    "",
+		})
+		if err != nil {
+			c.Logger.Errorf("account.deleteAccount - error: %v", err)
+			return nil, err
+		}
 	}
 
 	// TODO(@benqi): 1. Clear account data 2. Kickoff other client

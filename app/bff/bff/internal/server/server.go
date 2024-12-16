@@ -302,6 +302,7 @@ func (s *Server) Initialize() error {
 					AuthsessionClient: c.AuthSessionClient,
 					ChatClient:        c.BizServiceClient,
 					SyncClient:        c.SyncClient,
+					UsernameClient:    c.BizServiceClient,
 				},
 				nil,
 				nil))

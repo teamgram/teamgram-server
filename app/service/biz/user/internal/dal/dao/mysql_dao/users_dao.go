@@ -326,10 +326,10 @@ func (dao *UsersDAO) SelectUsersByPhoneListWithCB(ctx context.Context, phoneList
 }
 
 // SearchByQueryString
-// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) limit :limit
+// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) and deleted = 0 limit :limit
 func (dao *UsersDAO) SearchByQueryString(ctx context.Context, q string, q2 string, idList []int64, limit int32) (rList []int64, err error) {
 	var (
-		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) limit ?", sqlx.InInt64List(idList))
+		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 	)
 
 	if len(idList) == 0 {
@@ -347,10 +347,10 @@ func (dao *UsersDAO) SearchByQueryString(ctx context.Context, q string, q2 strin
 }
 
 // SearchByQueryStringWithCB
-// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) limit :limit
+// select id from users where (username like :q or first_name like :q2 or last_name like :q2) and id not in (:id_list) and deleted = 0 limit :limit
 func (dao *UsersDAO) SearchByQueryStringWithCB(ctx context.Context, q string, q2 string, idList []int64, limit int32, cb func(sz, i int, v int64)) (rList []int64, err error) {
 	var (
-		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) limit ?", sqlx.InInt64List(idList))
+		query = fmt.Sprintf("select id from users where (username like ? or first_name like ? or last_name like ?) and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 	)
 
 	if len(idList) == 0 {
@@ -375,10 +375,10 @@ func (dao *UsersDAO) SearchByQueryStringWithCB(ctx context.Context, q string, q2
 }
 
 // SearchByQueryNotIdList
-// select id from users where username like :q2 and id not in (:id_list) limit :limit
+// select id from users where username like :q2 and id not in (:id_list) and deleted = 0 limit :limit
 func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idList []int64, limit int32) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) limit ?", sqlx.InInt64List(idList))
+		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 		values []dataobject.UsersDO
 	)
 
@@ -400,10 +400,10 @@ func (dao *UsersDAO) SearchByQueryNotIdList(ctx context.Context, q2 string, idLi
 }
 
 // SearchByQueryNotIdListWithCB
-// select id from users where username like :q2 and id not in (:id_list) limit :limit
+// select id from users where username like :q2 and id not in (:id_list) and deleted = 0 limit :limit
 func (dao *UsersDAO) SearchByQueryNotIdListWithCB(ctx context.Context, q2 string, idList []int64, limit int32, cb func(sz, i int, v *dataobject.UsersDO)) (rList []dataobject.UsersDO, err error) {
 	var (
-		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) limit ?", sqlx.InInt64List(idList))
+		query  = fmt.Sprintf("select id from users where username like ? and id not in (%s) and deleted = 0 limit ?", sqlx.InInt64List(idList))
 		values []dataobject.UsersDO
 	)
 
