@@ -22,7 +22,12 @@ import (
 // dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWriteFilePartData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.writeFilePartData - metadata: {%s}, request: {%s}", c.MD, request)
+	c.Logger.Debugf("dfs.writeFilePartData - request: {creator: %d, file_id: %d, file_part: %d, file_total_parts: %d, bytes: %d}",
+		request.Creator,
+		request.FileId,
+		request.FilePart,
+		request.FileTotalParts,
+		len(request.Bytes))
 
 	r, err := c.DfsWriteFilePartData(request)
 	if err != nil {
@@ -89,7 +94,11 @@ func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloa
 		return nil, err
 	}
 
-	c.Logger.Debugf("dfs.downloadFile - reply: {%s}", r)
+	c.Logger.Debugf("dfs.downloadFile - reply: {type: %s, mtime: %d, bytes: %d}",
+		r.Type,
+		r.Mtime,
+		len(r.Bytes))
+
 	return r, err
 }
 
