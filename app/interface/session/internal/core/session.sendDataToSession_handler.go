@@ -42,7 +42,7 @@ func (c *SessionCore) SessionSendDataToSession(in *session.TLSessionSendDataToSe
 		return nil, err
 	}
 
-	mainAuth.SessionDataArrived(
+	_ = mainAuth.SessionDataArrived(
 		c.ctx,
 		int(data.KeyType),
 		data.AuthKeyId,

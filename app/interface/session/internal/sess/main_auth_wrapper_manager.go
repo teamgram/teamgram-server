@@ -44,15 +44,16 @@ func (m *MainAuthWrapperManager) DeleteByAuthKeyId(mainAuthKeyId int64) {
 	delete(m.authMgr, mainAuthKeyId)
 }
 
-func (m *MainAuthWrapperManager) AllocMainAuthWrapper(mainAuth *MainAuthWrapper) *MainAuthWrapper {
+func (m *MainAuthWrapperManager) AllocMainAuthWrapper(authKeyId int64, newMainAuth func(authKeyId int64) *MainAuthWrapper) *MainAuthWrapper {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	v, ok := m.authMgr[mainAuth.authKeyId]
+	v, ok := m.authMgr[authKeyId]
 	if ok {
 		return v
 	} else {
-		m.authMgr[mainAuth.authKeyId] = mainAuth
+		mainAuth := newMainAuth(authKeyId)
+		m.authMgr[authKeyId] = mainAuth
 		return mainAuth
 	}
 }

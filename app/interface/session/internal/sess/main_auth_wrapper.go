@@ -40,8 +40,12 @@ type SessionList struct {
 }
 
 func newSessionList(kType int, cb *MainAuthWrapper) *SessionList {
+	authId := int64(0)
+	if kType == mtproto.AuthKeyTypePerm {
+		authId = cb.authKeyId
+	}
 	return &SessionList{
-		authId:        0,
+		authId:        authId,
 		authType:      kType,
 		state:         0,
 		cacheSalt:     nil,

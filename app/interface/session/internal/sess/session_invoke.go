@@ -398,6 +398,7 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 	case *mtproto.TLUpdatesGetDifference:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
+		//
 	case *mtproto.TLUpdatesGetChannelDifference:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
 		//case *mtproto.TLAuthBindTempAuthKey:

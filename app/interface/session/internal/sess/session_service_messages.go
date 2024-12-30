@@ -76,7 +76,7 @@ func (c *session) onNewSessionCreated(ctx context.Context, gatewayId string, msg
 
 	logx.WithContext(ctx).Infof("onNewSessionCreated - reply: {%v}", newSessionCreated)
 
-	c.sendDirectToGateway(ctx, gatewayId, true, newSessionCreated, func(sentRaw *mtproto.TLMessageRawData) {
+	_, _ = c.sendDirectToGateway(ctx, gatewayId, true, newSessionCreated, func(sentRaw *mtproto.TLMessageRawData) {
 		id2 := c.sessList.cb.getNextNotifyId()
 		sentMsg := c.outQueue.AddNotifyMsg(id2, true, sentRaw)
 		sentMsg.sent = 0

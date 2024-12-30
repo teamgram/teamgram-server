@@ -67,13 +67,17 @@ func (c *SessionCore) getOrFetchMainAuthWrapper(mainAuthId int64) (*sess.MainAut
 		}
 	}
 
-	mainAuth = c.svcCtx.MainAuthMgr.AllocMainAuthWrapper(sess.NewMainAuthWrapper(
+	mainAuth = c.svcCtx.MainAuthMgr.AllocMainAuthWrapper(
 		mainAuthId,
-		kData.UserId,
-		int(kData.KeyState),
-		kData.Client,
-		kData.GetAndroidPushSessionId().GetValue(),
-		c.svcCtx.MainAuthMgr))
+		func(authKeyId int64) *sess.MainAuthWrapper {
+			return sess.NewMainAuthWrapper(
+				mainAuthId,
+				kData.UserId,
+				int(kData.KeyState),
+				kData.Client,
+				kData.GetAndroidPushSessionId().GetValue(),
+				c.svcCtx.MainAuthMgr)
+		})
 
 	return mainAuth, nil
 }

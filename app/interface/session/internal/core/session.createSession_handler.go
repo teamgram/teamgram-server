@@ -42,7 +42,7 @@ func (c *SessionCore) SessionCreateSession(in *session.TLSessionCreateSession) (
 		return nil, err
 	}
 
-	mainAuth.SessionClientNew(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
+	_ = mainAuth.SessionClientNew(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
 
 	return mtproto.BoolTrue, nil
 }

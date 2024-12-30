@@ -90,8 +90,9 @@ func (c serverIdCtx) Equal(id string) bool {
 }
 
 /*
-* tdesktop's SessionData:
+## tdesktop's SessionData:
 
+```
 PreRequestMap _toSend; // map of request_id -> request, that is waiting to be sent
 RequestMap _haveSent; // map of msg_id -> request, that was sent, msDate = 0 for msgs_state_req (no resend / state req), msDate = 0, seqNo = 0 for containers
 RequestIdsMap _toResend; // map of msg_id -> request_id, that request_id -> request lies in toSend and is waiting to be resent
@@ -101,6 +102,7 @@ QMap<mtpMsgId, bool> _stateRequest; // set of msg_id's, whose state should be re
 
 QMap<mtpRequestId, SerializedMessage> _receivedResponses; // map of request_id -> response that should be processed in the main thread
 QList<SerializedMessage> _receivedUpdates; // list of updates that should be processed in the main thread
+```
 */
 type session struct {
 	sessionId       int64
@@ -549,7 +551,7 @@ func (c *session) sendDirectToGateway(ctx context.Context, gatewayId string, con
 
 	x := mtproto.NewEncodeBuf(512)
 	salt := c.sessList.cacheSalt.GetSalt()
-	obj.Encode(x, c.sessList.cb.Layer())
+	_ = obj.Encode(x, c.sessList.cb.Layer())
 	b := x.GetBuf()
 
 	rawMsg := &mtproto.TLMessageRawData{

@@ -45,7 +45,7 @@ func (c *UpdatesCore) UpdatesGetDifference(in *mtproto.TLUpdatesGetDifference) (
 		UserId:        c.MD.UserId,
 		Pts:           in.Pts,
 		PtsTotalLimit: in.PtsTotalLimit,
-		Date:          int64(in.Date) - 1,
+		Date:          int64(in.Date),
 	})
 	if err != nil {
 		c.Logger.Errorf("updates.getDifference - error: %v", err)
