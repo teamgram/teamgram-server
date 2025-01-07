@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -102,6 +102,7 @@ enum TLConstructor {
     CRC32_user_getUserIdByPhone = -72645694;
     CRC32_user_setAuthorizationTTL = -702417936;
     CRC32_user_getAuthorizationTTL = -563197636;
+    CRC32_user_updatePremium = -1075388731;
 }
 
 
@@ -726,6 +727,13 @@ message TL_user_getAuthorizationTTL {
     int64 user_id = 3;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_updatePremium {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool premium = 4;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -841,5 +849,6 @@ service RPCUser {
  rpc user_getUserIdByPhone(TL_user_getUserIdByPhone) returns (mtproto.Int64) {}
  rpc user_setAuthorizationTTL(TL_user_setAuthorizationTTL) returns (mtproto.Bool) {}
  rpc user_getAuthorizationTTL(TL_user_getAuthorizationTTL) returns (mtproto.AccountDaysTTL) {}
+ rpc user_updatePremium(TL_user_updatePremium) returns (mtproto.Bool) {}
 }
 

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -1155,5 +1155,20 @@ func (s *Service) UserGetAuthorizationTTL(ctx context.Context, request *user.TLU
 	}
 
 	c.Logger.Debugf("user.getAuthorizationTTL - reply: {%s}", r)
+	return r, err
+}
+
+// UserUpdatePremium
+// user.updatePremium user_id:long premium:Bool = Bool;
+func (s *Service) UserUpdatePremium(ctx context.Context, request *user.TLUserUpdatePremium) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.updatePremium - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserUpdatePremium(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.updatePremium - reply: {%s}", r)
 	return r, err
 }

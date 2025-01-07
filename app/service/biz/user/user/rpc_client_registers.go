@@ -102,6 +102,7 @@ var rpcContextRegisters = map[string]RPCContextTuple{
 	"TLUserGetUserIdByPhone":             RPCContextTuple{"/mtproto.RPCUser/user_getUserIdByPhone", func() interface{} { return new(mtproto.Int64) }},
 	"TLUserSetAuthorizationTTL":          RPCContextTuple{"/mtproto.RPCUser/user_setAuthorizationTTL", func() interface{} { return new(mtproto.Bool) }},
 	"TLUserGetAuthorizationTTL":          RPCContextTuple{"/mtproto.RPCUser/user_getAuthorizationTTL", func() interface{} { return new(mtproto.AccountDaysTTL) }},
+	"TLUserUpdatePremium":                RPCContextTuple{"/mtproto.RPCUser/user_updatePremium", func() interface{} { return new(mtproto.Bool) }},
 }
 
 func FindRPCContextTuple(t interface{}) *RPCContextTuple {

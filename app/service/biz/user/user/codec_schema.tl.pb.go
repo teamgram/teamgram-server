@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -434,6 +434,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-563197636: func() mtproto.TLObject { // 0xde6e493c
 		return &TLUserGetAuthorizationTTL{
 			Constructor: -563197636,
+		}
+	},
+	-1075388731: func() mtproto.TLObject { // 0xbfe6dec5
+		return &TLUserUpdatePremium{
+			Constructor: -1075388731,
 		}
 	},
 }
@@ -4469,6 +4474,50 @@ func (m *TLUserGetAuthorizationTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 		// not has flags
 
 		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserUpdatePremium
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserUpdatePremium) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xbfe6dec5:
+		x.UInt(0xbfe6dec5)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetPremium().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserUpdatePremium) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserUpdatePremium) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xbfe6dec5:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.Bool{}
+		m2.Decode(dBuf)
+		m.Premium = m2
+
 		return dBuf.GetError()
 
 	default:

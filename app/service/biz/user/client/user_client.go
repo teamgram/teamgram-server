@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -99,6 +99,7 @@ type UserClient interface {
 	UserGetUserIdByPhone(ctx context.Context, in *user.TLUserGetUserIdByPhone) (*mtproto.Int64, error)
 	UserSetAuthorizationTTL(ctx context.Context, in *user.TLUserSetAuthorizationTTL) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
+	UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*mtproto.Bool, error)
 }
 
 type defaultUserClient struct {
@@ -945,4 +946,15 @@ func (m *defaultUserClient) UserGetAuthorizationTTL(ctx context.Context, in *use
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetAuthorizationTTL(ctx, in)
+}
+
+// UserUpdatePremium
+// user.updatePremium user_id:long premium:Bool = Bool;
+func (m *defaultUserClient) UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdatePremium(ctx, in)
 }

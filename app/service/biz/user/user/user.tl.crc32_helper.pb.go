@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -93,4 +93,5 @@ const (
 	CRC32_user_getUserIdByPhone             TLConstructor = -72645694   // 0xfbab83c2
 	CRC32_user_setAuthorizationTTL          TLConstructor = -702417936  // 0xd621f3f0
 	CRC32_user_getAuthorizationTTL          TLConstructor = -563197636  // 0xde6e493c
+	CRC32_user_updatePremium                TLConstructor = -1075388731 // 0xbfe6dec5
 )

@@ -1007,3 +1007,26 @@ func (d *Dao) UpdatePhoneNumber(ctx context.Context, id int64, phoneNumber strin
 
 	return nil
 }
+
+func (d *Dao) UpdateUserPremium(ctx context.Context, id int64, premium bool) bool {
+	_, _, err := d.CachedConn.Exec(
+		ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			rowsAffected, err := d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+				"premium": premium,
+			}, id)
+
+			if err != nil {
+				return 0, 0, err
+			}
+
+			return 0, rowsAffected, nil
+		},
+		genCacheUserDataCacheKey(id))
+	if err != nil {
+		logx.WithContext(ctx).Errorf("updateUserUsername - error: %v", err)
+		return false
+	}
+
+	return true
+}

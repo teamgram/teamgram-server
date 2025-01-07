@@ -2,7 +2,7 @@
 // WARNING! All changes made in this file will be lost!
 // Created from 'scheme.tl' by 'mtprotoc'
 //
-// Copyright (c) 2024-present,  Teamgram Authors.
+// Copyright (c) 2025-present,  Teamgram Authors.
 //  All rights reserved.
 //
 // Author: Benqi (wubenqi@gmail.com)
@@ -105,6 +105,7 @@ const (
 	RPCUser_UserGetUserIdByPhone_FullMethodName             = "/user.RPCUser/user_getUserIdByPhone"
 	RPCUser_UserSetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_setAuthorizationTTL"
 	RPCUser_UserGetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_getAuthorizationTTL"
+	RPCUser_UserUpdatePremium_FullMethodName                = "/user.RPCUser/user_updatePremium"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -187,6 +188,7 @@ type RPCUserClient interface {
 	UserGetUserIdByPhone(ctx context.Context, in *TLUserGetUserIdByPhone, opts ...grpc.CallOption) (*mtproto.Int64, error)
 	UserSetAuthorizationTTL(ctx context.Context, in *TLUserSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.AccountDaysTTL, error)
+	UserUpdatePremium(ctx context.Context, in *TLUserUpdatePremium, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCUserClient struct {
@@ -881,6 +883,15 @@ func (c *rPCUserClient) UserGetAuthorizationTTL(ctx context.Context, in *TLUserG
 	return out, nil
 }
 
+func (c *rPCUserClient) UserUpdatePremium(ctx context.Context, in *TLUserUpdatePremium, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserUpdatePremium_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility
@@ -961,6 +972,7 @@ type RPCUserServer interface {
 	UserGetUserIdByPhone(context.Context, *TLUserGetUserIdByPhone) (*mtproto.Int64, error)
 	UserSetAuthorizationTTL(context.Context, *TLUserSetAuthorizationTTL) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
+	UserUpdatePremium(context.Context, *TLUserUpdatePremium) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have forward compatible implementations.
@@ -1194,6 +1206,9 @@ func (UnimplementedRPCUserServer) UserSetAuthorizationTTL(context.Context, *TLUs
 }
 func (UnimplementedRPCUserServer) UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetAuthorizationTTL not implemented")
+}
+func (UnimplementedRPCUserServer) UserUpdatePremium(context.Context, *TLUserUpdatePremium) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserUpdatePremium not implemented")
 }
 
 // UnsafeRPCUserServer may be embedded to opt out of forward compatibility for this service.
@@ -2575,6 +2590,24 @@ func _RPCUser_UserGetAuthorizationTTL_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserUpdatePremium_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserUpdatePremium)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserUpdatePremium(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserUpdatePremium_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserUpdatePremium(ctx, req.(*TLUserUpdatePremium))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2885,6 +2918,10 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getAuthorizationTTL",
 			Handler:    _RPCUser_UserGetAuthorizationTTL_Handler,
+		},
+		{
+			MethodName: "user_updatePremium",
+			Handler:    _RPCUser_UserUpdatePremium_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

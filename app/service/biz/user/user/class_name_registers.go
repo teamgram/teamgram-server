@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -92,6 +92,7 @@ const (
 	Predicate_user_getUserIdByPhone             = "user_getUserIdByPhone"
 	Predicate_user_setAuthorizationTTL          = "user_setAuthorizationTTL"
 	Predicate_user_getAuthorizationTTL          = "user_getAuthorizationTTL"
+	Predicate_user_updatePremium                = "user_updatePremium"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -419,6 +420,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -563197636, // 0xde6e493c
 
 	},
+	Predicate_user_updatePremium: {
+		0: -1075388731, // 0xbfe6dec5
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -503,6 +508,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-72645694:   Predicate_user_getUserIdByPhone,             // 0xfbab83c2
 	-702417936:  Predicate_user_setAuthorizationTTL,          // 0xd621f3f0
 	-563197636:  Predicate_user_getAuthorizationTTL,          // 0xde6e493c
+	-1075388731: Predicate_user_updatePremium,                // 0xbfe6dec5
 
 }
 
