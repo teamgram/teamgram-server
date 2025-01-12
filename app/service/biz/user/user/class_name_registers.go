@@ -421,7 +421,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_user_updatePremium: {
-		0: -1075388731, // 0xbfe6dec5
+		0: -1173824359, // 0xba08dc99
 
 	},
 }
@@ -508,7 +508,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-72645694:   Predicate_user_getUserIdByPhone,             // 0xfbab83c2
 	-702417936:  Predicate_user_setAuthorizationTTL,          // 0xd621f3f0
 	-563197636:  Predicate_user_getAuthorizationTTL,          // 0xde6e493c
-	-1075388731: Predicate_user_updatePremium,                // 0xbfe6dec5
+	-1173824359: Predicate_user_updatePremium,                // 0xba08dc99
 
 }
 

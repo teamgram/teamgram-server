@@ -24,12 +24,13 @@ import (
 )
 
 // UserUpdatePremium
-// user.updatePremium user_id:long premium:Bool = Bool;
+// user.updatePremium flags:# user_id:long premium:Bool months:flags.1?int = Bool;
 func (c *UserCore) UserUpdatePremium(in *user.TLUserUpdatePremium) (*mtproto.Bool, error) {
 	rB := c.svcCtx.Dao.UpdateUserPremium(
 		c.ctx,
 		in.GetUserId(),
-		mtproto.FromBool(in.Premium))
+		mtproto.FromBool(in.Premium),
+		in.GetMonths().GetValue())
 
 	return mtproto.ToBool(rB), nil
 }

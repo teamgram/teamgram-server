@@ -436,9 +436,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -563197636,
 		}
 	},
-	-1075388731: func() mtproto.TLObject { // 0xbfe6dec5
+	-1173824359: func() mtproto.TLObject { // 0xba08dc99
 		return &TLUserUpdatePremium{
-			Constructor: -1075388731,
+			Constructor: -1173824359,
 		}
 	},
 }
@@ -4487,13 +4487,24 @@ func (m *TLUserGetAuthorizationTTL) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLUserUpdatePremium) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xbfe6dec5:
-		x.UInt(0xbfe6dec5)
+	case 0xba08dc99:
+		x.UInt(0xba08dc99)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
+		if m.GetMonths() != nil {
+			flags |= 1 << 1
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetUserId())
 		m.GetPremium().Encode(x, layer)
+		if m.GetMonths() != nil {
+			x.Int(m.GetMonths().Value)
+		}
 
 	default:
 		// log.Errorf("")
@@ -4508,15 +4519,21 @@ func (m *TLUserUpdatePremium) CalcByteSize(layer int32) int {
 
 func (m *TLUserUpdatePremium) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xbfe6dec5:
+	case 0xba08dc99:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
+		// flags Debug by @benqi
 		m.UserId = dBuf.Long()
 
-		m2 := &mtproto.Bool{}
-		m2.Decode(dBuf)
-		m.Premium = m2
+		m3 := &mtproto.Bool{}
+		m3.Decode(dBuf)
+		m.Premium = m3
+
+		if (flags & (1 << 1)) != 0 {
+			m.Months = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
 
 		return dBuf.GetError()
 

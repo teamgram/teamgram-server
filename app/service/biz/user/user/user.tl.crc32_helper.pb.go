@@ -93,5 +93,5 @@ const (
 	CRC32_user_getUserIdByPhone             TLConstructor = -72645694   // 0xfbab83c2
 	CRC32_user_setAuthorizationTTL          TLConstructor = -702417936  // 0xd621f3f0
 	CRC32_user_getAuthorizationTTL          TLConstructor = -563197636  // 0xde6e493c
-	CRC32_user_updatePremium                TLConstructor = -1075388731 // 0xbfe6dec5
+	CRC32_user_updatePremium                TLConstructor = -1173824359 // 0xba08dc99
 )

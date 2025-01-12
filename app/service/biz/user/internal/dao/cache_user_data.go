@@ -176,6 +176,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		ProfileColor:       makePeerColor(userDO.ProfileColor, userDO.ProfileColorBackgroundEmojiId),
 		Birthday:           userDO.Birthday,
 		PersonalChannelId:  userDO.PersonalChannelId,
+		PremiumExpireDate:  mtproto.MakeFlagsInt64(userDO.PremiumExpireDate),
 	}).To_UserData()
 
 	return userData

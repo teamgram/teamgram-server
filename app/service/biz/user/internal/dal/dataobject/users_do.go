@@ -25,6 +25,7 @@ type UsersDO struct {
 	Scam                             bool   `db:"scam" json:"scam"`
 	Fake                             bool   `db:"fake" json:"fake"`
 	Premium                          bool   `db:"premium" json:"premium"`
+	PremiumExpireDate                int64  `db:"premium_expire_date" json:"premium_expire_date"`
 	About                            string `db:"about" json:"about"`
 	State                            int32  `db:"state" json:"state"`
 	IsBot                            bool   `db:"is_bot" json:"is_bot"`

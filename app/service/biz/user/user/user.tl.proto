@@ -102,7 +102,7 @@ enum TLConstructor {
     CRC32_user_getUserIdByPhone = -72645694;
     CRC32_user_setAuthorizationTTL = -702417936;
     CRC32_user_getAuthorizationTTL = -563197636;
-    CRC32_user_updatePremium = -1075388731;
+    CRC32_user_updatePremium = -1173824359;
 }
 
 
@@ -732,6 +732,7 @@ message TL_user_updatePremium {
     TLConstructor  constructor = 1;
     int64 user_id = 3;
     mtproto.Bool premium = 4;
+    google.protobuf.Int32Value months = 5;
 }
 
 

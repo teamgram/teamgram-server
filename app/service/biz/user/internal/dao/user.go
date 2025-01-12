@@ -1008,14 +1008,59 @@ func (d *Dao) UpdatePhoneNumber(ctx context.Context, id int64, phoneNumber strin
 	return nil
 }
 
-func (d *Dao) UpdateUserPremium(ctx context.Context, id int64, premium bool) bool {
+func (d *Dao) UpdateUserPremium(ctx context.Context, id int64, premium bool, months int32) bool {
 	_, _, err := d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-			rowsAffected, err := d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
-				"premium": premium,
-			}, id)
+			var (
+				rowsAffected int64
+				err          error
+			)
 
+			if !premium {
+				rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+					"premium":             false,
+					"premium_expire_date": 0,
+				}, id)
+			} else {
+				userDO, _ := d.UsersDAO.SelectById(ctx, id)
+				if userDO == nil {
+					return 0, 0, mtproto.ErrUserIdInvalid
+				}
+
+				date := time.Now()
+
+				if !userDO.Premium {
+					rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+						"premium":             true,
+						"premium_expire_date": date.AddDate(0, int(months), 0).Unix(),
+					}, id)
+				} else {
+					if months == 0 {
+						rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+							"premium":             true,
+							"premium_expire_date": 0,
+						}, id)
+					} else {
+						if userDO.PremiumExpireDate > date.Unix() {
+							remaining := userDO.PremiumExpireDate - date.Unix()
+							rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+								"premium":             true,
+								"premium_expire_date": date.AddDate(0, int(months), 0).Unix() + remaining,
+							}, id)
+						} else {
+							rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+								"premium":             true,
+								"premium_expire_date": date.AddDate(0, int(months), 0).Unix(),
+							}, id)
+						}
+					}
+				}
+				rowsAffected, err = d.UsersDAO.UpdateUser(ctx, map[string]interface{}{
+					"premium":             premium,
+					"premium_expire_date": time.Now().Unix() + int64(months)*30*24*60*60,
+				}, id)
+			}
 			if err != nil {
 				return 0, 0, err
 			}
