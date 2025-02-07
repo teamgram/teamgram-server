@@ -36,6 +36,10 @@ type outboxMsg struct {
 	msg   *mtproto.TLMessageRawData
 }
 
+func (o *outboxMsg) isPushMsgId() bool {
+	return o.msgId>>32 == 0 && o.msgId <= math.MaxInt32
+}
+
 type sessionOutgoingQueue struct {
 	minMsgId    int64
 	maxMsgId    int64

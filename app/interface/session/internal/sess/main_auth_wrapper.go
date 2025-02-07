@@ -415,6 +415,7 @@ func (m *MainAuthWrapper) onBindPushSessionId(ctx context.Context, sList *Sessio
 	}
 
 	sess.isAndroidPush = true
+	sess.canSync = true
 	m.androidPushSession = sess
 
 	m.setOnline(ctx)

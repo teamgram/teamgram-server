@@ -396,11 +396,14 @@ func (c *session) onRpcRequest(ctx context.Context, gatewayId, clientIp string, 
 		}
 	case *mtproto.TLUpdatesGetState:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
+		c.canSync = false
 	case *mtproto.TLUpdatesGetDifference:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
+		c.canSync = false
 		//
 	case *mtproto.TLUpdatesGetChannelDifference:
 		c.sessList.cb.onSetMainUpdatesSession(ctx, c)
+		c.canSync = false
 		//case *mtproto.TLAuthBindTempAuthKey:
 		//	res, err := c.AuthSessionRpcClient.AuthBindTempAuthKey(context.Background(), query.(*mtproto.TLAuthBindTempAuthKey))
 		//	if err != nil {
@@ -555,6 +558,12 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 				c.sessList.cb.changeAuthState(ctx, mtproto.AuthStateNormal, authAuthorization.GetUser().GetId())
 			}
 		}
+	case *mtproto.TLUpdatesGetState:
+		c.canSync = true
+	case *mtproto.TLUpdatesGetDifference:
+		c.canSync = true
+	case *mtproto.TLUpdatesGetChannelDifference:
+		c.canSync = true
 	default:
 	}
 
