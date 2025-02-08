@@ -476,6 +476,7 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 		return
 	}
 
+	hasCanSync := false
 	switch request := rpcResult.reqMsg.(type) {
 	case *mtproto.TLAuthBindTempAuthKey:
 		if rpcErr != nil {
@@ -559,15 +560,23 @@ func (c *session) onRpcResult(ctx context.Context, rpcResult *rpcApiMessage) {
 			}
 		}
 	case *mtproto.TLUpdatesGetState:
-		c.canSync = true
+		hasCanSync = true
+		// c.canSync = true
 	case *mtproto.TLUpdatesGetDifference:
-		c.canSync = true
+		hasCanSync = true
+		// c.canSync = true
 	case *mtproto.TLUpdatesGetChannelDifference:
-		c.canSync = true
+		hasCanSync = true
+		// c.canSync = true
 	default:
 	}
 
 	c.sendRpcResult(ctx, rpcResult.MoveRpcResult())
+	if hasCanSync {
+		c.canSync = true
+		gatewayId := c.getGatewayId()
+		c.sendQueueToGateway(ctx, gatewayId)
+	}
 }
 
 func (c *session) sendRpcResult(ctx context.Context, rpcResult *mtproto.TLRpcResult) {
