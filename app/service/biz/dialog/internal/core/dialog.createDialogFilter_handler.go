@@ -57,14 +57,12 @@ func (c *DialogCore) DialogCreateDialogFilter(in *dialog.TLDialogCreateDialogFil
 						Order:        v.OrderValue,
 					}
 
-					if err := jsonx.UnmarshalFromString(v.DialogFilter, &dialogFilter.DialogFilter); err != nil {
+					if df, err := mtproto.UnmarshalDialogFilter(v.DialogFilter); err != nil {
 						c.Logger.Errorf("jsonx.UnmarshalFromString(%v) - error: %v", v, err)
 						// continue
 						return
-					}
-
-					if dialogFilter.DialogFilter == nil {
-						dialogFilter.DialogFilter = mtproto.MakeTLDialogFilter(nil).To_DialogFilter()
+					} else {
+						dialogFilter.DialogFilter = df
 					}
 
 					vList = append(vList, dialogFilter)

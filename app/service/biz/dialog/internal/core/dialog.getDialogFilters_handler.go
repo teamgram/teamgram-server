@@ -16,8 +16,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
-
-	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 // DialogGetDialogFilters
@@ -46,14 +44,12 @@ func (c *DialogCore) DialogGetDialogFilters(in *dialog.TLDialogGetDialogFilters)
 						Order:        v.OrderValue,
 					}
 
-					if err := jsonx.UnmarshalFromString(v.DialogFilter, &dialogFilter.DialogFilter); err != nil {
+					if df, err := mtproto.UnmarshalDialogFilter(v.DialogFilter); err != nil {
 						c.Logger.Errorf("jsonx.UnmarshalFromString(%v) - error: %v", v, err)
 						// continue
 						return
-					}
-
-					if dialogFilter.DialogFilter == nil {
-						dialogFilter.DialogFilter = mtproto.MakeTLDialogFilter(nil).To_DialogFilter()
+					} else {
+						dialogFilter.DialogFilter = df
 					}
 
 					vList = append(vList, dialogFilter)
