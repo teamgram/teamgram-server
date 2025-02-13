@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -198,7 +198,7 @@ func (s *Service) MessagesGetMessagesViews(ctx context.Context, request *mtproto
 }
 
 // MessagesSearchGlobal
-// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true groups_only:flags.2?true users_only:flags.3?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (s *Service) MessagesSearchGlobal(ctx context.Context, request *mtproto.TLMessagesSearchGlobal) (*mtproto.Messages_Messages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.searchGlobal - metadata: {%s}, request: {%s}", c.MD, request)
@@ -434,6 +434,21 @@ func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *mtprot
 	}
 
 	c.Logger.Debugf("messages.getOutboxReadDate - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesReportMessagesDelivery
+// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
+func (s *Service) MessagesReportMessagesDelivery(ctx context.Context, request *mtproto.TLMessagesReportMessagesDelivery) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.reportMessagesDelivery - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesReportMessagesDelivery(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.reportMessagesDelivery - reply: {%s}", r)
 	return r, err
 }
 
