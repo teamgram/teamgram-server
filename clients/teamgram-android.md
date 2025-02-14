@@ -12,10 +12,10 @@
 
 If you want to connect to your own server, you can modify the following code:
 
-[ConnectionsManager.cpp#L1691](https://github.com/teamgram/teamgram-android/blob/teamgram/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1691)
+[ConnectionsManager.cpp#L1770](https://github.com/teamgram/teamgram-android/blob/teamgram/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1770)
 
 ```
-https://github.com/teamgram/teamgram-android/blob/teamgram/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1691
+https://github.com/teamgram/teamgram-android/blob/teamgram/TMessagesProj/jni/tgnet/ConnectionsManager.cpp#L1770
 void ConnectionsManager::initDatacenters() {
     Datacenter *datacenter;
     if (!testBackend) {
@@ -32,6 +32,4 @@ void ConnectionsManager::initDatacenters() {
         }
     }
 }
-
-
 ```
