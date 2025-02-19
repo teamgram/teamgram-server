@@ -173,6 +173,8 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Stickers: []*mtproto.Document{},
 		}).To_Messages_FavedStickers(), nil
 	case "TLMessagesGetMaskStickers":
+		fallthrough
+	case "TLMessagesGetEmojiStickers":
 		return mtproto.MakeTLMessagesAllStickers(&mtproto.Messages_AllStickers{
 			Hash: 0,
 			Sets: []*mtproto.StickerSet{},
@@ -197,6 +199,8 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Stickers: []*mtproto.Document{},
 		}).To_Messages_Stickers(), nil
 	case "TLMessagesGetFeaturedStickers":
+		fallthrough
+	case "TLMessagesGetFeaturedEmojiStickers":
 		return mtproto.MakeTLMessagesFeaturedStickers(&mtproto.Messages_FeaturedStickers{
 			Count:  0,
 			Hash:   0,
@@ -204,7 +208,7 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Unread: []int64{},
 		}).To_Messages_FeaturedStickers(), nil
 	case "TLMessagesGetStickerSet":
-		return nil, mtproto.ErrStickerIdInvalid
+		return mtproto.MakeTLMessagesStickerSetNotModified(&mtproto.Messages_StickerSet{}).To_Messages_StickerSet(), nil
 
 	// 	scheduledmessages
 	case "TLMessagesGetScheduledMessages":
