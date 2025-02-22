@@ -49,7 +49,7 @@ func (c *UserProfileCore) AccountUpdateProfile(in *mtproto.TLAccountUpdateProfil
 				me.SetAbout(in.GetAbout().GetValue())
 			}
 		}
-	} else {
+	} //else {
 		if in.GetFirstName().GetValue() == "" {
 			err = mtproto.ErrFirstnameInvalid
 			c.Logger.Errorf("account.updateProfile - error: bad request (%v)", err)
@@ -80,7 +80,7 @@ func (c *UserProfileCore) AccountUpdateProfile(in *mtproto.TLAccountUpdateProfil
 				}).To_Update()),
 			})
 		}
-	}
+	//}
 
 	return me.ToSelfUser(), nil
 }
