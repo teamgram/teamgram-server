@@ -258,6 +258,7 @@ func (c *MessageCore) MessageGetHistoryMessages(in *message.TLMessageGetHistoryM
 		selfUserId = in.UserId
 		peer       = mtproto.MakePeerUtil(in.PeerType, in.PeerId)
 		addOffset  = in.AddOffset
+		offsetDate = in.OffsetDate
 		limit      = in.Limit
 		offsetId   = in.OffsetId
 		minId      = in.MinId
@@ -267,6 +268,7 @@ func (c *MessageCore) MessageGetHistoryMessages(in *message.TLMessageGetHistoryM
 	)
 
 	loadType := loadTypeBackward
+
 	if addOffset >= 0 {
 		loadType = loadTypeBackward
 	} else if addOffset+limit > 0 {
@@ -278,14 +280,32 @@ func (c *MessageCore) MessageGetHistoryMessages(in *message.TLMessageGetHistoryM
 	if offsetId == 0 {
 		offsetId = math.MaxInt32
 	}
-	//if offsetDate > 0 {
-	//	switch loadType {
-	//	case loadTypeBackward:
-	//	case loadTypeFirstAroundDate:
-	//	case loadTypeForward:
-	//	}
-	//} else
-	{
+
+	if offsetDate > 0 {
+		switch loadType {
+		case loadTypeBackward:
+			if offsetId == 0 {
+				offsetId = math.MaxInt32
+			}
+			// c.svcCtx.Dao.MessageClient.MessageGet
+			boxList = c.svcCtx.Dao.GetOffsetDateBackwardHistoryMessages(c.ctx, selfUserId, peer, offsetDate, minId, maxId, addOffset+limit, hash)
+		case loadTypeFirstAroundDate:
+			boxList1 := c.svcCtx.GetOffsetDateForwardHistoryMessages(c.ctx, selfUserId, peer, offsetDate, minId, maxId, -addOffset, hash)
+			for i, j := 0, len(boxList1)-1; i < j; i, j = i+1, j-1 {
+				boxList1[i], boxList1[j] = boxList1[j], boxList1[i]
+			}
+			boxList = append(boxList, boxList1...)
+			// 降序
+			boxList2 := c.svcCtx.Dao.GetOffsetDateBackwardHistoryMessages(c.ctx, selfUserId, peer, offsetDate, minId, maxId, limit+addOffset, hash)
+			// log.Infof("%v", messages2)
+			boxList = append(boxList, boxList2...)
+		case loadTypeForward:
+			boxList = c.svcCtx.Dao.GetOffsetDateForwardHistoryMessages(c.ctx, selfUserId, peer, offsetDate, minId, maxId, -addOffset, hash)
+			for i, j := 0, len(boxList)-1; i < j; i, j = i+1, j-1 {
+				boxList[i], boxList[j] = boxList[j], boxList[i]
+			}
+		}
+	} else {
 		switch loadType {
 		case loadTypeBackward:
 			if offsetId == 0 {
@@ -308,6 +328,8 @@ func (c *MessageCore) MessageGetHistoryMessages(in *message.TLMessageGetHistoryM
 			for i, j := 0, len(boxList)-1; i < j; i, j = i+1, j-1 {
 				boxList[i], boxList[j] = boxList[j], boxList[i]
 			}
+			//case loadTypeLimit1:
+			//	boxList = c.svcCtx.Dao.GetOffsetDateForwardHistoryMessages(c.ctx, selfUserId, peer, offsetDate, minId, maxId, limit, hash)
 		}
 	}
 	return &message.Vector_MessageBox{
