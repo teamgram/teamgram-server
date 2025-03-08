@@ -103,7 +103,9 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 	}
 	// message
 	if in.Message != nil {
-		if in.Message.Value == "" {
+		if in.Message.Value == "" &&
+		   (outMessage.Media == nil ||
+		    outMessage.Media.PredicateName == mtproto.Predicate_messageMediaEmpty) {
 			err = mtproto.ErrMessageEmpty
 			c.Logger.Errorf("message empty: %v", err)
 			return nil, err
