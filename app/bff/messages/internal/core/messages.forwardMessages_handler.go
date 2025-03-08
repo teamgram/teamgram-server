@@ -198,7 +198,8 @@ func (c *MessagesCore) makeForwardMessages(
 
 	fwdOutboxList := make([]*msgpb.OutboxMessage, 0, int(messageList.Length()))
 	groupedIds := make(map[int64]int64)
-	for _, box := range messageList.Datas {
+	for i := len(messageList.Datas) - 1; i >= 0; i-- {
+		box := messageList.Datas[i]
 		m := box.Message
 		// TODO(@benqi): rid is 0
 
