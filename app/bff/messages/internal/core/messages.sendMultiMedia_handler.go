@@ -164,6 +164,12 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *mtproto.TLMessagesSendMultiMed
 					ReplyToPeerId:          nil,
 					ReplyToTopId:           nil,
 				}).To_MessageReplyHeader()
+				if in.GetReplyTo().GetQuoteText() != nil {
+					outMessage.ReplyTo.Quote = true
+					outMessage.ReplyTo.QuoteText = in.GetReplyTo().GetQuoteText()
+					outMessage.ReplyTo.QuoteEntities = in.GetReplyTo().GetQuoteEntities()
+					outMessage.ReplyTo.QuoteOffset = in.GetReplyTo().GetQuoteOffset()
+				}
 			case mtproto.Predicate_inputReplyToStory:
 				// TODO:
 			}
