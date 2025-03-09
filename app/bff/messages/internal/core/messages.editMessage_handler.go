@@ -19,13 +19,13 @@
 package core
 
 import (
-	"google.golang.org/protobuf/proto"
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
@@ -104,8 +104,8 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 	// message
 	if in.Message != nil {
 		if in.Message.Value == "" &&
-		   (outMessage.Media == nil ||
-		    outMessage.Media.PredicateName == mtproto.Predicate_messageMediaEmpty) {
+			(outMessage.Media == nil ||
+				outMessage.Media.PredicateName == mtproto.Predicate_messageMediaEmpty) {
 			err = mtproto.ErrMessageEmpty
 			c.Logger.Errorf("message empty: %v", err)
 			return nil, err
