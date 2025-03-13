@@ -77,7 +77,7 @@ func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mt
 	cUser.FirstName = mtproto.MakeFlagsString(in.FirstName)
 	cUser.LastName = mtproto.MakeFlagsString(in.LastName)
 	cUser.Phone = mtproto.MakeFlagsString(in.Phone)
-	
+
 	me, _ := users.GetUnsafeUserSelf(c.MD.UserId)
 
 	// TODO(@benqi): 性能优化，复用users

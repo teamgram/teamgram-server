@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -38,6 +38,7 @@ enum TLConstructor {
     CRC32_inbox_readInboxHistory = 32978549;
     CRC32_inbox_readOutboxHistory = 477116106;
     CRC32_inbox_readMediaUnreadToInboxV2 = -356170942;
+    CRC32_inbox_updatePinnedMessageV2 = 1454874236;
 }
 
 
@@ -233,6 +234,21 @@ message TL_inbox_readMediaUnreadToInboxV2 {
     int64 dialog_message_id = 6;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_inbox_updatePinnedMessageV2 {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    bool unpin = 4;
+    int32 peer_type = 5;
+    int64 peer_id = 6;
+    int32 id = 7;
+    int64 dialog_message_id = 8;
+    google.protobuf.Int32Value layer = 9;
+    google.protobuf.StringValue server_id = 10;
+    google.protobuf.Int64Value session_id = 11;
+    google.protobuf.Int64Value client_req_msg_id = 12;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -257,5 +273,6 @@ service RPCInbox {
  rpc inbox_readInboxHistory(TL_inbox_readInboxHistory) returns (mtproto.Void) {}
  rpc inbox_readOutboxHistory(TL_inbox_readOutboxHistory) returns (mtproto.Void) {}
  rpc inbox_readMediaUnreadToInboxV2(TL_inbox_readMediaUnreadToInboxV2) returns (mtproto.Void) {}
+ rpc inbox_updatePinnedMessageV2(TL_inbox_updatePinnedMessageV2) returns (mtproto.Void) {}
 }
 

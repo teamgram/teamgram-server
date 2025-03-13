@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -29,4 +29,5 @@ const (
 	CRC32_inbox_readInboxHistory           TLConstructor = 32978549    // 0x1f73675
 	CRC32_inbox_readOutboxHistory          TLConstructor = 477116106   // 0x1c7036ca
 	CRC32_inbox_readMediaUnreadToInboxV2   TLConstructor = -356170942  // 0xeac54342
+	CRC32_inbox_updatePinnedMessageV2      TLConstructor = 1454874236  // 0x56b79e7c
 )

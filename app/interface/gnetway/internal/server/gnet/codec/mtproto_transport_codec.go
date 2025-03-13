@@ -12,10 +12,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/valyala/bytebufferpool"
 
 	"github.com/teamgram/proto/mtproto/crypto"
 
+	"github.com/valyala/bytebufferpool"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

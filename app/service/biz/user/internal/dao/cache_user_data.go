@@ -170,7 +170,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		PrivaciesVersion:   1,
 		Premium:            userDO.Premium,
 		EmojiStatus:        makeEmojiStatus(userDO.EmojiStatusDocumentId, userDO.EmojiStatusUntil),
-		StoriesUnavailable: false,
+		StoriesUnavailable: true,
 		StoriesMaxId:       userDO.StoriesMaxId,
 		Color:              makePeerColor(userDO.Color, userDO.ColorBackgroundEmojiId),
 		ProfileColor:       makePeerColor(userDO.ProfileColor, userDO.ProfileColorBackgroundEmojiId),

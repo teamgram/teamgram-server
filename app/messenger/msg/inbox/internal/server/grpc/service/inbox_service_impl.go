@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -169,7 +169,7 @@ func (s *Service) InboxUnpinAllMessages(ctx context.Context, request *inbox.TLIn
 }
 
 // InboxSendUserMessageToInboxV2
-// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> = Void;
+// inbox.sendUserMessageToInboxV2 flags:# user_id:long out:flags.0?true from_id:long from_auth_keyId:long peer_type:int peer_id:long box_list:Vector<MessageBox> users:flags.1?Vector<User> chats:flags.2?Vector<Chat> layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long auth_key_id:flags.7?long= Void;
 func (s *Service) InboxSendUserMessageToInboxV2(ctx context.Context, request *inbox.TLInboxSendUserMessageToInboxV2) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.sendUserMessageToInboxV2 - metadata: {%s}, request: {%s}", c.MD, request)
@@ -199,7 +199,7 @@ func (s *Service) InboxEditMessageToInboxV2(ctx context.Context, request *inbox.
 }
 
 // InboxReadInboxHistory
-// inbox.readInboxHistory user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int = Void;
+// inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
 func (s *Service) InboxReadInboxHistory(ctx context.Context, request *inbox.TLInboxReadInboxHistory) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.readInboxHistory - metadata: {%s}, request: {%s}", c.MD, request)
@@ -229,7 +229,7 @@ func (s *Service) InboxReadOutboxHistory(ctx context.Context, request *inbox.TLI
 }
 
 // InboxReadMediaUnreadToInboxV2
-// inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long id:Vector<InboxMessageId> = Void;
+// inbox.readMediaUnreadToInboxV2 user_id:long peer_type:int peer_id:long dialog_message_id:long = Void;
 func (s *Service) InboxReadMediaUnreadToInboxV2(ctx context.Context, request *inbox.TLInboxReadMediaUnreadToInboxV2) (*mtproto.Void, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("inbox.readMediaUnreadToInboxV2 - metadata: {%s}, request: {%s}", c.MD, request)
@@ -240,5 +240,20 @@ func (s *Service) InboxReadMediaUnreadToInboxV2(ctx context.Context, request *in
 	}
 
 	c.Logger.Debugf("inbox.readMediaUnreadToInboxV2 - reply: {%s}", r)
+	return r, err
+}
+
+// InboxUpdatePinnedMessageV2
+// inbox.updatePinnedMessageV2 flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
+func (s *Service) InboxUpdatePinnedMessageV2(ctx context.Context, request *inbox.TLInboxUpdatePinnedMessageV2) (*mtproto.Void, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("inbox.updatePinnedMessageV2 - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.InboxUpdatePinnedMessageV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("inbox.updatePinnedMessageV2 - reply: {%s}", r)
 	return r, err
 }

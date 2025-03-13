@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -28,6 +28,7 @@ const (
 	Predicate_inbox_readInboxHistory           = "inbox_readInboxHistory"
 	Predicate_inbox_readOutboxHistory          = "inbox_readOutboxHistory"
 	Predicate_inbox_readMediaUnreadToInboxV2   = "inbox_readMediaUnreadToInboxV2"
+	Predicate_inbox_updatePinnedMessageV2      = "inbox_updatePinnedMessageV2"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -99,6 +100,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -356170942, // 0xeac54342
 
 	},
+	Predicate_inbox_updatePinnedMessageV2: {
+		0: 1454874236, // 0x56b79e7c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -119,6 +124,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	32978549:    Predicate_inbox_readInboxHistory,           // 0x1f73675
 	477116106:   Predicate_inbox_readOutboxHistory,          // 0x1c7036ca
 	-356170942:  Predicate_inbox_readMediaUnreadToInboxV2,   // 0xeac54342
+	1454874236:  Predicate_inbox_updatePinnedMessageV2,      // 0x56b79e7c
 
 }
 

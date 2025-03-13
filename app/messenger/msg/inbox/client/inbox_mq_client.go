@@ -208,3 +208,13 @@ func (m *defaultInboxMqClient) InboxReadMediaUnreadToInboxV2(ctx context.Context
 		strconv.FormatInt(in.GetUserId(), 10),
 		in)
 }
+
+// InboxUpdatePinnedMessageV2
+// inbox.updatePinnedMessageV2 flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
+func (m *defaultInboxMqClient) InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*mtproto.Void, error) {
+	return m.sendMessage(
+		ctx,
+		string(proto.MessageName(in)),
+		strconv.FormatInt(in.GetUserId(), 10),
+		in)
+}

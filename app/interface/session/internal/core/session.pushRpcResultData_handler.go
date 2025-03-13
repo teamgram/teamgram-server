@@ -28,7 +28,7 @@ import (
 // SessionPushRpcResultData
 // session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 func (c *SessionCore) SessionPushRpcResultData(in *session.TLSessionPushRpcResultData) (*mtproto.Bool, error) {
-	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.AuthKeyId)
+	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
 	if mainAuth == nil {
 		err := fmt.Errorf("not found authKeyId(%s)", in)
 		c.Logger.Errorf("session.pushRpcResultData - %v", err)

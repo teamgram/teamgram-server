@@ -27,14 +27,23 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 	}
 
 	botInfo := mtproto.MakeTLBotInfo(&mtproto.BotInfo{
+		HasPreviewMedias:       false,
 		UserId_INT64:           in.BotId,
 		UserId_FLAGINT64:       mtproto.MakeFlagsInt64(in.BotId),
 		Description_STRING:     botsDO.Description,
 		Description_FLAGSTRING: mtproto.MakeFlagsString(botsDO.Description),
+		DescriptionPhoto:       nil,
+		DescriptionDocument:    nil,
 		Commands:               []*mtproto.BotCommand{},
+		MenuButton:             nil,
+		PrivacyPolicyUrl:       nil,
+		AppSettings:            nil,
 	}).To_BotInfo()
 
-	c.svcCtx.Dao.BotCommandsDAO.SelectListWithCB(
+	// TODO: HasPreviewMedias
+
+	// Commands
+	_, _ = c.svcCtx.Dao.BotCommandsDAO.SelectListWithCB(
 		c.ctx,
 		in.BotId,
 		func(sz, i int, v *dataobject.BotCommandsDO) {
@@ -43,6 +52,14 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 				Description: v.Description,
 			}).To_BotCommand())
 		})
+
+	// MenuButton
+	if botsDO.HasMenuButton {
+		botInfo.MenuButton = mtproto.MakeTLBotMenuButton(&mtproto.BotMenuButton{
+			Text: botsDO.MenuButtonText,
+			Url:  botsDO.MenuButtonUrl,
+		}).To_BotMenuButton()
+	}
 
 	return botInfo, nil
 }

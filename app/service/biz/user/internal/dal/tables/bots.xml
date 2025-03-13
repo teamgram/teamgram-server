@@ -3,7 +3,7 @@
     <operation name="Select">
         <sql>
             SELECT
-                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder
+                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app , bot_active_users, has_menu_button, menu_button_text, menu_button_url
             FROM
                 bots
             WHERE
@@ -28,7 +28,7 @@
         </params>
         <sql>
             SELECT
-                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder
+                id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app , bot_active_users, has_menu_button, menu_button_text, menu_button_url
             FROM
                 bots
             WHERE

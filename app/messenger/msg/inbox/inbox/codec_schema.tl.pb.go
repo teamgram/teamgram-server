@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -114,6 +114,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	-356170942: func() mtproto.TLObject { // 0xeac54342
 		return &TLInboxReadMediaUnreadToInboxV2{
 			Constructor: -356170942,
+		}
+	},
+	1454874236: func() mtproto.TLObject { // 0x56b79e7c
+		return &TLInboxUpdatePinnedMessageV2{
+			Constructor: 1454874236,
 		}
 	},
 }
@@ -1380,6 +1385,109 @@ func (m *TLInboxReadMediaUnreadToInboxV2) Decode(dBuf *mtproto.DecodeBuf) error 
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
 		m.DialogMessageId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLInboxUpdatePinnedMessageV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLInboxUpdatePinnedMessageV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x56b79e7c:
+		x.UInt(0x56b79e7c)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetUnpin() == true {
+			flags |= 1 << 1
+		}
+
+		if m.GetLayer() != nil {
+			flags |= 1 << 3
+		}
+		if m.GetServerId() != nil {
+			flags |= 1 << 4
+		}
+		if m.GetSessionId() != nil {
+			flags |= 1 << 5
+		}
+		if m.GetClientReqMsgId() != nil {
+			flags |= 1 << 6
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Int(m.GetPeerType())
+		x.Long(m.GetPeerId())
+		x.Int(m.GetId())
+		x.Long(m.GetDialogMessageId())
+		if m.GetLayer() != nil {
+			x.Int(m.GetLayer().Value)
+		}
+
+		if m.GetServerId() != nil {
+			x.String(m.GetServerId().Value)
+		}
+
+		if m.GetSessionId() != nil {
+			x.Long(m.GetSessionId().Value)
+		}
+
+		if m.GetClientReqMsgId() != nil {
+			x.Long(m.GetClientReqMsgId().Value)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLInboxUpdatePinnedMessageV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLInboxUpdatePinnedMessageV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x56b79e7c:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		m.UserId = dBuf.Long()
+		if (flags & (1 << 1)) != 0 {
+			m.Unpin = true
+		}
+		m.PeerType = dBuf.Int()
+		m.PeerId = dBuf.Long()
+		m.Id = dBuf.Int()
+		m.DialogMessageId = dBuf.Long()
+		if (flags & (1 << 3)) != 0 {
+			m.Layer = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
+		if (flags & (1 << 4)) != 0 {
+			m.ServerId = &wrapperspb.StringValue{Value: dBuf.String()}
+		}
+
+		if (flags & (1 << 5)) != 0 {
+			m.SessionId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		if (flags & (1 << 6)) != 0 {
+			m.ClientReqMsgId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
 		return dBuf.GetError()
 
 	default:

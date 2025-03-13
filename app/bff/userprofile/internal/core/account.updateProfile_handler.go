@@ -50,36 +50,36 @@ func (c *UserProfileCore) AccountUpdateProfile(in *mtproto.TLAccountUpdateProfil
 			}
 		}
 	} //else {
-		if in.GetFirstName().GetValue() == "" {
-			err = mtproto.ErrFirstnameInvalid
-			c.Logger.Errorf("account.updateProfile - error: bad request (%v)", err)
-			return nil, err
+	if in.GetFirstName().GetValue() == "" {
+		err = mtproto.ErrFirstnameInvalid
+		c.Logger.Errorf("account.updateProfile - error: bad request (%v)", err)
+		return nil, err
+	}
+
+	if in.GetFirstName().GetValue() != me.FirstName() ||
+		in.GetLastName().GetValue() != me.LastName() {
+		if _, err = c.svcCtx.Dao.UserClient.UserUpdateFirstAndLastName(c.ctx, &userpb.TLUserUpdateFirstAndLastName{
+			UserId:    c.MD.UserId,
+			FirstName: in.GetFirstName().GetValue(),
+			LastName:  in.GetLastName().GetValue(),
+		}); err != nil {
+			c.Logger.Errorf("account.updateProfile - error: %v", err)
+		} else {
+			me.SetFirstName(in.GetFirstName().GetValue())
+			me.SetLastName(in.GetLastName().GetValue())
 		}
 
-		if in.GetFirstName().GetValue() != me.FirstName() ||
-			in.GetLastName().GetValue() != me.LastName() {
-			if _, err = c.svcCtx.Dao.UserClient.UserUpdateFirstAndLastName(c.ctx, &userpb.TLUserUpdateFirstAndLastName{
+		c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+			UserId:        c.MD.UserId,
+			PermAuthKeyId: c.MD.PermAuthKeyId,
+			Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserName(&mtproto.Update{
 				UserId:    c.MD.UserId,
 				FirstName: in.GetFirstName().GetValue(),
 				LastName:  in.GetLastName().GetValue(),
-			}); err != nil {
-				c.Logger.Errorf("account.updateProfile - error: %v", err)
-			} else {
-				me.SetFirstName(in.GetFirstName().GetValue())
-				me.SetLastName(in.GetLastName().GetValue())
-			}
-
-			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
-				UserId:        c.MD.UserId,
-				PermAuthKeyId: c.MD.PermAuthKeyId,
-				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserName(&mtproto.Update{
-					UserId:    c.MD.UserId,
-					FirstName: in.GetFirstName().GetValue(),
-					LastName:  in.GetLastName().GetValue(),
-					Username:  me.Username(),
-				}).To_Update()),
-			})
-		}
+				Username:  me.Username(),
+			}).To_Update()),
+		})
+	}
 	//}
 
 	return me.ToSelfUser(), nil

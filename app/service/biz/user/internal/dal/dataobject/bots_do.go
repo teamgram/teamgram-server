@@ -23,4 +23,12 @@ type BotsDO struct {
 	BotInlineGeo         bool   `db:"bot_inline_geo" json:"bot_inline_geo"`
 	BotInfoVersion       int32  `db:"bot_info_version" json:"bot_info_version"`
 	BotInlinePlaceholder string `db:"bot_inline_placeholder" json:"bot_inline_placeholder"`
+	BotAttachMenu        bool   `db:"bot_attach_menu" json:"bot_attach_menu"`
+	AttachMenuEnabled    bool   `db:"attach_menu_enabled" json:"attach_menu_enabled"`
+	BotBusiness          bool   `db:"bot_business" json:"bot_business"`
+	BotHasMainApp        bool   `db:"bot_has_main_app" json:"bot_has_main_app"`
+	BotActiveUsers       int32  `db:"bot_active_users" json:"bot_active_users"`
+	HasMenuButton        bool   `db:"has_menu_button" json:"has_menu_button"`
+	MenuButtonText       string `db:"menu_button_text" json:"menu_button_text"`
+	MenuButtonUrl        string `db:"menu_button_url" json:"menu_button_url"`
 }
