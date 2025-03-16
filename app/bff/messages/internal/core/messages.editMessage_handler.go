@@ -111,7 +111,7 @@ func (c *MessagesCore) MessagesEditMessage(in *mtproto.TLMessagesEditMessage) (*
 			return nil, err
 		}
 		outMessage.Message = in.Message.Value
-		//outMessage.Entities = nil
+		outMessage.Entities = nil
 		//outMessage, _ = c.fixMessageEntities(c.MD.UserId, peer, in.NoWebpage, outMessage, func() bool {
 		//	hasBot := c.MD.IsBot
 		//	if !hasBot {
