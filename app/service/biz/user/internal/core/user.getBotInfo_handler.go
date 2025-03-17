@@ -27,7 +27,7 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 	}
 
 	botInfo := mtproto.MakeTLBotInfo(&mtproto.BotInfo{
-		HasPreviewMedias:       false,
+		HasPreviewMedias:       botsDO.HasPreviewMedias,
 		UserId_INT64:           in.BotId,
 		UserId_FLAGINT64:       mtproto.MakeFlagsInt64(in.BotId),
 		Description_STRING:     botsDO.Description,
@@ -36,7 +36,7 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 		DescriptionDocument:    nil,
 		Commands:               []*mtproto.BotCommand{},
 		MenuButton:             nil,
-		PrivacyPolicyUrl:       nil,
+		PrivacyPolicyUrl:       mtproto.MakeFlagsString(botsDO.PrivacyPolicyUrl),
 		AppSettings:            nil,
 	}).To_BotInfo()
 
@@ -59,6 +59,17 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 			Text: botsDO.MenuButtonText,
 			Url:  botsDO.MenuButtonUrl,
 		}).To_BotMenuButton()
+	}
+
+	// DescriptionPhoto
+	if botsDO.HasAppSettings {
+		botInfo.AppSettings = mtproto.MakeTLBotAppSettings(&mtproto.BotAppSettings{
+			PlaceholderPath:     nil, // TODO: botsDO.PlaceholderPath,
+			BackgroundColor:     mtproto.MakeFlagsInt32(botsDO.BackgroundColor),
+			BackgroundDarkColor: mtproto.MakeFlagsInt32(botsDO.BackgroundDarkColor),
+			HeaderColor:         mtproto.MakeFlagsInt32(botsDO.HeaderColor),
+			HeaderDarkColor:     mtproto.MakeFlagsInt32(botsDO.HeaderDarkColor),
+		}).To_BotAppSettings()
 	}
 
 	return botInfo, nil

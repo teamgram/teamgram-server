@@ -42,4 +42,5 @@ type BotsDO struct {
 	BackgroundDarkColor   int32  `db:"background_dark_color" json:"background_dark_color"`
 	HeaderColor           int32  `db:"header_color" json:"header_color"`
 	HeaderDarkColor       int32  `db:"header_dark_color" json:"header_dark_color"`
+	PrivacyPolicyUrl      string `db:"privacy_policy_url" json:"privacy_policy_url"`
 }
