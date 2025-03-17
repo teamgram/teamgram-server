@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -25,9 +25,10 @@ type PrivacySettingsClient interface {
 	AccountSetPrivacy(ctx context.Context, in *mtproto.TLAccountSetPrivacy) (*mtproto.Account_PrivacyRules, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountGetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *mtproto.TLAccountSetGlobalPrivacySettings) (*mtproto.GlobalPrivacySettings, error)
-	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error)
+	UsersGetRequirementsToContact(ctx context.Context, in *mtproto.TLUsersGetRequirementsToContact) (*mtproto.Vector_RequirementToContact, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesSetDefaultHistoryTTL) (*mtproto.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
+	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error)
 }
 
 type defaultPrivacySettingsClient struct {
@@ -68,11 +69,11 @@ func (m *defaultPrivacySettingsClient) AccountSetGlobalPrivacySettings(ctx conte
 	return client.AccountSetGlobalPrivacySettings(ctx, in)
 }
 
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (m *defaultPrivacySettingsClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
+// UsersGetRequirementsToContact
+// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
+func (m *defaultPrivacySettingsClient) UsersGetRequirementsToContact(ctx context.Context, in *mtproto.TLUsersGetRequirementsToContact) (*mtproto.Vector_RequirementToContact, error) {
 	client := mtproto.NewRPCPrivacySettingsClient(m.cli.Conn())
-	return client.UsersGetIsPremiumRequiredToContact(ctx, in)
+	return client.UsersGetRequirementsToContact(ctx, in)
 }
 
 // MessagesSetDefaultHistoryTTL
@@ -87,4 +88,11 @@ func (m *defaultPrivacySettingsClient) MessagesSetDefaultHistoryTTL(ctx context.
 func (m *defaultPrivacySettingsClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
 	client := mtproto.NewRPCPrivacySettingsClient(m.cli.Conn())
 	return client.MessagesGetDefaultHistoryTTL(ctx, in)
+}
+
+// UsersGetIsPremiumRequiredToContact
+// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
+func (m *defaultPrivacySettingsClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *mtproto.TLUsersGetIsPremiumRequiredToContact) (*mtproto.Vector_Bool, error) {
+	client := mtproto.NewRPCPrivacySettingsClient(m.cli.Conn())
+	return client.UsersGetIsPremiumRequiredToContact(ctx, in)
 }

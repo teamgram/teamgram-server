@@ -368,6 +368,8 @@ func (c *session) processMsg(ctx context.Context, gatewayId, clientIp string, in
 		c.onInvokeWithGooglePlayIntegrity(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithGooglePlayIntegrity))
 	case *mtproto.TLInvokeWithApnsSecret:
 		c.onInvokeWithApnsSecret(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithApnsSecret))
+	case *mtproto.TLInvokeWithReCaptcha:
+		c.onInvokeWithReCaptcha(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInvokeWithReCaptcha))
 	case *mtproto.TLInitConnection:
 		c.onInitConnection(ctx, gatewayId, clientIp, inMsg, r.(*mtproto.TLInitConnection))
 	case *mtproto.TLGzipPacked:

@@ -347,6 +347,36 @@ func (c *session) onInvokeWithApnsSecret(ctx context.Context, gatewayId, clientI
 	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
 }
 
+// onInvokeWithReCaptcha
+func (c *session) onInvokeWithReCaptcha(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInvokeWithReCaptcha) {
+	logx.WithContext(ctx).Infof("onInvokeWithReCaptcha - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, nonce: %s, secret: %s, request: {%s}}",
+		c,
+		gatewayId,
+		msgId.msgId,
+		msgId.seqNo,
+		request.Token,
+		reflect.TypeOf(request))
+
+	if request.GetQuery() == nil {
+		logx.WithContext(ctx).Errorf("onInvokeWithReCaptcha Query is nil, query: {%s}", request)
+		return
+	}
+
+	dBuf := mtproto.NewDecodeBuf(request.Query)
+	query := dBuf.Object()
+	if dBuf.GetError() != nil {
+		logx.WithContext(ctx).Errorf("dBuf query error: %v", dBuf.GetError())
+		return
+	}
+
+	if query == nil {
+		logx.WithContext(ctx).Errorf("decode buf is nil, query: %v", query)
+		return
+	}
+
+	c.processMsg(ctx, gatewayId, clientIp, msgId, query)
+}
+
 func (c *session) onInitConnection(ctx context.Context, gatewayId, clientIp string, msgId *inboxMsg, request *mtproto.TLInitConnection) {
 	logx.WithContext(ctx).Infof("onInitConnection - request data: {sess: %s, conn_id: %s, msg_id: %d, seq_no: %d, request: {%s}}",
 		c,

@@ -128,8 +128,9 @@ func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 		}).To_EmojiStatus()
 	} else {
 		return mtproto.MakeTLEmojiStatusUntil(&mtproto.EmojiStatus{
-			DocumentId: documentId,
-			Until:      until,
+			DocumentId:      documentId,
+			Until_INT32:     until,
+			Until_FLAGINT32: mtproto.MakeFlagsInt32(until),
 		}).To_EmojiStatus()
 	}
 }
