@@ -13,6 +13,7 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/app/service/media/media"
 )
 
 // UserGetBotInfo
@@ -62,6 +63,13 @@ func (c *UserCore) UserGetBotInfo(in *user.TLUserGetBotInfo) (*mtproto.BotInfo, 
 	}
 
 	// DescriptionPhoto
+	if botsDO.DescriptionPhotoId != 0 {
+		botInfo.DescriptionPhoto, _ = c.svcCtx.Dao.MediaClient.MediaGetPhoto(c.ctx, &media.TLMediaGetPhoto{
+			PhotoId: botsDO.DescriptionPhotoId,
+		})
+	}
+
+	// AppSettings
 	if botsDO.HasAppSettings {
 		botInfo.AppSettings = mtproto.MakeTLBotAppSettings(&mtproto.BotAppSettings{
 			PlaceholderPath:     nil, // TODO: botsDO.PlaceholderPath,
