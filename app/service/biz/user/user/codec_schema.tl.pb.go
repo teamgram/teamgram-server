@@ -366,9 +366,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1882568397,
 		}
 	},
-	-1174586898: func() mtproto.TLObject { // 0xb9fd39ee
+	-32434674: func() mtproto.TLObject { // 0xfe11160e
 		return &TLUserUpdateBotData{
-			Constructor: -1174586898,
+			Constructor: -32434674,
 		}
 	},
 	806009420: func() mtproto.TLObject { // 0x300aba4c
@@ -3771,8 +3771,8 @@ func (m *TLUserSearch) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLUserUpdateBotData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xb9fd39ee:
-		x.UInt(0xb9fd39ee)
+	case 0xfe11160e:
+		x.UInt(0xfe11160e)
 
 		// set flags
 		var flags uint32 = 0
@@ -3814,7 +3814,7 @@ func (m *TLUserUpdateBotData) Encode(x *mtproto.EncodeBuf, layer int32) error {
 		}
 
 		if m.GetBotInlinePlaceholder() != nil {
-			m.GetBotInlinePlaceholder().Encode(x, layer)
+			x.String(m.GetBotInlinePlaceholder().Value)
 		}
 
 	default:
@@ -3830,7 +3830,7 @@ func (m *TLUserUpdateBotData) CalcByteSize(layer int32) int {
 
 func (m *TLUserUpdateBotData) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xb9fd39ee:
+	case 0xfe11160e:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -3858,10 +3858,9 @@ func (m *TLUserUpdateBotData) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.BotAttachMenu = m6
 		}
 		if (flags & (1 << 19)) != 0 {
-			m7 := &mtproto.Bool{}
-			m7.Decode(dBuf)
-			m.BotInlinePlaceholder = m7
+			m.BotInlinePlaceholder = &wrapperspb.StringValue{Value: dBuf.String()}
 		}
+
 		return dBuf.GetError()
 
 	default:

@@ -949,7 +949,7 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string = Bool;
 func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.updateBotData - metadata: {%s}, request: {%s}", c.MD, request)

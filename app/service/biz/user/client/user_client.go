@@ -795,7 +795,7 @@ func (m *defaultUserClient) UserSearch(ctx context.Context, in *user.TLUserSearc
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string = Bool;
 func (m *defaultUserClient) UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	md := metadata.RpcMetadataFromIncoming(ctx)
 	if md != nil {

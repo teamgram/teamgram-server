@@ -79,7 +79,7 @@ const (
 	CRC32_user_getUserDataListByIdList      TLConstructor = -2121142279 // 0x8191eff9
 	CRC32_user_getUserDataByToken           TLConstructor = 1057580446  // 0x3f09659e
 	CRC32_user_search                       TLConstructor = 1882568397  // 0x7035b6cd
-	CRC32_user_updateBotData                TLConstructor = -1174586898 // 0xb9fd39ee
+	CRC32_user_updateBotData                TLConstructor = -32434674   // 0xfe11160e
 	CRC32_user_getImmutableUserV2           TLConstructor = 806009420   // 0x300aba4c
 	CRC32_user_getMutableUsersV2            TLConstructor = -1795585240 // 0x94f98b28
 	CRC32_user_createNewTestUser            TLConstructor = 1282329771  // 0x4c6eccab
