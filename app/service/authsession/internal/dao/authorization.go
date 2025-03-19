@@ -139,7 +139,7 @@ func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, h
 		keyIdList      []int64
 	)
 
-	d.AuthUsersDAO.SelectListByUserIdWithCB(
+	_, _ = d.AuthUsersDAO.SelectListByUserIdWithCB(
 		ctx,
 		userId,
 		func(sz, i int, v *dataobject.AuthUsersDO) {
@@ -162,10 +162,10 @@ func (d *Dao) ResetAuthorization(ctx context.Context, userId int64, authKeyId, h
 		return keyIdList
 	}
 
-	d.CachedConn.Exec(
+	_, _, _ = d.CachedConn.Exec(
 		ctx,
 		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-			d.AuthUsersDAO.DeleteByHashList(ctx, hashList)
+			_, _ = d.AuthUsersDAO.DeleteByHashList(ctx, hashList)
 			return 0, 0, nil
 		},
 		cacheKeyIdList...)

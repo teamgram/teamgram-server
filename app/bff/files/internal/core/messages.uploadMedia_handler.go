@@ -19,12 +19,13 @@
 package core
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/teamgram/proto/mtproto"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/app/service/media/media"
 	"github.com/teamgram/teamgram-server/pkg/phonenumber"
-	"math/rand"
-	"time"
 )
 
 // MessagesUploadMedia
