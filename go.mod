@@ -1,8 +1,6 @@
 module github.com/teamgram/teamgram-server
 
-go 1.21
-
-toolchain go1.24.1
+go 1.20
 
 require (
 	github.com/bwmarrin/snowflake v0.3.1-0.20221123153919-bc74ab286f15
