@@ -371,7 +371,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_user_updateBotData: {
-		0: -32434674, // 0xfe11160e
+		0: 1626561832, // 0x60f35d28
 
 	},
 	Predicate_user_getImmutableUserV2: {
@@ -505,7 +505,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-2121142279: Predicate_user_getUserDataListByIdList,      // 0x8191eff9
 	1057580446:  Predicate_user_getUserDataByToken,           // 0x3f09659e
 	1882568397:  Predicate_user_search,                       // 0x7035b6cd
-	-32434674:   Predicate_user_updateBotData,                // 0xfe11160e
+	1626561832:  Predicate_user_updateBotData,                // 0x60f35d28
 	806009420:   Predicate_user_getImmutableUserV2,           // 0x300aba4c
 	-1795585240: Predicate_user_getMutableUsersV2,            // 0x94f98b28
 	1282329771:  Predicate_user_createNewTestUser,            // 0x4c6eccab

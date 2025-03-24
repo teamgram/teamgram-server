@@ -89,7 +89,7 @@ enum TLConstructor {
     CRC32_user_getUserDataListByIdList = -2121142279;
     CRC32_user_getUserDataByToken = 1057580446;
     CRC32_user_search = 1882568397;
-    CRC32_user_updateBotData = -32434674;
+    CRC32_user_updateBotData = 1626561832;
     CRC32_user_getImmutableUserV2 = 806009420;
     CRC32_user_getMutableUsersV2 = -1795585240;
     CRC32_user_createNewTestUser = 1282329771;
@@ -649,6 +649,7 @@ message TL_user_updateBotData {
     mtproto.Bool bot_inline_geo = 6;
     mtproto.Bool bot_attach_menu = 7;
     google.protobuf.StringValue bot_inline_placeholder = 8;
+    mtproto.Bool bot_has_main_app = 9;
 }
 
 //--------------------------------------------------------------------------------------------
