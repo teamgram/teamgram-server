@@ -1159,7 +1159,7 @@ func (s *Service) UserGetAuthorizationTTL(ctx context.Context, request *user.TLU
 }
 
 // UserUpdatePremium
-// user.updatePremium user_id:long premium:Bool = Bool;
+// user.updatePremium flags:# user_id:long premium:Bool months:flags.1?int = Bool;
 func (s *Service) UserUpdatePremium(ctx context.Context, request *user.TLUserUpdatePremium) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.updatePremium - metadata: {%s}, request: {%s}", c.MD, request)
@@ -1170,5 +1170,20 @@ func (s *Service) UserUpdatePremium(ctx context.Context, request *user.TLUserUpd
 	}
 
 	c.Logger.Debugf("user.updatePremium - reply: {%s}", r)
+	return r, err
+}
+
+// UserGetBotInfoV2
+// user.getBotInfoV2 bot_id:long = BotInfoData;
+func (s *Service) UserGetBotInfoV2(ctx context.Context, request *user.TLUserGetBotInfoV2) (*user.BotInfoData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getBotInfoV2 - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserGetBotInfoV2(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getBotInfoV2 - reply: {%s}", r)
 	return r, err
 }

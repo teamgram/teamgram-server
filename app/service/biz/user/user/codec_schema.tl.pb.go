@@ -29,6 +29,11 @@ var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
+	25386268: func() mtproto.TLObject { // 0x1835d1c
+		o := MakeTLBotInfoData(nil)
+		o.Data2.Constructor = 25386268
+		return o
+	},
 	-1280204321: func() mtproto.TLObject { // 0xb3b1a1df
 		o := MakeTLLastSeenData(nil)
 		o.Data2.Constructor = -1280204321
@@ -441,6 +446,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1173824359,
 		}
 	},
+	-738419547: func() mtproto.TLObject { // 0xd3fc9ca5
+		return &TLUserGetBotInfoV2{
+			Constructor: -738419547,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -457,6 +467,173 @@ func CheckClassID(classId int32) (ok bool) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
+
+///////////////////////////////////////////////////////////////////////////////
+// BotInfoData <--
+//  + TL_BotInfoData
+//
+
+func (m *BotInfoData) Encode(x *mtproto.EncodeBuf, layer int32) []byte {
+	predicateName := m.PredicateName
+	if predicateName == "" {
+		if n, ok := clazzIdNameRegisters2[int32(m.Constructor)]; ok {
+			predicateName = n
+		}
+	}
+
+	switch predicateName {
+	case Predicate_botInfoData:
+		t := m.To_BotInfoData()
+		t.Encode(x, layer)
+
+	default:
+		// logx.Errorf("invalid predicate error: %s",  m.PredicateName)
+		return nil
+	}
+
+	return nil
+}
+
+func (m *BotInfoData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *BotInfoData) Decode(dBuf *mtproto.DecodeBuf) error {
+	m.Constructor = TLConstructor(dBuf.Int())
+	switch uint32(m.Constructor) {
+	case 0x1835d1c:
+		m2 := MakeTLBotInfoData(m)
+		m2.Decode(dBuf)
+
+	default:
+		return fmt.Errorf("invalid constructorId: 0x%x", uint32(m.Constructor))
+	}
+	return dBuf.GetError()
+}
+
+// To_BotInfoData
+func (m *BotInfoData) To_BotInfoData() *TLBotInfoData {
+	m.PredicateName = Predicate_botInfoData
+	return &TLBotInfoData{
+		Data2: m,
+	}
+}
+
+// MakeTLBotInfoData
+func MakeTLBotInfoData(data2 *BotInfoData) *TLBotInfoData {
+	if data2 == nil {
+		return &TLBotInfoData{Data2: &BotInfoData{
+			PredicateName: Predicate_botInfoData,
+		}}
+	} else {
+		data2.PredicateName = Predicate_botInfoData
+		return &TLBotInfoData{Data2: data2}
+	}
+}
+
+func (m *TLBotInfoData) To_BotInfoData() *BotInfoData {
+	m.Data2.PredicateName = Predicate_botInfoData
+	return m.Data2
+}
+
+// // flags
+func (m *TLBotInfoData) SetBotInfo(v *mtproto.BotInfo) { m.Data2.BotInfo = v }
+func (m *TLBotInfoData) GetBotInfo() *mtproto.BotInfo  { return m.Data2.BotInfo }
+
+func (m *TLBotInfoData) SetMainAppUrl(v *wrapperspb.StringValue) { m.Data2.MainAppUrl = v }
+func (m *TLBotInfoData) GetMainAppUrl() *wrapperspb.StringValue  { return m.Data2.MainAppUrl }
+
+func (m *TLBotInfoData) SetBotInline(v bool) { m.Data2.BotInline = v }
+func (m *TLBotInfoData) GetBotInline() bool  { return m.Data2.BotInline }
+
+func (m *TLBotInfoData) SetToken(v string) { m.Data2.Token = v }
+func (m *TLBotInfoData) GetToken() string  { return m.Data2.Token }
+
+func (m *TLBotInfoData) SetBotId(v int64) { m.Data2.BotId = v }
+func (m *TLBotInfoData) GetBotId() int64  { return m.Data2.BotId }
+
+func (m *TLBotInfoData) GetPredicateName() string {
+	return Predicate_botInfoData
+}
+
+func (m *TLBotInfoData) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1835d1c: func() error {
+			x.UInt(0x1835d1c)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetMainAppUrl() != nil {
+					flags |= 1 << 0
+				}
+				if m.GetBotInline() == true {
+					flags |= 1 << 1
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
+			m.GetBotInfo().Encode(x, layer)
+			if m.GetMainAppUrl() != nil {
+				x.String(m.GetMainAppUrl().Value)
+			}
+
+			x.String(m.GetToken())
+			x.Long(m.GetBotId())
+			return nil
+		},
+	}
+
+	clazzId := GetClazzID(Predicate_botInfoData, int(layer))
+	if f, ok := encodeF[uint32(clazzId)]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		// log.Errorf("not found clazzId by (%s, %d)", Predicate_botInfoData, layer)
+		return nil
+	}
+
+	return nil
+}
+
+func (m *TLBotInfoData) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLBotInfoData) Decode(dBuf *mtproto.DecodeBuf) error {
+	var decodeF = map[uint32]func() error{
+		0x1835d1c: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
+
+			m1 := &mtproto.BotInfo{}
+			m1.Decode(dBuf)
+			m.SetBotInfo(m1)
+
+			if (flags & (1 << 0)) != 0 {
+				m.SetMainAppUrl(&wrapperspb.StringValue{Value: dBuf.String()})
+			}
+
+			if (flags & (1 << 1)) != 0 {
+				m.SetBotInline(true)
+			}
+			m.SetToken(dBuf.String())
+			m.SetBotId(dBuf.Long())
+			return dBuf.GetError()
+		},
+	}
+
+	if f, ok := decodeF[uint32(m.Data2.Constructor)]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", uint32(m.Data2.Constructor))
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // LastSeenData <--
@@ -4534,6 +4711,44 @@ func (m *TLUserUpdatePremium) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.Months = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserGetBotInfoV2
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetBotInfoV2) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xd3fc9ca5:
+		x.UInt(0xd3fc9ca5)
+
+		// no flags
+
+		x.Long(m.GetBotId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserGetBotInfoV2) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetBotInfoV2) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xd3fc9ca5:
+
+		// not has flags
+
+		m.BotId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

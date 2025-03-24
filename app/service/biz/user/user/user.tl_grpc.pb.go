@@ -106,6 +106,7 @@ const (
 	RPCUser_UserSetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_setAuthorizationTTL"
 	RPCUser_UserGetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_getAuthorizationTTL"
 	RPCUser_UserUpdatePremium_FullMethodName                = "/user.RPCUser/user_updatePremium"
+	RPCUser_UserGetBotInfoV2_FullMethodName                 = "/user.RPCUser/user_getBotInfoV2"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -189,6 +190,7 @@ type RPCUserClient interface {
 	UserSetAuthorizationTTL(ctx context.Context, in *TLUserSetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(ctx context.Context, in *TLUserUpdatePremium, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotInfoV2, opts ...grpc.CallOption) (*BotInfoData, error)
 }
 
 type rPCUserClient struct {
@@ -969,6 +971,16 @@ func (c *rPCUserClient) UserUpdatePremium(ctx context.Context, in *TLUserUpdateP
 	return out, nil
 }
 
+func (c *rPCUserClient) UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotInfoV2, opts ...grpc.CallOption) (*BotInfoData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BotInfoData)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetBotInfoV2_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility.
@@ -1050,6 +1062,7 @@ type RPCUserServer interface {
 	UserSetAuthorizationTTL(context.Context, *TLUserSetAuthorizationTTL) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(context.Context, *TLUserUpdatePremium) (*mtproto.Bool, error)
+	UserGetBotInfoV2(context.Context, *TLUserGetBotInfoV2) (*BotInfoData, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have
@@ -1289,6 +1302,9 @@ func (UnimplementedRPCUserServer) UserGetAuthorizationTTL(context.Context, *TLUs
 }
 func (UnimplementedRPCUserServer) UserUpdatePremium(context.Context, *TLUserUpdatePremium) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserUpdatePremium not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetBotInfoV2(context.Context, *TLUserGetBotInfoV2) (*BotInfoData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetBotInfoV2 not implemented")
 }
 func (UnimplementedRPCUserServer) testEmbeddedByValue() {}
 
@@ -2696,6 +2712,24 @@ func _RPCUser_UserUpdatePremium_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserGetBotInfoV2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetBotInfoV2)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetBotInfoV2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetBotInfoV2_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetBotInfoV2(ctx, req.(*TLUserGetBotInfoV2))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3010,6 +3044,10 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_updatePremium",
 			Handler:    _RPCUser_UserUpdatePremium_Handler,
+		},
+		{
+			MethodName: "user_getBotInfoV2",
+			Handler:    _RPCUser_UserGetBotInfoV2_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

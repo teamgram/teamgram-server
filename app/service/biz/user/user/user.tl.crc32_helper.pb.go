@@ -17,6 +17,7 @@ const (
 	CRC32_usersIdFound                      TLConstructor = -2134594054 // 0x80c4adfa
 	CRC32_peerPeerNotifySettings            TLConstructor = 1894399913  // 0x70ea3fa9
 	CRC32_lastSeenData                      TLConstructor = -1280204321 // 0xb3b1a1df
+	CRC32_botInfoData                       TLConstructor = 25386268    // 0x1835d1c
 	CRC32_user_getLastSeens                 TLConstructor = 2090958337  // 0x7ca17e01
 	CRC32_user_updateLastSeen               TLConstructor = -46114259   // 0xfd405a2d
 	CRC32_user_getLastSeen                  TLConstructor = -1860581154 // 0x9119c8de
@@ -94,4 +95,5 @@ const (
 	CRC32_user_setAuthorizationTTL          TLConstructor = -702417936  // 0xd621f3f0
 	CRC32_user_getAuthorizationTTL          TLConstructor = -563197636  // 0xde6e493c
 	CRC32_user_updatePremium                TLConstructor = -1173824359 // 0xba08dc99
+	CRC32_user_getBotInfoV2                 TLConstructor = -738419547  // 0xd3fc9ca5
 )

@@ -100,6 +100,7 @@ type UserClient interface {
 	UserSetAuthorizationTTL(ctx context.Context, in *user.TLUserSetAuthorizationTTL) (*mtproto.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*mtproto.Bool, error)
+	UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error)
 }
 
 type defaultUserClient struct {
@@ -949,7 +950,7 @@ func (m *defaultUserClient) UserGetAuthorizationTTL(ctx context.Context, in *use
 }
 
 // UserUpdatePremium
-// user.updatePremium user_id:long premium:Bool = Bool;
+// user.updatePremium flags:# user_id:long premium:Bool months:flags.1?int = Bool;
 func (m *defaultUserClient) UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*mtproto.Bool, error) {
 	md := metadata.RpcMetadataFromIncoming(ctx)
 	if md != nil {
@@ -957,4 +958,15 @@ func (m *defaultUserClient) UserUpdatePremium(ctx context.Context, in *user.TLUs
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserUpdatePremium(ctx, in)
+}
+
+// UserGetBotInfoV2
+// user.getBotInfoV2 bot_id:long = BotInfoData;
+func (m *defaultUserClient) UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetBotInfoV2(ctx, in)
 }

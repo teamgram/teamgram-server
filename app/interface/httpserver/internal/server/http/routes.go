@@ -85,6 +85,7 @@ func apiw1(ctx *svc.ServiceContext) http.HandlerFunc {
 						Takeout:       nil,
 						Langpack:      "",
 						PermAuthKeyId: 0,
+						LangCode:      "",
 					})
 				rData, err2 := c.HttpserverApiw1(message)
 				if err2 != nil {

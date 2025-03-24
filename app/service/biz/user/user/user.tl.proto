@@ -26,6 +26,7 @@ enum TLConstructor {
     CRC32_usersIdFound = -2134594054;
     CRC32_peerPeerNotifySettings = 1894399913;
     CRC32_lastSeenData = -1280204321;
+    CRC32_botInfoData = 25386268;
     CRC32_user_getLastSeens = 2090958337;
     CRC32_user_updateLastSeen = -46114259;
     CRC32_user_getLastSeen = -1860581154;
@@ -103,6 +104,25 @@ enum TLConstructor {
     CRC32_user_setAuthorizationTTL = -702417936;
     CRC32_user_getAuthorizationTTL = -563197636;
     CRC32_user_updatePremium = -1173824359;
+    CRC32_user_getBotInfoV2 = -738419547;
+}
+
+
+// BotInfoData <--
+//  + TL_botInfoData
+//
+message BotInfoData {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    mtproto.BotInfo bot_info = 3;
+    google.protobuf.StringValue main_app_url = 4;
+    bool bot_inline = 5;
+    string token = 6;
+    int64 bot_id = 7;
+}
+
+message TL_botInfoData {
+    BotInfoData data2 = 1;
 }
 
 
@@ -735,6 +755,12 @@ message TL_user_updatePremium {
     google.protobuf.Int32Value months = 5;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_getBotInfoV2 {
+    TLConstructor  constructor = 1;
+    int64 bot_id = 3;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -851,5 +877,6 @@ service RPCUser {
  rpc user_setAuthorizationTTL(TL_user_setAuthorizationTTL) returns (mtproto.Bool) {}
  rpc user_getAuthorizationTTL(TL_user_getAuthorizationTTL) returns (mtproto.AccountDaysTTL) {}
  rpc user_updatePremium(TL_user_updatePremium) returns (mtproto.Bool) {}
+ rpc user_getBotInfoV2(TL_user_getBotInfoV2) returns (BotInfoData) {}
 }
 
