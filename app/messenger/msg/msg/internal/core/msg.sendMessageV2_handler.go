@@ -54,7 +54,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*mtproto.Updates
 	switch peer.PeerType {
 	case mtproto.PEER_USER:
 		if len(outBoxList) == 1 {
-			if kUseV3 {
+			if kUseV3 && c.MD != nil {
 				threading2.GoSafeContext(c.ctx, func(ctx context.Context) {
 					_, _ = c.sendUserOutgoingMessageV3(ctx, in.UserId, in.AuthKeyId, in.PeerId, outBoxList[0])
 				})
