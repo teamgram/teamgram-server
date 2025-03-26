@@ -20,8 +20,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	rand2 "math/rand"
-
-	"github.com/teamgram/proto/mtproto"
 )
 
 // PaddedIntermediateCodec
@@ -53,19 +51,12 @@ func generatePadding(size int) []byte {
 }
 
 // Encode encodes frames upon server responses into TCP stream.
-func (c *PaddedIntermediateCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
-	rawMsg, ok := msg.(*mtproto.MTPRawMessage)
-	if !ok {
-		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
-		// log.Error(err.Error())
-		return nil, err
-	}
-
+func (c *PaddedIntermediateCodec) Encode(conn CodecWriter, msg []byte) ([]byte, error) {
 	sb := make([]byte, 4)
-	size := len(rawMsg.Payload)
+	size := len(msg)
 
 	binary.LittleEndian.PutUint32(sb, uint32(size))
-	b := append(sb, rawMsg.Payload...)
+	b := append(sb, msg...)
 	b = append(b, generatePadding(rand2.Int()%16)...)
 
 	return c.Encrypt(b), nil

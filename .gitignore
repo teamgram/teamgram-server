@@ -1,33 +1,35 @@
-#folder
-target/
-.vagrant/
-
-#fixed file
-.class
-.exe
-.log
-.prefs
-.classpath
-.metadata
-.settings
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 .DS_Store
-Thumbs.db
-.project
-*.iml
-*.ipr
-*.iws
-*.tar.gz
-*.bak
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
 .idea
-*.log
-*.swp
-*.swo
+.env
+
 *.tl
 
-#deploy data
-
-data/*
-!data/.gitkeep
+/app/interface/session/client/t/t
+/app/interface/session/cmd/session/session
 
 teamgramd/bin/*
 !teamgramd/bin/config.json
@@ -38,23 +40,5 @@ teamgramd/bin/*
 
 teamgramd/logs/*
 !teamgramd/logs/.gitkeep
-
-/app/messenger/biz_server
-/app/bff/account/cmd/account/account
-/app/bff/authorization/cmd/authorization/authorization
-/app/bff/drafts/cmd/drafts/drafts
-/app/bff/bff/cmd/bff/bff
-/app/interface/session/cmd/session/session
-/app/interface/gateway/cmd/gateway/gateway
-/app/service/biz/username/cmd/username/username
-/app/service/media/internal/dao/examples/examples
-/app/service/status/cmd/cli/cli
-/app/service/dfs/internal/dao/examples/gif/testdata/
-/pkg/net2/examples/client/client
-/pkg/net2/examples/server/server
-/pkg/net2/brpc/benchmarks/echoserver/echoserver
-/pkg/net2/brpc/benchmarks/echoserver/testdata/test.data
-/app/interface/gnetway2
-/v2/
-app/service/dfs/internal/imaging/abc/abc
-v2
+/pkg/net/kitex/codec/examples/echo/cmd/echo/echo
+/pkg/net/kitex/codec/examples/echo/client/t/t

@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet"
 )
 
 var (

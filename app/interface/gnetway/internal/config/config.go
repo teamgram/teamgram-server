@@ -11,14 +11,14 @@ package config
 
 import (
 	"github.com/teamgram/marmota/pkg/container2"
-	"github.com/zeromicro/go-zero/zrpc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
-	zrpc.RpcServerConf
+	kitex.RpcServerConf
 	RSAKey  []RSAKey
 	Gnetway *GnetwayConfig
-	Session zrpc.RpcClientConf
+	Session kitex.RpcClientConf
 }
 
 type RSAKey struct {

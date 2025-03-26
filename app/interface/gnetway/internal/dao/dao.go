@@ -7,15 +7,12 @@
 package dao
 
 import (
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
 )
 
 type Dao struct {
-	*ShardingSessionClient
 }
 
 func New(c config.Config) *Dao {
-	return &Dao{
-		ShardingSessionClient: NewShardingSessionClient(c),
-	}
+	return &Dao{}
 }

@@ -11,9 +11,7 @@ import (
 )
 
 // innerBuffer
-type (
-	innerBuffer []byte
-)
+type innerBuffer []byte
 
 func (in *innerBuffer) readN(n int) (buf []byte, err error) {
 	if n <= 0 {

@@ -1,1 +1,0 @@
-./dalgen.sh username

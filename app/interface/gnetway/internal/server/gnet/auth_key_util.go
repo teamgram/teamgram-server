@@ -16,8 +16,8 @@
 package gnet
 
 import (
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/mtproto/crypto"
+	"github.com/teamgram/proto/v2/tg"
 )
 
 type AuthKeyUtil = authKeyUtil
@@ -25,14 +25,26 @@ type AuthKeyUtil = authKeyUtil
 var NewAuthKeyUtil = newAuthKeyUtil
 
 type authKeyUtil struct {
-	keyData *mtproto.AuthKeyInfo
+	keyData *tg.TLAuthKeyInfo
 	key     *crypto.AuthKey
 }
 
-func newAuthKeyUtil(k *mtproto.AuthKeyInfo) *authKeyUtil {
+func newAuthKeyUtil(k *tg.TLAuthKeyInfo) *authKeyUtil {
 	return &authKeyUtil{
 		keyData: k,
 		key:     crypto.NewAuthKey(k.AuthKeyId, k.AuthKey),
+	}
+}
+
+func (k *authKeyUtil) CloneKeyData() *tg.TLAuthKeyInfo {
+	return &tg.TLAuthKeyInfo{
+		ClazzID:            k.keyData.ClazzID,
+		AuthKeyId:          k.keyData.AuthKeyId,
+		AuthKey:            append([]byte(nil), k.keyData.AuthKey...),
+		AuthKeyType:        k.keyData.AuthKeyType,
+		PermAuthKeyId:      k.keyData.PermAuthKeyId,
+		TempAuthKeyId:      k.keyData.TempAuthKeyId,
+		MediaTempAuthKeyId: k.keyData.MediaTempAuthKeyId,
 	}
 }
 

@@ -21,23 +21,28 @@ package server
 import (
 	"flag"
 
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/config"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/grpc"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway/gnetwayservice"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
+	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/zrpc"
 )
 
 var (
 	configFile = flag.String("f", "etc/gateway.yaml", "the config file")
 )
 
+func New() *Server {
+	return new(Server)
+}
+
 type Server struct {
-	grpcSrv *zrpc.RpcServer
-	server  *gnet.Server
+	kitexSrv *kitex.RpcServer
+	server   *gnet.Server
 }
 
 func (s *Server) Initialize() error {
@@ -48,10 +53,15 @@ func (s *Server) Initialize() error {
 
 	ctx := svc.NewServiceContext(c)
 	s.server = gnet.New(ctx, c)
-	s.grpcSrv = grpc.New(ctx, c.RpcServerConf, s.server)
+
+	s.kitexSrv = kitex.MustNewServer(
+		c.RpcServerConf,
+		func(s2 server.Server) error {
+			return gnetwayservice.RegisterService(s2, s.server)
+		})
 
 	go func() {
-		s.grpcSrv.Start()
+		s.kitexSrv.Run()
 	}()
 
 	return nil
@@ -66,6 +76,6 @@ func (s *Server) RunLoop() {
 }
 
 func (s *Server) Destroy() {
-	s.grpcSrv.Stop()
+	s.kitexSrv.Stop()
 	s.server.Close()
 }

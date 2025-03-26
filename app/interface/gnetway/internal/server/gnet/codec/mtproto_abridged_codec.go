@@ -18,8 +18,6 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
-
-	"github.com/teamgram/proto/mtproto"
 )
 
 // https://core.telegram.org/mtproto#tcp-transport
@@ -46,27 +44,11 @@ func newMTProtoAbridgedCodec(crypto *AesCTR128Crypto) *AbridgedCodec {
 }
 
 // Encode encodes frames upon server responses into TCP stream.
-func (c *AbridgedCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
-	if msg == nil {
-		//logx.Error("conn(%s) msg is nil", conn)
-		return nil, nil
-	}
-
-	rm, ok := msg.(*mtproto.MTPRawMessage)
-	if !ok {
-		err := fmt.Errorf("conn(%s) msg type error, only MTPRawMessage, msg: %s", conn, rm)
-		return nil, err
-	} else if rm == nil {
-		// logx.Errorf("conn(%s) msg is nil, msg: %#v", conn, msg)
-		return nil, nil
-	}
-
-	out := rm.Payload
-
+func (c *AbridgedCodec) Encode(conn CodecWriter, msg []byte) ([]byte, error) {
 	// b := message.Encode() d
 	sb := make([]byte, 4)
 	// minus padding
-	size := len(out) / 4
+	size := len(msg) / 4
 
 	if size < 127 {
 		sb = []byte{byte(size)}
@@ -74,7 +56,7 @@ func (c *AbridgedCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error
 		binary.LittleEndian.PutUint32(sb, uint32(size<<8|127))
 	}
 
-	buf := append(sb, out...)
+	buf := append(sb, msg...)
 	return c.Encrypt(buf), nil
 }
 

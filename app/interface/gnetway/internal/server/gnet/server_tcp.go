@@ -19,7 +19,7 @@ import (
 	"encoding/binary"
 	"errors"
 
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/codec"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet/codec"
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -52,7 +52,7 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 			}
 			return
 		} else if frame == nil {
-			logx.Debugf("conn(%s) frame is nil", c)
+			// logx.Debugf("conn(%s) frame is nil", c)
 			break
 		}
 
@@ -66,7 +66,6 @@ func (s *Server) onTcpData(ctx *connContext, c gnet.Conn) (action gnet.Action) {
 
 		action = s.onMTPRawMessage(ctx, c, int64(binary.LittleEndian.Uint64(frame)), needAck, frame)
 		if action == gnet.Close {
-			logx.Errorf("conn(%s) onMTPRawMessage - error: action == gnet.Close", c)
 			return
 		}
 	}

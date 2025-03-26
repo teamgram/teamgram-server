@@ -7,25 +7,24 @@
 package gnet
 
 import (
-	"bytes"
-
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/codec"
-	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/ws"
+	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet/codec"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet/ws"
 
 	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type HandshakeStateCtx struct {
-	State         int32  `json:"state,omitempty"`
-	ResState      int32  `json:"res_state,omitempty"`
-	Nonce         []byte `json:"nonce,omitempty"`
-	ServerNonce   []byte `json:"server_nonce,omitempty"`
-	NewNonce      []byte `json:"new_nonce,omitempty"`
-	A             []byte `json:"a,omitempty"`
-	P             []byte `json:"p,omitempty"`
-	HandshakeType int    `json:"handshake_type"`
-	ExpiresIn     int32  `json:"expires_in,omitempty"`
+	State         int32      `json:"state,omitempty"`
+	ResState      int32      `json:"res_state,omitempty"`
+	Nonce         bin.Int128 `json:"nonce,omitempty"`
+	ServerNonce   bin.Int128 `json:"server_nonce,omitempty"`
+	NewNonce      bin.Int256 `json:"new_nonce,omitempty"`
+	A             []byte     `json:"a,omitempty"`
+	P             []byte     `json:"p,omitempty"`
+	HandshakeType int        `json:"handshake_type"`
+	ExpiresIn     int32      `json:"expires_in,omitempty"`
 }
 
 func (m *HandshakeStateCtx) DebugString() string {
@@ -77,9 +76,9 @@ func (ctx *connContext) putAuthKey(k *authKeyUtil) {
 	ctx.authKey = k
 }
 
-func (ctx *connContext) getHandshakeStateCtx(nonce []byte) *HandshakeStateCtx {
+func (ctx *connContext) getHandshakeStateCtx(nonce bin.Int128) *HandshakeStateCtx {
 	for _, state := range ctx.handshakes {
-		if bytes.Equal(nonce, state.Nonce) {
+		if nonce == state.Nonce {
 			return state
 		}
 	}

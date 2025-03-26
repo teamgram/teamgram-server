@@ -16,10 +16,14 @@
 package gnet
 
 import (
+	"encoding/binary"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/sync2"
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
+	"github.com/teamgram/proto/v2/mt"
+	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,54 +44,59 @@ func nextMessageId(isRpc bool) int64 {
 	return msgId
 }
 
-func parseFromIncomingMessage(b []byte) (msgId int64, obj mtproto.TLObject, err error) {
-	dBuf := mtproto.NewDecodeBuf(b)
+func parseFromIncomingMessage(b []byte) (msgId int64, obj iface.TLObject, err error) {
+	dBuf := bin.NewDecoder(b)
 
-	msgId = dBuf.Long()
-	_ = dBuf.Int()
-	obj = dBuf.Object()
-	err = dBuf.GetError()
+	msgId, _ = dBuf.Long()
+	_, _ = dBuf.Int()
+	obj, err = iface.DecodeObject(dBuf)
 
 	return
 }
 
-func serializeToBuffer(x *mtproto.EncodeBuf, msgId int64, obj mtproto.TLObject) error {
+func serializeToBuffer(x *bin.Encoder, msgId int64, obj iface.TLObject) error {
 	//obj.Encode(x, 0)
 	// x := mtproto.NewEncodeBuf(8 + 4 + len(oBuf))
-	x.Long(0)
-	x.Long(msgId)
-	offset := x.GetOffset()
-	x.Int(0)
+	x.PutLong(0)
+	x.PutLong(msgId)
+	offset := x.Len()
+	x.PutInt(0)
 	err := obj.Encode(x, 0)
 	if err != nil {
 		return err
 	}
-	//x.Bytes(oBuf)
-	x.IntOffset(offset, int32(x.GetOffset()-offset-4))
+
+	b := x.Bytes()
+
+	binary.LittleEndian.PutUint32(b[offset:], uint32(x.Len()-offset-4))
+
 	return nil
 }
 
-func serializeToBuffer2(salt, sessionId int64, msg2 *mtproto.TLMessage2) []byte {
-	x := mtproto.NewEncodeBuf(512)
+func serializeToBuffer2(salt, sessionId int64, msg2 *mt.TLMessage2) []byte {
+	x := bin.NewEncoder()
+	defer x.End()
 
-	x.Long(salt)
-	x.Long(sessionId)
-	msg2.Encode(x, 0)
+	x.PutLong(salt)
+	x.PutLong(sessionId)
+	_ = msg2.Encode(x, 0)
 
-	return x.GetBuf()
+	return x.Bytes()
 }
 
 const (
-	kMsgContainerBufLen = 8
+// kMsgContainerBufLen = 8
 )
 
 var (
-	kMsgContainerBuf = func() []byte {
-		x := mtproto.NewEncodeBuf(8)
-		x.Int(int32(mtproto.CRC32_msg_container))
-		x.Int(0)
-		return x.GetBuf()
-	}()
+//	kMsgContainerBuf = func() []byte {
+//		x := bin.NewEncoder()
+//      defer x.End()
+
+//		x.Int(int32(mtproto.CRC32_msg_container))
+//		x.Int(0)
+//		return x.GetBuf()
+//	}()
 )
 
 //func serializeToBuffer2(salt, sessionId int64, seqNo int32) []byte {
@@ -103,81 +112,89 @@ var (
 //	return x.GetBuf()
 //}
 
-func getRpcMethod(in mtproto.TLObject) mtproto.TLObject {
+func getRpcMethod(in iface.TLObject) iface.TLObject {
 	if in == nil {
 		return nil
 	}
 	logx.Debugf("rpc: %s", in)
 
 	switch r := in.(type) {
-	case *mtproto.TLDestroyAuthKey: // 所有连接都有可能
+	case *mt.TLDestroyAuthKey: // 所有连接都有可能
 		return nil
-	case *mtproto.TLRpcDropAnswer: // 所有连接都有可能
+	case *mt.TLRpcDropAnswer: // 所有连接都有可能
 		return nil
-	case *mtproto.TLGetFutureSalts: // GENERIC
+	case *mt.TLGetFutureSalts: // GENERIC
 		return nil
-	case *mtproto.TLPing: // android未用
+	case *mt.TLPing: // android未用
 		return nil
-	case *mtproto.TLPingDelayDisconnect: // PUSH和GENERIC
+	case *mt.TLPingDelayDisconnect: // PUSH和GENERIC
 		return nil
-	case *mtproto.TLDestroySession: // GENERIC
+	case *mt.TLDestroySession: // GENERIC
 		return nil
-	case *mtproto.TLMsgsStateReq: // android未用
+	case *mt.TLMsgsStateReq: // android未用
 		return nil
-	case *mtproto.TLMsgsStateInfo: // android未用
+	case *mt.TLMsgsStateInfo: // android未用
 		return nil
-	case *mtproto.TLMsgsAllInfo: // android未用
+	case *mt.TLMsgsAllInfo: // android未用
 		return nil
-	case *mtproto.TLMsgResendReq: // 都有可能
+	case *mt.TLMsgResendReq: // 都有可能
 		return nil
-	case *mtproto.TLMsgDetailedInfo: // 都有可能
+	case *mt.TLMsgDetailedInfo: // 都有可能
 		return nil
-	case *mtproto.TLMsgNewDetailedInfo: // 都有可能
+	case *mt.TLMsgNewDetailedInfo: // 都有可能
 		return nil
-	case *mtproto.TLInvokeWithLayer:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeAfterMsg:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeAfterMsgs:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeWithoutUpdates:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeWithMessagesRange:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeWithTakeout:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInvokeWithBusinessConnection:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLInitConnection:
-		dBuf := mtproto.NewDecodeBuf(r.Query)
-		return getRpcMethod(dBuf.Object())
-	case *mtproto.TLGzipPacked:
+	case *tg.TLInvokeWithLayer:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeAfterMsg:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeAfterMsgs:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeWithoutUpdates:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeWithMessagesRange:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeWithTakeout:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInvokeWithBusinessConnection:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *tg.TLInitConnection:
+		dBuf := bin.NewDecoder(r.Query)
+		o, _ := iface.DecodeObject(dBuf)
+		return getRpcMethod(o)
+	case *mt.TLGzipPacked:
 		return r.Obj
 	default:
 		return r
 	}
 }
 
-func tryGetUnknownTLObject(b []byte) (rList []mtproto.TLObject) {
+func tryGetUnknownTLObject(b []byte) (rList []iface.TLObject) {
 	var (
 		err  error
-		msg  = &mtproto.TLMessage2{}
-		msgs []*mtproto.TLMessage2
+		msg  = &mt.TLMessage2{}
+		msgs []*mt.TLMessage2
 	)
 
-	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	err = msg.Decode(bin.NewDecoder(b))
 	if err != nil {
 		return
 	}
 
-	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
+	if msgContainer, ok := msg.Object.(*mt.TLMsgContainer); ok {
 		msgs = msgContainer.Messages
 	} else {
 		msgs = append(msgs, msg)
@@ -196,16 +213,16 @@ func tryGetUnknownTLObject(b []byte) (rList []mtproto.TLObject) {
 func tryGetPermAuthKeyId(b []byte) int64 {
 	var (
 		err  error
-		msg  = &mtproto.TLMessage2{}
-		msgs []*mtproto.TLMessage2
+		msg  = &mt.TLMessage2{}
+		msgs []*mt.TLMessage2
 	)
 
-	err = msg.Decode(mtproto.NewDecodeBuf(b))
+	err = msg.Decode(bin.NewDecoder(b))
 	if err != nil {
 		return 0
 	}
 
-	if msgContainer, ok := msg.Object.(*mtproto.TLMsgContainer); ok {
+	if msgContainer, ok := msg.Object.(*mt.TLMsgContainer); ok {
 		msgs = msgContainer.Messages
 	} else {
 		msgs = append(msgs, msg)
@@ -225,11 +242,24 @@ func tryGetPermAuthKeyId(b []byte) int64 {
 	for _, m2 := range msgs {
 		r := getRpcMethod(m2.Object)
 		if r != nil {
-			if request, ok := r.(*mtproto.TLAuthBindTempAuthKey); ok {
-				return request.GetPermAuthKeyId()
+			if request, ok := r.(*tg.TLAuthBindTempAuthKey); ok {
+				return request.PermAuthKeyId
 			}
 		}
 	}
 
 	return 0
+}
+
+func encodeUnencryptedMessage(x *bin.Encoder, msgId int64, obj iface.TLObject) error {
+	x.PutInt64(0)
+	x.PutInt64(msgId)
+	offset := x.Len()
+	x.PutInt(0)
+	if err := obj.Encode(x, 0); err != nil {
+		return err
+	}
+	b := x.Bytes()
+	binary.LittleEndian.PutUint32(b[offset:], uint32(x.Len()-offset-4))
+	return nil
 }

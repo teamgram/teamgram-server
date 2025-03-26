@@ -30,6 +30,8 @@ Gnetway:
   ReceiveBuf: 65536
 
 Session:
+  ServiceName: "interface.session"
+  Codec: "zrpc"
   Etcd:
     Hosts:
       - 127.0.0.1:2379

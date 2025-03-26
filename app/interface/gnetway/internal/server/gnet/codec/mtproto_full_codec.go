@@ -18,8 +18,6 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
-
-	"github.com/teamgram/proto/mtproto"
 )
 
 // https://core.telegram.org/mtproto#tcp-transport
@@ -42,31 +40,22 @@ func newMTProtoFullCodec() *FullCodec {
 }
 
 // Encode encodes frames upon server responses into TCP stream.
-func (c *FullCodec) Encode(conn CodecWriter, msg interface{}) ([]byte, error) {
-	rawMsg, ok := msg.(*mtproto.MTPRawMessage)
-	if !ok {
-		err := fmt.Errorf("msg type error, only MTPRawMessage, msg: {%v}", msg)
-		// log.Error(err.Error())
-		return nil, err
-	}
-
-	b := rawMsg.Payload
-
+func (c *FullCodec) Encode(conn CodecWriter, msg []byte) ([]byte, error) {
 	sb := make([]byte, 8)
 	// minus padding
-	size := len(b) / 4
+	size := len(msg) / 4
 
 	binary.LittleEndian.PutUint32(sb, uint32(size))
 	// TODO(@benqi): gen seq_num
 	var seqNum uint32 = 0
 	binary.LittleEndian.PutUint32(sb[4:], seqNum)
-	b = append(sb, b...)
+	msg = append(sb, msg...)
 	var crc32Buf = make([]byte, 4)
 	var crc32 uint32 = 0
 	binary.LittleEndian.PutUint32(crc32Buf, crc32)
-	b = append(sb, crc32Buf...)
+	msg = append(sb, crc32Buf...)
 
-	return b, nil
+	return msg, nil
 }
 
 // Decode decodes frames from TCP stream via specific implementation.

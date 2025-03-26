@@ -18,18 +18,18 @@ package gnet
 import (
 	"fmt"
 
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/v2/tg"
 )
 
 type CacheV struct {
-	V *mtproto.AuthKeyInfo
+	V *tg.TLAuthKeyInfo
 }
 
 func (c CacheV) Size() int {
 	return 1
 }
 
-func (s *Server) GetAuthKey(authKeyId int64) *mtproto.AuthKeyInfo {
+func (s *Server) GetAuthKey(authKeyId int64) *tg.TLAuthKeyInfo {
 	var (
 		cacheK = fmt.Sprintf("%d", authKeyId)
 		value  *CacheV
@@ -46,7 +46,7 @@ func (s *Server) GetAuthKey(authKeyId int64) *mtproto.AuthKeyInfo {
 	}
 }
 
-func (s *Server) PutAuthKey(keyInfo *mtproto.AuthKeyInfo) {
+func (s *Server) PutAuthKey(keyInfo *tg.TLAuthKeyInfo) {
 	var (
 		cacheK = fmt.Sprintf("%d", keyInfo.AuthKeyId)
 	)

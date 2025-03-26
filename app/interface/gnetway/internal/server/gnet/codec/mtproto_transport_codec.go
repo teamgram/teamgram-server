@@ -136,7 +136,7 @@ type CodecWriter interface {
 }
 
 type Codec interface {
-	Encode(conn CodecWriter, msg interface{}) ([]byte, error)
+	Encode(conn CodecWriter, msg []byte) ([]byte, error)
 	Decode(conn CodecReader) (bool, []byte, error)
 	// FirstBytes() int
 }
