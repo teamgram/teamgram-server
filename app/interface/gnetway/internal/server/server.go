@@ -61,7 +61,7 @@ func (s *Server) Initialize() error {
 		})
 
 	go func() {
-		s.kitexSrv.Run()
+		_ = s.kitexSrv.Run()
 	}()
 
 	return nil

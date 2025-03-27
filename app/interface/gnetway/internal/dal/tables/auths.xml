@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auths">
+    <operation name="InsertOrUpdateLayer">
+        <sql>
+            INSERT INTO auths
+                (auth_key_id, layer, api_id, params, client_ip, date_active)
+            VALUES
+                (:auth_key_id, :layer, 0, 'null', :client_ip, :date_active)
+            ON DUPLICATE KEY UPDATE
+                layer = VALUES(layer),
+                client_ip = VALUES(client_ip),
+                date_active = VALUES(date_active)
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO auths
+                (auth_key_id, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, proxy, params, client_ip, date_active)
+            VALUES
+                (:auth_key_id, :api_id, :device_model, :system_version, :app_version, :system_lang_code, :lang_pack, :lang_code, :proxy, :params, :client_ip, :date_active)
+            ON DUPLICATE KEY UPDATE
+                api_id = VALUES(api_id),
+                device_model = VALUES(device_model),
+                system_version = VALUES(system_version),
+                app_version=VALUES(app_version),
+                system_lang_code = VALUES(system_lang_code),
+                lang_pack = VALUES(lang_pack),
+                lang_code = VALUES(lang_code),
+                proxy = VALUES(proxy),
+                params = VALUES(params),
+                client_ip = VALUES(client_ip),
+                date_active = VALUES(date_active)
+        </sql>
+    </operation>
+
+    <operation name="SelectSessions" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active
+            FROM
+                auths
+            WHERE
+                auth_key_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="SelectByAuthKeyId">
+        <sql>
+            SELECT
+               auth_key_id, layer, api_id, device_model, system_version, app_version, system_lang_code, lang_pack, lang_code, client_ip, date_active
+            FROM
+                auths
+            WHERE
+                auth_key_id = :auth_key_id AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectLayer" result_set="single">
+        <sql>
+            SELECT
+                layer
+            FROM
+                auths
+            WHERE
+                auth_key_id = :auth_key_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectLangCode" result_set="single">
+        <sql>
+            SELECT
+                lang_code
+            FROM
+                auths
+            WHERE
+                auth_key_id = :auth_key_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectLangPack" result_set="single">
+        <sql>
+            SELECT
+                lang_pack
+            FROM
+                auths
+            WHERE
+                auth_key_id = :auth_key_id LIMIT 1
+        </sql>
+    </operation>
+
+</table>
+

@@ -328,11 +328,10 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 			return
 		}
 
-		out, err := s.onHandshake(c, d)
+		err := s.onHandshake(c, d)
 		if err != nil {
+			logx.Errorf("conn(%s) error: %v", c, err)
 			action = gnet.Close
-		} else if out != nil {
-			_ = UnThreadSafeWrite(c, out)
 		}
 	} else {
 		authKey := ctx.getAuthKey()

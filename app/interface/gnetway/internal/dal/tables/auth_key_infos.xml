@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_key_infos">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_key_infos
+                (auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id)
+            VALUES
+                (:auth_key_id, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
+        </sql>
+    </operation>
+
+    <operation name="SelectByAuthKeyId">
+        <sql>
+            SELECT
+                auth_key_id, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id
+            FROM
+                auth_key_infos
+            WHERE
+                auth_key_id=:auth_key_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="UpdateCustomMap">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                auth_key_infos
+            SET
+                cMap = :cMap
+            WHERE
+                auth_key_id=:auth_key_id
+        </sql>
+    </operation>
+</table>

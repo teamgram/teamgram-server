@@ -64,6 +64,7 @@ func New(svcCtx *svc.ServiceContext, c config.Config) *Server {
 	go func() {
 		s.Serve()
 	}()
+
 	return s
 }
 

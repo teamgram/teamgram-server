@@ -20,9 +20,13 @@ package gnet
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha1"
+	"encoding/base64"
 	"encoding/binary"
 	"fmt"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dal/dataobject"
 	"math/big"
 	"strconv"
 	"time"
@@ -198,10 +202,10 @@ func mustNewHandshake(cList []config.RSAKey) *handshake {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
-func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
+func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) error {
 	ctx, ok := c.Context().(*connContext)
 	if !ok {
-		return nil, fmt.Errorf("unknown error")
+		return fmt.Errorf("unknown error")
 	}
 
 	clazzID, _ := d.ClazzID()
@@ -214,7 +218,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 		if err != nil {
 			// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 			// conn.Close()
-			return nil, err
+			return err
 		}
 		// logx.Infof("req_pq: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce[:]), hex.EncodeToString(resPQ.(*mt.TLResPQ).Nonce[:]))
 
@@ -233,7 +237,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 		defer x.End()
 		_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), resPQ)
 
-		return x.Bytes(), nil
+		return UnThreadSafeWrite(c, x.Bytes())
 	case mt.ClazzID_req_pq_multi:
 		request := &mt.TLReqPqMulti{ClazzID: clazzID}
 		_ = request.Decode(d)
@@ -242,7 +246,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 		if err != nil {
 			// logx.Errorf("onHandshake error: onReqPqMulti conn(%s)}", err, c)
 			// conn.Close()
-			return nil, err
+			return err
 		}
 		// logx.Infof("req_pq_multi: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce[:]), hex.EncodeToString(resPQ.(*mt.TLResPQ).Nonce[:]))
 
@@ -261,14 +265,14 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 		defer x.End()
 		_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), resPQ)
 
-		return x.Bytes(), nil
+		return UnThreadSafeWrite(c, x.Bytes())
 	case mt.ClazzID_req_DH_params:
 		request := &mt.TLReqDHParams{ClazzID: clazzID}
 		_ = request.Decode(d)
 
 		if ctx == nil {
 			// logx.Errorf("conn(%s), ctx is nil", c)
-			return nil, fmt.Errorf("unknown error")
+			return fmt.Errorf("unknown error")
 		}
 
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
@@ -276,7 +280,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 			if err != nil {
 				// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// conn.Close()
-				return nil, err
+				return err
 			}
 			// state.State = STATE_DH_params_res
 			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
@@ -285,7 +289,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 			// return nil, conn.Close()
 			// logx.Errorf("conn(%s), state is nil", c)
 			err := fmt.Errorf("state error")
-			return nil, err
+			return err
 		}
 	case mt.ClazzID_set_client_DH_params:
 		request := &mt.TLSetClientDHParams{ClazzID: clazzID}
@@ -293,7 +297,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 
 		if ctx == nil {
 			// logx.Errorf("conn(%s), ctx is nil", c)
-			return nil, fmt.Errorf("unknown error")
+			return fmt.Errorf("unknown error")
 		}
 
 		if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
@@ -301,7 +305,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 			if err != nil {
 				//log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
 				// return conn.Close()
-				return nil, err
+				return err
 			}
 			// state.State = STATE_dh_gen_res
 			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
@@ -309,109 +313,17 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) ([]byte, error) {
 			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return conn.Close()
 			err := fmt.Errorf("state error")
-			return nil, err
+			return err
 		}
 	case mt.ClazzID_msgs_ack:
 		request := &mt.TLMsgsAck{ClazzID: clazzID}
 		_ = request.Decode(d)
 	default:
 		err := fmt.Errorf("invalid handshake type (0x%x)", uint32(clazzID))
-		return nil, err
+		return err
 	}
 
-	//x := mtproto.NewEncodeBuf(512)
-	//
-	//switch request := obj.(type) {
-	//case *mtproto.TLReqPq:
-	//	resPQ, err := s.onReqPq(c, request)
-	//	if err != nil {
-	//		// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
-	//		// conn.Close()
-	//		return nil, err
-	//	}
-	//
-	//	ctx.putHandshakeStateCt(&HandshakeStateCtx{
-	//		State:       STATE_pq_res,
-	//		Nonce:       resPQ.GetNonce(),
-	//		ServerNonce: resPQ.GetServerNonce(),
-	//	})
-	//
-	//	_ = serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-	//	return &mtproto.MTPRawMessage{
-	//		Payload: x.GetBuf(),
-	//	}, nil
-	//case *mtproto.TLReqPqMulti:
-	//	resPQ, err := s.onReqPqMulti(c, request)
-	//	if err != nil {
-	//		// logx.Errorf("onHandshake error: onReqPqMulti conn(%s)}", err, c)
-	//		// conn.Close()
-	//		return nil, err
-	//	}
-	//
-	//	ctx.putHandshakeStateCt(&HandshakeStateCtx{
-	//		State:       STATE_pq_res,
-	//		Nonce:       resPQ.GetNonce(),
-	//		ServerNonce: resPQ.GetServerNonce(),
-	//	})
-	//
-	//	logx.Infof("req_pq_multi: nonce: %s, nonce: %s", hex.EncodeToString(request.Nonce), hex.EncodeToString(resPQ.Nonce))
-	//	_ = serializeToBuffer(x, mtproto.GenerateMessageId(), resPQ)
-	//	return &mtproto.MTPRawMessage{
-	//		Payload: x.GetBuf(),
-	//	}, nil
-	//case *mtproto.TLReq_DHParams:
-	//	if ctx == nil {
-	//		// logx.Errorf("conn(%s), ctx is nil", c)
-	//		return nil, fmt.Errorf("unknown error")
-	//	}
-	//
-	//	if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
-	//		_, err = s.onReqDHParams(c, state, obj.(*mtproto.TLReq_DHParams))
-	//		if err != nil {
-	//			// log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
-	//			// conn.Close()
-	//			return nil, err
-	//		}
-	//		// state.State = STATE_DH_params_res
-	//		// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
-	//	} else {
-	//		// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
-	//		// return nil, conn.Close()
-	//		// logx.Errorf("conn(%s), state is nil", c)
-	//		err = fmt.Errorf("state error")
-	//		return nil, err
-	//	}
-	//case *mtproto.TLSetClient_DHParams:
-	//	if ctx == nil {
-	//		// logx.Errorf("conn(%s), ctx is nil", c)
-	//		return nil, fmt.Errorf("unknown error")
-	//	}
-	//
-	//	if state := ctx.getHandshakeStateCtx(request.Nonce); state != nil {
-	//		_, err = s.onSetClientDHParams(c, state, obj.(*mtproto.TLSetClient_DHParams))
-	//		if err != nil {
-	//			//log.Errorf("onHandshake error: {%v} - {peer: %s, ctx: %s, mmsg: %s}", err, conn, ctx, mmsg)
-	//			// return conn.Close()
-	//			return nil, err
-	//		}
-	//		// state.State = STATE_dh_gen_res
-	//		// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
-	//	} else {
-	//		// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
-	//		// return conn.Close()
-	//		return nil, err
-	//	}
-	//case *mtproto.TLMsgsAck:
-	//	//err = s.onMsgsAck(state, obj.(*mtproto.TLMsgsAck))
-	//	//return nil, err
-	//	return nil, nil
-	//default:
-	//	// logx.Errorf("conn(%s), invalid handshake type", c)
-	//	err = fmt.Errorf("invalid handshake type")
-	//	return nil, err
-	//}
-
-	return nil, nil
+	return nil
 }
 
 // req_pq#60469778 nonce:int128 = ResPQ;
@@ -1064,36 +976,36 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *mtproto.AuthKeyInf
 	_ = serverSalt
 	_ = keyInfo
 
-	//// Fix by @wuyun9527, 2018-12-21
-	//var (
-	//	rB *tg.Bool
-	//)
-	//err := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-	//	strconv.FormatInt(key.AuthKeyId, 10),
-	//	func(client sessionclient.SessionClient) (err error) {
-	//		rB, err = client.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{
-	//			AuthKey:    keyInfo.ToAuthKeyInfo(),
-	//			FutureSalt: serverSalt,
-	//			ExpiresIn:  ctx.ExpiresIn,
-	//		})
-	//
-	//		return err
-	//	})
-	//if err != nil {
-	//	logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
-	//	return false
-	//} else if !tg.FromBool(rB) {
-	//	logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
-	//	return false
-	//} else {
-	//	s.PutAuthKey(&tg.TLAuthKeyInfo{
-	//		AuthKeyId:          keyInfo.AuthKeyId,
-	//		AuthKey:            keyInfo.AuthKey,
-	//		AuthKeyType:        keyInfo.AuthKeyType,
-	//		PermAuthKeyId:      keyInfo.PermAuthKeyId,
-	//		TempAuthKeyId:      keyInfo.TempAuthKeyId,
-	//		MediaTempAuthKeyId: keyInfo.MediaTempAuthKeyId})
-	//}
+	tR := sqlx.TxWrapper(
+		context.Background(),
+		s.svcCtx.DB,
+		func(tx *sqlx.Tx, result *sqlx.StoreResult) {
+			_, _, err := s.svcCtx.Dao.AuthKeysDAO.InsertTx(
+				tx,
+				&dataobject.AuthKeysDO{
+					AuthKeyId: key.AuthKeyId,
+					Body:      base64.RawStdEncoding.EncodeToString(key.AuthKey),
+				})
+			if err != nil {
+				result.Err = err
+				return
+			}
+
+			_, _, err = s.svcCtx.Dao.AuthKeyInfosDAO.InsertTx(
+				tx, &dataobject.AuthKeyInfosDO{
+					AuthKeyId:          key.AuthKeyId,
+					AuthKeyType:        key.AuthKeyType,
+					PermAuthKeyId:      key.PermAuthKeyId,
+					TempAuthKeyId:      key.TempAuthKeyId,
+					MediaTempAuthKeyId: key.MediaTempAuthKeyId,
+				})
+			if err != nil {
+				result.Err = err
+				return
+			}
+		})
+
+	_ = tR
 
 	return true
 }
