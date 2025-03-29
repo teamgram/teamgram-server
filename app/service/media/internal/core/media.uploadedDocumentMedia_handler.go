@@ -79,6 +79,7 @@ func (c *MediaCore) MediaUploadedDocumentMedia(in *media.TLMediaUploadedDocument
 
 	// messageMediaDocument#7c4414d3 flags:# document:flags.0?Document caption:flags.1?string ttl_seconds:flags.2?int = MessageMedia;
 	return mtproto.MakeTLMessageMediaDocument(&mtproto.MessageMedia{
+		Spoiler:    in.GetMedia().GetSpoiler(),
 		Document:   document,
 		TtlSeconds: in.GetMedia().GetTtlSeconds(),
 	}).To_MessageMedia(), nil
