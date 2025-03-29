@@ -75,6 +75,7 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 		}
 
 		messageMedia = mtproto.MakeTLMessageMediaPhoto(&mtproto.MessageMedia{
+			Spoiler:         media.Spoiler,
 			Photo_FLAGPHOTO: photo,
 			TtlSeconds:      media.TtlSeconds,
 		}).To_MessageMedia()
@@ -98,6 +99,7 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 		})
 
 		messageMedia = mtproto.MakeTLMessageMediaPhoto(&mtproto.MessageMedia{
+			Spoiler:         mediaPhoto.GetSpoiler(),
 			Photo_FLAGPHOTO: photo.To_Photo(),
 			TtlSeconds:      mediaPhoto.GetTtlSeconds(),
 		}).To_MessageMedia()
@@ -165,6 +167,7 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 
 		// messageMediaDocument#7c4414d3 flags:# document:flags.0?Document caption:flags.1?string ttl_seconds:flags.2?int = MessageMedia;
 		messageMedia = mtproto.MakeTLMessageMediaDocument(&mtproto.MessageMedia{
+			Spoiler:  media.To_InputMediaDocument().GetSpoiler(),
 			Document: document3,
 			// Caption:    media.To_InputMediaDocument().GetCaption(),
 			TtlSeconds: media.To_InputMediaDocument().GetTtlSeconds(),
