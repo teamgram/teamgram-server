@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -59,6 +59,21 @@ func (s *Service) PaymentsAssignPlayMarketTransaction(ctx context.Context, reque
 	}
 
 	c.Logger.Debugf("payments.assignPlayMarketTransaction - reply: {%s}", r)
+	return r, err
+}
+
+// PaymentsCanPurchaseStore
+// payments.canPurchaseStore#4fdc5ea7 purpose:InputStorePaymentPurpose = Bool;
+func (s *Service) PaymentsCanPurchaseStore(ctx context.Context, request *mtproto.TLPaymentsCanPurchaseStore) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("payments.canPurchaseStore - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.PaymentsCanPurchaseStore(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("payments.canPurchaseStore - reply: {%s}", r)
 	return r, err
 }
 
