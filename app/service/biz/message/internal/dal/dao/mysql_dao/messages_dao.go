@@ -200,6 +200,7 @@ func (dao *MessagesDAO) SelectByMessageId(ctx context.Context, userId int64, use
 			logx.WithContext(ctx).Errorf("queryx in SelectByMessageId(_), error: %v", err)
 			return
 		} else {
+			logx.WithContext(ctx).Errorf("queryx in SelectByMessageId(_), error: %v", err)
 			err = nil
 		}
 	} else {
