@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -32,8 +32,23 @@ func (s *Service) AccountToggleSponsoredMessages(ctx context.Context, request *m
 	return r, err
 }
 
+// ContactsGetSponsoredPeers
+// contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
+func (s *Service) ContactsGetSponsoredPeers(ctx context.Context, request *mtproto.TLContactsGetSponsoredPeers) (*mtproto.Contacts_SponsoredPeers, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.getSponsoredPeers - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.ContactsGetSponsoredPeers(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.getSponsoredPeers - reply: {%s}", r)
+	return r, err
+}
+
 // MessagesViewSponsoredMessage
-// messages.viewSponsoredMessage#673ad8f1 peer:InputPeer random_id:bytes = Bool;
+// messages.viewSponsoredMessage#269e3643 random_id:bytes = Bool;
 func (s *Service) MessagesViewSponsoredMessage(ctx context.Context, request *mtproto.TLMessagesViewSponsoredMessage) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.viewSponsoredMessage - metadata: {%s}, request: {%s}", c.MD, request)
@@ -48,7 +63,7 @@ func (s *Service) MessagesViewSponsoredMessage(ctx context.Context, request *mtp
 }
 
 // MessagesClickSponsoredMessage
-// messages.clickSponsoredMessage#f093465 flags:# media:flags.0?true fullscreen:flags.1?true peer:InputPeer random_id:bytes = Bool;
+// messages.clickSponsoredMessage#8235057e flags:# media:flags.0?true fullscreen:flags.1?true random_id:bytes = Bool;
 func (s *Service) MessagesClickSponsoredMessage(ctx context.Context, request *mtproto.TLMessagesClickSponsoredMessage) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.clickSponsoredMessage - metadata: {%s}, request: {%s}", c.MD, request)
@@ -63,7 +78,7 @@ func (s *Service) MessagesClickSponsoredMessage(ctx context.Context, request *mt
 }
 
 // MessagesReportSponsoredMessage
-// messages.reportSponsoredMessage#1af3dbb8 peer:InputPeer random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
+// messages.reportSponsoredMessage#12cbf0c4 random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
 func (s *Service) MessagesReportSponsoredMessage(ctx context.Context, request *mtproto.TLMessagesReportSponsoredMessage) (*mtproto.Channels_SponsoredMessageReportResult, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.reportSponsoredMessage - metadata: {%s}, request: {%s}", c.MD, request)

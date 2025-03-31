@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -22,6 +22,7 @@ var _ *mtproto.Bool
 
 type SponsoredMessagesClient interface {
 	AccountToggleSponsoredMessages(ctx context.Context, in *mtproto.TLAccountToggleSponsoredMessages) (*mtproto.Bool, error)
+	ContactsGetSponsoredPeers(ctx context.Context, in *mtproto.TLContactsGetSponsoredPeers) (*mtproto.Contacts_SponsoredPeers, error)
 	MessagesViewSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesViewSponsoredMessage) (*mtproto.Bool, error)
 	MessagesClickSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesClickSponsoredMessage) (*mtproto.Bool, error)
 	MessagesReportSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesReportSponsoredMessage) (*mtproto.Channels_SponsoredMessageReportResult, error)
@@ -50,22 +51,29 @@ func (m *defaultSponsoredMessagesClient) AccountToggleSponsoredMessages(ctx cont
 	return client.AccountToggleSponsoredMessages(ctx, in)
 }
 
+// ContactsGetSponsoredPeers
+// contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
+func (m *defaultSponsoredMessagesClient) ContactsGetSponsoredPeers(ctx context.Context, in *mtproto.TLContactsGetSponsoredPeers) (*mtproto.Contacts_SponsoredPeers, error) {
+	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
+	return client.ContactsGetSponsoredPeers(ctx, in)
+}
+
 // MessagesViewSponsoredMessage
-// messages.viewSponsoredMessage#673ad8f1 peer:InputPeer random_id:bytes = Bool;
+// messages.viewSponsoredMessage#269e3643 random_id:bytes = Bool;
 func (m *defaultSponsoredMessagesClient) MessagesViewSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesViewSponsoredMessage) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
 	return client.MessagesViewSponsoredMessage(ctx, in)
 }
 
 // MessagesClickSponsoredMessage
-// messages.clickSponsoredMessage#f093465 flags:# media:flags.0?true fullscreen:flags.1?true peer:InputPeer random_id:bytes = Bool;
+// messages.clickSponsoredMessage#8235057e flags:# media:flags.0?true fullscreen:flags.1?true random_id:bytes = Bool;
 func (m *defaultSponsoredMessagesClient) MessagesClickSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesClickSponsoredMessage) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
 	return client.MessagesClickSponsoredMessage(ctx, in)
 }
 
 // MessagesReportSponsoredMessage
-// messages.reportSponsoredMessage#1af3dbb8 peer:InputPeer random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
+// messages.reportSponsoredMessage#12cbf0c4 random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
 func (m *defaultSponsoredMessagesClient) MessagesReportSponsoredMessage(ctx context.Context, in *mtproto.TLMessagesReportSponsoredMessage) (*mtproto.Channels_SponsoredMessageReportResult, error) {
 	client := mtproto.NewRPCSponsoredMessagesClient(m.cli.Conn())
 	return client.MessagesReportSponsoredMessage(ctx, in)
