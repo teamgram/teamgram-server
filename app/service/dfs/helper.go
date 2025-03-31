@@ -15,6 +15,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/imaging"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/minio_util"
+	"github.com/teamgram/teamgram-server/app/service/dfs/internal/model"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/server/http"
 	"github.com/teamgram/teamgram-server/app/service/dfs/internal/svc"
@@ -39,9 +40,10 @@ var (
 //}
 
 type (
-	MinioConfig = minio_util.MinioConfig
-	DFSHelper   = dao.Dao
-	MinioHelper = minio_util.MinioUtil
+	MinioConfig     = minio_util.MinioConfig
+	DFSHelper       = dao.Dao
+	MinioHelper     = minio_util.MinioUtil
+	DfsHttpFileInfo = model.DfsHttpFileInfo
 )
 
 // imaging - imaging
@@ -56,6 +58,8 @@ var (
 	EncodeJpeg = imaging.EncodeJpeg
 
 	EncodeStripped = imaging.EncodeStripped
+
+	MustNewMinioClient = minio_util.MustNewMinioClient
 )
 
 func init() {
