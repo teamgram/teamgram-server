@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -244,6 +244,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	732705613: func() mtproto.TLObject { // 0x2bac334d
 		return &TLDialogUpdateUnreadCount{
 			Constructor: 732705613,
+		}
+	},
+	-1597149815: func() mtproto.TLObject { // 0xa0cd6d89
+		return &TLDialogToggleDialogFilterTags{
+			Constructor: -1597149815,
+		}
+	},
+	-84870505: func() mtproto.TLObject { // 0xfaf0fa97
+		return &TLDialogGetDialogFilterTags{
+			Constructor: -84870505,
 		}
 	},
 }
@@ -2848,6 +2858,88 @@ func (m *TLDialogUpdateUnreadCount) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.UnreadReactionsCount = &wrapperspb.Int32Value{Value: dBuf.Int()}
 		}
 
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLDialogToggleDialogFilterTags
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogToggleDialogFilterTags) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xa0cd6d89:
+		x.UInt(0xa0cd6d89)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetEnabled().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogToggleDialogFilterTags) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogToggleDialogFilterTags) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xa0cd6d89:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.Bool{}
+		m2.Decode(dBuf)
+		m.Enabled = m2
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLDialogGetDialogFilterTags
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLDialogGetDialogFilterTags) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xfaf0fa97:
+		x.UInt(0xfaf0fa97)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLDialogGetDialogFilterTags) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLDialogGetDialogFilterTags) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xfaf0fa97:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

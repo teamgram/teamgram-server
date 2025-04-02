@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -54,6 +54,8 @@ const (
 	Predicate_dialog_getDialogFilterBySlug             = "dialog_getDialogFilterBySlug"
 	Predicate_dialog_createDialogFilter                = "dialog_createDialogFilter"
 	Predicate_dialog_updateUnreadCount                 = "dialog_updateUnreadCount"
+	Predicate_dialog_toggleDialogFilterTags            = "dialog_toggleDialogFilterTags"
+	Predicate_dialog_getDialogFilterTags               = "dialog_getDialogFilterTags"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -229,6 +231,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 732705613, // 0x2bac334d
 
 	},
+	Predicate_dialog_toggleDialogFilterTags: {
+		0: -1597149815, // 0xa0cd6d89
+
+	},
+	Predicate_dialog_getDialogFilterTags: {
+		0: -84870505, // 0xfaf0fa97
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -275,6 +285,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	1313177583:  Predicate_dialog_getDialogFilterBySlug,             // 0x4e457fef
 	-959749265:  Predicate_dialog_createDialogFilter,                // 0xc6cb636f
 	732705613:   Predicate_dialog_updateUnreadCount,                 // 0x2bac334d
+	-1597149815: Predicate_dialog_toggleDialogFilterTags,            // 0xa0cd6d89
+	-84870505:   Predicate_dialog_getDialogFilterTags,               // 0xfaf0fa97
 
 }
 

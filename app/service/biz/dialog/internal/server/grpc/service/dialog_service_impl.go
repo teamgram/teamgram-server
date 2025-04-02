@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -570,5 +570,35 @@ func (s *Service) DialogUpdateUnreadCount(ctx context.Context, request *dialog.T
 	}
 
 	c.Logger.Debugf("dialog.updateUnreadCount - reply: {%s}", r)
+	return r, err
+}
+
+// DialogToggleDialogFilterTags
+// dialog.toggleDialogFilterTags user_id:long enabled:Bool = Bool;
+func (s *Service) DialogToggleDialogFilterTags(ctx context.Context, request *dialog.TLDialogToggleDialogFilterTags) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.toggleDialogFilterTags - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.DialogToggleDialogFilterTags(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.toggleDialogFilterTags - reply: {%s}", r)
+	return r, err
+}
+
+// DialogGetDialogFilterTags
+// dialog.getDialogFilterTags user_id:long = Bool;
+func (s *Service) DialogGetDialogFilterTags(ctx context.Context, request *dialog.TLDialogGetDialogFilterTags) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogFilterTags - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.DialogGetDialogFilterTags(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogFilterTags - reply: {%s}", r)
 	return r, err
 }

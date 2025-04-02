@@ -14,12 +14,14 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dao/mysql_dao"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dal/dataobject"
+	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/server/grpc/service"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/internal/svc"
 )
 
 type (
-	Config = config.Config
+	Config  = config.Config
+	Service = service.Service
 )
 
 func New(c Config) *service.Service {
@@ -31,6 +33,8 @@ type (
 	DialogsDO       = dataobject.DialogsDO
 	SavedDialogsDAO = mysql_dao.SavedDialogsDAO
 	SavedDialogsDO  = dataobject.SavedDialogsDO
+
+	Dao = dao.Dao
 )
 
 var (

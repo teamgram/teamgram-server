@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -55,4 +55,6 @@ const (
 	CRC32_dialog_getDialogFilterBySlug             TLConstructor = 1313177583  // 0x4e457fef
 	CRC32_dialog_createDialogFilter                TLConstructor = -959749265  // 0xc6cb636f
 	CRC32_dialog_updateUnreadCount                 TLConstructor = 732705613   // 0x2bac334d
+	CRC32_dialog_toggleDialogFilterTags            TLConstructor = -1597149815 // 0xa0cd6d89
+	CRC32_dialog_getDialogFilterTags               TLConstructor = -84870505   // 0xfaf0fa97
 )

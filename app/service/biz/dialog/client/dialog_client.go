@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -14,6 +14,7 @@ import (
 	"context"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -59,6 +60,8 @@ type DialogClient interface {
 	DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error)
 	DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error)
 	DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error)
+	DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*mtproto.Bool, error)
+	DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*mtproto.Bool, error)
 }
 
 type defaultDialogClient struct {
@@ -74,6 +77,10 @@ func NewDialogClient(cli zrpc.Client) DialogClient {
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 func (m *defaultDialogClient) DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogSaveDraftMessage(ctx, in)
 }
@@ -81,6 +88,10 @@ func (m *defaultDialogClient) DialogSaveDraftMessage(ctx context.Context, in *di
 // DialogClearDraftMessage
 // dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 func (m *defaultDialogClient) DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogClearDraftMessage(ctx, in)
 }
@@ -88,6 +99,10 @@ func (m *defaultDialogClient) DialogClearDraftMessage(ctx context.Context, in *d
 // DialogGetAllDrafts
 // dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (m *defaultDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetAllDrafts(ctx, in)
 }
@@ -95,6 +110,10 @@ func (m *defaultDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialog
 // DialogClearAllDrafts
 // dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (m *defaultDialogClient) DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.Vector_PeerWithDraftMessage, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogClearAllDrafts(ctx, in)
 }
@@ -102,6 +121,10 @@ func (m *defaultDialogClient) DialogClearAllDrafts(ctx context.Context, in *dial
 // DialogMarkDialogUnread
 // dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 func (m *defaultDialogClient) DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogMarkDialogUnread(ctx, in)
 }
@@ -109,6 +132,10 @@ func (m *defaultDialogClient) DialogMarkDialogUnread(ctx context.Context, in *di
 // DialogToggleDialogPin
 // dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 func (m *defaultDialogClient) DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*mtproto.Int32, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogToggleDialogPin(ctx, in)
 }
@@ -116,6 +143,10 @@ func (m *defaultDialogClient) DialogToggleDialogPin(ctx context.Context, in *dia
 // DialogGetDialogUnreadMarkList
 // dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 func (m *defaultDialogClient) DialogGetDialogUnreadMarkList(ctx context.Context, in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.Vector_DialogPeer, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogUnreadMarkList(ctx, in)
 }
@@ -123,6 +154,10 @@ func (m *defaultDialogClient) DialogGetDialogUnreadMarkList(ctx context.Context,
 // DialogGetDialogsByOffsetDate
 // dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 func (m *defaultDialogClient) DialogGetDialogsByOffsetDate(ctx context.Context, in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.Vector_DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogsByOffsetDate(ctx, in)
 }
@@ -130,6 +165,10 @@ func (m *defaultDialogClient) DialogGetDialogsByOffsetDate(ctx context.Context, 
 // DialogGetDialogs
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (m *defaultDialogClient) DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.Vector_DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogs(ctx, in)
 }
@@ -137,6 +176,10 @@ func (m *defaultDialogClient) DialogGetDialogs(ctx context.Context, in *dialog.T
 // DialogGetDialogsByIdList
 // dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 func (m *defaultDialogClient) DialogGetDialogsByIdList(ctx context.Context, in *dialog.TLDialogGetDialogsByIdList) (*dialog.Vector_DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogsByIdList(ctx, in)
 }
@@ -144,6 +187,10 @@ func (m *defaultDialogClient) DialogGetDialogsByIdList(ctx context.Context, in *
 // DialogGetDialogsCount
 // dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 func (m *defaultDialogClient) DialogGetDialogsCount(ctx context.Context, in *dialog.TLDialogGetDialogsCount) (*mtproto.Int32, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogsCount(ctx, in)
 }
@@ -151,6 +198,10 @@ func (m *defaultDialogClient) DialogGetDialogsCount(ctx context.Context, in *dia
 // DialogGetPinnedDialogs
 // dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 func (m *defaultDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedDialogs) (*dialog.Vector_DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetPinnedDialogs(ctx, in)
 }
@@ -158,6 +209,10 @@ func (m *defaultDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *di
 // DialogReorderPinnedDialogs
 // dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 func (m *defaultDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogReorderPinnedDialogs(ctx, in)
 }
@@ -165,6 +220,10 @@ func (m *defaultDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in
 // DialogGetDialogById
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (m *defaultDialogClient) DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogById(ctx, in)
 }
@@ -172,6 +231,10 @@ func (m *defaultDialogClient) DialogGetDialogById(ctx context.Context, in *dialo
 // DialogGetTopMessage
 // dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 func (m *defaultDialogClient) DialogGetTopMessage(ctx context.Context, in *dialog.TLDialogGetTopMessage) (*mtproto.Int32, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetTopMessage(ctx, in)
 }
@@ -179,6 +242,10 @@ func (m *defaultDialogClient) DialogGetTopMessage(ctx context.Context, in *dialo
 // DialogInsertOrUpdateDialog
 // dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long pinned_msg_id:flags.6?int = Bool;
 func (m *defaultDialogClient) DialogInsertOrUpdateDialog(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialog) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogInsertOrUpdateDialog(ctx, in)
 }
@@ -186,6 +253,10 @@ func (m *defaultDialogClient) DialogInsertOrUpdateDialog(ctx context.Context, in
 // DialogDeleteDialog
 // dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 func (m *defaultDialogClient) DialogDeleteDialog(ctx context.Context, in *dialog.TLDialogDeleteDialog) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogDeleteDialog(ctx, in)
 }
@@ -193,6 +264,10 @@ func (m *defaultDialogClient) DialogDeleteDialog(ctx context.Context, in *dialog
 // DialogGetUserPinnedMessage
 // dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 func (m *defaultDialogClient) DialogGetUserPinnedMessage(ctx context.Context, in *dialog.TLDialogGetUserPinnedMessage) (*mtproto.Int32, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetUserPinnedMessage(ctx, in)
 }
@@ -200,6 +275,10 @@ func (m *defaultDialogClient) DialogGetUserPinnedMessage(ctx context.Context, in
 // DialogUpdateUserPinnedMessage
 // dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 func (m *defaultDialogClient) DialogUpdateUserPinnedMessage(ctx context.Context, in *dialog.TLDialogUpdateUserPinnedMessage) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogUpdateUserPinnedMessage(ctx, in)
 }
@@ -207,6 +286,10 @@ func (m *defaultDialogClient) DialogUpdateUserPinnedMessage(ctx context.Context,
 // DialogInsertOrUpdateDialogFilter
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (m *defaultDialogClient) DialogInsertOrUpdateDialogFilter(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialogFilter) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogInsertOrUpdateDialogFilter(ctx, in)
 }
@@ -214,6 +297,10 @@ func (m *defaultDialogClient) DialogInsertOrUpdateDialogFilter(ctx context.Conte
 // DialogDeleteDialogFilter
 // dialog.deleteDialogFilter user_id:long id:int = Bool;
 func (m *defaultDialogClient) DialogDeleteDialogFilter(ctx context.Context, in *dialog.TLDialogDeleteDialogFilter) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogDeleteDialogFilter(ctx, in)
 }
@@ -221,6 +308,10 @@ func (m *defaultDialogClient) DialogDeleteDialogFilter(ctx context.Context, in *
 // DialogUpdateDialogFiltersOrder
 // dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 func (m *defaultDialogClient) DialogUpdateDialogFiltersOrder(ctx context.Context, in *dialog.TLDialogUpdateDialogFiltersOrder) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogUpdateDialogFiltersOrder(ctx, in)
 }
@@ -228,6 +319,10 @@ func (m *defaultDialogClient) DialogUpdateDialogFiltersOrder(ctx context.Context
 // DialogGetDialogFilters
 // dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 func (m *defaultDialogClient) DialogGetDialogFilters(ctx context.Context, in *dialog.TLDialogGetDialogFilters) (*dialog.Vector_DialogFilterExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilters(ctx, in)
 }
@@ -235,6 +330,10 @@ func (m *defaultDialogClient) DialogGetDialogFilters(ctx context.Context, in *di
 // DialogGetDialogFolder
 // dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 func (m *defaultDialogClient) DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.Vector_DialogExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFolder(ctx, in)
 }
@@ -242,6 +341,10 @@ func (m *defaultDialogClient) DialogGetDialogFolder(ctx context.Context, in *dia
 // DialogEditPeerFolders
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.Vector_DialogPinnedExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogEditPeerFolders(ctx, in)
 }
@@ -249,6 +352,10 @@ func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dia
 // DialogGetChannelMessageReadParticipants
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (m *defaultDialogClient) DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.Vector_Long, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetChannelMessageReadParticipants(ctx, in)
 }
@@ -256,6 +363,10 @@ func (m *defaultDialogClient) DialogGetChannelMessageReadParticipants(ctx contex
 // DialogSetChatTheme
 // dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
 func (m *defaultDialogClient) DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogSetChatTheme(ctx, in)
 }
@@ -263,6 +374,10 @@ func (m *defaultDialogClient) DialogSetChatTheme(ctx context.Context, in *dialog
 // DialogSetHistoryTTL
 // dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
 func (m *defaultDialogClient) DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogSetHistoryTTL(ctx, in)
 }
@@ -270,6 +385,10 @@ func (m *defaultDialogClient) DialogSetHistoryTTL(ctx context.Context, in *dialo
 // DialogGetMyDialogsData
 // dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (m *defaultDialogClient) DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetMyDialogsData(ctx, in)
 }
@@ -277,6 +396,10 @@ func (m *defaultDialogClient) DialogGetMyDialogsData(ctx context.Context, in *di
 // DialogGetSavedDialogs
 // dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
 func (m *defaultDialogClient) DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetSavedDialogs(ctx, in)
 }
@@ -284,6 +407,10 @@ func (m *defaultDialogClient) DialogGetSavedDialogs(ctx context.Context, in *dia
 // DialogGetPinnedSavedDialogs
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (m *defaultDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetPinnedSavedDialogs(ctx, in)
 }
@@ -291,6 +418,10 @@ func (m *defaultDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, i
 // DialogToggleSavedDialogPin
 // dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 func (m *defaultDialogClient) DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogToggleSavedDialogPin(ctx, in)
 }
@@ -298,6 +429,10 @@ func (m *defaultDialogClient) DialogToggleSavedDialogPin(ctx context.Context, in
 // DialogReorderPinnedSavedDialogs
 // dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
 func (m *defaultDialogClient) DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogReorderPinnedSavedDialogs(ctx, in)
 }
@@ -305,6 +440,10 @@ func (m *defaultDialogClient) DialogReorderPinnedSavedDialogs(ctx context.Contex
 // DialogGetDialogFilter
 // dialog.getDialogFilter user_id:long id:int = DialogFilterExt;
 func (m *defaultDialogClient) DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilter(ctx, in)
 }
@@ -312,6 +451,10 @@ func (m *defaultDialogClient) DialogGetDialogFilter(ctx context.Context, in *dia
 // DialogGetDialogFilterBySlug
 // dialog.getDialogFilterBySlug user_id:long slug:string = DialogFilterExt;
 func (m *defaultDialogClient) DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilterBySlug(ctx, in)
 }
@@ -319,6 +462,10 @@ func (m *defaultDialogClient) DialogGetDialogFilterBySlug(ctx context.Context, i
 // DialogCreateDialogFilter
 // dialog.createDialogFilter user_id:long dialog_filter:DialogFilterExt = DialogFilterExt;
 func (m *defaultDialogClient) DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogCreateDialogFilter(ctx, in)
 }
@@ -326,6 +473,32 @@ func (m *defaultDialogClient) DialogCreateDialogFilter(ctx context.Context, in *
 // DialogUpdateUnreadCount
 // dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (m *defaultDialogClient) DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogUpdateUnreadCount(ctx, in)
+}
+
+// DialogToggleDialogFilterTags
+// dialog.toggleDialogFilterTags user_id:long enabled:Bool = Bool;
+func (m *defaultDialogClient) DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogToggleDialogFilterTags(ctx, in)
+}
+
+// DialogGetDialogFilterTags
+// dialog.getDialogFilterTags user_id:long = Bool;
+func (m *defaultDialogClient) DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogGetDialogFilterTags(ctx, in)
 }

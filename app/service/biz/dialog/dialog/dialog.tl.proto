@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -64,6 +64,8 @@ enum TLConstructor {
     CRC32_dialog_getDialogFilterBySlug = 1313177583;
     CRC32_dialog_createDialogFilter = -959749265;
     CRC32_dialog_updateUnreadCount = 732705613;
+    CRC32_dialog_toggleDialogFilterTags = -1597149815;
+    CRC32_dialog_getDialogFilterTags = -84870505;
 }
 
 
@@ -469,6 +471,19 @@ message TL_dialog_updateUnreadCount {
     google.protobuf.Int32Value unread_reactions_count = 8;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_dialog_toggleDialogFilterTags {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.Bool enabled = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_dialog_getDialogFilterTags {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -533,5 +548,7 @@ service RPCDialog {
  rpc dialog_getDialogFilterBySlug(TL_dialog_getDialogFilterBySlug) returns (DialogFilterExt) {}
  rpc dialog_createDialogFilter(TL_dialog_createDialogFilter) returns (DialogFilterExt) {}
  rpc dialog_updateUnreadCount(TL_dialog_updateUnreadCount) returns (mtproto.Bool) {}
+ rpc dialog_toggleDialogFilterTags(TL_dialog_toggleDialogFilterTags) returns (mtproto.Bool) {}
+ rpc dialog_getDialogFilterTags(TL_dialog_getDialogFilterTags) returns (mtproto.Bool) {}
 }
 
