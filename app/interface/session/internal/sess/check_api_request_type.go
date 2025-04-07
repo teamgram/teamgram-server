@@ -62,7 +62,16 @@ import (
 func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 	switch tl.(type) {
 	// account
-	case *mtproto.TLAccountGetPassword:
+	case *mtproto.TLAccountConfirmPasswordEmail,
+		*mtproto.TLAccountResendPasswordEmail,
+		*mtproto.TLAccountCancelPasswordEmail,
+		*mtproto.TLAccountGetPassword,
+		*mtproto.TLAccountGetPasswordSettings,
+		*mtproto.TLAccountUpdatePasswordSettings,
+		*mtproto.TLAccountDeclinePasswordReset,
+		*mtproto.TLAuthRequestPasswordRecovery,
+		*mtproto.TLAuthRecoverPassword,
+		*mtproto.TLAuthCheckRecoveryPassword:
 		return true
 
 	// auth
@@ -75,8 +84,8 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthExportAuthorization,
 		*mtproto.TLAuthImportAuthorization,
 		*mtproto.TLAuthCancelCode,
-		// *mtproto.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
-		// *mtproto.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
+	// *mtproto.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
+	// *mtproto.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
 		*mtproto.TLAuthExportLoginToken,
 		*mtproto.TLAuthAcceptLoginToken,
 		*mtproto.TLAuthLogOut, // TODO: before process, try fetch usrId
@@ -84,7 +93,6 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthCheckPassword:
 
 		return true
-
 	// help
 	case *mtproto.TLHelpGetConfig,
 		*mtproto.TLHelpGetNearestDc,
@@ -94,7 +102,6 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLHelpGetAppConfig98914110:
 
 		return true
-
 	// langpack
 	case *mtproto.TLLangpackGetLangPack,
 		*mtproto.TLLangpackGetStrings,
