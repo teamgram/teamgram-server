@@ -10,6 +10,7 @@
 package core
 
 import (
+	"github.com/teamgram/marmota/pkg/utils"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 )
@@ -31,11 +32,17 @@ func (c *UsernameCore) UsernameResolveUsername(in *username.TLUsernameResolveUse
 		if len(username) < 5 {
 			err = mtproto.ErrUsernameInvalid
 			return nil, err
+		} else if utils.IsLetter(username[0]) == false {
+			err = mtproto.ErrUsernameInvalid
+			return nil, err
 		}
 	}
 
-	usernameDO, _ := c.svcCtx.Dao.UsernameDAO.SelectByUsername(c.ctx, username)
-	if usernameDO == nil {
+	usernameDO, err := c.svcCtx.Dao.UsernameDAO.SelectByUsername(c.ctx, username)
+	if err != nil {
+		c.Logger.Errorf("username.resolveUsername - error: %v", err)
+		return nil, mtproto.ErrInternalServerError
+	} else if usernameDO == nil {
 		c.Logger.Errorf("username.resolveUsername - error: %v", err)
 		err = mtproto.ErrUsernameNotOccupied
 		return nil, err
