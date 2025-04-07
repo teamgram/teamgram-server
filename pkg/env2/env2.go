@@ -24,6 +24,8 @@ var (
 	// PredefinedUser2
 	// predefined2 - auto register
 	PredefinedUser2 = false
+
+	MyTgCDNHost = ""
 )
 
 func init() {
@@ -36,6 +38,7 @@ func init() {
 	// flag.StringVar(&AndroidPackage, "android_package", "org.chatengine.messenger", "org.chatengine.messenger")
 	flag.BoolVar(&PredefinedUser, "predefined", false, "predefined")
 	flag.BoolVar(&PredefinedUser2, "predefined2", false, "predefined2")
+	flag.StringVar(&MyTgCDNHost, "cdn", "", "cdn_host")
 }
 
 func IsTDotMe(me string) bool {
