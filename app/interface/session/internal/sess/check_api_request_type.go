@@ -84,8 +84,8 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthExportAuthorization,
 		*mtproto.TLAuthImportAuthorization,
 		*mtproto.TLAuthCancelCode,
-	// *mtproto.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
-	// *mtproto.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
+		// *mtproto.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
+		// *mtproto.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
 		*mtproto.TLAuthExportLoginToken,
 		*mtproto.TLAuthAcceptLoginToken,
 		*mtproto.TLAuthLogOut, // TODO: before process, try fetch usrId
