@@ -21,6 +21,6 @@ type (
 	Config = config.Config
 )
 
-func New(c Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin) *service.Service {
-	return service.New(svc.NewServiceContext(c, plugin1, plugin2))
+func New(c Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin, plugin3 plugin.WallpaperPlugin) *service.Service {
+	return service.New(svc.NewServiceContext(c, plugin1, plugin2, plugin3))
 }

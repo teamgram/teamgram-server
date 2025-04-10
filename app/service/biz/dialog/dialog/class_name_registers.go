@@ -56,6 +56,7 @@ const (
 	Predicate_dialog_updateUnreadCount                 = "dialog_updateUnreadCount"
 	Predicate_dialog_toggleDialogFilterTags            = "dialog_toggleDialogFilterTags"
 	Predicate_dialog_getDialogFilterTags               = "dialog_getDialogFilterTags"
+	Predicate_dialog_setChatWallpaper                  = "dialog_setChatWallpaper"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -64,7 +65,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dialogExt: {
-		0: -1109809056, // 0xbdd9a860
+		0: 2055462539, // 0x7a83de8b
 
 	},
 	Predicate_dialogPinnedExt: {
@@ -239,11 +240,15 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -84870505, // 0xfaf0fa97
 
 	},
+	Predicate_dialog_setChatWallpaper: {
+		0: 348145650, // 0x14c047f2
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
 	-155335502:  Predicate_updateDraftMessage,                       // 0xf6bdc4b2
-	-1109809056: Predicate_dialogExt,                                // 0xbdd9a860
+	2055462539:  Predicate_dialogExt,                                // 0x7a83de8b
 	245834284:   Predicate_dialogPinnedExt,                          // 0xea7222c
 	-1496016642: Predicate_dialogFilterExt,                          // 0xa6d498fe
 	492418141:   Predicate_simpleDialogsData,                        // 0x1d59b45d
@@ -287,6 +292,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	732705613:   Predicate_dialog_updateUnreadCount,                 // 0x2bac334d
 	-1597149815: Predicate_dialog_toggleDialogFilterTags,            // 0xa0cd6d89
 	-84870505:   Predicate_dialog_getDialogFilterTags,               // 0xfaf0fa97
+	348145650:   Predicate_dialog_setChatWallpaper,                  // 0x14c047f2
 
 }
 

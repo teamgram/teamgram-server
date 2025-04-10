@@ -62,6 +62,7 @@ type DialogClient interface {
 	DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*mtproto.Bool, error)
 	DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*mtproto.Bool, error)
 	DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*mtproto.Bool, error)
+	DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*mtproto.Bool, error)
 }
 
 type defaultDialogClient struct {
@@ -501,4 +502,15 @@ func (m *defaultDialogClient) DialogGetDialogFilterTags(ctx context.Context, in 
 	}
 	client := dialog.NewRPCDialogClient(m.cli.Conn())
 	return client.DialogGetDialogFilterTags(ctx, in)
+}
+
+// DialogSetChatWallpaper
+// dialog.setChatWallpaper user_id:long peer_type:int peer_id:long wallpaper_id:long = Bool;
+func (m *defaultDialogClient) DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := dialog.NewRPCDialogClient(m.cli.Conn())
+	return client.DialogSetChatWallpaper(ctx, in)
 }

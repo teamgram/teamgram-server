@@ -87,6 +87,7 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 		Date:           dialogDO.Date2,
 		ThemeEmoticon:  dialogDO.ThemeEmoticon,
 		TtlPeriod:      dialogDO.TtlPeriod,
+		WallpaperId:    dialogDO.WallpaperId,
 	}).To_DialogExt()
 }
 

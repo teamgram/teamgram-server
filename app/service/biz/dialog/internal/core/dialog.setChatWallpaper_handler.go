@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2025 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,14 +24,14 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
-// DialogSetChatTheme
-// dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
-func (c *DialogCore) DialogSetChatTheme(in *dialog.TLDialogSetChatTheme) (*mtproto.Bool, error) {
+// DialogSetChatWallpaper
+// dialog.setChatWallpaper user_id:long peer_type:int peer_id:long wallpaper_id:long = Bool;
+func (c *DialogCore) DialogSetChatWallpaper(in *dialog.TLDialogSetChatWallpaper) (*mtproto.Bool, error) {
 	sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
 		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMapTx(
 			tx,
 			map[string]interface{}{
-				"theme_emoticon": in.ThemeEmoticon,
+				"wallpaper_id": in.WallpaperId,
 			},
 			in.UserId,
 			in.PeerType,
@@ -39,7 +39,7 @@ func (c *DialogCore) DialogSetChatTheme(in *dialog.TLDialogSetChatTheme) (*mtpro
 		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMapTx(
 			tx,
 			map[string]interface{}{
-				"theme_emoticon": in.ThemeEmoticon,
+				"wallpaper_id": in.WallpaperId,
 			},
 			in.PeerId,
 			in.PeerType,

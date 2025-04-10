@@ -33,14 +33,16 @@ type Dao struct {
 	dialog_client.DialogClient
 	plugin.StoryPlugin
 	plugin.PersonalChannelPlugin
+	plugin.WallpaperPlugin
 }
 
-func New(c config.Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin) *Dao {
+func New(c config.Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin, plugin3 plugin.WallpaperPlugin) *Dao {
 	return &Dao{
 		UserClient:            user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
 		ChatClient:            chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
 		DialogClient:          dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 		StoryPlugin:           plugin1,
 		PersonalChannelPlugin: plugin2,
+		WallpaperPlugin:       plugin3,
 	}
 }

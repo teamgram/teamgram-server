@@ -13,7 +13,7 @@ package dialog
 const (
 	CRC32_UNKNOWN                                  TLConstructor = 0
 	CRC32_updateDraftMessage                       TLConstructor = -155335502  // 0xf6bdc4b2
-	CRC32_dialogExt                                TLConstructor = -1109809056 // 0xbdd9a860
+	CRC32_dialogExt                                TLConstructor = 2055462539  // 0x7a83de8b
 	CRC32_dialogPinnedExt                          TLConstructor = 245834284   // 0xea7222c
 	CRC32_dialogFilterExt                          TLConstructor = -1496016642 // 0xa6d498fe
 	CRC32_simpleDialogsData                        TLConstructor = 492418141   // 0x1d59b45d
@@ -57,4 +57,5 @@ const (
 	CRC32_dialog_updateUnreadCount                 TLConstructor = 732705613   // 0x2bac334d
 	CRC32_dialog_toggleDialogFilterTags            TLConstructor = -1597149815 // 0xa0cd6d89
 	CRC32_dialog_getDialogFilterTags               TLConstructor = -84870505   // 0xfaf0fa97
+	CRC32_dialog_setChatWallpaper                  TLConstructor = 348145650   // 0x14c047f2
 )

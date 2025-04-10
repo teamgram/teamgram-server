@@ -274,6 +274,7 @@ func (s *Server) Initialize() error {
 					DialogClient:  c.BizServiceClient,
 				},
 				nil,
+				nil,
 				nil))
 
 		// nsfw_helper

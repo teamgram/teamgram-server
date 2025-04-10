@@ -32,6 +32,7 @@ type DialogsDO struct {
 	HasScheduled         bool   `db:"has_scheduled" json:"has_scheduled"`
 	TtlPeriod            int32  `db:"ttl_period" json:"ttl_period"`
 	ThemeEmoticon        string `db:"theme_emoticon" json:"theme_emoticon"`
+	WallpaperId          int64  `db:"wallpaper_id" json:"wallpaper_id"`
 	Date2                int64  `db:"date2" json:"date2"`
 	Deleted              bool   `db:"deleted" json:"deleted"`
 }

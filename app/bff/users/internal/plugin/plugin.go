@@ -39,3 +39,7 @@ type StoryPlugin interface {
 type PersonalChannelPlugin interface {
 	GetPersonalChannel(ctx context.Context, channelId, toSelfUserId int64) (*mtproto.Chat, int32)
 }
+
+type WallpaperPlugin interface {
+	GetChatWallpaper(ctx context.Context, userId, wallpaperId int64) *mtproto.WallPaper
+}

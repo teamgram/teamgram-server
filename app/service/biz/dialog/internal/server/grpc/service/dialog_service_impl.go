@@ -602,3 +602,18 @@ func (s *Service) DialogGetDialogFilterTags(ctx context.Context, request *dialog
 	c.Logger.Debugf("dialog.getDialogFilterTags - reply: {%s}", r)
 	return r, err
 }
+
+// DialogSetChatWallpaper
+// dialog.setChatWallpaper user_id:long peer_type:int peer_id:long wallpaper_id:long = Bool;
+func (s *Service) DialogSetChatWallpaper(ctx context.Context, request *dialog.TLDialogSetChatWallpaper) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.setChatWallpaper - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.DialogSetChatWallpaper(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.setChatWallpaper - reply: {%s}", r)
+	return r, err
+}
