@@ -313,14 +313,7 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 			rValues.Chats = append(rValues.Chats, mChats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
 		},
 		func(channelIdList []int64) {
-			//mChannels, _ := c.svcCtx.Dao.ChannelClient.ChannelGetChannelListByIdList(c.ctx,
-			//	&channelpb.TLChannelGetChannelListByIdList{
-			//		SelfUserId: c.MD.UserId,
-			//		Id:         channelIdList,
-			//	})
-			//if len(mChannels.GetDatas()) > 0 {
-			//	rValues.Chats = append(rValues.Chats, mChannels.GetDatas()...)
-			//}
+			// ignore it
 		})
 
 	return rValues, nil
