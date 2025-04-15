@@ -38,7 +38,29 @@ func genUserPeerSettingsCacheKey(id int64, peerType int32, peerId int64) string 
 }
 
 func (d *Dao) GetUserPeerSettings(ctx context.Context, id int64, peerType int32, peerId int64) (*mtproto.PeerSettings, error) {
-	settings := mtproto.MakeTLPeerSettings(nil).To_PeerSettings()
+	settings := mtproto.MakeTLPeerSettings(&mtproto.PeerSettings{
+		ReportSpam:             false,
+		AddContact:             false,
+		BlockContact:           false,
+		ShareContact:           false,
+		NeedContactsException:  false,
+		ReportGeo:              false,
+		Autoarchived:           false,
+		InviteMembers:          false,
+		RequestChatBroadcast:   false,
+		BusinessBotPaused:      false,
+		BusinessBotCanReply:    false,
+		GeoDistance:            nil,
+		RequestChatTitle:       nil,
+		RequestChatDate:        nil,
+		BusinessBotId:          nil,
+		BusinessBotManageUrl:   nil,
+		ChargePaidMessageStars: nil,
+		RegistrationMonth:      nil,
+		PhoneCountry:           nil,
+		NameChangeDate:         nil,
+		PhotoChangeDate:        nil,
+	}).To_PeerSettings()
 
 	err := d.CachedConn.QueryRow(
 		ctx,

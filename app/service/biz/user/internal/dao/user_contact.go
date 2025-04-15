@@ -186,7 +186,7 @@ func (d *Dao) ClearContactCaches(ctx context.Context, userId int64, contactId ..
 		keys = append(keys, genContactCacheKey(userId, id))
 		keys = append(keys, genContactCacheKey(id, userId))
 	}
-	d.CachedConn.DelCache(ctx, keys...)
+	_ = d.CachedConn.DelCache(ctx, keys...)
 }
 
 func (d *Dao) GetCloseFriendList(ctx context.Context, id int64) []*mtproto.ContactData {

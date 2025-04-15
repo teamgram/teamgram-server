@@ -24,6 +24,12 @@ import (
 )
 
 // ContactsAddContact
+/***
+	## contacts.addContact
+	Add an existing telegram user as contact.
+
+	Use contacts.importContacts to add contacts by phone number, without knowing their Telegram ID.
+**/
 // contacts.addContact#e8f463d0 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string = Updates;
 func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mtproto.Updates, error) {
 	// 400	CONTACT_NAME_EMPTY	Contact name empty.
@@ -42,8 +48,11 @@ func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mt
 		return nil, err
 	}
 
-	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: []int64{c.MD.UserId, id.PeerId},
+	users, err := c.svcCtx.Dao.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
+		Id:      []int64{c.MD.UserId, id.PeerId},
+		Privacy: true,
+		HasTo:   true,
+		To:      []int64{id.PeerId},
 	})
 	if err != nil {
 		c.Logger.Errorf("contacts.addContact - error: %v", err)
@@ -86,12 +95,27 @@ func (c *ContactsCore) ContactsAddContact(in *mtproto.TLContactsAddContact) (*mt
 		mtproto.MakeTLUpdatePeerSettings(&mtproto.Update{
 			Peer_PEER: id.ToPeer(),
 			Settings: mtproto.MakeTLPeerSettings(&mtproto.PeerSettings{
-				ReportSpam:            false,
-				AddContact:            false,
-				BlockContact:          false,
-				ShareContact:          false,
-				NeedContactsException: false,
-				ReportGeo:             false,
+				ReportSpam:             false,
+				AddContact:             false,
+				BlockContact:           false,
+				ShareContact:           false,
+				NeedContactsException:  false,
+				ReportGeo:              false,
+				Autoarchived:           false,
+				InviteMembers:          false,
+				RequestChatBroadcast:   false,
+				BusinessBotPaused:      false,
+				BusinessBotCanReply:    false,
+				GeoDistance:            nil,
+				RequestChatTitle:       nil,
+				RequestChatDate:        nil,
+				BusinessBotId:          nil,
+				BusinessBotManageUrl:   nil,
+				ChargePaidMessageStars: nil,
+				RegistrationMonth:      nil,
+				PhoneCountry:           nil,
+				NameChangeDate:         nil,
+				PhotoChangeDate:        nil,
 			}).To_PeerSettings(),
 		}).To_Update())
 
