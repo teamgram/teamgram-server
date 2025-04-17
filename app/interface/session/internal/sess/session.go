@@ -659,7 +659,7 @@ func (c *session) sendQueueToGateway(ctx context.Context, gatewayId string) {
 		sentTime = time.Now().Unix()
 	)
 	for e := c.outQueue.oMsgs.Front(); e != nil; e = e.Next() {
-		if !c.canSync && e.Value.(*outboxMsg).isPushMsgId() {
+		if !c.canSync && e.Value.(*outboxMsg).isPushMsgId() && c.sessList.state == mtproto.AuthStateNormal {
 			logx.WithContext(ctx).Debugf("sess: %s >>> canSync: %v, isPushMsgId: %v", c, c.canSync, e.Value.(*outboxMsg).msgId)
 			continue
 		}
