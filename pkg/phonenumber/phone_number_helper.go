@@ -103,9 +103,19 @@ func CheckPhoneNumberInvalid(phone string) (string, string, error) {
 	}
 
 	phone = strings.ReplaceAll(phone, " ", "")
-	if phone == "+42400" ||
-		phone == "+42777" {
+	switch phone {
+	case "+42400":
 		return "", phone[1:], nil
+	case "+42401":
+		return "", phone[1:], nil
+	case "+42777":
+		return "", phone[1:], nil
+	case "42400":
+		return "", phone, nil
+	case "42401":
+		return "", phone, nil
+	case "42777":
+		return "", phone, nil
 	}
 
 	// fragment
