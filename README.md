@@ -89,6 +89,7 @@ cd teamgram-server
 		mysql -uroot teamgram < teamgramd/sql/migrate-20241105.sql
 		mysql -uroot teamgram < teamgramd/sql/migrate-20241123.sql
 		mysql -uroot teamgram < teamgramd/sql/migrate-20250109.sql
+		mysql -uroot teamgram < teamgramd/sql/migrate-20250410.sql
 		mysql -uroot teamgram < teamgramd/sql/z_init.sql
 	```
 
