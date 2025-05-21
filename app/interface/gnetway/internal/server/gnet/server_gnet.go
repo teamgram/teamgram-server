@@ -52,13 +52,15 @@ func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c gnet.Co
 
 func (s *Server) asyncRun2(
 	connId int64,
+	kId int64,
+	needAck bool,
 	mmsg []byte,
-	execb func(mmsg []byte) (interface{}, error),
-	retcb func(c gnet.Conn, mmsg []byte, in interface{}, err error)) {
+	execb func(kId int64, mmsg []byte) (interface{}, error),
+	retcb func(c gnet.Conn, needAck bool, mmsg []byte, in interface{}, err error)) {
 	_ = s.pool.Submit(func() {
-		r, err := execb(mmsg)
+		r, err := execb(kId, mmsg)
 		s.eng.Trigger(connId, func(c gnet.Conn) {
-			retcb(c, mmsg, r, err)
+			retcb(c, needAck, mmsg, r, err)
 		})
 	})
 }
@@ -342,17 +344,19 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 
 			s.asyncRun2(
 				c.ConnId(),
+				authKeyId,
+				needAck,
 				msg2Clone,
-				func(mmsg []byte) (interface{}, error) {
+				func(authKeyId2 int64, mmsg []byte) (interface{}, error) {
 					var (
 						key3 *mtproto.AuthKeyInfo
 					)
 
 					err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-						strconv.FormatInt(authKeyId, 10),
+						strconv.FormatInt(authKeyId2, 10),
 						func(client sessionclient.SessionClient) (err error) {
 							key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-								AuthKeyId: authKeyId,
+								AuthKeyId: authKeyId2,
 							})
 							return
 						})
@@ -365,7 +369,7 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 
 					return newAuthKeyUtil(key3), nil
 				},
-				func(c2 gnet.Conn, mmsg []byte, in interface{}, err error) {
+				func(c2 gnet.Conn, needAck2 bool, mmsg []byte, in interface{}, err error) {
 					if err != nil {
 						if errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
 							out2 := &mtproto.MTPRawMessage{
@@ -384,7 +388,7 @@ func (s *Server) onMTPRawMessage(ctx *connContext, c gnet.Conn, authKeyId int64,
 						authKey2 := in.(*authKeyUtil)
 						ctx2 := c2.Context().(*connContext)
 						ctx2.putAuthKey(authKey2)
-						err = s.onEncryptedMessage(c2, ctx2, authKey2, needAck, mmsg)
+						err = s.onEncryptedMessage(c2, ctx2, authKey2, needAck2, mmsg)
 						if err != nil {
 							logx.Errorf("conn(%s) onEncryptedMessage - error: %v ", c2, err)
 							_ = c2.Close()
