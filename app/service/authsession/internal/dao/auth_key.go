@@ -32,7 +32,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/contextx"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/mr"
 	"github.com/zeromicro/go-zero/core/threading"
 )
 
@@ -106,37 +105,23 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 		genCacheAuthKeyV2Key(authKeyId),
 		func(ctx context.Context, conn *sqlx.DB, v interface{}) error {
 			kInfo := v.(*mtproto.AuthKeyInfo)
-			err := mr.Finish(
-				func() error {
-					do1, err2 := d.AuthKeyInfosDAO.SelectByAuthKeyId(ctx, authKeyId)
-					if err2 != nil {
-						return err2
-					} else if do1 == nil {
-						return sqlc.ErrNotFound
-					}
-					kInfo.AuthKeyType = do1.AuthKeyType
-					kInfo.PermAuthKeyId = do1.PermAuthKeyId
-					kInfo.TempAuthKeyId = do1.TempAuthKeyId
-					kInfo.MediaTempAuthKeyId = do1.MediaTempAuthKeyId
 
-					return nil
-				},
-				func() error {
-					do2, err2 := d.AuthKeysDAO.SelectByAuthKeyId(ctx, authKeyId)
-					if err2 != nil {
-						return err2
-					} else if do2 == nil {
-						return sqlc.ErrNotFound
-					}
+			do1, err1 := d.AuthKeyInfosDAO.SelectByAuthKeyId(ctx, authKeyId)
+			if err1 != nil {
+				return err1
+			}
+			do2, err2 := d.AuthKeysDAO.SelectByAuthKeyId(ctx, authKeyId)
+			if err2 != nil {
+				return err2
+			}
 
-					kInfo.AuthKey, err2 = base64.RawStdEncoding.DecodeString(do2.Body)
-					if err2 != nil {
-						return err2
-					}
-
-					return nil
-				})
-			if err != nil && errors.Is(err, sqlc.ErrNotFound) {
+			if do1 != nil && do2 != nil {
+				kInfo.AuthKeyType = do1.AuthKeyType
+				kInfo.PermAuthKeyId = do1.PermAuthKeyId
+				kInfo.TempAuthKeyId = do1.TempAuthKeyId
+				kInfo.MediaTempAuthKeyId = do1.MediaTempAuthKeyId
+				kInfo.AuthKey, _ = base64.RawStdEncoding.DecodeString(do2.Body)
+			} else {
 				kInfo2, _ := d.getAuthKey(ctx, authKeyId)
 				if kInfo2 != nil {
 					kInfo.AuthKeyType = kInfo2.AuthKeyType
@@ -145,7 +130,7 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 					kInfo.PermAuthKeyId = kInfo2.PermAuthKeyId
 					kInfo.MediaTempAuthKeyId = kInfo2.MediaTempAuthKeyId
 					threading.GoSafe(func() {
-						d.AuthKeyInfosDAO.Insert(
+						_, _, _ = d.AuthKeyInfosDAO.Insert(
 							contextx.ValueOnlyFrom(ctx),
 							&dataobject.AuthKeyInfosDO{
 								AuthKeyId:          keyInfo.AuthKeyId,
@@ -156,10 +141,13 @@ func (d *Dao) QueryAuthKeyV2(ctx context.Context, authKeyId int64) (*mtproto.Aut
 								Deleted:            false,
 							})
 					})
-					err = nil
+					// err = nil
+				} else {
+					return sqlc.ErrNotFound
 				}
 			}
-			return err
+
+			return nil
 		})
 	if err != nil {
 		if errors.Is(err, sqlc.ErrNotFound) {
