@@ -113,7 +113,7 @@ func (m *DialogsDataHelper) ToMessagesDialogs(count int32) *mtproto.Messages_Dia
 }
 
 func (m *DialogsDataHelper) ToMessagesPeerDialogs(state *mtproto.Updates_State) *mtproto.Messages_PeerDialogs {
-	m.fix()
+	// m.fix()
 	return mtproto.MakeTLMessagesPeerDialogs(&mtproto.Messages_PeerDialogs{
 		Dialogs:  m.Dialogs,
 		Messages: m.Messages,
