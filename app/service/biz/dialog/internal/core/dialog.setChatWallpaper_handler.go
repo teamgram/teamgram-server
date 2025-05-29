@@ -19,32 +19,34 @@
 package core
 
 import (
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 )
 
 // DialogSetChatWallpaper
-// dialog.setChatWallpaper user_id:long peer_type:int peer_id:long wallpaper_id:long = Bool;
+// dialog.setChatWallpaper flags:# user_id:long peer_type:int peer_id:long wallpaper_id:long wallpaper_overridden:flags.0?true = Bool;
 func (c *DialogCore) DialogSetChatWallpaper(in *dialog.TLDialogSetChatWallpaper) (*mtproto.Bool, error) {
-	sqlx.TxWrapper(c.ctx, c.svcCtx.Dao.DB, func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMapTx(
-			tx,
+	if in.WallpaperId != 0 {
+		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+			c.ctx,
 			map[string]interface{}{
-				"wallpaper_id": in.WallpaperId,
+				"wallpaper_id":         in.WallpaperId,
+				"wallpaper_overridden": in.WallpaperOverridden,
 			},
 			in.UserId,
 			in.PeerType,
 			in.PeerId)
-		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMapTx(
-			tx,
+	} else {
+		_, _ = c.svcCtx.Dao.DialogsDAO.UpdateCustomMap(
+			c.ctx,
 			map[string]interface{}{
-				"wallpaper_id": in.WallpaperId,
+				"wallpaper_id":         0,
+				"wallpaper_overridden": false,
 			},
-			in.PeerId,
+			in.UserId,
 			in.PeerType,
-			in.UserId)
-	})
+			in.PeerId)
+	}
 
 	return mtproto.BoolTrue, nil
 }

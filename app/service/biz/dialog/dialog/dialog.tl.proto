@@ -22,7 +22,7 @@ option go_package = "github.com/teamgram/teamgram-server/app/service/biz/dialog/
 enum TLConstructor {
     CRC32_UNKNOWN = 0;
     CRC32_updateDraftMessage = -155335502;
-    CRC32_dialogExt = 2055462539;
+    CRC32_dialogExt = 1930144063;
     CRC32_dialogPinnedExt = 245834284;
     CRC32_dialogFilterExt = -1496016642;
     CRC32_simpleDialogsData = 492418141;
@@ -66,7 +66,7 @@ enum TLConstructor {
     CRC32_dialog_updateUnreadCount = 732705613;
     CRC32_dialog_toggleDialogFilterTags = -1597149815;
     CRC32_dialog_getDialogFilterTags = -84870505;
-    CRC32_dialog_setChatWallpaper = 348145650;
+    CRC32_dialog_setChatWallpaper = -1252926702;
 }
 
 
@@ -83,6 +83,7 @@ message DialogExt {
     string theme_emoticon = 7;
     int32 ttl_period = 8;
     int64 wallpaper_id = 9;
+    bool wallpaper_overridden = 10;
 }
 
 message TL_dialogExt {
@@ -493,6 +494,7 @@ message TL_dialog_setChatWallpaper {
     int32 peer_type = 4;
     int64 peer_id = 5;
     int64 wallpaper_id = 6;
+    bool wallpaper_overridden = 7;
 }
 
 

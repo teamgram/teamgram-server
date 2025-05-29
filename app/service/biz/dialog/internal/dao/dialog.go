@@ -81,13 +81,14 @@ func (d *Dao) MakeDialog(dialogDO *dataobject.DialogsDO) *dialog.DialogExt {
 	}).To_PeerNotifySettings()
 
 	return dialog.MakeTLDialogExt(&dialog.DialogExt{
-		Order:          order,
-		Dialog:         dialog2,
-		AvailableMinId: 0,
-		Date:           dialogDO.Date2,
-		ThemeEmoticon:  dialogDO.ThemeEmoticon,
-		TtlPeriod:      dialogDO.TtlPeriod,
-		WallpaperId:    dialogDO.WallpaperId,
+		Order:               order,
+		Dialog:              dialog2,
+		AvailableMinId:      0,
+		Date:                dialogDO.Date2,
+		ThemeEmoticon:       dialogDO.ThemeEmoticon,
+		TtlPeriod:           dialogDO.TtlPeriod,
+		WallpaperId:         dialogDO.WallpaperId,
+		WallpaperOverridden: dialogDO.WallpaperOverridden,
 	}).To_DialogExt()
 }
 

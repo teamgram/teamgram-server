@@ -29,9 +29,9 @@ var _ fmt.Stringer
 
 var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 	// Constructor
-	2055462539: func() mtproto.TLObject { // 0x7a83de8b
+	1930144063: func() mtproto.TLObject { // 0x730ba93f
 		o := MakeTLDialogExt(nil)
-		o.Data2.Constructor = 2055462539
+		o.Data2.Constructor = 1930144063
 		return o
 	},
 	-1496016642: func() mtproto.TLObject { // 0xa6d498fe
@@ -256,9 +256,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -84870505,
 		}
 	},
-	348145650: func() mtproto.TLObject { // 0x14c047f2
+	-1252926702: func() mtproto.TLObject { // 0xb551db12
 		return &TLDialogSetChatWallpaper{
-			Constructor: 348145650,
+			Constructor: -1252926702,
 		}
 	},
 }
@@ -311,7 +311,7 @@ func (m *DialogExt) CalcByteSize(layer int32) int {
 func (m *DialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	m.Constructor = TLConstructor(dBuf.Int())
 	switch uint32(m.Constructor) {
-	case 0x7a83de8b:
+	case 0x730ba93f:
 		m2 := MakeTLDialogExt(m)
 		m2.Decode(dBuf)
 
@@ -346,6 +346,7 @@ func (m *TLDialogExt) To_DialogExt() *DialogExt {
 	return m.Data2
 }
 
+// // flags
 func (m *TLDialogExt) SetOrder(v int64) { m.Data2.Order = v }
 func (m *TLDialogExt) GetOrder() int64  { return m.Data2.Order }
 
@@ -367,15 +368,32 @@ func (m *TLDialogExt) GetTtlPeriod() int32  { return m.Data2.TtlPeriod }
 func (m *TLDialogExt) SetWallpaperId(v int64) { m.Data2.WallpaperId = v }
 func (m *TLDialogExt) GetWallpaperId() int64  { return m.Data2.WallpaperId }
 
+func (m *TLDialogExt) SetWallpaperOverridden(v bool) { m.Data2.WallpaperOverridden = v }
+func (m *TLDialogExt) GetWallpaperOverridden() bool  { return m.Data2.WallpaperOverridden }
+
 func (m *TLDialogExt) GetPredicateName() string {
 	return Predicate_dialogExt
 }
 
 func (m *TLDialogExt) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0x7a83de8b: func() error {
-			x.UInt(0x7a83de8b)
+		0x730ba93f: func() error {
+			x.UInt(0x730ba93f)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.GetWallpaperOverridden() == true {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.UInt(flags)
 			x.Long(m.GetOrder())
 			m.GetDialog().Encode(x, layer)
 			x.Int(m.GetAvailableMinId())
@@ -405,18 +423,23 @@ func (m *TLDialogExt) CalcByteSize(layer int32) int {
 
 func (m *TLDialogExt) Decode(dBuf *mtproto.DecodeBuf) error {
 	var decodeF = map[uint32]func() error{
-		0x7a83de8b: func() error {
+		0x730ba93f: func() error {
+			var flags = dBuf.UInt()
+			_ = flags
 			m.SetOrder(dBuf.Long())
 
-			m1 := &mtproto.Dialog{}
-			m1.Decode(dBuf)
-			m.SetDialog(m1)
+			m2 := &mtproto.Dialog{}
+			m2.Decode(dBuf)
+			m.SetDialog(m2)
 
 			m.SetAvailableMinId(dBuf.Int())
 			m.SetDate(dBuf.Long())
 			m.SetThemeEmoticon(dBuf.String())
 			m.SetTtlPeriod(dBuf.Int())
 			m.SetWallpaperId(dBuf.Long())
+			if (flags & (1 << 0)) != 0 {
+				m.SetWallpaperOverridden(true)
+			}
 			return dBuf.GetError()
 		},
 	}
@@ -2963,11 +2986,19 @@ func (m *TLDialogGetDialogFilterTags) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLDialogSetChatWallpaper) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x14c047f2:
-		x.UInt(0x14c047f2)
+	case 0xb551db12:
+		x.UInt(0xb551db12)
 
-		// no flags
+		// set flags
+		var flags uint32 = 0
 
+		if m.GetWallpaperOverridden() == true {
+			flags |= 1 << 0
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
 		x.Long(m.GetUserId())
 		x.Int(m.GetPeerType())
 		x.Long(m.GetPeerId())
@@ -2986,14 +3017,19 @@ func (m *TLDialogSetChatWallpaper) CalcByteSize(layer int32) int {
 
 func (m *TLDialogSetChatWallpaper) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x14c047f2:
+	case 0xb551db12:
 
-		// not has flags
+		flags := dBuf.UInt()
+		_ = flags
 
+		// flags Debug by @benqi
 		m.UserId = dBuf.Long()
 		m.PeerType = dBuf.Int()
 		m.PeerId = dBuf.Long()
 		m.WallpaperId = dBuf.Long()
+		if (flags & (1 << 0)) != 0 {
+			m.WallpaperOverridden = true
+		}
 		return dBuf.GetError()
 
 	default:

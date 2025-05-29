@@ -65,7 +65,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dialogExt: {
-		0: 2055462539, // 0x7a83de8b
+		0: 1930144063, // 0x730ba93f
 
 	},
 	Predicate_dialogPinnedExt: {
@@ -241,14 +241,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dialog_setChatWallpaper: {
-		0: 348145650, // 0x14c047f2
+		0: -1252926702, // 0xb551db12
 
 	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
 	-155335502:  Predicate_updateDraftMessage,                       // 0xf6bdc4b2
-	2055462539:  Predicate_dialogExt,                                // 0x7a83de8b
+	1930144063:  Predicate_dialogExt,                                // 0x730ba93f
 	245834284:   Predicate_dialogPinnedExt,                          // 0xea7222c
 	-1496016642: Predicate_dialogFilterExt,                          // 0xa6d498fe
 	492418141:   Predicate_simpleDialogsData,                        // 0x1d59b45d
@@ -292,7 +292,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	732705613:   Predicate_dialog_updateUnreadCount,                 // 0x2bac334d
 	-1597149815: Predicate_dialog_toggleDialogFilterTags,            // 0xa0cd6d89
 	-84870505:   Predicate_dialog_getDialogFilterTags,               // 0xfaf0fa97
-	348145650:   Predicate_dialog_setChatWallpaper,                  // 0x14c047f2
+	-1252926702: Predicate_dialog_setChatWallpaper,                  // 0xb551db12
 
 }
 
