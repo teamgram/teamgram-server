@@ -26,7 +26,7 @@ func (c *ChatCore) ChatGetChatParticipantIdList(in *chat.TLChatGetChatParticipan
 		c.ctx,
 		in.ChatId,
 		func(sz, i int, v *dataobject.ChatParticipantsDO) {
-			if v.State != mtproto.ChatMemberStateNormal {
+			if v.State != mtproto.ChatMemberStateNormal && v.State != mtproto.ChatMemberStateMigrated {
 				return
 			}
 			idList = append(idList, v.UserId)
