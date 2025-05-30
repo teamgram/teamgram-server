@@ -354,9 +354,12 @@ func (d *Dao) DeleteInboxMessages(ctx context.Context, deleteUserId int64, peer 
 			ChatId: peer.PeerId,
 		})
 
+		logx.WithContext(ctx).Debugf("pUserIdList: %s", pUserIdList)
+
 		for _, uId := range pUserIdList.GetDatas() {
 			tables.Insert(d.MessagesDAO.CalcTableName(uId))
 		}
+		logx.WithContext(ctx).Debugf("tables: %s", tables)
 
 		for tableName, _ := range tables {
 			d.MessagesDAO.SelectByMessageDataIdListWithCB(
