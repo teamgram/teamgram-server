@@ -349,7 +349,7 @@ func (c *MsgCore) sendChatOutgoingMessageV2(fromUserId, fromAuthKeyId, peerChatI
 			}
 
 			chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
-				if !participant.IsChatMemberStateNormal() {
+				if !participant.IsChatMemberStateNormal() && !participant.IsChatMemberStateMigrated() {
 					return nil
 				}
 				if err2 != nil {
