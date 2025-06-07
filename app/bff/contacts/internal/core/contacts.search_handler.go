@@ -113,6 +113,10 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 				})
 
 			users.Visit(func(it *mtproto.ImmutableUser) {
+				if it.Deleted() {
+					return
+				}
+
 				peer := mtproto.MakeTLPeerUser(&mtproto.Peer{
 					UserId: it.Id(),
 				})

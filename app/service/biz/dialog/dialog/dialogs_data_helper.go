@@ -37,7 +37,7 @@ func (m *DialogsDataHelper) fix() {
 		p := mtproto.FromPeer(dlg.Peer)
 		for _, msg := range m.Messages {
 			to := mtproto.FromPeer(msg.PeerId)
-			if to.PeerType == p.PeerType && dlg.TopMessage == msg.Id {
+			if to.PeerType == p.PeerType && to.PeerId == p.PeerId && dlg.TopMessage == msg.Id {
 				topMessage = msg
 				break
 			}
