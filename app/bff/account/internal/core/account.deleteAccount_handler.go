@@ -39,8 +39,7 @@ func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (
 
 	if me.Username != "" {
 		_, err = c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
-			Constructor: 0,
-			Username:    "",
+			Username: me.Username,
 		})
 		if err != nil {
 			c.Logger.Errorf("account.deleteAccount - error: %v", err)
