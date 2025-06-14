@@ -21,7 +21,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/panjf2000/gnet/v2 v2.6.2
 	github.com/shirou/gopsutil v3.21.11+incompatible
-	github.com/teamgram/marmota v0.1.21
+	github.com/teamgram/marmota v0.1.22
 	github.com/teamgram/proto v0.201.1-0.20250613143547-0bbc7ff25ce7
 	github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
