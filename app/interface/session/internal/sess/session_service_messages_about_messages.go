@@ -317,8 +317,8 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 		}
 
 		if msg.MsgId < c.inQueue.GetMinMsgId() {
-			errorCode = kMsgIdTooOld
-			break
+			// errorCode = kMsgIdTooOld
+			// break
 		}
 
 		//// TODO(@benqi): check kSeqNoTooHigh and kSeqNoTooLow
