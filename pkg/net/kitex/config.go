@@ -21,18 +21,23 @@ type (
 		MethodTimeoutConf = internal.MethodTimeoutConf
 	*/
 
+	EtcdConf struct {
+		GoZero bool `json:",default=false"` // use go-zero etcd client
+		discov.EtcdConf
+	}
+
 	// A RpcClientConf is a rpc client config.
 	RpcClientConf struct {
-		ServiceName   string          `json:",optional"`
-		Codec         string          `json:",default=zrpc"`
-		Etcd          discov.EtcdConf `json:",optional,inherit"`
-		Endpoints     []string        `json:",optional"`
-		Target        string          `json:",optional"`
-		App           string          `json:",optional"`
-		Token         string          `json:",optional"`
-		NonBlock      bool            `json:",optional"`
-		Timeout       int64           `json:",default=2000"`
-		KeepaliveTime time.Duration   `json:",optional"`
+		ServiceName   string        `json:",optional"`
+		Codec         string        `json:",default=zrpc"`
+		Etcd          EtcdConf      `json:",optional,inherit"`
+		Endpoints     []string      `json:",optional"`
+		Target        string        `json:",optional"`
+		App           string        `json:",optional"`
+		Token         string        `json:",optional"`
+		NonBlock      bool          `json:",optional"`
+		Timeout       int64         `json:",default=2000"`
+		KeepaliveTime time.Duration `json:",optional"`
 		// Middlewares   ClientMiddlewaresConf
 	}
 
@@ -41,7 +46,8 @@ type (
 		service.ServiceConf
 		ListenOn      string
 		Codec         string             `json:",default=zrpc"`
-		Etcd          discov.EtcdConf    `json:",optional,inherit"`
+		ZeroEtcd      bool               `json:",default=false"`
+		Etcd          EtcdConf           `json:",optional,inherit"`
 		Auth          bool               `json:",optional"`
 		Redis         redis.RedisKeyConf `json:",optional"`
 		StrictControl bool               `json:",optional"`
@@ -68,9 +74,12 @@ func NewDirectClientConf(endpoints []string, app, token string) RpcClientConf {
 // NewEtcdClientConf returns a RpcClientConf.
 func NewEtcdClientConf(hosts []string, key, app, token string) RpcClientConf {
 	return RpcClientConf{
-		Etcd: discov.EtcdConf{
-			Hosts: hosts,
-			Key:   key,
+		Etcd: EtcdConf{
+			GoZero: false,
+			EtcdConf: discov.EtcdConf{
+				Hosts: hosts,
+				Key:   key,
+			},
 		},
 		App:   app,
 		Token: token,
