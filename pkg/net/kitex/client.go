@@ -71,15 +71,17 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 	//options = append(options, client.WithSuite(trace.NewDefaultClientSuite()))
 
 	// resolver
-	if c.HasEtcd() {
-		r, err := etcd.NewEtcdResolver(c.Etcd.Hosts)
-		if err != nil {
-			panic(err)
-		}
-
-		options = append(options, client.WithResolver(r))
-	} else {
+	if len(c.Endpoints) > 0 {
 		options = append(options, client.WithHostPorts(c.Endpoints...))
+	} else {
+		if c.HasEtcd() {
+			r, err := etcd.NewEtcdResolver(c.Etcd.Hosts)
+			if err != nil {
+				panic(err)
+			}
+
+			options = append(options, client.WithResolver(r))
+		}
 	}
 
 	cli, err := newF(options...)

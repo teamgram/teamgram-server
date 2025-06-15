@@ -13,7 +13,7 @@ package echoclient
 import (
 	"context"
 
-    "github.com/teamgram/proto/v2/tg"
+	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo/echoservice"
 
@@ -23,8 +23,7 @@ import (
 var _ *tg.Bool
 
 type EchoClient interface {
-    EchoEcho(ctx context.Context, in *echo.TLEchoEcho) (*echo.Echo, error)
-
+	EchoEcho(ctx context.Context, in *echo.TLEchoEcho) (*echo.Echo, error)
 }
 
 type defaultEchoClient struct {
@@ -37,11 +36,9 @@ func NewEchoClient(cli client.Client) EchoClient {
 	}
 }
 
-
 // EchoEcho
 // echo.echo message:string = Echo;
 func (m *defaultEchoClient) EchoEcho(ctx context.Context, in *echo.TLEchoEcho) (*echo.Echo, error) {
-	 cli := echoservice.NewRPCEchoClient(m.cli)
-	 return cli.EchoEcho(ctx, in)
+	cli := echoservice.NewRPCEchoClient(m.cli)
+	return cli.EchoEcho(ctx, in)
 }
-

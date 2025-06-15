@@ -13,8 +13,8 @@ package echoservice
 import (
 	"context"
 
+	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
-    "github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
@@ -24,8 +24,7 @@ var _ *tg.Bool
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-    EchoEcho(ctx context.Context, req *echo.TLEchoEcho, callOptions ...callopt.Option) (r *echo.Echo, err error)
-
+	EchoEcho(ctx context.Context, req *echo.TLEchoEcho, callOptions ...callopt.Option) (r *echo.Echo, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -67,4 +66,3 @@ func (p *kEchoClient) EchoEcho(ctx context.Context, req *echo.TLEchoEcho, callOp
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.EchoEcho(ctx, req)
 }
-

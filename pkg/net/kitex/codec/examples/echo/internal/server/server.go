@@ -20,10 +20,10 @@ import (
 	"flag"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo/echoservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/config"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/svc"
-    "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo/echoservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/server/tg/service"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/internal/svc"
 
 	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"

@@ -28,16 +28,16 @@ type (
 
 	// A RpcClientConf is a rpc client config.
 	RpcClientConf struct {
-		ServiceName   string        `json:",optional"`
-		Codec         string        `json:",default=zrpc"`
-		Etcd          EtcdConf      `json:",optional,inherit"`
-		Endpoints     []string      `json:",optional"`
-		Target        string        `json:",optional"`
-		App           string        `json:",optional"`
-		Token         string        `json:",optional"`
-		NonBlock      bool          `json:",optional"`
-		Timeout       int64         `json:",default=2000"`
-		KeepaliveTime time.Duration `json:",optional"`
+		ServiceName   string          `json:",optional"`
+		Codec         string          `json:",default=zrpc"`
+		Etcd          discov.EtcdConf `json:",optional,inherit"`
+		Endpoints     []string        `json:",optional"`
+		Target        string          `json:",optional"`
+		App           string          `json:",optional"`
+		Token         string          `json:",optional"`
+		NonBlock      bool            `json:",optional"`
+		Timeout       int64           `json:",default=2000"`
+		KeepaliveTime time.Duration   `json:",optional"`
 		// Middlewares   ClientMiddlewaresConf
 	}
 
@@ -74,12 +74,9 @@ func NewDirectClientConf(endpoints []string, app, token string) RpcClientConf {
 // NewEtcdClientConf returns a RpcClientConf.
 func NewEtcdClientConf(hosts []string, key, app, token string) RpcClientConf {
 	return RpcClientConf{
-		Etcd: EtcdConf{
-			GoZero: false,
-			EtcdConf: discov.EtcdConf{
-				Hosts: hosts,
-				Key:   key,
-			},
+		Etcd: discov.EtcdConf{
+			Hosts: hosts,
+			Key:   key,
 		},
 		App:   app,
 		Token: token,

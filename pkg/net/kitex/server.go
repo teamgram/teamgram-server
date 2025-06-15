@@ -83,24 +83,30 @@ func NewServer(c RpcServerConf, register RegisterFn) (*RpcServer, error) {
 	//// BoundHandler
 	//options = append(options, server.WithBoundHandler(bound.NewCpuLimitHandler()))
 
+	var (
+		server2 server.Server
+	)
+
 	// registry
 	if c.HasEtcd() {
-		// etcd
-		r, err := etcd.NewEtcdRegistry(c.Etcd.Hosts) // r should not be reused.
-		if err != nil {
-			panic(err)
-		}
+		if c.Etcd.GoZero {
+			server2, err = NewRpcPubServer(c.Etcd.EtcdConf, c.ListenOn, options...)
+		} else {
+			// etcd
+			r, err := etcd.NewEtcdRegistry(c.Etcd.Hosts) // r should not be reused.
+			if err != nil {
+				panic(err)
+			}
 
-		options = append(options, server.WithRegistry(r))
+			options = append(options, server.WithRegistry(r))
+
+			server2 = server.NewServer(options...)
+		}
+	} else {
+		server2 = server.NewServer(options...)
 	}
 
-	//if c.ServiceConf.Telemetry.Name != "" {
-	//	tracer.InitJaeger(c.ServiceConf.Name)
-	//	options = append(options, server.WithSuite(trace.NewDefaultServerSuite()))
-	//}
-
 	// server.WithLogger()
-	server2 := server.NewServer(options...)
 	if err = register(server2); err != nil {
 		return nil, err
 	}
