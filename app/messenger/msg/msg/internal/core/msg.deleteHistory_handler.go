@@ -23,6 +23,7 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/msg/inbox/inbox"
 	"github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 )
 
 // MsgDeleteHistory
@@ -169,7 +170,7 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 				return
 			}
 
-			c.svcCtx.Dao.InboxClient.InboxDeleteUserHistoryToInbox(
+			_, _ = c.svcCtx.Dao.InboxClient.InboxDeleteUserHistoryToInbox(
 				c.ctx,
 				&inbox.TLInboxDeleteUserHistoryToInbox{
 					FromId:     in.UserId,
@@ -178,13 +179,29 @@ func (c *MsgCore) deleteUserHistory(in *msg.TLMsgDeleteHistory) (reply *mtproto.
 					MaxId:      in.MaxId,
 				})
 		case mtproto.PEER_CHAT:
-			c.svcCtx.Dao.InboxClient.InboxDeleteChatHistoryToInbox(
+			chat, err2 := c.svcCtx.Dao.ChatClient.ChatGetMutableChat(
 				c.ctx,
-				&inbox.TLInboxDeleteChatHistoryToInbox{
-					FromId:     in.UserId,
-					PeerChatId: in.PeerId,
-					MaxId:      in.MaxId,
+				&chatpb.TLChatGetMutableChat{
+					ChatId: in.PeerId,
 				})
+			if err2 != nil {
+				c.Logger.Errorf("inbox.sendChatMessageToInbox - error: %v", err2)
+			} else {
+				chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
+					if in.UserId != userId {
+						_, _ = c.svcCtx.Dao.InboxClient.InboxDeleteChatHistoryToInbox(
+							c.ctx,
+							&inbox.TLInboxDeleteChatHistoryToInbox{
+								FromId:     userId,
+								PeerChatId: in.PeerId,
+								MaxId:      in.MaxId,
+							})
+					}
+
+					return nil
+				})
+			}
+
 		}
 	}
 
