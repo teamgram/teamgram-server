@@ -7,18 +7,15 @@
 package dao
 
 import (
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
 )
 
 type Dao struct {
-	*Mysql
+	*ShardingSessionClient
 }
 
 func New(c config.Config) *Dao {
-	db := sqlx.NewMySQL(&c.Mysql)
-
 	return &Dao{
-		Mysql: newMysqlDao(db),
+		ShardingSessionClient: NewShardingSessionClient(c),
 	}
 }

@@ -50,7 +50,7 @@ func New(c config.Config) *Dao {
 		StatusClient:       statusclient.NewStatusClient(statusclient.MustNewKitexClient(c.StatusClient)),
 		eGateServers:       make(map[string]*Gateway),
 		MyServerId:         myServerId,
-		RpcShardingManager: NewRpcShardingManager(myServerId, c.Etcd),
+		RpcShardingManager: NewRpcShardingManager(myServerId, c.Etcd.EtcdConf),
 	}
 
 	d.watchGateway(c.GatewayClient)

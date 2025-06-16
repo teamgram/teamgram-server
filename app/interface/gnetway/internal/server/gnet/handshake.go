@@ -22,7 +22,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha1"
-	"encoding/base64"
 	"encoding/binary"
 	"fmt"
 	"math/big"
@@ -30,15 +29,13 @@ import (
 	"time"
 
 	"github.com/teamgram/marmota/pkg/hack"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/crypto"
 	"github.com/teamgram/proto/v2/mt"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dal/dataobject"
-	//sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
-	//"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
+	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 
 	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -972,39 +969,36 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) 
 		MediaTempAuthKeyId: key.MediaTempAuthKeyId,
 	}
 
-	_ = serverSalt
-	_ = keyInfo
+	// Fix by @wuyun9527, 2018-12-21
+	var (
+		rB *tg.Bool
+	)
+	err := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
+		strconv.FormatInt(key.AuthKeyId, 10),
+		func(client sessionclient.SessionClient) (err error) {
+			rB, err = client.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{
+				AuthKey:    keyInfo.ToAuthKeyInfo(),
+				FutureSalt: serverSalt,
+				ExpiresIn:  ctx.ExpiresIn,
+			})
 
-	tR := sqlx.TxWrapper(
-		context.Background(),
-		s.svcCtx.DB,
-		func(tx *sqlx.Tx, result *sqlx.StoreResult) {
-			_, _, err := s.svcCtx.Dao.AuthKeysDAO.InsertTx(
-				tx,
-				&dataobject.AuthKeysDO{
-					AuthKeyId: key.AuthKeyId,
-					Body:      base64.RawStdEncoding.EncodeToString(key.AuthKey),
-				})
-			if err != nil {
-				result.Err = err
-				return
-			}
-
-			_, _, err = s.svcCtx.Dao.AuthKeyInfosDAO.InsertTx(
-				tx, &dataobject.AuthKeyInfosDO{
-					AuthKeyId:          key.AuthKeyId,
-					AuthKeyType:        key.AuthKeyType,
-					PermAuthKeyId:      key.PermAuthKeyId,
-					TempAuthKeyId:      key.TempAuthKeyId,
-					MediaTempAuthKeyId: key.MediaTempAuthKeyId,
-				})
-			if err != nil {
-				result.Err = err
-				return
-			}
+			return err
 		})
-
-	_ = tR
+	if err != nil {
+		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
+		return false
+	} else if !tg.FromBool(rB) {
+		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
+		return false
+	} else {
+		s.PutAuthKey(&tg.TLAuthKeyInfo{
+			AuthKeyId:          keyInfo.AuthKeyId,
+			AuthKey:            keyInfo.AuthKey,
+			AuthKeyType:        keyInfo.AuthKeyType,
+			PermAuthKeyId:      keyInfo.PermAuthKeyId,
+			TempAuthKeyId:      keyInfo.TempAuthKeyId,
+			MediaTempAuthKeyId: keyInfo.MediaTempAuthKeyId})
+	}
 
 	return true
 }

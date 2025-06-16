@@ -21,6 +21,7 @@ package core
 import (
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 )
 
 var _ *tg.Bool
@@ -28,15 +29,13 @@ var _ *tg.Bool
 // SessionQueryAuthKey
 // session.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (c *SessionCore) SessionQueryAuthKey(in *session.TLSessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.queryAuthKey blocked, License key from https://teamgram.net required to unlock enterprise features.")
-	return tg.MakeAuthKeyInfo(&tg.TLAuthKeyInfo{
-		ClazzID:            tg.ClazzID_authKeyInfo,
-		AuthKeyId:          1234567890,
-		AuthKey:            []byte("01234567890"),
-		AuthKeyType:        1,
-		PermAuthKeyId:      1234567890,
-		TempAuthKeyId:      12345678900,
-		MediaTempAuthKeyId: 1234567890,
-	}), nil
+	key, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionQueryAuthKey(c.ctx, &authsession.TLAuthsessionQueryAuthKey{
+		AuthKeyId: in.AuthKeyId,
+	})
+	if err != nil {
+		c.Logger.Errorf("session.queryAuthKey - error: %v", err)
+		return nil, err
+	}
+
+	return key, nil
 }

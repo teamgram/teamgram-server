@@ -11,7 +11,6 @@ package config
 
 import (
 	"github.com/teamgram/marmota/pkg/container2"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
@@ -20,7 +19,6 @@ type Config struct {
 	RSAKey  []RSAKey
 	Gnetway *GnetwayConfig
 	Session kitex.RpcClientConf
-	Mysql   sqlx.Config
 }
 
 type RSAKey struct {

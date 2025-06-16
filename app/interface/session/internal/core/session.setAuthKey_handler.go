@@ -19,10 +19,9 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 )
 
 var _ *tg.Bool
@@ -30,8 +29,22 @@ var _ *tg.Bool
 // SessionSetAuthKey
 // session.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (c *SessionCore) SessionSetAuthKey(in *session.TLSessionSetAuthKey) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.setAuthKey blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.AuthKey == nil {
+		c.Logger.Errorf("session.setAuthKey error: auth_key is nil")
+		return nil, tg.ErrInputRequestInvalid
+	}
 
-	return nil, errors.New("session.setAuthKey not implemented")
+	rV, err := c.svcCtx.Dao.AuthsessionClient.AuthsessionSetAuthKey(
+		c.ctx,
+		&authsession.TLAuthsessionSetAuthKey{
+			AuthKey:    in.AuthKey,
+			FutureSalt: in.FutureSalt,
+			ExpiresIn:  in.ExpiresIn,
+		})
+	if err != nil {
+		c.Logger.Errorf("session.setAuthKey - error: %v", err)
+		return nil, err
+	}
+
+	return rV, nil
 }
