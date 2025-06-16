@@ -36,3 +36,12 @@ Session:
     Hosts:
       - 127.0.0.1:2379
     Key: interface.session
+
+Mysql:
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&clientFoundRows=true
+  ReadDSN:
+    - root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&clientFoundRows=true
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+  #DisableStmtLog: false

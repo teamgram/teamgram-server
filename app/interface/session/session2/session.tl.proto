@@ -1,0 +1,183 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2024-present,  Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: Benqi (wubenqi@gmail.com)
+ */
+
+syntax = "proto3";
+
+package session;
+
+import "google/protobuf/wrappers.proto";
+import "schema.tl.core_types.proto";
+import "schema.tl.transport.proto";
+import "schema.tl.sync.proto";
+
+option go_package = "github.com/teamgram/teamgram-server/app/interface/session/session";
+
+enum TLConstructor {
+    CRC32_UNKNOWN = 0;
+    CRC32_sessionClientEvent = -243320993;
+    CRC32_sessionClientData = 1101139022;
+    CRC32_httpSessionData = -606579889;
+    CRC32_session_queryAuthKey = 1798174801;
+    CRC32_session_setAuthKey = 487672075;
+    CRC32_session_createSession = 1091351053;
+    CRC32_session_sendDataToSession = -2023019028;
+    CRC32_session_sendHttpDataToSession = -1142152274;
+    CRC32_session_closeSession = 393200211;
+    CRC32_session_pushUpdatesData = -1519069143;
+    CRC32_session_pushSessionUpdatesData = 1173618080;
+    CRC32_session_pushRpcResultData = 1262947465;
+}
+
+
+// HttpSessionData <--
+//  + TL_httpSessionData
+//
+message HttpSessionData {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    bytes payload = 3;
+}
+
+message TL_httpSessionData {
+    HttpSessionData data2 = 1;
+}
+
+
+// SessionClientData <--
+//  + TL_sessionClientData
+//
+message SessionClientData {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    string server_id = 3;
+    int32 conn_type = 4;
+    int64 auth_key_id = 5;
+    int32 key_type = 6;
+    int64 perm_auth_key_id = 7;
+    int64 session_id = 8;
+    string client_ip = 9;
+    int32 quick_ack = 10;
+    int64 salt = 11;
+    bytes payload = 12;
+}
+
+message TL_sessionClientData {
+    SessionClientData data2 = 1;
+}
+
+
+// SessionClientEvent <--
+//  + TL_sessionClientEvent
+//
+message SessionClientEvent {
+    string predicate_name = 1;
+    TLConstructor  constructor = 2;
+    string server_id = 3;
+    int32 conn_type = 4;
+    int64 auth_key_id = 5;
+    int32 key_type = 6;
+    int64 perm_auth_key_id = 7;
+    int64 session_id = 8;
+    string client_ip = 9;
+}
+
+message TL_sessionClientEvent {
+    SessionClientEvent data2 = 1;
+}
+
+
+
+
+
+//--------------------------------------------------------------------------------------------
+message TL_session_queryAuthKey {
+    TLConstructor  constructor = 1;
+    int64 auth_key_id = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_setAuthKey {
+    TLConstructor  constructor = 1;
+    mtproto.AuthKeyInfo auth_key = 3;
+    mtproto.FutureSalt future_salt = 4;
+    int32 expires_in = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_createSession {
+    TLConstructor  constructor = 1;
+    SessionClientEvent client = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_sendDataToSession {
+    TLConstructor  constructor = 1;
+    SessionClientData data = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_sendHttpDataToSession {
+    TLConstructor  constructor = 1;
+    SessionClientData client = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_closeSession {
+    TLConstructor  constructor = 1;
+    SessionClientEvent client = 3;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_pushUpdatesData {
+    TLConstructor  constructor = 1;
+    int64 perm_auth_key_id = 3;
+    bool notification = 4;
+    mtproto.Updates updates = 5;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_pushSessionUpdatesData {
+    TLConstructor  constructor = 1;
+    int64 perm_auth_key_id = 3;
+    int64 auth_key_id = 4;
+    int64 session_id = 5;
+    mtproto.Updates updates = 6;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_session_pushRpcResultData {
+    TLConstructor  constructor = 1;
+    int64 perm_auth_key_id = 3;
+    int64 auth_key_id = 4;
+    int64 session_id = 5;
+    int64 client_req_msg_id = 6;
+    bytes rpc_result_data = 7;
+}
+
+
+//--------------------------------------------------------------------------------------------
+// Vector api result type
+
+
+//--------------------------------------------------------------------------------------------
+// rpc
+
+service RPCSession {
+ rpc session_queryAuthKey(TL_session_queryAuthKey) returns (mtproto.AuthKeyInfo) {}
+ rpc session_setAuthKey(TL_session_setAuthKey) returns (mtproto.Bool) {}
+ rpc session_createSession(TL_session_createSession) returns (mtproto.Bool) {}
+ rpc session_sendDataToSession(TL_session_sendDataToSession) returns (mtproto.Bool) {}
+ rpc session_sendHttpDataToSession(TL_session_sendHttpDataToSession) returns (HttpSessionData) {}
+ rpc session_closeSession(TL_session_closeSession) returns (mtproto.Bool) {}
+ rpc session_pushUpdatesData(TL_session_pushUpdatesData) returns (mtproto.Bool) {}
+ rpc session_pushSessionUpdatesData(TL_session_pushSessionUpdatesData) returns (mtproto.Bool) {}
+ rpc session_pushRpcResultData(TL_session_pushRpcResultData) returns (mtproto.Bool) {}
+}
+

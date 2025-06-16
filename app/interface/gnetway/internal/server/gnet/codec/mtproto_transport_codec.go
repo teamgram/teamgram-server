@@ -110,7 +110,6 @@ var (
 func init() {
 	flag.BoolVar(&isMTProto, "mtproto", true, "mtproto")
 	flag.BoolVar(&isObfuscated, "obfuscated", true, "obfuscated")
-
 }
 
 // var ErrShortBuffer = io.ErrShortBuffer
@@ -141,7 +140,6 @@ type CodecWriter interface {
 type Codec interface {
 	Encode(conn CodecWriter, msg []byte) ([]byte, error)
 	Decode(conn CodecReader) (bool, []byte, error)
-	// FirstBytes() int
 }
 
 func CreateCodec(conn CodecReader) (Codec, error) {

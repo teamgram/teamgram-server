@@ -1,0 +1,34 @@
+Name: service.biz_service
+ListenOn: 127.0.0.1:20020
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.biz_service
+Cache:
+  - Host: localhost:6379
+KV:
+  - Host: localhost:6379
+Mysql:
+  Addr: 127.0.0.1:3306
+  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  Active: 64
+  Idle: 64
+  IdleTimeout: 4h
+  QueryTimeout: 5s
+  ExecTimeout: 5s
+  TranTimeout: 5s
+
+MediaClient:
+  #  Endpoints:
+  #    - 127.0.0.1:20650
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.media
+IdgenClient:
+  #  Endpoints:
+  #    - 127.0.0.1:20660
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen

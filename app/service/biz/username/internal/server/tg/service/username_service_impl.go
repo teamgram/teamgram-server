@@ -1,0 +1,199 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright 2024 Teamgram Authors.
+ *  All rights reserved.
+ *
+ * Author: teamgramio (teamgram.io@gmail.com)
+ */
+
+package service
+
+import (
+	"context"
+
+	"github.com/teamgram/proto/v2/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/internal/core"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/username"
+)
+
+// UsernameGetAccountUsername
+// username.getAccountUsername user_id:long = UsernameData;
+func (s *Service) UsernameGetAccountUsername(ctx context.Context, request *username.TLUsernameGetAccountUsername) (*username.UsernameData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.getAccountUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameGetAccountUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameCheckAccountUsername
+// username.checkAccountUsername user_id:long username:string = UsernameExist;
+func (s *Service) UsernameCheckAccountUsername(ctx context.Context, request *username.TLUsernameCheckAccountUsername) (*username.UsernameExist, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.checkAccountUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameCheckAccountUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameGetChannelUsername
+// username.getChannelUsername channel_id:long = UsernameData;
+func (s *Service) UsernameGetChannelUsername(ctx context.Context, request *username.TLUsernameGetChannelUsername) (*username.UsernameData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.getChannelUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameGetChannelUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameCheckChannelUsername
+// username.checkChannelUsername channel_id:long username:string = UsernameExist;
+func (s *Service) UsernameCheckChannelUsername(ctx context.Context, request *username.TLUsernameCheckChannelUsername) (*username.UsernameExist, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.checkChannelUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameCheckChannelUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameUpdateUsernameByPeer
+// username.updateUsernameByPeer peer_type:int peer_id:long username:string = Bool;
+func (s *Service) UsernameUpdateUsernameByPeer(ctx context.Context, request *username.TLUsernameUpdateUsernameByPeer) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.updateUsernameByPeer - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameUpdateUsernameByPeer(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameCheckUsername
+// username.checkUsername username:string = UsernameExist;
+func (s *Service) UsernameCheckUsername(ctx context.Context, request *username.TLUsernameCheckUsername) (*username.UsernameExist, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.checkUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameCheckUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameUpdateUsername
+// username.updateUsername peer_type:int peer_id:long username:string = Bool;
+func (s *Service) UsernameUpdateUsername(ctx context.Context, request *username.TLUsernameUpdateUsername) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.updateUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameUpdateUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameDeleteUsername
+// username.deleteUsername username:string = Bool;
+func (s *Service) UsernameDeleteUsername(ctx context.Context, request *username.TLUsernameDeleteUsername) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.deleteUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameDeleteUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameResolveUsername
+// username.resolveUsername username:string = Peer;
+func (s *Service) UsernameResolveUsername(ctx context.Context, request *username.TLUsernameResolveUsername) (*tg.Peer, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.resolveUsername - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameResolveUsername(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameGetListByUsernameList
+// username.getListByUsernameList names:Vector<string> = Vector<UsernameData>;
+func (s *Service) UsernameGetListByUsernameList(ctx context.Context, request *username.TLUsernameGetListByUsernameList) (*username.VectorUsernameData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.getListByUsernameList - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameGetListByUsernameList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameDeleteUsernameByPeer
+// username.deleteUsernameByPeer peer_type:int peer_id:long = Bool;
+func (s *Service) UsernameDeleteUsernameByPeer(ctx context.Context, request *username.TLUsernameDeleteUsernameByPeer) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.deleteUsernameByPeer - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameDeleteUsernameByPeer(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}
+
+// UsernameSearch
+// username.search q:string excluded_contacts:Vector<long> limit:int = Vector<UsernameData>;
+func (s *Service) UsernameSearch(ctx context.Context, request *username.TLUsernameSearch) (*username.VectorUsernameData, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("username.search - metadata: {}, request: %v", request)
+
+	r, err := c.UsernameSearch(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("echos.echo - reply: %v", r)
+	return r, err
+}

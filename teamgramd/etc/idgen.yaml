@@ -1,0 +1,13 @@
+Name: service.idgen
+ListenOn: 127.0.0.1:20660
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: service.idgen
+Log:
+  Mode: file
+  Path: ../logs/idgen
+  Level: debug
+NodeId: 1
+SeqIDGen:
+  - Host: 127.0.0.1:6379
