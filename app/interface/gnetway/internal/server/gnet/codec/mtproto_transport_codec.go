@@ -99,7 +99,8 @@ var (
 )
 
 var (
-	isMTProto bool // 是否使用MTProto - true为官方mtproto协议，false为定制协议（当前实现为ntproto）
+	isMTProto    bool // 是否使用MTProto - true为官方mtproto协议，false为定制协议（当前实现为ntproto）
+	isObfuscated bool
 )
 
 var (
@@ -108,6 +109,8 @@ var (
 
 func init() {
 	flag.BoolVar(&isMTProto, "mtproto", true, "mtproto")
+	flag.BoolVar(&isObfuscated, "obfuscated", true, "obfuscated")
+
 }
 
 // var ErrShortBuffer = io.ErrShortBuffer
@@ -151,24 +154,26 @@ func CreateCodec(conn CodecReader) (Codec, error) {
 
 func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	var (
-		firstByte uint8
-		err       error
-	)
-
-	bytes, _ := conn.Peek(1)
-	firstByte = bytes[0]
-
-	if firstByte == ABRIDGED_FLAG {
-		logx.Debugf("conn(%s) mtproto abridged version.", conn)
-		_, _ = conn.Discard(1)
-		return newMTProtoAbridgedCodec(nil), nil
-	}
-
-	var (
 		firstInt uint32
 	)
+
+	if !isObfuscated {
+		var (
+			firstByte uint8
+		)
+		bytes, _ := conn.Peek(1)
+		firstByte = bytes[0]
+
+		if firstByte == ABRIDGED_FLAG {
+			tB, _ := conn.Peek(-1)
+			logx.Debugf("conn(%s) mtproto abridged version, data: %s", conn, hex.EncodeToString(tB))
+			_, _ = conn.Discard(1)
+			return newMTProtoAbridgedCodec(nil), nil
+		}
+	}
+
 	// not abridged version, we'll lookup codec!
-	bytes, err = conn.Peek(4)
+	bytes, err := conn.Peek(4)
 	if err != nil {
 		return nil, ErrUnexpectedEOF
 	}
