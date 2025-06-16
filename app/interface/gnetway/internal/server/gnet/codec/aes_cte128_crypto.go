@@ -16,7 +16,7 @@
 package codec
 
 import (
-	"github.com/teamgram/proto/mtproto/crypto"
+	"github.com/teamgram/proto/v2/crypto"
 )
 
 // AesCTR128Crypto AesCTR128Crypto

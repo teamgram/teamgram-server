@@ -25,19 +25,18 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"fmt"
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dal/dataobject"
 	"math/big"
 	"strconv"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/hack"
-	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/proto/mtproto/crypto"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/crypto"
 	"github.com/teamgram/proto/v2/mt"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/dal/dataobject"
 	//sessionclient "github.com/teamgram/teamgram-server/v2/app/interface/session/client"
 	//"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 
@@ -235,7 +234,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) error {
 
 		x := bin.NewEncoder()
 		defer x.End()
-		_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), resPQ)
+		_ = encodeUnencryptedMessage(x, GenerateMessageId(), resPQ)
 
 		return UnThreadSafeWrite(c, x.Bytes())
 	case mt.ClazzID_req_pq_multi:
@@ -263,7 +262,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) error {
 
 		x := bin.NewEncoder()
 		defer x.End()
-		_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), resPQ)
+		_ = encodeUnencryptedMessage(x, GenerateMessageId(), resPQ)
 
 		return UnThreadSafeWrite(c, x.Bytes())
 	case mt.ClazzID_req_DH_params:
@@ -283,7 +282,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) error {
 				return err
 			}
 			// state.State = STATE_DH_params_res
-			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resServerDHParam)
+			// rData = SerializeToBuffer(GenerateMessageId(), resServerDHParam)
 		} else {
 			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return nil, conn.Close()
@@ -308,7 +307,7 @@ func (s *Server) onHandshake(c gnet.Conn, d *bin.Decoder) error {
 				return err
 			}
 			// state.State = STATE_dh_gen_res
-			// rData = SerializeToBuffer(mtproto.GenerateMessageId(), resSetClientDHParamsAnswer)
+			// rData = SerializeToBuffer(GenerateMessageId(), resSetClientDHParamsAnswer)
 		} else {
 			// log.Errorf("onHandshake error: {invalid nonce} - {peer: %s, ctx: %s, mmsg: %s}", conn, ctx, mmsg)
 			// return conn.Close()
@@ -564,7 +563,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 					return err2
 				}
 
-				handshakeType = mtproto.AuthKeyTypePerm
+				handshakeType = tg.AuthKeyTypePerm
 				newNonce2 = pqInnerData.NewNonce
 			case mt.ClazzID_p_q_inner_data_dc:
 				pqInnerData := &mt.TLPQInnerDataDc{ClazzID: clazzID}
@@ -575,7 +574,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 					return err2
 				}
 
-				handshakeType = mtproto.AuthKeyTypePerm
+				handshakeType = tg.AuthKeyTypePerm
 				newNonce2 = pqInnerData.NewNonce
 			case mt.ClazzID_p_q_inner_data_temp:
 				pqInnerData := &mt.TLPQInnerDataTemp{ClazzID: clazzID}
@@ -586,7 +585,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 					return err2
 				}
 
-				handshakeType = mtproto.AuthKeyTypeTemp
+				handshakeType = tg.AuthKeyTypeTemp
 				expiresIn = pqInnerData.ExpiresIn
 				newNonce2 = pqInnerData.NewNonce
 			case mt.ClazzID_p_q_inner_data_temp_dc:
@@ -599,9 +598,9 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 				}
 
 				if pqInnerData.Dc < 0 {
-					handshakeType = mtproto.AuthKeyTypeMediaTemp
+					handshakeType = tg.AuthKeyTypeMediaTemp
 				} else {
-					handshakeType = mtproto.AuthKeyTypeTemp
+					handshakeType = tg.AuthKeyTypeTemp
 				}
 				expiresIn = pqInnerData.ExpiresIn
 				newNonce2 = pqInnerData.NewNonce
@@ -610,7 +609,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 				logx.Error(err2.Error())
 				return err2
 			}
-			//dbuf := mtproto.NewDecodeBuf(paddedDataWithHash)
+			//dbuf := tg.NewDecodeBuf(paddedDataWithHash)
 			//o := dbuf.Object()
 			//if dbuf.GetError() != nil {
 			//	err = fmt.Errorf("onReq_DHParams - decode P_Q_inner_data error")
@@ -618,24 +617,24 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 			//	return err
 			//}
 			//
-			//var pqInnerData *mtproto.P_QInnerData
+			//var pqInnerData *tg.P_QInnerData
 			//// TODO(@benqi):
 			//switch innerData := o.(type) {
-			//case *mtproto.TLPQInnerData:
-			//	handshakeType = mtproto.AuthKeyTypePerm
+			//case *tg.TLPQInnerData:
+			//	handshakeType = tg.AuthKeyTypePerm
 			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *mtproto.TLPQInnerDataDc:
-			//	handshakeType = mtproto.AuthKeyTypePerm
+			//case *tg.TLPQInnerDataDc:
+			//	handshakeType = tg.AuthKeyTypePerm
 			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *mtproto.TLPQInnerDataTemp:
-			//	handshakeType = mtproto.AuthKeyTypeTemp
+			//case *tg.TLPQInnerDataTemp:
+			//	handshakeType = tg.AuthKeyTypeTemp
 			//	expiresIn = innerData.GetExpiresIn()
 			//	pqInnerData = innerData.To_P_QInnerData()
-			//case *mtproto.TLPQInnerDataTempDc:
+			//case *tg.TLPQInnerDataTempDc:
 			//	if innerData.GetDc() < 0 {
-			//		handshakeType = mtproto.AuthKeyTypeMediaTemp
+			//		handshakeType = tg.AuthKeyTypeMediaTemp
 			//	} else {
-			//		handshakeType = mtproto.AuthKeyTypeTemp
+			//		handshakeType = tg.AuthKeyTypeTemp
 			//	}
 			//	expiresIn = innerData.GetExpiresIn()
 			//	pqInnerData = innerData.To_P_QInnerData()
@@ -752,12 +751,12 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 
 			x := bin.NewEncoder()
 			defer x.End()
-			_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), serverDHParams)
+			_ = encodeUnencryptedMessage(x, GenerateMessageId(), serverDHParams)
 			_ = UnThreadSafeWrite(c, x.Bytes())
 			//
-			//x := mtproto.NewEncodeBuf(512)
-			//_ = serializeToBuffer(x, mtproto.GenerateMessageId(), serverDHParams)
-			//_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{
+			//x := bin.NewEncodeBuf(512)
+			//_ = serializeToBuffer(x, GenerateMessageId(), serverDHParams)
+			//_ = UnThreadSafeWrite(c, &tg.MTPRawMessage{
 			//	Payload: x.GetBuf(),
 			//})
 		})
@@ -809,8 +808,8 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	dBuf := bin.NewDecoder(decryptedData[20:])
 	clientDHInnerData := new(mt.ClientDHInnerData)
 	err = clientDHInnerData.Decode(dBuf)
-	//// clientDHInnerData := mtproto.MakeTLClient_DHInnerData(nil)
-	//clientDHInnerData.Data2.Constructor = mtproto.TLConstructor(dBuf.Int())
+	//// clientDHInnerData := tg.MakeTLClient_DHInnerData(nil)
+	//clientDHInnerData.Data2.Constructor = tg.TLConstructor(dBuf.Int())
 	//err = clientDHInnerData.Decode(dBuf)
 	if err != nil {
 		logx.Errorf("onSetClientDHParams conn(%s) - TLClient_DHInnerData decode error: %s", c, err)
@@ -891,7 +890,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 				newNonceHash bin.Int128
 			)
 
-			if s.saveAuthKeyInfo(ctx, mtproto.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
+			if s.saveAuthKeyInfo(ctx, tg.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
 				copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x01))
 				dhGen = mt.MakeSetClientDHParamsAnswer(&mt.TLDhGenOk{
 					Nonce:         ctx.Nonce,
@@ -922,7 +921,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 
 			x := bin.NewEncoder()
 			defer x.End()
-			_ = encodeUnencryptedMessage(x, mtproto.GenerateMessageId(), dhGen)
+			_ = encodeUnencryptedMessage(x, GenerateMessageId(), dhGen)
 			_ = UnThreadSafeWrite(c, x.Bytes())
 		})
 
@@ -930,7 +929,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 }
 
 // msgs_ack#62d6b459 msg_ids:Vector<long> = MsgsAck;
-func (s *Server) onMsgsAck(c gnet.Conn, state *HandshakeStateCtx, request *mtproto.TLMsgsAck) error {
+func (s *Server) onMsgsAck(c gnet.Conn, state *HandshakeStateCtx, request *mt.TLMsgsAck) error {
 	logx.Infof("msgs_ack#62d6b459 conn(%s) - state: {%s}, request: %s", c, state, request)
 
 	switch state.State {
@@ -947,7 +946,7 @@ func (s *Server) onMsgsAck(c gnet.Conn, state *HandshakeStateCtx, request *mtpro
 	return nil
 }
 
-func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *mtproto.AuthKeyInfo) bool {
+func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) bool {
 	var (
 		salt = int64(0)
 		now  = int32(time.Now().Unix())

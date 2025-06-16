@@ -23,7 +23,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/mt"
 	"github.com/teamgram/proto/v2/tg"
@@ -191,6 +190,9 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	)
 
 	if permAuthKeyId == 0 {
+		x3 := bin.NewEncoder()
+		defer x3.End()
+
 		// hack
 		for _, unknown := range tryGetUnknownTLObject(mtpRwaData[16:]) {
 			switch unknownMsg := unknown.(type) {
@@ -213,11 +215,11 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				})
 
 				msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(payload)
-				x2 := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
-				x2.Long(authKey.AuthKeyId())
-				x2.Bytes(msgKey)
-				x2.Bytes(mtpRawData)
-				_ = UnThreadSafeWrite(c, x2.GetBuf())
+				x3.PutInt64(authKey.AuthKeyId())
+				x3.Put(msgKey)
+				x3.Put(mtpRawData)
+				_ = UnThreadSafeWrite(c, x3.Bytes())
+				x3.Reset()
 
 				return nil
 			default:

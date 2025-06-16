@@ -16,7 +16,7 @@
 package gnet
 
 import (
-	"github.com/teamgram/proto/mtproto/crypto"
+	"github.com/teamgram/proto/v2/crypto"
 	"github.com/teamgram/proto/v2/tg"
 )
 

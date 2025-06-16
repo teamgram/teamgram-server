@@ -18,8 +18,10 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
+	"github.com/teamgram/proto/v2/tg"
 
-	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet"
 )
 
@@ -45,13 +47,12 @@ var (
 	}
 )
 
-func parseFromIncomingMessage(b []byte) (msgId int64, obj mtproto.TLObject, err error) {
-	dBuf := mtproto.NewDecodeBuf(b)
+func parseFromIncomingMessage(b []byte) (msgId int64, obj iface.TLObject, err error) {
+	dBuf := bin.NewDecoder(b)
 
-	msgId = dBuf.Long()
-	_ = dBuf.Int()
-	obj = dBuf.Object()
-	err = dBuf.GetError()
+	msgId, err = dBuf.Long()
+	_, err = dBuf.Int()
+	obj, err = iface.DecodeObject(dBuf)
 
 	return
 }
@@ -70,7 +71,7 @@ func main() {
 			k, ok := kDataList[id]
 			if ok {
 				kData, _ := hex.DecodeString(k)
-				kInfo := mtproto.NewAuthKeyInfo(id, kData, mtproto.AuthKeyTypeTemp)
+				kInfo := tg.NewAuthKeyInfo(id, kData, tg.AuthKeyTypeTemp)
 				authKey := gnet.NewAuthKeyUtil(kInfo)
 				rawData, err := authKey.AesIgeDecrypt(data[8:24], data[24:])
 				if err != nil {

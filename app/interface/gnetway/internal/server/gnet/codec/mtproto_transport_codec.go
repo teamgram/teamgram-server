@@ -13,7 +13,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/teamgram/proto/mtproto/crypto"
+	"github.com/teamgram/proto/v2/crypto"
 
 	"github.com/valyala/bytebufferpool"
 	"github.com/zeromicro/go-zero/core/logx"

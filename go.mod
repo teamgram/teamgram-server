@@ -5,7 +5,7 @@ go 1.21
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.6.2 => github.com/teamgram/gnet/v2 v2.6.2-teamgram
+	github.com/panjf2000/gnet/v2 v2.9.0 => github.com/teamgram/gnet/v2 v2.9.0-teamgram.0.20250615092430-2cc4ae763f7f
 	// github.com/teamgram/marmota => ../marmota
 	// github.com/teamgram/proto/v2 v2.0.0-20241130092828-125cd7e4ee36 => ../proto/v2
 	github.com/zeromicro/go-zero v1.8.4 => github.com/teamgram/go-zero v1.8.4-teamgram
@@ -19,10 +19,9 @@ require (
 	github.com/gobwas/ws v1.4.0
 	github.com/kitex-contrib/registry-etcd v0.2.5
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/panjf2000/gnet/v2 v2.6.2
+	github.com/panjf2000/gnet/v2 v2.9.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/teamgram/marmota v0.1.22
-	github.com/teamgram/proto v0.201.1-0.20250613143547-0bbc7ff25ce7
 	github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
@@ -88,7 +87,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
-	github.com/panjf2000/ants/v2 v2.10.0 // indirect
+	github.com/panjf2000/ants/v2 v2.11.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -124,7 +123,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.26.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.14.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/net v0.35.0 // indirect

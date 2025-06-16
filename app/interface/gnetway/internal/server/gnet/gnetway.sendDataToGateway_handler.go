@@ -18,7 +18,7 @@ package gnet
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway"
 
@@ -42,11 +42,14 @@ func (s *Server) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGne
 
 	ctx = contextx.ValueOnlyFrom(ctx)
 	msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(in.Payload)
-	x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
-	x.Long(authKey.AuthKeyId())
-	x.Bytes(msgKey)
-	x.Bytes(mtpRawData)
-	msg := x.GetBuf()
+	x := bin.NewEncoder()
+	defer x.End()
+
+	// x := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+	x.PutInt64(authKey.AuthKeyId())
+	x.Put(msgKey)
+	x.Put(mtpRawData)
+	msg := x.Bytes()
 
 	_ = s.pool.Submit(func() {
 		for _, connId := range connIdList {
