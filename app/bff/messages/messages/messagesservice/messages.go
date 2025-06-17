@@ -222,6 +222,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"messages.reportMessagesDelivery": kitex.NewMethodInfo(
+		messagesReportMessagesDeliveryHandler,
+		newMessagesReportMessagesDeliveryArgs,
+		newMessagesReportMessagesDeliveryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"channels.getSendAs": kitex.NewMethodInfo(
 		channelsGetSendAsHandler,
 		newChannelsGetSendAsArgs,
@@ -3829,6 +3836,132 @@ func (p *MessagesGetOutboxReadDateResult) GetResult() interface{} {
 	return p.Success
 }
 
+func messagesReportMessagesDeliveryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*MessagesReportMessagesDeliveryArgs)
+	realResult := result.(*MessagesReportMessagesDeliveryResult)
+	success, err := handler.(tg.RPCMessages).MessagesReportMessagesDelivery(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newMessagesReportMessagesDeliveryArgs() interface{} {
+	return &MessagesReportMessagesDeliveryArgs{}
+}
+
+func newMessagesReportMessagesDeliveryResult() interface{} {
+	return &MessagesReportMessagesDeliveryResult{}
+}
+
+type MessagesReportMessagesDeliveryArgs struct {
+	Req *tg.TLMessagesReportMessagesDelivery
+}
+
+func (p *MessagesReportMessagesDeliveryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in MessagesReportMessagesDeliveryArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *MessagesReportMessagesDeliveryArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLMessagesReportMessagesDelivery)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *MessagesReportMessagesDeliveryArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in MessagesReportMessagesDeliveryArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *MessagesReportMessagesDeliveryArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLMessagesReportMessagesDelivery)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var MessagesReportMessagesDeliveryArgs_Req_DEFAULT *tg.TLMessagesReportMessagesDelivery
+
+func (p *MessagesReportMessagesDeliveryArgs) GetReq() *tg.TLMessagesReportMessagesDelivery {
+	if !p.IsSetReq() {
+		return MessagesReportMessagesDeliveryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *MessagesReportMessagesDeliveryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type MessagesReportMessagesDeliveryResult struct {
+	Success *tg.Bool
+}
+
+var MessagesReportMessagesDeliveryResult_Success_DEFAULT *tg.Bool
+
+func (p *MessagesReportMessagesDeliveryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in MessagesReportMessagesDeliveryResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *MessagesReportMessagesDeliveryResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesReportMessagesDeliveryResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in MessagesReportMessagesDeliveryResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *MessagesReportMessagesDeliveryResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesReportMessagesDeliveryResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return MessagesReportMessagesDeliveryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *MessagesReportMessagesDeliveryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *MessagesReportMessagesDeliveryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *MessagesReportMessagesDeliveryResult) GetResult() interface{} {
+	return p.Success
+}
+
 func channelsGetSendAsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*ChannelsGetSendAsArgs)
 	realResult := result.(*ChannelsGetSendAsResult)
@@ -4366,6 +4499,16 @@ func (p *kClient) MessagesGetOutboxReadDate(ctx context.Context, req *tg.TLMessa
 	_args.Req = req
 	var _result MessagesGetOutboxReadDateResult
 	if err = p.c.Call(ctx, "messages.getOutboxReadDate", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MessagesReportMessagesDelivery(ctx context.Context, req *tg.TLMessagesReportMessagesDelivery) (r *tg.Bool, err error) {
+	var _args MessagesReportMessagesDeliveryArgs
+	_args.Req = req
+	var _result MessagesReportMessagesDeliveryResult
+	if err = p.c.Call(ctx, "messages.reportMessagesDelivery", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

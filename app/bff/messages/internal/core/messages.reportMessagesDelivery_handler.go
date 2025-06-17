@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-// ChannelsViewSponsoredMessage
-// channels.viewSponsoredMessage#beaedb94 channel:InputChannel random_id:bytes = Bool;
-func (c *SponsoredMessagesCore) ChannelsViewSponsoredMessage(in *tg.TLChannelsViewSponsoredMessage) (*tg.Bool, error) {
+// MessagesReportMessagesDelivery
+// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
+func (c *MessagesCore) MessagesReportMessagesDelivery(in *tg.TLMessagesReportMessagesDelivery) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("channels.viewSponsoredMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// c.Logger.Errorf("messages.reportMessagesDelivery blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, errors.New("channels.viewSponsoredMessage not implemented")
+	return nil, errors.New("messages.reportMessagesDelivery not implemented")
 }

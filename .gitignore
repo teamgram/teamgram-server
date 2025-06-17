@@ -39,6 +39,8 @@ teamgramd/bin/*
 !teamgramd/bin/server_pkcs1.key
 
 teamgramd/logs/*
-!teamgramd/logs/.gitkeep
+!teamgramd/logs/.gitkeeper
 /pkg/net/kitex/codec/examples/echo/cmd/echo/echo
 /pkg/net/kitex/codec/examples/echo/client/t/t
+
+v2

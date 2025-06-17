@@ -48,6 +48,7 @@ type MessagesClient interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, in *tg.TLMessagesSaveDefaultSendAs) (*tg.Bool, error)
 	MessagesSearchSentMedia(ctx context.Context, in *tg.TLMessagesSearchSentMedia) (*tg.MessagesMessages, error)
 	MessagesGetOutboxReadDate(ctx context.Context, in *tg.TLMessagesGetOutboxReadDate) (*tg.OutboxReadDate, error)
+	MessagesReportMessagesDelivery(ctx context.Context, in *tg.TLMessagesReportMessagesDelivery) (*tg.Bool, error)
 	ChannelsGetSendAs(ctx context.Context, in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error)
 	ChannelsSearchPosts(ctx context.Context, in *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error)
 }
@@ -112,21 +113,21 @@ func (m *defaultMessagesClient) MessagesReceivedMessages(ctx context.Context, in
 }
 
 // MessagesSendMessage
-// messages.sendMessage#983f9745 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
+// messages.sendMessage#fbf2340a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMessage(ctx context.Context, in *tg.TLMessagesSendMessage) (*tg.Updates, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.MessagesSendMessage(ctx, in)
 }
 
 // MessagesSendMedia
-// messages.sendMedia#7852834e flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
+// messages.sendMedia#a550cd78 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMedia(ctx context.Context, in *tg.TLMessagesSendMedia) (*tg.Updates, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.MessagesSendMedia(ctx, in)
 }
 
 // MessagesForwardMessages
-// messages.forwardMessages#d5039208 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true allow_paid_floodskip:flags.19?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut = Updates;
+// messages.forwardMessages#bb9fa475 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true allow_paid_floodskip:flags.19?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut video_timestamp:flags.20?int allow_paid_stars:flags.21?long = Updates;
 func (m *defaultMessagesClient) MessagesForwardMessages(ctx context.Context, in *tg.TLMessagesForwardMessages) (*tg.Updates, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.MessagesForwardMessages(ctx, in)
@@ -147,7 +148,7 @@ func (m *defaultMessagesClient) MessagesGetMessagesViews(ctx context.Context, in
 }
 
 // MessagesSearchGlobal
-// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// messages.searchGlobal#4bc6589a flags:# broadcasts_only:flags.1?true groups_only:flags.2?true users_only:flags.3?true folder_id:flags.0?int q:string filter:MessagesFilter min_date:int max_date:int offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
 func (m *defaultMessagesClient) MessagesSearchGlobal(ctx context.Context, in *tg.TLMessagesSearchGlobal) (*tg.MessagesMessages, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.MessagesSearchGlobal(ctx, in)
@@ -189,7 +190,7 @@ func (m *defaultMessagesClient) MessagesGetRecentLocations(ctx context.Context, 
 }
 
 // MessagesSendMultiMedia
-// messages.sendMultiMedia#37b74355 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long = Updates;
+// messages.sendMultiMedia#1bf89d74 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo multi_media:Vector<InputSingleMedia> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
 func (m *defaultMessagesClient) MessagesSendMultiMedia(ctx context.Context, in *tg.TLMessagesSendMultiMedia) (*tg.Updates, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.MessagesSendMultiMedia(ctx, in)
@@ -258,8 +259,15 @@ func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, i
 	return cli.MessagesGetOutboxReadDate(ctx, in)
 }
 
+// MessagesReportMessagesDelivery
+// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
+func (m *defaultMessagesClient) MessagesReportMessagesDelivery(ctx context.Context, in *tg.TLMessagesReportMessagesDelivery) (*tg.Bool, error) {
+	cli := messagesservice.NewRPCMessagesClient(m.cli)
+	return cli.MessagesReportMessagesDelivery(ctx, in)
+}
+
 // ChannelsGetSendAs
-// channels.getSendAs#dc770ee peer:InputPeer = channels.SendAsPeers;
+// channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true peer:InputPeer = channels.SendAsPeers;
 func (m *defaultMessagesClient) ChannelsGetSendAs(ctx context.Context, in *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error) {
 	cli := messagesservice.NewRPCMessagesClient(m.cli)
 	return cli.ChannelsGetSendAs(ctx, in)

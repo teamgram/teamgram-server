@@ -62,6 +62,21 @@ func (s *Service) PaymentsAssignPlayMarketTransaction(ctx context.Context, reque
 	return r, err
 }
 
+// PaymentsCanPurchaseStore
+// payments.canPurchaseStore#4fdc5ea7 purpose:InputStorePaymentPurpose = Bool;
+func (s *Service) PaymentsCanPurchaseStore(ctx context.Context, request *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("payments.canPurchaseStore - metadata: {}, request: {%v}", request)
+
+	r, err := c.PaymentsCanPurchaseStore(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("payments.canPurchaseStore - reply: {%v}", r)
+	return r, err
+}
+
 // PaymentsCanPurchasePremium
 // payments.canPurchasePremium#9fc19eb6 purpose:InputStorePaymentPurpose = Bool;
 func (s *Service) PaymentsCanPurchasePremium(ctx context.Context, request *tg.TLPaymentsCanPurchasePremium) (*tg.Bool, error) {

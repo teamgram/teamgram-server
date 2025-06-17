@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-// ChannelsReportSponsoredMessage
-// channels.reportSponsoredMessage#af8ff6b9 channel:InputChannel random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
-func (c *SponsoredMessagesCore) ChannelsReportSponsoredMessage(in *tg.TLChannelsReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
+// ContactsGetSponsoredPeers
+// contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
+func (c *SponsoredMessagesCore) ContactsGetSponsoredPeers(in *tg.TLContactsGetSponsoredPeers) (*tg.ContactsSponsoredPeers, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("channels.reportSponsoredMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// c.Logger.Errorf("contacts.getSponsoredPeers blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, errors.New("channels.reportSponsoredMessage not implemented")
+	return nil, errors.New("contacts.getSponsoredPeers not implemented")
 }

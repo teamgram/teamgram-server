@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (c *SponsoredMessagesCore) ChannelsGetSponsoredMessages(in *tg.TLChannelsGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
+// UsersGetRequirementsToContact
+// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
+func (c *PrivacySettingsCore) UsersGetRequirementsToContact(in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("channels.getSponsoredMessages blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// c.Logger.Errorf("users.getRequirementsToContact blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, errors.New("channels.getSponsoredMessages not implemented")
+	return nil, errors.New("users.getRequirementsToContact not implemented")
 }

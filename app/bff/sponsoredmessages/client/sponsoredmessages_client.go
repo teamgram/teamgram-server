@@ -21,15 +21,12 @@ import (
 
 type SponsoredMessagesClient interface {
 	AccountToggleSponsoredMessages(ctx context.Context, in *tg.TLAccountToggleSponsoredMessages) (*tg.Bool, error)
+	ContactsGetSponsoredPeers(ctx context.Context, in *tg.TLContactsGetSponsoredPeers) (*tg.ContactsSponsoredPeers, error)
 	MessagesViewSponsoredMessage(ctx context.Context, in *tg.TLMessagesViewSponsoredMessage) (*tg.Bool, error)
 	MessagesClickSponsoredMessage(ctx context.Context, in *tg.TLMessagesClickSponsoredMessage) (*tg.Bool, error)
 	MessagesReportSponsoredMessage(ctx context.Context, in *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error)
 	MessagesGetSponsoredMessages(ctx context.Context, in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error)
 	ChannelsRestrictSponsoredMessages(ctx context.Context, in *tg.TLChannelsRestrictSponsoredMessages) (*tg.Updates, error)
-	ChannelsViewSponsoredMessage(ctx context.Context, in *tg.TLChannelsViewSponsoredMessage) (*tg.Bool, error)
-	ChannelsGetSponsoredMessages(ctx context.Context, in *tg.TLChannelsGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error)
-	ChannelsClickSponsoredMessage(ctx context.Context, in *tg.TLChannelsClickSponsoredMessage) (*tg.Bool, error)
-	ChannelsReportSponsoredMessage(ctx context.Context, in *tg.TLChannelsReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error)
 }
 
 type defaultSponsoredMessagesClient struct {
@@ -49,22 +46,29 @@ func (m *defaultSponsoredMessagesClient) AccountToggleSponsoredMessages(ctx cont
 	return cli.AccountToggleSponsoredMessages(ctx, in)
 }
 
+// ContactsGetSponsoredPeers
+// contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
+func (m *defaultSponsoredMessagesClient) ContactsGetSponsoredPeers(ctx context.Context, in *tg.TLContactsGetSponsoredPeers) (*tg.ContactsSponsoredPeers, error) {
+	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
+	return cli.ContactsGetSponsoredPeers(ctx, in)
+}
+
 // MessagesViewSponsoredMessage
-// messages.viewSponsoredMessage#673ad8f1 peer:InputPeer random_id:bytes = Bool;
+// messages.viewSponsoredMessage#269e3643 random_id:bytes = Bool;
 func (m *defaultSponsoredMessagesClient) MessagesViewSponsoredMessage(ctx context.Context, in *tg.TLMessagesViewSponsoredMessage) (*tg.Bool, error) {
 	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
 	return cli.MessagesViewSponsoredMessage(ctx, in)
 }
 
 // MessagesClickSponsoredMessage
-// messages.clickSponsoredMessage#f093465 flags:# media:flags.0?true fullscreen:flags.1?true peer:InputPeer random_id:bytes = Bool;
+// messages.clickSponsoredMessage#8235057e flags:# media:flags.0?true fullscreen:flags.1?true random_id:bytes = Bool;
 func (m *defaultSponsoredMessagesClient) MessagesClickSponsoredMessage(ctx context.Context, in *tg.TLMessagesClickSponsoredMessage) (*tg.Bool, error) {
 	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
 	return cli.MessagesClickSponsoredMessage(ctx, in)
 }
 
 // MessagesReportSponsoredMessage
-// messages.reportSponsoredMessage#1af3dbb8 peer:InputPeer random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
+// messages.reportSponsoredMessage#12cbf0c4 random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
 func (m *defaultSponsoredMessagesClient) MessagesReportSponsoredMessage(ctx context.Context, in *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
 	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
 	return cli.MessagesReportSponsoredMessage(ctx, in)
@@ -82,32 +86,4 @@ func (m *defaultSponsoredMessagesClient) MessagesGetSponsoredMessages(ctx contex
 func (m *defaultSponsoredMessagesClient) ChannelsRestrictSponsoredMessages(ctx context.Context, in *tg.TLChannelsRestrictSponsoredMessages) (*tg.Updates, error) {
 	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
 	return cli.ChannelsRestrictSponsoredMessages(ctx, in)
-}
-
-// ChannelsViewSponsoredMessage
-// channels.viewSponsoredMessage#beaedb94 channel:InputChannel random_id:bytes = Bool;
-func (m *defaultSponsoredMessagesClient) ChannelsViewSponsoredMessage(ctx context.Context, in *tg.TLChannelsViewSponsoredMessage) (*tg.Bool, error) {
-	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
-	return cli.ChannelsViewSponsoredMessage(ctx, in)
-}
-
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (m *defaultSponsoredMessagesClient) ChannelsGetSponsoredMessages(ctx context.Context, in *tg.TLChannelsGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
-	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
-	return cli.ChannelsGetSponsoredMessages(ctx, in)
-}
-
-// ChannelsClickSponsoredMessage
-// channels.clickSponsoredMessage#1445d75 flags:# media:flags.0?true fullscreen:flags.1?true channel:InputChannel random_id:bytes = Bool;
-func (m *defaultSponsoredMessagesClient) ChannelsClickSponsoredMessage(ctx context.Context, in *tg.TLChannelsClickSponsoredMessage) (*tg.Bool, error) {
-	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
-	return cli.ChannelsClickSponsoredMessage(ctx, in)
-}
-
-// ChannelsReportSponsoredMessage
-// channels.reportSponsoredMessage#af8ff6b9 channel:InputChannel random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
-func (m *defaultSponsoredMessagesClient) ChannelsReportSponsoredMessage(ctx context.Context, in *tg.TLChannelsReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
-	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
-	return cli.ChannelsReportSponsoredMessage(ctx, in)
 }

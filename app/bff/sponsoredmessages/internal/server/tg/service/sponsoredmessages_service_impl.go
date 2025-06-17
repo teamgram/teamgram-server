@@ -32,8 +32,23 @@ func (s *Service) AccountToggleSponsoredMessages(ctx context.Context, request *t
 	return r, err
 }
 
+// ContactsGetSponsoredPeers
+// contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
+func (s *Service) ContactsGetSponsoredPeers(ctx context.Context, request *tg.TLContactsGetSponsoredPeers) (*tg.ContactsSponsoredPeers, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.getSponsoredPeers - metadata: {}, request: {%v}", request)
+
+	r, err := c.ContactsGetSponsoredPeers(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.getSponsoredPeers - reply: {%v}", r)
+	return r, err
+}
+
 // MessagesViewSponsoredMessage
-// messages.viewSponsoredMessage#673ad8f1 peer:InputPeer random_id:bytes = Bool;
+// messages.viewSponsoredMessage#269e3643 random_id:bytes = Bool;
 func (s *Service) MessagesViewSponsoredMessage(ctx context.Context, request *tg.TLMessagesViewSponsoredMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.viewSponsoredMessage - metadata: {}, request: {%v}", request)
@@ -48,7 +63,7 @@ func (s *Service) MessagesViewSponsoredMessage(ctx context.Context, request *tg.
 }
 
 // MessagesClickSponsoredMessage
-// messages.clickSponsoredMessage#f093465 flags:# media:flags.0?true fullscreen:flags.1?true peer:InputPeer random_id:bytes = Bool;
+// messages.clickSponsoredMessage#8235057e flags:# media:flags.0?true fullscreen:flags.1?true random_id:bytes = Bool;
 func (s *Service) MessagesClickSponsoredMessage(ctx context.Context, request *tg.TLMessagesClickSponsoredMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.clickSponsoredMessage - metadata: {}, request: {%v}", request)
@@ -63,7 +78,7 @@ func (s *Service) MessagesClickSponsoredMessage(ctx context.Context, request *tg
 }
 
 // MessagesReportSponsoredMessage
-// messages.reportSponsoredMessage#1af3dbb8 peer:InputPeer random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
+// messages.reportSponsoredMessage#12cbf0c4 random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
 func (s *Service) MessagesReportSponsoredMessage(ctx context.Context, request *tg.TLMessagesReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.reportSponsoredMessage - metadata: {}, request: {%v}", request)
@@ -104,65 +119,5 @@ func (s *Service) ChannelsRestrictSponsoredMessages(ctx context.Context, request
 	}
 
 	c.Logger.Debugf("channels.restrictSponsoredMessages - reply: {%v}", r)
-	return r, err
-}
-
-// ChannelsViewSponsoredMessage
-// channels.viewSponsoredMessage#beaedb94 channel:InputChannel random_id:bytes = Bool;
-func (s *Service) ChannelsViewSponsoredMessage(ctx context.Context, request *tg.TLChannelsViewSponsoredMessage) (*tg.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.viewSponsoredMessage - metadata: {}, request: {%v}", request)
-
-	r, err := c.ChannelsViewSponsoredMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("channels.viewSponsoredMessage - reply: {%v}", r)
-	return r, err
-}
-
-// ChannelsGetSponsoredMessages
-// channels.getSponsoredMessages#ec210fbf channel:InputChannel = messages.SponsoredMessages;
-func (s *Service) ChannelsGetSponsoredMessages(ctx context.Context, request *tg.TLChannelsGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.getSponsoredMessages - metadata: {}, request: {%v}", request)
-
-	r, err := c.ChannelsGetSponsoredMessages(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("channels.getSponsoredMessages - reply: {%v}", r)
-	return r, err
-}
-
-// ChannelsClickSponsoredMessage
-// channels.clickSponsoredMessage#1445d75 flags:# media:flags.0?true fullscreen:flags.1?true channel:InputChannel random_id:bytes = Bool;
-func (s *Service) ChannelsClickSponsoredMessage(ctx context.Context, request *tg.TLChannelsClickSponsoredMessage) (*tg.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.clickSponsoredMessage - metadata: {}, request: {%v}", request)
-
-	r, err := c.ChannelsClickSponsoredMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("channels.clickSponsoredMessage - reply: {%v}", r)
-	return r, err
-}
-
-// ChannelsReportSponsoredMessage
-// channels.reportSponsoredMessage#af8ff6b9 channel:InputChannel random_id:bytes option:bytes = channels.SponsoredMessageReportResult;
-func (s *Service) ChannelsReportSponsoredMessage(ctx context.Context, request *tg.TLChannelsReportSponsoredMessage) (*tg.ChannelsSponsoredMessageReportResult, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.reportSponsoredMessage - metadata: {}, request: {%v}", request)
-
-	r, err := c.ChannelsReportSponsoredMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("channels.reportSponsoredMessage - reply: {%v}", r)
 	return r, err
 }

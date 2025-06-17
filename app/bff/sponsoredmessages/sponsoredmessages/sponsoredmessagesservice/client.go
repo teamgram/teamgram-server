@@ -22,15 +22,12 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	AccountToggleSponsoredMessages(ctx context.Context, req *tg.TLAccountToggleSponsoredMessages, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	ContactsGetSponsoredPeers(ctx context.Context, req *tg.TLContactsGetSponsoredPeers, callOptions ...callopt.Option) (r *tg.ContactsSponsoredPeers, err error)
 	MessagesViewSponsoredMessage(ctx context.Context, req *tg.TLMessagesViewSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesClickSponsoredMessage(ctx context.Context, req *tg.TLMessagesClickSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesReportSponsoredMessage(ctx context.Context, req *tg.TLMessagesReportSponsoredMessage, callOptions ...callopt.Option) (r *tg.ChannelsSponsoredMessageReportResult, err error)
 	MessagesGetSponsoredMessages(ctx context.Context, req *tg.TLMessagesGetSponsoredMessages, callOptions ...callopt.Option) (r *tg.MessagesSponsoredMessages, err error)
 	ChannelsRestrictSponsoredMessages(ctx context.Context, req *tg.TLChannelsRestrictSponsoredMessages, callOptions ...callopt.Option) (r *tg.Updates, err error)
-	ChannelsViewSponsoredMessage(ctx context.Context, req *tg.TLChannelsViewSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
-	ChannelsGetSponsoredMessages(ctx context.Context, req *tg.TLChannelsGetSponsoredMessages, callOptions ...callopt.Option) (r *tg.MessagesSponsoredMessages, err error)
-	ChannelsClickSponsoredMessage(ctx context.Context, req *tg.TLChannelsClickSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
-	ChannelsReportSponsoredMessage(ctx context.Context, req *tg.TLChannelsReportSponsoredMessage, callOptions ...callopt.Option) (r *tg.ChannelsSponsoredMessageReportResult, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -73,6 +70,11 @@ func (p *kSponsoredMessagesClient) AccountToggleSponsoredMessages(ctx context.Co
 	return p.kClient.AccountToggleSponsoredMessages(ctx, req)
 }
 
+func (p *kSponsoredMessagesClient) ContactsGetSponsoredPeers(ctx context.Context, req *tg.TLContactsGetSponsoredPeers, callOptions ...callopt.Option) (r *tg.ContactsSponsoredPeers, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ContactsGetSponsoredPeers(ctx, req)
+}
+
 func (p *kSponsoredMessagesClient) MessagesViewSponsoredMessage(ctx context.Context, req *tg.TLMessagesViewSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MessagesViewSponsoredMessage(ctx, req)
@@ -96,24 +98,4 @@ func (p *kSponsoredMessagesClient) MessagesGetSponsoredMessages(ctx context.Cont
 func (p *kSponsoredMessagesClient) ChannelsRestrictSponsoredMessages(ctx context.Context, req *tg.TLChannelsRestrictSponsoredMessages, callOptions ...callopt.Option) (r *tg.Updates, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ChannelsRestrictSponsoredMessages(ctx, req)
-}
-
-func (p *kSponsoredMessagesClient) ChannelsViewSponsoredMessage(ctx context.Context, req *tg.TLChannelsViewSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChannelsViewSponsoredMessage(ctx, req)
-}
-
-func (p *kSponsoredMessagesClient) ChannelsGetSponsoredMessages(ctx context.Context, req *tg.TLChannelsGetSponsoredMessages, callOptions ...callopt.Option) (r *tg.MessagesSponsoredMessages, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChannelsGetSponsoredMessages(ctx, req)
-}
-
-func (p *kSponsoredMessagesClient) ChannelsClickSponsoredMessage(ctx context.Context, req *tg.TLChannelsClickSponsoredMessage, callOptions ...callopt.Option) (r *tg.Bool, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChannelsClickSponsoredMessage(ctx, req)
-}
-
-func (p *kSponsoredMessagesClient) ChannelsReportSponsoredMessage(ctx context.Context, req *tg.TLChannelsReportSponsoredMessage, callOptions ...callopt.Option) (r *tg.ChannelsSponsoredMessageReportResult, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChannelsReportSponsoredMessage(ctx, req)
 }

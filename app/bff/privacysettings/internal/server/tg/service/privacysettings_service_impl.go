@@ -77,18 +77,18 @@ func (s *Service) AccountSetGlobalPrivacySettings(ctx context.Context, request *
 	return r, err
 }
 
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, request *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error) {
+// UsersGetRequirementsToContact
+// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
+func (s *Service) UsersGetRequirementsToContact(ctx context.Context, request *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("users.getRequirementsToContact - metadata: {}, request: {%v}", request)
 
-	r, err := c.UsersGetIsPremiumRequiredToContact(request)
+	r, err := c.UsersGetRequirementsToContact(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - reply: {%v}", r)
+	c.Logger.Debugf("users.getRequirementsToContact - reply: {%v}", r)
 	return r, err
 }
 
@@ -119,5 +119,20 @@ func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *tg.
 	}
 
 	c.Logger.Debugf("messages.getDefaultHistoryTTL - reply: {%v}", r)
+	return r, err
+}
+
+// UsersGetIsPremiumRequiredToContact
+// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
+func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, request *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("users.getIsPremiumRequiredToContact - metadata: {}, request: {%v}", request)
+
+	r, err := c.UsersGetIsPremiumRequiredToContact(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("users.getIsPremiumRequiredToContact - reply: {%v}", r)
 	return r, err
 }

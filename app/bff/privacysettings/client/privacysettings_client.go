@@ -24,9 +24,10 @@ type PrivacySettingsClient interface {
 	AccountSetPrivacy(ctx context.Context, in *tg.TLAccountSetPrivacy) (*tg.AccountPrivacyRules, error)
 	AccountGetGlobalPrivacySettings(ctx context.Context, in *tg.TLAccountGetGlobalPrivacySettings) (*tg.GlobalPrivacySettings, error)
 	AccountSetGlobalPrivacySettings(ctx context.Context, in *tg.TLAccountSetGlobalPrivacySettings) (*tg.GlobalPrivacySettings, error)
-	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error)
+	UsersGetRequirementsToContact(ctx context.Context, in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesSetDefaultHistoryTTL) (*tg.Bool, error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error)
+	UsersGetIsPremiumRequiredToContact(ctx context.Context, in *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error)
 }
 
 type defaultPrivacySettingsClient struct {
@@ -67,11 +68,11 @@ func (m *defaultPrivacySettingsClient) AccountSetGlobalPrivacySettings(ctx conte
 	return cli.AccountSetGlobalPrivacySettings(ctx, in)
 }
 
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (m *defaultPrivacySettingsClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error) {
+// UsersGetRequirementsToContact
+// users.getRequirementsToContact#d89a83a3 id:Vector<InputUser> = Vector<RequirementToContact>;
+func (m *defaultPrivacySettingsClient) UsersGetRequirementsToContact(ctx context.Context, in *tg.TLUsersGetRequirementsToContact) (*tg.VectorRequirementToContact, error) {
 	cli := privacysettingsservice.NewRPCPrivacySettingsClient(m.cli)
-	return cli.UsersGetIsPremiumRequiredToContact(ctx, in)
+	return cli.UsersGetRequirementsToContact(ctx, in)
 }
 
 // MessagesSetDefaultHistoryTTL
@@ -86,4 +87,11 @@ func (m *defaultPrivacySettingsClient) MessagesSetDefaultHistoryTTL(ctx context.
 func (m *defaultPrivacySettingsClient) MessagesGetDefaultHistoryTTL(ctx context.Context, in *tg.TLMessagesGetDefaultHistoryTTL) (*tg.DefaultHistoryTTL, error) {
 	cli := privacysettingsservice.NewRPCPrivacySettingsClient(m.cli)
 	return cli.MessagesGetDefaultHistoryTTL(ctx, in)
+}
+
+// UsersGetIsPremiumRequiredToContact
+// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
+func (m *defaultPrivacySettingsClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, in *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error) {
+	cli := privacysettingsservice.NewRPCPrivacySettingsClient(m.cli)
+	return cli.UsersGetIsPremiumRequiredToContact(ctx, in)
 }

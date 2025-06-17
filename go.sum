@@ -300,6 +300,8 @@ github.com/teamgram/proto v0.201.0 h1:VHvGcqkPC6SDxfJy6DOk0z5plsl30CJYhKJop/bgCL
 github.com/teamgram/proto v0.201.0/go.mod h1:4KxxacZTRe1Djvrls/DMgqFHL+s4ydkbFTQ+KxnqYPU=
 github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7 h1:gYrFUOrHI7kClBjouZnYgOpZoVcRQPHZfbQAQbHSYUs=
 github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7/go.mod h1:U7nPHGLbpiUWdLcovgVGobzsCUcv55gQ9JM05A4hA6M=
+github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 h1:iQkGs8VFRx8EPyfY/F3ONoq0n8plhFSAkO0MZL/4+cw=
+github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03/go.mod h1:U7nPHGLbpiUWdLcovgVGobzsCUcv55gQ9JM05A4hA6M=
 github.com/tidwall/gjson v1.17.3 h1:bwWLZU7icoKRG+C+0PNwIKC6FCJO/Q3p2pZvuP0jN94=
 github.com/tidwall/gjson v1.17.3/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

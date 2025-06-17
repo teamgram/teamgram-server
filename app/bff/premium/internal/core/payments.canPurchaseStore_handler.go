@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-// ChannelsClickSponsoredMessage
-// channels.clickSponsoredMessage#1445d75 flags:# media:flags.0?true fullscreen:flags.1?true channel:InputChannel random_id:bytes = Bool;
-func (c *SponsoredMessagesCore) ChannelsClickSponsoredMessage(in *tg.TLChannelsClickSponsoredMessage) (*tg.Bool, error) {
+// PaymentsCanPurchaseStore
+// payments.canPurchaseStore#4fdc5ea7 purpose:InputStorePaymentPurpose = Bool;
+func (c *PremiumCore) PaymentsCanPurchaseStore(in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("channels.clickSponsoredMessage blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// c.Logger.Errorf("payments.canPurchaseStore blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, errors.New("channels.clickSponsoredMessage not implemented")
+	return nil, errors.New("payments.canPurchaseStore not implemented")
 }

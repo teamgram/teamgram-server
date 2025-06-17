@@ -54,10 +54,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.getIsPremiumRequiredToContact": kitex.NewMethodInfo(
-		usersGetIsPremiumRequiredToContactHandler,
-		newUsersGetIsPremiumRequiredToContactArgs,
-		newUsersGetIsPremiumRequiredToContactResult,
+	"users.getRequirementsToContact": kitex.NewMethodInfo(
+		usersGetRequirementsToContactHandler,
+		newUsersGetRequirementsToContactArgs,
+		newUsersGetRequirementsToContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -72,6 +72,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		messagesGetDefaultHistoryTTLHandler,
 		newMessagesGetDefaultHistoryTTLArgs,
 		newMessagesGetDefaultHistoryTTLResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"users.getIsPremiumRequiredToContact": kitex.NewMethodInfo(
+		usersGetIsPremiumRequiredToContactHandler,
+		newUsersGetIsPremiumRequiredToContactArgs,
+		newUsersGetIsPremiumRequiredToContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -644,10 +651,10 @@ func (p *AccountSetGlobalPrivacySettingsResult) GetResult() interface{} {
 	return p.Success
 }
 
-func usersGetIsPremiumRequiredToContactHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*UsersGetIsPremiumRequiredToContactArgs)
-	realResult := result.(*UsersGetIsPremiumRequiredToContactResult)
-	success, err := handler.(tg.RPCPrivacySettings).UsersGetIsPremiumRequiredToContact(ctx, realArg.Req)
+func usersGetRequirementsToContactHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UsersGetRequirementsToContactArgs)
+	realResult := result.(*UsersGetRequirementsToContactResult)
+	success, err := handler.(tg.RPCPrivacySettings).UsersGetRequirementsToContact(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -655,27 +662,27 @@ func usersGetIsPremiumRequiredToContactHandler(ctx context.Context, handler inte
 	return nil
 }
 
-func newUsersGetIsPremiumRequiredToContactArgs() interface{} {
-	return &UsersGetIsPremiumRequiredToContactArgs{}
+func newUsersGetRequirementsToContactArgs() interface{} {
+	return &UsersGetRequirementsToContactArgs{}
 }
 
-func newUsersGetIsPremiumRequiredToContactResult() interface{} {
-	return &UsersGetIsPremiumRequiredToContactResult{}
+func newUsersGetRequirementsToContactResult() interface{} {
+	return &UsersGetRequirementsToContactResult{}
 }
 
-type UsersGetIsPremiumRequiredToContactArgs struct {
-	Req *tg.TLUsersGetIsPremiumRequiredToContact
+type UsersGetRequirementsToContactArgs struct {
+	Req *tg.TLUsersGetRequirementsToContact
 }
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) Marshal(out []byte) ([]byte, error) {
+func (p *UsersGetRequirementsToContactArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactArgs")
+		return out, fmt.Errorf("No req in UsersGetRequirementsToContactArgs")
 	}
 	return json.Marshal(p.Req)
 }
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) Unmarshal(in []byte) error {
-	msg := new(tg.TLUsersGetIsPremiumRequiredToContact)
+func (p *UsersGetRequirementsToContactArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLUsersGetRequirementsToContact)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -683,50 +690,50 @@ func (p *UsersGetIsPremiumRequiredToContactArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) Encode(x *bin.Encoder, layer int32) error {
+func (p *UsersGetRequirementsToContactArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactArgs")
+		return fmt.Errorf("No req in UsersGetRequirementsToContactArgs")
 	}
 
 	return p.Req.Encode(x, layer)
 }
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.TLUsersGetIsPremiumRequiredToContact)
+func (p *UsersGetRequirementsToContactArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLUsersGetRequirementsToContact)
 	msg.ClazzID, _ = d.ClazzID()
 	msg.Decode(d)
 	p.Req = msg
 	return nil
 }
 
-var UsersGetIsPremiumRequiredToContactArgs_Req_DEFAULT *tg.TLUsersGetIsPremiumRequiredToContact
+var UsersGetRequirementsToContactArgs_Req_DEFAULT *tg.TLUsersGetRequirementsToContact
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) GetReq() *tg.TLUsersGetIsPremiumRequiredToContact {
+func (p *UsersGetRequirementsToContactArgs) GetReq() *tg.TLUsersGetRequirementsToContact {
 	if !p.IsSetReq() {
-		return UsersGetIsPremiumRequiredToContactArgs_Req_DEFAULT
+		return UsersGetRequirementsToContactArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *UsersGetIsPremiumRequiredToContactArgs) IsSetReq() bool {
+func (p *UsersGetRequirementsToContactArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-type UsersGetIsPremiumRequiredToContactResult struct {
-	Success *tg.VectorBool
+type UsersGetRequirementsToContactResult struct {
+	Success *tg.VectorRequirementToContact
 }
 
-var UsersGetIsPremiumRequiredToContactResult_Success_DEFAULT *tg.VectorBool
+var UsersGetRequirementsToContactResult_Success_DEFAULT *tg.VectorRequirementToContact
 
-func (p *UsersGetIsPremiumRequiredToContactResult) Marshal(out []byte) ([]byte, error) {
+func (p *UsersGetRequirementsToContactResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactResult")
+		return out, fmt.Errorf("No req in UsersGetRequirementsToContactResult")
 	}
 	return json.Marshal(p.Success)
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) Unmarshal(in []byte) error {
-	msg := new(tg.VectorBool)
+func (p *UsersGetRequirementsToContactResult) Unmarshal(in []byte) error {
+	msg := new(tg.VectorRequirementToContact)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -734,16 +741,16 @@ func (p *UsersGetIsPremiumRequiredToContactResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) Encode(x *bin.Encoder, layer int32) error {
+func (p *UsersGetRequirementsToContactResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactResult")
+		return fmt.Errorf("No req in UsersGetRequirementsToContactResult")
 	}
 
 	return p.Success.Encode(x, layer)
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.VectorBool)
+func (p *UsersGetRequirementsToContactResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.VectorRequirementToContact)
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -751,22 +758,22 @@ func (p *UsersGetIsPremiumRequiredToContactResult) Decode(d *bin.Decoder) (err e
 	return nil
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) GetSuccess() *tg.VectorBool {
+func (p *UsersGetRequirementsToContactResult) GetSuccess() *tg.VectorRequirementToContact {
 	if !p.IsSetSuccess() {
-		return UsersGetIsPremiumRequiredToContactResult_Success_DEFAULT
+		return UsersGetRequirementsToContactResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) SetSuccess(x interface{}) {
-	p.Success = x.(*tg.VectorBool)
+func (p *UsersGetRequirementsToContactResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.VectorRequirementToContact)
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) IsSetSuccess() bool {
+func (p *UsersGetRequirementsToContactResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *UsersGetIsPremiumRequiredToContactResult) GetResult() interface{} {
+func (p *UsersGetRequirementsToContactResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1022,6 +1029,132 @@ func (p *MessagesGetDefaultHistoryTTLResult) GetResult() interface{} {
 	return p.Success
 }
 
+func usersGetIsPremiumRequiredToContactHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UsersGetIsPremiumRequiredToContactArgs)
+	realResult := result.(*UsersGetIsPremiumRequiredToContactResult)
+	success, err := handler.(tg.RPCPrivacySettings).UsersGetIsPremiumRequiredToContact(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUsersGetIsPremiumRequiredToContactArgs() interface{} {
+	return &UsersGetIsPremiumRequiredToContactArgs{}
+}
+
+func newUsersGetIsPremiumRequiredToContactResult() interface{} {
+	return &UsersGetIsPremiumRequiredToContactResult{}
+}
+
+type UsersGetIsPremiumRequiredToContactArgs struct {
+	Req *tg.TLUsersGetIsPremiumRequiredToContact
+}
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLUsersGetIsPremiumRequiredToContact)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLUsersGetIsPremiumRequiredToContact)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var UsersGetIsPremiumRequiredToContactArgs_Req_DEFAULT *tg.TLUsersGetIsPremiumRequiredToContact
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) GetReq() *tg.TLUsersGetIsPremiumRequiredToContact {
+	if !p.IsSetReq() {
+		return UsersGetIsPremiumRequiredToContactArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UsersGetIsPremiumRequiredToContactArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UsersGetIsPremiumRequiredToContactResult struct {
+	Success *tg.VectorBool
+}
+
+var UsersGetIsPremiumRequiredToContactResult_Success_DEFAULT *tg.VectorBool
+
+func (p *UsersGetIsPremiumRequiredToContactResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) Unmarshal(in []byte) error {
+	msg := new(tg.VectorBool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in UsersGetIsPremiumRequiredToContactResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.VectorBool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) GetSuccess() *tg.VectorBool {
+	if !p.IsSetSuccess() {
+		return UsersGetIsPremiumRequiredToContactResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.VectorBool)
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UsersGetIsPremiumRequiredToContactResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1072,11 +1205,11 @@ func (p *kClient) AccountSetGlobalPrivacySettings(ctx context.Context, req *tg.T
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, req *tg.TLUsersGetIsPremiumRequiredToContact) (r *tg.VectorBool, err error) {
-	var _args UsersGetIsPremiumRequiredToContactArgs
+func (p *kClient) UsersGetRequirementsToContact(ctx context.Context, req *tg.TLUsersGetRequirementsToContact) (r *tg.VectorRequirementToContact, err error) {
+	var _args UsersGetRequirementsToContactArgs
 	_args.Req = req
-	var _result UsersGetIsPremiumRequiredToContactResult
-	if err = p.c.Call(ctx, "users.getIsPremiumRequiredToContact", &_args, &_result); err != nil {
+	var _result UsersGetRequirementsToContactResult
+	if err = p.c.Call(ctx, "users.getRequirementsToContact", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -1097,6 +1230,16 @@ func (p *kClient) MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMe
 	_args.Req = req
 	var _result MessagesGetDefaultHistoryTTLResult
 	if err = p.c.Call(ctx, "messages.getDefaultHistoryTTL", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, req *tg.TLUsersGetIsPremiumRequiredToContact) (r *tg.VectorBool, err error) {
+	var _args UsersGetIsPremiumRequiredToContactArgs
+	_args.Req = req
+	var _result UsersGetIsPremiumRequiredToContactResult
+	if err = p.c.Call(ctx, "users.getIsPremiumRequiredToContact", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
