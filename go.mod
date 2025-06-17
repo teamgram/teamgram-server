@@ -7,7 +7,7 @@ replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
 	github.com/panjf2000/gnet/v2 v2.9.0 => github.com/teamgram/gnet/v2 v2.9.0-teamgram.0.20250615092430-2cc4ae763f7f
 	// github.com/teamgram/marmota => ../marmota
-	// github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7 => ../proto/v2
+	github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 => ../proto/v2
 	github.com/zeromicro/go-zero v1.8.4 => github.com/teamgram/go-zero v1.8.4-teamgram
 )
 
@@ -29,7 +29,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.8.4
 	google.golang.org/grpc v1.65.0
-	google.golang.org/protobuf v1.36.5
 )
 
 require (
@@ -155,6 +154,7 @@ require (
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

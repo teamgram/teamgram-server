@@ -298,10 +298,6 @@ github.com/teamgram/marmota v0.1.22 h1:3B2rizjAobRVeyGA/Zl1lY6V5o4f7GDkk+w9+DUV7
 github.com/teamgram/marmota v0.1.22/go.mod h1:HDocjcnW8eXpi4wlIdKUhGksTZGrhz7UmLsp16eN0TY=
 github.com/teamgram/proto v0.201.0 h1:VHvGcqkPC6SDxfJy6DOk0z5plsl30CJYhKJop/bgCLQ=
 github.com/teamgram/proto v0.201.0/go.mod h1:4KxxacZTRe1Djvrls/DMgqFHL+s4ydkbFTQ+KxnqYPU=
-github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7 h1:gYrFUOrHI7kClBjouZnYgOpZoVcRQPHZfbQAQbHSYUs=
-github.com/teamgram/proto/v2 v2.0.0-20250613143547-0bbc7ff25ce7/go.mod h1:U7nPHGLbpiUWdLcovgVGobzsCUcv55gQ9JM05A4hA6M=
-github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 h1:iQkGs8VFRx8EPyfY/F3ONoq0n8plhFSAkO0MZL/4+cw=
-github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03/go.mod h1:U7nPHGLbpiUWdLcovgVGobzsCUcv55gQ9JM05A4hA6M=
 github.com/tidwall/gjson v1.17.3 h1:bwWLZU7icoKRG+C+0PNwIKC6FCJO/Q3p2pZvuP0jN94=
 github.com/tidwall/gjson v1.17.3/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

@@ -54,6 +54,11 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.createSession - metadata: {}, request: %v", request)
 
+	cli, _ := request.Client.ToSessionClientEvent()
+	if err := s.checkShardingV(ctx, cli.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionCreateSession(request)
 	if err != nil {
 		return nil, err
