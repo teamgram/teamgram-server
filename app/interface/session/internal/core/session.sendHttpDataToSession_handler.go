@@ -19,8 +19,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 )
@@ -30,8 +28,47 @@ var _ *tg.Bool
 // SessionSendHttpDataToSession
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (c *SessionCore) SessionSendHttpDataToSession(in *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.sendHttpDataToSession blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	//var (
+	//	data = in.GetClient()
+	//)
+	//
+	//if data == nil {
+	//	err := mtproto.ErrInputRequestInvalid
+	//	c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+	//	return nil, err
+	//}
+	//
+	//mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
+	//if err != nil {
+	//	c.Logger.Errorf("session.sendHttpDataToSession - error: %v", err)
+	//	return nil, err
+	//}
+	//
+	//chData := make(chan interface{})
+	//mainAuth.SessionHttpDataArrived(
+	//	c.ctx,
+	//	int(data.KeyType),
+	//	data.AuthKeyId,
+	//	data.ServerId,
+	//	data.ClientIp,
+	//	data.SessionId,
+	//	data.Salt,
+	//	data.Payload,
+	//	chData)
+	//
+	//timer := time.NewTimer(time.Second * 7)
+	//select {
+	//case cData := <-chData:
+	//	return &session.HttpSessionData{
+	//		Payload: cData.([]byte),
+	//	}, nil
+	//case <-timer.C:
+	//	c.Logger.Errorf("chData timeout...")
+	//}
 
-	return nil, errors.New("session.sendHttpDataToSession not implemented")
+	c.Logger.Errorf("session.sendHttpDataToSession - error: not implement")
+
+	return session.MakeHttpSessionData(&session.TLHttpSessionData{
+		Payload: []byte{},
+	}), nil
 }

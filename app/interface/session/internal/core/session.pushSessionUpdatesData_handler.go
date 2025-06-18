@@ -19,7 +19,7 @@
 package core
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
@@ -30,8 +30,13 @@ var _ *tg.Bool
 // SessionPushSessionUpdatesData
 // session.pushSessionUpdatesData flags:# perm_auth_key_id:long auth_key_id:long session_id:long updates:Updates = Bool;
 func (c *SessionCore) SessionPushSessionUpdatesData(in *session.TLSessionPushSessionUpdatesData) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.pushSessionUpdatesData blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
+	if mainAuth == nil {
+		err := fmt.Errorf("not found authKeyId(%d)", in.PermAuthKeyId)
+		c.Logger.Errorf("session.pushSessionUpdatesData - %v", err)
+		return nil, err
+	}
+	_ = mainAuth.SyncSessionDataArrived(c.ctx, in.AuthKeyId, in.SessionId, in.Updates)
 
-	return nil, errors.New("session.pushSessionUpdatesData not implemented")
+	return tg.BoolTrue, nil
 }

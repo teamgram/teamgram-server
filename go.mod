@@ -7,7 +7,7 @@ replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
 	github.com/panjf2000/gnet/v2 v2.9.0 => github.com/teamgram/gnet/v2 v2.9.0-teamgram.0.20250615092430-2cc4ae763f7f
 	// github.com/teamgram/marmota => ../marmota
-	github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 => ../proto/v2
+	// github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 => ../proto/v2
 	github.com/zeromicro/go-zero v1.8.4 => github.com/teamgram/go-zero v1.8.4-teamgram
 )
 
@@ -23,8 +23,8 @@ require (
 	github.com/panjf2000/gnet/v2 v2.9.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/teamgram/marmota v0.1.22
-	github.com/teamgram/proto v0.201.0
-	github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03
+	github.com/teamgram/proto v0.201.1
+	github.com/teamgram/proto/v2 v2.0.0-20250617130417-ecbcc8c0bace
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.8.4

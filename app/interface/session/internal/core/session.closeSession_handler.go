@@ -19,8 +19,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 )
@@ -30,8 +28,20 @@ var _ *tg.Bool
 // SessionCloseSession
 // session.closeSession client:SessionClientEvent = Bool;
 func (c *SessionCore) SessionCloseSession(in *session.TLSessionCloseSession) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.closeSession blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	cli, _ := in.Client.ToSessionClientEvent()
 
-	return nil, errors.New("session.closeSession not implemented")
+	if cli == nil {
+		err := tg.ErrInputRequestInvalid
+		c.Logger.Errorf("session.closeSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(cli.PermAuthKeyId)
+	if mainAuth == nil {
+		c.Logger.Errorf("session.closeSession - not found sessList by keyId: %s", cli)
+	} else {
+		_ = mainAuth.SessionClientClosed(c.ctx, int(cli.KeyType), cli.AuthKeyId, cli.ServerId, cli.SessionId)
+	}
+
+	return tg.BoolTrue, nil
 }

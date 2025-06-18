@@ -19,8 +19,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 )
@@ -30,8 +28,29 @@ var _ *tg.Bool
 // SessionSendDataToSession
 // session.sendDataToSession data:SessionClientData = Bool;
 func (c *SessionCore) SessionSendDataToSession(in *session.TLSessionSendDataToSession) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("session.sendDataToSession blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	data, _ := in.Data.ToSessionClientData()
 
-	return nil, errors.New("session.sendDataToSession not implemented")
+	if data == nil {
+		err := tg.ErrInputRequestInvalid
+		c.Logger.Errorf("session.sendDataToSession - error: %v", err)
+		return nil, err
+	}
+
+	mainAuth, err := c.getOrFetchMainAuthWrapper(data.PermAuthKeyId)
+	if err != nil {
+		c.Logger.Errorf("session.sendDataToSession - error: %v", err)
+		return nil, err
+	}
+
+	_ = mainAuth.SessionDataArrived(
+		c.ctx,
+		int(data.KeyType),
+		data.AuthKeyId,
+		data.ServerId,
+		data.ClientIp,
+		data.SessionId,
+		data.Salt,
+		data.Payload)
+
+	return tg.BoolTrue, nil
 }

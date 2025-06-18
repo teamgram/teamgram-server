@@ -296,8 +296,10 @@ github.com/teamgram/go-zero v1.8.4-teamgram h1:t5ctHFdY49uU3UJuvE9w7WsqtBGWygLP0
 github.com/teamgram/go-zero v1.8.4-teamgram/go.mod h1:eM5f6If/RF+jG1wSCmlvfXD2h2l23vJwETI8oDpjYt4=
 github.com/teamgram/marmota v0.1.22 h1:3B2rizjAobRVeyGA/Zl1lY6V5o4f7GDkk+w9+DUV7AQ=
 github.com/teamgram/marmota v0.1.22/go.mod h1:HDocjcnW8eXpi4wlIdKUhGksTZGrhz7UmLsp16eN0TY=
-github.com/teamgram/proto v0.201.0 h1:VHvGcqkPC6SDxfJy6DOk0z5plsl30CJYhKJop/bgCLQ=
-github.com/teamgram/proto v0.201.0/go.mod h1:4KxxacZTRe1Djvrls/DMgqFHL+s4ydkbFTQ+KxnqYPU=
+github.com/teamgram/proto v0.201.1 h1:ylOuWO6x3pUYFFrWgyLuNSOb4zELcrfWc3TrUdI/nQA=
+github.com/teamgram/proto v0.201.1/go.mod h1:7Ccq6JXeL3P6/Hn0qfAQk4yXrxbZ9rE39bPO9q23kew=
+github.com/teamgram/proto/v2 v2.0.0-20250617130417-ecbcc8c0bace h1:OCuxgmnJSbpdszeaJsoSOw7LssIlu0x3Yi2mKM4yh2U=
+github.com/teamgram/proto/v2 v2.0.0-20250617130417-ecbcc8c0bace/go.mod h1:U7nPHGLbpiUWdLcovgVGobzsCUcv55gQ9JM05A4hA6M=
 github.com/tidwall/gjson v1.17.3 h1:bwWLZU7icoKRG+C+0PNwIKC6FCJO/Q3p2pZvuP0jN94=
 github.com/tidwall/gjson v1.17.3/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=

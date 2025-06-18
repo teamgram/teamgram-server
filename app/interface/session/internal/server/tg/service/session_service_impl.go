@@ -29,7 +29,7 @@ func (s *Service) SessionQueryAuthKey(ctx context.Context, request *session.TLSe
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.queryAuthKey - reply: %v", r)
 	return r, err
 }
 
@@ -44,7 +44,7 @@ func (s *Service) SessionSetAuthKey(ctx context.Context, request *session.TLSess
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.setAuthKey - reply: %v", r)
 	return r, err
 }
 
@@ -54,8 +54,13 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.createSession - metadata: {}, request: %v", request)
 
-	cli, _ := request.Client.ToSessionClientEvent()
-	if err := s.checkShardingV(ctx, cli.PermAuthKeyId); err != nil {
+	data, _ := request.Client.ToSessionClientEvent()
+	if data == nil {
+		c.Logger.Errorf("session.createSession error: client is nil")
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	if err := s.checkShardingV(ctx, data.PermAuthKeyId); err != nil {
 		return nil, err
 	}
 
@@ -64,7 +69,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.createSession - reply: %v", r)
 	return r, err
 }
 
@@ -72,14 +77,35 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 // session.sendDataToSession data:SessionClientData = Bool;
 func (s *Service) SessionSendDataToSession(ctx context.Context, request *session.TLSessionSendDataToSession) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendDataToSession - metadata: {}, request: %v", request)
+
+	data, _ := request.Data.ToSessionClientData()
+	if data == nil {
+		c.Logger.Errorf("session.sendDataToSession error: client is nil")
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	c.Logger.Debugf("session.sendDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, key_type: %d, perm_auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		data.ServerId,
+		data.ConnType,
+		data.AuthKeyId,
+		data.KeyType,
+		data.PermAuthKeyId,
+		data.SessionId,
+		data.ClientIp,
+		data.QuickAck,
+		data.Salt,
+		len(data.Payload))
+
+	if err := s.checkShardingV(ctx, data.PermAuthKeyId); err != nil {
+		return nil, err
+	}
 
 	r, err := c.SessionSendDataToSession(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.sendDataToSession - reply: %v", r)
 	return r, err
 }
 
@@ -87,7 +113,28 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("session.sendHttpDataToSession - metadata: {}, request: %v", request)
+
+	data, _ := request.Client.ToSessionClientData()
+	if data == nil {
+		c.Logger.Errorf("session.sendHttpDataToSession error: client is nil")
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	c.Logger.Debugf("session.sendHttpDataToSession - request: {server_id: %s, conn_type: %d, auth_key_id: %d, key_type: %d, perm_auth_key_id: %d, session_id: %d, client_ip: %s, quick_ack: %d, salt: %d, payload: %d}",
+		data.ServerId,
+		data.ConnType,
+		data.AuthKeyId,
+		data.KeyType,
+		data.PermAuthKeyId,
+		data.SessionId,
+		data.ClientIp,
+		data.QuickAck,
+		data.Salt,
+		len(data.Payload))
+
+	if err := s.checkShardingV(ctx, data.PermAuthKeyId); err != nil {
+		return nil, err
+	}
 
 	r, err := c.SessionSendHttpDataToSession(request)
 	if err != nil {
@@ -104,12 +151,22 @@ func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSe
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.closeSession - metadata: {}, request: %v", request)
 
+	data, _ := request.Client.ToSessionClientEvent()
+	if data == nil {
+		c.Logger.Errorf("session.closeSession error: client is nil")
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	if err := s.checkShardingV(ctx, data.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionCloseSession(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.closeSession - reply: %v", r)
 	return r, err
 }
 
@@ -119,12 +176,16 @@ func (s *Service) SessionPushUpdatesData(ctx context.Context, request *session.T
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushUpdatesData - metadata: {}, request: %v", request)
 
+	if err := s.checkShardingV(ctx, request.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionPushUpdatesData(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.pushUpdatesData - reply: %v", r)
 	return r, err
 }
 
@@ -134,12 +195,16 @@ func (s *Service) SessionPushSessionUpdatesData(ctx context.Context, request *se
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushSessionUpdatesData - metadata: {}, request: %v", request)
 
+	if err := s.checkShardingV(ctx, request.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionPushSessionUpdatesData(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.pushSessionUpdatesData - reply: %v", r)
 	return r, err
 }
 
@@ -149,11 +214,15 @@ func (s *Service) SessionPushRpcResultData(ctx context.Context, request *session
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.pushRpcResultData - metadata: {}, request: %v", request)
 
+	if err := s.checkShardingV(ctx, request.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+
 	r, err := c.SessionPushRpcResultData(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("session.pushRpcResultData - reply: %v", r)
 	return r, err
 }
