@@ -41,10 +41,10 @@ func (c *MediaCore) MediaUploadProfilePhotoFile(in *media.TLMediaUploadProfilePh
 		return nil, err
 	}
 	if hasVideo {
-		c.svcCtx.Dao.SaveVideoSizeV2(c.ctx, photo.GetId(), photo.GetVideoSizes())
+		_ = c.svcCtx.Dao.SaveVideoSizeV2(c.ctx, photo.GetId(), photo.GetVideoSizes())
 	}
 
-	c.svcCtx.SavePhotoV2(c.ctx,
+	_ = c.svcCtx.SavePhotoV2(c.ctx,
 		photo.GetId(),
 		photo.GetAccessHash(),
 		photo.GetHasStickers(),

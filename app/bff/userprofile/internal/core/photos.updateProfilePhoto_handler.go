@@ -68,7 +68,7 @@ func (c *UserProfileCore) PhotosUpdateProfilePhoto(in *mtproto.TLPhotosUpdatePro
 		return nil, err
 	}
 
-	c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
+	_, _ = c.svcCtx.Dao.SyncClient.SyncPushUpdates(c.ctx, &sync.TLSyncPushUpdates{
 		UserId: c.MD.UserId,
 		Updates: mtproto.MakeUpdatesByUpdatesUsers(
 			[]*mtproto.User{me.ToSelfUser()},
