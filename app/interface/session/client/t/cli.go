@@ -20,7 +20,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/teamgram/proto/v2/rpc/codec"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session/sessionservice"
@@ -42,12 +41,14 @@ func main() {
 		KeepaliveTime: 0,
 	}
 	_ = c
+
+	// ,
+	//		client.WithCodec(codec.NewZRpcCodec(true))
 	cli := kitex.MustNewClient(
 		c,
 		func(opts ...client.Option) (client.Client, error) {
 			return client.NewClient(sessionservice.NewServiceInfoForClient(), opts...)
-		},
-		client.WithCodec(codec.NewZRpcCodec(true)))
+		})
 
 	cli2 := sessionclient.NewSessionClient(cli)
 	for {

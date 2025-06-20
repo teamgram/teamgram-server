@@ -7,7 +7,7 @@ replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
 	github.com/panjf2000/gnet/v2 v2.9.0 => github.com/teamgram/gnet/v2 v2.9.0-teamgram.0.20250615092430-2cc4ae763f7f
 	// github.com/teamgram/marmota => ../marmota
-	// github.com/teamgram/proto/v2 v2.0.0-20250617082353-36686a3a0d03 => ../proto/v2
+	github.com/teamgram/proto/v2 v2.0.0-20250617130417-ecbcc8c0bace => ../proto/v2
 	github.com/zeromicro/go-zero v1.8.4 => github.com/teamgram/go-zero v1.8.4-teamgram
 )
 

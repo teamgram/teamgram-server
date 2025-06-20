@@ -7,6 +7,7 @@
 package kitex
 
 import (
+	"github.com/teamgram/proto/v2/iface"
 	"io"
 	"strings"
 
@@ -36,7 +37,7 @@ func (c *client2) Close() error {
 		client.WithCodec(codec.NewZRpcCodec(true)))
 */
 
-func GetCachedKitexClient(c RpcClientConf, newF func(c RpcClientConf) Client) Client {
+func GetCachedKitexClient(c RpcClientConf) Client {
 	var (
 		val io.Closer
 		err error
@@ -47,7 +48,7 @@ func GetCachedKitexClient(c RpcClientConf, newF func(c RpcClientConf) Client) Cl
 	logx.Infof("client: %v", c)
 	if len(c.Endpoints) > 0 {
 		val, err = clientManager.GetResource(strings.Join(c.Endpoints, "/"), func() (io.Closer, error) {
-			cli := newF(c)
+			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
 			return &client2{
 				Client: cli,
 			}, nil
@@ -57,7 +58,7 @@ func GetCachedKitexClient(c RpcClientConf, newF func(c RpcClientConf) Client) Cl
 		}
 	} else {
 		val, err = clientManager.GetResource(c.Etcd.Key, func() (io.Closer, error) {
-			cli := newF(c)
+			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
 			return &client2{
 				Client: cli,
 			}, nil

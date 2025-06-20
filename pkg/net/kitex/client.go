@@ -9,6 +9,7 @@ package kitex
 import (
 	"context"
 
+	"github.com/cloudwego/kitex/pkg/serviceinfo"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec"
 
 	"github.com/cloudwego/kitex/client"
@@ -92,6 +93,12 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 	return &RpcClient{
 		client: cli,
 	}, nil
+}
+
+func NewClientWithServiceInfo(c RpcClientConf, svc *serviceinfo.ServiceInfo) (Client, error) {
+	return NewClient(c, func(opts ...client.Option) (Client, error) {
+		return client.NewClient(svc, opts...)
+	})
 }
 
 // Call returns the underlying grpc.ClientConn.
