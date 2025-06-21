@@ -11,7 +11,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.49
 	github.com/nyaruka/phonenumbers v1.3.0
 	github.com/oschwald/geoip2-golang v1.8.0
-	github.com/panjf2000/gnet/v2 v2.6.2
+	github.com/panjf2000/gnet/v2 v2.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/teamgram/marmota v0.1.22
 	github.com/teamgram/proto v0.201.1
@@ -82,7 +82,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/oschwald/maxminddb-golang v1.10.0 // indirect
-	github.com/panjf2000/ants/v2 v2.10.0 // indirect
+	github.com/panjf2000/ants/v2 v2.11.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -111,10 +111,9 @@ require (
 	go.opentelemetry.io/otel/sdk v1.24.0 // indirect
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.3.1 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
-	go.uber.org/multierr v1.9.0 // indirect
-	go.uber.org/zap v1.24.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 	golang.org/x/net v0.35.0 // indirect
@@ -144,7 +143,7 @@ require (
 
 replace (
 	// github.com/panjf2000/gnet/v2 => ../gnet
-	github.com/panjf2000/gnet/v2 v2.6.2 => github.com/teamgram/gnet/v2 v2.6.2-teamgram
+	github.com/panjf2000/gnet/v2 v2.9.1 => github.com/teamgram/gnet/v2 v2.9.1-teamgram
 	// github.com/teamgram/marmota => ../marmota
 	// github.com/teamgram/proto => ../proto
 	// github.com/teamgram/proto/v2 => ../proto/v2
