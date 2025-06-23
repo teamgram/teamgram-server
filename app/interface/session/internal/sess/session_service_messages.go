@@ -32,7 +32,7 @@ import (
 func (c *session) checkContainer(ctx context.Context, msgId int64, seqno int32, container *mtproto.TLMsgContainer) int32 {
 	if c.inQueue.Lookup(msgId) != nil {
 		logx.WithContext(ctx).Errorf("checkContainer - msgId collision: {msg_id: %d, seqno: %d}", msgId, seqno)
-		return kMsgIdCollision
+		// return kMsgIdCollision
 	}
 	//for e := c.msgIds.Front(); e != nil; e = e.Next() {
 	//	if e.Value.(int64) == msgId {

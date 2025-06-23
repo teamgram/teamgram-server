@@ -42,13 +42,22 @@ func (c *DfsCore) DfsUploadProfilePhotoFileV2(in *dfs.TLDfsUploadProfilePhotoFil
 	// TODO: file and video not nil
 	if in.GetFile() != nil {
 		file = in.GetVideo()
+		if file != nil {
+			if err = model.CheckFileParts(file.Parts); err != nil {
+				c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
+				return nil, err
+			}
 
-		if err = model.CheckFileParts(file.Parts); err != nil {
-			c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
-			return nil, err
+			photoV2, err = c.uploadVideoSizeListV2(in.GetCreator(), file, in.GetVideoStartTs().GetValue())
+		} else {
+			file = in.GetFile()
+			if err = model.CheckFileParts(file.Parts); err != nil {
+				c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
+				return nil, err
+			}
+
+			photoV2, err = c.uploadPhotoSizeListV2(in.GetCreator(), in.GetFile(), true)
 		}
-
-		photoV2, err = c.uploadVideoSizeListV2(in.GetCreator(), file, in.GetVideoStartTs().GetValue())
 		if err != nil {
 			c.Logger.Errorf("dfs.uploadPhotoFile - %v", err)
 			return nil, err

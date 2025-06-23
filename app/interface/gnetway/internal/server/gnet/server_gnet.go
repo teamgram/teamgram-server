@@ -38,6 +38,18 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func (s *Server) asyncRunIfError(connId int64, msgId int64, execb func() error, retcb func(c gnet.Conn, msgId int64, err error)) {
+	_ = s.pool.Submit(func() {
+		if err := execb(); err != nil {
+			s.eng.Trigger(connId, func(c gnet.Conn) {
+				retcb(c, msgId, err)
+			})
+		} else {
+			// do nothing
+		}
+	})
+}
+
 func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c gnet.Conn)) {
 	_ = s.pool.Submit(func() {
 		if err := execb(); err == nil {
@@ -194,9 +206,11 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 	}
 
 	var (
-		permAuthKeyId = authKey.PermAuthKeyId()
-		salt          = int64(binary.LittleEndian.Uint64(mtpRwaData))
-		sessionId     = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
+		permAuthKeyId     = authKey.PermAuthKeyId()
+		salt              = int64(binary.LittleEndian.Uint64(mtpRwaData))
+		sessionId         = int64(binary.LittleEndian.Uint64(mtpRwaData[8:]))
+		msgId             = int64(binary.LittleEndian.Uint64(mtpRwaData[16:24]))
+		isBindTempAuthKey = false
 	)
 
 	if permAuthKeyId == 0 {
@@ -210,6 +224,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				clone.PermAuthKeyId = permAuthKeyId
 				authKey.keyData = clone
 				s.PutAuthKey(clone)
+				isBindTempAuthKey = true
 			case *mtproto.TLPing:
 				payload := serializeToBuffer2(salt, sessionId, &mtproto.TLMessage2{
 					MsgId: nextMessageId(false),
@@ -251,51 +266,76 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		// check sessionId??
 	}
 
-	_ = s.pool.Submit(func() {
-		defer func() {
-			logx.WithDuration(timex.Since(since)).Infof("onEncryptedMessage: %s", c)
-		}()
+	s.asyncRunIfError(
+		c.ConnId(),
+		msgId,
+		func() error {
+			defer func() {
+				logx.WithDuration(timex.Since(since)).Infof("onEncryptedMessage: %s", c)
+			}()
 
-		_ = s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-			strconv.FormatInt(permAuthKeyId, 10),
-			func(client sessionclient.SessionClient) (err error) {
-				if isNew {
-					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
-						_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
-							Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
-								ServerId:      s.svcCtx.GatewayId,
-								AuthKeyId:     authKey.AuthKeyId(),
-								KeyType:       int32(authKey.AuthKeyType()),
-								PermAuthKeyId: permAuthKeyId,
-								SessionId:     sessionId,
-								ClientIp:      clientIp,
-							}).To_SessionClientEvent(),
-						})
-						if err != nil {
-							logx.Errorf("client.SessionCreateSession - error: %v", err)
+			return s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
+				strconv.FormatInt(permAuthKeyId, 10),
+				func(client sessionclient.SessionClient) (err error) {
+					if isNew {
+						if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
+							_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
+								Client: session.MakeTLSessionClientEvent(&session.SessionClientEvent{
+									ServerId:      s.svcCtx.GatewayId,
+									AuthKeyId:     authKey.AuthKeyId(),
+									KeyType:       int32(authKey.AuthKeyType()),
+									PermAuthKeyId: permAuthKeyId,
+									SessionId:     sessionId,
+									ClientIp:      clientIp,
+								}).To_SessionClientEvent(),
+							})
+							if err != nil {
+								logx.Errorf("client.SessionCreateSession - error: %v", err)
+							}
 						}
 					}
-				}
 
-				_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
-					Data: &session.SessionClientData{
-						ServerId:      s.svcCtx.GatewayId,
-						AuthKeyId:     authKey.AuthKeyId(),
-						KeyType:       int32(authKey.AuthKeyType()),
-						PermAuthKeyId: permAuthKeyId,
-						SessionId:     sessionId,
-						Salt:          salt,
-						Payload:       mtpRwaData[16:],
-						ClientIp:      clientIp,
-					},
+					_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
+						Data: &session.SessionClientData{
+							ServerId:      s.svcCtx.GatewayId,
+							AuthKeyId:     authKey.AuthKeyId(),
+							KeyType:       int32(authKey.AuthKeyType()),
+							PermAuthKeyId: permAuthKeyId,
+							SessionId:     sessionId,
+							Salt:          salt,
+							Payload:       mtpRwaData[16:],
+							ClientIp:      clientIp,
+						},
+					})
+					if err != nil {
+						logx.Errorf("session.sendDataToSession - error: %v", err)
+					}
+
+					return
 				})
-				if err != nil {
-					logx.Errorf("session.sendDataToSession - error: %v", err)
-				}
+		},
+		func(c gnet.Conn, msgId int64, err error) {
+			if isBindTempAuthKey && errors.Is(err, mtproto.ErrAuthKeyUnregistered) {
+				payload := serializeToBuffer2(salt, sessionId, &mtproto.TLMessage2{
+					MsgId: nextMessageId(false),
+					Seqno: 0,
+					Bytes: 0,
+					Object: &mtproto.TLRpcResult{
+						ReqMsgId: msgId,
+						Result: mtproto.MakeTLRpcError(&mtproto.RpcError{
+							ErrorCode:    400,
+							ErrorMessage: "ENCRYPTED_MESSAGE_INVALID",
+						}).To_RpcError(),
+					}})
 
-				return
-			})
-	})
+				msgKey, mtpRawData, _ := authKey.AesIgeEncrypt(payload)
+				x2 := mtproto.NewEncodeBuf(8 + len(msgKey) + len(mtpRawData))
+				x2.Long(authKey.AuthKeyId())
+				x2.Bytes(msgKey)
+				x2.Bytes(mtpRawData)
+				_ = UnThreadSafeWrite(c, &mtproto.MTPRawMessage{Payload: x2.GetBuf()})
+			}
+		})
 
 	return nil
 }
