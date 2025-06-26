@@ -16,6 +16,7 @@
 package gnet
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"encoding/hex"
@@ -27,6 +28,7 @@ import (
 	"time"
 
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/pp"
 	"github.com/teamgram/teamgram-server/app/interface/gnetway/internal/server/gnet/ws"
 	"github.com/teamgram/teamgram-server/app/interface/session/client"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
@@ -99,6 +101,7 @@ func (s *Server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 
 	ctx := newConnContext()
 	ctx.setClientIp(strings.Split(c.RemoteAddr().String(), ":")[0])
+	ctx.ppv1 = s.c.Gnetway.IsProxyProtocolV1(c.LocalAddr().String())
 	ctx.tcp = s.c.Gnetway.IsTcp(c.LocalAddr().String())
 	ctx.websocket = s.c.Gnetway.IsWebsocket(c.LocalAddr().String())
 	if ctx.websocket {
@@ -166,6 +169,34 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	ctx := c.Context().(*connContext)
 	ctx.closeDate = time.Now().Unix() + 300 + rand.Int63()%10
+	if ctx.ppv1 {
+		ppv1, err := c.Peek(-1)
+		if err != nil {
+			return
+		}
+		if len(ppv1) < len(pp.V1Identifier) {
+			return
+		}
+
+		if bytes.HasPrefix(ppv1, pp.V1Identifier) {
+			r := bytes.NewReader(ppv1)
+			h, err := pp.ReadHeader(r)
+			if err != nil {
+				logx.Errorf("conn(%s) ReadHeader error: %v", c, err)
+				if r.Len() > 107 {
+					return gnet.Close
+				} else {
+					return
+				}
+			}
+			ctx.setClientIp(strings.Split(h.Source.String(), ":")[0])
+			_, _ = c.Discard(len(ppv1) - r.Len())
+			ctx.ppv1 = false
+		} else {
+			ctx.ppv1 = false
+		}
+	}
+
 	if ctx.websocket {
 		return s.onWebsocketData(ctx, c)
 	} else {

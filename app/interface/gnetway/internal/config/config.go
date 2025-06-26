@@ -28,6 +28,7 @@ type RSAKey struct {
 
 type GnetwayServer struct {
 	Proto     string `json:",default=tcp,options=tcp|websocket|http"`
+	PPV1      bool   `json:",optional"`
 	Addresses []string
 }
 
@@ -67,6 +68,19 @@ func (c GnetwayConfig) IsHttp(addr string) bool {
 func (c GnetwayConfig) IsTcp(addr string) bool {
 	for _, server := range c.Server {
 		if server.Proto == "tcp" {
+			for _, address := range server.Addresses {
+				if address == addr {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func (c GnetwayConfig) IsProxyProtocolV1(addr string) bool {
+	for _, server := range c.Server {
+		if server.PPV1 {
 			for _, address := range server.Addresses {
 				if address == addr {
 					return true

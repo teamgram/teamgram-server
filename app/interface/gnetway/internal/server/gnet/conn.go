@@ -46,6 +46,7 @@ type connContext struct {
 	newSession bool
 	nextSeqNo  int32
 	closeDate  int64
+	ppv1       bool
 }
 
 func newConnContext() *connContext {
