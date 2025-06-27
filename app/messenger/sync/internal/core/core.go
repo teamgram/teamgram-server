@@ -171,7 +171,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 	if syncType == syncTypeUserMe && hasServerId != nil {
 		c.Logger.Debugf("pushUpdatesToSession - pushData: {server_id: %v, auth_key_id: %v}", hasServerId, authKeyId)
 		if sessionId != nil {
-			c.svcCtx.Dao.PushSessionUpdatesToSession(
+			_ = c.svcCtx.Dao.PushSessionUpdatesToSession(
 				c.ctx,
 				hasServerId.GetValue(),
 				&session.TLSessionPushSessionUpdatesData{
@@ -181,7 +181,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 					Updates:       pushData,
 				})
 		} else {
-			c.svcCtx.Dao.PushUpdatesToSession(
+			_ = c.svcCtx.Dao.PushUpdatesToSession(
 				c.ctx,
 				hasServerId.GetValue(),
 				&session.TLSessionPushUpdatesData{
@@ -217,7 +217,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 		for serverId, keyIdList := range serverIdKeyIdList {
 			for _, keyId := range keyIdList {
 				// log.Debugf("serverIdKeyIdList - #%v", serverIdKeyIdList)
-				c.svcCtx.Dao.PushUpdatesToSession(
+				_ = c.svcCtx.Dao.PushUpdatesToSession(
 					c.ctx,
 					serverId,
 					&session.TLSessionPushUpdatesData{
@@ -231,7 +231,7 @@ func (c *SyncCore) pushUpdatesToSession(syncType SyncType, userId, permAuthKeyId
 		if syncType == syncTypeUser {
 			if c.svcCtx.Dao.PushClient != nil {
 				c.Logger.Debugf("push PushClient...")
-				c.svcCtx.Dao.PushClient.SyncPushUpdatesIfNot(c.ctx, &sync.TLSyncPushUpdatesIfNot{
+				_, _ = c.svcCtx.Dao.PushClient.SyncPushUpdatesIfNot(c.ctx, &sync.TLSyncPushUpdatesIfNot{
 					UserId:   userId,
 					Excludes: pushExcludeList,
 					Updates:  pushData,

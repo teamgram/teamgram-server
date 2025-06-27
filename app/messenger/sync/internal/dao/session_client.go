@@ -205,7 +205,6 @@ func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *se
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
-	return
 }
 
 func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushSessionUpdatesData) (err error) {
@@ -216,7 +215,6 @@ func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, 
 		logx.WithContext(ctx).Errorf("not found k: %s, %v", serverId, d.sessionServers)
 		return fmt.Errorf("not found k: %s", serverId)
 	}
-	return
 }
 
 func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *session.TLSessionPushRpcResultData) (err error) {
