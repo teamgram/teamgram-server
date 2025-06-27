@@ -1,0 +1,10 @@
+Echo1:
+  ServiceName: "examples.echo1"
+  Codec: "zrpc"
+  Endpoints:
+    - 127.0.0.1:8880
+Echo2:
+  ServiceName: "examples.echo2"
+  Codec: "zrpc"
+  Endpoints:
+    - 127.0.0.1:8880

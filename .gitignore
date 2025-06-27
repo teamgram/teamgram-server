@@ -44,3 +44,8 @@ teamgramd/logs/*
 /pkg/net/kitex/codec/examples/echo/client/t/t
 
 v2
+
+/pkg/net/kitex/codec/echo/echo/client/client
+/pkg/net/kitex/codec/echo/echo1/cmd/echo1/echo1
+/pkg/net/kitex/codec/echo/echo2/cmd/echo2/echo2
+/pkg/net/kitex/codec/echo/echo/cmd/echo/echo

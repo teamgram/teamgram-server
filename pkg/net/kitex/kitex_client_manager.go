@@ -7,10 +7,10 @@
 package kitex
 
 import (
-	"github.com/teamgram/proto/v2/iface"
 	"io"
 	"strings"
 
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/syncx"
 )
