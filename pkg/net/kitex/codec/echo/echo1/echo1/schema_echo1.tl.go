@@ -114,10 +114,6 @@ type Echo struct {
 	EchoClazz
 }
 
-func NewEchoResult() interface{} {
-	return &Echo{}
-}
-
 // MakeEcho <--
 func MakeEcho(c EchoClazz) *Echo {
 	return &Echo{

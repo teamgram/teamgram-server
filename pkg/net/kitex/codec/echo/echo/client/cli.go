@@ -14,8 +14,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	echo1client "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1"
-	echo2client "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/client"
+	// _ "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1/echo1service"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/echo2"
+	_ "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo2/echo2/echo2service"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,8 +38,10 @@ func main() {
 
 	conf.MustLoad(*configFile, &c)
 
-	cli1 := echo1client.MustNewKitexClient(c.Echo1) // echo1client.NewEcho1Client(echo1client.MustNewKitexClient(c.Echo1))
-	cli2 := echo2client.MustNewKitexClient(c.Echo2)
+	// cli1 := echo1client.MustNewKitexClient(c.Echo1) // echo1client.NewEcho1Client(echo1client.MustNewKitexClient(c.Echo1))
+	// cli2 := echo2client.MustNewKitexClient(c.Echo2)
+	cli1 := echo1client.NewEcho1Client(kitex.GetCachedKitexClient(c.Echo1))
+	cli2 := kitex.GetCachedKitexClient(c.Echo2)
 
 	for {
 		req1 := &echo1.TLEcho1Echo{
@@ -46,8 +49,8 @@ func main() {
 			Message: "my reqeuest1",
 		}
 
-		resp1 := &echo1.Echo{}
-		err := cli1.Call(context.Background(), "echo1.echo", req1, resp1)
+		// resp1 := &echo1.Echo{}
+		resp1, err := cli1.Echo1Echo(context.Background(), req1)
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -65,6 +68,7 @@ func main() {
 		}
 
 		resp2 := &echo2.Echo{}
+		_ = cli2
 		err = cli2.Call(context.Background(), "echo2.echo", req2, resp2)
 		logx.Debugf("resp2: %s", resp2)
 		if err != nil {

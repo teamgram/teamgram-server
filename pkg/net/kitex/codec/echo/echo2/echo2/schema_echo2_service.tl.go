@@ -61,6 +61,9 @@ func (m *TLEcho2Echo) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

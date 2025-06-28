@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/echo1"
 
@@ -44,6 +45,12 @@ var (
 	echo1ServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCEcho1", echo1ServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCEcho1", echo1ServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCEcho1", echo1ServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return echo1ServiceServiceInfo
@@ -68,6 +75,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -238,11 +247,16 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) Echo1Echo(ctx context.Context, req *echo1.TLEcho1Echo) (r *echo1.Echo, err error) {
-	var _args EchoArgs
-	_args.Req = req
-	var _result EchoResult
-	if err = p.c.Call(ctx, "echo1.echo", &_args, &_result); err != nil {
+	// var _args EchoArgs
+	// _args.Req = req
+	// var _result EchoResult
+
+	_result := new(echo1.Echo)
+
+	if err = p.c.Call(ctx, "echo1.echo", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -28,6 +28,7 @@ type (
 
 	// A RpcClientConf is a rpc client config.
 	RpcClientConf struct {
+		DestService   string
 		ServiceName   string          `json:",optional"`
 		Codec         string          `json:",default=zrpc"`
 		Etcd          discov.EtcdConf `json:",optional,inherit"`

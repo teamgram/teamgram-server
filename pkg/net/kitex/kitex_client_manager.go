@@ -47,7 +47,7 @@ func GetCachedKitexClient(c RpcClientConf) Client {
 	}
 	logx.Infof("client: %v", c)
 	if len(c.Endpoints) > 0 {
-		val, err = clientManager.GetResource(strings.Join(c.Endpoints, "/"), func() (io.Closer, error) {
+		val, err = clientManager.GetResource(c.ServiceName+"@"+strings.Join(c.Endpoints, "/"), func() (io.Closer, error) {
 			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
 			return &client2{
 				Client: cli,
@@ -57,7 +57,7 @@ func GetCachedKitexClient(c RpcClientConf) Client {
 			panic(err)
 		}
 	} else {
-		val, err = clientManager.GetResource(c.Etcd.Key, func() (io.Closer, error) {
+		val, err = clientManager.GetResource(c.ServiceName+"@"+c.Etcd.Key, func() (io.Closer, error) {
 			cli, _ := NewClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
 			return &client2{
 				Client: cli,

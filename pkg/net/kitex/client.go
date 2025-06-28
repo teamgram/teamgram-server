@@ -45,7 +45,7 @@ func MustNewClient(c RpcClientConf, newF NewClientFn) Client {
 func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 	var options []client.Option
 
-	options = append(options, client.WithDestService(c.ServiceName))
+	options = append(options, client.WithDestService(c.DestService))
 	if c.Codec == "zrpc" {
 		options = append(options, client.WithCodec(codec.NewZRpcCodec(true)))
 	}

@@ -30,10 +30,6 @@ type TLEcho1Echo struct {
 	Message string `json:"message"`
 }
 
-func NewTLEcho1EchoArg() interface{} {
-	return &TLEcho1Echo{}
-}
-
 // Encode <--
 func (m *TLEcho1Echo) Encode(x *bin.Encoder, layer int32) error {
 	var encodeF = map[uint32]func() error{
