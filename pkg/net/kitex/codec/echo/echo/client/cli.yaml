@@ -1,12 +1,20 @@
 Echo1:
-  DestService: "examples.echo1"
+  DestService: "examples.echo"
   ServiceName: "RPCEcho1"
   Codec: "zrpc"
-  Endpoints:
-    - 127.0.0.1:8880
+  #Endpoints:
+  #  - 127.0.0.1:8880
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: examples.echo
 Echo2:
-  DestService: "examples.echo2"
+  DestService: "examples.echo"
   ServiceName: "RPCEcho2"
   Codec: "zrpc"
-  Endpoints:
-    - 127.0.0.1:8880
+  #Endpoints:
+  #  - 127.0.0.1:8880
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: examples.echo
