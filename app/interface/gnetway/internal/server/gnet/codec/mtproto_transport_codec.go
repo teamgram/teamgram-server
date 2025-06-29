@@ -152,34 +152,35 @@ func CreateCodec(conn CodecReader) (Codec, error) {
 }
 
 func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
-	var (
-		err      error
-		bytes    []byte
-		firstInt uint32
-	)
+	rData, _ := conn.Peek(-1)
+	if len(rData) == 0 {
+		logx.Errorf("conn(%s) peek fail", conn)
+		return nil, ErrUnexpectedEOF
+	}
 
 	if !isObfuscated {
 		var (
 			firstByte uint8
 		)
-		bytes, _ := conn.Peek(1)
-		firstByte = bytes[0]
+		// bytes, _ := conn.Peek(1)
+		firstByte = rData[0]
 
 		if firstByte == ABRIDGED_FLAG {
-			tB, _ := conn.Peek(-1)
-			logx.Debugf("conn(%s) mtproto abridged version, data: %s", conn, hex.EncodeToString(tB))
+			// tB, _ := conn.Peek(-1)
+			logx.Debugf("conn(%s) mtproto abridged version, data: %s", conn, hex.EncodeToString(rData))
 			_, _ = conn.Discard(1)
 			return newMTProtoAbridgedCodec(nil), nil
 		}
 	}
 
-	// not abridged version, we'll lookup codec!
-	bytes, err = conn.Peek(4)
-	if err != nil {
+	if len(rData) < 4 {
+		logx.Errorf("conn(%s) peek bytes length < 4, data: %s", conn, hex.EncodeToString(rData))
 		return nil, ErrUnexpectedEOF
 	}
 
-	firstInt = binary.LittleEndian.Uint32(bytes)
+	// not abridged version, we'll lookup codec!
+	// bytes = rData[:4]
+	firstInt := binary.LittleEndian.Uint32(rData)
 
 	// check http
 	if firstInt == HTTP_HEAD_FLAG ||
@@ -192,49 +193,55 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 		// conn2 := NewMTProtoHttpProxyConn(conn)
 		// c.conn = conn2
 		// c.codecType = TRANSPORT_HTTP
-		logx.Debugf("conn(%s) mtproto http.", conn)
+		logx.Errorf("conn(%s) mtproto http. data: %s", conn, hex.EncodeToString(rData))
 		return nil, ErrHttpTransport
 	}
 
 	// check intermediate version
 	if firstInt == INTERMEDIATE_FLAG {
-		logx.Debugf("conn(%s) intermediate version.", conn)
+		logx.Debugf("conn(%s) intermediate version. data: %s", conn, hex.EncodeToString(rData))
 		_, _ = conn.Discard(4)
 		return newMTProtoIntermediateCodec(nil), nil
 	}
 
 	// check intermediate version
 	if firstInt == PADDED_INTERMEDIATE_FLAG {
-		logx.Debugf("conn(%s) padded intermediate version.", conn)
+		logx.Debugf("conn(%s) padded intermediate version. data: %s", conn, hex.EncodeToString(rData))
 		_, _ = conn.Discard(4)
 		return newMTProtoPaddedIntermediateCodec(nil), nil
 	}
 
 	// check PVrG
 	if firstInt == PVRG_FLAG {
-		logx.Errorf("conn(%s) PVrG version.", conn)
+		logx.Errorf("conn(%s) PVrG version. data: %s", conn, hex.EncodeToString(rData))
 		return nil, ErrPvrgNotSupport
 	}
 
 	// check 0x02010316
 	if firstInt == UNKNOWN_FLAG {
-		logx.Errorf("conn(%s) firstInt is 0x02010316.", conn)
+		logx.Errorf("conn(%s) firstInt is 0x02010316. data: %s", conn, hex.EncodeToString(rData))
 		return nil, Err0x02010316NotSupport
 	}
 
-	var (
-		checkFullBuf []byte
-	)
-
-	if bytes, err = conn.Peek(12); err != nil {
+	if len(rData) < 12 {
+		logx.Errorf("conn(%s) peek bytes length < 12, data: %s", conn, hex.EncodeToString(rData))
 		return nil, ErrUnexpectedEOF
-	} else {
-		checkFullBuf = bytes
 	}
+
+	checkFullBuf := rData[:12]
+	//var (
+	//	checkFullBuf []byte
+	//)
+	//
+	//if bytes, err = conn.Peek(12); err != nil {
+	//	return nil, ErrUnexpectedEOF
+	//} else {
+	//	checkFullBuf = bytes
+	//}
 
 	secondInt := binary.BigEndian.Uint32(checkFullBuf[4:])
 	if secondInt == FULL_FLAG {
-		logx.Infof("conn(%s) mtproto full version.", conn)
+		logx.Infof("conn(%s) mtproto full version. data: %s", conn, hex.EncodeToString(rData))
 		// conn.Discard(12)
 		return newMTProtoFullCodec(), nil
 	}
@@ -255,15 +262,12 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 	// decrypt_iv_ : 32 ~ 47 (temp)
 	//
 
-	var (
-		obfuscatedBuf []byte
-	)
-
-	if bytes, err = conn.Peek(64); err != nil {
+	if len(rData) < 64 {
+		logx.Errorf("conn(%s) peek bytes length < 64, data: %s", conn, hex.EncodeToString(rData))
 		return nil, ErrUnexpectedEOF
-	} else {
-		obfuscatedBuf = bytes
 	}
+
+	obfuscatedBuf := rData[:64]
 
 	var (
 		tmp [64]byte
@@ -292,7 +296,7 @@ func CreateMTProtoCodec(conn CodecReader) (Codec, error) {
 		protocolType != PADDED_INTERMEDIATE_FLAG {
 		return nil, fmt.Errorf("conn(%s) mtproto buf[56:60]'s byte != 0xef, received: %s",
 			conn,
-			hex.EncodeToString(obfuscatedBuf[56:60]))
+			hex.EncodeToString(rData))
 	}
 
 	dcId := int16(binary.BigEndian.Uint16(obfuscatedBuf[60:]))

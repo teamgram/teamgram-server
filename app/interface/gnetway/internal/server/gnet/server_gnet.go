@@ -172,13 +172,17 @@ func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if ctx.ppv1 {
 		ppv1, err := c.Peek(-1)
 		if err != nil {
+			logx.Errorf("conn(%s) Peek fail: %v", c, err)
 			return
 		}
 		if len(ppv1) < len(pp.V1Identifier) {
+			logx.Errorf("conn(%s) ppv1 < len(pp.V1Identifier), data: %s", c, hex.EncodeToString(ppv1))
 			return
 		}
 
 		if bytes.HasPrefix(ppv1, pp.V1Identifier) {
+			logx.Errorf("conn(%s) ppv1 data: %s", c, hex.EncodeToString(ppv1))
+
 			r := bytes.NewReader(ppv1)
 			h, err := pp.ReadHeader(r)
 			if err != nil {
