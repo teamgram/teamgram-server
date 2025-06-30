@@ -23,8 +23,8 @@ import (
 
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/marmota/pkg/net/ip"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/proto/v2/iface"
+	"github.com/teamgram/proto/v2/rpc/metadata"
 	bff_proxy_client "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/config"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
@@ -35,7 +35,7 @@ type Dao struct {
 	cache *cache.LRUCache
 	authsessionclient.AuthsessionClient
 	statusclient.StatusClient
-	*bff_proxy_client.BFFProxyClient
+	*bff_proxy_client.BFFProxyClient2
 	eGateServers map[string]*Gateway
 	MyServerId   string
 	*RpcShardingManager
@@ -59,5 +59,5 @@ func New(c config.Config) *Dao {
 }
 
 func (d *Dao) InvokeContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, object iface.TLObject) (iface.TLObject, error) {
-	return d.BFFProxyClient.InvokeContext(ctx, rpcMetaData, object)
+	return d.BFFProxyClient2.InvokeContext(ctx, rpcMetaData, object)
 }

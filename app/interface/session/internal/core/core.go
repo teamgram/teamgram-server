@@ -21,13 +21,12 @@ package core
 import (
 	"context"
 
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	//"github.com/teamgram/proto/mtproto/rpc/metadata"
 )
 
 type SessionCore struct {
@@ -60,7 +59,7 @@ func (c *SessionCore) getOrFetchMainAuthWrapper(mainAuthId int64) (*sess.MainAut
 	if mainAuthId == 0 {
 		kData = &authsession.TLAuthKeyStateData{
 			AuthKeyId:            0,
-			KeyState:             mtproto.AuthStateNew,
+			KeyState:             tg.AuthStateNew,
 			UserId:               0,
 			AccessHash:           0,
 			Client:               nil,

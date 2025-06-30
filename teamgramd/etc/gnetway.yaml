@@ -5,8 +5,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: interface.gateway
 Log:
-  Mode: file
-  Path: ../logs/gnetway
+  #Mode: file
+  #Path: ../logs/gnetway
   Level: debug
 
 RSAKey:
@@ -30,7 +30,8 @@ Gnetway:
   ReceiveBuf: 65536
 
 Session:
-  ServiceName: "interface.session"
+  DestService: interface.session
+  ServiceName: "RPCSession"
   Codec: "zrpc"
   Etcd:
     Hosts:

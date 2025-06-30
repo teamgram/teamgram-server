@@ -16,10 +16,10 @@ import (
 	"time"
 
 	"github.com/teamgram/marmota/pkg/queue2"
-	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/mt"
+	"github.com/teamgram/proto/v2/rpc/metadata"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/dao"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
@@ -626,17 +626,17 @@ func (m *MainAuthWrapper) rpcRunLoop() {
 					doRpcRequest(request.ctx,
 						m.cb.Dao,
 						&metadata.RpcMetadata{
-							ServerId:      m.cb.Dao.MyServerId,
-							ClientAddr:    request.clientIp,
-							AuthId:        request.sessList.authId,
-							SessionId:     request.sessionId,
-							ReceiveTime:   time.Now().Unix(),
-							UserId:        m.AuthUserId,
-							ClientMsgId:   request.reqMsgId,
-							Layer:         m.Layer(),
-							Client:        m.ClientName(),
-							Langpack:      m.LangPack(),
-							PermAuthKeyId: m.authKeyId,
+							//ServerId:      m.cb.Dao.MyServerId,
+							//ClientAddr:    request.clientIp,
+							//AuthId:        request.sessList.authId,
+							//SessionId:     request.sessionId,
+							//ReceiveTime:   time.Now().Unix(),
+							//UserId:        m.AuthUserId,
+							//ClientMsgId:   request.reqMsgId,
+							//Layer:         m.Layer(),
+							//Client:        m.ClientName(),
+							//Langpack:      m.LangPack(),
+							//PermAuthKeyId: m.authKeyId,
 						},
 						request)
 					m.rpcDataChan <- request

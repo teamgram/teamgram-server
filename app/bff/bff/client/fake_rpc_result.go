@@ -70,7 +70,7 @@ func init() {
 	})
 }
 
-func (c *BFFProxyClient) TryReturnFakeRpcResult(object iface.TLObject) (iface.TLObject, error) {
+func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.TLObject, error) {
 	rt := reflect.TypeOf(object)
 	if rt.Kind() == reflect.Ptr {
 		rt = rt.Elem()

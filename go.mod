@@ -23,12 +23,10 @@ require (
 	github.com/panjf2000/gnet/v2 v2.9.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/teamgram/marmota v0.1.22
-	github.com/teamgram/proto v0.201.1
 	github.com/teamgram/proto/v2 v2.0.0-20250617130417-ecbcc8c0bace
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.8.4
-	google.golang.org/grpc v1.65.0
 )
 
 require (
@@ -154,6 +152,7 @@ require (
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240701130421-f6361c86f094 // indirect
+	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect

@@ -21,7 +21,7 @@ package conf
 import (
 	"fmt"
 
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/proto/v2/tg"
 )
 
 type MessageEntityConfig struct {
@@ -34,7 +34,7 @@ type MessageEntityConfig struct {
 	EntityLanguage string   `json:",optional"`
 }
 
-func (c *MessageEntityConfig) ToMessageBuildEntry(params map[string]interface{}) mtproto.MessageBuildEntry {
+func (c *MessageEntityConfig) ToMessageBuildEntry(params map[string]interface{}) tg.MessageBuildEntry {
 	aList := make([]interface{}, 0, len(c.TextA))
 	for _, v := range c.TextA {
 		var (
@@ -55,7 +55,7 @@ func (c *MessageEntityConfig) ToMessageBuildEntry(params map[string]interface{})
 		}
 	}
 
-	return mtproto.MessageBuildEntry{
+	return tg.MessageBuildEntry{
 		Text:           fmt.Sprintf(c.TextFormat, aList...),
 		Param:          param,
 		EntityType:     c.EntityType,
@@ -65,9 +65,9 @@ func (c *MessageEntityConfig) ToMessageBuildEntry(params map[string]interface{})
 	}
 }
 
-func ToMessageBuildHelper(c []MessageEntityConfig, params map[string]interface{}) mtproto.MessageBuildHelper {
+func ToMessageBuildHelper(c []MessageEntityConfig, params map[string]interface{}) tg.MessageBuildHelper {
 	var (
-		m = make([]mtproto.MessageBuildEntry, 0, len(c))
+		m = make([]tg.MessageBuildEntry, 0, len(c))
 	)
 	for _, v := range c {
 		m = append(m, v.ToMessageBuildEntry(params))

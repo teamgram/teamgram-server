@@ -22,8 +22,8 @@ import (
 	"context"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/svc"
+
 	"github.com/zeromicro/go-zero/core/logx"
-	//"github.com/teamgram/proto/mtproto/rpc/metadata"
 )
 
 type AuthsessionCore struct {
