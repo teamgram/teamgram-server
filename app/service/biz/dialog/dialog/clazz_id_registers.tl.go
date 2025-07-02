@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -19,7 +19,7 @@ import (
 
 func init() {
 	// Constructor
-	iface.RegisterClazzID(0xbdd9a860, func() iface.TLObject { return &TLDialogExt{ClazzID: 0xbdd9a860} })          // 0xbdd9a860
+	iface.RegisterClazzID(0x730ba93f, func() iface.TLObject { return &TLDialogExt{ClazzID: 0x730ba93f} })          // 0x730ba93f
 	iface.RegisterClazzID(0xa6d498fe, func() iface.TLObject { return &TLDialogFilterExt{ClazzID: 0xa6d498fe} })    // 0xa6d498fe
 	iface.RegisterClazzID(0xea7222c, func() iface.TLObject { return &TLDialogPinnedExt{ClazzID: 0xea7222c} })      // 0xea7222c
 	iface.RegisterClazzID(0x1d59b45d, func() iface.TLObject { return &TLSimpleDialogsData{ClazzID: 0x1d59b45d} })  // 0x1d59b45d
@@ -64,4 +64,7 @@ func init() {
 	iface.RegisterClazzID(0x4e457fef, func() iface.TLObject { return &TLDialogGetDialogFilterBySlug{ClazzID: 0x4e457fef} })             // 0x4e457fef
 	iface.RegisterClazzID(0xc6cb636f, func() iface.TLObject { return &TLDialogCreateDialogFilter{ClazzID: 0xc6cb636f} })                // 0xc6cb636f
 	iface.RegisterClazzID(0x2bac334d, func() iface.TLObject { return &TLDialogUpdateUnreadCount{ClazzID: 0x2bac334d} })                 // 0x2bac334d
+	iface.RegisterClazzID(0xa0cd6d89, func() iface.TLObject { return &TLDialogToggleDialogFilterTags{ClazzID: 0xa0cd6d89} })            // 0xa0cd6d89
+	iface.RegisterClazzID(0xfaf0fa97, func() iface.TLObject { return &TLDialogGetDialogFilterTags{ClazzID: 0xfaf0fa97} })               // 0xfaf0fa97
+	iface.RegisterClazzID(0xb551db12, func() iface.TLObject { return &TLDialogSetChatWallpaper{ClazzID: 0xb551db12} })                  // 0xb551db12
 }

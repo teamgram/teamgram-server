@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package idgen
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,14 +20,22 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLIdgenNextId <--
 type TLIdgenNextId struct {
 	ClazzID uint32 `json:"_id"`
+}
+
+func (m *TLIdgenNextId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -57,6 +66,9 @@ func (m *TLIdgenNextId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -68,6 +80,11 @@ func (m *TLIdgenNextId) Decode(d *bin.Decoder) (err error) {
 type TLIdgenNextIds struct {
 	ClazzID uint32 `json:"_id"`
 	Num     int32  `json:"num"`
+}
+
+func (m *TLIdgenNextIds) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -101,6 +118,9 @@ func (m *TLIdgenNextIds) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -112,6 +132,11 @@ func (m *TLIdgenNextIds) Decode(d *bin.Decoder) (err error) {
 type TLIdgenGetCurrentSeqId struct {
 	ClazzID uint32 `json:"_id"`
 	Key     string `json:"key"`
+}
+
+func (m *TLIdgenGetCurrentSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -145,6 +170,9 @@ func (m *TLIdgenGetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -157,6 +185,11 @@ type TLIdgenSetCurrentSeqId struct {
 	ClazzID uint32 `json:"_id"`
 	Key     string `json:"key"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLIdgenSetCurrentSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -192,6 +225,9 @@ func (m *TLIdgenSetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -203,6 +239,11 @@ func (m *TLIdgenSetCurrentSeqId) Decode(d *bin.Decoder) (err error) {
 type TLIdgenGetNextSeqId struct {
 	ClazzID uint32 `json:"_id"`
 	Key     string `json:"key"`
+}
+
+func (m *TLIdgenGetNextSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -236,6 +277,9 @@ func (m *TLIdgenGetNextSeqId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -248,6 +292,11 @@ type TLIdgenGetNextNSeqId struct {
 	ClazzID uint32 `json:"_id"`
 	Key     string `json:"key"`
 	N       int32  `json:"n"`
+}
+
+func (m *TLIdgenGetNextNSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -283,6 +332,9 @@ func (m *TLIdgenGetNextNSeqId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -294,6 +346,11 @@ func (m *TLIdgenGetNextNSeqId) Decode(d *bin.Decoder) (err error) {
 type TLIdgenGetNextIdValList struct {
 	ClazzID uint32     `json:"_id"`
 	Id      []*InputId `json:"id"`
+}
+
+func (m *TLIdgenGetNextIdValList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -340,6 +397,9 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -351,6 +411,11 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 type TLIdgenGetCurrentSeqIdList struct {
 	ClazzID uint32     `json:"_id"`
 	Id      []*InputId `json:"id"`
+}
+
+func (m *TLIdgenGetCurrentSeqIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -397,6 +462,9 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -410,7 +478,12 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -429,7 +502,12 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorIdVal <--
 type VectorIdVal struct {
-	Datas []*IdVal `json:"datas"`
+	Datas []*IdVal `json:"_datas"`
+}
+
+func (m *VectorIdVal) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

@@ -27,53 +27,53 @@ BizServiceClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service
-AuthSessionClient:
-  ServiceName: "service.authsession"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.authsession
-MediaClient:
-  ServiceName: "service.media"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.media
-  Timeout: 0
-IdgenClient:
-  ServiceName: "service.idgen"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.idgen
-MsgClient:
-  ServiceName: "messenger.msg"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: messenger.msg
-  Timeout: 0
-DfsClient:
-  ServiceName: "service.dfs"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.dfs
-  Timeout: 0
-StatusClient:
-  ServiceName: "service.status"
-  Codec: "zrpc"
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.status
-
-SyncClient:
-  Topic:   "Sync-T"
-  Brokers:
-    - 127.0.0.1:9092
+#AuthSessionClient:
+#  ServiceName: "service.authsession"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: service.authsession
+#MediaClient:
+#  ServiceName: "service.media"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: service.media
+#  Timeout: 0
+#IdgenClient:
+#  ServiceName: "service.idgen"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: service.idgen
+#MsgClient:
+#  ServiceName: "messenger.msg"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: messenger.msg
+#  Timeout: 0
+#DfsClient:
+#  ServiceName: "service.dfs"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: service.dfs
+#  Timeout: 0
+#StatusClient:
+#  ServiceName: "service.status"
+#  Codec: "zrpc"
+#  Etcd:
+#    Hosts:
+#      - 127.0.0.1:2379
+#    Key: service.status
+#
+#SyncClient:
+#  Topic:   "Sync-T"
+#  Brokers:
+#    - 127.0.0.1:9092

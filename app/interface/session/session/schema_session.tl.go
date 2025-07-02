@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -52,6 +52,11 @@ func DecodeHttpSessionDataClazz(d *bin.Decoder) (HttpSessionDataClazz, error) {
 type TLHttpSessionData struct {
 	ClazzID uint32 `json:"_id"`
 	Payload []byte `json:"payload"`
+}
+
+func (m *TLHttpSessionData) String() string {
+	wrapper := iface.WithNameWrapper{"httpSessionData", m}
+	return wrapper.String()
 }
 
 // HttpSessionDataClazzName <--
@@ -111,7 +116,12 @@ func (m *TLHttpSessionData) Decode(d *bin.Decoder) (err error) {
 type HttpSessionData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	HttpSessionDataClazz
+	HttpSessionDataClazz `json:"_clazz"`
+}
+
+func (m *HttpSessionData) String() string {
+	wrapper := iface.WithNameWrapper{m.HttpSessionDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeHttpSessionData <--
@@ -205,6 +215,11 @@ type TLSessionClientData struct {
 	Payload       []byte `json:"payload"`
 }
 
+func (m *TLSessionClientData) String() string {
+	wrapper := iface.WithNameWrapper{"sessionClientData", m}
+	return wrapper.String()
+}
+
 // SessionClientDataClazzName <--
 func (m *TLSessionClientData) SessionClientDataClazzName() string {
 	return ClazzName_sessionClientData
@@ -280,7 +295,12 @@ func (m *TLSessionClientData) Decode(d *bin.Decoder) (err error) {
 type SessionClientData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionClientDataClazz
+	SessionClientDataClazz `json:"_clazz"`
+}
+
+func (m *SessionClientData) String() string {
+	wrapper := iface.WithNameWrapper{m.SessionClientDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeSessionClientData <--
@@ -371,6 +391,11 @@ type TLSessionClientEvent struct {
 	ClientIp      string `json:"client_ip"`
 }
 
+func (m *TLSessionClientEvent) String() string {
+	wrapper := iface.WithNameWrapper{"sessionClientEvent", m}
+	return wrapper.String()
+}
+
 // SessionClientEventClazzName <--
 func (m *TLSessionClientEvent) SessionClientEventClazzName() string {
 	return ClazzName_sessionClientEvent
@@ -440,7 +465,12 @@ func (m *TLSessionClientEvent) Decode(d *bin.Decoder) (err error) {
 type SessionClientEvent struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionClientEventClazz
+	SessionClientEventClazz `json:"_clazz"`
+}
+
+func (m *SessionClientEvent) String() string {
+	wrapper := iface.WithNameWrapper{m.SessionClientEventClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeSessionClientEvent <--

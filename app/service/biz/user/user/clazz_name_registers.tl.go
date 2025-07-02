@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -20,6 +20,7 @@ const (
 	ClazzName_usersIdFound                      = "usersIdFound"
 	ClazzName_peerPeerNotifySettings            = "peerPeerNotifySettings"
 	ClazzName_lastSeenData                      = "lastSeenData"
+	ClazzName_botInfoData                       = "botInfoData"
 	ClazzName_user_getLastSeens                 = "user_getLastSeens"
 	ClazzName_user_updateLastSeen               = "user_updateLastSeen"
 	ClazzName_user_getLastSeen                  = "user_getLastSeen"
@@ -96,6 +97,8 @@ const (
 	ClazzName_user_getUserIdByPhone             = "user_getUserIdByPhone"
 	ClazzName_user_setAuthorizationTTL          = "user_setAuthorizationTTL"
 	ClazzName_user_getAuthorizationTTL          = "user_getAuthorizationTTL"
+	ClazzName_user_updatePremium                = "user_updatePremium"
+	ClazzName_user_getBotInfoV2                 = "user_getBotInfoV2"
 )
 
 func init() {
@@ -105,6 +108,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_usersIdFound, 0, 0x80c4adfa)                      // 80c4adfa
 	iface.RegisterClazzName(ClazzName_peerPeerNotifySettings, 0, 0x70ea3fa9)            // 70ea3fa9
 	iface.RegisterClazzName(ClazzName_lastSeenData, 0, 0xb3b1a1df)                      // b3b1a1df
+	iface.RegisterClazzName(ClazzName_botInfoData, 0, 0x1835d1c)                        // 1835d1c
 	iface.RegisterClazzName(ClazzName_user_getLastSeens, 0, 0x7ca17e01)                 // 7ca17e01
 	iface.RegisterClazzName(ClazzName_user_updateLastSeen, 0, 0xfd405a2d)               // fd405a2d
 	iface.RegisterClazzName(ClazzName_user_getLastSeen, 0, 0x9119c8de)                  // 9119c8de
@@ -167,7 +171,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_user_getUserDataListByIdList, 0, 0x8191eff9)      // 8191eff9
 	iface.RegisterClazzName(ClazzName_user_getUserDataByToken, 0, 0x3f09659e)           // 3f09659e
 	iface.RegisterClazzName(ClazzName_user_search, 0, 0x7035b6cd)                       // 7035b6cd
-	iface.RegisterClazzName(ClazzName_user_updateBotData, 0, 0xb9fd39ee)                // b9fd39ee
+	iface.RegisterClazzName(ClazzName_user_updateBotData, 0, 0x60f35d28)                // 60f35d28
 	iface.RegisterClazzName(ClazzName_user_getImmutableUserV2, 0, 0x300aba4c)           // 300aba4c
 	iface.RegisterClazzName(ClazzName_user_getMutableUsersV2, 0, 0x94f98b28)            // 94f98b28
 	iface.RegisterClazzName(ClazzName_user_createNewTestUser, 0, 0x4c6eccab)            // 4c6eccab
@@ -181,6 +185,8 @@ func init() {
 	iface.RegisterClazzName(ClazzName_user_getUserIdByPhone, 0, 0xfbab83c2)             // fbab83c2
 	iface.RegisterClazzName(ClazzName_user_setAuthorizationTTL, 0, 0xd621f3f0)          // d621f3f0
 	iface.RegisterClazzName(ClazzName_user_getAuthorizationTTL, 0, 0xde6e493c)          // de6e493c
+	iface.RegisterClazzName(ClazzName_user_updatePremium, 0, 0xba08dc99)                // ba08dc99
+	iface.RegisterClazzName(ClazzName_user_getBotInfoV2, 0, 0xd3fc9ca5)                 // d3fc9ca5
 
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_userImportedContacts, 0x4adf7bc0)              // 4adf7bc0
@@ -188,6 +194,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_usersIdFound, 0x80c4adfa)                      // 80c4adfa
 	iface.RegisterClazzIDName(ClazzName_peerPeerNotifySettings, 0x70ea3fa9)            // 70ea3fa9
 	iface.RegisterClazzIDName(ClazzName_lastSeenData, 0xb3b1a1df)                      // b3b1a1df
+	iface.RegisterClazzIDName(ClazzName_botInfoData, 0x1835d1c)                        // 1835d1c
 	iface.RegisterClazzIDName(ClazzName_user_getLastSeens, 0x7ca17e01)                 // 7ca17e01
 	iface.RegisterClazzIDName(ClazzName_user_updateLastSeen, 0xfd405a2d)               // fd405a2d
 	iface.RegisterClazzIDName(ClazzName_user_getLastSeen, 0x9119c8de)                  // 9119c8de
@@ -250,7 +257,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_user_getUserDataListByIdList, 0x8191eff9)      // 8191eff9
 	iface.RegisterClazzIDName(ClazzName_user_getUserDataByToken, 0x3f09659e)           // 3f09659e
 	iface.RegisterClazzIDName(ClazzName_user_search, 0x7035b6cd)                       // 7035b6cd
-	iface.RegisterClazzIDName(ClazzName_user_updateBotData, 0xb9fd39ee)                // b9fd39ee
+	iface.RegisterClazzIDName(ClazzName_user_updateBotData, 0x60f35d28)                // 60f35d28
 	iface.RegisterClazzIDName(ClazzName_user_getImmutableUserV2, 0x300aba4c)           // 300aba4c
 	iface.RegisterClazzIDName(ClazzName_user_getMutableUsersV2, 0x94f98b28)            // 94f98b28
 	iface.RegisterClazzIDName(ClazzName_user_createNewTestUser, 0x4c6eccab)            // 4c6eccab
@@ -264,4 +271,6 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_user_getUserIdByPhone, 0xfbab83c2)             // fbab83c2
 	iface.RegisterClazzIDName(ClazzName_user_setAuthorizationTTL, 0xd621f3f0)          // d621f3f0
 	iface.RegisterClazzIDName(ClazzName_user_getAuthorizationTTL, 0xde6e493c)          // de6e493c
+	iface.RegisterClazzIDName(ClazzName_user_updatePremium, 0xba08dc99)                // ba08dc99
+	iface.RegisterClazzIDName(ClazzName_user_getBotInfoV2, 0xd3fc9ca5)                 // d3fc9ca5
 }

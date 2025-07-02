@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,7 +12,7 @@ package dialog
 
 const (
 	ClazzID_updateDraftMessage                       = 0xf6bdc4b2 // f6bdc4b2
-	ClazzID_dialogExt                                = 0xbdd9a860 // bdd9a860
+	ClazzID_dialogExt                                = 0x730ba93f // 730ba93f
 	ClazzID_dialogPinnedExt                          = 0xea7222c  // ea7222c
 	ClazzID_dialogFilterExt                          = 0xa6d498fe // a6d498fe
 	ClazzID_simpleDialogsData                        = 0x1d59b45d // 1d59b45d
@@ -54,4 +54,7 @@ const (
 	ClazzID_dialog_getDialogFilterBySlug             = 0x4e457fef // 4e457fef
 	ClazzID_dialog_createDialogFilter                = 0xc6cb636f // c6cb636f
 	ClazzID_dialog_updateUnreadCount                 = 0x2bac334d // 2bac334d
+	ClazzID_dialog_toggleDialogFilterTags            = 0xa0cd6d89 // a0cd6d89
+	ClazzID_dialog_getDialogFilterTags               = 0xfaf0fa97 // faf0fa97
+	ClazzID_dialog_setChatWallpaper                  = 0xb551db12 // b551db12
 )

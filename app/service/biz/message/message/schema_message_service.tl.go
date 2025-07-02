@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package message
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,16 +20,24 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLMessageGetUserMessage <--
 type TLMessageGetUserMessage struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int32  `json:"id"`
+}
+
+func (m *TLMessageGetUserMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -64,6 +73,9 @@ func (m *TLMessageGetUserMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -76,6 +88,11 @@ type TLMessageGetUserMessageList struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	IdList  []int32 `json:"id_list"`
+}
+
+func (m *TLMessageGetUserMessageList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -113,6 +130,9 @@ func (m *TLMessageGetUserMessageList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -125,6 +145,11 @@ type TLMessageGetUserMessageListByDataIdList struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	IdList  []int64 `json:"id_list"`
+}
+
+func (m *TLMessageGetUserMessageListByDataIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -162,6 +187,9 @@ func (m *TLMessageGetUserMessageListByDataIdList) Decode(d *bin.Decoder) (err er
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -174,6 +202,11 @@ type TLMessageGetUserMessageListByDataIdUserIdList struct {
 	ClazzID    uint32  `json:"_id"`
 	Id         int64   `json:"id"`
 	UserIdList []int64 `json:"user_id_list"`
+}
+
+func (m *TLMessageGetUserMessageListByDataIdUserIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -211,6 +244,9 @@ func (m *TLMessageGetUserMessageListByDataIdUserIdList) Decode(d *bin.Decoder) (
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -231,6 +267,11 @@ type TLMessageGetHistoryMessages struct {
 	MaxId      int32  `json:"max_id"`
 	MinId      int32  `json:"min_id"`
 	Hash       int64  `json:"hash"`
+}
+
+func (m *TLMessageGetHistoryMessages) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -282,6 +323,9 @@ func (m *TLMessageGetHistoryMessages) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -295,6 +339,11 @@ type TLMessageGetHistoryMessagesCount struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageGetHistoryMessagesCount) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -332,6 +381,9 @@ func (m *TLMessageGetHistoryMessagesCount) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -345,6 +397,11 @@ type TLMessageGetPeerUserMessageId struct {
 	UserId     int64  `json:"user_id"`
 	PeerUserId int64  `json:"peer_user_id"`
 	MsgId      int32  `json:"msg_id"`
+}
+
+func (m *TLMessageGetPeerUserMessageId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -382,6 +439,9 @@ func (m *TLMessageGetPeerUserMessageId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -395,6 +455,11 @@ type TLMessageGetPeerUserMessage struct {
 	UserId     int64  `json:"user_id"`
 	PeerUserId int64  `json:"peer_user_id"`
 	MsgId      int32  `json:"msg_id"`
+}
+
+func (m *TLMessageGetPeerUserMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -432,6 +497,9 @@ func (m *TLMessageGetPeerUserMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -448,6 +516,11 @@ type TLMessageSearchByMediaType struct {
 	MediaType int32  `json:"media_type"`
 	Offset    int32  `json:"offset"`
 	Limit     int32  `json:"limit"`
+}
+
+func (m *TLMessageSearchByMediaType) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -491,6 +564,9 @@ func (m *TLMessageSearchByMediaType) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -507,6 +583,11 @@ type TLMessageSearch struct {
 	Q        string `json:"q"`
 	Offset   int32  `json:"offset"`
 	Limit    int32  `json:"limit"`
+}
+
+func (m *TLMessageSearch) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -550,6 +631,9 @@ func (m *TLMessageSearch) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -564,6 +648,11 @@ type TLMessageSearchGlobal struct {
 	Q       string `json:"q"`
 	Offset  int32  `json:"offset"`
 	Limit   int32  `json:"limit"`
+}
+
+func (m *TLMessageSearchGlobal) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -603,6 +692,9 @@ func (m *TLMessageSearchGlobal) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -616,6 +708,11 @@ type TLMessageSearchByPinned struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageSearchByPinned) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -653,6 +750,9 @@ func (m *TLMessageSearchByPinned) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -667,6 +767,11 @@ type TLMessageGetSearchCounter struct {
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
 	MediaType int32  `json:"media_type"`
+}
+
+func (m *TLMessageGetSearchCounter) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -706,6 +811,9 @@ func (m *TLMessageGetSearchCounter) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -729,6 +837,11 @@ type TLMessageSearchV2 struct {
 	MaxId     int32  `json:"max_id"`
 	MinId     int32  `json:"min_id"`
 	Hash      int64  `json:"hash"`
+}
+
+func (m *TLMessageSearchV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -786,6 +899,9 @@ func (m *TLMessageSearchV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -799,6 +915,11 @@ type TLMessageGetLastTwoPinnedMessageId struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageGetLastTwoPinnedMessageId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -836,6 +957,9 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Decode(d *bin.Decoder) (err error) 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -851,6 +975,11 @@ type TLMessageUpdatePinnedMessageId struct {
 	PeerId   int64    `json:"peer_id"`
 	Id       int32    `json:"id"`
 	Pinned   *tg.Bool `json:"pinned"`
+}
+
+func (m *TLMessageUpdatePinnedMessageId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -895,6 +1024,9 @@ func (m *TLMessageUpdatePinnedMessageId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -908,6 +1040,11 @@ type TLMessageGetPinnedMessageIdList struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageGetPinnedMessageIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -945,6 +1082,9 @@ func (m *TLMessageGetPinnedMessageIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -958,6 +1098,11 @@ type TLMessageUnPinAllMessages struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageUnPinAllMessages) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -995,6 +1140,9 @@ func (m *TLMessageUnPinAllMessages) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1013,6 +1161,11 @@ type TLMessageGetUnreadMentions struct {
 	Limit     int32  `json:"limit"`
 	MinId     int32  `json:"min_id"`
 	MaxInt    int32  `json:"max_int"`
+}
+
+func (m *TLMessageGetUnreadMentions) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1060,6 +1213,9 @@ func (m *TLMessageGetUnreadMentions) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1073,6 +1229,11 @@ type TLMessageGetUnreadMentionsCount struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLMessageGetUnreadMentionsCount) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1110,6 +1271,9 @@ func (m *TLMessageGetUnreadMentionsCount) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1123,7 +1287,12 @@ func (m *TLMessageGetUnreadMentionsCount) Decode(d *bin.Decoder) (err error) {
 
 // VectorMessageBox <--
 type VectorMessageBox struct {
-	Datas []*tg.MessageBox `json:"datas"`
+	Datas []*tg.MessageBox `json:"_datas"`
+}
+
+func (m *VectorMessageBox) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -1142,7 +1311,12 @@ func (m *VectorMessageBox) Decode(d *bin.Decoder) (err error) {
 
 // VectorInt <--
 type VectorInt struct {
-	Datas []int32 `json:"datas"`
+	Datas []int32 `json:"_datas"`
+}
+
+func (m *VectorInt) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

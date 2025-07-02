@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package username
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,15 +20,23 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLUsernameGetAccountUsername <--
 type TLUsernameGetAccountUsername struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUsernameGetAccountUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -61,6 +70,9 @@ func (m *TLUsernameGetAccountUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -73,6 +85,11 @@ type TLUsernameCheckAccountUsername struct {
 	ClazzID  uint32 `json:"_id"`
 	UserId   int64  `json:"user_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameCheckAccountUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -108,6 +125,9 @@ func (m *TLUsernameCheckAccountUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -119,6 +139,11 @@ func (m *TLUsernameCheckAccountUsername) Decode(d *bin.Decoder) (err error) {
 type TLUsernameGetChannelUsername struct {
 	ClazzID   uint32 `json:"_id"`
 	ChannelId int64  `json:"channel_id"`
+}
+
+func (m *TLUsernameGetChannelUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -152,6 +177,9 @@ func (m *TLUsernameGetChannelUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -164,6 +192,11 @@ type TLUsernameCheckChannelUsername struct {
 	ClazzID   uint32 `json:"_id"`
 	ChannelId int64  `json:"channel_id"`
 	Username  string `json:"username"`
+}
+
+func (m *TLUsernameCheckChannelUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -199,6 +232,9 @@ func (m *TLUsernameCheckChannelUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -212,6 +248,11 @@ type TLUsernameUpdateUsernameByPeer struct {
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameUpdateUsernameByPeer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -249,6 +290,9 @@ func (m *TLUsernameUpdateUsernameByPeer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -260,6 +304,11 @@ func (m *TLUsernameUpdateUsernameByPeer) Decode(d *bin.Decoder) (err error) {
 type TLUsernameCheckUsername struct {
 	ClazzID  uint32 `json:"_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameCheckUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -293,6 +342,9 @@ func (m *TLUsernameCheckUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -306,6 +358,11 @@ type TLUsernameUpdateUsername struct {
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameUpdateUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -343,6 +400,9 @@ func (m *TLUsernameUpdateUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -354,6 +414,11 @@ func (m *TLUsernameUpdateUsername) Decode(d *bin.Decoder) (err error) {
 type TLUsernameDeleteUsername struct {
 	ClazzID  uint32 `json:"_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameDeleteUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -387,6 +452,9 @@ func (m *TLUsernameDeleteUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -398,6 +466,11 @@ func (m *TLUsernameDeleteUsername) Decode(d *bin.Decoder) (err error) {
 type TLUsernameResolveUsername struct {
 	ClazzID  uint32 `json:"_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUsernameResolveUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -431,6 +504,9 @@ func (m *TLUsernameResolveUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -442,6 +518,11 @@ func (m *TLUsernameResolveUsername) Decode(d *bin.Decoder) (err error) {
 type TLUsernameGetListByUsernameList struct {
 	ClazzID uint32   `json:"_id"`
 	Names   []string `json:"names"`
+}
+
+func (m *TLUsernameGetListByUsernameList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -476,6 +557,9 @@ func (m *TLUsernameGetListByUsernameList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -488,6 +572,11 @@ type TLUsernameDeleteUsernameByPeer struct {
 	ClazzID  uint32 `json:"_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUsernameDeleteUsernameByPeer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -523,6 +612,9 @@ func (m *TLUsernameDeleteUsernameByPeer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -536,6 +628,11 @@ type TLUsernameSearch struct {
 	Q                string  `json:"q"`
 	ExcludedContacts []int64 `json:"excluded_contacts"`
 	Limit            int32   `json:"limit"`
+}
+
+func (m *TLUsernameSearch) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -577,6 +674,9 @@ func (m *TLUsernameSearch) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -590,7 +690,12 @@ func (m *TLUsernameSearch) Decode(d *bin.Decoder) (err error) {
 
 // VectorUsernameData <--
 type VectorUsernameData struct {
-	Datas []*UsernameData `json:"datas"`
+	Datas []*UsernameData `json:"_datas"`
+}
+
+func (m *VectorUsernameData) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

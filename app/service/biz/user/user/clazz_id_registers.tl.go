@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -19,6 +19,7 @@ import (
 
 func init() {
 	// Constructor
+	iface.RegisterClazzID(0x1835d1c, func() iface.TLObject { return &TLBotInfoData{ClazzID: 0x1835d1c} })              // 0x1835d1c
 	iface.RegisterClazzID(0xb3b1a1df, func() iface.TLObject { return &TLLastSeenData{ClazzID: 0xb3b1a1df} })           // 0xb3b1a1df
 	iface.RegisterClazzID(0x70ea3fa9, func() iface.TLObject { return &TLPeerPeerNotifySettings{ClazzID: 0x70ea3fa9} }) // 0x70ea3fa9
 	iface.RegisterClazzID(0x4adf7bc0, func() iface.TLObject { return &TLUserImportedContacts{ClazzID: 0x4adf7bc0} })   // 0x4adf7bc0
@@ -88,7 +89,7 @@ func init() {
 	iface.RegisterClazzID(0x8191eff9, func() iface.TLObject { return &TLUserGetUserDataListByIdList{ClazzID: 0x8191eff9} })      // 0x8191eff9
 	iface.RegisterClazzID(0x3f09659e, func() iface.TLObject { return &TLUserGetUserDataByToken{ClazzID: 0x3f09659e} })           // 0x3f09659e
 	iface.RegisterClazzID(0x7035b6cd, func() iface.TLObject { return &TLUserSearch{ClazzID: 0x7035b6cd} })                       // 0x7035b6cd
-	iface.RegisterClazzID(0xb9fd39ee, func() iface.TLObject { return &TLUserUpdateBotData{ClazzID: 0xb9fd39ee} })                // 0xb9fd39ee
+	iface.RegisterClazzID(0x60f35d28, func() iface.TLObject { return &TLUserUpdateBotData{ClazzID: 0x60f35d28} })                // 0x60f35d28
 	iface.RegisterClazzID(0x300aba4c, func() iface.TLObject { return &TLUserGetImmutableUserV2{ClazzID: 0x300aba4c} })           // 0x300aba4c
 	iface.RegisterClazzID(0x94f98b28, func() iface.TLObject { return &TLUserGetMutableUsersV2{ClazzID: 0x94f98b28} })            // 0x94f98b28
 	iface.RegisterClazzID(0x4c6eccab, func() iface.TLObject { return &TLUserCreateNewTestUser{ClazzID: 0x4c6eccab} })            // 0x4c6eccab
@@ -102,4 +103,6 @@ func init() {
 	iface.RegisterClazzID(0xfbab83c2, func() iface.TLObject { return &TLUserGetUserIdByPhone{ClazzID: 0xfbab83c2} })             // 0xfbab83c2
 	iface.RegisterClazzID(0xd621f3f0, func() iface.TLObject { return &TLUserSetAuthorizationTTL{ClazzID: 0xd621f3f0} })          // 0xd621f3f0
 	iface.RegisterClazzID(0xde6e493c, func() iface.TLObject { return &TLUserGetAuthorizationTTL{ClazzID: 0xde6e493c} })          // 0xde6e493c
+	iface.RegisterClazzID(0xba08dc99, func() iface.TLObject { return &TLUserUpdatePremium{ClazzID: 0xba08dc99} })                // 0xba08dc99
+	iface.RegisterClazzID(0xd3fc9ca5, func() iface.TLObject { return &TLUserGetBotInfoV2{ClazzID: 0xd3fc9ca5} })                 // 0xd3fc9ca5
 }

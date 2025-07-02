@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package dfs
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLDfsWriteFilePartData <--
 type TLDfsWriteFilePartData struct {
@@ -33,6 +37,11 @@ type TLDfsWriteFilePartData struct {
 	Bytes          []byte `json:"bytes"`
 	Big            bool   `json:"big"`
 	FileTotalParts *int32 `json:"file_total_parts"`
+}
+
+func (m *TLDfsWriteFilePartData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -101,6 +110,9 @@ func (m *TLDfsWriteFilePartData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -113,6 +125,11 @@ type TLDfsUploadPhotoFileV2 struct {
 	ClazzID uint32        `json:"_id"`
 	Creator int64         `json:"creator"`
 	File    *tg.InputFile `json:"file"`
+}
+
+func (m *TLDfsUploadPhotoFileV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -151,6 +168,9 @@ func (m *TLDfsUploadPhotoFileV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -165,6 +185,11 @@ type TLDfsUploadProfilePhotoFileV2 struct {
 	File         *tg.InputFile `json:"file"`
 	Video        *tg.InputFile `json:"video"`
 	VideoStartTs *float64      `json:"video_start_ts"`
+}
+
+func (m *TLDfsUploadProfilePhotoFileV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -245,6 +270,9 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -257,6 +285,11 @@ type TLDfsUploadEncryptedFileV2 struct {
 	ClazzID uint32                 `json:"_id"`
 	Creator int64                  `json:"creator"`
 	File    *tg.InputEncryptedFile `json:"file"`
+}
+
+func (m *TLDfsUploadEncryptedFileV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -295,6 +328,9 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -308,6 +344,11 @@ type TLDfsDownloadFile struct {
 	Location *tg.InputFileLocation `json:"location"`
 	Offset   int64                 `json:"offset"`
 	Limit    int32                 `json:"limit"`
+}
+
+func (m *TLDfsDownloadFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -349,6 +390,9 @@ func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -361,6 +405,11 @@ type TLDfsUploadDocumentFileV2 struct {
 	ClazzID uint32         `json:"_id"`
 	Creator int64          `json:"creator"`
 	Media   *tg.InputMedia `json:"media"`
+}
+
+func (m *TLDfsUploadDocumentFileV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -399,6 +448,9 @@ func (m *TLDfsUploadDocumentFileV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -411,6 +463,11 @@ type TLDfsUploadGifDocumentMedia struct {
 	ClazzID uint32         `json:"_id"`
 	Creator int64          `json:"creator"`
 	Media   *tg.InputMedia `json:"media"`
+}
+
+func (m *TLDfsUploadGifDocumentMedia) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -449,6 +506,9 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -461,6 +521,11 @@ type TLDfsUploadMp4DocumentMedia struct {
 	ClazzID uint32         `json:"_id"`
 	Creator int64          `json:"creator"`
 	Media   *tg.InputMedia `json:"media"`
+}
+
+func (m *TLDfsUploadMp4DocumentMedia) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -499,6 +564,9 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -513,6 +581,11 @@ type TLDfsUploadWallPaperFile struct {
 	File     *tg.InputFile `json:"file"`
 	MimeType string        `json:"mime_type"`
 	Admin    *tg.Bool      `json:"admin"`
+}
+
+func (m *TLDfsUploadWallPaperFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -559,6 +632,9 @@ func (m *TLDfsUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -574,6 +650,11 @@ type TLDfsUploadThemeFile struct {
 	Thumb    *tg.InputFile `json:"thumb"`
 	MimeType string        `json:"mime_type"`
 	FileName string        `json:"file_name"`
+}
+
+func (m *TLDfsUploadThemeFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -642,6 +723,9 @@ func (m *TLDfsUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -656,6 +740,11 @@ type TLDfsUploadRingtoneFile struct {
 	File     *tg.InputFile `json:"file"`
 	MimeType string        `json:"mime_type"`
 	FileName string        `json:"file_name"`
+}
+
+func (m *TLDfsUploadRingtoneFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -699,6 +788,9 @@ func (m *TLDfsUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -711,6 +803,11 @@ type TLDfsUploadedProfilePhoto struct {
 	ClazzID uint32 `json:"_id"`
 	Creator int64  `json:"creator"`
 	PhotoId int64  `json:"photo_id"`
+}
+
+func (m *TLDfsUploadedProfilePhoto) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -746,6 +843,9 @@ func (m *TLDfsUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

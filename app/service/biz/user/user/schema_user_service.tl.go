@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package user
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,15 +20,23 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLUserGetLastSeens <--
 type TLUserGetLastSeens struct {
 	ClazzID uint32  `json:"_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLUserGetLastSeens) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -62,6 +71,9 @@ func (m *TLUserGetLastSeens) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -75,6 +87,11 @@ type TLUserUpdateLastSeen struct {
 	Id         int64  `json:"id"`
 	LastSeenAt int64  `json:"last_seen_at"`
 	Expires    int32  `json:"expires"`
+}
+
+func (m *TLUserUpdateLastSeen) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -112,6 +129,9 @@ func (m *TLUserUpdateLastSeen) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -123,6 +143,11 @@ func (m *TLUserUpdateLastSeen) Decode(d *bin.Decoder) (err error) {
 type TLUserGetLastSeen struct {
 	ClazzID uint32 `json:"_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserGetLastSeen) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -156,6 +181,9 @@ func (m *TLUserGetLastSeen) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -169,6 +197,11 @@ type TLUserGetImmutableUser struct {
 	Id       int64   `json:"id"`
 	Privacy  bool    `json:"privacy"`
 	Contacts []int64 `json:"contacts"`
+}
+
+func (m *TLUserGetImmutableUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -225,6 +258,9 @@ func (m *TLUserGetImmutableUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -237,6 +273,11 @@ type TLUserGetMutableUsers struct {
 	ClazzID uint32  `json:"_id"`
 	Id      []int64 `json:"id"`
 	To      []int64 `json:"to"`
+}
+
+func (m *TLUserGetMutableUsers) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -275,6 +316,9 @@ func (m *TLUserGetMutableUsers) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -286,6 +330,11 @@ func (m *TLUserGetMutableUsers) Decode(d *bin.Decoder) (err error) {
 type TLUserGetImmutableUserByPhone struct {
 	ClazzID uint32 `json:"_id"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserGetImmutableUserByPhone) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -319,6 +368,9 @@ func (m *TLUserGetImmutableUserByPhone) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -330,6 +382,11 @@ func (m *TLUserGetImmutableUserByPhone) Decode(d *bin.Decoder) (err error) {
 type TLUserGetImmutableUserByToken struct {
 	ClazzID uint32 `json:"_id"`
 	Token   string `json:"token"`
+}
+
+func (m *TLUserGetImmutableUserByToken) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -363,6 +420,9 @@ func (m *TLUserGetImmutableUserByToken) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -375,6 +435,11 @@ type TLUserSetAccountDaysTTL struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Ttl     int32  `json:"ttl"`
+}
+
+func (m *TLUserSetAccountDaysTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -410,6 +475,9 @@ func (m *TLUserSetAccountDaysTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -421,6 +489,11 @@ func (m *TLUserSetAccountDaysTTL) Decode(d *bin.Decoder) (err error) {
 type TLUserGetAccountDaysTTL struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetAccountDaysTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -454,6 +527,9 @@ func (m *TLUserGetAccountDaysTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -467,6 +543,11 @@ type TLUserGetNotifySettings struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUserGetNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -504,6 +585,9 @@ func (m *TLUserGetNotifySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -516,6 +600,11 @@ type TLUserGetNotifySettingsList struct {
 	ClazzID uint32         `json:"_id"`
 	UserId  int64          `json:"user_id"`
 	Peers   []*tg.PeerUtil `json:"peers"`
+}
+
+func (m *TLUserGetNotifySettingsList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -565,6 +654,9 @@ func (m *TLUserGetNotifySettingsList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -579,6 +671,11 @@ type TLUserSetNotifySettings struct {
 	PeerType int32                  `json:"peer_type"`
 	PeerId   int64                  `json:"peer_id"`
 	Settings *tg.PeerNotifySettings `json:"settings"`
+}
+
+func (m *TLUserSetNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -621,6 +718,9 @@ func (m *TLUserSetNotifySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -632,6 +732,11 @@ func (m *TLUserSetNotifySettings) Decode(d *bin.Decoder) (err error) {
 type TLUserResetNotifySettings struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserResetNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -665,6 +770,9 @@ func (m *TLUserResetNotifySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -676,6 +784,11 @@ func (m *TLUserResetNotifySettings) Decode(d *bin.Decoder) (err error) {
 type TLUserGetAllNotifySettings struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetAllNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -709,6 +822,9 @@ func (m *TLUserGetAllNotifySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -720,6 +836,11 @@ func (m *TLUserGetAllNotifySettings) Decode(d *bin.Decoder) (err error) {
 type TLUserGetGlobalPrivacySettings struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetGlobalPrivacySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -753,6 +874,9 @@ func (m *TLUserGetGlobalPrivacySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -765,6 +889,11 @@ type TLUserSetGlobalPrivacySettings struct {
 	ClazzID  uint32                    `json:"_id"`
 	UserId   int64                     `json:"user_id"`
 	Settings *tg.GlobalPrivacySettings `json:"settings"`
+}
+
+func (m *TLUserSetGlobalPrivacySettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -803,6 +932,9 @@ func (m *TLUserSetGlobalPrivacySettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -815,6 +947,11 @@ type TLUserGetPrivacy struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	KeyType int32  `json:"key_type"`
+}
+
+func (m *TLUserGetPrivacy) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -850,6 +987,9 @@ func (m *TLUserGetPrivacy) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -863,6 +1003,11 @@ type TLUserSetPrivacy struct {
 	UserId  int64             `json:"user_id"`
 	KeyType int32             `json:"key_type"`
 	Rules   []*tg.PrivacyRule `json:"rules"`
+}
+
+func (m *TLUserSetPrivacy) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -914,6 +1059,9 @@ func (m *TLUserSetPrivacy) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -927,6 +1075,11 @@ type TLUserCheckPrivacy struct {
 	UserId  int64  `json:"user_id"`
 	KeyType int32  `json:"key_type"`
 	PeerId  int64  `json:"peer_id"`
+}
+
+func (m *TLUserCheckPrivacy) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -976,6 +1129,9 @@ func (m *TLUserCheckPrivacy) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -990,6 +1146,11 @@ type TLUserAddPeerSettings struct {
 	PeerType int32            `json:"peer_type"`
 	PeerId   int64            `json:"peer_id"`
 	Settings *tg.PeerSettings `json:"settings"`
+}
+
+func (m *TLUserAddPeerSettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1032,6 +1193,9 @@ func (m *TLUserAddPeerSettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1045,6 +1209,11 @@ type TLUserGetPeerSettings struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUserGetPeerSettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1082,6 +1251,9 @@ func (m *TLUserGetPeerSettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1095,6 +1267,11 @@ type TLUserDeletePeerSettings struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUserDeletePeerSettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1132,6 +1309,9 @@ func (m *TLUserDeletePeerSettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1144,6 +1324,11 @@ type TLUserChangePhone struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserChangePhone) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1179,6 +1364,9 @@ func (m *TLUserChangePhone) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1194,6 +1382,11 @@ type TLUserCreateNewUser struct {
 	CountryCode string `json:"country_code"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
+}
+
+func (m *TLUserCreateNewUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1235,6 +1428,9 @@ func (m *TLUserCreateNewUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1248,6 +1444,11 @@ type TLUserDeleteUser struct {
 	UserId  int64  `json:"user_id"`
 	Reason  string `json:"reason"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserDeleteUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1285,6 +1486,9 @@ func (m *TLUserDeleteUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1298,6 +1502,11 @@ type TLUserBlockPeer struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUserBlockPeer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1335,6 +1544,9 @@ func (m *TLUserBlockPeer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1348,6 +1560,11 @@ type TLUserUnBlockPeer struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLUserUnBlockPeer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1385,6 +1602,9 @@ func (m *TLUserUnBlockPeer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1397,6 +1617,11 @@ type TLUserBlockedByUser struct {
 	ClazzID    uint32 `json:"_id"`
 	UserId     int64  `json:"user_id"`
 	PeerUserId int64  `json:"peer_user_id"`
+}
+
+func (m *TLUserBlockedByUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1432,6 +1657,9 @@ func (m *TLUserBlockedByUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1444,6 +1672,11 @@ type TLUserIsBlockedByUser struct {
 	ClazzID    uint32 `json:"_id"`
 	UserId     int64  `json:"user_id"`
 	PeerUserId int64  `json:"peer_user_id"`
+}
+
+func (m *TLUserIsBlockedByUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1479,6 +1712,9 @@ func (m *TLUserIsBlockedByUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1491,6 +1727,11 @@ type TLUserCheckBlockUserList struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLUserCheckBlockUserList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1528,6 +1769,9 @@ func (m *TLUserCheckBlockUserList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1541,6 +1785,11 @@ type TLUserGetBlockedList struct {
 	UserId  int64  `json:"user_id"`
 	Offset  int32  `json:"offset"`
 	Limit   int32  `json:"limit"`
+}
+
+func (m *TLUserGetBlockedList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1578,6 +1827,9 @@ func (m *TLUserGetBlockedList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1589,6 +1841,11 @@ func (m *TLUserGetBlockedList) Decode(d *bin.Decoder) (err error) {
 type TLUserGetContactSignUpNotification struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetContactSignUpNotification) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1622,6 +1879,9 @@ func (m *TLUserGetContactSignUpNotification) Decode(d *bin.Decoder) (err error) 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1634,6 +1894,11 @@ type TLUserSetContactSignUpNotification struct {
 	ClazzID uint32   `json:"_id"`
 	UserId  int64    `json:"user_id"`
 	Silent  *tg.Bool `json:"silent"`
+}
+
+func (m *TLUserSetContactSignUpNotification) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1672,6 +1937,9 @@ func (m *TLUserSetContactSignUpNotification) Decode(d *bin.Decoder) (err error) 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1683,6 +1951,11 @@ func (m *TLUserSetContactSignUpNotification) Decode(d *bin.Decoder) (err error) 
 type TLUserGetContentSettings struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetContentSettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1716,6 +1989,9 @@ func (m *TLUserGetContentSettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1728,6 +2004,11 @@ type TLUserSetContentSettings struct {
 	ClazzID          uint32 `json:"_id"`
 	UserId           int64  `json:"user_id"`
 	SensitiveEnabled bool   `json:"sensitive_enabled"`
+}
+
+func (m *TLUserSetContentSettings) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1780,6 +2061,9 @@ func (m *TLUserSetContentSettings) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1792,6 +2076,11 @@ type TLUserDeleteContact struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserDeleteContact) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1827,6 +2116,9 @@ func (m *TLUserDeleteContact) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1838,6 +2130,11 @@ func (m *TLUserDeleteContact) Decode(d *bin.Decoder) (err error) {
 type TLUserGetContactList struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetContactList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1871,6 +2168,9 @@ func (m *TLUserGetContactList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1882,6 +2182,11 @@ func (m *TLUserGetContactList) Decode(d *bin.Decoder) (err error) {
 type TLUserGetContactIdList struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetContactIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1915,6 +2220,9 @@ func (m *TLUserGetContactIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1927,6 +2235,11 @@ type TLUserGetContact struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserGetContact) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1962,6 +2275,9 @@ func (m *TLUserGetContact) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1978,6 +2294,11 @@ type TLUserAddContact struct {
 	FirstName                string   `json:"first_name"`
 	LastName                 string   `json:"last_name"`
 	Phone                    string   `json:"phone"`
+}
+
+func (m *TLUserAddContact) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2025,6 +2346,9 @@ func (m *TLUserAddContact) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2037,6 +2361,11 @@ type TLUserCheckContact struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserCheckContact) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2072,6 +2401,9 @@ func (m *TLUserCheckContact) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2083,6 +2415,11 @@ func (m *TLUserCheckContact) Decode(d *bin.Decoder) (err error) {
 type TLUserGetImportersByPhone struct {
 	ClazzID uint32 `json:"_id"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserGetImportersByPhone) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2116,6 +2453,9 @@ func (m *TLUserGetImportersByPhone) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2127,6 +2467,11 @@ func (m *TLUserGetImportersByPhone) Decode(d *bin.Decoder) (err error) {
 type TLUserDeleteImportersByPhone struct {
 	ClazzID uint32 `json:"_id"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserDeleteImportersByPhone) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2160,6 +2505,9 @@ func (m *TLUserDeleteImportersByPhone) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2172,6 +2520,11 @@ type TLUserImportContacts struct {
 	ClazzID  uint32             `json:"_id"`
 	UserId   int64              `json:"user_id"`
 	Contacts []*tg.InputContact `json:"contacts"`
+}
+
+func (m *TLUserImportContacts) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2221,6 +2574,9 @@ func (m *TLUserImportContacts) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2232,6 +2588,11 @@ func (m *TLUserImportContacts) Decode(d *bin.Decoder) (err error) {
 type TLUserGetCountryCode struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetCountryCode) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2265,6 +2626,9 @@ func (m *TLUserGetCountryCode) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2277,6 +2641,11 @@ type TLUserUpdateAbout struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	About   string `json:"about"`
+}
+
+func (m *TLUserUpdateAbout) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2312,6 +2681,9 @@ func (m *TLUserUpdateAbout) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2325,6 +2697,11 @@ type TLUserUpdateFirstAndLastName struct {
 	UserId    int64  `json:"user_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+}
+
+func (m *TLUserUpdateFirstAndLastName) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2362,6 +2739,9 @@ func (m *TLUserUpdateFirstAndLastName) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2374,6 +2754,11 @@ type TLUserUpdateVerified struct {
 	ClazzID  uint32   `json:"_id"`
 	UserId   int64    `json:"user_id"`
 	Verified *tg.Bool `json:"verified"`
+}
+
+func (m *TLUserUpdateVerified) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2412,6 +2797,9 @@ func (m *TLUserUpdateVerified) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2424,6 +2812,11 @@ type TLUserUpdateUsername struct {
 	ClazzID  uint32 `json:"_id"`
 	UserId   int64  `json:"user_id"`
 	Username string `json:"username"`
+}
+
+func (m *TLUserUpdateUsername) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2459,6 +2852,9 @@ func (m *TLUserUpdateUsername) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2471,6 +2867,11 @@ type TLUserUpdateProfilePhoto struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserUpdateProfilePhoto) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2506,6 +2907,9 @@ func (m *TLUserUpdateProfilePhoto) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2518,6 +2922,11 @@ type TLUserDeleteProfilePhotos struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLUserDeleteProfilePhotos) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2555,6 +2964,9 @@ func (m *TLUserDeleteProfilePhotos) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2566,6 +2978,11 @@ func (m *TLUserDeleteProfilePhotos) Decode(d *bin.Decoder) (err error) {
 type TLUserGetProfilePhotos struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetProfilePhotos) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2599,6 +3016,9 @@ func (m *TLUserGetProfilePhotos) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2612,6 +3032,11 @@ type TLUserSetBotCommands struct {
 	UserId   int64            `json:"user_id"`
 	BotId    int64            `json:"bot_id"`
 	Commands []*tg.BotCommand `json:"commands"`
+}
+
+func (m *TLUserSetBotCommands) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2663,6 +3088,9 @@ func (m *TLUserSetBotCommands) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2674,6 +3102,11 @@ func (m *TLUserSetBotCommands) Decode(d *bin.Decoder) (err error) {
 type TLUserIsBot struct {
 	ClazzID uint32 `json:"_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLUserIsBot) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2707,6 +3140,9 @@ func (m *TLUserIsBot) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2718,6 +3154,11 @@ func (m *TLUserIsBot) Decode(d *bin.Decoder) (err error) {
 type TLUserGetBotInfo struct {
 	ClazzID uint32 `json:"_id"`
 	BotId   int64  `json:"bot_id"`
+}
+
+func (m *TLUserGetBotInfo) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2751,6 +3192,9 @@ func (m *TLUserGetBotInfo) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2762,6 +3206,11 @@ func (m *TLUserGetBotInfo) Decode(d *bin.Decoder) (err error) {
 type TLUserCheckBots struct {
 	ClazzID uint32  `json:"_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLUserCheckBots) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2796,6 +3245,9 @@ func (m *TLUserCheckBots) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2808,6 +3260,11 @@ type TLUserGetFullUser struct {
 	ClazzID    uint32 `json:"_id"`
 	SelfUserId int64  `json:"self_user_id"`
 	Id         int64  `json:"id"`
+}
+
+func (m *TLUserGetFullUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2843,6 +3300,9 @@ func (m *TLUserGetFullUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2856,6 +3316,11 @@ type TLUserUpdateEmojiStatus struct {
 	UserId                int64  `json:"user_id"`
 	EmojiStatusDocumentId int64  `json:"emoji_status_document_id"`
 	EmojiStatusUntil      int32  `json:"emoji_status_until"`
+}
+
+func (m *TLUserUpdateEmojiStatus) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2893,6 +3358,9 @@ func (m *TLUserUpdateEmojiStatus) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2904,6 +3372,11 @@ func (m *TLUserUpdateEmojiStatus) Decode(d *bin.Decoder) (err error) {
 type TLUserGetUserDataById struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetUserDataById) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2937,6 +3410,9 @@ func (m *TLUserGetUserDataById) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2948,6 +3424,11 @@ func (m *TLUserGetUserDataById) Decode(d *bin.Decoder) (err error) {
 type TLUserGetUserDataListByIdList struct {
 	ClazzID    uint32  `json:"_id"`
 	UserIdList []int64 `json:"user_id_list"`
+}
+
+func (m *TLUserGetUserDataListByIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2982,6 +3463,9 @@ func (m *TLUserGetUserDataListByIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2993,6 +3477,11 @@ func (m *TLUserGetUserDataListByIdList) Decode(d *bin.Decoder) (err error) {
 type TLUserGetUserDataByToken struct {
 	ClazzID uint32 `json:"_id"`
 	Token   string `json:"token"`
+}
+
+func (m *TLUserGetUserDataByToken) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3026,6 +3515,9 @@ func (m *TLUserGetUserDataByToken) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3040,6 +3532,11 @@ type TLUserSearch struct {
 	ExcludedContacts []int64 `json:"excluded_contacts"`
 	Offset           int64   `json:"offset"`
 	Limit            int32   `json:"limit"`
+}
+
+func (m *TLUserSearch) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3083,6 +3580,9 @@ func (m *TLUserSearch) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3098,14 +3598,20 @@ type TLUserUpdateBotData struct {
 	BotNochats           *tg.Bool `json:"bot_nochats"`
 	BotInlineGeo         *tg.Bool `json:"bot_inline_geo"`
 	BotAttachMenu        *tg.Bool `json:"bot_attach_menu"`
-	BotInlinePlaceholder *tg.Bool `json:"bot_inline_placeholder"`
+	BotInlinePlaceholder *string  `json:"bot_inline_placeholder"`
+	BotHasMainApp        *tg.Bool `json:"bot_has_main_app"`
+}
+
+func (m *TLUserUpdateBotData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLUserUpdateBotData) Encode(x *bin.Encoder, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xb9fd39ee: func() error {
-			x.PutClazzID(0xb9fd39ee)
+		0x60f35d28: func() error {
+			x.PutClazzID(0x60f35d28)
 
 			// set flags
 			var getFlags = func() uint32 {
@@ -3125,6 +3631,9 @@ func (m *TLUserUpdateBotData) Encode(x *bin.Encoder, layer int32) error {
 				}
 				if m.BotInlinePlaceholder != nil {
 					flags |= 1 << 19
+				}
+				if m.BotHasMainApp != nil {
+					flags |= 1 << 13
 				}
 
 				return flags
@@ -3151,7 +3660,11 @@ func (m *TLUserUpdateBotData) Encode(x *bin.Encoder, layer int32) error {
 			}
 
 			if m.BotInlinePlaceholder != nil {
-				_ = m.BotInlinePlaceholder.Encode(x, layer)
+				x.PutString(*m.BotInlinePlaceholder)
+			}
+
+			if m.BotHasMainApp != nil {
+				_ = m.BotHasMainApp.Encode(x, layer)
 			}
 
 			return nil
@@ -3170,7 +3683,7 @@ func (m *TLUserUpdateBotData) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLUserUpdateBotData) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
-		0xb9fd39ee: func() (err error) {
+		0x60f35d28: func() (err error) {
 			flags, _ := d.Uint32()
 			_ = flags
 			m.BotId, err = d.Int64()
@@ -3195,15 +3708,23 @@ func (m *TLUserUpdateBotData) Decode(d *bin.Decoder) (err error) {
 				m.BotAttachMenu = m6
 			}
 			if (flags & (1 << 19)) != 0 {
-				m7 := &tg.Bool{}
-				_ = m7.Decode(d)
-				m.BotInlinePlaceholder = m7
+				m.BotInlinePlaceholder = new(string)
+				*m.BotInlinePlaceholder, err = d.String()
+			}
+
+			if (flags & (1 << 13)) != 0 {
+				m8 := &tg.Bool{}
+				_ = m8.Decode(d)
+				m.BotHasMainApp = m8
 			}
 
 			return nil
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3218,6 +3739,11 @@ type TLUserGetImmutableUserV2 struct {
 	Privacy bool    `json:"privacy"`
 	HasTo   bool    `json:"has_to"`
 	To      []int64 `json:"to"`
+}
+
+func (m *TLUserGetImmutableUserV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3285,6 +3811,9 @@ func (m *TLUserGetImmutableUserV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3299,6 +3828,11 @@ type TLUserGetMutableUsersV2 struct {
 	Privacy bool    `json:"privacy"`
 	HasTo   bool    `json:"has_to"`
 	To      []int64 `json:"to"`
+}
+
+func (m *TLUserGetMutableUsersV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3370,6 +3904,9 @@ func (m *TLUserGetMutableUsersV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3383,6 +3920,11 @@ type TLUserCreateNewTestUser struct {
 	SecretKeyId int64  `json:"secret_key_id"`
 	MinId       int64  `json:"min_id"`
 	MaxId       int64  `json:"max_id"`
+}
+
+func (m *TLUserCreateNewTestUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3420,6 +3962,9 @@ func (m *TLUserCreateNewTestUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3432,6 +3977,11 @@ type TLUserEditCloseFriends struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLUserEditCloseFriends) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3469,6 +4019,9 @@ func (m *TLUserEditCloseFriends) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3481,6 +4034,11 @@ type TLUserSetStoriesMaxId struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int32  `json:"id"`
+}
+
+func (m *TLUserSetStoriesMaxId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3516,6 +4074,9 @@ func (m *TLUserSetStoriesMaxId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3530,6 +4091,11 @@ type TLUserSetColor struct {
 	ForProfile        bool   `json:"for_profile"`
 	Color             int32  `json:"color"`
 	BackgroundEmojiId int64  `json:"background_emoji_id"`
+}
+
+func (m *TLUserSetColor) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3586,6 +4152,9 @@ func (m *TLUserSetColor) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3598,6 +4167,11 @@ type TLUserUpdateBirthday struct {
 	ClazzID  uint32       `json:"_id"`
 	UserId   int64        `json:"user_id"`
 	Birthday *tg.Birthday `json:"birthday"`
+}
+
+func (m *TLUserUpdateBirthday) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3655,6 +4229,9 @@ func (m *TLUserUpdateBirthday) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3666,6 +4243,11 @@ func (m *TLUserUpdateBirthday) Decode(d *bin.Decoder) (err error) {
 type TLUserGetBirthdays struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetBirthdays) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3699,6 +4281,9 @@ func (m *TLUserGetBirthdays) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3712,6 +4297,11 @@ type TLUserSetStoriesHidden struct {
 	UserId  int64    `json:"user_id"`
 	Id      int64    `json:"id"`
 	Hidden  *tg.Bool `json:"hidden"`
+}
+
+func (m *TLUserSetStoriesHidden) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3752,6 +4342,9 @@ func (m *TLUserSetStoriesHidden) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3764,6 +4357,11 @@ type TLUserUpdatePersonalChannel struct {
 	ClazzID   uint32 `json:"_id"`
 	UserId    int64  `json:"user_id"`
 	ChannelId int64  `json:"channel_id"`
+}
+
+func (m *TLUserUpdatePersonalChannel) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3799,6 +4397,9 @@ func (m *TLUserUpdatePersonalChannel) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3810,6 +4411,11 @@ func (m *TLUserUpdatePersonalChannel) Decode(d *bin.Decoder) (err error) {
 type TLUserGetUserIdByPhone struct {
 	ClazzID uint32 `json:"_id"`
 	Phone   string `json:"phone"`
+}
+
+func (m *TLUserGetUserIdByPhone) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3843,6 +4449,9 @@ func (m *TLUserGetUserIdByPhone) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3855,6 +4464,11 @@ type TLUserSetAuthorizationTTL struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Ttl     int32  `json:"ttl"`
+}
+
+func (m *TLUserSetAuthorizationTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3890,6 +4504,9 @@ func (m *TLUserSetAuthorizationTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3901,6 +4518,11 @@ func (m *TLUserSetAuthorizationTTL) Decode(d *bin.Decoder) (err error) {
 type TLUserGetAuthorizationTTL struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLUserGetAuthorizationTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -3934,6 +4556,144 @@ func (m *TLUserGetAuthorizationTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLUserUpdatePremium <--
+type TLUserUpdatePremium struct {
+	ClazzID uint32   `json:"_id"`
+	UserId  int64    `json:"user_id"`
+	Premium *tg.Bool `json:"premium"`
+	Months  *int32   `json:"months"`
+}
+
+func (m *TLUserUpdatePremium) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLUserUpdatePremium) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xba08dc99: func() error {
+			x.PutClazzID(0xba08dc99)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.Months != nil {
+					flags |= 1 << 1
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
+			x.PutInt64(m.UserId)
+			_ = m.Premium.Encode(x, layer)
+			if m.Months != nil {
+				x.PutInt32(*m.Months)
+			}
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_user_updatePremium, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_user_updatePremium, layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserUpdatePremium) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0xba08dc99: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
+			m.UserId, err = d.Int64()
+
+			m3 := &tg.Bool{}
+			_ = m3.Decode(d)
+			m.Premium = m3
+
+			if (flags & (1 << 1)) != 0 {
+				m.Months = new(int32)
+				*m.Months, err = d.Int32()
+			}
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLUserGetBotInfoV2 <--
+type TLUserGetBotInfoV2 struct {
+	ClazzID uint32 `json:"_id"`
+	BotId   int64  `json:"bot_id"`
+}
+
+func (m *TLUserGetBotInfoV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLUserGetBotInfoV2) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xd3fc9ca5: func() error {
+			x.PutClazzID(0xd3fc9ca5)
+
+			x.PutInt64(m.BotId)
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_user_getBotInfoV2, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_user_getBotInfoV2, layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserGetBotInfoV2) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0xd3fc9ca5: func() (err error) {
+			m.BotId, err = d.Int64()
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -3947,7 +4707,12 @@ func (m *TLUserGetAuthorizationTTL) Decode(d *bin.Decoder) (err error) {
 
 // VectorLastSeenData <--
 type VectorLastSeenData struct {
-	Datas []*LastSeenData `json:"datas"`
+	Datas []*LastSeenData `json:"_datas"`
+}
+
+func (m *VectorLastSeenData) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -3966,7 +4731,12 @@ func (m *VectorLastSeenData) Decode(d *bin.Decoder) (err error) {
 
 // VectorImmutableUser <--
 type VectorImmutableUser struct {
-	Datas []*tg.ImmutableUser `json:"datas"`
+	Datas []*tg.ImmutableUser `json:"_datas"`
+}
+
+func (m *VectorImmutableUser) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -3985,7 +4755,12 @@ func (m *VectorImmutableUser) Decode(d *bin.Decoder) (err error) {
 
 // VectorPeerPeerNotifySettings <--
 type VectorPeerPeerNotifySettings struct {
-	Datas []*PeerPeerNotifySettings `json:"datas"`
+	Datas []*PeerPeerNotifySettings `json:"_datas"`
+}
+
+func (m *VectorPeerPeerNotifySettings) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4004,7 +4779,12 @@ func (m *VectorPeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
 
 // VectorPrivacyRule <--
 type VectorPrivacyRule struct {
-	Datas []*tg.PrivacyRule `json:"datas"`
+	Datas []*tg.PrivacyRule `json:"_datas"`
+}
+
+func (m *VectorPrivacyRule) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4023,7 +4803,12 @@ func (m *VectorPrivacyRule) Decode(d *bin.Decoder) (err error) {
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4042,7 +4827,12 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorPeerBlocked <--
 type VectorPeerBlocked struct {
-	Datas []*tg.PeerBlocked `json:"datas"`
+	Datas []*tg.PeerBlocked `json:"_datas"`
+}
+
+func (m *VectorPeerBlocked) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4061,7 +4851,12 @@ func (m *VectorPeerBlocked) Decode(d *bin.Decoder) (err error) {
 
 // VectorContactData <--
 type VectorContactData struct {
-	Datas []*tg.ContactData `json:"datas"`
+	Datas []*tg.ContactData `json:"_datas"`
+}
+
+func (m *VectorContactData) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4080,7 +4875,12 @@ func (m *VectorContactData) Decode(d *bin.Decoder) (err error) {
 
 // VectorInputContact <--
 type VectorInputContact struct {
-	Datas []*tg.InputContact `json:"datas"`
+	Datas []*tg.InputContact `json:"_datas"`
+}
+
+func (m *VectorInputContact) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4099,7 +4899,12 @@ func (m *VectorInputContact) Decode(d *bin.Decoder) (err error) {
 
 // VectorUserData <--
 type VectorUserData struct {
-	Datas []*tg.UserData `json:"datas"`
+	Datas []*tg.UserData `json:"_datas"`
+}
+
+func (m *VectorUserData) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4118,7 +4923,12 @@ func (m *VectorUserData) Decode(d *bin.Decoder) (err error) {
 
 // VectorContactBirthday <--
 type VectorContactBirthday struct {
-	Datas []*tg.ContactBirthday `json:"datas"`
+	Datas []*tg.ContactBirthday `json:"_datas"`
+}
+
+func (m *VectorContactBirthday) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -4215,4 +5025,6 @@ type RPCUser interface {
 	UserGetUserIdByPhone(ctx context.Context, in *TLUserGetUserIdByPhone) (*tg.Int64, error)
 	UserSetAuthorizationTTL(ctx context.Context, in *TLUserSetAuthorizationTTL) (*tg.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL) (*tg.AccountDaysTTL, error)
+	UserUpdatePremium(ctx context.Context, in *TLUserUpdatePremium) (*tg.Bool, error)
+	UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotInfoV2) (*BotInfoData, error)
 }

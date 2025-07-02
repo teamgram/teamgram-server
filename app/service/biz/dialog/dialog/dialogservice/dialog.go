@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -286,6 +289,27 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"dialog.toggleDialogFilterTags": kitex.NewMethodInfo(
+		toggleDialogFilterTagsHandler,
+		newToggleDialogFilterTagsArgs,
+		newToggleDialogFilterTagsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"dialog.getDialogFilterTags": kitex.NewMethodInfo(
+		getDialogFilterTagsHandler,
+		newGetDialogFilterTagsArgs,
+		newGetDialogFilterTagsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"dialog.setChatWallpaper": kitex.NewMethodInfo(
+		setChatWallpaperHandler,
+		newSetChatWallpaperArgs,
+		newSetChatWallpaperResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -293,6 +317,12 @@ var (
 	dialogServiceServiceInfoForClient       = NewServiceInfoForClient()
 	dialogServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCDialog", dialogServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCDialog", dialogServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCDialog", dialogServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {
@@ -318,6 +348,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -5013,6 +5045,384 @@ func (p *UpdateUnreadCountResult) GetResult() interface{} {
 	return p.Success
 }
 
+func toggleDialogFilterTagsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ToggleDialogFilterTagsArgs)
+	realResult := result.(*ToggleDialogFilterTagsResult)
+	success, err := handler.(dialog.RPCDialog).DialogToggleDialogFilterTags(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newToggleDialogFilterTagsArgs() interface{} {
+	return &ToggleDialogFilterTagsArgs{}
+}
+
+func newToggleDialogFilterTagsResult() interface{} {
+	return &ToggleDialogFilterTagsResult{}
+}
+
+type ToggleDialogFilterTagsArgs struct {
+	Req *dialog.TLDialogToggleDialogFilterTags
+}
+
+func (p *ToggleDialogFilterTagsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ToggleDialogFilterTagsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ToggleDialogFilterTagsArgs) Unmarshal(in []byte) error {
+	msg := new(dialog.TLDialogToggleDialogFilterTags)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ToggleDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ToggleDialogFilterTagsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ToggleDialogFilterTagsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dialog.TLDialogToggleDialogFilterTags)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var ToggleDialogFilterTagsArgs_Req_DEFAULT *dialog.TLDialogToggleDialogFilterTags
+
+func (p *ToggleDialogFilterTagsArgs) GetReq() *dialog.TLDialogToggleDialogFilterTags {
+	if !p.IsSetReq() {
+		return ToggleDialogFilterTagsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ToggleDialogFilterTagsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ToggleDialogFilterTagsResult struct {
+	Success *tg.Bool
+}
+
+var ToggleDialogFilterTagsResult_Success_DEFAULT *tg.Bool
+
+func (p *ToggleDialogFilterTagsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ToggleDialogFilterTagsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ToggleDialogFilterTagsResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ToggleDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ToggleDialogFilterTagsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ToggleDialogFilterTagsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ToggleDialogFilterTagsResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return ToggleDialogFilterTagsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ToggleDialogFilterTagsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *ToggleDialogFilterTagsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ToggleDialogFilterTagsResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getDialogFilterTagsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetDialogFilterTagsArgs)
+	realResult := result.(*GetDialogFilterTagsResult)
+	success, err := handler.(dialog.RPCDialog).DialogGetDialogFilterTags(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetDialogFilterTagsArgs() interface{} {
+	return &GetDialogFilterTagsArgs{}
+}
+
+func newGetDialogFilterTagsResult() interface{} {
+	return &GetDialogFilterTagsResult{}
+}
+
+type GetDialogFilterTagsArgs struct {
+	Req *dialog.TLDialogGetDialogFilterTags
+}
+
+func (p *GetDialogFilterTagsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetDialogFilterTagsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetDialogFilterTagsArgs) Unmarshal(in []byte) error {
+	msg := new(dialog.TLDialogGetDialogFilterTags)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetDialogFilterTagsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetDialogFilterTagsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetDialogFilterTagsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dialog.TLDialogGetDialogFilterTags)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var GetDialogFilterTagsArgs_Req_DEFAULT *dialog.TLDialogGetDialogFilterTags
+
+func (p *GetDialogFilterTagsArgs) GetReq() *dialog.TLDialogGetDialogFilterTags {
+	if !p.IsSetReq() {
+		return GetDialogFilterTagsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetDialogFilterTagsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetDialogFilterTagsResult struct {
+	Success *tg.Bool
+}
+
+var GetDialogFilterTagsResult_Success_DEFAULT *tg.Bool
+
+func (p *GetDialogFilterTagsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetDialogFilterTagsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetDialogFilterTagsResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogFilterTagsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetDialogFilterTagsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetDialogFilterTagsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogFilterTagsResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return GetDialogFilterTagsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetDialogFilterTagsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *GetDialogFilterTagsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetDialogFilterTagsResult) GetResult() interface{} {
+	return p.Success
+}
+
+func setChatWallpaperHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SetChatWallpaperArgs)
+	realResult := result.(*SetChatWallpaperResult)
+	success, err := handler.(dialog.RPCDialog).DialogSetChatWallpaper(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSetChatWallpaperArgs() interface{} {
+	return &SetChatWallpaperArgs{}
+}
+
+func newSetChatWallpaperResult() interface{} {
+	return &SetChatWallpaperResult{}
+}
+
+type SetChatWallpaperArgs struct {
+	Req *dialog.TLDialogSetChatWallpaper
+}
+
+func (p *SetChatWallpaperArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in SetChatWallpaperArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SetChatWallpaperArgs) Unmarshal(in []byte) error {
+	msg := new(dialog.TLDialogSetChatWallpaper)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SetChatWallpaperArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in SetChatWallpaperArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SetChatWallpaperArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dialog.TLDialogSetChatWallpaper)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var SetChatWallpaperArgs_Req_DEFAULT *dialog.TLDialogSetChatWallpaper
+
+func (p *SetChatWallpaperArgs) GetReq() *dialog.TLDialogSetChatWallpaper {
+	if !p.IsSetReq() {
+		return SetChatWallpaperArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SetChatWallpaperArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SetChatWallpaperResult struct {
+	Success *tg.Bool
+}
+
+var SetChatWallpaperResult_Success_DEFAULT *tg.Bool
+
+func (p *SetChatWallpaperResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in SetChatWallpaperResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SetChatWallpaperResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetChatWallpaperResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in SetChatWallpaperResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SetChatWallpaperResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SetChatWallpaperResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return SetChatWallpaperResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SetChatWallpaperResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *SetChatWallpaperResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SetChatWallpaperResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -5024,371 +5434,601 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) DialogSaveDraftMessage(ctx context.Context, req *dialog.TLDialogSaveDraftMessage) (r *tg.Bool, err error) {
-	var _args SaveDraftMessageArgs
-	_args.Req = req
-	var _result SaveDraftMessageResult
-	if err = p.c.Call(ctx, "dialog.saveDraftMessage", &_args, &_result); err != nil {
+	// var _args SaveDraftMessageArgs
+	// _args.Req = req
+	// var _result SaveDraftMessageResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.saveDraftMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogClearDraftMessage(ctx context.Context, req *dialog.TLDialogClearDraftMessage) (r *tg.Bool, err error) {
-	var _args ClearDraftMessageArgs
-	_args.Req = req
-	var _result ClearDraftMessageResult
-	if err = p.c.Call(ctx, "dialog.clearDraftMessage", &_args, &_result); err != nil {
+	// var _args ClearDraftMessageArgs
+	// _args.Req = req
+	// var _result ClearDraftMessageResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.clearDraftMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetAllDrafts(ctx context.Context, req *dialog.TLDialogGetAllDrafts) (r *dialog.VectorPeerWithDraftMessage, err error) {
-	var _args GetAllDraftsArgs
-	_args.Req = req
-	var _result GetAllDraftsResult
-	if err = p.c.Call(ctx, "dialog.getAllDrafts", &_args, &_result); err != nil {
+	// var _args GetAllDraftsArgs
+	// _args.Req = req
+	// var _result GetAllDraftsResult
+
+	_result := new(dialog.VectorPeerWithDraftMessage)
+
+	if err = p.c.Call(ctx, "dialog.getAllDrafts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogClearAllDrafts(ctx context.Context, req *dialog.TLDialogClearAllDrafts) (r *dialog.VectorPeerWithDraftMessage, err error) {
-	var _args ClearAllDraftsArgs
-	_args.Req = req
-	var _result ClearAllDraftsResult
-	if err = p.c.Call(ctx, "dialog.clearAllDrafts", &_args, &_result); err != nil {
+	// var _args ClearAllDraftsArgs
+	// _args.Req = req
+	// var _result ClearAllDraftsResult
+
+	_result := new(dialog.VectorPeerWithDraftMessage)
+
+	if err = p.c.Call(ctx, "dialog.clearAllDrafts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogMarkDialogUnread(ctx context.Context, req *dialog.TLDialogMarkDialogUnread) (r *tg.Bool, err error) {
-	var _args MarkDialogUnreadArgs
-	_args.Req = req
-	var _result MarkDialogUnreadResult
-	if err = p.c.Call(ctx, "dialog.markDialogUnread", &_args, &_result); err != nil {
+	// var _args MarkDialogUnreadArgs
+	// _args.Req = req
+	// var _result MarkDialogUnreadResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.markDialogUnread", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogToggleDialogPin(ctx context.Context, req *dialog.TLDialogToggleDialogPin) (r *tg.Int32, err error) {
-	var _args ToggleDialogPinArgs
-	_args.Req = req
-	var _result ToggleDialogPinResult
-	if err = p.c.Call(ctx, "dialog.toggleDialogPin", &_args, &_result); err != nil {
+	// var _args ToggleDialogPinArgs
+	// _args.Req = req
+	// var _result ToggleDialogPinResult
+
+	_result := new(tg.Int32)
+
+	if err = p.c.Call(ctx, "dialog.toggleDialogPin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogUnreadMarkList(ctx context.Context, req *dialog.TLDialogGetDialogUnreadMarkList) (r *dialog.VectorDialogPeer, err error) {
-	var _args GetDialogUnreadMarkListArgs
-	_args.Req = req
-	var _result GetDialogUnreadMarkListResult
-	if err = p.c.Call(ctx, "dialog.getDialogUnreadMarkList", &_args, &_result); err != nil {
+	// var _args GetDialogUnreadMarkListArgs
+	// _args.Req = req
+	// var _result GetDialogUnreadMarkListResult
+
+	_result := new(dialog.VectorDialogPeer)
+
+	if err = p.c.Call(ctx, "dialog.getDialogUnreadMarkList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogsByOffsetDate(ctx context.Context, req *dialog.TLDialogGetDialogsByOffsetDate) (r *dialog.VectorDialogExt, err error) {
-	var _args GetDialogsByOffsetDateArgs
-	_args.Req = req
-	var _result GetDialogsByOffsetDateResult
-	if err = p.c.Call(ctx, "dialog.getDialogsByOffsetDate", &_args, &_result); err != nil {
+	// var _args GetDialogsByOffsetDateArgs
+	// _args.Req = req
+	// var _result GetDialogsByOffsetDateResult
+
+	_result := new(dialog.VectorDialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogsByOffsetDate", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogs(ctx context.Context, req *dialog.TLDialogGetDialogs) (r *dialog.VectorDialogExt, err error) {
-	var _args GetDialogsArgs
-	_args.Req = req
-	var _result GetDialogsResult
-	if err = p.c.Call(ctx, "dialog.getDialogs", &_args, &_result); err != nil {
+	// var _args GetDialogsArgs
+	// _args.Req = req
+	// var _result GetDialogsResult
+
+	_result := new(dialog.VectorDialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogsByIdList(ctx context.Context, req *dialog.TLDialogGetDialogsByIdList) (r *dialog.VectorDialogExt, err error) {
-	var _args GetDialogsByIdListArgs
-	_args.Req = req
-	var _result GetDialogsByIdListResult
-	if err = p.c.Call(ctx, "dialog.getDialogsByIdList", &_args, &_result); err != nil {
+	// var _args GetDialogsByIdListArgs
+	// _args.Req = req
+	// var _result GetDialogsByIdListResult
+
+	_result := new(dialog.VectorDialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogsByIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogsCount(ctx context.Context, req *dialog.TLDialogGetDialogsCount) (r *tg.Int32, err error) {
-	var _args GetDialogsCountArgs
-	_args.Req = req
-	var _result GetDialogsCountResult
-	if err = p.c.Call(ctx, "dialog.getDialogsCount", &_args, &_result); err != nil {
+	// var _args GetDialogsCountArgs
+	// _args.Req = req
+	// var _result GetDialogsCountResult
+
+	_result := new(tg.Int32)
+
+	if err = p.c.Call(ctx, "dialog.getDialogsCount", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetPinnedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedDialogs) (r *dialog.VectorDialogExt, err error) {
-	var _args GetPinnedDialogsArgs
-	_args.Req = req
-	var _result GetPinnedDialogsResult
-	if err = p.c.Call(ctx, "dialog.getPinnedDialogs", &_args, &_result); err != nil {
+	// var _args GetPinnedDialogsArgs
+	// _args.Req = req
+	// var _result GetPinnedDialogsResult
+
+	_result := new(dialog.VectorDialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getPinnedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogReorderPinnedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedDialogs) (r *tg.Bool, err error) {
-	var _args ReorderPinnedDialogsArgs
-	_args.Req = req
-	var _result ReorderPinnedDialogsResult
-	if err = p.c.Call(ctx, "dialog.reorderPinnedDialogs", &_args, &_result); err != nil {
+	// var _args ReorderPinnedDialogsArgs
+	// _args.Req = req
+	// var _result ReorderPinnedDialogsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.reorderPinnedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogById(ctx context.Context, req *dialog.TLDialogGetDialogById) (r *dialog.DialogExt, err error) {
-	var _args GetDialogByIdArgs
-	_args.Req = req
-	var _result GetDialogByIdResult
-	if err = p.c.Call(ctx, "dialog.getDialogById", &_args, &_result); err != nil {
+	// var _args GetDialogByIdArgs
+	// _args.Req = req
+	// var _result GetDialogByIdResult
+
+	_result := new(dialog.DialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogById", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetTopMessage(ctx context.Context, req *dialog.TLDialogGetTopMessage) (r *tg.Int32, err error) {
-	var _args GetTopMessageArgs
-	_args.Req = req
-	var _result GetTopMessageResult
-	if err = p.c.Call(ctx, "dialog.getTopMessage", &_args, &_result); err != nil {
+	// var _args GetTopMessageArgs
+	// _args.Req = req
+	// var _result GetTopMessageResult
+
+	_result := new(tg.Int32)
+
+	if err = p.c.Call(ctx, "dialog.getTopMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogInsertOrUpdateDialog(ctx context.Context, req *dialog.TLDialogInsertOrUpdateDialog) (r *tg.Bool, err error) {
-	var _args InsertOrUpdateDialogArgs
-	_args.Req = req
-	var _result InsertOrUpdateDialogResult
-	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialog", &_args, &_result); err != nil {
+	// var _args InsertOrUpdateDialogArgs
+	// _args.Req = req
+	// var _result InsertOrUpdateDialogResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialog", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogDeleteDialog(ctx context.Context, req *dialog.TLDialogDeleteDialog) (r *tg.Bool, err error) {
-	var _args DeleteDialogArgs
-	_args.Req = req
-	var _result DeleteDialogResult
-	if err = p.c.Call(ctx, "dialog.deleteDialog", &_args, &_result); err != nil {
+	// var _args DeleteDialogArgs
+	// _args.Req = req
+	// var _result DeleteDialogResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.deleteDialog", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetUserPinnedMessage(ctx context.Context, req *dialog.TLDialogGetUserPinnedMessage) (r *tg.Int32, err error) {
-	var _args GetUserPinnedMessageArgs
-	_args.Req = req
-	var _result GetUserPinnedMessageResult
-	if err = p.c.Call(ctx, "dialog.getUserPinnedMessage", &_args, &_result); err != nil {
+	// var _args GetUserPinnedMessageArgs
+	// _args.Req = req
+	// var _result GetUserPinnedMessageResult
+
+	_result := new(tg.Int32)
+
+	if err = p.c.Call(ctx, "dialog.getUserPinnedMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogUpdateUserPinnedMessage(ctx context.Context, req *dialog.TLDialogUpdateUserPinnedMessage) (r *tg.Bool, err error) {
-	var _args UpdateUserPinnedMessageArgs
-	_args.Req = req
-	var _result UpdateUserPinnedMessageResult
-	if err = p.c.Call(ctx, "dialog.updateUserPinnedMessage", &_args, &_result); err != nil {
+	// var _args UpdateUserPinnedMessageArgs
+	// _args.Req = req
+	// var _result UpdateUserPinnedMessageResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.updateUserPinnedMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogInsertOrUpdateDialogFilter(ctx context.Context, req *dialog.TLDialogInsertOrUpdateDialogFilter) (r *tg.Bool, err error) {
-	var _args InsertOrUpdateDialogFilterArgs
-	_args.Req = req
-	var _result InsertOrUpdateDialogFilterResult
-	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialogFilter", &_args, &_result); err != nil {
+	// var _args InsertOrUpdateDialogFilterArgs
+	// _args.Req = req
+	// var _result InsertOrUpdateDialogFilterResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialogFilter", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogDeleteDialogFilter(ctx context.Context, req *dialog.TLDialogDeleteDialogFilter) (r *tg.Bool, err error) {
-	var _args DeleteDialogFilterArgs
-	_args.Req = req
-	var _result DeleteDialogFilterResult
-	if err = p.c.Call(ctx, "dialog.deleteDialogFilter", &_args, &_result); err != nil {
+	// var _args DeleteDialogFilterArgs
+	// _args.Req = req
+	// var _result DeleteDialogFilterResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.deleteDialogFilter", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogUpdateDialogFiltersOrder(ctx context.Context, req *dialog.TLDialogUpdateDialogFiltersOrder) (r *tg.Bool, err error) {
-	var _args UpdateDialogFiltersOrderArgs
-	_args.Req = req
-	var _result UpdateDialogFiltersOrderResult
-	if err = p.c.Call(ctx, "dialog.updateDialogFiltersOrder", &_args, &_result); err != nil {
+	// var _args UpdateDialogFiltersOrderArgs
+	// _args.Req = req
+	// var _result UpdateDialogFiltersOrderResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.updateDialogFiltersOrder", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogFilters(ctx context.Context, req *dialog.TLDialogGetDialogFilters) (r *dialog.VectorDialogFilterExt, err error) {
-	var _args GetDialogFiltersArgs
-	_args.Req = req
-	var _result GetDialogFiltersResult
-	if err = p.c.Call(ctx, "dialog.getDialogFilters", &_args, &_result); err != nil {
+	// var _args GetDialogFiltersArgs
+	// _args.Req = req
+	// var _result GetDialogFiltersResult
+
+	_result := new(dialog.VectorDialogFilterExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogFilters", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogFolder(ctx context.Context, req *dialog.TLDialogGetDialogFolder) (r *dialog.VectorDialogExt, err error) {
-	var _args GetDialogFolderArgs
-	_args.Req = req
-	var _result GetDialogFolderResult
-	if err = p.c.Call(ctx, "dialog.getDialogFolder", &_args, &_result); err != nil {
+	// var _args GetDialogFolderArgs
+	// _args.Req = req
+	// var _result GetDialogFolderResult
+
+	_result := new(dialog.VectorDialogExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogFolder", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogEditPeerFolders(ctx context.Context, req *dialog.TLDialogEditPeerFolders) (r *dialog.VectorDialogPinnedExt, err error) {
-	var _args EditPeerFoldersArgs
-	_args.Req = req
-	var _result EditPeerFoldersResult
-	if err = p.c.Call(ctx, "dialog.editPeerFolders", &_args, &_result); err != nil {
+	// var _args EditPeerFoldersArgs
+	// _args.Req = req
+	// var _result EditPeerFoldersResult
+
+	_result := new(dialog.VectorDialogPinnedExt)
+
+	if err = p.c.Call(ctx, "dialog.editPeerFolders", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetChannelMessageReadParticipants(ctx context.Context, req *dialog.TLDialogGetChannelMessageReadParticipants) (r *dialog.VectorLong, err error) {
-	var _args GetChannelMessageReadParticipantsArgs
-	_args.Req = req
-	var _result GetChannelMessageReadParticipantsResult
-	if err = p.c.Call(ctx, "dialog.getChannelMessageReadParticipants", &_args, &_result); err != nil {
+	// var _args GetChannelMessageReadParticipantsArgs
+	// _args.Req = req
+	// var _result GetChannelMessageReadParticipantsResult
+
+	_result := new(dialog.VectorLong)
+
+	if err = p.c.Call(ctx, "dialog.getChannelMessageReadParticipants", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogSetChatTheme(ctx context.Context, req *dialog.TLDialogSetChatTheme) (r *tg.Bool, err error) {
-	var _args SetChatThemeArgs
-	_args.Req = req
-	var _result SetChatThemeResult
-	if err = p.c.Call(ctx, "dialog.setChatTheme", &_args, &_result); err != nil {
+	// var _args SetChatThemeArgs
+	// _args.Req = req
+	// var _result SetChatThemeResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.setChatTheme", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogSetHistoryTTL) (r *tg.Bool, err error) {
-	var _args SetHistoryTTLArgs
-	_args.Req = req
-	var _result SetHistoryTTLResult
-	if err = p.c.Call(ctx, "dialog.setHistoryTTL", &_args, &_result); err != nil {
+	// var _args SetHistoryTTLArgs
+	// _args.Req = req
+	// var _result SetHistoryTTLResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.setHistoryTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDialogGetMyDialogsData) (r *dialog.DialogsData, err error) {
-	var _args GetMyDialogsDataArgs
-	_args.Req = req
-	var _result GetMyDialogsDataResult
-	if err = p.c.Call(ctx, "dialog.getMyDialogsData", &_args, &_result); err != nil {
+	// var _args GetMyDialogsDataArgs
+	// _args.Req = req
+	// var _result GetMyDialogsDataResult
+
+	_result := new(dialog.DialogsData)
+
+	if err = p.c.Call(ctx, "dialog.getMyDialogsData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialogGetSavedDialogs) (r *dialog.SavedDialogList, err error) {
-	var _args GetSavedDialogsArgs
-	_args.Req = req
-	var _result GetSavedDialogsResult
-	if err = p.c.Call(ctx, "dialog.getSavedDialogs", &_args, &_result); err != nil {
+	// var _args GetSavedDialogsArgs
+	// _args.Req = req
+	// var _result GetSavedDialogsResult
+
+	_result := new(dialog.SavedDialogList)
+
+	if err = p.c.Call(ctx, "dialog.getSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedSavedDialogs) (r *dialog.SavedDialogList, err error) {
-	var _args GetPinnedSavedDialogsArgs
-	_args.Req = req
-	var _result GetPinnedSavedDialogsResult
-	if err = p.c.Call(ctx, "dialog.getPinnedSavedDialogs", &_args, &_result); err != nil {
+	// var _args GetPinnedSavedDialogsArgs
+	// _args.Req = req
+	// var _result GetPinnedSavedDialogsResult
+
+	_result := new(dialog.SavedDialogList)
+
+	if err = p.c.Call(ctx, "dialog.getPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogToggleSavedDialogPin(ctx context.Context, req *dialog.TLDialogToggleSavedDialogPin) (r *tg.Bool, err error) {
-	var _args ToggleSavedDialogPinArgs
-	_args.Req = req
-	var _result ToggleSavedDialogPinResult
-	if err = p.c.Call(ctx, "dialog.toggleSavedDialogPin", &_args, &_result); err != nil {
+	// var _args ToggleSavedDialogPinArgs
+	// _args.Req = req
+	// var _result ToggleSavedDialogPinResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.toggleSavedDialogPin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogReorderPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedSavedDialogs) (r *tg.Bool, err error) {
-	var _args ReorderPinnedSavedDialogsArgs
-	_args.Req = req
-	var _result ReorderPinnedSavedDialogsResult
-	if err = p.c.Call(ctx, "dialog.reorderPinnedSavedDialogs", &_args, &_result); err != nil {
+	// var _args ReorderPinnedSavedDialogsArgs
+	// _args.Req = req
+	// var _result ReorderPinnedSavedDialogsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.reorderPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogFilter(ctx context.Context, req *dialog.TLDialogGetDialogFilter) (r *dialog.DialogFilterExt, err error) {
-	var _args GetDialogFilterArgs
-	_args.Req = req
-	var _result GetDialogFilterResult
-	if err = p.c.Call(ctx, "dialog.getDialogFilter", &_args, &_result); err != nil {
+	// var _args GetDialogFilterArgs
+	// _args.Req = req
+	// var _result GetDialogFilterResult
+
+	_result := new(dialog.DialogFilterExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogFilter", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogGetDialogFilterBySlug(ctx context.Context, req *dialog.TLDialogGetDialogFilterBySlug) (r *dialog.DialogFilterExt, err error) {
-	var _args GetDialogFilterBySlugArgs
-	_args.Req = req
-	var _result GetDialogFilterBySlugResult
-	if err = p.c.Call(ctx, "dialog.getDialogFilterBySlug", &_args, &_result); err != nil {
+	// var _args GetDialogFilterBySlugArgs
+	// _args.Req = req
+	// var _result GetDialogFilterBySlugResult
+
+	_result := new(dialog.DialogFilterExt)
+
+	if err = p.c.Call(ctx, "dialog.getDialogFilterBySlug", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogCreateDialogFilter(ctx context.Context, req *dialog.TLDialogCreateDialogFilter) (r *dialog.DialogFilterExt, err error) {
-	var _args CreateDialogFilterArgs
-	_args.Req = req
-	var _result CreateDialogFilterResult
-	if err = p.c.Call(ctx, "dialog.createDialogFilter", &_args, &_result); err != nil {
+	// var _args CreateDialogFilterArgs
+	// _args.Req = req
+	// var _result CreateDialogFilterResult
+
+	_result := new(dialog.DialogFilterExt)
+
+	if err = p.c.Call(ctx, "dialog.createDialogFilter", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DialogUpdateUnreadCount(ctx context.Context, req *dialog.TLDialogUpdateUnreadCount) (r *tg.Bool, err error) {
-	var _args UpdateUnreadCountArgs
-	_args.Req = req
-	var _result UpdateUnreadCountResult
-	if err = p.c.Call(ctx, "dialog.updateUnreadCount", &_args, &_result); err != nil {
+	// var _args UpdateUnreadCountArgs
+	// _args.Req = req
+	// var _result UpdateUnreadCountResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.updateUnreadCount", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) DialogToggleDialogFilterTags(ctx context.Context, req *dialog.TLDialogToggleDialogFilterTags) (r *tg.Bool, err error) {
+	// var _args ToggleDialogFilterTagsArgs
+	// _args.Req = req
+	// var _result ToggleDialogFilterTagsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.toggleDialogFilterTags", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) DialogGetDialogFilterTags(ctx context.Context, req *dialog.TLDialogGetDialogFilterTags) (r *tg.Bool, err error) {
+	// var _args GetDialogFilterTagsArgs
+	// _args.Req = req
+	// var _result GetDialogFilterTagsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.getDialogFilterTags", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) DialogSetChatWallpaper(ctx context.Context, req *dialog.TLDialogSetChatWallpaper) (r *tg.Bool, err error) {
+	// var _args SetChatWallpaperArgs
+	// _args.Req = req
+	// var _result SetChatWallpaperResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dialog.setChatWallpaper", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

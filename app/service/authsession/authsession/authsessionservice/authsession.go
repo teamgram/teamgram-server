@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 
@@ -184,6 +185,12 @@ var (
 	authsessionServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCAuthsession", authsessionServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCAuthsession", authsessionServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCAuthsession", authsessionServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return authsessionServiceServiceInfo
@@ -208,6 +215,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -2898,211 +2907,316 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AuthsessionGetAuthorizations(ctx context.Context, req *authsession.TLAuthsessionGetAuthorizations) (r *tg.AccountAuthorizations, err error) {
-	var _args GetAuthorizationsArgs
-	_args.Req = req
-	var _result GetAuthorizationsResult
-	if err = p.c.Call(ctx, "authsession.getAuthorizations", &_args, &_result); err != nil {
+	// var _args GetAuthorizationsArgs
+	// _args.Req = req
+	// var _result GetAuthorizationsResult
+
+	_result := new(tg.AccountAuthorizations)
+
+	if err = p.c.Call(ctx, "authsession.getAuthorizations", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionResetAuthorization(ctx context.Context, req *authsession.TLAuthsessionResetAuthorization) (r *authsession.VectorLong, err error) {
-	var _args ResetAuthorizationArgs
-	_args.Req = req
-	var _result ResetAuthorizationResult
-	if err = p.c.Call(ctx, "authsession.resetAuthorization", &_args, &_result); err != nil {
+	// var _args ResetAuthorizationArgs
+	// _args.Req = req
+	// var _result ResetAuthorizationResult
+
+	_result := new(authsession.VectorLong)
+
+	if err = p.c.Call(ctx, "authsession.resetAuthorization", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetLayer(ctx context.Context, req *authsession.TLAuthsessionGetLayer) (r *tg.Int32, err error) {
-	var _args GetLayerArgs
-	_args.Req = req
-	var _result GetLayerResult
-	if err = p.c.Call(ctx, "authsession.getLayer", &_args, &_result); err != nil {
+	// var _args GetLayerArgs
+	// _args.Req = req
+	// var _result GetLayerResult
+
+	_result := new(tg.Int32)
+
+	if err = p.c.Call(ctx, "authsession.getLayer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetLangPack(ctx context.Context, req *authsession.TLAuthsessionGetLangPack) (r *tg.String, err error) {
-	var _args GetLangPackArgs
-	_args.Req = req
-	var _result GetLangPackResult
-	if err = p.c.Call(ctx, "authsession.getLangPack", &_args, &_result); err != nil {
+	// var _args GetLangPackArgs
+	// _args.Req = req
+	// var _result GetLangPackResult
+
+	_result := new(tg.String)
+
+	if err = p.c.Call(ctx, "authsession.getLangPack", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetClient(ctx context.Context, req *authsession.TLAuthsessionGetClient) (r *tg.String, err error) {
-	var _args GetClientArgs
-	_args.Req = req
-	var _result GetClientResult
-	if err = p.c.Call(ctx, "authsession.getClient", &_args, &_result); err != nil {
+	// var _args GetClientArgs
+	// _args.Req = req
+	// var _result GetClientResult
+
+	_result := new(tg.String)
+
+	if err = p.c.Call(ctx, "authsession.getClient", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetLangCode(ctx context.Context, req *authsession.TLAuthsessionGetLangCode) (r *tg.String, err error) {
-	var _args GetLangCodeArgs
-	_args.Req = req
-	var _result GetLangCodeResult
-	if err = p.c.Call(ctx, "authsession.getLangCode", &_args, &_result); err != nil {
+	// var _args GetLangCodeArgs
+	// _args.Req = req
+	// var _result GetLangCodeResult
+
+	_result := new(tg.String)
+
+	if err = p.c.Call(ctx, "authsession.getLangCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetUserId(ctx context.Context, req *authsession.TLAuthsessionGetUserId) (r *tg.Int64, err error) {
-	var _args GetUserIdArgs
-	_args.Req = req
-	var _result GetUserIdResult
-	if err = p.c.Call(ctx, "authsession.getUserId", &_args, &_result); err != nil {
+	// var _args GetUserIdArgs
+	// _args.Req = req
+	// var _result GetUserIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "authsession.getUserId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetPushSessionId(ctx context.Context, req *authsession.TLAuthsessionGetPushSessionId) (r *tg.Int64, err error) {
-	var _args GetPushSessionIdArgs
-	_args.Req = req
-	var _result GetPushSessionIdResult
-	if err = p.c.Call(ctx, "authsession.getPushSessionId", &_args, &_result); err != nil {
+	// var _args GetPushSessionIdArgs
+	// _args.Req = req
+	// var _result GetPushSessionIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "authsession.getPushSessionId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetFutureSalts(ctx context.Context, req *authsession.TLAuthsessionGetFutureSalts) (r *tg.FutureSalts, err error) {
-	var _args GetFutureSaltsArgs
-	_args.Req = req
-	var _result GetFutureSaltsResult
-	if err = p.c.Call(ctx, "authsession.getFutureSalts", &_args, &_result); err != nil {
+	// var _args GetFutureSaltsArgs
+	// _args.Req = req
+	// var _result GetFutureSaltsResult
+
+	_result := new(tg.FutureSalts)
+
+	if err = p.c.Call(ctx, "authsession.getFutureSalts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionQueryAuthKey(ctx context.Context, req *authsession.TLAuthsessionQueryAuthKey) (r *tg.AuthKeyInfo, err error) {
-	var _args QueryAuthKeyArgs
-	_args.Req = req
-	var _result QueryAuthKeyResult
-	if err = p.c.Call(ctx, "authsession.queryAuthKey", &_args, &_result); err != nil {
+	// var _args QueryAuthKeyArgs
+	// _args.Req = req
+	// var _result QueryAuthKeyResult
+
+	_result := new(tg.AuthKeyInfo)
+
+	if err = p.c.Call(ctx, "authsession.queryAuthKey", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionSetAuthKey(ctx context.Context, req *authsession.TLAuthsessionSetAuthKey) (r *tg.Bool, err error) {
-	var _args SetAuthKeyArgs
-	_args.Req = req
-	var _result SetAuthKeyResult
-	if err = p.c.Call(ctx, "authsession.setAuthKey", &_args, &_result); err != nil {
+	// var _args SetAuthKeyArgs
+	// _args.Req = req
+	// var _result SetAuthKeyResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.setAuthKey", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionBindAuthKeyUser(ctx context.Context, req *authsession.TLAuthsessionBindAuthKeyUser) (r *tg.Int64, err error) {
-	var _args BindAuthKeyUserArgs
-	_args.Req = req
-	var _result BindAuthKeyUserResult
-	if err = p.c.Call(ctx, "authsession.bindAuthKeyUser", &_args, &_result); err != nil {
+	// var _args BindAuthKeyUserArgs
+	// _args.Req = req
+	// var _result BindAuthKeyUserResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "authsession.bindAuthKeyUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionUnbindAuthKeyUser(ctx context.Context, req *authsession.TLAuthsessionUnbindAuthKeyUser) (r *tg.Bool, err error) {
-	var _args UnbindAuthKeyUserArgs
-	_args.Req = req
-	var _result UnbindAuthKeyUserResult
-	if err = p.c.Call(ctx, "authsession.unbindAuthKeyUser", &_args, &_result); err != nil {
+	// var _args UnbindAuthKeyUserArgs
+	// _args.Req = req
+	// var _result UnbindAuthKeyUserResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.unbindAuthKeyUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetPermAuthKeyId(ctx context.Context, req *authsession.TLAuthsessionGetPermAuthKeyId) (r *tg.Int64, err error) {
-	var _args GetPermAuthKeyIdArgs
-	_args.Req = req
-	var _result GetPermAuthKeyIdResult
-	if err = p.c.Call(ctx, "authsession.getPermAuthKeyId", &_args, &_result); err != nil {
+	// var _args GetPermAuthKeyIdArgs
+	// _args.Req = req
+	// var _result GetPermAuthKeyIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "authsession.getPermAuthKeyId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionBindTempAuthKey(ctx context.Context, req *authsession.TLAuthsessionBindTempAuthKey) (r *tg.Bool, err error) {
-	var _args BindTempAuthKeyArgs
-	_args.Req = req
-	var _result BindTempAuthKeyResult
-	if err = p.c.Call(ctx, "authsession.bindTempAuthKey", &_args, &_result); err != nil {
+	// var _args BindTempAuthKeyArgs
+	// _args.Req = req
+	// var _result BindTempAuthKeyResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.bindTempAuthKey", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionSetClientSessionInfo(ctx context.Context, req *authsession.TLAuthsessionSetClientSessionInfo) (r *tg.Bool, err error) {
-	var _args SetClientSessionInfoArgs
-	_args.Req = req
-	var _result SetClientSessionInfoResult
-	if err = p.c.Call(ctx, "authsession.setClientSessionInfo", &_args, &_result); err != nil {
+	// var _args SetClientSessionInfoArgs
+	// _args.Req = req
+	// var _result SetClientSessionInfoResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.setClientSessionInfo", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetAuthorization(ctx context.Context, req *authsession.TLAuthsessionGetAuthorization) (r *tg.Authorization, err error) {
-	var _args GetAuthorizationArgs
-	_args.Req = req
-	var _result GetAuthorizationResult
-	if err = p.c.Call(ctx, "authsession.getAuthorization", &_args, &_result); err != nil {
+	// var _args GetAuthorizationArgs
+	// _args.Req = req
+	// var _result GetAuthorizationResult
+
+	_result := new(tg.Authorization)
+
+	if err = p.c.Call(ctx, "authsession.getAuthorization", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionGetAuthStateData(ctx context.Context, req *authsession.TLAuthsessionGetAuthStateData) (r *authsession.AuthKeyStateData, err error) {
-	var _args GetAuthStateDataArgs
-	_args.Req = req
-	var _result GetAuthStateDataResult
-	if err = p.c.Call(ctx, "authsession.getAuthStateData", &_args, &_result); err != nil {
+	// var _args GetAuthStateDataArgs
+	// _args.Req = req
+	// var _result GetAuthStateDataResult
+
+	_result := new(authsession.AuthKeyStateData)
+
+	if err = p.c.Call(ctx, "authsession.getAuthStateData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionSetLayer(ctx context.Context, req *authsession.TLAuthsessionSetLayer) (r *tg.Bool, err error) {
-	var _args SetLayerArgs
-	_args.Req = req
-	var _result SetLayerResult
-	if err = p.c.Call(ctx, "authsession.setLayer", &_args, &_result); err != nil {
+	// var _args SetLayerArgs
+	// _args.Req = req
+	// var _result SetLayerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.setLayer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionSetInitConnection(ctx context.Context, req *authsession.TLAuthsessionSetInitConnection) (r *tg.Bool, err error) {
-	var _args SetInitConnectionArgs
-	_args.Req = req
-	var _result SetInitConnectionResult
-	if err = p.c.Call(ctx, "authsession.setInitConnection", &_args, &_result); err != nil {
+	// var _args SetInitConnectionArgs
+	// _args.Req = req
+	// var _result SetInitConnectionResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.setInitConnection", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthsessionSetAndroidPushSessionId(ctx context.Context, req *authsession.TLAuthsessionSetAndroidPushSessionId) (r *tg.Bool, err error) {
-	var _args SetAndroidPushSessionIdArgs
-	_args.Req = req
-	var _result SetAndroidPushSessionIdResult
-	if err = p.c.Call(ctx, "authsession.setAndroidPushSessionId", &_args, &_result); err != nil {
+	// var _args SetAndroidPushSessionIdArgs
+	// _args.Req = req
+	// var _result SetAndroidPushSessionIdResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "authsession.setAndroidPushSessionId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

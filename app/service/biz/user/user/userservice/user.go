@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -559,6 +562,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"user.updatePremium": kitex.NewMethodInfo(
+		updatePremiumHandler,
+		newUpdatePremiumArgs,
+		newUpdatePremiumResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"user.getBotInfoV2": kitex.NewMethodInfo(
+		getBotInfoV2Handler,
+		newGetBotInfoV2Args,
+		newGetBotInfoV2Result,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -566,6 +583,12 @@ var (
 	userServiceServiceInfoForClient       = NewServiceInfoForClient()
 	userServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUser", userServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUser", userServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUser", userServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {
@@ -591,6 +614,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -10200,6 +10225,258 @@ func (p *GetAuthorizationTTLResult) GetResult() interface{} {
 	return p.Success
 }
 
+func updatePremiumHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UpdatePremiumArgs)
+	realResult := result.(*UpdatePremiumResult)
+	success, err := handler.(user.RPCUser).UserUpdatePremium(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUpdatePremiumArgs() interface{} {
+	return &UpdatePremiumArgs{}
+}
+
+func newUpdatePremiumResult() interface{} {
+	return &UpdatePremiumResult{}
+}
+
+type UpdatePremiumArgs struct {
+	Req *user.TLUserUpdatePremium
+}
+
+func (p *UpdatePremiumArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in UpdatePremiumArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UpdatePremiumArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserUpdatePremium)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UpdatePremiumArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in UpdatePremiumArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UpdatePremiumArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserUpdatePremium)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var UpdatePremiumArgs_Req_DEFAULT *user.TLUserUpdatePremium
+
+func (p *UpdatePremiumArgs) GetReq() *user.TLUserUpdatePremium {
+	if !p.IsSetReq() {
+		return UpdatePremiumArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdatePremiumArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UpdatePremiumResult struct {
+	Success *tg.Bool
+}
+
+var UpdatePremiumResult_Success_DEFAULT *tg.Bool
+
+func (p *UpdatePremiumResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in UpdatePremiumResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UpdatePremiumResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdatePremiumResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in UpdatePremiumResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UpdatePremiumResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdatePremiumResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return UpdatePremiumResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdatePremiumResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *UpdatePremiumResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdatePremiumResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getBotInfoV2Handler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetBotInfoV2Args)
+	realResult := result.(*GetBotInfoV2Result)
+	success, err := handler.(user.RPCUser).UserGetBotInfoV2(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetBotInfoV2Args() interface{} {
+	return &GetBotInfoV2Args{}
+}
+
+func newGetBotInfoV2Result() interface{} {
+	return &GetBotInfoV2Result{}
+}
+
+type GetBotInfoV2Args struct {
+	Req *user.TLUserGetBotInfoV2
+}
+
+func (p *GetBotInfoV2Args) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in GetBotInfoV2Args")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetBotInfoV2Args) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetBotInfoV2)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetBotInfoV2Args) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in GetBotInfoV2Args")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetBotInfoV2Args) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetBotInfoV2)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var GetBotInfoV2Args_Req_DEFAULT *user.TLUserGetBotInfoV2
+
+func (p *GetBotInfoV2Args) GetReq() *user.TLUserGetBotInfoV2 {
+	if !p.IsSetReq() {
+		return GetBotInfoV2Args_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetBotInfoV2Args) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetBotInfoV2Result struct {
+	Success *user.BotInfoData
+}
+
+var GetBotInfoV2Result_Success_DEFAULT *user.BotInfoData
+
+func (p *GetBotInfoV2Result) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in GetBotInfoV2Result")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetBotInfoV2Result) Unmarshal(in []byte) error {
+	msg := new(user.BotInfoData)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetBotInfoV2Result) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in GetBotInfoV2Result")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetBotInfoV2Result) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.BotInfoData)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetBotInfoV2Result) GetSuccess() *user.BotInfoData {
+	if !p.IsSetSuccess() {
+		return GetBotInfoV2Result_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetBotInfoV2Result) SetSuccess(x interface{}) {
+	p.Success = x.(*user.BotInfoData)
+}
+
+func (p *GetBotInfoV2Result) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetBotInfoV2Result) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -10211,761 +10488,1171 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) UserGetLastSeens(ctx context.Context, req *user.TLUserGetLastSeens) (r *user.VectorLastSeenData, err error) {
-	var _args GetLastSeensArgs
-	_args.Req = req
-	var _result GetLastSeensResult
-	if err = p.c.Call(ctx, "user.getLastSeens", &_args, &_result); err != nil {
+	// var _args GetLastSeensArgs
+	// _args.Req = req
+	// var _result GetLastSeensResult
+
+	_result := new(user.VectorLastSeenData)
+
+	if err = p.c.Call(ctx, "user.getLastSeens", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateLastSeen(ctx context.Context, req *user.TLUserUpdateLastSeen) (r *tg.Bool, err error) {
-	var _args UpdateLastSeenArgs
-	_args.Req = req
-	var _result UpdateLastSeenResult
-	if err = p.c.Call(ctx, "user.updateLastSeen", &_args, &_result); err != nil {
+	// var _args UpdateLastSeenArgs
+	// _args.Req = req
+	// var _result UpdateLastSeenResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateLastSeen", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetLastSeen(ctx context.Context, req *user.TLUserGetLastSeen) (r *user.LastSeenData, err error) {
-	var _args GetLastSeenArgs
-	_args.Req = req
-	var _result GetLastSeenResult
-	if err = p.c.Call(ctx, "user.getLastSeen", &_args, &_result); err != nil {
+	// var _args GetLastSeenArgs
+	// _args.Req = req
+	// var _result GetLastSeenResult
+
+	_result := new(user.LastSeenData)
+
+	if err = p.c.Call(ctx, "user.getLastSeen", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetImmutableUser(ctx context.Context, req *user.TLUserGetImmutableUser) (r *tg.ImmutableUser, err error) {
-	var _args GetImmutableUserArgs
-	_args.Req = req
-	var _result GetImmutableUserResult
-	if err = p.c.Call(ctx, "user.getImmutableUser", &_args, &_result); err != nil {
+	// var _args GetImmutableUserArgs
+	// _args.Req = req
+	// var _result GetImmutableUserResult
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.getImmutableUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetMutableUsers(ctx context.Context, req *user.TLUserGetMutableUsers) (r *user.VectorImmutableUser, err error) {
-	var _args GetMutableUsersArgs
-	_args.Req = req
-	var _result GetMutableUsersResult
-	if err = p.c.Call(ctx, "user.getMutableUsers", &_args, &_result); err != nil {
+	// var _args GetMutableUsersArgs
+	// _args.Req = req
+	// var _result GetMutableUsersResult
+
+	_result := new(user.VectorImmutableUser)
+
+	if err = p.c.Call(ctx, "user.getMutableUsers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetImmutableUserByPhone(ctx context.Context, req *user.TLUserGetImmutableUserByPhone) (r *tg.ImmutableUser, err error) {
-	var _args GetImmutableUserByPhoneArgs
-	_args.Req = req
-	var _result GetImmutableUserByPhoneResult
-	if err = p.c.Call(ctx, "user.getImmutableUserByPhone", &_args, &_result); err != nil {
+	// var _args GetImmutableUserByPhoneArgs
+	// _args.Req = req
+	// var _result GetImmutableUserByPhoneResult
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.getImmutableUserByPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetImmutableUserByToken(ctx context.Context, req *user.TLUserGetImmutableUserByToken) (r *tg.ImmutableUser, err error) {
-	var _args GetImmutableUserByTokenArgs
-	_args.Req = req
-	var _result GetImmutableUserByTokenResult
-	if err = p.c.Call(ctx, "user.getImmutableUserByToken", &_args, &_result); err != nil {
+	// var _args GetImmutableUserByTokenArgs
+	// _args.Req = req
+	// var _result GetImmutableUserByTokenResult
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.getImmutableUserByToken", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetAccountDaysTTL(ctx context.Context, req *user.TLUserSetAccountDaysTTL) (r *tg.Bool, err error) {
-	var _args SetAccountDaysTTLArgs
-	_args.Req = req
-	var _result SetAccountDaysTTLResult
-	if err = p.c.Call(ctx, "user.setAccountDaysTTL", &_args, &_result); err != nil {
+	// var _args SetAccountDaysTTLArgs
+	// _args.Req = req
+	// var _result SetAccountDaysTTLResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setAccountDaysTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetAccountDaysTTL(ctx context.Context, req *user.TLUserGetAccountDaysTTL) (r *tg.AccountDaysTTL, err error) {
-	var _args GetAccountDaysTTLArgs
-	_args.Req = req
-	var _result GetAccountDaysTTLResult
-	if err = p.c.Call(ctx, "user.getAccountDaysTTL", &_args, &_result); err != nil {
+	// var _args GetAccountDaysTTLArgs
+	// _args.Req = req
+	// var _result GetAccountDaysTTLResult
+
+	_result := new(tg.AccountDaysTTL)
+
+	if err = p.c.Call(ctx, "user.getAccountDaysTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetNotifySettings(ctx context.Context, req *user.TLUserGetNotifySettings) (r *tg.PeerNotifySettings, err error) {
-	var _args GetNotifySettingsArgs
-	_args.Req = req
-	var _result GetNotifySettingsResult
-	if err = p.c.Call(ctx, "user.getNotifySettings", &_args, &_result); err != nil {
+	// var _args GetNotifySettingsArgs
+	// _args.Req = req
+	// var _result GetNotifySettingsResult
+
+	_result := new(tg.PeerNotifySettings)
+
+	if err = p.c.Call(ctx, "user.getNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetNotifySettingsList(ctx context.Context, req *user.TLUserGetNotifySettingsList) (r *user.VectorPeerPeerNotifySettings, err error) {
-	var _args GetNotifySettingsListArgs
-	_args.Req = req
-	var _result GetNotifySettingsListResult
-	if err = p.c.Call(ctx, "user.getNotifySettingsList", &_args, &_result); err != nil {
+	// var _args GetNotifySettingsListArgs
+	// _args.Req = req
+	// var _result GetNotifySettingsListResult
+
+	_result := new(user.VectorPeerPeerNotifySettings)
+
+	if err = p.c.Call(ctx, "user.getNotifySettingsList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetNotifySettings(ctx context.Context, req *user.TLUserSetNotifySettings) (r *tg.Bool, err error) {
-	var _args SetNotifySettingsArgs
-	_args.Req = req
-	var _result SetNotifySettingsResult
-	if err = p.c.Call(ctx, "user.setNotifySettings", &_args, &_result); err != nil {
+	// var _args SetNotifySettingsArgs
+	// _args.Req = req
+	// var _result SetNotifySettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserResetNotifySettings(ctx context.Context, req *user.TLUserResetNotifySettings) (r *tg.Bool, err error) {
-	var _args ResetNotifySettingsArgs
-	_args.Req = req
-	var _result ResetNotifySettingsResult
-	if err = p.c.Call(ctx, "user.resetNotifySettings", &_args, &_result); err != nil {
+	// var _args ResetNotifySettingsArgs
+	// _args.Req = req
+	// var _result ResetNotifySettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.resetNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetAllNotifySettings(ctx context.Context, req *user.TLUserGetAllNotifySettings) (r *user.VectorPeerPeerNotifySettings, err error) {
-	var _args GetAllNotifySettingsArgs
-	_args.Req = req
-	var _result GetAllNotifySettingsResult
-	if err = p.c.Call(ctx, "user.getAllNotifySettings", &_args, &_result); err != nil {
+	// var _args GetAllNotifySettingsArgs
+	// _args.Req = req
+	// var _result GetAllNotifySettingsResult
+
+	_result := new(user.VectorPeerPeerNotifySettings)
+
+	if err = p.c.Call(ctx, "user.getAllNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetGlobalPrivacySettings(ctx context.Context, req *user.TLUserGetGlobalPrivacySettings) (r *tg.GlobalPrivacySettings, err error) {
-	var _args GetGlobalPrivacySettingsArgs
-	_args.Req = req
-	var _result GetGlobalPrivacySettingsResult
-	if err = p.c.Call(ctx, "user.getGlobalPrivacySettings", &_args, &_result); err != nil {
+	// var _args GetGlobalPrivacySettingsArgs
+	// _args.Req = req
+	// var _result GetGlobalPrivacySettingsResult
+
+	_result := new(tg.GlobalPrivacySettings)
+
+	if err = p.c.Call(ctx, "user.getGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetGlobalPrivacySettings(ctx context.Context, req *user.TLUserSetGlobalPrivacySettings) (r *tg.Bool, err error) {
-	var _args SetGlobalPrivacySettingsArgs
-	_args.Req = req
-	var _result SetGlobalPrivacySettingsResult
-	if err = p.c.Call(ctx, "user.setGlobalPrivacySettings", &_args, &_result); err != nil {
+	// var _args SetGlobalPrivacySettingsArgs
+	// _args.Req = req
+	// var _result SetGlobalPrivacySettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetPrivacy(ctx context.Context, req *user.TLUserGetPrivacy) (r *user.VectorPrivacyRule, err error) {
-	var _args GetPrivacyArgs
-	_args.Req = req
-	var _result GetPrivacyResult
-	if err = p.c.Call(ctx, "user.getPrivacy", &_args, &_result); err != nil {
+	// var _args GetPrivacyArgs
+	// _args.Req = req
+	// var _result GetPrivacyResult
+
+	_result := new(user.VectorPrivacyRule)
+
+	if err = p.c.Call(ctx, "user.getPrivacy", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetPrivacy(ctx context.Context, req *user.TLUserSetPrivacy) (r *tg.Bool, err error) {
-	var _args SetPrivacyArgs
-	_args.Req = req
-	var _result SetPrivacyResult
-	if err = p.c.Call(ctx, "user.setPrivacy", &_args, &_result); err != nil {
+	// var _args SetPrivacyArgs
+	// _args.Req = req
+	// var _result SetPrivacyResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setPrivacy", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCheckPrivacy(ctx context.Context, req *user.TLUserCheckPrivacy) (r *tg.Bool, err error) {
-	var _args CheckPrivacyArgs
-	_args.Req = req
-	var _result CheckPrivacyResult
-	if err = p.c.Call(ctx, "user.checkPrivacy", &_args, &_result); err != nil {
+	// var _args CheckPrivacyArgs
+	// _args.Req = req
+	// var _result CheckPrivacyResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.checkPrivacy", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserAddPeerSettings(ctx context.Context, req *user.TLUserAddPeerSettings) (r *tg.Bool, err error) {
-	var _args AddPeerSettingsArgs
-	_args.Req = req
-	var _result AddPeerSettingsResult
-	if err = p.c.Call(ctx, "user.addPeerSettings", &_args, &_result); err != nil {
+	// var _args AddPeerSettingsArgs
+	// _args.Req = req
+	// var _result AddPeerSettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.addPeerSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetPeerSettings(ctx context.Context, req *user.TLUserGetPeerSettings) (r *tg.PeerSettings, err error) {
-	var _args GetPeerSettingsArgs
-	_args.Req = req
-	var _result GetPeerSettingsResult
-	if err = p.c.Call(ctx, "user.getPeerSettings", &_args, &_result); err != nil {
+	// var _args GetPeerSettingsArgs
+	// _args.Req = req
+	// var _result GetPeerSettingsResult
+
+	_result := new(tg.PeerSettings)
+
+	if err = p.c.Call(ctx, "user.getPeerSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserDeletePeerSettings(ctx context.Context, req *user.TLUserDeletePeerSettings) (r *tg.Bool, err error) {
-	var _args DeletePeerSettingsArgs
-	_args.Req = req
-	var _result DeletePeerSettingsResult
-	if err = p.c.Call(ctx, "user.deletePeerSettings", &_args, &_result); err != nil {
+	// var _args DeletePeerSettingsArgs
+	// _args.Req = req
+	// var _result DeletePeerSettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.deletePeerSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserChangePhone(ctx context.Context, req *user.TLUserChangePhone) (r *tg.Bool, err error) {
-	var _args ChangePhoneArgs
-	_args.Req = req
-	var _result ChangePhoneResult
-	if err = p.c.Call(ctx, "user.changePhone", &_args, &_result); err != nil {
+	// var _args ChangePhoneArgs
+	// _args.Req = req
+	// var _result ChangePhoneResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.changePhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCreateNewUser(ctx context.Context, req *user.TLUserCreateNewUser) (r *tg.ImmutableUser, err error) {
-	var _args CreateNewUserArgs
-	_args.Req = req
-	var _result CreateNewUserResult
-	if err = p.c.Call(ctx, "user.createNewUser", &_args, &_result); err != nil {
+	// var _args CreateNewUserArgs
+	// _args.Req = req
+	// var _result CreateNewUserResult
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.createNewUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserDeleteUser(ctx context.Context, req *user.TLUserDeleteUser) (r *tg.Bool, err error) {
-	var _args DeleteUserArgs
-	_args.Req = req
-	var _result DeleteUserResult
-	if err = p.c.Call(ctx, "user.deleteUser", &_args, &_result); err != nil {
+	// var _args DeleteUserArgs
+	// _args.Req = req
+	// var _result DeleteUserResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.deleteUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserBlockPeer(ctx context.Context, req *user.TLUserBlockPeer) (r *tg.Bool, err error) {
-	var _args BlockPeerArgs
-	_args.Req = req
-	var _result BlockPeerResult
-	if err = p.c.Call(ctx, "user.blockPeer", &_args, &_result); err != nil {
+	// var _args BlockPeerArgs
+	// _args.Req = req
+	// var _result BlockPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.blockPeer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUnBlockPeer(ctx context.Context, req *user.TLUserUnBlockPeer) (r *tg.Bool, err error) {
-	var _args UnBlockPeerArgs
-	_args.Req = req
-	var _result UnBlockPeerResult
-	if err = p.c.Call(ctx, "user.unBlockPeer", &_args, &_result); err != nil {
+	// var _args UnBlockPeerArgs
+	// _args.Req = req
+	// var _result UnBlockPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.unBlockPeer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserBlockedByUser(ctx context.Context, req *user.TLUserBlockedByUser) (r *tg.Bool, err error) {
-	var _args BlockedByUserArgs
-	_args.Req = req
-	var _result BlockedByUserResult
-	if err = p.c.Call(ctx, "user.blockedByUser", &_args, &_result); err != nil {
+	// var _args BlockedByUserArgs
+	// _args.Req = req
+	// var _result BlockedByUserResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.blockedByUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserIsBlockedByUser(ctx context.Context, req *user.TLUserIsBlockedByUser) (r *tg.Bool, err error) {
-	var _args IsBlockedByUserArgs
-	_args.Req = req
-	var _result IsBlockedByUserResult
-	if err = p.c.Call(ctx, "user.isBlockedByUser", &_args, &_result); err != nil {
+	// var _args IsBlockedByUserArgs
+	// _args.Req = req
+	// var _result IsBlockedByUserResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.isBlockedByUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCheckBlockUserList(ctx context.Context, req *user.TLUserCheckBlockUserList) (r *user.VectorLong, err error) {
-	var _args CheckBlockUserListArgs
-	_args.Req = req
-	var _result CheckBlockUserListResult
-	if err = p.c.Call(ctx, "user.checkBlockUserList", &_args, &_result); err != nil {
+	// var _args CheckBlockUserListArgs
+	// _args.Req = req
+	// var _result CheckBlockUserListResult
+
+	_result := new(user.VectorLong)
+
+	if err = p.c.Call(ctx, "user.checkBlockUserList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetBlockedList(ctx context.Context, req *user.TLUserGetBlockedList) (r *user.VectorPeerBlocked, err error) {
-	var _args GetBlockedListArgs
-	_args.Req = req
-	var _result GetBlockedListResult
-	if err = p.c.Call(ctx, "user.getBlockedList", &_args, &_result); err != nil {
+	// var _args GetBlockedListArgs
+	// _args.Req = req
+	// var _result GetBlockedListResult
+
+	_result := new(user.VectorPeerBlocked)
+
+	if err = p.c.Call(ctx, "user.getBlockedList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetContactSignUpNotification(ctx context.Context, req *user.TLUserGetContactSignUpNotification) (r *tg.Bool, err error) {
-	var _args GetContactSignUpNotificationArgs
-	_args.Req = req
-	var _result GetContactSignUpNotificationResult
-	if err = p.c.Call(ctx, "user.getContactSignUpNotification", &_args, &_result); err != nil {
+	// var _args GetContactSignUpNotificationArgs
+	// _args.Req = req
+	// var _result GetContactSignUpNotificationResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.getContactSignUpNotification", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetContactSignUpNotification(ctx context.Context, req *user.TLUserSetContactSignUpNotification) (r *tg.Bool, err error) {
-	var _args SetContactSignUpNotificationArgs
-	_args.Req = req
-	var _result SetContactSignUpNotificationResult
-	if err = p.c.Call(ctx, "user.setContactSignUpNotification", &_args, &_result); err != nil {
+	// var _args SetContactSignUpNotificationArgs
+	// _args.Req = req
+	// var _result SetContactSignUpNotificationResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setContactSignUpNotification", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetContentSettings(ctx context.Context, req *user.TLUserGetContentSettings) (r *tg.AccountContentSettings, err error) {
-	var _args GetContentSettingsArgs
-	_args.Req = req
-	var _result GetContentSettingsResult
-	if err = p.c.Call(ctx, "user.getContentSettings", &_args, &_result); err != nil {
+	// var _args GetContentSettingsArgs
+	// _args.Req = req
+	// var _result GetContentSettingsResult
+
+	_result := new(tg.AccountContentSettings)
+
+	if err = p.c.Call(ctx, "user.getContentSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetContentSettings(ctx context.Context, req *user.TLUserSetContentSettings) (r *tg.Bool, err error) {
-	var _args SetContentSettingsArgs
-	_args.Req = req
-	var _result SetContentSettingsResult
-	if err = p.c.Call(ctx, "user.setContentSettings", &_args, &_result); err != nil {
+	// var _args SetContentSettingsArgs
+	// _args.Req = req
+	// var _result SetContentSettingsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setContentSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserDeleteContact(ctx context.Context, req *user.TLUserDeleteContact) (r *tg.Bool, err error) {
-	var _args DeleteContactArgs
-	_args.Req = req
-	var _result DeleteContactResult
-	if err = p.c.Call(ctx, "user.deleteContact", &_args, &_result); err != nil {
+	// var _args DeleteContactArgs
+	// _args.Req = req
+	// var _result DeleteContactResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.deleteContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetContactList(ctx context.Context, req *user.TLUserGetContactList) (r *user.VectorContactData, err error) {
-	var _args GetContactListArgs
-	_args.Req = req
-	var _result GetContactListResult
-	if err = p.c.Call(ctx, "user.getContactList", &_args, &_result); err != nil {
+	// var _args GetContactListArgs
+	// _args.Req = req
+	// var _result GetContactListResult
+
+	_result := new(user.VectorContactData)
+
+	if err = p.c.Call(ctx, "user.getContactList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetContactIdList(ctx context.Context, req *user.TLUserGetContactIdList) (r *user.VectorLong, err error) {
-	var _args GetContactIdListArgs
-	_args.Req = req
-	var _result GetContactIdListResult
-	if err = p.c.Call(ctx, "user.getContactIdList", &_args, &_result); err != nil {
+	// var _args GetContactIdListArgs
+	// _args.Req = req
+	// var _result GetContactIdListResult
+
+	_result := new(user.VectorLong)
+
+	if err = p.c.Call(ctx, "user.getContactIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetContact(ctx context.Context, req *user.TLUserGetContact) (r *tg.ContactData, err error) {
-	var _args GetContactArgs
-	_args.Req = req
-	var _result GetContactResult
-	if err = p.c.Call(ctx, "user.getContact", &_args, &_result); err != nil {
+	// var _args GetContactArgs
+	// _args.Req = req
+	// var _result GetContactResult
+
+	_result := new(tg.ContactData)
+
+	if err = p.c.Call(ctx, "user.getContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserAddContact(ctx context.Context, req *user.TLUserAddContact) (r *tg.Bool, err error) {
-	var _args AddContactArgs
-	_args.Req = req
-	var _result AddContactResult
-	if err = p.c.Call(ctx, "user.addContact", &_args, &_result); err != nil {
+	// var _args AddContactArgs
+	// _args.Req = req
+	// var _result AddContactResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.addContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCheckContact(ctx context.Context, req *user.TLUserCheckContact) (r *tg.Bool, err error) {
-	var _args CheckContactArgs
-	_args.Req = req
-	var _result CheckContactResult
-	if err = p.c.Call(ctx, "user.checkContact", &_args, &_result); err != nil {
+	// var _args CheckContactArgs
+	// _args.Req = req
+	// var _result CheckContactResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.checkContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetImportersByPhone(ctx context.Context, req *user.TLUserGetImportersByPhone) (r *user.VectorInputContact, err error) {
-	var _args GetImportersByPhoneArgs
-	_args.Req = req
-	var _result GetImportersByPhoneResult
-	if err = p.c.Call(ctx, "user.getImportersByPhone", &_args, &_result); err != nil {
+	// var _args GetImportersByPhoneArgs
+	// _args.Req = req
+	// var _result GetImportersByPhoneResult
+
+	_result := new(user.VectorInputContact)
+
+	if err = p.c.Call(ctx, "user.getImportersByPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserDeleteImportersByPhone(ctx context.Context, req *user.TLUserDeleteImportersByPhone) (r *tg.Bool, err error) {
-	var _args DeleteImportersByPhoneArgs
-	_args.Req = req
-	var _result DeleteImportersByPhoneResult
-	if err = p.c.Call(ctx, "user.deleteImportersByPhone", &_args, &_result); err != nil {
+	// var _args DeleteImportersByPhoneArgs
+	// _args.Req = req
+	// var _result DeleteImportersByPhoneResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.deleteImportersByPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserImportContacts(ctx context.Context, req *user.TLUserImportContacts) (r *user.UserImportedContacts, err error) {
-	var _args ImportContactsArgs
-	_args.Req = req
-	var _result ImportContactsResult
-	if err = p.c.Call(ctx, "user.importContacts", &_args, &_result); err != nil {
+	// var _args ImportContactsArgs
+	// _args.Req = req
+	// var _result ImportContactsResult
+
+	_result := new(user.UserImportedContacts)
+
+	if err = p.c.Call(ctx, "user.importContacts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetCountryCode(ctx context.Context, req *user.TLUserGetCountryCode) (r *tg.String, err error) {
-	var _args GetCountryCodeArgs
-	_args.Req = req
-	var _result GetCountryCodeResult
-	if err = p.c.Call(ctx, "user.getCountryCode", &_args, &_result); err != nil {
+	// var _args GetCountryCodeArgs
+	// _args.Req = req
+	// var _result GetCountryCodeResult
+
+	_result := new(tg.String)
+
+	if err = p.c.Call(ctx, "user.getCountryCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateAbout(ctx context.Context, req *user.TLUserUpdateAbout) (r *tg.Bool, err error) {
-	var _args UpdateAboutArgs
-	_args.Req = req
-	var _result UpdateAboutResult
-	if err = p.c.Call(ctx, "user.updateAbout", &_args, &_result); err != nil {
+	// var _args UpdateAboutArgs
+	// _args.Req = req
+	// var _result UpdateAboutResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateAbout", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateFirstAndLastName(ctx context.Context, req *user.TLUserUpdateFirstAndLastName) (r *tg.Bool, err error) {
-	var _args UpdateFirstAndLastNameArgs
-	_args.Req = req
-	var _result UpdateFirstAndLastNameResult
-	if err = p.c.Call(ctx, "user.updateFirstAndLastName", &_args, &_result); err != nil {
+	// var _args UpdateFirstAndLastNameArgs
+	// _args.Req = req
+	// var _result UpdateFirstAndLastNameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateFirstAndLastName", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateVerified(ctx context.Context, req *user.TLUserUpdateVerified) (r *tg.Bool, err error) {
-	var _args UpdateVerifiedArgs
-	_args.Req = req
-	var _result UpdateVerifiedResult
-	if err = p.c.Call(ctx, "user.updateVerified", &_args, &_result); err != nil {
+	// var _args UpdateVerifiedArgs
+	// _args.Req = req
+	// var _result UpdateVerifiedResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateVerified", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateUsername(ctx context.Context, req *user.TLUserUpdateUsername) (r *tg.Bool, err error) {
-	var _args UpdateUsernameArgs
-	_args.Req = req
-	var _result UpdateUsernameResult
-	if err = p.c.Call(ctx, "user.updateUsername", &_args, &_result); err != nil {
+	// var _args UpdateUsernameArgs
+	// _args.Req = req
+	// var _result UpdateUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateProfilePhoto(ctx context.Context, req *user.TLUserUpdateProfilePhoto) (r *tg.Int64, err error) {
-	var _args UpdateProfilePhotoArgs
-	_args.Req = req
-	var _result UpdateProfilePhotoResult
-	if err = p.c.Call(ctx, "user.updateProfilePhoto", &_args, &_result); err != nil {
+	// var _args UpdateProfilePhotoArgs
+	// _args.Req = req
+	// var _result UpdateProfilePhotoResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "user.updateProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserDeleteProfilePhotos(ctx context.Context, req *user.TLUserDeleteProfilePhotos) (r *tg.Int64, err error) {
-	var _args DeleteProfilePhotosArgs
-	_args.Req = req
-	var _result DeleteProfilePhotosResult
-	if err = p.c.Call(ctx, "user.deleteProfilePhotos", &_args, &_result); err != nil {
+	// var _args DeleteProfilePhotosArgs
+	// _args.Req = req
+	// var _result DeleteProfilePhotosResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "user.deleteProfilePhotos", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetProfilePhotos(ctx context.Context, req *user.TLUserGetProfilePhotos) (r *user.VectorLong, err error) {
-	var _args GetProfilePhotosArgs
-	_args.Req = req
-	var _result GetProfilePhotosResult
-	if err = p.c.Call(ctx, "user.getProfilePhotos", &_args, &_result); err != nil {
+	// var _args GetProfilePhotosArgs
+	// _args.Req = req
+	// var _result GetProfilePhotosResult
+
+	_result := new(user.VectorLong)
+
+	if err = p.c.Call(ctx, "user.getProfilePhotos", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetBotCommands(ctx context.Context, req *user.TLUserSetBotCommands) (r *tg.Bool, err error) {
-	var _args SetBotCommandsArgs
-	_args.Req = req
-	var _result SetBotCommandsResult
-	if err = p.c.Call(ctx, "user.setBotCommands", &_args, &_result); err != nil {
+	// var _args SetBotCommandsArgs
+	// _args.Req = req
+	// var _result SetBotCommandsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setBotCommands", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserIsBot(ctx context.Context, req *user.TLUserIsBot) (r *tg.Bool, err error) {
-	var _args IsBotArgs
-	_args.Req = req
-	var _result IsBotResult
-	if err = p.c.Call(ctx, "user.isBot", &_args, &_result); err != nil {
+	// var _args IsBotArgs
+	// _args.Req = req
+	// var _result IsBotResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.isBot", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetBotInfo(ctx context.Context, req *user.TLUserGetBotInfo) (r *tg.BotInfo, err error) {
-	var _args GetBotInfoArgs
-	_args.Req = req
-	var _result GetBotInfoResult
-	if err = p.c.Call(ctx, "user.getBotInfo", &_args, &_result); err != nil {
+	// var _args GetBotInfoArgs
+	// _args.Req = req
+	// var _result GetBotInfoResult
+
+	_result := new(tg.BotInfo)
+
+	if err = p.c.Call(ctx, "user.getBotInfo", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCheckBots(ctx context.Context, req *user.TLUserCheckBots) (r *user.VectorLong, err error) {
-	var _args CheckBotsArgs
-	_args.Req = req
-	var _result CheckBotsResult
-	if err = p.c.Call(ctx, "user.checkBots", &_args, &_result); err != nil {
+	// var _args CheckBotsArgs
+	// _args.Req = req
+	// var _result CheckBotsResult
+
+	_result := new(user.VectorLong)
+
+	if err = p.c.Call(ctx, "user.checkBots", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetFullUser(ctx context.Context, req *user.TLUserGetFullUser) (r *tg.UsersUserFull, err error) {
-	var _args GetFullUserArgs
-	_args.Req = req
-	var _result GetFullUserResult
-	if err = p.c.Call(ctx, "user.getFullUser", &_args, &_result); err != nil {
+	// var _args GetFullUserArgs
+	// _args.Req = req
+	// var _result GetFullUserResult
+
+	_result := new(tg.UsersUserFull)
+
+	if err = p.c.Call(ctx, "user.getFullUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateEmojiStatus(ctx context.Context, req *user.TLUserUpdateEmojiStatus) (r *tg.Bool, err error) {
-	var _args UpdateEmojiStatusArgs
-	_args.Req = req
-	var _result UpdateEmojiStatusResult
-	if err = p.c.Call(ctx, "user.updateEmojiStatus", &_args, &_result); err != nil {
+	// var _args UpdateEmojiStatusArgs
+	// _args.Req = req
+	// var _result UpdateEmojiStatusResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateEmojiStatus", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetUserDataById(ctx context.Context, req *user.TLUserGetUserDataById) (r *tg.UserData, err error) {
-	var _args GetUserDataByIdArgs
-	_args.Req = req
-	var _result GetUserDataByIdResult
-	if err = p.c.Call(ctx, "user.getUserDataById", &_args, &_result); err != nil {
+	// var _args GetUserDataByIdArgs
+	// _args.Req = req
+	// var _result GetUserDataByIdResult
+
+	_result := new(tg.UserData)
+
+	if err = p.c.Call(ctx, "user.getUserDataById", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetUserDataListByIdList(ctx context.Context, req *user.TLUserGetUserDataListByIdList) (r *user.VectorUserData, err error) {
-	var _args GetUserDataListByIdListArgs
-	_args.Req = req
-	var _result GetUserDataListByIdListResult
-	if err = p.c.Call(ctx, "user.getUserDataListByIdList", &_args, &_result); err != nil {
+	// var _args GetUserDataListByIdListArgs
+	// _args.Req = req
+	// var _result GetUserDataListByIdListResult
+
+	_result := new(user.VectorUserData)
+
+	if err = p.c.Call(ctx, "user.getUserDataListByIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetUserDataByToken(ctx context.Context, req *user.TLUserGetUserDataByToken) (r *tg.UserData, err error) {
-	var _args GetUserDataByTokenArgs
-	_args.Req = req
-	var _result GetUserDataByTokenResult
-	if err = p.c.Call(ctx, "user.getUserDataByToken", &_args, &_result); err != nil {
+	// var _args GetUserDataByTokenArgs
+	// _args.Req = req
+	// var _result GetUserDataByTokenResult
+
+	_result := new(tg.UserData)
+
+	if err = p.c.Call(ctx, "user.getUserDataByToken", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSearch(ctx context.Context, req *user.TLUserSearch) (r *user.UsersFound, err error) {
-	var _args SearchArgs
-	_args.Req = req
-	var _result SearchResult
-	if err = p.c.Call(ctx, "user.search", &_args, &_result); err != nil {
+	// var _args SearchArgs
+	// _args.Req = req
+	// var _result SearchResult
+
+	_result := new(user.UsersFound)
+
+	if err = p.c.Call(ctx, "user.search", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateBotData(ctx context.Context, req *user.TLUserUpdateBotData) (r *tg.Bool, err error) {
-	var _args UpdateBotDataArgs
-	_args.Req = req
-	var _result UpdateBotDataResult
-	if err = p.c.Call(ctx, "user.updateBotData", &_args, &_result); err != nil {
+	// var _args UpdateBotDataArgs
+	// _args.Req = req
+	// var _result UpdateBotDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateBotData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetImmutableUserV2(ctx context.Context, req *user.TLUserGetImmutableUserV2) (r *tg.ImmutableUser, err error) {
-	var _args GetImmutableUserV2Args
-	_args.Req = req
-	var _result GetImmutableUserV2Result
-	if err = p.c.Call(ctx, "user.getImmutableUserV2", &_args, &_result); err != nil {
+	// var _args GetImmutableUserV2Args
+	// _args.Req = req
+	// var _result GetImmutableUserV2Result
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.getImmutableUserV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetMutableUsersV2(ctx context.Context, req *user.TLUserGetMutableUsersV2) (r *tg.MutableUsers, err error) {
-	var _args GetMutableUsersV2Args
-	_args.Req = req
-	var _result GetMutableUsersV2Result
-	if err = p.c.Call(ctx, "user.getMutableUsersV2", &_args, &_result); err != nil {
+	// var _args GetMutableUsersV2Args
+	// _args.Req = req
+	// var _result GetMutableUsersV2Result
+
+	_result := new(tg.MutableUsers)
+
+	if err = p.c.Call(ctx, "user.getMutableUsersV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserCreateNewTestUser(ctx context.Context, req *user.TLUserCreateNewTestUser) (r *tg.ImmutableUser, err error) {
-	var _args CreateNewTestUserArgs
-	_args.Req = req
-	var _result CreateNewTestUserResult
-	if err = p.c.Call(ctx, "user.createNewTestUser", &_args, &_result); err != nil {
+	// var _args CreateNewTestUserArgs
+	// _args.Req = req
+	// var _result CreateNewTestUserResult
+
+	_result := new(tg.ImmutableUser)
+
+	if err = p.c.Call(ctx, "user.createNewTestUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserEditCloseFriends(ctx context.Context, req *user.TLUserEditCloseFriends) (r *tg.Bool, err error) {
-	var _args EditCloseFriendsArgs
-	_args.Req = req
-	var _result EditCloseFriendsResult
-	if err = p.c.Call(ctx, "user.editCloseFriends", &_args, &_result); err != nil {
+	// var _args EditCloseFriendsArgs
+	// _args.Req = req
+	// var _result EditCloseFriendsResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.editCloseFriends", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetStoriesMaxId(ctx context.Context, req *user.TLUserSetStoriesMaxId) (r *tg.Bool, err error) {
-	var _args SetStoriesMaxIdArgs
-	_args.Req = req
-	var _result SetStoriesMaxIdResult
-	if err = p.c.Call(ctx, "user.setStoriesMaxId", &_args, &_result); err != nil {
+	// var _args SetStoriesMaxIdArgs
+	// _args.Req = req
+	// var _result SetStoriesMaxIdResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setStoriesMaxId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetColor(ctx context.Context, req *user.TLUserSetColor) (r *tg.Bool, err error) {
-	var _args SetColorArgs
-	_args.Req = req
-	var _result SetColorResult
-	if err = p.c.Call(ctx, "user.setColor", &_args, &_result); err != nil {
+	// var _args SetColorArgs
+	// _args.Req = req
+	// var _result SetColorResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setColor", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdateBirthday(ctx context.Context, req *user.TLUserUpdateBirthday) (r *tg.Bool, err error) {
-	var _args UpdateBirthdayArgs
-	_args.Req = req
-	var _result UpdateBirthdayResult
-	if err = p.c.Call(ctx, "user.updateBirthday", &_args, &_result); err != nil {
+	// var _args UpdateBirthdayArgs
+	// _args.Req = req
+	// var _result UpdateBirthdayResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updateBirthday", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetBirthdays(ctx context.Context, req *user.TLUserGetBirthdays) (r *user.VectorContactBirthday, err error) {
-	var _args GetBirthdaysArgs
-	_args.Req = req
-	var _result GetBirthdaysResult
-	if err = p.c.Call(ctx, "user.getBirthdays", &_args, &_result); err != nil {
+	// var _args GetBirthdaysArgs
+	// _args.Req = req
+	// var _result GetBirthdaysResult
+
+	_result := new(user.VectorContactBirthday)
+
+	if err = p.c.Call(ctx, "user.getBirthdays", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetStoriesHidden(ctx context.Context, req *user.TLUserSetStoriesHidden) (r *tg.Bool, err error) {
-	var _args SetStoriesHiddenArgs
-	_args.Req = req
-	var _result SetStoriesHiddenResult
-	if err = p.c.Call(ctx, "user.setStoriesHidden", &_args, &_result); err != nil {
+	// var _args SetStoriesHiddenArgs
+	// _args.Req = req
+	// var _result SetStoriesHiddenResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setStoriesHidden", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserUpdatePersonalChannel(ctx context.Context, req *user.TLUserUpdatePersonalChannel) (r *tg.Bool, err error) {
-	var _args UpdatePersonalChannelArgs
-	_args.Req = req
-	var _result UpdatePersonalChannelResult
-	if err = p.c.Call(ctx, "user.updatePersonalChannel", &_args, &_result); err != nil {
+	// var _args UpdatePersonalChannelArgs
+	// _args.Req = req
+	// var _result UpdatePersonalChannelResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updatePersonalChannel", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetUserIdByPhone(ctx context.Context, req *user.TLUserGetUserIdByPhone) (r *tg.Int64, err error) {
-	var _args GetUserIdByPhoneArgs
-	_args.Req = req
-	var _result GetUserIdByPhoneResult
-	if err = p.c.Call(ctx, "user.getUserIdByPhone", &_args, &_result); err != nil {
+	// var _args GetUserIdByPhoneArgs
+	// _args.Req = req
+	// var _result GetUserIdByPhoneResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "user.getUserIdByPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserSetAuthorizationTTL(ctx context.Context, req *user.TLUserSetAuthorizationTTL) (r *tg.Bool, err error) {
-	var _args SetAuthorizationTTLArgs
-	_args.Req = req
-	var _result SetAuthorizationTTLResult
-	if err = p.c.Call(ctx, "user.setAuthorizationTTL", &_args, &_result); err != nil {
+	// var _args SetAuthorizationTTLArgs
+	// _args.Req = req
+	// var _result SetAuthorizationTTLResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.setAuthorizationTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UserGetAuthorizationTTL(ctx context.Context, req *user.TLUserGetAuthorizationTTL) (r *tg.AccountDaysTTL, err error) {
-	var _args GetAuthorizationTTLArgs
-	_args.Req = req
-	var _result GetAuthorizationTTLResult
-	if err = p.c.Call(ctx, "user.getAuthorizationTTL", &_args, &_result); err != nil {
+	// var _args GetAuthorizationTTLArgs
+	// _args.Req = req
+	// var _result GetAuthorizationTTLResult
+
+	_result := new(tg.AccountDaysTTL)
+
+	if err = p.c.Call(ctx, "user.getAuthorizationTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserUpdatePremium(ctx context.Context, req *user.TLUserUpdatePremium) (r *tg.Bool, err error) {
+	// var _args UpdatePremiumArgs
+	// _args.Req = req
+	// var _result UpdatePremiumResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "user.updatePremium", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotInfoV2) (r *user.BotInfoData, err error) {
+	// var _args GetBotInfoV2Args
+	// _args.Req = req
+	// var _result GetBotInfoV2Result
+
+	_result := new(user.BotInfoData)
+
+	if err = p.c.Call(ctx, "user.getBotInfoV2", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

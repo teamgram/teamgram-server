@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package code
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLCodeCreatePhoneCode <--
 type TLCodeCreatePhoneCode struct {
@@ -34,6 +38,11 @@ type TLCodeCreatePhoneCode struct {
 	SentCodeType          int32  `json:"sent_code_type"`
 	NextCodeType          int32  `json:"next_code_type"`
 	State                 int32  `json:"state"`
+}
+
+func (m *TLCodeCreatePhoneCode) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -96,6 +105,9 @@ func (m *TLCodeCreatePhoneCode) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -109,6 +121,11 @@ type TLCodeGetPhoneCode struct {
 	AuthKeyId     int64  `json:"auth_key_id"`
 	Phone         string `json:"phone"`
 	PhoneCodeHash string `json:"phone_code_hash"`
+}
+
+func (m *TLCodeGetPhoneCode) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -146,6 +163,9 @@ func (m *TLCodeGetPhoneCode) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -159,6 +179,11 @@ type TLCodeDeletePhoneCode struct {
 	AuthKeyId     int64  `json:"auth_key_id"`
 	Phone         string `json:"phone"`
 	PhoneCodeHash string `json:"phone_code_hash"`
+}
+
+func (m *TLCodeDeletePhoneCode) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -196,6 +221,9 @@ func (m *TLCodeDeletePhoneCode) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -210,6 +238,11 @@ type TLCodeUpdatePhoneCodeData struct {
 	Phone         string                `json:"phone"`
 	PhoneCodeHash string                `json:"phone_code_hash"`
 	CodeData      *PhoneCodeTransaction `json:"code_data"`
+}
+
+func (m *TLCodeUpdatePhoneCodeData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -252,6 +285,9 @@ func (m *TLCodeUpdatePhoneCodeData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

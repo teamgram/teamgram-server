@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -57,6 +57,11 @@ type TLAuthKeyStateData struct {
 	AccessHash           int64          `json:"access_hash"`
 	Client               *ClientSession `json:"client"`
 	AndroidPushSessionId *int64         `json:"android_push_session_id"`
+}
+
+func (m *TLAuthKeyStateData) String() string {
+	wrapper := iface.WithNameWrapper{"authKeyStateData", m}
+	return wrapper.String()
 }
 
 // AuthKeyStateDataClazzName <--
@@ -157,7 +162,12 @@ func (m *TLAuthKeyStateData) Decode(d *bin.Decoder) (err error) {
 type AuthKeyStateData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	AuthKeyStateDataClazz
+	AuthKeyStateDataClazz `json:"_clazz"`
+}
+
+func (m *AuthKeyStateData) String() string {
+	wrapper := iface.WithNameWrapper{m.AuthKeyStateDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeAuthKeyStateData <--
@@ -253,6 +263,11 @@ type TLClientSession struct {
 	Params         string `json:"params"`
 }
 
+func (m *TLClientSession) String() string {
+	wrapper := iface.WithNameWrapper{"clientSession", m}
+	return wrapper.String()
+}
+
 // ClientSessionClazzName <--
 func (m *TLClientSession) ClientSessionClazzName() string {
 	return ClazzName_clientSession
@@ -332,7 +347,12 @@ func (m *TLClientSession) Decode(d *bin.Decoder) (err error) {
 type ClientSession struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ClientSessionClazz
+	ClientSessionClazz `json:"_clazz"`
+}
+
+func (m *ClientSession) String() string {
+	wrapper := iface.WithNameWrapper{m.ClientSessionClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeClientSession <--

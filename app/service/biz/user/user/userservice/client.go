@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client/callopt"
 )
 
+var _ *tg.Bool
+
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	UserGetLastSeens(ctx context.Context, req *user.TLUserGetLastSeens, callOptions ...callopt.Option) (r *user.VectorLastSeenData, err error)
@@ -98,6 +100,8 @@ type Client interface {
 	UserGetUserIdByPhone(ctx context.Context, req *user.TLUserGetUserIdByPhone, callOptions ...callopt.Option) (r *tg.Int64, err error)
 	UserSetAuthorizationTTL(ctx context.Context, req *user.TLUserSetAuthorizationTTL, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	UserGetAuthorizationTTL(ctx context.Context, req *user.TLUserGetAuthorizationTTL, callOptions ...callopt.Option) (r *tg.AccountDaysTTL, err error)
+	UserUpdatePremium(ctx context.Context, req *user.TLUserUpdatePremium, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotInfoV2, callOptions ...callopt.Option) (r *user.BotInfoData, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -513,4 +517,14 @@ func (p *kUserClient) UserSetAuthorizationTTL(ctx context.Context, req *user.TLU
 func (p *kUserClient) UserGetAuthorizationTTL(ctx context.Context, req *user.TLUserGetAuthorizationTTL, callOptions ...callopt.Option) (r *tg.AccountDaysTTL, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserGetAuthorizationTTL(ctx, req)
+}
+
+func (p *kUserClient) UserUpdatePremium(ctx context.Context, req *user.TLUserUpdatePremium, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserUpdatePremium(ctx, req)
+}
+
+func (p *kUserClient) UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotInfoV2, callOptions ...callopt.Option) (r *user.BotInfoData, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetBotInfoV2(ctx, req)
 }

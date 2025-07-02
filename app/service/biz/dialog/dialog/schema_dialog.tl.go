@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -50,13 +50,20 @@ func DecodeDialogExtClazz(d *bin.Decoder) (DialogExtClazz, error) {
 
 // TLDialogExt <--
 type TLDialogExt struct {
-	ClazzID        uint32     `json:"_id"`
-	Order          int64      `json:"order"`
-	Dialog         *tg.Dialog `json:"dialog"`
-	AvailableMinId int32      `json:"available_min_id"`
-	Date           int64      `json:"date"`
-	ThemeEmoticon  string     `json:"theme_emoticon"`
-	TtlPeriod      int32      `json:"ttl_period"`
+	ClazzID             uint32     `json:"_id"`
+	Order               int64      `json:"order"`
+	Dialog              *tg.Dialog `json:"dialog"`
+	AvailableMinId      int32      `json:"available_min_id"`
+	Date                int64      `json:"date"`
+	ThemeEmoticon       string     `json:"theme_emoticon"`
+	TtlPeriod           int32      `json:"ttl_period"`
+	WallpaperId         int64      `json:"wallpaper_id"`
+	WallpaperOverridden bool       `json:"wallpaper_overridden"`
+}
+
+func (m *TLDialogExt) String() string {
+	wrapper := iface.WithNameWrapper{"dialogExt", m}
+	return wrapper.String()
 }
 
 // DialogExtClazzName <--
@@ -77,15 +84,30 @@ func (m *TLDialogExt) ToDialogExt() *DialogExt {
 // Encode <--
 func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0xbdd9a860: func() error {
-			x.PutClazzID(0xbdd9a860)
+		0x730ba93f: func() error {
+			x.PutClazzID(0x730ba93f)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.WallpaperOverridden == true {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
 			x.PutInt64(m.Order)
 			_ = m.Dialog.Encode(x, layer)
 			x.PutInt32(m.AvailableMinId)
 			x.PutInt64(m.Date)
 			x.PutString(m.ThemeEmoticon)
 			x.PutInt32(m.TtlPeriod)
+			x.PutInt64(m.WallpaperId)
 
 			return nil
 		},
@@ -103,17 +125,23 @@ func (m *TLDialogExt) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
-		0xbdd9a860: func() (err error) {
+		0x730ba93f: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
 			m.Order, err = d.Int64()
 
-			m1 := &tg.Dialog{}
-			_ = m1.Decode(d)
-			m.Dialog = m1
+			m2 := &tg.Dialog{}
+			_ = m2.Decode(d)
+			m.Dialog = m2
 
 			m.AvailableMinId, err = d.Int32()
 			m.Date, err = d.Int64()
 			m.ThemeEmoticon, err = d.String()
 			m.TtlPeriod, err = d.Int32()
+			m.WallpaperId, err = d.Int64()
+			if (flags & (1 << 0)) != 0 {
+				m.WallpaperOverridden = true
+			}
 
 			return nil
 		},
@@ -130,7 +158,12 @@ func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
 type DialogExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogExtClazz
+	DialogExtClazz `json:"_clazz"`
+}
+
+func (m *DialogExt) String() string {
+	wrapper := iface.WithNameWrapper{m.DialogExtClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeDialogExt <--
@@ -219,6 +252,11 @@ type TLDialogFilterExt struct {
 	Order        int64            `json:"order"`
 }
 
+func (m *TLDialogFilterExt) String() string {
+	wrapper := iface.WithNameWrapper{"dialogFilterExt", m}
+	return wrapper.String()
+}
+
 // DialogFilterExtClazzName <--
 func (m *TLDialogFilterExt) DialogFilterExtClazzName() string {
 	return ClazzName_dialogFilterExt
@@ -305,7 +343,12 @@ func (m *TLDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 type DialogFilterExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogFilterExtClazz
+	DialogFilterExtClazz `json:"_clazz"`
+}
+
+func (m *DialogFilterExt) String() string {
+	wrapper := iface.WithNameWrapper{m.DialogFilterExtClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeDialogFilterExt <--
@@ -392,6 +435,11 @@ type TLDialogPinnedExt struct {
 	PeerId   int64  `json:"peer_id"`
 }
 
+func (m *TLDialogPinnedExt) String() string {
+	wrapper := iface.WithNameWrapper{"dialogPinnedExt", m}
+	return wrapper.String()
+}
+
 // DialogPinnedExtClazzName <--
 func (m *TLDialogPinnedExt) DialogPinnedExtClazzName() string {
 	return ClazzName_dialogPinnedExt
@@ -453,7 +501,12 @@ func (m *TLDialogPinnedExt) Decode(d *bin.Decoder) (err error) {
 type DialogPinnedExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogPinnedExtClazz
+	DialogPinnedExtClazz `json:"_clazz"`
+}
+
+func (m *DialogPinnedExt) String() string {
+	wrapper := iface.WithNameWrapper{m.DialogPinnedExtClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeDialogPinnedExt <--
@@ -540,6 +593,11 @@ type TLSimpleDialogsData struct {
 	Channels []int64 `json:"channels"`
 }
 
+func (m *TLSimpleDialogsData) String() string {
+	wrapper := iface.WithNameWrapper{"simpleDialogsData", m}
+	return wrapper.String()
+}
+
 // DialogsDataClazzName <--
 func (m *TLSimpleDialogsData) DialogsDataClazzName() string {
 	return ClazzName_simpleDialogsData
@@ -606,7 +664,12 @@ func (m *TLSimpleDialogsData) Decode(d *bin.Decoder) (err error) {
 type DialogsData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogsDataClazz
+	DialogsDataClazz `json:"_clazz"`
+}
+
+func (m *DialogsData) String() string {
+	wrapper := iface.WithNameWrapper{m.DialogsDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeDialogsData <--
@@ -692,6 +755,11 @@ type TLUpdateDraftMessage struct {
 	Draft   *tg.DraftMessage `json:"draft"`
 }
 
+func (m *TLUpdateDraftMessage) String() string {
+	wrapper := iface.WithNameWrapper{"updateDraftMessage", m}
+	return wrapper.String()
+}
+
 // PeerWithDraftMessageClazzName <--
 func (m *TLUpdateDraftMessage) PeerWithDraftMessageClazzName() string {
 	return ClazzName_updateDraftMessage
@@ -757,7 +825,12 @@ func (m *TLUpdateDraftMessage) Decode(d *bin.Decoder) (err error) {
 type PeerWithDraftMessage struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PeerWithDraftMessageClazz
+	PeerWithDraftMessageClazz `json:"_clazz"`
+}
+
+func (m *PeerWithDraftMessage) String() string {
+	wrapper := iface.WithNameWrapper{m.PeerWithDraftMessageClazzName(), m}
+	return wrapper.String()
 }
 
 // MakePeerWithDraftMessage <--
@@ -843,6 +916,11 @@ type TLSavedDialogList struct {
 	Dialogs []*tg.SavedDialog `json:"dialogs"`
 }
 
+func (m *TLSavedDialogList) String() string {
+	wrapper := iface.WithNameWrapper{"savedDialogList", m}
+	return wrapper.String()
+}
+
 // SavedDialogListClazzName <--
 func (m *TLSavedDialogList) SavedDialogListClazzName() string {
 	return ClazzName_savedDialogList
@@ -916,7 +994,12 @@ func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
 type SavedDialogList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SavedDialogListClazz
+	SavedDialogListClazz `json:"_clazz"`
+}
+
+func (m *SavedDialogList) String() string {
+	wrapper := iface.WithNameWrapper{m.SavedDialogListClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeSavedDialogList <--

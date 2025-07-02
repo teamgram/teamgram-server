@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type DialogClient interface {
 	DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error)
 	DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error)
@@ -58,6 +60,9 @@ type DialogClient interface {
 	DialogGetDialogFilterBySlug(ctx context.Context, in *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error)
 	DialogCreateDialogFilter(ctx context.Context, in *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error)
 	DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error)
+	DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error)
+	DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error)
+	DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*tg.Bool, error)
 }
 
 type defaultDialogClient struct {
@@ -327,4 +332,25 @@ func (m *defaultDialogClient) DialogCreateDialogFilter(ctx context.Context, in *
 func (m *defaultDialogClient) DialogUpdateUnreadCount(ctx context.Context, in *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error) {
 	cli := dialogservice.NewRPCDialogClient(m.cli)
 	return cli.DialogUpdateUnreadCount(ctx, in)
+}
+
+// DialogToggleDialogFilterTags
+// dialog.toggleDialogFilterTags user_id:long enabled:Bool = Bool;
+func (m *defaultDialogClient) DialogToggleDialogFilterTags(ctx context.Context, in *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error) {
+	cli := dialogservice.NewRPCDialogClient(m.cli)
+	return cli.DialogToggleDialogFilterTags(ctx, in)
+}
+
+// DialogGetDialogFilterTags
+// dialog.getDialogFilterTags user_id:long = Bool;
+func (m *defaultDialogClient) DialogGetDialogFilterTags(ctx context.Context, in *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error) {
+	cli := dialogservice.NewRPCDialogClient(m.cli)
+	return cli.DialogGetDialogFilterTags(ctx, in)
+}
+
+// DialogSetChatWallpaper
+// dialog.setChatWallpaper flags:# user_id:long peer_type:int peer_id:long wallpaper_id:long wallpaper_overridden:flags.0?true = Bool;
+func (m *defaultDialogClient) DialogSetChatWallpaper(ctx context.Context, in *dialog.TLDialogSetChatWallpaper) (*tg.Bool, error) {
+	cli := dialogservice.NewRPCDialogClient(m.cli)
+	return cli.DialogSetChatWallpaper(ctx, in)
 }

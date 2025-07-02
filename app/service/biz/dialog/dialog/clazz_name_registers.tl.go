@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -58,12 +58,15 @@ const (
 	ClazzName_dialog_getDialogFilterBySlug             = "dialog_getDialogFilterBySlug"
 	ClazzName_dialog_createDialogFilter                = "dialog_createDialogFilter"
 	ClazzName_dialog_updateUnreadCount                 = "dialog_updateUnreadCount"
+	ClazzName_dialog_toggleDialogFilterTags            = "dialog_toggleDialogFilterTags"
+	ClazzName_dialog_getDialogFilterTags               = "dialog_getDialogFilterTags"
+	ClazzName_dialog_setChatWallpaper                  = "dialog_setChatWallpaper"
 )
 
 func init() {
 	// RegisterClazzNameList
 	iface.RegisterClazzName(ClazzName_updateDraftMessage, 0, 0xf6bdc4b2)                       // f6bdc4b2
-	iface.RegisterClazzName(ClazzName_dialogExt, 0, 0xbdd9a860)                                // bdd9a860
+	iface.RegisterClazzName(ClazzName_dialogExt, 0, 0x730ba93f)                                // 730ba93f
 	iface.RegisterClazzName(ClazzName_dialogPinnedExt, 0, 0xea7222c)                           // ea7222c
 	iface.RegisterClazzName(ClazzName_dialogFilterExt, 0, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzName(ClazzName_simpleDialogsData, 0, 0x1d59b45d)                        // 1d59b45d
@@ -105,10 +108,13 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dialog_getDialogFilterBySlug, 0, 0x4e457fef)             // 4e457fef
 	iface.RegisterClazzName(ClazzName_dialog_createDialogFilter, 0, 0xc6cb636f)                // c6cb636f
 	iface.RegisterClazzName(ClazzName_dialog_updateUnreadCount, 0, 0x2bac334d)                 // 2bac334d
+	iface.RegisterClazzName(ClazzName_dialog_toggleDialogFilterTags, 0, 0xa0cd6d89)            // a0cd6d89
+	iface.RegisterClazzName(ClazzName_dialog_getDialogFilterTags, 0, 0xfaf0fa97)               // faf0fa97
+	iface.RegisterClazzName(ClazzName_dialog_setChatWallpaper, 0, 0xb551db12)                  // b551db12
 
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_updateDraftMessage, 0xf6bdc4b2)                       // f6bdc4b2
-	iface.RegisterClazzIDName(ClazzName_dialogExt, 0xbdd9a860)                                // bdd9a860
+	iface.RegisterClazzIDName(ClazzName_dialogExt, 0x730ba93f)                                // 730ba93f
 	iface.RegisterClazzIDName(ClazzName_dialogPinnedExt, 0xea7222c)                           // ea7222c
 	iface.RegisterClazzIDName(ClazzName_dialogFilterExt, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzIDName(ClazzName_simpleDialogsData, 0x1d59b45d)                        // 1d59b45d
@@ -150,4 +156,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_dialog_getDialogFilterBySlug, 0x4e457fef)             // 4e457fef
 	iface.RegisterClazzIDName(ClazzName_dialog_createDialogFilter, 0xc6cb636f)                // c6cb636f
 	iface.RegisterClazzIDName(ClazzName_dialog_updateUnreadCount, 0x2bac334d)                 // 2bac334d
+	iface.RegisterClazzIDName(ClazzName_dialog_toggleDialogFilterTags, 0xa0cd6d89)            // a0cd6d89
+	iface.RegisterClazzIDName(ClazzName_dialog_getDialogFilterTags, 0xfaf0fa97)               // faf0fa97
+	iface.RegisterClazzIDName(ClazzName_dialog_setChatWallpaper, 0xb551db12)                  // b551db12
 }

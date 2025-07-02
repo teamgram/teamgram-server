@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package updates
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,16 +20,24 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLUpdatesGetStateV2 <--
 type TLUpdatesGetStateV2 struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	UserId    int64  `json:"user_id"`
+}
+
+func (m *TLUpdatesGetStateV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -64,6 +73,9 @@ func (m *TLUpdatesGetStateV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -79,6 +91,11 @@ type TLUpdatesGetDifferenceV2 struct {
 	Pts           int32  `json:"pts"`
 	PtsTotalLimit *int32 `json:"pts_total_limit"`
 	Date          int64  `json:"date"`
+}
+
+func (m *TLUpdatesGetDifferenceV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -142,6 +159,9 @@ func (m *TLUpdatesGetDifferenceV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -157,6 +177,11 @@ type TLUpdatesGetChannelDifferenceV2 struct {
 	ChannelId int64  `json:"channel_id"`
 	Pts       int32  `json:"pts"`
 	Limit     int32  `json:"limit"`
+}
+
+func (m *TLUpdatesGetChannelDifferenceV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -198,6 +223,9 @@ func (m *TLUpdatesGetChannelDifferenceV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

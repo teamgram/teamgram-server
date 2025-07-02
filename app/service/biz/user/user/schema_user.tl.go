@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -22,6 +22,201 @@ var _ iface.TLObject
 var _ fmt.Stringer
 var _ *tg.Bool
 var _ bin.Fields
+
+// BotInfoDataClazz <--
+//   - TL_BotInfoData
+type BotInfoDataClazz interface {
+	iface.TLObject
+	BotInfoDataClazzName() string
+}
+
+func DecodeBotInfoDataClazz(d *bin.Decoder) (BotInfoDataClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, err
+	}
+
+	clazzName := iface.GetClazzNameByID(id)
+	switch clazzName {
+	case ClazzName_botInfoData:
+		x := &TLBotInfoData{ClazzID: id}
+		_ = x.Decode(d)
+		return x, nil
+	default:
+		return nil, fmt.Errorf("DecodeBotInfoData - unexpected clazzId: %d", id)
+	}
+}
+
+// TLBotInfoData <--
+type TLBotInfoData struct {
+	ClazzID    uint32      `json:"_id"`
+	BotInfo    *tg.BotInfo `json:"bot_info"`
+	MainAppUrl *string     `json:"main_app_url"`
+	BotInline  bool        `json:"bot_inline"`
+	Token      string      `json:"token"`
+	BotId      int64       `json:"bot_id"`
+}
+
+func (m *TLBotInfoData) String() string {
+	wrapper := iface.WithNameWrapper{"botInfoData", m}
+	return wrapper.String()
+}
+
+// BotInfoDataClazzName <--
+func (m *TLBotInfoData) BotInfoDataClazzName() string {
+	return ClazzName_botInfoData
+}
+
+// ClazzName <--
+func (m *TLBotInfoData) ClazzName() string {
+	return ClazzName_botInfoData
+}
+
+// ToBotInfoData <--
+func (m *TLBotInfoData) ToBotInfoData() *BotInfoData {
+	return MakeBotInfoData(m)
+}
+
+// Encode <--
+func (m *TLBotInfoData) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x1835d1c: func() error {
+			x.PutClazzID(0x1835d1c)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.MainAppUrl != nil {
+					flags |= 1 << 0
+				}
+				if m.BotInline == true {
+					flags |= 1 << 1
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
+			_ = m.BotInfo.Encode(x, layer)
+			if m.MainAppUrl != nil {
+				x.PutString(*m.MainAppUrl)
+			}
+
+			x.PutString(m.Token)
+			x.PutInt64(m.BotId)
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_botInfoData, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_botInfoData, layer)
+	}
+}
+
+// Decode <--
+func (m *TLBotInfoData) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0x1835d1c: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
+
+			m1 := &tg.BotInfo{}
+			_ = m1.Decode(d)
+			m.BotInfo = m1
+
+			if (flags & (1 << 0)) != 0 {
+				m.MainAppUrl = new(string)
+				*m.MainAppUrl, err = d.String()
+			}
+
+			if (flags & (1 << 1)) != 0 {
+				m.BotInline = true
+			}
+			m.Token, err = d.String()
+			m.BotId, err = d.Int64()
+
+			return nil
+		},
+	}
+
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// BotInfoData <--
+type BotInfoData struct {
+	// ClazzID   uint32 `json:"_id"`
+	// ClazzName string `json:"_name"`
+	BotInfoDataClazz `json:"_clazz"`
+}
+
+func (m *BotInfoData) String() string {
+	wrapper := iface.WithNameWrapper{m.BotInfoDataClazzName(), m}
+	return wrapper.String()
+}
+
+// MakeBotInfoData <--
+func MakeBotInfoData(c BotInfoDataClazz) *BotInfoData {
+	return &BotInfoData{
+		// ClazzID:   c.ClazzID(),
+		// ClazzName: c.ClazzName(),
+		BotInfoDataClazz: c,
+	}
+}
+
+// Encode <--
+func (m *BotInfoData) Encode(x *bin.Encoder, layer int32) error {
+	if m.BotInfoDataClazz != nil {
+		return m.BotInfoDataClazz.Encode(x, layer)
+	}
+
+	return fmt.Errorf("BotInfoData - invalid Clazz")
+}
+
+// Decode <--
+func (m *BotInfoData) Decode(d *bin.Decoder) (err error) {
+	m.BotInfoDataClazz, err = DecodeBotInfoDataClazz(d)
+	return
+}
+
+// Match <--
+func (m *BotInfoData) Match(f ...interface{}) {
+	switch c := m.BotInfoDataClazz.(type) {
+	case *TLBotInfoData:
+		for _, v := range f {
+			if f1, ok := v.(func(c *TLBotInfoData) interface{}); ok {
+				f1(c)
+			}
+		}
+	default:
+		//
+	}
+}
+
+// ToBotInfoData <--
+func (m *BotInfoData) ToBotInfoData() (*TLBotInfoData, bool) {
+	if m.BotInfoDataClazz == nil {
+		return nil, false
+	}
+
+	if x, ok := m.BotInfoDataClazz.(*TLBotInfoData); ok {
+		return x, true
+	}
+
+	return nil, false
+}
 
 // LastSeenDataClazz <--
 //   - TL_LastSeenData
@@ -54,6 +249,11 @@ type TLLastSeenData struct {
 	UserId     int64  `json:"user_id"`
 	LastSeenAt int64  `json:"last_seen_at"`
 	Expires    int32  `json:"expires"`
+}
+
+func (m *TLLastSeenData) String() string {
+	wrapper := iface.WithNameWrapper{"lastSeenData", m}
+	return wrapper.String()
 }
 
 // LastSeenDataClazzName <--
@@ -117,7 +317,12 @@ func (m *TLLastSeenData) Decode(d *bin.Decoder) (err error) {
 type LastSeenData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	LastSeenDataClazz
+	LastSeenDataClazz `json:"_clazz"`
+}
+
+func (m *LastSeenData) String() string {
+	wrapper := iface.WithNameWrapper{m.LastSeenDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeLastSeenData <--
@@ -204,6 +409,11 @@ type TLPeerPeerNotifySettings struct {
 	Settings *tg.PeerNotifySettings `json:"settings"`
 }
 
+func (m *TLPeerPeerNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{"peerPeerNotifySettings", m}
+	return wrapper.String()
+}
+
 // PeerPeerNotifySettingsClazzName <--
 func (m *TLPeerPeerNotifySettings) PeerPeerNotifySettingsClazzName() string {
 	return ClazzName_peerPeerNotifySettings
@@ -268,7 +478,12 @@ func (m *TLPeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
 type PeerPeerNotifySettings struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PeerPeerNotifySettingsClazz
+	PeerPeerNotifySettingsClazz `json:"_clazz"`
+}
+
+func (m *PeerPeerNotifySettings) String() string {
+	wrapper := iface.WithNameWrapper{m.PeerPeerNotifySettingsClazzName(), m}
+	return wrapper.String()
 }
 
 // MakePeerPeerNotifySettings <--
@@ -355,6 +570,11 @@ type TLUserImportedContacts struct {
 	RetryContacts  []int64               `json:"retry_contacts"`
 	Users          []*tg.User            `json:"users"`
 	UpdateIdList   []int64               `json:"update_id_list"`
+}
+
+func (m *TLUserImportedContacts) String() string {
+	wrapper := iface.WithNameWrapper{"userImportedContacts", m}
+	return wrapper.String()
 }
 
 // UserImportedContactsClazzName <--
@@ -469,7 +689,12 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 type UserImportedContacts struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserImportedContactsClazz
+	UserImportedContactsClazz `json:"_clazz"`
+}
+
+func (m *UserImportedContacts) String() string {
+	wrapper := iface.WithNameWrapper{m.UserImportedContactsClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUserImportedContacts <--
@@ -561,6 +786,11 @@ type TLUsersDataFound struct {
 	NextOffset string         `json:"next_offset"`
 }
 
+func (m *TLUsersDataFound) String() string {
+	wrapper := iface.WithNameWrapper{"usersDataFound", m}
+	return wrapper.String()
+}
+
 // UsersFoundClazzName <--
 func (m *TLUsersDataFound) UsersFoundClazzName() string {
 	return ClazzName_usersDataFound
@@ -640,6 +870,11 @@ type TLUsersIdFound struct {
 	IdList  []int64 `json:"id_list"`
 }
 
+func (m *TLUsersIdFound) String() string {
+	wrapper := iface.WithNameWrapper{"usersIdFound", m}
+	return wrapper.String()
+}
+
 // UsersFoundClazzName <--
 func (m *TLUsersIdFound) UsersFoundClazzName() string {
 	return ClazzName_usersIdFound
@@ -698,7 +933,12 @@ func (m *TLUsersIdFound) Decode(d *bin.Decoder) (err error) {
 type UsersFound struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsersFoundClazz
+	UsersFoundClazz `json:"_clazz"`
+}
+
+func (m *UsersFound) String() string {
+	wrapper := iface.WithNameWrapper{m.UsersFoundClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUsersFound <--

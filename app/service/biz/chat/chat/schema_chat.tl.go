@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -62,6 +62,11 @@ func DecodeChatInviteExtClazz(d *bin.Decoder) (ChatInviteExtClazz, error) {
 type TLChatInviteAlready struct {
 	ClazzID uint32          `json:"_id"`
 	Chat    *tg.MutableChat `json:"chat"`
+}
+
+func (m *TLChatInviteAlready) String() string {
+	wrapper := iface.WithNameWrapper{"chatInviteAlready", m}
+	return wrapper.String()
 }
 
 // ChatInviteExtClazzName <--
@@ -129,6 +134,11 @@ type TLChatInvite struct {
 	Photo             *tg.Photo `json:"photo"`
 	ParticipantsCount int32     `json:"participants_count"`
 	Participants      []int64   `json:"participants"`
+}
+
+func (m *TLChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"chatInvite", m}
+	return wrapper.String()
 }
 
 // ChatInviteExtClazzName <--
@@ -240,6 +250,11 @@ type TLChatInvitePeek struct {
 	Expires int32           `json:"expires"`
 }
 
+func (m *TLChatInvitePeek) String() string {
+	wrapper := iface.WithNameWrapper{"chatInvitePeek", m}
+	return wrapper.String()
+}
+
 // ChatInviteExtClazzName <--
 func (m *TLChatInvitePeek) ChatInviteExtClazzName() string {
 	return ClazzName_chatInvitePeek
@@ -303,7 +318,12 @@ func (m *TLChatInvitePeek) Decode(d *bin.Decoder) (err error) {
 type ChatInviteExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChatInviteExtClazz
+	ChatInviteExtClazz `json:"_clazz"`
+}
+
+func (m *ChatInviteExt) String() string {
+	wrapper := iface.WithNameWrapper{m.ChatInviteExtClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeChatInviteExt <--
@@ -427,6 +447,11 @@ type TLChatInviteImported struct {
 	Requesters *RecentChatInviteRequesters `json:"requesters"`
 }
 
+func (m *TLChatInviteImported) String() string {
+	wrapper := iface.WithNameWrapper{"chatInviteImported", m}
+	return wrapper.String()
+}
+
 // ChatInviteImportedClazzName <--
 func (m *TLChatInviteImported) ChatInviteImportedClazzName() string {
 	return ClazzName_chatInviteImported
@@ -512,7 +537,12 @@ func (m *TLChatInviteImported) Decode(d *bin.Decoder) (err error) {
 type ChatInviteImported struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChatInviteImportedClazz
+	ChatInviteImportedClazz `json:"_clazz"`
+}
+
+func (m *ChatInviteImported) String() string {
+	wrapper := iface.WithNameWrapper{m.ChatInviteImportedClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeChatInviteImported <--
@@ -598,6 +628,11 @@ type TLRecentChatInviteRequesters struct {
 	RecentRequesters []int64 `json:"recent_requesters"`
 }
 
+func (m *TLRecentChatInviteRequesters) String() string {
+	wrapper := iface.WithNameWrapper{"recentChatInviteRequesters", m}
+	return wrapper.String()
+}
+
 // RecentChatInviteRequestersClazzName <--
 func (m *TLRecentChatInviteRequesters) RecentChatInviteRequestersClazzName() string {
 	return ClazzName_recentChatInviteRequesters
@@ -659,7 +694,12 @@ func (m *TLRecentChatInviteRequesters) Decode(d *bin.Decoder) (err error) {
 type RecentChatInviteRequesters struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	RecentChatInviteRequestersClazz
+	RecentChatInviteRequestersClazz `json:"_clazz"`
+}
+
+func (m *RecentChatInviteRequesters) String() string {
+	wrapper := iface.WithNameWrapper{m.RecentChatInviteRequestersClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeRecentChatInviteRequesters <--
@@ -745,6 +785,11 @@ type TLUserChatIdList struct {
 	ChatIdList []int64 `json:"chat_id_list"`
 }
 
+func (m *TLUserChatIdList) String() string {
+	wrapper := iface.WithNameWrapper{"userChatIdList", m}
+	return wrapper.String()
+}
+
 // UserChatIdListClazzName <--
 func (m *TLUserChatIdList) UserChatIdListClazzName() string {
 	return ClazzName_userChatIdList
@@ -806,7 +851,12 @@ func (m *TLUserChatIdList) Decode(d *bin.Decoder) (err error) {
 type UserChatIdList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserChatIdListClazz
+	UserChatIdListClazz `json:"_clazz"`
+}
+
+func (m *UserChatIdList) String() string {
+	wrapper := iface.WithNameWrapper{m.UserChatIdListClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUserChatIdList <--

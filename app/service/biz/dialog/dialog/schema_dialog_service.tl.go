@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package dialog
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLDialogSaveDraftMessage <--
 type TLDialogSaveDraftMessage struct {
@@ -31,6 +35,11 @@ type TLDialogSaveDraftMessage struct {
 	PeerType int32            `json:"peer_type"`
 	PeerId   int64            `json:"peer_id"`
 	Message  *tg.DraftMessage `json:"message"`
+}
+
+func (m *TLDialogSaveDraftMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -73,6 +82,9 @@ func (m *TLDialogSaveDraftMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -86,6 +98,11 @@ type TLDialogClearDraftMessage struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLDialogClearDraftMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -123,6 +140,9 @@ func (m *TLDialogClearDraftMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -134,6 +154,11 @@ func (m *TLDialogClearDraftMessage) Decode(d *bin.Decoder) (err error) {
 type TLDialogGetAllDrafts struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogGetAllDrafts) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -167,6 +192,9 @@ func (m *TLDialogGetAllDrafts) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -178,6 +206,11 @@ func (m *TLDialogGetAllDrafts) Decode(d *bin.Decoder) (err error) {
 type TLDialogClearAllDrafts struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogClearAllDrafts) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -211,6 +244,9 @@ func (m *TLDialogClearAllDrafts) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -225,6 +261,11 @@ type TLDialogMarkDialogUnread struct {
 	PeerType   int32    `json:"peer_type"`
 	PeerId     int64    `json:"peer_id"`
 	UnreadMark *tg.Bool `json:"unread_mark"`
+}
+
+func (m *TLDialogMarkDialogUnread) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -267,6 +308,9 @@ func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -281,6 +325,11 @@ type TLDialogToggleDialogPin struct {
 	PeerType int32    `json:"peer_type"`
 	PeerId   int64    `json:"peer_id"`
 	Pinned   *tg.Bool `json:"pinned"`
+}
+
+func (m *TLDialogToggleDialogPin) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -323,6 +372,9 @@ func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -334,6 +386,11 @@ func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
 type TLDialogGetDialogUnreadMarkList struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogGetDialogUnreadMarkList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -367,6 +424,9 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -381,6 +441,11 @@ type TLDialogGetDialogsByOffsetDate struct {
 	ExcludePinned *tg.Bool `json:"exclude_pinned"`
 	OffsetDate    int32    `json:"offset_date"`
 	Limit         int32    `json:"limit"`
+}
+
+func (m *TLDialogGetDialogsByOffsetDate) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -424,6 +489,9 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -437,6 +505,11 @@ type TLDialogGetDialogs struct {
 	UserId        int64    `json:"user_id"`
 	ExcludePinned *tg.Bool `json:"exclude_pinned"`
 	FolderId      int32    `json:"folder_id"`
+}
+
+func (m *TLDialogGetDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -478,6 +551,9 @@ func (m *TLDialogGetDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -490,6 +566,11 @@ type TLDialogGetDialogsByIdList struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	IdList  []int64 `json:"id_list"`
+}
+
+func (m *TLDialogGetDialogsByIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -527,6 +608,9 @@ func (m *TLDialogGetDialogsByIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -540,6 +624,11 @@ type TLDialogGetDialogsCount struct {
 	UserId        int64    `json:"user_id"`
 	ExcludePinned *tg.Bool `json:"exclude_pinned"`
 	FolderId      int32    `json:"folder_id"`
+}
+
+func (m *TLDialogGetDialogsCount) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -581,6 +670,9 @@ func (m *TLDialogGetDialogsCount) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -593,6 +685,11 @@ type TLDialogGetPinnedDialogs struct {
 	ClazzID  uint32 `json:"_id"`
 	UserId   int64  `json:"user_id"`
 	FolderId int32  `json:"folder_id"`
+}
+
+func (m *TLDialogGetPinnedDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -628,6 +725,9 @@ func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -642,6 +742,11 @@ type TLDialogReorderPinnedDialogs struct {
 	Force    *tg.Bool `json:"force"`
 	FolderId int32    `json:"folder_id"`
 	IdList   []int64  `json:"id_list"`
+}
+
+func (m *TLDialogReorderPinnedDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -687,6 +792,9 @@ func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -700,6 +808,11 @@ type TLDialogGetDialogById struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLDialogGetDialogById) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -737,6 +850,9 @@ func (m *TLDialogGetDialogById) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -750,6 +866,11 @@ type TLDialogGetTopMessage struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLDialogGetTopMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -787,6 +908,9 @@ func (m *TLDialogGetTopMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -807,6 +931,11 @@ type TLDialogInsertOrUpdateDialog struct {
 	UnreadMark      bool   `json:"unread_mark"`
 	Date2           *int64 `json:"date2"`
 	PinnedMsgId     *int32 `json:"pinned_msg_id"`
+}
+
+func (m *TLDialogInsertOrUpdateDialog) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -929,6 +1058,9 @@ func (m *TLDialogInsertOrUpdateDialog) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -942,6 +1074,11 @@ type TLDialogDeleteDialog struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLDialogDeleteDialog) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -979,6 +1116,9 @@ func (m *TLDialogDeleteDialog) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -992,6 +1132,11 @@ type TLDialogGetUserPinnedMessage struct {
 	UserId   int64  `json:"user_id"`
 	PeerType int32  `json:"peer_type"`
 	PeerId   int64  `json:"peer_id"`
+}
+
+func (m *TLDialogGetUserPinnedMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1029,6 +1174,9 @@ func (m *TLDialogGetUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1043,6 +1191,11 @@ type TLDialogUpdateUserPinnedMessage struct {
 	PeerType    int32  `json:"peer_type"`
 	PeerId      int64  `json:"peer_id"`
 	PinnedMsgId int32  `json:"pinned_msg_id"`
+}
+
+func (m *TLDialogUpdateUserPinnedMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1082,6 +1235,9 @@ func (m *TLDialogUpdateUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1095,6 +1251,11 @@ type TLDialogInsertOrUpdateDialogFilter struct {
 	UserId       int64            `json:"user_id"`
 	Id           int32            `json:"id"`
 	DialogFilter *tg.DialogFilter `json:"dialog_filter"`
+}
+
+func (m *TLDialogInsertOrUpdateDialogFilter) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1135,6 +1296,9 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Decode(d *bin.Decoder) (err error) 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1147,6 +1311,11 @@ type TLDialogDeleteDialogFilter struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int32  `json:"id"`
+}
+
+func (m *TLDialogDeleteDialogFilter) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1182,6 +1351,9 @@ func (m *TLDialogDeleteDialogFilter) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1194,6 +1366,11 @@ type TLDialogUpdateDialogFiltersOrder struct {
 	ClazzID uint32  `json:"_id"`
 	UserId  int64   `json:"user_id"`
 	Order   []int32 `json:"order"`
+}
+
+func (m *TLDialogUpdateDialogFiltersOrder) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1231,6 +1408,9 @@ func (m *TLDialogUpdateDialogFiltersOrder) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1242,6 +1422,11 @@ func (m *TLDialogUpdateDialogFiltersOrder) Decode(d *bin.Decoder) (err error) {
 type TLDialogGetDialogFilters struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogGetDialogFilters) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1275,6 +1460,9 @@ func (m *TLDialogGetDialogFilters) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1287,6 +1475,11 @@ type TLDialogGetDialogFolder struct {
 	ClazzID  uint32 `json:"_id"`
 	UserId   int64  `json:"user_id"`
 	FolderId int32  `json:"folder_id"`
+}
+
+func (m *TLDialogGetDialogFolder) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1322,6 +1515,9 @@ func (m *TLDialogGetDialogFolder) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1335,6 +1531,11 @@ type TLDialogEditPeerFolders struct {
 	UserId         int64   `json:"user_id"`
 	PeerDialogList []int64 `json:"peer_dialog_list"`
 	FolderId       int32   `json:"folder_id"`
+}
+
+func (m *TLDialogEditPeerFolders) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1376,6 +1577,9 @@ func (m *TLDialogEditPeerFolders) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1389,6 +1593,11 @@ type TLDialogGetChannelMessageReadParticipants struct {
 	UserId    int64  `json:"user_id"`
 	ChannelId int64  `json:"channel_id"`
 	MsgId     int32  `json:"msg_id"`
+}
+
+func (m *TLDialogGetChannelMessageReadParticipants) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1426,6 +1635,9 @@ func (m *TLDialogGetChannelMessageReadParticipants) Decode(d *bin.Decoder) (err 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1440,6 +1652,11 @@ type TLDialogSetChatTheme struct {
 	PeerType      int32  `json:"peer_type"`
 	PeerId        int64  `json:"peer_id"`
 	ThemeEmoticon string `json:"theme_emoticon"`
+}
+
+func (m *TLDialogSetChatTheme) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1479,6 +1696,9 @@ func (m *TLDialogSetChatTheme) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1493,6 +1713,11 @@ type TLDialogSetHistoryTTL struct {
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
 	TtlPeriod int32  `json:"ttl_period"`
+}
+
+func (m *TLDialogSetHistoryTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1532,6 +1757,9 @@ func (m *TLDialogSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1546,6 +1774,11 @@ type TLDialogGetMyDialogsData struct {
 	User    bool   `json:"user"`
 	Chat    bool   `json:"chat"`
 	Channel bool   `json:"channel"`
+}
+
+func (m *TLDialogGetMyDialogsData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1610,6 +1843,9 @@ func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1626,6 +1862,11 @@ type TLDialogGetSavedDialogs struct {
 	OffsetId      int32        `json:"offset_id"`
 	OffsetPeer    *tg.PeerUtil `json:"offset_peer"`
 	Limit         int32        `json:"limit"`
+}
+
+func (m *TLDialogGetSavedDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1677,6 +1918,9 @@ func (m *TLDialogGetSavedDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1688,6 +1932,11 @@ func (m *TLDialogGetSavedDialogs) Decode(d *bin.Decoder) (err error) {
 type TLDialogGetPinnedSavedDialogs struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogGetPinnedSavedDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1721,6 +1970,9 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1734,6 +1986,11 @@ type TLDialogToggleSavedDialogPin struct {
 	UserId  int64        `json:"user_id"`
 	Peer    *tg.PeerUtil `json:"peer"`
 	Pinned  *tg.Bool     `json:"pinned"`
+}
+
+func (m *TLDialogToggleSavedDialogPin) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1777,6 +2034,9 @@ func (m *TLDialogToggleSavedDialogPin) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1790,6 +2050,11 @@ type TLDialogReorderPinnedSavedDialogs struct {
 	UserId  int64          `json:"user_id"`
 	Force   *tg.Bool       `json:"force"`
 	Order   []*tg.PeerUtil `json:"order"`
+}
+
+func (m *TLDialogReorderPinnedSavedDialogs) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1845,6 +2110,9 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1857,6 +2125,11 @@ type TLDialogGetDialogFilter struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Id      int32  `json:"id"`
+}
+
+func (m *TLDialogGetDialogFilter) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1892,6 +2165,9 @@ func (m *TLDialogGetDialogFilter) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1904,6 +2180,11 @@ type TLDialogGetDialogFilterBySlug struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
 	Slug    string `json:"slug"`
+}
+
+func (m *TLDialogGetDialogFilterBySlug) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1939,6 +2220,9 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1951,6 +2235,11 @@ type TLDialogCreateDialogFilter struct {
 	ClazzID      uint32           `json:"_id"`
 	UserId       int64            `json:"user_id"`
 	DialogFilter *DialogFilterExt `json:"dialog_filter"`
+}
+
+func (m *TLDialogCreateDialogFilter) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1989,6 +2278,9 @@ func (m *TLDialogCreateDialogFilter) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2005,6 +2297,11 @@ type TLDialogUpdateUnreadCount struct {
 	UnreadCount          *int32 `json:"unread_count"`
 	UnreadMentionsCount  *int32 `json:"unread_mentions_count"`
 	UnreadReactionsCount *int32 `json:"unread_reactions_count"`
+}
+
+func (m *TLDialogUpdateUnreadCount) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2087,6 +2384,200 @@ func (m *TLDialogUpdateUnreadCount) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLDialogToggleDialogFilterTags <--
+type TLDialogToggleDialogFilterTags struct {
+	ClazzID uint32   `json:"_id"`
+	UserId  int64    `json:"user_id"`
+	Enabled *tg.Bool `json:"enabled"`
+}
+
+func (m *TLDialogToggleDialogFilterTags) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLDialogToggleDialogFilterTags) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xa0cd6d89: func() error {
+			x.PutClazzID(0xa0cd6d89)
+
+			x.PutInt64(m.UserId)
+			_ = m.Enabled.Encode(x, layer)
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogFilterTags, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_toggleDialogFilterTags, layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogToggleDialogFilterTags) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0xa0cd6d89: func() (err error) {
+			m.UserId, err = d.Int64()
+
+			m2 := &tg.Bool{}
+			_ = m2.Decode(d)
+			m.Enabled = m2
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLDialogGetDialogFilterTags <--
+type TLDialogGetDialogFilterTags struct {
+	ClazzID uint32 `json:"_id"`
+	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLDialogGetDialogFilterTags) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLDialogGetDialogFilterTags) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xfaf0fa97: func() error {
+			x.PutClazzID(0xfaf0fa97)
+
+			x.PutInt64(m.UserId)
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogFilterTags, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_getDialogFilterTags, layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogGetDialogFilterTags) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0xfaf0fa97: func() (err error) {
+			m.UserId, err = d.Int64()
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLDialogSetChatWallpaper <--
+type TLDialogSetChatWallpaper struct {
+	ClazzID             uint32 `json:"_id"`
+	UserId              int64  `json:"user_id"`
+	PeerType            int32  `json:"peer_type"`
+	PeerId              int64  `json:"peer_id"`
+	WallpaperId         int64  `json:"wallpaper_id"`
+	WallpaperOverridden bool   `json:"wallpaper_overridden"`
+}
+
+func (m *TLDialogSetChatWallpaper) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLDialogSetChatWallpaper) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0xb551db12: func() error {
+			x.PutClazzID(0xb551db12)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.WallpaperOverridden == true {
+					flags |= 1 << 0
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
+			x.PutInt64(m.UserId)
+			x.PutInt32(m.PeerType)
+			x.PutInt64(m.PeerId)
+			x.PutInt64(m.WallpaperId)
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_dialog_setChatWallpaper, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_dialog_setChatWallpaper, layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogSetChatWallpaper) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0xb551db12: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
+			m.UserId, err = d.Int64()
+			m.PeerType, err = d.Int32()
+			m.PeerId, err = d.Int64()
+			m.WallpaperId, err = d.Int64()
+			if (flags & (1 << 0)) != 0 {
+				m.WallpaperOverridden = true
+			}
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2100,7 +2591,12 @@ func (m *TLDialogUpdateUnreadCount) Decode(d *bin.Decoder) (err error) {
 
 // VectorPeerWithDraftMessage <--
 type VectorPeerWithDraftMessage struct {
-	Datas []*PeerWithDraftMessage `json:"datas"`
+	Datas []*PeerWithDraftMessage `json:"_datas"`
+}
+
+func (m *VectorPeerWithDraftMessage) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2119,7 +2615,12 @@ func (m *VectorPeerWithDraftMessage) Decode(d *bin.Decoder) (err error) {
 
 // VectorDialogPeer <--
 type VectorDialogPeer struct {
-	Datas []*tg.DialogPeer `json:"datas"`
+	Datas []*tg.DialogPeer `json:"_datas"`
+}
+
+func (m *VectorDialogPeer) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2138,7 +2639,12 @@ func (m *VectorDialogPeer) Decode(d *bin.Decoder) (err error) {
 
 // VectorDialogExt <--
 type VectorDialogExt struct {
-	Datas []*DialogExt `json:"datas"`
+	Datas []*DialogExt `json:"_datas"`
+}
+
+func (m *VectorDialogExt) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2157,7 +2663,12 @@ func (m *VectorDialogExt) Decode(d *bin.Decoder) (err error) {
 
 // VectorDialogFilterExt <--
 type VectorDialogFilterExt struct {
-	Datas []*DialogFilterExt `json:"datas"`
+	Datas []*DialogFilterExt `json:"_datas"`
+}
+
+func (m *VectorDialogFilterExt) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2176,7 +2687,12 @@ func (m *VectorDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 
 // VectorDialogPinnedExt <--
 type VectorDialogPinnedExt struct {
-	Datas []*DialogPinnedExt `json:"datas"`
+	Datas []*DialogPinnedExt `json:"_datas"`
+}
+
+func (m *VectorDialogPinnedExt) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2195,7 +2711,12 @@ func (m *VectorDialogPinnedExt) Decode(d *bin.Decoder) (err error) {
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2253,4 +2774,7 @@ type RPCDialog interface {
 	DialogGetDialogFilterBySlug(ctx context.Context, in *TLDialogGetDialogFilterBySlug) (*DialogFilterExt, error)
 	DialogCreateDialogFilter(ctx context.Context, in *TLDialogCreateDialogFilter) (*DialogFilterExt, error)
 	DialogUpdateUnreadCount(ctx context.Context, in *TLDialogUpdateUnreadCount) (*tg.Bool, error)
+	DialogToggleDialogFilterTags(ctx context.Context, in *TLDialogToggleDialogFilterTags) (*tg.Bool, error)
+	DialogGetDialogFilterTags(ctx context.Context, in *TLDialogGetDialogFilterTags) (*tg.Bool, error)
+	DialogSetChatWallpaper(ctx context.Context, in *TLDialogSetChatWallpaper) (*tg.Bool, error)
 }

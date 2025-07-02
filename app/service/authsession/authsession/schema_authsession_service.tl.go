@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,24 +12,32 @@ package authsession
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/iface"
-	"github.com/teamgram/proto/v2/mt"
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLAuthsessionGetAuthorizations <--
 type TLAuthsessionGetAuthorizations struct {
 	ClazzID          uint32 `json:"_id"`
 	UserId           int64  `json:"user_id"`
 	ExcludeAuthKeyId int64  `json:"exclude_auth_keyId"`
+}
+
+func (m *TLAuthsessionGetAuthorizations) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -65,6 +73,9 @@ func (m *TLAuthsessionGetAuthorizations) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -78,6 +89,11 @@ type TLAuthsessionResetAuthorization struct {
 	UserId    int64  `json:"user_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	Hash      int64  `json:"hash"`
+}
+
+func (m *TLAuthsessionResetAuthorization) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -115,6 +131,9 @@ func (m *TLAuthsessionResetAuthorization) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -126,6 +145,11 @@ func (m *TLAuthsessionResetAuthorization) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetLayer struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetLayer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -159,6 +183,9 @@ func (m *TLAuthsessionGetLayer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -170,6 +197,11 @@ func (m *TLAuthsessionGetLayer) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetLangPack struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetLangPack) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -203,6 +235,9 @@ func (m *TLAuthsessionGetLangPack) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -214,6 +249,11 @@ func (m *TLAuthsessionGetLangPack) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetClient struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetClient) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -247,6 +287,9 @@ func (m *TLAuthsessionGetClient) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -258,6 +301,11 @@ func (m *TLAuthsessionGetClient) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetLangCode struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetLangCode) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -291,6 +339,9 @@ func (m *TLAuthsessionGetLangCode) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -302,6 +353,11 @@ func (m *TLAuthsessionGetLangCode) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetUserId struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetUserId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -335,6 +391,9 @@ func (m *TLAuthsessionGetUserId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -348,6 +407,11 @@ type TLAuthsessionGetPushSessionId struct {
 	UserId    int64  `json:"user_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	TokenType int32  `json:"token_type"`
+}
+
+func (m *TLAuthsessionGetPushSessionId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -385,6 +449,9 @@ func (m *TLAuthsessionGetPushSessionId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -397,6 +464,11 @@ type TLAuthsessionGetFutureSalts struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	Num       int32  `json:"num"`
+}
+
+func (m *TLAuthsessionGetFutureSalts) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -432,6 +504,9 @@ func (m *TLAuthsessionGetFutureSalts) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -443,6 +518,11 @@ func (m *TLAuthsessionGetFutureSalts) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionQueryAuthKey struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionQueryAuthKey) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -476,6 +556,9 @@ func (m *TLAuthsessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -487,8 +570,13 @@ func (m *TLAuthsessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionSetAuthKey struct {
 	ClazzID    uint32          `json:"_id"`
 	AuthKey    *tg.AuthKeyInfo `json:"auth_key"`
-	FutureSalt *mt.FutureSalt  `json:"future_salt"`
+	FutureSalt *tg.FutureSalt  `json:"future_salt"`
 	ExpiresIn  int32           `json:"expires_in"`
+}
+
+func (m *TLAuthsessionSetAuthKey) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -523,7 +611,7 @@ func (m *TLAuthsessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 			_ = m1.Decode(d)
 			m.AuthKey = m1
 
-			m2 := &mt.FutureSalt{}
+			m2 := &tg.FutureSalt{}
 			_ = m2.Decode(d)
 			m.FutureSalt = m2
 
@@ -533,6 +621,9 @@ func (m *TLAuthsessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -545,6 +636,11 @@ type TLAuthsessionBindAuthKeyUser struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	UserId    int64  `json:"user_id"`
+}
+
+func (m *TLAuthsessionBindAuthKeyUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -580,6 +676,9 @@ func (m *TLAuthsessionBindAuthKeyUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -592,6 +691,11 @@ type TLAuthsessionUnbindAuthKeyUser struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	UserId    int64  `json:"user_id"`
+}
+
+func (m *TLAuthsessionUnbindAuthKeyUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -627,6 +731,9 @@ func (m *TLAuthsessionUnbindAuthKeyUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -638,6 +745,11 @@ func (m *TLAuthsessionUnbindAuthKeyUser) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetPermAuthKeyId struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetPermAuthKeyId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -671,6 +783,9 @@ func (m *TLAuthsessionGetPermAuthKeyId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -685,6 +800,11 @@ type TLAuthsessionBindTempAuthKey struct {
 	Nonce            int64  `json:"nonce"`
 	ExpiresAt        int32  `json:"expires_at"`
 	EncryptedMessage []byte `json:"encrypted_message"`
+}
+
+func (m *TLAuthsessionBindTempAuthKey) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -724,6 +844,9 @@ func (m *TLAuthsessionBindTempAuthKey) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -735,6 +858,11 @@ func (m *TLAuthsessionBindTempAuthKey) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionSetClientSessionInfo struct {
 	ClazzID uint32         `json:"_id"`
 	Data    *ClientSession `json:"data"`
+}
+
+func (m *TLAuthsessionSetClientSessionInfo) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -771,6 +899,9 @@ func (m *TLAuthsessionSetClientSessionInfo) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -782,6 +913,11 @@ func (m *TLAuthsessionSetClientSessionInfo) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetAuthorization struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetAuthorization) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -815,6 +951,9 @@ func (m *TLAuthsessionGetAuthorization) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -826,6 +965,11 @@ func (m *TLAuthsessionGetAuthorization) Decode(d *bin.Decoder) (err error) {
 type TLAuthsessionGetAuthStateData struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLAuthsessionGetAuthStateData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -859,6 +1003,9 @@ func (m *TLAuthsessionGetAuthStateData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -872,6 +1019,11 @@ type TLAuthsessionSetLayer struct {
 	AuthKeyId int64  `json:"auth_key_id"`
 	Ip        string `json:"ip"`
 	Layer     int32  `json:"layer"`
+}
+
+func (m *TLAuthsessionSetLayer) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -909,6 +1061,9 @@ func (m *TLAuthsessionSetLayer) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -930,6 +1085,11 @@ type TLAuthsessionSetInitConnection struct {
 	LangCode       string `json:"lang_code"`
 	Proxy          string `json:"proxy"`
 	Params         string `json:"params"`
+}
+
+func (m *TLAuthsessionSetInitConnection) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -983,6 +1143,9 @@ func (m *TLAuthsessionSetInitConnection) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -996,6 +1159,11 @@ type TLAuthsessionSetAndroidPushSessionId struct {
 	UserId    int64  `json:"user_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	SessionId int64  `json:"session_id"`
+}
+
+func (m *TLAuthsessionSetAndroidPushSessionId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1033,6 +1201,9 @@ func (m *TLAuthsessionSetAndroidPushSessionId) Decode(d *bin.Decoder) (err error
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1046,7 +1217,12 @@ func (m *TLAuthsessionSetAndroidPushSessionId) Decode(d *bin.Decoder) (err error
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -1075,7 +1251,7 @@ type RPCAuthsession interface {
 	AuthsessionGetLangCode(ctx context.Context, in *TLAuthsessionGetLangCode) (*tg.String, error)
 	AuthsessionGetUserId(ctx context.Context, in *TLAuthsessionGetUserId) (*tg.Int64, error)
 	AuthsessionGetPushSessionId(ctx context.Context, in *TLAuthsessionGetPushSessionId) (*tg.Int64, error)
-	AuthsessionGetFutureSalts(ctx context.Context, in *TLAuthsessionGetFutureSalts) (*mt.FutureSalts, error)
+	AuthsessionGetFutureSalts(ctx context.Context, in *TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error)
 	AuthsessionQueryAuthKey(ctx context.Context, in *TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error)
 	AuthsessionSetAuthKey(ctx context.Context, in *TLAuthsessionSetAuthKey) (*tg.Bool, error)
 	AuthsessionBindAuthKeyUser(ctx context.Context, in *TLAuthsessionBindAuthKeyUser) (*tg.Int64, error)

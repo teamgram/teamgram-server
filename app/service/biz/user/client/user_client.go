@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type UserClient interface {
 	UserGetLastSeens(ctx context.Context, in *user.TLUserGetLastSeens) (*user.VectorLastSeenData, error)
 	UserUpdateLastSeen(ctx context.Context, in *user.TLUserUpdateLastSeen) (*tg.Bool, error)
@@ -97,6 +99,8 @@ type UserClient interface {
 	UserGetUserIdByPhone(ctx context.Context, in *user.TLUserGetUserIdByPhone) (*tg.Int64, error)
 	UserSetAuthorizationTTL(ctx context.Context, in *user.TLUserSetAuthorizationTTL) (*tg.Bool, error)
 	UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*tg.AccountDaysTTL, error)
+	UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*tg.Bool, error)
+	UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error)
 }
 
 type defaultUserClient struct {
@@ -544,7 +548,7 @@ func (m *defaultUserClient) UserSearch(ctx context.Context, in *user.TLUserSearc
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?Bool = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string bot_has_main_app:flags.13?Bool = Bool;
 func (m *defaultUserClient) UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*tg.Bool, error) {
 	cli := userservice.NewRPCUserClient(m.cli)
 	return cli.UserUpdateBotData(ctx, in)
@@ -639,4 +643,18 @@ func (m *defaultUserClient) UserSetAuthorizationTTL(ctx context.Context, in *use
 func (m *defaultUserClient) UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*tg.AccountDaysTTL, error) {
 	cli := userservice.NewRPCUserClient(m.cli)
 	return cli.UserGetAuthorizationTTL(ctx, in)
+}
+
+// UserUpdatePremium
+// user.updatePremium flags:# user_id:long premium:Bool months:flags.1?int = Bool;
+func (m *defaultUserClient) UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*tg.Bool, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserUpdatePremium(ctx, in)
+}
+
+// UserGetBotInfoV2
+// user.getBotInfoV2 bot_id:long = BotInfoData;
+func (m *defaultUserClient) UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error) {
+	cli := userservice.NewRPCUserClient(m.cli)
+	return cli.UserGetBotInfoV2(ctx, in)
 }

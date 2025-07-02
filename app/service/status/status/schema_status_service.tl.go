@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package status
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,16 +20,24 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLStatusSetSessionOnline <--
 type TLStatusSetSessionOnline struct {
 	ClazzID uint32        `json:"_id"`
 	UserId  int64         `json:"user_id"`
 	Session *SessionEntry `json:"session"`
+}
+
+func (m *TLStatusSetSessionOnline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -67,6 +76,9 @@ func (m *TLStatusSetSessionOnline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -79,6 +91,11 @@ type TLStatusSetSessionOffline struct {
 	ClazzID   uint32 `json:"_id"`
 	UserId    int64  `json:"user_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLStatusSetSessionOffline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -114,6 +131,9 @@ func (m *TLStatusSetSessionOffline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -125,6 +145,11 @@ func (m *TLStatusSetSessionOffline) Decode(d *bin.Decoder) (err error) {
 type TLStatusGetUserOnlineSessions struct {
 	ClazzID uint32 `json:"_id"`
 	UserId  int64  `json:"user_id"`
+}
+
+func (m *TLStatusGetUserOnlineSessions) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -158,6 +183,9 @@ func (m *TLStatusGetUserOnlineSessions) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -169,6 +197,11 @@ func (m *TLStatusGetUserOnlineSessions) Decode(d *bin.Decoder) (err error) {
 type TLStatusGetUsersOnlineSessionsList struct {
 	ClazzID uint32  `json:"_id"`
 	Users   []int64 `json:"users"`
+}
+
+func (m *TLStatusGetUsersOnlineSessionsList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -203,6 +236,9 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(d *bin.Decoder) (err error) 
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -214,6 +250,11 @@ func (m *TLStatusGetUsersOnlineSessionsList) Decode(d *bin.Decoder) (err error) 
 type TLStatusGetChannelOnlineUsers struct {
 	ClazzID   uint32 `json:"_id"`
 	ChannelId int64  `json:"channel_id"`
+}
+
+func (m *TLStatusGetChannelOnlineUsers) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -247,6 +288,9 @@ func (m *TLStatusGetChannelOnlineUsers) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -259,6 +303,11 @@ type TLStatusSetUserChannelsOnline struct {
 	ClazzID  uint32  `json:"_id"`
 	UserId   int64   `json:"user_id"`
 	Channels []int64 `json:"channels"`
+}
+
+func (m *TLStatusSetUserChannelsOnline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -296,6 +345,9 @@ func (m *TLStatusSetUserChannelsOnline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -308,6 +360,11 @@ type TLStatusSetUserChannelsOffline struct {
 	ClazzID  uint32  `json:"_id"`
 	UserId   int64   `json:"user_id"`
 	Channels []int64 `json:"channels"`
+}
+
+func (m *TLStatusSetUserChannelsOffline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -345,6 +402,9 @@ func (m *TLStatusSetUserChannelsOffline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -357,6 +417,11 @@ type TLStatusSetChannelUserOffline struct {
 	ClazzID   uint32 `json:"_id"`
 	ChannelId int64  `json:"channel_id"`
 	UserId    int64  `json:"user_id"`
+}
+
+func (m *TLStatusSetChannelUserOffline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -392,6 +457,9 @@ func (m *TLStatusSetChannelUserOffline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -404,6 +472,11 @@ type TLStatusSetChannelUsersOnline struct {
 	ClazzID   uint32  `json:"_id"`
 	ChannelId int64   `json:"channel_id"`
 	Id        []int64 `json:"id"`
+}
+
+func (m *TLStatusSetChannelUsersOnline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -441,6 +514,9 @@ func (m *TLStatusSetChannelUsersOnline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -452,6 +528,11 @@ func (m *TLStatusSetChannelUsersOnline) Decode(d *bin.Decoder) (err error) {
 type TLStatusSetChannelOffline struct {
 	ClazzID   uint32 `json:"_id"`
 	ChannelId int64  `json:"channel_id"`
+}
+
+func (m *TLStatusSetChannelOffline) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -485,6 +566,9 @@ func (m *TLStatusSetChannelOffline) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -498,7 +582,12 @@ func (m *TLStatusSetChannelOffline) Decode(d *bin.Decoder) (err error) {
 
 // VectorUserSessionEntryList <--
 type VectorUserSessionEntryList struct {
-	Datas []*UserSessionEntryList `json:"datas"`
+	Datas []*UserSessionEntryList `json:"_datas"`
+}
+
+func (m *VectorUserSessionEntryList) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -517,7 +606,12 @@ func (m *VectorUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

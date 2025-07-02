@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -53,6 +53,11 @@ type TLUsernameData struct {
 	ClazzID  uint32   `json:"_id"`
 	Username string   `json:"username"`
 	Peer     *tg.Peer `json:"peer"`
+}
+
+func (m *TLUsernameData) String() string {
+	wrapper := iface.WithNameWrapper{"usernameData", m}
+	return wrapper.String()
 }
 
 // UsernameDataClazzName <--
@@ -136,7 +141,12 @@ func (m *TLUsernameData) Decode(d *bin.Decoder) (err error) {
 type UsernameData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsernameDataClazz
+	UsernameDataClazz `json:"_clazz"`
+}
+
+func (m *UsernameData) String() string {
+	wrapper := iface.WithNameWrapper{m.UsernameDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUsernameData <--
@@ -235,6 +245,11 @@ type TLUsernameNotExisted struct {
 	ClazzID uint32 `json:"_id"`
 }
 
+func (m *TLUsernameNotExisted) String() string {
+	wrapper := iface.WithNameWrapper{"usernameNotExisted", m}
+	return wrapper.String()
+}
+
 // UsernameExistClazzName <--
 func (m *TLUsernameNotExisted) UsernameExistClazzName() string {
 	return ClazzName_usernameNotExisted
@@ -288,6 +303,11 @@ func (m *TLUsernameNotExisted) Decode(d *bin.Decoder) (err error) {
 // TLUsernameExisted <--
 type TLUsernameExisted struct {
 	ClazzID uint32 `json:"_id"`
+}
+
+func (m *TLUsernameExisted) String() string {
+	wrapper := iface.WithNameWrapper{"usernameExisted", m}
+	return wrapper.String()
 }
 
 // UsernameExistClazzName <--
@@ -345,6 +365,11 @@ type TLUsernameExistedNotMe struct {
 	ClazzID uint32 `json:"_id"`
 }
 
+func (m *TLUsernameExistedNotMe) String() string {
+	wrapper := iface.WithNameWrapper{"usernameExistedNotMe", m}
+	return wrapper.String()
+}
+
 // UsernameExistClazzName <--
 func (m *TLUsernameExistedNotMe) UsernameExistClazzName() string {
 	return ClazzName_usernameExistedNotMe
@@ -398,6 +423,11 @@ func (m *TLUsernameExistedNotMe) Decode(d *bin.Decoder) (err error) {
 // TLUsernameExistedIsMe <--
 type TLUsernameExistedIsMe struct {
 	ClazzID uint32 `json:"_id"`
+}
+
+func (m *TLUsernameExistedIsMe) String() string {
+	wrapper := iface.WithNameWrapper{"usernameExistedIsMe", m}
+	return wrapper.String()
 }
 
 // UsernameExistClazzName <--
@@ -454,7 +484,12 @@ func (m *TLUsernameExistedIsMe) Decode(d *bin.Decoder) (err error) {
 type UsernameExist struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsernameExistClazz
+	UsernameExistClazz `json:"_clazz"`
+}
+
+func (m *UsernameExist) String() string {
+	wrapper := iface.WithNameWrapper{m.UsernameExistClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUsernameExist <--

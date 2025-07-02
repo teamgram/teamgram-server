@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client/callopt"
 )
 
+var _ *tg.Bool
+
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	DialogSaveDraftMessage(ctx context.Context, req *dialog.TLDialogSaveDraftMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -59,6 +61,9 @@ type Client interface {
 	DialogGetDialogFilterBySlug(ctx context.Context, req *dialog.TLDialogGetDialogFilterBySlug, callOptions ...callopt.Option) (r *dialog.DialogFilterExt, err error)
 	DialogCreateDialogFilter(ctx context.Context, req *dialog.TLDialogCreateDialogFilter, callOptions ...callopt.Option) (r *dialog.DialogFilterExt, err error)
 	DialogUpdateUnreadCount(ctx context.Context, req *dialog.TLDialogUpdateUnreadCount, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	DialogToggleDialogFilterTags(ctx context.Context, req *dialog.TLDialogToggleDialogFilterTags, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	DialogGetDialogFilterTags(ctx context.Context, req *dialog.TLDialogGetDialogFilterTags, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	DialogSetChatWallpaper(ctx context.Context, req *dialog.TLDialogSetChatWallpaper, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -279,4 +284,19 @@ func (p *kDialogClient) DialogCreateDialogFilter(ctx context.Context, req *dialo
 func (p *kDialogClient) DialogUpdateUnreadCount(ctx context.Context, req *dialog.TLDialogUpdateUnreadCount, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogUpdateUnreadCount(ctx, req)
+}
+
+func (p *kDialogClient) DialogToggleDialogFilterTags(ctx context.Context, req *dialog.TLDialogToggleDialogFilterTags, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogToggleDialogFilterTags(ctx, req)
+}
+
+func (p *kDialogClient) DialogGetDialogFilterTags(ctx context.Context, req *dialog.TLDialogGetDialogFilterTags, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogGetDialogFilterTags(ctx, req)
+}
+
+func (p *kDialogClient) DialogSetChatWallpaper(ctx context.Context, req *dialog.TLDialogSetChatWallpaper, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogSetChatWallpaper(ctx, req)
 }

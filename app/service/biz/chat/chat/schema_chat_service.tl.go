@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package chat
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,15 +20,23 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLChatGetMutableChat <--
 type TLChatGetMutableChat struct {
 	ClazzID uint32 `json:"_id"`
 	ChatId  int64  `json:"chat_id"`
+}
+
+func (m *TLChatGetMutableChat) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -61,6 +70,9 @@ func (m *TLChatGetMutableChat) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -73,6 +85,11 @@ type TLChatGetChatListByIdList struct {
 	ClazzID uint32  `json:"_id"`
 	SelfId  int64   `json:"self_id"`
 	IdList  []int64 `json:"id_list"`
+}
+
+func (m *TLChatGetChatListByIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -110,6 +127,9 @@ func (m *TLChatGetChatListByIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -122,6 +142,11 @@ type TLChatGetChatBySelfId struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	ChatId  int64  `json:"chat_id"`
+}
+
+func (m *TLChatGetChatBySelfId) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -157,6 +182,9 @@ func (m *TLChatGetChatBySelfId) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -171,6 +199,11 @@ type TLChatCreateChat2 struct {
 	UserIdList []int64 `json:"user_id_list"`
 	Title      string  `json:"title"`
 	Bots       []int64 `json:"bots"`
+}
+
+func (m *TLChatCreateChat2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -234,6 +267,9 @@ func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -246,6 +282,11 @@ type TLChatDeleteChat struct {
 	ClazzID    uint32 `json:"_id"`
 	ChatId     int64  `json:"chat_id"`
 	OperatorId int64  `json:"operator_id"`
+}
+
+func (m *TLChatDeleteChat) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -281,6 +322,9 @@ func (m *TLChatDeleteChat) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -294,6 +338,11 @@ type TLChatDeleteChatUser struct {
 	ChatId       int64  `json:"chat_id"`
 	OperatorId   int64  `json:"operator_id"`
 	DeleteUserId int64  `json:"delete_user_id"`
+}
+
+func (m *TLChatDeleteChatUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -331,6 +380,9 @@ func (m *TLChatDeleteChatUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -344,6 +396,11 @@ type TLChatEditChatTitle struct {
 	ChatId     int64  `json:"chat_id"`
 	EditUserId int64  `json:"edit_user_id"`
 	Title      string `json:"title"`
+}
+
+func (m *TLChatEditChatTitle) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -381,6 +438,9 @@ func (m *TLChatEditChatTitle) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -394,6 +454,11 @@ type TLChatEditChatAbout struct {
 	ChatId     int64  `json:"chat_id"`
 	EditUserId int64  `json:"edit_user_id"`
 	About      string `json:"about"`
+}
+
+func (m *TLChatEditChatAbout) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -431,6 +496,9 @@ func (m *TLChatEditChatAbout) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -444,6 +512,11 @@ type TLChatEditChatPhoto struct {
 	ChatId     int64     `json:"chat_id"`
 	EditUserId int64     `json:"edit_user_id"`
 	ChatPhoto  *tg.Photo `json:"chat_photo"`
+}
+
+func (m *TLChatEditChatPhoto) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -484,6 +557,9 @@ func (m *TLChatEditChatPhoto) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -498,6 +574,11 @@ type TLChatEditChatAdmin struct {
 	OperatorId      int64    `json:"operator_id"`
 	EditChatAdminId int64    `json:"edit_chat_admin_id"`
 	IsAdmin         *tg.Bool `json:"is_admin"`
+}
+
+func (m *TLChatEditChatAdmin) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -540,6 +621,9 @@ func (m *TLChatEditChatAdmin) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -553,6 +637,11 @@ type TLChatEditChatDefaultBannedRights struct {
 	ChatId       int64                `json:"chat_id"`
 	OperatorId   int64                `json:"operator_id"`
 	BannedRights *tg.ChatBannedRights `json:"banned_rights"`
+}
+
+func (m *TLChatEditChatDefaultBannedRights) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -593,6 +682,9 @@ func (m *TLChatEditChatDefaultBannedRights) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -607,6 +699,11 @@ type TLChatAddChatUser struct {
 	InviterId int64  `json:"inviter_id"`
 	UserId    int64  `json:"user_id"`
 	IsBot     bool   `json:"is_bot"`
+}
+
+func (m *TLChatAddChatUser) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -663,6 +760,9 @@ func (m *TLChatAddChatUser) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -674,6 +774,11 @@ func (m *TLChatAddChatUser) Decode(d *bin.Decoder) (err error) {
 type TLChatGetMutableChatByLink struct {
 	ClazzID uint32 `json:"_id"`
 	Link    string `json:"link"`
+}
+
+func (m *TLChatGetMutableChatByLink) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -707,6 +812,9 @@ func (m *TLChatGetMutableChatByLink) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -720,6 +828,11 @@ type TLChatToggleNoForwards struct {
 	ChatId     int64    `json:"chat_id"`
 	OperatorId int64    `json:"operator_id"`
 	Enabled    *tg.Bool `json:"enabled"`
+}
+
+func (m *TLChatToggleNoForwards) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -760,6 +873,9 @@ func (m *TLChatToggleNoForwards) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -773,6 +889,11 @@ type TLChatMigratedToChannel struct {
 	Chat       *tg.MutableChat `json:"chat"`
 	Id         int64           `json:"id"`
 	AccessHash int64           `json:"access_hash"`
+}
+
+func (m *TLChatMigratedToChannel) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -814,6 +935,9 @@ func (m *TLChatMigratedToChannel) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -825,6 +949,11 @@ func (m *TLChatMigratedToChannel) Decode(d *bin.Decoder) (err error) {
 type TLChatGetChatParticipantIdList struct {
 	ClazzID uint32 `json:"_id"`
 	ChatId  int64  `json:"chat_id"`
+}
+
+func (m *TLChatGetChatParticipantIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -858,6 +987,9 @@ func (m *TLChatGetChatParticipantIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -869,6 +1001,11 @@ func (m *TLChatGetChatParticipantIdList) Decode(d *bin.Decoder) (err error) {
 type TLChatGetUsersChatIdList struct {
 	ClazzID uint32  `json:"_id"`
 	Id      []int64 `json:"id"`
+}
+
+func (m *TLChatGetUsersChatIdList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -903,6 +1040,9 @@ func (m *TLChatGetUsersChatIdList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -915,6 +1055,11 @@ type TLChatGetMyChatList struct {
 	ClazzID   uint32   `json:"_id"`
 	UserId    int64    `json:"user_id"`
 	IsCreator *tg.Bool `json:"is_creator"`
+}
+
+func (m *TLChatGetMyChatList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -953,6 +1098,9 @@ func (m *TLChatGetMyChatList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -970,6 +1118,11 @@ type TLChatExportChatInvite struct {
 	ExpireDate            *int32  `json:"expire_date"`
 	UsageLimit            *int32  `json:"usage_limit"`
 	Title                 *string `json:"title"`
+}
+
+func (m *TLChatExportChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1062,6 +1215,9 @@ func (m *TLChatExportChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1074,6 +1230,11 @@ type TLChatGetAdminsWithInvites struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	ChatId  int64  `json:"chat_id"`
+}
+
+func (m *TLChatGetAdminsWithInvites) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1109,6 +1270,9 @@ func (m *TLChatGetAdminsWithInvites) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1121,6 +1285,11 @@ type TLChatGetExportedChatInvite struct {
 	ClazzID uint32 `json:"_id"`
 	ChatId  int64  `json:"chat_id"`
 	Link    string `json:"link"`
+}
+
+func (m *TLChatGetExportedChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1156,6 +1325,9 @@ func (m *TLChatGetExportedChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1172,6 +1344,11 @@ type TLChatGetExportedChatInvites struct {
 	OffsetDate *int32  `json:"offset_date"`
 	OffsetLink *string `json:"offset_link"`
 	Limit      int32   `json:"limit"`
+}
+
+func (m *TLChatGetExportedChatInvites) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1251,6 +1428,9 @@ func (m *TLChatGetExportedChatInvites) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1263,6 +1443,11 @@ type TLChatCheckChatInvite struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	Hash    string `json:"hash"`
+}
+
+func (m *TLChatCheckChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1298,6 +1483,9 @@ func (m *TLChatCheckChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1310,6 +1498,11 @@ type TLChatImportChatInvite struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	Hash    string `json:"hash"`
+}
+
+func (m *TLChatImportChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1345,6 +1538,9 @@ func (m *TLChatImportChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1363,6 +1559,11 @@ type TLChatGetChatInviteImporters struct {
 	OffsetDate int32   `json:"offset_date"`
 	OffsetUser int64   `json:"offset_user"`
 	Limit      int32   `json:"limit"`
+}
+
+func (m *TLChatGetChatInviteImporters) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1447,6 +1648,9 @@ func (m *TLChatGetChatInviteImporters) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1460,6 +1664,11 @@ type TLChatDeleteExportedChatInvite struct {
 	SelfId  int64  `json:"self_id"`
 	ChatId  int64  `json:"chat_id"`
 	Link    string `json:"link"`
+}
+
+func (m *TLChatDeleteExportedChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1497,6 +1706,9 @@ func (m *TLChatDeleteExportedChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1510,6 +1722,11 @@ type TLChatDeleteRevokedExportedChatInvites struct {
 	SelfId  int64  `json:"self_id"`
 	ChatId  int64  `json:"chat_id"`
 	AdminId int64  `json:"admin_id"`
+}
+
+func (m *TLChatDeleteRevokedExportedChatInvites) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1547,6 +1764,9 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Decode(d *bin.Decoder) (err err
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1565,6 +1785,11 @@ type TLChatEditExportedChatInvite struct {
 	UsageLimit    *int32   `json:"usage_limit"`
 	RequestNeeded *tg.Bool `json:"request_needed"`
 	Title         *string  `json:"title"`
+}
+
+func (m *TLChatEditExportedChatInvite) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1666,6 +1891,9 @@ func (m *TLChatEditExportedChatInvite) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1680,6 +1908,11 @@ type TLChatSetChatAvailableReactions struct {
 	ChatId                 int64    `json:"chat_id"`
 	AvailableReactionsType int32    `json:"available_reactions_type"`
 	AvailableReactions     []string `json:"available_reactions"`
+}
+
+func (m *TLChatSetChatAvailableReactions) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1721,6 +1954,9 @@ func (m *TLChatSetChatAvailableReactions) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1734,6 +1970,11 @@ type TLChatSetHistoryTTL struct {
 	SelfId    int64  `json:"self_id"`
 	ChatId    int64  `json:"chat_id"`
 	TtlPeriod int32  `json:"ttl_period"`
+}
+
+func (m *TLChatSetHistoryTTL) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1771,6 +2012,9 @@ func (m *TLChatSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1785,6 +2029,11 @@ type TLChatSearch struct {
 	Q       string `json:"q"`
 	Offset  int64  `json:"offset"`
 	Limit   int32  `json:"limit"`
+}
+
+func (m *TLChatSearch) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1824,6 +2073,9 @@ func (m *TLChatSearch) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1836,6 +2088,11 @@ type TLChatGetRecentChatInviteRequesters struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	ChatId  int64  `json:"chat_id"`
+}
+
+func (m *TLChatGetRecentChatInviteRequesters) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1871,6 +2128,9 @@ func (m *TLChatGetRecentChatInviteRequesters) Decode(d *bin.Decoder) (err error)
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1886,6 +2146,11 @@ type TLChatHideChatJoinRequests struct {
 	Approved bool    `json:"approved"`
 	Link     *string `json:"link"`
 	UserId   *int64  `json:"user_id"`
+}
+
+func (m *TLChatHideChatJoinRequests) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1962,6 +2227,9 @@ func (m *TLChatHideChatJoinRequests) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1974,6 +2242,11 @@ type TLChatImportChatInvite2 struct {
 	ClazzID uint32 `json:"_id"`
 	SelfId  int64  `json:"self_id"`
 	Hash    string `json:"hash"`
+}
+
+func (m *TLChatImportChatInvite2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -2009,6 +2282,9 @@ func (m *TLChatImportChatInvite2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -2022,7 +2298,12 @@ func (m *TLChatImportChatInvite2) Decode(d *bin.Decoder) (err error) {
 
 // VectorMutableChat <--
 type VectorMutableChat struct {
-	Datas []*tg.MutableChat `json:"datas"`
+	Datas []*tg.MutableChat `json:"_datas"`
+}
+
+func (m *VectorMutableChat) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2041,7 +2322,12 @@ func (m *VectorMutableChat) Decode(d *bin.Decoder) (err error) {
 
 // VectorLong <--
 type VectorLong struct {
-	Datas []int64 `json:"datas"`
+	Datas []int64 `json:"_datas"`
+}
+
+func (m *VectorLong) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2060,7 +2346,12 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorUserChatIdList <--
 type VectorUserChatIdList struct {
-	Datas []*UserChatIdList `json:"datas"`
+	Datas []*UserChatIdList `json:"_datas"`
+}
+
+func (m *VectorUserChatIdList) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2079,7 +2370,12 @@ func (m *VectorUserChatIdList) Decode(d *bin.Decoder) (err error) {
 
 // VectorChatAdminWithInvites <--
 type VectorChatAdminWithInvites struct {
-	Datas []*tg.ChatAdminWithInvites `json:"datas"`
+	Datas []*tg.ChatAdminWithInvites `json:"_datas"`
+}
+
+func (m *VectorChatAdminWithInvites) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2098,7 +2394,12 @@ func (m *VectorChatAdminWithInvites) Decode(d *bin.Decoder) (err error) {
 
 // VectorExportedChatInvite <--
 type VectorExportedChatInvite struct {
-	Datas []*tg.ExportedChatInvite `json:"datas"`
+	Datas []*tg.ExportedChatInvite `json:"_datas"`
+}
+
+func (m *VectorExportedChatInvite) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -2117,7 +2418,12 @@ func (m *VectorExportedChatInvite) Decode(d *bin.Decoder) (err error) {
 
 // VectorChatInviteImporter <--
 type VectorChatInviteImporter struct {
-	Datas []*tg.ChatInviteImporter `json:"datas"`
+	Datas []*tg.ChatInviteImporter `json:"_datas"`
+}
+
+func (m *VectorChatInviteImporter) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

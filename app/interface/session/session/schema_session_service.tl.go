@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,23 +12,31 @@ package session
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/iface"
-	"github.com/teamgram/proto/v2/mt"
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLSessionQueryAuthKey <--
 type TLSessionQueryAuthKey struct {
 	ClazzID   uint32 `json:"_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
+}
+
+func (m *TLSessionQueryAuthKey) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -62,6 +70,9 @@ func (m *TLSessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -73,8 +84,13 @@ func (m *TLSessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 type TLSessionSetAuthKey struct {
 	ClazzID    uint32          `json:"_id"`
 	AuthKey    *tg.AuthKeyInfo `json:"auth_key"`
-	FutureSalt *mt.FutureSalt  `json:"future_salt"`
+	FutureSalt *tg.FutureSalt  `json:"future_salt"`
 	ExpiresIn  int32           `json:"expires_in"`
+}
+
+func (m *TLSessionSetAuthKey) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -109,7 +125,7 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 			_ = m1.Decode(d)
 			m.AuthKey = m1
 
-			m2 := &mt.FutureSalt{}
+			m2 := &tg.FutureSalt{}
 			_ = m2.Decode(d)
 			m.FutureSalt = m2
 
@@ -119,6 +135,9 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -130,6 +149,11 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 type TLSessionCreateSession struct {
 	ClazzID uint32              `json:"_id"`
 	Client  *SessionClientEvent `json:"client"`
+}
+
+func (m *TLSessionCreateSession) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -166,6 +190,9 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -177,6 +204,11 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 type TLSessionSendDataToSession struct {
 	ClazzID uint32             `json:"_id"`
 	Data    *SessionClientData `json:"data"`
+}
+
+func (m *TLSessionSendDataToSession) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -213,6 +245,9 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -224,6 +259,11 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 type TLSessionSendHttpDataToSession struct {
 	ClazzID uint32             `json:"_id"`
 	Client  *SessionClientData `json:"client"`
+}
+
+func (m *TLSessionSendHttpDataToSession) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -260,6 +300,9 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -271,6 +314,11 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 type TLSessionCloseSession struct {
 	ClazzID uint32              `json:"_id"`
 	Client  *SessionClientEvent `json:"client"`
+}
+
+func (m *TLSessionCloseSession) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -307,6 +355,9 @@ func (m *TLSessionCloseSession) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -320,6 +371,11 @@ type TLSessionPushUpdatesData struct {
 	PermAuthKeyId int64       `json:"perm_auth_key_id"`
 	Notification  bool        `json:"notification"`
 	Updates       *tg.Updates `json:"updates"`
+}
+
+func (m *TLSessionPushUpdatesData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -377,6 +433,9 @@ func (m *TLSessionPushUpdatesData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -391,6 +450,11 @@ type TLSessionPushSessionUpdatesData struct {
 	AuthKeyId     int64       `json:"auth_key_id"`
 	SessionId     int64       `json:"session_id"`
 	Updates       *tg.Updates `json:"updates"`
+}
+
+func (m *TLSessionPushSessionUpdatesData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -445,6 +509,9 @@ func (m *TLSessionPushSessionUpdatesData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -460,6 +527,11 @@ type TLSessionPushRpcResultData struct {
 	SessionId      int64  `json:"session_id"`
 	ClientReqMsgId int64  `json:"client_req_msg_id"`
 	RpcResultData  []byte `json:"rpc_result_data"`
+}
+
+func (m *TLSessionPushRpcResultData) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -501,6 +573,9 @@ func (m *TLSessionPushRpcResultData) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package media
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLMediaUploadPhotoFile <--
 type TLMediaUploadPhotoFile struct {
@@ -31,6 +35,11 @@ type TLMediaUploadPhotoFile struct {
 	File       *tg.InputFile       `json:"file"`
 	Stickers   []*tg.InputDocument `json:"stickers"`
 	TtlSeconds *int32              `json:"ttl_seconds"`
+}
+
+func (m *TLMediaUploadPhotoFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -115,6 +124,9 @@ func (m *TLMediaUploadPhotoFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -129,6 +141,11 @@ type TLMediaUploadProfilePhotoFile struct {
 	File         *tg.InputFile `json:"file"`
 	Video        *tg.InputFile `json:"video"`
 	VideoStartTs *float64      `json:"video_start_ts"`
+}
+
+func (m *TLMediaUploadProfilePhotoFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -209,6 +226,9 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -220,6 +240,11 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetPhoto struct {
 	ClazzID uint32 `json:"_id"`
 	PhotoId int64  `json:"photo_id"`
+}
+
+func (m *TLMediaGetPhoto) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -253,6 +278,9 @@ func (m *TLMediaGetPhoto) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -264,6 +292,11 @@ func (m *TLMediaGetPhoto) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetPhotoSizeList struct {
 	ClazzID uint32 `json:"_id"`
 	SizeId  int64  `json:"size_id"`
+}
+
+func (m *TLMediaGetPhotoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -297,6 +330,9 @@ func (m *TLMediaGetPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -308,6 +344,11 @@ func (m *TLMediaGetPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetPhotoSizeListList struct {
 	ClazzID uint32  `json:"_id"`
 	IdList  []int64 `json:"id_list"`
+}
+
+func (m *TLMediaGetPhotoSizeListList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -342,6 +383,9 @@ func (m *TLMediaGetPhotoSizeListList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -353,6 +397,11 @@ func (m *TLMediaGetPhotoSizeListList) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetVideoSizeList struct {
 	ClazzID uint32 `json:"_id"`
 	SizeId  int64  `json:"size_id"`
+}
+
+func (m *TLMediaGetVideoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -386,6 +435,9 @@ func (m *TLMediaGetVideoSizeList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -398,6 +450,11 @@ type TLMediaUploadedDocumentMedia struct {
 	ClazzID uint32         `json:"_id"`
 	OwnerId int64          `json:"owner_id"`
 	Media   *tg.InputMedia `json:"media"`
+}
+
+func (m *TLMediaUploadedDocumentMedia) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -436,6 +493,9 @@ func (m *TLMediaUploadedDocumentMedia) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -447,6 +507,11 @@ func (m *TLMediaUploadedDocumentMedia) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetDocument struct {
 	ClazzID uint32 `json:"_id"`
 	Id      int64  `json:"id"`
+}
+
+func (m *TLMediaGetDocument) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -480,6 +545,9 @@ func (m *TLMediaGetDocument) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -491,6 +559,11 @@ func (m *TLMediaGetDocument) Decode(d *bin.Decoder) (err error) {
 type TLMediaGetDocumentList struct {
 	ClazzID uint32  `json:"_id"`
 	IdList  []int64 `json:"id_list"`
+}
+
+func (m *TLMediaGetDocumentList) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -525,6 +598,9 @@ func (m *TLMediaGetDocumentList) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -537,6 +613,11 @@ type TLMediaUploadEncryptedFile struct {
 	ClazzID uint32                 `json:"_id"`
 	OwnerId int64                  `json:"owner_id"`
 	File    *tg.InputEncryptedFile `json:"file"`
+}
+
+func (m *TLMediaUploadEncryptedFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -575,6 +656,9 @@ func (m *TLMediaUploadEncryptedFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -587,6 +671,11 @@ type TLMediaGetEncryptedFile struct {
 	ClazzID    uint32 `json:"_id"`
 	Id         int64  `json:"id"`
 	AccessHash int64  `json:"access_hash"`
+}
+
+func (m *TLMediaGetEncryptedFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -622,6 +711,9 @@ func (m *TLMediaGetEncryptedFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -636,6 +728,11 @@ type TLMediaUploadWallPaperFile struct {
 	File     *tg.InputFile `json:"file"`
 	MimeType string        `json:"mime_type"`
 	Admin    *tg.Bool      `json:"admin"`
+}
+
+func (m *TLMediaUploadWallPaperFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -682,6 +779,9 @@ func (m *TLMediaUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -697,6 +797,11 @@ type TLMediaUploadThemeFile struct {
 	Thumb    *tg.InputFile `json:"thumb"`
 	MimeType string        `json:"mime_type"`
 	FileName string        `json:"file_name"`
+}
+
+func (m *TLMediaUploadThemeFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -765,6 +870,9 @@ func (m *TLMediaUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -781,6 +889,11 @@ type TLMediaUploadStickerFile struct {
 	MimeType                 string                `json:"mime_type"`
 	FileName                 string                `json:"file_name"`
 	DocumentAttributeSticker *tg.DocumentAttribute `json:"document_attribute_sticker"`
+}
+
+func (m *TLMediaUploadStickerFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -854,6 +967,9 @@ func (m *TLMediaUploadStickerFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -868,6 +984,11 @@ type TLMediaUploadRingtoneFile struct {
 	File     *tg.InputFile `json:"file"`
 	MimeType string        `json:"mime_type"`
 	FileName string        `json:"file_name"`
+}
+
+func (m *TLMediaUploadRingtoneFile) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -923,6 +1044,9 @@ func (m *TLMediaUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -935,6 +1059,11 @@ type TLMediaUploadedProfilePhoto struct {
 	ClazzID uint32 `json:"_id"`
 	OwnerId int64  `json:"owner_id"`
 	PhotoId int64  `json:"photo_id"`
+}
+
+func (m *TLMediaUploadedProfilePhoto) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -970,6 +1099,9 @@ func (m *TLMediaUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -983,7 +1115,12 @@ func (m *TLMediaUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 
 // VectorPhotoSizeList <--
 type VectorPhotoSizeList struct {
-	Datas []*PhotoSizeList `json:"datas"`
+	Datas []*PhotoSizeList `json:"_datas"`
+}
+
+func (m *VectorPhotoSizeList) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--
@@ -1002,7 +1139,12 @@ func (m *VectorPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 
 // VectorDocument <--
 type VectorDocument struct {
-	Datas []*tg.Document `json:"datas"`
+	Datas []*tg.Document `json:"_datas"`
+}
+
+func (m *VectorDocument) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // Encode <--

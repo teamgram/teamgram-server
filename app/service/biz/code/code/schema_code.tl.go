@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -63,6 +63,11 @@ type TLPhoneCodeTransaction struct {
 	FlashCallPattern      string `json:"flash_call_pattern"`
 	NextCodeType          int32  `json:"next_code_type"`
 	State                 int32  `json:"state"`
+}
+
+func (m *TLPhoneCodeTransaction) String() string {
+	wrapper := iface.WithNameWrapper{"phoneCodeTransaction", m}
+	return wrapper.String()
 }
 
 // PhoneCodeTransactionClazzName <--
@@ -161,7 +166,12 @@ func (m *TLPhoneCodeTransaction) Decode(d *bin.Decoder) (err error) {
 type PhoneCodeTransaction struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PhoneCodeTransactionClazz
+	PhoneCodeTransactionClazz `json:"_clazz"`
+}
+
+func (m *PhoneCodeTransaction) String() string {
+	wrapper := iface.WithNameWrapper{m.PhoneCodeTransactionClazzName(), m}
+	return wrapper.String()
 }
 
 // MakePhoneCodeTransaction <--

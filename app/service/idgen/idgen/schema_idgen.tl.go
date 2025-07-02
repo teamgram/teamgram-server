@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -64,6 +64,11 @@ type TLIdVal struct {
 	Id_INT64 int64  `json:"id_INT64"`
 }
 
+func (m *TLIdVal) String() string {
+	wrapper := iface.WithNameWrapper{"idVal", m}
+	return wrapper.String()
+}
+
 // IdValClazzName <--
 func (m *TLIdVal) IdValClazzName() string {
 	return ClazzName_idVal
@@ -121,6 +126,11 @@ func (m *TLIdVal) Decode(d *bin.Decoder) (err error) {
 type TLIdVals struct {
 	ClazzID        uint32  `json:"_id"`
 	Id_VECTORINT64 []int64 `json:"id_VECTORINT64"`
+}
+
+func (m *TLIdVals) String() string {
+	wrapper := iface.WithNameWrapper{"idVals", m}
+	return wrapper.String()
 }
 
 // IdValClazzName <--
@@ -183,6 +193,11 @@ type TLSeqIdVal struct {
 	Id_INT64 int64  `json:"id_INT64"`
 }
 
+func (m *TLSeqIdVal) String() string {
+	wrapper := iface.WithNameWrapper{"seqIdVal", m}
+	return wrapper.String()
+}
+
 // IdValClazzName <--
 func (m *TLSeqIdVal) IdValClazzName() string {
 	return ClazzName_seqIdVal
@@ -240,7 +255,12 @@ func (m *TLSeqIdVal) Decode(d *bin.Decoder) (err error) {
 type IdVal struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	IdValClazz
+	IdValClazz `json:"_clazz"`
+}
+
+func (m *IdVal) String() string {
+	wrapper := iface.WithNameWrapper{m.IdValClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeIdVal <--
@@ -377,6 +397,11 @@ type TLInputId struct {
 	ClazzID uint32 `json:"_id"`
 }
 
+func (m *TLInputId) String() string {
+	wrapper := iface.WithNameWrapper{"inputId", m}
+	return wrapper.String()
+}
+
 // InputIdClazzName <--
 func (m *TLInputId) InputIdClazzName() string {
 	return ClazzName_inputId
@@ -431,6 +456,11 @@ func (m *TLInputId) Decode(d *bin.Decoder) (err error) {
 type TLInputIds struct {
 	ClazzID uint32 `json:"_id"`
 	Num     int32  `json:"num"`
+}
+
+func (m *TLInputIds) String() string {
+	wrapper := iface.WithNameWrapper{"inputIds", m}
+	return wrapper.String()
 }
 
 // InputIdClazzName <--
@@ -490,6 +520,11 @@ func (m *TLInputIds) Decode(d *bin.Decoder) (err error) {
 type TLInputSeqId struct {
 	ClazzID uint32 `json:"_id"`
 	Key     string `json:"key"`
+}
+
+func (m *TLInputSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"inputSeqId", m}
+	return wrapper.String()
 }
 
 // InputIdClazzName <--
@@ -552,6 +587,11 @@ type TLInputNSeqId struct {
 	N       int32  `json:"n"`
 }
 
+func (m *TLInputNSeqId) String() string {
+	wrapper := iface.WithNameWrapper{"inputNSeqId", m}
+	return wrapper.String()
+}
+
 // InputIdClazzName <--
 func (m *TLInputNSeqId) InputIdClazzName() string {
 	return ClazzName_inputNSeqId
@@ -611,7 +651,12 @@ func (m *TLInputNSeqId) Decode(d *bin.Decoder) (err error) {
 type InputId struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	InputIdClazz
+	InputIdClazz `json:"_clazz"`
+}
+
+func (m *InputId) String() string {
+	wrapper := iface.WithNameWrapper{m.InputIdClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeInputId <--

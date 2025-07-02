@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -54,6 +54,11 @@ type TLPhotoSizeList struct {
 	SizeId  int64           `json:"size_id"`
 	Sizes   []*tg.PhotoSize `json:"sizes"`
 	DcId    int32           `json:"dc_id"`
+}
+
+func (m *TLPhotoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{"photoSizeList", m}
+	return wrapper.String()
 }
 
 // PhotoSizeListClazzName <--
@@ -133,7 +138,12 @@ func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 type PhotoSizeList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PhotoSizeListClazz
+	PhotoSizeListClazz `json:"_clazz"`
+}
+
+func (m *PhotoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{m.PhotoSizeListClazzName(), m}
+	return wrapper.String()
 }
 
 // MakePhotoSizeList <--
@@ -220,6 +230,11 @@ type TLVideoSizeList struct {
 	DcId    int32           `json:"dc_id"`
 }
 
+func (m *TLVideoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{"videoSizeList", m}
+	return wrapper.String()
+}
+
 // VideoSizeListClazzName <--
 func (m *TLVideoSizeList) VideoSizeListClazzName() string {
 	return ClazzName_videoSizeList
@@ -297,7 +312,12 @@ func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
 type VideoSizeList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	VideoSizeListClazz
+	VideoSizeListClazz `json:"_clazz"`
+}
+
+func (m *VideoSizeList) String() string {
+	wrapper := iface.WithNameWrapper{m.VideoSizeListClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeVideoSizeList <--

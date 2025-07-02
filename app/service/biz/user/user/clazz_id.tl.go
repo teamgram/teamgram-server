@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -16,6 +16,7 @@ const (
 	ClazzID_usersIdFound                      = 0x80c4adfa // 80c4adfa
 	ClazzID_peerPeerNotifySettings            = 0x70ea3fa9 // 70ea3fa9
 	ClazzID_lastSeenData                      = 0xb3b1a1df // b3b1a1df
+	ClazzID_botInfoData                       = 0x1835d1c  // 1835d1c
 	ClazzID_user_getLastSeens                 = 0x7ca17e01 // 7ca17e01
 	ClazzID_user_updateLastSeen               = 0xfd405a2d // fd405a2d
 	ClazzID_user_getLastSeen                  = 0x9119c8de // 9119c8de
@@ -78,7 +79,7 @@ const (
 	ClazzID_user_getUserDataListByIdList      = 0x8191eff9 // 8191eff9
 	ClazzID_user_getUserDataByToken           = 0x3f09659e // 3f09659e
 	ClazzID_user_search                       = 0x7035b6cd // 7035b6cd
-	ClazzID_user_updateBotData                = 0xb9fd39ee // b9fd39ee
+	ClazzID_user_updateBotData                = 0x60f35d28 // 60f35d28
 	ClazzID_user_getImmutableUserV2           = 0x300aba4c // 300aba4c
 	ClazzID_user_getMutableUsersV2            = 0x94f98b28 // 94f98b28
 	ClazzID_user_createNewTestUser            = 0x4c6eccab // 4c6eccab
@@ -92,4 +93,6 @@ const (
 	ClazzID_user_getUserIdByPhone             = 0xfbab83c2 // fbab83c2
 	ClazzID_user_setAuthorizationTTL          = 0xd621f3f0 // d621f3f0
 	ClazzID_user_getAuthorizationTTL          = 0xde6e493c // de6e493c
+	ClazzID_user_updatePremium                = 0xba08dc99 // ba08dc99
+	ClazzID_user_getBotInfoV2                 = 0xd3fc9ca5 // d3fc9ca5
 )

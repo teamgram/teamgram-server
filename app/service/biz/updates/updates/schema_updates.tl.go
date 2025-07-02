@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -55,6 +55,11 @@ type TLChannelDifference struct {
 	Pts          int32         `json:"pts"`
 	NewMessages  []*tg.Message `json:"new_messages"`
 	OtherUpdates []*tg.Update  `json:"other_updates"`
+}
+
+func (m *TLChannelDifference) String() string {
+	wrapper := iface.WithNameWrapper{"channelDifference", m}
+	return wrapper.String()
 }
 
 // ChannelDifferenceClazzName <--
@@ -166,7 +171,12 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 type ChannelDifference struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChannelDifferenceClazz
+	ChannelDifferenceClazz `json:"_clazz"`
+}
+
+func (m *ChannelDifference) String() string {
+	wrapper := iface.WithNameWrapper{m.ChannelDifferenceClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeChannelDifference <--
@@ -266,6 +276,11 @@ type TLDifferenceEmpty struct {
 	State   *tg.UpdatesState `json:"state"`
 }
 
+func (m *TLDifferenceEmpty) String() string {
+	wrapper := iface.WithNameWrapper{"differenceEmpty", m}
+	return wrapper.String()
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceEmpty) DifferenceClazzName() string {
 	return ClazzName_differenceEmpty
@@ -328,6 +343,11 @@ type TLDifference struct {
 	NewMessages  []*tg.Message    `json:"new_messages"`
 	OtherUpdates []*tg.Update     `json:"other_updates"`
 	State        *tg.UpdatesState `json:"state"`
+}
+
+func (m *TLDifference) String() string {
+	wrapper := iface.WithNameWrapper{"difference", m}
+	return wrapper.String()
 }
 
 // DifferenceClazzName <--
@@ -427,6 +447,11 @@ type TLDifferenceSlice struct {
 	IntermediateState *tg.UpdatesState `json:"intermediate_state"`
 }
 
+func (m *TLDifferenceSlice) String() string {
+	wrapper := iface.WithNameWrapper{"differenceSlice", m}
+	return wrapper.String()
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceSlice) DifferenceClazzName() string {
 	return ClazzName_differenceSlice
@@ -522,6 +547,11 @@ type TLDifferenceTooLong struct {
 	Pts     int32  `json:"pts"`
 }
 
+func (m *TLDifferenceTooLong) String() string {
+	wrapper := iface.WithNameWrapper{"differenceTooLong", m}
+	return wrapper.String()
+}
+
 // DifferenceClazzName <--
 func (m *TLDifferenceTooLong) DifferenceClazzName() string {
 	return ClazzName_differenceTooLong
@@ -579,7 +609,12 @@ func (m *TLDifferenceTooLong) Decode(d *bin.Decoder) (err error) {
 type Difference struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DifferenceClazz
+	DifferenceClazz `json:"_clazz"`
+}
+
+func (m *Difference) String() string {
+	wrapper := iface.WithNameWrapper{m.DifferenceClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeDifference <--

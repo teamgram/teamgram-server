@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/session"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -98,6 +101,12 @@ var (
 	sessionServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCSession", sessionServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCSession", sessionServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCSession", sessionServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return sessionServiceServiceInfo
@@ -122,6 +131,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1300,91 +1311,136 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) SessionQueryAuthKey(ctx context.Context, req *session.TLSessionQueryAuthKey) (r *tg.AuthKeyInfo, err error) {
-	var _args QueryAuthKeyArgs
-	_args.Req = req
-	var _result QueryAuthKeyResult
-	if err = p.c.Call(ctx, "session.queryAuthKey", &_args, &_result); err != nil {
+	// var _args QueryAuthKeyArgs
+	// _args.Req = req
+	// var _result QueryAuthKeyResult
+
+	_result := new(tg.AuthKeyInfo)
+
+	if err = p.c.Call(ctx, "session.queryAuthKey", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionSetAuthKey(ctx context.Context, req *session.TLSessionSetAuthKey) (r *tg.Bool, err error) {
-	var _args SetAuthKeyArgs
-	_args.Req = req
-	var _result SetAuthKeyResult
-	if err = p.c.Call(ctx, "session.setAuthKey", &_args, &_result); err != nil {
+	// var _args SetAuthKeyArgs
+	// _args.Req = req
+	// var _result SetAuthKeyResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.setAuthKey", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionCreateSession(ctx context.Context, req *session.TLSessionCreateSession) (r *tg.Bool, err error) {
-	var _args CreateSessionArgs
-	_args.Req = req
-	var _result CreateSessionResult
-	if err = p.c.Call(ctx, "session.createSession", &_args, &_result); err != nil {
+	// var _args CreateSessionArgs
+	// _args.Req = req
+	// var _result CreateSessionResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.createSession", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionSendDataToSession(ctx context.Context, req *session.TLSessionSendDataToSession) (r *tg.Bool, err error) {
-	var _args SendDataToSessionArgs
-	_args.Req = req
-	var _result SendDataToSessionResult
-	if err = p.c.Call(ctx, "session.sendDataToSession", &_args, &_result); err != nil {
+	// var _args SendDataToSessionArgs
+	// _args.Req = req
+	// var _result SendDataToSessionResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.sendDataToSession", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionSendHttpDataToSession(ctx context.Context, req *session.TLSessionSendHttpDataToSession) (r *session.HttpSessionData, err error) {
-	var _args SendHttpDataToSessionArgs
-	_args.Req = req
-	var _result SendHttpDataToSessionResult
-	if err = p.c.Call(ctx, "session.sendHttpDataToSession", &_args, &_result); err != nil {
+	// var _args SendHttpDataToSessionArgs
+	// _args.Req = req
+	// var _result SendHttpDataToSessionResult
+
+	_result := new(session.HttpSessionData)
+
+	if err = p.c.Call(ctx, "session.sendHttpDataToSession", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionCloseSession(ctx context.Context, req *session.TLSessionCloseSession) (r *tg.Bool, err error) {
-	var _args CloseSessionArgs
-	_args.Req = req
-	var _result CloseSessionResult
-	if err = p.c.Call(ctx, "session.closeSession", &_args, &_result); err != nil {
+	// var _args CloseSessionArgs
+	// _args.Req = req
+	// var _result CloseSessionResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.closeSession", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionPushUpdatesData(ctx context.Context, req *session.TLSessionPushUpdatesData) (r *tg.Bool, err error) {
-	var _args PushUpdatesDataArgs
-	_args.Req = req
-	var _result PushUpdatesDataResult
-	if err = p.c.Call(ctx, "session.pushUpdatesData", &_args, &_result); err != nil {
+	// var _args PushUpdatesDataArgs
+	// _args.Req = req
+	// var _result PushUpdatesDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.pushUpdatesData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionPushSessionUpdatesData(ctx context.Context, req *session.TLSessionPushSessionUpdatesData) (r *tg.Bool, err error) {
-	var _args PushSessionUpdatesDataArgs
-	_args.Req = req
-	var _result PushSessionUpdatesDataResult
-	if err = p.c.Call(ctx, "session.pushSessionUpdatesData", &_args, &_result); err != nil {
+	// var _args PushSessionUpdatesDataArgs
+	// _args.Req = req
+	// var _result PushSessionUpdatesDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.pushSessionUpdatesData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SessionPushRpcResultData(ctx context.Context, req *session.TLSessionPushRpcResultData) (r *tg.Bool, err error) {
-	var _args PushRpcResultDataArgs
-	_args.Req = req
-	var _result PushRpcResultDataResult
-	if err = p.c.Call(ctx, "session.pushRpcResultData", &_args, &_result); err != nil {
+	// var _args PushRpcResultDataArgs
+	// _args.Req = req
+	// var _result PushRpcResultDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "session.pushRpcResultData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

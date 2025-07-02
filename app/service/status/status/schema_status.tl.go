@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -58,6 +58,11 @@ type TLSessionEntry struct {
 	Layer         int32  `json:"layer"`
 	PermAuthKeyId int64  `json:"perm_auth_key_id"`
 	Client        string `json:"client"`
+}
+
+func (m *TLSessionEntry) String() string {
+	wrapper := iface.WithNameWrapper{"sessionEntry", m}
+	return wrapper.String()
 }
 
 // SessionEntryClazzName <--
@@ -129,7 +134,12 @@ func (m *TLSessionEntry) Decode(d *bin.Decoder) (err error) {
 type SessionEntry struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionEntryClazz
+	SessionEntryClazz `json:"_clazz"`
+}
+
+func (m *SessionEntry) String() string {
+	wrapper := iface.WithNameWrapper{m.SessionEntryClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeSessionEntry <--
@@ -215,6 +225,11 @@ type TLUserSessionEntryList struct {
 	UserSessions []*SessionEntry `json:"user_sessions"`
 }
 
+func (m *TLUserSessionEntryList) String() string {
+	wrapper := iface.WithNameWrapper{"userSessionEntryList", m}
+	return wrapper.String()
+}
+
 // UserSessionEntryListClazzName <--
 func (m *TLUserSessionEntryList) UserSessionEntryListClazzName() string {
 	return ClazzName_userSessionEntryList
@@ -288,7 +303,12 @@ func (m *TLUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
 type UserSessionEntryList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserSessionEntryListClazz
+	UserSessionEntryListClazz `json:"_clazz"`
+}
+
+func (m *UserSessionEntryList) String() string {
+	wrapper := iface.WithNameWrapper{m.UserSessionEntryListClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeUserSessionEntryList <--

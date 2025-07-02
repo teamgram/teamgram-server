@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type SessionClient interface {
 	SessionQueryAuthKey(ctx context.Context, in *session.TLSessionQueryAuthKey) (*tg.AuthKeyInfo, error)
 	SessionSetAuthKey(ctx context.Context, in *session.TLSessionSetAuthKey) (*tg.Bool, error)
