@@ -71,6 +71,10 @@ func (m *TLHttpSessionData) ClazzName() string {
 
 // ToHttpSessionData <--
 func (m *TLHttpSessionData) ToHttpSessionData() *HttpSessionData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeHttpSessionData(m)
 }
 
@@ -164,6 +168,10 @@ func (m *HttpSessionData) Match(f ...interface{}) {
 
 // ToHttpSessionData <--
 func (m *HttpSessionData) ToHttpSessionData() (*TLHttpSessionData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.HttpSessionDataClazz == nil {
 		return nil, false
 	}
@@ -232,6 +240,10 @@ func (m *TLSessionClientData) ClazzName() string {
 
 // ToSessionClientData <--
 func (m *TLSessionClientData) ToSessionClientData() *SessionClientData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeSessionClientData(m)
 }
 
@@ -343,6 +355,10 @@ func (m *SessionClientData) Match(f ...interface{}) {
 
 // ToSessionClientData <--
 func (m *SessionClientData) ToSessionClientData() (*TLSessionClientData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.SessionClientDataClazz == nil {
 		return nil, false
 	}
@@ -408,6 +424,10 @@ func (m *TLSessionClientEvent) ClazzName() string {
 
 // ToSessionClientEvent <--
 func (m *TLSessionClientEvent) ToSessionClientEvent() *SessionClientEvent {
+	if m == nil {
+		return nil
+	}
+
 	return MakeSessionClientEvent(m)
 }
 
@@ -513,6 +533,10 @@ func (m *SessionClientEvent) Match(f ...interface{}) {
 
 // ToSessionClientEvent <--
 func (m *SessionClientEvent) ToSessionClientEvent() (*TLSessionClientEvent, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.SessionClientEventClazz == nil {
 		return nil, false
 	}

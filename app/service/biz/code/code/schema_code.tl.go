@@ -82,6 +82,10 @@ func (m *TLPhoneCodeTransaction) ClazzName() string {
 
 // ToPhoneCodeTransaction <--
 func (m *TLPhoneCodeTransaction) ToPhoneCodeTransaction() *PhoneCodeTransaction {
+	if m == nil {
+		return nil
+	}
+
 	return MakePhoneCodeTransaction(m)
 }
 
@@ -214,6 +218,10 @@ func (m *PhoneCodeTransaction) Match(f ...interface{}) {
 
 // ToPhoneCodeTransaction <--
 func (m *PhoneCodeTransaction) ToPhoneCodeTransaction() (*TLPhoneCodeTransaction, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.PhoneCodeTransactionClazz == nil {
 		return nil, false
 	}

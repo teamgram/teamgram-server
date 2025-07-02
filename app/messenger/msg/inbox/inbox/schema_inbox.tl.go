@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -56,6 +56,11 @@ type TLInboxMessageData struct {
 	Message         *tg.Message `json:"message"`
 }
 
+func (m *TLInboxMessageData) String() string {
+	wrapper := iface.WithNameWrapper{"inboxMessageData", m}
+	return wrapper.String()
+}
+
 // InboxMessageDataClazzName <--
 func (m *TLInboxMessageData) InboxMessageDataClazzName() string {
 	return ClazzName_inboxMessageData
@@ -68,6 +73,10 @@ func (m *TLInboxMessageData) ClazzName() string {
 
 // ToInboxMessageData <--
 func (m *TLInboxMessageData) ToInboxMessageData() *InboxMessageData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInboxMessageData(m)
 }
 
@@ -120,7 +129,12 @@ func (m *TLInboxMessageData) Decode(d *bin.Decoder) (err error) {
 type InboxMessageData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	InboxMessageDataClazz
+	InboxMessageDataClazz `json:"_clazz"`
+}
+
+func (m *InboxMessageData) String() string {
+	wrapper := iface.WithNameWrapper{m.InboxMessageDataClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeInboxMessageData <--
@@ -163,6 +177,10 @@ func (m *InboxMessageData) Match(f ...interface{}) {
 
 // ToInboxMessageData <--
 func (m *InboxMessageData) ToInboxMessageData() (*TLInboxMessageData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InboxMessageDataClazz == nil {
 		return nil, false
 	}
@@ -206,6 +224,11 @@ type TLInboxMessageId struct {
 	DialogMessageId int64  `json:"dialog_message_id"`
 }
 
+func (m *TLInboxMessageId) String() string {
+	wrapper := iface.WithNameWrapper{"inboxMessageId", m}
+	return wrapper.String()
+}
+
 // InboxMessageIdClazzName <--
 func (m *TLInboxMessageId) InboxMessageIdClazzName() string {
 	return ClazzName_inboxMessageId
@@ -218,6 +241,10 @@ func (m *TLInboxMessageId) ClazzName() string {
 
 // ToInboxMessageId <--
 func (m *TLInboxMessageId) ToInboxMessageId() *InboxMessageId {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInboxMessageId(m)
 }
 
@@ -265,7 +292,12 @@ func (m *TLInboxMessageId) Decode(d *bin.Decoder) (err error) {
 type InboxMessageId struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	InboxMessageIdClazz
+	InboxMessageIdClazz `json:"_clazz"`
+}
+
+func (m *InboxMessageId) String() string {
+	wrapper := iface.WithNameWrapper{m.InboxMessageIdClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeInboxMessageId <--
@@ -308,6 +340,10 @@ func (m *InboxMessageId) Match(f ...interface{}) {
 
 // ToInboxMessageId <--
 func (m *InboxMessageId) ToInboxMessageId() (*TLInboxMessageId, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InboxMessageIdClazz == nil {
 		return nil, false
 	}

@@ -197,6 +197,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 		defer x3.End()
 
 		// hack
+		logx.Debugf("mtpRwaData: %s", hex.EncodeToString(mtpRwaData))
 		for _, unknown := range tryGetUnknownTLObject(mtpRwaData[16:]) {
 			switch unknownMsg := unknown.(type) {
 			case *tg.TLAuthBindTempAuthKey:
@@ -253,7 +254,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 			func(client sessionclient.SessionClient) (err error) {
 				if isNew {
 					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
-						_, err = client.SessionCreateSession(context.Background(), &session.TLSessionCreateSession{
+						r := &session.TLSessionCreateSession{
 							Client: session.MakeSessionClientEvent(&session.TLSessionClientEvent{
 								ServerId:      s.svcCtx.GatewayId,
 								AuthKeyId:     authKey.AuthKeyId(),
@@ -262,7 +263,13 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 								SessionId:     sessionId,
 								ClientIp:      clientIp,
 							}),
-						})
+						}
+						logx.Infof("conn(%s) create new session(%s)", c, r)
+						_, err = client.SessionCreateSession(context.Background(), r)
+						if err != nil {
+							logx.Errorf("session.createSession - error: %v", err)
+							// return err
+						}
 					}
 				}
 

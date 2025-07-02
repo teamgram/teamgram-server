@@ -23,9 +23,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/iface"
+	"github.com/teamgram/proto/v2/iface/ecode"
+	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/bytedance/gopkg/lang/dirtmake"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -48,9 +49,11 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 	case remote.Exception:
 		switch e := message.Data().(type) {
 		case *remote.TransError:
-			validData = &Exception{e.TypeID(), e.Error()}
+			// validData = &Exception{e.TypeID(), e.Error()}
+			validData = tg.NewRpcError(e)
 		case error:
-			validData = &Exception{remote.InternalError, e.Error()}
+			// validData = &Exception{remote.InternalError, e.Error()}
+			validData = tg.NewRpcError(e)
 		default:
 			return errors.New("exception relay must implement error type")
 		}
@@ -108,7 +111,7 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	data := &Meta{}
 	err = json.Unmarshal(buf, data)
 	if err != nil {
-		return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal data failed: %w", err))
+		return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal Meta data failed: %w", err))
 	}
 	if err = codec.SetOrCheckSeqID(data.SeqID, message); err != nil {
 		return err
@@ -123,12 +126,19 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 		klog.Infof("encoded payload: %s\n", hex.EncodeToString(data.Payload))
 	}
 	if remote.MessageType(data.MsgType) == remote.Exception {
-		var exception Exception
-		err = json.Unmarshal(data.Payload, &exception)
-		if err != nil {
-			return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal payload failed: %w", err))
+		//var exception tg.TLRpcError
+		//d := bin.NewDecoder(data.Payload)
+		//err = exception.Decode(d)
+		exception2, err2 := tg.DecodeRpcErrorClazz(bin.NewDecoder(data.Payload))
+		// var exception Exception
+		// err = json.Unmarshal(data.Payload, &exception)
+		if err2 != nil {
+			return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal Exception payload failed: %w", err2))
+		} else if exception, ok := exception2.(*tg.TLRpcError); !ok {
+			return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal Exception payload failed: %w", exception2))
+		} else {
+			return ecode.NewCodeError(exception.Code(), exception.ErrorMessage)
 		}
-		return exception
 	}
 
 	d := bin.NewDecoder(data.Payload)

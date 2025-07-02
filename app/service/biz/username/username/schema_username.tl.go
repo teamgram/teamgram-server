@@ -72,6 +72,10 @@ func (m *TLUsernameData) ClazzName() string {
 
 // ToUsernameData <--
 func (m *TLUsernameData) ToUsernameData() *UsernameData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsernameData(m)
 }
 
@@ -189,6 +193,10 @@ func (m *UsernameData) Match(f ...interface{}) {
 
 // ToUsernameData <--
 func (m *UsernameData) ToUsernameData() (*TLUsernameData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsernameDataClazz == nil {
 		return nil, false
 	}
@@ -262,6 +270,10 @@ func (m *TLUsernameNotExisted) ClazzName() string {
 
 // ToUsernameExist <--
 func (m *TLUsernameNotExisted) ToUsernameExist() *UsernameExist {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsernameExist(m)
 }
 
@@ -322,6 +334,10 @@ func (m *TLUsernameExisted) ClazzName() string {
 
 // ToUsernameExist <--
 func (m *TLUsernameExisted) ToUsernameExist() *UsernameExist {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsernameExist(m)
 }
 
@@ -382,6 +398,10 @@ func (m *TLUsernameExistedNotMe) ClazzName() string {
 
 // ToUsernameExist <--
 func (m *TLUsernameExistedNotMe) ToUsernameExist() *UsernameExist {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsernameExist(m)
 }
 
@@ -442,6 +462,10 @@ func (m *TLUsernameExistedIsMe) ClazzName() string {
 
 // ToUsernameExist <--
 func (m *TLUsernameExistedIsMe) ToUsernameExist() *UsernameExist {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsernameExist(m)
 }
 
@@ -550,6 +574,10 @@ func (m *UsernameExist) Match(f ...interface{}) {
 
 // ToUsernameNotExisted <--
 func (m *UsernameExist) ToUsernameNotExisted() (*TLUsernameNotExisted, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsernameExistClazz == nil {
 		return nil, false
 	}
@@ -563,6 +591,10 @@ func (m *UsernameExist) ToUsernameNotExisted() (*TLUsernameNotExisted, bool) {
 
 // ToUsernameExisted <--
 func (m *UsernameExist) ToUsernameExisted() (*TLUsernameExisted, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsernameExistClazz == nil {
 		return nil, false
 	}
@@ -576,6 +608,10 @@ func (m *UsernameExist) ToUsernameExisted() (*TLUsernameExisted, bool) {
 
 // ToUsernameExistedNotMe <--
 func (m *UsernameExist) ToUsernameExistedNotMe() (*TLUsernameExistedNotMe, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsernameExistClazz == nil {
 		return nil, false
 	}
@@ -589,6 +625,10 @@ func (m *UsernameExist) ToUsernameExistedNotMe() (*TLUsernameExistedNotMe, bool)
 
 // ToUsernameExistedIsMe <--
 func (m *UsernameExist) ToUsernameExistedIsMe() (*TLUsernameExistedIsMe, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsernameExistClazz == nil {
 		return nil, false
 	}

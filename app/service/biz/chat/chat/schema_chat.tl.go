@@ -81,6 +81,10 @@ func (m *TLChatInviteAlready) ClazzName() string {
 
 // ToChatInviteExt <--
 func (m *TLChatInviteAlready) ToChatInviteExt() *ChatInviteExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeChatInviteExt(m)
 }
 
@@ -153,6 +157,10 @@ func (m *TLChatInvite) ClazzName() string {
 
 // ToChatInviteExt <--
 func (m *TLChatInvite) ToChatInviteExt() *ChatInviteExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeChatInviteExt(m)
 }
 
@@ -267,6 +275,10 @@ func (m *TLChatInvitePeek) ClazzName() string {
 
 // ToChatInviteExt <--
 func (m *TLChatInvitePeek) ToChatInviteExt() *ChatInviteExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeChatInviteExt(m)
 }
 
@@ -378,6 +390,10 @@ func (m *ChatInviteExt) Match(f ...interface{}) {
 
 // ToChatInviteAlready <--
 func (m *ChatInviteExt) ToChatInviteAlready() (*TLChatInviteAlready, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ChatInviteExtClazz == nil {
 		return nil, false
 	}
@@ -391,6 +407,10 @@ func (m *ChatInviteExt) ToChatInviteAlready() (*TLChatInviteAlready, bool) {
 
 // ToChatInvite <--
 func (m *ChatInviteExt) ToChatInvite() (*TLChatInvite, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ChatInviteExtClazz == nil {
 		return nil, false
 	}
@@ -404,6 +424,10 @@ func (m *ChatInviteExt) ToChatInvite() (*TLChatInvite, bool) {
 
 // ToChatInvitePeek <--
 func (m *ChatInviteExt) ToChatInvitePeek() (*TLChatInvitePeek, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ChatInviteExtClazz == nil {
 		return nil, false
 	}
@@ -464,6 +488,10 @@ func (m *TLChatInviteImported) ClazzName() string {
 
 // ToChatInviteImported <--
 func (m *TLChatInviteImported) ToChatInviteImported() *ChatInviteImported {
+	if m == nil {
+		return nil
+	}
+
 	return MakeChatInviteImported(m)
 }
 
@@ -585,6 +613,10 @@ func (m *ChatInviteImported) Match(f ...interface{}) {
 
 // ToChatInviteImported <--
 func (m *ChatInviteImported) ToChatInviteImported() (*TLChatInviteImported, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ChatInviteImportedClazz == nil {
 		return nil, false
 	}
@@ -645,6 +677,10 @@ func (m *TLRecentChatInviteRequesters) ClazzName() string {
 
 // ToRecentChatInviteRequesters <--
 func (m *TLRecentChatInviteRequesters) ToRecentChatInviteRequesters() *RecentChatInviteRequesters {
+	if m == nil {
+		return nil
+	}
+
 	return MakeRecentChatInviteRequesters(m)
 }
 
@@ -742,6 +778,10 @@ func (m *RecentChatInviteRequesters) Match(f ...interface{}) {
 
 // ToRecentChatInviteRequesters <--
 func (m *RecentChatInviteRequesters) ToRecentChatInviteRequesters() (*TLRecentChatInviteRequesters, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.RecentChatInviteRequestersClazz == nil {
 		return nil, false
 	}
@@ -802,6 +842,10 @@ func (m *TLUserChatIdList) ClazzName() string {
 
 // ToUserChatIdList <--
 func (m *TLUserChatIdList) ToUserChatIdList() *UserChatIdList {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUserChatIdList(m)
 }
 
@@ -899,6 +943,10 @@ func (m *UserChatIdList) Match(f ...interface{}) {
 
 // ToUserChatIdList <--
 func (m *UserChatIdList) ToUserChatIdList() (*TLUserChatIdList, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UserChatIdListClazz == nil {
 		return nil, false
 	}

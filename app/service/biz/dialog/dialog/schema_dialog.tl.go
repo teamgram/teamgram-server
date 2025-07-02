@@ -78,6 +78,10 @@ func (m *TLDialogExt) ClazzName() string {
 
 // ToDialogExt <--
 func (m *TLDialogExt) ToDialogExt() *DialogExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDialogExt(m)
 }
 
@@ -206,6 +210,10 @@ func (m *DialogExt) Match(f ...interface{}) {
 
 // ToDialogExt <--
 func (m *DialogExt) ToDialogExt() (*TLDialogExt, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DialogExtClazz == nil {
 		return nil, false
 	}
@@ -269,6 +277,10 @@ func (m *TLDialogFilterExt) ClazzName() string {
 
 // ToDialogFilterExt <--
 func (m *TLDialogFilterExt) ToDialogFilterExt() *DialogFilterExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDialogFilterExt(m)
 }
 
@@ -391,6 +403,10 @@ func (m *DialogFilterExt) Match(f ...interface{}) {
 
 // ToDialogFilterExt <--
 func (m *DialogFilterExt) ToDialogFilterExt() (*TLDialogFilterExt, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DialogFilterExtClazz == nil {
 		return nil, false
 	}
@@ -452,6 +468,10 @@ func (m *TLDialogPinnedExt) ClazzName() string {
 
 // ToDialogPinnedExt <--
 func (m *TLDialogPinnedExt) ToDialogPinnedExt() *DialogPinnedExt {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDialogPinnedExt(m)
 }
 
@@ -549,6 +569,10 @@ func (m *DialogPinnedExt) Match(f ...interface{}) {
 
 // ToDialogPinnedExt <--
 func (m *DialogPinnedExt) ToDialogPinnedExt() (*TLDialogPinnedExt, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DialogPinnedExtClazz == nil {
 		return nil, false
 	}
@@ -610,6 +634,10 @@ func (m *TLSimpleDialogsData) ClazzName() string {
 
 // ToDialogsData <--
 func (m *TLSimpleDialogsData) ToDialogsData() *DialogsData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDialogsData(m)
 }
 
@@ -712,6 +740,10 @@ func (m *DialogsData) Match(f ...interface{}) {
 
 // ToSimpleDialogsData <--
 func (m *DialogsData) ToSimpleDialogsData() (*TLSimpleDialogsData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DialogsDataClazz == nil {
 		return nil, false
 	}
@@ -772,6 +804,10 @@ func (m *TLUpdateDraftMessage) ClazzName() string {
 
 // ToPeerWithDraftMessage <--
 func (m *TLUpdateDraftMessage) ToPeerWithDraftMessage() *PeerWithDraftMessage {
+	if m == nil {
+		return nil
+	}
+
 	return MakePeerWithDraftMessage(m)
 }
 
@@ -873,6 +909,10 @@ func (m *PeerWithDraftMessage) Match(f ...interface{}) {
 
 // ToUpdateDraftMessage <--
 func (m *PeerWithDraftMessage) ToUpdateDraftMessage() (*TLUpdateDraftMessage, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.PeerWithDraftMessageClazz == nil {
 		return nil, false
 	}
@@ -933,6 +973,10 @@ func (m *TLSavedDialogList) ClazzName() string {
 
 // ToSavedDialogList <--
 func (m *TLSavedDialogList) ToSavedDialogList() *SavedDialogList {
+	if m == nil {
+		return nil
+	}
+
 	return MakeSavedDialogList(m)
 }
 
@@ -1042,6 +1086,10 @@ func (m *SavedDialogList) Match(f ...interface{}) {
 
 // ToSavedDialogList <--
 func (m *SavedDialogList) ToSavedDialogList() (*TLSavedDialogList, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.SavedDialogListClazz == nil {
 		return nil, false
 	}

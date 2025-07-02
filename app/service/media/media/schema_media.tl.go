@@ -73,6 +73,10 @@ func (m *TLPhotoSizeList) ClazzName() string {
 
 // ToPhotoSizeList <--
 func (m *TLPhotoSizeList) ToPhotoSizeList() *PhotoSizeList {
+	if m == nil {
+		return nil
+	}
+
 	return MakePhotoSizeList(m)
 }
 
@@ -186,6 +190,10 @@ func (m *PhotoSizeList) Match(f ...interface{}) {
 
 // ToPhotoSizeList <--
 func (m *PhotoSizeList) ToPhotoSizeList() (*TLPhotoSizeList, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.PhotoSizeListClazz == nil {
 		return nil, false
 	}
@@ -247,6 +255,10 @@ func (m *TLVideoSizeList) ClazzName() string {
 
 // ToVideoSizeList <--
 func (m *TLVideoSizeList) ToVideoSizeList() *VideoSizeList {
+	if m == nil {
+		return nil
+	}
+
 	return MakeVideoSizeList(m)
 }
 
@@ -360,6 +372,10 @@ func (m *VideoSizeList) Match(f ...interface{}) {
 
 // ToVideoSizeList <--
 func (m *VideoSizeList) ToVideoSizeList() (*TLVideoSizeList, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.VideoSizeListClazz == nil {
 		return nil, false
 	}

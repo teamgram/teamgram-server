@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package msg
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLMsgPushUserMessage <--
 type TLMsgPushUserMessage struct {
@@ -33,6 +37,11 @@ type TLMsgPushUserMessage struct {
 	PeerId    int64          `json:"peer_id"`
 	PushType  int32          `json:"push_type"`
 	Message   *OutboxMessage `json:"message"`
+}
+
+func (m *TLMsgPushUserMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -79,6 +88,9 @@ func (m *TLMsgPushUserMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -94,6 +106,11 @@ type TLMsgReadMessageContents struct {
 	PeerType  int32             `json:"peer_type"`
 	PeerId    int64             `json:"peer_id"`
 	Id        []*ContentMessage `json:"id"`
+}
+
+func (m *TLMsgReadMessageContents) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -149,6 +166,9 @@ func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -164,6 +184,11 @@ type TLMsgSendMessageV2 struct {
 	PeerType  int32            `json:"peer_type"`
 	PeerId    int64            `json:"peer_id"`
 	Message   []*OutboxMessage `json:"message"`
+}
+
+func (m *TLMsgSendMessageV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -219,6 +244,9 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -236,6 +264,11 @@ type TLMsgEditMessageV2 struct {
 	EditType   int32          `json:"edit_type"`
 	NewMessage *OutboxMessage `json:"new_message"`
 	DstMessage *tg.MessageBox `json:"dst_message"`
+}
+
+func (m *TLMsgEditMessageV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -287,6 +320,9 @@ func (m *TLMsgEditMessageV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -303,6 +339,11 @@ type TLMsgDeleteMessages struct {
 	PeerId    int64   `json:"peer_id"`
 	Revoke    bool    `json:"revoke"`
 	Id        []int32 `json:"id"`
+}
+
+func (m *TLMsgDeleteMessages) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -365,6 +406,9 @@ func (m *TLMsgDeleteMessages) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -382,6 +426,11 @@ type TLMsgDeleteHistory struct {
 	JustClear bool   `json:"just_clear"`
 	Revoke    bool   `json:"revoke"`
 	MaxId     int32  `json:"max_id"`
+}
+
+func (m *TLMsgDeleteHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -448,6 +497,9 @@ func (m *TLMsgDeleteHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -461,6 +513,11 @@ type TLMsgDeletePhoneCallHistory struct {
 	UserId    int64  `json:"user_id"`
 	AuthKeyId int64  `json:"auth_key_id"`
 	Revoke    bool   `json:"revoke"`
+}
+
+func (m *TLMsgDeletePhoneCallHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -515,6 +572,9 @@ func (m *TLMsgDeletePhoneCallHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -527,6 +587,11 @@ type TLMsgDeleteChatHistory struct {
 	ClazzID      uint32 `json:"_id"`
 	ChatId       int64  `json:"chat_id"`
 	DeleteUserId int64  `json:"delete_user_id"`
+}
+
+func (m *TLMsgDeleteChatHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -562,6 +627,9 @@ func (m *TLMsgDeleteChatHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -577,6 +645,11 @@ type TLMsgReadHistory struct {
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
 	MaxId     int32  `json:"max_id"`
+}
+
+func (m *TLMsgReadHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -618,6 +691,9 @@ func (m *TLMsgReadHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -633,6 +709,11 @@ type TLMsgReadHistoryV2 struct {
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
 	MaxId     int32  `json:"max_id"`
+}
+
+func (m *TLMsgReadHistoryV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -674,6 +755,9 @@ func (m *TLMsgReadHistoryV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -692,6 +776,11 @@ type TLMsgUpdatePinnedMessage struct {
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
 	Id        int32  `json:"id"`
+}
+
+func (m *TLMsgUpdatePinnedMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -764,6 +853,9 @@ func (m *TLMsgUpdatePinnedMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -778,6 +870,11 @@ type TLMsgUnpinAllMessages struct {
 	AuthKeyId int64  `json:"auth_key_id"`
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
+}
+
+func (m *TLMsgUnpinAllMessages) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -817,6 +914,9 @@ func (m *TLMsgUnpinAllMessages) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

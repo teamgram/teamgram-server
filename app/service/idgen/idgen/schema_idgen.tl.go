@@ -81,6 +81,10 @@ func (m *TLIdVal) ClazzName() string {
 
 // ToIdVal <--
 func (m *TLIdVal) ToIdVal() *IdVal {
+	if m == nil {
+		return nil
+	}
+
 	return MakeIdVal(m)
 }
 
@@ -145,6 +149,10 @@ func (m *TLIdVals) ClazzName() string {
 
 // ToIdVal <--
 func (m *TLIdVals) ToIdVal() *IdVal {
+	if m == nil {
+		return nil
+	}
+
 	return MakeIdVal(m)
 }
 
@@ -210,6 +218,10 @@ func (m *TLSeqIdVal) ClazzName() string {
 
 // ToIdVal <--
 func (m *TLSeqIdVal) ToIdVal() *IdVal {
+	if m == nil {
+		return nil
+	}
+
 	return MakeIdVal(m)
 }
 
@@ -315,6 +327,10 @@ func (m *IdVal) Match(f ...interface{}) {
 
 // ToIdVal <--
 func (m *IdVal) ToIdVal() (*TLIdVal, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.IdValClazz == nil {
 		return nil, false
 	}
@@ -328,6 +344,10 @@ func (m *IdVal) ToIdVal() (*TLIdVal, bool) {
 
 // ToIdVals <--
 func (m *IdVal) ToIdVals() (*TLIdVals, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.IdValClazz == nil {
 		return nil, false
 	}
@@ -341,6 +361,10 @@ func (m *IdVal) ToIdVals() (*TLIdVals, bool) {
 
 // ToSeqIdVal <--
 func (m *IdVal) ToSeqIdVal() (*TLSeqIdVal, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.IdValClazz == nil {
 		return nil, false
 	}
@@ -414,6 +438,10 @@ func (m *TLInputId) ClazzName() string {
 
 // ToInputId <--
 func (m *TLInputId) ToInputId() *InputId {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInputId(m)
 }
 
@@ -475,6 +503,10 @@ func (m *TLInputIds) ClazzName() string {
 
 // ToInputId <--
 func (m *TLInputIds) ToInputId() *InputId {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInputId(m)
 }
 
@@ -539,6 +571,10 @@ func (m *TLInputSeqId) ClazzName() string {
 
 // ToInputId <--
 func (m *TLInputSeqId) ToInputId() *InputId {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInputId(m)
 }
 
@@ -604,6 +640,10 @@ func (m *TLInputNSeqId) ClazzName() string {
 
 // ToInputId <--
 func (m *TLInputNSeqId) ToInputId() *InputId {
+	if m == nil {
+		return nil
+	}
+
 	return MakeInputId(m)
 }
 
@@ -717,6 +757,10 @@ func (m *InputId) Match(f ...interface{}) {
 
 // ToInputId <--
 func (m *InputId) ToInputId() (*TLInputId, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InputIdClazz == nil {
 		return nil, false
 	}
@@ -730,6 +774,10 @@ func (m *InputId) ToInputId() (*TLInputId, bool) {
 
 // ToInputIds <--
 func (m *InputId) ToInputIds() (*TLInputIds, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InputIdClazz == nil {
 		return nil, false
 	}
@@ -743,6 +791,10 @@ func (m *InputId) ToInputIds() (*TLInputIds, bool) {
 
 // ToInputSeqId <--
 func (m *InputId) ToInputSeqId() (*TLInputSeqId, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InputIdClazz == nil {
 		return nil, false
 	}
@@ -756,6 +808,10 @@ func (m *InputId) ToInputSeqId() (*TLInputSeqId, bool) {
 
 // ToInputNSeqId <--
 func (m *InputId) ToInputNSeqId() (*TLInputNSeqId, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.InputIdClazz == nil {
 		return nil, false
 	}

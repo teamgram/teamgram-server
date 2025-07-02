@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package sync
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLSyncUpdatesMe <--
 type TLSyncUpdatesMe struct {
@@ -33,6 +37,11 @@ type TLSyncUpdatesMe struct {
 	AuthKeyId     *int64      `json:"auth_key_id"`
 	SessionId     *int64      `json:"session_id"`
 	Updates       *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncUpdatesMe) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -121,6 +130,9 @@ func (m *TLSyncUpdatesMe) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -134,6 +146,11 @@ type TLSyncUpdatesNotMe struct {
 	UserId        int64       `json:"user_id"`
 	PermAuthKeyId int64       `json:"perm_auth_key_id"`
 	Updates       *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncUpdatesNotMe) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -174,6 +191,9 @@ func (m *TLSyncUpdatesNotMe) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -186,6 +206,11 @@ type TLSyncPushUpdates struct {
 	ClazzID uint32      `json:"_id"`
 	UserId  int64       `json:"user_id"`
 	Updates *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncPushUpdates) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -224,6 +249,9 @@ func (m *TLSyncPushUpdates) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -235,20 +263,46 @@ func (m *TLSyncPushUpdates) Decode(d *bin.Decoder) (err error) {
 type TLSyncPushUpdatesIfNot struct {
 	ClazzID  uint32      `json:"_id"`
 	UserId   int64       `json:"user_id"`
+	Includes []int64     `json:"includes"`
 	Excludes []int64     `json:"excludes"`
 	Updates  *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncPushUpdatesIfNot) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
 func (m *TLSyncPushUpdatesIfNot) Encode(x *bin.Encoder, layer int32) error {
 	var encodeF = map[uint32]func() error{
-		0x40053fe4: func() error {
-			x.PutClazzID(0x40053fe4)
+		0x2d3778bc: func() error {
+			x.PutClazzID(0x2d3778bc)
 
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.Includes != nil {
+					flags |= 1 << 0
+				}
+				if m.Excludes != nil {
+					flags |= 1 << 1
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
 			x.PutInt64(m.UserId)
-
-			iface.EncodeInt64List(x, m.Excludes)
-
+			if m.Includes != nil {
+				iface.EncodeInt64List(x, m.Includes)
+			}
+			if m.Excludes != nil {
+				iface.EncodeInt64List(x, m.Excludes)
+			}
 			_ = m.Updates.Encode(x, layer)
 
 			return nil
@@ -267,19 +321,28 @@ func (m *TLSyncPushUpdatesIfNot) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLSyncPushUpdatesIfNot) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
-		0x40053fe4: func() (err error) {
+		0x2d3778bc: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
 			m.UserId, err = d.Int64()
+			if (flags & (1 << 0)) != 0 {
+				m.Includes, err = iface.DecodeInt64List(d)
+			}
+			if (flags & (1 << 1)) != 0 {
+				m.Excludes, err = iface.DecodeInt64List(d)
+			}
 
-			m.Excludes, err = iface.DecodeInt64List(d)
-
-			m3 := &tg.Updates{}
-			_ = m3.Decode(d)
-			m.Updates = m3
+			m5 := &tg.Updates{}
+			_ = m5.Decode(d)
+			m.Updates = m5
 
 			return nil
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -292,6 +355,11 @@ type TLSyncPushBotUpdates struct {
 	ClazzID uint32      `json:"_id"`
 	UserId  int64       `json:"user_id"`
 	Updates *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncPushBotUpdates) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -330,6 +398,9 @@ func (m *TLSyncPushBotUpdates) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -347,6 +418,11 @@ type TLSyncPushRpcResult struct {
 	SessionId      int64  `json:"session_id"`
 	ClientReqMsgId int64  `json:"client_req_msg_id"`
 	RpcResult      []byte `json:"rpc_result"`
+}
+
+func (m *TLSyncPushRpcResult) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -392,6 +468,9 @@ func (m *TLSyncPushRpcResult) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -406,6 +485,11 @@ type TLSyncBroadcastUpdates struct {
 	ChatId        int64       `json:"chat_id"`
 	ExcludeIdList []int64     `json:"exclude_id_list"`
 	Updates       *tg.Updates `json:"updates"`
+}
+
+func (m *TLSyncBroadcastUpdates) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -451,6 +535,9 @@ func (m *TLSyncBroadcastUpdates) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {

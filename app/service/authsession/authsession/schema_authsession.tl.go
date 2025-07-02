@@ -76,6 +76,10 @@ func (m *TLAuthKeyStateData) ClazzName() string {
 
 // ToAuthKeyStateData <--
 func (m *TLAuthKeyStateData) ToAuthKeyStateData() *AuthKeyStateData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeAuthKeyStateData(m)
 }
 
@@ -210,6 +214,10 @@ func (m *AuthKeyStateData) Match(f ...interface{}) {
 
 // ToAuthKeyStateData <--
 func (m *AuthKeyStateData) ToAuthKeyStateData() (*TLAuthKeyStateData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.AuthKeyStateDataClazz == nil {
 		return nil, false
 	}
@@ -280,6 +288,10 @@ func (m *TLClientSession) ClazzName() string {
 
 // ToClientSession <--
 func (m *TLClientSession) ToClientSession() *ClientSession {
+	if m == nil {
+		return nil
+	}
+
 	return MakeClientSession(m)
 }
 
@@ -395,6 +407,10 @@ func (m *ClientSession) Match(f ...interface{}) {
 
 // ToClientSession <--
 func (m *ClientSession) ToClientSession() (*TLClientSession, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ClientSessionClazz == nil {
 		return nil, false
 	}

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package inbox
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,10 +20,13 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLInboxEditUserMessageToInbox <--
 type TLInboxEditUserMessageToInbox struct {
@@ -30,6 +34,11 @@ type TLInboxEditUserMessageToInbox struct {
 	FromId     int64       `json:"from_id"`
 	PeerUserId int64       `json:"peer_user_id"`
 	Message    *tg.Message `json:"message"`
+}
+
+func (m *TLInboxEditUserMessageToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -70,6 +79,9 @@ func (m *TLInboxEditUserMessageToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -83,6 +95,11 @@ type TLInboxEditChatMessageToInbox struct {
 	FromId     int64       `json:"from_id"`
 	PeerChatId int64       `json:"peer_chat_id"`
 	Message    *tg.Message `json:"message"`
+}
+
+func (m *TLInboxEditChatMessageToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -123,6 +140,9 @@ func (m *TLInboxEditChatMessageToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -137,6 +157,11 @@ type TLInboxDeleteMessagesToInbox struct {
 	PeerType int32   `json:"peer_type"`
 	PeerId   int64   `json:"peer_id"`
 	Id       []int64 `json:"id"`
+}
+
+func (m *TLInboxDeleteMessagesToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -178,6 +203,9 @@ func (m *TLInboxDeleteMessagesToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -192,6 +220,11 @@ type TLInboxDeleteUserHistoryToInbox struct {
 	PeerUserId int64  `json:"peer_user_id"`
 	JustClear  bool   `json:"just_clear"`
 	MaxId      int32  `json:"max_id"`
+}
+
+func (m *TLInboxDeleteUserHistoryToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -248,6 +281,9 @@ func (m *TLInboxDeleteUserHistoryToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -261,6 +297,11 @@ type TLInboxDeleteChatHistoryToInbox struct {
 	FromId     int64  `json:"from_id"`
 	PeerChatId int64  `json:"peer_chat_id"`
 	MaxId      int32  `json:"max_id"`
+}
+
+func (m *TLInboxDeleteChatHistoryToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -298,6 +339,9 @@ func (m *TLInboxDeleteChatHistoryToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -311,6 +355,11 @@ type TLInboxReadUserMediaUnreadToInbox struct {
 	FromId     int64             `json:"from_id"`
 	PeerUserId int64             `json:"peer_user_id"`
 	Id         []*InboxMessageId `json:"id"`
+}
+
+func (m *TLInboxReadUserMediaUnreadToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -362,6 +411,9 @@ func (m *TLInboxReadUserMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -375,6 +427,11 @@ type TLInboxReadChatMediaUnreadToInbox struct {
 	FromId     int64             `json:"from_id"`
 	PeerChatId int64             `json:"peer_chat_id"`
 	Id         []*InboxMessageId `json:"id"`
+}
+
+func (m *TLInboxReadChatMediaUnreadToInbox) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -426,6 +483,9 @@ func (m *TLInboxReadChatMediaUnreadToInbox) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -441,6 +501,11 @@ type TLInboxUpdateHistoryReaded struct {
 	PeerId   int64  `json:"peer_id"`
 	MaxId    int32  `json:"max_id"`
 	Sender   int64  `json:"sender"`
+}
+
+func (m *TLInboxUpdateHistoryReaded) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -482,6 +547,9 @@ func (m *TLInboxUpdateHistoryReaded) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -498,6 +566,11 @@ type TLInboxUpdatePinnedMessage struct {
 	PeerId          int64  `json:"peer_id"`
 	Id              int32  `json:"id"`
 	DialogMessageId int64  `json:"dialog_message_id"`
+}
+
+func (m *TLInboxUpdatePinnedMessage) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -558,6 +631,9 @@ func (m *TLInboxUpdatePinnedMessage) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -572,6 +648,11 @@ type TLInboxUnpinAllMessages struct {
 	AuthKeyId int64  `json:"auth_key_id"`
 	PeerType  int32  `json:"peer_type"`
 	PeerId    int64  `json:"peer_id"`
+}
+
+func (m *TLInboxUnpinAllMessages) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -611,6 +692,9 @@ func (m *TLInboxUnpinAllMessages) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -635,6 +719,11 @@ type TLInboxSendUserMessageToInboxV2 struct {
 	SessionId      *int64           `json:"session_id"`
 	ClientReqMsgId *int64           `json:"client_req_msg_id"`
 	AuthKeyId      *int64           `json:"auth_key_id"`
+}
+
+func (m *TLInboxSendUserMessageToInboxV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -815,6 +904,9 @@ func (m *TLInboxSendUserMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -835,6 +927,11 @@ type TLInboxEditMessageToInboxV2 struct {
 	DstMessage    *tg.MessageBox `json:"dst_message"`
 	Users         []*tg.User     `json:"users"`
 	Chats         []*tg.Chat     `json:"chats"`
+}
+
+func (m *TLInboxEditMessageToInboxV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -958,6 +1055,9 @@ func (m *TLInboxEditMessageToInboxV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -981,6 +1081,11 @@ type TLInboxReadInboxHistory struct {
 	ServerId       *string `json:"server_id"`
 	SessionId      *int64  `json:"session_id"`
 	ClientReqMsgId *int64  `json:"client_req_msg_id"`
+}
+
+func (m *TLInboxReadInboxHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1088,6 +1193,9 @@ func (m *TLInboxReadInboxHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1102,6 +1210,11 @@ type TLInboxReadOutboxHistory struct {
 	PeerType           int32  `json:"peer_type"`
 	PeerId             int64  `json:"peer_id"`
 	MaxDialogMessageId int64  `json:"max_dialog_message_id"`
+}
+
+func (m *TLInboxReadOutboxHistory) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1141,6 +1254,9 @@ func (m *TLInboxReadOutboxHistory) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1155,6 +1271,11 @@ type TLInboxReadMediaUnreadToInboxV2 struct {
 	PeerType        int32  `json:"peer_type"`
 	PeerId          int64  `json:"peer_id"`
 	DialogMessageId int64  `json:"dialog_message_id"`
+}
+
+func (m *TLInboxReadMediaUnreadToInboxV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--
@@ -1194,6 +1315,143 @@ func (m *TLInboxReadMediaUnreadToInboxV2) Decode(d *bin.Decoder) (err error) {
 		},
 	}
 
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
+	if f, ok := decodeF[m.ClazzID]; ok {
+		return f()
+	} else {
+		return fmt.Errorf("invalid constructor: %x", m.ClazzID)
+	}
+}
+
+// TLInboxUpdatePinnedMessageV2 <--
+type TLInboxUpdatePinnedMessageV2 struct {
+	ClazzID         uint32  `json:"_id"`
+	UserId          int64   `json:"user_id"`
+	Unpin           bool    `json:"unpin"`
+	PeerType        int32   `json:"peer_type"`
+	PeerId          int64   `json:"peer_id"`
+	Id              int32   `json:"id"`
+	DialogMessageId int64   `json:"dialog_message_id"`
+	Layer           *int32  `json:"layer"`
+	ServerId        *string `json:"server_id"`
+	SessionId       *int64  `json:"session_id"`
+	ClientReqMsgId  *int64  `json:"client_req_msg_id"`
+}
+
+func (m *TLInboxUpdatePinnedMessageV2) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
+}
+
+// Encode <--
+func (m *TLInboxUpdatePinnedMessageV2) Encode(x *bin.Encoder, layer int32) error {
+	var encodeF = map[uint32]func() error{
+		0x56b79e7c: func() error {
+			x.PutClazzID(0x56b79e7c)
+
+			// set flags
+			var getFlags = func() uint32 {
+				var flags uint32 = 0
+
+				if m.Unpin == true {
+					flags |= 1 << 1
+				}
+
+				if m.Layer != nil {
+					flags |= 1 << 3
+				}
+				if m.ServerId != nil {
+					flags |= 1 << 4
+				}
+				if m.SessionId != nil {
+					flags |= 1 << 5
+				}
+				if m.ClientReqMsgId != nil {
+					flags |= 1 << 6
+				}
+
+				return flags
+			}
+
+			// set flags
+			var flags = getFlags()
+			x.PutUint32(flags)
+			x.PutInt64(m.UserId)
+			x.PutInt32(m.PeerType)
+			x.PutInt64(m.PeerId)
+			x.PutInt32(m.Id)
+			x.PutInt64(m.DialogMessageId)
+			if m.Layer != nil {
+				x.PutInt32(*m.Layer)
+			}
+
+			if m.ServerId != nil {
+				x.PutString(*m.ServerId)
+			}
+
+			if m.SessionId != nil {
+				x.PutInt64(*m.SessionId)
+			}
+
+			if m.ClientReqMsgId != nil {
+				x.PutInt64(*m.ClientReqMsgId)
+			}
+
+			return nil
+		},
+	}
+
+	clazzId := iface.GetClazzIDByName(ClazzName_inbox_updatePinnedMessageV2, int(layer))
+	if f, ok := encodeF[clazzId]; ok {
+		return f()
+	} else {
+		// TODO(@benqi): handle error
+		return fmt.Errorf("not found clazzId by (%s, %d)", ClazzName_inbox_updatePinnedMessageV2, layer)
+	}
+}
+
+// Decode <--
+func (m *TLInboxUpdatePinnedMessageV2) Decode(d *bin.Decoder) (err error) {
+	var decodeF = map[uint32]func() error{
+		0x56b79e7c: func() (err error) {
+			flags, _ := d.Uint32()
+			_ = flags
+			m.UserId, err = d.Int64()
+			if (flags & (1 << 1)) != 0 {
+				m.Unpin = true
+			}
+			m.PeerType, err = d.Int32()
+			m.PeerId, err = d.Int64()
+			m.Id, err = d.Int32()
+			m.DialogMessageId, err = d.Int64()
+			if (flags & (1 << 3)) != 0 {
+				m.Layer = new(int32)
+				*m.Layer, err = d.Int32()
+			}
+			if (flags & (1 << 4)) != 0 {
+				m.ServerId = new(string)
+				*m.ServerId, err = d.String()
+			}
+
+			if (flags & (1 << 5)) != 0 {
+				m.SessionId = new(int64)
+				*m.SessionId, err = d.Int64()
+			}
+
+			if (flags & (1 << 6)) != 0 {
+				m.ClientReqMsgId = new(int64)
+				*m.ClientReqMsgId, err = d.Int64()
+			}
+
+			return nil
+		},
+	}
+
+	if m.ClazzID == 0 {
+		m.ClazzID, _ = d.ClazzID()
+	}
 	if f, ok := decodeF[m.ClazzID]; ok {
 		return f()
 	} else {
@@ -1224,4 +1482,5 @@ type RPCInbox interface {
 	InboxReadInboxHistory(ctx context.Context, in *TLInboxReadInboxHistory) (*tg.Void, error)
 	InboxReadOutboxHistory(ctx context.Context, in *TLInboxReadOutboxHistory) (*tg.Void, error)
 	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error)
+	InboxUpdatePinnedMessageV2(ctx context.Context, in *TLInboxUpdatePinnedMessageV2) (*tg.Void, error)
 }

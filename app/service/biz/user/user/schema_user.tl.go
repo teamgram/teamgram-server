@@ -75,6 +75,10 @@ func (m *TLBotInfoData) ClazzName() string {
 
 // ToBotInfoData <--
 func (m *TLBotInfoData) ToBotInfoData() *BotInfoData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeBotInfoData(m)
 }
 
@@ -207,6 +211,10 @@ func (m *BotInfoData) Match(f ...interface{}) {
 
 // ToBotInfoData <--
 func (m *BotInfoData) ToBotInfoData() (*TLBotInfoData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.BotInfoDataClazz == nil {
 		return nil, false
 	}
@@ -268,6 +276,10 @@ func (m *TLLastSeenData) ClazzName() string {
 
 // ToLastSeenData <--
 func (m *TLLastSeenData) ToLastSeenData() *LastSeenData {
+	if m == nil {
+		return nil
+	}
+
 	return MakeLastSeenData(m)
 }
 
@@ -365,6 +377,10 @@ func (m *LastSeenData) Match(f ...interface{}) {
 
 // ToLastSeenData <--
 func (m *LastSeenData) ToLastSeenData() (*TLLastSeenData, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.LastSeenDataClazz == nil {
 		return nil, false
 	}
@@ -426,6 +442,10 @@ func (m *TLPeerPeerNotifySettings) ClazzName() string {
 
 // ToPeerPeerNotifySettings <--
 func (m *TLPeerPeerNotifySettings) ToPeerPeerNotifySettings() *PeerPeerNotifySettings {
+	if m == nil {
+		return nil
+	}
+
 	return MakePeerPeerNotifySettings(m)
 }
 
@@ -526,6 +546,10 @@ func (m *PeerPeerNotifySettings) Match(f ...interface{}) {
 
 // ToPeerPeerNotifySettings <--
 func (m *PeerPeerNotifySettings) ToPeerPeerNotifySettings() (*TLPeerPeerNotifySettings, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.PeerPeerNotifySettingsClazz == nil {
 		return nil, false
 	}
@@ -589,6 +613,10 @@ func (m *TLUserImportedContacts) ClazzName() string {
 
 // ToUserImportedContacts <--
 func (m *TLUserImportedContacts) ToUserImportedContacts() *UserImportedContacts {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUserImportedContacts(m)
 }
 
@@ -737,6 +765,10 @@ func (m *UserImportedContacts) Match(f ...interface{}) {
 
 // ToUserImportedContacts <--
 func (m *UserImportedContacts) ToUserImportedContacts() (*TLUserImportedContacts, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UserImportedContactsClazz == nil {
 		return nil, false
 	}
@@ -803,6 +835,10 @@ func (m *TLUsersDataFound) ClazzName() string {
 
 // ToUsersFound <--
 func (m *TLUsersDataFound) ToUsersFound() *UsersFound {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsersFound(m)
 }
 
@@ -887,6 +923,10 @@ func (m *TLUsersIdFound) ClazzName() string {
 
 // ToUsersFound <--
 func (m *TLUsersIdFound) ToUsersFound() *UsersFound {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUsersFound(m)
 }
 
@@ -987,6 +1027,10 @@ func (m *UsersFound) Match(f ...interface{}) {
 
 // ToUsersDataFound <--
 func (m *UsersFound) ToUsersDataFound() (*TLUsersDataFound, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsersFoundClazz == nil {
 		return nil, false
 	}
@@ -1000,6 +1044,10 @@ func (m *UsersFound) ToUsersDataFound() (*TLUsersDataFound, bool) {
 
 // ToUsersIdFound <--
 func (m *UsersFound) ToUsersIdFound() (*TLUsersIdFound, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UsersFoundClazz == nil {
 		return nil, false
 	}

@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -38,4 +38,5 @@ func init() {
 	iface.RegisterClazzID(0x1f73675, func() iface.TLObject { return &TLInboxReadInboxHistory{ClazzID: 0x1f73675} })             // 0x1f73675
 	iface.RegisterClazzID(0x1c7036ca, func() iface.TLObject { return &TLInboxReadOutboxHistory{ClazzID: 0x1c7036ca} })          // 0x1c7036ca
 	iface.RegisterClazzID(0xeac54342, func() iface.TLObject { return &TLInboxReadMediaUnreadToInboxV2{ClazzID: 0xeac54342} })   // 0xeac54342
+	iface.RegisterClazzID(0x56b79e7c, func() iface.TLObject { return &TLInboxUpdatePinnedMessageV2{ClazzID: 0x56b79e7c} })      // 0x56b79e7c
 }

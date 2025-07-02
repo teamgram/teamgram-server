@@ -74,6 +74,10 @@ func (m *TLChannelDifference) ClazzName() string {
 
 // ToChannelDifference <--
 func (m *TLChannelDifference) ToChannelDifference() *ChannelDifference {
+	if m == nil {
+		return nil
+	}
+
 	return MakeChannelDifference(m)
 }
 
@@ -219,6 +223,10 @@ func (m *ChannelDifference) Match(f ...interface{}) {
 
 // ToChannelDifference <--
 func (m *ChannelDifference) ToChannelDifference() (*TLChannelDifference, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ChannelDifferenceClazz == nil {
 		return nil, false
 	}
@@ -293,6 +301,10 @@ func (m *TLDifferenceEmpty) ClazzName() string {
 
 // ToDifference <--
 func (m *TLDifferenceEmpty) ToDifference() *Difference {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDifference(m)
 }
 
@@ -362,6 +374,10 @@ func (m *TLDifference) ClazzName() string {
 
 // ToDifference <--
 func (m *TLDifference) ToDifference() *Difference {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDifference(m)
 }
 
@@ -464,6 +480,10 @@ func (m *TLDifferenceSlice) ClazzName() string {
 
 // ToDifference <--
 func (m *TLDifferenceSlice) ToDifference() *Difference {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDifference(m)
 }
 
@@ -564,6 +584,10 @@ func (m *TLDifferenceTooLong) ClazzName() string {
 
 // ToDifference <--
 func (m *TLDifferenceTooLong) ToDifference() *Difference {
+	if m == nil {
+		return nil
+	}
+
 	return MakeDifference(m)
 }
 
@@ -675,6 +699,10 @@ func (m *Difference) Match(f ...interface{}) {
 
 // ToDifferenceEmpty <--
 func (m *Difference) ToDifferenceEmpty() (*TLDifferenceEmpty, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DifferenceClazz == nil {
 		return nil, false
 	}
@@ -688,6 +716,10 @@ func (m *Difference) ToDifferenceEmpty() (*TLDifferenceEmpty, bool) {
 
 // ToDifference <--
 func (m *Difference) ToDifference() (*TLDifference, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DifferenceClazz == nil {
 		return nil, false
 	}
@@ -701,6 +733,10 @@ func (m *Difference) ToDifference() (*TLDifference, bool) {
 
 // ToDifferenceSlice <--
 func (m *Difference) ToDifferenceSlice() (*TLDifferenceSlice, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DifferenceClazz == nil {
 		return nil, false
 	}
@@ -714,6 +750,10 @@ func (m *Difference) ToDifferenceSlice() (*TLDifferenceSlice, bool) {
 
 // ToDifferenceTooLong <--
 func (m *Difference) ToDifferenceTooLong() (*TLDifferenceTooLong, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.DifferenceClazz == nil {
 		return nil, false
 	}

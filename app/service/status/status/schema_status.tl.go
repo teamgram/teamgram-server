@@ -77,6 +77,10 @@ func (m *TLSessionEntry) ClazzName() string {
 
 // ToSessionEntry <--
 func (m *TLSessionEntry) ToSessionEntry() *SessionEntry {
+	if m == nil {
+		return nil
+	}
+
 	return MakeSessionEntry(m)
 }
 
@@ -182,6 +186,10 @@ func (m *SessionEntry) Match(f ...interface{}) {
 
 // ToSessionEntry <--
 func (m *SessionEntry) ToSessionEntry() (*TLSessionEntry, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.SessionEntryClazz == nil {
 		return nil, false
 	}
@@ -242,6 +250,10 @@ func (m *TLUserSessionEntryList) ClazzName() string {
 
 // ToUserSessionEntryList <--
 func (m *TLUserSessionEntryList) ToUserSessionEntryList() *UserSessionEntryList {
+	if m == nil {
+		return nil
+	}
+
 	return MakeUserSessionEntryList(m)
 }
 
@@ -351,6 +363,10 @@ func (m *UserSessionEntryList) Match(f ...interface{}) {
 
 // ToUserSessionEntryList <--
 func (m *UserSessionEntryList) ToUserSessionEntryList() (*TLUserSessionEntryList, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.UserSessionEntryListClazz == nil {
 		return nil, false
 	}

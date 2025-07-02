@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -32,6 +32,7 @@ const (
 	ClazzName_inbox_readInboxHistory           = "inbox_readInboxHistory"
 	ClazzName_inbox_readOutboxHistory          = "inbox_readOutboxHistory"
 	ClazzName_inbox_readMediaUnreadToInboxV2   = "inbox_readMediaUnreadToInboxV2"
+	ClazzName_inbox_updatePinnedMessageV2      = "inbox_updatePinnedMessageV2"
 )
 
 func init() {
@@ -53,6 +54,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_inbox_readInboxHistory, 0, 0x1f73675)            // 1f73675
 	iface.RegisterClazzName(ClazzName_inbox_readOutboxHistory, 0, 0x1c7036ca)          // 1c7036ca
 	iface.RegisterClazzName(ClazzName_inbox_readMediaUnreadToInboxV2, 0, 0xeac54342)   // eac54342
+	iface.RegisterClazzName(ClazzName_inbox_updatePinnedMessageV2, 0, 0x56b79e7c)      // 56b79e7c
 
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_inboxMessageData, 0x3bbdadd4)                 // 3bbdadd4
@@ -72,4 +74,5 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_inbox_readInboxHistory, 0x1f73675)            // 1f73675
 	iface.RegisterClazzIDName(ClazzName_inbox_readOutboxHistory, 0x1c7036ca)          // 1c7036ca
 	iface.RegisterClazzIDName(ClazzName_inbox_readMediaUnreadToInboxV2, 0xeac54342)   // eac54342
+	iface.RegisterClazzIDName(ClazzName_inbox_updatePinnedMessageV2, 0x56b79e7c)      // 56b79e7c
 }

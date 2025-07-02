@@ -191,6 +191,7 @@ func tryGetUnknownTLObject(b []byte) (rList []iface.TLObject) {
 
 	err = msg.Decode(bin.NewDecoder(b))
 	if err != nil {
+		logx.Errorf("decode error: %v", err)
 		return
 	}
 

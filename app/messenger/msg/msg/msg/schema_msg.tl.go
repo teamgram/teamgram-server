@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -59,6 +59,11 @@ type TLContentMessage struct {
 	SendUserId      int64  `json:"send_user_id"`
 }
 
+func (m *TLContentMessage) String() string {
+	wrapper := iface.WithNameWrapper{"contentMessage", m}
+	return wrapper.String()
+}
+
 // ContentMessageClazzName <--
 func (m *TLContentMessage) ContentMessageClazzName() string {
 	return ClazzName_contentMessage
@@ -71,6 +76,10 @@ func (m *TLContentMessage) ClazzName() string {
 
 // ToContentMessage <--
 func (m *TLContentMessage) ToContentMessage() *ContentMessage {
+	if m == nil {
+		return nil
+	}
+
 	return MakeContentMessage(m)
 }
 
@@ -151,7 +160,12 @@ func (m *TLContentMessage) Decode(d *bin.Decoder) (err error) {
 type ContentMessage struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ContentMessageClazz
+	ContentMessageClazz `json:"_clazz"`
+}
+
+func (m *ContentMessage) String() string {
+	wrapper := iface.WithNameWrapper{m.ContentMessageClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeContentMessage <--
@@ -194,6 +208,10 @@ func (m *ContentMessage) Match(f ...interface{}) {
 
 // ToContentMessage <--
 func (m *ContentMessage) ToContentMessage() (*TLContentMessage, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.ContentMessageClazz == nil {
 		return nil, false
 	}
@@ -240,6 +258,11 @@ type TLOutboxMessage struct {
 	ScheduleDate *int32      `json:"schedule_date"`
 }
 
+func (m *TLOutboxMessage) String() string {
+	wrapper := iface.WithNameWrapper{"outboxMessage", m}
+	return wrapper.String()
+}
+
 // OutboxMessageClazzName <--
 func (m *TLOutboxMessage) OutboxMessageClazzName() string {
 	return ClazzName_outboxMessage
@@ -252,6 +275,10 @@ func (m *TLOutboxMessage) ClazzName() string {
 
 // ToOutboxMessage <--
 func (m *TLOutboxMessage) ToOutboxMessage() *OutboxMessage {
+	if m == nil {
+		return nil
+	}
+
 	return MakeOutboxMessage(m)
 }
 
@@ -339,7 +366,12 @@ func (m *TLOutboxMessage) Decode(d *bin.Decoder) (err error) {
 type OutboxMessage struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	OutboxMessageClazz
+	OutboxMessageClazz `json:"_clazz"`
+}
+
+func (m *OutboxMessage) String() string {
+	wrapper := iface.WithNameWrapper{m.OutboxMessageClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeOutboxMessage <--
@@ -382,6 +414,10 @@ func (m *OutboxMessage) Match(f ...interface{}) {
 
 // ToOutboxMessage <--
 func (m *OutboxMessage) ToOutboxMessage() (*TLOutboxMessage, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.OutboxMessageClazz == nil {
 		return nil, false
 	}
@@ -426,6 +462,11 @@ type TLSender struct {
 	AuthKeyId int64  `json:"auth_key_id"`
 }
 
+func (m *TLSender) String() string {
+	wrapper := iface.WithNameWrapper{"sender", m}
+	return wrapper.String()
+}
+
 // SenderClazzName <--
 func (m *TLSender) SenderClazzName() string {
 	return ClazzName_sender
@@ -438,6 +479,10 @@ func (m *TLSender) ClazzName() string {
 
 // ToSender <--
 func (m *TLSender) ToSender() *Sender {
+	if m == nil {
+		return nil
+	}
+
 	return MakeSender(m)
 }
 
@@ -487,7 +532,12 @@ func (m *TLSender) Decode(d *bin.Decoder) (err error) {
 type Sender struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SenderClazz
+	SenderClazz `json:"_clazz"`
+}
+
+func (m *Sender) String() string {
+	wrapper := iface.WithNameWrapper{m.SenderClazzName(), m}
+	return wrapper.String()
 }
 
 // MakeSender <--
@@ -530,6 +580,10 @@ func (m *Sender) Match(f ...interface{}) {
 
 // ToSender <--
 func (m *Sender) ToSender() (*TLSender, bool) {
+	if m == nil {
+		return nil, false
+	}
+
 	if m.SenderClazz == nil {
 		return nil, false
 	}

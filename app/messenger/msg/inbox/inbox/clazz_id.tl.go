@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -28,4 +28,5 @@ const (
 	ClazzID_inbox_readInboxHistory           = 0x1f73675  // 1f73675
 	ClazzID_inbox_readOutboxHistory          = 0x1c7036ca // 1c7036ca
 	ClazzID_inbox_readMediaUnreadToInboxV2   = 0xeac54342 // eac54342
+	ClazzID_inbox_updatePinnedMessageV2      = 0x56b79e7c // 56b79e7c
 )
