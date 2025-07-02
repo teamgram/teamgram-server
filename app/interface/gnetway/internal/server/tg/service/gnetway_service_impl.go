@@ -15,20 +15,21 @@ import (
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway"
-	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/core"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 // GnetwaySendDataToGateway
 // gnetway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (s *Service) GnetwaySendDataToGateway(ctx context.Context, request *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("gnetway.sendDataToGateway - metadata: {}, request: %v", request)
+	// c := core.New(ctx, s.svcCtx)
+	logx.WithContext(ctx).Debugf("gnetway.sendDataToGateway - metadata: {}, request: %s", request)
 
-	r, err := c.GnetwaySendDataToGateway(request)
+	r, err := s.RPCGnetway.GnetwaySendDataToGateway(ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	logx.WithContext(ctx).Debugf("echos.echo - reply: %s", r)
 	return r, err
 }

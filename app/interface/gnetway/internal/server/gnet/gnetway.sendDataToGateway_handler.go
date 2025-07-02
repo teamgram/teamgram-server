@@ -51,29 +51,27 @@ func (s *Server) GnetwaySendDataToGateway(ctx context.Context, in *gnetway.TLGne
 	x.Put(mtpRawData)
 	msg := x.Bytes()
 
-	_ = s.pool.Submit(func() {
-		for _, connId := range connIdList {
-			s.eng.Trigger(connId, func(c gnet.Conn) {
-				connCtx, _ := c.Context().(*connContext)
-				if connCtx == nil {
-					logx.WithContext(ctx).Errorf("invalid state - conn(%s) Context() is nil", c)
-					return
-				}
+	for _, connId := range connIdList {
+		s.eng.Trigger(connId, func(c gnet.Conn) {
+			connCtx, _ := c.Context().(*connContext)
+			if connCtx == nil {
+				logx.WithContext(ctx).Errorf("invalid state - conn(%s) Context() is nil", c)
+				return
+			}
 
-				if in.AuthKeyId != connCtx.getAuthKey().AuthKeyId() {
-					logx.WithContext(ctx).Errorf("invalid state - conn(%s) c.keyId(%d) != in.keyId(%d) is nil", authKey.AuthKeyId(), in.AuthKeyId)
-					return
-				}
+			if in.AuthKeyId != connCtx.getAuthKey().AuthKeyId() {
+				logx.WithContext(ctx).Errorf("invalid state - conn(%s) c.keyId(%d) != in.keyId(%d) is nil", authKey.AuthKeyId(), in.AuthKeyId)
+				return
+			}
 
-				err2 := UnThreadSafeWrite(c, msg)
-				if err2 != nil {
-					logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
-				} else {
-					logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
-				}
-			})
-		}
-	})
+			err2 := UnThreadSafeWrite(c, msg)
+			if err2 != nil {
+				logx.WithContext(ctx).Errorf("sendToClient error: %v", err2)
+			} else {
+				logx.WithContext(ctx).Debugf("sendToConn: %v", connId)
+			}
+		})
+	}
 
 	return tg.BoolTrue, nil
 }
