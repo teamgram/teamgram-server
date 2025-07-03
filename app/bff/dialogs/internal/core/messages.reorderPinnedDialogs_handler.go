@@ -19,8 +19,13 @@
 package core
 
 import (
+	"context"
+	"github.com/teamgram/marmota/pkg/threading2"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
+	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // MessagesReorderPinnedDialogs
@@ -33,12 +38,19 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorder
 
 	var (
 		peerDialogIdList []int64
+		peerDialogList   = make([]*mtproto.DialogPeer, 0, len(in.GetOrder()))
+		idHelper         = mtproto.NewIDListHelper(c.MD.UserId)
 	)
+
 	for _, peer := range in.GetOrder() {
 		switch peer.PredicateName {
 		case mtproto.Predicate_inputDialogPeer:
 			p := mtproto.FromInputPeer2(c.MD.UserId, peer.Peer)
 			peerDialogIdList = append(peerDialogIdList, mtproto.MakePeerDialogId(p.PeerType, p.PeerId))
+			peerDialogList = append(peerDialogList, mtproto.MakeTLDialogPeer(&mtproto.DialogPeer{
+				Peer: p.ToPeer(),
+			}).To_DialogPeer())
+			idHelper.PickByPeerUtil(p.PeerType, p.PeerId)
 		case mtproto.Predicate_inputDialogPeerFolder:
 			c.Logger.Info("messages.reorderPinnedDialogs - inputDialogPeerFolder %s", peer)
 		default:
@@ -59,5 +71,37 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorder
 		return nil, err
 	}
 
-	return mtproto.BoolTrue, nil
+	return threading2.WrapperGoFunc(
+		c.ctx,
+		mtproto.BoolTrue,
+		func(ctx context.Context) {
+			syncUpdates := mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdatePinnedDialogs(&mtproto.Update{
+				FolderId:                   mtproto.MakeFlagsInt32(in.FolderId),
+				Order_FLAGVECTORDIALOGPEER: peerDialogList,
+			}).To_Update())
+
+			idHelper.Visit(
+				func(userIdList []int64) {
+					users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
+						&userpb.TLUserGetMutableUsers{
+							Id: userIdList,
+						})
+					syncUpdates.PushUser(users.GetUserListByIdList(c.MD.UserId, userIdList...)...)
+				},
+				func(chatIdList []int64) {
+					chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(ctx,
+						&chatpb.TLChatGetChatListByIdList{
+							IdList: chatIdList,
+						})
+					syncUpdates.PushChat(chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
+				},
+				func(channelIdList []int64) {
+					// TODO
+				})
+			_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
+				UserId:        c.MD.UserId,
+				PermAuthKeyId: c.MD.PermAuthKeyId,
+				Updates:       syncUpdates,
+			})
+		}).(*mtproto.Bool), nil
 }
