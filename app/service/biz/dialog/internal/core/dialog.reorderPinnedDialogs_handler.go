@@ -42,10 +42,17 @@ func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinned
 					conn,
 					func(tx *sqlx.Tx, result *sqlx.StoreResult) {
 						if force {
-							_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
-								tx,
-								userId,
-								idList)
+							if len(idList) > 0 {
+								_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
+									tx,
+									userId,
+									idList)
+							} else {
+								_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
+									tx,
+									userId,
+									[]int64{0}) // hack
+							}
 							if result.Err != nil {
 								return
 							}
@@ -74,10 +81,17 @@ func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinned
 					c.svcCtx.Dao.DB,
 					func(tx *sqlx.Tx, result *sqlx.StoreResult) {
 						if force {
-							_, result.Err = c.svcCtx.DialogsDAO.UpdateFolderUnPinnedNotIdListTx(
-								tx,
-								userId,
-								idList)
+							if len(idList) > 0 {
+								_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
+									tx,
+									userId,
+									idList)
+							} else {
+								_, result.Err = c.svcCtx.Dao.DialogsDAO.UpdateUnPinnedNotIdListTx(
+									tx,
+									userId,
+									[]int64{0}) // hack
+							}
 							if result.Err != nil {
 								return
 							}

@@ -31,14 +31,9 @@ import (
 // MessagesReorderPinnedDialogs
 // messages.reorderPinnedDialogs#3b1adf37 flags:# force:flags.0?true folder_id:int order:Vector<InputDialogPeer> = Bool;
 func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorderPinnedDialogs) (*mtproto.Bool, error) {
-	if len(in.GetOrder()) == 0 {
-		c.Logger.Errorf("messages.reorderPinnedDialogs - len(order) == 0")
-		return mtproto.BoolTrue, nil
-	}
-
 	var (
 		peerDialogIdList []int64
-		peerDialogList   = make([]*mtproto.DialogPeer, 0, len(in.GetOrder()))
+		peerDialogList   = make([]*mtproto.DialogPeer, 0, len(in.GetOrder())+1)
 		idHelper         = mtproto.NewIDListHelper(c.MD.UserId)
 	)
 
@@ -80,24 +75,27 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *mtproto.TLMessagesReorder
 				Order_FLAGVECTORDIALOGPEER: peerDialogList,
 			}).To_Update())
 
-			idHelper.Visit(
-				func(userIdList []int64) {
-					users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
-						&userpb.TLUserGetMutableUsers{
-							Id: userIdList,
-						})
-					syncUpdates.PushUser(users.GetUserListByIdList(c.MD.UserId, userIdList...)...)
-				},
-				func(chatIdList []int64) {
-					chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(ctx,
-						&chatpb.TLChatGetChatListByIdList{
-							IdList: chatIdList,
-						})
-					syncUpdates.PushChat(chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
-				},
-				func(channelIdList []int64) {
-					// TODO
-				})
+			if len(peerDialogList) > 0 {
+				idHelper.Visit(
+					func(userIdList []int64) {
+						users, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(ctx,
+							&userpb.TLUserGetMutableUsers{
+								Id: userIdList,
+							})
+						syncUpdates.PushUser(users.GetUserListByIdList(c.MD.UserId, userIdList...)...)
+					},
+					func(chatIdList []int64) {
+						chats, _ := c.svcCtx.Dao.ChatClient.ChatGetChatListByIdList(ctx,
+							&chatpb.TLChatGetChatListByIdList{
+								IdList: chatIdList,
+							})
+						syncUpdates.PushChat(chats.GetChatListByIdList(c.MD.UserId, chatIdList...)...)
+					},
+					func(channelIdList []int64) {
+						// TODO
+					})
+			}
+
 			_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        c.MD.UserId,
 				PermAuthKeyId: c.MD.PermAuthKeyId,
