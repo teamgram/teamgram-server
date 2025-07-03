@@ -58,39 +58,46 @@ func (c *ChatsCore) MessagesDeleteChatUser(in *mtproto.TLMessagesDeleteChatUser)
 		PeerId:   in.ChatId,
 	})
 
-	fromId := c.MD.UserId
-	if c.MD.IsAdmin {
-		fromId = chat.Creator()
-	}
-
-	replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
-		c.ctx,
-		&msgpb.TLMsgSendMessageV2{
-			UserId:    fromId,
-			AuthKeyId: c.MD.PermAuthKeyId,
-			PeerType:  mtproto.PEER_CHAT,
-			PeerId:    in.ChatId,
-			Message: []*msgpb.OutboxMessage{
-				msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-					NoWebpage:    true,
-					Background:   false,
-					RandomId:     rand.Int63(),
-					Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
-					ScheduleDate: nil,
-				}).To_OutboxMessage(),
-			},
+	if c.MD.Client == "ios" || c.MD.Client == "android" {
+		chat.Walk(func(userId int64, participant *mtproto.ImmutableChatParticipant) error {
+			return nil
 		})
-	if err != nil {
-		c.Logger.Errorf("messages.deleteChatUser - error: %v", err)
-		return nil, err
-	}
+		return mtproto.MakeEmptyUpdates(), nil
+	} else {
+		fromId := c.MD.UserId
+		if c.MD.IsAdmin {
+			fromId = chat.Creator()
+		}
 
-	updateChatParticipants := mtproto.MakeTLUpdateChatParticipants(&mtproto.Update{
-		Participants_CHATPARTICIPANTS: chat.ToChatParticipants(0),
-	}).To_Update()
-	if deleteUser.PeerType == mtproto.PEER_USER {
-		replyUpdates.Updates = append(replyUpdates.Updates, updateChatParticipants)
-	}
+		replyUpdates, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(
+			c.ctx,
+			&msgpb.TLMsgSendMessageV2{
+				UserId:    fromId,
+				AuthKeyId: c.MD.PermAuthKeyId,
+				PeerType:  mtproto.PEER_CHAT,
+				PeerId:    in.ChatId,
+				Message: []*msgpb.OutboxMessage{
+					msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+						NoWebpage:    true,
+						Background:   false,
+						RandomId:     rand.Int63(),
+						Message:      chat.MakeMessageService(fromId, mtproto.MakeMessageActionChatDeleteUser(deleteUser.PeerId)),
+						ScheduleDate: nil,
+					}).To_OutboxMessage(),
+				},
+			})
+		if err != nil {
+			c.Logger.Errorf("messages.deleteChatUser - error: %v", err)
+			return nil, err
+		}
 
-	return replyUpdates, nil
+		updateChatParticipants := mtproto.MakeTLUpdateChatParticipants(&mtproto.Update{
+			Participants_CHATPARTICIPANTS: chat.ToChatParticipants(0),
+		}).To_Update()
+		if deleteUser.PeerType == mtproto.PEER_USER {
+			replyUpdates.Updates = append(replyUpdates.Updates, updateChatParticipants)
+		}
+
+		return replyUpdates, nil
+	}
 }
