@@ -16,9 +16,31 @@
 
 package dao
 
+import (
+	"log"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
+
+	"github.com/bwmarrin/snowflake"
+	"github.com/zeromicro/go-zero/core/stores/kv"
+)
+
 type Dao struct {
+	*snowflake.Node
+	KV kv.Store
 }
 
-func New() *Dao {
-	return new(Dao)
+func New(c config.Config) *Dao {
+	var (
+		err error
+		d   = new(Dao)
+	)
+
+	d.Node, err = snowflake.NewNode(c.NodeId)
+	if err != nil {
+		log.Fatal("new snowflake node error: ", err)
+	}
+	d.KV = kv.NewStore(c.SeqIDGen)
+
+	return d
 }

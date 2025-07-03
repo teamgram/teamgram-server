@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 )
@@ -28,8 +26,11 @@ var _ *tg.Bool
 // IdgenGetNextSeqId
 // idgen.getNextSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetNextSeqId(in *idgen.TLIdgenGetNextSeqId) (*tg.Int64, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.getNextSeqId blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	id, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, in.Key, 1)
+	if err != nil {
+		c.Logger.Errorf("dgen.getNextSeqId(%s) error: %v", in.Key, err)
+		return nil, err
+	}
 
-	return nil, errors.New("idgen.getNextSeqId not implemented")
+	return tg.MakeInt64Helper(id), nil
 }

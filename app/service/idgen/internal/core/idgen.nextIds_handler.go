@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
@@ -25,11 +25,25 @@ import (
 
 var _ *tg.Bool
 
+const (
+	maxNextIdsNum = 100
+)
+
 // IdgenNextIds
 // idgen.nextIds num:int = Vector<long>;
 func (c *IdgenCore) IdgenNextIds(in *idgen.TLIdgenNextIds) (*idgen.VectorLong, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.nextIds blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	if in.Num > maxNextIdsNum || in.Num < 0 {
+		c.Logger.Errorf("NextIds num can't be greater than %d or less than 0", maxNextIdsNum)
+		return nil, fmt.Errorf("NextIds num: %d error", in.Num)
+	}
 
-	return nil, errors.New("idgen.nextIds not implemented")
+	ids := make([]int64, in.Num)
+	for i := int32(0); i < in.Num; i++ {
+		// TODO: 库里提供ids方法，以减少Lock次数
+		ids[i] = c.svcCtx.Node.Generate().Int64()
+	}
+
+	return &idgen.VectorLong{
+		Datas: ids,
+	}, nil
 }

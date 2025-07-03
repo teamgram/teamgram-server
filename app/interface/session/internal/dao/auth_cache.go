@@ -80,47 +80,28 @@ func (d *Dao) getFutureSaltList(ctx context.Context, authKeyId int64) ([]*tg.TLF
 		return nil, false
 	}
 
-	var (
-		rB       = false
-		saltList []*tg.TLFutureSalt
-	)
+	logx.WithContext(ctx).Infof("getFutureSaltList: %s", futureSalts)
 
-	futureSalts.Match(func(futureSalts *tg.TLFutureSalts) interface{} {
-		for i, salt := range futureSalts.Salts {
+	futureSalts2, _ := futureSalts.ToFutureSalts()
+	if futureSalts2 != nil {
+		saltList := futureSalts2.Salts
+
+		for i, salt := range saltList {
 			if salt.ValidUntil >= date {
 				if i > 0 {
 					saltList = saltList[i-1:]
 					cv.SaltList = saltList
-					rB = true
-					break
+					return saltList, true
 				} else {
 					saltList = saltList[i:]
 					cv.SaltList = saltList
-					rB = true
-					break
+					return saltList, true
 				}
 			}
 		}
+	}
 
-		return nil
-	})
-
-	//saltList := futureSalts.GetSalts()
-	//for i, salt := range saltList {
-	//	if salt.Data2.ValidUntil >= date {
-	//		if i > 0 {
-	//			saltList = saltList[i-1:]
-	//			cv.SaltList = saltList
-	//			return saltList, true
-	//		} else {
-	//			saltList = saltList[i:]
-	//			cv.SaltList = saltList
-	//			return saltList, true
-	//		}
-	//	}
-	//}
-
-	return saltList, rB
+	return nil, false
 }
 
 func (d *Dao) GetOrFetchNewSalt(ctx context.Context, authKeyId int64) (salt, lastInvalidSalt *tg.TLFutureSalt, err error) {

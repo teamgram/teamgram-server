@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 )
@@ -28,8 +26,9 @@ var _ *tg.Bool
 // IdgenNextId
 // idgen.nextId = Int64;
 func (c *IdgenCore) IdgenNextId(in *idgen.TLIdgenNextId) (*tg.Int64, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.nextId blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("idgen.nextId not implemented")
+	id := c.svcCtx.Dao.Node.Generate().Int64()
+
+	return tg.MakeInt64Helper(id), nil
 }

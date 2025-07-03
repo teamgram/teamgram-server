@@ -263,14 +263,6 @@ func (m *MainAuthWrapper) getNextPushId() (id int64) {
 	return
 }
 
-func (m *MainAuthWrapper) getClient() *authsession.TLClientSession {
-	if m.client != nil {
-		return m.client
-	}
-
-	return nil
-}
-
 func (m *MainAuthWrapper) onUpdateLayer(ctx context.Context, layer int32) {
 	if layer == 0 || m.Layer() == layer {
 		return
@@ -432,60 +424,106 @@ func (m *MainAuthWrapper) onSetMainUpdatesSession(ctx context.Context, sess *ses
 }
 
 func (m *MainAuthWrapper) Layer() int32 {
-	return m.getClient().Layer
+	if m.client == nil {
+		return 0
+	}
+
+	return m.client.Layer
 }
 
 func (m *MainAuthWrapper) ApiId() int32 {
-	return m.getClient().ApiId
+	if m.client == nil {
+		return 0
+	}
+
+	return m.client.ApiId
 }
 
 func (m *MainAuthWrapper) DeviceModel() string {
-	return m.getClient().DeviceModel
+	if m.client == nil {
+		return ""
+	}
+	return m.client.DeviceModel
 }
 
 func (m *MainAuthWrapper) SystemVersion() string {
-	return m.getClient().SystemVersion
+	if m.client == nil {
+		return ""
+	}
+	return m.client.SystemVersion
 }
 
 func (m *MainAuthWrapper) AppVersion() string {
-	return m.getClient().AppVersion
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.AppVersion
 }
 
 func (m *MainAuthWrapper) SystemLangCode() string {
-	return m.getClient().SystemLangCode
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.SystemLangCode
 }
 
 func (m *MainAuthWrapper) LangPack() string {
-	return m.getClient().LangPack
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.LangPack
 }
 
 func (m *MainAuthWrapper) LangCode() string {
-	return m.getClient().LangCode
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.LangCode
 }
 
 func (m *MainAuthWrapper) ClientIp() string {
-	return m.getClient().Ip
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.Ip
 }
 
 func (m *MainAuthWrapper) Proxy() string {
-	return m.getClient().Proxy
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.Proxy
 }
 
 func (m *MainAuthWrapper) Params() string {
-	return m.getClient().Params
+	if m.client == nil {
+		return ""
+	}
+
+	return m.client.Params
 }
 
 func (m *MainAuthWrapper) ClientName() string {
-	c := m.getClient().LangPack
+	if m.client == nil {
+		return ""
+	}
+
+	c := m.client.LangPack
 
 	if c == "android" {
-		if strings.Index(m.getClient().AppVersion, "TDLib") >= 0 {
+		if strings.Index(m.client.AppVersion, "TDLib") >= 0 {
 			c = "react"
 		}
 	} else if c == "" {
-		if strings.HasSuffix(m.getClient().AppVersion, " A") {
+		if strings.HasSuffix(m.client.AppVersion, " A") {
 			c = "weba"
-		} else if strings.HasSuffix(m.getClient().AppVersion, " Z") {
+		} else if strings.HasSuffix(m.client.AppVersion, " Z") {
 			c = "weba"
 		}
 	}

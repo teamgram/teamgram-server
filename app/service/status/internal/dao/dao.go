@@ -18,9 +18,19 @@
 
 package dao
 
+import (
+	"github.com/teamgram/marmota/pkg/stores/kv"
+	"github.com/teamgram/teamgram-server/v2/app/service/status/internal/config"
+)
+
 type Dao struct {
+	KV kv.Store
 }
 
-func New() *Dao {
-	return new(Dao)
+func New(c config.Config) *Dao {
+	d := &Dao{
+		KV: kv.NewStore(c.Status),
+	}
+
+	return d
 }

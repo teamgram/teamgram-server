@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
@@ -28,8 +28,11 @@ var _ *tg.Bool
 // IdgenSetCurrentSeqId
 // idgen.setCurrentSeqId key:string id:long = Bool;
 func (c *IdgenCore) IdgenSetCurrentSeqId(in *idgen.TLIdgenSetCurrentSeqId) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.setCurrentSeqId blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	err := c.svcCtx.Dao.KV.SetCtx(c.ctx, in.Key, strconv.FormatInt(in.Id, 10))
+	if err != nil {
+		c.Logger.Errorf("idgen.setCurrentSeqId(%s, %d) error: %v", in.Key, in.Id, err)
+		return nil, err
+	}
 
-	return nil, errors.New("idgen.setCurrentSeqId not implemented")
+	return tg.BoolTrue, nil
 }

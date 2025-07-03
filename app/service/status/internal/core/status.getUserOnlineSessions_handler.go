@@ -19,10 +19,10 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 var _ *tg.Bool
@@ -30,8 +30,23 @@ var _ *tg.Bool
 // StatusGetUserOnlineSessions
 // status.getUserOnlineSessions user_id:long = UserSessionEntryList;
 func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlineSessions) (*status.UserSessionEntryList, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("status.getUserOnlineSessions blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	rMap, err := c.svcCtx.Dao.KV.HgetallCtx(c.ctx, getUserKey(in.UserId))
+	if err != nil {
+		c.Logger.Errorf("status.getUserOnlineSessions(%s) error(%v)", in, err)
+		return nil, err
+	}
 
-	return nil, errors.New("status.getUserOnlineSessions not implemented")
+	rValues := &status.TLUserSessionEntryList{
+		UserId:       in.UserId,
+		UserSessions: make([]*status.SessionEntry, 0, len(rMap)),
+	}
+
+	for _, v := range rMap {
+		sess := new(status.SessionEntry)
+		if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
+			rValues.UserSessions = append(rValues.UserSessions, sess)
+		}
+	}
+
+	return rValues.ToUserSessionEntryList(), nil
 }

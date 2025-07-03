@@ -19,10 +19,12 @@
 package core
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
+
+	"github.com/zeromicro/go-zero/core/jsonx"
 )
 
 var _ *tg.Bool
@@ -30,8 +32,30 @@ var _ *tg.Bool
 // StatusSetSessionOnline
 // status.setSessionOnline user_id:long session:SessionEntry = Bool;
 func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("status.setSessionOnline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	var (
+		userK   = getUserKey(in.UserId)
+		sess, _ = in.Session.ToSessionEntry()
+	)
 
-	return nil, errors.New("status.setSessionOnline not implemented")
+	sessData, _ := jsonx.Marshal(sess)
+	err := c.svcCtx.Dao.KV.HsetCtx(
+		c.ctx,
+		userK,
+		strconv.FormatInt(sess.AuthKeyId, 10),
+		string(sessData))
+	if err != nil {
+		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
+		return nil, err
+	}
+
+	_, err = c.svcCtx.Dao.KV.ExpireCtx(
+		c.ctx,
+		userK,
+		c.svcCtx.Config.StatusExpire)
+	if err != nil {
+		c.Logger.Errorf("status.setSessionOnline(%s) error(%v)", in, err)
+		return nil, err
+	}
+
+	return tg.BoolTrue, nil
 }

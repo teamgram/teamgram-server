@@ -19,8 +19,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 )
@@ -31,7 +29,7 @@ var _ *tg.Bool
 // status.setChannelUsersOnline channel_id:long id:Vector<long> = Bool;
 func (c *StatusCore) StatusSetChannelUsersOnline(in *status.TLStatusSetChannelUsersOnline) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("status.setChannelUsersOnline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("status.setChannelUsersOnline - error: method StatusSetChannelUsersOnline not impl")
 
-	return nil, errors.New("status.setChannelUsersOnline not implemented")
+	return nil, tg.ErrMethodNotImpl
 }

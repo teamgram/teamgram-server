@@ -19,7 +19,7 @@
 package core
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
@@ -30,8 +30,14 @@ var _ *tg.Bool
 // StatusSetSessionOffline
 // status.setSessionOffline user_id:long auth_key_id:long = Bool;
 func (c *StatusCore) StatusSetSessionOffline(in *status.TLStatusSetSessionOffline) (*tg.Bool, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("status.setSessionOffline blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_, err := c.svcCtx.Dao.KV.HdelCtx(
+		c.ctx,
+		getUserKey(in.UserId),
+		strconv.FormatInt(in.AuthKeyId, 10))
+	if err != nil {
+		c.Logger.Errorf("status.setSessionOffline(%s) error(%v)", in, err)
+		return nil, err
+	}
 
-	return nil, errors.New("status.setSessionOffline not implemented")
+	return tg.BoolTrue, nil
 }

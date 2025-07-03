@@ -17,7 +17,8 @@
 package core
 
 import (
-	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
@@ -28,8 +29,21 @@ var _ *tg.Bool
 // IdgenGetCurrentSeqId
 // idgen.getCurrentSeqId key:string = Int64;
 func (c *IdgenCore) IdgenGetCurrentSeqId(in *idgen.TLIdgenGetCurrentSeqId) (*tg.Int64, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.getCurrentSeqId blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	id, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, in.Key)
+	if err != nil {
+		c.Logger.Errorf("dgen.getCurrentSeqId(%s) error: %v", in.Key, err)
+		return nil, err
+	}
 
-	return nil, errors.New("idgen.getCurrentSeqId not implemented")
+	if id == "" {
+		return tg.MakeInt64Helper(0), nil
+	}
+
+	intValue, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		c.Logger.Errorf("dgen.getCurrentSeqId(%s) error: %v", in.Key, err)
+		return nil, fmt.Errorf("the value %q cannot parsed as int", err)
+	}
+
+	return tg.MakeInt64Helper(intValue), nil
 }

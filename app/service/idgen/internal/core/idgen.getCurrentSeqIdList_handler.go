@@ -17,7 +17,7 @@
 package core
 
 import (
-	"errors"
+	"strconv"
 
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
@@ -28,8 +28,34 @@ var _ *tg.Bool
 // IdgenGetCurrentSeqIdList
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("idgen.getCurrentSeqIdList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	var (
+		idList = make([]*idgen.IdVal, len(in.Id))
+	)
 
-	return nil, errors.New("idgen.getCurrentSeqIdList not implemented")
+	for i, id := range in.Id {
+		id.Match(func(id2 *idgen.TLInputNSeqId) interface{} {
+			sid, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, id2.Key)
+			if err != nil {
+				c.Logger.Errorf("idgen.getCurrentSeqIdList(%s) error: %v", id2.Key, err)
+				return err
+			}
+
+			if sid == "" {
+				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
+					Id_INT64: 0,
+				})
+			} else {
+				iV, _ := strconv.ParseInt(sid, 10, 64)
+				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
+					Id_INT64: iV,
+				})
+			}
+
+			return nil
+		})
+	}
+
+	return &idgen.VectorIdVal{
+		Datas: idList,
+	}, nil
 }
