@@ -19,9 +19,8 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"log"
-	"math/rand"
-	"strconv"
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -141,31 +140,35 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 
 	cli1 := echoclient.NewEchoClient(echoclient.MustNewKitexClient(c.EchoClient))
-	cli2 := NewEchoClient(c)
+	// cli2 := NewEchoClient(c)
 	for {
 		req := &api.TLEchoEcho{
 			ClazzID: api.ClazzID_echo_echo,
 			Message: "my request",
 		}
 
-		v := rand.Int63()
-		if v%2 == 0 {
-			resp, err := cli1.EchoEcho(context.Background(), req)
-			logx.Debugf("resp: %s", resp)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			_ = cli2.InvokeByKey(strconv.FormatInt(v, 10), func(client echoclient.EchoClient) (err error) {
-				resp, err := client.EchoEcho(context.Background(), req)
-				logx.Debugf("resp: %s", resp)
-				if err != nil {
-					log.Fatal(err)
-				}
+		ctx := context.Background()
+		ctx = metainfo.WithValue(ctx, "temp", "temp-value")       // only present in next service
+		ctx = metainfo.WithPersistentValue(ctx, "logid", "12345") // will present in the next service and its successors
 
-				return err
-			})
+		//v := rand.Int63()
+		//if v%2 == 0 {
+		resp, err := cli1.EchoEcho(ctx, req)
+		logx.Debugf("resp: %s", resp)
+		if err != nil {
+			log.Fatal(err)
 		}
+		//} else {
+		//	//_ = cli2.InvokeByKey(strconv.FormatInt(v, 10), func(client echoclient.EchoClient) (err error) {
+		//	//	resp, err := client.EchoEcho(context.Background(), req)
+		//	//	logx.Debugf("resp: %s", resp)
+		//	//	if err != nil {
+		//	//		log.Fatal(err)
+		//	//	}
+		//	//
+		//	//	return err
+		//	//})
+		//}
 
 		//resp, err := cli2.EchoEcho(context.Background(), req)
 		time.Sleep(time.Millisecond * 100)

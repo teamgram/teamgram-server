@@ -19,16 +19,17 @@
 package config
 
 import (
+	bff_proxy_client "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	// "github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
 	kitex.RpcServerConf
-	AuthSession   kitex.RpcClientConf
-	StatusClient  kitex.RpcClientConf
-	GatewayClient kitex.RpcClientConf
-	// BFFProxyClients []bff_proxy_client.BFFProxyClientConf
+	AuthSession     kitex.RpcClientConf
+	StatusClient    kitex.RpcClientConf
+	GatewayClient   kitex.RpcClientConf
+	BFFProxyClients []bff_proxy_client.BFFProxyClientConf
 }
 
 // Routine routine.

@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/teamgram/proto/v2/iface"
 
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/tg"
@@ -40,6 +41,12 @@ var (
 	miscellaneousServiceServiceInfoForClient       = NewServiceInfoForClient()
 	miscellaneousServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCMiscellaneous", miscellaneousServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCMiscellaneous", miscellaneousServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCMiscellaneous", miscellaneousServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {

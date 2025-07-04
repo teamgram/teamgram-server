@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/teamgram/proto/v2/iface"
 
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/tg"
@@ -26,7 +27,7 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"help.getConfig": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getConfig": kitex.NewMethodInfo(
 		helpGetConfigHandler,
 		newHelpGetConfigArgs,
 		newHelpGetConfigResult,
@@ -96,6 +97,12 @@ var (
 	configurationServiceServiceInfoForClient       = NewServiceInfoForClient()
 	configurationServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCConfiguration", configurationServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCConfiguration", configurationServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCConfiguration", configurationServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {
@@ -1302,7 +1309,7 @@ func (p *kClient) HelpGetConfig(ctx context.Context, req *tg.TLHelpGetConfig) (r
 	var _args HelpGetConfigArgs
 	_args.Req = req
 	var _result HelpGetConfigResult
-	if err = p.c.Call(ctx, "help.getConfig", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getConfig", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

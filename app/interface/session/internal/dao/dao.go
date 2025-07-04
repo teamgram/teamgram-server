@@ -19,12 +19,8 @@
 package dao
 
 import (
-	"context"
-
 	"github.com/teamgram/marmota/pkg/cache"
 	"github.com/teamgram/marmota/pkg/net/ip"
-	"github.com/teamgram/proto/v2/iface"
-	"github.com/teamgram/proto/v2/rpc/metadata"
 	bff_proxy_client "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/config"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
@@ -44,9 +40,9 @@ type Dao struct {
 func New(c config.Config) *Dao {
 	myServerId := ip.FigureOutListenOn(c.ListenOn)
 	d := &Dao{
-		cache:             cache.NewLRUCache(1024 * 1024 * 1024),
-		AuthsessionClient: authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthSession)),
-		// BFFProxyClient:     bff_proxy_client.NewBFFProxyClients(c.BFFProxyClients.Clients, c.BFFProxyClients.IDMap),
+		cache:              cache.NewLRUCache(1024 * 1024 * 1024),
+		AuthsessionClient:  authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthSession)),
+		BFFProxyClient2:    bff_proxy_client.NewBFFProxyClient2(c.BFFProxyClients),
 		StatusClient:       statusclient.NewStatusClient(statusclient.MustNewKitexClient(c.StatusClient)),
 		eGateServers:       make(map[string]*Gateway),
 		MyServerId:         myServerId,
@@ -56,8 +52,4 @@ func New(c config.Config) *Dao {
 	d.watchGateway(c.GatewayClient)
 
 	return d
-}
-
-func (d *Dao) InvokeContext(ctx context.Context, rpcMetaData *metadata.RpcMetadata, object iface.TLObject) (iface.TLObject, error) {
-	return d.BFFProxyClient2.InvokeContext(ctx, rpcMetaData, object)
 }

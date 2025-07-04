@@ -61,6 +61,8 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 		validData = message.Data()
 	}
 
+	klog.Infof("trans: %v", message.TransInfo().TransStrInfo())
+
 	x := bin.NewEncoder()
 	defer x.End()
 	_ = validData.(iface.TLObject).Encode(x, 0)

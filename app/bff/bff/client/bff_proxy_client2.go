@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/teamgram/proto/v2/iface"
@@ -43,11 +44,6 @@ func NewBFFProxyClient2(cList []BFFProxyClientConf) *BFFProxyClient2 {
 
 	for _, c := range cList {
 		for _, serviceName := range c.ServiceNameList {
-			if _, ok := registers[serviceName]; !ok {
-				logx.Errorf("serviceName %s not exist", c.ServiceName)
-				continue
-			}
-
 			c2 := c.RpcClientConf
 			c2.ServiceName = serviceName
 
@@ -56,8 +52,19 @@ func NewBFFProxyClient2(cList []BFFProxyClientConf) *BFFProxyClient2 {
 		}
 	}
 
+	bizClients := make(map[string]kitex.Client)
+
+	for m, ctx := range registers {
+		for k, v := range clients {
+			if strings.HasPrefix(ctx.Method[4:], k) {
+				bizClients[m] = v
+				break
+			}
+		}
+	}
+
 	return &BFFProxyClient2{
-		BFFClients: clients,
+		BFFClients: bizClients,
 	}
 }
 

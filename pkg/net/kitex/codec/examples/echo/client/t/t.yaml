@@ -1,5 +1,6 @@
 EchoClient:
-  ServiceName: "examples.echo"
+  DestService: "examples.echo"
+  ServiceName: "RPCEcho"
   Codec: "zrpc"
   Etcd:
     Hosts:
