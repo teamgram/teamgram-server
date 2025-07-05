@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/gnetway"
 
@@ -24,10 +25,12 @@ import (
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
 
+var _ *tg.Bool
+
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"gnetway.sendDataToGateway": kitex.NewMethodInfo(
+	"/gnetway.RPCGnetway/gnetway.sendDataToGateway": kitex.NewMethodInfo(
 		sendDataToGatewayHandler,
 		newSendDataToGatewayArgs,
 		newSendDataToGatewayResult,
@@ -41,6 +44,12 @@ var (
 	gnetwayServiceServiceInfoForClient       = NewServiceInfoForClient()
 	gnetwayServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCGnetway", gnetwayServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCGnetway", gnetwayServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCGnetway", gnetwayServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {
@@ -66,6 +75,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -236,11 +247,16 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) GnetwaySendDataToGateway(ctx context.Context, req *gnetway.TLGnetwaySendDataToGateway) (r *tg.Bool, err error) {
-	var _args SendDataToGatewayArgs
-	_args.Req = req
-	var _result SendDataToGatewayResult
-	if err = p.c.Call(ctx, "gnetway.sendDataToGateway", &_args, &_result); err != nil {
+	// var _args SendDataToGatewayArgs
+	// _args.Req = req
+	// var _result SendDataToGatewayResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "/gnetway.RPCGnetway/gnetway.sendDataToGateway", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

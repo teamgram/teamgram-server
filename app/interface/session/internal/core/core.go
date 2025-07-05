@@ -25,6 +25,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/sess"
 	"github.com/teamgram/teamgram-server/v2/app/interface/session/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,7 +34,7 @@ type SessionCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	// MD *metadata.RpcMetadata
+	MD *metadata.RpcMetadata
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *SessionCore {
@@ -41,7 +42,7 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *SessionCore {
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
-		// MD:     metadata.RpcMetadataFromIncoming(ctx),
+		MD:     metadata.RpcMetadataFromIncoming(ctx),
 	}
 }
 

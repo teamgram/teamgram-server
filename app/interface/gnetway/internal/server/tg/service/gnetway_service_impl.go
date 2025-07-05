@@ -19,6 +19,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+var _ *tg.Bool
+
 // GnetwaySendDataToGateway
 // gnetway.sendDataToGateway auth_key_id:long session_id:long payload:bytes = Bool;
 func (s *Service) GnetwaySendDataToGateway(ctx context.Context, request *gnetway.TLGnetwaySendDataToGateway) (*tg.Bool, error) {
@@ -30,6 +32,6 @@ func (s *Service) GnetwaySendDataToGateway(ctx context.Context, request *gnetway
 		return nil, err
 	}
 
-	logx.WithContext(ctx).Debugf("echos.echo - reply: %s", r)
+	logx.WithContext(ctx).Debugf("gnetway.sendDataToGateway - reply: %s", r)
 	return r, err
 }

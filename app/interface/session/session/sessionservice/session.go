@@ -30,63 +30,63 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"session.queryAuthKey": kitex.NewMethodInfo(
+	"/session.RPCSession/session.queryAuthKey": kitex.NewMethodInfo(
 		queryAuthKeyHandler,
 		newQueryAuthKeyArgs,
 		newQueryAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.setAuthKey": kitex.NewMethodInfo(
+	"/session.RPCSession/session.setAuthKey": kitex.NewMethodInfo(
 		setAuthKeyHandler,
 		newSetAuthKeyArgs,
 		newSetAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.createSession": kitex.NewMethodInfo(
+	"/session.RPCSession/session.createSession": kitex.NewMethodInfo(
 		createSessionHandler,
 		newCreateSessionArgs,
 		newCreateSessionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.sendDataToSession": kitex.NewMethodInfo(
+	"/session.RPCSession/session.sendDataToSession": kitex.NewMethodInfo(
 		sendDataToSessionHandler,
 		newSendDataToSessionArgs,
 		newSendDataToSessionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.sendHttpDataToSession": kitex.NewMethodInfo(
+	"/session.RPCSession/session.sendHttpDataToSession": kitex.NewMethodInfo(
 		sendHttpDataToSessionHandler,
 		newSendHttpDataToSessionArgs,
 		newSendHttpDataToSessionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.closeSession": kitex.NewMethodInfo(
+	"/session.RPCSession/session.closeSession": kitex.NewMethodInfo(
 		closeSessionHandler,
 		newCloseSessionArgs,
 		newCloseSessionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.pushUpdatesData": kitex.NewMethodInfo(
+	"/session.RPCSession/session.pushUpdatesData": kitex.NewMethodInfo(
 		pushUpdatesDataHandler,
 		newPushUpdatesDataArgs,
 		newPushUpdatesDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.pushSessionUpdatesData": kitex.NewMethodInfo(
+	"/session.RPCSession/session.pushSessionUpdatesData": kitex.NewMethodInfo(
 		pushSessionUpdatesDataHandler,
 		newPushSessionUpdatesDataArgs,
 		newPushSessionUpdatesDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"session.pushRpcResultData": kitex.NewMethodInfo(
+	"/session.RPCSession/session.pushRpcResultData": kitex.NewMethodInfo(
 		pushRpcResultDataHandler,
 		newPushRpcResultDataArgs,
 		newPushRpcResultDataResult,
@@ -1317,7 +1317,7 @@ func (p *kClient) SessionQueryAuthKey(ctx context.Context, req *session.TLSessio
 
 	_result := new(tg.AuthKeyInfo)
 
-	if err = p.c.Call(ctx, "session.queryAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.queryAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -1332,7 +1332,7 @@ func (p *kClient) SessionSetAuthKey(ctx context.Context, req *session.TLSessionS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.setAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.setAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -1347,7 +1347,7 @@ func (p *kClient) SessionCreateSession(ctx context.Context, req *session.TLSessi
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.createSession", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.createSession", req, _result); err != nil {
 		return
 	}
 
@@ -1362,7 +1362,7 @@ func (p *kClient) SessionSendDataToSession(ctx context.Context, req *session.TLS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.sendDataToSession", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.sendDataToSession", req, _result); err != nil {
 		return
 	}
 
@@ -1377,7 +1377,7 @@ func (p *kClient) SessionSendHttpDataToSession(ctx context.Context, req *session
 
 	_result := new(session.HttpSessionData)
 
-	if err = p.c.Call(ctx, "session.sendHttpDataToSession", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.sendHttpDataToSession", req, _result); err != nil {
 		return
 	}
 
@@ -1392,7 +1392,7 @@ func (p *kClient) SessionCloseSession(ctx context.Context, req *session.TLSessio
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.closeSession", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.closeSession", req, _result); err != nil {
 		return
 	}
 
@@ -1407,7 +1407,7 @@ func (p *kClient) SessionPushUpdatesData(ctx context.Context, req *session.TLSes
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.pushUpdatesData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.pushUpdatesData", req, _result); err != nil {
 		return
 	}
 
@@ -1422,7 +1422,7 @@ func (p *kClient) SessionPushSessionUpdatesData(ctx context.Context, req *sessio
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.pushSessionUpdatesData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.pushSessionUpdatesData", req, _result); err != nil {
 		return
 	}
 
@@ -1437,7 +1437,7 @@ func (p *kClient) SessionPushRpcResultData(ctx context.Context, req *session.TLS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "session.pushRpcResultData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/session.RPCSession/session.pushRpcResultData", req, _result); err != nil {
 		return
 	}
 
