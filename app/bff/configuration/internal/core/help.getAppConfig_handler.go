@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,15 @@ import (
 // help.getAppConfig#61e3f854 hash:int = help.AppConfig;
 func (c *ConfigurationCore) HelpGetAppConfig(in *tg.TLHelpGetAppConfig) (*tg.HelpAppConfig, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getAppConfig blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getAppConfig not implemented")
+	rV := tg.MakeHelpAppConfig(&tg.TLHelpAppConfig{
+		Hash: 0,
+		Config: tg.MakeJSONValue(&tg.TLJsonObject{
+			ClazzID:                     0,
+			Value_VECTORJSONOBJECTVALUE: []*tg.JSONObjectValue{},
+		}),
+	})
+
+	return rV, nil
 }

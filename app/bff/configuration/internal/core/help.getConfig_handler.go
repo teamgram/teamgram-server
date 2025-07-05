@@ -17,16 +17,56 @@
 package core
 
 import (
-	"errors"
+	"os"
+	"time"
 
+	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 )
+
+const (
+	configFile = "./config.data"
+	// date = 1509066502,    2017/10/27 09:08:22
+	// expires = 1509070295, 2017/10/27 10:11:35
+	expiresTimeout = 3600 // 超时时间设置为3600秒
+
+	// support user: @benqi
+	// SUPPORT_USER_ID = 2
+)
+
+var (
+	config *tg.TLConfig
+)
+
+func init() {
+	configData, err := os.ReadFile(configFile)
+	if err != nil {
+		panic(err)
+	}
+
+	config2, err := iface.DecodeObject(bin.NewDecoder(configData))
+	if err != nil {
+		panic(err)
+	}
+
+	config, _ = config2.(*tg.TLConfig)
+	if config == nil {
+		panic("config is nil")
+	}
+}
 
 // HelpGetConfig
 // help.getConfig#c4f9186b = Config;
 func (c *ConfigurationCore) HelpGetConfig(in *tg.TLHelpGetConfig) (*tg.Config, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("help.getConfig blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getConfig not implemented")
+	c2 := &tg.TLConfig{}
+	*c2 = *config
+
+	now := int32(time.Now().Unix())
+	c2.Date = now
+	c2.Expires = now + expiresTimeout
+
+	return c2.ToConfig(), nil
 }

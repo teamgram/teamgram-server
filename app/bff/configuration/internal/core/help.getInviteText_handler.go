@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,11 @@ import (
 // help.getInviteText#4d392343 = help.InviteText;
 func (c *ConfigurationCore) HelpGetInviteText(in *tg.TLHelpGetInviteText) (*tg.HelpInviteText, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getInviteText blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getInviteText not implemented")
+	rV := tg.MakeHelpInviteText(&tg.TLHelpInviteText{
+		Message: "",
+	})
+
+	return rV, nil
 }

@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,7 @@ import (
 // help.dismissSuggestion#f50dbaa1 peer:InputPeer suggestion:string = Bool;
 func (c *ConfigurationCore) HelpDismissSuggestion(in *tg.TLHelpDismissSuggestion) (*tg.Bool, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.dismissSuggestion blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.dismissSuggestion not implemented")
+	return tg.BoolTrue, nil
 }

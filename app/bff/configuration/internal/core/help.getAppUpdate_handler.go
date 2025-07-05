@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,10 @@ import (
 // help.getAppUpdate#522d5a7d source:string = help.AppUpdate;
 func (c *ConfigurationCore) HelpGetAppUpdate(in *tg.TLHelpGetAppUpdate) (*tg.HelpAppUpdate, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getAppUpdate blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getAppUpdate not implemented")
+	rValue := tg.MakeHelpAppUpdate(&tg.TLHelpNoAppUpdate{
+		// ClazzID: 0,
+	})
+	return rValue, nil
 }

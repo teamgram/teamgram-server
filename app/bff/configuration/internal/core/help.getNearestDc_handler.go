@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,13 @@ import (
 // help.getNearestDc#1fb33026 = NearestDc;
 func (c *ConfigurationCore) HelpGetNearestDc(in *tg.TLHelpGetNearestDc) (*tg.NearestDc, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getNearestDc blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getNearestDc not implemented")
+	rValue := tg.MakeNearestDc(&tg.TLNearestDc{
+		Country:   "CN",
+		ThisDc:    1,
+		NearestDc: 1,
+	})
+
+	return rValue, nil
 }

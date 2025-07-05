@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 )
 
@@ -26,7 +24,12 @@ import (
 // help.getCountriesList#735787a8 lang_code:string hash:int = help.CountriesList;
 func (c *ConfigurationCore) HelpGetCountriesList(in *tg.TLHelpGetCountriesList) (*tg.HelpCountriesList, error) {
 	// TODO: not impl
-	// c.Logger.Errorf("help.getCountriesList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	_ = in
 
-	return nil, errors.New("help.getCountriesList not implemented")
+	rV := tg.MakeHelpCountriesList(&tg.TLHelpCountriesList{
+		Countries: []*tg.HelpCountry{},
+		Hash:      0,
+	})
+
+	return rV, nil
 }
