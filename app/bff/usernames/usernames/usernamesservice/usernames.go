@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -69,6 +70,12 @@ var (
 	usernamesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUsernames", usernamesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUsernames", usernamesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUsernames", usernamesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return usernamesServiceServiceInfo
@@ -93,6 +100,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -767,51 +776,71 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountCheckUsername(ctx context.Context, req *tg.TLAccountCheckUsername) (r *tg.Bool, err error) {
-	var _args AccountCheckUsernameArgs
-	_args.Req = req
-	var _result AccountCheckUsernameResult
-	if err = p.c.Call(ctx, "account.checkUsername", &_args, &_result); err != nil {
+	// var _args AccountCheckUsernameArgs
+	// _args.Req = req
+	// var _result AccountCheckUsernameResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.checkUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateUsername(ctx context.Context, req *tg.TLAccountUpdateUsername) (r *tg.User, err error) {
-	var _args AccountUpdateUsernameArgs
-	_args.Req = req
-	var _result AccountUpdateUsernameResult
-	if err = p.c.Call(ctx, "account.updateUsername", &_args, &_result); err != nil {
+	// var _args AccountUpdateUsernameArgs
+	// _args.Req = req
+	// var _result AccountUpdateUsernameResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "account.updateUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsResolveUsername(ctx context.Context, req *tg.TLContactsResolveUsername) (r *tg.ContactsResolvedPeer, err error) {
-	var _args ContactsResolveUsernameArgs
-	_args.Req = req
-	var _result ContactsResolveUsernameResult
-	if err = p.c.Call(ctx, "contacts.resolveUsername", &_args, &_result); err != nil {
+	// var _args ContactsResolveUsernameArgs
+	// _args.Req = req
+	// var _result ContactsResolveUsernameResult
+
+	_result := new(tg.ContactsResolvedPeer)
+	if err = p.c.Call(ctx, "contacts.resolveUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsCheckUsername(ctx context.Context, req *tg.TLChannelsCheckUsername) (r *tg.Bool, err error) {
-	var _args ChannelsCheckUsernameArgs
-	_args.Req = req
-	var _result ChannelsCheckUsernameResult
-	if err = p.c.Call(ctx, "channels.checkUsername", &_args, &_result); err != nil {
+	// var _args ChannelsCheckUsernameArgs
+	// _args.Req = req
+	// var _result ChannelsCheckUsernameResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "channels.checkUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsUpdateUsername(ctx context.Context, req *tg.TLChannelsUpdateUsername) (r *tg.Bool, err error) {
-	var _args ChannelsUpdateUsernameArgs
-	_args.Req = req
-	var _result ChannelsUpdateUsernameResult
-	if err = p.c.Call(ctx, "channels.updateUsername", &_args, &_result); err != nil {
+	// var _args ChannelsUpdateUsernameArgs
+	// _args.Req = req
+	// var _result ChannelsUpdateUsernameResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "channels.updateUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

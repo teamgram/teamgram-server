@@ -21,14 +21,14 @@ import (
 // account.registerDevice#ec86017a flags:# no_muted:flags.0?true token_type:int token:string app_sandbox:Bool secret:bytes other_uids:Vector<long> = Bool;
 func (s *Service) AccountRegisterDevice(ctx context.Context, request *tg.TLAccountRegisterDevice) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.registerDevice - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.registerDevice - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountRegisterDevice(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.registerDevice - reply: {%v}", r)
+	c.Logger.Debugf("account.registerDevice - reply: %s", r)
 	return r, err
 }
 
@@ -36,14 +36,14 @@ func (s *Service) AccountRegisterDevice(ctx context.Context, request *tg.TLAccou
 // account.unregisterDevice#6a0d3206 token_type:int token:string other_uids:Vector<long> = Bool;
 func (s *Service) AccountUnregisterDevice(ctx context.Context, request *tg.TLAccountUnregisterDevice) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.unregisterDevice - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.unregisterDevice - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountUnregisterDevice(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.unregisterDevice - reply: {%v}", r)
+	c.Logger.Debugf("account.unregisterDevice - reply: %s", r)
 	return r, err
 }
 
@@ -51,14 +51,14 @@ func (s *Service) AccountUnregisterDevice(ctx context.Context, request *tg.TLAcc
 // account.updateNotifySettings#84be5b93 peer:InputNotifyPeer settings:InputPeerNotifySettings = Bool;
 func (s *Service) AccountUpdateNotifySettings(ctx context.Context, request *tg.TLAccountUpdateNotifySettings) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.updateNotifySettings - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.updateNotifySettings - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountUpdateNotifySettings(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.updateNotifySettings - reply: {%v}", r)
+	c.Logger.Debugf("account.updateNotifySettings - reply: %s", r)
 	return r, err
 }
 
@@ -66,14 +66,14 @@ func (s *Service) AccountUpdateNotifySettings(ctx context.Context, request *tg.T
 // account.getNotifySettings#12b3ad31 peer:InputNotifyPeer = PeerNotifySettings;
 func (s *Service) AccountGetNotifySettings(ctx context.Context, request *tg.TLAccountGetNotifySettings) (*tg.PeerNotifySettings, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getNotifySettings - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getNotifySettings - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetNotifySettings(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getNotifySettings - reply: {%v}", r)
+	c.Logger.Debugf("account.getNotifySettings - reply: %s", r)
 	return r, err
 }
 
@@ -81,14 +81,14 @@ func (s *Service) AccountGetNotifySettings(ctx context.Context, request *tg.TLAc
 // account.resetNotifySettings#db7e1747 = Bool;
 func (s *Service) AccountResetNotifySettings(ctx context.Context, request *tg.TLAccountResetNotifySettings) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.resetNotifySettings - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.resetNotifySettings - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountResetNotifySettings(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.resetNotifySettings - reply: {%v}", r)
+	c.Logger.Debugf("account.resetNotifySettings - reply: %s", r)
 	return r, err
 }
 
@@ -96,14 +96,14 @@ func (s *Service) AccountResetNotifySettings(ctx context.Context, request *tg.TL
 // account.updateDeviceLocked#38df3532 period:int = Bool;
 func (s *Service) AccountUpdateDeviceLocked(ctx context.Context, request *tg.TLAccountUpdateDeviceLocked) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.updateDeviceLocked - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.updateDeviceLocked - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountUpdateDeviceLocked(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.updateDeviceLocked - reply: {%v}", r)
+	c.Logger.Debugf("account.updateDeviceLocked - reply: %s", r)
 	return r, err
 }
 
@@ -111,13 +111,13 @@ func (s *Service) AccountUpdateDeviceLocked(ctx context.Context, request *tg.TLA
 // account.getNotifyExceptions#53577479 flags:# compare_sound:flags.1?true compare_stories:flags.2?true peer:flags.0?InputNotifyPeer = Updates;
 func (s *Service) AccountGetNotifyExceptions(ctx context.Context, request *tg.TLAccountGetNotifyExceptions) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getNotifyExceptions - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getNotifyExceptions - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetNotifyExceptions(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getNotifyExceptions - reply: {%v}", r)
+	c.Logger.Debugf("account.getNotifyExceptions - reply: %s", r)
 	return r, err
 }

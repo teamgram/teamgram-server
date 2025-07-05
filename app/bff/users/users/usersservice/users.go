@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -62,6 +63,12 @@ var (
 	usersServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUsers", usersServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUsers", usersServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUsers", usersServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return usersServiceServiceInfo
@@ -86,6 +93,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -634,41 +643,57 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) UsersGetUsers(ctx context.Context, req *tg.TLUsersGetUsers) (r *tg.VectorUser, err error) {
-	var _args UsersGetUsersArgs
-	_args.Req = req
-	var _result UsersGetUsersResult
-	if err = p.c.Call(ctx, "users.getUsers", &_args, &_result); err != nil {
+	// var _args UsersGetUsersArgs
+	// _args.Req = req
+	// var _result UsersGetUsersResult
+
+	_result := new(tg.VectorUser)
+	if err = p.c.Call(ctx, "users.getUsers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsersGetFullUser(ctx context.Context, req *tg.TLUsersGetFullUser) (r *tg.UsersUserFull, err error) {
-	var _args UsersGetFullUserArgs
-	_args.Req = req
-	var _result UsersGetFullUserResult
-	if err = p.c.Call(ctx, "users.getFullUser", &_args, &_result); err != nil {
+	// var _args UsersGetFullUserArgs
+	// _args.Req = req
+	// var _result UsersGetFullUserResult
+
+	_result := new(tg.UsersUserFull)
+	if err = p.c.Call(ctx, "users.getFullUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsResolvePhone(ctx context.Context, req *tg.TLContactsResolvePhone) (r *tg.ContactsResolvedPeer, err error) {
-	var _args ContactsResolvePhoneArgs
-	_args.Req = req
-	var _result ContactsResolvePhoneResult
-	if err = p.c.Call(ctx, "contacts.resolvePhone", &_args, &_result); err != nil {
+	// var _args ContactsResolvePhoneArgs
+	// _args.Req = req
+	// var _result ContactsResolvePhoneResult
+
+	_result := new(tg.ContactsResolvedPeer)
+	if err = p.c.Call(ctx, "contacts.resolvePhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsersGetMe(ctx context.Context, req *tg.TLUsersGetMe) (r *tg.User, err error) {
-	var _args UsersGetMeArgs
-	_args.Req = req
-	var _result UsersGetMeResult
-	if err = p.c.Call(ctx, "users.getMe", &_args, &_result); err != nil {
+	// var _args UsersGetMeArgs
+	// _args.Req = req
+	// var _result UsersGetMeResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "users.getMe", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

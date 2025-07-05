@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/inbox/inbox"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -132,6 +135,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"inbox.updatePinnedMessageV2": kitex.NewMethodInfo(
+		updatePinnedMessageV2Handler,
+		newUpdatePinnedMessageV2Args,
+		newUpdatePinnedMessageV2Result,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -139,6 +149,12 @@ var (
 	inboxServiceServiceInfoForClient       = NewServiceInfoForClient()
 	inboxServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
+
+func init() {
+	iface.RegisterKitexServiceInfo("RPCInbox", inboxServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCInbox", inboxServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCInbox", inboxServiceServiceInfoForStreamClient)
+}
 
 // for server
 func serviceInfo() *kitex.ServiceInfo {
@@ -164,6 +180,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -2087,6 +2105,132 @@ func (p *ReadMediaUnreadToInboxV2Result) GetResult() interface{} {
 	return p.Success
 }
 
+func updatePinnedMessageV2Handler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UpdatePinnedMessageV2Args)
+	realResult := result.(*UpdatePinnedMessageV2Result)
+	success, err := handler.(inbox.RPCInbox).InboxUpdatePinnedMessageV2(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUpdatePinnedMessageV2Args() interface{} {
+	return &UpdatePinnedMessageV2Args{}
+}
+
+func newUpdatePinnedMessageV2Result() interface{} {
+	return &UpdatePinnedMessageV2Result{}
+}
+
+type UpdatePinnedMessageV2Args struct {
+	Req *inbox.TLInboxUpdatePinnedMessageV2
+}
+
+func (p *UpdatePinnedMessageV2Args) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in UpdatePinnedMessageV2Args")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UpdatePinnedMessageV2Args) Unmarshal(in []byte) error {
+	msg := new(inbox.TLInboxUpdatePinnedMessageV2)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UpdatePinnedMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in UpdatePinnedMessageV2Args")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UpdatePinnedMessageV2Args) Decode(d *bin.Decoder) (err error) {
+	msg := new(inbox.TLInboxUpdatePinnedMessageV2)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var UpdatePinnedMessageV2Args_Req_DEFAULT *inbox.TLInboxUpdatePinnedMessageV2
+
+func (p *UpdatePinnedMessageV2Args) GetReq() *inbox.TLInboxUpdatePinnedMessageV2 {
+	if !p.IsSetReq() {
+		return UpdatePinnedMessageV2Args_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdatePinnedMessageV2Args) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UpdatePinnedMessageV2Result struct {
+	Success *tg.Void
+}
+
+var UpdatePinnedMessageV2Result_Success_DEFAULT *tg.Void
+
+func (p *UpdatePinnedMessageV2Result) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in UpdatePinnedMessageV2Result")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UpdatePinnedMessageV2Result) Unmarshal(in []byte) error {
+	msg := new(tg.Void)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdatePinnedMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in UpdatePinnedMessageV2Result")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UpdatePinnedMessageV2Result) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Void)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdatePinnedMessageV2Result) GetSuccess() *tg.Void {
+	if !p.IsSetSuccess() {
+		return UpdatePinnedMessageV2Result_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdatePinnedMessageV2Result) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Void)
+}
+
+func (p *UpdatePinnedMessageV2Result) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdatePinnedMessageV2Result) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -2098,151 +2242,241 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) InboxEditUserMessageToInbox(ctx context.Context, req *inbox.TLInboxEditUserMessageToInbox) (r *tg.Void, err error) {
-	var _args EditUserMessageToInboxArgs
-	_args.Req = req
-	var _result EditUserMessageToInboxResult
-	if err = p.c.Call(ctx, "inbox.editUserMessageToInbox", &_args, &_result); err != nil {
+	// var _args EditUserMessageToInboxArgs
+	// _args.Req = req
+	// var _result EditUserMessageToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.editUserMessageToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxEditChatMessageToInbox(ctx context.Context, req *inbox.TLInboxEditChatMessageToInbox) (r *tg.Void, err error) {
-	var _args EditChatMessageToInboxArgs
-	_args.Req = req
-	var _result EditChatMessageToInboxResult
-	if err = p.c.Call(ctx, "inbox.editChatMessageToInbox", &_args, &_result); err != nil {
+	// var _args EditChatMessageToInboxArgs
+	// _args.Req = req
+	// var _result EditChatMessageToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.editChatMessageToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxDeleteMessagesToInbox(ctx context.Context, req *inbox.TLInboxDeleteMessagesToInbox) (r *tg.Void, err error) {
-	var _args DeleteMessagesToInboxArgs
-	_args.Req = req
-	var _result DeleteMessagesToInboxResult
-	if err = p.c.Call(ctx, "inbox.deleteMessagesToInbox", &_args, &_result); err != nil {
+	// var _args DeleteMessagesToInboxArgs
+	// _args.Req = req
+	// var _result DeleteMessagesToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.deleteMessagesToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxDeleteUserHistoryToInbox(ctx context.Context, req *inbox.TLInboxDeleteUserHistoryToInbox) (r *tg.Void, err error) {
-	var _args DeleteUserHistoryToInboxArgs
-	_args.Req = req
-	var _result DeleteUserHistoryToInboxResult
-	if err = p.c.Call(ctx, "inbox.deleteUserHistoryToInbox", &_args, &_result); err != nil {
+	// var _args DeleteUserHistoryToInboxArgs
+	// _args.Req = req
+	// var _result DeleteUserHistoryToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.deleteUserHistoryToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxDeleteChatHistoryToInbox(ctx context.Context, req *inbox.TLInboxDeleteChatHistoryToInbox) (r *tg.Void, err error) {
-	var _args DeleteChatHistoryToInboxArgs
-	_args.Req = req
-	var _result DeleteChatHistoryToInboxResult
-	if err = p.c.Call(ctx, "inbox.deleteChatHistoryToInbox", &_args, &_result); err != nil {
+	// var _args DeleteChatHistoryToInboxArgs
+	// _args.Req = req
+	// var _result DeleteChatHistoryToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.deleteChatHistoryToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxReadUserMediaUnreadToInbox(ctx context.Context, req *inbox.TLInboxReadUserMediaUnreadToInbox) (r *tg.Void, err error) {
-	var _args ReadUserMediaUnreadToInboxArgs
-	_args.Req = req
-	var _result ReadUserMediaUnreadToInboxResult
-	if err = p.c.Call(ctx, "inbox.readUserMediaUnreadToInbox", &_args, &_result); err != nil {
+	// var _args ReadUserMediaUnreadToInboxArgs
+	// _args.Req = req
+	// var _result ReadUserMediaUnreadToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.readUserMediaUnreadToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, req *inbox.TLInboxReadChatMediaUnreadToInbox) (r *tg.Void, err error) {
-	var _args ReadChatMediaUnreadToInboxArgs
-	_args.Req = req
-	var _result ReadChatMediaUnreadToInboxResult
-	if err = p.c.Call(ctx, "inbox.readChatMediaUnreadToInbox", &_args, &_result); err != nil {
+	// var _args ReadChatMediaUnreadToInboxArgs
+	// _args.Req = req
+	// var _result ReadChatMediaUnreadToInboxResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.readChatMediaUnreadToInbox", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxUpdateHistoryReaded(ctx context.Context, req *inbox.TLInboxUpdateHistoryReaded) (r *tg.Void, err error) {
-	var _args UpdateHistoryReadedArgs
-	_args.Req = req
-	var _result UpdateHistoryReadedResult
-	if err = p.c.Call(ctx, "inbox.updateHistoryReaded", &_args, &_result); err != nil {
+	// var _args UpdateHistoryReadedArgs
+	// _args.Req = req
+	// var _result UpdateHistoryReadedResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.updateHistoryReaded", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxUpdatePinnedMessage(ctx context.Context, req *inbox.TLInboxUpdatePinnedMessage) (r *tg.Void, err error) {
-	var _args UpdatePinnedMessageArgs
-	_args.Req = req
-	var _result UpdatePinnedMessageResult
-	if err = p.c.Call(ctx, "inbox.updatePinnedMessage", &_args, &_result); err != nil {
+	// var _args UpdatePinnedMessageArgs
+	// _args.Req = req
+	// var _result UpdatePinnedMessageResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.updatePinnedMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxUnpinAllMessages(ctx context.Context, req *inbox.TLInboxUnpinAllMessages) (r *tg.Void, err error) {
-	var _args UnpinAllMessagesArgs
-	_args.Req = req
-	var _result UnpinAllMessagesResult
-	if err = p.c.Call(ctx, "inbox.unpinAllMessages", &_args, &_result); err != nil {
+	// var _args UnpinAllMessagesArgs
+	// _args.Req = req
+	// var _result UnpinAllMessagesResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.unpinAllMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxSendUserMessageToInboxV2(ctx context.Context, req *inbox.TLInboxSendUserMessageToInboxV2) (r *tg.Void, err error) {
-	var _args SendUserMessageToInboxV2Args
-	_args.Req = req
-	var _result SendUserMessageToInboxV2Result
-	if err = p.c.Call(ctx, "inbox.sendUserMessageToInboxV2", &_args, &_result); err != nil {
+	// var _args SendUserMessageToInboxV2Args
+	// _args.Req = req
+	// var _result SendUserMessageToInboxV2Result
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.sendUserMessageToInboxV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxEditMessageToInboxV2(ctx context.Context, req *inbox.TLInboxEditMessageToInboxV2) (r *tg.Void, err error) {
-	var _args EditMessageToInboxV2Args
-	_args.Req = req
-	var _result EditMessageToInboxV2Result
-	if err = p.c.Call(ctx, "inbox.editMessageToInboxV2", &_args, &_result); err != nil {
+	// var _args EditMessageToInboxV2Args
+	// _args.Req = req
+	// var _result EditMessageToInboxV2Result
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.editMessageToInboxV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxReadInboxHistory(ctx context.Context, req *inbox.TLInboxReadInboxHistory) (r *tg.Void, err error) {
-	var _args ReadInboxHistoryArgs
-	_args.Req = req
-	var _result ReadInboxHistoryResult
-	if err = p.c.Call(ctx, "inbox.readInboxHistory", &_args, &_result); err != nil {
+	// var _args ReadInboxHistoryArgs
+	// _args.Req = req
+	// var _result ReadInboxHistoryResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.readInboxHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxReadOutboxHistory(ctx context.Context, req *inbox.TLInboxReadOutboxHistory) (r *tg.Void, err error) {
-	var _args ReadOutboxHistoryArgs
-	_args.Req = req
-	var _result ReadOutboxHistoryResult
-	if err = p.c.Call(ctx, "inbox.readOutboxHistory", &_args, &_result); err != nil {
+	// var _args ReadOutboxHistoryArgs
+	// _args.Req = req
+	// var _result ReadOutboxHistoryResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.readOutboxHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, req *inbox.TLInboxReadMediaUnreadToInboxV2) (r *tg.Void, err error) {
-	var _args ReadMediaUnreadToInboxV2Args
-	_args.Req = req
-	var _result ReadMediaUnreadToInboxV2Result
-	if err = p.c.Call(ctx, "inbox.readMediaUnreadToInboxV2", &_args, &_result); err != nil {
+	// var _args ReadMediaUnreadToInboxV2Args
+	// _args.Req = req
+	// var _result ReadMediaUnreadToInboxV2Result
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.readMediaUnreadToInboxV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) InboxUpdatePinnedMessageV2(ctx context.Context, req *inbox.TLInboxUpdatePinnedMessageV2) (r *tg.Void, err error) {
+	// var _args UpdatePinnedMessageV2Args
+	// _args.Req = req
+	// var _result UpdatePinnedMessageV2Result
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "inbox.updatePinnedMessageV2", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

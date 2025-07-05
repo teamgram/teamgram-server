@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client/callopt"
 )
 
+var _ *tg.Bool
+
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	MessageGetUserMessage(ctx context.Context, req *message.TLMessageGetUserMessage, callOptions ...callopt.Option) (r *tg.MessageBox, err error)

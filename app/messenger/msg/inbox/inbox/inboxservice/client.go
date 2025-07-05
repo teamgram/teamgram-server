@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client/callopt"
 )
 
+var _ *tg.Bool
+
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	InboxEditUserMessageToInbox(ctx context.Context, req *inbox.TLInboxEditUserMessageToInbox, callOptions ...callopt.Option) (r *tg.Void, err error)
@@ -37,6 +39,7 @@ type Client interface {
 	InboxReadInboxHistory(ctx context.Context, req *inbox.TLInboxReadInboxHistory, callOptions ...callopt.Option) (r *tg.Void, err error)
 	InboxReadOutboxHistory(ctx context.Context, req *inbox.TLInboxReadOutboxHistory, callOptions ...callopt.Option) (r *tg.Void, err error)
 	InboxReadMediaUnreadToInboxV2(ctx context.Context, req *inbox.TLInboxReadMediaUnreadToInboxV2, callOptions ...callopt.Option) (r *tg.Void, err error)
+	InboxUpdatePinnedMessageV2(ctx context.Context, req *inbox.TLInboxUpdatePinnedMessageV2, callOptions ...callopt.Option) (r *tg.Void, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -147,4 +150,9 @@ func (p *kInboxClient) InboxReadOutboxHistory(ctx context.Context, req *inbox.TL
 func (p *kInboxClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, req *inbox.TLInboxReadMediaUnreadToInboxV2, callOptions ...callopt.Option) (r *tg.Void, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.InboxReadMediaUnreadToInboxV2(ctx, req)
+}
+
+func (p *kInboxClient) InboxUpdatePinnedMessageV2(ctx context.Context, req *inbox.TLInboxUpdatePinnedMessageV2, callOptions ...callopt.Option) (r *tg.Void, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.InboxUpdatePinnedMessageV2(ctx, req)
 }

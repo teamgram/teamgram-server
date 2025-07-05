@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -76,6 +77,12 @@ var (
 	savedmessagedialogsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCSavedMessageDialogs", savedmessagedialogsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCSavedMessageDialogs", savedmessagedialogsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCSavedMessageDialogs", savedmessagedialogsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return savedmessagedialogsServiceServiceInfo
@@ -100,6 +107,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -900,61 +909,85 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesGetSavedDialogs(ctx context.Context, req *tg.TLMessagesGetSavedDialogs) (r *tg.MessagesSavedDialogs, err error) {
-	var _args MessagesGetSavedDialogsArgs
-	_args.Req = req
-	var _result MessagesGetSavedDialogsResult
-	if err = p.c.Call(ctx, "messages.getSavedDialogs", &_args, &_result); err != nil {
+	// var _args MessagesGetSavedDialogsArgs
+	// _args.Req = req
+	// var _result MessagesGetSavedDialogsResult
+
+	_result := new(tg.MessagesSavedDialogs)
+	if err = p.c.Call(ctx, "messages.getSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetSavedHistory(ctx context.Context, req *tg.TLMessagesGetSavedHistory) (r *tg.MessagesMessages, err error) {
-	var _args MessagesGetSavedHistoryArgs
-	_args.Req = req
-	var _result MessagesGetSavedHistoryResult
-	if err = p.c.Call(ctx, "messages.getSavedHistory", &_args, &_result); err != nil {
+	// var _args MessagesGetSavedHistoryArgs
+	// _args.Req = req
+	// var _result MessagesGetSavedHistoryResult
+
+	_result := new(tg.MessagesMessages)
+	if err = p.c.Call(ctx, "messages.getSavedHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesDeleteSavedHistory(ctx context.Context, req *tg.TLMessagesDeleteSavedHistory) (r *tg.MessagesAffectedHistory, err error) {
-	var _args MessagesDeleteSavedHistoryArgs
-	_args.Req = req
-	var _result MessagesDeleteSavedHistoryResult
-	if err = p.c.Call(ctx, "messages.deleteSavedHistory", &_args, &_result); err != nil {
+	// var _args MessagesDeleteSavedHistoryArgs
+	// _args.Req = req
+	// var _result MessagesDeleteSavedHistoryResult
+
+	_result := new(tg.MessagesAffectedHistory)
+	if err = p.c.Call(ctx, "messages.deleteSavedHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetPinnedSavedDialogs(ctx context.Context, req *tg.TLMessagesGetPinnedSavedDialogs) (r *tg.MessagesSavedDialogs, err error) {
-	var _args MessagesGetPinnedSavedDialogsArgs
-	_args.Req = req
-	var _result MessagesGetPinnedSavedDialogsResult
-	if err = p.c.Call(ctx, "messages.getPinnedSavedDialogs", &_args, &_result); err != nil {
+	// var _args MessagesGetPinnedSavedDialogsArgs
+	// _args.Req = req
+	// var _result MessagesGetPinnedSavedDialogsResult
+
+	_result := new(tg.MessagesSavedDialogs)
+	if err = p.c.Call(ctx, "messages.getPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesToggleSavedDialogPin(ctx context.Context, req *tg.TLMessagesToggleSavedDialogPin) (r *tg.Bool, err error) {
-	var _args MessagesToggleSavedDialogPinArgs
-	_args.Req = req
-	var _result MessagesToggleSavedDialogPinResult
-	if err = p.c.Call(ctx, "messages.toggleSavedDialogPin", &_args, &_result); err != nil {
+	// var _args MessagesToggleSavedDialogPinArgs
+	// _args.Req = req
+	// var _result MessagesToggleSavedDialogPinResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.toggleSavedDialogPin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, req *tg.TLMessagesReorderPinnedSavedDialogs) (r *tg.Bool, err error) {
-	var _args MessagesReorderPinnedSavedDialogsArgs
-	_args.Req = req
-	var _result MessagesReorderPinnedSavedDialogsResult
-	if err = p.c.Call(ctx, "messages.reorderPinnedSavedDialogs", &_args, &_result); err != nil {
+	// var _args MessagesReorderPinnedSavedDialogsArgs
+	// _args.Req = req
+	// var _result MessagesReorderPinnedSavedDialogsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.reorderPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

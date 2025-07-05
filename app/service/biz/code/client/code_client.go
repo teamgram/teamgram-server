@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type CodeClient interface {
 	CodeCreatePhoneCode(ctx context.Context, in *code.TLCodeCreatePhoneCode) (*code.PhoneCodeTransaction, error)
 	CodeGetPhoneCode(ctx context.Context, in *code.TLCodeGetPhoneCode) (*code.PhoneCodeTransaction, error)

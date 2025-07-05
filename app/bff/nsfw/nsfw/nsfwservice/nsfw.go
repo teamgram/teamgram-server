@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -48,6 +49,12 @@ var (
 	nsfwServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCNsfw", nsfwServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCNsfw", nsfwServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCNsfw", nsfwServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return nsfwServiceServiceInfo
@@ -72,6 +79,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -368,21 +377,29 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountSetContentSettings(ctx context.Context, req *tg.TLAccountSetContentSettings) (r *tg.Bool, err error) {
-	var _args AccountSetContentSettingsArgs
-	_args.Req = req
-	var _result AccountSetContentSettingsResult
-	if err = p.c.Call(ctx, "account.setContentSettings", &_args, &_result); err != nil {
+	// var _args AccountSetContentSettingsArgs
+	// _args.Req = req
+	// var _result AccountSetContentSettingsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.setContentSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetContentSettings(ctx context.Context, req *tg.TLAccountGetContentSettings) (r *tg.AccountContentSettings, err error) {
-	var _args AccountGetContentSettingsArgs
-	_args.Req = req
-	var _result AccountGetContentSettingsResult
-	if err = p.c.Call(ctx, "account.getContentSettings", &_args, &_result); err != nil {
+	// var _args AccountGetContentSettingsArgs
+	// _args.Req = req
+	// var _result AccountGetContentSettingsResult
+
+	_result := new(tg.AccountContentSettings)
+	if err = p.c.Call(ctx, "account.getContentSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -91,6 +94,12 @@ var (
 	idgenServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCIdgen", idgenServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCIdgen", idgenServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCIdgen", idgenServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return idgenServiceServiceInfo
@@ -115,6 +124,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1167,81 +1178,121 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) IdgenNextId(ctx context.Context, req *idgen.TLIdgenNextId) (r *tg.Int64, err error) {
-	var _args NextIdArgs
-	_args.Req = req
-	var _result NextIdResult
-	if err = p.c.Call(ctx, "idgen.nextId", &_args, &_result); err != nil {
+	// var _args NextIdArgs
+	// _args.Req = req
+	// var _result NextIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "idgen.nextId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenNextIds(ctx context.Context, req *idgen.TLIdgenNextIds) (r *idgen.VectorLong, err error) {
-	var _args NextIdsArgs
-	_args.Req = req
-	var _result NextIdsResult
-	if err = p.c.Call(ctx, "idgen.nextIds", &_args, &_result); err != nil {
+	// var _args NextIdsArgs
+	// _args.Req = req
+	// var _result NextIdsResult
+
+	_result := new(idgen.VectorLong)
+
+	if err = p.c.Call(ctx, "idgen.nextIds", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenGetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenGetCurrentSeqId) (r *tg.Int64, err error) {
-	var _args GetCurrentSeqIdArgs
-	_args.Req = req
-	var _result GetCurrentSeqIdResult
-	if err = p.c.Call(ctx, "idgen.getCurrentSeqId", &_args, &_result); err != nil {
+	// var _args GetCurrentSeqIdArgs
+	// _args.Req = req
+	// var _result GetCurrentSeqIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "idgen.getCurrentSeqId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenSetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenSetCurrentSeqId) (r *tg.Bool, err error) {
-	var _args SetCurrentSeqIdArgs
-	_args.Req = req
-	var _result SetCurrentSeqIdResult
-	if err = p.c.Call(ctx, "idgen.setCurrentSeqId", &_args, &_result); err != nil {
+	// var _args SetCurrentSeqIdArgs
+	// _args.Req = req
+	// var _result SetCurrentSeqIdResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "idgen.setCurrentSeqId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenGetNextSeqId(ctx context.Context, req *idgen.TLIdgenGetNextSeqId) (r *tg.Int64, err error) {
-	var _args GetNextSeqIdArgs
-	_args.Req = req
-	var _result GetNextSeqIdResult
-	if err = p.c.Call(ctx, "idgen.getNextSeqId", &_args, &_result); err != nil {
+	// var _args GetNextSeqIdArgs
+	// _args.Req = req
+	// var _result GetNextSeqIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "idgen.getNextSeqId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenGetNextNSeqId(ctx context.Context, req *idgen.TLIdgenGetNextNSeqId) (r *tg.Int64, err error) {
-	var _args GetNextNSeqIdArgs
-	_args.Req = req
-	var _result GetNextNSeqIdResult
-	if err = p.c.Call(ctx, "idgen.getNextNSeqId", &_args, &_result); err != nil {
+	// var _args GetNextNSeqIdArgs
+	// _args.Req = req
+	// var _result GetNextNSeqIdResult
+
+	_result := new(tg.Int64)
+
+	if err = p.c.Call(ctx, "idgen.getNextNSeqId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenGetNextIdValList(ctx context.Context, req *idgen.TLIdgenGetNextIdValList) (r *idgen.VectorIdVal, err error) {
-	var _args GetNextIdValListArgs
-	_args.Req = req
-	var _result GetNextIdValListResult
-	if err = p.c.Call(ctx, "idgen.getNextIdValList", &_args, &_result); err != nil {
+	// var _args GetNextIdValListArgs
+	// _args.Req = req
+	// var _result GetNextIdValListResult
+
+	_result := new(idgen.VectorIdVal)
+
+	if err = p.c.Call(ctx, "idgen.getNextIdValList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) IdgenGetCurrentSeqIdList(ctx context.Context, req *idgen.TLIdgenGetCurrentSeqIdList) (r *idgen.VectorIdVal, err error) {
-	var _args GetCurrentSeqIdListArgs
-	_args.Req = req
-	var _result GetCurrentSeqIdListResult
-	if err = p.c.Call(ctx, "idgen.getCurrentSeqIdList", &_args, &_result); err != nil {
+	// var _args GetCurrentSeqIdListArgs
+	// _args.Req = req
+	// var _result GetCurrentSeqIdListResult
+
+	_result := new(idgen.VectorIdVal)
+
+	if err = p.c.Call(ctx, "idgen.getCurrentSeqIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -63,6 +66,12 @@ var (
 	codeServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCCode", codeServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCCode", codeServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCCode", codeServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return codeServiceServiceInfo
@@ -87,6 +96,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -635,41 +646,61 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) CodeCreatePhoneCode(ctx context.Context, req *code.TLCodeCreatePhoneCode) (r *code.PhoneCodeTransaction, err error) {
-	var _args CreatePhoneCodeArgs
-	_args.Req = req
-	var _result CreatePhoneCodeResult
-	if err = p.c.Call(ctx, "code.createPhoneCode", &_args, &_result); err != nil {
+	// var _args CreatePhoneCodeArgs
+	// _args.Req = req
+	// var _result CreatePhoneCodeResult
+
+	_result := new(code.PhoneCodeTransaction)
+
+	if err = p.c.Call(ctx, "code.createPhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) CodeGetPhoneCode(ctx context.Context, req *code.TLCodeGetPhoneCode) (r *code.PhoneCodeTransaction, err error) {
-	var _args GetPhoneCodeArgs
-	_args.Req = req
-	var _result GetPhoneCodeResult
-	if err = p.c.Call(ctx, "code.getPhoneCode", &_args, &_result); err != nil {
+	// var _args GetPhoneCodeArgs
+	// _args.Req = req
+	// var _result GetPhoneCodeResult
+
+	_result := new(code.PhoneCodeTransaction)
+
+	if err = p.c.Call(ctx, "code.getPhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) CodeDeletePhoneCode(ctx context.Context, req *code.TLCodeDeletePhoneCode) (r *tg.Bool, err error) {
-	var _args DeletePhoneCodeArgs
-	_args.Req = req
-	var _result DeletePhoneCodeResult
-	if err = p.c.Call(ctx, "code.deletePhoneCode", &_args, &_result); err != nil {
+	// var _args DeletePhoneCodeArgs
+	// _args.Req = req
+	// var _result DeletePhoneCodeResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "code.deletePhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) CodeUpdatePhoneCodeData(ctx context.Context, req *code.TLCodeUpdatePhoneCodeData) (r *tg.Bool, err error) {
-	var _args UpdatePhoneCodeDataArgs
-	_args.Req = req
-	var _result UpdatePhoneCodeDataResult
-	if err = p.c.Call(ctx, "code.updatePhoneCodeData", &_args, &_result); err != nil {
+	// var _args UpdatePhoneCodeDataArgs
+	// _args.Req = req
+	// var _result UpdatePhoneCodeDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "code.updatePhoneCodeData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

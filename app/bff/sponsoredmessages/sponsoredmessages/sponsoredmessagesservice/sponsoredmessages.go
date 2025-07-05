@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -83,6 +84,12 @@ var (
 	sponsoredmessagesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCSponsoredMessages", sponsoredmessagesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCSponsoredMessages", sponsoredmessagesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCSponsoredMessages", sponsoredmessagesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return sponsoredmessagesServiceServiceInfo
@@ -107,6 +114,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1033,71 +1042,99 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountToggleSponsoredMessages(ctx context.Context, req *tg.TLAccountToggleSponsoredMessages) (r *tg.Bool, err error) {
-	var _args AccountToggleSponsoredMessagesArgs
-	_args.Req = req
-	var _result AccountToggleSponsoredMessagesResult
-	if err = p.c.Call(ctx, "account.toggleSponsoredMessages", &_args, &_result); err != nil {
+	// var _args AccountToggleSponsoredMessagesArgs
+	// _args.Req = req
+	// var _result AccountToggleSponsoredMessagesResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.toggleSponsoredMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetSponsoredPeers(ctx context.Context, req *tg.TLContactsGetSponsoredPeers) (r *tg.ContactsSponsoredPeers, err error) {
-	var _args ContactsGetSponsoredPeersArgs
-	_args.Req = req
-	var _result ContactsGetSponsoredPeersResult
-	if err = p.c.Call(ctx, "contacts.getSponsoredPeers", &_args, &_result); err != nil {
+	// var _args ContactsGetSponsoredPeersArgs
+	// _args.Req = req
+	// var _result ContactsGetSponsoredPeersResult
+
+	_result := new(tg.ContactsSponsoredPeers)
+	if err = p.c.Call(ctx, "contacts.getSponsoredPeers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesViewSponsoredMessage(ctx context.Context, req *tg.TLMessagesViewSponsoredMessage) (r *tg.Bool, err error) {
-	var _args MessagesViewSponsoredMessageArgs
-	_args.Req = req
-	var _result MessagesViewSponsoredMessageResult
-	if err = p.c.Call(ctx, "messages.viewSponsoredMessage", &_args, &_result); err != nil {
+	// var _args MessagesViewSponsoredMessageArgs
+	// _args.Req = req
+	// var _result MessagesViewSponsoredMessageResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.viewSponsoredMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesClickSponsoredMessage(ctx context.Context, req *tg.TLMessagesClickSponsoredMessage) (r *tg.Bool, err error) {
-	var _args MessagesClickSponsoredMessageArgs
-	_args.Req = req
-	var _result MessagesClickSponsoredMessageResult
-	if err = p.c.Call(ctx, "messages.clickSponsoredMessage", &_args, &_result); err != nil {
+	// var _args MessagesClickSponsoredMessageArgs
+	// _args.Req = req
+	// var _result MessagesClickSponsoredMessageResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.clickSponsoredMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesReportSponsoredMessage(ctx context.Context, req *tg.TLMessagesReportSponsoredMessage) (r *tg.ChannelsSponsoredMessageReportResult, err error) {
-	var _args MessagesReportSponsoredMessageArgs
-	_args.Req = req
-	var _result MessagesReportSponsoredMessageResult
-	if err = p.c.Call(ctx, "messages.reportSponsoredMessage", &_args, &_result); err != nil {
+	// var _args MessagesReportSponsoredMessageArgs
+	// _args.Req = req
+	// var _result MessagesReportSponsoredMessageResult
+
+	_result := new(tg.ChannelsSponsoredMessageReportResult)
+	if err = p.c.Call(ctx, "messages.reportSponsoredMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetSponsoredMessages(ctx context.Context, req *tg.TLMessagesGetSponsoredMessages) (r *tg.MessagesSponsoredMessages, err error) {
-	var _args MessagesGetSponsoredMessagesArgs
-	_args.Req = req
-	var _result MessagesGetSponsoredMessagesResult
-	if err = p.c.Call(ctx, "messages.getSponsoredMessages", &_args, &_result); err != nil {
+	// var _args MessagesGetSponsoredMessagesArgs
+	// _args.Req = req
+	// var _result MessagesGetSponsoredMessagesResult
+
+	_result := new(tg.MessagesSponsoredMessages)
+	if err = p.c.Call(ctx, "messages.getSponsoredMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsRestrictSponsoredMessages(ctx context.Context, req *tg.TLChannelsRestrictSponsoredMessages) (r *tg.Updates, err error) {
-	var _args ChannelsRestrictSponsoredMessagesArgs
-	_args.Req = req
-	var _result ChannelsRestrictSponsoredMessagesResult
-	if err = p.c.Call(ctx, "channels.restrictSponsoredMessages", &_args, &_result); err != nil {
+	// var _args ChannelsRestrictSponsoredMessagesArgs
+	// _args.Req = req
+	// var _result ChannelsRestrictSponsoredMessagesResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "channels.restrictSponsoredMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

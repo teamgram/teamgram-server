@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -56,6 +59,12 @@ var (
 	updatesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUpdates", updatesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUpdates", updatesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUpdates", updatesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return updatesServiceServiceInfo
@@ -80,6 +89,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -502,31 +513,46 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) UpdatesGetStateV2(ctx context.Context, req *updates.TLUpdatesGetStateV2) (r *tg.UpdatesState, err error) {
-	var _args GetStateV2Args
-	_args.Req = req
-	var _result GetStateV2Result
-	if err = p.c.Call(ctx, "updates.getStateV2", &_args, &_result); err != nil {
+	// var _args GetStateV2Args
+	// _args.Req = req
+	// var _result GetStateV2Result
+
+	_result := new(tg.UpdatesState)
+
+	if err = p.c.Call(ctx, "updates.getStateV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UpdatesGetDifferenceV2(ctx context.Context, req *updates.TLUpdatesGetDifferenceV2) (r *updates.Difference, err error) {
-	var _args GetDifferenceV2Args
-	_args.Req = req
-	var _result GetDifferenceV2Result
-	if err = p.c.Call(ctx, "updates.getDifferenceV2", &_args, &_result); err != nil {
+	// var _args GetDifferenceV2Args
+	// _args.Req = req
+	// var _result GetDifferenceV2Result
+
+	_result := new(updates.Difference)
+
+	if err = p.c.Call(ctx, "updates.getDifferenceV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UpdatesGetChannelDifferenceV2(ctx context.Context, req *updates.TLUpdatesGetChannelDifferenceV2) (r *updates.ChannelDifference, err error) {
-	var _args GetChannelDifferenceV2Args
-	_args.Req = req
-	var _result GetChannelDifferenceV2Result
-	if err = p.c.Call(ctx, "updates.getChannelDifferenceV2", &_args, &_result); err != nil {
+	// var _args GetChannelDifferenceV2Args
+	// _args.Req = req
+	// var _result GetChannelDifferenceV2Result
+
+	_result := new(updates.ChannelDifference)
+
+	if err = p.c.Call(ctx, "updates.getChannelDifferenceV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

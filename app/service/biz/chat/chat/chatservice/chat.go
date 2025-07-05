@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -273,6 +276,12 @@ var (
 	chatServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCChat", chatServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCChat", chatServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCChat", chatServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return chatServiceServiceInfo
@@ -297,6 +306,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -4625,341 +4636,511 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) ChatGetMutableChat(ctx context.Context, req *chat.TLChatGetMutableChat) (r *tg.MutableChat, err error) {
-	var _args GetMutableChatArgs
-	_args.Req = req
-	var _result GetMutableChatResult
-	if err = p.c.Call(ctx, "chat.getMutableChat", &_args, &_result); err != nil {
+	// var _args GetMutableChatArgs
+	// _args.Req = req
+	// var _result GetMutableChatResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.getMutableChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatGetChatListByIdList) (r *chat.VectorMutableChat, err error) {
-	var _args GetChatListByIdListArgs
-	_args.Req = req
-	var _result GetChatListByIdListResult
-	if err = p.c.Call(ctx, "chat.getChatListByIdList", &_args, &_result); err != nil {
+	// var _args GetChatListByIdListArgs
+	// _args.Req = req
+	// var _result GetChatListByIdListResult
+
+	_result := new(chat.VectorMutableChat)
+
+	if err = p.c.Call(ctx, "chat.getChatListByIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetChatBySelfId) (r *tg.MutableChat, err error) {
-	var _args GetChatBySelfIdArgs
-	_args.Req = req
-	var _result GetChatBySelfIdResult
-	if err = p.c.Call(ctx, "chat.getChatBySelfId", &_args, &_result); err != nil {
+	// var _args GetChatBySelfIdArgs
+	// _args.Req = req
+	// var _result GetChatBySelfIdResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.getChatBySelfId", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatCreateChat2(ctx context.Context, req *chat.TLChatCreateChat2) (r *tg.MutableChat, err error) {
-	var _args CreateChat2Args
-	_args.Req = req
-	var _result CreateChat2Result
-	if err = p.c.Call(ctx, "chat.createChat2", &_args, &_result); err != nil {
+	// var _args CreateChat2Args
+	// _args.Req = req
+	// var _result CreateChat2Result
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.createChat2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatDeleteChat(ctx context.Context, req *chat.TLChatDeleteChat) (r *tg.MutableChat, err error) {
-	var _args DeleteChatArgs
-	_args.Req = req
-	var _result DeleteChatResult
-	if err = p.c.Call(ctx, "chat.deleteChat", &_args, &_result); err != nil {
+	// var _args DeleteChatArgs
+	// _args.Req = req
+	// var _result DeleteChatResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.deleteChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatDeleteChatUser(ctx context.Context, req *chat.TLChatDeleteChatUser) (r *tg.MutableChat, err error) {
-	var _args DeleteChatUserArgs
-	_args.Req = req
-	var _result DeleteChatUserResult
-	if err = p.c.Call(ctx, "chat.deleteChatUser", &_args, &_result); err != nil {
+	// var _args DeleteChatUserArgs
+	// _args.Req = req
+	// var _result DeleteChatUserResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.deleteChatUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditChatTitle(ctx context.Context, req *chat.TLChatEditChatTitle) (r *tg.MutableChat, err error) {
-	var _args EditChatTitleArgs
-	_args.Req = req
-	var _result EditChatTitleResult
-	if err = p.c.Call(ctx, "chat.editChatTitle", &_args, &_result); err != nil {
+	// var _args EditChatTitleArgs
+	// _args.Req = req
+	// var _result EditChatTitleResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.editChatTitle", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditChatAbout(ctx context.Context, req *chat.TLChatEditChatAbout) (r *tg.MutableChat, err error) {
-	var _args EditChatAboutArgs
-	_args.Req = req
-	var _result EditChatAboutResult
-	if err = p.c.Call(ctx, "chat.editChatAbout", &_args, &_result); err != nil {
+	// var _args EditChatAboutArgs
+	// _args.Req = req
+	// var _result EditChatAboutResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.editChatAbout", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditChatPhoto(ctx context.Context, req *chat.TLChatEditChatPhoto) (r *tg.MutableChat, err error) {
-	var _args EditChatPhotoArgs
-	_args.Req = req
-	var _result EditChatPhotoResult
-	if err = p.c.Call(ctx, "chat.editChatPhoto", &_args, &_result); err != nil {
+	// var _args EditChatPhotoArgs
+	// _args.Req = req
+	// var _result EditChatPhotoResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.editChatPhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditChatAdmin(ctx context.Context, req *chat.TLChatEditChatAdmin) (r *tg.MutableChat, err error) {
-	var _args EditChatAdminArgs
-	_args.Req = req
-	var _result EditChatAdminResult
-	if err = p.c.Call(ctx, "chat.editChatAdmin", &_args, &_result); err != nil {
+	// var _args EditChatAdminArgs
+	// _args.Req = req
+	// var _result EditChatAdminResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.editChatAdmin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditChatDefaultBannedRights(ctx context.Context, req *chat.TLChatEditChatDefaultBannedRights) (r *tg.MutableChat, err error) {
-	var _args EditChatDefaultBannedRightsArgs
-	_args.Req = req
-	var _result EditChatDefaultBannedRightsResult
-	if err = p.c.Call(ctx, "chat.editChatDefaultBannedRights", &_args, &_result); err != nil {
+	// var _args EditChatDefaultBannedRightsArgs
+	// _args.Req = req
+	// var _result EditChatDefaultBannedRightsResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.editChatDefaultBannedRights", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatAddChatUser(ctx context.Context, req *chat.TLChatAddChatUser) (r *tg.MutableChat, err error) {
-	var _args AddChatUserArgs
-	_args.Req = req
-	var _result AddChatUserResult
-	if err = p.c.Call(ctx, "chat.addChatUser", &_args, &_result); err != nil {
+	// var _args AddChatUserArgs
+	// _args.Req = req
+	// var _result AddChatUserResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.addChatUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetMutableChatByLink(ctx context.Context, req *chat.TLChatGetMutableChatByLink) (r *tg.MutableChat, err error) {
-	var _args GetMutableChatByLinkArgs
-	_args.Req = req
-	var _result GetMutableChatByLinkResult
-	if err = p.c.Call(ctx, "chat.getMutableChatByLink", &_args, &_result); err != nil {
+	// var _args GetMutableChatByLinkArgs
+	// _args.Req = req
+	// var _result GetMutableChatByLinkResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.getMutableChatByLink", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatToggleNoForwards(ctx context.Context, req *chat.TLChatToggleNoForwards) (r *tg.MutableChat, err error) {
-	var _args ToggleNoForwardsArgs
-	_args.Req = req
-	var _result ToggleNoForwardsResult
-	if err = p.c.Call(ctx, "chat.toggleNoForwards", &_args, &_result); err != nil {
+	// var _args ToggleNoForwardsArgs
+	// _args.Req = req
+	// var _result ToggleNoForwardsResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.toggleNoForwards", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatMigratedToChannel(ctx context.Context, req *chat.TLChatMigratedToChannel) (r *tg.Bool, err error) {
-	var _args MigratedToChannelArgs
-	_args.Req = req
-	var _result MigratedToChannelResult
-	if err = p.c.Call(ctx, "chat.migratedToChannel", &_args, &_result); err != nil {
+	// var _args MigratedToChannelArgs
+	// _args.Req = req
+	// var _result MigratedToChannelResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "chat.migratedToChannel", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetChatParticipantIdList(ctx context.Context, req *chat.TLChatGetChatParticipantIdList) (r *chat.VectorLong, err error) {
-	var _args GetChatParticipantIdListArgs
-	_args.Req = req
-	var _result GetChatParticipantIdListResult
-	if err = p.c.Call(ctx, "chat.getChatParticipantIdList", &_args, &_result); err != nil {
+	// var _args GetChatParticipantIdListArgs
+	// _args.Req = req
+	// var _result GetChatParticipantIdListResult
+
+	_result := new(chat.VectorLong)
+
+	if err = p.c.Call(ctx, "chat.getChatParticipantIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetUsersChatIdList(ctx context.Context, req *chat.TLChatGetUsersChatIdList) (r *chat.VectorUserChatIdList, err error) {
-	var _args GetUsersChatIdListArgs
-	_args.Req = req
-	var _result GetUsersChatIdListResult
-	if err = p.c.Call(ctx, "chat.getUsersChatIdList", &_args, &_result); err != nil {
+	// var _args GetUsersChatIdListArgs
+	// _args.Req = req
+	// var _result GetUsersChatIdListResult
+
+	_result := new(chat.VectorUserChatIdList)
+
+	if err = p.c.Call(ctx, "chat.getUsersChatIdList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetMyChatList(ctx context.Context, req *chat.TLChatGetMyChatList) (r *chat.VectorMutableChat, err error) {
-	var _args GetMyChatListArgs
-	_args.Req = req
-	var _result GetMyChatListResult
-	if err = p.c.Call(ctx, "chat.getMyChatList", &_args, &_result); err != nil {
+	// var _args GetMyChatListArgs
+	// _args.Req = req
+	// var _result GetMyChatListResult
+
+	_result := new(chat.VectorMutableChat)
+
+	if err = p.c.Call(ctx, "chat.getMyChatList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatExportChatInvite(ctx context.Context, req *chat.TLChatExportChatInvite) (r *tg.ExportedChatInvite, err error) {
-	var _args ExportChatInviteArgs
-	_args.Req = req
-	var _result ExportChatInviteResult
-	if err = p.c.Call(ctx, "chat.exportChatInvite", &_args, &_result); err != nil {
+	// var _args ExportChatInviteArgs
+	// _args.Req = req
+	// var _result ExportChatInviteResult
+
+	_result := new(tg.ExportedChatInvite)
+
+	if err = p.c.Call(ctx, "chat.exportChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetAdminsWithInvites(ctx context.Context, req *chat.TLChatGetAdminsWithInvites) (r *chat.VectorChatAdminWithInvites, err error) {
-	var _args GetAdminsWithInvitesArgs
-	_args.Req = req
-	var _result GetAdminsWithInvitesResult
-	if err = p.c.Call(ctx, "chat.getAdminsWithInvites", &_args, &_result); err != nil {
+	// var _args GetAdminsWithInvitesArgs
+	// _args.Req = req
+	// var _result GetAdminsWithInvitesResult
+
+	_result := new(chat.VectorChatAdminWithInvites)
+
+	if err = p.c.Call(ctx, "chat.getAdminsWithInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetExportedChatInvite(ctx context.Context, req *chat.TLChatGetExportedChatInvite) (r *tg.ExportedChatInvite, err error) {
-	var _args GetExportedChatInviteArgs
-	_args.Req = req
-	var _result GetExportedChatInviteResult
-	if err = p.c.Call(ctx, "chat.getExportedChatInvite", &_args, &_result); err != nil {
+	// var _args GetExportedChatInviteArgs
+	// _args.Req = req
+	// var _result GetExportedChatInviteResult
+
+	_result := new(tg.ExportedChatInvite)
+
+	if err = p.c.Call(ctx, "chat.getExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetExportedChatInvites(ctx context.Context, req *chat.TLChatGetExportedChatInvites) (r *chat.VectorExportedChatInvite, err error) {
-	var _args GetExportedChatInvitesArgs
-	_args.Req = req
-	var _result GetExportedChatInvitesResult
-	if err = p.c.Call(ctx, "chat.getExportedChatInvites", &_args, &_result); err != nil {
+	// var _args GetExportedChatInvitesArgs
+	// _args.Req = req
+	// var _result GetExportedChatInvitesResult
+
+	_result := new(chat.VectorExportedChatInvite)
+
+	if err = p.c.Call(ctx, "chat.getExportedChatInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatCheckChatInvite(ctx context.Context, req *chat.TLChatCheckChatInvite) (r *chat.ChatInviteExt, err error) {
-	var _args CheckChatInviteArgs
-	_args.Req = req
-	var _result CheckChatInviteResult
-	if err = p.c.Call(ctx, "chat.checkChatInvite", &_args, &_result); err != nil {
+	// var _args CheckChatInviteArgs
+	// _args.Req = req
+	// var _result CheckChatInviteResult
+
+	_result := new(chat.ChatInviteExt)
+
+	if err = p.c.Call(ctx, "chat.checkChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatImportChatInvite(ctx context.Context, req *chat.TLChatImportChatInvite) (r *tg.MutableChat, err error) {
-	var _args ImportChatInviteArgs
-	_args.Req = req
-	var _result ImportChatInviteResult
-	if err = p.c.Call(ctx, "chat.importChatInvite", &_args, &_result); err != nil {
+	// var _args ImportChatInviteArgs
+	// _args.Req = req
+	// var _result ImportChatInviteResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.importChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetChatInviteImporters(ctx context.Context, req *chat.TLChatGetChatInviteImporters) (r *chat.VectorChatInviteImporter, err error) {
-	var _args GetChatInviteImportersArgs
-	_args.Req = req
-	var _result GetChatInviteImportersResult
-	if err = p.c.Call(ctx, "chat.getChatInviteImporters", &_args, &_result); err != nil {
+	// var _args GetChatInviteImportersArgs
+	// _args.Req = req
+	// var _result GetChatInviteImportersResult
+
+	_result := new(chat.VectorChatInviteImporter)
+
+	if err = p.c.Call(ctx, "chat.getChatInviteImporters", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatDeleteExportedChatInvite(ctx context.Context, req *chat.TLChatDeleteExportedChatInvite) (r *tg.Bool, err error) {
-	var _args DeleteExportedChatInviteArgs
-	_args.Req = req
-	var _result DeleteExportedChatInviteResult
-	if err = p.c.Call(ctx, "chat.deleteExportedChatInvite", &_args, &_result); err != nil {
+	// var _args DeleteExportedChatInviteArgs
+	// _args.Req = req
+	// var _result DeleteExportedChatInviteResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "chat.deleteExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatDeleteRevokedExportedChatInvites(ctx context.Context, req *chat.TLChatDeleteRevokedExportedChatInvites) (r *tg.Bool, err error) {
-	var _args DeleteRevokedExportedChatInvitesArgs
-	_args.Req = req
-	var _result DeleteRevokedExportedChatInvitesResult
-	if err = p.c.Call(ctx, "chat.deleteRevokedExportedChatInvites", &_args, &_result); err != nil {
+	// var _args DeleteRevokedExportedChatInvitesArgs
+	// _args.Req = req
+	// var _result DeleteRevokedExportedChatInvitesResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "chat.deleteRevokedExportedChatInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatEditExportedChatInvite(ctx context.Context, req *chat.TLChatEditExportedChatInvite) (r *chat.VectorExportedChatInvite, err error) {
-	var _args EditExportedChatInviteArgs
-	_args.Req = req
-	var _result EditExportedChatInviteResult
-	if err = p.c.Call(ctx, "chat.editExportedChatInvite", &_args, &_result); err != nil {
+	// var _args EditExportedChatInviteArgs
+	// _args.Req = req
+	// var _result EditExportedChatInviteResult
+
+	_result := new(chat.VectorExportedChatInvite)
+
+	if err = p.c.Call(ctx, "chat.editExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatSetChatAvailableReactions(ctx context.Context, req *chat.TLChatSetChatAvailableReactions) (r *tg.MutableChat, err error) {
-	var _args SetChatAvailableReactionsArgs
-	_args.Req = req
-	var _result SetChatAvailableReactionsResult
-	if err = p.c.Call(ctx, "chat.setChatAvailableReactions", &_args, &_result); err != nil {
+	// var _args SetChatAvailableReactionsArgs
+	// _args.Req = req
+	// var _result SetChatAvailableReactionsResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.setChatAvailableReactions", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatSetHistoryTTL(ctx context.Context, req *chat.TLChatSetHistoryTTL) (r *tg.MutableChat, err error) {
-	var _args SetHistoryTTLArgs
-	_args.Req = req
-	var _result SetHistoryTTLResult
-	if err = p.c.Call(ctx, "chat.setHistoryTTL", &_args, &_result); err != nil {
+	// var _args SetHistoryTTLArgs
+	// _args.Req = req
+	// var _result SetHistoryTTLResult
+
+	_result := new(tg.MutableChat)
+
+	if err = p.c.Call(ctx, "chat.setHistoryTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatSearch(ctx context.Context, req *chat.TLChatSearch) (r *chat.VectorMutableChat, err error) {
-	var _args SearchArgs
-	_args.Req = req
-	var _result SearchResult
-	if err = p.c.Call(ctx, "chat.search", &_args, &_result); err != nil {
+	// var _args SearchArgs
+	// _args.Req = req
+	// var _result SearchResult
+
+	_result := new(chat.VectorMutableChat)
+
+	if err = p.c.Call(ctx, "chat.search", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatGetRecentChatInviteRequesters(ctx context.Context, req *chat.TLChatGetRecentChatInviteRequesters) (r *chat.RecentChatInviteRequesters, err error) {
-	var _args GetRecentChatInviteRequestersArgs
-	_args.Req = req
-	var _result GetRecentChatInviteRequestersResult
-	if err = p.c.Call(ctx, "chat.getRecentChatInviteRequesters", &_args, &_result); err != nil {
+	// var _args GetRecentChatInviteRequestersArgs
+	// _args.Req = req
+	// var _result GetRecentChatInviteRequestersResult
+
+	_result := new(chat.RecentChatInviteRequesters)
+
+	if err = p.c.Call(ctx, "chat.getRecentChatInviteRequesters", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatHideChatJoinRequests(ctx context.Context, req *chat.TLChatHideChatJoinRequests) (r *chat.RecentChatInviteRequesters, err error) {
-	var _args HideChatJoinRequestsArgs
-	_args.Req = req
-	var _result HideChatJoinRequestsResult
-	if err = p.c.Call(ctx, "chat.hideChatJoinRequests", &_args, &_result); err != nil {
+	// var _args HideChatJoinRequestsArgs
+	// _args.Req = req
+	// var _result HideChatJoinRequestsResult
+
+	_result := new(chat.RecentChatInviteRequesters)
+
+	if err = p.c.Call(ctx, "chat.hideChatJoinRequests", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChatImportChatInvite2(ctx context.Context, req *chat.TLChatImportChatInvite2) (r *chat.ChatInviteImported, err error) {
-	var _args ImportChatInvite2Args
-	_args.Req = req
-	var _result ImportChatInvite2Result
-	if err = p.c.Call(ctx, "chat.importChatInvite2", &_args, &_result); err != nil {
+	// var _args ImportChatInvite2Args
+	// _args.Req = req
+	// var _result ImportChatInvite2Result
+
+	_result := new(chat.ChatInviteImported)
+
+	if err = p.c.Call(ctx, "chat.importChatInvite2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -147,6 +150,12 @@ var (
 	mediaServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCMedia", mediaServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCMedia", mediaServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCMedia", mediaServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return mediaServiceServiceInfo
@@ -171,6 +180,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -2231,161 +2242,241 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MediaUploadPhotoFile(ctx context.Context, req *media.TLMediaUploadPhotoFile) (r *tg.Photo, err error) {
-	var _args UploadPhotoFileArgs
-	_args.Req = req
-	var _result UploadPhotoFileResult
-	if err = p.c.Call(ctx, "media.uploadPhotoFile", &_args, &_result); err != nil {
+	// var _args UploadPhotoFileArgs
+	// _args.Req = req
+	// var _result UploadPhotoFileResult
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "media.uploadPhotoFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadProfilePhotoFile(ctx context.Context, req *media.TLMediaUploadProfilePhotoFile) (r *tg.Photo, err error) {
-	var _args UploadProfilePhotoFileArgs
-	_args.Req = req
-	var _result UploadProfilePhotoFileResult
-	if err = p.c.Call(ctx, "media.uploadProfilePhotoFile", &_args, &_result); err != nil {
+	// var _args UploadProfilePhotoFileArgs
+	// _args.Req = req
+	// var _result UploadProfilePhotoFileResult
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "media.uploadProfilePhotoFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetPhoto(ctx context.Context, req *media.TLMediaGetPhoto) (r *tg.Photo, err error) {
-	var _args GetPhotoArgs
-	_args.Req = req
-	var _result GetPhotoResult
-	if err = p.c.Call(ctx, "media.getPhoto", &_args, &_result); err != nil {
+	// var _args GetPhotoArgs
+	// _args.Req = req
+	// var _result GetPhotoResult
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "media.getPhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetPhotoSizeList(ctx context.Context, req *media.TLMediaGetPhotoSizeList) (r *media.PhotoSizeList, err error) {
-	var _args GetPhotoSizeListArgs
-	_args.Req = req
-	var _result GetPhotoSizeListResult
-	if err = p.c.Call(ctx, "media.getPhotoSizeList", &_args, &_result); err != nil {
+	// var _args GetPhotoSizeListArgs
+	// _args.Req = req
+	// var _result GetPhotoSizeListResult
+
+	_result := new(media.PhotoSizeList)
+
+	if err = p.c.Call(ctx, "media.getPhotoSizeList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetPhotoSizeListList(ctx context.Context, req *media.TLMediaGetPhotoSizeListList) (r *media.VectorPhotoSizeList, err error) {
-	var _args GetPhotoSizeListListArgs
-	_args.Req = req
-	var _result GetPhotoSizeListListResult
-	if err = p.c.Call(ctx, "media.getPhotoSizeListList", &_args, &_result); err != nil {
+	// var _args GetPhotoSizeListListArgs
+	// _args.Req = req
+	// var _result GetPhotoSizeListListResult
+
+	_result := new(media.VectorPhotoSizeList)
+
+	if err = p.c.Call(ctx, "media.getPhotoSizeListList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetVideoSizeList(ctx context.Context, req *media.TLMediaGetVideoSizeList) (r *media.VideoSizeList, err error) {
-	var _args GetVideoSizeListArgs
-	_args.Req = req
-	var _result GetVideoSizeListResult
-	if err = p.c.Call(ctx, "media.getVideoSizeList", &_args, &_result); err != nil {
+	// var _args GetVideoSizeListArgs
+	// _args.Req = req
+	// var _result GetVideoSizeListResult
+
+	_result := new(media.VideoSizeList)
+
+	if err = p.c.Call(ctx, "media.getVideoSizeList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadedDocumentMedia(ctx context.Context, req *media.TLMediaUploadedDocumentMedia) (r *tg.MessageMedia, err error) {
-	var _args UploadedDocumentMediaArgs
-	_args.Req = req
-	var _result UploadedDocumentMediaResult
-	if err = p.c.Call(ctx, "media.uploadedDocumentMedia", &_args, &_result); err != nil {
+	// var _args UploadedDocumentMediaArgs
+	// _args.Req = req
+	// var _result UploadedDocumentMediaResult
+
+	_result := new(tg.MessageMedia)
+
+	if err = p.c.Call(ctx, "media.uploadedDocumentMedia", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetDocument(ctx context.Context, req *media.TLMediaGetDocument) (r *tg.Document, err error) {
-	var _args GetDocumentArgs
-	_args.Req = req
-	var _result GetDocumentResult
-	if err = p.c.Call(ctx, "media.getDocument", &_args, &_result); err != nil {
+	// var _args GetDocumentArgs
+	// _args.Req = req
+	// var _result GetDocumentResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "media.getDocument", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetDocumentList(ctx context.Context, req *media.TLMediaGetDocumentList) (r *media.VectorDocument, err error) {
-	var _args GetDocumentListArgs
-	_args.Req = req
-	var _result GetDocumentListResult
-	if err = p.c.Call(ctx, "media.getDocumentList", &_args, &_result); err != nil {
+	// var _args GetDocumentListArgs
+	// _args.Req = req
+	// var _result GetDocumentListResult
+
+	_result := new(media.VectorDocument)
+
+	if err = p.c.Call(ctx, "media.getDocumentList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadEncryptedFile(ctx context.Context, req *media.TLMediaUploadEncryptedFile) (r *tg.EncryptedFile, err error) {
-	var _args UploadEncryptedFileArgs
-	_args.Req = req
-	var _result UploadEncryptedFileResult
-	if err = p.c.Call(ctx, "media.uploadEncryptedFile", &_args, &_result); err != nil {
+	// var _args UploadEncryptedFileArgs
+	// _args.Req = req
+	// var _result UploadEncryptedFileResult
+
+	_result := new(tg.EncryptedFile)
+
+	if err = p.c.Call(ctx, "media.uploadEncryptedFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaGetEncryptedFile(ctx context.Context, req *media.TLMediaGetEncryptedFile) (r *tg.EncryptedFile, err error) {
-	var _args GetEncryptedFileArgs
-	_args.Req = req
-	var _result GetEncryptedFileResult
-	if err = p.c.Call(ctx, "media.getEncryptedFile", &_args, &_result); err != nil {
+	// var _args GetEncryptedFileArgs
+	// _args.Req = req
+	// var _result GetEncryptedFileResult
+
+	_result := new(tg.EncryptedFile)
+
+	if err = p.c.Call(ctx, "media.getEncryptedFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadWallPaperFile(ctx context.Context, req *media.TLMediaUploadWallPaperFile) (r *tg.Document, err error) {
-	var _args UploadWallPaperFileArgs
-	_args.Req = req
-	var _result UploadWallPaperFileResult
-	if err = p.c.Call(ctx, "media.uploadWallPaperFile", &_args, &_result); err != nil {
+	// var _args UploadWallPaperFileArgs
+	// _args.Req = req
+	// var _result UploadWallPaperFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "media.uploadWallPaperFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadThemeFile(ctx context.Context, req *media.TLMediaUploadThemeFile) (r *tg.Document, err error) {
-	var _args UploadThemeFileArgs
-	_args.Req = req
-	var _result UploadThemeFileResult
-	if err = p.c.Call(ctx, "media.uploadThemeFile", &_args, &_result); err != nil {
+	// var _args UploadThemeFileArgs
+	// _args.Req = req
+	// var _result UploadThemeFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "media.uploadThemeFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadStickerFile(ctx context.Context, req *media.TLMediaUploadStickerFile) (r *tg.Document, err error) {
-	var _args UploadStickerFileArgs
-	_args.Req = req
-	var _result UploadStickerFileResult
-	if err = p.c.Call(ctx, "media.uploadStickerFile", &_args, &_result); err != nil {
+	// var _args UploadStickerFileArgs
+	// _args.Req = req
+	// var _result UploadStickerFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "media.uploadStickerFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadRingtoneFile(ctx context.Context, req *media.TLMediaUploadRingtoneFile) (r *tg.Document, err error) {
-	var _args UploadRingtoneFileArgs
-	_args.Req = req
-	var _result UploadRingtoneFileResult
-	if err = p.c.Call(ctx, "media.uploadRingtoneFile", &_args, &_result); err != nil {
+	// var _args UploadRingtoneFileArgs
+	// _args.Req = req
+	// var _result UploadRingtoneFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "media.uploadRingtoneFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMediaUploadedProfilePhoto) (r *tg.Photo, err error) {
-	var _args UploadedProfilePhotoArgs
-	_args.Req = req
-	var _result UploadedProfilePhotoResult
-	if err = p.c.Call(ctx, "media.uploadedProfilePhoto", &_args, &_result); err != nil {
+	// var _args UploadedProfilePhotoArgs
+	// _args.Req = req
+	// var _result UploadedProfilePhotoResult
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "media.uploadedProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

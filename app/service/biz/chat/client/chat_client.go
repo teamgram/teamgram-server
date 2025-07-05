@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type ChatClient interface {
 	ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*tg.MutableChat, error)
 	ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error)

@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type IdgenClient interface {
 	IdgenNextId(ctx context.Context, in *idgen.TLIdgenNextId) (*tg.Int64, error)
 	IdgenNextIds(ctx context.Context, in *idgen.TLIdgenNextIds) (*idgen.VectorLong, error)

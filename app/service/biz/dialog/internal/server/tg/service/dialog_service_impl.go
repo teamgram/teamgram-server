@@ -24,7 +24,7 @@ var _ *tg.Bool
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.saveDraftMessage - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.saveDraftMessage - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogSaveDraftMessage(request)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TL
 // dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.clearDraftMessage - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.clearDraftMessage - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogClearDraftMessage(request)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.T
 // dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (s *Service) DialogGetAllDrafts(ctx context.Context, request *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getAllDrafts - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getAllDrafts - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetAllDrafts(request)
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *Service) DialogGetAllDrafts(ctx context.Context, request *dialog.TLDial
 // dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (s *Service) DialogClearAllDrafts(ctx context.Context, request *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.clearAllDrafts - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.clearAllDrafts - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogClearAllDrafts(request)
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *Service) DialogClearAllDrafts(ctx context.Context, request *dialog.TLDi
 // dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
 func (s *Service) DialogMarkDialogUnread(ctx context.Context, request *dialog.TLDialogMarkDialogUnread) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.markDialogUnread - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.markDialogUnread - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogMarkDialogUnread(request)
 	if err != nil {
@@ -99,7 +99,7 @@ func (s *Service) DialogMarkDialogUnread(ctx context.Context, request *dialog.TL
 // dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 func (s *Service) DialogToggleDialogPin(ctx context.Context, request *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.toggleDialogPin - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.toggleDialogPin - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogToggleDialogPin(request)
 	if err != nil {
@@ -114,7 +114,7 @@ func (s *Service) DialogToggleDialogPin(ctx context.Context, request *dialog.TLD
 // dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 func (s *Service) DialogGetDialogUnreadMarkList(ctx context.Context, request *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.VectorDialogPeer, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogUnreadMarkList - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogUnreadMarkList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogUnreadMarkList(request)
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *Service) DialogGetDialogUnreadMarkList(ctx context.Context, request *di
 // dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 func (s *Service) DialogGetDialogsByOffsetDate(ctx context.Context, request *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsByOffsetDate - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogsByOffsetDate - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogsByOffsetDate(request)
 	if err != nil {
@@ -144,7 +144,7 @@ func (s *Service) DialogGetDialogsByOffsetDate(ctx context.Context, request *dia
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (s *Service) DialogGetDialogs(ctx context.Context, request *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogs(request)
 	if err != nil {
@@ -159,7 +159,7 @@ func (s *Service) DialogGetDialogs(ctx context.Context, request *dialog.TLDialog
 // dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 func (s *Service) DialogGetDialogsByIdList(ctx context.Context, request *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsByIdList - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogsByIdList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogsByIdList(request)
 	if err != nil {
@@ -174,7 +174,7 @@ func (s *Service) DialogGetDialogsByIdList(ctx context.Context, request *dialog.
 // dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 func (s *Service) DialogGetDialogsCount(ctx context.Context, request *dialog.TLDialogGetDialogsCount) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsCount - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogsCount - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogsCount(request)
 	if err != nil {
@@ -189,7 +189,7 @@ func (s *Service) DialogGetDialogsCount(ctx context.Context, request *dialog.TLD
 // dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 func (s *Service) DialogGetPinnedDialogs(ctx context.Context, request *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getPinnedDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getPinnedDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetPinnedDialogs(request)
 	if err != nil {
@@ -204,7 +204,7 @@ func (s *Service) DialogGetPinnedDialogs(ctx context.Context, request *dialog.TL
 // dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
 func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.reorderPinnedDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.reorderPinnedDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogReorderPinnedDialogs(request)
 	if err != nil {
@@ -219,7 +219,7 @@ func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialo
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (s *Service) DialogGetDialogById(ctx context.Context, request *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogById - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogById - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogById(request)
 	if err != nil {
@@ -234,7 +234,7 @@ func (s *Service) DialogGetDialogById(ctx context.Context, request *dialog.TLDia
 // dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
 func (s *Service) DialogGetTopMessage(ctx context.Context, request *dialog.TLDialogGetTopMessage) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getTopMessage - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getTopMessage - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetTopMessage(request)
 	if err != nil {
@@ -249,7 +249,7 @@ func (s *Service) DialogGetTopMessage(ctx context.Context, request *dialog.TLDia
 // dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long pinned_msg_id:flags.6?int = Bool;
 func (s *Service) DialogInsertOrUpdateDialog(ctx context.Context, request *dialog.TLDialogInsertOrUpdateDialog) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.insertOrUpdateDialog - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.insertOrUpdateDialog - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogInsertOrUpdateDialog(request)
 	if err != nil {
@@ -264,7 +264,7 @@ func (s *Service) DialogInsertOrUpdateDialog(ctx context.Context, request *dialo
 // dialog.deleteDialog user_id:long peer_type:int peer_id:long = Bool;
 func (s *Service) DialogDeleteDialog(ctx context.Context, request *dialog.TLDialogDeleteDialog) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.deleteDialog - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.deleteDialog - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogDeleteDialog(request)
 	if err != nil {
@@ -279,7 +279,7 @@ func (s *Service) DialogDeleteDialog(ctx context.Context, request *dialog.TLDial
 // dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 func (s *Service) DialogGetUserPinnedMessage(ctx context.Context, request *dialog.TLDialogGetUserPinnedMessage) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getUserPinnedMessage - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getUserPinnedMessage - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetUserPinnedMessage(request)
 	if err != nil {
@@ -294,7 +294,7 @@ func (s *Service) DialogGetUserPinnedMessage(ctx context.Context, request *dialo
 // dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 func (s *Service) DialogUpdateUserPinnedMessage(ctx context.Context, request *dialog.TLDialogUpdateUserPinnedMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.updateUserPinnedMessage - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.updateUserPinnedMessage - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogUpdateUserPinnedMessage(request)
 	if err != nil {
@@ -309,7 +309,7 @@ func (s *Service) DialogUpdateUserPinnedMessage(ctx context.Context, request *di
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (s *Service) DialogInsertOrUpdateDialogFilter(ctx context.Context, request *dialog.TLDialogInsertOrUpdateDialogFilter) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.insertOrUpdateDialogFilter - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.insertOrUpdateDialogFilter - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogInsertOrUpdateDialogFilter(request)
 	if err != nil {
@@ -324,7 +324,7 @@ func (s *Service) DialogInsertOrUpdateDialogFilter(ctx context.Context, request 
 // dialog.deleteDialogFilter user_id:long id:int = Bool;
 func (s *Service) DialogDeleteDialogFilter(ctx context.Context, request *dialog.TLDialogDeleteDialogFilter) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.deleteDialogFilter - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.deleteDialogFilter - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogDeleteDialogFilter(request)
 	if err != nil {
@@ -339,7 +339,7 @@ func (s *Service) DialogDeleteDialogFilter(ctx context.Context, request *dialog.
 // dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 func (s *Service) DialogUpdateDialogFiltersOrder(ctx context.Context, request *dialog.TLDialogUpdateDialogFiltersOrder) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.updateDialogFiltersOrder - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.updateDialogFiltersOrder - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogUpdateDialogFiltersOrder(request)
 	if err != nil {
@@ -354,7 +354,7 @@ func (s *Service) DialogUpdateDialogFiltersOrder(ctx context.Context, request *d
 // dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 func (s *Service) DialogGetDialogFilters(ctx context.Context, request *dialog.TLDialogGetDialogFilters) (*dialog.VectorDialogFilterExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogFilters - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogFilters - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogFilters(request)
 	if err != nil {
@@ -369,7 +369,7 @@ func (s *Service) DialogGetDialogFilters(ctx context.Context, request *dialog.TL
 // dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 func (s *Service) DialogGetDialogFolder(ctx context.Context, request *dialog.TLDialogGetDialogFolder) (*dialog.VectorDialogExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogFolder - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogFolder - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogFolder(request)
 	if err != nil {
@@ -384,7 +384,7 @@ func (s *Service) DialogGetDialogFolder(ctx context.Context, request *dialog.TLD
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.editPeerFolders - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.editPeerFolders - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogEditPeerFolders(request)
 	if err != nil {
@@ -399,7 +399,7 @@ func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLD
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (s *Service) DialogGetChannelMessageReadParticipants(ctx context.Context, request *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getChannelMessageReadParticipants - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getChannelMessageReadParticipants - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetChannelMessageReadParticipants(request)
 	if err != nil {
@@ -414,7 +414,7 @@ func (s *Service) DialogGetChannelMessageReadParticipants(ctx context.Context, r
 // dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
 func (s *Service) DialogSetChatTheme(ctx context.Context, request *dialog.TLDialogSetChatTheme) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.setChatTheme - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.setChatTheme - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogSetChatTheme(request)
 	if err != nil {
@@ -429,7 +429,7 @@ func (s *Service) DialogSetChatTheme(ctx context.Context, request *dialog.TLDial
 // dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
 func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.setHistoryTTL - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.setHistoryTTL - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogSetHistoryTTL(request)
 	if err != nil {
@@ -444,7 +444,7 @@ func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDia
 // dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getMyDialogsData - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getMyDialogsData - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetMyDialogsData(request)
 	if err != nil {
@@ -459,7 +459,7 @@ func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TL
 // dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
 func (s *Service) DialogGetSavedDialogs(ctx context.Context, request *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getSavedDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getSavedDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetSavedDialogs(request)
 	if err != nil {
@@ -474,7 +474,7 @@ func (s *Service) DialogGetSavedDialogs(ctx context.Context, request *dialog.TLD
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getPinnedSavedDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getPinnedSavedDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetPinnedSavedDialogs(request)
 	if err != nil {
@@ -489,7 +489,7 @@ func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dial
 // dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 func (s *Service) DialogToggleSavedDialogPin(ctx context.Context, request *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.toggleSavedDialogPin - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.toggleSavedDialogPin - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogToggleSavedDialogPin(request)
 	if err != nil {
@@ -504,7 +504,7 @@ func (s *Service) DialogToggleSavedDialogPin(ctx context.Context, request *dialo
 // dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
 func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *dialog.TLDialogReorderPinnedSavedDialogs) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.reorderPinnedSavedDialogs - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogReorderPinnedSavedDialogs(request)
 	if err != nil {
@@ -519,7 +519,7 @@ func (s *Service) DialogReorderPinnedSavedDialogs(ctx context.Context, request *
 // dialog.getDialogFilter user_id:long id:int = DialogFilterExt;
 func (s *Service) DialogGetDialogFilter(ctx context.Context, request *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogFilter - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogFilter - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogFilter(request)
 	if err != nil {
@@ -534,7 +534,7 @@ func (s *Service) DialogGetDialogFilter(ctx context.Context, request *dialog.TLD
 // dialog.getDialogFilterBySlug user_id:long slug:string = DialogFilterExt;
 func (s *Service) DialogGetDialogFilterBySlug(ctx context.Context, request *dialog.TLDialogGetDialogFilterBySlug) (*dialog.DialogFilterExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogFilterBySlug - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogFilterBySlug - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogFilterBySlug(request)
 	if err != nil {
@@ -549,7 +549,7 @@ func (s *Service) DialogGetDialogFilterBySlug(ctx context.Context, request *dial
 // dialog.createDialogFilter user_id:long dialog_filter:DialogFilterExt = DialogFilterExt;
 func (s *Service) DialogCreateDialogFilter(ctx context.Context, request *dialog.TLDialogCreateDialogFilter) (*dialog.DialogFilterExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.createDialogFilter - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.createDialogFilter - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogCreateDialogFilter(request)
 	if err != nil {
@@ -564,7 +564,7 @@ func (s *Service) DialogCreateDialogFilter(ctx context.Context, request *dialog.
 // dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (s *Service) DialogUpdateUnreadCount(ctx context.Context, request *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.updateUnreadCount - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.updateUnreadCount - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogUpdateUnreadCount(request)
 	if err != nil {
@@ -579,7 +579,7 @@ func (s *Service) DialogUpdateUnreadCount(ctx context.Context, request *dialog.T
 // dialog.toggleDialogFilterTags user_id:long enabled:Bool = Bool;
 func (s *Service) DialogToggleDialogFilterTags(ctx context.Context, request *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.toggleDialogFilterTags - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.toggleDialogFilterTags - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogToggleDialogFilterTags(request)
 	if err != nil {
@@ -594,7 +594,7 @@ func (s *Service) DialogToggleDialogFilterTags(ctx context.Context, request *dia
 // dialog.getDialogFilterTags user_id:long = Bool;
 func (s *Service) DialogGetDialogFilterTags(ctx context.Context, request *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogFilterTags - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.getDialogFilterTags - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogGetDialogFilterTags(request)
 	if err != nil {
@@ -609,7 +609,7 @@ func (s *Service) DialogGetDialogFilterTags(ctx context.Context, request *dialog
 // dialog.setChatWallpaper flags:# user_id:long peer_type:int peer_id:long wallpaper_id:long wallpaper_overridden:flags.0?true = Bool;
 func (s *Service) DialogSetChatWallpaper(ctx context.Context, request *dialog.TLDialogSetChatWallpaper) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.setChatWallpaper - metadata: {}, request: %s", request)
+	c.Logger.Debugf("dialog.setChatWallpaper - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DialogSetChatWallpaper(request)
 	if err != nil {

@@ -15,9 +15,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/teamgram/proto/v2/iface"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -72,6 +72,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -242,11 +244,15 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) HelpSaveAppLog(ctx context.Context, req *tg.TLHelpSaveAppLog) (r *tg.Bool, err error) {
-	var _args HelpSaveAppLogArgs
-	_args.Req = req
-	var _result HelpSaveAppLogResult
-	if err = p.c.Call(ctx, "help.saveAppLog", &_args, &_result); err != nil {
+	// var _args HelpSaveAppLogArgs
+	// _args.Req = req
+	// var _result HelpSaveAppLogResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "help.saveAppLog", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

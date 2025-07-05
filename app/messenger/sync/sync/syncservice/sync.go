@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -84,6 +87,12 @@ var (
 	syncServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCSync", syncServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCSync", syncServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCSync", syncServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return syncServiceServiceInfo
@@ -108,6 +117,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1034,71 +1045,106 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) SyncUpdatesMe(ctx context.Context, req *sync.TLSyncUpdatesMe) (r *tg.Void, err error) {
-	var _args UpdatesMeArgs
-	_args.Req = req
-	var _result UpdatesMeResult
-	if err = p.c.Call(ctx, "sync.updatesMe", &_args, &_result); err != nil {
+	// var _args UpdatesMeArgs
+	// _args.Req = req
+	// var _result UpdatesMeResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.updatesMe", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncUpdatesNotMe(ctx context.Context, req *sync.TLSyncUpdatesNotMe) (r *tg.Void, err error) {
-	var _args UpdatesNotMeArgs
-	_args.Req = req
-	var _result UpdatesNotMeResult
-	if err = p.c.Call(ctx, "sync.updatesNotMe", &_args, &_result); err != nil {
+	// var _args UpdatesNotMeArgs
+	// _args.Req = req
+	// var _result UpdatesNotMeResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.updatesNotMe", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncPushUpdates(ctx context.Context, req *sync.TLSyncPushUpdates) (r *tg.Void, err error) {
-	var _args PushUpdatesArgs
-	_args.Req = req
-	var _result PushUpdatesResult
-	if err = p.c.Call(ctx, "sync.pushUpdates", &_args, &_result); err != nil {
+	// var _args PushUpdatesArgs
+	// _args.Req = req
+	// var _result PushUpdatesResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.pushUpdates", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncPushUpdatesIfNot(ctx context.Context, req *sync.TLSyncPushUpdatesIfNot) (r *tg.Void, err error) {
-	var _args PushUpdatesIfNotArgs
-	_args.Req = req
-	var _result PushUpdatesIfNotResult
-	if err = p.c.Call(ctx, "sync.pushUpdatesIfNot", &_args, &_result); err != nil {
+	// var _args PushUpdatesIfNotArgs
+	// _args.Req = req
+	// var _result PushUpdatesIfNotResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.pushUpdatesIfNot", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncPushBotUpdates(ctx context.Context, req *sync.TLSyncPushBotUpdates) (r *tg.Void, err error) {
-	var _args PushBotUpdatesArgs
-	_args.Req = req
-	var _result PushBotUpdatesResult
-	if err = p.c.Call(ctx, "sync.pushBotUpdates", &_args, &_result); err != nil {
+	// var _args PushBotUpdatesArgs
+	// _args.Req = req
+	// var _result PushBotUpdatesResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.pushBotUpdates", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncPushRpcResult(ctx context.Context, req *sync.TLSyncPushRpcResult) (r *tg.Void, err error) {
-	var _args PushRpcResultArgs
-	_args.Req = req
-	var _result PushRpcResultResult
-	if err = p.c.Call(ctx, "sync.pushRpcResult", &_args, &_result); err != nil {
+	// var _args PushRpcResultArgs
+	// _args.Req = req
+	// var _result PushRpcResultResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.pushRpcResult", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) SyncBroadcastUpdates(ctx context.Context, req *sync.TLSyncBroadcastUpdates) (r *tg.Void, err error) {
-	var _args BroadcastUpdatesArgs
-	_args.Req = req
-	var _result BroadcastUpdatesResult
-	if err = p.c.Call(ctx, "sync.broadcastUpdates", &_args, &_result); err != nil {
+	// var _args BroadcastUpdatesArgs
+	// _args.Req = req
+	// var _result BroadcastUpdatesResult
+
+	_result := new(tg.Void)
+
+	if err = p.c.Call(ctx, "sync.broadcastUpdates", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

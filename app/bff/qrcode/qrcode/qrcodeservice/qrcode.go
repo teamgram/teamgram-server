@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -55,6 +56,12 @@ var (
 	qrcodeServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCQrCode", qrcodeServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCQrCode", qrcodeServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCQrCode", qrcodeServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return qrcodeServiceServiceInfo
@@ -79,6 +86,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -501,31 +510,43 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AuthExportLoginToken(ctx context.Context, req *tg.TLAuthExportLoginToken) (r *tg.AuthLoginToken, err error) {
-	var _args AuthExportLoginTokenArgs
-	_args.Req = req
-	var _result AuthExportLoginTokenResult
-	if err = p.c.Call(ctx, "auth.exportLoginToken", &_args, &_result); err != nil {
+	// var _args AuthExportLoginTokenArgs
+	// _args.Req = req
+	// var _result AuthExportLoginTokenResult
+
+	_result := new(tg.AuthLoginToken)
+	if err = p.c.Call(ctx, "auth.exportLoginToken", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthImportLoginToken(ctx context.Context, req *tg.TLAuthImportLoginToken) (r *tg.AuthLoginToken, err error) {
-	var _args AuthImportLoginTokenArgs
-	_args.Req = req
-	var _result AuthImportLoginTokenResult
-	if err = p.c.Call(ctx, "auth.importLoginToken", &_args, &_result); err != nil {
+	// var _args AuthImportLoginTokenArgs
+	// _args.Req = req
+	// var _result AuthImportLoginTokenResult
+
+	_result := new(tg.AuthLoginToken)
+	if err = p.c.Call(ctx, "auth.importLoginToken", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AuthAcceptLoginToken(ctx context.Context, req *tg.TLAuthAcceptLoginToken) (r *tg.Authorization, err error) {
-	var _args AuthAcceptLoginTokenArgs
-	_args.Req = req
-	var _result AuthAcceptLoginTokenResult
-	if err = p.c.Call(ctx, "auth.acceptLoginToken", &_args, &_result); err != nil {
+	// var _args AuthAcceptLoginTokenArgs
+	// _args.Req = req
+	// var _result AuthAcceptLoginTokenResult
+
+	_result := new(tg.Authorization)
+	if err = p.c.Call(ctx, "auth.acceptLoginToken", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

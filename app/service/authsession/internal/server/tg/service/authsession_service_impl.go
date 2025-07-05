@@ -24,7 +24,7 @@ var _ *tg.Bool
 // authsession.getAuthorizations user_id:long exclude_auth_keyId:long = account.Authorizations;
 func (s *Service) AuthsessionGetAuthorizations(ctx context.Context, request *authsession.TLAuthsessionGetAuthorizations) (*tg.AccountAuthorizations, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getAuthorizations - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getAuthorizations - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetAuthorizations(request)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Service) AuthsessionGetAuthorizations(ctx context.Context, request *aut
 // authsession.resetAuthorization user_id:long auth_key_id:long hash:long = Vector<long>;
 func (s *Service) AuthsessionResetAuthorization(ctx context.Context, request *authsession.TLAuthsessionResetAuthorization) (*authsession.VectorLong, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.resetAuthorization - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.resetAuthorization - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionResetAuthorization(request)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *Service) AuthsessionResetAuthorization(ctx context.Context, request *au
 // authsession.getLayer auth_key_id:long = Int32;
 func (s *Service) AuthsessionGetLayer(ctx context.Context, request *authsession.TLAuthsessionGetLayer) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getLayer - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getLayer - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetLayer(request)
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *Service) AuthsessionGetLayer(ctx context.Context, request *authsession.
 // authsession.getLangPack auth_key_id:long = String;
 func (s *Service) AuthsessionGetLangPack(ctx context.Context, request *authsession.TLAuthsessionGetLangPack) (*tg.String, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getLangPack - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getLangPack - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetLangPack(request)
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *Service) AuthsessionGetLangPack(ctx context.Context, request *authsessi
 // authsession.getClient auth_key_id:long = String;
 func (s *Service) AuthsessionGetClient(ctx context.Context, request *authsession.TLAuthsessionGetClient) (*tg.String, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getClient - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getClient - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetClient(request)
 	if err != nil {
@@ -99,7 +99,7 @@ func (s *Service) AuthsessionGetClient(ctx context.Context, request *authsession
 // authsession.getLangCode auth_key_id:long = String;
 func (s *Service) AuthsessionGetLangCode(ctx context.Context, request *authsession.TLAuthsessionGetLangCode) (*tg.String, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getLangCode - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getLangCode - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetLangCode(request)
 	if err != nil {
@@ -114,7 +114,7 @@ func (s *Service) AuthsessionGetLangCode(ctx context.Context, request *authsessi
 // authsession.getUserId auth_key_id:long = Int64;
 func (s *Service) AuthsessionGetUserId(ctx context.Context, request *authsession.TLAuthsessionGetUserId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getUserId - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getUserId - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetUserId(request)
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *Service) AuthsessionGetUserId(ctx context.Context, request *authsession
 // authsession.getPushSessionId user_id:long auth_key_id:long token_type:int = Int64;
 func (s *Service) AuthsessionGetPushSessionId(ctx context.Context, request *authsession.TLAuthsessionGetPushSessionId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getPushSessionId - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getPushSessionId - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetPushSessionId(request)
 	if err != nil {
@@ -144,7 +144,7 @@ func (s *Service) AuthsessionGetPushSessionId(ctx context.Context, request *auth
 // authsession.getFutureSalts auth_key_id:long num:int = FutureSalts;
 func (s *Service) AuthsessionGetFutureSalts(ctx context.Context, request *authsession.TLAuthsessionGetFutureSalts) (*tg.FutureSalts, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getFutureSalts - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getFutureSalts - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetFutureSalts(request)
 	if err != nil {
@@ -159,7 +159,7 @@ func (s *Service) AuthsessionGetFutureSalts(ctx context.Context, request *authse
 // authsession.queryAuthKey auth_key_id:long = AuthKeyInfo;
 func (s *Service) AuthsessionQueryAuthKey(ctx context.Context, request *authsession.TLAuthsessionQueryAuthKey) (*tg.AuthKeyInfo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.queryAuthKey - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.queryAuthKey - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionQueryAuthKey(request)
 	if err != nil {
@@ -174,7 +174,7 @@ func (s *Service) AuthsessionQueryAuthKey(ctx context.Context, request *authsess
 // authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (s *Service) AuthsessionSetAuthKey(ctx context.Context, request *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.setAuthKey - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.setAuthKey - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionSetAuthKey(request)
 	if err != nil {
@@ -189,7 +189,7 @@ func (s *Service) AuthsessionSetAuthKey(ctx context.Context, request *authsessio
 // authsession.bindAuthKeyUser auth_key_id:long user_id:long = Int64;
 func (s *Service) AuthsessionBindAuthKeyUser(ctx context.Context, request *authsession.TLAuthsessionBindAuthKeyUser) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.bindAuthKeyUser - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.bindAuthKeyUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionBindAuthKeyUser(request)
 	if err != nil {
@@ -204,7 +204,7 @@ func (s *Service) AuthsessionBindAuthKeyUser(ctx context.Context, request *auths
 // authsession.unbindAuthKeyUser auth_key_id:long user_id:long = Bool;
 func (s *Service) AuthsessionUnbindAuthKeyUser(ctx context.Context, request *authsession.TLAuthsessionUnbindAuthKeyUser) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.unbindAuthKeyUser - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.unbindAuthKeyUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionUnbindAuthKeyUser(request)
 	if err != nil {
@@ -219,7 +219,7 @@ func (s *Service) AuthsessionUnbindAuthKeyUser(ctx context.Context, request *aut
 // authsession.getPermAuthKeyId auth_key_id:long= Int64;
 func (s *Service) AuthsessionGetPermAuthKeyId(ctx context.Context, request *authsession.TLAuthsessionGetPermAuthKeyId) (*tg.Int64, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getPermAuthKeyId - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getPermAuthKeyId - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetPermAuthKeyId(request)
 	if err != nil {
@@ -234,7 +234,7 @@ func (s *Service) AuthsessionGetPermAuthKeyId(ctx context.Context, request *auth
 // authsession.bindTempAuthKey perm_auth_key_id:long nonce:long expires_at:int encrypted_message:bytes = Bool;
 func (s *Service) AuthsessionBindTempAuthKey(ctx context.Context, request *authsession.TLAuthsessionBindTempAuthKey) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.bindTempAuthKey - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.bindTempAuthKey - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionBindTempAuthKey(request)
 	if err != nil {
@@ -249,7 +249,7 @@ func (s *Service) AuthsessionBindTempAuthKey(ctx context.Context, request *auths
 // authsession.setClientSessionInfo data:ClientSession = Bool;
 func (s *Service) AuthsessionSetClientSessionInfo(ctx context.Context, request *authsession.TLAuthsessionSetClientSessionInfo) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.setClientSessionInfo - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.setClientSessionInfo - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionSetClientSessionInfo(request)
 	if err != nil {
@@ -264,7 +264,7 @@ func (s *Service) AuthsessionSetClientSessionInfo(ctx context.Context, request *
 // authsession.getAuthorization auth_key_id:long = Authorization;
 func (s *Service) AuthsessionGetAuthorization(ctx context.Context, request *authsession.TLAuthsessionGetAuthorization) (*tg.Authorization, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getAuthorization - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getAuthorization - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetAuthorization(request)
 	if err != nil {
@@ -279,7 +279,7 @@ func (s *Service) AuthsessionGetAuthorization(ctx context.Context, request *auth
 // authsession.getAuthStateData auth_key_id:long = AuthKeyStateData;
 func (s *Service) AuthsessionGetAuthStateData(ctx context.Context, request *authsession.TLAuthsessionGetAuthStateData) (*authsession.AuthKeyStateData, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.getAuthStateData - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.getAuthStateData - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionGetAuthStateData(request)
 	if err != nil {
@@ -294,7 +294,7 @@ func (s *Service) AuthsessionGetAuthStateData(ctx context.Context, request *auth
 // authsession.setLayer auth_key_id:long ip:string layer:int = Bool;
 func (s *Service) AuthsessionSetLayer(ctx context.Context, request *authsession.TLAuthsessionSetLayer) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.setLayer - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.setLayer - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionSetLayer(request)
 	if err != nil {
@@ -309,7 +309,7 @@ func (s *Service) AuthsessionSetLayer(ctx context.Context, request *authsession.
 // authsession.setInitConnection auth_key_id:long ip:string api_id:int device_model:string system_version:string app_version:string system_lang_code:string lang_pack:string lang_code:string proxy:string params:string = Bool;
 func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *authsession.TLAuthsessionSetInitConnection) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.setInitConnection - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.setInitConnection - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionSetInitConnection(request)
 	if err != nil {
@@ -324,7 +324,7 @@ func (s *Service) AuthsessionSetInitConnection(ctx context.Context, request *aut
 // authsession.setAndroidPushSessionId user_id:long auth_key_id:long session_id:long = Bool;
 func (s *Service) AuthsessionSetAndroidPushSessionId(ctx context.Context, request *authsession.TLAuthsessionSetAndroidPushSessionId) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("authsession.setAndroidPushSessionId - metadata: {}, request: %s", request)
+	c.Logger.Debugf("authsession.setAndroidPushSessionId - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthsessionSetAndroidPushSessionId(request)
 	if err != nil {

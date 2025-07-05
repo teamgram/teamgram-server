@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type DfsClient interface {
 	DfsWriteFilePartData(ctx context.Context, in *dfs.TLDfsWriteFilePartData) (*tg.Bool, error)
 	DfsUploadPhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error)

@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type SyncClient interface {
 	SyncUpdatesMe(ctx context.Context, in *sync.TLSyncUpdatesMe) (*tg.Void, error)
 	SyncUpdatesNotMe(ctx context.Context, in *sync.TLSyncUpdatesNotMe) (*tg.Void, error)
@@ -62,7 +64,7 @@ func (m *defaultSyncClient) SyncPushUpdates(ctx context.Context, in *sync.TLSync
 }
 
 // SyncPushUpdatesIfNot
-// sync.pushUpdatesIfNot user_id:long excludes:Vector<long> updates:Updates = Void;
+// sync.pushUpdatesIfNot flags:# user_id:long includes:flags.0?Vector<long> excludes:flags.1?Vector<long> updates:Updates = Void;
 func (m *defaultSyncClient) SyncPushUpdatesIfNot(ctx context.Context, in *sync.TLSyncPushUpdatesIfNot) (*tg.Void, error) {
 	cli := syncservice.NewRPCSyncClient(m.cli)
 	return cli.SyncPushUpdatesIfNot(ctx, in)

@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -119,6 +122,12 @@ var (
 	dfsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCDfs", dfsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCDfs", dfsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCDfs", dfsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return dfsServiceServiceInfo
@@ -143,6 +152,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1699,121 +1710,181 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) DfsWriteFilePartData(ctx context.Context, req *dfs.TLDfsWriteFilePartData) (r *tg.Bool, err error) {
-	var _args WriteFilePartDataArgs
-	_args.Req = req
-	var _result WriteFilePartDataResult
-	if err = p.c.Call(ctx, "dfs.writeFilePartData", &_args, &_result); err != nil {
+	// var _args WriteFilePartDataArgs
+	// _args.Req = req
+	// var _result WriteFilePartDataResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "dfs.writeFilePartData", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadPhotoFileV2(ctx context.Context, req *dfs.TLDfsUploadPhotoFileV2) (r *tg.Photo, err error) {
-	var _args UploadPhotoFileV2Args
-	_args.Req = req
-	var _result UploadPhotoFileV2Result
-	if err = p.c.Call(ctx, "dfs.uploadPhotoFileV2", &_args, &_result); err != nil {
+	// var _args UploadPhotoFileV2Args
+	// _args.Req = req
+	// var _result UploadPhotoFileV2Result
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "dfs.uploadPhotoFileV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadProfilePhotoFileV2(ctx context.Context, req *dfs.TLDfsUploadProfilePhotoFileV2) (r *tg.Photo, err error) {
-	var _args UploadProfilePhotoFileV2Args
-	_args.Req = req
-	var _result UploadProfilePhotoFileV2Result
-	if err = p.c.Call(ctx, "dfs.uploadProfilePhotoFileV2", &_args, &_result); err != nil {
+	// var _args UploadProfilePhotoFileV2Args
+	// _args.Req = req
+	// var _result UploadProfilePhotoFileV2Result
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "dfs.uploadProfilePhotoFileV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadEncryptedFileV2(ctx context.Context, req *dfs.TLDfsUploadEncryptedFileV2) (r *tg.EncryptedFile, err error) {
-	var _args UploadEncryptedFileV2Args
-	_args.Req = req
-	var _result UploadEncryptedFileV2Result
-	if err = p.c.Call(ctx, "dfs.uploadEncryptedFileV2", &_args, &_result); err != nil {
+	// var _args UploadEncryptedFileV2Args
+	// _args.Req = req
+	// var _result UploadEncryptedFileV2Result
+
+	_result := new(tg.EncryptedFile)
+
+	if err = p.c.Call(ctx, "dfs.uploadEncryptedFileV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsDownloadFile(ctx context.Context, req *dfs.TLDfsDownloadFile) (r *tg.UploadFile, err error) {
-	var _args DownloadFileArgs
-	_args.Req = req
-	var _result DownloadFileResult
-	if err = p.c.Call(ctx, "dfs.downloadFile", &_args, &_result); err != nil {
+	// var _args DownloadFileArgs
+	// _args.Req = req
+	// var _result DownloadFileResult
+
+	_result := new(tg.UploadFile)
+
+	if err = p.c.Call(ctx, "dfs.downloadFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadDocumentFileV2(ctx context.Context, req *dfs.TLDfsUploadDocumentFileV2) (r *tg.Document, err error) {
-	var _args UploadDocumentFileV2Args
-	_args.Req = req
-	var _result UploadDocumentFileV2Result
-	if err = p.c.Call(ctx, "dfs.uploadDocumentFileV2", &_args, &_result); err != nil {
+	// var _args UploadDocumentFileV2Args
+	// _args.Req = req
+	// var _result UploadDocumentFileV2Result
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadDocumentFileV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadGifDocumentMedia(ctx context.Context, req *dfs.TLDfsUploadGifDocumentMedia) (r *tg.Document, err error) {
-	var _args UploadGifDocumentMediaArgs
-	_args.Req = req
-	var _result UploadGifDocumentMediaResult
-	if err = p.c.Call(ctx, "dfs.uploadGifDocumentMedia", &_args, &_result); err != nil {
+	// var _args UploadGifDocumentMediaArgs
+	// _args.Req = req
+	// var _result UploadGifDocumentMediaResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadGifDocumentMedia", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadMp4DocumentMedia(ctx context.Context, req *dfs.TLDfsUploadMp4DocumentMedia) (r *tg.Document, err error) {
-	var _args UploadMp4DocumentMediaArgs
-	_args.Req = req
-	var _result UploadMp4DocumentMediaResult
-	if err = p.c.Call(ctx, "dfs.uploadMp4DocumentMedia", &_args, &_result); err != nil {
+	// var _args UploadMp4DocumentMediaArgs
+	// _args.Req = req
+	// var _result UploadMp4DocumentMediaResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadMp4DocumentMedia", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadWallPaperFile(ctx context.Context, req *dfs.TLDfsUploadWallPaperFile) (r *tg.Document, err error) {
-	var _args UploadWallPaperFileArgs
-	_args.Req = req
-	var _result UploadWallPaperFileResult
-	if err = p.c.Call(ctx, "dfs.uploadWallPaperFile", &_args, &_result); err != nil {
+	// var _args UploadWallPaperFileArgs
+	// _args.Req = req
+	// var _result UploadWallPaperFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadWallPaperFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadThemeFile(ctx context.Context, req *dfs.TLDfsUploadThemeFile) (r *tg.Document, err error) {
-	var _args UploadThemeFileArgs
-	_args.Req = req
-	var _result UploadThemeFileResult
-	if err = p.c.Call(ctx, "dfs.uploadThemeFile", &_args, &_result); err != nil {
+	// var _args UploadThemeFileArgs
+	// _args.Req = req
+	// var _result UploadThemeFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadThemeFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadRingtoneFile(ctx context.Context, req *dfs.TLDfsUploadRingtoneFile) (r *tg.Document, err error) {
-	var _args UploadRingtoneFileArgs
-	_args.Req = req
-	var _result UploadRingtoneFileResult
-	if err = p.c.Call(ctx, "dfs.uploadRingtoneFile", &_args, &_result); err != nil {
+	// var _args UploadRingtoneFileArgs
+	// _args.Req = req
+	// var _result UploadRingtoneFileResult
+
+	_result := new(tg.Document)
+
+	if err = p.c.Call(ctx, "dfs.uploadRingtoneFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) DfsUploadedProfilePhoto(ctx context.Context, req *dfs.TLDfsUploadedProfilePhoto) (r *tg.Photo, err error) {
-	var _args UploadedProfilePhotoArgs
-	_args.Req = req
-	var _result UploadedProfilePhotoResult
-	if err = p.c.Call(ctx, "dfs.uploadedProfilePhoto", &_args, &_result); err != nil {
+	// var _args UploadedProfilePhotoArgs
+	// _args.Req = req
+	// var _result UploadedProfilePhotoResult
+
+	_result := new(tg.Photo)
+
+	if err = p.c.Call(ctx, "dfs.uploadedProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

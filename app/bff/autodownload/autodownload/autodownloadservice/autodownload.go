@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -48,6 +49,12 @@ var (
 	autodownloadServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCAutoDownload", autodownloadServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCAutoDownload", autodownloadServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCAutoDownload", autodownloadServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return autodownloadServiceServiceInfo
@@ -72,6 +79,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -368,21 +377,29 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountGetAutoDownloadSettings(ctx context.Context, req *tg.TLAccountGetAutoDownloadSettings) (r *tg.AccountAutoDownloadSettings, err error) {
-	var _args AccountGetAutoDownloadSettingsArgs
-	_args.Req = req
-	var _result AccountGetAutoDownloadSettingsResult
-	if err = p.c.Call(ctx, "account.getAutoDownloadSettings", &_args, &_result); err != nil {
+	// var _args AccountGetAutoDownloadSettingsArgs
+	// _args.Req = req
+	// var _result AccountGetAutoDownloadSettingsResult
+
+	_result := new(tg.AccountAutoDownloadSettings)
+	if err = p.c.Call(ctx, "account.getAutoDownloadSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSaveAutoDownloadSettings(ctx context.Context, req *tg.TLAccountSaveAutoDownloadSettings) (r *tg.Bool, err error) {
-	var _args AccountSaveAutoDownloadSettingsArgs
-	_args.Req = req
-	var _result AccountSaveAutoDownloadSettingsResult
-	if err = p.c.Call(ctx, "account.saveAutoDownloadSettings", &_args, &_result); err != nil {
+	// var _args AccountSaveAutoDownloadSettingsArgs
+	// _args.Req = req
+	// var _result AccountSaveAutoDownloadSettingsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.saveAutoDownloadSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

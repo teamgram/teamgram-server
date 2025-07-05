@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -55,6 +56,12 @@ var (
 	updatesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUpdates", updatesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUpdates", updatesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUpdates", updatesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return updatesServiceServiceInfo
@@ -79,6 +86,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -501,31 +510,43 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) UpdatesGetState(ctx context.Context, req *tg.TLUpdatesGetState) (r *tg.UpdatesState, err error) {
-	var _args UpdatesGetStateArgs
-	_args.Req = req
-	var _result UpdatesGetStateResult
-	if err = p.c.Call(ctx, "updates.getState", &_args, &_result); err != nil {
+	// var _args UpdatesGetStateArgs
+	// _args.Req = req
+	// var _result UpdatesGetStateResult
+
+	_result := new(tg.UpdatesState)
+	if err = p.c.Call(ctx, "updates.getState", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UpdatesGetDifference(ctx context.Context, req *tg.TLUpdatesGetDifference) (r *tg.UpdatesDifference, err error) {
-	var _args UpdatesGetDifferenceArgs
-	_args.Req = req
-	var _result UpdatesGetDifferenceResult
-	if err = p.c.Call(ctx, "updates.getDifference", &_args, &_result); err != nil {
+	// var _args UpdatesGetDifferenceArgs
+	// _args.Req = req
+	// var _result UpdatesGetDifferenceResult
+
+	_result := new(tg.UpdatesDifference)
+	if err = p.c.Call(ctx, "updates.getDifference", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UpdatesGetChannelDifference(ctx context.Context, req *tg.TLUpdatesGetChannelDifference) (r *tg.UpdatesChannelDifference, err error) {
-	var _args UpdatesGetChannelDifferenceArgs
-	_args.Req = req
-	var _result UpdatesGetChannelDifferenceResult
-	if err = p.c.Call(ctx, "updates.getChannelDifference", &_args, &_result); err != nil {
+	// var _args UpdatesGetChannelDifferenceArgs
+	// _args.Req = req
+	// var _result UpdatesGetChannelDifferenceResult
+
+	_result := new(tg.UpdatesChannelDifference)
+	if err = p.c.Call(ctx, "updates.getChannelDifference", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

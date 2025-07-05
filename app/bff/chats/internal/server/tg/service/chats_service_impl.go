@@ -21,14 +21,14 @@ import (
 // messages.getChats#49e9528f id:Vector<long> = messages.Chats;
 func (s *Service) MessagesGetChats(ctx context.Context, request *tg.TLMessagesGetChats) (*tg.MessagesChats, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getChats - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.getChats - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesGetChats(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getChats - reply: {%v}", r)
+	c.Logger.Debugf("messages.getChats - reply: %s", r)
 	return r, err
 }
 
@@ -36,14 +36,14 @@ func (s *Service) MessagesGetChats(ctx context.Context, request *tg.TLMessagesGe
 // messages.getFullChat#aeb00b34 chat_id:long = messages.ChatFull;
 func (s *Service) MessagesGetFullChat(ctx context.Context, request *tg.TLMessagesGetFullChat) (*tg.MessagesChatFull, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getFullChat - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.getFullChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesGetFullChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getFullChat - reply: {%v}", r)
+	c.Logger.Debugf("messages.getFullChat - reply: %s", r)
 	return r, err
 }
 
@@ -51,14 +51,14 @@ func (s *Service) MessagesGetFullChat(ctx context.Context, request *tg.TLMessage
 // messages.editChatTitle#73783ffd chat_id:long title:string = Updates;
 func (s *Service) MessagesEditChatTitle(ctx context.Context, request *tg.TLMessagesEditChatTitle) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.editChatTitle - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.editChatTitle - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesEditChatTitle(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.editChatTitle - reply: {%v}", r)
+	c.Logger.Debugf("messages.editChatTitle - reply: %s", r)
 	return r, err
 }
 
@@ -66,14 +66,14 @@ func (s *Service) MessagesEditChatTitle(ctx context.Context, request *tg.TLMessa
 // messages.editChatPhoto#35ddd674 chat_id:long photo:InputChatPhoto = Updates;
 func (s *Service) MessagesEditChatPhoto(ctx context.Context, request *tg.TLMessagesEditChatPhoto) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.editChatPhoto - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.editChatPhoto - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesEditChatPhoto(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.editChatPhoto - reply: {%v}", r)
+	c.Logger.Debugf("messages.editChatPhoto - reply: %s", r)
 	return r, err
 }
 
@@ -81,14 +81,14 @@ func (s *Service) MessagesEditChatPhoto(ctx context.Context, request *tg.TLMessa
 // messages.addChatUser#cbc6d107 chat_id:long user_id:InputUser fwd_limit:int = messages.InvitedUsers;
 func (s *Service) MessagesAddChatUser(ctx context.Context, request *tg.TLMessagesAddChatUser) (*tg.MessagesInvitedUsers, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.addChatUser - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.addChatUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesAddChatUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.addChatUser - reply: {%v}", r)
+	c.Logger.Debugf("messages.addChatUser - reply: %s", r)
 	return r, err
 }
 
@@ -96,14 +96,14 @@ func (s *Service) MessagesAddChatUser(ctx context.Context, request *tg.TLMessage
 // messages.deleteChatUser#a2185cab flags:# revoke_history:flags.0?true chat_id:long user_id:InputUser = Updates;
 func (s *Service) MessagesDeleteChatUser(ctx context.Context, request *tg.TLMessagesDeleteChatUser) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.deleteChatUser - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.deleteChatUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesDeleteChatUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.deleteChatUser - reply: {%v}", r)
+	c.Logger.Debugf("messages.deleteChatUser - reply: %s", r)
 	return r, err
 }
 
@@ -111,14 +111,14 @@ func (s *Service) MessagesDeleteChatUser(ctx context.Context, request *tg.TLMess
 // messages.createChat#92ceddd4 flags:# users:Vector<InputUser> title:string ttl_period:flags.0?int = messages.InvitedUsers;
 func (s *Service) MessagesCreateChat(ctx context.Context, request *tg.TLMessagesCreateChat) (*tg.MessagesInvitedUsers, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.createChat - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.createChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesCreateChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.createChat - reply: {%v}", r)
+	c.Logger.Debugf("messages.createChat - reply: %s", r)
 	return r, err
 }
 
@@ -126,14 +126,14 @@ func (s *Service) MessagesCreateChat(ctx context.Context, request *tg.TLMessages
 // messages.editChatAdmin#a85bd1c2 chat_id:long user_id:InputUser is_admin:Bool = Bool;
 func (s *Service) MessagesEditChatAdmin(ctx context.Context, request *tg.TLMessagesEditChatAdmin) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.editChatAdmin - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.editChatAdmin - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesEditChatAdmin(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.editChatAdmin - reply: {%v}", r)
+	c.Logger.Debugf("messages.editChatAdmin - reply: %s", r)
 	return r, err
 }
 
@@ -141,14 +141,14 @@ func (s *Service) MessagesEditChatAdmin(ctx context.Context, request *tg.TLMessa
 // messages.migrateChat#a2875319 chat_id:long = Updates;
 func (s *Service) MessagesMigrateChat(ctx context.Context, request *tg.TLMessagesMigrateChat) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.migrateChat - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.migrateChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesMigrateChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.migrateChat - reply: {%v}", r)
+	c.Logger.Debugf("messages.migrateChat - reply: %s", r)
 	return r, err
 }
 
@@ -156,14 +156,14 @@ func (s *Service) MessagesMigrateChat(ctx context.Context, request *tg.TLMessage
 // messages.getCommonChats#e40ca104 user_id:InputUser max_id:long limit:int = messages.Chats;
 func (s *Service) MessagesGetCommonChats(ctx context.Context, request *tg.TLMessagesGetCommonChats) (*tg.MessagesChats, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getCommonChats - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.getCommonChats - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesGetCommonChats(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getCommonChats - reply: {%v}", r)
+	c.Logger.Debugf("messages.getCommonChats - reply: %s", r)
 	return r, err
 }
 
@@ -171,14 +171,14 @@ func (s *Service) MessagesGetCommonChats(ctx context.Context, request *tg.TLMess
 // messages.editChatAbout#def60797 peer:InputPeer about:string = Bool;
 func (s *Service) MessagesEditChatAbout(ctx context.Context, request *tg.TLMessagesEditChatAbout) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.editChatAbout - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.editChatAbout - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesEditChatAbout(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.editChatAbout - reply: {%v}", r)
+	c.Logger.Debugf("messages.editChatAbout - reply: %s", r)
 	return r, err
 }
 
@@ -186,14 +186,14 @@ func (s *Service) MessagesEditChatAbout(ctx context.Context, request *tg.TLMessa
 // messages.editChatDefaultBannedRights#a5866b41 peer:InputPeer banned_rights:ChatBannedRights = Updates;
 func (s *Service) MessagesEditChatDefaultBannedRights(ctx context.Context, request *tg.TLMessagesEditChatDefaultBannedRights) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.editChatDefaultBannedRights - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.editChatDefaultBannedRights - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesEditChatDefaultBannedRights(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.editChatDefaultBannedRights - reply: {%v}", r)
+	c.Logger.Debugf("messages.editChatDefaultBannedRights - reply: %s", r)
 	return r, err
 }
 
@@ -201,14 +201,14 @@ func (s *Service) MessagesEditChatDefaultBannedRights(ctx context.Context, reque
 // messages.deleteChat#5bd0ee50 chat_id:long = Bool;
 func (s *Service) MessagesDeleteChat(ctx context.Context, request *tg.TLMessagesDeleteChat) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.deleteChat - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.deleteChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesDeleteChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.deleteChat - reply: {%v}", r)
+	c.Logger.Debugf("messages.deleteChat - reply: %s", r)
 	return r, err
 }
 
@@ -216,14 +216,14 @@ func (s *Service) MessagesDeleteChat(ctx context.Context, request *tg.TLMessages
 // messages.getMessageReadParticipants#31c1c44f peer:InputPeer msg_id:int = Vector<ReadParticipantDate>;
 func (s *Service) MessagesGetMessageReadParticipants(ctx context.Context, request *tg.TLMessagesGetMessageReadParticipants) (*tg.VectorReadParticipantDate, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.getMessageReadParticipants - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("messages.getMessageReadParticipants - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.MessagesGetMessageReadParticipants(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.getMessageReadParticipants - reply: {%v}", r)
+	c.Logger.Debugf("messages.getMessageReadParticipants - reply: %s", r)
 	return r, err
 }
 
@@ -231,14 +231,14 @@ func (s *Service) MessagesGetMessageReadParticipants(ctx context.Context, reques
 // channels.convertToGigagroup#b290c69 channel:InputChannel = Updates;
 func (s *Service) ChannelsConvertToGigagroup(ctx context.Context, request *tg.TLChannelsConvertToGigagroup) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.convertToGigagroup - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("channels.convertToGigagroup - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChannelsConvertToGigagroup(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("channels.convertToGigagroup - reply: {%v}", r)
+	c.Logger.Debugf("channels.convertToGigagroup - reply: %s", r)
 	return r, err
 }
 
@@ -246,13 +246,13 @@ func (s *Service) ChannelsConvertToGigagroup(ctx context.Context, request *tg.TL
 // channels.setEmojiStickers#3cd930b7 channel:InputChannel stickerset:InputStickerSet = Bool;
 func (s *Service) ChannelsSetEmojiStickers(ctx context.Context, request *tg.TLChannelsSetEmojiStickers) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("channels.setEmojiStickers - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("channels.setEmojiStickers - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChannelsSetEmojiStickers(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("channels.setEmojiStickers - reply: {%v}", r)
+	c.Logger.Debugf("channels.setEmojiStickers - reply: %s", r)
 	return r, err
 }

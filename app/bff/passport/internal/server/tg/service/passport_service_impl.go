@@ -21,14 +21,14 @@ import (
 // account.getAuthorizations#e320c158 = account.Authorizations;
 func (s *Service) AccountGetAuthorizations(ctx context.Context, request *tg.TLAccountGetAuthorizations) (*tg.AccountAuthorizations, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getAuthorizations - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getAuthorizations - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetAuthorizations(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getAuthorizations - reply: {%v}", r)
+	c.Logger.Debugf("account.getAuthorizations - reply: %s", r)
 	return r, err
 }
 
@@ -36,14 +36,14 @@ func (s *Service) AccountGetAuthorizations(ctx context.Context, request *tg.TLAc
 // account.getAllSecureValues#b288bc7d = Vector<SecureValue>;
 func (s *Service) AccountGetAllSecureValues(ctx context.Context, request *tg.TLAccountGetAllSecureValues) (*tg.VectorSecureValue, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getAllSecureValues - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getAllSecureValues - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetAllSecureValues(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getAllSecureValues - reply: {%v}", r)
+	c.Logger.Debugf("account.getAllSecureValues - reply: %s", r)
 	return r, err
 }
 
@@ -51,14 +51,14 @@ func (s *Service) AccountGetAllSecureValues(ctx context.Context, request *tg.TLA
 // account.getSecureValue#73665bc2 types:Vector<SecureValueType> = Vector<SecureValue>;
 func (s *Service) AccountGetSecureValue(ctx context.Context, request *tg.TLAccountGetSecureValue) (*tg.VectorSecureValue, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getSecureValue - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getSecureValue - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetSecureValue(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getSecureValue - reply: {%v}", r)
+	c.Logger.Debugf("account.getSecureValue - reply: %s", r)
 	return r, err
 }
 
@@ -66,14 +66,14 @@ func (s *Service) AccountGetSecureValue(ctx context.Context, request *tg.TLAccou
 // account.saveSecureValue#899fe31d value:InputSecureValue secure_secret_id:long = SecureValue;
 func (s *Service) AccountSaveSecureValue(ctx context.Context, request *tg.TLAccountSaveSecureValue) (*tg.SecureValue, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.saveSecureValue - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.saveSecureValue - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountSaveSecureValue(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.saveSecureValue - reply: {%v}", r)
+	c.Logger.Debugf("account.saveSecureValue - reply: %s", r)
 	return r, err
 }
 
@@ -81,14 +81,14 @@ func (s *Service) AccountSaveSecureValue(ctx context.Context, request *tg.TLAcco
 // account.deleteSecureValue#b880bc4b types:Vector<SecureValueType> = Bool;
 func (s *Service) AccountDeleteSecureValue(ctx context.Context, request *tg.TLAccountDeleteSecureValue) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.deleteSecureValue - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.deleteSecureValue - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountDeleteSecureValue(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.deleteSecureValue - reply: {%v}", r)
+	c.Logger.Debugf("account.deleteSecureValue - reply: %s", r)
 	return r, err
 }
 
@@ -96,14 +96,14 @@ func (s *Service) AccountDeleteSecureValue(ctx context.Context, request *tg.TLAc
 // account.getAuthorizationForm#a929597a bot_id:long scope:string public_key:string = account.AuthorizationForm;
 func (s *Service) AccountGetAuthorizationForm(ctx context.Context, request *tg.TLAccountGetAuthorizationForm) (*tg.AccountAuthorizationForm, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.getAuthorizationForm - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.getAuthorizationForm - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountGetAuthorizationForm(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.getAuthorizationForm - reply: {%v}", r)
+	c.Logger.Debugf("account.getAuthorizationForm - reply: %s", r)
 	return r, err
 }
 
@@ -111,14 +111,14 @@ func (s *Service) AccountGetAuthorizationForm(ctx context.Context, request *tg.T
 // account.acceptAuthorization#f3ed4c73 bot_id:long scope:string public_key:string value_hashes:Vector<SecureValueHash> credentials:SecureCredentialsEncrypted = Bool;
 func (s *Service) AccountAcceptAuthorization(ctx context.Context, request *tg.TLAccountAcceptAuthorization) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.acceptAuthorization - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.acceptAuthorization - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountAcceptAuthorization(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.acceptAuthorization - reply: {%v}", r)
+	c.Logger.Debugf("account.acceptAuthorization - reply: %s", r)
 	return r, err
 }
 
@@ -126,14 +126,14 @@ func (s *Service) AccountAcceptAuthorization(ctx context.Context, request *tg.TL
 // account.sendVerifyPhoneCode#a5a356f9 phone_number:string settings:CodeSettings = auth.SentCode;
 func (s *Service) AccountSendVerifyPhoneCode(ctx context.Context, request *tg.TLAccountSendVerifyPhoneCode) (*tg.AuthSentCode, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.sendVerifyPhoneCode - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.sendVerifyPhoneCode - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountSendVerifyPhoneCode(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.sendVerifyPhoneCode - reply: {%v}", r)
+	c.Logger.Debugf("account.sendVerifyPhoneCode - reply: %s", r)
 	return r, err
 }
 
@@ -141,14 +141,14 @@ func (s *Service) AccountSendVerifyPhoneCode(ctx context.Context, request *tg.TL
 // account.verifyPhone#4dd3a7f6 phone_number:string phone_code_hash:string phone_code:string = Bool;
 func (s *Service) AccountVerifyPhone(ctx context.Context, request *tg.TLAccountVerifyPhone) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.verifyPhone - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("account.verifyPhone - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AccountVerifyPhone(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.verifyPhone - reply: {%v}", r)
+	c.Logger.Debugf("account.verifyPhone - reply: %s", r)
 	return r, err
 }
 
@@ -156,14 +156,14 @@ func (s *Service) AccountVerifyPhone(ctx context.Context, request *tg.TLAccountV
 // users.setSecureValueErrors#90c894b5 id:InputUser errors:Vector<SecureValueError> = Bool;
 func (s *Service) UsersSetSecureValueErrors(ctx context.Context, request *tg.TLUsersSetSecureValueErrors) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.setSecureValueErrors - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("users.setSecureValueErrors - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.UsersSetSecureValueErrors(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("users.setSecureValueErrors - reply: {%v}", r)
+	c.Logger.Debugf("users.setSecureValueErrors - reply: %s", r)
 	return r, err
 }
 
@@ -171,13 +171,13 @@ func (s *Service) UsersSetSecureValueErrors(ctx context.Context, request *tg.TLU
 // help.getPassportConfig#c661ad08 hash:int = help.PassportConfig;
 func (s *Service) HelpGetPassportConfig(ctx context.Context, request *tg.TLHelpGetPassportConfig) (*tg.HelpPassportConfig, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.getPassportConfig - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("help.getPassportConfig - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.HelpGetPassportConfig(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("help.getPassportConfig - reply: {%v}", r)
+	c.Logger.Debugf("help.getPassportConfig - reply: %s", r)
 	return r, err
 }

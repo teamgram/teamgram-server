@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/status/status"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -105,6 +108,12 @@ var (
 	statusServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCStatus", statusServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCStatus", statusServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCStatus", statusServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return statusServiceServiceInfo
@@ -129,6 +138,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1433,101 +1444,151 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) StatusSetSessionOnline(ctx context.Context, req *status.TLStatusSetSessionOnline) (r *tg.Bool, err error) {
-	var _args SetSessionOnlineArgs
-	_args.Req = req
-	var _result SetSessionOnlineResult
-	if err = p.c.Call(ctx, "status.setSessionOnline", &_args, &_result); err != nil {
+	// var _args SetSessionOnlineArgs
+	// _args.Req = req
+	// var _result SetSessionOnlineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setSessionOnline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetSessionOffline(ctx context.Context, req *status.TLStatusSetSessionOffline) (r *tg.Bool, err error) {
-	var _args SetSessionOfflineArgs
-	_args.Req = req
-	var _result SetSessionOfflineResult
-	if err = p.c.Call(ctx, "status.setSessionOffline", &_args, &_result); err != nil {
+	// var _args SetSessionOfflineArgs
+	// _args.Req = req
+	// var _result SetSessionOfflineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setSessionOffline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusGetUserOnlineSessions(ctx context.Context, req *status.TLStatusGetUserOnlineSessions) (r *status.UserSessionEntryList, err error) {
-	var _args GetUserOnlineSessionsArgs
-	_args.Req = req
-	var _result GetUserOnlineSessionsResult
-	if err = p.c.Call(ctx, "status.getUserOnlineSessions", &_args, &_result); err != nil {
+	// var _args GetUserOnlineSessionsArgs
+	// _args.Req = req
+	// var _result GetUserOnlineSessionsResult
+
+	_result := new(status.UserSessionEntryList)
+
+	if err = p.c.Call(ctx, "status.getUserOnlineSessions", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusGetUsersOnlineSessionsList(ctx context.Context, req *status.TLStatusGetUsersOnlineSessionsList) (r *status.VectorUserSessionEntryList, err error) {
-	var _args GetUsersOnlineSessionsListArgs
-	_args.Req = req
-	var _result GetUsersOnlineSessionsListResult
-	if err = p.c.Call(ctx, "status.getUsersOnlineSessionsList", &_args, &_result); err != nil {
+	// var _args GetUsersOnlineSessionsListArgs
+	// _args.Req = req
+	// var _result GetUsersOnlineSessionsListResult
+
+	_result := new(status.VectorUserSessionEntryList)
+
+	if err = p.c.Call(ctx, "status.getUsersOnlineSessionsList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusGetChannelOnlineUsers(ctx context.Context, req *status.TLStatusGetChannelOnlineUsers) (r *status.VectorLong, err error) {
-	var _args GetChannelOnlineUsersArgs
-	_args.Req = req
-	var _result GetChannelOnlineUsersResult
-	if err = p.c.Call(ctx, "status.getChannelOnlineUsers", &_args, &_result); err != nil {
+	// var _args GetChannelOnlineUsersArgs
+	// _args.Req = req
+	// var _result GetChannelOnlineUsersResult
+
+	_result := new(status.VectorLong)
+
+	if err = p.c.Call(ctx, "status.getChannelOnlineUsers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetUserChannelsOnline(ctx context.Context, req *status.TLStatusSetUserChannelsOnline) (r *tg.Bool, err error) {
-	var _args SetUserChannelsOnlineArgs
-	_args.Req = req
-	var _result SetUserChannelsOnlineResult
-	if err = p.c.Call(ctx, "status.setUserChannelsOnline", &_args, &_result); err != nil {
+	// var _args SetUserChannelsOnlineArgs
+	// _args.Req = req
+	// var _result SetUserChannelsOnlineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setUserChannelsOnline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetUserChannelsOffline(ctx context.Context, req *status.TLStatusSetUserChannelsOffline) (r *tg.Bool, err error) {
-	var _args SetUserChannelsOfflineArgs
-	_args.Req = req
-	var _result SetUserChannelsOfflineResult
-	if err = p.c.Call(ctx, "status.setUserChannelsOffline", &_args, &_result); err != nil {
+	// var _args SetUserChannelsOfflineArgs
+	// _args.Req = req
+	// var _result SetUserChannelsOfflineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setUserChannelsOffline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetChannelUserOffline(ctx context.Context, req *status.TLStatusSetChannelUserOffline) (r *tg.Bool, err error) {
-	var _args SetChannelUserOfflineArgs
-	_args.Req = req
-	var _result SetChannelUserOfflineResult
-	if err = p.c.Call(ctx, "status.setChannelUserOffline", &_args, &_result); err != nil {
+	// var _args SetChannelUserOfflineArgs
+	// _args.Req = req
+	// var _result SetChannelUserOfflineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setChannelUserOffline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetChannelUsersOnline(ctx context.Context, req *status.TLStatusSetChannelUsersOnline) (r *tg.Bool, err error) {
-	var _args SetChannelUsersOnlineArgs
-	_args.Req = req
-	var _result SetChannelUsersOnlineResult
-	if err = p.c.Call(ctx, "status.setChannelUsersOnline", &_args, &_result); err != nil {
+	// var _args SetChannelUsersOnlineArgs
+	// _args.Req = req
+	// var _result SetChannelUsersOnlineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setChannelUsersOnline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) StatusSetChannelOffline(ctx context.Context, req *status.TLStatusSetChannelOffline) (r *tg.Bool, err error) {
-	var _args SetChannelOfflineArgs
-	_args.Req = req
-	var _result SetChannelOfflineResult
-	if err = p.c.Call(ctx, "status.setChannelOffline", &_args, &_result); err != nil {
+	// var _args SetChannelOfflineArgs
+	// _args.Req = req
+	// var _result SetChannelOfflineResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "status.setChannelOffline", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

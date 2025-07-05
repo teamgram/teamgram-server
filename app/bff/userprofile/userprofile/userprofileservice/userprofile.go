@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -111,6 +112,12 @@ var (
 	userprofileServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUserProfile", userprofileServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUserProfile", userprofileServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUserProfile", userprofileServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return userprofileServiceServiceInfo
@@ -135,6 +142,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1565,111 +1574,155 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountUpdateProfile(ctx context.Context, req *tg.TLAccountUpdateProfile) (r *tg.User, err error) {
-	var _args AccountUpdateProfileArgs
-	_args.Req = req
-	var _result AccountUpdateProfileResult
-	if err = p.c.Call(ctx, "account.updateProfile", &_args, &_result); err != nil {
+	// var _args AccountUpdateProfileArgs
+	// _args.Req = req
+	// var _result AccountUpdateProfileResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "account.updateProfile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateStatus(ctx context.Context, req *tg.TLAccountUpdateStatus) (r *tg.Bool, err error) {
-	var _args AccountUpdateStatusArgs
-	_args.Req = req
-	var _result AccountUpdateStatusResult
-	if err = p.c.Call(ctx, "account.updateStatus", &_args, &_result); err != nil {
+	// var _args AccountUpdateStatusArgs
+	// _args.Req = req
+	// var _result AccountUpdateStatusResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.updateStatus", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateBirthday(ctx context.Context, req *tg.TLAccountUpdateBirthday) (r *tg.Bool, err error) {
-	var _args AccountUpdateBirthdayArgs
-	_args.Req = req
-	var _result AccountUpdateBirthdayResult
-	if err = p.c.Call(ctx, "account.updateBirthday", &_args, &_result); err != nil {
+	// var _args AccountUpdateBirthdayArgs
+	// _args.Req = req
+	// var _result AccountUpdateBirthdayResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.updateBirthday", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdatePersonalChannel(ctx context.Context, req *tg.TLAccountUpdatePersonalChannel) (r *tg.Bool, err error) {
-	var _args AccountUpdatePersonalChannelArgs
-	_args.Req = req
-	var _result AccountUpdatePersonalChannelResult
-	if err = p.c.Call(ctx, "account.updatePersonalChannel", &_args, &_result); err != nil {
+	// var _args AccountUpdatePersonalChannelArgs
+	// _args.Req = req
+	// var _result AccountUpdatePersonalChannelResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.updatePersonalChannel", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetBirthdays(ctx context.Context, req *tg.TLContactsGetBirthdays) (r *tg.ContactsContactBirthdays, err error) {
-	var _args ContactsGetBirthdaysArgs
-	_args.Req = req
-	var _result ContactsGetBirthdaysResult
-	if err = p.c.Call(ctx, "contacts.getBirthdays", &_args, &_result); err != nil {
+	// var _args ContactsGetBirthdaysArgs
+	// _args.Req = req
+	// var _result ContactsGetBirthdaysResult
+
+	_result := new(tg.ContactsContactBirthdays)
+	if err = p.c.Call(ctx, "contacts.getBirthdays", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PhotosUpdateProfilePhoto(ctx context.Context, req *tg.TLPhotosUpdateProfilePhoto) (r *tg.PhotosPhoto, err error) {
-	var _args PhotosUpdateProfilePhotoArgs
-	_args.Req = req
-	var _result PhotosUpdateProfilePhotoResult
-	if err = p.c.Call(ctx, "photos.updateProfilePhoto", &_args, &_result); err != nil {
+	// var _args PhotosUpdateProfilePhotoArgs
+	// _args.Req = req
+	// var _result PhotosUpdateProfilePhotoResult
+
+	_result := new(tg.PhotosPhoto)
+	if err = p.c.Call(ctx, "photos.updateProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PhotosUploadProfilePhoto(ctx context.Context, req *tg.TLPhotosUploadProfilePhoto) (r *tg.PhotosPhoto, err error) {
-	var _args PhotosUploadProfilePhotoArgs
-	_args.Req = req
-	var _result PhotosUploadProfilePhotoResult
-	if err = p.c.Call(ctx, "photos.uploadProfilePhoto", &_args, &_result); err != nil {
+	// var _args PhotosUploadProfilePhotoArgs
+	// _args.Req = req
+	// var _result PhotosUploadProfilePhotoResult
+
+	_result := new(tg.PhotosPhoto)
+	if err = p.c.Call(ctx, "photos.uploadProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PhotosDeletePhotos(ctx context.Context, req *tg.TLPhotosDeletePhotos) (r *tg.VectorLong, err error) {
-	var _args PhotosDeletePhotosArgs
-	_args.Req = req
-	var _result PhotosDeletePhotosResult
-	if err = p.c.Call(ctx, "photos.deletePhotos", &_args, &_result); err != nil {
+	// var _args PhotosDeletePhotosArgs
+	// _args.Req = req
+	// var _result PhotosDeletePhotosResult
+
+	_result := new(tg.VectorLong)
+	if err = p.c.Call(ctx, "photos.deletePhotos", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PhotosGetUserPhotos(ctx context.Context, req *tg.TLPhotosGetUserPhotos) (r *tg.PhotosPhotos, err error) {
-	var _args PhotosGetUserPhotosArgs
-	_args.Req = req
-	var _result PhotosGetUserPhotosResult
-	if err = p.c.Call(ctx, "photos.getUserPhotos", &_args, &_result); err != nil {
+	// var _args PhotosGetUserPhotosArgs
+	// _args.Req = req
+	// var _result PhotosGetUserPhotosResult
+
+	_result := new(tg.PhotosPhotos)
+	if err = p.c.Call(ctx, "photos.getUserPhotos", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PhotosUploadContactProfilePhoto(ctx context.Context, req *tg.TLPhotosUploadContactProfilePhoto) (r *tg.PhotosPhoto, err error) {
-	var _args PhotosUploadContactProfilePhotoArgs
-	_args.Req = req
-	var _result PhotosUploadContactProfilePhotoResult
-	if err = p.c.Call(ctx, "photos.uploadContactProfilePhoto", &_args, &_result); err != nil {
+	// var _args PhotosUploadContactProfilePhotoArgs
+	// _args.Req = req
+	// var _result PhotosUploadContactProfilePhotoResult
+
+	_result := new(tg.PhotosPhoto)
+	if err = p.c.Call(ctx, "photos.uploadContactProfilePhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateVerified(ctx context.Context, req *tg.TLAccountUpdateVerified) (r *tg.User, err error) {
-	var _args AccountUpdateVerifiedArgs
-	_args.Req = req
-	var _result AccountUpdateVerifiedResult
-	if err = p.c.Call(ctx, "account.updateVerified", &_args, &_result); err != nil {
+	// var _args AccountUpdateVerifiedArgs
+	// _args.Req = req
+	// var _result AccountUpdateVerifiedResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "account.updateVerified", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

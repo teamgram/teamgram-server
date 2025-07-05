@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type MediaClient interface {
 	MediaUploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error)
 	MediaUploadProfilePhotoFile(ctx context.Context, in *media.TLMediaUploadProfilePhotoFile) (*tg.Photo, error)

@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -132,6 +133,12 @@ var (
 	chatinvitesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCChatInvites", chatinvitesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCChatInvites", chatinvitesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCChatInvites", chatinvitesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return chatinvitesServiceServiceInfo
@@ -156,6 +163,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1964,141 +1973,197 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesExportChatInvite(ctx context.Context, req *tg.TLMessagesExportChatInvite) (r *tg.ExportedChatInvite, err error) {
-	var _args MessagesExportChatInviteArgs
-	_args.Req = req
-	var _result MessagesExportChatInviteResult
-	if err = p.c.Call(ctx, "messages.exportChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesExportChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesExportChatInviteResult
+
+	_result := new(tg.ExportedChatInvite)
+	if err = p.c.Call(ctx, "messages.exportChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesCheckChatInvite(ctx context.Context, req *tg.TLMessagesCheckChatInvite) (r *tg.ChatInvite, err error) {
-	var _args MessagesCheckChatInviteArgs
-	_args.Req = req
-	var _result MessagesCheckChatInviteResult
-	if err = p.c.Call(ctx, "messages.checkChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesCheckChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesCheckChatInviteResult
+
+	_result := new(tg.ChatInvite)
+	if err = p.c.Call(ctx, "messages.checkChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesImportChatInvite(ctx context.Context, req *tg.TLMessagesImportChatInvite) (r *tg.Updates, err error) {
-	var _args MessagesImportChatInviteArgs
-	_args.Req = req
-	var _result MessagesImportChatInviteResult
-	if err = p.c.Call(ctx, "messages.importChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesImportChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesImportChatInviteResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.importChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetExportedChatInvites(ctx context.Context, req *tg.TLMessagesGetExportedChatInvites) (r *tg.MessagesExportedChatInvites, err error) {
-	var _args MessagesGetExportedChatInvitesArgs
-	_args.Req = req
-	var _result MessagesGetExportedChatInvitesResult
-	if err = p.c.Call(ctx, "messages.getExportedChatInvites", &_args, &_result); err != nil {
+	// var _args MessagesGetExportedChatInvitesArgs
+	// _args.Req = req
+	// var _result MessagesGetExportedChatInvitesResult
+
+	_result := new(tg.MessagesExportedChatInvites)
+	if err = p.c.Call(ctx, "messages.getExportedChatInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetExportedChatInvite(ctx context.Context, req *tg.TLMessagesGetExportedChatInvite) (r *tg.MessagesExportedChatInvite, err error) {
-	var _args MessagesGetExportedChatInviteArgs
-	_args.Req = req
-	var _result MessagesGetExportedChatInviteResult
-	if err = p.c.Call(ctx, "messages.getExportedChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesGetExportedChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesGetExportedChatInviteResult
+
+	_result := new(tg.MessagesExportedChatInvite)
+	if err = p.c.Call(ctx, "messages.getExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditExportedChatInvite(ctx context.Context, req *tg.TLMessagesEditExportedChatInvite) (r *tg.MessagesExportedChatInvite, err error) {
-	var _args MessagesEditExportedChatInviteArgs
-	_args.Req = req
-	var _result MessagesEditExportedChatInviteResult
-	if err = p.c.Call(ctx, "messages.editExportedChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesEditExportedChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesEditExportedChatInviteResult
+
+	_result := new(tg.MessagesExportedChatInvite)
+	if err = p.c.Call(ctx, "messages.editExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesDeleteRevokedExportedChatInvites(ctx context.Context, req *tg.TLMessagesDeleteRevokedExportedChatInvites) (r *tg.Bool, err error) {
-	var _args MessagesDeleteRevokedExportedChatInvitesArgs
-	_args.Req = req
-	var _result MessagesDeleteRevokedExportedChatInvitesResult
-	if err = p.c.Call(ctx, "messages.deleteRevokedExportedChatInvites", &_args, &_result); err != nil {
+	// var _args MessagesDeleteRevokedExportedChatInvitesArgs
+	// _args.Req = req
+	// var _result MessagesDeleteRevokedExportedChatInvitesResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.deleteRevokedExportedChatInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesDeleteExportedChatInvite(ctx context.Context, req *tg.TLMessagesDeleteExportedChatInvite) (r *tg.Bool, err error) {
-	var _args MessagesDeleteExportedChatInviteArgs
-	_args.Req = req
-	var _result MessagesDeleteExportedChatInviteResult
-	if err = p.c.Call(ctx, "messages.deleteExportedChatInvite", &_args, &_result); err != nil {
+	// var _args MessagesDeleteExportedChatInviteArgs
+	// _args.Req = req
+	// var _result MessagesDeleteExportedChatInviteResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.deleteExportedChatInvite", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetAdminsWithInvites(ctx context.Context, req *tg.TLMessagesGetAdminsWithInvites) (r *tg.MessagesChatAdminsWithInvites, err error) {
-	var _args MessagesGetAdminsWithInvitesArgs
-	_args.Req = req
-	var _result MessagesGetAdminsWithInvitesResult
-	if err = p.c.Call(ctx, "messages.getAdminsWithInvites", &_args, &_result); err != nil {
+	// var _args MessagesGetAdminsWithInvitesArgs
+	// _args.Req = req
+	// var _result MessagesGetAdminsWithInvitesResult
+
+	_result := new(tg.MessagesChatAdminsWithInvites)
+	if err = p.c.Call(ctx, "messages.getAdminsWithInvites", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetChatInviteImporters(ctx context.Context, req *tg.TLMessagesGetChatInviteImporters) (r *tg.MessagesChatInviteImporters, err error) {
-	var _args MessagesGetChatInviteImportersArgs
-	_args.Req = req
-	var _result MessagesGetChatInviteImportersResult
-	if err = p.c.Call(ctx, "messages.getChatInviteImporters", &_args, &_result); err != nil {
+	// var _args MessagesGetChatInviteImportersArgs
+	// _args.Req = req
+	// var _result MessagesGetChatInviteImportersResult
+
+	_result := new(tg.MessagesChatInviteImporters)
+	if err = p.c.Call(ctx, "messages.getChatInviteImporters", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesHideChatJoinRequest(ctx context.Context, req *tg.TLMessagesHideChatJoinRequest) (r *tg.Updates, err error) {
-	var _args MessagesHideChatJoinRequestArgs
-	_args.Req = req
-	var _result MessagesHideChatJoinRequestResult
-	if err = p.c.Call(ctx, "messages.hideChatJoinRequest", &_args, &_result); err != nil {
+	// var _args MessagesHideChatJoinRequestArgs
+	// _args.Req = req
+	// var _result MessagesHideChatJoinRequestResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.hideChatJoinRequest", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesHideAllChatJoinRequests(ctx context.Context, req *tg.TLMessagesHideAllChatJoinRequests) (r *tg.Updates, err error) {
-	var _args MessagesHideAllChatJoinRequestsArgs
-	_args.Req = req
-	var _result MessagesHideAllChatJoinRequestsResult
-	if err = p.c.Call(ctx, "messages.hideAllChatJoinRequests", &_args, &_result); err != nil {
+	// var _args MessagesHideAllChatJoinRequestsArgs
+	// _args.Req = req
+	// var _result MessagesHideAllChatJoinRequestsResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.hideAllChatJoinRequests", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsToggleJoinToSend(ctx context.Context, req *tg.TLChannelsToggleJoinToSend) (r *tg.Updates, err error) {
-	var _args ChannelsToggleJoinToSendArgs
-	_args.Req = req
-	var _result ChannelsToggleJoinToSendResult
-	if err = p.c.Call(ctx, "channels.toggleJoinToSend", &_args, &_result); err != nil {
+	// var _args ChannelsToggleJoinToSendArgs
+	// _args.Req = req
+	// var _result ChannelsToggleJoinToSendResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "channels.toggleJoinToSend", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsToggleJoinRequest(ctx context.Context, req *tg.TLChannelsToggleJoinRequest) (r *tg.Updates, err error) {
-	var _args ChannelsToggleJoinRequestArgs
-	_args.Req = req
-	var _result ChannelsToggleJoinRequestResult
-	if err = p.c.Call(ctx, "channels.toggleJoinRequest", &_args, &_result); err != nil {
+	// var _args ChannelsToggleJoinRequestArgs
+	// _args.Req = req
+	// var _result ChannelsToggleJoinRequestResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "channels.toggleJoinRequest", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

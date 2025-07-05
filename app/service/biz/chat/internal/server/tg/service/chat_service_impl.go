@@ -18,18 +18,20 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/internal/core"
 )
 
+var _ *tg.Bool
+
 // ChatGetMutableChat
 // chat.getMutableChat chat_id:long = MutableChat;
 func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGetMutableChat) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getMutableChat - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getMutableChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetMutableChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getMutableChat - reply: %s", r)
 	return r, err
 }
 
@@ -37,14 +39,14 @@ func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGe
 // chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getChatListByIdList - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getChatListByIdList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetChatListByIdList(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getChatListByIdList - reply: %s", r)
 	return r, err
 }
 
@@ -52,14 +54,14 @@ func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLC
 // chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatGetChatBySelfId) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getChatBySelfId - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getChatBySelfId - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetChatBySelfId(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getChatBySelfId - reply: %s", r)
 	return r, err
 }
 
@@ -67,14 +69,14 @@ func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatG
 // chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> = MutableChat;
 func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreateChat2) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.createChat2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.createChat2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatCreateChat2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.createChat2 - reply: %s", r)
 	return r, err
 }
 
@@ -82,14 +84,14 @@ func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreat
 // chat.deleteChat chat_id:long operator_id:long = MutableChat;
 func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDeleteChat) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.deleteChat - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.deleteChat - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatDeleteChat(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.deleteChat - reply: %s", r)
 	return r, err
 }
 
@@ -97,14 +99,14 @@ func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDelete
 // chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDeleteChatUser) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.deleteChatUser - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.deleteChatUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatDeleteChatUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.deleteChatUser - reply: %s", r)
 	return r, err
 }
 
@@ -112,14 +114,14 @@ func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDe
 // chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEditChatTitle) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editChatTitle - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editChatTitle - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditChatTitle(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editChatTitle - reply: %s", r)
 	return r, err
 }
 
@@ -127,14 +129,14 @@ func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEdi
 // chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
 func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEditChatAbout) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editChatAbout - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editChatAbout - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditChatAbout(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editChatAbout - reply: %s", r)
 	return r, err
 }
 
@@ -142,14 +144,14 @@ func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEdi
 // chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEditChatPhoto) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editChatPhoto - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editChatPhoto - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditChatPhoto(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editChatPhoto - reply: %s", r)
 	return r, err
 }
 
@@ -157,14 +159,14 @@ func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEdi
 // chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEditChatAdmin) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editChatAdmin - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editChatAdmin - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditChatAdmin(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editChatAdmin - reply: %s", r)
 	return r, err
 }
 
@@ -172,14 +174,14 @@ func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEdi
 // chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *chat.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editChatDefaultBannedRights - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editChatDefaultBannedRights - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditChatDefaultBannedRights(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editChatDefaultBannedRights - reply: %s", r)
 	return r, err
 }
 
@@ -187,14 +189,14 @@ func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *
 // chat.addChatUser flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
 func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddChatUser) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.addChatUser - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.addChatUser - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatAddChatUser(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.addChatUser - reply: %s", r)
 	return r, err
 }
 
@@ -202,14 +204,14 @@ func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddCh
 // chat.getMutableChatByLink link:string = MutableChat;
 func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TLChatGetMutableChatByLink) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getMutableChatByLink - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getMutableChatByLink - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetMutableChatByLink(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getMutableChatByLink - reply: %s", r)
 	return r, err
 }
 
@@ -217,14 +219,14 @@ func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TL
 // chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChatToggleNoForwards) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.toggleNoForwards - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.toggleNoForwards - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatToggleNoForwards(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.toggleNoForwards - reply: %s", r)
 	return r, err
 }
 
@@ -232,14 +234,14 @@ func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChat
 // chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLChatMigratedToChannel) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.migratedToChannel - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.migratedToChannel - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatMigratedToChannel(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.migratedToChannel - reply: %s", r)
 	return r, err
 }
 
@@ -247,14 +249,14 @@ func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLCha
 // chat.getChatParticipantIdList chat_id:long = Vector<long>;
 func (s *Service) ChatGetChatParticipantIdList(ctx context.Context, request *chat.TLChatGetChatParticipantIdList) (*chat.VectorLong, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getChatParticipantIdList - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getChatParticipantIdList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetChatParticipantIdList(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getChatParticipantIdList - reply: %s", r)
 	return r, err
 }
 
@@ -262,14 +264,14 @@ func (s *Service) ChatGetChatParticipantIdList(ctx context.Context, request *cha
 // chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 func (s *Service) ChatGetUsersChatIdList(ctx context.Context, request *chat.TLChatGetUsersChatIdList) (*chat.VectorUserChatIdList, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getUsersChatIdList - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getUsersChatIdList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetUsersChatIdList(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getUsersChatIdList - reply: %s", r)
 	return r, err
 }
 
@@ -277,14 +279,14 @@ func (s *Service) ChatGetUsersChatIdList(ctx context.Context, request *chat.TLCh
 // chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 func (s *Service) ChatGetMyChatList(ctx context.Context, request *chat.TLChatGetMyChatList) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getMyChatList - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getMyChatList - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetMyChatList(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getMyChatList - reply: %s", r)
 	return r, err
 }
 
@@ -292,14 +294,14 @@ func (s *Service) ChatGetMyChatList(ctx context.Context, request *chat.TLChatGet
 // chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (s *Service) ChatExportChatInvite(ctx context.Context, request *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.exportChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.exportChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatExportChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.exportChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -307,14 +309,14 @@ func (s *Service) ChatExportChatInvite(ctx context.Context, request *chat.TLChat
 // chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 func (s *Service) ChatGetAdminsWithInvites(ctx context.Context, request *chat.TLChatGetAdminsWithInvites) (*chat.VectorChatAdminWithInvites, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getAdminsWithInvites - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getAdminsWithInvites - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetAdminsWithInvites(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getAdminsWithInvites - reply: %s", r)
 	return r, err
 }
 
@@ -322,14 +324,14 @@ func (s *Service) ChatGetAdminsWithInvites(ctx context.Context, request *chat.TL
 // chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 func (s *Service) ChatGetExportedChatInvite(ctx context.Context, request *chat.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getExportedChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getExportedChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetExportedChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getExportedChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -337,14 +339,14 @@ func (s *Service) ChatGetExportedChatInvite(ctx context.Context, request *chat.T
 // chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 func (s *Service) ChatGetExportedChatInvites(ctx context.Context, request *chat.TLChatGetExportedChatInvites) (*chat.VectorExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getExportedChatInvites - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getExportedChatInvites - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetExportedChatInvites(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getExportedChatInvites - reply: %s", r)
 	return r, err
 }
 
@@ -352,14 +354,14 @@ func (s *Service) ChatGetExportedChatInvites(ctx context.Context, request *chat.
 // chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
 func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.checkChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.checkChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatCheckChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.checkChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -367,14 +369,14 @@ func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatC
 // chat.importChatInvite self_id:long hash:string = MutableChat;
 func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChatImportChatInvite) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.importChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.importChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatImportChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.importChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -382,14 +384,14 @@ func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChat
 // chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 func (s *Service) ChatGetChatInviteImporters(ctx context.Context, request *chat.TLChatGetChatInviteImporters) (*chat.VectorChatInviteImporter, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getChatInviteImporters - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getChatInviteImporters - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetChatInviteImporters(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getChatInviteImporters - reply: %s", r)
 	return r, err
 }
 
@@ -397,14 +399,14 @@ func (s *Service) ChatGetChatInviteImporters(ctx context.Context, request *chat.
 // chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
 func (s *Service) ChatDeleteExportedChatInvite(ctx context.Context, request *chat.TLChatDeleteExportedChatInvite) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.deleteExportedChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.deleteExportedChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatDeleteExportedChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.deleteExportedChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -412,14 +414,14 @@ func (s *Service) ChatDeleteExportedChatInvite(ctx context.Context, request *cha
 // chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 func (s *Service) ChatDeleteRevokedExportedChatInvites(ctx context.Context, request *chat.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.deleteRevokedExportedChatInvites - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.deleteRevokedExportedChatInvites - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatDeleteRevokedExportedChatInvites(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.deleteRevokedExportedChatInvites - reply: %s", r)
 	return r, err
 }
 
@@ -427,14 +429,14 @@ func (s *Service) ChatDeleteRevokedExportedChatInvites(ctx context.Context, requ
 // chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.TLChatEditExportedChatInvite) (*chat.VectorExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.editExportedChatInvite - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.editExportedChatInvite - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatEditExportedChatInvite(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.editExportedChatInvite - reply: %s", r)
 	return r, err
 }
 
@@ -442,14 +444,14 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 // chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
 func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.setChatAvailableReactions - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.setChatAvailableReactions - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatSetChatAvailableReactions(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.setChatAvailableReactions - reply: %s", r)
 	return r, err
 }
 
@@ -457,14 +459,14 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 // chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
 func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSetHistoryTTL) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.setHistoryTTL - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.setHistoryTTL - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatSetHistoryTTL(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.setHistoryTTL - reply: %s", r)
 	return r, err
 }
 
@@ -472,14 +474,14 @@ func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSet
 // chat.search self_id:long q:string offset:long limit:int = Vector<MutableChat>;
 func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.search - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.search - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatSearch(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.search - reply: %s", r)
 	return r, err
 }
 
@@ -487,14 +489,14 @@ func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*
 // chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
 func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.getRecentChatInviteRequesters - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.getRecentChatInviteRequesters - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatGetRecentChatInviteRequesters(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.getRecentChatInviteRequesters - reply: %s", r)
 	return r, err
 }
 
@@ -502,14 +504,14 @@ func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request
 // chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
 func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.hideChatJoinRequests - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.hideChatJoinRequests - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatHideChatJoinRequests(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.hideChatJoinRequests - reply: %s", r)
 	return r, err
 }
 
@@ -517,13 +519,13 @@ func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TL
 // chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
 func (s *Service) ChatImportChatInvite2(ctx context.Context, request *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("chat.importChatInvite2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("chat.importChatInvite2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.ChatImportChatInvite2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("chat.importChatInvite2 - reply: %s", r)
 	return r, err
 }

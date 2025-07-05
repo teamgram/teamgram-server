@@ -15,9 +15,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/teamgram/proto/v2/iface"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -27,7 +27,7 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"/tg.RPCConfiguration/help.getConfig": kitex.NewMethodInfo(
+	"help.getConfig": kitex.NewMethodInfo(
 		helpGetConfigHandler,
 		newHelpGetConfigArgs,
 		newHelpGetConfigResult,
@@ -128,6 +128,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1306,91 +1308,127 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) HelpGetConfig(ctx context.Context, req *tg.TLHelpGetConfig) (r *tg.Config, err error) {
-	var _args HelpGetConfigArgs
-	_args.Req = req
-	var _result HelpGetConfigResult
-	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getConfig", &_args, &_result); err != nil {
+	// var _args HelpGetConfigArgs
+	// _args.Req = req
+	// var _result HelpGetConfigResult
+
+	_result := new(tg.Config)
+	if err = p.c.Call(ctx, "help.getConfig", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetNearestDc(ctx context.Context, req *tg.TLHelpGetNearestDc) (r *tg.NearestDc, err error) {
-	var _args HelpGetNearestDcArgs
-	_args.Req = req
-	var _result HelpGetNearestDcResult
-	if err = p.c.Call(ctx, "help.getNearestDc", &_args, &_result); err != nil {
+	// var _args HelpGetNearestDcArgs
+	// _args.Req = req
+	// var _result HelpGetNearestDcResult
+
+	_result := new(tg.NearestDc)
+	if err = p.c.Call(ctx, "help.getNearestDc", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetAppUpdate(ctx context.Context, req *tg.TLHelpGetAppUpdate) (r *tg.HelpAppUpdate, err error) {
-	var _args HelpGetAppUpdateArgs
-	_args.Req = req
-	var _result HelpGetAppUpdateResult
-	if err = p.c.Call(ctx, "help.getAppUpdate", &_args, &_result); err != nil {
+	// var _args HelpGetAppUpdateArgs
+	// _args.Req = req
+	// var _result HelpGetAppUpdateResult
+
+	_result := new(tg.HelpAppUpdate)
+	if err = p.c.Call(ctx, "help.getAppUpdate", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetInviteText(ctx context.Context, req *tg.TLHelpGetInviteText) (r *tg.HelpInviteText, err error) {
-	var _args HelpGetInviteTextArgs
-	_args.Req = req
-	var _result HelpGetInviteTextResult
-	if err = p.c.Call(ctx, "help.getInviteText", &_args, &_result); err != nil {
+	// var _args HelpGetInviteTextArgs
+	// _args.Req = req
+	// var _result HelpGetInviteTextResult
+
+	_result := new(tg.HelpInviteText)
+	if err = p.c.Call(ctx, "help.getInviteText", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetSupport(ctx context.Context, req *tg.TLHelpGetSupport) (r *tg.HelpSupport, err error) {
-	var _args HelpGetSupportArgs
-	_args.Req = req
-	var _result HelpGetSupportResult
-	if err = p.c.Call(ctx, "help.getSupport", &_args, &_result); err != nil {
+	// var _args HelpGetSupportArgs
+	// _args.Req = req
+	// var _result HelpGetSupportResult
+
+	_result := new(tg.HelpSupport)
+	if err = p.c.Call(ctx, "help.getSupport", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetAppConfig(ctx context.Context, req *tg.TLHelpGetAppConfig) (r *tg.HelpAppConfig, err error) {
-	var _args HelpGetAppConfigArgs
-	_args.Req = req
-	var _result HelpGetAppConfigResult
-	if err = p.c.Call(ctx, "help.getAppConfig", &_args, &_result); err != nil {
+	// var _args HelpGetAppConfigArgs
+	// _args.Req = req
+	// var _result HelpGetAppConfigResult
+
+	_result := new(tg.HelpAppConfig)
+	if err = p.c.Call(ctx, "help.getAppConfig", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetSupportName(ctx context.Context, req *tg.TLHelpGetSupportName) (r *tg.HelpSupportName, err error) {
-	var _args HelpGetSupportNameArgs
-	_args.Req = req
-	var _result HelpGetSupportNameResult
-	if err = p.c.Call(ctx, "help.getSupportName", &_args, &_result); err != nil {
+	// var _args HelpGetSupportNameArgs
+	// _args.Req = req
+	// var _result HelpGetSupportNameResult
+
+	_result := new(tg.HelpSupportName)
+	if err = p.c.Call(ctx, "help.getSupportName", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpDismissSuggestion(ctx context.Context, req *tg.TLHelpDismissSuggestion) (r *tg.Bool, err error) {
-	var _args HelpDismissSuggestionArgs
-	_args.Req = req
-	var _result HelpDismissSuggestionResult
-	if err = p.c.Call(ctx, "help.dismissSuggestion", &_args, &_result); err != nil {
+	// var _args HelpDismissSuggestionArgs
+	// _args.Req = req
+	// var _result HelpDismissSuggestionResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "help.dismissSuggestion", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetCountriesList(ctx context.Context, req *tg.TLHelpGetCountriesList) (r *tg.HelpCountriesList, err error) {
-	var _args HelpGetCountriesListArgs
-	_args.Req = req
-	var _result HelpGetCountriesListResult
-	if err = p.c.Call(ctx, "help.getCountriesList", &_args, &_result); err != nil {
+	// var _args HelpGetCountriesListArgs
+	// _args.Req = req
+	// var _result HelpGetCountriesListResult
+
+	_result := new(tg.HelpCountriesList)
+	if err = p.c.Call(ctx, "help.getCountriesList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

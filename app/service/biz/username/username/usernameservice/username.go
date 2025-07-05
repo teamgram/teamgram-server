@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/username/username"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -119,6 +122,12 @@ var (
 	usernameServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCUsername", usernameServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCUsername", usernameServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCUsername", usernameServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return usernameServiceServiceInfo
@@ -143,6 +152,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1699,121 +1710,181 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) UsernameGetAccountUsername(ctx context.Context, req *username.TLUsernameGetAccountUsername) (r *username.UsernameData, err error) {
-	var _args GetAccountUsernameArgs
-	_args.Req = req
-	var _result GetAccountUsernameResult
-	if err = p.c.Call(ctx, "username.getAccountUsername", &_args, &_result); err != nil {
+	// var _args GetAccountUsernameArgs
+	// _args.Req = req
+	// var _result GetAccountUsernameResult
+
+	_result := new(username.UsernameData)
+
+	if err = p.c.Call(ctx, "username.getAccountUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameCheckAccountUsername(ctx context.Context, req *username.TLUsernameCheckAccountUsername) (r *username.UsernameExist, err error) {
-	var _args CheckAccountUsernameArgs
-	_args.Req = req
-	var _result CheckAccountUsernameResult
-	if err = p.c.Call(ctx, "username.checkAccountUsername", &_args, &_result); err != nil {
+	// var _args CheckAccountUsernameArgs
+	// _args.Req = req
+	// var _result CheckAccountUsernameResult
+
+	_result := new(username.UsernameExist)
+
+	if err = p.c.Call(ctx, "username.checkAccountUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameGetChannelUsername(ctx context.Context, req *username.TLUsernameGetChannelUsername) (r *username.UsernameData, err error) {
-	var _args GetChannelUsernameArgs
-	_args.Req = req
-	var _result GetChannelUsernameResult
-	if err = p.c.Call(ctx, "username.getChannelUsername", &_args, &_result); err != nil {
+	// var _args GetChannelUsernameArgs
+	// _args.Req = req
+	// var _result GetChannelUsernameResult
+
+	_result := new(username.UsernameData)
+
+	if err = p.c.Call(ctx, "username.getChannelUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameCheckChannelUsername(ctx context.Context, req *username.TLUsernameCheckChannelUsername) (r *username.UsernameExist, err error) {
-	var _args CheckChannelUsernameArgs
-	_args.Req = req
-	var _result CheckChannelUsernameResult
-	if err = p.c.Call(ctx, "username.checkChannelUsername", &_args, &_result); err != nil {
+	// var _args CheckChannelUsernameArgs
+	// _args.Req = req
+	// var _result CheckChannelUsernameResult
+
+	_result := new(username.UsernameExist)
+
+	if err = p.c.Call(ctx, "username.checkChannelUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameUpdateUsernameByPeer(ctx context.Context, req *username.TLUsernameUpdateUsernameByPeer) (r *tg.Bool, err error) {
-	var _args UpdateUsernameByPeerArgs
-	_args.Req = req
-	var _result UpdateUsernameByPeerResult
-	if err = p.c.Call(ctx, "username.updateUsernameByPeer", &_args, &_result); err != nil {
+	// var _args UpdateUsernameByPeerArgs
+	// _args.Req = req
+	// var _result UpdateUsernameByPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "username.updateUsernameByPeer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameCheckUsername(ctx context.Context, req *username.TLUsernameCheckUsername) (r *username.UsernameExist, err error) {
-	var _args CheckUsernameArgs
-	_args.Req = req
-	var _result CheckUsernameResult
-	if err = p.c.Call(ctx, "username.checkUsername", &_args, &_result); err != nil {
+	// var _args CheckUsernameArgs
+	// _args.Req = req
+	// var _result CheckUsernameResult
+
+	_result := new(username.UsernameExist)
+
+	if err = p.c.Call(ctx, "username.checkUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameUpdateUsername(ctx context.Context, req *username.TLUsernameUpdateUsername) (r *tg.Bool, err error) {
-	var _args UpdateUsernameArgs
-	_args.Req = req
-	var _result UpdateUsernameResult
-	if err = p.c.Call(ctx, "username.updateUsername", &_args, &_result); err != nil {
+	// var _args UpdateUsernameArgs
+	// _args.Req = req
+	// var _result UpdateUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "username.updateUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameDeleteUsername(ctx context.Context, req *username.TLUsernameDeleteUsername) (r *tg.Bool, err error) {
-	var _args DeleteUsernameArgs
-	_args.Req = req
-	var _result DeleteUsernameResult
-	if err = p.c.Call(ctx, "username.deleteUsername", &_args, &_result); err != nil {
+	// var _args DeleteUsernameArgs
+	// _args.Req = req
+	// var _result DeleteUsernameResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "username.deleteUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameResolveUsername(ctx context.Context, req *username.TLUsernameResolveUsername) (r *tg.Peer, err error) {
-	var _args ResolveUsernameArgs
-	_args.Req = req
-	var _result ResolveUsernameResult
-	if err = p.c.Call(ctx, "username.resolveUsername", &_args, &_result); err != nil {
+	// var _args ResolveUsernameArgs
+	// _args.Req = req
+	// var _result ResolveUsernameResult
+
+	_result := new(tg.Peer)
+
+	if err = p.c.Call(ctx, "username.resolveUsername", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameGetListByUsernameList(ctx context.Context, req *username.TLUsernameGetListByUsernameList) (r *username.VectorUsernameData, err error) {
-	var _args GetListByUsernameListArgs
-	_args.Req = req
-	var _result GetListByUsernameListResult
-	if err = p.c.Call(ctx, "username.getListByUsernameList", &_args, &_result); err != nil {
+	// var _args GetListByUsernameListArgs
+	// _args.Req = req
+	// var _result GetListByUsernameListResult
+
+	_result := new(username.VectorUsernameData)
+
+	if err = p.c.Call(ctx, "username.getListByUsernameList", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameDeleteUsernameByPeer(ctx context.Context, req *username.TLUsernameDeleteUsernameByPeer) (r *tg.Bool, err error) {
-	var _args DeleteUsernameByPeerArgs
-	_args.Req = req
-	var _result DeleteUsernameByPeerResult
-	if err = p.c.Call(ctx, "username.deleteUsernameByPeer", &_args, &_result); err != nil {
+	// var _args DeleteUsernameByPeerArgs
+	// _args.Req = req
+	// var _result DeleteUsernameByPeerResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "username.deleteUsernameByPeer", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsernameSearch(ctx context.Context, req *username.TLUsernameSearch) (r *username.VectorUsernameData, err error) {
-	var _args SearchArgs
-	_args.Req = req
-	var _result SearchResult
-	if err = p.c.Call(ctx, "username.search", &_args, &_result); err != nil {
+	// var _args SearchArgs
+	// _args.Req = req
+	// var _result SearchResult
+
+	_result := new(username.VectorUsernameData)
+
+	if err = p.c.Call(ctx, "username.search", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -52,7 +52,7 @@ func (m *defaultUsernamesClient) AccountUpdateUsername(ctx context.Context, in *
 }
 
 // ContactsResolveUsername
-// contacts.resolveUsername#f93ccba3 username:string = contacts.ResolvedPeer;
+// contacts.resolveUsername#725afbbc flags:# username:string referer:flags.0?string = contacts.ResolvedPeer;
 func (m *defaultUsernamesClient) ContactsResolveUsername(ctx context.Context, in *tg.TLContactsResolveUsername) (*tg.ContactsResolvedPeer, error) {
 	cli := usernamesservice.NewRPCUsernamesClient(m.cli)
 	return cli.ContactsResolveUsername(ctx, in)

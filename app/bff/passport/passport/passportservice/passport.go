@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -111,6 +112,12 @@ var (
 	passportServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCPassport", passportServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCPassport", passportServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCPassport", passportServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return passportServiceServiceInfo
@@ -135,6 +142,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1565,111 +1574,155 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountGetAuthorizations(ctx context.Context, req *tg.TLAccountGetAuthorizations) (r *tg.AccountAuthorizations, err error) {
-	var _args AccountGetAuthorizationsArgs
-	_args.Req = req
-	var _result AccountGetAuthorizationsResult
-	if err = p.c.Call(ctx, "account.getAuthorizations", &_args, &_result); err != nil {
+	// var _args AccountGetAuthorizationsArgs
+	// _args.Req = req
+	// var _result AccountGetAuthorizationsResult
+
+	_result := new(tg.AccountAuthorizations)
+	if err = p.c.Call(ctx, "account.getAuthorizations", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetAllSecureValues(ctx context.Context, req *tg.TLAccountGetAllSecureValues) (r *tg.VectorSecureValue, err error) {
-	var _args AccountGetAllSecureValuesArgs
-	_args.Req = req
-	var _result AccountGetAllSecureValuesResult
-	if err = p.c.Call(ctx, "account.getAllSecureValues", &_args, &_result); err != nil {
+	// var _args AccountGetAllSecureValuesArgs
+	// _args.Req = req
+	// var _result AccountGetAllSecureValuesResult
+
+	_result := new(tg.VectorSecureValue)
+	if err = p.c.Call(ctx, "account.getAllSecureValues", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetSecureValue(ctx context.Context, req *tg.TLAccountGetSecureValue) (r *tg.VectorSecureValue, err error) {
-	var _args AccountGetSecureValueArgs
-	_args.Req = req
-	var _result AccountGetSecureValueResult
-	if err = p.c.Call(ctx, "account.getSecureValue", &_args, &_result); err != nil {
+	// var _args AccountGetSecureValueArgs
+	// _args.Req = req
+	// var _result AccountGetSecureValueResult
+
+	_result := new(tg.VectorSecureValue)
+	if err = p.c.Call(ctx, "account.getSecureValue", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSaveSecureValue(ctx context.Context, req *tg.TLAccountSaveSecureValue) (r *tg.SecureValue, err error) {
-	var _args AccountSaveSecureValueArgs
-	_args.Req = req
-	var _result AccountSaveSecureValueResult
-	if err = p.c.Call(ctx, "account.saveSecureValue", &_args, &_result); err != nil {
+	// var _args AccountSaveSecureValueArgs
+	// _args.Req = req
+	// var _result AccountSaveSecureValueResult
+
+	_result := new(tg.SecureValue)
+	if err = p.c.Call(ctx, "account.saveSecureValue", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountDeleteSecureValue(ctx context.Context, req *tg.TLAccountDeleteSecureValue) (r *tg.Bool, err error) {
-	var _args AccountDeleteSecureValueArgs
-	_args.Req = req
-	var _result AccountDeleteSecureValueResult
-	if err = p.c.Call(ctx, "account.deleteSecureValue", &_args, &_result); err != nil {
+	// var _args AccountDeleteSecureValueArgs
+	// _args.Req = req
+	// var _result AccountDeleteSecureValueResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.deleteSecureValue", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetAuthorizationForm(ctx context.Context, req *tg.TLAccountGetAuthorizationForm) (r *tg.AccountAuthorizationForm, err error) {
-	var _args AccountGetAuthorizationFormArgs
-	_args.Req = req
-	var _result AccountGetAuthorizationFormResult
-	if err = p.c.Call(ctx, "account.getAuthorizationForm", &_args, &_result); err != nil {
+	// var _args AccountGetAuthorizationFormArgs
+	// _args.Req = req
+	// var _result AccountGetAuthorizationFormResult
+
+	_result := new(tg.AccountAuthorizationForm)
+	if err = p.c.Call(ctx, "account.getAuthorizationForm", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountAcceptAuthorization(ctx context.Context, req *tg.TLAccountAcceptAuthorization) (r *tg.Bool, err error) {
-	var _args AccountAcceptAuthorizationArgs
-	_args.Req = req
-	var _result AccountAcceptAuthorizationResult
-	if err = p.c.Call(ctx, "account.acceptAuthorization", &_args, &_result); err != nil {
+	// var _args AccountAcceptAuthorizationArgs
+	// _args.Req = req
+	// var _result AccountAcceptAuthorizationResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.acceptAuthorization", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSendVerifyPhoneCode(ctx context.Context, req *tg.TLAccountSendVerifyPhoneCode) (r *tg.AuthSentCode, err error) {
-	var _args AccountSendVerifyPhoneCodeArgs
-	_args.Req = req
-	var _result AccountSendVerifyPhoneCodeResult
-	if err = p.c.Call(ctx, "account.sendVerifyPhoneCode", &_args, &_result); err != nil {
+	// var _args AccountSendVerifyPhoneCodeArgs
+	// _args.Req = req
+	// var _result AccountSendVerifyPhoneCodeResult
+
+	_result := new(tg.AuthSentCode)
+	if err = p.c.Call(ctx, "account.sendVerifyPhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountVerifyPhone(ctx context.Context, req *tg.TLAccountVerifyPhone) (r *tg.Bool, err error) {
-	var _args AccountVerifyPhoneArgs
-	_args.Req = req
-	var _result AccountVerifyPhoneResult
-	if err = p.c.Call(ctx, "account.verifyPhone", &_args, &_result); err != nil {
+	// var _args AccountVerifyPhoneArgs
+	// _args.Req = req
+	// var _result AccountVerifyPhoneResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.verifyPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsersSetSecureValueErrors(ctx context.Context, req *tg.TLUsersSetSecureValueErrors) (r *tg.Bool, err error) {
-	var _args UsersSetSecureValueErrorsArgs
-	_args.Req = req
-	var _result UsersSetSecureValueErrorsResult
-	if err = p.c.Call(ctx, "users.setSecureValueErrors", &_args, &_result); err != nil {
+	// var _args UsersSetSecureValueErrorsArgs
+	// _args.Req = req
+	// var _result UsersSetSecureValueErrorsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "users.setSecureValueErrors", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetPassportConfig(ctx context.Context, req *tg.TLHelpGetPassportConfig) (r *tg.HelpPassportConfig, err error) {
-	var _args HelpGetPassportConfigArgs
-	_args.Req = req
-	var _result HelpGetPassportConfigResult
-	if err = p.c.Call(ctx, "help.getPassportConfig", &_args, &_result); err != nil {
+	// var _args HelpGetPassportConfigArgs
+	// _args.Req = req
+	// var _result HelpGetPassportConfigResult
+
+	_result := new(tg.HelpPassportConfig)
+	if err = p.c.Call(ctx, "help.getPassportConfig", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type StatusClient interface {
 	StatusSetSessionOnline(ctx context.Context, in *status.TLStatusSetSessionOnline) (*tg.Bool, error)
 	StatusSetSessionOffline(ctx context.Context, in *status.TLStatusSetSessionOffline) (*tg.Bool, error)

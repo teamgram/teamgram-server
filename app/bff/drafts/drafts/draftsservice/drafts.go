@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -55,6 +56,12 @@ var (
 	draftsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCDrafts", draftsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCDrafts", draftsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCDrafts", draftsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return draftsServiceServiceInfo
@@ -79,6 +86,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -501,31 +510,43 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesSaveDraft(ctx context.Context, req *tg.TLMessagesSaveDraft) (r *tg.Bool, err error) {
-	var _args MessagesSaveDraftArgs
-	_args.Req = req
-	var _result MessagesSaveDraftResult
-	if err = p.c.Call(ctx, "messages.saveDraft", &_args, &_result); err != nil {
+	// var _args MessagesSaveDraftArgs
+	// _args.Req = req
+	// var _result MessagesSaveDraftResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.saveDraft", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetAllDrafts(ctx context.Context, req *tg.TLMessagesGetAllDrafts) (r *tg.Updates, err error) {
-	var _args MessagesGetAllDraftsArgs
-	_args.Req = req
-	var _result MessagesGetAllDraftsResult
-	if err = p.c.Call(ctx, "messages.getAllDrafts", &_args, &_result); err != nil {
+	// var _args MessagesGetAllDraftsArgs
+	// _args.Req = req
+	// var _result MessagesGetAllDraftsResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.getAllDrafts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesClearAllDrafts(ctx context.Context, req *tg.TLMessagesClearAllDrafts) (r *tg.Bool, err error) {
-	var _args MessagesClearAllDraftsArgs
-	_args.Req = req
-	var _result MessagesClearAllDraftsResult
-	if err = p.c.Call(ctx, "messages.clearAllDrafts", &_args, &_result); err != nil {
+	// var _args MessagesClearAllDraftsArgs
+	// _args.Req = req
+	// var _result MessagesClearAllDraftsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.clearAllDrafts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

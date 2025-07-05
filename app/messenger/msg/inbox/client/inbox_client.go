@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type InboxClient interface {
 	InboxEditUserMessageToInbox(ctx context.Context, in *inbox.TLInboxEditUserMessageToInbox) (*tg.Void, error)
 	InboxEditChatMessageToInbox(ctx context.Context, in *inbox.TLInboxEditChatMessageToInbox) (*tg.Void, error)
@@ -36,6 +38,7 @@ type InboxClient interface {
 	InboxReadInboxHistory(ctx context.Context, in *inbox.TLInboxReadInboxHistory) (*tg.Void, error)
 	InboxReadOutboxHistory(ctx context.Context, in *inbox.TLInboxReadOutboxHistory) (*tg.Void, error)
 	InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error)
+	InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*tg.Void, error)
 }
 
 type defaultInboxClient struct {
@@ -133,7 +136,7 @@ func (m *defaultInboxClient) InboxEditMessageToInboxV2(ctx context.Context, in *
 }
 
 // InboxReadInboxHistory
-// inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int  layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
+// inbox.readInboxHistory flags:# user_id:long auth_key_id:long peer_type:int peer_id:long pts:int pts_count:int unread_count:int read_inbox_max_id:int max_id:int layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
 func (m *defaultInboxClient) InboxReadInboxHistory(ctx context.Context, in *inbox.TLInboxReadInboxHistory) (*tg.Void, error) {
 	cli := inboxservice.NewRPCInboxClient(m.cli)
 	return cli.InboxReadInboxHistory(ctx, in)
@@ -151,4 +154,11 @@ func (m *defaultInboxClient) InboxReadOutboxHistory(ctx context.Context, in *inb
 func (m *defaultInboxClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, in *inbox.TLInboxReadMediaUnreadToInboxV2) (*tg.Void, error) {
 	cli := inboxservice.NewRPCInboxClient(m.cli)
 	return cli.InboxReadMediaUnreadToInboxV2(ctx, in)
+}
+
+// InboxUpdatePinnedMessageV2
+// inbox.updatePinnedMessageV2 flags:# user_id:long unpin:flags.1?true peer_type:int peer_id:long id:int dialog_message_id:long layer:flags.3?int server_id:flags.4?string session_id:flags.5?long client_req_msg_id:flags.6?long = Void;
+func (m *defaultInboxClient) InboxUpdatePinnedMessageV2(ctx context.Context, in *inbox.TLInboxUpdatePinnedMessageV2) (*tg.Void, error) {
+	cli := inboxservice.NewRPCInboxClient(m.cli)
+	return cli.InboxUpdatePinnedMessageV2(ctx, in)
 }

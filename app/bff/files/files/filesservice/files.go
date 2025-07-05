@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -118,6 +119,12 @@ var (
 	filesServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCFiles", filesServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCFiles", filesServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCFiles", filesServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return filesServiceServiceInfo
@@ -142,6 +149,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1698,121 +1707,169 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesGetDocumentByHash(ctx context.Context, req *tg.TLMessagesGetDocumentByHash) (r *tg.Document, err error) {
-	var _args MessagesGetDocumentByHashArgs
-	_args.Req = req
-	var _result MessagesGetDocumentByHashResult
-	if err = p.c.Call(ctx, "messages.getDocumentByHash", &_args, &_result); err != nil {
+	// var _args MessagesGetDocumentByHashArgs
+	// _args.Req = req
+	// var _result MessagesGetDocumentByHashResult
+
+	_result := new(tg.Document)
+	if err = p.c.Call(ctx, "messages.getDocumentByHash", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesUploadMedia(ctx context.Context, req *tg.TLMessagesUploadMedia) (r *tg.MessageMedia, err error) {
-	var _args MessagesUploadMediaArgs
-	_args.Req = req
-	var _result MessagesUploadMediaResult
-	if err = p.c.Call(ctx, "messages.uploadMedia", &_args, &_result); err != nil {
+	// var _args MessagesUploadMediaArgs
+	// _args.Req = req
+	// var _result MessagesUploadMediaResult
+
+	_result := new(tg.MessageMedia)
+	if err = p.c.Call(ctx, "messages.uploadMedia", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesUploadEncryptedFile(ctx context.Context, req *tg.TLMessagesUploadEncryptedFile) (r *tg.EncryptedFile, err error) {
-	var _args MessagesUploadEncryptedFileArgs
-	_args.Req = req
-	var _result MessagesUploadEncryptedFileResult
-	if err = p.c.Call(ctx, "messages.uploadEncryptedFile", &_args, &_result); err != nil {
+	// var _args MessagesUploadEncryptedFileArgs
+	// _args.Req = req
+	// var _result MessagesUploadEncryptedFileResult
+
+	_result := new(tg.EncryptedFile)
+	if err = p.c.Call(ctx, "messages.uploadEncryptedFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadSaveFilePart(ctx context.Context, req *tg.TLUploadSaveFilePart) (r *tg.Bool, err error) {
-	var _args UploadSaveFilePartArgs
-	_args.Req = req
-	var _result UploadSaveFilePartResult
-	if err = p.c.Call(ctx, "upload.saveFilePart", &_args, &_result); err != nil {
+	// var _args UploadSaveFilePartArgs
+	// _args.Req = req
+	// var _result UploadSaveFilePartResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "upload.saveFilePart", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadGetFile(ctx context.Context, req *tg.TLUploadGetFile) (r *tg.UploadFile, err error) {
-	var _args UploadGetFileArgs
-	_args.Req = req
-	var _result UploadGetFileResult
-	if err = p.c.Call(ctx, "upload.getFile", &_args, &_result); err != nil {
+	// var _args UploadGetFileArgs
+	// _args.Req = req
+	// var _result UploadGetFileResult
+
+	_result := new(tg.UploadFile)
+	if err = p.c.Call(ctx, "upload.getFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadSaveBigFilePart(ctx context.Context, req *tg.TLUploadSaveBigFilePart) (r *tg.Bool, err error) {
-	var _args UploadSaveBigFilePartArgs
-	_args.Req = req
-	var _result UploadSaveBigFilePartResult
-	if err = p.c.Call(ctx, "upload.saveBigFilePart", &_args, &_result); err != nil {
+	// var _args UploadSaveBigFilePartArgs
+	// _args.Req = req
+	// var _result UploadSaveBigFilePartResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "upload.saveBigFilePart", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadGetWebFile(ctx context.Context, req *tg.TLUploadGetWebFile) (r *tg.UploadWebFile, err error) {
-	var _args UploadGetWebFileArgs
-	_args.Req = req
-	var _result UploadGetWebFileResult
-	if err = p.c.Call(ctx, "upload.getWebFile", &_args, &_result); err != nil {
+	// var _args UploadGetWebFileArgs
+	// _args.Req = req
+	// var _result UploadGetWebFileResult
+
+	_result := new(tg.UploadWebFile)
+	if err = p.c.Call(ctx, "upload.getWebFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadGetCdnFile(ctx context.Context, req *tg.TLUploadGetCdnFile) (r *tg.UploadCdnFile, err error) {
-	var _args UploadGetCdnFileArgs
-	_args.Req = req
-	var _result UploadGetCdnFileResult
-	if err = p.c.Call(ctx, "upload.getCdnFile", &_args, &_result); err != nil {
+	// var _args UploadGetCdnFileArgs
+	// _args.Req = req
+	// var _result UploadGetCdnFileResult
+
+	_result := new(tg.UploadCdnFile)
+	if err = p.c.Call(ctx, "upload.getCdnFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadReuploadCdnFile(ctx context.Context, req *tg.TLUploadReuploadCdnFile) (r *tg.VectorFileHash, err error) {
-	var _args UploadReuploadCdnFileArgs
-	_args.Req = req
-	var _result UploadReuploadCdnFileResult
-	if err = p.c.Call(ctx, "upload.reuploadCdnFile", &_args, &_result); err != nil {
+	// var _args UploadReuploadCdnFileArgs
+	// _args.Req = req
+	// var _result UploadReuploadCdnFileResult
+
+	_result := new(tg.VectorFileHash)
+	if err = p.c.Call(ctx, "upload.reuploadCdnFile", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadGetCdnFileHashes(ctx context.Context, req *tg.TLUploadGetCdnFileHashes) (r *tg.VectorFileHash, err error) {
-	var _args UploadGetCdnFileHashesArgs
-	_args.Req = req
-	var _result UploadGetCdnFileHashesResult
-	if err = p.c.Call(ctx, "upload.getCdnFileHashes", &_args, &_result); err != nil {
+	// var _args UploadGetCdnFileHashesArgs
+	// _args.Req = req
+	// var _result UploadGetCdnFileHashesResult
+
+	_result := new(tg.VectorFileHash)
+	if err = p.c.Call(ctx, "upload.getCdnFileHashes", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UploadGetFileHashes(ctx context.Context, req *tg.TLUploadGetFileHashes) (r *tg.VectorFileHash, err error) {
-	var _args UploadGetFileHashesArgs
-	_args.Req = req
-	var _result UploadGetFileHashesResult
-	if err = p.c.Call(ctx, "upload.getFileHashes", &_args, &_result); err != nil {
+	// var _args UploadGetFileHashesArgs
+	// _args.Req = req
+	// var _result UploadGetFileHashesResult
+
+	_result := new(tg.VectorFileHash)
+	if err = p.c.Call(ctx, "upload.getFileHashes", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) HelpGetCdnConfig(ctx context.Context, req *tg.TLHelpGetCdnConfig) (r *tg.CdnConfig, err error) {
-	var _args HelpGetCdnConfigArgs
-	_args.Req = req
-	var _result HelpGetCdnConfigResult
-	if err = p.c.Call(ctx, "help.getCdnConfig", &_args, &_result); err != nil {
+	// var _args HelpGetCdnConfigArgs
+	// _args.Req = req
+	// var _result HelpGetCdnConfigResult
+
+	_result := new(tg.CdnConfig)
+	if err = p.c.Call(ctx, "help.getCdnConfig", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

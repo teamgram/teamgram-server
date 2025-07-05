@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -125,6 +126,12 @@ var (
 	dialogsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCDialogs", dialogsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCDialogs", dialogsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCDialogs", dialogsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return dialogsServiceServiceInfo
@@ -149,6 +156,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1831,131 +1840,183 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesGetDialogs(ctx context.Context, req *tg.TLMessagesGetDialogs) (r *tg.MessagesDialogs, err error) {
-	var _args MessagesGetDialogsArgs
-	_args.Req = req
-	var _result MessagesGetDialogsResult
-	if err = p.c.Call(ctx, "messages.getDialogs", &_args, &_result); err != nil {
+	// var _args MessagesGetDialogsArgs
+	// _args.Req = req
+	// var _result MessagesGetDialogsResult
+
+	_result := new(tg.MessagesDialogs)
+	if err = p.c.Call(ctx, "messages.getDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesSetTyping(ctx context.Context, req *tg.TLMessagesSetTyping) (r *tg.Bool, err error) {
-	var _args MessagesSetTypingArgs
-	_args.Req = req
-	var _result MessagesSetTypingResult
-	if err = p.c.Call(ctx, "messages.setTyping", &_args, &_result); err != nil {
+	// var _args MessagesSetTypingArgs
+	// _args.Req = req
+	// var _result MessagesSetTypingResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.setTyping", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetPeerSettings(ctx context.Context, req *tg.TLMessagesGetPeerSettings) (r *tg.MessagesPeerSettings, err error) {
-	var _args MessagesGetPeerSettingsArgs
-	_args.Req = req
-	var _result MessagesGetPeerSettingsResult
-	if err = p.c.Call(ctx, "messages.getPeerSettings", &_args, &_result); err != nil {
+	// var _args MessagesGetPeerSettingsArgs
+	// _args.Req = req
+	// var _result MessagesGetPeerSettingsResult
+
+	_result := new(tg.MessagesPeerSettings)
+	if err = p.c.Call(ctx, "messages.getPeerSettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetPeerDialogs(ctx context.Context, req *tg.TLMessagesGetPeerDialogs) (r *tg.MessagesPeerDialogs, err error) {
-	var _args MessagesGetPeerDialogsArgs
-	_args.Req = req
-	var _result MessagesGetPeerDialogsResult
-	if err = p.c.Call(ctx, "messages.getPeerDialogs", &_args, &_result); err != nil {
+	// var _args MessagesGetPeerDialogsArgs
+	// _args.Req = req
+	// var _result MessagesGetPeerDialogsResult
+
+	_result := new(tg.MessagesPeerDialogs)
+	if err = p.c.Call(ctx, "messages.getPeerDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesToggleDialogPin(ctx context.Context, req *tg.TLMessagesToggleDialogPin) (r *tg.Bool, err error) {
-	var _args MessagesToggleDialogPinArgs
-	_args.Req = req
-	var _result MessagesToggleDialogPinResult
-	if err = p.c.Call(ctx, "messages.toggleDialogPin", &_args, &_result); err != nil {
+	// var _args MessagesToggleDialogPinArgs
+	// _args.Req = req
+	// var _result MessagesToggleDialogPinResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.toggleDialogPin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesReorderPinnedDialogs(ctx context.Context, req *tg.TLMessagesReorderPinnedDialogs) (r *tg.Bool, err error) {
-	var _args MessagesReorderPinnedDialogsArgs
-	_args.Req = req
-	var _result MessagesReorderPinnedDialogsResult
-	if err = p.c.Call(ctx, "messages.reorderPinnedDialogs", &_args, &_result); err != nil {
+	// var _args MessagesReorderPinnedDialogsArgs
+	// _args.Req = req
+	// var _result MessagesReorderPinnedDialogsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.reorderPinnedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetPinnedDialogs(ctx context.Context, req *tg.TLMessagesGetPinnedDialogs) (r *tg.MessagesPeerDialogs, err error) {
-	var _args MessagesGetPinnedDialogsArgs
-	_args.Req = req
-	var _result MessagesGetPinnedDialogsResult
-	if err = p.c.Call(ctx, "messages.getPinnedDialogs", &_args, &_result); err != nil {
+	// var _args MessagesGetPinnedDialogsArgs
+	// _args.Req = req
+	// var _result MessagesGetPinnedDialogsResult
+
+	_result := new(tg.MessagesPeerDialogs)
+	if err = p.c.Call(ctx, "messages.getPinnedDialogs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesSendScreenshotNotification(ctx context.Context, req *tg.TLMessagesSendScreenshotNotification) (r *tg.Updates, err error) {
-	var _args MessagesSendScreenshotNotificationArgs
-	_args.Req = req
-	var _result MessagesSendScreenshotNotificationResult
-	if err = p.c.Call(ctx, "messages.sendScreenshotNotification", &_args, &_result); err != nil {
+	// var _args MessagesSendScreenshotNotificationArgs
+	// _args.Req = req
+	// var _result MessagesSendScreenshotNotificationResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.sendScreenshotNotification", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesMarkDialogUnread(ctx context.Context, req *tg.TLMessagesMarkDialogUnread) (r *tg.Bool, err error) {
-	var _args MessagesMarkDialogUnreadArgs
-	_args.Req = req
-	var _result MessagesMarkDialogUnreadResult
-	if err = p.c.Call(ctx, "messages.markDialogUnread", &_args, &_result); err != nil {
+	// var _args MessagesMarkDialogUnreadArgs
+	// _args.Req = req
+	// var _result MessagesMarkDialogUnreadResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.markDialogUnread", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetDialogUnreadMarks(ctx context.Context, req *tg.TLMessagesGetDialogUnreadMarks) (r *tg.VectorDialogPeer, err error) {
-	var _args MessagesGetDialogUnreadMarksArgs
-	_args.Req = req
-	var _result MessagesGetDialogUnreadMarksResult
-	if err = p.c.Call(ctx, "messages.getDialogUnreadMarks", &_args, &_result); err != nil {
+	// var _args MessagesGetDialogUnreadMarksArgs
+	// _args.Req = req
+	// var _result MessagesGetDialogUnreadMarksResult
+
+	_result := new(tg.VectorDialogPeer)
+	if err = p.c.Call(ctx, "messages.getDialogUnreadMarks", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetOnlines(ctx context.Context, req *tg.TLMessagesGetOnlines) (r *tg.ChatOnlines, err error) {
-	var _args MessagesGetOnlinesArgs
-	_args.Req = req
-	var _result MessagesGetOnlinesResult
-	if err = p.c.Call(ctx, "messages.getOnlines", &_args, &_result); err != nil {
+	// var _args MessagesGetOnlinesArgs
+	// _args.Req = req
+	// var _result MessagesGetOnlinesResult
+
+	_result := new(tg.ChatOnlines)
+	if err = p.c.Call(ctx, "messages.getOnlines", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesHidePeerSettingsBar(ctx context.Context, req *tg.TLMessagesHidePeerSettingsBar) (r *tg.Bool, err error) {
-	var _args MessagesHidePeerSettingsBarArgs
-	_args.Req = req
-	var _result MessagesHidePeerSettingsBarResult
-	if err = p.c.Call(ctx, "messages.hidePeerSettingsBar", &_args, &_result); err != nil {
+	// var _args MessagesHidePeerSettingsBarArgs
+	// _args.Req = req
+	// var _result MessagesHidePeerSettingsBarResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.hidePeerSettingsBar", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesSetHistoryTTL(ctx context.Context, req *tg.TLMessagesSetHistoryTTL) (r *tg.Updates, err error) {
-	var _args MessagesSetHistoryTTLArgs
-	_args.Req = req
-	var _result MessagesSetHistoryTTLResult
-	if err = p.c.Call(ctx, "messages.setHistoryTTL", &_args, &_result); err != nil {
+	// var _args MessagesSetHistoryTTLArgs
+	// _args.Req = req
+	// var _result MessagesSetHistoryTTLResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.setHistoryTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type MsgClient interface {
 	MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*tg.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)

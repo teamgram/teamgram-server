@@ -18,18 +18,20 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/core"
 )
 
+var _ *tg.Bool
+
 // DfsWriteFilePartData
 // dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWriteFilePartData) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.writeFilePartData - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.writeFilePartData - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsWriteFilePartData(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.writeFilePartData - reply: %s", r)
 	return r, err
 }
 
@@ -37,14 +39,14 @@ func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWr
 // dfs.uploadPhotoFileV2 creator:long file:InputFile = Photo;
 func (s *Service) DfsUploadPhotoFileV2(ctx context.Context, request *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadPhotoFileV2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadPhotoFileV2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadPhotoFileV2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadPhotoFileV2 - reply: %s", r)
 	return r, err
 }
 
@@ -52,14 +54,14 @@ func (s *Service) DfsUploadPhotoFileV2(ctx context.Context, request *dfs.TLDfsUp
 // dfs.uploadProfilePhotoFileV2 flags:# creator:long file:flags.0?InputFile video:flags.1?InputFile video_start_ts:flags.2?double = Photo;
 func (s *Service) DfsUploadProfilePhotoFileV2(ctx context.Context, request *dfs.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadProfilePhotoFileV2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadProfilePhotoFileV2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadProfilePhotoFileV2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadProfilePhotoFileV2 - reply: %s", r)
 	return r, err
 }
 
@@ -67,14 +69,14 @@ func (s *Service) DfsUploadProfilePhotoFileV2(ctx context.Context, request *dfs.
 // dfs.uploadEncryptedFileV2 creator:long file:InputEncryptedFile = EncryptedFile;
 func (s *Service) DfsUploadEncryptedFileV2(ctx context.Context, request *dfs.TLDfsUploadEncryptedFileV2) (*tg.EncryptedFile, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadEncryptedFileV2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadEncryptedFileV2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadEncryptedFileV2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadEncryptedFileV2 - reply: %s", r)
 	return r, err
 }
 
@@ -82,14 +84,14 @@ func (s *Service) DfsUploadEncryptedFileV2(ctx context.Context, request *dfs.TLD
 // dfs.downloadFile location:InputFileLocation offset:long limit:int = upload.File;
 func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloadFile) (*tg.UploadFile, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.downloadFile - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.downloadFile - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsDownloadFile(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.downloadFile - reply: %s", r)
 	return r, err
 }
 
@@ -97,14 +99,14 @@ func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloa
 // dfs.uploadDocumentFileV2 creator:long media:InputMedia = Document;
 func (s *Service) DfsUploadDocumentFileV2(ctx context.Context, request *dfs.TLDfsUploadDocumentFileV2) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadDocumentFileV2 - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadDocumentFileV2 - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadDocumentFileV2(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadDocumentFileV2 - reply: %s", r)
 	return r, err
 }
 
@@ -112,14 +114,14 @@ func (s *Service) DfsUploadDocumentFileV2(ctx context.Context, request *dfs.TLDf
 // dfs.uploadGifDocumentMedia creator:long media:InputMedia = Document;
 func (s *Service) DfsUploadGifDocumentMedia(ctx context.Context, request *dfs.TLDfsUploadGifDocumentMedia) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadGifDocumentMedia - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadGifDocumentMedia - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadGifDocumentMedia(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadGifDocumentMedia - reply: %s", r)
 	return r, err
 }
 
@@ -127,14 +129,14 @@ func (s *Service) DfsUploadGifDocumentMedia(ctx context.Context, request *dfs.TL
 // dfs.uploadMp4DocumentMedia creator:long media:InputMedia = Document;
 func (s *Service) DfsUploadMp4DocumentMedia(ctx context.Context, request *dfs.TLDfsUploadMp4DocumentMedia) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadMp4DocumentMedia - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadMp4DocumentMedia - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadMp4DocumentMedia(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadMp4DocumentMedia - reply: %s", r)
 	return r, err
 }
 
@@ -142,14 +144,14 @@ func (s *Service) DfsUploadMp4DocumentMedia(ctx context.Context, request *dfs.TL
 // dfs.uploadWallPaperFile creator:long file:InputFile mime_type:string admin:Bool = Document;
 func (s *Service) DfsUploadWallPaperFile(ctx context.Context, request *dfs.TLDfsUploadWallPaperFile) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadWallPaperFile - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadWallPaperFile - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadWallPaperFile(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadWallPaperFile - reply: %s", r)
 	return r, err
 }
 
@@ -157,14 +159,14 @@ func (s *Service) DfsUploadWallPaperFile(ctx context.Context, request *dfs.TLDfs
 // dfs.uploadThemeFile flags:# creator:long file:InputFile thumb:flags.0?InputFile mime_type:string file_name:string = Document;
 func (s *Service) DfsUploadThemeFile(ctx context.Context, request *dfs.TLDfsUploadThemeFile) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadThemeFile - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadThemeFile - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadThemeFile(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadThemeFile - reply: %s", r)
 	return r, err
 }
 
@@ -172,14 +174,14 @@ func (s *Service) DfsUploadThemeFile(ctx context.Context, request *dfs.TLDfsUplo
 // dfs.uploadRingtoneFile creator:long file:InputFile mime_type:string file_name:string = Document;
 func (s *Service) DfsUploadRingtoneFile(ctx context.Context, request *dfs.TLDfsUploadRingtoneFile) (*tg.Document, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadRingtoneFile - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadRingtoneFile - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadRingtoneFile(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadRingtoneFile - reply: %s", r)
 	return r, err
 }
 
@@ -187,13 +189,13 @@ func (s *Service) DfsUploadRingtoneFile(ctx context.Context, request *dfs.TLDfsU
 // dfs.uploadedProfilePhoto creator:long photo_id:long = Photo;
 func (s *Service) DfsUploadedProfilePhoto(ctx context.Context, request *dfs.TLDfsUploadedProfilePhoto) (*tg.Photo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.uploadedProfilePhoto - metadata: {}, request: %v", request)
+	c.Logger.Debugf("dfs.uploadedProfilePhoto - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.DfsUploadedProfilePhoto(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("echos.echo - reply: %v", r)
+	c.Logger.Debugf("dfs.uploadedProfilePhoto - reply: %s", r)
 	return r, err
 }

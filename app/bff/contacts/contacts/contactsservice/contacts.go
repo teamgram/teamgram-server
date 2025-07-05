@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -188,6 +189,12 @@ var (
 	contactsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCContacts", contactsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCContacts", contactsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCContacts", contactsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return contactsServiceServiceInfo
@@ -212,6 +219,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -3028,221 +3037,309 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountGetContactSignUpNotification(ctx context.Context, req *tg.TLAccountGetContactSignUpNotification) (r *tg.Bool, err error) {
-	var _args AccountGetContactSignUpNotificationArgs
-	_args.Req = req
-	var _result AccountGetContactSignUpNotificationResult
-	if err = p.c.Call(ctx, "account.getContactSignUpNotification", &_args, &_result); err != nil {
+	// var _args AccountGetContactSignUpNotificationArgs
+	// _args.Req = req
+	// var _result AccountGetContactSignUpNotificationResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.getContactSignUpNotification", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSetContactSignUpNotification(ctx context.Context, req *tg.TLAccountSetContactSignUpNotification) (r *tg.Bool, err error) {
-	var _args AccountSetContactSignUpNotificationArgs
-	_args.Req = req
-	var _result AccountSetContactSignUpNotificationResult
-	if err = p.c.Call(ctx, "account.setContactSignUpNotification", &_args, &_result); err != nil {
+	// var _args AccountSetContactSignUpNotificationArgs
+	// _args.Req = req
+	// var _result AccountSetContactSignUpNotificationResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.setContactSignUpNotification", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetContactIDs(ctx context.Context, req *tg.TLContactsGetContactIDs) (r *tg.VectorInt, err error) {
-	var _args ContactsGetContactIDsArgs
-	_args.Req = req
-	var _result ContactsGetContactIDsResult
-	if err = p.c.Call(ctx, "contacts.getContactIDs", &_args, &_result); err != nil {
+	// var _args ContactsGetContactIDsArgs
+	// _args.Req = req
+	// var _result ContactsGetContactIDsResult
+
+	_result := new(tg.VectorInt)
+	if err = p.c.Call(ctx, "contacts.getContactIDs", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetStatuses(ctx context.Context, req *tg.TLContactsGetStatuses) (r *tg.VectorContactStatus, err error) {
-	var _args ContactsGetStatusesArgs
-	_args.Req = req
-	var _result ContactsGetStatusesResult
-	if err = p.c.Call(ctx, "contacts.getStatuses", &_args, &_result); err != nil {
+	// var _args ContactsGetStatusesArgs
+	// _args.Req = req
+	// var _result ContactsGetStatusesResult
+
+	_result := new(tg.VectorContactStatus)
+	if err = p.c.Call(ctx, "contacts.getStatuses", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetContacts(ctx context.Context, req *tg.TLContactsGetContacts) (r *tg.ContactsContacts, err error) {
-	var _args ContactsGetContactsArgs
-	_args.Req = req
-	var _result ContactsGetContactsResult
-	if err = p.c.Call(ctx, "contacts.getContacts", &_args, &_result); err != nil {
+	// var _args ContactsGetContactsArgs
+	// _args.Req = req
+	// var _result ContactsGetContactsResult
+
+	_result := new(tg.ContactsContacts)
+	if err = p.c.Call(ctx, "contacts.getContacts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsImportContacts(ctx context.Context, req *tg.TLContactsImportContacts) (r *tg.ContactsImportedContacts, err error) {
-	var _args ContactsImportContactsArgs
-	_args.Req = req
-	var _result ContactsImportContactsResult
-	if err = p.c.Call(ctx, "contacts.importContacts", &_args, &_result); err != nil {
+	// var _args ContactsImportContactsArgs
+	// _args.Req = req
+	// var _result ContactsImportContactsResult
+
+	_result := new(tg.ContactsImportedContacts)
+	if err = p.c.Call(ctx, "contacts.importContacts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsDeleteContacts(ctx context.Context, req *tg.TLContactsDeleteContacts) (r *tg.Updates, err error) {
-	var _args ContactsDeleteContactsArgs
-	_args.Req = req
-	var _result ContactsDeleteContactsResult
-	if err = p.c.Call(ctx, "contacts.deleteContacts", &_args, &_result); err != nil {
+	// var _args ContactsDeleteContactsArgs
+	// _args.Req = req
+	// var _result ContactsDeleteContactsResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "contacts.deleteContacts", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsDeleteByPhones(ctx context.Context, req *tg.TLContactsDeleteByPhones) (r *tg.Bool, err error) {
-	var _args ContactsDeleteByPhonesArgs
-	_args.Req = req
-	var _result ContactsDeleteByPhonesResult
-	if err = p.c.Call(ctx, "contacts.deleteByPhones", &_args, &_result); err != nil {
+	// var _args ContactsDeleteByPhonesArgs
+	// _args.Req = req
+	// var _result ContactsDeleteByPhonesResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.deleteByPhones", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsBlock(ctx context.Context, req *tg.TLContactsBlock) (r *tg.Bool, err error) {
-	var _args ContactsBlockArgs
-	_args.Req = req
-	var _result ContactsBlockResult
-	if err = p.c.Call(ctx, "contacts.block", &_args, &_result); err != nil {
+	// var _args ContactsBlockArgs
+	// _args.Req = req
+	// var _result ContactsBlockResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.block", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsUnblock(ctx context.Context, req *tg.TLContactsUnblock) (r *tg.Bool, err error) {
-	var _args ContactsUnblockArgs
-	_args.Req = req
-	var _result ContactsUnblockResult
-	if err = p.c.Call(ctx, "contacts.unblock", &_args, &_result); err != nil {
+	// var _args ContactsUnblockArgs
+	// _args.Req = req
+	// var _result ContactsUnblockResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.unblock", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetBlocked(ctx context.Context, req *tg.TLContactsGetBlocked) (r *tg.ContactsBlocked, err error) {
-	var _args ContactsGetBlockedArgs
-	_args.Req = req
-	var _result ContactsGetBlockedResult
-	if err = p.c.Call(ctx, "contacts.getBlocked", &_args, &_result); err != nil {
+	// var _args ContactsGetBlockedArgs
+	// _args.Req = req
+	// var _result ContactsGetBlockedResult
+
+	_result := new(tg.ContactsBlocked)
+	if err = p.c.Call(ctx, "contacts.getBlocked", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsSearch(ctx context.Context, req *tg.TLContactsSearch) (r *tg.ContactsFound, err error) {
-	var _args ContactsSearchArgs
-	_args.Req = req
-	var _result ContactsSearchResult
-	if err = p.c.Call(ctx, "contacts.search", &_args, &_result); err != nil {
+	// var _args ContactsSearchArgs
+	// _args.Req = req
+	// var _result ContactsSearchResult
+
+	_result := new(tg.ContactsFound)
+	if err = p.c.Call(ctx, "contacts.search", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetTopPeers(ctx context.Context, req *tg.TLContactsGetTopPeers) (r *tg.ContactsTopPeers, err error) {
-	var _args ContactsGetTopPeersArgs
-	_args.Req = req
-	var _result ContactsGetTopPeersResult
-	if err = p.c.Call(ctx, "contacts.getTopPeers", &_args, &_result); err != nil {
+	// var _args ContactsGetTopPeersArgs
+	// _args.Req = req
+	// var _result ContactsGetTopPeersResult
+
+	_result := new(tg.ContactsTopPeers)
+	if err = p.c.Call(ctx, "contacts.getTopPeers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsResetTopPeerRating(ctx context.Context, req *tg.TLContactsResetTopPeerRating) (r *tg.Bool, err error) {
-	var _args ContactsResetTopPeerRatingArgs
-	_args.Req = req
-	var _result ContactsResetTopPeerRatingResult
-	if err = p.c.Call(ctx, "contacts.resetTopPeerRating", &_args, &_result); err != nil {
+	// var _args ContactsResetTopPeerRatingArgs
+	// _args.Req = req
+	// var _result ContactsResetTopPeerRatingResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.resetTopPeerRating", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsResetSaved(ctx context.Context, req *tg.TLContactsResetSaved) (r *tg.Bool, err error) {
-	var _args ContactsResetSavedArgs
-	_args.Req = req
-	var _result ContactsResetSavedResult
-	if err = p.c.Call(ctx, "contacts.resetSaved", &_args, &_result); err != nil {
+	// var _args ContactsResetSavedArgs
+	// _args.Req = req
+	// var _result ContactsResetSavedResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.resetSaved", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetSaved(ctx context.Context, req *tg.TLContactsGetSaved) (r *tg.VectorSavedContact, err error) {
-	var _args ContactsGetSavedArgs
-	_args.Req = req
-	var _result ContactsGetSavedResult
-	if err = p.c.Call(ctx, "contacts.getSaved", &_args, &_result); err != nil {
+	// var _args ContactsGetSavedArgs
+	// _args.Req = req
+	// var _result ContactsGetSavedResult
+
+	_result := new(tg.VectorSavedContact)
+	if err = p.c.Call(ctx, "contacts.getSaved", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsToggleTopPeers(ctx context.Context, req *tg.TLContactsToggleTopPeers) (r *tg.Bool, err error) {
-	var _args ContactsToggleTopPeersArgs
-	_args.Req = req
-	var _result ContactsToggleTopPeersResult
-	if err = p.c.Call(ctx, "contacts.toggleTopPeers", &_args, &_result); err != nil {
+	// var _args ContactsToggleTopPeersArgs
+	// _args.Req = req
+	// var _result ContactsToggleTopPeersResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.toggleTopPeers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsAddContact(ctx context.Context, req *tg.TLContactsAddContact) (r *tg.Updates, err error) {
-	var _args ContactsAddContactArgs
-	_args.Req = req
-	var _result ContactsAddContactResult
-	if err = p.c.Call(ctx, "contacts.addContact", &_args, &_result); err != nil {
+	// var _args ContactsAddContactArgs
+	// _args.Req = req
+	// var _result ContactsAddContactResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "contacts.addContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsAcceptContact(ctx context.Context, req *tg.TLContactsAcceptContact) (r *tg.Updates, err error) {
-	var _args ContactsAcceptContactArgs
-	_args.Req = req
-	var _result ContactsAcceptContactResult
-	if err = p.c.Call(ctx, "contacts.acceptContact", &_args, &_result); err != nil {
+	// var _args ContactsAcceptContactArgs
+	// _args.Req = req
+	// var _result ContactsAcceptContactResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "contacts.acceptContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsGetLocated(ctx context.Context, req *tg.TLContactsGetLocated) (r *tg.Updates, err error) {
-	var _args ContactsGetLocatedArgs
-	_args.Req = req
-	var _result ContactsGetLocatedResult
-	if err = p.c.Call(ctx, "contacts.getLocated", &_args, &_result); err != nil {
+	// var _args ContactsGetLocatedArgs
+	// _args.Req = req
+	// var _result ContactsGetLocatedResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "contacts.getLocated", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsEditCloseFriends(ctx context.Context, req *tg.TLContactsEditCloseFriends) (r *tg.Bool, err error) {
-	var _args ContactsEditCloseFriendsArgs
-	_args.Req = req
-	var _result ContactsEditCloseFriendsResult
-	if err = p.c.Call(ctx, "contacts.editCloseFriends", &_args, &_result); err != nil {
+	// var _args ContactsEditCloseFriendsArgs
+	// _args.Req = req
+	// var _result ContactsEditCloseFriendsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.editCloseFriends", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetBlocked) (r *tg.Bool, err error) {
-	var _args ContactsSetBlockedArgs
-	_args.Req = req
-	var _result ContactsSetBlockedResult
-	if err = p.c.Call(ctx, "contacts.setBlocked", &_args, &_result); err != nil {
+	// var _args ContactsSetBlockedArgs
+	// _args.Req = req
+	// var _result ContactsSetBlockedResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "contacts.setBlocked", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

@@ -21,14 +21,14 @@ import (
 // updates.getState#edd4882a = updates.State;
 func (s *Service) UpdatesGetState(ctx context.Context, request *tg.TLUpdatesGetState) (*tg.UpdatesState, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("updates.getState - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("updates.getState - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.UpdatesGetState(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("updates.getState - reply: {%v}", r)
+	c.Logger.Debugf("updates.getState - reply: %s", r)
 	return r, err
 }
 
@@ -36,14 +36,14 @@ func (s *Service) UpdatesGetState(ctx context.Context, request *tg.TLUpdatesGetS
 // updates.getDifference#19c2f763 flags:# pts:int pts_limit:flags.1?int pts_total_limit:flags.0?int date:int qts:int qts_limit:flags.2?int = updates.Difference;
 func (s *Service) UpdatesGetDifference(ctx context.Context, request *tg.TLUpdatesGetDifference) (*tg.UpdatesDifference, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("updates.getDifference - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("updates.getDifference - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.UpdatesGetDifference(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("updates.getDifference - reply: {%v}", r)
+	c.Logger.Debugf("updates.getDifference - reply: %s", r)
 	return r, err
 }
 
@@ -51,13 +51,13 @@ func (s *Service) UpdatesGetDifference(ctx context.Context, request *tg.TLUpdate
 // updates.getChannelDifference#3173d78 flags:# force:flags.0?true channel:InputChannel filter:ChannelMessagesFilter pts:int limit:int = updates.ChannelDifference;
 func (s *Service) UpdatesGetChannelDifference(ctx context.Context, request *tg.TLUpdatesGetChannelDifference) (*tg.UpdatesChannelDifference, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("updates.getChannelDifference - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("updates.getChannelDifference - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.UpdatesGetChannelDifference(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("updates.getChannelDifference - reply: {%v}", r)
+	c.Logger.Debugf("updates.getChannelDifference - reply: %s", r)
 	return r, err
 }

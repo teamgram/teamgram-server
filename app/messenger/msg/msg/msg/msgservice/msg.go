@@ -17,12 +17,15 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg/msg"
 
 	"github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
+
+var _ *tg.Bool
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
@@ -119,6 +122,12 @@ var (
 	msgServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCMsg", msgServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCMsg", msgServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCMsg", msgServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return msgServiceServiceInfo
@@ -143,6 +152,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1699,121 +1710,181 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MsgPushUserMessage(ctx context.Context, req *msg.TLMsgPushUserMessage) (r *tg.Bool, err error) {
-	var _args PushUserMessageArgs
-	_args.Req = req
-	var _result PushUserMessageResult
-	if err = p.c.Call(ctx, "msg.pushUserMessage", &_args, &_result); err != nil {
+	// var _args PushUserMessageArgs
+	// _args.Req = req
+	// var _result PushUserMessageResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "msg.pushUserMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgReadMessageContents) (r *tg.MessagesAffectedMessages, err error) {
-	var _args ReadMessageContentsArgs
-	_args.Req = req
-	var _result ReadMessageContentsResult
-	if err = p.c.Call(ctx, "msg.readMessageContents", &_args, &_result); err != nil {
+	// var _args ReadMessageContentsArgs
+	// _args.Req = req
+	// var _result ReadMessageContentsResult
+
+	_result := new(tg.MessagesAffectedMessages)
+
+	if err = p.c.Call(ctx, "msg.readMessageContents", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessageV2) (r *tg.Updates, err error) {
-	var _args SendMessageV2Args
-	_args.Req = req
-	var _result SendMessageV2Result
-	if err = p.c.Call(ctx, "msg.sendMessageV2", &_args, &_result); err != nil {
+	// var _args SendMessageV2Args
+	// _args.Req = req
+	// var _result SendMessageV2Result
+
+	_result := new(tg.Updates)
+
+	if err = p.c.Call(ctx, "msg.sendMessageV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessageV2) (r *tg.Updates, err error) {
-	var _args EditMessageV2Args
-	_args.Req = req
-	var _result EditMessageV2Result
-	if err = p.c.Call(ctx, "msg.editMessageV2", &_args, &_result); err != nil {
+	// var _args EditMessageV2Args
+	// _args.Req = req
+	// var _result EditMessageV2Result
+
+	_result := new(tg.Updates)
+
+	if err = p.c.Call(ctx, "msg.editMessageV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgDeleteMessages(ctx context.Context, req *msg.TLMsgDeleteMessages) (r *tg.MessagesAffectedMessages, err error) {
-	var _args DeleteMessagesArgs
-	_args.Req = req
-	var _result DeleteMessagesResult
-	if err = p.c.Call(ctx, "msg.deleteMessages", &_args, &_result); err != nil {
+	// var _args DeleteMessagesArgs
+	// _args.Req = req
+	// var _result DeleteMessagesResult
+
+	_result := new(tg.MessagesAffectedMessages)
+
+	if err = p.c.Call(ctx, "msg.deleteMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgDeleteHistory(ctx context.Context, req *msg.TLMsgDeleteHistory) (r *tg.MessagesAffectedHistory, err error) {
-	var _args DeleteHistoryArgs
-	_args.Req = req
-	var _result DeleteHistoryResult
-	if err = p.c.Call(ctx, "msg.deleteHistory", &_args, &_result); err != nil {
+	// var _args DeleteHistoryArgs
+	// _args.Req = req
+	// var _result DeleteHistoryResult
+
+	_result := new(tg.MessagesAffectedHistory)
+
+	if err = p.c.Call(ctx, "msg.deleteHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgDeletePhoneCallHistory(ctx context.Context, req *msg.TLMsgDeletePhoneCallHistory) (r *tg.MessagesAffectedFoundMessages, err error) {
-	var _args DeletePhoneCallHistoryArgs
-	_args.Req = req
-	var _result DeletePhoneCallHistoryResult
-	if err = p.c.Call(ctx, "msg.deletePhoneCallHistory", &_args, &_result); err != nil {
+	// var _args DeletePhoneCallHistoryArgs
+	// _args.Req = req
+	// var _result DeletePhoneCallHistoryResult
+
+	_result := new(tg.MessagesAffectedFoundMessages)
+
+	if err = p.c.Call(ctx, "msg.deletePhoneCallHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgDeleteChatHistory(ctx context.Context, req *msg.TLMsgDeleteChatHistory) (r *tg.Bool, err error) {
-	var _args DeleteChatHistoryArgs
-	_args.Req = req
-	var _result DeleteChatHistoryResult
-	if err = p.c.Call(ctx, "msg.deleteChatHistory", &_args, &_result); err != nil {
+	// var _args DeleteChatHistoryArgs
+	// _args.Req = req
+	// var _result DeleteChatHistoryResult
+
+	_result := new(tg.Bool)
+
+	if err = p.c.Call(ctx, "msg.deleteChatHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHistory) (r *tg.MessagesAffectedMessages, err error) {
-	var _args ReadHistoryArgs
-	_args.Req = req
-	var _result ReadHistoryResult
-	if err = p.c.Call(ctx, "msg.readHistory", &_args, &_result); err != nil {
+	// var _args ReadHistoryArgs
+	// _args.Req = req
+	// var _result ReadHistoryResult
+
+	_result := new(tg.MessagesAffectedMessages)
+
+	if err = p.c.Call(ctx, "msg.readHistory", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2) (r *tg.MessagesAffectedMessages, err error) {
-	var _args ReadHistoryV2Args
-	_args.Req = req
-	var _result ReadHistoryV2Result
-	if err = p.c.Call(ctx, "msg.readHistoryV2", &_args, &_result); err != nil {
+	// var _args ReadHistoryV2Args
+	// _args.Req = req
+	// var _result ReadHistoryV2Result
+
+	_result := new(tg.MessagesAffectedMessages)
+
+	if err = p.c.Call(ctx, "msg.readHistoryV2", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage) (r *tg.Updates, err error) {
-	var _args UpdatePinnedMessageArgs
-	_args.Req = req
-	var _result UpdatePinnedMessageResult
-	if err = p.c.Call(ctx, "msg.updatePinnedMessage", &_args, &_result); err != nil {
+	// var _args UpdatePinnedMessageArgs
+	// _args.Req = req
+	// var _result UpdatePinnedMessageResult
+
+	_result := new(tg.Updates)
+
+	if err = p.c.Call(ctx, "msg.updatePinnedMessage", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MsgUnpinAllMessages(ctx context.Context, req *msg.TLMsgUnpinAllMessages) (r *tg.MessagesAffectedHistory, err error) {
-	var _args UnpinAllMessagesArgs
-	_args.Req = req
-	var _result UnpinAllMessagesResult
-	if err = p.c.Call(ctx, "msg.unpinAllMessages", &_args, &_result); err != nil {
+	// var _args UnpinAllMessagesArgs
+	// _args.Req = req
+	// var _result UnpinAllMessagesResult
+
+	_result := new(tg.MessagesAffectedHistory)
+
+	if err = p.c.Call(ctx, "msg.unpinAllMessages", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

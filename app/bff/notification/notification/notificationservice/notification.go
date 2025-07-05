@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -83,6 +84,12 @@ var (
 	notificationServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCNotification", notificationServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCNotification", notificationServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCNotification", notificationServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return notificationServiceServiceInfo
@@ -107,6 +114,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1033,71 +1042,99 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountRegisterDevice(ctx context.Context, req *tg.TLAccountRegisterDevice) (r *tg.Bool, err error) {
-	var _args AccountRegisterDeviceArgs
-	_args.Req = req
-	var _result AccountRegisterDeviceResult
-	if err = p.c.Call(ctx, "account.registerDevice", &_args, &_result); err != nil {
+	// var _args AccountRegisterDeviceArgs
+	// _args.Req = req
+	// var _result AccountRegisterDeviceResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.registerDevice", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUnregisterDevice(ctx context.Context, req *tg.TLAccountUnregisterDevice) (r *tg.Bool, err error) {
-	var _args AccountUnregisterDeviceArgs
-	_args.Req = req
-	var _result AccountUnregisterDeviceResult
-	if err = p.c.Call(ctx, "account.unregisterDevice", &_args, &_result); err != nil {
+	// var _args AccountUnregisterDeviceArgs
+	// _args.Req = req
+	// var _result AccountUnregisterDeviceResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.unregisterDevice", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateNotifySettings(ctx context.Context, req *tg.TLAccountUpdateNotifySettings) (r *tg.Bool, err error) {
-	var _args AccountUpdateNotifySettingsArgs
-	_args.Req = req
-	var _result AccountUpdateNotifySettingsResult
-	if err = p.c.Call(ctx, "account.updateNotifySettings", &_args, &_result); err != nil {
+	// var _args AccountUpdateNotifySettingsArgs
+	// _args.Req = req
+	// var _result AccountUpdateNotifySettingsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.updateNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetNotifySettings(ctx context.Context, req *tg.TLAccountGetNotifySettings) (r *tg.PeerNotifySettings, err error) {
-	var _args AccountGetNotifySettingsArgs
-	_args.Req = req
-	var _result AccountGetNotifySettingsResult
-	if err = p.c.Call(ctx, "account.getNotifySettings", &_args, &_result); err != nil {
+	// var _args AccountGetNotifySettingsArgs
+	// _args.Req = req
+	// var _result AccountGetNotifySettingsResult
+
+	_result := new(tg.PeerNotifySettings)
+	if err = p.c.Call(ctx, "account.getNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountResetNotifySettings(ctx context.Context, req *tg.TLAccountResetNotifySettings) (r *tg.Bool, err error) {
-	var _args AccountResetNotifySettingsArgs
-	_args.Req = req
-	var _result AccountResetNotifySettingsResult
-	if err = p.c.Call(ctx, "account.resetNotifySettings", &_args, &_result); err != nil {
+	// var _args AccountResetNotifySettingsArgs
+	// _args.Req = req
+	// var _result AccountResetNotifySettingsResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.resetNotifySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountUpdateDeviceLocked(ctx context.Context, req *tg.TLAccountUpdateDeviceLocked) (r *tg.Bool, err error) {
-	var _args AccountUpdateDeviceLockedArgs
-	_args.Req = req
-	var _result AccountUpdateDeviceLockedResult
-	if err = p.c.Call(ctx, "account.updateDeviceLocked", &_args, &_result); err != nil {
+	// var _args AccountUpdateDeviceLockedArgs
+	// _args.Req = req
+	// var _result AccountUpdateDeviceLockedResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.updateDeviceLocked", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetNotifyExceptions(ctx context.Context, req *tg.TLAccountGetNotifyExceptions) (r *tg.Updates, err error) {
-	var _args AccountGetNotifyExceptionsArgs
-	_args.Req = req
-	var _result AccountGetNotifyExceptionsResult
-	if err = p.c.Call(ctx, "account.getNotifyExceptions", &_args, &_result); err != nil {
+	// var _args AccountGetNotifyExceptionsArgs
+	// _args.Req = req
+	// var _result AccountGetNotifyExceptionsResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "account.getNotifyExceptions", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

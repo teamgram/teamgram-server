@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -69,6 +70,12 @@ var (
 	premiumServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCPremium", premiumServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCPremium", premiumServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCPremium", premiumServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return premiumServiceServiceInfo
@@ -93,6 +100,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -767,51 +776,71 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) HelpGetPremiumPromo(ctx context.Context, req *tg.TLHelpGetPremiumPromo) (r *tg.HelpPremiumPromo, err error) {
-	var _args HelpGetPremiumPromoArgs
-	_args.Req = req
-	var _result HelpGetPremiumPromoResult
-	if err = p.c.Call(ctx, "help.getPremiumPromo", &_args, &_result); err != nil {
+	// var _args HelpGetPremiumPromoArgs
+	// _args.Req = req
+	// var _result HelpGetPremiumPromoResult
+
+	_result := new(tg.HelpPremiumPromo)
+	if err = p.c.Call(ctx, "help.getPremiumPromo", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PaymentsAssignAppStoreTransaction(ctx context.Context, req *tg.TLPaymentsAssignAppStoreTransaction) (r *tg.Updates, err error) {
-	var _args PaymentsAssignAppStoreTransactionArgs
-	_args.Req = req
-	var _result PaymentsAssignAppStoreTransactionResult
-	if err = p.c.Call(ctx, "payments.assignAppStoreTransaction", &_args, &_result); err != nil {
+	// var _args PaymentsAssignAppStoreTransactionArgs
+	// _args.Req = req
+	// var _result PaymentsAssignAppStoreTransactionResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "payments.assignAppStoreTransaction", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PaymentsAssignPlayMarketTransaction(ctx context.Context, req *tg.TLPaymentsAssignPlayMarketTransaction) (r *tg.Updates, err error) {
-	var _args PaymentsAssignPlayMarketTransactionArgs
-	_args.Req = req
-	var _result PaymentsAssignPlayMarketTransactionResult
-	if err = p.c.Call(ctx, "payments.assignPlayMarketTransaction", &_args, &_result); err != nil {
+	// var _args PaymentsAssignPlayMarketTransactionArgs
+	// _args.Req = req
+	// var _result PaymentsAssignPlayMarketTransactionResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "payments.assignPlayMarketTransaction", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymentsCanPurchaseStore) (r *tg.Bool, err error) {
-	var _args PaymentsCanPurchaseStoreArgs
-	_args.Req = req
-	var _result PaymentsCanPurchaseStoreResult
-	if err = p.c.Call(ctx, "payments.canPurchaseStore", &_args, &_result); err != nil {
+	// var _args PaymentsCanPurchaseStoreArgs
+	// _args.Req = req
+	// var _result PaymentsCanPurchaseStoreResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "payments.canPurchaseStore", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) PaymentsCanPurchasePremium(ctx context.Context, req *tg.TLPaymentsCanPurchasePremium) (r *tg.Bool, err error) {
-	var _args PaymentsCanPurchasePremiumArgs
-	_args.Req = req
-	var _result PaymentsCanPurchasePremiumResult
-	if err = p.c.Call(ctx, "payments.canPurchasePremium", &_args, &_result); err != nil {
+	// var _args PaymentsCanPurchasePremiumArgs
+	// _args.Req = req
+	// var _result PaymentsCanPurchasePremiumResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "payments.canPurchasePremium", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

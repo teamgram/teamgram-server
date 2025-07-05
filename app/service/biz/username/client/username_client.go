@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type UsernameClient interface {
 	UsernameGetAccountUsername(ctx context.Context, in *username.TLUsernameGetAccountUsername) (*username.UsernameData, error)
 	UsernameCheckAccountUsername(ctx context.Context, in *username.TLUsernameCheckAccountUsername) (*username.UsernameExist, error)

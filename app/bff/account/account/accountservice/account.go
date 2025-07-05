@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -90,6 +91,12 @@ var (
 	accountServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCAccount", accountServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCAccount", accountServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCAccount", accountServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return accountServiceServiceInfo
@@ -114,6 +121,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1166,81 +1175,113 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountDeleteAccount(ctx context.Context, req *tg.TLAccountDeleteAccount) (r *tg.Bool, err error) {
-	var _args AccountDeleteAccountArgs
-	_args.Req = req
-	var _result AccountDeleteAccountResult
-	if err = p.c.Call(ctx, "account.deleteAccount", &_args, &_result); err != nil {
+	// var _args AccountDeleteAccountArgs
+	// _args.Req = req
+	// var _result AccountDeleteAccountResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.deleteAccount", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetAccountTTL(ctx context.Context, req *tg.TLAccountGetAccountTTL) (r *tg.AccountDaysTTL, err error) {
-	var _args AccountGetAccountTTLArgs
-	_args.Req = req
-	var _result AccountGetAccountTTLResult
-	if err = p.c.Call(ctx, "account.getAccountTTL", &_args, &_result); err != nil {
+	// var _args AccountGetAccountTTLArgs
+	// _args.Req = req
+	// var _result AccountGetAccountTTLResult
+
+	_result := new(tg.AccountDaysTTL)
+	if err = p.c.Call(ctx, "account.getAccountTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSetAccountTTL(ctx context.Context, req *tg.TLAccountSetAccountTTL) (r *tg.Bool, err error) {
-	var _args AccountSetAccountTTLArgs
-	_args.Req = req
-	var _result AccountSetAccountTTLResult
-	if err = p.c.Call(ctx, "account.setAccountTTL", &_args, &_result); err != nil {
+	// var _args AccountSetAccountTTLArgs
+	// _args.Req = req
+	// var _result AccountSetAccountTTLResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.setAccountTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSendChangePhoneCode(ctx context.Context, req *tg.TLAccountSendChangePhoneCode) (r *tg.AuthSentCode, err error) {
-	var _args AccountSendChangePhoneCodeArgs
-	_args.Req = req
-	var _result AccountSendChangePhoneCodeResult
-	if err = p.c.Call(ctx, "account.sendChangePhoneCode", &_args, &_result); err != nil {
+	// var _args AccountSendChangePhoneCodeArgs
+	// _args.Req = req
+	// var _result AccountSendChangePhoneCodeResult
+
+	_result := new(tg.AuthSentCode)
+	if err = p.c.Call(ctx, "account.sendChangePhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountChangePhone(ctx context.Context, req *tg.TLAccountChangePhone) (r *tg.User, err error) {
-	var _args AccountChangePhoneArgs
-	_args.Req = req
-	var _result AccountChangePhoneResult
-	if err = p.c.Call(ctx, "account.changePhone", &_args, &_result); err != nil {
+	// var _args AccountChangePhoneArgs
+	// _args.Req = req
+	// var _result AccountChangePhoneResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "account.changePhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountResetAuthorization(ctx context.Context, req *tg.TLAccountResetAuthorization) (r *tg.Bool, err error) {
-	var _args AccountResetAuthorizationArgs
-	_args.Req = req
-	var _result AccountResetAuthorizationResult
-	if err = p.c.Call(ctx, "account.resetAuthorization", &_args, &_result); err != nil {
+	// var _args AccountResetAuthorizationArgs
+	// _args.Req = req
+	// var _result AccountResetAuthorizationResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.resetAuthorization", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSendConfirmPhoneCode(ctx context.Context, req *tg.TLAccountSendConfirmPhoneCode) (r *tg.AuthSentCode, err error) {
-	var _args AccountSendConfirmPhoneCodeArgs
-	_args.Req = req
-	var _result AccountSendConfirmPhoneCodeResult
-	if err = p.c.Call(ctx, "account.sendConfirmPhoneCode", &_args, &_result); err != nil {
+	// var _args AccountSendConfirmPhoneCodeArgs
+	// _args.Req = req
+	// var _result AccountSendConfirmPhoneCodeResult
+
+	_result := new(tg.AuthSentCode)
+	if err = p.c.Call(ctx, "account.sendConfirmPhoneCode", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountConfirmPhone(ctx context.Context, req *tg.TLAccountConfirmPhone) (r *tg.Bool, err error) {
-	var _args AccountConfirmPhoneArgs
-	_args.Req = req
-	var _result AccountConfirmPhoneResult
-	if err = p.c.Call(ctx, "account.confirmPhone", &_args, &_result); err != nil {
+	// var _args AccountConfirmPhoneArgs
+	// _args.Req = req
+	// var _result AccountConfirmPhoneResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "account.confirmPhone", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

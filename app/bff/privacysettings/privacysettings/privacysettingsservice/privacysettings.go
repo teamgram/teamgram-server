@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -90,6 +91,12 @@ var (
 	privacysettingsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCPrivacySettings", privacysettingsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCPrivacySettings", privacysettingsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCPrivacySettings", privacysettingsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return privacysettingsServiceServiceInfo
@@ -114,6 +121,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -1166,81 +1175,113 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) AccountGetPrivacy(ctx context.Context, req *tg.TLAccountGetPrivacy) (r *tg.AccountPrivacyRules, err error) {
-	var _args AccountGetPrivacyArgs
-	_args.Req = req
-	var _result AccountGetPrivacyResult
-	if err = p.c.Call(ctx, "account.getPrivacy", &_args, &_result); err != nil {
+	// var _args AccountGetPrivacyArgs
+	// _args.Req = req
+	// var _result AccountGetPrivacyResult
+
+	_result := new(tg.AccountPrivacyRules)
+	if err = p.c.Call(ctx, "account.getPrivacy", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSetPrivacy(ctx context.Context, req *tg.TLAccountSetPrivacy) (r *tg.AccountPrivacyRules, err error) {
-	var _args AccountSetPrivacyArgs
-	_args.Req = req
-	var _result AccountSetPrivacyResult
-	if err = p.c.Call(ctx, "account.setPrivacy", &_args, &_result); err != nil {
+	// var _args AccountSetPrivacyArgs
+	// _args.Req = req
+	// var _result AccountSetPrivacyResult
+
+	_result := new(tg.AccountPrivacyRules)
+	if err = p.c.Call(ctx, "account.setPrivacy", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountGetGlobalPrivacySettings(ctx context.Context, req *tg.TLAccountGetGlobalPrivacySettings) (r *tg.GlobalPrivacySettings, err error) {
-	var _args AccountGetGlobalPrivacySettingsArgs
-	_args.Req = req
-	var _result AccountGetGlobalPrivacySettingsResult
-	if err = p.c.Call(ctx, "account.getGlobalPrivacySettings", &_args, &_result); err != nil {
+	// var _args AccountGetGlobalPrivacySettingsArgs
+	// _args.Req = req
+	// var _result AccountGetGlobalPrivacySettingsResult
+
+	_result := new(tg.GlobalPrivacySettings)
+	if err = p.c.Call(ctx, "account.getGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) AccountSetGlobalPrivacySettings(ctx context.Context, req *tg.TLAccountSetGlobalPrivacySettings) (r *tg.GlobalPrivacySettings, err error) {
-	var _args AccountSetGlobalPrivacySettingsArgs
-	_args.Req = req
-	var _result AccountSetGlobalPrivacySettingsResult
-	if err = p.c.Call(ctx, "account.setGlobalPrivacySettings", &_args, &_result); err != nil {
+	// var _args AccountSetGlobalPrivacySettingsArgs
+	// _args.Req = req
+	// var _result AccountSetGlobalPrivacySettingsResult
+
+	_result := new(tg.GlobalPrivacySettings)
+	if err = p.c.Call(ctx, "account.setGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsersGetRequirementsToContact(ctx context.Context, req *tg.TLUsersGetRequirementsToContact) (r *tg.VectorRequirementToContact, err error) {
-	var _args UsersGetRequirementsToContactArgs
-	_args.Req = req
-	var _result UsersGetRequirementsToContactResult
-	if err = p.c.Call(ctx, "users.getRequirementsToContact", &_args, &_result); err != nil {
+	// var _args UsersGetRequirementsToContactArgs
+	// _args.Req = req
+	// var _result UsersGetRequirementsToContactResult
+
+	_result := new(tg.VectorRequirementToContact)
+	if err = p.c.Call(ctx, "users.getRequirementsToContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesSetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesSetDefaultHistoryTTL) (r *tg.Bool, err error) {
-	var _args MessagesSetDefaultHistoryTTLArgs
-	_args.Req = req
-	var _result MessagesSetDefaultHistoryTTLResult
-	if err = p.c.Call(ctx, "messages.setDefaultHistoryTTL", &_args, &_result); err != nil {
+	// var _args MessagesSetDefaultHistoryTTLArgs
+	// _args.Req = req
+	// var _result MessagesSetDefaultHistoryTTLResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.setDefaultHistoryTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesGetDefaultHistoryTTL) (r *tg.DefaultHistoryTTL, err error) {
-	var _args MessagesGetDefaultHistoryTTLArgs
-	_args.Req = req
-	var _result MessagesGetDefaultHistoryTTLResult
-	if err = p.c.Call(ctx, "messages.getDefaultHistoryTTL", &_args, &_result); err != nil {
+	// var _args MessagesGetDefaultHistoryTTLArgs
+	// _args.Req = req
+	// var _result MessagesGetDefaultHistoryTTLResult
+
+	_result := new(tg.DefaultHistoryTTL)
+	if err = p.c.Call(ctx, "messages.getDefaultHistoryTTL", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, req *tg.TLUsersGetIsPremiumRequiredToContact) (r *tg.VectorBool, err error) {
-	var _args UsersGetIsPremiumRequiredToContactArgs
-	_args.Req = req
-	var _result UsersGetIsPremiumRequiredToContactResult
-	if err = p.c.Call(ctx, "users.getIsPremiumRequiredToContact", &_args, &_result); err != nil {
+	// var _args UsersGetIsPremiumRequiredToContactArgs
+	// _args.Req = req
+	// var _result UsersGetIsPremiumRequiredToContactResult
+
+	_result := new(tg.VectorBool)
+	if err = p.c.Call(ctx, "users.getIsPremiumRequiredToContact", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

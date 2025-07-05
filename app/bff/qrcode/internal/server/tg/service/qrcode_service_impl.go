@@ -21,14 +21,14 @@ import (
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (s *Service) AuthExportLoginToken(ctx context.Context, request *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.exportLoginToken - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("auth.exportLoginToken - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthExportLoginToken(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("auth.exportLoginToken - reply: {%v}", r)
+	c.Logger.Debugf("auth.exportLoginToken - reply: %s", r)
 	return r, err
 }
 
@@ -36,14 +36,14 @@ func (s *Service) AuthExportLoginToken(ctx context.Context, request *tg.TLAuthEx
 // auth.importLoginToken#95ac5ce4 token:bytes = auth.LoginToken;
 func (s *Service) AuthImportLoginToken(ctx context.Context, request *tg.TLAuthImportLoginToken) (*tg.AuthLoginToken, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.importLoginToken - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("auth.importLoginToken - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthImportLoginToken(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("auth.importLoginToken - reply: {%v}", r)
+	c.Logger.Debugf("auth.importLoginToken - reply: %s", r)
 	return r, err
 }
 
@@ -51,13 +51,13 @@ func (s *Service) AuthImportLoginToken(ctx context.Context, request *tg.TLAuthIm
 // auth.acceptLoginToken#e894ad4d token:bytes = Authorization;
 func (s *Service) AuthAcceptLoginToken(ctx context.Context, request *tg.TLAuthAcceptLoginToken) (*tg.Authorization, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("auth.acceptLoginToken - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("auth.acceptLoginToken - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.AuthAcceptLoginToken(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("auth.acceptLoginToken - reply: {%v}", r)
+	c.Logger.Debugf("auth.acceptLoginToken - reply: %s", r)
 	return r, err
 }

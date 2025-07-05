@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
+	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
 
 	"github.com/cloudwego/kitex/client"
@@ -146,6 +147,12 @@ var (
 	chatsServiceServiceInfoForStreamClient = NewServiceInfoForStreamClient()
 )
 
+func init() {
+	iface.RegisterKitexServiceInfo("RPCChats", chatsServiceServiceInfo)
+	iface.RegisterKitexServiceInfoForClient("RPCChats", chatsServiceServiceInfoForClient)
+	iface.RegisterKitexServiceInfoForStreamClient("RPCChats", chatsServiceServiceInfoForStreamClient)
+}
+
 // for server
 func serviceInfo() *kitex.ServiceInfo {
 	return chatsServiceServiceInfo
@@ -170,6 +177,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 func NewServiceInfoForClient() *kitex.ServiceInfo {
 	return newServiceInfo(false, false, true)
 }
+
+// NewServiceInfoForStreamClient creates a new ServiceInfo containing all streaming methods
 func NewServiceInfoForStreamClient() *kitex.ServiceInfo {
 	return newServiceInfo(true, true, false)
 }
@@ -2230,161 +2239,225 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) MessagesGetChats(ctx context.Context, req *tg.TLMessagesGetChats) (r *tg.MessagesChats, err error) {
-	var _args MessagesGetChatsArgs
-	_args.Req = req
-	var _result MessagesGetChatsResult
-	if err = p.c.Call(ctx, "messages.getChats", &_args, &_result); err != nil {
+	// var _args MessagesGetChatsArgs
+	// _args.Req = req
+	// var _result MessagesGetChatsResult
+
+	_result := new(tg.MessagesChats)
+	if err = p.c.Call(ctx, "messages.getChats", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetFullChat(ctx context.Context, req *tg.TLMessagesGetFullChat) (r *tg.MessagesChatFull, err error) {
-	var _args MessagesGetFullChatArgs
-	_args.Req = req
-	var _result MessagesGetFullChatResult
-	if err = p.c.Call(ctx, "messages.getFullChat", &_args, &_result); err != nil {
+	// var _args MessagesGetFullChatArgs
+	// _args.Req = req
+	// var _result MessagesGetFullChatResult
+
+	_result := new(tg.MessagesChatFull)
+	if err = p.c.Call(ctx, "messages.getFullChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditChatTitle(ctx context.Context, req *tg.TLMessagesEditChatTitle) (r *tg.Updates, err error) {
-	var _args MessagesEditChatTitleArgs
-	_args.Req = req
-	var _result MessagesEditChatTitleResult
-	if err = p.c.Call(ctx, "messages.editChatTitle", &_args, &_result); err != nil {
+	// var _args MessagesEditChatTitleArgs
+	// _args.Req = req
+	// var _result MessagesEditChatTitleResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.editChatTitle", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditChatPhoto(ctx context.Context, req *tg.TLMessagesEditChatPhoto) (r *tg.Updates, err error) {
-	var _args MessagesEditChatPhotoArgs
-	_args.Req = req
-	var _result MessagesEditChatPhotoResult
-	if err = p.c.Call(ctx, "messages.editChatPhoto", &_args, &_result); err != nil {
+	// var _args MessagesEditChatPhotoArgs
+	// _args.Req = req
+	// var _result MessagesEditChatPhotoResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.editChatPhoto", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesAddChatUser(ctx context.Context, req *tg.TLMessagesAddChatUser) (r *tg.MessagesInvitedUsers, err error) {
-	var _args MessagesAddChatUserArgs
-	_args.Req = req
-	var _result MessagesAddChatUserResult
-	if err = p.c.Call(ctx, "messages.addChatUser", &_args, &_result); err != nil {
+	// var _args MessagesAddChatUserArgs
+	// _args.Req = req
+	// var _result MessagesAddChatUserResult
+
+	_result := new(tg.MessagesInvitedUsers)
+	if err = p.c.Call(ctx, "messages.addChatUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesDeleteChatUser(ctx context.Context, req *tg.TLMessagesDeleteChatUser) (r *tg.Updates, err error) {
-	var _args MessagesDeleteChatUserArgs
-	_args.Req = req
-	var _result MessagesDeleteChatUserResult
-	if err = p.c.Call(ctx, "messages.deleteChatUser", &_args, &_result); err != nil {
+	// var _args MessagesDeleteChatUserArgs
+	// _args.Req = req
+	// var _result MessagesDeleteChatUserResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.deleteChatUser", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesCreateChat(ctx context.Context, req *tg.TLMessagesCreateChat) (r *tg.MessagesInvitedUsers, err error) {
-	var _args MessagesCreateChatArgs
-	_args.Req = req
-	var _result MessagesCreateChatResult
-	if err = p.c.Call(ctx, "messages.createChat", &_args, &_result); err != nil {
+	// var _args MessagesCreateChatArgs
+	// _args.Req = req
+	// var _result MessagesCreateChatResult
+
+	_result := new(tg.MessagesInvitedUsers)
+	if err = p.c.Call(ctx, "messages.createChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditChatAdmin(ctx context.Context, req *tg.TLMessagesEditChatAdmin) (r *tg.Bool, err error) {
-	var _args MessagesEditChatAdminArgs
-	_args.Req = req
-	var _result MessagesEditChatAdminResult
-	if err = p.c.Call(ctx, "messages.editChatAdmin", &_args, &_result); err != nil {
+	// var _args MessagesEditChatAdminArgs
+	// _args.Req = req
+	// var _result MessagesEditChatAdminResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.editChatAdmin", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesMigrateChat(ctx context.Context, req *tg.TLMessagesMigrateChat) (r *tg.Updates, err error) {
-	var _args MessagesMigrateChatArgs
-	_args.Req = req
-	var _result MessagesMigrateChatResult
-	if err = p.c.Call(ctx, "messages.migrateChat", &_args, &_result); err != nil {
+	// var _args MessagesMigrateChatArgs
+	// _args.Req = req
+	// var _result MessagesMigrateChatResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.migrateChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetCommonChats(ctx context.Context, req *tg.TLMessagesGetCommonChats) (r *tg.MessagesChats, err error) {
-	var _args MessagesGetCommonChatsArgs
-	_args.Req = req
-	var _result MessagesGetCommonChatsResult
-	if err = p.c.Call(ctx, "messages.getCommonChats", &_args, &_result); err != nil {
+	// var _args MessagesGetCommonChatsArgs
+	// _args.Req = req
+	// var _result MessagesGetCommonChatsResult
+
+	_result := new(tg.MessagesChats)
+	if err = p.c.Call(ctx, "messages.getCommonChats", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditChatAbout(ctx context.Context, req *tg.TLMessagesEditChatAbout) (r *tg.Bool, err error) {
-	var _args MessagesEditChatAboutArgs
-	_args.Req = req
-	var _result MessagesEditChatAboutResult
-	if err = p.c.Call(ctx, "messages.editChatAbout", &_args, &_result); err != nil {
+	// var _args MessagesEditChatAboutArgs
+	// _args.Req = req
+	// var _result MessagesEditChatAboutResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.editChatAbout", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesEditChatDefaultBannedRights(ctx context.Context, req *tg.TLMessagesEditChatDefaultBannedRights) (r *tg.Updates, err error) {
-	var _args MessagesEditChatDefaultBannedRightsArgs
-	_args.Req = req
-	var _result MessagesEditChatDefaultBannedRightsResult
-	if err = p.c.Call(ctx, "messages.editChatDefaultBannedRights", &_args, &_result); err != nil {
+	// var _args MessagesEditChatDefaultBannedRightsArgs
+	// _args.Req = req
+	// var _result MessagesEditChatDefaultBannedRightsResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "messages.editChatDefaultBannedRights", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesDeleteChat(ctx context.Context, req *tg.TLMessagesDeleteChat) (r *tg.Bool, err error) {
-	var _args MessagesDeleteChatArgs
-	_args.Req = req
-	var _result MessagesDeleteChatResult
-	if err = p.c.Call(ctx, "messages.deleteChat", &_args, &_result); err != nil {
+	// var _args MessagesDeleteChatArgs
+	// _args.Req = req
+	// var _result MessagesDeleteChatResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "messages.deleteChat", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) MessagesGetMessageReadParticipants(ctx context.Context, req *tg.TLMessagesGetMessageReadParticipants) (r *tg.VectorReadParticipantDate, err error) {
-	var _args MessagesGetMessageReadParticipantsArgs
-	_args.Req = req
-	var _result MessagesGetMessageReadParticipantsResult
-	if err = p.c.Call(ctx, "messages.getMessageReadParticipants", &_args, &_result); err != nil {
+	// var _args MessagesGetMessageReadParticipantsArgs
+	// _args.Req = req
+	// var _result MessagesGetMessageReadParticipantsResult
+
+	_result := new(tg.VectorReadParticipantDate)
+	if err = p.c.Call(ctx, "messages.getMessageReadParticipants", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsConvertToGigagroup(ctx context.Context, req *tg.TLChannelsConvertToGigagroup) (r *tg.Updates, err error) {
-	var _args ChannelsConvertToGigagroupArgs
-	_args.Req = req
-	var _result ChannelsConvertToGigagroupResult
-	if err = p.c.Call(ctx, "channels.convertToGigagroup", &_args, &_result); err != nil {
+	// var _args ChannelsConvertToGigagroupArgs
+	// _args.Req = req
+	// var _result ChannelsConvertToGigagroupResult
+
+	_result := new(tg.Updates)
+	if err = p.c.Call(ctx, "channels.convertToGigagroup", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }
 
 func (p *kClient) ChannelsSetEmojiStickers(ctx context.Context, req *tg.TLChannelsSetEmojiStickers) (r *tg.Bool, err error) {
-	var _args ChannelsSetEmojiStickersArgs
-	_args.Req = req
-	var _result ChannelsSetEmojiStickersResult
-	if err = p.c.Call(ctx, "channels.setEmojiStickers", &_args, &_result); err != nil {
+	// var _args ChannelsSetEmojiStickersArgs
+	// _args.Req = req
+	// var _result ChannelsSetEmojiStickersResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "channels.setEmojiStickers", req, _result); err != nil {
 		return
 	}
-	return _result.GetSuccess(), nil
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
 }

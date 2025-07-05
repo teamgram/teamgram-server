@@ -20,6 +20,8 @@ import (
 	"github.com/cloudwego/kitex/client"
 )
 
+var _ *tg.Bool
+
 type MessageClient interface {
 	MessageGetUserMessage(ctx context.Context, in *message.TLMessageGetUserMessage) (*tg.MessageBox, error)
 	MessageGetUserMessageList(ctx context.Context, in *message.TLMessageGetUserMessageList) (*message.VectorMessageBox, error)
