@@ -27,77 +27,77 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.updateProfile": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/account.updateProfile": kitex.NewMethodInfo(
 		accountUpdateProfileHandler,
 		newAccountUpdateProfileArgs,
 		newAccountUpdateProfileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateStatus": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/account.updateStatus": kitex.NewMethodInfo(
 		accountUpdateStatusHandler,
 		newAccountUpdateStatusArgs,
 		newAccountUpdateStatusResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateBirthday": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/account.updateBirthday": kitex.NewMethodInfo(
 		accountUpdateBirthdayHandler,
 		newAccountUpdateBirthdayArgs,
 		newAccountUpdateBirthdayResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updatePersonalChannel": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/account.updatePersonalChannel": kitex.NewMethodInfo(
 		accountUpdatePersonalChannelHandler,
 		newAccountUpdatePersonalChannelArgs,
 		newAccountUpdatePersonalChannelResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getBirthdays": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/contacts.getBirthdays": kitex.NewMethodInfo(
 		contactsGetBirthdaysHandler,
 		newContactsGetBirthdaysArgs,
 		newContactsGetBirthdaysResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"photos.updateProfilePhoto": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/photos.updateProfilePhoto": kitex.NewMethodInfo(
 		photosUpdateProfilePhotoHandler,
 		newPhotosUpdateProfilePhotoArgs,
 		newPhotosUpdateProfilePhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"photos.uploadProfilePhoto": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/photos.uploadProfilePhoto": kitex.NewMethodInfo(
 		photosUploadProfilePhotoHandler,
 		newPhotosUploadProfilePhotoArgs,
 		newPhotosUploadProfilePhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"photos.deletePhotos": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/photos.deletePhotos": kitex.NewMethodInfo(
 		photosDeletePhotosHandler,
 		newPhotosDeletePhotosArgs,
 		newPhotosDeletePhotosResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"photos.getUserPhotos": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/photos.getUserPhotos": kitex.NewMethodInfo(
 		photosGetUserPhotosHandler,
 		newPhotosGetUserPhotosArgs,
 		newPhotosGetUserPhotosResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"photos.uploadContactProfilePhoto": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/photos.uploadContactProfilePhoto": kitex.NewMethodInfo(
 		photosUploadContactProfilePhotoHandler,
 		newPhotosUploadContactProfilePhotoArgs,
 		newPhotosUploadContactProfilePhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateVerified": kitex.NewMethodInfo(
+	"/tg.RPCUserProfile/account.updateVerified": kitex.NewMethodInfo(
 		accountUpdateVerifiedHandler,
 		newAccountUpdateVerifiedArgs,
 		newAccountUpdateVerifiedResult,
@@ -1579,7 +1579,7 @@ func (p *kClient) AccountUpdateProfile(ctx context.Context, req *tg.TLAccountUpd
 	// var _result AccountUpdateProfileResult
 
 	_result := new(tg.User)
-	if err = p.c.Call(ctx, "account.updateProfile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/account.updateProfile", req, _result); err != nil {
 		return
 	}
 
@@ -1593,7 +1593,7 @@ func (p *kClient) AccountUpdateStatus(ctx context.Context, req *tg.TLAccountUpda
 	// var _result AccountUpdateStatusResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.updateStatus", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/account.updateStatus", req, _result); err != nil {
 		return
 	}
 
@@ -1607,7 +1607,7 @@ func (p *kClient) AccountUpdateBirthday(ctx context.Context, req *tg.TLAccountUp
 	// var _result AccountUpdateBirthdayResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.updateBirthday", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/account.updateBirthday", req, _result); err != nil {
 		return
 	}
 
@@ -1621,7 +1621,7 @@ func (p *kClient) AccountUpdatePersonalChannel(ctx context.Context, req *tg.TLAc
 	// var _result AccountUpdatePersonalChannelResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.updatePersonalChannel", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/account.updatePersonalChannel", req, _result); err != nil {
 		return
 	}
 
@@ -1635,7 +1635,7 @@ func (p *kClient) ContactsGetBirthdays(ctx context.Context, req *tg.TLContactsGe
 	// var _result ContactsGetBirthdaysResult
 
 	_result := new(tg.ContactsContactBirthdays)
-	if err = p.c.Call(ctx, "contacts.getBirthdays", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/contacts.getBirthdays", req, _result); err != nil {
 		return
 	}
 
@@ -1649,7 +1649,7 @@ func (p *kClient) PhotosUpdateProfilePhoto(ctx context.Context, req *tg.TLPhotos
 	// var _result PhotosUpdateProfilePhotoResult
 
 	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "photos.updateProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/photos.updateProfilePhoto", req, _result); err != nil {
 		return
 	}
 
@@ -1663,7 +1663,7 @@ func (p *kClient) PhotosUploadProfilePhoto(ctx context.Context, req *tg.TLPhotos
 	// var _result PhotosUploadProfilePhotoResult
 
 	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "photos.uploadProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/photos.uploadProfilePhoto", req, _result); err != nil {
 		return
 	}
 
@@ -1677,7 +1677,7 @@ func (p *kClient) PhotosDeletePhotos(ctx context.Context, req *tg.TLPhotosDelete
 	// var _result PhotosDeletePhotosResult
 
 	_result := new(tg.VectorLong)
-	if err = p.c.Call(ctx, "photos.deletePhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/photos.deletePhotos", req, _result); err != nil {
 		return
 	}
 
@@ -1691,7 +1691,7 @@ func (p *kClient) PhotosGetUserPhotos(ctx context.Context, req *tg.TLPhotosGetUs
 	// var _result PhotosGetUserPhotosResult
 
 	_result := new(tg.PhotosPhotos)
-	if err = p.c.Call(ctx, "photos.getUserPhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/photos.getUserPhotos", req, _result); err != nil {
 		return
 	}
 
@@ -1705,7 +1705,7 @@ func (p *kClient) PhotosUploadContactProfilePhoto(ctx context.Context, req *tg.T
 	// var _result PhotosUploadContactProfilePhotoResult
 
 	_result := new(tg.PhotosPhoto)
-	if err = p.c.Call(ctx, "photos.uploadContactProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/photos.uploadContactProfilePhoto", req, _result); err != nil {
 		return
 	}
 
@@ -1719,7 +1719,7 @@ func (p *kClient) AccountUpdateVerified(ctx context.Context, req *tg.TLAccountUp
 	// var _result AccountUpdateVerifiedResult
 
 	_result := new(tg.User)
-	if err = p.c.Call(ctx, "account.updateVerified", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUserProfile/account.updateVerified", req, _result); err != nil {
 		return
 	}
 

@@ -30,70 +30,70 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"status.setSessionOnline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setSessionOnline": kitex.NewMethodInfo(
 		setSessionOnlineHandler,
 		newSetSessionOnlineArgs,
 		newSetSessionOnlineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setSessionOffline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setSessionOffline": kitex.NewMethodInfo(
 		setSessionOfflineHandler,
 		newSetSessionOfflineArgs,
 		newSetSessionOfflineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.getUserOnlineSessions": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.getUserOnlineSessions": kitex.NewMethodInfo(
 		getUserOnlineSessionsHandler,
 		newGetUserOnlineSessionsArgs,
 		newGetUserOnlineSessionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.getUsersOnlineSessionsList": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.getUsersOnlineSessionsList": kitex.NewMethodInfo(
 		getUsersOnlineSessionsListHandler,
 		newGetUsersOnlineSessionsListArgs,
 		newGetUsersOnlineSessionsListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.getChannelOnlineUsers": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.getChannelOnlineUsers": kitex.NewMethodInfo(
 		getChannelOnlineUsersHandler,
 		newGetChannelOnlineUsersArgs,
 		newGetChannelOnlineUsersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setUserChannelsOnline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setUserChannelsOnline": kitex.NewMethodInfo(
 		setUserChannelsOnlineHandler,
 		newSetUserChannelsOnlineArgs,
 		newSetUserChannelsOnlineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setUserChannelsOffline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setUserChannelsOffline": kitex.NewMethodInfo(
 		setUserChannelsOfflineHandler,
 		newSetUserChannelsOfflineArgs,
 		newSetUserChannelsOfflineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setChannelUserOffline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setChannelUserOffline": kitex.NewMethodInfo(
 		setChannelUserOfflineHandler,
 		newSetChannelUserOfflineArgs,
 		newSetChannelUserOfflineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setChannelUsersOnline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setChannelUsersOnline": kitex.NewMethodInfo(
 		setChannelUsersOnlineHandler,
 		newSetChannelUsersOnlineArgs,
 		newSetChannelUsersOnlineResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"status.setChannelOffline": kitex.NewMethodInfo(
+	"/status.RPCStatus/status.setChannelOffline": kitex.NewMethodInfo(
 		setChannelOfflineHandler,
 		newSetChannelOfflineArgs,
 		newSetChannelOfflineResult,
@@ -1450,7 +1450,7 @@ func (p *kClient) StatusSetSessionOnline(ctx context.Context, req *status.TLStat
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setSessionOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOnline", req, _result); err != nil {
 		return
 	}
 
@@ -1465,7 +1465,7 @@ func (p *kClient) StatusSetSessionOffline(ctx context.Context, req *status.TLSta
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setSessionOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setSessionOffline", req, _result); err != nil {
 		return
 	}
 
@@ -1480,7 +1480,7 @@ func (p *kClient) StatusGetUserOnlineSessions(ctx context.Context, req *status.T
 
 	_result := new(status.UserSessionEntryList)
 
-	if err = p.c.Call(ctx, "status.getUserOnlineSessions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUserOnlineSessions", req, _result); err != nil {
 		return
 	}
 
@@ -1495,7 +1495,7 @@ func (p *kClient) StatusGetUsersOnlineSessionsList(ctx context.Context, req *sta
 
 	_result := new(status.VectorUserSessionEntryList)
 
-	if err = p.c.Call(ctx, "status.getUsersOnlineSessionsList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getUsersOnlineSessionsList", req, _result); err != nil {
 		return
 	}
 
@@ -1510,7 +1510,7 @@ func (p *kClient) StatusGetChannelOnlineUsers(ctx context.Context, req *status.T
 
 	_result := new(status.VectorLong)
 
-	if err = p.c.Call(ctx, "status.getChannelOnlineUsers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.getChannelOnlineUsers", req, _result); err != nil {
 		return
 	}
 
@@ -1525,7 +1525,7 @@ func (p *kClient) StatusSetUserChannelsOnline(ctx context.Context, req *status.T
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setUserChannelsOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOnline", req, _result); err != nil {
 		return
 	}
 
@@ -1540,7 +1540,7 @@ func (p *kClient) StatusSetUserChannelsOffline(ctx context.Context, req *status.
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setUserChannelsOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setUserChannelsOffline", req, _result); err != nil {
 		return
 	}
 
@@ -1555,7 +1555,7 @@ func (p *kClient) StatusSetChannelUserOffline(ctx context.Context, req *status.T
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setChannelUserOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUserOffline", req, _result); err != nil {
 		return
 	}
 
@@ -1570,7 +1570,7 @@ func (p *kClient) StatusSetChannelUsersOnline(ctx context.Context, req *status.T
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setChannelUsersOnline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelUsersOnline", req, _result); err != nil {
 		return
 	}
 
@@ -1585,7 +1585,7 @@ func (p *kClient) StatusSetChannelOffline(ctx context.Context, req *status.TLSta
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "status.setChannelOffline", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/status.RPCStatus/status.setChannelOffline", req, _result); err != nil {
 		return
 	}
 

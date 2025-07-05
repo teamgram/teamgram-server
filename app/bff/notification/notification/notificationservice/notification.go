@@ -27,49 +27,49 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.registerDevice": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.registerDevice": kitex.NewMethodInfo(
 		accountRegisterDeviceHandler,
 		newAccountRegisterDeviceArgs,
 		newAccountRegisterDeviceResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.unregisterDevice": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.unregisterDevice": kitex.NewMethodInfo(
 		accountUnregisterDeviceHandler,
 		newAccountUnregisterDeviceArgs,
 		newAccountUnregisterDeviceResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateNotifySettings": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.updateNotifySettings": kitex.NewMethodInfo(
 		accountUpdateNotifySettingsHandler,
 		newAccountUpdateNotifySettingsArgs,
 		newAccountUpdateNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getNotifySettings": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.getNotifySettings": kitex.NewMethodInfo(
 		accountGetNotifySettingsHandler,
 		newAccountGetNotifySettingsArgs,
 		newAccountGetNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.resetNotifySettings": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.resetNotifySettings": kitex.NewMethodInfo(
 		accountResetNotifySettingsHandler,
 		newAccountResetNotifySettingsArgs,
 		newAccountResetNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateDeviceLocked": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.updateDeviceLocked": kitex.NewMethodInfo(
 		accountUpdateDeviceLockedHandler,
 		newAccountUpdateDeviceLockedArgs,
 		newAccountUpdateDeviceLockedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getNotifyExceptions": kitex.NewMethodInfo(
+	"/tg.RPCNotification/account.getNotifyExceptions": kitex.NewMethodInfo(
 		accountGetNotifyExceptionsHandler,
 		newAccountGetNotifyExceptionsArgs,
 		newAccountGetNotifyExceptionsResult,
@@ -1047,7 +1047,7 @@ func (p *kClient) AccountRegisterDevice(ctx context.Context, req *tg.TLAccountRe
 	// var _result AccountRegisterDeviceResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.registerDevice", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.registerDevice", req, _result); err != nil {
 		return
 	}
 
@@ -1061,7 +1061,7 @@ func (p *kClient) AccountUnregisterDevice(ctx context.Context, req *tg.TLAccount
 	// var _result AccountUnregisterDeviceResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.unregisterDevice", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.unregisterDevice", req, _result); err != nil {
 		return
 	}
 
@@ -1075,7 +1075,7 @@ func (p *kClient) AccountUpdateNotifySettings(ctx context.Context, req *tg.TLAcc
 	// var _result AccountUpdateNotifySettingsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.updateNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -1089,7 +1089,7 @@ func (p *kClient) AccountGetNotifySettings(ctx context.Context, req *tg.TLAccoun
 	// var _result AccountGetNotifySettingsResult
 
 	_result := new(tg.PeerNotifySettings)
-	if err = p.c.Call(ctx, "account.getNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -1103,7 +1103,7 @@ func (p *kClient) AccountResetNotifySettings(ctx context.Context, req *tg.TLAcco
 	// var _result AccountResetNotifySettingsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.resetNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.resetNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -1117,7 +1117,7 @@ func (p *kClient) AccountUpdateDeviceLocked(ctx context.Context, req *tg.TLAccou
 	// var _result AccountUpdateDeviceLockedResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.updateDeviceLocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.updateDeviceLocked", req, _result); err != nil {
 		return
 	}
 
@@ -1131,7 +1131,7 @@ func (p *kClient) AccountGetNotifyExceptions(ctx context.Context, req *tg.TLAcco
 	// var _result AccountGetNotifyExceptionsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "account.getNotifyExceptions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNotification/account.getNotifyExceptions", req, _result); err != nil {
 		return
 	}
 

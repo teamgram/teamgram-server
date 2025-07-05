@@ -30,28 +30,28 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"code.createPhoneCode": kitex.NewMethodInfo(
+	"/code.RPCCode/code.createPhoneCode": kitex.NewMethodInfo(
 		createPhoneCodeHandler,
 		newCreatePhoneCodeArgs,
 		newCreatePhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"code.getPhoneCode": kitex.NewMethodInfo(
+	"/code.RPCCode/code.getPhoneCode": kitex.NewMethodInfo(
 		getPhoneCodeHandler,
 		newGetPhoneCodeArgs,
 		newGetPhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"code.deletePhoneCode": kitex.NewMethodInfo(
+	"/code.RPCCode/code.deletePhoneCode": kitex.NewMethodInfo(
 		deletePhoneCodeHandler,
 		newDeletePhoneCodeArgs,
 		newDeletePhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"code.updatePhoneCodeData": kitex.NewMethodInfo(
+	"/code.RPCCode/code.updatePhoneCodeData": kitex.NewMethodInfo(
 		updatePhoneCodeDataHandler,
 		newUpdatePhoneCodeDataArgs,
 		newUpdatePhoneCodeDataResult,
@@ -652,7 +652,7 @@ func (p *kClient) CodeCreatePhoneCode(ctx context.Context, req *code.TLCodeCreat
 
 	_result := new(code.PhoneCodeTransaction)
 
-	if err = p.c.Call(ctx, "code.createPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.createPhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -667,7 +667,7 @@ func (p *kClient) CodeGetPhoneCode(ctx context.Context, req *code.TLCodeGetPhone
 
 	_result := new(code.PhoneCodeTransaction)
 
-	if err = p.c.Call(ctx, "code.getPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.getPhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -682,7 +682,7 @@ func (p *kClient) CodeDeletePhoneCode(ctx context.Context, req *code.TLCodeDelet
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "code.deletePhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.deletePhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -697,7 +697,7 @@ func (p *kClient) CodeUpdatePhoneCodeData(ctx context.Context, req *code.TLCodeU
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "code.updatePhoneCodeData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/code.RPCCode/code.updatePhoneCodeData", req, _result); err != nil {
 		return
 	}
 

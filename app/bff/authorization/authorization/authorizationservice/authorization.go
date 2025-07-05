@@ -27,189 +27,189 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"auth.sendCode": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.sendCode": kitex.NewMethodInfo(
 		authSendCodeHandler,
 		newAuthSendCodeArgs,
 		newAuthSendCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.signUp": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.signUp": kitex.NewMethodInfo(
 		authSignUpHandler,
 		newAuthSignUpArgs,
 		newAuthSignUpResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.signIn": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.signIn": kitex.NewMethodInfo(
 		authSignInHandler,
 		newAuthSignInArgs,
 		newAuthSignInResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.logOut": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.logOut": kitex.NewMethodInfo(
 		authLogOutHandler,
 		newAuthLogOutArgs,
 		newAuthLogOutResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.resetAuthorizations": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.resetAuthorizations": kitex.NewMethodInfo(
 		authResetAuthorizationsHandler,
 		newAuthResetAuthorizationsArgs,
 		newAuthResetAuthorizationsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.exportAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.exportAuthorization": kitex.NewMethodInfo(
 		authExportAuthorizationHandler,
 		newAuthExportAuthorizationArgs,
 		newAuthExportAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.importAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.importAuthorization": kitex.NewMethodInfo(
 		authImportAuthorizationHandler,
 		newAuthImportAuthorizationArgs,
 		newAuthImportAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.bindTempAuthKey": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.bindTempAuthKey": kitex.NewMethodInfo(
 		authBindTempAuthKeyHandler,
 		newAuthBindTempAuthKeyArgs,
 		newAuthBindTempAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.importBotAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.importBotAuthorization": kitex.NewMethodInfo(
 		authImportBotAuthorizationHandler,
 		newAuthImportBotAuthorizationArgs,
 		newAuthImportBotAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.checkPassword": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.checkPassword": kitex.NewMethodInfo(
 		authCheckPasswordHandler,
 		newAuthCheckPasswordArgs,
 		newAuthCheckPasswordResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.requestPasswordRecovery": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.requestPasswordRecovery": kitex.NewMethodInfo(
 		authRequestPasswordRecoveryHandler,
 		newAuthRequestPasswordRecoveryArgs,
 		newAuthRequestPasswordRecoveryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.recoverPassword": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.recoverPassword": kitex.NewMethodInfo(
 		authRecoverPasswordHandler,
 		newAuthRecoverPasswordArgs,
 		newAuthRecoverPasswordResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.resendCode": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.resendCode": kitex.NewMethodInfo(
 		authResendCodeHandler,
 		newAuthResendCodeArgs,
 		newAuthResendCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.cancelCode": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.cancelCode": kitex.NewMethodInfo(
 		authCancelCodeHandler,
 		newAuthCancelCodeArgs,
 		newAuthCancelCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.dropTempAuthKeys": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.dropTempAuthKeys": kitex.NewMethodInfo(
 		authDropTempAuthKeysHandler,
 		newAuthDropTempAuthKeysArgs,
 		newAuthDropTempAuthKeysResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.checkRecoveryPassword": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.checkRecoveryPassword": kitex.NewMethodInfo(
 		authCheckRecoveryPasswordHandler,
 		newAuthCheckRecoveryPasswordArgs,
 		newAuthCheckRecoveryPasswordResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.importWebTokenAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.importWebTokenAuthorization": kitex.NewMethodInfo(
 		authImportWebTokenAuthorizationHandler,
 		newAuthImportWebTokenAuthorizationArgs,
 		newAuthImportWebTokenAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.requestFirebaseSms": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.requestFirebaseSms": kitex.NewMethodInfo(
 		authRequestFirebaseSmsHandler,
 		newAuthRequestFirebaseSmsArgs,
 		newAuthRequestFirebaseSmsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.resetLoginEmail": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.resetLoginEmail": kitex.NewMethodInfo(
 		authResetLoginEmailHandler,
 		newAuthResetLoginEmailArgs,
 		newAuthResetLoginEmailResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.reportMissingCode": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.reportMissingCode": kitex.NewMethodInfo(
 		authReportMissingCodeHandler,
 		newAuthReportMissingCodeArgs,
 		newAuthReportMissingCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.sendVerifyEmailCode": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.sendVerifyEmailCode": kitex.NewMethodInfo(
 		accountSendVerifyEmailCodeHandler,
 		newAccountSendVerifyEmailCodeArgs,
 		newAccountSendVerifyEmailCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.verifyEmail": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.verifyEmail": kitex.NewMethodInfo(
 		accountVerifyEmailHandler,
 		newAccountVerifyEmailArgs,
 		newAccountVerifyEmailResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.resetPassword": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.resetPassword": kitex.NewMethodInfo(
 		accountResetPasswordHandler,
 		newAccountResetPasswordArgs,
 		newAccountResetPasswordResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.setAuthorizationTTL": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.setAuthorizationTTL": kitex.NewMethodInfo(
 		accountSetAuthorizationTTLHandler,
 		newAccountSetAuthorizationTTLArgs,
 		newAccountSetAuthorizationTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.changeAuthorizationSettings": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.changeAuthorizationSettings": kitex.NewMethodInfo(
 		accountChangeAuthorizationSettingsHandler,
 		newAccountChangeAuthorizationSettingsArgs,
 		newAccountChangeAuthorizationSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.invalidateSignInCodes": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/account.invalidateSignInCodes": kitex.NewMethodInfo(
 		accountInvalidateSignInCodesHandler,
 		newAccountInvalidateSignInCodesArgs,
 		newAccountInvalidateSignInCodesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.toggleBan": kitex.NewMethodInfo(
+	"/tg.RPCAuthorization/auth.toggleBan": kitex.NewMethodInfo(
 		authToggleBanHandler,
 		newAuthToggleBanArgs,
 		newAuthToggleBanResult,
@@ -3707,7 +3707,7 @@ func (p *kClient) AuthSendCode(ctx context.Context, req *tg.TLAuthSendCode) (r *
 	// var _result AuthSendCodeResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "auth.sendCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.sendCode", req, _result); err != nil {
 		return
 	}
 
@@ -3721,7 +3721,7 @@ func (p *kClient) AuthSignUp(ctx context.Context, req *tg.TLAuthSignUp) (r *tg.A
 	// var _result AuthSignUpResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.signUp", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.signUp", req, _result); err != nil {
 		return
 	}
 
@@ -3735,7 +3735,7 @@ func (p *kClient) AuthSignIn(ctx context.Context, req *tg.TLAuthSignIn) (r *tg.A
 	// var _result AuthSignInResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.signIn", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.signIn", req, _result); err != nil {
 		return
 	}
 
@@ -3749,7 +3749,7 @@ func (p *kClient) AuthLogOut(ctx context.Context, req *tg.TLAuthLogOut) (r *tg.A
 	// var _result AuthLogOutResult
 
 	_result := new(tg.AuthLoggedOut)
-	if err = p.c.Call(ctx, "auth.logOut", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.logOut", req, _result); err != nil {
 		return
 	}
 
@@ -3763,7 +3763,7 @@ func (p *kClient) AuthResetAuthorizations(ctx context.Context, req *tg.TLAuthRes
 	// var _result AuthResetAuthorizationsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.resetAuthorizations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.resetAuthorizations", req, _result); err != nil {
 		return
 	}
 
@@ -3777,7 +3777,7 @@ func (p *kClient) AuthExportAuthorization(ctx context.Context, req *tg.TLAuthExp
 	// var _result AuthExportAuthorizationResult
 
 	_result := new(tg.AuthExportedAuthorization)
-	if err = p.c.Call(ctx, "auth.exportAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.exportAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -3791,7 +3791,7 @@ func (p *kClient) AuthImportAuthorization(ctx context.Context, req *tg.TLAuthImp
 	// var _result AuthImportAuthorizationResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.importAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.importAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -3805,7 +3805,7 @@ func (p *kClient) AuthBindTempAuthKey(ctx context.Context, req *tg.TLAuthBindTem
 	// var _result AuthBindTempAuthKeyResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.bindTempAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.bindTempAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -3819,7 +3819,7 @@ func (p *kClient) AuthImportBotAuthorization(ctx context.Context, req *tg.TLAuth
 	// var _result AuthImportBotAuthorizationResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.importBotAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.importBotAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -3833,7 +3833,7 @@ func (p *kClient) AuthCheckPassword(ctx context.Context, req *tg.TLAuthCheckPass
 	// var _result AuthCheckPasswordResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.checkPassword", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.checkPassword", req, _result); err != nil {
 		return
 	}
 
@@ -3847,7 +3847,7 @@ func (p *kClient) AuthRequestPasswordRecovery(ctx context.Context, req *tg.TLAut
 	// var _result AuthRequestPasswordRecoveryResult
 
 	_result := new(tg.AuthPasswordRecovery)
-	if err = p.c.Call(ctx, "auth.requestPasswordRecovery", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.requestPasswordRecovery", req, _result); err != nil {
 		return
 	}
 
@@ -3861,7 +3861,7 @@ func (p *kClient) AuthRecoverPassword(ctx context.Context, req *tg.TLAuthRecover
 	// var _result AuthRecoverPasswordResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.recoverPassword", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.recoverPassword", req, _result); err != nil {
 		return
 	}
 
@@ -3875,7 +3875,7 @@ func (p *kClient) AuthResendCode(ctx context.Context, req *tg.TLAuthResendCode) 
 	// var _result AuthResendCodeResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "auth.resendCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.resendCode", req, _result); err != nil {
 		return
 	}
 
@@ -3889,7 +3889,7 @@ func (p *kClient) AuthCancelCode(ctx context.Context, req *tg.TLAuthCancelCode) 
 	// var _result AuthCancelCodeResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.cancelCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.cancelCode", req, _result); err != nil {
 		return
 	}
 
@@ -3903,7 +3903,7 @@ func (p *kClient) AuthDropTempAuthKeys(ctx context.Context, req *tg.TLAuthDropTe
 	// var _result AuthDropTempAuthKeysResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.dropTempAuthKeys", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.dropTempAuthKeys", req, _result); err != nil {
 		return
 	}
 
@@ -3917,7 +3917,7 @@ func (p *kClient) AuthCheckRecoveryPassword(ctx context.Context, req *tg.TLAuthC
 	// var _result AuthCheckRecoveryPasswordResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.checkRecoveryPassword", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.checkRecoveryPassword", req, _result); err != nil {
 		return
 	}
 
@@ -3931,7 +3931,7 @@ func (p *kClient) AuthImportWebTokenAuthorization(ctx context.Context, req *tg.T
 	// var _result AuthImportWebTokenAuthorizationResult
 
 	_result := new(tg.AuthAuthorization)
-	if err = p.c.Call(ctx, "auth.importWebTokenAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.importWebTokenAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -3945,7 +3945,7 @@ func (p *kClient) AuthRequestFirebaseSms(ctx context.Context, req *tg.TLAuthRequ
 	// var _result AuthRequestFirebaseSmsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.requestFirebaseSms", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.requestFirebaseSms", req, _result); err != nil {
 		return
 	}
 
@@ -3959,7 +3959,7 @@ func (p *kClient) AuthResetLoginEmail(ctx context.Context, req *tg.TLAuthResetLo
 	// var _result AuthResetLoginEmailResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "auth.resetLoginEmail", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.resetLoginEmail", req, _result); err != nil {
 		return
 	}
 
@@ -3973,7 +3973,7 @@ func (p *kClient) AuthReportMissingCode(ctx context.Context, req *tg.TLAuthRepor
 	// var _result AuthReportMissingCodeResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "auth.reportMissingCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.reportMissingCode", req, _result); err != nil {
 		return
 	}
 
@@ -3987,7 +3987,7 @@ func (p *kClient) AccountSendVerifyEmailCode(ctx context.Context, req *tg.TLAcco
 	// var _result AccountSendVerifyEmailCodeResult
 
 	_result := new(tg.AccountSentEmailCode)
-	if err = p.c.Call(ctx, "account.sendVerifyEmailCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.sendVerifyEmailCode", req, _result); err != nil {
 		return
 	}
 
@@ -4001,7 +4001,7 @@ func (p *kClient) AccountVerifyEmail(ctx context.Context, req *tg.TLAccountVerif
 	// var _result AccountVerifyEmailResult
 
 	_result := new(tg.AccountEmailVerified)
-	if err = p.c.Call(ctx, "account.verifyEmail", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.verifyEmail", req, _result); err != nil {
 		return
 	}
 
@@ -4015,7 +4015,7 @@ func (p *kClient) AccountResetPassword(ctx context.Context, req *tg.TLAccountRes
 	// var _result AccountResetPasswordResult
 
 	_result := new(tg.AccountResetPasswordResult)
-	if err = p.c.Call(ctx, "account.resetPassword", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.resetPassword", req, _result); err != nil {
 		return
 	}
 
@@ -4029,7 +4029,7 @@ func (p *kClient) AccountSetAuthorizationTTL(ctx context.Context, req *tg.TLAcco
 	// var _result AccountSetAuthorizationTTLResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.setAuthorizationTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.setAuthorizationTTL", req, _result); err != nil {
 		return
 	}
 
@@ -4043,7 +4043,7 @@ func (p *kClient) AccountChangeAuthorizationSettings(ctx context.Context, req *t
 	// var _result AccountChangeAuthorizationSettingsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.changeAuthorizationSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.changeAuthorizationSettings", req, _result); err != nil {
 		return
 	}
 
@@ -4057,7 +4057,7 @@ func (p *kClient) AccountInvalidateSignInCodes(ctx context.Context, req *tg.TLAc
 	// var _result AccountInvalidateSignInCodesResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.invalidateSignInCodes", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/account.invalidateSignInCodes", req, _result); err != nil {
 		return
 	}
 
@@ -4071,7 +4071,7 @@ func (p *kClient) AuthToggleBan(ctx context.Context, req *tg.TLAuthToggleBan) (r
 	// var _result AuthToggleBanResult
 
 	_result := new(tg.PredefinedUser)
-	if err = p.c.Call(ctx, "auth.toggleBan", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.toggleBan", req, _result); err != nil {
 		return
 	}
 

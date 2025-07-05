@@ -30,112 +30,112 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"media.uploadPhotoFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadPhotoFile": kitex.NewMethodInfo(
 		uploadPhotoFileHandler,
 		newUploadPhotoFileArgs,
 		newUploadPhotoFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadProfilePhotoFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadProfilePhotoFile": kitex.NewMethodInfo(
 		uploadProfilePhotoFileHandler,
 		newUploadProfilePhotoFileArgs,
 		newUploadProfilePhotoFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getPhoto": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getPhoto": kitex.NewMethodInfo(
 		getPhotoHandler,
 		newGetPhotoArgs,
 		newGetPhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getPhotoSizeList": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getPhotoSizeList": kitex.NewMethodInfo(
 		getPhotoSizeListHandler,
 		newGetPhotoSizeListArgs,
 		newGetPhotoSizeListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getPhotoSizeListList": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getPhotoSizeListList": kitex.NewMethodInfo(
 		getPhotoSizeListListHandler,
 		newGetPhotoSizeListListArgs,
 		newGetPhotoSizeListListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getVideoSizeList": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getVideoSizeList": kitex.NewMethodInfo(
 		getVideoSizeListHandler,
 		newGetVideoSizeListArgs,
 		newGetVideoSizeListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadedDocumentMedia": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadedDocumentMedia": kitex.NewMethodInfo(
 		uploadedDocumentMediaHandler,
 		newUploadedDocumentMediaArgs,
 		newUploadedDocumentMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getDocument": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getDocument": kitex.NewMethodInfo(
 		getDocumentHandler,
 		newGetDocumentArgs,
 		newGetDocumentResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getDocumentList": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getDocumentList": kitex.NewMethodInfo(
 		getDocumentListHandler,
 		newGetDocumentListArgs,
 		newGetDocumentListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadEncryptedFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadEncryptedFile": kitex.NewMethodInfo(
 		uploadEncryptedFileHandler,
 		newUploadEncryptedFileArgs,
 		newUploadEncryptedFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.getEncryptedFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.getEncryptedFile": kitex.NewMethodInfo(
 		getEncryptedFileHandler,
 		newGetEncryptedFileArgs,
 		newGetEncryptedFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadWallPaperFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadWallPaperFile": kitex.NewMethodInfo(
 		uploadWallPaperFileHandler,
 		newUploadWallPaperFileArgs,
 		newUploadWallPaperFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadThemeFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadThemeFile": kitex.NewMethodInfo(
 		uploadThemeFileHandler,
 		newUploadThemeFileArgs,
 		newUploadThemeFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadStickerFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadStickerFile": kitex.NewMethodInfo(
 		uploadStickerFileHandler,
 		newUploadStickerFileArgs,
 		newUploadStickerFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadRingtoneFile": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadRingtoneFile": kitex.NewMethodInfo(
 		uploadRingtoneFileHandler,
 		newUploadRingtoneFileArgs,
 		newUploadRingtoneFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"media.uploadedProfilePhoto": kitex.NewMethodInfo(
+	"/media.RPCMedia/media.uploadedProfilePhoto": kitex.NewMethodInfo(
 		uploadedProfilePhotoHandler,
 		newUploadedProfilePhotoArgs,
 		newUploadedProfilePhotoResult,
@@ -2248,7 +2248,7 @@ func (p *kClient) MediaUploadPhotoFile(ctx context.Context, req *media.TLMediaUp
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "media.uploadPhotoFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadPhotoFile", req, _result); err != nil {
 		return
 	}
 
@@ -2263,7 +2263,7 @@ func (p *kClient) MediaUploadProfilePhotoFile(ctx context.Context, req *media.TL
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "media.uploadProfilePhotoFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadProfilePhotoFile", req, _result); err != nil {
 		return
 	}
 
@@ -2278,7 +2278,7 @@ func (p *kClient) MediaGetPhoto(ctx context.Context, req *media.TLMediaGetPhoto)
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "media.getPhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhoto", req, _result); err != nil {
 		return
 	}
 
@@ -2293,7 +2293,7 @@ func (p *kClient) MediaGetPhotoSizeList(ctx context.Context, req *media.TLMediaG
 
 	_result := new(media.PhotoSizeList)
 
-	if err = p.c.Call(ctx, "media.getPhotoSizeList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeList", req, _result); err != nil {
 		return
 	}
 
@@ -2308,7 +2308,7 @@ func (p *kClient) MediaGetPhotoSizeListList(ctx context.Context, req *media.TLMe
 
 	_result := new(media.VectorPhotoSizeList)
 
-	if err = p.c.Call(ctx, "media.getPhotoSizeListList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getPhotoSizeListList", req, _result); err != nil {
 		return
 	}
 
@@ -2323,7 +2323,7 @@ func (p *kClient) MediaGetVideoSizeList(ctx context.Context, req *media.TLMediaG
 
 	_result := new(media.VideoSizeList)
 
-	if err = p.c.Call(ctx, "media.getVideoSizeList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getVideoSizeList", req, _result); err != nil {
 		return
 	}
 
@@ -2338,7 +2338,7 @@ func (p *kClient) MediaUploadedDocumentMedia(ctx context.Context, req *media.TLM
 
 	_result := new(tg.MessageMedia)
 
-	if err = p.c.Call(ctx, "media.uploadedDocumentMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedDocumentMedia", req, _result); err != nil {
 		return
 	}
 
@@ -2353,7 +2353,7 @@ func (p *kClient) MediaGetDocument(ctx context.Context, req *media.TLMediaGetDoc
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "media.getDocument", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocument", req, _result); err != nil {
 		return
 	}
 
@@ -2368,7 +2368,7 @@ func (p *kClient) MediaGetDocumentList(ctx context.Context, req *media.TLMediaGe
 
 	_result := new(media.VectorDocument)
 
-	if err = p.c.Call(ctx, "media.getDocumentList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getDocumentList", req, _result); err != nil {
 		return
 	}
 
@@ -2383,7 +2383,7 @@ func (p *kClient) MediaUploadEncryptedFile(ctx context.Context, req *media.TLMed
 
 	_result := new(tg.EncryptedFile)
 
-	if err = p.c.Call(ctx, "media.uploadEncryptedFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadEncryptedFile", req, _result); err != nil {
 		return
 	}
 
@@ -2398,7 +2398,7 @@ func (p *kClient) MediaGetEncryptedFile(ctx context.Context, req *media.TLMediaG
 
 	_result := new(tg.EncryptedFile)
 
-	if err = p.c.Call(ctx, "media.getEncryptedFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.getEncryptedFile", req, _result); err != nil {
 		return
 	}
 
@@ -2413,7 +2413,7 @@ func (p *kClient) MediaUploadWallPaperFile(ctx context.Context, req *media.TLMed
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "media.uploadWallPaperFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadWallPaperFile", req, _result); err != nil {
 		return
 	}
 
@@ -2428,7 +2428,7 @@ func (p *kClient) MediaUploadThemeFile(ctx context.Context, req *media.TLMediaUp
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "media.uploadThemeFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadThemeFile", req, _result); err != nil {
 		return
 	}
 
@@ -2443,7 +2443,7 @@ func (p *kClient) MediaUploadStickerFile(ctx context.Context, req *media.TLMedia
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "media.uploadStickerFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadStickerFile", req, _result); err != nil {
 		return
 	}
 
@@ -2458,7 +2458,7 @@ func (p *kClient) MediaUploadRingtoneFile(ctx context.Context, req *media.TLMedi
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "media.uploadRingtoneFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadRingtoneFile", req, _result); err != nil {
 		return
 	}
 
@@ -2473,7 +2473,7 @@ func (p *kClient) MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMe
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "media.uploadedProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedProfilePhoto", req, _result); err != nil {
 		return
 	}
 

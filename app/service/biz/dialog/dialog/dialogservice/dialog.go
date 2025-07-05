@@ -30,280 +30,280 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"dialog.saveDraftMessage": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.saveDraftMessage": kitex.NewMethodInfo(
 		saveDraftMessageHandler,
 		newSaveDraftMessageArgs,
 		newSaveDraftMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.clearDraftMessage": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.clearDraftMessage": kitex.NewMethodInfo(
 		clearDraftMessageHandler,
 		newClearDraftMessageArgs,
 		newClearDraftMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getAllDrafts": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getAllDrafts": kitex.NewMethodInfo(
 		getAllDraftsHandler,
 		newGetAllDraftsArgs,
 		newGetAllDraftsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.clearAllDrafts": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.clearAllDrafts": kitex.NewMethodInfo(
 		clearAllDraftsHandler,
 		newClearAllDraftsArgs,
 		newClearAllDraftsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.markDialogUnread": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.markDialogUnread": kitex.NewMethodInfo(
 		markDialogUnreadHandler,
 		newMarkDialogUnreadArgs,
 		newMarkDialogUnreadResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.toggleDialogPin": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.toggleDialogPin": kitex.NewMethodInfo(
 		toggleDialogPinHandler,
 		newToggleDialogPinArgs,
 		newToggleDialogPinResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogUnreadMarkList": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogUnreadMarkList": kitex.NewMethodInfo(
 		getDialogUnreadMarkListHandler,
 		newGetDialogUnreadMarkListArgs,
 		newGetDialogUnreadMarkListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogsByOffsetDate": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogsByOffsetDate": kitex.NewMethodInfo(
 		getDialogsByOffsetDateHandler,
 		newGetDialogsByOffsetDateArgs,
 		newGetDialogsByOffsetDateResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogs": kitex.NewMethodInfo(
 		getDialogsHandler,
 		newGetDialogsArgs,
 		newGetDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogsByIdList": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogsByIdList": kitex.NewMethodInfo(
 		getDialogsByIdListHandler,
 		newGetDialogsByIdListArgs,
 		newGetDialogsByIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogsCount": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogsCount": kitex.NewMethodInfo(
 		getDialogsCountHandler,
 		newGetDialogsCountArgs,
 		newGetDialogsCountResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getPinnedDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getPinnedDialogs": kitex.NewMethodInfo(
 		getPinnedDialogsHandler,
 		newGetPinnedDialogsArgs,
 		newGetPinnedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.reorderPinnedDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.reorderPinnedDialogs": kitex.NewMethodInfo(
 		reorderPinnedDialogsHandler,
 		newReorderPinnedDialogsArgs,
 		newReorderPinnedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogById": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogById": kitex.NewMethodInfo(
 		getDialogByIdHandler,
 		newGetDialogByIdArgs,
 		newGetDialogByIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getTopMessage": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getTopMessage": kitex.NewMethodInfo(
 		getTopMessageHandler,
 		newGetTopMessageArgs,
 		newGetTopMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.insertOrUpdateDialog": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.insertOrUpdateDialog": kitex.NewMethodInfo(
 		insertOrUpdateDialogHandler,
 		newInsertOrUpdateDialogArgs,
 		newInsertOrUpdateDialogResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.deleteDialog": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.deleteDialog": kitex.NewMethodInfo(
 		deleteDialogHandler,
 		newDeleteDialogArgs,
 		newDeleteDialogResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getUserPinnedMessage": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getUserPinnedMessage": kitex.NewMethodInfo(
 		getUserPinnedMessageHandler,
 		newGetUserPinnedMessageArgs,
 		newGetUserPinnedMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.updateUserPinnedMessage": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.updateUserPinnedMessage": kitex.NewMethodInfo(
 		updateUserPinnedMessageHandler,
 		newUpdateUserPinnedMessageArgs,
 		newUpdateUserPinnedMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.insertOrUpdateDialogFilter": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.insertOrUpdateDialogFilter": kitex.NewMethodInfo(
 		insertOrUpdateDialogFilterHandler,
 		newInsertOrUpdateDialogFilterArgs,
 		newInsertOrUpdateDialogFilterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.deleteDialogFilter": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.deleteDialogFilter": kitex.NewMethodInfo(
 		deleteDialogFilterHandler,
 		newDeleteDialogFilterArgs,
 		newDeleteDialogFilterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.updateDialogFiltersOrder": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.updateDialogFiltersOrder": kitex.NewMethodInfo(
 		updateDialogFiltersOrderHandler,
 		newUpdateDialogFiltersOrderArgs,
 		newUpdateDialogFiltersOrderResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogFilters": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogFilters": kitex.NewMethodInfo(
 		getDialogFiltersHandler,
 		newGetDialogFiltersArgs,
 		newGetDialogFiltersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogFolder": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogFolder": kitex.NewMethodInfo(
 		getDialogFolderHandler,
 		newGetDialogFolderArgs,
 		newGetDialogFolderResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.editPeerFolders": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.editPeerFolders": kitex.NewMethodInfo(
 		editPeerFoldersHandler,
 		newEditPeerFoldersArgs,
 		newEditPeerFoldersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getChannelMessageReadParticipants": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getChannelMessageReadParticipants": kitex.NewMethodInfo(
 		getChannelMessageReadParticipantsHandler,
 		newGetChannelMessageReadParticipantsArgs,
 		newGetChannelMessageReadParticipantsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.setChatTheme": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.setChatTheme": kitex.NewMethodInfo(
 		setChatThemeHandler,
 		newSetChatThemeArgs,
 		newSetChatThemeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.setHistoryTTL": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.setHistoryTTL": kitex.NewMethodInfo(
 		setHistoryTTLHandler,
 		newSetHistoryTTLArgs,
 		newSetHistoryTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getMyDialogsData": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getMyDialogsData": kitex.NewMethodInfo(
 		getMyDialogsDataHandler,
 		newGetMyDialogsDataArgs,
 		newGetMyDialogsDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getSavedDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getSavedDialogs": kitex.NewMethodInfo(
 		getSavedDialogsHandler,
 		newGetSavedDialogsArgs,
 		newGetSavedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getPinnedSavedDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getPinnedSavedDialogs": kitex.NewMethodInfo(
 		getPinnedSavedDialogsHandler,
 		newGetPinnedSavedDialogsArgs,
 		newGetPinnedSavedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.toggleSavedDialogPin": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.toggleSavedDialogPin": kitex.NewMethodInfo(
 		toggleSavedDialogPinHandler,
 		newToggleSavedDialogPinArgs,
 		newToggleSavedDialogPinResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.reorderPinnedSavedDialogs": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.reorderPinnedSavedDialogs": kitex.NewMethodInfo(
 		reorderPinnedSavedDialogsHandler,
 		newReorderPinnedSavedDialogsArgs,
 		newReorderPinnedSavedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogFilter": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogFilter": kitex.NewMethodInfo(
 		getDialogFilterHandler,
 		newGetDialogFilterArgs,
 		newGetDialogFilterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogFilterBySlug": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogFilterBySlug": kitex.NewMethodInfo(
 		getDialogFilterBySlugHandler,
 		newGetDialogFilterBySlugArgs,
 		newGetDialogFilterBySlugResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.createDialogFilter": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.createDialogFilter": kitex.NewMethodInfo(
 		createDialogFilterHandler,
 		newCreateDialogFilterArgs,
 		newCreateDialogFilterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.updateUnreadCount": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.updateUnreadCount": kitex.NewMethodInfo(
 		updateUnreadCountHandler,
 		newUpdateUnreadCountArgs,
 		newUpdateUnreadCountResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.toggleDialogFilterTags": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.toggleDialogFilterTags": kitex.NewMethodInfo(
 		toggleDialogFilterTagsHandler,
 		newToggleDialogFilterTagsArgs,
 		newToggleDialogFilterTagsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.getDialogFilterTags": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.getDialogFilterTags": kitex.NewMethodInfo(
 		getDialogFilterTagsHandler,
 		newGetDialogFilterTagsArgs,
 		newGetDialogFilterTagsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dialog.setChatWallpaper": kitex.NewMethodInfo(
+	"/dialog.RPCDialog/dialog.setChatWallpaper": kitex.NewMethodInfo(
 		setChatWallpaperHandler,
 		newSetChatWallpaperArgs,
 		newSetChatWallpaperResult,
@@ -5440,7 +5440,7 @@ func (p *kClient) DialogSaveDraftMessage(ctx context.Context, req *dialog.TLDial
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.saveDraftMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.saveDraftMessage", req, _result); err != nil {
 		return
 	}
 
@@ -5455,7 +5455,7 @@ func (p *kClient) DialogClearDraftMessage(ctx context.Context, req *dialog.TLDia
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.clearDraftMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearDraftMessage", req, _result); err != nil {
 		return
 	}
 
@@ -5470,7 +5470,7 @@ func (p *kClient) DialogGetAllDrafts(ctx context.Context, req *dialog.TLDialogGe
 
 	_result := new(dialog.VectorPeerWithDraftMessage)
 
-	if err = p.c.Call(ctx, "dialog.getAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getAllDrafts", req, _result); err != nil {
 		return
 	}
 
@@ -5485,7 +5485,7 @@ func (p *kClient) DialogClearAllDrafts(ctx context.Context, req *dialog.TLDialog
 
 	_result := new(dialog.VectorPeerWithDraftMessage)
 
-	if err = p.c.Call(ctx, "dialog.clearAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearAllDrafts", req, _result); err != nil {
 		return
 	}
 
@@ -5500,7 +5500,7 @@ func (p *kClient) DialogMarkDialogUnread(ctx context.Context, req *dialog.TLDial
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.markDialogUnread", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.markDialogUnread", req, _result); err != nil {
 		return
 	}
 
@@ -5515,7 +5515,7 @@ func (p *kClient) DialogToggleDialogPin(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "dialog.toggleDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogPin", req, _result); err != nil {
 		return
 	}
 
@@ -5530,7 +5530,7 @@ func (p *kClient) DialogGetDialogUnreadMarkList(ctx context.Context, req *dialog
 
 	_result := new(dialog.VectorDialogPeer)
 
-	if err = p.c.Call(ctx, "dialog.getDialogUnreadMarkList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogUnreadMarkList", req, _result); err != nil {
 		return
 	}
 
@@ -5545,7 +5545,7 @@ func (p *kClient) DialogGetDialogsByOffsetDate(ctx context.Context, req *dialog.
 
 	_result := new(dialog.VectorDialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogsByOffsetDate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByOffsetDate", req, _result); err != nil {
 		return
 	}
 
@@ -5560,7 +5560,7 @@ func (p *kClient) DialogGetDialogs(ctx context.Context, req *dialog.TLDialogGetD
 
 	_result := new(dialog.VectorDialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5575,7 +5575,7 @@ func (p *kClient) DialogGetDialogsByIdList(ctx context.Context, req *dialog.TLDi
 
 	_result := new(dialog.VectorDialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogsByIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsByIdList", req, _result); err != nil {
 		return
 	}
 
@@ -5590,7 +5590,7 @@ func (p *kClient) DialogGetDialogsCount(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "dialog.getDialogsCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogsCount", req, _result); err != nil {
 		return
 	}
 
@@ -5605,7 +5605,7 @@ func (p *kClient) DialogGetPinnedDialogs(ctx context.Context, req *dialog.TLDial
 
 	_result := new(dialog.VectorDialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5620,7 +5620,7 @@ func (p *kClient) DialogReorderPinnedDialogs(ctx context.Context, req *dialog.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.reorderPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5635,7 +5635,7 @@ func (p *kClient) DialogGetDialogById(ctx context.Context, req *dialog.TLDialogG
 
 	_result := new(dialog.DialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogById", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogById", req, _result); err != nil {
 		return
 	}
 
@@ -5650,7 +5650,7 @@ func (p *kClient) DialogGetTopMessage(ctx context.Context, req *dialog.TLDialogG
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "dialog.getTopMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getTopMessage", req, _result); err != nil {
 		return
 	}
 
@@ -5665,7 +5665,7 @@ func (p *kClient) DialogInsertOrUpdateDialog(ctx context.Context, req *dialog.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialog", req, _result); err != nil {
 		return
 	}
 
@@ -5680,7 +5680,7 @@ func (p *kClient) DialogDeleteDialog(ctx context.Context, req *dialog.TLDialogDe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.deleteDialog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialog", req, _result); err != nil {
 		return
 	}
 
@@ -5695,7 +5695,7 @@ func (p *kClient) DialogGetUserPinnedMessage(ctx context.Context, req *dialog.TL
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "dialog.getUserPinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getUserPinnedMessage", req, _result); err != nil {
 		return
 	}
 
@@ -5710,7 +5710,7 @@ func (p *kClient) DialogUpdateUserPinnedMessage(ctx context.Context, req *dialog
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.updateUserPinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUserPinnedMessage", req, _result); err != nil {
 		return
 	}
 
@@ -5725,7 +5725,7 @@ func (p *kClient) DialogInsertOrUpdateDialogFilter(ctx context.Context, req *dia
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.insertOrUpdateDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.insertOrUpdateDialogFilter", req, _result); err != nil {
 		return
 	}
 
@@ -5740,7 +5740,7 @@ func (p *kClient) DialogDeleteDialogFilter(ctx context.Context, req *dialog.TLDi
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.deleteDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.deleteDialogFilter", req, _result); err != nil {
 		return
 	}
 
@@ -5755,7 +5755,7 @@ func (p *kClient) DialogUpdateDialogFiltersOrder(ctx context.Context, req *dialo
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.updateDialogFiltersOrder", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateDialogFiltersOrder", req, _result); err != nil {
 		return
 	}
 
@@ -5770,7 +5770,7 @@ func (p *kClient) DialogGetDialogFilters(ctx context.Context, req *dialog.TLDial
 
 	_result := new(dialog.VectorDialogFilterExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogFilters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilters", req, _result); err != nil {
 		return
 	}
 
@@ -5785,7 +5785,7 @@ func (p *kClient) DialogGetDialogFolder(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(dialog.VectorDialogExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogFolder", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFolder", req, _result); err != nil {
 		return
 	}
 
@@ -5800,7 +5800,7 @@ func (p *kClient) DialogEditPeerFolders(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(dialog.VectorDialogPinnedExt)
 
-	if err = p.c.Call(ctx, "dialog.editPeerFolders", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.editPeerFolders", req, _result); err != nil {
 		return
 	}
 
@@ -5815,7 +5815,7 @@ func (p *kClient) DialogGetChannelMessageReadParticipants(ctx context.Context, r
 
 	_result := new(dialog.VectorLong)
 
-	if err = p.c.Call(ctx, "dialog.getChannelMessageReadParticipants", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getChannelMessageReadParticipants", req, _result); err != nil {
 		return
 	}
 
@@ -5830,7 +5830,7 @@ func (p *kClient) DialogSetChatTheme(ctx context.Context, req *dialog.TLDialogSe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.setChatTheme", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatTheme", req, _result); err != nil {
 		return
 	}
 
@@ -5845,7 +5845,7 @@ func (p *kClient) DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.setHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setHistoryTTL", req, _result); err != nil {
 		return
 	}
 
@@ -5860,7 +5860,7 @@ func (p *kClient) DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDial
 
 	_result := new(dialog.DialogsData)
 
-	if err = p.c.Call(ctx, "dialog.getMyDialogsData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getMyDialogsData", req, _result); err != nil {
 		return
 	}
 
@@ -5875,7 +5875,7 @@ func (p *kClient) DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(dialog.SavedDialogList)
 
-	if err = p.c.Call(ctx, "dialog.getSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getSavedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5890,7 +5890,7 @@ func (p *kClient) DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.T
 
 	_result := new(dialog.SavedDialogList)
 
-	if err = p.c.Call(ctx, "dialog.getPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5905,7 +5905,7 @@ func (p *kClient) DialogToggleSavedDialogPin(ctx context.Context, req *dialog.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.toggleSavedDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleSavedDialogPin", req, _result); err != nil {
 		return
 	}
 
@@ -5920,7 +5920,7 @@ func (p *kClient) DialogReorderPinnedSavedDialogs(ctx context.Context, req *dial
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.reorderPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.reorderPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -5935,7 +5935,7 @@ func (p *kClient) DialogGetDialogFilter(ctx context.Context, req *dialog.TLDialo
 
 	_result := new(dialog.DialogFilterExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilter", req, _result); err != nil {
 		return
 	}
 
@@ -5950,7 +5950,7 @@ func (p *kClient) DialogGetDialogFilterBySlug(ctx context.Context, req *dialog.T
 
 	_result := new(dialog.DialogFilterExt)
 
-	if err = p.c.Call(ctx, "dialog.getDialogFilterBySlug", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterBySlug", req, _result); err != nil {
 		return
 	}
 
@@ -5965,7 +5965,7 @@ func (p *kClient) DialogCreateDialogFilter(ctx context.Context, req *dialog.TLDi
 
 	_result := new(dialog.DialogFilterExt)
 
-	if err = p.c.Call(ctx, "dialog.createDialogFilter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.createDialogFilter", req, _result); err != nil {
 		return
 	}
 
@@ -5980,7 +5980,7 @@ func (p *kClient) DialogUpdateUnreadCount(ctx context.Context, req *dialog.TLDia
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.updateUnreadCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.updateUnreadCount", req, _result); err != nil {
 		return
 	}
 
@@ -5995,7 +5995,7 @@ func (p *kClient) DialogToggleDialogFilterTags(ctx context.Context, req *dialog.
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.toggleDialogFilterTags", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.toggleDialogFilterTags", req, _result); err != nil {
 		return
 	}
 
@@ -6010,7 +6010,7 @@ func (p *kClient) DialogGetDialogFilterTags(ctx context.Context, req *dialog.TLD
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.getDialogFilterTags", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getDialogFilterTags", req, _result); err != nil {
 		return
 	}
 
@@ -6025,7 +6025,7 @@ func (p *kClient) DialogSetChatWallpaper(ctx context.Context, req *dialog.TLDial
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dialog.setChatWallpaper", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.setChatWallpaper", req, _result); err != nil {
 		return
 	}
 

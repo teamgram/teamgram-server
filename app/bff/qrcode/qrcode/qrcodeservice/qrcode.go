@@ -27,21 +27,21 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"auth.exportLoginToken": kitex.NewMethodInfo(
+	"/tg.RPCQrCode/auth.exportLoginToken": kitex.NewMethodInfo(
 		authExportLoginTokenHandler,
 		newAuthExportLoginTokenArgs,
 		newAuthExportLoginTokenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.importLoginToken": kitex.NewMethodInfo(
+	"/tg.RPCQrCode/auth.importLoginToken": kitex.NewMethodInfo(
 		authImportLoginTokenHandler,
 		newAuthImportLoginTokenArgs,
 		newAuthImportLoginTokenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"auth.acceptLoginToken": kitex.NewMethodInfo(
+	"/tg.RPCQrCode/auth.acceptLoginToken": kitex.NewMethodInfo(
 		authAcceptLoginTokenHandler,
 		newAuthAcceptLoginTokenArgs,
 		newAuthAcceptLoginTokenResult,
@@ -515,7 +515,7 @@ func (p *kClient) AuthExportLoginToken(ctx context.Context, req *tg.TLAuthExport
 	// var _result AuthExportLoginTokenResult
 
 	_result := new(tg.AuthLoginToken)
-	if err = p.c.Call(ctx, "auth.exportLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.exportLoginToken", req, _result); err != nil {
 		return
 	}
 
@@ -529,7 +529,7 @@ func (p *kClient) AuthImportLoginToken(ctx context.Context, req *tg.TLAuthImport
 	// var _result AuthImportLoginTokenResult
 
 	_result := new(tg.AuthLoginToken)
-	if err = p.c.Call(ctx, "auth.importLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.importLoginToken", req, _result); err != nil {
 		return
 	}
 
@@ -543,7 +543,7 @@ func (p *kClient) AuthAcceptLoginToken(ctx context.Context, req *tg.TLAuthAccept
 	// var _result AuthAcceptLoginTokenResult
 
 	_result := new(tg.Authorization)
-	if err = p.c.Call(ctx, "auth.acceptLoginToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCQrCode/auth.acceptLoginToken", req, _result); err != nil {
 		return
 	}
 

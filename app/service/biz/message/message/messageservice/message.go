@@ -30,140 +30,140 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"message.getUserMessage": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUserMessage": kitex.NewMethodInfo(
 		getUserMessageHandler,
 		newGetUserMessageArgs,
 		newGetUserMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getUserMessageList": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUserMessageList": kitex.NewMethodInfo(
 		getUserMessageListHandler,
 		newGetUserMessageListArgs,
 		newGetUserMessageListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getUserMessageListByDataIdList": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUserMessageListByDataIdList": kitex.NewMethodInfo(
 		getUserMessageListByDataIdListHandler,
 		newGetUserMessageListByDataIdListArgs,
 		newGetUserMessageListByDataIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getUserMessageListByDataIdUserIdList": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUserMessageListByDataIdUserIdList": kitex.NewMethodInfo(
 		getUserMessageListByDataIdUserIdListHandler,
 		newGetUserMessageListByDataIdUserIdListArgs,
 		newGetUserMessageListByDataIdUserIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getHistoryMessages": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getHistoryMessages": kitex.NewMethodInfo(
 		getHistoryMessagesHandler,
 		newGetHistoryMessagesArgs,
 		newGetHistoryMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getHistoryMessagesCount": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getHistoryMessagesCount": kitex.NewMethodInfo(
 		getHistoryMessagesCountHandler,
 		newGetHistoryMessagesCountArgs,
 		newGetHistoryMessagesCountResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getPeerUserMessageId": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getPeerUserMessageId": kitex.NewMethodInfo(
 		getPeerUserMessageIdHandler,
 		newGetPeerUserMessageIdArgs,
 		newGetPeerUserMessageIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getPeerUserMessage": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getPeerUserMessage": kitex.NewMethodInfo(
 		getPeerUserMessageHandler,
 		newGetPeerUserMessageArgs,
 		newGetPeerUserMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.searchByMediaType": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.searchByMediaType": kitex.NewMethodInfo(
 		searchByMediaTypeHandler,
 		newSearchByMediaTypeArgs,
 		newSearchByMediaTypeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.search": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.search": kitex.NewMethodInfo(
 		searchHandler,
 		newSearchArgs,
 		newSearchResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.searchGlobal": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.searchGlobal": kitex.NewMethodInfo(
 		searchGlobalHandler,
 		newSearchGlobalArgs,
 		newSearchGlobalResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.searchByPinned": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.searchByPinned": kitex.NewMethodInfo(
 		searchByPinnedHandler,
 		newSearchByPinnedArgs,
 		newSearchByPinnedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getSearchCounter": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getSearchCounter": kitex.NewMethodInfo(
 		getSearchCounterHandler,
 		newGetSearchCounterArgs,
 		newGetSearchCounterResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.searchV2": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.searchV2": kitex.NewMethodInfo(
 		searchV2Handler,
 		newSearchV2Args,
 		newSearchV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getLastTwoPinnedMessageId": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getLastTwoPinnedMessageId": kitex.NewMethodInfo(
 		getLastTwoPinnedMessageIdHandler,
 		newGetLastTwoPinnedMessageIdArgs,
 		newGetLastTwoPinnedMessageIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.updatePinnedMessageId": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.updatePinnedMessageId": kitex.NewMethodInfo(
 		updatePinnedMessageIdHandler,
 		newUpdatePinnedMessageIdArgs,
 		newUpdatePinnedMessageIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getPinnedMessageIdList": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getPinnedMessageIdList": kitex.NewMethodInfo(
 		getPinnedMessageIdListHandler,
 		newGetPinnedMessageIdListArgs,
 		newGetPinnedMessageIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.unPinAllMessages": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.unPinAllMessages": kitex.NewMethodInfo(
 		unPinAllMessagesHandler,
 		newUnPinAllMessagesArgs,
 		newUnPinAllMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getUnreadMentions": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUnreadMentions": kitex.NewMethodInfo(
 		getUnreadMentionsHandler,
 		newGetUnreadMentionsArgs,
 		newGetUnreadMentionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"message.getUnreadMentionsCount": kitex.NewMethodInfo(
+	"/message.RPCMessage/message.getUnreadMentionsCount": kitex.NewMethodInfo(
 		getUnreadMentionsCountHandler,
 		newGetUnreadMentionsCountArgs,
 		newGetUnreadMentionsCountResult,
@@ -2780,7 +2780,7 @@ func (p *kClient) MessageGetUserMessage(ctx context.Context, req *message.TLMess
 
 	_result := new(tg.MessageBox)
 
-	if err = p.c.Call(ctx, "message.getUserMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUserMessage", req, _result); err != nil {
 		return
 	}
 
@@ -2795,7 +2795,7 @@ func (p *kClient) MessageGetUserMessageList(ctx context.Context, req *message.TL
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.getUserMessageList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUserMessageList", req, _result); err != nil {
 		return
 	}
 
@@ -2810,7 +2810,7 @@ func (p *kClient) MessageGetUserMessageListByDataIdList(ctx context.Context, req
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.getUserMessageListByDataIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUserMessageListByDataIdList", req, _result); err != nil {
 		return
 	}
 
@@ -2825,7 +2825,7 @@ func (p *kClient) MessageGetUserMessageListByDataIdUserIdList(ctx context.Contex
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.getUserMessageListByDataIdUserIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUserMessageListByDataIdUserIdList", req, _result); err != nil {
 		return
 	}
 
@@ -2840,7 +2840,7 @@ func (p *kClient) MessageGetHistoryMessages(ctx context.Context, req *message.TL
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.getHistoryMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getHistoryMessages", req, _result); err != nil {
 		return
 	}
 
@@ -2855,7 +2855,7 @@ func (p *kClient) MessageGetHistoryMessagesCount(ctx context.Context, req *messa
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "message.getHistoryMessagesCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getHistoryMessagesCount", req, _result); err != nil {
 		return
 	}
 
@@ -2870,7 +2870,7 @@ func (p *kClient) MessageGetPeerUserMessageId(ctx context.Context, req *message.
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "message.getPeerUserMessageId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getPeerUserMessageId", req, _result); err != nil {
 		return
 	}
 
@@ -2885,7 +2885,7 @@ func (p *kClient) MessageGetPeerUserMessage(ctx context.Context, req *message.TL
 
 	_result := new(tg.MessageBox)
 
-	if err = p.c.Call(ctx, "message.getPeerUserMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getPeerUserMessage", req, _result); err != nil {
 		return
 	}
 
@@ -2900,7 +2900,7 @@ func (p *kClient) MessageSearchByMediaType(ctx context.Context, req *message.TLM
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.searchByMediaType", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.searchByMediaType", req, _result); err != nil {
 		return
 	}
 
@@ -2915,7 +2915,7 @@ func (p *kClient) MessageSearch(ctx context.Context, req *message.TLMessageSearc
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.search", req, _result); err != nil {
 		return
 	}
 
@@ -2930,7 +2930,7 @@ func (p *kClient) MessageSearchGlobal(ctx context.Context, req *message.TLMessag
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.searchGlobal", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.searchGlobal", req, _result); err != nil {
 		return
 	}
 
@@ -2945,7 +2945,7 @@ func (p *kClient) MessageSearchByPinned(ctx context.Context, req *message.TLMess
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.searchByPinned", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.searchByPinned", req, _result); err != nil {
 		return
 	}
 
@@ -2960,7 +2960,7 @@ func (p *kClient) MessageGetSearchCounter(ctx context.Context, req *message.TLMe
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "message.getSearchCounter", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getSearchCounter", req, _result); err != nil {
 		return
 	}
 
@@ -2975,7 +2975,7 @@ func (p *kClient) MessageSearchV2(ctx context.Context, req *message.TLMessageSea
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.searchV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.searchV2", req, _result); err != nil {
 		return
 	}
 
@@ -2990,7 +2990,7 @@ func (p *kClient) MessageGetLastTwoPinnedMessageId(ctx context.Context, req *mes
 
 	_result := new(message.VectorInt)
 
-	if err = p.c.Call(ctx, "message.getLastTwoPinnedMessageId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getLastTwoPinnedMessageId", req, _result); err != nil {
 		return
 	}
 
@@ -3005,7 +3005,7 @@ func (p *kClient) MessageUpdatePinnedMessageId(ctx context.Context, req *message
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "message.updatePinnedMessageId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.updatePinnedMessageId", req, _result); err != nil {
 		return
 	}
 
@@ -3020,7 +3020,7 @@ func (p *kClient) MessageGetPinnedMessageIdList(ctx context.Context, req *messag
 
 	_result := new(message.VectorInt)
 
-	if err = p.c.Call(ctx, "message.getPinnedMessageIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getPinnedMessageIdList", req, _result); err != nil {
 		return
 	}
 
@@ -3035,7 +3035,7 @@ func (p *kClient) MessageUnPinAllMessages(ctx context.Context, req *message.TLMe
 
 	_result := new(message.VectorInt)
 
-	if err = p.c.Call(ctx, "message.unPinAllMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.unPinAllMessages", req, _result); err != nil {
 		return
 	}
 
@@ -3050,7 +3050,7 @@ func (p *kClient) MessageGetUnreadMentions(ctx context.Context, req *message.TLM
 
 	_result := new(message.VectorMessageBox)
 
-	if err = p.c.Call(ctx, "message.getUnreadMentions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUnreadMentions", req, _result); err != nil {
 		return
 	}
 
@@ -3065,7 +3065,7 @@ func (p *kClient) MessageGetUnreadMentionsCount(ctx context.Context, req *messag
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "message.getUnreadMentionsCount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/message.RPCMessage/message.getUnreadMentionsCount", req, _result); err != nil {
 		return
 	}
 

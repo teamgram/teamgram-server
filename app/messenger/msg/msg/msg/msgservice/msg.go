@@ -30,84 +30,84 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"msg.pushUserMessage": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.pushUserMessage": kitex.NewMethodInfo(
 		pushUserMessageHandler,
 		newPushUserMessageArgs,
 		newPushUserMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.readMessageContents": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.readMessageContents": kitex.NewMethodInfo(
 		readMessageContentsHandler,
 		newReadMessageContentsArgs,
 		newReadMessageContentsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.sendMessageV2": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.sendMessageV2": kitex.NewMethodInfo(
 		sendMessageV2Handler,
 		newSendMessageV2Args,
 		newSendMessageV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.editMessageV2": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.editMessageV2": kitex.NewMethodInfo(
 		editMessageV2Handler,
 		newEditMessageV2Args,
 		newEditMessageV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.deleteMessages": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.deleteMessages": kitex.NewMethodInfo(
 		deleteMessagesHandler,
 		newDeleteMessagesArgs,
 		newDeleteMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.deleteHistory": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.deleteHistory": kitex.NewMethodInfo(
 		deleteHistoryHandler,
 		newDeleteHistoryArgs,
 		newDeleteHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.deletePhoneCallHistory": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.deletePhoneCallHistory": kitex.NewMethodInfo(
 		deletePhoneCallHistoryHandler,
 		newDeletePhoneCallHistoryArgs,
 		newDeletePhoneCallHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.deleteChatHistory": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.deleteChatHistory": kitex.NewMethodInfo(
 		deleteChatHistoryHandler,
 		newDeleteChatHistoryArgs,
 		newDeleteChatHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.readHistory": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.readHistory": kitex.NewMethodInfo(
 		readHistoryHandler,
 		newReadHistoryArgs,
 		newReadHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.readHistoryV2": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.readHistoryV2": kitex.NewMethodInfo(
 		readHistoryV2Handler,
 		newReadHistoryV2Args,
 		newReadHistoryV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.updatePinnedMessage": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.updatePinnedMessage": kitex.NewMethodInfo(
 		updatePinnedMessageHandler,
 		newUpdatePinnedMessageArgs,
 		newUpdatePinnedMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"msg.unpinAllMessages": kitex.NewMethodInfo(
+	"/msg.RPCMsg/msg.unpinAllMessages": kitex.NewMethodInfo(
 		unpinAllMessagesHandler,
 		newUnpinAllMessagesArgs,
 		newUnpinAllMessagesResult,
@@ -1716,7 +1716,7 @@ func (p *kClient) MsgPushUserMessage(ctx context.Context, req *msg.TLMsgPushUser
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "msg.pushUserMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.pushUserMessage", req, _result); err != nil {
 		return
 	}
 
@@ -1731,7 +1731,7 @@ func (p *kClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgRead
 
 	_result := new(tg.MessagesAffectedMessages)
 
-	if err = p.c.Call(ctx, "msg.readMessageContents", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readMessageContents", req, _result); err != nil {
 		return
 	}
 
@@ -1746,7 +1746,7 @@ func (p *kClient) MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessag
 
 	_result := new(tg.Updates)
 
-	if err = p.c.Call(ctx, "msg.sendMessageV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessageV2", req, _result); err != nil {
 		return
 	}
 
@@ -1761,7 +1761,7 @@ func (p *kClient) MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessag
 
 	_result := new(tg.Updates)
 
-	if err = p.c.Call(ctx, "msg.editMessageV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessageV2", req, _result); err != nil {
 		return
 	}
 
@@ -1776,7 +1776,7 @@ func (p *kClient) MsgDeleteMessages(ctx context.Context, req *msg.TLMsgDeleteMes
 
 	_result := new(tg.MessagesAffectedMessages)
 
-	if err = p.c.Call(ctx, "msg.deleteMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteMessages", req, _result); err != nil {
 		return
 	}
 
@@ -1791,7 +1791,7 @@ func (p *kClient) MsgDeleteHistory(ctx context.Context, req *msg.TLMsgDeleteHist
 
 	_result := new(tg.MessagesAffectedHistory)
 
-	if err = p.c.Call(ctx, "msg.deleteHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteHistory", req, _result); err != nil {
 		return
 	}
 
@@ -1806,7 +1806,7 @@ func (p *kClient) MsgDeletePhoneCallHistory(ctx context.Context, req *msg.TLMsgD
 
 	_result := new(tg.MessagesAffectedFoundMessages)
 
-	if err = p.c.Call(ctx, "msg.deletePhoneCallHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deletePhoneCallHistory", req, _result); err != nil {
 		return
 	}
 
@@ -1821,7 +1821,7 @@ func (p *kClient) MsgDeleteChatHistory(ctx context.Context, req *msg.TLMsgDelete
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "msg.deleteChatHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.deleteChatHistory", req, _result); err != nil {
 		return
 	}
 
@@ -1836,7 +1836,7 @@ func (p *kClient) MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHistory)
 
 	_result := new(tg.MessagesAffectedMessages)
 
-	if err = p.c.Call(ctx, "msg.readHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistory", req, _result); err != nil {
 		return
 	}
 
@@ -1851,7 +1851,7 @@ func (p *kClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistor
 
 	_result := new(tg.MessagesAffectedMessages)
 
-	if err = p.c.Call(ctx, "msg.readHistoryV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.readHistoryV2", req, _result); err != nil {
 		return
 	}
 
@@ -1866,7 +1866,7 @@ func (p *kClient) MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpda
 
 	_result := new(tg.Updates)
 
-	if err = p.c.Call(ctx, "msg.updatePinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.updatePinnedMessage", req, _result); err != nil {
 		return
 	}
 
@@ -1881,7 +1881,7 @@ func (p *kClient) MsgUnpinAllMessages(ctx context.Context, req *msg.TLMsgUnpinAl
 
 	_result := new(tg.MessagesAffectedHistory)
 
-	if err = p.c.Call(ctx, "msg.unpinAllMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.unpinAllMessages", req, _result); err != nil {
 		return
 	}
 

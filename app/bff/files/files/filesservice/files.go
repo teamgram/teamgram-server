@@ -27,84 +27,84 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.getDocumentByHash": kitex.NewMethodInfo(
+	"/tg.RPCFiles/messages.getDocumentByHash": kitex.NewMethodInfo(
 		messagesGetDocumentByHashHandler,
 		newMessagesGetDocumentByHashArgs,
 		newMessagesGetDocumentByHashResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.uploadMedia": kitex.NewMethodInfo(
+	"/tg.RPCFiles/messages.uploadMedia": kitex.NewMethodInfo(
 		messagesUploadMediaHandler,
 		newMessagesUploadMediaArgs,
 		newMessagesUploadMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.uploadEncryptedFile": kitex.NewMethodInfo(
+	"/tg.RPCFiles/messages.uploadEncryptedFile": kitex.NewMethodInfo(
 		messagesUploadEncryptedFileHandler,
 		newMessagesUploadEncryptedFileArgs,
 		newMessagesUploadEncryptedFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.saveFilePart": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.saveFilePart": kitex.NewMethodInfo(
 		uploadSaveFilePartHandler,
 		newUploadSaveFilePartArgs,
 		newUploadSaveFilePartResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.getFile": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.getFile": kitex.NewMethodInfo(
 		uploadGetFileHandler,
 		newUploadGetFileArgs,
 		newUploadGetFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.saveBigFilePart": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.saveBigFilePart": kitex.NewMethodInfo(
 		uploadSaveBigFilePartHandler,
 		newUploadSaveBigFilePartArgs,
 		newUploadSaveBigFilePartResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.getWebFile": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.getWebFile": kitex.NewMethodInfo(
 		uploadGetWebFileHandler,
 		newUploadGetWebFileArgs,
 		newUploadGetWebFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.getCdnFile": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.getCdnFile": kitex.NewMethodInfo(
 		uploadGetCdnFileHandler,
 		newUploadGetCdnFileArgs,
 		newUploadGetCdnFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.reuploadCdnFile": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.reuploadCdnFile": kitex.NewMethodInfo(
 		uploadReuploadCdnFileHandler,
 		newUploadReuploadCdnFileArgs,
 		newUploadReuploadCdnFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.getCdnFileHashes": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.getCdnFileHashes": kitex.NewMethodInfo(
 		uploadGetCdnFileHashesHandler,
 		newUploadGetCdnFileHashesArgs,
 		newUploadGetCdnFileHashesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"upload.getFileHashes": kitex.NewMethodInfo(
+	"/tg.RPCFiles/upload.getFileHashes": kitex.NewMethodInfo(
 		uploadGetFileHashesHandler,
 		newUploadGetFileHashesArgs,
 		newUploadGetFileHashesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getCdnConfig": kitex.NewMethodInfo(
+	"/tg.RPCFiles/help.getCdnConfig": kitex.NewMethodInfo(
 		helpGetCdnConfigHandler,
 		newHelpGetCdnConfigArgs,
 		newHelpGetCdnConfigResult,
@@ -1712,7 +1712,7 @@ func (p *kClient) MessagesGetDocumentByHash(ctx context.Context, req *tg.TLMessa
 	// var _result MessagesGetDocumentByHashResult
 
 	_result := new(tg.Document)
-	if err = p.c.Call(ctx, "messages.getDocumentByHash", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/messages.getDocumentByHash", req, _result); err != nil {
 		return
 	}
 
@@ -1726,7 +1726,7 @@ func (p *kClient) MessagesUploadMedia(ctx context.Context, req *tg.TLMessagesUpl
 	// var _result MessagesUploadMediaResult
 
 	_result := new(tg.MessageMedia)
-	if err = p.c.Call(ctx, "messages.uploadMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/messages.uploadMedia", req, _result); err != nil {
 		return
 	}
 
@@ -1740,7 +1740,7 @@ func (p *kClient) MessagesUploadEncryptedFile(ctx context.Context, req *tg.TLMes
 	// var _result MessagesUploadEncryptedFileResult
 
 	_result := new(tg.EncryptedFile)
-	if err = p.c.Call(ctx, "messages.uploadEncryptedFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/messages.uploadEncryptedFile", req, _result); err != nil {
 		return
 	}
 
@@ -1754,7 +1754,7 @@ func (p *kClient) UploadSaveFilePart(ctx context.Context, req *tg.TLUploadSaveFi
 	// var _result UploadSaveFilePartResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "upload.saveFilePart", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.saveFilePart", req, _result); err != nil {
 		return
 	}
 
@@ -1768,7 +1768,7 @@ func (p *kClient) UploadGetFile(ctx context.Context, req *tg.TLUploadGetFile) (r
 	// var _result UploadGetFileResult
 
 	_result := new(tg.UploadFile)
-	if err = p.c.Call(ctx, "upload.getFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.getFile", req, _result); err != nil {
 		return
 	}
 
@@ -1782,7 +1782,7 @@ func (p *kClient) UploadSaveBigFilePart(ctx context.Context, req *tg.TLUploadSav
 	// var _result UploadSaveBigFilePartResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "upload.saveBigFilePart", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.saveBigFilePart", req, _result); err != nil {
 		return
 	}
 
@@ -1796,7 +1796,7 @@ func (p *kClient) UploadGetWebFile(ctx context.Context, req *tg.TLUploadGetWebFi
 	// var _result UploadGetWebFileResult
 
 	_result := new(tg.UploadWebFile)
-	if err = p.c.Call(ctx, "upload.getWebFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.getWebFile", req, _result); err != nil {
 		return
 	}
 
@@ -1810,7 +1810,7 @@ func (p *kClient) UploadGetCdnFile(ctx context.Context, req *tg.TLUploadGetCdnFi
 	// var _result UploadGetCdnFileResult
 
 	_result := new(tg.UploadCdnFile)
-	if err = p.c.Call(ctx, "upload.getCdnFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.getCdnFile", req, _result); err != nil {
 		return
 	}
 
@@ -1824,7 +1824,7 @@ func (p *kClient) UploadReuploadCdnFile(ctx context.Context, req *tg.TLUploadReu
 	// var _result UploadReuploadCdnFileResult
 
 	_result := new(tg.VectorFileHash)
-	if err = p.c.Call(ctx, "upload.reuploadCdnFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.reuploadCdnFile", req, _result); err != nil {
 		return
 	}
 
@@ -1838,7 +1838,7 @@ func (p *kClient) UploadGetCdnFileHashes(ctx context.Context, req *tg.TLUploadGe
 	// var _result UploadGetCdnFileHashesResult
 
 	_result := new(tg.VectorFileHash)
-	if err = p.c.Call(ctx, "upload.getCdnFileHashes", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.getCdnFileHashes", req, _result); err != nil {
 		return
 	}
 
@@ -1852,7 +1852,7 @@ func (p *kClient) UploadGetFileHashes(ctx context.Context, req *tg.TLUploadGetFi
 	// var _result UploadGetFileHashesResult
 
 	_result := new(tg.VectorFileHash)
-	if err = p.c.Call(ctx, "upload.getFileHashes", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/upload.getFileHashes", req, _result); err != nil {
 		return
 	}
 
@@ -1866,7 +1866,7 @@ func (p *kClient) HelpGetCdnConfig(ctx context.Context, req *tg.TLHelpGetCdnConf
 	// var _result HelpGetCdnConfigResult
 
 	_result := new(tg.CdnConfig)
-	if err = p.c.Call(ctx, "help.getCdnConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCFiles/help.getCdnConfig", req, _result); err != nil {
 		return
 	}
 

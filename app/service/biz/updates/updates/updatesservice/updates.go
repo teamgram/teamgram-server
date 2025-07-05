@@ -30,21 +30,21 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"updates.getStateV2": kitex.NewMethodInfo(
+	"/updates.RPCUpdates/updates.getStateV2": kitex.NewMethodInfo(
 		getStateV2Handler,
 		newGetStateV2Args,
 		newGetStateV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"updates.getDifferenceV2": kitex.NewMethodInfo(
+	"/updates.RPCUpdates/updates.getDifferenceV2": kitex.NewMethodInfo(
 		getDifferenceV2Handler,
 		newGetDifferenceV2Args,
 		newGetDifferenceV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"updates.getChannelDifferenceV2": kitex.NewMethodInfo(
+	"/updates.RPCUpdates/updates.getChannelDifferenceV2": kitex.NewMethodInfo(
 		getChannelDifferenceV2Handler,
 		newGetChannelDifferenceV2Args,
 		newGetChannelDifferenceV2Result,
@@ -519,7 +519,7 @@ func (p *kClient) UpdatesGetStateV2(ctx context.Context, req *updates.TLUpdatesG
 
 	_result := new(tg.UpdatesState)
 
-	if err = p.c.Call(ctx, "updates.getStateV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getStateV2", req, _result); err != nil {
 		return
 	}
 
@@ -534,7 +534,7 @@ func (p *kClient) UpdatesGetDifferenceV2(ctx context.Context, req *updates.TLUpd
 
 	_result := new(updates.Difference)
 
-	if err = p.c.Call(ctx, "updates.getDifferenceV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getDifferenceV2", req, _result); err != nil {
 		return
 	}
 
@@ -549,7 +549,7 @@ func (p *kClient) UpdatesGetChannelDifferenceV2(ctx context.Context, req *update
 
 	_result := new(updates.ChannelDifference)
 
-	if err = p.c.Call(ctx, "updates.getChannelDifferenceV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/updates.RPCUpdates/updates.getChannelDifferenceV2", req, _result); err != nil {
 		return
 	}
 

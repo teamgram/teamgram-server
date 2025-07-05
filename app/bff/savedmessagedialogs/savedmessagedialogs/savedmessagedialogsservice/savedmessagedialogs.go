@@ -27,42 +27,42 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.getSavedDialogs": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.getSavedDialogs": kitex.NewMethodInfo(
 		messagesGetSavedDialogsHandler,
 		newMessagesGetSavedDialogsArgs,
 		newMessagesGetSavedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getSavedHistory": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.getSavedHistory": kitex.NewMethodInfo(
 		messagesGetSavedHistoryHandler,
 		newMessagesGetSavedHistoryArgs,
 		newMessagesGetSavedHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteSavedHistory": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.deleteSavedHistory": kitex.NewMethodInfo(
 		messagesDeleteSavedHistoryHandler,
 		newMessagesDeleteSavedHistoryArgs,
 		newMessagesDeleteSavedHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getPinnedSavedDialogs": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.getPinnedSavedDialogs": kitex.NewMethodInfo(
 		messagesGetPinnedSavedDialogsHandler,
 		newMessagesGetPinnedSavedDialogsArgs,
 		newMessagesGetPinnedSavedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.toggleSavedDialogPin": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.toggleSavedDialogPin": kitex.NewMethodInfo(
 		messagesToggleSavedDialogPinHandler,
 		newMessagesToggleSavedDialogPinArgs,
 		newMessagesToggleSavedDialogPinResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.reorderPinnedSavedDialogs": kitex.NewMethodInfo(
+	"/tg.RPCSavedMessageDialogs/messages.reorderPinnedSavedDialogs": kitex.NewMethodInfo(
 		messagesReorderPinnedSavedDialogsHandler,
 		newMessagesReorderPinnedSavedDialogsArgs,
 		newMessagesReorderPinnedSavedDialogsResult,
@@ -914,7 +914,7 @@ func (p *kClient) MessagesGetSavedDialogs(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesGetSavedDialogsResult
 
 	_result := new(tg.MessagesSavedDialogs)
-	if err = p.c.Call(ctx, "messages.getSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.getSavedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -928,7 +928,7 @@ func (p *kClient) MessagesGetSavedHistory(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesGetSavedHistoryResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.getSavedHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.getSavedHistory", req, _result); err != nil {
 		return
 	}
 
@@ -942,7 +942,7 @@ func (p *kClient) MessagesDeleteSavedHistory(ctx context.Context, req *tg.TLMess
 	// var _result MessagesDeleteSavedHistoryResult
 
 	_result := new(tg.MessagesAffectedHistory)
-	if err = p.c.Call(ctx, "messages.deleteSavedHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.deleteSavedHistory", req, _result); err != nil {
 		return
 	}
 
@@ -956,7 +956,7 @@ func (p *kClient) MessagesGetPinnedSavedDialogs(ctx context.Context, req *tg.TLM
 	// var _result MessagesGetPinnedSavedDialogsResult
 
 	_result := new(tg.MessagesSavedDialogs)
-	if err = p.c.Call(ctx, "messages.getPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.getPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -970,7 +970,7 @@ func (p *kClient) MessagesToggleSavedDialogPin(ctx context.Context, req *tg.TLMe
 	// var _result MessagesToggleSavedDialogPinResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.toggleSavedDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.toggleSavedDialogPin", req, _result); err != nil {
 		return
 	}
 
@@ -984,7 +984,7 @@ func (p *kClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, req *tg
 	// var _result MessagesReorderPinnedSavedDialogsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.reorderPinnedSavedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.reorderPinnedSavedDialogs", req, _result); err != nil {
 		return
 	}
 

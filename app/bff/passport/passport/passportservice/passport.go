@@ -27,77 +27,77 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.getAuthorizations": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.getAuthorizations": kitex.NewMethodInfo(
 		accountGetAuthorizationsHandler,
 		newAccountGetAuthorizationsArgs,
 		newAccountGetAuthorizationsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getAllSecureValues": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.getAllSecureValues": kitex.NewMethodInfo(
 		accountGetAllSecureValuesHandler,
 		newAccountGetAllSecureValuesArgs,
 		newAccountGetAllSecureValuesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getSecureValue": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.getSecureValue": kitex.NewMethodInfo(
 		accountGetSecureValueHandler,
 		newAccountGetSecureValueArgs,
 		newAccountGetSecureValueResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.saveSecureValue": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.saveSecureValue": kitex.NewMethodInfo(
 		accountSaveSecureValueHandler,
 		newAccountSaveSecureValueArgs,
 		newAccountSaveSecureValueResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.deleteSecureValue": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.deleteSecureValue": kitex.NewMethodInfo(
 		accountDeleteSecureValueHandler,
 		newAccountDeleteSecureValueArgs,
 		newAccountDeleteSecureValueResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getAuthorizationForm": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.getAuthorizationForm": kitex.NewMethodInfo(
 		accountGetAuthorizationFormHandler,
 		newAccountGetAuthorizationFormArgs,
 		newAccountGetAuthorizationFormResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.acceptAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.acceptAuthorization": kitex.NewMethodInfo(
 		accountAcceptAuthorizationHandler,
 		newAccountAcceptAuthorizationArgs,
 		newAccountAcceptAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.sendVerifyPhoneCode": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.sendVerifyPhoneCode": kitex.NewMethodInfo(
 		accountSendVerifyPhoneCodeHandler,
 		newAccountSendVerifyPhoneCodeArgs,
 		newAccountSendVerifyPhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.verifyPhone": kitex.NewMethodInfo(
+	"/tg.RPCPassport/account.verifyPhone": kitex.NewMethodInfo(
 		accountVerifyPhoneHandler,
 		newAccountVerifyPhoneArgs,
 		newAccountVerifyPhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.setSecureValueErrors": kitex.NewMethodInfo(
+	"/tg.RPCPassport/users.setSecureValueErrors": kitex.NewMethodInfo(
 		usersSetSecureValueErrorsHandler,
 		newUsersSetSecureValueErrorsArgs,
 		newUsersSetSecureValueErrorsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getPassportConfig": kitex.NewMethodInfo(
+	"/tg.RPCPassport/help.getPassportConfig": kitex.NewMethodInfo(
 		helpGetPassportConfigHandler,
 		newHelpGetPassportConfigArgs,
 		newHelpGetPassportConfigResult,
@@ -1579,7 +1579,7 @@ func (p *kClient) AccountGetAuthorizations(ctx context.Context, req *tg.TLAccoun
 	// var _result AccountGetAuthorizationsResult
 
 	_result := new(tg.AccountAuthorizations)
-	if err = p.c.Call(ctx, "account.getAuthorizations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizations", req, _result); err != nil {
 		return
 	}
 
@@ -1593,7 +1593,7 @@ func (p *kClient) AccountGetAllSecureValues(ctx context.Context, req *tg.TLAccou
 	// var _result AccountGetAllSecureValuesResult
 
 	_result := new(tg.VectorSecureValue)
-	if err = p.c.Call(ctx, "account.getAllSecureValues", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAllSecureValues", req, _result); err != nil {
 		return
 	}
 
@@ -1607,7 +1607,7 @@ func (p *kClient) AccountGetSecureValue(ctx context.Context, req *tg.TLAccountGe
 	// var _result AccountGetSecureValueResult
 
 	_result := new(tg.VectorSecureValue)
-	if err = p.c.Call(ctx, "account.getSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getSecureValue", req, _result); err != nil {
 		return
 	}
 
@@ -1621,7 +1621,7 @@ func (p *kClient) AccountSaveSecureValue(ctx context.Context, req *tg.TLAccountS
 	// var _result AccountSaveSecureValueResult
 
 	_result := new(tg.SecureValue)
-	if err = p.c.Call(ctx, "account.saveSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.saveSecureValue", req, _result); err != nil {
 		return
 	}
 
@@ -1635,7 +1635,7 @@ func (p *kClient) AccountDeleteSecureValue(ctx context.Context, req *tg.TLAccoun
 	// var _result AccountDeleteSecureValueResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.deleteSecureValue", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.deleteSecureValue", req, _result); err != nil {
 		return
 	}
 
@@ -1649,7 +1649,7 @@ func (p *kClient) AccountGetAuthorizationForm(ctx context.Context, req *tg.TLAcc
 	// var _result AccountGetAuthorizationFormResult
 
 	_result := new(tg.AccountAuthorizationForm)
-	if err = p.c.Call(ctx, "account.getAuthorizationForm", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.getAuthorizationForm", req, _result); err != nil {
 		return
 	}
 
@@ -1663,7 +1663,7 @@ func (p *kClient) AccountAcceptAuthorization(ctx context.Context, req *tg.TLAcco
 	// var _result AccountAcceptAuthorizationResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.acceptAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.acceptAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -1677,7 +1677,7 @@ func (p *kClient) AccountSendVerifyPhoneCode(ctx context.Context, req *tg.TLAcco
 	// var _result AccountSendVerifyPhoneCodeResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "account.sendVerifyPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.sendVerifyPhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -1691,7 +1691,7 @@ func (p *kClient) AccountVerifyPhone(ctx context.Context, req *tg.TLAccountVerif
 	// var _result AccountVerifyPhoneResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.verifyPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/account.verifyPhone", req, _result); err != nil {
 		return
 	}
 
@@ -1705,7 +1705,7 @@ func (p *kClient) UsersSetSecureValueErrors(ctx context.Context, req *tg.TLUsers
 	// var _result UsersSetSecureValueErrorsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "users.setSecureValueErrors", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/users.setSecureValueErrors", req, _result); err != nil {
 		return
 	}
 
@@ -1719,7 +1719,7 @@ func (p *kClient) HelpGetPassportConfig(ctx context.Context, req *tg.TLHelpGetPa
 	// var _result HelpGetPassportConfigResult
 
 	_result := new(tg.HelpPassportConfig)
-	if err = p.c.Call(ctx, "help.getPassportConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPassport/help.getPassportConfig", req, _result); err != nil {
 		return
 	}
 

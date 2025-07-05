@@ -30,147 +30,147 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"authsession.getAuthorizations": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getAuthorizations": kitex.NewMethodInfo(
 		getAuthorizationsHandler,
 		newGetAuthorizationsArgs,
 		newGetAuthorizationsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.resetAuthorization": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.resetAuthorization": kitex.NewMethodInfo(
 		resetAuthorizationHandler,
 		newResetAuthorizationArgs,
 		newResetAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getLayer": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getLayer": kitex.NewMethodInfo(
 		getLayerHandler,
 		newGetLayerArgs,
 		newGetLayerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getLangPack": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getLangPack": kitex.NewMethodInfo(
 		getLangPackHandler,
 		newGetLangPackArgs,
 		newGetLangPackResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getClient": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getClient": kitex.NewMethodInfo(
 		getClientHandler,
 		newGetClientArgs,
 		newGetClientResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getLangCode": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getLangCode": kitex.NewMethodInfo(
 		getLangCodeHandler,
 		newGetLangCodeArgs,
 		newGetLangCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getUserId": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getUserId": kitex.NewMethodInfo(
 		getUserIdHandler,
 		newGetUserIdArgs,
 		newGetUserIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getPushSessionId": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getPushSessionId": kitex.NewMethodInfo(
 		getPushSessionIdHandler,
 		newGetPushSessionIdArgs,
 		newGetPushSessionIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getFutureSalts": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getFutureSalts": kitex.NewMethodInfo(
 		getFutureSaltsHandler,
 		newGetFutureSaltsArgs,
 		newGetFutureSaltsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.queryAuthKey": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.queryAuthKey": kitex.NewMethodInfo(
 		queryAuthKeyHandler,
 		newQueryAuthKeyArgs,
 		newQueryAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.setAuthKey": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.setAuthKey": kitex.NewMethodInfo(
 		setAuthKeyHandler,
 		newSetAuthKeyArgs,
 		newSetAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.bindAuthKeyUser": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.bindAuthKeyUser": kitex.NewMethodInfo(
 		bindAuthKeyUserHandler,
 		newBindAuthKeyUserArgs,
 		newBindAuthKeyUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.unbindAuthKeyUser": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.unbindAuthKeyUser": kitex.NewMethodInfo(
 		unbindAuthKeyUserHandler,
 		newUnbindAuthKeyUserArgs,
 		newUnbindAuthKeyUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getPermAuthKeyId": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getPermAuthKeyId": kitex.NewMethodInfo(
 		getPermAuthKeyIdHandler,
 		newGetPermAuthKeyIdArgs,
 		newGetPermAuthKeyIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.bindTempAuthKey": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.bindTempAuthKey": kitex.NewMethodInfo(
 		bindTempAuthKeyHandler,
 		newBindTempAuthKeyArgs,
 		newBindTempAuthKeyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.setClientSessionInfo": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.setClientSessionInfo": kitex.NewMethodInfo(
 		setClientSessionInfoHandler,
 		newSetClientSessionInfoArgs,
 		newSetClientSessionInfoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getAuthorization": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getAuthorization": kitex.NewMethodInfo(
 		getAuthorizationHandler,
 		newGetAuthorizationArgs,
 		newGetAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.getAuthStateData": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.getAuthStateData": kitex.NewMethodInfo(
 		getAuthStateDataHandler,
 		newGetAuthStateDataArgs,
 		newGetAuthStateDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.setLayer": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.setLayer": kitex.NewMethodInfo(
 		setLayerHandler,
 		newSetLayerArgs,
 		newSetLayerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.setInitConnection": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.setInitConnection": kitex.NewMethodInfo(
 		setInitConnectionHandler,
 		newSetInitConnectionArgs,
 		newSetInitConnectionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"authsession.setAndroidPushSessionId": kitex.NewMethodInfo(
+	"/authsession.RPCAuthsession/authsession.setAndroidPushSessionId": kitex.NewMethodInfo(
 		setAndroidPushSessionIdHandler,
 		newSetAndroidPushSessionIdArgs,
 		newSetAndroidPushSessionIdResult,
@@ -2913,7 +2913,7 @@ func (p *kClient) AuthsessionGetAuthorizations(ctx context.Context, req *authses
 
 	_result := new(tg.AccountAuthorizations)
 
-	if err = p.c.Call(ctx, "authsession.getAuthorizations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorizations", req, _result); err != nil {
 		return
 	}
 
@@ -2928,7 +2928,7 @@ func (p *kClient) AuthsessionResetAuthorization(ctx context.Context, req *authse
 
 	_result := new(authsession.VectorLong)
 
-	if err = p.c.Call(ctx, "authsession.resetAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.resetAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -2943,7 +2943,7 @@ func (p *kClient) AuthsessionGetLayer(ctx context.Context, req *authsession.TLAu
 
 	_result := new(tg.Int32)
 
-	if err = p.c.Call(ctx, "authsession.getLayer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLayer", req, _result); err != nil {
 		return
 	}
 
@@ -2958,7 +2958,7 @@ func (p *kClient) AuthsessionGetLangPack(ctx context.Context, req *authsession.T
 
 	_result := new(tg.String)
 
-	if err = p.c.Call(ctx, "authsession.getLangPack", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangPack", req, _result); err != nil {
 		return
 	}
 
@@ -2973,7 +2973,7 @@ func (p *kClient) AuthsessionGetClient(ctx context.Context, req *authsession.TLA
 
 	_result := new(tg.String)
 
-	if err = p.c.Call(ctx, "authsession.getClient", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getClient", req, _result); err != nil {
 		return
 	}
 
@@ -2988,7 +2988,7 @@ func (p *kClient) AuthsessionGetLangCode(ctx context.Context, req *authsession.T
 
 	_result := new(tg.String)
 
-	if err = p.c.Call(ctx, "authsession.getLangCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getLangCode", req, _result); err != nil {
 		return
 	}
 
@@ -3003,7 +3003,7 @@ func (p *kClient) AuthsessionGetUserId(ctx context.Context, req *authsession.TLA
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "authsession.getUserId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getUserId", req, _result); err != nil {
 		return
 	}
 
@@ -3018,7 +3018,7 @@ func (p *kClient) AuthsessionGetPushSessionId(ctx context.Context, req *authsess
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "authsession.getPushSessionId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPushSessionId", req, _result); err != nil {
 		return
 	}
 
@@ -3033,7 +3033,7 @@ func (p *kClient) AuthsessionGetFutureSalts(ctx context.Context, req *authsessio
 
 	_result := new(tg.FutureSalts)
 
-	if err = p.c.Call(ctx, "authsession.getFutureSalts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getFutureSalts", req, _result); err != nil {
 		return
 	}
 
@@ -3048,7 +3048,7 @@ func (p *kClient) AuthsessionQueryAuthKey(ctx context.Context, req *authsession.
 
 	_result := new(tg.AuthKeyInfo)
 
-	if err = p.c.Call(ctx, "authsession.queryAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.queryAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -3063,7 +3063,7 @@ func (p *kClient) AuthsessionSetAuthKey(ctx context.Context, req *authsession.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.setAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -3078,7 +3078,7 @@ func (p *kClient) AuthsessionBindAuthKeyUser(ctx context.Context, req *authsessi
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "authsession.bindAuthKeyUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindAuthKeyUser", req, _result); err != nil {
 		return
 	}
 
@@ -3093,7 +3093,7 @@ func (p *kClient) AuthsessionUnbindAuthKeyUser(ctx context.Context, req *authses
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.unbindAuthKeyUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.unbindAuthKeyUser", req, _result); err != nil {
 		return
 	}
 
@@ -3108,7 +3108,7 @@ func (p *kClient) AuthsessionGetPermAuthKeyId(ctx context.Context, req *authsess
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "authsession.getPermAuthKeyId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getPermAuthKeyId", req, _result); err != nil {
 		return
 	}
 
@@ -3123,7 +3123,7 @@ func (p *kClient) AuthsessionBindTempAuthKey(ctx context.Context, req *authsessi
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.bindTempAuthKey", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.bindTempAuthKey", req, _result); err != nil {
 		return
 	}
 
@@ -3138,7 +3138,7 @@ func (p *kClient) AuthsessionSetClientSessionInfo(ctx context.Context, req *auth
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.setClientSessionInfo", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setClientSessionInfo", req, _result); err != nil {
 		return
 	}
 
@@ -3153,7 +3153,7 @@ func (p *kClient) AuthsessionGetAuthorization(ctx context.Context, req *authsess
 
 	_result := new(tg.Authorization)
 
-	if err = p.c.Call(ctx, "authsession.getAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -3168,7 +3168,7 @@ func (p *kClient) AuthsessionGetAuthStateData(ctx context.Context, req *authsess
 
 	_result := new(authsession.AuthKeyStateData)
 
-	if err = p.c.Call(ctx, "authsession.getAuthStateData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.getAuthStateData", req, _result); err != nil {
 		return
 	}
 
@@ -3183,7 +3183,7 @@ func (p *kClient) AuthsessionSetLayer(ctx context.Context, req *authsession.TLAu
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.setLayer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setLayer", req, _result); err != nil {
 		return
 	}
 
@@ -3198,7 +3198,7 @@ func (p *kClient) AuthsessionSetInitConnection(ctx context.Context, req *authses
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.setInitConnection", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setInitConnection", req, _result); err != nil {
 		return
 	}
 
@@ -3213,7 +3213,7 @@ func (p *kClient) AuthsessionSetAndroidPushSessionId(ctx context.Context, req *a
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "authsession.setAndroidPushSessionId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/authsession.RPCAuthsession/authsession.setAndroidPushSessionId", req, _result); err != nil {
 		return
 	}
 

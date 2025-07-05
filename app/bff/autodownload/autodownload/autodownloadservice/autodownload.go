@@ -27,14 +27,14 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.getAutoDownloadSettings": kitex.NewMethodInfo(
+	"/tg.RPCAutoDownload/account.getAutoDownloadSettings": kitex.NewMethodInfo(
 		accountGetAutoDownloadSettingsHandler,
 		newAccountGetAutoDownloadSettingsArgs,
 		newAccountGetAutoDownloadSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.saveAutoDownloadSettings": kitex.NewMethodInfo(
+	"/tg.RPCAutoDownload/account.saveAutoDownloadSettings": kitex.NewMethodInfo(
 		accountSaveAutoDownloadSettingsHandler,
 		newAccountSaveAutoDownloadSettingsArgs,
 		newAccountSaveAutoDownloadSettingsResult,
@@ -382,7 +382,7 @@ func (p *kClient) AccountGetAutoDownloadSettings(ctx context.Context, req *tg.TL
 	// var _result AccountGetAutoDownloadSettingsResult
 
 	_result := new(tg.AccountAutoDownloadSettings)
-	if err = p.c.Call(ctx, "account.getAutoDownloadSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.getAutoDownloadSettings", req, _result); err != nil {
 		return
 	}
 
@@ -396,7 +396,7 @@ func (p *kClient) AccountSaveAutoDownloadSettings(ctx context.Context, req *tg.T
 	// var _result AccountSaveAutoDownloadSettingsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.saveAutoDownloadSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAutoDownload/account.saveAutoDownloadSettings", req, _result); err != nil {
 		return
 	}
 

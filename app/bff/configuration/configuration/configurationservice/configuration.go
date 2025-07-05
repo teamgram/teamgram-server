@@ -27,63 +27,63 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"help.getConfig": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getConfig": kitex.NewMethodInfo(
 		helpGetConfigHandler,
 		newHelpGetConfigArgs,
 		newHelpGetConfigResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getNearestDc": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getNearestDc": kitex.NewMethodInfo(
 		helpGetNearestDcHandler,
 		newHelpGetNearestDcArgs,
 		newHelpGetNearestDcResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getAppUpdate": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getAppUpdate": kitex.NewMethodInfo(
 		helpGetAppUpdateHandler,
 		newHelpGetAppUpdateArgs,
 		newHelpGetAppUpdateResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getInviteText": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getInviteText": kitex.NewMethodInfo(
 		helpGetInviteTextHandler,
 		newHelpGetInviteTextArgs,
 		newHelpGetInviteTextResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getSupport": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getSupport": kitex.NewMethodInfo(
 		helpGetSupportHandler,
 		newHelpGetSupportArgs,
 		newHelpGetSupportResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getAppConfig": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getAppConfig": kitex.NewMethodInfo(
 		helpGetAppConfigHandler,
 		newHelpGetAppConfigArgs,
 		newHelpGetAppConfigResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getSupportName": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getSupportName": kitex.NewMethodInfo(
 		helpGetSupportNameHandler,
 		newHelpGetSupportNameArgs,
 		newHelpGetSupportNameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.dismissSuggestion": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.dismissSuggestion": kitex.NewMethodInfo(
 		helpDismissSuggestionHandler,
 		newHelpDismissSuggestionArgs,
 		newHelpDismissSuggestionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.getCountriesList": kitex.NewMethodInfo(
+	"/tg.RPCConfiguration/help.getCountriesList": kitex.NewMethodInfo(
 		helpGetCountriesListHandler,
 		newHelpGetCountriesListArgs,
 		newHelpGetCountriesListResult,
@@ -1313,7 +1313,7 @@ func (p *kClient) HelpGetConfig(ctx context.Context, req *tg.TLHelpGetConfig) (r
 	// var _result HelpGetConfigResult
 
 	_result := new(tg.Config)
-	if err = p.c.Call(ctx, "help.getConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getConfig", req, _result); err != nil {
 		return
 	}
 
@@ -1327,7 +1327,7 @@ func (p *kClient) HelpGetNearestDc(ctx context.Context, req *tg.TLHelpGetNearest
 	// var _result HelpGetNearestDcResult
 
 	_result := new(tg.NearestDc)
-	if err = p.c.Call(ctx, "help.getNearestDc", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getNearestDc", req, _result); err != nil {
 		return
 	}
 
@@ -1341,7 +1341,7 @@ func (p *kClient) HelpGetAppUpdate(ctx context.Context, req *tg.TLHelpGetAppUpda
 	// var _result HelpGetAppUpdateResult
 
 	_result := new(tg.HelpAppUpdate)
-	if err = p.c.Call(ctx, "help.getAppUpdate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppUpdate", req, _result); err != nil {
 		return
 	}
 
@@ -1355,7 +1355,7 @@ func (p *kClient) HelpGetInviteText(ctx context.Context, req *tg.TLHelpGetInvite
 	// var _result HelpGetInviteTextResult
 
 	_result := new(tg.HelpInviteText)
-	if err = p.c.Call(ctx, "help.getInviteText", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getInviteText", req, _result); err != nil {
 		return
 	}
 
@@ -1369,7 +1369,7 @@ func (p *kClient) HelpGetSupport(ctx context.Context, req *tg.TLHelpGetSupport) 
 	// var _result HelpGetSupportResult
 
 	_result := new(tg.HelpSupport)
-	if err = p.c.Call(ctx, "help.getSupport", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupport", req, _result); err != nil {
 		return
 	}
 
@@ -1383,7 +1383,7 @@ func (p *kClient) HelpGetAppConfig(ctx context.Context, req *tg.TLHelpGetAppConf
 	// var _result HelpGetAppConfigResult
 
 	_result := new(tg.HelpAppConfig)
-	if err = p.c.Call(ctx, "help.getAppConfig", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getAppConfig", req, _result); err != nil {
 		return
 	}
 
@@ -1397,7 +1397,7 @@ func (p *kClient) HelpGetSupportName(ctx context.Context, req *tg.TLHelpGetSuppo
 	// var _result HelpGetSupportNameResult
 
 	_result := new(tg.HelpSupportName)
-	if err = p.c.Call(ctx, "help.getSupportName", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getSupportName", req, _result); err != nil {
 		return
 	}
 
@@ -1411,7 +1411,7 @@ func (p *kClient) HelpDismissSuggestion(ctx context.Context, req *tg.TLHelpDismi
 	// var _result HelpDismissSuggestionResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "help.dismissSuggestion", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.dismissSuggestion", req, _result); err != nil {
 		return
 	}
 
@@ -1425,7 +1425,7 @@ func (p *kClient) HelpGetCountriesList(ctx context.Context, req *tg.TLHelpGetCou
 	// var _result HelpGetCountriesListResult
 
 	_result := new(tg.HelpCountriesList)
-	if err = p.c.Call(ctx, "help.getCountriesList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCConfiguration/help.getCountriesList", req, _result); err != nil {
 		return
 	}
 

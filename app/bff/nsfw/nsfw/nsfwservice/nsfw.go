@@ -27,14 +27,14 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.setContentSettings": kitex.NewMethodInfo(
+	"/tg.RPCNsfw/account.setContentSettings": kitex.NewMethodInfo(
 		accountSetContentSettingsHandler,
 		newAccountSetContentSettingsArgs,
 		newAccountSetContentSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getContentSettings": kitex.NewMethodInfo(
+	"/tg.RPCNsfw/account.getContentSettings": kitex.NewMethodInfo(
 		accountGetContentSettingsHandler,
 		newAccountGetContentSettingsArgs,
 		newAccountGetContentSettingsResult,
@@ -382,7 +382,7 @@ func (p *kClient) AccountSetContentSettings(ctx context.Context, req *tg.TLAccou
 	// var _result AccountSetContentSettingsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.setContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.setContentSettings", req, _result); err != nil {
 		return
 	}
 
@@ -396,7 +396,7 @@ func (p *kClient) AccountGetContentSettings(ctx context.Context, req *tg.TLAccou
 	// var _result AccountGetContentSettingsResult
 
 	_result := new(tg.AccountContentSettings)
-	if err = p.c.Call(ctx, "account.getContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCNsfw/account.getContentSettings", req, _result); err != nil {
 		return
 	}
 

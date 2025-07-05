@@ -27,28 +27,28 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"users.getUsers": kitex.NewMethodInfo(
+	"/tg.RPCUsers/users.getUsers": kitex.NewMethodInfo(
 		usersGetUsersHandler,
 		newUsersGetUsersArgs,
 		newUsersGetUsersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.getFullUser": kitex.NewMethodInfo(
+	"/tg.RPCUsers/users.getFullUser": kitex.NewMethodInfo(
 		usersGetFullUserHandler,
 		newUsersGetFullUserArgs,
 		newUsersGetFullUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.resolvePhone": kitex.NewMethodInfo(
+	"/tg.RPCUsers/contacts.resolvePhone": kitex.NewMethodInfo(
 		contactsResolvePhoneHandler,
 		newContactsResolvePhoneArgs,
 		newContactsResolvePhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.getMe": kitex.NewMethodInfo(
+	"/tg.RPCUsers/users.getMe": kitex.NewMethodInfo(
 		usersGetMeHandler,
 		newUsersGetMeArgs,
 		newUsersGetMeResult,
@@ -648,7 +648,7 @@ func (p *kClient) UsersGetUsers(ctx context.Context, req *tg.TLUsersGetUsers) (r
 	// var _result UsersGetUsersResult
 
 	_result := new(tg.VectorUser)
-	if err = p.c.Call(ctx, "users.getUsers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getUsers", req, _result); err != nil {
 		return
 	}
 
@@ -662,7 +662,7 @@ func (p *kClient) UsersGetFullUser(ctx context.Context, req *tg.TLUsersGetFullUs
 	// var _result UsersGetFullUserResult
 
 	_result := new(tg.UsersUserFull)
-	if err = p.c.Call(ctx, "users.getFullUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getFullUser", req, _result); err != nil {
 		return
 	}
 
@@ -676,7 +676,7 @@ func (p *kClient) ContactsResolvePhone(ctx context.Context, req *tg.TLContactsRe
 	// var _result ContactsResolvePhoneResult
 
 	_result := new(tg.ContactsResolvedPeer)
-	if err = p.c.Call(ctx, "contacts.resolvePhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/contacts.resolvePhone", req, _result); err != nil {
 		return
 	}
 
@@ -690,7 +690,7 @@ func (p *kClient) UsersGetMe(ctx context.Context, req *tg.TLUsersGetMe) (r *tg.U
 	// var _result UsersGetMeResult
 
 	_result := new(tg.User)
-	if err = p.c.Call(ctx, "users.getMe", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsers/users.getMe", req, _result); err != nil {
 		return
 	}
 

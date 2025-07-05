@@ -27,154 +27,154 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.getContactSignUpNotification": kitex.NewMethodInfo(
+	"/tg.RPCContacts/account.getContactSignUpNotification": kitex.NewMethodInfo(
 		accountGetContactSignUpNotificationHandler,
 		newAccountGetContactSignUpNotificationArgs,
 		newAccountGetContactSignUpNotificationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.setContactSignUpNotification": kitex.NewMethodInfo(
+	"/tg.RPCContacts/account.setContactSignUpNotification": kitex.NewMethodInfo(
 		accountSetContactSignUpNotificationHandler,
 		newAccountSetContactSignUpNotificationArgs,
 		newAccountSetContactSignUpNotificationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getContactIDs": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getContactIDs": kitex.NewMethodInfo(
 		contactsGetContactIDsHandler,
 		newContactsGetContactIDsArgs,
 		newContactsGetContactIDsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getStatuses": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getStatuses": kitex.NewMethodInfo(
 		contactsGetStatusesHandler,
 		newContactsGetStatusesArgs,
 		newContactsGetStatusesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getContacts": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getContacts": kitex.NewMethodInfo(
 		contactsGetContactsHandler,
 		newContactsGetContactsArgs,
 		newContactsGetContactsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.importContacts": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.importContacts": kitex.NewMethodInfo(
 		contactsImportContactsHandler,
 		newContactsImportContactsArgs,
 		newContactsImportContactsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.deleteContacts": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.deleteContacts": kitex.NewMethodInfo(
 		contactsDeleteContactsHandler,
 		newContactsDeleteContactsArgs,
 		newContactsDeleteContactsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.deleteByPhones": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.deleteByPhones": kitex.NewMethodInfo(
 		contactsDeleteByPhonesHandler,
 		newContactsDeleteByPhonesArgs,
 		newContactsDeleteByPhonesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.block": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.block": kitex.NewMethodInfo(
 		contactsBlockHandler,
 		newContactsBlockArgs,
 		newContactsBlockResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.unblock": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.unblock": kitex.NewMethodInfo(
 		contactsUnblockHandler,
 		newContactsUnblockArgs,
 		newContactsUnblockResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getBlocked": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getBlocked": kitex.NewMethodInfo(
 		contactsGetBlockedHandler,
 		newContactsGetBlockedArgs,
 		newContactsGetBlockedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.search": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.search": kitex.NewMethodInfo(
 		contactsSearchHandler,
 		newContactsSearchArgs,
 		newContactsSearchResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getTopPeers": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getTopPeers": kitex.NewMethodInfo(
 		contactsGetTopPeersHandler,
 		newContactsGetTopPeersArgs,
 		newContactsGetTopPeersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.resetTopPeerRating": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.resetTopPeerRating": kitex.NewMethodInfo(
 		contactsResetTopPeerRatingHandler,
 		newContactsResetTopPeerRatingArgs,
 		newContactsResetTopPeerRatingResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.resetSaved": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.resetSaved": kitex.NewMethodInfo(
 		contactsResetSavedHandler,
 		newContactsResetSavedArgs,
 		newContactsResetSavedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getSaved": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getSaved": kitex.NewMethodInfo(
 		contactsGetSavedHandler,
 		newContactsGetSavedArgs,
 		newContactsGetSavedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.toggleTopPeers": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.toggleTopPeers": kitex.NewMethodInfo(
 		contactsToggleTopPeersHandler,
 		newContactsToggleTopPeersArgs,
 		newContactsToggleTopPeersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.addContact": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.addContact": kitex.NewMethodInfo(
 		contactsAddContactHandler,
 		newContactsAddContactArgs,
 		newContactsAddContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.acceptContact": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.acceptContact": kitex.NewMethodInfo(
 		contactsAcceptContactHandler,
 		newContactsAcceptContactArgs,
 		newContactsAcceptContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getLocated": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.getLocated": kitex.NewMethodInfo(
 		contactsGetLocatedHandler,
 		newContactsGetLocatedArgs,
 		newContactsGetLocatedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.editCloseFriends": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.editCloseFriends": kitex.NewMethodInfo(
 		contactsEditCloseFriendsHandler,
 		newContactsEditCloseFriendsArgs,
 		newContactsEditCloseFriendsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.setBlocked": kitex.NewMethodInfo(
+	"/tg.RPCContacts/contacts.setBlocked": kitex.NewMethodInfo(
 		contactsSetBlockedHandler,
 		newContactsSetBlockedArgs,
 		newContactsSetBlockedResult,
@@ -3042,7 +3042,7 @@ func (p *kClient) AccountGetContactSignUpNotification(ctx context.Context, req *
 	// var _result AccountGetContactSignUpNotificationResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.getContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/account.getContactSignUpNotification", req, _result); err != nil {
 		return
 	}
 
@@ -3056,7 +3056,7 @@ func (p *kClient) AccountSetContactSignUpNotification(ctx context.Context, req *
 	// var _result AccountSetContactSignUpNotificationResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.setContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/account.setContactSignUpNotification", req, _result); err != nil {
 		return
 	}
 
@@ -3070,7 +3070,7 @@ func (p *kClient) ContactsGetContactIDs(ctx context.Context, req *tg.TLContactsG
 	// var _result ContactsGetContactIDsResult
 
 	_result := new(tg.VectorInt)
-	if err = p.c.Call(ctx, "contacts.getContactIDs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContactIDs", req, _result); err != nil {
 		return
 	}
 
@@ -3084,7 +3084,7 @@ func (p *kClient) ContactsGetStatuses(ctx context.Context, req *tg.TLContactsGet
 	// var _result ContactsGetStatusesResult
 
 	_result := new(tg.VectorContactStatus)
-	if err = p.c.Call(ctx, "contacts.getStatuses", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getStatuses", req, _result); err != nil {
 		return
 	}
 
@@ -3098,7 +3098,7 @@ func (p *kClient) ContactsGetContacts(ctx context.Context, req *tg.TLContactsGet
 	// var _result ContactsGetContactsResult
 
 	_result := new(tg.ContactsContacts)
-	if err = p.c.Call(ctx, "contacts.getContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getContacts", req, _result); err != nil {
 		return
 	}
 
@@ -3112,7 +3112,7 @@ func (p *kClient) ContactsImportContacts(ctx context.Context, req *tg.TLContacts
 	// var _result ContactsImportContactsResult
 
 	_result := new(tg.ContactsImportedContacts)
-	if err = p.c.Call(ctx, "contacts.importContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.importContacts", req, _result); err != nil {
 		return
 	}
 
@@ -3126,7 +3126,7 @@ func (p *kClient) ContactsDeleteContacts(ctx context.Context, req *tg.TLContacts
 	// var _result ContactsDeleteContactsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "contacts.deleteContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteContacts", req, _result); err != nil {
 		return
 	}
 
@@ -3140,7 +3140,7 @@ func (p *kClient) ContactsDeleteByPhones(ctx context.Context, req *tg.TLContacts
 	// var _result ContactsDeleteByPhonesResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.deleteByPhones", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.deleteByPhones", req, _result); err != nil {
 		return
 	}
 
@@ -3154,7 +3154,7 @@ func (p *kClient) ContactsBlock(ctx context.Context, req *tg.TLContactsBlock) (r
 	// var _result ContactsBlockResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.block", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.block", req, _result); err != nil {
 		return
 	}
 
@@ -3168,7 +3168,7 @@ func (p *kClient) ContactsUnblock(ctx context.Context, req *tg.TLContactsUnblock
 	// var _result ContactsUnblockResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.unblock", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.unblock", req, _result); err != nil {
 		return
 	}
 
@@ -3182,7 +3182,7 @@ func (p *kClient) ContactsGetBlocked(ctx context.Context, req *tg.TLContactsGetB
 	// var _result ContactsGetBlockedResult
 
 	_result := new(tg.ContactsBlocked)
-	if err = p.c.Call(ctx, "contacts.getBlocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getBlocked", req, _result); err != nil {
 		return
 	}
 
@@ -3196,7 +3196,7 @@ func (p *kClient) ContactsSearch(ctx context.Context, req *tg.TLContactsSearch) 
 	// var _result ContactsSearchResult
 
 	_result := new(tg.ContactsFound)
-	if err = p.c.Call(ctx, "contacts.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.search", req, _result); err != nil {
 		return
 	}
 
@@ -3210,7 +3210,7 @@ func (p *kClient) ContactsGetTopPeers(ctx context.Context, req *tg.TLContactsGet
 	// var _result ContactsGetTopPeersResult
 
 	_result := new(tg.ContactsTopPeers)
-	if err = p.c.Call(ctx, "contacts.getTopPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getTopPeers", req, _result); err != nil {
 		return
 	}
 
@@ -3224,7 +3224,7 @@ func (p *kClient) ContactsResetTopPeerRating(ctx context.Context, req *tg.TLCont
 	// var _result ContactsResetTopPeerRatingResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.resetTopPeerRating", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetTopPeerRating", req, _result); err != nil {
 		return
 	}
 
@@ -3238,7 +3238,7 @@ func (p *kClient) ContactsResetSaved(ctx context.Context, req *tg.TLContactsRese
 	// var _result ContactsResetSavedResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.resetSaved", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.resetSaved", req, _result); err != nil {
 		return
 	}
 
@@ -3252,7 +3252,7 @@ func (p *kClient) ContactsGetSaved(ctx context.Context, req *tg.TLContactsGetSav
 	// var _result ContactsGetSavedResult
 
 	_result := new(tg.VectorSavedContact)
-	if err = p.c.Call(ctx, "contacts.getSaved", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getSaved", req, _result); err != nil {
 		return
 	}
 
@@ -3266,7 +3266,7 @@ func (p *kClient) ContactsToggleTopPeers(ctx context.Context, req *tg.TLContacts
 	// var _result ContactsToggleTopPeersResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.toggleTopPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.toggleTopPeers", req, _result); err != nil {
 		return
 	}
 
@@ -3280,7 +3280,7 @@ func (p *kClient) ContactsAddContact(ctx context.Context, req *tg.TLContactsAddC
 	// var _result ContactsAddContactResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "contacts.addContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.addContact", req, _result); err != nil {
 		return
 	}
 
@@ -3294,7 +3294,7 @@ func (p *kClient) ContactsAcceptContact(ctx context.Context, req *tg.TLContactsA
 	// var _result ContactsAcceptContactResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "contacts.acceptContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.acceptContact", req, _result); err != nil {
 		return
 	}
 
@@ -3308,7 +3308,7 @@ func (p *kClient) ContactsGetLocated(ctx context.Context, req *tg.TLContactsGetL
 	// var _result ContactsGetLocatedResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "contacts.getLocated", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.getLocated", req, _result); err != nil {
 		return
 	}
 
@@ -3322,7 +3322,7 @@ func (p *kClient) ContactsEditCloseFriends(ctx context.Context, req *tg.TLContac
 	// var _result ContactsEditCloseFriendsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.editCloseFriends", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.editCloseFriends", req, _result); err != nil {
 		return
 	}
 
@@ -3336,7 +3336,7 @@ func (p *kClient) ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetB
 	// var _result ContactsSetBlockedResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "contacts.setBlocked", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.setBlocked", req, _result); err != nil {
 		return
 	}
 

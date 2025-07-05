@@ -30,49 +30,49 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"sync.updatesMe": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.updatesMe": kitex.NewMethodInfo(
 		updatesMeHandler,
 		newUpdatesMeArgs,
 		newUpdatesMeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.updatesNotMe": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.updatesNotMe": kitex.NewMethodInfo(
 		updatesNotMeHandler,
 		newUpdatesNotMeArgs,
 		newUpdatesNotMeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.pushUpdates": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.pushUpdates": kitex.NewMethodInfo(
 		pushUpdatesHandler,
 		newPushUpdatesArgs,
 		newPushUpdatesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.pushUpdatesIfNot": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.pushUpdatesIfNot": kitex.NewMethodInfo(
 		pushUpdatesIfNotHandler,
 		newPushUpdatesIfNotArgs,
 		newPushUpdatesIfNotResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.pushBotUpdates": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.pushBotUpdates": kitex.NewMethodInfo(
 		pushBotUpdatesHandler,
 		newPushBotUpdatesArgs,
 		newPushBotUpdatesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.pushRpcResult": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.pushRpcResult": kitex.NewMethodInfo(
 		pushRpcResultHandler,
 		newPushRpcResultArgs,
 		newPushRpcResultResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"sync.broadcastUpdates": kitex.NewMethodInfo(
+	"/sync.RPCSync/sync.broadcastUpdates": kitex.NewMethodInfo(
 		broadcastUpdatesHandler,
 		newBroadcastUpdatesArgs,
 		newBroadcastUpdatesResult,
@@ -1051,7 +1051,7 @@ func (p *kClient) SyncUpdatesMe(ctx context.Context, req *sync.TLSyncUpdatesMe) 
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.updatesMe", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.updatesMe", req, _result); err != nil {
 		return
 	}
 
@@ -1066,7 +1066,7 @@ func (p *kClient) SyncUpdatesNotMe(ctx context.Context, req *sync.TLSyncUpdatesN
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.updatesNotMe", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.updatesNotMe", req, _result); err != nil {
 		return
 	}
 
@@ -1081,7 +1081,7 @@ func (p *kClient) SyncPushUpdates(ctx context.Context, req *sync.TLSyncPushUpdat
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.pushUpdates", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.pushUpdates", req, _result); err != nil {
 		return
 	}
 
@@ -1096,7 +1096,7 @@ func (p *kClient) SyncPushUpdatesIfNot(ctx context.Context, req *sync.TLSyncPush
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.pushUpdatesIfNot", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.pushUpdatesIfNot", req, _result); err != nil {
 		return
 	}
 
@@ -1111,7 +1111,7 @@ func (p *kClient) SyncPushBotUpdates(ctx context.Context, req *sync.TLSyncPushBo
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.pushBotUpdates", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.pushBotUpdates", req, _result); err != nil {
 		return
 	}
 
@@ -1126,7 +1126,7 @@ func (p *kClient) SyncPushRpcResult(ctx context.Context, req *sync.TLSyncPushRpc
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.pushRpcResult", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.pushRpcResult", req, _result); err != nil {
 		return
 	}
 
@@ -1141,7 +1141,7 @@ func (p *kClient) SyncBroadcastUpdates(ctx context.Context, req *sync.TLSyncBroa
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "sync.broadcastUpdates", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/sync.RPCSync/sync.broadcastUpdates", req, _result); err != nil {
 		return
 	}
 

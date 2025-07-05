@@ -30,84 +30,84 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"dfs.writeFilePartData": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.writeFilePartData": kitex.NewMethodInfo(
 		writeFilePartDataHandler,
 		newWriteFilePartDataArgs,
 		newWriteFilePartDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadPhotoFileV2": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadPhotoFileV2": kitex.NewMethodInfo(
 		uploadPhotoFileV2Handler,
 		newUploadPhotoFileV2Args,
 		newUploadPhotoFileV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadProfilePhotoFileV2": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadProfilePhotoFileV2": kitex.NewMethodInfo(
 		uploadProfilePhotoFileV2Handler,
 		newUploadProfilePhotoFileV2Args,
 		newUploadProfilePhotoFileV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadEncryptedFileV2": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadEncryptedFileV2": kitex.NewMethodInfo(
 		uploadEncryptedFileV2Handler,
 		newUploadEncryptedFileV2Args,
 		newUploadEncryptedFileV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.downloadFile": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.downloadFile": kitex.NewMethodInfo(
 		downloadFileHandler,
 		newDownloadFileArgs,
 		newDownloadFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadDocumentFileV2": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadDocumentFileV2": kitex.NewMethodInfo(
 		uploadDocumentFileV2Handler,
 		newUploadDocumentFileV2Args,
 		newUploadDocumentFileV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadGifDocumentMedia": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadGifDocumentMedia": kitex.NewMethodInfo(
 		uploadGifDocumentMediaHandler,
 		newUploadGifDocumentMediaArgs,
 		newUploadGifDocumentMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadMp4DocumentMedia": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadMp4DocumentMedia": kitex.NewMethodInfo(
 		uploadMp4DocumentMediaHandler,
 		newUploadMp4DocumentMediaArgs,
 		newUploadMp4DocumentMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadWallPaperFile": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadWallPaperFile": kitex.NewMethodInfo(
 		uploadWallPaperFileHandler,
 		newUploadWallPaperFileArgs,
 		newUploadWallPaperFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadThemeFile": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadThemeFile": kitex.NewMethodInfo(
 		uploadThemeFileHandler,
 		newUploadThemeFileArgs,
 		newUploadThemeFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadRingtoneFile": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadRingtoneFile": kitex.NewMethodInfo(
 		uploadRingtoneFileHandler,
 		newUploadRingtoneFileArgs,
 		newUploadRingtoneFileResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"dfs.uploadedProfilePhoto": kitex.NewMethodInfo(
+	"/dfs.RPCDfs/dfs.uploadedProfilePhoto": kitex.NewMethodInfo(
 		uploadedProfilePhotoHandler,
 		newUploadedProfilePhotoArgs,
 		newUploadedProfilePhotoResult,
@@ -1716,7 +1716,7 @@ func (p *kClient) DfsWriteFilePartData(ctx context.Context, req *dfs.TLDfsWriteF
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "dfs.writeFilePartData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.writeFilePartData", req, _result); err != nil {
 		return
 	}
 
@@ -1731,7 +1731,7 @@ func (p *kClient) DfsUploadPhotoFileV2(ctx context.Context, req *dfs.TLDfsUpload
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "dfs.uploadPhotoFileV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadPhotoFileV2", req, _result); err != nil {
 		return
 	}
 
@@ -1746,7 +1746,7 @@ func (p *kClient) DfsUploadProfilePhotoFileV2(ctx context.Context, req *dfs.TLDf
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "dfs.uploadProfilePhotoFileV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadProfilePhotoFileV2", req, _result); err != nil {
 		return
 	}
 
@@ -1761,7 +1761,7 @@ func (p *kClient) DfsUploadEncryptedFileV2(ctx context.Context, req *dfs.TLDfsUp
 
 	_result := new(tg.EncryptedFile)
 
-	if err = p.c.Call(ctx, "dfs.uploadEncryptedFileV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadEncryptedFileV2", req, _result); err != nil {
 		return
 	}
 
@@ -1776,7 +1776,7 @@ func (p *kClient) DfsDownloadFile(ctx context.Context, req *dfs.TLDfsDownloadFil
 
 	_result := new(tg.UploadFile)
 
-	if err = p.c.Call(ctx, "dfs.downloadFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.downloadFile", req, _result); err != nil {
 		return
 	}
 
@@ -1791,7 +1791,7 @@ func (p *kClient) DfsUploadDocumentFileV2(ctx context.Context, req *dfs.TLDfsUpl
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadDocumentFileV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadDocumentFileV2", req, _result); err != nil {
 		return
 	}
 
@@ -1806,7 +1806,7 @@ func (p *kClient) DfsUploadGifDocumentMedia(ctx context.Context, req *dfs.TLDfsU
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadGifDocumentMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadGifDocumentMedia", req, _result); err != nil {
 		return
 	}
 
@@ -1821,7 +1821,7 @@ func (p *kClient) DfsUploadMp4DocumentMedia(ctx context.Context, req *dfs.TLDfsU
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadMp4DocumentMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadMp4DocumentMedia", req, _result); err != nil {
 		return
 	}
 
@@ -1836,7 +1836,7 @@ func (p *kClient) DfsUploadWallPaperFile(ctx context.Context, req *dfs.TLDfsUplo
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadWallPaperFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadWallPaperFile", req, _result); err != nil {
 		return
 	}
 
@@ -1851,7 +1851,7 @@ func (p *kClient) DfsUploadThemeFile(ctx context.Context, req *dfs.TLDfsUploadTh
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadThemeFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadThemeFile", req, _result); err != nil {
 		return
 	}
 
@@ -1866,7 +1866,7 @@ func (p *kClient) DfsUploadRingtoneFile(ctx context.Context, req *dfs.TLDfsUploa
 
 	_result := new(tg.Document)
 
-	if err = p.c.Call(ctx, "dfs.uploadRingtoneFile", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadRingtoneFile", req, _result); err != nil {
 		return
 	}
 
@@ -1881,7 +1881,7 @@ func (p *kClient) DfsUploadedProfilePhoto(ctx context.Context, req *dfs.TLDfsUpl
 
 	_result := new(tg.Photo)
 
-	if err = p.c.Call(ctx, "dfs.uploadedProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.uploadedProfilePhoto", req, _result); err != nil {
 		return
 	}
 

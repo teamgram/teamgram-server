@@ -27,35 +27,35 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"help.getPremiumPromo": kitex.NewMethodInfo(
+	"/tg.RPCPremium/help.getPremiumPromo": kitex.NewMethodInfo(
 		helpGetPremiumPromoHandler,
 		newHelpGetPremiumPromoArgs,
 		newHelpGetPremiumPromoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"payments.assignAppStoreTransaction": kitex.NewMethodInfo(
+	"/tg.RPCPremium/payments.assignAppStoreTransaction": kitex.NewMethodInfo(
 		paymentsAssignAppStoreTransactionHandler,
 		newPaymentsAssignAppStoreTransactionArgs,
 		newPaymentsAssignAppStoreTransactionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"payments.assignPlayMarketTransaction": kitex.NewMethodInfo(
+	"/tg.RPCPremium/payments.assignPlayMarketTransaction": kitex.NewMethodInfo(
 		paymentsAssignPlayMarketTransactionHandler,
 		newPaymentsAssignPlayMarketTransactionArgs,
 		newPaymentsAssignPlayMarketTransactionResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"payments.canPurchaseStore": kitex.NewMethodInfo(
+	"/tg.RPCPremium/payments.canPurchaseStore": kitex.NewMethodInfo(
 		paymentsCanPurchaseStoreHandler,
 		newPaymentsCanPurchaseStoreArgs,
 		newPaymentsCanPurchaseStoreResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"payments.canPurchasePremium": kitex.NewMethodInfo(
+	"/tg.RPCPremium/payments.canPurchasePremium": kitex.NewMethodInfo(
 		paymentsCanPurchasePremiumHandler,
 		newPaymentsCanPurchasePremiumArgs,
 		newPaymentsCanPurchasePremiumResult,
@@ -781,7 +781,7 @@ func (p *kClient) HelpGetPremiumPromo(ctx context.Context, req *tg.TLHelpGetPrem
 	// var _result HelpGetPremiumPromoResult
 
 	_result := new(tg.HelpPremiumPromo)
-	if err = p.c.Call(ctx, "help.getPremiumPromo", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/help.getPremiumPromo", req, _result); err != nil {
 		return
 	}
 
@@ -795,7 +795,7 @@ func (p *kClient) PaymentsAssignAppStoreTransaction(ctx context.Context, req *tg
 	// var _result PaymentsAssignAppStoreTransactionResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "payments.assignAppStoreTransaction", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignAppStoreTransaction", req, _result); err != nil {
 		return
 	}
 
@@ -809,7 +809,7 @@ func (p *kClient) PaymentsAssignPlayMarketTransaction(ctx context.Context, req *
 	// var _result PaymentsAssignPlayMarketTransactionResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "payments.assignPlayMarketTransaction", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.assignPlayMarketTransaction", req, _result); err != nil {
 		return
 	}
 
@@ -823,7 +823,7 @@ func (p *kClient) PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymen
 	// var _result PaymentsCanPurchaseStoreResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "payments.canPurchaseStore", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchaseStore", req, _result); err != nil {
 		return
 	}
 
@@ -837,7 +837,7 @@ func (p *kClient) PaymentsCanPurchasePremium(ctx context.Context, req *tg.TLPaym
 	// var _result PaymentsCanPurchasePremiumResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "payments.canPurchasePremium", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchasePremium", req, _result); err != nil {
 		return
 	}
 

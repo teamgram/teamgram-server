@@ -27,21 +27,21 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"updates.getState": kitex.NewMethodInfo(
+	"/tg.RPCUpdates/updates.getState": kitex.NewMethodInfo(
 		updatesGetStateHandler,
 		newUpdatesGetStateArgs,
 		newUpdatesGetStateResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"updates.getDifference": kitex.NewMethodInfo(
+	"/tg.RPCUpdates/updates.getDifference": kitex.NewMethodInfo(
 		updatesGetDifferenceHandler,
 		newUpdatesGetDifferenceArgs,
 		newUpdatesGetDifferenceResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"updates.getChannelDifference": kitex.NewMethodInfo(
+	"/tg.RPCUpdates/updates.getChannelDifference": kitex.NewMethodInfo(
 		updatesGetChannelDifferenceHandler,
 		newUpdatesGetChannelDifferenceArgs,
 		newUpdatesGetChannelDifferenceResult,
@@ -515,7 +515,7 @@ func (p *kClient) UpdatesGetState(ctx context.Context, req *tg.TLUpdatesGetState
 	// var _result UpdatesGetStateResult
 
 	_result := new(tg.UpdatesState)
-	if err = p.c.Call(ctx, "updates.getState", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getState", req, _result); err != nil {
 		return
 	}
 
@@ -529,7 +529,7 @@ func (p *kClient) UpdatesGetDifference(ctx context.Context, req *tg.TLUpdatesGet
 	// var _result UpdatesGetDifferenceResult
 
 	_result := new(tg.UpdatesDifference)
-	if err = p.c.Call(ctx, "updates.getDifference", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getDifference", req, _result); err != nil {
 		return
 	}
 
@@ -543,7 +543,7 @@ func (p *kClient) UpdatesGetChannelDifference(ctx context.Context, req *tg.TLUpd
 	// var _result UpdatesGetChannelDifferenceResult
 
 	_result := new(tg.UpdatesChannelDifference)
-	if err = p.c.Call(ctx, "updates.getChannelDifference", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUpdates/updates.getChannelDifference", req, _result); err != nil {
 		return
 	}
 

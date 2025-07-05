@@ -30,56 +30,56 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"idgen.nextId": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.nextId": kitex.NewMethodInfo(
 		nextIdHandler,
 		newNextIdArgs,
 		newNextIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.nextIds": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.nextIds": kitex.NewMethodInfo(
 		nextIdsHandler,
 		newNextIdsArgs,
 		newNextIdsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.getCurrentSeqId": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.getCurrentSeqId": kitex.NewMethodInfo(
 		getCurrentSeqIdHandler,
 		newGetCurrentSeqIdArgs,
 		newGetCurrentSeqIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.setCurrentSeqId": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.setCurrentSeqId": kitex.NewMethodInfo(
 		setCurrentSeqIdHandler,
 		newSetCurrentSeqIdArgs,
 		newSetCurrentSeqIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.getNextSeqId": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.getNextSeqId": kitex.NewMethodInfo(
 		getNextSeqIdHandler,
 		newGetNextSeqIdArgs,
 		newGetNextSeqIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.getNextNSeqId": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.getNextNSeqId": kitex.NewMethodInfo(
 		getNextNSeqIdHandler,
 		newGetNextNSeqIdArgs,
 		newGetNextNSeqIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.getNextIdValList": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.getNextIdValList": kitex.NewMethodInfo(
 		getNextIdValListHandler,
 		newGetNextIdValListArgs,
 		newGetNextIdValListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"idgen.getCurrentSeqIdList": kitex.NewMethodInfo(
+	"/idgen.RPCIdgen/idgen.getCurrentSeqIdList": kitex.NewMethodInfo(
 		getCurrentSeqIdListHandler,
 		newGetCurrentSeqIdListArgs,
 		newGetCurrentSeqIdListResult,
@@ -1184,7 +1184,7 @@ func (p *kClient) IdgenNextId(ctx context.Context, req *idgen.TLIdgenNextId) (r 
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "idgen.nextId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextId", req, _result); err != nil {
 		return
 	}
 
@@ -1199,7 +1199,7 @@ func (p *kClient) IdgenNextIds(ctx context.Context, req *idgen.TLIdgenNextIds) (
 
 	_result := new(idgen.VectorLong)
 
-	if err = p.c.Call(ctx, "idgen.nextIds", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.nextIds", req, _result); err != nil {
 		return
 	}
 
@@ -1214,7 +1214,7 @@ func (p *kClient) IdgenGetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenGe
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "idgen.getCurrentSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqId", req, _result); err != nil {
 		return
 	}
 
@@ -1229,7 +1229,7 @@ func (p *kClient) IdgenSetCurrentSeqId(ctx context.Context, req *idgen.TLIdgenSe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "idgen.setCurrentSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.setCurrentSeqId", req, _result); err != nil {
 		return
 	}
 
@@ -1244,7 +1244,7 @@ func (p *kClient) IdgenGetNextSeqId(ctx context.Context, req *idgen.TLIdgenGetNe
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "idgen.getNextSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextSeqId", req, _result); err != nil {
 		return
 	}
 
@@ -1259,7 +1259,7 @@ func (p *kClient) IdgenGetNextNSeqId(ctx context.Context, req *idgen.TLIdgenGetN
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "idgen.getNextNSeqId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextNSeqId", req, _result); err != nil {
 		return
 	}
 
@@ -1274,7 +1274,7 @@ func (p *kClient) IdgenGetNextIdValList(ctx context.Context, req *idgen.TLIdgenG
 
 	_result := new(idgen.VectorIdVal)
 
-	if err = p.c.Call(ctx, "idgen.getNextIdValList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getNextIdValList", req, _result); err != nil {
 		return
 	}
 
@@ -1289,7 +1289,7 @@ func (p *kClient) IdgenGetCurrentSeqIdList(ctx context.Context, req *idgen.TLIdg
 
 	_result := new(idgen.VectorIdVal)
 
-	if err = p.c.Call(ctx, "idgen.getCurrentSeqIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/idgen.RPCIdgen/idgen.getCurrentSeqIdList", req, _result); err != nil {
 		return
 	}
 

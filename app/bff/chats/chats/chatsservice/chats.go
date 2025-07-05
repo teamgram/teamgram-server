@@ -27,112 +27,112 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.getChats": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.getChats": kitex.NewMethodInfo(
 		messagesGetChatsHandler,
 		newMessagesGetChatsArgs,
 		newMessagesGetChatsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getFullChat": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.getFullChat": kitex.NewMethodInfo(
 		messagesGetFullChatHandler,
 		newMessagesGetFullChatArgs,
 		newMessagesGetFullChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editChatTitle": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.editChatTitle": kitex.NewMethodInfo(
 		messagesEditChatTitleHandler,
 		newMessagesEditChatTitleArgs,
 		newMessagesEditChatTitleResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editChatPhoto": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.editChatPhoto": kitex.NewMethodInfo(
 		messagesEditChatPhotoHandler,
 		newMessagesEditChatPhotoArgs,
 		newMessagesEditChatPhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.addChatUser": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.addChatUser": kitex.NewMethodInfo(
 		messagesAddChatUserHandler,
 		newMessagesAddChatUserArgs,
 		newMessagesAddChatUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteChatUser": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.deleteChatUser": kitex.NewMethodInfo(
 		messagesDeleteChatUserHandler,
 		newMessagesDeleteChatUserArgs,
 		newMessagesDeleteChatUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.createChat": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.createChat": kitex.NewMethodInfo(
 		messagesCreateChatHandler,
 		newMessagesCreateChatArgs,
 		newMessagesCreateChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editChatAdmin": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.editChatAdmin": kitex.NewMethodInfo(
 		messagesEditChatAdminHandler,
 		newMessagesEditChatAdminArgs,
 		newMessagesEditChatAdminResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.migrateChat": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.migrateChat": kitex.NewMethodInfo(
 		messagesMigrateChatHandler,
 		newMessagesMigrateChatArgs,
 		newMessagesMigrateChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getCommonChats": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.getCommonChats": kitex.NewMethodInfo(
 		messagesGetCommonChatsHandler,
 		newMessagesGetCommonChatsArgs,
 		newMessagesGetCommonChatsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editChatAbout": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.editChatAbout": kitex.NewMethodInfo(
 		messagesEditChatAboutHandler,
 		newMessagesEditChatAboutArgs,
 		newMessagesEditChatAboutResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editChatDefaultBannedRights": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.editChatDefaultBannedRights": kitex.NewMethodInfo(
 		messagesEditChatDefaultBannedRightsHandler,
 		newMessagesEditChatDefaultBannedRightsArgs,
 		newMessagesEditChatDefaultBannedRightsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteChat": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.deleteChat": kitex.NewMethodInfo(
 		messagesDeleteChatHandler,
 		newMessagesDeleteChatArgs,
 		newMessagesDeleteChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getMessageReadParticipants": kitex.NewMethodInfo(
+	"/tg.RPCChats/messages.getMessageReadParticipants": kitex.NewMethodInfo(
 		messagesGetMessageReadParticipantsHandler,
 		newMessagesGetMessageReadParticipantsArgs,
 		newMessagesGetMessageReadParticipantsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.convertToGigagroup": kitex.NewMethodInfo(
+	"/tg.RPCChats/channels.convertToGigagroup": kitex.NewMethodInfo(
 		channelsConvertToGigagroupHandler,
 		newChannelsConvertToGigagroupArgs,
 		newChannelsConvertToGigagroupResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.setEmojiStickers": kitex.NewMethodInfo(
+	"/tg.RPCChats/channels.setEmojiStickers": kitex.NewMethodInfo(
 		channelsSetEmojiStickersHandler,
 		newChannelsSetEmojiStickersArgs,
 		newChannelsSetEmojiStickersResult,
@@ -2244,7 +2244,7 @@ func (p *kClient) MessagesGetChats(ctx context.Context, req *tg.TLMessagesGetCha
 	// var _result MessagesGetChatsResult
 
 	_result := new(tg.MessagesChats)
-	if err = p.c.Call(ctx, "messages.getChats", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getChats", req, _result); err != nil {
 		return
 	}
 
@@ -2258,7 +2258,7 @@ func (p *kClient) MessagesGetFullChat(ctx context.Context, req *tg.TLMessagesGet
 	// var _result MessagesGetFullChatResult
 
 	_result := new(tg.MessagesChatFull)
-	if err = p.c.Call(ctx, "messages.getFullChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getFullChat", req, _result); err != nil {
 		return
 	}
 
@@ -2272,7 +2272,7 @@ func (p *kClient) MessagesEditChatTitle(ctx context.Context, req *tg.TLMessagesE
 	// var _result MessagesEditChatTitleResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.editChatTitle", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatTitle", req, _result); err != nil {
 		return
 	}
 
@@ -2286,7 +2286,7 @@ func (p *kClient) MessagesEditChatPhoto(ctx context.Context, req *tg.TLMessagesE
 	// var _result MessagesEditChatPhotoResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.editChatPhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatPhoto", req, _result); err != nil {
 		return
 	}
 
@@ -2300,7 +2300,7 @@ func (p *kClient) MessagesAddChatUser(ctx context.Context, req *tg.TLMessagesAdd
 	// var _result MessagesAddChatUserResult
 
 	_result := new(tg.MessagesInvitedUsers)
-	if err = p.c.Call(ctx, "messages.addChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.addChatUser", req, _result); err != nil {
 		return
 	}
 
@@ -2314,7 +2314,7 @@ func (p *kClient) MessagesDeleteChatUser(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesDeleteChatUserResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.deleteChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChatUser", req, _result); err != nil {
 		return
 	}
 
@@ -2328,7 +2328,7 @@ func (p *kClient) MessagesCreateChat(ctx context.Context, req *tg.TLMessagesCrea
 	// var _result MessagesCreateChatResult
 
 	_result := new(tg.MessagesInvitedUsers)
-	if err = p.c.Call(ctx, "messages.createChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.createChat", req, _result); err != nil {
 		return
 	}
 
@@ -2342,7 +2342,7 @@ func (p *kClient) MessagesEditChatAdmin(ctx context.Context, req *tg.TLMessagesE
 	// var _result MessagesEditChatAdminResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.editChatAdmin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAdmin", req, _result); err != nil {
 		return
 	}
 
@@ -2356,7 +2356,7 @@ func (p *kClient) MessagesMigrateChat(ctx context.Context, req *tg.TLMessagesMig
 	// var _result MessagesMigrateChatResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.migrateChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.migrateChat", req, _result); err != nil {
 		return
 	}
 
@@ -2370,7 +2370,7 @@ func (p *kClient) MessagesGetCommonChats(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesGetCommonChatsResult
 
 	_result := new(tg.MessagesChats)
-	if err = p.c.Call(ctx, "messages.getCommonChats", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getCommonChats", req, _result); err != nil {
 		return
 	}
 
@@ -2384,7 +2384,7 @@ func (p *kClient) MessagesEditChatAbout(ctx context.Context, req *tg.TLMessagesE
 	// var _result MessagesEditChatAboutResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.editChatAbout", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatAbout", req, _result); err != nil {
 		return
 	}
 
@@ -2398,7 +2398,7 @@ func (p *kClient) MessagesEditChatDefaultBannedRights(ctx context.Context, req *
 	// var _result MessagesEditChatDefaultBannedRightsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.editChatDefaultBannedRights", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.editChatDefaultBannedRights", req, _result); err != nil {
 		return
 	}
 
@@ -2412,7 +2412,7 @@ func (p *kClient) MessagesDeleteChat(ctx context.Context, req *tg.TLMessagesDele
 	// var _result MessagesDeleteChatResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.deleteChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.deleteChat", req, _result); err != nil {
 		return
 	}
 
@@ -2426,7 +2426,7 @@ func (p *kClient) MessagesGetMessageReadParticipants(ctx context.Context, req *t
 	// var _result MessagesGetMessageReadParticipantsResult
 
 	_result := new(tg.VectorReadParticipantDate)
-	if err = p.c.Call(ctx, "messages.getMessageReadParticipants", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/messages.getMessageReadParticipants", req, _result); err != nil {
 		return
 	}
 
@@ -2440,7 +2440,7 @@ func (p *kClient) ChannelsConvertToGigagroup(ctx context.Context, req *tg.TLChan
 	// var _result ChannelsConvertToGigagroupResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "channels.convertToGigagroup", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/channels.convertToGigagroup", req, _result); err != nil {
 		return
 	}
 
@@ -2454,7 +2454,7 @@ func (p *kClient) ChannelsSetEmojiStickers(ctx context.Context, req *tg.TLChanne
 	// var _result ChannelsSetEmojiStickersResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "channels.setEmojiStickers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChats/channels.setEmojiStickers", req, _result); err != nil {
 		return
 	}
 

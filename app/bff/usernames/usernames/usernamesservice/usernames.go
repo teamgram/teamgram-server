@@ -27,35 +27,35 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.checkUsername": kitex.NewMethodInfo(
+	"/tg.RPCUsernames/account.checkUsername": kitex.NewMethodInfo(
 		accountCheckUsernameHandler,
 		newAccountCheckUsernameArgs,
 		newAccountCheckUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.updateUsername": kitex.NewMethodInfo(
+	"/tg.RPCUsernames/account.updateUsername": kitex.NewMethodInfo(
 		accountUpdateUsernameHandler,
 		newAccountUpdateUsernameArgs,
 		newAccountUpdateUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.resolveUsername": kitex.NewMethodInfo(
+	"/tg.RPCUsernames/contacts.resolveUsername": kitex.NewMethodInfo(
 		contactsResolveUsernameHandler,
 		newContactsResolveUsernameArgs,
 		newContactsResolveUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.checkUsername": kitex.NewMethodInfo(
+	"/tg.RPCUsernames/channels.checkUsername": kitex.NewMethodInfo(
 		channelsCheckUsernameHandler,
 		newChannelsCheckUsernameArgs,
 		newChannelsCheckUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.updateUsername": kitex.NewMethodInfo(
+	"/tg.RPCUsernames/channels.updateUsername": kitex.NewMethodInfo(
 		channelsUpdateUsernameHandler,
 		newChannelsUpdateUsernameArgs,
 		newChannelsUpdateUsernameResult,
@@ -781,7 +781,7 @@ func (p *kClient) AccountCheckUsername(ctx context.Context, req *tg.TLAccountChe
 	// var _result AccountCheckUsernameResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.checkUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsernames/account.checkUsername", req, _result); err != nil {
 		return
 	}
 
@@ -795,7 +795,7 @@ func (p *kClient) AccountUpdateUsername(ctx context.Context, req *tg.TLAccountUp
 	// var _result AccountUpdateUsernameResult
 
 	_result := new(tg.User)
-	if err = p.c.Call(ctx, "account.updateUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsernames/account.updateUsername", req, _result); err != nil {
 		return
 	}
 
@@ -809,7 +809,7 @@ func (p *kClient) ContactsResolveUsername(ctx context.Context, req *tg.TLContact
 	// var _result ContactsResolveUsernameResult
 
 	_result := new(tg.ContactsResolvedPeer)
-	if err = p.c.Call(ctx, "contacts.resolveUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsernames/contacts.resolveUsername", req, _result); err != nil {
 		return
 	}
 
@@ -823,7 +823,7 @@ func (p *kClient) ChannelsCheckUsername(ctx context.Context, req *tg.TLChannelsC
 	// var _result ChannelsCheckUsernameResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "channels.checkUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsernames/channels.checkUsername", req, _result); err != nil {
 		return
 	}
 
@@ -837,7 +837,7 @@ func (p *kClient) ChannelsUpdateUsername(ctx context.Context, req *tg.TLChannels
 	// var _result ChannelsUpdateUsernameResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "channels.updateUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCUsernames/channels.updateUsername", req, _result); err != nil {
 		return
 	}
 

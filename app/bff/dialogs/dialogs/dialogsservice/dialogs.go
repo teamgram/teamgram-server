@@ -27,91 +27,91 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.getDialogs": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getDialogs": kitex.NewMethodInfo(
 		messagesGetDialogsHandler,
 		newMessagesGetDialogsArgs,
 		newMessagesGetDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.setTyping": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.setTyping": kitex.NewMethodInfo(
 		messagesSetTypingHandler,
 		newMessagesSetTypingArgs,
 		newMessagesSetTypingResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getPeerSettings": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getPeerSettings": kitex.NewMethodInfo(
 		messagesGetPeerSettingsHandler,
 		newMessagesGetPeerSettingsArgs,
 		newMessagesGetPeerSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getPeerDialogs": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getPeerDialogs": kitex.NewMethodInfo(
 		messagesGetPeerDialogsHandler,
 		newMessagesGetPeerDialogsArgs,
 		newMessagesGetPeerDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.toggleDialogPin": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.toggleDialogPin": kitex.NewMethodInfo(
 		messagesToggleDialogPinHandler,
 		newMessagesToggleDialogPinArgs,
 		newMessagesToggleDialogPinResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.reorderPinnedDialogs": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.reorderPinnedDialogs": kitex.NewMethodInfo(
 		messagesReorderPinnedDialogsHandler,
 		newMessagesReorderPinnedDialogsArgs,
 		newMessagesReorderPinnedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getPinnedDialogs": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getPinnedDialogs": kitex.NewMethodInfo(
 		messagesGetPinnedDialogsHandler,
 		newMessagesGetPinnedDialogsArgs,
 		newMessagesGetPinnedDialogsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.sendScreenshotNotification": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.sendScreenshotNotification": kitex.NewMethodInfo(
 		messagesSendScreenshotNotificationHandler,
 		newMessagesSendScreenshotNotificationArgs,
 		newMessagesSendScreenshotNotificationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.markDialogUnread": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.markDialogUnread": kitex.NewMethodInfo(
 		messagesMarkDialogUnreadHandler,
 		newMessagesMarkDialogUnreadArgs,
 		newMessagesMarkDialogUnreadResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getDialogUnreadMarks": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getDialogUnreadMarks": kitex.NewMethodInfo(
 		messagesGetDialogUnreadMarksHandler,
 		newMessagesGetDialogUnreadMarksArgs,
 		newMessagesGetDialogUnreadMarksResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getOnlines": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.getOnlines": kitex.NewMethodInfo(
 		messagesGetOnlinesHandler,
 		newMessagesGetOnlinesArgs,
 		newMessagesGetOnlinesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.hidePeerSettingsBar": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.hidePeerSettingsBar": kitex.NewMethodInfo(
 		messagesHidePeerSettingsBarHandler,
 		newMessagesHidePeerSettingsBarArgs,
 		newMessagesHidePeerSettingsBarResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.setHistoryTTL": kitex.NewMethodInfo(
+	"/tg.RPCDialogs/messages.setHistoryTTL": kitex.NewMethodInfo(
 		messagesSetHistoryTTLHandler,
 		newMessagesSetHistoryTTLArgs,
 		newMessagesSetHistoryTTLResult,
@@ -1845,7 +1845,7 @@ func (p *kClient) MessagesGetDialogs(ctx context.Context, req *tg.TLMessagesGetD
 	// var _result MessagesGetDialogsResult
 
 	_result := new(tg.MessagesDialogs)
-	if err = p.c.Call(ctx, "messages.getDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -1859,7 +1859,7 @@ func (p *kClient) MessagesSetTyping(ctx context.Context, req *tg.TLMessagesSetTy
 	// var _result MessagesSetTypingResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.setTyping", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setTyping", req, _result); err != nil {
 		return
 	}
 
@@ -1873,7 +1873,7 @@ func (p *kClient) MessagesGetPeerSettings(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesGetPeerSettingsResult
 
 	_result := new(tg.MessagesPeerSettings)
-	if err = p.c.Call(ctx, "messages.getPeerSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerSettings", req, _result); err != nil {
 		return
 	}
 
@@ -1887,7 +1887,7 @@ func (p *kClient) MessagesGetPeerDialogs(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesGetPeerDialogsResult
 
 	_result := new(tg.MessagesPeerDialogs)
-	if err = p.c.Call(ctx, "messages.getPeerDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPeerDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -1901,7 +1901,7 @@ func (p *kClient) MessagesToggleDialogPin(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesToggleDialogPinResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.toggleDialogPin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.toggleDialogPin", req, _result); err != nil {
 		return
 	}
 
@@ -1915,7 +1915,7 @@ func (p *kClient) MessagesReorderPinnedDialogs(ctx context.Context, req *tg.TLMe
 	// var _result MessagesReorderPinnedDialogsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.reorderPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.reorderPinnedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -1929,7 +1929,7 @@ func (p *kClient) MessagesGetPinnedDialogs(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesGetPinnedDialogsResult
 
 	_result := new(tg.MessagesPeerDialogs)
-	if err = p.c.Call(ctx, "messages.getPinnedDialogs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getPinnedDialogs", req, _result); err != nil {
 		return
 	}
 
@@ -1943,7 +1943,7 @@ func (p *kClient) MessagesSendScreenshotNotification(ctx context.Context, req *t
 	// var _result MessagesSendScreenshotNotificationResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.sendScreenshotNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.sendScreenshotNotification", req, _result); err != nil {
 		return
 	}
 
@@ -1957,7 +1957,7 @@ func (p *kClient) MessagesMarkDialogUnread(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesMarkDialogUnreadResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.markDialogUnread", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.markDialogUnread", req, _result); err != nil {
 		return
 	}
 
@@ -1971,7 +1971,7 @@ func (p *kClient) MessagesGetDialogUnreadMarks(ctx context.Context, req *tg.TLMe
 	// var _result MessagesGetDialogUnreadMarksResult
 
 	_result := new(tg.VectorDialogPeer)
-	if err = p.c.Call(ctx, "messages.getDialogUnreadMarks", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getDialogUnreadMarks", req, _result); err != nil {
 		return
 	}
 
@@ -1985,7 +1985,7 @@ func (p *kClient) MessagesGetOnlines(ctx context.Context, req *tg.TLMessagesGetO
 	// var _result MessagesGetOnlinesResult
 
 	_result := new(tg.ChatOnlines)
-	if err = p.c.Call(ctx, "messages.getOnlines", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.getOnlines", req, _result); err != nil {
 		return
 	}
 
@@ -1999,7 +1999,7 @@ func (p *kClient) MessagesHidePeerSettingsBar(ctx context.Context, req *tg.TLMes
 	// var _result MessagesHidePeerSettingsBarResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.hidePeerSettingsBar", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.hidePeerSettingsBar", req, _result); err != nil {
 		return
 	}
 
@@ -2013,7 +2013,7 @@ func (p *kClient) MessagesSetHistoryTTL(ctx context.Context, req *tg.TLMessagesS
 	// var _result MessagesSetHistoryTTLResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.setHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDialogs/messages.setHistoryTTL", req, _result); err != nil {
 		return
 	}
 

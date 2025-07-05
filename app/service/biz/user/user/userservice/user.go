@@ -30,546 +30,546 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"user.getLastSeens": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getLastSeens": kitex.NewMethodInfo(
 		getLastSeensHandler,
 		newGetLastSeensArgs,
 		newGetLastSeensResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateLastSeen": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateLastSeen": kitex.NewMethodInfo(
 		updateLastSeenHandler,
 		newUpdateLastSeenArgs,
 		newUpdateLastSeenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getLastSeen": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getLastSeen": kitex.NewMethodInfo(
 		getLastSeenHandler,
 		newGetLastSeenArgs,
 		newGetLastSeenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getImmutableUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getImmutableUser": kitex.NewMethodInfo(
 		getImmutableUserHandler,
 		newGetImmutableUserArgs,
 		newGetImmutableUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getMutableUsers": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getMutableUsers": kitex.NewMethodInfo(
 		getMutableUsersHandler,
 		newGetMutableUsersArgs,
 		newGetMutableUsersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getImmutableUserByPhone": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getImmutableUserByPhone": kitex.NewMethodInfo(
 		getImmutableUserByPhoneHandler,
 		newGetImmutableUserByPhoneArgs,
 		newGetImmutableUserByPhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getImmutableUserByToken": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getImmutableUserByToken": kitex.NewMethodInfo(
 		getImmutableUserByTokenHandler,
 		newGetImmutableUserByTokenArgs,
 		newGetImmutableUserByTokenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setAccountDaysTTL": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setAccountDaysTTL": kitex.NewMethodInfo(
 		setAccountDaysTTLHandler,
 		newSetAccountDaysTTLArgs,
 		newSetAccountDaysTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getAccountDaysTTL": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getAccountDaysTTL": kitex.NewMethodInfo(
 		getAccountDaysTTLHandler,
 		newGetAccountDaysTTLArgs,
 		newGetAccountDaysTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getNotifySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getNotifySettings": kitex.NewMethodInfo(
 		getNotifySettingsHandler,
 		newGetNotifySettingsArgs,
 		newGetNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getNotifySettingsList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getNotifySettingsList": kitex.NewMethodInfo(
 		getNotifySettingsListHandler,
 		newGetNotifySettingsListArgs,
 		newGetNotifySettingsListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setNotifySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setNotifySettings": kitex.NewMethodInfo(
 		setNotifySettingsHandler,
 		newSetNotifySettingsArgs,
 		newSetNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.resetNotifySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.resetNotifySettings": kitex.NewMethodInfo(
 		resetNotifySettingsHandler,
 		newResetNotifySettingsArgs,
 		newResetNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getAllNotifySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getAllNotifySettings": kitex.NewMethodInfo(
 		getAllNotifySettingsHandler,
 		newGetAllNotifySettingsArgs,
 		newGetAllNotifySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getGlobalPrivacySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getGlobalPrivacySettings": kitex.NewMethodInfo(
 		getGlobalPrivacySettingsHandler,
 		newGetGlobalPrivacySettingsArgs,
 		newGetGlobalPrivacySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setGlobalPrivacySettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setGlobalPrivacySettings": kitex.NewMethodInfo(
 		setGlobalPrivacySettingsHandler,
 		newSetGlobalPrivacySettingsArgs,
 		newSetGlobalPrivacySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getPrivacy": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getPrivacy": kitex.NewMethodInfo(
 		getPrivacyHandler,
 		newGetPrivacyArgs,
 		newGetPrivacyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setPrivacy": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setPrivacy": kitex.NewMethodInfo(
 		setPrivacyHandler,
 		newSetPrivacyArgs,
 		newSetPrivacyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.checkPrivacy": kitex.NewMethodInfo(
+	"/user.RPCUser/user.checkPrivacy": kitex.NewMethodInfo(
 		checkPrivacyHandler,
 		newCheckPrivacyArgs,
 		newCheckPrivacyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.addPeerSettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.addPeerSettings": kitex.NewMethodInfo(
 		addPeerSettingsHandler,
 		newAddPeerSettingsArgs,
 		newAddPeerSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getPeerSettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getPeerSettings": kitex.NewMethodInfo(
 		getPeerSettingsHandler,
 		newGetPeerSettingsArgs,
 		newGetPeerSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.deletePeerSettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.deletePeerSettings": kitex.NewMethodInfo(
 		deletePeerSettingsHandler,
 		newDeletePeerSettingsArgs,
 		newDeletePeerSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.changePhone": kitex.NewMethodInfo(
+	"/user.RPCUser/user.changePhone": kitex.NewMethodInfo(
 		changePhoneHandler,
 		newChangePhoneArgs,
 		newChangePhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.createNewUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.createNewUser": kitex.NewMethodInfo(
 		createNewUserHandler,
 		newCreateNewUserArgs,
 		newCreateNewUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.deleteUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.deleteUser": kitex.NewMethodInfo(
 		deleteUserHandler,
 		newDeleteUserArgs,
 		newDeleteUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.blockPeer": kitex.NewMethodInfo(
+	"/user.RPCUser/user.blockPeer": kitex.NewMethodInfo(
 		blockPeerHandler,
 		newBlockPeerArgs,
 		newBlockPeerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.unBlockPeer": kitex.NewMethodInfo(
+	"/user.RPCUser/user.unBlockPeer": kitex.NewMethodInfo(
 		unBlockPeerHandler,
 		newUnBlockPeerArgs,
 		newUnBlockPeerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.blockedByUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.blockedByUser": kitex.NewMethodInfo(
 		blockedByUserHandler,
 		newBlockedByUserArgs,
 		newBlockedByUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.isBlockedByUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.isBlockedByUser": kitex.NewMethodInfo(
 		isBlockedByUserHandler,
 		newIsBlockedByUserArgs,
 		newIsBlockedByUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.checkBlockUserList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.checkBlockUserList": kitex.NewMethodInfo(
 		checkBlockUserListHandler,
 		newCheckBlockUserListArgs,
 		newCheckBlockUserListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getBlockedList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getBlockedList": kitex.NewMethodInfo(
 		getBlockedListHandler,
 		newGetBlockedListArgs,
 		newGetBlockedListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getContactSignUpNotification": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getContactSignUpNotification": kitex.NewMethodInfo(
 		getContactSignUpNotificationHandler,
 		newGetContactSignUpNotificationArgs,
 		newGetContactSignUpNotificationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setContactSignUpNotification": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setContactSignUpNotification": kitex.NewMethodInfo(
 		setContactSignUpNotificationHandler,
 		newSetContactSignUpNotificationArgs,
 		newSetContactSignUpNotificationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getContentSettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getContentSettings": kitex.NewMethodInfo(
 		getContentSettingsHandler,
 		newGetContentSettingsArgs,
 		newGetContentSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setContentSettings": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setContentSettings": kitex.NewMethodInfo(
 		setContentSettingsHandler,
 		newSetContentSettingsArgs,
 		newSetContentSettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.deleteContact": kitex.NewMethodInfo(
+	"/user.RPCUser/user.deleteContact": kitex.NewMethodInfo(
 		deleteContactHandler,
 		newDeleteContactArgs,
 		newDeleteContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getContactList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getContactList": kitex.NewMethodInfo(
 		getContactListHandler,
 		newGetContactListArgs,
 		newGetContactListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getContactIdList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getContactIdList": kitex.NewMethodInfo(
 		getContactIdListHandler,
 		newGetContactIdListArgs,
 		newGetContactIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getContact": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getContact": kitex.NewMethodInfo(
 		getContactHandler,
 		newGetContactArgs,
 		newGetContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.addContact": kitex.NewMethodInfo(
+	"/user.RPCUser/user.addContact": kitex.NewMethodInfo(
 		addContactHandler,
 		newAddContactArgs,
 		newAddContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.checkContact": kitex.NewMethodInfo(
+	"/user.RPCUser/user.checkContact": kitex.NewMethodInfo(
 		checkContactHandler,
 		newCheckContactArgs,
 		newCheckContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getImportersByPhone": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getImportersByPhone": kitex.NewMethodInfo(
 		getImportersByPhoneHandler,
 		newGetImportersByPhoneArgs,
 		newGetImportersByPhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.deleteImportersByPhone": kitex.NewMethodInfo(
+	"/user.RPCUser/user.deleteImportersByPhone": kitex.NewMethodInfo(
 		deleteImportersByPhoneHandler,
 		newDeleteImportersByPhoneArgs,
 		newDeleteImportersByPhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.importContacts": kitex.NewMethodInfo(
+	"/user.RPCUser/user.importContacts": kitex.NewMethodInfo(
 		importContactsHandler,
 		newImportContactsArgs,
 		newImportContactsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getCountryCode": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getCountryCode": kitex.NewMethodInfo(
 		getCountryCodeHandler,
 		newGetCountryCodeArgs,
 		newGetCountryCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateAbout": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateAbout": kitex.NewMethodInfo(
 		updateAboutHandler,
 		newUpdateAboutArgs,
 		newUpdateAboutResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateFirstAndLastName": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateFirstAndLastName": kitex.NewMethodInfo(
 		updateFirstAndLastNameHandler,
 		newUpdateFirstAndLastNameArgs,
 		newUpdateFirstAndLastNameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateVerified": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateVerified": kitex.NewMethodInfo(
 		updateVerifiedHandler,
 		newUpdateVerifiedArgs,
 		newUpdateVerifiedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateUsername": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateUsername": kitex.NewMethodInfo(
 		updateUsernameHandler,
 		newUpdateUsernameArgs,
 		newUpdateUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateProfilePhoto": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateProfilePhoto": kitex.NewMethodInfo(
 		updateProfilePhotoHandler,
 		newUpdateProfilePhotoArgs,
 		newUpdateProfilePhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.deleteProfilePhotos": kitex.NewMethodInfo(
+	"/user.RPCUser/user.deleteProfilePhotos": kitex.NewMethodInfo(
 		deleteProfilePhotosHandler,
 		newDeleteProfilePhotosArgs,
 		newDeleteProfilePhotosResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getProfilePhotos": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getProfilePhotos": kitex.NewMethodInfo(
 		getProfilePhotosHandler,
 		newGetProfilePhotosArgs,
 		newGetProfilePhotosResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setBotCommands": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setBotCommands": kitex.NewMethodInfo(
 		setBotCommandsHandler,
 		newSetBotCommandsArgs,
 		newSetBotCommandsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.isBot": kitex.NewMethodInfo(
+	"/user.RPCUser/user.isBot": kitex.NewMethodInfo(
 		isBotHandler,
 		newIsBotArgs,
 		newIsBotResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getBotInfo": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getBotInfo": kitex.NewMethodInfo(
 		getBotInfoHandler,
 		newGetBotInfoArgs,
 		newGetBotInfoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.checkBots": kitex.NewMethodInfo(
+	"/user.RPCUser/user.checkBots": kitex.NewMethodInfo(
 		checkBotsHandler,
 		newCheckBotsArgs,
 		newCheckBotsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getFullUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getFullUser": kitex.NewMethodInfo(
 		getFullUserHandler,
 		newGetFullUserArgs,
 		newGetFullUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateEmojiStatus": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateEmojiStatus": kitex.NewMethodInfo(
 		updateEmojiStatusHandler,
 		newUpdateEmojiStatusArgs,
 		newUpdateEmojiStatusResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getUserDataById": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getUserDataById": kitex.NewMethodInfo(
 		getUserDataByIdHandler,
 		newGetUserDataByIdArgs,
 		newGetUserDataByIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getUserDataListByIdList": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getUserDataListByIdList": kitex.NewMethodInfo(
 		getUserDataListByIdListHandler,
 		newGetUserDataListByIdListArgs,
 		newGetUserDataListByIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getUserDataByToken": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getUserDataByToken": kitex.NewMethodInfo(
 		getUserDataByTokenHandler,
 		newGetUserDataByTokenArgs,
 		newGetUserDataByTokenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.search": kitex.NewMethodInfo(
+	"/user.RPCUser/user.search": kitex.NewMethodInfo(
 		searchHandler,
 		newSearchArgs,
 		newSearchResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateBotData": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateBotData": kitex.NewMethodInfo(
 		updateBotDataHandler,
 		newUpdateBotDataArgs,
 		newUpdateBotDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getImmutableUserV2": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getImmutableUserV2": kitex.NewMethodInfo(
 		getImmutableUserV2Handler,
 		newGetImmutableUserV2Args,
 		newGetImmutableUserV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getMutableUsersV2": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getMutableUsersV2": kitex.NewMethodInfo(
 		getMutableUsersV2Handler,
 		newGetMutableUsersV2Args,
 		newGetMutableUsersV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.createNewTestUser": kitex.NewMethodInfo(
+	"/user.RPCUser/user.createNewTestUser": kitex.NewMethodInfo(
 		createNewTestUserHandler,
 		newCreateNewTestUserArgs,
 		newCreateNewTestUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.editCloseFriends": kitex.NewMethodInfo(
+	"/user.RPCUser/user.editCloseFriends": kitex.NewMethodInfo(
 		editCloseFriendsHandler,
 		newEditCloseFriendsArgs,
 		newEditCloseFriendsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setStoriesMaxId": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setStoriesMaxId": kitex.NewMethodInfo(
 		setStoriesMaxIdHandler,
 		newSetStoriesMaxIdArgs,
 		newSetStoriesMaxIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setColor": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setColor": kitex.NewMethodInfo(
 		setColorHandler,
 		newSetColorArgs,
 		newSetColorResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updateBirthday": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updateBirthday": kitex.NewMethodInfo(
 		updateBirthdayHandler,
 		newUpdateBirthdayArgs,
 		newUpdateBirthdayResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getBirthdays": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getBirthdays": kitex.NewMethodInfo(
 		getBirthdaysHandler,
 		newGetBirthdaysArgs,
 		newGetBirthdaysResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setStoriesHidden": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setStoriesHidden": kitex.NewMethodInfo(
 		setStoriesHiddenHandler,
 		newSetStoriesHiddenArgs,
 		newSetStoriesHiddenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updatePersonalChannel": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updatePersonalChannel": kitex.NewMethodInfo(
 		updatePersonalChannelHandler,
 		newUpdatePersonalChannelArgs,
 		newUpdatePersonalChannelResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getUserIdByPhone": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getUserIdByPhone": kitex.NewMethodInfo(
 		getUserIdByPhoneHandler,
 		newGetUserIdByPhoneArgs,
 		newGetUserIdByPhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.setAuthorizationTTL": kitex.NewMethodInfo(
+	"/user.RPCUser/user.setAuthorizationTTL": kitex.NewMethodInfo(
 		setAuthorizationTTLHandler,
 		newSetAuthorizationTTLArgs,
 		newSetAuthorizationTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getAuthorizationTTL": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getAuthorizationTTL": kitex.NewMethodInfo(
 		getAuthorizationTTLHandler,
 		newGetAuthorizationTTLArgs,
 		newGetAuthorizationTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.updatePremium": kitex.NewMethodInfo(
+	"/user.RPCUser/user.updatePremium": kitex.NewMethodInfo(
 		updatePremiumHandler,
 		newUpdatePremiumArgs,
 		newUpdatePremiumResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user.getBotInfoV2": kitex.NewMethodInfo(
+	"/user.RPCUser/user.getBotInfoV2": kitex.NewMethodInfo(
 		getBotInfoV2Handler,
 		newGetBotInfoV2Args,
 		newGetBotInfoV2Result,
@@ -10494,7 +10494,7 @@ func (p *kClient) UserGetLastSeens(ctx context.Context, req *user.TLUserGetLastS
 
 	_result := new(user.VectorLastSeenData)
 
-	if err = p.c.Call(ctx, "user.getLastSeens", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getLastSeens", req, _result); err != nil {
 		return
 	}
 
@@ -10509,7 +10509,7 @@ func (p *kClient) UserUpdateLastSeen(ctx context.Context, req *user.TLUserUpdate
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateLastSeen", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateLastSeen", req, _result); err != nil {
 		return
 	}
 
@@ -10524,7 +10524,7 @@ func (p *kClient) UserGetLastSeen(ctx context.Context, req *user.TLUserGetLastSe
 
 	_result := new(user.LastSeenData)
 
-	if err = p.c.Call(ctx, "user.getLastSeen", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getLastSeen", req, _result); err != nil {
 		return
 	}
 
@@ -10539,7 +10539,7 @@ func (p *kClient) UserGetImmutableUser(ctx context.Context, req *user.TLUserGetI
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.getImmutableUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getImmutableUser", req, _result); err != nil {
 		return
 	}
 
@@ -10554,7 +10554,7 @@ func (p *kClient) UserGetMutableUsers(ctx context.Context, req *user.TLUserGetMu
 
 	_result := new(user.VectorImmutableUser)
 
-	if err = p.c.Call(ctx, "user.getMutableUsers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getMutableUsers", req, _result); err != nil {
 		return
 	}
 
@@ -10569,7 +10569,7 @@ func (p *kClient) UserGetImmutableUserByPhone(ctx context.Context, req *user.TLU
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.getImmutableUserByPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getImmutableUserByPhone", req, _result); err != nil {
 		return
 	}
 
@@ -10584,7 +10584,7 @@ func (p *kClient) UserGetImmutableUserByToken(ctx context.Context, req *user.TLU
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.getImmutableUserByToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getImmutableUserByToken", req, _result); err != nil {
 		return
 	}
 
@@ -10599,7 +10599,7 @@ func (p *kClient) UserSetAccountDaysTTL(ctx context.Context, req *user.TLUserSet
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setAccountDaysTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setAccountDaysTTL", req, _result); err != nil {
 		return
 	}
 
@@ -10614,7 +10614,7 @@ func (p *kClient) UserGetAccountDaysTTL(ctx context.Context, req *user.TLUserGet
 
 	_result := new(tg.AccountDaysTTL)
 
-	if err = p.c.Call(ctx, "user.getAccountDaysTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getAccountDaysTTL", req, _result); err != nil {
 		return
 	}
 
@@ -10629,7 +10629,7 @@ func (p *kClient) UserGetNotifySettings(ctx context.Context, req *user.TLUserGet
 
 	_result := new(tg.PeerNotifySettings)
 
-	if err = p.c.Call(ctx, "user.getNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10644,7 +10644,7 @@ func (p *kClient) UserGetNotifySettingsList(ctx context.Context, req *user.TLUse
 
 	_result := new(user.VectorPeerPeerNotifySettings)
 
-	if err = p.c.Call(ctx, "user.getNotifySettingsList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getNotifySettingsList", req, _result); err != nil {
 		return
 	}
 
@@ -10659,7 +10659,7 @@ func (p *kClient) UserSetNotifySettings(ctx context.Context, req *user.TLUserSet
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10674,7 +10674,7 @@ func (p *kClient) UserResetNotifySettings(ctx context.Context, req *user.TLUserR
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.resetNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.resetNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10689,7 +10689,7 @@ func (p *kClient) UserGetAllNotifySettings(ctx context.Context, req *user.TLUser
 
 	_result := new(user.VectorPeerPeerNotifySettings)
 
-	if err = p.c.Call(ctx, "user.getAllNotifySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getAllNotifySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10704,7 +10704,7 @@ func (p *kClient) UserGetGlobalPrivacySettings(ctx context.Context, req *user.TL
 
 	_result := new(tg.GlobalPrivacySettings)
 
-	if err = p.c.Call(ctx, "user.getGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10719,7 +10719,7 @@ func (p *kClient) UserSetGlobalPrivacySettings(ctx context.Context, req *user.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
 
@@ -10734,7 +10734,7 @@ func (p *kClient) UserGetPrivacy(ctx context.Context, req *user.TLUserGetPrivacy
 
 	_result := new(user.VectorPrivacyRule)
 
-	if err = p.c.Call(ctx, "user.getPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getPrivacy", req, _result); err != nil {
 		return
 	}
 
@@ -10749,7 +10749,7 @@ func (p *kClient) UserSetPrivacy(ctx context.Context, req *user.TLUserSetPrivacy
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setPrivacy", req, _result); err != nil {
 		return
 	}
 
@@ -10764,7 +10764,7 @@ func (p *kClient) UserCheckPrivacy(ctx context.Context, req *user.TLUserCheckPri
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.checkPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkPrivacy", req, _result); err != nil {
 		return
 	}
 
@@ -10779,7 +10779,7 @@ func (p *kClient) UserAddPeerSettings(ctx context.Context, req *user.TLUserAddPe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.addPeerSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.addPeerSettings", req, _result); err != nil {
 		return
 	}
 
@@ -10794,7 +10794,7 @@ func (p *kClient) UserGetPeerSettings(ctx context.Context, req *user.TLUserGetPe
 
 	_result := new(tg.PeerSettings)
 
-	if err = p.c.Call(ctx, "user.getPeerSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getPeerSettings", req, _result); err != nil {
 		return
 	}
 
@@ -10809,7 +10809,7 @@ func (p *kClient) UserDeletePeerSettings(ctx context.Context, req *user.TLUserDe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.deletePeerSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deletePeerSettings", req, _result); err != nil {
 		return
 	}
 
@@ -10824,7 +10824,7 @@ func (p *kClient) UserChangePhone(ctx context.Context, req *user.TLUserChangePho
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.changePhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.changePhone", req, _result); err != nil {
 		return
 	}
 
@@ -10839,7 +10839,7 @@ func (p *kClient) UserCreateNewUser(ctx context.Context, req *user.TLUserCreateN
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.createNewUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.createNewUser", req, _result); err != nil {
 		return
 	}
 
@@ -10854,7 +10854,7 @@ func (p *kClient) UserDeleteUser(ctx context.Context, req *user.TLUserDeleteUser
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.deleteUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteUser", req, _result); err != nil {
 		return
 	}
 
@@ -10869,7 +10869,7 @@ func (p *kClient) UserBlockPeer(ctx context.Context, req *user.TLUserBlockPeer) 
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.blockPeer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.blockPeer", req, _result); err != nil {
 		return
 	}
 
@@ -10884,7 +10884,7 @@ func (p *kClient) UserUnBlockPeer(ctx context.Context, req *user.TLUserUnBlockPe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.unBlockPeer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.unBlockPeer", req, _result); err != nil {
 		return
 	}
 
@@ -10899,7 +10899,7 @@ func (p *kClient) UserBlockedByUser(ctx context.Context, req *user.TLUserBlocked
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.blockedByUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.blockedByUser", req, _result); err != nil {
 		return
 	}
 
@@ -10914,7 +10914,7 @@ func (p *kClient) UserIsBlockedByUser(ctx context.Context, req *user.TLUserIsBlo
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.isBlockedByUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.isBlockedByUser", req, _result); err != nil {
 		return
 	}
 
@@ -10929,7 +10929,7 @@ func (p *kClient) UserCheckBlockUserList(ctx context.Context, req *user.TLUserCh
 
 	_result := new(user.VectorLong)
 
-	if err = p.c.Call(ctx, "user.checkBlockUserList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkBlockUserList", req, _result); err != nil {
 		return
 	}
 
@@ -10944,7 +10944,7 @@ func (p *kClient) UserGetBlockedList(ctx context.Context, req *user.TLUserGetBlo
 
 	_result := new(user.VectorPeerBlocked)
 
-	if err = p.c.Call(ctx, "user.getBlockedList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getBlockedList", req, _result); err != nil {
 		return
 	}
 
@@ -10959,7 +10959,7 @@ func (p *kClient) UserGetContactSignUpNotification(ctx context.Context, req *use
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.getContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getContactSignUpNotification", req, _result); err != nil {
 		return
 	}
 
@@ -10974,7 +10974,7 @@ func (p *kClient) UserSetContactSignUpNotification(ctx context.Context, req *use
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setContactSignUpNotification", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setContactSignUpNotification", req, _result); err != nil {
 		return
 	}
 
@@ -10989,7 +10989,7 @@ func (p *kClient) UserGetContentSettings(ctx context.Context, req *user.TLUserGe
 
 	_result := new(tg.AccountContentSettings)
 
-	if err = p.c.Call(ctx, "user.getContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getContentSettings", req, _result); err != nil {
 		return
 	}
 
@@ -11004,7 +11004,7 @@ func (p *kClient) UserSetContentSettings(ctx context.Context, req *user.TLUserSe
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setContentSettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setContentSettings", req, _result); err != nil {
 		return
 	}
 
@@ -11019,7 +11019,7 @@ func (p *kClient) UserDeleteContact(ctx context.Context, req *user.TLUserDeleteC
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.deleteContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteContact", req, _result); err != nil {
 		return
 	}
 
@@ -11034,7 +11034,7 @@ func (p *kClient) UserGetContactList(ctx context.Context, req *user.TLUserGetCon
 
 	_result := new(user.VectorContactData)
 
-	if err = p.c.Call(ctx, "user.getContactList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getContactList", req, _result); err != nil {
 		return
 	}
 
@@ -11049,7 +11049,7 @@ func (p *kClient) UserGetContactIdList(ctx context.Context, req *user.TLUserGetC
 
 	_result := new(user.VectorLong)
 
-	if err = p.c.Call(ctx, "user.getContactIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getContactIdList", req, _result); err != nil {
 		return
 	}
 
@@ -11064,7 +11064,7 @@ func (p *kClient) UserGetContact(ctx context.Context, req *user.TLUserGetContact
 
 	_result := new(tg.ContactData)
 
-	if err = p.c.Call(ctx, "user.getContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getContact", req, _result); err != nil {
 		return
 	}
 
@@ -11079,7 +11079,7 @@ func (p *kClient) UserAddContact(ctx context.Context, req *user.TLUserAddContact
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.addContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.addContact", req, _result); err != nil {
 		return
 	}
 
@@ -11094,7 +11094,7 @@ func (p *kClient) UserCheckContact(ctx context.Context, req *user.TLUserCheckCon
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.checkContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkContact", req, _result); err != nil {
 		return
 	}
 
@@ -11109,7 +11109,7 @@ func (p *kClient) UserGetImportersByPhone(ctx context.Context, req *user.TLUserG
 
 	_result := new(user.VectorInputContact)
 
-	if err = p.c.Call(ctx, "user.getImportersByPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getImportersByPhone", req, _result); err != nil {
 		return
 	}
 
@@ -11124,7 +11124,7 @@ func (p *kClient) UserDeleteImportersByPhone(ctx context.Context, req *user.TLUs
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.deleteImportersByPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteImportersByPhone", req, _result); err != nil {
 		return
 	}
 
@@ -11139,7 +11139,7 @@ func (p *kClient) UserImportContacts(ctx context.Context, req *user.TLUserImport
 
 	_result := new(user.UserImportedContacts)
 
-	if err = p.c.Call(ctx, "user.importContacts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.importContacts", req, _result); err != nil {
 		return
 	}
 
@@ -11154,7 +11154,7 @@ func (p *kClient) UserGetCountryCode(ctx context.Context, req *user.TLUserGetCou
 
 	_result := new(tg.String)
 
-	if err = p.c.Call(ctx, "user.getCountryCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getCountryCode", req, _result); err != nil {
 		return
 	}
 
@@ -11169,7 +11169,7 @@ func (p *kClient) UserUpdateAbout(ctx context.Context, req *user.TLUserUpdateAbo
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateAbout", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateAbout", req, _result); err != nil {
 		return
 	}
 
@@ -11184,7 +11184,7 @@ func (p *kClient) UserUpdateFirstAndLastName(ctx context.Context, req *user.TLUs
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateFirstAndLastName", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateFirstAndLastName", req, _result); err != nil {
 		return
 	}
 
@@ -11199,7 +11199,7 @@ func (p *kClient) UserUpdateVerified(ctx context.Context, req *user.TLUserUpdate
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateVerified", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateVerified", req, _result); err != nil {
 		return
 	}
 
@@ -11214,7 +11214,7 @@ func (p *kClient) UserUpdateUsername(ctx context.Context, req *user.TLUserUpdate
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateUsername", req, _result); err != nil {
 		return
 	}
 
@@ -11229,7 +11229,7 @@ func (p *kClient) UserUpdateProfilePhoto(ctx context.Context, req *user.TLUserUp
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "user.updateProfilePhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateProfilePhoto", req, _result); err != nil {
 		return
 	}
 
@@ -11244,7 +11244,7 @@ func (p *kClient) UserDeleteProfilePhotos(ctx context.Context, req *user.TLUserD
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "user.deleteProfilePhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.deleteProfilePhotos", req, _result); err != nil {
 		return
 	}
 
@@ -11259,7 +11259,7 @@ func (p *kClient) UserGetProfilePhotos(ctx context.Context, req *user.TLUserGetP
 
 	_result := new(user.VectorLong)
 
-	if err = p.c.Call(ctx, "user.getProfilePhotos", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getProfilePhotos", req, _result); err != nil {
 		return
 	}
 
@@ -11274,7 +11274,7 @@ func (p *kClient) UserSetBotCommands(ctx context.Context, req *user.TLUserSetBot
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setBotCommands", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setBotCommands", req, _result); err != nil {
 		return
 	}
 
@@ -11289,7 +11289,7 @@ func (p *kClient) UserIsBot(ctx context.Context, req *user.TLUserIsBot) (r *tg.B
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.isBot", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.isBot", req, _result); err != nil {
 		return
 	}
 
@@ -11304,7 +11304,7 @@ func (p *kClient) UserGetBotInfo(ctx context.Context, req *user.TLUserGetBotInfo
 
 	_result := new(tg.BotInfo)
 
-	if err = p.c.Call(ctx, "user.getBotInfo", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getBotInfo", req, _result); err != nil {
 		return
 	}
 
@@ -11319,7 +11319,7 @@ func (p *kClient) UserCheckBots(ctx context.Context, req *user.TLUserCheckBots) 
 
 	_result := new(user.VectorLong)
 
-	if err = p.c.Call(ctx, "user.checkBots", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.checkBots", req, _result); err != nil {
 		return
 	}
 
@@ -11334,7 +11334,7 @@ func (p *kClient) UserGetFullUser(ctx context.Context, req *user.TLUserGetFullUs
 
 	_result := new(tg.UsersUserFull)
 
-	if err = p.c.Call(ctx, "user.getFullUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getFullUser", req, _result); err != nil {
 		return
 	}
 
@@ -11349,7 +11349,7 @@ func (p *kClient) UserUpdateEmojiStatus(ctx context.Context, req *user.TLUserUpd
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateEmojiStatus", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateEmojiStatus", req, _result); err != nil {
 		return
 	}
 
@@ -11364,7 +11364,7 @@ func (p *kClient) UserGetUserDataById(ctx context.Context, req *user.TLUserGetUs
 
 	_result := new(tg.UserData)
 
-	if err = p.c.Call(ctx, "user.getUserDataById", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getUserDataById", req, _result); err != nil {
 		return
 	}
 
@@ -11379,7 +11379,7 @@ func (p *kClient) UserGetUserDataListByIdList(ctx context.Context, req *user.TLU
 
 	_result := new(user.VectorUserData)
 
-	if err = p.c.Call(ctx, "user.getUserDataListByIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getUserDataListByIdList", req, _result); err != nil {
 		return
 	}
 
@@ -11394,7 +11394,7 @@ func (p *kClient) UserGetUserDataByToken(ctx context.Context, req *user.TLUserGe
 
 	_result := new(tg.UserData)
 
-	if err = p.c.Call(ctx, "user.getUserDataByToken", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getUserDataByToken", req, _result); err != nil {
 		return
 	}
 
@@ -11409,7 +11409,7 @@ func (p *kClient) UserSearch(ctx context.Context, req *user.TLUserSearch) (r *us
 
 	_result := new(user.UsersFound)
 
-	if err = p.c.Call(ctx, "user.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.search", req, _result); err != nil {
 		return
 	}
 
@@ -11424,7 +11424,7 @@ func (p *kClient) UserUpdateBotData(ctx context.Context, req *user.TLUserUpdateB
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateBotData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateBotData", req, _result); err != nil {
 		return
 	}
 
@@ -11439,7 +11439,7 @@ func (p *kClient) UserGetImmutableUserV2(ctx context.Context, req *user.TLUserGe
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.getImmutableUserV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getImmutableUserV2", req, _result); err != nil {
 		return
 	}
 
@@ -11454,7 +11454,7 @@ func (p *kClient) UserGetMutableUsersV2(ctx context.Context, req *user.TLUserGet
 
 	_result := new(tg.MutableUsers)
 
-	if err = p.c.Call(ctx, "user.getMutableUsersV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getMutableUsersV2", req, _result); err != nil {
 		return
 	}
 
@@ -11469,7 +11469,7 @@ func (p *kClient) UserCreateNewTestUser(ctx context.Context, req *user.TLUserCre
 
 	_result := new(tg.ImmutableUser)
 
-	if err = p.c.Call(ctx, "user.createNewTestUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.createNewTestUser", req, _result); err != nil {
 		return
 	}
 
@@ -11484,7 +11484,7 @@ func (p *kClient) UserEditCloseFriends(ctx context.Context, req *user.TLUserEdit
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.editCloseFriends", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.editCloseFriends", req, _result); err != nil {
 		return
 	}
 
@@ -11499,7 +11499,7 @@ func (p *kClient) UserSetStoriesMaxId(ctx context.Context, req *user.TLUserSetSt
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setStoriesMaxId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setStoriesMaxId", req, _result); err != nil {
 		return
 	}
 
@@ -11514,7 +11514,7 @@ func (p *kClient) UserSetColor(ctx context.Context, req *user.TLUserSetColor) (r
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setColor", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setColor", req, _result); err != nil {
 		return
 	}
 
@@ -11529,7 +11529,7 @@ func (p *kClient) UserUpdateBirthday(ctx context.Context, req *user.TLUserUpdate
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updateBirthday", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updateBirthday", req, _result); err != nil {
 		return
 	}
 
@@ -11544,7 +11544,7 @@ func (p *kClient) UserGetBirthdays(ctx context.Context, req *user.TLUserGetBirth
 
 	_result := new(user.VectorContactBirthday)
 
-	if err = p.c.Call(ctx, "user.getBirthdays", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getBirthdays", req, _result); err != nil {
 		return
 	}
 
@@ -11559,7 +11559,7 @@ func (p *kClient) UserSetStoriesHidden(ctx context.Context, req *user.TLUserSetS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setStoriesHidden", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setStoriesHidden", req, _result); err != nil {
 		return
 	}
 
@@ -11574,7 +11574,7 @@ func (p *kClient) UserUpdatePersonalChannel(ctx context.Context, req *user.TLUse
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updatePersonalChannel", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updatePersonalChannel", req, _result); err != nil {
 		return
 	}
 
@@ -11589,7 +11589,7 @@ func (p *kClient) UserGetUserIdByPhone(ctx context.Context, req *user.TLUserGetU
 
 	_result := new(tg.Int64)
 
-	if err = p.c.Call(ctx, "user.getUserIdByPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getUserIdByPhone", req, _result); err != nil {
 		return
 	}
 
@@ -11604,7 +11604,7 @@ func (p *kClient) UserSetAuthorizationTTL(ctx context.Context, req *user.TLUserS
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.setAuthorizationTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.setAuthorizationTTL", req, _result); err != nil {
 		return
 	}
 
@@ -11619,7 +11619,7 @@ func (p *kClient) UserGetAuthorizationTTL(ctx context.Context, req *user.TLUserG
 
 	_result := new(tg.AccountDaysTTL)
 
-	if err = p.c.Call(ctx, "user.getAuthorizationTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getAuthorizationTTL", req, _result); err != nil {
 		return
 	}
 
@@ -11634,7 +11634,7 @@ func (p *kClient) UserUpdatePremium(ctx context.Context, req *user.TLUserUpdateP
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "user.updatePremium", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.updatePremium", req, _result); err != nil {
 		return
 	}
 
@@ -11649,7 +11649,7 @@ func (p *kClient) UserGetBotInfoV2(ctx context.Context, req *user.TLUserGetBotIn
 
 	_result := new(user.BotInfoData)
 
-	if err = p.c.Call(ctx, "user.getBotInfoV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getBotInfoV2", req, _result); err != nil {
 		return
 	}
 

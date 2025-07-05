@@ -27,14 +27,14 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"help.getTermsOfServiceUpdate": kitex.NewMethodInfo(
+	"/tg.RPCTos/help.getTermsOfServiceUpdate": kitex.NewMethodInfo(
 		helpGetTermsOfServiceUpdateHandler,
 		newHelpGetTermsOfServiceUpdateArgs,
 		newHelpGetTermsOfServiceUpdateResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"help.acceptTermsOfService": kitex.NewMethodInfo(
+	"/tg.RPCTos/help.acceptTermsOfService": kitex.NewMethodInfo(
 		helpAcceptTermsOfServiceHandler,
 		newHelpAcceptTermsOfServiceArgs,
 		newHelpAcceptTermsOfServiceResult,
@@ -382,7 +382,7 @@ func (p *kClient) HelpGetTermsOfServiceUpdate(ctx context.Context, req *tg.TLHel
 	// var _result HelpGetTermsOfServiceUpdateResult
 
 	_result := new(tg.HelpTermsOfServiceUpdate)
-	if err = p.c.Call(ctx, "help.getTermsOfServiceUpdate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCTos/help.getTermsOfServiceUpdate", req, _result); err != nil {
 		return
 	}
 
@@ -396,7 +396,7 @@ func (p *kClient) HelpAcceptTermsOfService(ctx context.Context, req *tg.TLHelpAc
 	// var _result HelpAcceptTermsOfServiceResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "help.acceptTermsOfService", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCTos/help.acceptTermsOfService", req, _result); err != nil {
 		return
 	}
 

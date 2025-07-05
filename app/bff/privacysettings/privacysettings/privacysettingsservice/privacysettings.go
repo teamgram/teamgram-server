@@ -27,56 +27,56 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.getPrivacy": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/account.getPrivacy": kitex.NewMethodInfo(
 		accountGetPrivacyHandler,
 		newAccountGetPrivacyArgs,
 		newAccountGetPrivacyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.setPrivacy": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/account.setPrivacy": kitex.NewMethodInfo(
 		accountSetPrivacyHandler,
 		newAccountSetPrivacyArgs,
 		newAccountSetPrivacyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getGlobalPrivacySettings": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/account.getGlobalPrivacySettings": kitex.NewMethodInfo(
 		accountGetGlobalPrivacySettingsHandler,
 		newAccountGetGlobalPrivacySettingsArgs,
 		newAccountGetGlobalPrivacySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.setGlobalPrivacySettings": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/account.setGlobalPrivacySettings": kitex.NewMethodInfo(
 		accountSetGlobalPrivacySettingsHandler,
 		newAccountSetGlobalPrivacySettingsArgs,
 		newAccountSetGlobalPrivacySettingsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.getRequirementsToContact": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/users.getRequirementsToContact": kitex.NewMethodInfo(
 		usersGetRequirementsToContactHandler,
 		newUsersGetRequirementsToContactArgs,
 		newUsersGetRequirementsToContactResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.setDefaultHistoryTTL": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/messages.setDefaultHistoryTTL": kitex.NewMethodInfo(
 		messagesSetDefaultHistoryTTLHandler,
 		newMessagesSetDefaultHistoryTTLArgs,
 		newMessagesSetDefaultHistoryTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getDefaultHistoryTTL": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/messages.getDefaultHistoryTTL": kitex.NewMethodInfo(
 		messagesGetDefaultHistoryTTLHandler,
 		newMessagesGetDefaultHistoryTTLArgs,
 		newMessagesGetDefaultHistoryTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"users.getIsPremiumRequiredToContact": kitex.NewMethodInfo(
+	"/tg.RPCPrivacySettings/users.getIsPremiumRequiredToContact": kitex.NewMethodInfo(
 		usersGetIsPremiumRequiredToContactHandler,
 		newUsersGetIsPremiumRequiredToContactArgs,
 		newUsersGetIsPremiumRequiredToContactResult,
@@ -1180,7 +1180,7 @@ func (p *kClient) AccountGetPrivacy(ctx context.Context, req *tg.TLAccountGetPri
 	// var _result AccountGetPrivacyResult
 
 	_result := new(tg.AccountPrivacyRules)
-	if err = p.c.Call(ctx, "account.getPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getPrivacy", req, _result); err != nil {
 		return
 	}
 
@@ -1194,7 +1194,7 @@ func (p *kClient) AccountSetPrivacy(ctx context.Context, req *tg.TLAccountSetPri
 	// var _result AccountSetPrivacyResult
 
 	_result := new(tg.AccountPrivacyRules)
-	if err = p.c.Call(ctx, "account.setPrivacy", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setPrivacy", req, _result); err != nil {
 		return
 	}
 
@@ -1208,7 +1208,7 @@ func (p *kClient) AccountGetGlobalPrivacySettings(ctx context.Context, req *tg.T
 	// var _result AccountGetGlobalPrivacySettingsResult
 
 	_result := new(tg.GlobalPrivacySettings)
-	if err = p.c.Call(ctx, "account.getGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.getGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
 
@@ -1222,7 +1222,7 @@ func (p *kClient) AccountSetGlobalPrivacySettings(ctx context.Context, req *tg.T
 	// var _result AccountSetGlobalPrivacySettingsResult
 
 	_result := new(tg.GlobalPrivacySettings)
-	if err = p.c.Call(ctx, "account.setGlobalPrivacySettings", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/account.setGlobalPrivacySettings", req, _result); err != nil {
 		return
 	}
 
@@ -1236,7 +1236,7 @@ func (p *kClient) UsersGetRequirementsToContact(ctx context.Context, req *tg.TLU
 	// var _result UsersGetRequirementsToContactResult
 
 	_result := new(tg.VectorRequirementToContact)
-	if err = p.c.Call(ctx, "users.getRequirementsToContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/users.getRequirementsToContact", req, _result); err != nil {
 		return
 	}
 
@@ -1250,7 +1250,7 @@ func (p *kClient) MessagesSetDefaultHistoryTTL(ctx context.Context, req *tg.TLMe
 	// var _result MessagesSetDefaultHistoryTTLResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.setDefaultHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.setDefaultHistoryTTL", req, _result); err != nil {
 		return
 	}
 
@@ -1264,7 +1264,7 @@ func (p *kClient) MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMe
 	// var _result MessagesGetDefaultHistoryTTLResult
 
 	_result := new(tg.DefaultHistoryTTL)
-	if err = p.c.Call(ctx, "messages.getDefaultHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/messages.getDefaultHistoryTTL", req, _result); err != nil {
 		return
 	}
 
@@ -1278,7 +1278,7 @@ func (p *kClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, req *t
 	// var _result UsersGetIsPremiumRequiredToContactResult
 
 	_result := new(tg.VectorBool)
-	if err = p.c.Call(ctx, "users.getIsPremiumRequiredToContact", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCPrivacySettings/users.getIsPremiumRequiredToContact", req, _result); err != nil {
 		return
 	}
 

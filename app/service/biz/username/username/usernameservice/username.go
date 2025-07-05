@@ -30,84 +30,84 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"username.getAccountUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.getAccountUsername": kitex.NewMethodInfo(
 		getAccountUsernameHandler,
 		newGetAccountUsernameArgs,
 		newGetAccountUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.checkAccountUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.checkAccountUsername": kitex.NewMethodInfo(
 		checkAccountUsernameHandler,
 		newCheckAccountUsernameArgs,
 		newCheckAccountUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.getChannelUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.getChannelUsername": kitex.NewMethodInfo(
 		getChannelUsernameHandler,
 		newGetChannelUsernameArgs,
 		newGetChannelUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.checkChannelUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.checkChannelUsername": kitex.NewMethodInfo(
 		checkChannelUsernameHandler,
 		newCheckChannelUsernameArgs,
 		newCheckChannelUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.updateUsernameByPeer": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.updateUsernameByPeer": kitex.NewMethodInfo(
 		updateUsernameByPeerHandler,
 		newUpdateUsernameByPeerArgs,
 		newUpdateUsernameByPeerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.checkUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.checkUsername": kitex.NewMethodInfo(
 		checkUsernameHandler,
 		newCheckUsernameArgs,
 		newCheckUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.updateUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.updateUsername": kitex.NewMethodInfo(
 		updateUsernameHandler,
 		newUpdateUsernameArgs,
 		newUpdateUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.deleteUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.deleteUsername": kitex.NewMethodInfo(
 		deleteUsernameHandler,
 		newDeleteUsernameArgs,
 		newDeleteUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.resolveUsername": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.resolveUsername": kitex.NewMethodInfo(
 		resolveUsernameHandler,
 		newResolveUsernameArgs,
 		newResolveUsernameResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.getListByUsernameList": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.getListByUsernameList": kitex.NewMethodInfo(
 		getListByUsernameListHandler,
 		newGetListByUsernameListArgs,
 		newGetListByUsernameListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.deleteUsernameByPeer": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.deleteUsernameByPeer": kitex.NewMethodInfo(
 		deleteUsernameByPeerHandler,
 		newDeleteUsernameByPeerArgs,
 		newDeleteUsernameByPeerResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"username.search": kitex.NewMethodInfo(
+	"/username.RPCUsername/username.search": kitex.NewMethodInfo(
 		searchHandler,
 		newSearchArgs,
 		newSearchResult,
@@ -1716,7 +1716,7 @@ func (p *kClient) UsernameGetAccountUsername(ctx context.Context, req *username.
 
 	_result := new(username.UsernameData)
 
-	if err = p.c.Call(ctx, "username.getAccountUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.getAccountUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1731,7 +1731,7 @@ func (p *kClient) UsernameCheckAccountUsername(ctx context.Context, req *usernam
 
 	_result := new(username.UsernameExist)
 
-	if err = p.c.Call(ctx, "username.checkAccountUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.checkAccountUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1746,7 +1746,7 @@ func (p *kClient) UsernameGetChannelUsername(ctx context.Context, req *username.
 
 	_result := new(username.UsernameData)
 
-	if err = p.c.Call(ctx, "username.getChannelUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.getChannelUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1761,7 +1761,7 @@ func (p *kClient) UsernameCheckChannelUsername(ctx context.Context, req *usernam
 
 	_result := new(username.UsernameExist)
 
-	if err = p.c.Call(ctx, "username.checkChannelUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.checkChannelUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1776,7 +1776,7 @@ func (p *kClient) UsernameUpdateUsernameByPeer(ctx context.Context, req *usernam
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "username.updateUsernameByPeer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.updateUsernameByPeer", req, _result); err != nil {
 		return
 	}
 
@@ -1791,7 +1791,7 @@ func (p *kClient) UsernameCheckUsername(ctx context.Context, req *username.TLUse
 
 	_result := new(username.UsernameExist)
 
-	if err = p.c.Call(ctx, "username.checkUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.checkUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1806,7 +1806,7 @@ func (p *kClient) UsernameUpdateUsername(ctx context.Context, req *username.TLUs
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "username.updateUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.updateUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1821,7 +1821,7 @@ func (p *kClient) UsernameDeleteUsername(ctx context.Context, req *username.TLUs
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "username.deleteUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.deleteUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1836,7 +1836,7 @@ func (p *kClient) UsernameResolveUsername(ctx context.Context, req *username.TLU
 
 	_result := new(tg.Peer)
 
-	if err = p.c.Call(ctx, "username.resolveUsername", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.resolveUsername", req, _result); err != nil {
 		return
 	}
 
@@ -1851,7 +1851,7 @@ func (p *kClient) UsernameGetListByUsernameList(ctx context.Context, req *userna
 
 	_result := new(username.VectorUsernameData)
 
-	if err = p.c.Call(ctx, "username.getListByUsernameList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.getListByUsernameList", req, _result); err != nil {
 		return
 	}
 
@@ -1866,7 +1866,7 @@ func (p *kClient) UsernameDeleteUsernameByPeer(ctx context.Context, req *usernam
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "username.deleteUsernameByPeer", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.deleteUsernameByPeer", req, _result); err != nil {
 		return
 	}
 
@@ -1881,7 +1881,7 @@ func (p *kClient) UsernameSearch(ctx context.Context, req *username.TLUsernameSe
 
 	_result := new(username.VectorUsernameData)
 
-	if err = p.c.Call(ctx, "username.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/username.RPCUsername/username.search", req, _result); err != nil {
 		return
 	}
 

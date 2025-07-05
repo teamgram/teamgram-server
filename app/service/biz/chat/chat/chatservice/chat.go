@@ -30,238 +30,238 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"chat.getMutableChat": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getMutableChat": kitex.NewMethodInfo(
 		getMutableChatHandler,
 		newGetMutableChatArgs,
 		newGetMutableChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getChatListByIdList": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getChatListByIdList": kitex.NewMethodInfo(
 		getChatListByIdListHandler,
 		newGetChatListByIdListArgs,
 		newGetChatListByIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getChatBySelfId": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getChatBySelfId": kitex.NewMethodInfo(
 		getChatBySelfIdHandler,
 		newGetChatBySelfIdArgs,
 		newGetChatBySelfIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.createChat2": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.createChat2": kitex.NewMethodInfo(
 		createChat2Handler,
 		newCreateChat2Args,
 		newCreateChat2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.deleteChat": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.deleteChat": kitex.NewMethodInfo(
 		deleteChatHandler,
 		newDeleteChatArgs,
 		newDeleteChatResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.deleteChatUser": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.deleteChatUser": kitex.NewMethodInfo(
 		deleteChatUserHandler,
 		newDeleteChatUserArgs,
 		newDeleteChatUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editChatTitle": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editChatTitle": kitex.NewMethodInfo(
 		editChatTitleHandler,
 		newEditChatTitleArgs,
 		newEditChatTitleResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editChatAbout": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editChatAbout": kitex.NewMethodInfo(
 		editChatAboutHandler,
 		newEditChatAboutArgs,
 		newEditChatAboutResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editChatPhoto": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editChatPhoto": kitex.NewMethodInfo(
 		editChatPhotoHandler,
 		newEditChatPhotoArgs,
 		newEditChatPhotoResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editChatAdmin": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editChatAdmin": kitex.NewMethodInfo(
 		editChatAdminHandler,
 		newEditChatAdminArgs,
 		newEditChatAdminResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editChatDefaultBannedRights": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editChatDefaultBannedRights": kitex.NewMethodInfo(
 		editChatDefaultBannedRightsHandler,
 		newEditChatDefaultBannedRightsArgs,
 		newEditChatDefaultBannedRightsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.addChatUser": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.addChatUser": kitex.NewMethodInfo(
 		addChatUserHandler,
 		newAddChatUserArgs,
 		newAddChatUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getMutableChatByLink": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getMutableChatByLink": kitex.NewMethodInfo(
 		getMutableChatByLinkHandler,
 		newGetMutableChatByLinkArgs,
 		newGetMutableChatByLinkResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.toggleNoForwards": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.toggleNoForwards": kitex.NewMethodInfo(
 		toggleNoForwardsHandler,
 		newToggleNoForwardsArgs,
 		newToggleNoForwardsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.migratedToChannel": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.migratedToChannel": kitex.NewMethodInfo(
 		migratedToChannelHandler,
 		newMigratedToChannelArgs,
 		newMigratedToChannelResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getChatParticipantIdList": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getChatParticipantIdList": kitex.NewMethodInfo(
 		getChatParticipantIdListHandler,
 		newGetChatParticipantIdListArgs,
 		newGetChatParticipantIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getUsersChatIdList": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getUsersChatIdList": kitex.NewMethodInfo(
 		getUsersChatIdListHandler,
 		newGetUsersChatIdListArgs,
 		newGetUsersChatIdListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getMyChatList": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getMyChatList": kitex.NewMethodInfo(
 		getMyChatListHandler,
 		newGetMyChatListArgs,
 		newGetMyChatListResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.exportChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.exportChatInvite": kitex.NewMethodInfo(
 		exportChatInviteHandler,
 		newExportChatInviteArgs,
 		newExportChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getAdminsWithInvites": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getAdminsWithInvites": kitex.NewMethodInfo(
 		getAdminsWithInvitesHandler,
 		newGetAdminsWithInvitesArgs,
 		newGetAdminsWithInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getExportedChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getExportedChatInvite": kitex.NewMethodInfo(
 		getExportedChatInviteHandler,
 		newGetExportedChatInviteArgs,
 		newGetExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getExportedChatInvites": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getExportedChatInvites": kitex.NewMethodInfo(
 		getExportedChatInvitesHandler,
 		newGetExportedChatInvitesArgs,
 		newGetExportedChatInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.checkChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.checkChatInvite": kitex.NewMethodInfo(
 		checkChatInviteHandler,
 		newCheckChatInviteArgs,
 		newCheckChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.importChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.importChatInvite": kitex.NewMethodInfo(
 		importChatInviteHandler,
 		newImportChatInviteArgs,
 		newImportChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getChatInviteImporters": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getChatInviteImporters": kitex.NewMethodInfo(
 		getChatInviteImportersHandler,
 		newGetChatInviteImportersArgs,
 		newGetChatInviteImportersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.deleteExportedChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.deleteExportedChatInvite": kitex.NewMethodInfo(
 		deleteExportedChatInviteHandler,
 		newDeleteExportedChatInviteArgs,
 		newDeleteExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.deleteRevokedExportedChatInvites": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.deleteRevokedExportedChatInvites": kitex.NewMethodInfo(
 		deleteRevokedExportedChatInvitesHandler,
 		newDeleteRevokedExportedChatInvitesArgs,
 		newDeleteRevokedExportedChatInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.editExportedChatInvite": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.editExportedChatInvite": kitex.NewMethodInfo(
 		editExportedChatInviteHandler,
 		newEditExportedChatInviteArgs,
 		newEditExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.setChatAvailableReactions": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.setChatAvailableReactions": kitex.NewMethodInfo(
 		setChatAvailableReactionsHandler,
 		newSetChatAvailableReactionsArgs,
 		newSetChatAvailableReactionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.setHistoryTTL": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.setHistoryTTL": kitex.NewMethodInfo(
 		setHistoryTTLHandler,
 		newSetHistoryTTLArgs,
 		newSetHistoryTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.search": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.search": kitex.NewMethodInfo(
 		searchHandler,
 		newSearchArgs,
 		newSearchResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.getRecentChatInviteRequesters": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.getRecentChatInviteRequesters": kitex.NewMethodInfo(
 		getRecentChatInviteRequestersHandler,
 		newGetRecentChatInviteRequestersArgs,
 		newGetRecentChatInviteRequestersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.hideChatJoinRequests": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.hideChatJoinRequests": kitex.NewMethodInfo(
 		hideChatJoinRequestsHandler,
 		newHideChatJoinRequestsArgs,
 		newHideChatJoinRequestsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"chat.importChatInvite2": kitex.NewMethodInfo(
+	"/chat.RPCChat/chat.importChatInvite2": kitex.NewMethodInfo(
 		importChatInvite2Handler,
 		newImportChatInvite2Args,
 		newImportChatInvite2Result,
@@ -4642,7 +4642,7 @@ func (p *kClient) ChatGetMutableChat(ctx context.Context, req *chat.TLChatGetMut
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.getMutableChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getMutableChat", req, _result); err != nil {
 		return
 	}
 
@@ -4657,7 +4657,7 @@ func (p *kClient) ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatG
 
 	_result := new(chat.VectorMutableChat)
 
-	if err = p.c.Call(ctx, "chat.getChatListByIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatListByIdList", req, _result); err != nil {
 		return
 	}
 
@@ -4672,7 +4672,7 @@ func (p *kClient) ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetCh
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.getChatBySelfId", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatBySelfId", req, _result); err != nil {
 		return
 	}
 
@@ -4687,7 +4687,7 @@ func (p *kClient) ChatCreateChat2(ctx context.Context, req *chat.TLChatCreateCha
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.createChat2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.createChat2", req, _result); err != nil {
 		return
 	}
 
@@ -4702,7 +4702,7 @@ func (p *kClient) ChatDeleteChat(ctx context.Context, req *chat.TLChatDeleteChat
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.deleteChat", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.deleteChat", req, _result); err != nil {
 		return
 	}
 
@@ -4717,7 +4717,7 @@ func (p *kClient) ChatDeleteChatUser(ctx context.Context, req *chat.TLChatDelete
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.deleteChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.deleteChatUser", req, _result); err != nil {
 		return
 	}
 
@@ -4732,7 +4732,7 @@ func (p *kClient) ChatEditChatTitle(ctx context.Context, req *chat.TLChatEditCha
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.editChatTitle", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editChatTitle", req, _result); err != nil {
 		return
 	}
 
@@ -4747,7 +4747,7 @@ func (p *kClient) ChatEditChatAbout(ctx context.Context, req *chat.TLChatEditCha
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.editChatAbout", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editChatAbout", req, _result); err != nil {
 		return
 	}
 
@@ -4762,7 +4762,7 @@ func (p *kClient) ChatEditChatPhoto(ctx context.Context, req *chat.TLChatEditCha
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.editChatPhoto", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editChatPhoto", req, _result); err != nil {
 		return
 	}
 
@@ -4777,7 +4777,7 @@ func (p *kClient) ChatEditChatAdmin(ctx context.Context, req *chat.TLChatEditCha
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.editChatAdmin", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editChatAdmin", req, _result); err != nil {
 		return
 	}
 
@@ -4792,7 +4792,7 @@ func (p *kClient) ChatEditChatDefaultBannedRights(ctx context.Context, req *chat
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.editChatDefaultBannedRights", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editChatDefaultBannedRights", req, _result); err != nil {
 		return
 	}
 
@@ -4807,7 +4807,7 @@ func (p *kClient) ChatAddChatUser(ctx context.Context, req *chat.TLChatAddChatUs
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.addChatUser", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.addChatUser", req, _result); err != nil {
 		return
 	}
 
@@ -4822,7 +4822,7 @@ func (p *kClient) ChatGetMutableChatByLink(ctx context.Context, req *chat.TLChat
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.getMutableChatByLink", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getMutableChatByLink", req, _result); err != nil {
 		return
 	}
 
@@ -4837,7 +4837,7 @@ func (p *kClient) ChatToggleNoForwards(ctx context.Context, req *chat.TLChatTogg
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.toggleNoForwards", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.toggleNoForwards", req, _result); err != nil {
 		return
 	}
 
@@ -4852,7 +4852,7 @@ func (p *kClient) ChatMigratedToChannel(ctx context.Context, req *chat.TLChatMig
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "chat.migratedToChannel", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.migratedToChannel", req, _result); err != nil {
 		return
 	}
 
@@ -4867,7 +4867,7 @@ func (p *kClient) ChatGetChatParticipantIdList(ctx context.Context, req *chat.TL
 
 	_result := new(chat.VectorLong)
 
-	if err = p.c.Call(ctx, "chat.getChatParticipantIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatParticipantIdList", req, _result); err != nil {
 		return
 	}
 
@@ -4882,7 +4882,7 @@ func (p *kClient) ChatGetUsersChatIdList(ctx context.Context, req *chat.TLChatGe
 
 	_result := new(chat.VectorUserChatIdList)
 
-	if err = p.c.Call(ctx, "chat.getUsersChatIdList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getUsersChatIdList", req, _result); err != nil {
 		return
 	}
 
@@ -4897,7 +4897,7 @@ func (p *kClient) ChatGetMyChatList(ctx context.Context, req *chat.TLChatGetMyCh
 
 	_result := new(chat.VectorMutableChat)
 
-	if err = p.c.Call(ctx, "chat.getMyChatList", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getMyChatList", req, _result); err != nil {
 		return
 	}
 
@@ -4912,7 +4912,7 @@ func (p *kClient) ChatExportChatInvite(ctx context.Context, req *chat.TLChatExpo
 
 	_result := new(tg.ExportedChatInvite)
 
-	if err = p.c.Call(ctx, "chat.exportChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.exportChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -4927,7 +4927,7 @@ func (p *kClient) ChatGetAdminsWithInvites(ctx context.Context, req *chat.TLChat
 
 	_result := new(chat.VectorChatAdminWithInvites)
 
-	if err = p.c.Call(ctx, "chat.getAdminsWithInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getAdminsWithInvites", req, _result); err != nil {
 		return
 	}
 
@@ -4942,7 +4942,7 @@ func (p *kClient) ChatGetExportedChatInvite(ctx context.Context, req *chat.TLCha
 
 	_result := new(tg.ExportedChatInvite)
 
-	if err = p.c.Call(ctx, "chat.getExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -4957,7 +4957,7 @@ func (p *kClient) ChatGetExportedChatInvites(ctx context.Context, req *chat.TLCh
 
 	_result := new(chat.VectorExportedChatInvite)
 
-	if err = p.c.Call(ctx, "chat.getExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getExportedChatInvites", req, _result); err != nil {
 		return
 	}
 
@@ -4972,7 +4972,7 @@ func (p *kClient) ChatCheckChatInvite(ctx context.Context, req *chat.TLChatCheck
 
 	_result := new(chat.ChatInviteExt)
 
-	if err = p.c.Call(ctx, "chat.checkChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.checkChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -4987,7 +4987,7 @@ func (p *kClient) ChatImportChatInvite(ctx context.Context, req *chat.TLChatImpo
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.importChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.importChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -5002,7 +5002,7 @@ func (p *kClient) ChatGetChatInviteImporters(ctx context.Context, req *chat.TLCh
 
 	_result := new(chat.VectorChatInviteImporter)
 
-	if err = p.c.Call(ctx, "chat.getChatInviteImporters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatInviteImporters", req, _result); err != nil {
 		return
 	}
 
@@ -5017,7 +5017,7 @@ func (p *kClient) ChatDeleteExportedChatInvite(ctx context.Context, req *chat.TL
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "chat.deleteExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.deleteExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -5032,7 +5032,7 @@ func (p *kClient) ChatDeleteRevokedExportedChatInvites(ctx context.Context, req 
 
 	_result := new(tg.Bool)
 
-	if err = p.c.Call(ctx, "chat.deleteRevokedExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.deleteRevokedExportedChatInvites", req, _result); err != nil {
 		return
 	}
 
@@ -5047,7 +5047,7 @@ func (p *kClient) ChatEditExportedChatInvite(ctx context.Context, req *chat.TLCh
 
 	_result := new(chat.VectorExportedChatInvite)
 
-	if err = p.c.Call(ctx, "chat.editExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.editExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -5062,7 +5062,7 @@ func (p *kClient) ChatSetChatAvailableReactions(ctx context.Context, req *chat.T
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.setChatAvailableReactions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.setChatAvailableReactions", req, _result); err != nil {
 		return
 	}
 
@@ -5077,7 +5077,7 @@ func (p *kClient) ChatSetHistoryTTL(ctx context.Context, req *chat.TLChatSetHist
 
 	_result := new(tg.MutableChat)
 
-	if err = p.c.Call(ctx, "chat.setHistoryTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.setHistoryTTL", req, _result); err != nil {
 		return
 	}
 
@@ -5092,7 +5092,7 @@ func (p *kClient) ChatSearch(ctx context.Context, req *chat.TLChatSearch) (r *ch
 
 	_result := new(chat.VectorMutableChat)
 
-	if err = p.c.Call(ctx, "chat.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.search", req, _result); err != nil {
 		return
 	}
 
@@ -5107,7 +5107,7 @@ func (p *kClient) ChatGetRecentChatInviteRequesters(ctx context.Context, req *ch
 
 	_result := new(chat.RecentChatInviteRequesters)
 
-	if err = p.c.Call(ctx, "chat.getRecentChatInviteRequesters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getRecentChatInviteRequesters", req, _result); err != nil {
 		return
 	}
 
@@ -5122,7 +5122,7 @@ func (p *kClient) ChatHideChatJoinRequests(ctx context.Context, req *chat.TLChat
 
 	_result := new(chat.RecentChatInviteRequesters)
 
-	if err = p.c.Call(ctx, "chat.hideChatJoinRequests", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.hideChatJoinRequests", req, _result); err != nil {
 		return
 	}
 
@@ -5137,7 +5137,7 @@ func (p *kClient) ChatImportChatInvite2(ctx context.Context, req *chat.TLChatImp
 
 	_result := new(chat.ChatInviteImported)
 
-	if err = p.c.Call(ctx, "chat.importChatInvite2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.importChatInvite2", req, _result); err != nil {
 		return
 	}
 

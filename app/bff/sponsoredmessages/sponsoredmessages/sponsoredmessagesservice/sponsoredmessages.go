@@ -27,49 +27,49 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.toggleSponsoredMessages": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/account.toggleSponsoredMessages": kitex.NewMethodInfo(
 		accountToggleSponsoredMessagesHandler,
 		newAccountToggleSponsoredMessagesArgs,
 		newAccountToggleSponsoredMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"contacts.getSponsoredPeers": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/contacts.getSponsoredPeers": kitex.NewMethodInfo(
 		contactsGetSponsoredPeersHandler,
 		newContactsGetSponsoredPeersArgs,
 		newContactsGetSponsoredPeersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.viewSponsoredMessage": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/messages.viewSponsoredMessage": kitex.NewMethodInfo(
 		messagesViewSponsoredMessageHandler,
 		newMessagesViewSponsoredMessageArgs,
 		newMessagesViewSponsoredMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.clickSponsoredMessage": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/messages.clickSponsoredMessage": kitex.NewMethodInfo(
 		messagesClickSponsoredMessageHandler,
 		newMessagesClickSponsoredMessageArgs,
 		newMessagesClickSponsoredMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.reportSponsoredMessage": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/messages.reportSponsoredMessage": kitex.NewMethodInfo(
 		messagesReportSponsoredMessageHandler,
 		newMessagesReportSponsoredMessageArgs,
 		newMessagesReportSponsoredMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getSponsoredMessages": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/messages.getSponsoredMessages": kitex.NewMethodInfo(
 		messagesGetSponsoredMessagesHandler,
 		newMessagesGetSponsoredMessagesArgs,
 		newMessagesGetSponsoredMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.restrictSponsoredMessages": kitex.NewMethodInfo(
+	"/tg.RPCSponsoredMessages/channels.restrictSponsoredMessages": kitex.NewMethodInfo(
 		channelsRestrictSponsoredMessagesHandler,
 		newChannelsRestrictSponsoredMessagesArgs,
 		newChannelsRestrictSponsoredMessagesResult,
@@ -1047,7 +1047,7 @@ func (p *kClient) AccountToggleSponsoredMessages(ctx context.Context, req *tg.TL
 	// var _result AccountToggleSponsoredMessagesResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.toggleSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/account.toggleSponsoredMessages", req, _result); err != nil {
 		return
 	}
 
@@ -1061,7 +1061,7 @@ func (p *kClient) ContactsGetSponsoredPeers(ctx context.Context, req *tg.TLConta
 	// var _result ContactsGetSponsoredPeersResult
 
 	_result := new(tg.ContactsSponsoredPeers)
-	if err = p.c.Call(ctx, "contacts.getSponsoredPeers", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/contacts.getSponsoredPeers", req, _result); err != nil {
 		return
 	}
 
@@ -1075,7 +1075,7 @@ func (p *kClient) MessagesViewSponsoredMessage(ctx context.Context, req *tg.TLMe
 	// var _result MessagesViewSponsoredMessageResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.viewSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.viewSponsoredMessage", req, _result); err != nil {
 		return
 	}
 
@@ -1089,7 +1089,7 @@ func (p *kClient) MessagesClickSponsoredMessage(ctx context.Context, req *tg.TLM
 	// var _result MessagesClickSponsoredMessageResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.clickSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.clickSponsoredMessage", req, _result); err != nil {
 		return
 	}
 
@@ -1103,7 +1103,7 @@ func (p *kClient) MessagesReportSponsoredMessage(ctx context.Context, req *tg.TL
 	// var _result MessagesReportSponsoredMessageResult
 
 	_result := new(tg.ChannelsSponsoredMessageReportResult)
-	if err = p.c.Call(ctx, "messages.reportSponsoredMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.reportSponsoredMessage", req, _result); err != nil {
 		return
 	}
 
@@ -1117,7 +1117,7 @@ func (p *kClient) MessagesGetSponsoredMessages(ctx context.Context, req *tg.TLMe
 	// var _result MessagesGetSponsoredMessagesResult
 
 	_result := new(tg.MessagesSponsoredMessages)
-	if err = p.c.Call(ctx, "messages.getSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/messages.getSponsoredMessages", req, _result); err != nil {
 		return
 	}
 
@@ -1131,7 +1131,7 @@ func (p *kClient) ChannelsRestrictSponsoredMessages(ctx context.Context, req *tg
 	// var _result ChannelsRestrictSponsoredMessagesResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "channels.restrictSponsoredMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCSponsoredMessages/channels.restrictSponsoredMessages", req, _result); err != nil {
 		return
 	}
 

@@ -27,217 +27,217 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.getMessages": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getMessages": kitex.NewMethodInfo(
 		messagesGetMessagesHandler,
 		newMessagesGetMessagesArgs,
 		newMessagesGetMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getHistory": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getHistory": kitex.NewMethodInfo(
 		messagesGetHistoryHandler,
 		newMessagesGetHistoryArgs,
 		newMessagesGetHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.search": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.search": kitex.NewMethodInfo(
 		messagesSearchHandler,
 		newMessagesSearchArgs,
 		newMessagesSearchResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.readHistory": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.readHistory": kitex.NewMethodInfo(
 		messagesReadHistoryHandler,
 		newMessagesReadHistoryArgs,
 		newMessagesReadHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteHistory": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.deleteHistory": kitex.NewMethodInfo(
 		messagesDeleteHistoryHandler,
 		newMessagesDeleteHistoryArgs,
 		newMessagesDeleteHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteMessages": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.deleteMessages": kitex.NewMethodInfo(
 		messagesDeleteMessagesHandler,
 		newMessagesDeleteMessagesArgs,
 		newMessagesDeleteMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.receivedMessages": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.receivedMessages": kitex.NewMethodInfo(
 		messagesReceivedMessagesHandler,
 		newMessagesReceivedMessagesArgs,
 		newMessagesReceivedMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.sendMessage": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.sendMessage": kitex.NewMethodInfo(
 		messagesSendMessageHandler,
 		newMessagesSendMessageArgs,
 		newMessagesSendMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.sendMedia": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.sendMedia": kitex.NewMethodInfo(
 		messagesSendMediaHandler,
 		newMessagesSendMediaArgs,
 		newMessagesSendMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.forwardMessages": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.forwardMessages": kitex.NewMethodInfo(
 		messagesForwardMessagesHandler,
 		newMessagesForwardMessagesArgs,
 		newMessagesForwardMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.readMessageContents": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.readMessageContents": kitex.NewMethodInfo(
 		messagesReadMessageContentsHandler,
 		newMessagesReadMessageContentsArgs,
 		newMessagesReadMessageContentsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getMessagesViews": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getMessagesViews": kitex.NewMethodInfo(
 		messagesGetMessagesViewsHandler,
 		newMessagesGetMessagesViewsArgs,
 		newMessagesGetMessagesViewsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.searchGlobal": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.searchGlobal": kitex.NewMethodInfo(
 		messagesSearchGlobalHandler,
 		newMessagesSearchGlobalArgs,
 		newMessagesSearchGlobalResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getMessageEditData": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getMessageEditData": kitex.NewMethodInfo(
 		messagesGetMessageEditDataHandler,
 		newMessagesGetMessageEditDataArgs,
 		newMessagesGetMessageEditDataResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editMessage": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.editMessage": kitex.NewMethodInfo(
 		messagesEditMessageHandler,
 		newMessagesEditMessageArgs,
 		newMessagesEditMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getUnreadMentions": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getUnreadMentions": kitex.NewMethodInfo(
 		messagesGetUnreadMentionsHandler,
 		newMessagesGetUnreadMentionsArgs,
 		newMessagesGetUnreadMentionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.readMentions": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.readMentions": kitex.NewMethodInfo(
 		messagesReadMentionsHandler,
 		newMessagesReadMentionsArgs,
 		newMessagesReadMentionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getRecentLocations": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getRecentLocations": kitex.NewMethodInfo(
 		messagesGetRecentLocationsHandler,
 		newMessagesGetRecentLocationsArgs,
 		newMessagesGetRecentLocationsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.sendMultiMedia": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.sendMultiMedia": kitex.NewMethodInfo(
 		messagesSendMultiMediaHandler,
 		newMessagesSendMultiMediaArgs,
 		newMessagesSendMultiMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.updatePinnedMessage": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.updatePinnedMessage": kitex.NewMethodInfo(
 		messagesUpdatePinnedMessageHandler,
 		newMessagesUpdatePinnedMessageArgs,
 		newMessagesUpdatePinnedMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getSearchCounters": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getSearchCounters": kitex.NewMethodInfo(
 		messagesGetSearchCountersHandler,
 		newMessagesGetSearchCountersArgs,
 		newMessagesGetSearchCountersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.unpinAllMessages": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.unpinAllMessages": kitex.NewMethodInfo(
 		messagesUnpinAllMessagesHandler,
 		newMessagesUnpinAllMessagesArgs,
 		newMessagesUnpinAllMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getSearchResultsCalendar": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getSearchResultsCalendar": kitex.NewMethodInfo(
 		messagesGetSearchResultsCalendarHandler,
 		newMessagesGetSearchResultsCalendarArgs,
 		newMessagesGetSearchResultsCalendarResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getSearchResultsPositions": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getSearchResultsPositions": kitex.NewMethodInfo(
 		messagesGetSearchResultsPositionsHandler,
 		newMessagesGetSearchResultsPositionsArgs,
 		newMessagesGetSearchResultsPositionsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.toggleNoForwards": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.toggleNoForwards": kitex.NewMethodInfo(
 		messagesToggleNoForwardsHandler,
 		newMessagesToggleNoForwardsArgs,
 		newMessagesToggleNoForwardsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.saveDefaultSendAs": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.saveDefaultSendAs": kitex.NewMethodInfo(
 		messagesSaveDefaultSendAsHandler,
 		newMessagesSaveDefaultSendAsArgs,
 		newMessagesSaveDefaultSendAsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.searchSentMedia": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.searchSentMedia": kitex.NewMethodInfo(
 		messagesSearchSentMediaHandler,
 		newMessagesSearchSentMediaArgs,
 		newMessagesSearchSentMediaResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getOutboxReadDate": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.getOutboxReadDate": kitex.NewMethodInfo(
 		messagesGetOutboxReadDateHandler,
 		newMessagesGetOutboxReadDateArgs,
 		newMessagesGetOutboxReadDateResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.reportMessagesDelivery": kitex.NewMethodInfo(
+	"/tg.RPCMessages/messages.reportMessagesDelivery": kitex.NewMethodInfo(
 		messagesReportMessagesDeliveryHandler,
 		newMessagesReportMessagesDeliveryArgs,
 		newMessagesReportMessagesDeliveryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.getSendAs": kitex.NewMethodInfo(
+	"/tg.RPCMessages/channels.getSendAs": kitex.NewMethodInfo(
 		channelsGetSendAsHandler,
 		newChannelsGetSendAsArgs,
 		newChannelsGetSendAsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.searchPosts": kitex.NewMethodInfo(
+	"/tg.RPCMessages/channels.searchPosts": kitex.NewMethodInfo(
 		channelsSearchPostsHandler,
 		newChannelsSearchPostsArgs,
 		newChannelsSearchPostsResult,
@@ -4239,7 +4239,7 @@ func (p *kClient) MessagesGetMessages(ctx context.Context, req *tg.TLMessagesGet
 	// var _result MessagesGetMessagesResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.getMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getMessages", req, _result); err != nil {
 		return
 	}
 
@@ -4253,7 +4253,7 @@ func (p *kClient) MessagesGetHistory(ctx context.Context, req *tg.TLMessagesGetH
 	// var _result MessagesGetHistoryResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.getHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getHistory", req, _result); err != nil {
 		return
 	}
 
@@ -4267,7 +4267,7 @@ func (p *kClient) MessagesSearch(ctx context.Context, req *tg.TLMessagesSearch) 
 	// var _result MessagesSearchResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.search", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.search", req, _result); err != nil {
 		return
 	}
 
@@ -4281,7 +4281,7 @@ func (p *kClient) MessagesReadHistory(ctx context.Context, req *tg.TLMessagesRea
 	// var _result MessagesReadHistoryResult
 
 	_result := new(tg.MessagesAffectedMessages)
-	if err = p.c.Call(ctx, "messages.readHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.readHistory", req, _result); err != nil {
 		return
 	}
 
@@ -4295,7 +4295,7 @@ func (p *kClient) MessagesDeleteHistory(ctx context.Context, req *tg.TLMessagesD
 	// var _result MessagesDeleteHistoryResult
 
 	_result := new(tg.MessagesAffectedHistory)
-	if err = p.c.Call(ctx, "messages.deleteHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.deleteHistory", req, _result); err != nil {
 		return
 	}
 
@@ -4309,7 +4309,7 @@ func (p *kClient) MessagesDeleteMessages(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesDeleteMessagesResult
 
 	_result := new(tg.MessagesAffectedMessages)
-	if err = p.c.Call(ctx, "messages.deleteMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.deleteMessages", req, _result); err != nil {
 		return
 	}
 
@@ -4323,7 +4323,7 @@ func (p *kClient) MessagesReceivedMessages(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesReceivedMessagesResult
 
 	_result := new(tg.VectorReceivedNotifyMessage)
-	if err = p.c.Call(ctx, "messages.receivedMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.receivedMessages", req, _result); err != nil {
 		return
 	}
 
@@ -4337,7 +4337,7 @@ func (p *kClient) MessagesSendMessage(ctx context.Context, req *tg.TLMessagesSen
 	// var _result MessagesSendMessageResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.sendMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.sendMessage", req, _result); err != nil {
 		return
 	}
 
@@ -4351,7 +4351,7 @@ func (p *kClient) MessagesSendMedia(ctx context.Context, req *tg.TLMessagesSendM
 	// var _result MessagesSendMediaResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.sendMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.sendMedia", req, _result); err != nil {
 		return
 	}
 
@@ -4365,7 +4365,7 @@ func (p *kClient) MessagesForwardMessages(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesForwardMessagesResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.forwardMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.forwardMessages", req, _result); err != nil {
 		return
 	}
 
@@ -4379,7 +4379,7 @@ func (p *kClient) MessagesReadMessageContents(ctx context.Context, req *tg.TLMes
 	// var _result MessagesReadMessageContentsResult
 
 	_result := new(tg.MessagesAffectedMessages)
-	if err = p.c.Call(ctx, "messages.readMessageContents", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.readMessageContents", req, _result); err != nil {
 		return
 	}
 
@@ -4393,7 +4393,7 @@ func (p *kClient) MessagesGetMessagesViews(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesGetMessagesViewsResult
 
 	_result := new(tg.MessagesMessageViews)
-	if err = p.c.Call(ctx, "messages.getMessagesViews", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getMessagesViews", req, _result); err != nil {
 		return
 	}
 
@@ -4407,7 +4407,7 @@ func (p *kClient) MessagesSearchGlobal(ctx context.Context, req *tg.TLMessagesSe
 	// var _result MessagesSearchGlobalResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.searchGlobal", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.searchGlobal", req, _result); err != nil {
 		return
 	}
 
@@ -4421,7 +4421,7 @@ func (p *kClient) MessagesGetMessageEditData(ctx context.Context, req *tg.TLMess
 	// var _result MessagesGetMessageEditDataResult
 
 	_result := new(tg.MessagesMessageEditData)
-	if err = p.c.Call(ctx, "messages.getMessageEditData", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getMessageEditData", req, _result); err != nil {
 		return
 	}
 
@@ -4435,7 +4435,7 @@ func (p *kClient) MessagesEditMessage(ctx context.Context, req *tg.TLMessagesEdi
 	// var _result MessagesEditMessageResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.editMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.editMessage", req, _result); err != nil {
 		return
 	}
 
@@ -4449,7 +4449,7 @@ func (p *kClient) MessagesGetUnreadMentions(ctx context.Context, req *tg.TLMessa
 	// var _result MessagesGetUnreadMentionsResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.getUnreadMentions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getUnreadMentions", req, _result); err != nil {
 		return
 	}
 
@@ -4463,7 +4463,7 @@ func (p *kClient) MessagesReadMentions(ctx context.Context, req *tg.TLMessagesRe
 	// var _result MessagesReadMentionsResult
 
 	_result := new(tg.MessagesAffectedHistory)
-	if err = p.c.Call(ctx, "messages.readMentions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.readMentions", req, _result); err != nil {
 		return
 	}
 
@@ -4477,7 +4477,7 @@ func (p *kClient) MessagesGetRecentLocations(ctx context.Context, req *tg.TLMess
 	// var _result MessagesGetRecentLocationsResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.getRecentLocations", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getRecentLocations", req, _result); err != nil {
 		return
 	}
 
@@ -4491,7 +4491,7 @@ func (p *kClient) MessagesSendMultiMedia(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesSendMultiMediaResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.sendMultiMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.sendMultiMedia", req, _result); err != nil {
 		return
 	}
 
@@ -4505,7 +4505,7 @@ func (p *kClient) MessagesUpdatePinnedMessage(ctx context.Context, req *tg.TLMes
 	// var _result MessagesUpdatePinnedMessageResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.updatePinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.updatePinnedMessage", req, _result); err != nil {
 		return
 	}
 
@@ -4519,7 +4519,7 @@ func (p *kClient) MessagesGetSearchCounters(ctx context.Context, req *tg.TLMessa
 	// var _result MessagesGetSearchCountersResult
 
 	_result := new(tg.VectorMessagesSearchCounter)
-	if err = p.c.Call(ctx, "messages.getSearchCounters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getSearchCounters", req, _result); err != nil {
 		return
 	}
 
@@ -4533,7 +4533,7 @@ func (p *kClient) MessagesUnpinAllMessages(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesUnpinAllMessagesResult
 
 	_result := new(tg.MessagesAffectedHistory)
-	if err = p.c.Call(ctx, "messages.unpinAllMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.unpinAllMessages", req, _result); err != nil {
 		return
 	}
 
@@ -4547,7 +4547,7 @@ func (p *kClient) MessagesGetSearchResultsCalendar(ctx context.Context, req *tg.
 	// var _result MessagesGetSearchResultsCalendarResult
 
 	_result := new(tg.MessagesSearchResultsCalendar)
-	if err = p.c.Call(ctx, "messages.getSearchResultsCalendar", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getSearchResultsCalendar", req, _result); err != nil {
 		return
 	}
 
@@ -4561,7 +4561,7 @@ func (p *kClient) MessagesGetSearchResultsPositions(ctx context.Context, req *tg
 	// var _result MessagesGetSearchResultsPositionsResult
 
 	_result := new(tg.MessagesSearchResultsPositions)
-	if err = p.c.Call(ctx, "messages.getSearchResultsPositions", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getSearchResultsPositions", req, _result); err != nil {
 		return
 	}
 
@@ -4575,7 +4575,7 @@ func (p *kClient) MessagesToggleNoForwards(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesToggleNoForwardsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.toggleNoForwards", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.toggleNoForwards", req, _result); err != nil {
 		return
 	}
 
@@ -4589,7 +4589,7 @@ func (p *kClient) MessagesSaveDefaultSendAs(ctx context.Context, req *tg.TLMessa
 	// var _result MessagesSaveDefaultSendAsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.saveDefaultSendAs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.saveDefaultSendAs", req, _result); err != nil {
 		return
 	}
 
@@ -4603,7 +4603,7 @@ func (p *kClient) MessagesSearchSentMedia(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesSearchSentMediaResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "messages.searchSentMedia", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.searchSentMedia", req, _result); err != nil {
 		return
 	}
 
@@ -4617,7 +4617,7 @@ func (p *kClient) MessagesGetOutboxReadDate(ctx context.Context, req *tg.TLMessa
 	// var _result MessagesGetOutboxReadDateResult
 
 	_result := new(tg.OutboxReadDate)
-	if err = p.c.Call(ctx, "messages.getOutboxReadDate", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.getOutboxReadDate", req, _result); err != nil {
 		return
 	}
 
@@ -4631,7 +4631,7 @@ func (p *kClient) MessagesReportMessagesDelivery(ctx context.Context, req *tg.TL
 	// var _result MessagesReportMessagesDeliveryResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.reportMessagesDelivery", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.reportMessagesDelivery", req, _result); err != nil {
 		return
 	}
 
@@ -4645,7 +4645,7 @@ func (p *kClient) ChannelsGetSendAs(ctx context.Context, req *tg.TLChannelsGetSe
 	// var _result ChannelsGetSendAsResult
 
 	_result := new(tg.ChannelsSendAsPeers)
-	if err = p.c.Call(ctx, "channels.getSendAs", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/channels.getSendAs", req, _result); err != nil {
 		return
 	}
 
@@ -4659,7 +4659,7 @@ func (p *kClient) ChannelsSearchPosts(ctx context.Context, req *tg.TLChannelsSea
 	// var _result ChannelsSearchPostsResult
 
 	_result := new(tg.MessagesMessages)
-	if err = p.c.Call(ctx, "channels.searchPosts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMessages/channels.searchPosts", req, _result); err != nil {
 		return
 	}
 

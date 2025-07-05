@@ -27,56 +27,56 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"account.deleteAccount": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.deleteAccount": kitex.NewMethodInfo(
 		accountDeleteAccountHandler,
 		newAccountDeleteAccountArgs,
 		newAccountDeleteAccountResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.getAccountTTL": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.getAccountTTL": kitex.NewMethodInfo(
 		accountGetAccountTTLHandler,
 		newAccountGetAccountTTLArgs,
 		newAccountGetAccountTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.setAccountTTL": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.setAccountTTL": kitex.NewMethodInfo(
 		accountSetAccountTTLHandler,
 		newAccountSetAccountTTLArgs,
 		newAccountSetAccountTTLResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.sendChangePhoneCode": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.sendChangePhoneCode": kitex.NewMethodInfo(
 		accountSendChangePhoneCodeHandler,
 		newAccountSendChangePhoneCodeArgs,
 		newAccountSendChangePhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.changePhone": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.changePhone": kitex.NewMethodInfo(
 		accountChangePhoneHandler,
 		newAccountChangePhoneArgs,
 		newAccountChangePhoneResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.resetAuthorization": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.resetAuthorization": kitex.NewMethodInfo(
 		accountResetAuthorizationHandler,
 		newAccountResetAuthorizationArgs,
 		newAccountResetAuthorizationResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.sendConfirmPhoneCode": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.sendConfirmPhoneCode": kitex.NewMethodInfo(
 		accountSendConfirmPhoneCodeHandler,
 		newAccountSendConfirmPhoneCodeArgs,
 		newAccountSendConfirmPhoneCodeResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"account.confirmPhone": kitex.NewMethodInfo(
+	"/tg.RPCAccount/account.confirmPhone": kitex.NewMethodInfo(
 		accountConfirmPhoneHandler,
 		newAccountConfirmPhoneArgs,
 		newAccountConfirmPhoneResult,
@@ -1180,7 +1180,7 @@ func (p *kClient) AccountDeleteAccount(ctx context.Context, req *tg.TLAccountDel
 	// var _result AccountDeleteAccountResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.deleteAccount", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.deleteAccount", req, _result); err != nil {
 		return
 	}
 
@@ -1194,7 +1194,7 @@ func (p *kClient) AccountGetAccountTTL(ctx context.Context, req *tg.TLAccountGet
 	// var _result AccountGetAccountTTLResult
 
 	_result := new(tg.AccountDaysTTL)
-	if err = p.c.Call(ctx, "account.getAccountTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.getAccountTTL", req, _result); err != nil {
 		return
 	}
 
@@ -1208,7 +1208,7 @@ func (p *kClient) AccountSetAccountTTL(ctx context.Context, req *tg.TLAccountSet
 	// var _result AccountSetAccountTTLResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.setAccountTTL", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.setAccountTTL", req, _result); err != nil {
 		return
 	}
 
@@ -1222,7 +1222,7 @@ func (p *kClient) AccountSendChangePhoneCode(ctx context.Context, req *tg.TLAcco
 	// var _result AccountSendChangePhoneCodeResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "account.sendChangePhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendChangePhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -1236,7 +1236,7 @@ func (p *kClient) AccountChangePhone(ctx context.Context, req *tg.TLAccountChang
 	// var _result AccountChangePhoneResult
 
 	_result := new(tg.User)
-	if err = p.c.Call(ctx, "account.changePhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.changePhone", req, _result); err != nil {
 		return
 	}
 
@@ -1250,7 +1250,7 @@ func (p *kClient) AccountResetAuthorization(ctx context.Context, req *tg.TLAccou
 	// var _result AccountResetAuthorizationResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.resetAuthorization", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.resetAuthorization", req, _result); err != nil {
 		return
 	}
 
@@ -1264,7 +1264,7 @@ func (p *kClient) AccountSendConfirmPhoneCode(ctx context.Context, req *tg.TLAcc
 	// var _result AccountSendConfirmPhoneCodeResult
 
 	_result := new(tg.AuthSentCode)
-	if err = p.c.Call(ctx, "account.sendConfirmPhoneCode", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.sendConfirmPhoneCode", req, _result); err != nil {
 		return
 	}
 
@@ -1278,7 +1278,7 @@ func (p *kClient) AccountConfirmPhone(ctx context.Context, req *tg.TLAccountConf
 	// var _result AccountConfirmPhoneResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "account.confirmPhone", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCAccount/account.confirmPhone", req, _result); err != nil {
 		return
 	}
 

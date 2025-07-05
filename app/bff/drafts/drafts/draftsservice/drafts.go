@@ -27,21 +27,21 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.saveDraft": kitex.NewMethodInfo(
+	"/tg.RPCDrafts/messages.saveDraft": kitex.NewMethodInfo(
 		messagesSaveDraftHandler,
 		newMessagesSaveDraftArgs,
 		newMessagesSaveDraftResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getAllDrafts": kitex.NewMethodInfo(
+	"/tg.RPCDrafts/messages.getAllDrafts": kitex.NewMethodInfo(
 		messagesGetAllDraftsHandler,
 		newMessagesGetAllDraftsArgs,
 		newMessagesGetAllDraftsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.clearAllDrafts": kitex.NewMethodInfo(
+	"/tg.RPCDrafts/messages.clearAllDrafts": kitex.NewMethodInfo(
 		messagesClearAllDraftsHandler,
 		newMessagesClearAllDraftsArgs,
 		newMessagesClearAllDraftsResult,
@@ -515,7 +515,7 @@ func (p *kClient) MessagesSaveDraft(ctx context.Context, req *tg.TLMessagesSaveD
 	// var _result MessagesSaveDraftResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.saveDraft", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.saveDraft", req, _result); err != nil {
 		return
 	}
 
@@ -529,7 +529,7 @@ func (p *kClient) MessagesGetAllDrafts(ctx context.Context, req *tg.TLMessagesGe
 	// var _result MessagesGetAllDraftsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.getAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.getAllDrafts", req, _result); err != nil {
 		return
 	}
 
@@ -543,7 +543,7 @@ func (p *kClient) MessagesClearAllDrafts(ctx context.Context, req *tg.TLMessages
 	// var _result MessagesClearAllDraftsResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.clearAllDrafts", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCDrafts/messages.clearAllDrafts", req, _result); err != nil {
 		return
 	}
 

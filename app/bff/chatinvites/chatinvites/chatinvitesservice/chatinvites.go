@@ -27,98 +27,98 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"messages.exportChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.exportChatInvite": kitex.NewMethodInfo(
 		messagesExportChatInviteHandler,
 		newMessagesExportChatInviteArgs,
 		newMessagesExportChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.checkChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.checkChatInvite": kitex.NewMethodInfo(
 		messagesCheckChatInviteHandler,
 		newMessagesCheckChatInviteArgs,
 		newMessagesCheckChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.importChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.importChatInvite": kitex.NewMethodInfo(
 		messagesImportChatInviteHandler,
 		newMessagesImportChatInviteArgs,
 		newMessagesImportChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getExportedChatInvites": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.getExportedChatInvites": kitex.NewMethodInfo(
 		messagesGetExportedChatInvitesHandler,
 		newMessagesGetExportedChatInvitesArgs,
 		newMessagesGetExportedChatInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getExportedChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.getExportedChatInvite": kitex.NewMethodInfo(
 		messagesGetExportedChatInviteHandler,
 		newMessagesGetExportedChatInviteArgs,
 		newMessagesGetExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.editExportedChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.editExportedChatInvite": kitex.NewMethodInfo(
 		messagesEditExportedChatInviteHandler,
 		newMessagesEditExportedChatInviteArgs,
 		newMessagesEditExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteRevokedExportedChatInvites": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.deleteRevokedExportedChatInvites": kitex.NewMethodInfo(
 		messagesDeleteRevokedExportedChatInvitesHandler,
 		newMessagesDeleteRevokedExportedChatInvitesArgs,
 		newMessagesDeleteRevokedExportedChatInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.deleteExportedChatInvite": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.deleteExportedChatInvite": kitex.NewMethodInfo(
 		messagesDeleteExportedChatInviteHandler,
 		newMessagesDeleteExportedChatInviteArgs,
 		newMessagesDeleteExportedChatInviteResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getAdminsWithInvites": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.getAdminsWithInvites": kitex.NewMethodInfo(
 		messagesGetAdminsWithInvitesHandler,
 		newMessagesGetAdminsWithInvitesArgs,
 		newMessagesGetAdminsWithInvitesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.getChatInviteImporters": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.getChatInviteImporters": kitex.NewMethodInfo(
 		messagesGetChatInviteImportersHandler,
 		newMessagesGetChatInviteImportersArgs,
 		newMessagesGetChatInviteImportersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.hideChatJoinRequest": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.hideChatJoinRequest": kitex.NewMethodInfo(
 		messagesHideChatJoinRequestHandler,
 		newMessagesHideChatJoinRequestArgs,
 		newMessagesHideChatJoinRequestResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"messages.hideAllChatJoinRequests": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/messages.hideAllChatJoinRequests": kitex.NewMethodInfo(
 		messagesHideAllChatJoinRequestsHandler,
 		newMessagesHideAllChatJoinRequestsArgs,
 		newMessagesHideAllChatJoinRequestsResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.toggleJoinToSend": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/channels.toggleJoinToSend": kitex.NewMethodInfo(
 		channelsToggleJoinToSendHandler,
 		newChannelsToggleJoinToSendArgs,
 		newChannelsToggleJoinToSendResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"channels.toggleJoinRequest": kitex.NewMethodInfo(
+	"/tg.RPCChatInvites/channels.toggleJoinRequest": kitex.NewMethodInfo(
 		channelsToggleJoinRequestHandler,
 		newChannelsToggleJoinRequestArgs,
 		newChannelsToggleJoinRequestResult,
@@ -1978,7 +1978,7 @@ func (p *kClient) MessagesExportChatInvite(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesExportChatInviteResult
 
 	_result := new(tg.ExportedChatInvite)
-	if err = p.c.Call(ctx, "messages.exportChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.exportChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -1992,7 +1992,7 @@ func (p *kClient) MessagesCheckChatInvite(ctx context.Context, req *tg.TLMessage
 	// var _result MessagesCheckChatInviteResult
 
 	_result := new(tg.ChatInvite)
-	if err = p.c.Call(ctx, "messages.checkChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.checkChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -2006,7 +2006,7 @@ func (p *kClient) MessagesImportChatInvite(ctx context.Context, req *tg.TLMessag
 	// var _result MessagesImportChatInviteResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.importChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.importChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -2020,7 +2020,7 @@ func (p *kClient) MessagesGetExportedChatInvites(ctx context.Context, req *tg.TL
 	// var _result MessagesGetExportedChatInvitesResult
 
 	_result := new(tg.MessagesExportedChatInvites)
-	if err = p.c.Call(ctx, "messages.getExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvites", req, _result); err != nil {
 		return
 	}
 
@@ -2034,7 +2034,7 @@ func (p *kClient) MessagesGetExportedChatInvite(ctx context.Context, req *tg.TLM
 	// var _result MessagesGetExportedChatInviteResult
 
 	_result := new(tg.MessagesExportedChatInvite)
-	if err = p.c.Call(ctx, "messages.getExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -2048,7 +2048,7 @@ func (p *kClient) MessagesEditExportedChatInvite(ctx context.Context, req *tg.TL
 	// var _result MessagesEditExportedChatInviteResult
 
 	_result := new(tg.MessagesExportedChatInvite)
-	if err = p.c.Call(ctx, "messages.editExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.editExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -2062,7 +2062,7 @@ func (p *kClient) MessagesDeleteRevokedExportedChatInvites(ctx context.Context, 
 	// var _result MessagesDeleteRevokedExportedChatInvitesResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.deleteRevokedExportedChatInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteRevokedExportedChatInvites", req, _result); err != nil {
 		return
 	}
 
@@ -2076,7 +2076,7 @@ func (p *kClient) MessagesDeleteExportedChatInvite(ctx context.Context, req *tg.
 	// var _result MessagesDeleteExportedChatInviteResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "messages.deleteExportedChatInvite", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.deleteExportedChatInvite", req, _result); err != nil {
 		return
 	}
 
@@ -2090,7 +2090,7 @@ func (p *kClient) MessagesGetAdminsWithInvites(ctx context.Context, req *tg.TLMe
 	// var _result MessagesGetAdminsWithInvitesResult
 
 	_result := new(tg.MessagesChatAdminsWithInvites)
-	if err = p.c.Call(ctx, "messages.getAdminsWithInvites", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getAdminsWithInvites", req, _result); err != nil {
 		return
 	}
 
@@ -2104,7 +2104,7 @@ func (p *kClient) MessagesGetChatInviteImporters(ctx context.Context, req *tg.TL
 	// var _result MessagesGetChatInviteImportersResult
 
 	_result := new(tg.MessagesChatInviteImporters)
-	if err = p.c.Call(ctx, "messages.getChatInviteImporters", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.getChatInviteImporters", req, _result); err != nil {
 		return
 	}
 
@@ -2118,7 +2118,7 @@ func (p *kClient) MessagesHideChatJoinRequest(ctx context.Context, req *tg.TLMes
 	// var _result MessagesHideChatJoinRequestResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.hideChatJoinRequest", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideChatJoinRequest", req, _result); err != nil {
 		return
 	}
 
@@ -2132,7 +2132,7 @@ func (p *kClient) MessagesHideAllChatJoinRequests(ctx context.Context, req *tg.T
 	// var _result MessagesHideAllChatJoinRequestsResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "messages.hideAllChatJoinRequests", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/messages.hideAllChatJoinRequests", req, _result); err != nil {
 		return
 	}
 
@@ -2146,7 +2146,7 @@ func (p *kClient) ChannelsToggleJoinToSend(ctx context.Context, req *tg.TLChanne
 	// var _result ChannelsToggleJoinToSendResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "channels.toggleJoinToSend", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinToSend", req, _result); err != nil {
 		return
 	}
 
@@ -2160,7 +2160,7 @@ func (p *kClient) ChannelsToggleJoinRequest(ctx context.Context, req *tg.TLChann
 	// var _result ChannelsToggleJoinRequestResult
 
 	_result := new(tg.Updates)
-	if err = p.c.Call(ctx, "channels.toggleJoinRequest", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCChatInvites/channels.toggleJoinRequest", req, _result); err != nil {
 		return
 	}
 

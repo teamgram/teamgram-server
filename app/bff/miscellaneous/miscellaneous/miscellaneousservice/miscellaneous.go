@@ -27,7 +27,7 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"help.saveAppLog": kitex.NewMethodInfo(
+	"/tg.RPCMiscellaneous/help.saveAppLog": kitex.NewMethodInfo(
 		helpSaveAppLogHandler,
 		newHelpSaveAppLogArgs,
 		newHelpSaveAppLogResult,
@@ -249,7 +249,7 @@ func (p *kClient) HelpSaveAppLog(ctx context.Context, req *tg.TLHelpSaveAppLog) 
 	// var _result HelpSaveAppLogResult
 
 	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "help.saveAppLog", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/tg.RPCMiscellaneous/help.saveAppLog", req, _result); err != nil {
 		return
 	}
 

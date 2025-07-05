@@ -30,112 +30,112 @@ var _ *tg.Bool
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"inbox.editUserMessageToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.editUserMessageToInbox": kitex.NewMethodInfo(
 		editUserMessageToInboxHandler,
 		newEditUserMessageToInboxArgs,
 		newEditUserMessageToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.editChatMessageToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.editChatMessageToInbox": kitex.NewMethodInfo(
 		editChatMessageToInboxHandler,
 		newEditChatMessageToInboxArgs,
 		newEditChatMessageToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.deleteMessagesToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.deleteMessagesToInbox": kitex.NewMethodInfo(
 		deleteMessagesToInboxHandler,
 		newDeleteMessagesToInboxArgs,
 		newDeleteMessagesToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.deleteUserHistoryToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.deleteUserHistoryToInbox": kitex.NewMethodInfo(
 		deleteUserHistoryToInboxHandler,
 		newDeleteUserHistoryToInboxArgs,
 		newDeleteUserHistoryToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.deleteChatHistoryToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.deleteChatHistoryToInbox": kitex.NewMethodInfo(
 		deleteChatHistoryToInboxHandler,
 		newDeleteChatHistoryToInboxArgs,
 		newDeleteChatHistoryToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.readUserMediaUnreadToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.readUserMediaUnreadToInbox": kitex.NewMethodInfo(
 		readUserMediaUnreadToInboxHandler,
 		newReadUserMediaUnreadToInboxArgs,
 		newReadUserMediaUnreadToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.readChatMediaUnreadToInbox": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.readChatMediaUnreadToInbox": kitex.NewMethodInfo(
 		readChatMediaUnreadToInboxHandler,
 		newReadChatMediaUnreadToInboxArgs,
 		newReadChatMediaUnreadToInboxResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.updateHistoryReaded": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.updateHistoryReaded": kitex.NewMethodInfo(
 		updateHistoryReadedHandler,
 		newUpdateHistoryReadedArgs,
 		newUpdateHistoryReadedResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.updatePinnedMessage": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.updatePinnedMessage": kitex.NewMethodInfo(
 		updatePinnedMessageHandler,
 		newUpdatePinnedMessageArgs,
 		newUpdatePinnedMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.unpinAllMessages": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.unpinAllMessages": kitex.NewMethodInfo(
 		unpinAllMessagesHandler,
 		newUnpinAllMessagesArgs,
 		newUnpinAllMessagesResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.sendUserMessageToInboxV2": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.sendUserMessageToInboxV2": kitex.NewMethodInfo(
 		sendUserMessageToInboxV2Handler,
 		newSendUserMessageToInboxV2Args,
 		newSendUserMessageToInboxV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.editMessageToInboxV2": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.editMessageToInboxV2": kitex.NewMethodInfo(
 		editMessageToInboxV2Handler,
 		newEditMessageToInboxV2Args,
 		newEditMessageToInboxV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.readInboxHistory": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.readInboxHistory": kitex.NewMethodInfo(
 		readInboxHistoryHandler,
 		newReadInboxHistoryArgs,
 		newReadInboxHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.readOutboxHistory": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.readOutboxHistory": kitex.NewMethodInfo(
 		readOutboxHistoryHandler,
 		newReadOutboxHistoryArgs,
 		newReadOutboxHistoryResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.readMediaUnreadToInboxV2": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.readMediaUnreadToInboxV2": kitex.NewMethodInfo(
 		readMediaUnreadToInboxV2Handler,
 		newReadMediaUnreadToInboxV2Args,
 		newReadMediaUnreadToInboxV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"inbox.updatePinnedMessageV2": kitex.NewMethodInfo(
+	"/inbox.RPCInbox/inbox.updatePinnedMessageV2": kitex.NewMethodInfo(
 		updatePinnedMessageV2Handler,
 		newUpdatePinnedMessageV2Args,
 		newUpdatePinnedMessageV2Result,
@@ -2248,7 +2248,7 @@ func (p *kClient) InboxEditUserMessageToInbox(ctx context.Context, req *inbox.TL
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.editUserMessageToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.editUserMessageToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2263,7 +2263,7 @@ func (p *kClient) InboxEditChatMessageToInbox(ctx context.Context, req *inbox.TL
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.editChatMessageToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.editChatMessageToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2278,7 +2278,7 @@ func (p *kClient) InboxDeleteMessagesToInbox(ctx context.Context, req *inbox.TLI
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.deleteMessagesToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.deleteMessagesToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2293,7 +2293,7 @@ func (p *kClient) InboxDeleteUserHistoryToInbox(ctx context.Context, req *inbox.
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.deleteUserHistoryToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.deleteUserHistoryToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2308,7 +2308,7 @@ func (p *kClient) InboxDeleteChatHistoryToInbox(ctx context.Context, req *inbox.
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.deleteChatHistoryToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.deleteChatHistoryToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2323,7 +2323,7 @@ func (p *kClient) InboxReadUserMediaUnreadToInbox(ctx context.Context, req *inbo
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.readUserMediaUnreadToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.readUserMediaUnreadToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2338,7 +2338,7 @@ func (p *kClient) InboxReadChatMediaUnreadToInbox(ctx context.Context, req *inbo
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.readChatMediaUnreadToInbox", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.readChatMediaUnreadToInbox", req, _result); err != nil {
 		return
 	}
 
@@ -2353,7 +2353,7 @@ func (p *kClient) InboxUpdateHistoryReaded(ctx context.Context, req *inbox.TLInb
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.updateHistoryReaded", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.updateHistoryReaded", req, _result); err != nil {
 		return
 	}
 
@@ -2368,7 +2368,7 @@ func (p *kClient) InboxUpdatePinnedMessage(ctx context.Context, req *inbox.TLInb
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.updatePinnedMessage", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.updatePinnedMessage", req, _result); err != nil {
 		return
 	}
 
@@ -2383,7 +2383,7 @@ func (p *kClient) InboxUnpinAllMessages(ctx context.Context, req *inbox.TLInboxU
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.unpinAllMessages", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.unpinAllMessages", req, _result); err != nil {
 		return
 	}
 
@@ -2398,7 +2398,7 @@ func (p *kClient) InboxSendUserMessageToInboxV2(ctx context.Context, req *inbox.
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.sendUserMessageToInboxV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.sendUserMessageToInboxV2", req, _result); err != nil {
 		return
 	}
 
@@ -2413,7 +2413,7 @@ func (p *kClient) InboxEditMessageToInboxV2(ctx context.Context, req *inbox.TLIn
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.editMessageToInboxV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.editMessageToInboxV2", req, _result); err != nil {
 		return
 	}
 
@@ -2428,7 +2428,7 @@ func (p *kClient) InboxReadInboxHistory(ctx context.Context, req *inbox.TLInboxR
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.readInboxHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.readInboxHistory", req, _result); err != nil {
 		return
 	}
 
@@ -2443,7 +2443,7 @@ func (p *kClient) InboxReadOutboxHistory(ctx context.Context, req *inbox.TLInbox
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.readOutboxHistory", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.readOutboxHistory", req, _result); err != nil {
 		return
 	}
 
@@ -2458,7 +2458,7 @@ func (p *kClient) InboxReadMediaUnreadToInboxV2(ctx context.Context, req *inbox.
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.readMediaUnreadToInboxV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.readMediaUnreadToInboxV2", req, _result); err != nil {
 		return
 	}
 
@@ -2473,7 +2473,7 @@ func (p *kClient) InboxUpdatePinnedMessageV2(ctx context.Context, req *inbox.TLI
 
 	_result := new(tg.Void)
 
-	if err = p.c.Call(ctx, "inbox.updatePinnedMessageV2", req, _result); err != nil {
+	if err = p.c.Call(ctx, "/inbox.RPCInbox/inbox.updatePinnedMessageV2", req, _result); err != nil {
 		return
 	}
 
