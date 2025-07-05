@@ -17,16 +17,37 @@
 package core
 
 import (
-	"errors"
+	"time"
 
+	"github.com/teamgram/proto/v2/crypto"
 	"github.com/teamgram/proto/v2/tg"
+	"github.com/teamgram/teamgram-server/v2/app/bff/qrcode/model"
+)
+
+const (
+	qrCodeTimeout = 60 // salt timeout
 )
 
 // AuthExportLoginToken
 // auth.exportLoginToken#b7e085fe api_id:int api_hash:string except_ids:Vector<long> = auth.LoginToken;
 func (c *QrCodeCore) AuthExportLoginToken(in *tg.TLAuthExportLoginToken) (*tg.AuthLoginToken, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("auth.exportLoginToken blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	qrCode := &model.QRCodeTransaction{
+		PermAuthKeyId: c.MD.PermAuthKeyId,
+		AuthKeyId:     c.MD.AuthId,
+		SessionId:     c.MD.SessionId,
+		ServerId:      c.MD.ServerId,
+		ApiId:         in.ApiId,
+		ApiHash:       in.ApiHash,
+		CodeHash:      crypto.GenerateStringNonce(16),
+		ExpireAt:      time.Now().Unix() + qrCodeTimeout,
+		UserId:        0,
+		State:         model.QRCodeStateNew,
+	}
 
-	return nil, errors.New("auth.exportLoginToken not implemented")
+	rQRLoginToken := tg.MakeAuthLoginToken(&tg.TLAuthLoginToken{
+		Expires: int32(qrCode.ExpireAt),
+		Token:   qrCode.Token(),
+	})
+
+	return rQRLoginToken, nil
 }
