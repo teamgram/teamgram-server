@@ -5,6 +5,17 @@
 
 package metadata
 
+import (
+	"context"
+
+	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/zeromicro/go-zero/core/jsonx"
+)
+
+var (
+	rpcMetadataKey = "rpc_metadata"
+)
+
 type TakeoutMessageRange struct {
 	MinId int32 `json:"min_id,omitempty"`
 	MaxId int32 `json:"max_id,omitempty"`
@@ -31,4 +42,48 @@ type RpcMetadata struct {
 	Langpack      string   `json:"langpack,omitempty"`
 	PermAuthKeyId int64    `json:"perm_auth_key_id,omitempty"`
 	LangCode      string   `json:"lang_code,omitempty"`
+}
+
+func RpcMetadataFromIncoming(ctx context.Context) *RpcMetadata {
+	v, ok := metainfo.GetPersistentValue(ctx, rpcMetadataKey)
+	if !ok {
+		return nil
+	}
+
+	md := &RpcMetadata{}
+	err := jsonx.UnmarshalFromString(v, md)
+	if err != nil {
+		// log.Errorf("Unmarshal rpc_metadata error: %v", err)
+		return nil
+	}
+
+	return md
+}
+
+func RpcMetadataToOutgoing(ctx context.Context, md *RpcMetadata) (context.Context, error) {
+	v, err := jsonx.MarshalToString(md)
+	if err != nil {
+		// log.Errorf("Marshal rpc_metadata error: %v", err)
+		return nil, err
+	}
+
+	return metainfo.WithPersistentValue(ctx, rpcMetadataKey, v), nil
+}
+
+func (m *RpcMetadata) String() (val string) {
+	val, _ = jsonx.MarshalToString(m)
+
+	return
+}
+
+func (m *RpcMetadata) HasTakeout() bool {
+	return m.Takeout != nil
+}
+
+func (m *RpcMetadata) GetTakeoutId() int64 {
+	if m.Takeout == nil {
+		return m.Takeout.Id
+	} else {
+		return 0
+	}
 }

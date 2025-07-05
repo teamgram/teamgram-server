@@ -20,6 +20,7 @@ import (
 	"errors"
 	"flag"
 	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"log"
 	"time"
 
@@ -150,7 +151,24 @@ func main() {
 		ctx := context.Background()
 		ctx = metainfo.WithValue(ctx, "temp", "temp-value")       // only present in next service
 		ctx = metainfo.WithPersistentValue(ctx, "logid", "12345") // will present in the next service and its successors
-
+		md2 := metadata.RpcMetadata{
+			ServerId:      "12345",
+			ClientAddr:    "12345",
+			AuthId:        0,
+			SessionId:     0,
+			ReceiveTime:   0,
+			UserId:        0,
+			ClientMsgId:   0,
+			IsBot:         false,
+			Layer:         0,
+			Client:        "",
+			IsAdmin:       false,
+			Takeout:       nil,
+			Langpack:      "",
+			PermAuthKeyId: 0,
+			LangCode:      "",
+		}
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, &md2)
 		//v := rand.Int63()
 		//if v%2 == 0 {
 		resp, err := cli1.EchoEcho(ctx, req)

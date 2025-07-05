@@ -21,7 +21,7 @@ import (
 // help.getConfig#c4f9186b = Config;
 func (s *Service) HelpGetConfig(ctx context.Context, request *tg.TLHelpGetConfig) (*tg.Config, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.getConfig - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("help.getConfig - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.HelpGetConfig(request)
 	if err != nil {
@@ -36,7 +36,7 @@ func (s *Service) HelpGetConfig(ctx context.Context, request *tg.TLHelpGetConfig
 // help.getNearestDc#1fb33026 = NearestDc;
 func (s *Service) HelpGetNearestDc(ctx context.Context, request *tg.TLHelpGetNearestDc) (*tg.NearestDc, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("help.getNearestDc - metadata: {}, request: {%v}", request)
+	c.Logger.Debugf("help.getNearestDc - metadata: %s, request: {%v}", c.MD, request)
 
 	r, err := c.HelpGetNearestDc(request)
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 	"context"
 
 	"github.com/teamgram/proto/v2/iface"
-	"github.com/teamgram/proto/v2/rpc/metadata"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/configuration/configuration/configurationservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/miscellaneous/miscellaneous/miscellaneousservice"

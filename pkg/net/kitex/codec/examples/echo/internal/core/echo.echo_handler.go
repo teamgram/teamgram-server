@@ -19,6 +19,7 @@ package core
 import (
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 )
 
 var _ *tg.Bool
@@ -39,6 +40,8 @@ func (c *EchoCore) EchoEcho(in *echo.TLEchoEcho) (resp *echo.Echo, err error) {
 		klog.Debug("echo called")
 	*/
 
+	md := metadata.RpcMetadataFromIncoming(c.ctx)
+	c.Logger.Debugf("md message: %s", md)
 	return echo.MakeEcho(&echo.TLEcho{
 		ClazzID: echo.ClazzID_echo,
 		Message: in.Message,

@@ -80,6 +80,7 @@ func (jc *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out rem
 		SeqID:       message.RPCInfo().Invocation().SeqID(),
 		MsgType:     uint32(message.MessageType()),
 		Payload:     payload,
+		Metadata:    message.TransInfo().TransStrInfo(),
 	}
 	buf, err := json.Marshal(data)
 	if err != nil {
@@ -124,6 +125,7 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	if err = codec.NewDataIfNeeded(data.MethodName, message); err != nil {
 		return err
 	}
+
 	if jc.printDebugInfo {
 		klog.Infof("encoded payload: %s\n", hex.EncodeToString(data.Payload))
 	}
@@ -151,6 +153,11 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	if err != nil {
 		return perrors.NewProtocolError(fmt.Errorf("json decode, unmarshal payload failed: %w", err))
 	}
+
+	klog.Infof("trans: %v", data.Metadata)
+
+	message.TransInfo().PutTransStrInfo(data.Metadata)
+
 	return nil
 }
 

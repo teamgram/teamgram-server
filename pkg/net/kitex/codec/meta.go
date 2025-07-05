@@ -26,6 +26,7 @@ type Meta struct {
 	SeqID       int32
 	MsgType     uint32
 	Payload     []byte
+	Metadata    map[string]string
 }
 
 type Exception struct {
