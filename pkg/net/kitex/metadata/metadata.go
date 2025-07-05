@@ -71,7 +71,11 @@ func RpcMetadataToOutgoing(ctx context.Context, md *RpcMetadata) (context.Contex
 }
 
 func (m *RpcMetadata) String() (val string) {
-	val, _ = jsonx.MarshalToString(m)
+	if m == nil {
+		val = "{}"
+	} else {
+		val, _ = jsonx.MarshalToString(m)
+	}
 
 	return
 }
