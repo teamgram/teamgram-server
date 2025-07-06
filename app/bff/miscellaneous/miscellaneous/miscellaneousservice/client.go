@@ -22,6 +22,7 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	HelpSaveAppLog(ctx context.Context, req *tg.TLHelpSaveAppLog, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	HelpTest(ctx context.Context, req *tg.TLHelpTest, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -62,4 +63,9 @@ func NewRPCMiscellaneousClient(cli client.Client) Client {
 func (p *kMiscellaneousClient) HelpSaveAppLog(ctx context.Context, req *tg.TLHelpSaveAppLog, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.HelpSaveAppLog(ctx, req)
+}
+
+func (p *kMiscellaneousClient) HelpTest(ctx context.Context, req *tg.TLHelpTest, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.HelpTest(ctx, req)
 }

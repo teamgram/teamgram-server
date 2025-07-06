@@ -16,9 +16,27 @@
 
 package dao
 
+import (
+	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
+	media_client "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+)
+
+// Dao dao.
 type Dao struct {
+	*Mysql
+	sqlc.CachedConn
+	media_client.MediaClient
 }
 
-func New() *Dao {
-	return new(Dao)
+// New new a dao and return.
+func New(c config.Config) *Dao {
+	db := sqlx.NewMySQL(&c.Mysql)
+	return &Dao{
+		Mysql:       newMysqlDao(db),
+		CachedConn:  sqlc.NewConn(db, c.Cache),
+		MediaClient: media_client.NewMediaClient(kitex.GetCachedKitexClient(c.MediaClient)),
+	}
 }

@@ -14,21 +14,19 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package svc
+package core
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/dao"
+	"errors"
+
+	"github.com/teamgram/proto/v2/tg"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-}
+// HelpTest
+// help.test#c0e202f7 = Bool;
+func (c *MiscellaneousCore) HelpTest(in *tg.TLHelpTest) (*tg.Bool, error) {
+	// TODO: not impl
+	// c.Logger.Errorf("help.test blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c),
-	}
+	return nil, errors.New("help.test not implemented")
 }

@@ -1,0 +1,17 @@
+./dalgen.sh bot_commands
+./dalgen.sh bots
+./dalgen.sh imported_contacts
+./dalgen.sh phone_books
+./dalgen.sh popular_contacts
+./dalgen.sh predefined_users
+./dalgen.sh unregistered_contacts
+./dalgen.sh user_contacts
+./dalgen.sh user_global_privacy_settings
+./dalgen.sh user_notify_settings
+./dalgen.sh user_peer_blocks
+./dalgen.sh user_peer_settings
+./dalgen.sh user_presences
+./dalgen.sh user_privacies
+./dalgen.sh user_profile_photos
+./dalgen.sh user_settings
+./dalgen.sh users

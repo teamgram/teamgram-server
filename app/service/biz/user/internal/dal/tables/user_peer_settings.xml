@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_peer_settings">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_peer_settings
+                (user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :hide, :report_spam, :add_contact, :block_contact, :share_contact, :need_contacts_exception, :report_geo, :autoarchived, :geo_distance)
+            ON DUPLICATE KEY UPDATE
+                report_spam = VALUES(report_spam),
+                add_contact = VALUES(add_contact),
+                block_contact = VALUES(block_contact),
+                share_contact = VALUES(share_contact),
+                need_contacts_exception = VALUES(need_contacts_exception),
+                report_geo = VALUES(report_geo),
+                autoarchived = VALUES(autoarchived),
+                geo_distance = VALUES(geo_distance),
+                hide = 0
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, hide, report_spam, add_contact, block_contact, share_contact, need_contacts_exception, report_geo, autoarchived, geo_distance
+            FROM
+                user_peer_settings
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND hide = 0
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                user_peer_settings
+            SET
+                cMap = :cMap
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                user_peer_settings
+            SET
+                hide = 1
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+</table>

@@ -31,3 +31,18 @@ func (s *Service) HelpSaveAppLog(ctx context.Context, request *tg.TLHelpSaveAppL
 	c.Logger.Debugf("help.saveAppLog - reply: %s", r)
 	return r, err
 }
+
+// HelpTest
+// help.test#c0e202f7 = Bool;
+func (s *Service) HelpTest(ctx context.Context, request *tg.TLHelpTest) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("help.test - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.HelpTest(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("help.test - reply: %s", r)
+	return r, err
+}

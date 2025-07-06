@@ -21,6 +21,7 @@ import (
 
 type MiscellaneousClient interface {
 	HelpSaveAppLog(ctx context.Context, in *tg.TLHelpSaveAppLog) (*tg.Bool, error)
+	HelpTest(ctx context.Context, in *tg.TLHelpTest) (*tg.Bool, error)
 }
 
 type defaultMiscellaneousClient struct {
@@ -38,4 +39,11 @@ func NewMiscellaneousClient(cli client.Client) MiscellaneousClient {
 func (m *defaultMiscellaneousClient) HelpSaveAppLog(ctx context.Context, in *tg.TLHelpSaveAppLog) (*tg.Bool, error) {
 	cli := miscellaneousservice.NewRPCMiscellaneousClient(m.cli)
 	return cli.HelpSaveAppLog(ctx, in)
+}
+
+// HelpTest
+// help.test#c0e202f7 = Bool;
+func (m *defaultMiscellaneousClient) HelpTest(ctx context.Context, in *tg.TLHelpTest) (*tg.Bool, error) {
+	cli := miscellaneousservice.NewRPCMiscellaneousClient(m.cli)
+	return cli.HelpTest(ctx, in)
 }

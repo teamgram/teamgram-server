@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_profile_photos">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_profile_photos
+                (user_id, photo_id, date2, deleted)
+            VALUES
+                (:user_id, :photo_id, :date2, 0)
+            ON DUPLICATE KEY UPDATE
+                date2 = VALUES(date2),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="single_list">
+        <sql>
+            SELECT
+                photo_id
+            FROM
+                user_profile_photos
+            WHERE
+                user_id = :user_id AND deleted = 0 ORDER BY date2 DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectNext" result_set="single">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                photo_id
+            FROM
+                user_profile_photos
+            WHERE
+                user_id = :user_id AND photo_id NOT IN (:id_list) AND deleted = 0 ORDER BY date2 DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                user_profile_photos
+            SET
+                deleted = 1, date2 = 0
+            WHERE
+                user_id = :user_id AND photo_id IN (:id_list)
+        </sql>
+    </operation>
+</table>
