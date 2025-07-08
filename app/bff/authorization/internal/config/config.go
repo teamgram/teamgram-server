@@ -17,9 +17,27 @@
 package config
 
 import (
+	kafka "github.com/teamgram/marmota/pkg/mq"
+	"github.com/teamgram/teamgram-server/v2/pkg/code/conf"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/zeromicro/go-zero/core/stores/kv"
 )
+
+//type Config struct {
+//	kitex.RpcServerConf
+//}
 
 type Config struct {
 	kitex.RpcServerConf
+	KV                        kv.KvConf
+	Code                      *conf.SmsVerifyCodeConfig
+	UserClient                kitex.RpcClientConf
+	AuthsessionClient         kitex.RpcClientConf
+	ChatClient                kitex.RpcClientConf
+	StatusClient              kitex.RpcClientConf
+	UsernameClient            kitex.RpcClientConf
+	MsgClient                 kitex.RpcClientConf
+	SyncClient                *kafka.KafkaProducerConf
+	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`
+	SignInMessage             []conf.MessageEntityConfig `json:",optional"`
 }

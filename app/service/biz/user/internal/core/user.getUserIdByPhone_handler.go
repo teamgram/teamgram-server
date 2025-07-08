@@ -17,8 +17,6 @@
 package core
 
 import (
-	"errors"
-
 	"github.com/teamgram/proto/v2/tg"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 )
@@ -28,8 +26,11 @@ var _ *tg.Bool
 // UserGetUserIdByPhone
 // user.getUserIdByPhone phone:string = Int64;
 func (c *UserCore) UserGetUserIdByPhone(in *user.TLUserGetUserIdByPhone) (*tg.Int64, error) {
-	// TODO: not impl
-	// c.Logger.Errorf("user.getUserIdByPhone blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	id, err := c.svcCtx.Dao.GetUserIdByPhone(c.ctx, in.Phone)
+	if err != nil {
+		c.Logger.Errorf("user.getUserIdByPhone - error: %v", err)
+		return nil, err
+	}
 
-	return nil, errors.New("user.getUserIdByPhone not implemented")
+	return tg.MakeInt64Helper(id), nil
 }
