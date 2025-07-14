@@ -50,15 +50,25 @@ func DecodeDialogExtClazz(d *bin.Decoder) (DialogExtClazz, error) {
 
 // TLDialogExt <--
 type TLDialogExt struct {
-	ClazzID             uint32     `json:"_id"`
-	Order               int64      `json:"order"`
-	Dialog              *tg.Dialog `json:"dialog"`
-	AvailableMinId      int32      `json:"available_min_id"`
-	Date                int64      `json:"date"`
-	ThemeEmoticon       string     `json:"theme_emoticon"`
-	TtlPeriod           int32      `json:"ttl_period"`
-	WallpaperId         int64      `json:"wallpaper_id"`
-	WallpaperOverridden bool       `json:"wallpaper_overridden"`
+	ClazzID             uint32         `json:"_id"`
+	ClazzName2          string         `json:"_name"`
+	Order               int64          `json:"order"`
+	Dialog              tg.DialogClazz `json:"dialog"`
+	AvailableMinId      int32          `json:"available_min_id"`
+	Date                int64          `json:"date"`
+	ThemeEmoticon       string         `json:"theme_emoticon"`
+	TtlPeriod           int32          `json:"ttl_period"`
+	WallpaperId         int64          `json:"wallpaper_id"`
+	WallpaperOverridden bool           `json:"wallpaper_overridden"`
+}
+
+func MakeTLDialogExt(m *TLDialogExt) *TLDialogExt {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogExt
+
+	return m
 }
 
 func (m *TLDialogExt) String() string {
@@ -73,7 +83,7 @@ func (m *TLDialogExt) DialogExtClazzName() string {
 
 // ClazzName <--
 func (m *TLDialogExt) ClazzName() string {
-	return ClazzName_dialogExt
+	return m.ClazzName2
 }
 
 // ToDialogExt <--
@@ -82,7 +92,7 @@ func (m *TLDialogExt) ToDialogExt() *DialogExt {
 		return nil
 	}
 
-	return MakeDialogExt(m)
+	return &DialogExt{Clazz: m}
 }
 
 // Encode <--
@@ -134,9 +144,10 @@ func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.Order, err = d.Int64()
 
-			m2 := &tg.Dialog{}
-			_ = m2.Decode(d)
-			m.Dialog = m2
+			// m2 := &tg.Dialog{}
+			// _ = m2.Decode(d)
+			// m.Dialog = m2
+			m.Dialog, _ = tg.DecodeDialogClazz(d)
 
 			m.AvailableMinId, err = d.Int32()
 			m.Date, err = d.Int64()
@@ -162,27 +173,26 @@ func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
 type DialogExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogExtClazz `json:"_clazz"`
+	Clazz DialogExtClazz `json:"_clazz"`
 }
 
 func (m *DialogExt) String() string {
-	wrapper := iface.WithNameWrapper{m.DialogExtClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeDialogExt <--
-func MakeDialogExt(c DialogExtClazz) *DialogExt {
-	return &DialogExt{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		DialogExtClazz: c,
+func (m *DialogExt) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.DialogExtClazzName()
 	}
 }
 
 // Encode <--
 func (m *DialogExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.DialogExtClazz != nil {
-		return m.DialogExtClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("DialogExt - invalid Clazz")
@@ -190,13 +200,16 @@ func (m *DialogExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *DialogExt) Decode(d *bin.Decoder) (err error) {
-	m.DialogExtClazz, err = DecodeDialogExtClazz(d)
+	m.Clazz, err = DecodeDialogExtClazz(d)
 	return
 }
 
 // Match <--
 func (m *DialogExt) Match(f ...interface{}) {
-	switch c := m.DialogExtClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLDialogExt:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLDialogExt) interface{}); ok {
@@ -214,11 +227,11 @@ func (m *DialogExt) ToDialogExt() (*TLDialogExt, bool) {
 		return nil, false
 	}
 
-	if m.DialogExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DialogExtClazz.(*TLDialogExt); ok {
+	if x, ok := m.Clazz.(*TLDialogExt); ok {
 		return x, true
 	}
 
@@ -252,12 +265,22 @@ func DecodeDialogFilterExtClazz(d *bin.Decoder) (DialogFilterExtClazz, error) {
 
 // TLDialogFilterExt <--
 type TLDialogFilterExt struct {
-	ClazzID      uint32           `json:"_id"`
-	Id           int32            `json:"id"`
-	JoinedBySlug bool             `json:"joined_by_slug"`
-	Slug         string           `json:"slug"`
-	DialogFilter *tg.DialogFilter `json:"dialog_filter"`
-	Order        int64            `json:"order"`
+	ClazzID      uint32               `json:"_id"`
+	ClazzName2   string               `json:"_name"`
+	Id           int32                `json:"id"`
+	JoinedBySlug bool                 `json:"joined_by_slug"`
+	Slug         string               `json:"slug"`
+	DialogFilter tg.DialogFilterClazz `json:"dialog_filter"`
+	Order        int64                `json:"order"`
+}
+
+func MakeTLDialogFilterExt(m *TLDialogFilterExt) *TLDialogFilterExt {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogFilterExt
+
+	return m
 }
 
 func (m *TLDialogFilterExt) String() string {
@@ -272,7 +295,7 @@ func (m *TLDialogFilterExt) DialogFilterExtClazzName() string {
 
 // ClazzName <--
 func (m *TLDialogFilterExt) ClazzName() string {
-	return ClazzName_dialogFilterExt
+	return m.ClazzName2
 }
 
 // ToDialogFilterExt <--
@@ -281,7 +304,7 @@ func (m *TLDialogFilterExt) ToDialogFilterExt() *DialogFilterExt {
 		return nil
 	}
 
-	return MakeDialogFilterExt(m)
+	return &DialogFilterExt{Clazz: m}
 }
 
 // Encode <--
@@ -334,9 +357,10 @@ func (m *TLDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 			}
 			m.Slug, err = d.String()
 
-			m4 := &tg.DialogFilter{}
-			_ = m4.Decode(d)
-			m.DialogFilter = m4
+			// m4 := &tg.DialogFilter{}
+			// _ = m4.Decode(d)
+			// m.DialogFilter = m4
+			m.DialogFilter, _ = tg.DecodeDialogFilterClazz(d)
 
 			m.Order, err = d.Int64()
 
@@ -355,27 +379,26 @@ func (m *TLDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 type DialogFilterExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogFilterExtClazz `json:"_clazz"`
+	Clazz DialogFilterExtClazz `json:"_clazz"`
 }
 
 func (m *DialogFilterExt) String() string {
-	wrapper := iface.WithNameWrapper{m.DialogFilterExtClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeDialogFilterExt <--
-func MakeDialogFilterExt(c DialogFilterExtClazz) *DialogFilterExt {
-	return &DialogFilterExt{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		DialogFilterExtClazz: c,
+func (m *DialogFilterExt) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.DialogFilterExtClazzName()
 	}
 }
 
 // Encode <--
 func (m *DialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.DialogFilterExtClazz != nil {
-		return m.DialogFilterExtClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("DialogFilterExt - invalid Clazz")
@@ -383,13 +406,16 @@ func (m *DialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *DialogFilterExt) Decode(d *bin.Decoder) (err error) {
-	m.DialogFilterExtClazz, err = DecodeDialogFilterExtClazz(d)
+	m.Clazz, err = DecodeDialogFilterExtClazz(d)
 	return
 }
 
 // Match <--
 func (m *DialogFilterExt) Match(f ...interface{}) {
-	switch c := m.DialogFilterExtClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLDialogFilterExt:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLDialogFilterExt) interface{}); ok {
@@ -407,11 +433,11 @@ func (m *DialogFilterExt) ToDialogFilterExt() (*TLDialogFilterExt, bool) {
 		return nil, false
 	}
 
-	if m.DialogFilterExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DialogFilterExtClazz.(*TLDialogFilterExt); ok {
+	if x, ok := m.Clazz.(*TLDialogFilterExt); ok {
 		return x, true
 	}
 
@@ -445,10 +471,20 @@ func DecodeDialogPinnedExtClazz(d *bin.Decoder) (DialogPinnedExtClazz, error) {
 
 // TLDialogPinnedExt <--
 type TLDialogPinnedExt struct {
-	ClazzID  uint32 `json:"_id"`
-	Order    int64  `json:"order"`
-	PeerType int32  `json:"peer_type"`
-	PeerId   int64  `json:"peer_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Order      int64  `json:"order"`
+	PeerType   int32  `json:"peer_type"`
+	PeerId     int64  `json:"peer_id"`
+}
+
+func MakeTLDialogPinnedExt(m *TLDialogPinnedExt) *TLDialogPinnedExt {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogPinnedExt
+
+	return m
 }
 
 func (m *TLDialogPinnedExt) String() string {
@@ -463,7 +499,7 @@ func (m *TLDialogPinnedExt) DialogPinnedExtClazzName() string {
 
 // ClazzName <--
 func (m *TLDialogPinnedExt) ClazzName() string {
-	return ClazzName_dialogPinnedExt
+	return m.ClazzName2
 }
 
 // ToDialogPinnedExt <--
@@ -472,7 +508,7 @@ func (m *TLDialogPinnedExt) ToDialogPinnedExt() *DialogPinnedExt {
 		return nil
 	}
 
-	return MakeDialogPinnedExt(m)
+	return &DialogPinnedExt{Clazz: m}
 }
 
 // Encode <--
@@ -521,27 +557,26 @@ func (m *TLDialogPinnedExt) Decode(d *bin.Decoder) (err error) {
 type DialogPinnedExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogPinnedExtClazz `json:"_clazz"`
+	Clazz DialogPinnedExtClazz `json:"_clazz"`
 }
 
 func (m *DialogPinnedExt) String() string {
-	wrapper := iface.WithNameWrapper{m.DialogPinnedExtClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeDialogPinnedExt <--
-func MakeDialogPinnedExt(c DialogPinnedExtClazz) *DialogPinnedExt {
-	return &DialogPinnedExt{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		DialogPinnedExtClazz: c,
+func (m *DialogPinnedExt) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.DialogPinnedExtClazzName()
 	}
 }
 
 // Encode <--
 func (m *DialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.DialogPinnedExtClazz != nil {
-		return m.DialogPinnedExtClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("DialogPinnedExt - invalid Clazz")
@@ -549,13 +584,16 @@ func (m *DialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *DialogPinnedExt) Decode(d *bin.Decoder) (err error) {
-	m.DialogPinnedExtClazz, err = DecodeDialogPinnedExtClazz(d)
+	m.Clazz, err = DecodeDialogPinnedExtClazz(d)
 	return
 }
 
 // Match <--
 func (m *DialogPinnedExt) Match(f ...interface{}) {
-	switch c := m.DialogPinnedExtClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLDialogPinnedExt:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLDialogPinnedExt) interface{}); ok {
@@ -573,11 +611,11 @@ func (m *DialogPinnedExt) ToDialogPinnedExt() (*TLDialogPinnedExt, bool) {
 		return nil, false
 	}
 
-	if m.DialogPinnedExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DialogPinnedExtClazz.(*TLDialogPinnedExt); ok {
+	if x, ok := m.Clazz.(*TLDialogPinnedExt); ok {
 		return x, true
 	}
 
@@ -611,10 +649,20 @@ func DecodeDialogsDataClazz(d *bin.Decoder) (DialogsDataClazz, error) {
 
 // TLSimpleDialogsData <--
 type TLSimpleDialogsData struct {
-	ClazzID  uint32  `json:"_id"`
-	Users    []int64 `json:"users"`
-	Chats    []int64 `json:"chats"`
-	Channels []int64 `json:"channels"`
+	ClazzID    uint32  `json:"_id"`
+	ClazzName2 string  `json:"_name"`
+	Users      []int64 `json:"users"`
+	Chats      []int64 `json:"chats"`
+	Channels   []int64 `json:"channels"`
+}
+
+func MakeTLSimpleDialogsData(m *TLSimpleDialogsData) *TLSimpleDialogsData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_simpleDialogsData
+
+	return m
 }
 
 func (m *TLSimpleDialogsData) String() string {
@@ -629,7 +677,7 @@ func (m *TLSimpleDialogsData) DialogsDataClazzName() string {
 
 // ClazzName <--
 func (m *TLSimpleDialogsData) ClazzName() string {
-	return ClazzName_simpleDialogsData
+	return m.ClazzName2
 }
 
 // ToDialogsData <--
@@ -638,7 +686,7 @@ func (m *TLSimpleDialogsData) ToDialogsData() *DialogsData {
 		return nil
 	}
 
-	return MakeDialogsData(m)
+	return &DialogsData{Clazz: m}
 }
 
 // Encode <--
@@ -692,27 +740,26 @@ func (m *TLSimpleDialogsData) Decode(d *bin.Decoder) (err error) {
 type DialogsData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DialogsDataClazz `json:"_clazz"`
+	Clazz DialogsDataClazz `json:"_clazz"`
 }
 
 func (m *DialogsData) String() string {
-	wrapper := iface.WithNameWrapper{m.DialogsDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeDialogsData <--
-func MakeDialogsData(c DialogsDataClazz) *DialogsData {
-	return &DialogsData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		DialogsDataClazz: c,
+func (m *DialogsData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.DialogsDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *DialogsData) Encode(x *bin.Encoder, layer int32) error {
-	if m.DialogsDataClazz != nil {
-		return m.DialogsDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("DialogsData - invalid Clazz")
@@ -720,13 +767,16 @@ func (m *DialogsData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *DialogsData) Decode(d *bin.Decoder) (err error) {
-	m.DialogsDataClazz, err = DecodeDialogsDataClazz(d)
+	m.Clazz, err = DecodeDialogsDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *DialogsData) Match(f ...interface{}) {
-	switch c := m.DialogsDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLSimpleDialogsData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLSimpleDialogsData) interface{}); ok {
@@ -744,11 +794,11 @@ func (m *DialogsData) ToSimpleDialogsData() (*TLSimpleDialogsData, bool) {
 		return nil, false
 	}
 
-	if m.DialogsDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DialogsDataClazz.(*TLSimpleDialogsData); ok {
+	if x, ok := m.Clazz.(*TLSimpleDialogsData); ok {
 		return x, true
 	}
 
@@ -782,9 +832,19 @@ func DecodePeerWithDraftMessageClazz(d *bin.Decoder) (PeerWithDraftMessageClazz,
 
 // TLUpdateDraftMessage <--
 type TLUpdateDraftMessage struct {
-	ClazzID uint32           `json:"_id"`
-	Peer    *tg.Peer         `json:"peer"`
-	Draft   *tg.DraftMessage `json:"draft"`
+	ClazzID    uint32               `json:"_id"`
+	ClazzName2 string               `json:"_name"`
+	Peer       tg.PeerClazz         `json:"peer"`
+	Draft      tg.DraftMessageClazz `json:"draft"`
+}
+
+func MakeTLUpdateDraftMessage(m *TLUpdateDraftMessage) *TLUpdateDraftMessage {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_updateDraftMessage
+
+	return m
 }
 
 func (m *TLUpdateDraftMessage) String() string {
@@ -799,7 +859,7 @@ func (m *TLUpdateDraftMessage) PeerWithDraftMessageClazzName() string {
 
 // ClazzName <--
 func (m *TLUpdateDraftMessage) ClazzName() string {
-	return ClazzName_updateDraftMessage
+	return m.ClazzName2
 }
 
 // ToPeerWithDraftMessage <--
@@ -808,7 +868,7 @@ func (m *TLUpdateDraftMessage) ToPeerWithDraftMessage() *PeerWithDraftMessage {
 		return nil
 	}
 
-	return MakePeerWithDraftMessage(m)
+	return &PeerWithDraftMessage{Clazz: m}
 }
 
 // Encode <--
@@ -838,13 +898,15 @@ func (m *TLUpdateDraftMessage) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0xf6bdc4b2: func() (err error) {
 
-			m0 := &tg.Peer{}
-			_ = m0.Decode(d)
-			m.Peer = m0
+			// m0 := &tg.Peer{}
+			// _ = m0.Decode(d)
+			// m.Peer = m0
+			m.Peer, _ = tg.DecodePeerClazz(d)
 
-			m1 := &tg.DraftMessage{}
-			_ = m1.Decode(d)
-			m.Draft = m1
+			// m1 := &tg.DraftMessage{}
+			// _ = m1.Decode(d)
+			// m.Draft = m1
+			m.Draft, _ = tg.DecodeDraftMessageClazz(d)
 
 			return nil
 		},
@@ -861,27 +923,26 @@ func (m *TLUpdateDraftMessage) Decode(d *bin.Decoder) (err error) {
 type PeerWithDraftMessage struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PeerWithDraftMessageClazz `json:"_clazz"`
+	Clazz PeerWithDraftMessageClazz `json:"_clazz"`
 }
 
 func (m *PeerWithDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{m.PeerWithDraftMessageClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakePeerWithDraftMessage <--
-func MakePeerWithDraftMessage(c PeerWithDraftMessageClazz) *PeerWithDraftMessage {
-	return &PeerWithDraftMessage{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		PeerWithDraftMessageClazz: c,
+func (m *PeerWithDraftMessage) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.PeerWithDraftMessageClazzName()
 	}
 }
 
 // Encode <--
 func (m *PeerWithDraftMessage) Encode(x *bin.Encoder, layer int32) error {
-	if m.PeerWithDraftMessageClazz != nil {
-		return m.PeerWithDraftMessageClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("PeerWithDraftMessage - invalid Clazz")
@@ -889,13 +950,16 @@ func (m *PeerWithDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *PeerWithDraftMessage) Decode(d *bin.Decoder) (err error) {
-	m.PeerWithDraftMessageClazz, err = DecodePeerWithDraftMessageClazz(d)
+	m.Clazz, err = DecodePeerWithDraftMessageClazz(d)
 	return
 }
 
 // Match <--
 func (m *PeerWithDraftMessage) Match(f ...interface{}) {
-	switch c := m.PeerWithDraftMessageClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUpdateDraftMessage:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUpdateDraftMessage) interface{}); ok {
@@ -913,11 +977,11 @@ func (m *PeerWithDraftMessage) ToUpdateDraftMessage() (*TLUpdateDraftMessage, bo
 		return nil, false
 	}
 
-	if m.PeerWithDraftMessageClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.PeerWithDraftMessageClazz.(*TLUpdateDraftMessage); ok {
+	if x, ok := m.Clazz.(*TLUpdateDraftMessage); ok {
 		return x, true
 	}
 
@@ -951,9 +1015,19 @@ func DecodeSavedDialogListClazz(d *bin.Decoder) (SavedDialogListClazz, error) {
 
 // TLSavedDialogList <--
 type TLSavedDialogList struct {
-	ClazzID uint32            `json:"_id"`
-	Count   int32             `json:"count"`
-	Dialogs []*tg.SavedDialog `json:"dialogs"`
+	ClazzID    uint32                `json:"_id"`
+	ClazzName2 string                `json:"_name"`
+	Count      int32                 `json:"count"`
+	Dialogs    []tg.SavedDialogClazz `json:"dialogs"`
+}
+
+func MakeTLSavedDialogList(m *TLSavedDialogList) *TLSavedDialogList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_savedDialogList
+
+	return m
 }
 
 func (m *TLSavedDialogList) String() string {
@@ -968,7 +1042,7 @@ func (m *TLSavedDialogList) SavedDialogListClazzName() string {
 
 // ClazzName <--
 func (m *TLSavedDialogList) ClazzName() string {
-	return ClazzName_savedDialogList
+	return m.ClazzName2
 }
 
 // ToSavedDialogList <--
@@ -977,7 +1051,7 @@ func (m *TLSavedDialogList) ToSavedDialogList() *SavedDialogList {
 		return nil
 	}
 
-	return MakeSavedDialogList(m)
+	return &SavedDialogList{Clazz: m}
 }
 
 // Encode <--
@@ -1014,12 +1088,14 @@ func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.SavedDialog, l1)
+			v1 := make([]tg.SavedDialogClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.SavedDialog)
-				err3 = vv.Decode(d)
+				// vv := new(SavedDialog)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodeSavedDialogClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Dialogs = v1
 
@@ -1038,27 +1114,26 @@ func (m *TLSavedDialogList) Decode(d *bin.Decoder) (err error) {
 type SavedDialogList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SavedDialogListClazz `json:"_clazz"`
+	Clazz SavedDialogListClazz `json:"_clazz"`
 }
 
 func (m *SavedDialogList) String() string {
-	wrapper := iface.WithNameWrapper{m.SavedDialogListClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeSavedDialogList <--
-func MakeSavedDialogList(c SavedDialogListClazz) *SavedDialogList {
-	return &SavedDialogList{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		SavedDialogListClazz: c,
+func (m *SavedDialogList) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.SavedDialogListClazzName()
 	}
 }
 
 // Encode <--
 func (m *SavedDialogList) Encode(x *bin.Encoder, layer int32) error {
-	if m.SavedDialogListClazz != nil {
-		return m.SavedDialogListClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("SavedDialogList - invalid Clazz")
@@ -1066,13 +1141,16 @@ func (m *SavedDialogList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *SavedDialogList) Decode(d *bin.Decoder) (err error) {
-	m.SavedDialogListClazz, err = DecodeSavedDialogListClazz(d)
+	m.Clazz, err = DecodeSavedDialogListClazz(d)
 	return
 }
 
 // Match <--
 func (m *SavedDialogList) Match(f ...interface{}) {
-	switch c := m.SavedDialogListClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLSavedDialogList:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLSavedDialogList) interface{}); ok {
@@ -1090,11 +1168,11 @@ func (m *SavedDialogList) ToSavedDialogList() (*TLSavedDialogList, bool) {
 		return nil, false
 	}
 
-	if m.SavedDialogListClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.SavedDialogListClazz.(*TLSavedDialogList); ok {
+	if x, ok := m.Clazz.(*TLSavedDialogList); ok {
 		return x, true
 	}
 

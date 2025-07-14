@@ -969,12 +969,12 @@ func (m *TLMessageGetLastTwoPinnedMessageId) Decode(d *bin.Decoder) (err error) 
 
 // TLMessageUpdatePinnedMessageId <--
 type TLMessageUpdatePinnedMessageId struct {
-	ClazzID  uint32   `json:"_id"`
-	UserId   int64    `json:"user_id"`
-	PeerType int32    `json:"peer_type"`
-	PeerId   int64    `json:"peer_id"`
-	Id       int32    `json:"id"`
-	Pinned   *tg.Bool `json:"pinned"`
+	ClazzID  uint32       `json:"_id"`
+	UserId   int64        `json:"user_id"`
+	PeerType int32        `json:"peer_type"`
+	PeerId   int64        `json:"peer_id"`
+	Id       int32        `json:"id"`
+	Pinned   tg.BoolClazz `json:"pinned"`
 }
 
 func (m *TLMessageUpdatePinnedMessageId) String() string {
@@ -1016,9 +1016,10 @@ func (m *TLMessageUpdatePinnedMessageId) Decode(d *bin.Decoder) (err error) {
 			m.PeerId, err = d.Int64()
 			m.Id, err = d.Int32()
 
-			m5 := &tg.Bool{}
-			_ = m5.Decode(d)
-			m.Pinned = m5
+			// m5 := &tg.Bool{}
+			// _ = m5.Decode(d)
+			// m.Pinned = m5
+			m.Pinned, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -1287,7 +1288,7 @@ func (m *TLMessageGetUnreadMentionsCount) Decode(d *bin.Decoder) (err error) {
 
 // VectorMessageBox <--
 type VectorMessageBox struct {
-	Datas []*tg.MessageBox `json:"_datas"`
+	Datas []tg.MessageBoxClazz `json:"_datas"`
 }
 
 func (m *VectorMessageBox) String() string {
@@ -1304,7 +1305,7 @@ func (m *VectorMessageBox) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorMessageBox) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.MessageBox](d)
+	m.Datas, err = iface.DecodeObjectList[tg.MessageBoxClazz](d)
 
 	return err
 }

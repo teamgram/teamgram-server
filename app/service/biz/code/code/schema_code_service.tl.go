@@ -233,11 +233,11 @@ func (m *TLCodeDeletePhoneCode) Decode(d *bin.Decoder) (err error) {
 
 // TLCodeUpdatePhoneCodeData <--
 type TLCodeUpdatePhoneCodeData struct {
-	ClazzID       uint32                `json:"_id"`
-	AuthKeyId     int64                 `json:"auth_key_id"`
-	Phone         string                `json:"phone"`
-	PhoneCodeHash string                `json:"phone_code_hash"`
-	CodeData      *PhoneCodeTransaction `json:"code_data"`
+	ClazzID       uint32                    `json:"_id"`
+	AuthKeyId     int64                     `json:"auth_key_id"`
+	Phone         string                    `json:"phone"`
+	PhoneCodeHash string                    `json:"phone_code_hash"`
+	CodeData      PhoneCodeTransactionClazz `json:"code_data"`
 }
 
 func (m *TLCodeUpdatePhoneCodeData) String() string {
@@ -277,9 +277,10 @@ func (m *TLCodeUpdatePhoneCodeData) Decode(d *bin.Decoder) (err error) {
 			m.Phone, err = d.String()
 			m.PhoneCodeHash, err = d.String()
 
-			m4 := &PhoneCodeTransaction{}
-			_ = m4.Decode(d)
-			m.CodeData = m4
+			// m4 := &PhoneCodeTransaction{}
+			// _ = m4.Decode(d)
+			// m.CodeData = m4
+			m.CodeData, _ = DecodePhoneCodeTransactionClazz(d)
 
 			return nil
 		},

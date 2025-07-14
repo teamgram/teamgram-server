@@ -86,7 +86,7 @@ func (c *session) checkBadServerSalt(ctx context.Context, gatewayId string, salt
 	}
 
 	if !valid {
-		badServerSalt := mt.MakeBadMsgNotification(&mt.TLBadServerSalt{
+		badServerSalt := mt.MakeTLBadServerSalt(&mt.TLBadServerSalt{
 			BadMsgId:      msg.MsgId,
 			ErrorCode:     kServerSaltIncorrect,
 			BadMsgSeqno:   msg.Seqno,
@@ -362,7 +362,7 @@ func (c *session) checkBadMsgNotification(ctx context.Context, gatewayId string,
 	}
 
 	if errorCode != 0 {
-		badMsgNotification := mt.MakeBadMsgNotification(&mt.TLBadMsgNotification{
+		badMsgNotification := mt.MakeTLBadMsgNotification(&mt.TLBadMsgNotification{
 			BadMsgId:    msg.MsgId,
 			BadMsgSeqno: msg.Seqno,
 			ErrorCode:   errorCode,
@@ -495,7 +495,7 @@ func (c *session) onMsgsStateReq(ctx context.Context, gatewayId string, msgId *i
 		info[i] = iMsgId.state
 	}
 
-	msgsStateInfo := mt.MakeMsgsStateInfo(&mt.TLMsgsStateInfo{
+	msgsStateInfo := mt.MakeTLMsgsStateInfo(&mt.TLMsgsStateInfo{
 		ReqMsgId: msgId.msgId,
 		Info:     string(info),
 	})
@@ -748,7 +748,7 @@ func (c *session) onMsgResendReq(ctx context.Context, gatewayId string, msgId *i
 			info[i] = iMsgId.state
 		}
 
-		msgsStateInfo := mt.MakeMsgsStateInfo(&mt.TLMsgsStateInfo{
+		msgsStateInfo := mt.MakeTLMsgsStateInfo(&mt.TLMsgsStateInfo{
 			ReqMsgId: msgId.msgId,
 			Info:     string(info),
 		})
@@ -787,7 +787,7 @@ func (c *session) onMsgNewDetailInfo(ctx context.Context, gatewayId string, msgI
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////
 func (c *session) notifyMsgsStateInfo(ctx context.Context, gatewayId string, inMsg *inboxMsg) {
 	// TODO(@benqi): if aced and < resendSize, send rsp.
-	msgsStateInfo := mt.MakeMsgsStateInfo(&mt.TLMsgsStateInfo{
+	msgsStateInfo := mt.MakeTLMsgsStateInfo(&mt.TLMsgsStateInfo{
 		ReqMsgId: inMsg.msgId,
 		Info:     string([]byte{inMsg.state}),
 	})

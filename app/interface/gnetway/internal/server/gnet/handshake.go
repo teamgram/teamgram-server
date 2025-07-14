@@ -335,12 +335,12 @@ func (s *Server) onReqPq(c gnet.Conn, request *mt.TLReqPq) (*mt.ResPQ, error) {
 		return nil, err
 	}
 
-	return mt.MakeResPQ(&mt.TLResPQ{
+	return mt.MakeTLResPQ(&mt.TLResPQ{
 		Nonce:                       request.Nonce,
 		ServerNonce:                 generateInt128(),
 		Pq:                          pq,
 		ServerPublicKeyFingerprints: s.handshake.keyFingerprints,
-	}), nil
+	}).ToResPQ(), nil
 }
 
 // req_pq_multi#be7e8ef1 nonce:int128 = ResPQ;
@@ -356,12 +356,12 @@ func (s *Server) onReqPqMulti(c gnet.Conn, request *mt.TLReqPqMulti) (*mt.ResPQ,
 		return nil, err
 	}
 
-	return mt.MakeResPQ(&mt.TLResPQ{
+	return mt.MakeTLResPQ(&mt.TLResPQ{
 		Nonce:                       request.Nonce,
 		ServerNonce:                 generateInt128(),
 		Pq:                          pq,
 		ServerPublicKeyFingerprints: s.handshake.keyFingerprints,
-	}), nil
+	}).ToResPQ(), nil
 }
 
 // req_DH_params#d712e4be nonce:int128 server_nonce:int128 p:string q:string public_key_fingerprint:long encrypted_data:string = Server_DH_Params;
@@ -370,7 +370,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 
 	var (
 		err            error
-		serverDHParams *mt.ServerDHParams
+		serverDHParams mt.ServerDHParamsClazz
 		handshakeType  int
 		expiresIn      int32
 		A              []byte
@@ -729,7 +729,7 @@ func (s *Server) onReqDHParams(c gnet.Conn, ctx *HandshakeStateCtx, request *mt.
 			e := crypto.NewAES256IGECryptor(tmpAesKeyAndIV[:32], tmpAesKeyAndIV[32:64])
 			tmpEncryptedAnswer, _ = e.Encrypt(tmpEncryptedAnswer)
 
-			serverDHParams = mt.MakeServerDHParams(&mt.TLServerDHParamsOk{
+			serverDHParams = mt.MakeTLServerDHParamsOk(&mt.TLServerDHParamsOk{
 				Nonce:           request.Nonce,
 				ServerNonce:     request.ServerNonce,
 				EncryptedAnswer: hack.String(tmpEncryptedAnswer),
@@ -874,7 +874,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	// 至此key已经创建成功
 	var (
 		authKeyId = int64(binary.LittleEndian.Uint64(authKeyAuxHash[len(ctx.NewNonce)+1+12 : len(ctx.NewNonce)+1+12+8]))
-		dhGen     *mt.SetClientDHParamsAnswer
+		dhGen     mt.SetClientDHParamsAnswerClazz
 	)
 
 	s.asyncRun(c.ConnId(),
@@ -889,7 +889,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 
 			if s.saveAuthKeyInfo(ctx, tg.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
 				copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x01))
-				dhGen = mt.MakeSetClientDHParamsAnswer(&mt.TLDhGenOk{
+				dhGen = mt.MakeTLDhGenOk(&mt.TLDhGenOk{
 					Nonce:         ctx.Nonce,
 					ServerNonce:   ctx.ServerNonce,
 					NewNonceHash1: newNonceHash,
@@ -903,7 +903,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 			} else {
 				// TODO(@benqi): dhGenFail
 				copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x02))
-				dhGen = mt.MakeSetClientDHParamsAnswer(&mt.TLDhGenRetry{
+				dhGen = mt.MakeTLDhGenRetry(&mt.TLDhGenRetry{
 					Nonce:         ctx.Nonce,
 					ServerNonce:   ctx.ServerNonce,
 					NewNonceHash2: newNonceHash,
@@ -954,7 +954,7 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) 
 		salt |= int64(ctx.NewNonce[a] ^ ctx.ServerNonce[a])
 	}
 
-	serverSalt := tg.MakeFutureSalt(&tg.TLFutureSalt{
+	serverSalt := tg.MakeTLFutureSalt(&tg.TLFutureSalt{
 		ValidSince: now,
 		ValidUntil: now + 30*60,
 		Salt:       salt,
@@ -977,7 +977,7 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) 
 		strconv.FormatInt(key.AuthKeyId, 10),
 		func(client sessionclient.SessionClient) (err error) {
 			rB, err = client.SessionSetAuthKey(context.Background(), &session.TLSessionSetAuthKey{
-				AuthKey:    keyInfo.ToAuthKeyInfo(),
+				AuthKey:    keyInfo,
 				FutureSalt: serverSalt,
 				ExpiresIn:  ctx.ExpiresIn,
 			})
@@ -987,7 +987,7 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) 
 	if err != nil {
 		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
 		return false
-	} else if !tg.FromBool(rB) {
+	} else if !tg.FromBool(rB.Clazz) {
 		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
 		return false
 	} else {

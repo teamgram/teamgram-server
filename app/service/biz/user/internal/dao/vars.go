@@ -28,11 +28,11 @@ const (
 )
 
 var (
-	defaultRules = []*tg.PrivacyRule{
-		tg.MakePrivacyRule(&tg.TLPrivacyValueAllowAll{}),
+	defaultRules = []tg.PrivacyRuleClazz{
+		tg.MakeTLPrivacyValueAllowAll(&tg.TLPrivacyValueAllowAll{}),
 	}
-	phoneNumberRules = []*tg.PrivacyRule{
-		tg.MakePrivacyRule(&tg.TLPrivacyValueDisallowAll{}),
+	phoneNumberRules = []tg.PrivacyRuleClazz{
+		tg.MakeTLPrivacyValueDisallowAll(&tg.TLPrivacyValueDisallowAll{}),
 	}
 
 	defaultRulesData     string
@@ -49,7 +49,7 @@ type idxId struct {
 	id  int64
 }
 
-func removeAllNil(contacts []*tg.ContactData) []*tg.ContactData {
+func removeAllNil(contacts []tg.ContactDataClazz) []tg.ContactDataClazz {
 	for i := 0; i < len(contacts); {
 		if contacts[i] != nil {
 			i++
@@ -67,7 +67,7 @@ func removeAllNil(contacts []*tg.ContactData) []*tg.ContactData {
 	return contacts
 }
 
-func makeDefaultPrivacyRules(key int32) []*tg.PrivacyRule {
+func makeDefaultPrivacyRules(key int32) []tg.PrivacyRuleClazz {
 	if key == tg.PHONE_NUMBER {
 		return phoneNumberRules
 	} else {

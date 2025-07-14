@@ -50,12 +50,22 @@ func DecodeBotInfoDataClazz(d *bin.Decoder) (BotInfoDataClazz, error) {
 
 // TLBotInfoData <--
 type TLBotInfoData struct {
-	ClazzID    uint32      `json:"_id"`
-	BotInfo    *tg.BotInfo `json:"bot_info"`
-	MainAppUrl *string     `json:"main_app_url"`
-	BotInline  bool        `json:"bot_inline"`
-	Token      string      `json:"token"`
-	BotId      int64       `json:"bot_id"`
+	ClazzID    uint32          `json:"_id"`
+	ClazzName2 string          `json:"_name"`
+	BotInfo    tg.BotInfoClazz `json:"bot_info"`
+	MainAppUrl *string         `json:"main_app_url"`
+	BotInline  bool            `json:"bot_inline"`
+	Token      string          `json:"token"`
+	BotId      int64           `json:"bot_id"`
+}
+
+func MakeTLBotInfoData(m *TLBotInfoData) *TLBotInfoData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_botInfoData
+
+	return m
 }
 
 func (m *TLBotInfoData) String() string {
@@ -70,7 +80,7 @@ func (m *TLBotInfoData) BotInfoDataClazzName() string {
 
 // ClazzName <--
 func (m *TLBotInfoData) ClazzName() string {
-	return ClazzName_botInfoData
+	return m.ClazzName2
 }
 
 // ToBotInfoData <--
@@ -79,7 +89,7 @@ func (m *TLBotInfoData) ToBotInfoData() *BotInfoData {
 		return nil
 	}
 
-	return MakeBotInfoData(m)
+	return &BotInfoData{Clazz: m}
 }
 
 // Encode <--
@@ -133,9 +143,10 @@ func (m *TLBotInfoData) Decode(d *bin.Decoder) (err error) {
 			flags, _ := d.Uint32()
 			_ = flags
 
-			m1 := &tg.BotInfo{}
-			_ = m1.Decode(d)
-			m.BotInfo = m1
+			// m1 := &tg.BotInfo{}
+			// _ = m1.Decode(d)
+			// m.BotInfo = m1
+			m.BotInfo, _ = tg.DecodeBotInfoClazz(d)
 
 			if (flags & (1 << 0)) != 0 {
 				m.MainAppUrl = new(string)
@@ -163,27 +174,26 @@ func (m *TLBotInfoData) Decode(d *bin.Decoder) (err error) {
 type BotInfoData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	BotInfoDataClazz `json:"_clazz"`
+	Clazz BotInfoDataClazz `json:"_clazz"`
 }
 
 func (m *BotInfoData) String() string {
-	wrapper := iface.WithNameWrapper{m.BotInfoDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeBotInfoData <--
-func MakeBotInfoData(c BotInfoDataClazz) *BotInfoData {
-	return &BotInfoData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		BotInfoDataClazz: c,
+func (m *BotInfoData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.BotInfoDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *BotInfoData) Encode(x *bin.Encoder, layer int32) error {
-	if m.BotInfoDataClazz != nil {
-		return m.BotInfoDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("BotInfoData - invalid Clazz")
@@ -191,13 +201,16 @@ func (m *BotInfoData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *BotInfoData) Decode(d *bin.Decoder) (err error) {
-	m.BotInfoDataClazz, err = DecodeBotInfoDataClazz(d)
+	m.Clazz, err = DecodeBotInfoDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *BotInfoData) Match(f ...interface{}) {
-	switch c := m.BotInfoDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLBotInfoData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLBotInfoData) interface{}); ok {
@@ -215,11 +228,11 @@ func (m *BotInfoData) ToBotInfoData() (*TLBotInfoData, bool) {
 		return nil, false
 	}
 
-	if m.BotInfoDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.BotInfoDataClazz.(*TLBotInfoData); ok {
+	if x, ok := m.Clazz.(*TLBotInfoData); ok {
 		return x, true
 	}
 
@@ -254,9 +267,19 @@ func DecodeLastSeenDataClazz(d *bin.Decoder) (LastSeenDataClazz, error) {
 // TLLastSeenData <--
 type TLLastSeenData struct {
 	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
 	UserId     int64  `json:"user_id"`
 	LastSeenAt int64  `json:"last_seen_at"`
 	Expires    int32  `json:"expires"`
+}
+
+func MakeTLLastSeenData(m *TLLastSeenData) *TLLastSeenData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_lastSeenData
+
+	return m
 }
 
 func (m *TLLastSeenData) String() string {
@@ -271,7 +294,7 @@ func (m *TLLastSeenData) LastSeenDataClazzName() string {
 
 // ClazzName <--
 func (m *TLLastSeenData) ClazzName() string {
-	return ClazzName_lastSeenData
+	return m.ClazzName2
 }
 
 // ToLastSeenData <--
@@ -280,7 +303,7 @@ func (m *TLLastSeenData) ToLastSeenData() *LastSeenData {
 		return nil
 	}
 
-	return MakeLastSeenData(m)
+	return &LastSeenData{Clazz: m}
 }
 
 // Encode <--
@@ -329,27 +352,26 @@ func (m *TLLastSeenData) Decode(d *bin.Decoder) (err error) {
 type LastSeenData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	LastSeenDataClazz `json:"_clazz"`
+	Clazz LastSeenDataClazz `json:"_clazz"`
 }
 
 func (m *LastSeenData) String() string {
-	wrapper := iface.WithNameWrapper{m.LastSeenDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeLastSeenData <--
-func MakeLastSeenData(c LastSeenDataClazz) *LastSeenData {
-	return &LastSeenData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		LastSeenDataClazz: c,
+func (m *LastSeenData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.LastSeenDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *LastSeenData) Encode(x *bin.Encoder, layer int32) error {
-	if m.LastSeenDataClazz != nil {
-		return m.LastSeenDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("LastSeenData - invalid Clazz")
@@ -357,13 +379,16 @@ func (m *LastSeenData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *LastSeenData) Decode(d *bin.Decoder) (err error) {
-	m.LastSeenDataClazz, err = DecodeLastSeenDataClazz(d)
+	m.Clazz, err = DecodeLastSeenDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *LastSeenData) Match(f ...interface{}) {
-	switch c := m.LastSeenDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLLastSeenData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLLastSeenData) interface{}); ok {
@@ -381,11 +406,11 @@ func (m *LastSeenData) ToLastSeenData() (*TLLastSeenData, bool) {
 		return nil, false
 	}
 
-	if m.LastSeenDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.LastSeenDataClazz.(*TLLastSeenData); ok {
+	if x, ok := m.Clazz.(*TLLastSeenData); ok {
 		return x, true
 	}
 
@@ -419,10 +444,20 @@ func DecodePeerPeerNotifySettingsClazz(d *bin.Decoder) (PeerPeerNotifySettingsCl
 
 // TLPeerPeerNotifySettings <--
 type TLPeerPeerNotifySettings struct {
-	ClazzID  uint32                 `json:"_id"`
-	PeerType int32                  `json:"peer_type"`
-	PeerId   int64                  `json:"peer_id"`
-	Settings *tg.PeerNotifySettings `json:"settings"`
+	ClazzID    uint32                     `json:"_id"`
+	ClazzName2 string                     `json:"_name"`
+	PeerType   int32                      `json:"peer_type"`
+	PeerId     int64                      `json:"peer_id"`
+	Settings   tg.PeerNotifySettingsClazz `json:"settings"`
+}
+
+func MakeTLPeerPeerNotifySettings(m *TLPeerPeerNotifySettings) *TLPeerPeerNotifySettings {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_peerPeerNotifySettings
+
+	return m
 }
 
 func (m *TLPeerPeerNotifySettings) String() string {
@@ -437,7 +472,7 @@ func (m *TLPeerPeerNotifySettings) PeerPeerNotifySettingsClazzName() string {
 
 // ClazzName <--
 func (m *TLPeerPeerNotifySettings) ClazzName() string {
-	return ClazzName_peerPeerNotifySettings
+	return m.ClazzName2
 }
 
 // ToPeerPeerNotifySettings <--
@@ -446,7 +481,7 @@ func (m *TLPeerPeerNotifySettings) ToPeerPeerNotifySettings() *PeerPeerNotifySet
 		return nil
 	}
 
-	return MakePeerPeerNotifySettings(m)
+	return &PeerPeerNotifySettings{Clazz: m}
 }
 
 // Encode <--
@@ -479,9 +514,10 @@ func (m *TLPeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m2 := &tg.PeerNotifySettings{}
-			_ = m2.Decode(d)
-			m.Settings = m2
+			// m2 := &tg.PeerNotifySettings{}
+			// _ = m2.Decode(d)
+			// m.Settings = m2
+			m.Settings, _ = tg.DecodePeerNotifySettingsClazz(d)
 
 			return nil
 		},
@@ -498,27 +534,26 @@ func (m *TLPeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
 type PeerPeerNotifySettings struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PeerPeerNotifySettingsClazz `json:"_clazz"`
+	Clazz PeerPeerNotifySettingsClazz `json:"_clazz"`
 }
 
 func (m *PeerPeerNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{m.PeerPeerNotifySettingsClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakePeerPeerNotifySettings <--
-func MakePeerPeerNotifySettings(c PeerPeerNotifySettingsClazz) *PeerPeerNotifySettings {
-	return &PeerPeerNotifySettings{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		PeerPeerNotifySettingsClazz: c,
+func (m *PeerPeerNotifySettings) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.PeerPeerNotifySettingsClazzName()
 	}
 }
 
 // Encode <--
 func (m *PeerPeerNotifySettings) Encode(x *bin.Encoder, layer int32) error {
-	if m.PeerPeerNotifySettingsClazz != nil {
-		return m.PeerPeerNotifySettingsClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("PeerPeerNotifySettings - invalid Clazz")
@@ -526,13 +561,16 @@ func (m *PeerPeerNotifySettings) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *PeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
-	m.PeerPeerNotifySettingsClazz, err = DecodePeerPeerNotifySettingsClazz(d)
+	m.Clazz, err = DecodePeerPeerNotifySettingsClazz(d)
 	return
 }
 
 // Match <--
 func (m *PeerPeerNotifySettings) Match(f ...interface{}) {
-	switch c := m.PeerPeerNotifySettingsClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLPeerPeerNotifySettings:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLPeerPeerNotifySettings) interface{}); ok {
@@ -550,11 +588,11 @@ func (m *PeerPeerNotifySettings) ToPeerPeerNotifySettings() (*TLPeerPeerNotifySe
 		return nil, false
 	}
 
-	if m.PeerPeerNotifySettingsClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.PeerPeerNotifySettingsClazz.(*TLPeerPeerNotifySettings); ok {
+	if x, ok := m.Clazz.(*TLPeerPeerNotifySettings); ok {
 		return x, true
 	}
 
@@ -588,12 +626,22 @@ func DecodeUserImportedContactsClazz(d *bin.Decoder) (UserImportedContactsClazz,
 
 // TLUserImportedContacts <--
 type TLUserImportedContacts struct {
-	ClazzID        uint32                `json:"_id"`
-	Imported       []*tg.ImportedContact `json:"imported"`
-	PopularInvites []*tg.PopularContact  `json:"popular_invites"`
-	RetryContacts  []int64               `json:"retry_contacts"`
-	Users          []*tg.User            `json:"users"`
-	UpdateIdList   []int64               `json:"update_id_list"`
+	ClazzID        uint32                    `json:"_id"`
+	ClazzName2     string                    `json:"_name"`
+	Imported       []tg.ImportedContactClazz `json:"imported"`
+	PopularInvites []tg.PopularContactClazz  `json:"popular_invites"`
+	RetryContacts  []int64                   `json:"retry_contacts"`
+	Users          []tg.UserClazz            `json:"users"`
+	UpdateIdList   []int64                   `json:"update_id_list"`
+}
+
+func MakeTLUserImportedContacts(m *TLUserImportedContacts) *TLUserImportedContacts {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userImportedContacts
+
+	return m
 }
 
 func (m *TLUserImportedContacts) String() string {
@@ -608,7 +656,7 @@ func (m *TLUserImportedContacts) UserImportedContactsClazzName() string {
 
 // ClazzName <--
 func (m *TLUserImportedContacts) ClazzName() string {
-	return ClazzName_userImportedContacts
+	return m.ClazzName2
 }
 
 // ToUserImportedContacts <--
@@ -617,7 +665,7 @@ func (m *TLUserImportedContacts) ToUserImportedContacts() *UserImportedContacts 
 		return nil
 	}
 
-	return MakeUserImportedContacts(m)
+	return &UserImportedContacts{Clazz: m}
 }
 
 // Encode <--
@@ -659,12 +707,14 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l0, err3 := d.Int()
-			v0 := make([]*tg.ImportedContact, l0)
+			v0 := make([]tg.ImportedContactClazz, l0)
 			for i := 0; i < l0; i++ {
-				vv := new(tg.ImportedContact)
-				err3 = vv.Decode(d)
+				// vv := new(ImportedContact)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v0[i] = vv
+				v0[i], err3 = tg.DecodeImportedContactClazz(d)
 				_ = err3
-				v0[i] = vv
 			}
 			m.Imported = v0
 
@@ -674,12 +724,14 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.PopularContact, l1)
+			v1 := make([]tg.PopularContactClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.PopularContact)
-				err3 = vv.Decode(d)
+				// vv := new(PopularContact)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodePopularContactClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.PopularInvites = v1
 
@@ -691,12 +743,14 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l3, err3 := d.Int()
-			v3 := make([]*tg.User, l3)
+			v3 := make([]tg.UserClazz, l3)
 			for i := 0; i < l3; i++ {
-				vv := new(tg.User)
-				err3 = vv.Decode(d)
+				// vv := new(User)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v3[i] = vv
+				v3[i], err3 = tg.DecodeUserClazz(d)
 				_ = err3
-				v3[i] = vv
 			}
 			m.Users = v3
 
@@ -717,27 +771,26 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 type UserImportedContacts struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserImportedContactsClazz `json:"_clazz"`
+	Clazz UserImportedContactsClazz `json:"_clazz"`
 }
 
 func (m *UserImportedContacts) String() string {
-	wrapper := iface.WithNameWrapper{m.UserImportedContactsClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUserImportedContacts <--
-func MakeUserImportedContacts(c UserImportedContactsClazz) *UserImportedContacts {
-	return &UserImportedContacts{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UserImportedContactsClazz: c,
+func (m *UserImportedContacts) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UserImportedContactsClazzName()
 	}
 }
 
 // Encode <--
 func (m *UserImportedContacts) Encode(x *bin.Encoder, layer int32) error {
-	if m.UserImportedContactsClazz != nil {
-		return m.UserImportedContactsClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UserImportedContacts - invalid Clazz")
@@ -745,13 +798,16 @@ func (m *UserImportedContacts) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UserImportedContacts) Decode(d *bin.Decoder) (err error) {
-	m.UserImportedContactsClazz, err = DecodeUserImportedContactsClazz(d)
+	m.Clazz, err = DecodeUserImportedContactsClazz(d)
 	return
 }
 
 // Match <--
 func (m *UserImportedContacts) Match(f ...interface{}) {
-	switch c := m.UserImportedContactsClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUserImportedContacts:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUserImportedContacts) interface{}); ok {
@@ -769,11 +825,11 @@ func (m *UserImportedContacts) ToUserImportedContacts() (*TLUserImportedContacts
 		return nil, false
 	}
 
-	if m.UserImportedContactsClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UserImportedContactsClazz.(*TLUserImportedContacts); ok {
+	if x, ok := m.Clazz.(*TLUserImportedContacts); ok {
 		return x, true
 	}
 
@@ -812,10 +868,20 @@ func DecodeUsersFoundClazz(d *bin.Decoder) (UsersFoundClazz, error) {
 
 // TLUsersDataFound <--
 type TLUsersDataFound struct {
-	ClazzID    uint32         `json:"_id"`
-	Count      int32          `json:"count"`
-	Users      []*tg.UserData `json:"users"`
-	NextOffset string         `json:"next_offset"`
+	ClazzID    uint32             `json:"_id"`
+	ClazzName2 string             `json:"_name"`
+	Count      int32              `json:"count"`
+	Users      []tg.UserDataClazz `json:"users"`
+	NextOffset string             `json:"next_offset"`
+}
+
+func MakeTLUsersDataFound(m *TLUsersDataFound) *TLUsersDataFound {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usersDataFound
+
+	return m
 }
 
 func (m *TLUsersDataFound) String() string {
@@ -830,7 +896,7 @@ func (m *TLUsersDataFound) UsersFoundClazzName() string {
 
 // ClazzName <--
 func (m *TLUsersDataFound) ClazzName() string {
-	return ClazzName_usersDataFound
+	return m.ClazzName2
 }
 
 // ToUsersFound <--
@@ -839,7 +905,7 @@ func (m *TLUsersDataFound) ToUsersFound() *UsersFound {
 		return nil
 	}
 
-	return MakeUsersFound(m)
+	return &UsersFound{Clazz: m}
 }
 
 // Encode <--
@@ -878,12 +944,14 @@ func (m *TLUsersDataFound) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.UserData, l1)
+			v1 := make([]tg.UserDataClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.UserData)
-				err3 = vv.Decode(d)
+				// vv := new(UserData)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodeUserDataClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Users = v1
 
@@ -902,8 +970,18 @@ func (m *TLUsersDataFound) Decode(d *bin.Decoder) (err error) {
 
 // TLUsersIdFound <--
 type TLUsersIdFound struct {
-	ClazzID uint32  `json:"_id"`
-	IdList  []int64 `json:"id_list"`
+	ClazzID    uint32  `json:"_id"`
+	ClazzName2 string  `json:"_name"`
+	IdList     []int64 `json:"id_list"`
+}
+
+func MakeTLUsersIdFound(m *TLUsersIdFound) *TLUsersIdFound {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usersIdFound
+
+	return m
 }
 
 func (m *TLUsersIdFound) String() string {
@@ -918,7 +996,7 @@ func (m *TLUsersIdFound) UsersFoundClazzName() string {
 
 // ClazzName <--
 func (m *TLUsersIdFound) ClazzName() string {
-	return ClazzName_usersIdFound
+	return m.ClazzName2
 }
 
 // ToUsersFound <--
@@ -927,7 +1005,7 @@ func (m *TLUsersIdFound) ToUsersFound() *UsersFound {
 		return nil
 	}
 
-	return MakeUsersFound(m)
+	return &UsersFound{Clazz: m}
 }
 
 // Encode <--
@@ -973,27 +1051,26 @@ func (m *TLUsersIdFound) Decode(d *bin.Decoder) (err error) {
 type UsersFound struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsersFoundClazz `json:"_clazz"`
+	Clazz UsersFoundClazz `json:"_clazz"`
 }
 
 func (m *UsersFound) String() string {
-	wrapper := iface.WithNameWrapper{m.UsersFoundClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUsersFound <--
-func MakeUsersFound(c UsersFoundClazz) *UsersFound {
-	return &UsersFound{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UsersFoundClazz: c,
+func (m *UsersFound) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UsersFoundClazzName()
 	}
 }
 
 // Encode <--
 func (m *UsersFound) Encode(x *bin.Encoder, layer int32) error {
-	if m.UsersFoundClazz != nil {
-		return m.UsersFoundClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UsersFound - invalid Clazz")
@@ -1001,13 +1078,16 @@ func (m *UsersFound) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UsersFound) Decode(d *bin.Decoder) (err error) {
-	m.UsersFoundClazz, err = DecodeUsersFoundClazz(d)
+	m.Clazz, err = DecodeUsersFoundClazz(d)
 	return
 }
 
 // Match <--
 func (m *UsersFound) Match(f ...interface{}) {
-	switch c := m.UsersFoundClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUsersDataFound:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUsersDataFound) interface{}); ok {
@@ -1031,11 +1111,11 @@ func (m *UsersFound) ToUsersDataFound() (*TLUsersDataFound, bool) {
 		return nil, false
 	}
 
-	if m.UsersFoundClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsersFoundClazz.(*TLUsersDataFound); ok {
+	if x, ok := m.Clazz.(*TLUsersDataFound); ok {
 		return x, true
 	}
 
@@ -1048,11 +1128,11 @@ func (m *UsersFound) ToUsersIdFound() (*TLUsersIdFound, bool) {
 		return nil, false
 	}
 
-	if m.UsersFoundClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsersFoundClazz.(*TLUsersIdFound); ok {
+	if x, ok := m.Clazz.(*TLUsersIdFound); ok {
 		return x, true
 	}
 

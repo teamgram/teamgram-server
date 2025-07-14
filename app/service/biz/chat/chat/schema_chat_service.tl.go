@@ -508,10 +508,10 @@ func (m *TLChatEditChatAbout) Decode(d *bin.Decoder) (err error) {
 
 // TLChatEditChatPhoto <--
 type TLChatEditChatPhoto struct {
-	ClazzID    uint32    `json:"_id"`
-	ChatId     int64     `json:"chat_id"`
-	EditUserId int64     `json:"edit_user_id"`
-	ChatPhoto  *tg.Photo `json:"chat_photo"`
+	ClazzID    uint32        `json:"_id"`
+	ChatId     int64         `json:"chat_id"`
+	EditUserId int64         `json:"edit_user_id"`
+	ChatPhoto  tg.PhotoClazz `json:"chat_photo"`
 }
 
 func (m *TLChatEditChatPhoto) String() string {
@@ -549,9 +549,10 @@ func (m *TLChatEditChatPhoto) Decode(d *bin.Decoder) (err error) {
 			m.ChatId, err = d.Int64()
 			m.EditUserId, err = d.Int64()
 
-			m3 := &tg.Photo{}
-			_ = m3.Decode(d)
-			m.ChatPhoto = m3
+			// m3 := &tg.Photo{}
+			// _ = m3.Decode(d)
+			// m.ChatPhoto = m3
+			m.ChatPhoto, _ = tg.DecodePhotoClazz(d)
 
 			return nil
 		},
@@ -569,11 +570,11 @@ func (m *TLChatEditChatPhoto) Decode(d *bin.Decoder) (err error) {
 
 // TLChatEditChatAdmin <--
 type TLChatEditChatAdmin struct {
-	ClazzID         uint32   `json:"_id"`
-	ChatId          int64    `json:"chat_id"`
-	OperatorId      int64    `json:"operator_id"`
-	EditChatAdminId int64    `json:"edit_chat_admin_id"`
-	IsAdmin         *tg.Bool `json:"is_admin"`
+	ClazzID         uint32       `json:"_id"`
+	ChatId          int64        `json:"chat_id"`
+	OperatorId      int64        `json:"operator_id"`
+	EditChatAdminId int64        `json:"edit_chat_admin_id"`
+	IsAdmin         tg.BoolClazz `json:"is_admin"`
 }
 
 func (m *TLChatEditChatAdmin) String() string {
@@ -613,9 +614,10 @@ func (m *TLChatEditChatAdmin) Decode(d *bin.Decoder) (err error) {
 			m.OperatorId, err = d.Int64()
 			m.EditChatAdminId, err = d.Int64()
 
-			m4 := &tg.Bool{}
-			_ = m4.Decode(d)
-			m.IsAdmin = m4
+			// m4 := &tg.Bool{}
+			// _ = m4.Decode(d)
+			// m.IsAdmin = m4
+			m.IsAdmin, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -633,10 +635,10 @@ func (m *TLChatEditChatAdmin) Decode(d *bin.Decoder) (err error) {
 
 // TLChatEditChatDefaultBannedRights <--
 type TLChatEditChatDefaultBannedRights struct {
-	ClazzID      uint32               `json:"_id"`
-	ChatId       int64                `json:"chat_id"`
-	OperatorId   int64                `json:"operator_id"`
-	BannedRights *tg.ChatBannedRights `json:"banned_rights"`
+	ClazzID      uint32                   `json:"_id"`
+	ChatId       int64                    `json:"chat_id"`
+	OperatorId   int64                    `json:"operator_id"`
+	BannedRights tg.ChatBannedRightsClazz `json:"banned_rights"`
 }
 
 func (m *TLChatEditChatDefaultBannedRights) String() string {
@@ -674,9 +676,10 @@ func (m *TLChatEditChatDefaultBannedRights) Decode(d *bin.Decoder) (err error) {
 			m.ChatId, err = d.Int64()
 			m.OperatorId, err = d.Int64()
 
-			m3 := &tg.ChatBannedRights{}
-			_ = m3.Decode(d)
-			m.BannedRights = m3
+			// m3 := &tg.ChatBannedRights{}
+			// _ = m3.Decode(d)
+			// m.BannedRights = m3
+			m.BannedRights, _ = tg.DecodeChatBannedRightsClazz(d)
 
 			return nil
 		},
@@ -824,10 +827,10 @@ func (m *TLChatGetMutableChatByLink) Decode(d *bin.Decoder) (err error) {
 
 // TLChatToggleNoForwards <--
 type TLChatToggleNoForwards struct {
-	ClazzID    uint32   `json:"_id"`
-	ChatId     int64    `json:"chat_id"`
-	OperatorId int64    `json:"operator_id"`
-	Enabled    *tg.Bool `json:"enabled"`
+	ClazzID    uint32       `json:"_id"`
+	ChatId     int64        `json:"chat_id"`
+	OperatorId int64        `json:"operator_id"`
+	Enabled    tg.BoolClazz `json:"enabled"`
 }
 
 func (m *TLChatToggleNoForwards) String() string {
@@ -865,9 +868,10 @@ func (m *TLChatToggleNoForwards) Decode(d *bin.Decoder) (err error) {
 			m.ChatId, err = d.Int64()
 			m.OperatorId, err = d.Int64()
 
-			m3 := &tg.Bool{}
-			_ = m3.Decode(d)
-			m.Enabled = m3
+			// m3 := &tg.Bool{}
+			// _ = m3.Decode(d)
+			// m.Enabled = m3
+			m.Enabled, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -885,10 +889,10 @@ func (m *TLChatToggleNoForwards) Decode(d *bin.Decoder) (err error) {
 
 // TLChatMigratedToChannel <--
 type TLChatMigratedToChannel struct {
-	ClazzID    uint32          `json:"_id"`
-	Chat       *tg.MutableChat `json:"chat"`
-	Id         int64           `json:"id"`
-	AccessHash int64           `json:"access_hash"`
+	ClazzID    uint32              `json:"_id"`
+	Chat       tg.MutableChatClazz `json:"chat"`
+	Id         int64               `json:"id"`
+	AccessHash int64               `json:"access_hash"`
 }
 
 func (m *TLChatMigratedToChannel) String() string {
@@ -924,9 +928,10 @@ func (m *TLChatMigratedToChannel) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x83faadf: func() (err error) {
 
-			m1 := &tg.MutableChat{}
-			_ = m1.Decode(d)
-			m.Chat = m1
+			// m1 := &tg.MutableChat{}
+			// _ = m1.Decode(d)
+			// m.Chat = m1
+			m.Chat, _ = tg.DecodeMutableChatClazz(d)
 
 			m.Id, err = d.Int64()
 			m.AccessHash, err = d.Int64()
@@ -1052,9 +1057,9 @@ func (m *TLChatGetUsersChatIdList) Decode(d *bin.Decoder) (err error) {
 
 // TLChatGetMyChatList <--
 type TLChatGetMyChatList struct {
-	ClazzID   uint32   `json:"_id"`
-	UserId    int64    `json:"user_id"`
-	IsCreator *tg.Bool `json:"is_creator"`
+	ClazzID   uint32       `json:"_id"`
+	UserId    int64        `json:"user_id"`
+	IsCreator tg.BoolClazz `json:"is_creator"`
 }
 
 func (m *TLChatGetMyChatList) String() string {
@@ -1090,9 +1095,10 @@ func (m *TLChatGetMyChatList) Decode(d *bin.Decoder) (err error) {
 		0xf3756c88: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.IsCreator = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.IsCreator = m2
+			m.IsCreator, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -1776,15 +1782,15 @@ func (m *TLChatDeleteRevokedExportedChatInvites) Decode(d *bin.Decoder) (err err
 
 // TLChatEditExportedChatInvite <--
 type TLChatEditExportedChatInvite struct {
-	ClazzID       uint32   `json:"_id"`
-	SelfId        int64    `json:"self_id"`
-	ChatId        int64    `json:"chat_id"`
-	Revoked       bool     `json:"revoked"`
-	Link          string   `json:"link"`
-	ExpireDate    *int32   `json:"expire_date"`
-	UsageLimit    *int32   `json:"usage_limit"`
-	RequestNeeded *tg.Bool `json:"request_needed"`
-	Title         *string  `json:"title"`
+	ClazzID       uint32       `json:"_id"`
+	SelfId        int64        `json:"self_id"`
+	ChatId        int64        `json:"chat_id"`
+	Revoked       bool         `json:"revoked"`
+	Link          string       `json:"link"`
+	ExpireDate    *int32       `json:"expire_date"`
+	UsageLimit    *int32       `json:"usage_limit"`
+	RequestNeeded tg.BoolClazz `json:"request_needed"`
+	Title         *string      `json:"title"`
 }
 
 func (m *TLChatEditExportedChatInvite) String() string {
@@ -1878,9 +1884,10 @@ func (m *TLChatEditExportedChatInvite) Decode(d *bin.Decoder) (err error) {
 				*m.UsageLimit, err = d.Int32()
 			}
 			if (flags & (1 << 3)) != 0 {
-				m8 := &tg.Bool{}
-				_ = m8.Decode(d)
-				m.RequestNeeded = m8
+				// m8 := &tg.Bool{}
+				// _ = m8.Decode(d)
+				// m.RequestNeeded = m8
+				m.RequestNeeded, _ = tg.DecodeBoolClazz(d)
 			}
 			if (flags & (1 << 4)) != 0 {
 				m.Title = new(string)
@@ -2298,7 +2305,7 @@ func (m *TLChatImportChatInvite2) Decode(d *bin.Decoder) (err error) {
 
 // VectorMutableChat <--
 type VectorMutableChat struct {
-	Datas []*tg.MutableChat `json:"_datas"`
+	Datas []tg.MutableChatClazz `json:"_datas"`
 }
 
 func (m *VectorMutableChat) String() string {
@@ -2315,7 +2322,7 @@ func (m *VectorMutableChat) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorMutableChat) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.MutableChat](d)
+	m.Datas, err = iface.DecodeObjectList[tg.MutableChatClazz](d)
 
 	return err
 }
@@ -2346,7 +2353,7 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorUserChatIdList <--
 type VectorUserChatIdList struct {
-	Datas []*UserChatIdList `json:"_datas"`
+	Datas []UserChatIdListClazz `json:"_datas"`
 }
 
 func (m *VectorUserChatIdList) String() string {
@@ -2363,14 +2370,14 @@ func (m *VectorUserChatIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorUserChatIdList) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*UserChatIdList](d)
+	m.Datas, err = iface.DecodeObjectList[UserChatIdListClazz](d)
 
 	return err
 }
 
 // VectorChatAdminWithInvites <--
 type VectorChatAdminWithInvites struct {
-	Datas []*tg.ChatAdminWithInvites `json:"_datas"`
+	Datas []tg.ChatAdminWithInvitesClazz `json:"_datas"`
 }
 
 func (m *VectorChatAdminWithInvites) String() string {
@@ -2387,14 +2394,14 @@ func (m *VectorChatAdminWithInvites) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorChatAdminWithInvites) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ChatAdminWithInvites](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ChatAdminWithInvitesClazz](d)
 
 	return err
 }
 
 // VectorExportedChatInvite <--
 type VectorExportedChatInvite struct {
-	Datas []*tg.ExportedChatInvite `json:"_datas"`
+	Datas []tg.ExportedChatInviteClazz `json:"_datas"`
 }
 
 func (m *VectorExportedChatInvite) String() string {
@@ -2411,14 +2418,14 @@ func (m *VectorExportedChatInvite) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorExportedChatInvite) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ExportedChatInvite](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ExportedChatInviteClazz](d)
 
 	return err
 }
 
 // VectorChatInviteImporter <--
 type VectorChatInviteImporter struct {
-	Datas []*tg.ChatInviteImporter `json:"_datas"`
+	Datas []tg.ChatInviteImporterClazz `json:"_datas"`
 }
 
 func (m *VectorChatInviteImporter) String() string {
@@ -2435,7 +2442,7 @@ func (m *VectorChatInviteImporter) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorChatInviteImporter) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ChatInviteImporter](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ChatInviteImporterClazz](d)
 
 	return err
 }

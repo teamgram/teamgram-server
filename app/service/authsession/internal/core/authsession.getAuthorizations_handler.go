@@ -43,7 +43,7 @@ func (c *AuthsessionCore) AuthsessionGetAuthorizations(in *authsession.TLAuthses
 
 	authorizationList := c.svcCtx.Dao.GetAuthorizations(c.ctx, in.UserId, keyData.PermAuthKeyId)
 
-	return tg.MakeAccountAuthorizations(&tg.TLAccountAuthorizations{
+	return tg.MakeTLAccountAuthorizations(&tg.TLAccountAuthorizations{
 		Authorizations: authorizationList,
-	}), nil
+	}).ToAccountAuthorizations(), nil
 }

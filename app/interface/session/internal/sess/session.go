@@ -71,7 +71,7 @@ const (
 )
 
 var emptyMsgContainer = mt.TLMsgRawDataContainer{Messages: make([]*mt.TLMessageRawData, 0)}
-var androidPushTooLong = tg.MakeUpdates(&tg.TLUpdatesTooLong{})
+var androidPushTooLong = tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{})
 
 type messageData struct {
 	confirmFlag  bool
@@ -400,7 +400,7 @@ func (c *session) onTimer(ctx context.Context) bool {
 			ctx,
 			&mt.TLRpcResult{
 				ReqMsgId: id,
-				Result: mt.MakeRpcError(&mt.TLRpcError{
+				Result: mt.MakeTLRpcError(&mt.TLRpcError{
 					ErrorCode:    -503,
 					ErrorMessage: "Timeout",
 				}),

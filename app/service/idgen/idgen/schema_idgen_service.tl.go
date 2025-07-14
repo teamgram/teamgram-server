@@ -344,8 +344,8 @@ func (m *TLIdgenGetNextNSeqId) Decode(d *bin.Decoder) (err error) {
 
 // TLIdgenGetNextIdValList <--
 type TLIdgenGetNextIdValList struct {
-	ClazzID uint32     `json:"_id"`
-	Id      []*InputId `json:"id"`
+	ClazzID uint32         `json:"_id"`
+	Id      []InputIdClazz `json:"id"`
 }
 
 func (m *TLIdgenGetNextIdValList) String() string {
@@ -384,12 +384,14 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*InputId, l1)
+			v1 := make([]InputIdClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(InputId)
-				err3 = vv.Decode(d)
+				// vv := new(InputId)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = DecodeInputIdClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Id = v1
 
@@ -409,8 +411,8 @@ func (m *TLIdgenGetNextIdValList) Decode(d *bin.Decoder) (err error) {
 
 // TLIdgenGetCurrentSeqIdList <--
 type TLIdgenGetCurrentSeqIdList struct {
-	ClazzID uint32     `json:"_id"`
-	Id      []*InputId `json:"id"`
+	ClazzID uint32         `json:"_id"`
+	Id      []InputIdClazz `json:"id"`
 }
 
 func (m *TLIdgenGetCurrentSeqIdList) String() string {
@@ -449,12 +451,14 @@ func (m *TLIdgenGetCurrentSeqIdList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*InputId, l1)
+			v1 := make([]InputIdClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(InputId)
-				err3 = vv.Decode(d)
+				// vv := new(InputId)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = DecodeInputIdClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Id = v1
 
@@ -502,7 +506,7 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorIdVal <--
 type VectorIdVal struct {
-	Datas []*IdVal `json:"_datas"`
+	Datas []IdValClazz `json:"_datas"`
 }
 
 func (m *VectorIdVal) String() string {
@@ -519,7 +523,7 @@ func (m *VectorIdVal) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorIdVal) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*IdVal](d)
+	m.Datas, err = iface.DecodeObjectList[IdValClazz](d)
 
 	return err
 }

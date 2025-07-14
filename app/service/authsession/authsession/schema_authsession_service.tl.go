@@ -568,10 +568,10 @@ func (m *TLAuthsessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 
 // TLAuthsessionSetAuthKey <--
 type TLAuthsessionSetAuthKey struct {
-	ClazzID    uint32          `json:"_id"`
-	AuthKey    *tg.AuthKeyInfo `json:"auth_key"`
-	FutureSalt *tg.FutureSalt  `json:"future_salt"`
-	ExpiresIn  int32           `json:"expires_in"`
+	ClazzID    uint32              `json:"_id"`
+	AuthKey    tg.AuthKeyInfoClazz `json:"auth_key"`
+	FutureSalt tg.FutureSaltClazz  `json:"future_salt"`
+	ExpiresIn  int32               `json:"expires_in"`
 }
 
 func (m *TLAuthsessionSetAuthKey) String() string {
@@ -607,13 +607,15 @@ func (m *TLAuthsessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x3e940c91: func() (err error) {
 
-			m1 := &tg.AuthKeyInfo{}
-			_ = m1.Decode(d)
-			m.AuthKey = m1
+			// m1 := &tg.AuthKeyInfo{}
+			// _ = m1.Decode(d)
+			// m.AuthKey = m1
+			m.AuthKey, _ = tg.DecodeAuthKeyInfoClazz(d)
 
-			m2 := &tg.FutureSalt{}
-			_ = m2.Decode(d)
-			m.FutureSalt = m2
+			// m2 := &tg.FutureSalt{}
+			// _ = m2.Decode(d)
+			// m.FutureSalt = m2
+			m.FutureSalt, _ = tg.DecodeFutureSaltClazz(d)
 
 			m.ExpiresIn, err = d.Int32()
 
@@ -856,8 +858,8 @@ func (m *TLAuthsessionBindTempAuthKey) Decode(d *bin.Decoder) (err error) {
 
 // TLAuthsessionSetClientSessionInfo <--
 type TLAuthsessionSetClientSessionInfo struct {
-	ClazzID uint32         `json:"_id"`
-	Data    *ClientSession `json:"data"`
+	ClazzID uint32             `json:"_id"`
+	Data    ClientSessionClazz `json:"data"`
 }
 
 func (m *TLAuthsessionSetClientSessionInfo) String() string {
@@ -891,9 +893,10 @@ func (m *TLAuthsessionSetClientSessionInfo) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x2d9ff94: func() (err error) {
 
-			m1 := &ClientSession{}
-			_ = m1.Decode(d)
-			m.Data = m1
+			// m1 := &ClientSession{}
+			// _ = m1.Decode(d)
+			// m.Data = m1
+			m.Data, _ = DecodeClientSessionClazz(d)
 
 			return nil
 		},

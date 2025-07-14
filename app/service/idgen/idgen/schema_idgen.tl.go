@@ -60,8 +60,18 @@ func DecodeIdValClazz(d *bin.Decoder) (IdValClazz, error) {
 
 // TLIdVal <--
 type TLIdVal struct {
-	ClazzID  uint32 `json:"_id"`
-	Id_INT64 int64  `json:"id_INT64"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Id_INT64   int64  `json:"id_INT64"`
+}
+
+func MakeTLIdVal(m *TLIdVal) *TLIdVal {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_idVal
+
+	return m
 }
 
 func (m *TLIdVal) String() string {
@@ -76,7 +86,7 @@ func (m *TLIdVal) IdValClazzName() string {
 
 // ClazzName <--
 func (m *TLIdVal) ClazzName() string {
-	return ClazzName_idVal
+	return m.ClazzName2
 }
 
 // ToIdVal <--
@@ -85,7 +95,7 @@ func (m *TLIdVal) ToIdVal() *IdVal {
 		return nil
 	}
 
-	return MakeIdVal(m)
+	return &IdVal{Clazz: m}
 }
 
 // Encode <--
@@ -129,7 +139,17 @@ func (m *TLIdVal) Decode(d *bin.Decoder) (err error) {
 // TLIdVals <--
 type TLIdVals struct {
 	ClazzID        uint32  `json:"_id"`
+	ClazzName2     string  `json:"_name"`
 	Id_VECTORINT64 []int64 `json:"id_VECTORINT64"`
+}
+
+func MakeTLIdVals(m *TLIdVals) *TLIdVals {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_idVals
+
+	return m
 }
 
 func (m *TLIdVals) String() string {
@@ -144,7 +164,7 @@ func (m *TLIdVals) IdValClazzName() string {
 
 // ClazzName <--
 func (m *TLIdVals) ClazzName() string {
-	return ClazzName_idVals
+	return m.ClazzName2
 }
 
 // ToIdVal <--
@@ -153,7 +173,7 @@ func (m *TLIdVals) ToIdVal() *IdVal {
 		return nil
 	}
 
-	return MakeIdVal(m)
+	return &IdVal{Clazz: m}
 }
 
 // Encode <--
@@ -197,8 +217,18 @@ func (m *TLIdVals) Decode(d *bin.Decoder) (err error) {
 
 // TLSeqIdVal <--
 type TLSeqIdVal struct {
-	ClazzID  uint32 `json:"_id"`
-	Id_INT64 int64  `json:"id_INT64"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Id_INT64   int64  `json:"id_INT64"`
+}
+
+func MakeTLSeqIdVal(m *TLSeqIdVal) *TLSeqIdVal {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_seqIdVal
+
+	return m
 }
 
 func (m *TLSeqIdVal) String() string {
@@ -213,7 +243,7 @@ func (m *TLSeqIdVal) IdValClazzName() string {
 
 // ClazzName <--
 func (m *TLSeqIdVal) ClazzName() string {
-	return ClazzName_seqIdVal
+	return m.ClazzName2
 }
 
 // ToIdVal <--
@@ -222,7 +252,7 @@ func (m *TLSeqIdVal) ToIdVal() *IdVal {
 		return nil
 	}
 
-	return MakeIdVal(m)
+	return &IdVal{Clazz: m}
 }
 
 // Encode <--
@@ -267,27 +297,26 @@ func (m *TLSeqIdVal) Decode(d *bin.Decoder) (err error) {
 type IdVal struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	IdValClazz `json:"_clazz"`
+	Clazz IdValClazz `json:"_clazz"`
 }
 
 func (m *IdVal) String() string {
-	wrapper := iface.WithNameWrapper{m.IdValClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeIdVal <--
-func MakeIdVal(c IdValClazz) *IdVal {
-	return &IdVal{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		IdValClazz: c,
+func (m *IdVal) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.IdValClazzName()
 	}
 }
 
 // Encode <--
 func (m *IdVal) Encode(x *bin.Encoder, layer int32) error {
-	if m.IdValClazz != nil {
-		return m.IdValClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("IdVal - invalid Clazz")
@@ -295,13 +324,16 @@ func (m *IdVal) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *IdVal) Decode(d *bin.Decoder) (err error) {
-	m.IdValClazz, err = DecodeIdValClazz(d)
+	m.Clazz, err = DecodeIdValClazz(d)
 	return
 }
 
 // Match <--
 func (m *IdVal) Match(f ...interface{}) {
-	switch c := m.IdValClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLIdVal:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLIdVal) interface{}); ok {
@@ -331,11 +363,11 @@ func (m *IdVal) ToIdVal() (*TLIdVal, bool) {
 		return nil, false
 	}
 
-	if m.IdValClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.IdValClazz.(*TLIdVal); ok {
+	if x, ok := m.Clazz.(*TLIdVal); ok {
 		return x, true
 	}
 
@@ -348,11 +380,11 @@ func (m *IdVal) ToIdVals() (*TLIdVals, bool) {
 		return nil, false
 	}
 
-	if m.IdValClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.IdValClazz.(*TLIdVals); ok {
+	if x, ok := m.Clazz.(*TLIdVals); ok {
 		return x, true
 	}
 
@@ -365,11 +397,11 @@ func (m *IdVal) ToSeqIdVal() (*TLSeqIdVal, bool) {
 		return nil, false
 	}
 
-	if m.IdValClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.IdValClazz.(*TLSeqIdVal); ok {
+	if x, ok := m.Clazz.(*TLSeqIdVal); ok {
 		return x, true
 	}
 
@@ -418,7 +450,17 @@ func DecodeInputIdClazz(d *bin.Decoder) (InputIdClazz, error) {
 
 // TLInputId <--
 type TLInputId struct {
-	ClazzID uint32 `json:"_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+}
+
+func MakeTLInputId(m *TLInputId) *TLInputId {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inputId
+
+	return m
 }
 
 func (m *TLInputId) String() string {
@@ -433,7 +475,7 @@ func (m *TLInputId) InputIdClazzName() string {
 
 // ClazzName <--
 func (m *TLInputId) ClazzName() string {
-	return ClazzName_inputId
+	return m.ClazzName2
 }
 
 // ToInputId <--
@@ -442,7 +484,7 @@ func (m *TLInputId) ToInputId() *InputId {
 		return nil
 	}
 
-	return MakeInputId(m)
+	return &InputId{Clazz: m}
 }
 
 // Encode <--
@@ -482,8 +524,18 @@ func (m *TLInputId) Decode(d *bin.Decoder) (err error) {
 
 // TLInputIds <--
 type TLInputIds struct {
-	ClazzID uint32 `json:"_id"`
-	Num     int32  `json:"num"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Num        int32  `json:"num"`
+}
+
+func MakeTLInputIds(m *TLInputIds) *TLInputIds {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inputIds
+
+	return m
 }
 
 func (m *TLInputIds) String() string {
@@ -498,7 +550,7 @@ func (m *TLInputIds) InputIdClazzName() string {
 
 // ClazzName <--
 func (m *TLInputIds) ClazzName() string {
-	return ClazzName_inputIds
+	return m.ClazzName2
 }
 
 // ToInputId <--
@@ -507,7 +559,7 @@ func (m *TLInputIds) ToInputId() *InputId {
 		return nil
 	}
 
-	return MakeInputId(m)
+	return &InputId{Clazz: m}
 }
 
 // Encode <--
@@ -550,8 +602,18 @@ func (m *TLInputIds) Decode(d *bin.Decoder) (err error) {
 
 // TLInputSeqId <--
 type TLInputSeqId struct {
-	ClazzID uint32 `json:"_id"`
-	Key     string `json:"key"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Key        string `json:"key"`
+}
+
+func MakeTLInputSeqId(m *TLInputSeqId) *TLInputSeqId {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inputSeqId
+
+	return m
 }
 
 func (m *TLInputSeqId) String() string {
@@ -566,7 +628,7 @@ func (m *TLInputSeqId) InputIdClazzName() string {
 
 // ClazzName <--
 func (m *TLInputSeqId) ClazzName() string {
-	return ClazzName_inputSeqId
+	return m.ClazzName2
 }
 
 // ToInputId <--
@@ -575,7 +637,7 @@ func (m *TLInputSeqId) ToInputId() *InputId {
 		return nil
 	}
 
-	return MakeInputId(m)
+	return &InputId{Clazz: m}
 }
 
 // Encode <--
@@ -618,9 +680,19 @@ func (m *TLInputSeqId) Decode(d *bin.Decoder) (err error) {
 
 // TLInputNSeqId <--
 type TLInputNSeqId struct {
-	ClazzID uint32 `json:"_id"`
-	Key     string `json:"key"`
-	N       int32  `json:"n"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Key        string `json:"key"`
+	N          int32  `json:"n"`
+}
+
+func MakeTLInputNSeqId(m *TLInputNSeqId) *TLInputNSeqId {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_inputNSeqId
+
+	return m
 }
 
 func (m *TLInputNSeqId) String() string {
@@ -635,7 +707,7 @@ func (m *TLInputNSeqId) InputIdClazzName() string {
 
 // ClazzName <--
 func (m *TLInputNSeqId) ClazzName() string {
-	return ClazzName_inputNSeqId
+	return m.ClazzName2
 }
 
 // ToInputId <--
@@ -644,7 +716,7 @@ func (m *TLInputNSeqId) ToInputId() *InputId {
 		return nil
 	}
 
-	return MakeInputId(m)
+	return &InputId{Clazz: m}
 }
 
 // Encode <--
@@ -691,27 +763,26 @@ func (m *TLInputNSeqId) Decode(d *bin.Decoder) (err error) {
 type InputId struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	InputIdClazz `json:"_clazz"`
+	Clazz InputIdClazz `json:"_clazz"`
 }
 
 func (m *InputId) String() string {
-	wrapper := iface.WithNameWrapper{m.InputIdClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeInputId <--
-func MakeInputId(c InputIdClazz) *InputId {
-	return &InputId{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		InputIdClazz: c,
+func (m *InputId) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.InputIdClazzName()
 	}
 }
 
 // Encode <--
 func (m *InputId) Encode(x *bin.Encoder, layer int32) error {
-	if m.InputIdClazz != nil {
-		return m.InputIdClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("InputId - invalid Clazz")
@@ -719,13 +790,16 @@ func (m *InputId) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *InputId) Decode(d *bin.Decoder) (err error) {
-	m.InputIdClazz, err = DecodeInputIdClazz(d)
+	m.Clazz, err = DecodeInputIdClazz(d)
 	return
 }
 
 // Match <--
 func (m *InputId) Match(f ...interface{}) {
-	switch c := m.InputIdClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLInputId:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLInputId) interface{}); ok {
@@ -761,11 +835,11 @@ func (m *InputId) ToInputId() (*TLInputId, bool) {
 		return nil, false
 	}
 
-	if m.InputIdClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.InputIdClazz.(*TLInputId); ok {
+	if x, ok := m.Clazz.(*TLInputId); ok {
 		return x, true
 	}
 
@@ -778,11 +852,11 @@ func (m *InputId) ToInputIds() (*TLInputIds, bool) {
 		return nil, false
 	}
 
-	if m.InputIdClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.InputIdClazz.(*TLInputIds); ok {
+	if x, ok := m.Clazz.(*TLInputIds); ok {
 		return x, true
 	}
 
@@ -795,11 +869,11 @@ func (m *InputId) ToInputSeqId() (*TLInputSeqId, bool) {
 		return nil, false
 	}
 
-	if m.InputIdClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.InputIdClazz.(*TLInputSeqId); ok {
+	if x, ok := m.Clazz.(*TLInputSeqId); ok {
 		return x, true
 	}
 
@@ -812,11 +886,11 @@ func (m *InputId) ToInputNSeqId() (*TLInputNSeqId, bool) {
 		return nil, false
 	}
 
-	if m.InputIdClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.InputIdClazz.(*TLInputNSeqId); ok {
+	if x, ok := m.Clazz.(*TLInputNSeqId); ok {
 		return x, true
 	}
 

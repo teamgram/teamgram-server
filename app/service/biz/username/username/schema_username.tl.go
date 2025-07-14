@@ -50,9 +50,19 @@ func DecodeUsernameDataClazz(d *bin.Decoder) (UsernameDataClazz, error) {
 
 // TLUsernameData <--
 type TLUsernameData struct {
-	ClazzID  uint32   `json:"_id"`
-	Username string   `json:"username"`
-	Peer     *tg.Peer `json:"peer"`
+	ClazzID    uint32       `json:"_id"`
+	ClazzName2 string       `json:"_name"`
+	Username   string       `json:"username"`
+	Peer       tg.PeerClazz `json:"peer"`
+}
+
+func MakeTLUsernameData(m *TLUsernameData) *TLUsernameData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usernameData
+
+	return m
 }
 
 func (m *TLUsernameData) String() string {
@@ -67,7 +77,7 @@ func (m *TLUsernameData) UsernameDataClazzName() string {
 
 // ClazzName <--
 func (m *TLUsernameData) ClazzName() string {
-	return ClazzName_usernameData
+	return m.ClazzName2
 }
 
 // ToUsernameData <--
@@ -76,7 +86,7 @@ func (m *TLUsernameData) ToUsernameData() *UsernameData {
 		return nil
 	}
 
-	return MakeUsernameData(m)
+	return &UsernameData{Clazz: m}
 }
 
 // Encode <--
@@ -125,9 +135,10 @@ func (m *TLUsernameData) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.Username, err = d.String()
 			if (flags & (1 << 0)) != 0 {
-				m2 := &tg.Peer{}
-				_ = m2.Decode(d)
-				m.Peer = m2
+				// m2 := &tg.Peer{}
+				// _ = m2.Decode(d)
+				// m.Peer = m2
+				m.Peer, _ = tg.DecodePeerClazz(d)
 			}
 
 			return nil
@@ -145,27 +156,26 @@ func (m *TLUsernameData) Decode(d *bin.Decoder) (err error) {
 type UsernameData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsernameDataClazz `json:"_clazz"`
+	Clazz UsernameDataClazz `json:"_clazz"`
 }
 
 func (m *UsernameData) String() string {
-	wrapper := iface.WithNameWrapper{m.UsernameDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUsernameData <--
-func MakeUsernameData(c UsernameDataClazz) *UsernameData {
-	return &UsernameData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UsernameDataClazz: c,
+func (m *UsernameData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UsernameDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *UsernameData) Encode(x *bin.Encoder, layer int32) error {
-	if m.UsernameDataClazz != nil {
-		return m.UsernameDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UsernameData - invalid Clazz")
@@ -173,13 +183,16 @@ func (m *UsernameData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UsernameData) Decode(d *bin.Decoder) (err error) {
-	m.UsernameDataClazz, err = DecodeUsernameDataClazz(d)
+	m.Clazz, err = DecodeUsernameDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *UsernameData) Match(f ...interface{}) {
-	switch c := m.UsernameDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUsernameData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUsernameData) interface{}); ok {
@@ -197,11 +210,11 @@ func (m *UsernameData) ToUsernameData() (*TLUsernameData, bool) {
 		return nil, false
 	}
 
-	if m.UsernameDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsernameDataClazz.(*TLUsernameData); ok {
+	if x, ok := m.Clazz.(*TLUsernameData); ok {
 		return x, true
 	}
 
@@ -250,7 +263,17 @@ func DecodeUsernameExistClazz(d *bin.Decoder) (UsernameExistClazz, error) {
 
 // TLUsernameNotExisted <--
 type TLUsernameNotExisted struct {
-	ClazzID uint32 `json:"_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+}
+
+func MakeTLUsernameNotExisted(m *TLUsernameNotExisted) *TLUsernameNotExisted {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usernameNotExisted
+
+	return m
 }
 
 func (m *TLUsernameNotExisted) String() string {
@@ -265,7 +288,7 @@ func (m *TLUsernameNotExisted) UsernameExistClazzName() string {
 
 // ClazzName <--
 func (m *TLUsernameNotExisted) ClazzName() string {
-	return ClazzName_usernameNotExisted
+	return m.ClazzName2
 }
 
 // ToUsernameExist <--
@@ -274,7 +297,7 @@ func (m *TLUsernameNotExisted) ToUsernameExist() *UsernameExist {
 		return nil
 	}
 
-	return MakeUsernameExist(m)
+	return &UsernameExist{Clazz: m}
 }
 
 // Encode <--
@@ -314,7 +337,17 @@ func (m *TLUsernameNotExisted) Decode(d *bin.Decoder) (err error) {
 
 // TLUsernameExisted <--
 type TLUsernameExisted struct {
-	ClazzID uint32 `json:"_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+}
+
+func MakeTLUsernameExisted(m *TLUsernameExisted) *TLUsernameExisted {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usernameExisted
+
+	return m
 }
 
 func (m *TLUsernameExisted) String() string {
@@ -329,7 +362,7 @@ func (m *TLUsernameExisted) UsernameExistClazzName() string {
 
 // ClazzName <--
 func (m *TLUsernameExisted) ClazzName() string {
-	return ClazzName_usernameExisted
+	return m.ClazzName2
 }
 
 // ToUsernameExist <--
@@ -338,7 +371,7 @@ func (m *TLUsernameExisted) ToUsernameExist() *UsernameExist {
 		return nil
 	}
 
-	return MakeUsernameExist(m)
+	return &UsernameExist{Clazz: m}
 }
 
 // Encode <--
@@ -378,7 +411,17 @@ func (m *TLUsernameExisted) Decode(d *bin.Decoder) (err error) {
 
 // TLUsernameExistedNotMe <--
 type TLUsernameExistedNotMe struct {
-	ClazzID uint32 `json:"_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+}
+
+func MakeTLUsernameExistedNotMe(m *TLUsernameExistedNotMe) *TLUsernameExistedNotMe {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usernameExistedNotMe
+
+	return m
 }
 
 func (m *TLUsernameExistedNotMe) String() string {
@@ -393,7 +436,7 @@ func (m *TLUsernameExistedNotMe) UsernameExistClazzName() string {
 
 // ClazzName <--
 func (m *TLUsernameExistedNotMe) ClazzName() string {
-	return ClazzName_usernameExistedNotMe
+	return m.ClazzName2
 }
 
 // ToUsernameExist <--
@@ -402,7 +445,7 @@ func (m *TLUsernameExistedNotMe) ToUsernameExist() *UsernameExist {
 		return nil
 	}
 
-	return MakeUsernameExist(m)
+	return &UsernameExist{Clazz: m}
 }
 
 // Encode <--
@@ -442,7 +485,17 @@ func (m *TLUsernameExistedNotMe) Decode(d *bin.Decoder) (err error) {
 
 // TLUsernameExistedIsMe <--
 type TLUsernameExistedIsMe struct {
-	ClazzID uint32 `json:"_id"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+}
+
+func MakeTLUsernameExistedIsMe(m *TLUsernameExistedIsMe) *TLUsernameExistedIsMe {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_usernameExistedIsMe
+
+	return m
 }
 
 func (m *TLUsernameExistedIsMe) String() string {
@@ -457,7 +510,7 @@ func (m *TLUsernameExistedIsMe) UsernameExistClazzName() string {
 
 // ClazzName <--
 func (m *TLUsernameExistedIsMe) ClazzName() string {
-	return ClazzName_usernameExistedIsMe
+	return m.ClazzName2
 }
 
 // ToUsernameExist <--
@@ -466,7 +519,7 @@ func (m *TLUsernameExistedIsMe) ToUsernameExist() *UsernameExist {
 		return nil
 	}
 
-	return MakeUsernameExist(m)
+	return &UsernameExist{Clazz: m}
 }
 
 // Encode <--
@@ -508,27 +561,26 @@ func (m *TLUsernameExistedIsMe) Decode(d *bin.Decoder) (err error) {
 type UsernameExist struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UsernameExistClazz `json:"_clazz"`
+	Clazz UsernameExistClazz `json:"_clazz"`
 }
 
 func (m *UsernameExist) String() string {
-	wrapper := iface.WithNameWrapper{m.UsernameExistClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUsernameExist <--
-func MakeUsernameExist(c UsernameExistClazz) *UsernameExist {
-	return &UsernameExist{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UsernameExistClazz: c,
+func (m *UsernameExist) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UsernameExistClazzName()
 	}
 }
 
 // Encode <--
 func (m *UsernameExist) Encode(x *bin.Encoder, layer int32) error {
-	if m.UsernameExistClazz != nil {
-		return m.UsernameExistClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UsernameExist - invalid Clazz")
@@ -536,13 +588,16 @@ func (m *UsernameExist) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UsernameExist) Decode(d *bin.Decoder) (err error) {
-	m.UsernameExistClazz, err = DecodeUsernameExistClazz(d)
+	m.Clazz, err = DecodeUsernameExistClazz(d)
 	return
 }
 
 // Match <--
 func (m *UsernameExist) Match(f ...interface{}) {
-	switch c := m.UsernameExistClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUsernameNotExisted:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUsernameNotExisted) interface{}); ok {
@@ -578,11 +633,11 @@ func (m *UsernameExist) ToUsernameNotExisted() (*TLUsernameNotExisted, bool) {
 		return nil, false
 	}
 
-	if m.UsernameExistClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsernameExistClazz.(*TLUsernameNotExisted); ok {
+	if x, ok := m.Clazz.(*TLUsernameNotExisted); ok {
 		return x, true
 	}
 
@@ -595,11 +650,11 @@ func (m *UsernameExist) ToUsernameExisted() (*TLUsernameExisted, bool) {
 		return nil, false
 	}
 
-	if m.UsernameExistClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsernameExistClazz.(*TLUsernameExisted); ok {
+	if x, ok := m.Clazz.(*TLUsernameExisted); ok {
 		return x, true
 	}
 
@@ -612,11 +667,11 @@ func (m *UsernameExist) ToUsernameExistedNotMe() (*TLUsernameExistedNotMe, bool)
 		return nil, false
 	}
 
-	if m.UsernameExistClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsernameExistClazz.(*TLUsernameExistedNotMe); ok {
+	if x, ok := m.Clazz.(*TLUsernameExistedNotMe); ok {
 		return x, true
 	}
 
@@ -629,11 +684,11 @@ func (m *UsernameExist) ToUsernameExistedIsMe() (*TLUsernameExistedIsMe, bool) {
 		return nil, false
 	}
 
-	if m.UsernameExistClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UsernameExistClazz.(*TLUsernameExistedIsMe); ok {
+	if x, ok := m.Clazz.(*TLUsernameExistedIsMe); ok {
 		return x, true
 	}
 

@@ -51,6 +51,7 @@ func DecodeSessionEntryClazz(d *bin.Decoder) (SessionEntryClazz, error) {
 // TLSessionEntry <--
 type TLSessionEntry struct {
 	ClazzID       uint32 `json:"_id"`
+	ClazzName2    string `json:"_name"`
 	UserId        int64  `json:"user_id"`
 	AuthKeyId     int64  `json:"auth_key_id"`
 	Gateway       string `json:"gateway"`
@@ -58,6 +59,15 @@ type TLSessionEntry struct {
 	Layer         int32  `json:"layer"`
 	PermAuthKeyId int64  `json:"perm_auth_key_id"`
 	Client        string `json:"client"`
+}
+
+func MakeTLSessionEntry(m *TLSessionEntry) *TLSessionEntry {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_sessionEntry
+
+	return m
 }
 
 func (m *TLSessionEntry) String() string {
@@ -72,7 +82,7 @@ func (m *TLSessionEntry) SessionEntryClazzName() string {
 
 // ClazzName <--
 func (m *TLSessionEntry) ClazzName() string {
-	return ClazzName_sessionEntry
+	return m.ClazzName2
 }
 
 // ToSessionEntry <--
@@ -81,7 +91,7 @@ func (m *TLSessionEntry) ToSessionEntry() *SessionEntry {
 		return nil
 	}
 
-	return MakeSessionEntry(m)
+	return &SessionEntry{Clazz: m}
 }
 
 // Encode <--
@@ -138,27 +148,26 @@ func (m *TLSessionEntry) Decode(d *bin.Decoder) (err error) {
 type SessionEntry struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionEntryClazz `json:"_clazz"`
+	Clazz SessionEntryClazz `json:"_clazz"`
 }
 
 func (m *SessionEntry) String() string {
-	wrapper := iface.WithNameWrapper{m.SessionEntryClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeSessionEntry <--
-func MakeSessionEntry(c SessionEntryClazz) *SessionEntry {
-	return &SessionEntry{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		SessionEntryClazz: c,
+func (m *SessionEntry) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.SessionEntryClazzName()
 	}
 }
 
 // Encode <--
 func (m *SessionEntry) Encode(x *bin.Encoder, layer int32) error {
-	if m.SessionEntryClazz != nil {
-		return m.SessionEntryClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("SessionEntry - invalid Clazz")
@@ -166,13 +175,16 @@ func (m *SessionEntry) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *SessionEntry) Decode(d *bin.Decoder) (err error) {
-	m.SessionEntryClazz, err = DecodeSessionEntryClazz(d)
+	m.Clazz, err = DecodeSessionEntryClazz(d)
 	return
 }
 
 // Match <--
 func (m *SessionEntry) Match(f ...interface{}) {
-	switch c := m.SessionEntryClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLSessionEntry:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLSessionEntry) interface{}); ok {
@@ -190,11 +202,11 @@ func (m *SessionEntry) ToSessionEntry() (*TLSessionEntry, bool) {
 		return nil, false
 	}
 
-	if m.SessionEntryClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.SessionEntryClazz.(*TLSessionEntry); ok {
+	if x, ok := m.Clazz.(*TLSessionEntry); ok {
 		return x, true
 	}
 
@@ -228,9 +240,19 @@ func DecodeUserSessionEntryListClazz(d *bin.Decoder) (UserSessionEntryListClazz,
 
 // TLUserSessionEntryList <--
 type TLUserSessionEntryList struct {
-	ClazzID      uint32          `json:"_id"`
-	UserId       int64           `json:"user_id"`
-	UserSessions []*SessionEntry `json:"user_sessions"`
+	ClazzID      uint32              `json:"_id"`
+	ClazzName2   string              `json:"_name"`
+	UserId       int64               `json:"user_id"`
+	UserSessions []SessionEntryClazz `json:"user_sessions"`
+}
+
+func MakeTLUserSessionEntryList(m *TLUserSessionEntryList) *TLUserSessionEntryList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userSessionEntryList
+
+	return m
 }
 
 func (m *TLUserSessionEntryList) String() string {
@@ -245,7 +267,7 @@ func (m *TLUserSessionEntryList) UserSessionEntryListClazzName() string {
 
 // ClazzName <--
 func (m *TLUserSessionEntryList) ClazzName() string {
-	return ClazzName_userSessionEntryList
+	return m.ClazzName2
 }
 
 // ToUserSessionEntryList <--
@@ -254,7 +276,7 @@ func (m *TLUserSessionEntryList) ToUserSessionEntryList() *UserSessionEntryList 
 		return nil
 	}
 
-	return MakeUserSessionEntryList(m)
+	return &UserSessionEntryList{Clazz: m}
 }
 
 // Encode <--
@@ -291,12 +313,14 @@ func (m *TLUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*SessionEntry, l1)
+			v1 := make([]SessionEntryClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(SessionEntry)
-				err3 = vv.Decode(d)
+				// vv := new(SessionEntry)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = DecodeSessionEntryClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.UserSessions = v1
 
@@ -315,27 +339,26 @@ func (m *TLUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
 type UserSessionEntryList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserSessionEntryListClazz `json:"_clazz"`
+	Clazz UserSessionEntryListClazz `json:"_clazz"`
 }
 
 func (m *UserSessionEntryList) String() string {
-	wrapper := iface.WithNameWrapper{m.UserSessionEntryListClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUserSessionEntryList <--
-func MakeUserSessionEntryList(c UserSessionEntryListClazz) *UserSessionEntryList {
-	return &UserSessionEntryList{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UserSessionEntryListClazz: c,
+func (m *UserSessionEntryList) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UserSessionEntryListClazzName()
 	}
 }
 
 // Encode <--
 func (m *UserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
-	if m.UserSessionEntryListClazz != nil {
-		return m.UserSessionEntryListClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UserSessionEntryList - invalid Clazz")
@@ -343,13 +366,16 @@ func (m *UserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UserSessionEntryList) Decode(d *bin.Decoder) (err error) {
-	m.UserSessionEntryListClazz, err = DecodeUserSessionEntryListClazz(d)
+	m.Clazz, err = DecodeUserSessionEntryListClazz(d)
 	return
 }
 
 // Match <--
 func (m *UserSessionEntryList) Match(f ...interface{}) {
-	switch c := m.UserSessionEntryListClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUserSessionEntryList:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUserSessionEntryList) interface{}); ok {
@@ -367,11 +393,11 @@ func (m *UserSessionEntryList) ToUserSessionEntryList() (*TLUserSessionEntryList
 		return nil, false
 	}
 
-	if m.UserSessionEntryListClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UserSessionEntryListClazz.(*TLUserSessionEntryList); ok {
+	if x, ok := m.Clazz.(*TLUserSessionEntryList); ok {
 		return x, true
 	}
 

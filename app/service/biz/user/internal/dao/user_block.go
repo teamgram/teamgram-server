@@ -34,7 +34,7 @@ var (
 )
 
 type CachedPeerBlocked struct {
-	PeerBlocked *tg.PeerBlocked `json:"peer_blocked"`
+	PeerBlocked tg.PeerBlockedClazz `json:"peer_blocked"`
 }
 
 func (c *CachedPeerBlocked) IsEmpty() bool {
@@ -63,7 +63,7 @@ func (d *Dao) CheckBlocked(ctx context.Context, id, blockedId int64) bool {
 				return err
 			}
 			if do != nil {
-				v.(*CachedPeerBlocked).PeerBlocked = tg.MakePeerBlocked(&tg.TLPeerBlocked{
+				v.(*CachedPeerBlocked).PeerBlocked = tg.MakeTLPeerBlocked(&tg.TLPeerBlocked{
 					PeerId: tg.MakePeerUser(do.PeerId),
 					Date:   int32(do.Date),
 				})

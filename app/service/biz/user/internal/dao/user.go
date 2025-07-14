@@ -34,15 +34,15 @@ import (
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
-func (d *Dao) getBotData(ctx context.Context, botId int64) *tg.BotData {
+func (d *Dao) getBotData(ctx context.Context, botId int64) *tg.TLBotData {
 	var (
-		botData *tg.BotData
+		botData *tg.TLBotData
 	)
 
 	botDO, _ := d.BotsDAO.Select(ctx, botId)
 	if botDO != nil {
 		// userData.Bot
-		botData = tg.MakeBotData(&tg.TLBotData{
+		botData = tg.MakeTLBotData(&tg.TLBotData{
 			Id:                   botDO.BotId,
 			BotType:              botDO.BotType,
 			Creator:              botDO.CreatorUserId,
@@ -106,15 +106,15 @@ func (d *Dao) CreateNewUserV2(
 	cacheUserData.UserData = d.MakeUserDataByDO(userDO)
 	cacheUserData.CachesPrivacyKeyRules = append(
 		cacheUserData.CachesPrivacyKeyRules,
-		tg.MakePrivacyKeyRules(&tg.TLPrivacyKeyRules{
+		tg.MakeTLPrivacyKeyRules(&tg.TLPrivacyKeyRules{
 			Key:   tg.STATUS_TIMESTAMP,
 			Rules: defaultRules,
 		}),
-		tg.MakePrivacyKeyRules(&tg.TLPrivacyKeyRules{
+		tg.MakeTLPrivacyKeyRules(&tg.TLPrivacyKeyRules{
 			Key:   tg.PHONE_NUMBER,
 			Rules: phoneNumberRules,
 		}),
-		tg.MakePrivacyKeyRules(&tg.TLPrivacyKeyRules{
+		tg.MakeTLPrivacyKeyRules(&tg.TLPrivacyKeyRules{
 			Key:   tg.PROFILE_PHOTO,
 			Rules: defaultRules,
 		}))
@@ -125,12 +125,12 @@ func (d *Dao) CreateNewUserV2(
 	// 2. PutLastSeenAt
 	d.PutLastSeenAt(ctx, userDO.Id, now, 300)
 
-	return tg.MakeImmutableUser(&tg.TLImmutableUser{
+	return tg.MakeTLImmutableUser(&tg.TLImmutableUser{
 		User:             cacheUserData.UserData,
 		LastSeenAt:       now,
 		Contacts:         nil,
 		KeysPrivacyRules: nil,
-	}), nil
+	}).ToImmutableUser(), nil
 }
 
 func (d *Dao) UpdateUserFirstAndLastName(ctx context.Context, id int64, firstName, lastName string) bool {
@@ -270,9 +270,9 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 		logx.WithContext(ctx).Errorf("user.getImmutableUser - error: %v", err)
 		return nil, err
 	}
-	userData, _ := cacheUserData.UserData.ToUserData()
+	userData := cacheUserData.UserData
 	immutableUser := &tg.TLImmutableUser{
-		User:             userData.ToUserData(),
+		User:             userData,
 		LastSeenAt:       0,
 		Contacts:         nil,
 		KeysPrivacyRules: nil,
@@ -314,6 +314,7 @@ func (d *Dao) GetImmutableUser(ctx context.Context, id int64, privacy bool, cont
 				return
 			}
 
+			immutableUser.Contacts = d.getContactListByIdList(ctx, id, idList2)
 			immutableUser.Contacts = d.getContactListByIdList(ctx, id, idList2)
 		})
 	//func() {

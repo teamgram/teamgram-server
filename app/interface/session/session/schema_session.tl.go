@@ -50,8 +50,18 @@ func DecodeHttpSessionDataClazz(d *bin.Decoder) (HttpSessionDataClazz, error) {
 
 // TLHttpSessionData <--
 type TLHttpSessionData struct {
-	ClazzID uint32 `json:"_id"`
-	Payload []byte `json:"payload"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Payload    []byte `json:"payload"`
+}
+
+func MakeTLHttpSessionData(m *TLHttpSessionData) *TLHttpSessionData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_httpSessionData
+
+	return m
 }
 
 func (m *TLHttpSessionData) String() string {
@@ -66,7 +76,7 @@ func (m *TLHttpSessionData) HttpSessionDataClazzName() string {
 
 // ClazzName <--
 func (m *TLHttpSessionData) ClazzName() string {
-	return ClazzName_httpSessionData
+	return m.ClazzName2
 }
 
 // ToHttpSessionData <--
@@ -75,7 +85,7 @@ func (m *TLHttpSessionData) ToHttpSessionData() *HttpSessionData {
 		return nil
 	}
 
-	return MakeHttpSessionData(m)
+	return &HttpSessionData{Clazz: m}
 }
 
 // Encode <--
@@ -120,27 +130,26 @@ func (m *TLHttpSessionData) Decode(d *bin.Decoder) (err error) {
 type HttpSessionData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	HttpSessionDataClazz `json:"_clazz"`
+	Clazz HttpSessionDataClazz `json:"_clazz"`
 }
 
 func (m *HttpSessionData) String() string {
-	wrapper := iface.WithNameWrapper{m.HttpSessionDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeHttpSessionData <--
-func MakeHttpSessionData(c HttpSessionDataClazz) *HttpSessionData {
-	return &HttpSessionData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		HttpSessionDataClazz: c,
+func (m *HttpSessionData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.HttpSessionDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *HttpSessionData) Encode(x *bin.Encoder, layer int32) error {
-	if m.HttpSessionDataClazz != nil {
-		return m.HttpSessionDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("HttpSessionData - invalid Clazz")
@@ -148,13 +157,16 @@ func (m *HttpSessionData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *HttpSessionData) Decode(d *bin.Decoder) (err error) {
-	m.HttpSessionDataClazz, err = DecodeHttpSessionDataClazz(d)
+	m.Clazz, err = DecodeHttpSessionDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *HttpSessionData) Match(f ...interface{}) {
-	switch c := m.HttpSessionDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLHttpSessionData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLHttpSessionData) interface{}); ok {
@@ -172,11 +184,11 @@ func (m *HttpSessionData) ToHttpSessionData() (*TLHttpSessionData, bool) {
 		return nil, false
 	}
 
-	if m.HttpSessionDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.HttpSessionDataClazz.(*TLHttpSessionData); ok {
+	if x, ok := m.Clazz.(*TLHttpSessionData); ok {
 		return x, true
 	}
 
@@ -211,6 +223,7 @@ func DecodeSessionClientDataClazz(d *bin.Decoder) (SessionClientDataClazz, error
 // TLSessionClientData <--
 type TLSessionClientData struct {
 	ClazzID       uint32 `json:"_id"`
+	ClazzName2    string `json:"_name"`
 	ServerId      string `json:"server_id"`
 	ConnType      int32  `json:"conn_type"`
 	AuthKeyId     int64  `json:"auth_key_id"`
@@ -221,6 +234,15 @@ type TLSessionClientData struct {
 	QuickAck      int32  `json:"quick_ack"`
 	Salt          int64  `json:"salt"`
 	Payload       []byte `json:"payload"`
+}
+
+func MakeTLSessionClientData(m *TLSessionClientData) *TLSessionClientData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_sessionClientData
+
+	return m
 }
 
 func (m *TLSessionClientData) String() string {
@@ -235,7 +257,7 @@ func (m *TLSessionClientData) SessionClientDataClazzName() string {
 
 // ClazzName <--
 func (m *TLSessionClientData) ClazzName() string {
-	return ClazzName_sessionClientData
+	return m.ClazzName2
 }
 
 // ToSessionClientData <--
@@ -244,7 +266,7 @@ func (m *TLSessionClientData) ToSessionClientData() *SessionClientData {
 		return nil
 	}
 
-	return MakeSessionClientData(m)
+	return &SessionClientData{Clazz: m}
 }
 
 // Encode <--
@@ -307,27 +329,26 @@ func (m *TLSessionClientData) Decode(d *bin.Decoder) (err error) {
 type SessionClientData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionClientDataClazz `json:"_clazz"`
+	Clazz SessionClientDataClazz `json:"_clazz"`
 }
 
 func (m *SessionClientData) String() string {
-	wrapper := iface.WithNameWrapper{m.SessionClientDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeSessionClientData <--
-func MakeSessionClientData(c SessionClientDataClazz) *SessionClientData {
-	return &SessionClientData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		SessionClientDataClazz: c,
+func (m *SessionClientData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.SessionClientDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *SessionClientData) Encode(x *bin.Encoder, layer int32) error {
-	if m.SessionClientDataClazz != nil {
-		return m.SessionClientDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("SessionClientData - invalid Clazz")
@@ -335,13 +356,16 @@ func (m *SessionClientData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *SessionClientData) Decode(d *bin.Decoder) (err error) {
-	m.SessionClientDataClazz, err = DecodeSessionClientDataClazz(d)
+	m.Clazz, err = DecodeSessionClientDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *SessionClientData) Match(f ...interface{}) {
-	switch c := m.SessionClientDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLSessionClientData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLSessionClientData) interface{}); ok {
@@ -359,11 +383,11 @@ func (m *SessionClientData) ToSessionClientData() (*TLSessionClientData, bool) {
 		return nil, false
 	}
 
-	if m.SessionClientDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.SessionClientDataClazz.(*TLSessionClientData); ok {
+	if x, ok := m.Clazz.(*TLSessionClientData); ok {
 		return x, true
 	}
 
@@ -398,6 +422,7 @@ func DecodeSessionClientEventClazz(d *bin.Decoder) (SessionClientEventClazz, err
 // TLSessionClientEvent <--
 type TLSessionClientEvent struct {
 	ClazzID       uint32 `json:"_id"`
+	ClazzName2    string `json:"_name"`
 	ServerId      string `json:"server_id"`
 	ConnType      int32  `json:"conn_type"`
 	AuthKeyId     int64  `json:"auth_key_id"`
@@ -405,6 +430,15 @@ type TLSessionClientEvent struct {
 	PermAuthKeyId int64  `json:"perm_auth_key_id"`
 	SessionId     int64  `json:"session_id"`
 	ClientIp      string `json:"client_ip"`
+}
+
+func MakeTLSessionClientEvent(m *TLSessionClientEvent) *TLSessionClientEvent {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_sessionClientEvent
+
+	return m
 }
 
 func (m *TLSessionClientEvent) String() string {
@@ -419,7 +453,7 @@ func (m *TLSessionClientEvent) SessionClientEventClazzName() string {
 
 // ClazzName <--
 func (m *TLSessionClientEvent) ClazzName() string {
-	return ClazzName_sessionClientEvent
+	return m.ClazzName2
 }
 
 // ToSessionClientEvent <--
@@ -428,7 +462,7 @@ func (m *TLSessionClientEvent) ToSessionClientEvent() *SessionClientEvent {
 		return nil
 	}
 
-	return MakeSessionClientEvent(m)
+	return &SessionClientEvent{Clazz: m}
 }
 
 // Encode <--
@@ -485,27 +519,26 @@ func (m *TLSessionClientEvent) Decode(d *bin.Decoder) (err error) {
 type SessionClientEvent struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	SessionClientEventClazz `json:"_clazz"`
+	Clazz SessionClientEventClazz `json:"_clazz"`
 }
 
 func (m *SessionClientEvent) String() string {
-	wrapper := iface.WithNameWrapper{m.SessionClientEventClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeSessionClientEvent <--
-func MakeSessionClientEvent(c SessionClientEventClazz) *SessionClientEvent {
-	return &SessionClientEvent{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		SessionClientEventClazz: c,
+func (m *SessionClientEvent) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.SessionClientEventClazzName()
 	}
 }
 
 // Encode <--
 func (m *SessionClientEvent) Encode(x *bin.Encoder, layer int32) error {
-	if m.SessionClientEventClazz != nil {
-		return m.SessionClientEventClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("SessionClientEvent - invalid Clazz")
@@ -513,13 +546,16 @@ func (m *SessionClientEvent) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *SessionClientEvent) Decode(d *bin.Decoder) (err error) {
-	m.SessionClientEventClazz, err = DecodeSessionClientEventClazz(d)
+	m.Clazz, err = DecodeSessionClientEventClazz(d)
 	return
 }
 
 // Match <--
 func (m *SessionClientEvent) Match(f ...interface{}) {
-	switch c := m.SessionClientEventClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLSessionClientEvent:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLSessionClientEvent) interface{}); ok {
@@ -537,11 +573,11 @@ func (m *SessionClientEvent) ToSessionClientEvent() (*TLSessionClientEvent, bool
 		return nil, false
 	}
 
-	if m.SessionClientEventClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.SessionClientEventClazz.(*TLSessionClientEvent); ok {
+	if x, ok := m.Clazz.(*TLSessionClientEvent); ok {
 		return x, true
 	}
 

@@ -81,13 +81,13 @@ type idxId struct {
 	id  int64
 }
 
-func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKeyId int64) (authorizations []*tg.Authorization) {
+func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKeyId int64) (authorizations []tg.AuthorizationClazz) {
 	doList, _ := d.AuthUsersDAO.SelectListByUserId(ctx, userId)
 	if len(doList) == 0 {
 		return
 	}
 
-	authorizations = make([]*tg.Authorization, len(doList)+1)
+	authorizations = make([]tg.AuthorizationClazz, len(doList)+1)
 	mr.ForEach(
 		func(source chan<- interface{}) {
 			for i := 0; i < len(doList); i++ {
@@ -101,7 +101,7 @@ func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKe
 			if cData != nil {
 				country, region := d.getCountryAndRegionByIp(cData.ClientIp())
 				// TODO(@benqi): fill plat_form, app_name, (country, region)
-				authorization := tg.TLAuthorization{
+				authorization := tg.MakeTLAuthorization(&tg.TLAuthorization{
 					Current:         false,
 					OfficialApp:     true,
 					PasswordPending: false,
@@ -117,14 +117,14 @@ func (d *Dao) GetAuthorizations(ctx context.Context, userId int64, excludeAuthKe
 					Ip:              cData.ClientIp(),
 					Country:         country,
 					Region:          region,
-				}
+				})
 
 				if idx.id == excludeAuthKeyId {
 					authorization.Current = true
 					authorization.Hash = 0
-					authorizations[0] = authorization.ToAuthorization()
+					authorizations[0] = authorization
 				} else {
-					authorizations[idx.idx+1] = authorization.ToAuthorization()
+					authorizations[idx.idx+1] = authorization
 				}
 			}
 		})

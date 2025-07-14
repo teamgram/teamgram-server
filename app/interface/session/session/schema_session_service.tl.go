@@ -82,10 +82,10 @@ func (m *TLSessionQueryAuthKey) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionSetAuthKey <--
 type TLSessionSetAuthKey struct {
-	ClazzID    uint32          `json:"_id"`
-	AuthKey    *tg.AuthKeyInfo `json:"auth_key"`
-	FutureSalt *tg.FutureSalt  `json:"future_salt"`
-	ExpiresIn  int32           `json:"expires_in"`
+	ClazzID    uint32              `json:"_id"`
+	AuthKey    tg.AuthKeyInfoClazz `json:"auth_key"`
+	FutureSalt tg.FutureSaltClazz  `json:"future_salt"`
+	ExpiresIn  int32               `json:"expires_in"`
 }
 
 func (m *TLSessionSetAuthKey) String() string {
@@ -121,13 +121,15 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x1d11490b: func() (err error) {
 
-			m1 := &tg.AuthKeyInfo{}
-			_ = m1.Decode(d)
-			m.AuthKey = m1
+			// m1 := &tg.AuthKeyInfo{}
+			// _ = m1.Decode(d)
+			// m.AuthKey = m1
+			m.AuthKey, _ = tg.DecodeAuthKeyInfoClazz(d)
 
-			m2 := &tg.FutureSalt{}
-			_ = m2.Decode(d)
-			m.FutureSalt = m2
+			// m2 := &tg.FutureSalt{}
+			// _ = m2.Decode(d)
+			// m.FutureSalt = m2
+			m.FutureSalt, _ = tg.DecodeFutureSaltClazz(d)
 
 			m.ExpiresIn, err = d.Int32()
 
@@ -147,8 +149,8 @@ func (m *TLSessionSetAuthKey) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionCreateSession <--
 type TLSessionCreateSession struct {
-	ClazzID uint32              `json:"_id"`
-	Client  *SessionClientEvent `json:"client"`
+	ClazzID uint32                  `json:"_id"`
+	Client  SessionClientEventClazz `json:"client"`
 }
 
 func (m *TLSessionCreateSession) String() string {
@@ -182,9 +184,10 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x410cb20d: func() (err error) {
 
-			m1 := &SessionClientEvent{}
-			_ = m1.Decode(d)
-			m.Client = m1
+			// m1 := &SessionClientEvent{}
+			// _ = m1.Decode(d)
+			// m.Client = m1
+			m.Client, _ = DecodeSessionClientEventClazz(d)
 
 			return nil
 		},
@@ -202,8 +205,8 @@ func (m *TLSessionCreateSession) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionSendDataToSession <--
 type TLSessionSendDataToSession struct {
-	ClazzID uint32             `json:"_id"`
-	Data    *SessionClientData `json:"data"`
+	ClazzID uint32                 `json:"_id"`
+	Data    SessionClientDataClazz `json:"data"`
 }
 
 func (m *TLSessionSendDataToSession) String() string {
@@ -237,9 +240,10 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x876b2dec: func() (err error) {
 
-			m1 := &SessionClientData{}
-			_ = m1.Decode(d)
-			m.Data = m1
+			// m1 := &SessionClientData{}
+			// _ = m1.Decode(d)
+			// m.Data = m1
+			m.Data, _ = DecodeSessionClientDataClazz(d)
 
 			return nil
 		},
@@ -257,8 +261,8 @@ func (m *TLSessionSendDataToSession) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionSendHttpDataToSession <--
 type TLSessionSendHttpDataToSession struct {
-	ClazzID uint32             `json:"_id"`
-	Client  *SessionClientData `json:"client"`
+	ClazzID uint32                 `json:"_id"`
+	Client  SessionClientDataClazz `json:"client"`
 }
 
 func (m *TLSessionSendHttpDataToSession) String() string {
@@ -292,9 +296,10 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0xbbec23ae: func() (err error) {
 
-			m1 := &SessionClientData{}
-			_ = m1.Decode(d)
-			m.Client = m1
+			// m1 := &SessionClientData{}
+			// _ = m1.Decode(d)
+			// m.Client = m1
+			m.Client, _ = DecodeSessionClientDataClazz(d)
 
 			return nil
 		},
@@ -312,8 +317,8 @@ func (m *TLSessionSendHttpDataToSession) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionCloseSession <--
 type TLSessionCloseSession struct {
-	ClazzID uint32              `json:"_id"`
-	Client  *SessionClientEvent `json:"client"`
+	ClazzID uint32                  `json:"_id"`
+	Client  SessionClientEventClazz `json:"client"`
 }
 
 func (m *TLSessionCloseSession) String() string {
@@ -347,9 +352,10 @@ func (m *TLSessionCloseSession) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x176fc253: func() (err error) {
 
-			m1 := &SessionClientEvent{}
-			_ = m1.Decode(d)
-			m.Client = m1
+			// m1 := &SessionClientEvent{}
+			// _ = m1.Decode(d)
+			// m.Client = m1
+			m.Client, _ = DecodeSessionClientEventClazz(d)
 
 			return nil
 		},
@@ -367,10 +373,10 @@ func (m *TLSessionCloseSession) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionPushUpdatesData <--
 type TLSessionPushUpdatesData struct {
-	ClazzID       uint32      `json:"_id"`
-	PermAuthKeyId int64       `json:"perm_auth_key_id"`
-	Notification  bool        `json:"notification"`
-	Updates       *tg.Updates `json:"updates"`
+	ClazzID       uint32          `json:"_id"`
+	PermAuthKeyId int64           `json:"perm_auth_key_id"`
+	Notification  bool            `json:"notification"`
+	Updates       tg.UpdatesClazz `json:"updates"`
 }
 
 func (m *TLSessionPushUpdatesData) String() string {
@@ -425,9 +431,10 @@ func (m *TLSessionPushUpdatesData) Decode(d *bin.Decoder) (err error) {
 				m.Notification = true
 			}
 
-			m4 := &tg.Updates{}
-			_ = m4.Decode(d)
-			m.Updates = m4
+			// m4 := &tg.Updates{}
+			// _ = m4.Decode(d)
+			// m.Updates = m4
+			m.Updates, _ = tg.DecodeUpdatesClazz(d)
 
 			return nil
 		},
@@ -445,11 +452,11 @@ func (m *TLSessionPushUpdatesData) Decode(d *bin.Decoder) (err error) {
 
 // TLSessionPushSessionUpdatesData <--
 type TLSessionPushSessionUpdatesData struct {
-	ClazzID       uint32      `json:"_id"`
-	PermAuthKeyId int64       `json:"perm_auth_key_id"`
-	AuthKeyId     int64       `json:"auth_key_id"`
-	SessionId     int64       `json:"session_id"`
-	Updates       *tg.Updates `json:"updates"`
+	ClazzID       uint32          `json:"_id"`
+	PermAuthKeyId int64           `json:"perm_auth_key_id"`
+	AuthKeyId     int64           `json:"auth_key_id"`
+	SessionId     int64           `json:"session_id"`
+	Updates       tg.UpdatesClazz `json:"updates"`
 }
 
 func (m *TLSessionPushSessionUpdatesData) String() string {
@@ -501,9 +508,10 @@ func (m *TLSessionPushSessionUpdatesData) Decode(d *bin.Decoder) (err error) {
 			m.AuthKeyId, err = d.Int64()
 			m.SessionId, err = d.Int64()
 
-			m5 := &tg.Updates{}
-			_ = m5.Decode(d)
-			m.Updates = m5
+			// m5 := &tg.Updates{}
+			// _ = m5.Decode(d)
+			// m.Updates = m5
+			m.Updates, _ = tg.DecodeUpdatesClazz(d)
 
 			return nil
 		},

@@ -221,7 +221,8 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	var (
 		// phoneRegistered = false
 		settings, _ = request.Settings.ToCodeSettings()
-		// user            *tg.ImmutableUser
+		//phoneRegistered bool
+		//user            *tg.ImmutableUser
 	)
 
 	if len(settings.LogoutTokens) > 0 {
@@ -307,7 +308,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	//	}
 	//}
 	//// phoneRegistered = user != nil
-
+	//
 	//// codeLogic := logic.NewAuthSignLogic(s.AuthCore)
 	//codeData, err2 := c.svcCtx.AuthLogic.DoAuthSendCode(c.ctx,
 	//	authKeyId,
@@ -417,7 +418,7 @@ func (c *AuthorizationCore) authSendCode(authKeyId, sessionId int64, request *tg
 	//
 	//		return nil
 	//	})
-
+	//
 	//if err2 != nil {
 	//	c.Logger.Errorf("auth.sendCode - error: %v", err2)
 	//	err = err2

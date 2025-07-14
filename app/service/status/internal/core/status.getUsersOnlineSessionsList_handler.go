@@ -36,7 +36,7 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 		pipes = make(map[interface{}][]string)
 
 		rValues = &status.VectorUserSessionEntryList{
-			Datas: make([]*status.UserSessionEntryList, 0, len(in.Users)),
+			Datas: make([]status.UserSessionEntryListClazz, 0, len(in.Users)),
 		}
 	)
 
@@ -75,20 +75,20 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 			var (
 				sessions = &status.TLUserSessionEntryList{
 					UserId:       getIdByUserKey(kList[i]),
-					UserSessions: make([]*status.SessionEntry, len(rMap)),
+					UserSessions: make([]status.SessionEntryClazz, len(rMap)),
 				}
 			)
 
-			sessions.UserSessions = make([]*status.SessionEntry, 0, len(rMap))
+			sessions.UserSessions = make([]status.SessionEntryClazz, 0, len(rMap))
 			for _, v := range rMap {
 				// keyId, _ := strconv.ParseInt(k, 10, 64)
-				sess := new(status.SessionEntry)
+				sess := new(status.TLSessionEntry)
 				if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
 					sessions.UserSessions = append(sessions.UserSessions, sess)
 				}
 			}
 
-			rValues.Datas = append(rValues.Datas, sessions.ToUserSessionEntryList())
+			rValues.Datas = append(rValues.Datas, sessions)
 		}
 	}
 

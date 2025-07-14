@@ -50,13 +50,23 @@ func DecodeAuthKeyStateDataClazz(d *bin.Decoder) (AuthKeyStateDataClazz, error) 
 
 // TLAuthKeyStateData <--
 type TLAuthKeyStateData struct {
-	ClazzID              uint32         `json:"_id"`
-	AuthKeyId            int64          `json:"auth_key_id"`
-	KeyState             int32          `json:"key_state"`
-	UserId               int64          `json:"user_id"`
-	AccessHash           int64          `json:"access_hash"`
-	Client               *ClientSession `json:"client"`
-	AndroidPushSessionId *int64         `json:"android_push_session_id"`
+	ClazzID              uint32             `json:"_id"`
+	ClazzName2           string             `json:"_name"`
+	AuthKeyId            int64              `json:"auth_key_id"`
+	KeyState             int32              `json:"key_state"`
+	UserId               int64              `json:"user_id"`
+	AccessHash           int64              `json:"access_hash"`
+	Client               ClientSessionClazz `json:"client"`
+	AndroidPushSessionId *int64             `json:"android_push_session_id"`
+}
+
+func MakeTLAuthKeyStateData(m *TLAuthKeyStateData) *TLAuthKeyStateData {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_authKeyStateData
+
+	return m
 }
 
 func (m *TLAuthKeyStateData) String() string {
@@ -71,7 +81,7 @@ func (m *TLAuthKeyStateData) AuthKeyStateDataClazzName() string {
 
 // ClazzName <--
 func (m *TLAuthKeyStateData) ClazzName() string {
-	return ClazzName_authKeyStateData
+	return m.ClazzName2
 }
 
 // ToAuthKeyStateData <--
@@ -80,7 +90,7 @@ func (m *TLAuthKeyStateData) ToAuthKeyStateData() *AuthKeyStateData {
 		return nil
 	}
 
-	return MakeAuthKeyStateData(m)
+	return &AuthKeyStateData{Clazz: m}
 }
 
 // Encode <--
@@ -142,9 +152,10 @@ func (m *TLAuthKeyStateData) Decode(d *bin.Decoder) (err error) {
 			m.UserId, err = d.Int64()
 			m.AccessHash, err = d.Int64()
 			if (flags & (1 << 0)) != 0 {
-				m5 := &ClientSession{}
-				_ = m5.Decode(d)
-				m.Client = m5
+				// m5 := &ClientSession{}
+				// _ = m5.Decode(d)
+				// m.Client = m5
+				m.Client, _ = DecodeClientSessionClazz(d)
 			}
 			if (flags & (1 << 1)) != 0 {
 				m.AndroidPushSessionId = new(int64)
@@ -166,27 +177,26 @@ func (m *TLAuthKeyStateData) Decode(d *bin.Decoder) (err error) {
 type AuthKeyStateData struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	AuthKeyStateDataClazz `json:"_clazz"`
+	Clazz AuthKeyStateDataClazz `json:"_clazz"`
 }
 
 func (m *AuthKeyStateData) String() string {
-	wrapper := iface.WithNameWrapper{m.AuthKeyStateDataClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeAuthKeyStateData <--
-func MakeAuthKeyStateData(c AuthKeyStateDataClazz) *AuthKeyStateData {
-	return &AuthKeyStateData{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		AuthKeyStateDataClazz: c,
+func (m *AuthKeyStateData) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.AuthKeyStateDataClazzName()
 	}
 }
 
 // Encode <--
 func (m *AuthKeyStateData) Encode(x *bin.Encoder, layer int32) error {
-	if m.AuthKeyStateDataClazz != nil {
-		return m.AuthKeyStateDataClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("AuthKeyStateData - invalid Clazz")
@@ -194,13 +204,16 @@ func (m *AuthKeyStateData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *AuthKeyStateData) Decode(d *bin.Decoder) (err error) {
-	m.AuthKeyStateDataClazz, err = DecodeAuthKeyStateDataClazz(d)
+	m.Clazz, err = DecodeAuthKeyStateDataClazz(d)
 	return
 }
 
 // Match <--
 func (m *AuthKeyStateData) Match(f ...interface{}) {
-	switch c := m.AuthKeyStateDataClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLAuthKeyStateData:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLAuthKeyStateData) interface{}); ok {
@@ -218,11 +231,11 @@ func (m *AuthKeyStateData) ToAuthKeyStateData() (*TLAuthKeyStateData, bool) {
 		return nil, false
 	}
 
-	if m.AuthKeyStateDataClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.AuthKeyStateDataClazz.(*TLAuthKeyStateData); ok {
+	if x, ok := m.Clazz.(*TLAuthKeyStateData); ok {
 		return x, true
 	}
 
@@ -257,6 +270,7 @@ func DecodeClientSessionClazz(d *bin.Decoder) (ClientSessionClazz, error) {
 // TLClientSession <--
 type TLClientSession struct {
 	ClazzID        uint32 `json:"_id"`
+	ClazzName2     string `json:"_name"`
 	AuthKeyId      int64  `json:"auth_key_id"`
 	Ip             string `json:"ip"`
 	Layer          int32  `json:"layer"`
@@ -271,6 +285,15 @@ type TLClientSession struct {
 	Params         string `json:"params"`
 }
 
+func MakeTLClientSession(m *TLClientSession) *TLClientSession {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_clientSession
+
+	return m
+}
+
 func (m *TLClientSession) String() string {
 	wrapper := iface.WithNameWrapper{"clientSession", m}
 	return wrapper.String()
@@ -283,7 +306,7 @@ func (m *TLClientSession) ClientSessionClazzName() string {
 
 // ClazzName <--
 func (m *TLClientSession) ClazzName() string {
-	return ClazzName_clientSession
+	return m.ClazzName2
 }
 
 // ToClientSession <--
@@ -292,7 +315,7 @@ func (m *TLClientSession) ToClientSession() *ClientSession {
 		return nil
 	}
 
-	return MakeClientSession(m)
+	return &ClientSession{Clazz: m}
 }
 
 // Encode <--
@@ -359,27 +382,26 @@ func (m *TLClientSession) Decode(d *bin.Decoder) (err error) {
 type ClientSession struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ClientSessionClazz `json:"_clazz"`
+	Clazz ClientSessionClazz `json:"_clazz"`
 }
 
 func (m *ClientSession) String() string {
-	wrapper := iface.WithNameWrapper{m.ClientSessionClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeClientSession <--
-func MakeClientSession(c ClientSessionClazz) *ClientSession {
-	return &ClientSession{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		ClientSessionClazz: c,
+func (m *ClientSession) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.ClientSessionClazzName()
 	}
 }
 
 // Encode <--
 func (m *ClientSession) Encode(x *bin.Encoder, layer int32) error {
-	if m.ClientSessionClazz != nil {
-		return m.ClientSessionClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("ClientSession - invalid Clazz")
@@ -387,13 +409,16 @@ func (m *ClientSession) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *ClientSession) Decode(d *bin.Decoder) (err error) {
-	m.ClientSessionClazz, err = DecodeClientSessionClazz(d)
+	m.Clazz, err = DecodeClientSessionClazz(d)
 	return
 }
 
 // Match <--
 func (m *ClientSession) Match(f ...interface{}) {
-	switch c := m.ClientSessionClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLClientSession:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLClientSession) interface{}); ok {
@@ -411,11 +436,11 @@ func (m *ClientSession) ToClientSession() (*TLClientSession, bool) {
 		return nil, false
 	}
 
-	if m.ClientSessionClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ClientSessionClazz.(*TLClientSession); ok {
+	if x, ok := m.Clazz.(*TLClientSession); ok {
 		return x, true
 	}
 

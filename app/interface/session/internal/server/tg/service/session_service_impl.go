@@ -56,7 +56,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.createSession - metadata: %s, request: %s", c.MD, request)
 
-	data, _ := request.Client.ToSessionClientEvent()
+	data, _ := request.Client.(*session.TLSessionClientEvent)
 	if data == nil {
 		c.Logger.Errorf("session.createSession error: client is nil")
 		return nil, tg.ErrInputRequestInvalid
@@ -79,7 +79,7 @@ func (s *Service) SessionCreateSession(ctx context.Context, request *session.TLS
 // session.sendDataToSession data:SessionClientData = Bool;
 func (s *Service) SessionSendDataToSession(ctx context.Context, request *session.TLSessionSendDataToSession) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	data, _ := request.Data.ToSessionClientData()
+	data, _ := request.Data.(*session.TLSessionClientData)
 	if data == nil {
 		c.Logger.Errorf("session.sendDataToSession(%s) error: client is nil", request)
 		return nil, tg.ErrInputRequestInvalid
@@ -114,7 +114,7 @@ func (s *Service) SessionSendDataToSession(ctx context.Context, request *session
 // session.sendHttpDataToSession client:SessionClientData = HttpSessionData;
 func (s *Service) SessionSendHttpDataToSession(ctx context.Context, request *session.TLSessionSendHttpDataToSession) (*session.HttpSessionData, error) {
 	c := core.New(ctx, s.svcCtx)
-	data, _ := request.Client.ToSessionClientData()
+	data, _ := request.Client.(*session.TLSessionClientData)
 	if data == nil {
 		c.Logger.Errorf("session.sendHttpDataToSession(%s) error: client is nil", request)
 		return nil, tg.ErrInputRequestInvalid
@@ -151,7 +151,7 @@ func (s *Service) SessionCloseSession(ctx context.Context, request *session.TLSe
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("session.closeSession - metadata: %s, request: %s", c.MD, request)
 
-	data, _ := request.Client.ToSessionClientEvent()
+	data, _ := request.Client.(*session.TLSessionClientEvent)
 	if data == nil {
 		c.Logger.Errorf("session.closeSession error: client is nil")
 		return nil, tg.ErrInputRequestInvalid

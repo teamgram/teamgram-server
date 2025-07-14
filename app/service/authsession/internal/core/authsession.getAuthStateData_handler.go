@@ -55,12 +55,12 @@ func (c *AuthsessionCore) AuthsessionGetAuthStateData(in *authsession.TLAuthsess
 
 	// cli := cData.Client
 
-	return authsession.MakeAuthKeyStateData(&authsession.TLAuthKeyStateData{
+	return authsession.MakeTLAuthKeyStateData(&authsession.TLAuthKeyStateData{
 		AuthKeyId:            inKeyId,
 		KeyState:             int32(cData.ToAuthState()),
 		UserId:               cData.UserId(),
 		AccessHash:           0,
-		Client:               cData.GetClient().ToClientSession(),
+		Client:               cData.GetClient(),
 		AndroidPushSessionId: iface.Ptr(cData.AndroidPushSessionId()),
-	}), nil
+	}).ToAuthKeyStateData(), nil
 }

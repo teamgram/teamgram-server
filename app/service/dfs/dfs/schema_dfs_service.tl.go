@@ -122,9 +122,9 @@ func (m *TLDfsWriteFilePartData) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadPhotoFileV2 <--
 type TLDfsUploadPhotoFileV2 struct {
-	ClazzID uint32        `json:"_id"`
-	Creator int64         `json:"creator"`
-	File    *tg.InputFile `json:"file"`
+	ClazzID uint32            `json:"_id"`
+	Creator int64             `json:"creator"`
+	File    tg.InputFileClazz `json:"file"`
 }
 
 func (m *TLDfsUploadPhotoFileV2) String() string {
@@ -160,9 +160,10 @@ func (m *TLDfsUploadPhotoFileV2) Decode(d *bin.Decoder) (err error) {
 		0x2410d1a2: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputFile{}
-			_ = m2.Decode(d)
-			m.File = m2
+			// m2 := &tg.InputFile{}
+			// _ = m2.Decode(d)
+			// m.File = m2
+			m.File, _ = tg.DecodeInputFileClazz(d)
 
 			return nil
 		},
@@ -180,11 +181,11 @@ func (m *TLDfsUploadPhotoFileV2) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadProfilePhotoFileV2 <--
 type TLDfsUploadProfilePhotoFileV2 struct {
-	ClazzID      uint32        `json:"_id"`
-	Creator      int64         `json:"creator"`
-	File         *tg.InputFile `json:"file"`
-	Video        *tg.InputFile `json:"video"`
-	VideoStartTs *float64      `json:"video_start_ts"`
+	ClazzID      uint32            `json:"_id"`
+	Creator      int64             `json:"creator"`
+	File         tg.InputFileClazz `json:"file"`
+	Video        tg.InputFileClazz `json:"video"`
+	VideoStartTs *float64          `json:"video_start_ts"`
 }
 
 func (m *TLDfsUploadProfilePhotoFileV2) String() string {
@@ -252,14 +253,16 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.Creator, err = d.Int64()
 			if (flags & (1 << 0)) != 0 {
-				m3 := &tg.InputFile{}
-				_ = m3.Decode(d)
-				m.File = m3
+				// m3 := &tg.InputFile{}
+				// _ = m3.Decode(d)
+				// m.File = m3
+				m.File, _ = tg.DecodeInputFileClazz(d)
 			}
 			if (flags & (1 << 1)) != 0 {
-				m4 := &tg.InputFile{}
-				_ = m4.Decode(d)
-				m.Video = m4
+				// m4 := &tg.InputFile{}
+				// _ = m4.Decode(d)
+				// m.Video = m4
+				m.Video, _ = tg.DecodeInputFileClazz(d)
 			}
 			if (flags & (1 << 2)) != 0 {
 				m.VideoStartTs = new(float64)
@@ -282,9 +285,9 @@ func (m *TLDfsUploadProfilePhotoFileV2) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadEncryptedFileV2 <--
 type TLDfsUploadEncryptedFileV2 struct {
-	ClazzID uint32                 `json:"_id"`
-	Creator int64                  `json:"creator"`
-	File    *tg.InputEncryptedFile `json:"file"`
+	ClazzID uint32                     `json:"_id"`
+	Creator int64                      `json:"creator"`
+	File    tg.InputEncryptedFileClazz `json:"file"`
 }
 
 func (m *TLDfsUploadEncryptedFileV2) String() string {
@@ -320,9 +323,10 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(d *bin.Decoder) (err error) {
 		0x79d3c523: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputEncryptedFile{}
-			_ = m2.Decode(d)
-			m.File = m2
+			// m2 := &tg.InputEncryptedFile{}
+			// _ = m2.Decode(d)
+			// m.File = m2
+			m.File, _ = tg.DecodeInputEncryptedFileClazz(d)
 
 			return nil
 		},
@@ -340,10 +344,10 @@ func (m *TLDfsUploadEncryptedFileV2) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsDownloadFile <--
 type TLDfsDownloadFile struct {
-	ClazzID  uint32                `json:"_id"`
-	Location *tg.InputFileLocation `json:"location"`
-	Offset   int64                 `json:"offset"`
-	Limit    int32                 `json:"limit"`
+	ClazzID  uint32                    `json:"_id"`
+	Location tg.InputFileLocationClazz `json:"location"`
+	Offset   int64                     `json:"offset"`
+	Limit    int32                     `json:"limit"`
 }
 
 func (m *TLDfsDownloadFile) String() string {
@@ -379,9 +383,10 @@ func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0xd6bfee3e: func() (err error) {
 
-			m1 := &tg.InputFileLocation{}
-			_ = m1.Decode(d)
-			m.Location = m1
+			// m1 := &tg.InputFileLocation{}
+			// _ = m1.Decode(d)
+			// m.Location = m1
+			m.Location, _ = tg.DecodeInputFileLocationClazz(d)
 
 			m.Offset, err = d.Int64()
 			m.Limit, err = d.Int32()
@@ -402,9 +407,9 @@ func (m *TLDfsDownloadFile) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadDocumentFileV2 <--
 type TLDfsUploadDocumentFileV2 struct {
-	ClazzID uint32         `json:"_id"`
-	Creator int64          `json:"creator"`
-	Media   *tg.InputMedia `json:"media"`
+	ClazzID uint32             `json:"_id"`
+	Creator int64              `json:"creator"`
+	Media   tg.InputMediaClazz `json:"media"`
 }
 
 func (m *TLDfsUploadDocumentFileV2) String() string {
@@ -440,9 +445,10 @@ func (m *TLDfsUploadDocumentFileV2) Decode(d *bin.Decoder) (err error) {
 		0x76336db7: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputMedia{}
-			_ = m2.Decode(d)
-			m.Media = m2
+			// m2 := &tg.InputMedia{}
+			// _ = m2.Decode(d)
+			// m.Media = m2
+			m.Media, _ = tg.DecodeInputMediaClazz(d)
 
 			return nil
 		},
@@ -460,9 +466,9 @@ func (m *TLDfsUploadDocumentFileV2) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadGifDocumentMedia <--
 type TLDfsUploadGifDocumentMedia struct {
-	ClazzID uint32         `json:"_id"`
-	Creator int64          `json:"creator"`
-	Media   *tg.InputMedia `json:"media"`
+	ClazzID uint32             `json:"_id"`
+	Creator int64              `json:"creator"`
+	Media   tg.InputMediaClazz `json:"media"`
 }
 
 func (m *TLDfsUploadGifDocumentMedia) String() string {
@@ -498,9 +504,10 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(d *bin.Decoder) (err error) {
 		0x41c4cd00: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputMedia{}
-			_ = m2.Decode(d)
-			m.Media = m2
+			// m2 := &tg.InputMedia{}
+			// _ = m2.Decode(d)
+			// m.Media = m2
+			m.Media, _ = tg.DecodeInputMediaClazz(d)
 
 			return nil
 		},
@@ -518,9 +525,9 @@ func (m *TLDfsUploadGifDocumentMedia) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadMp4DocumentMedia <--
 type TLDfsUploadMp4DocumentMedia struct {
-	ClazzID uint32         `json:"_id"`
-	Creator int64          `json:"creator"`
-	Media   *tg.InputMedia `json:"media"`
+	ClazzID uint32             `json:"_id"`
+	Creator int64              `json:"creator"`
+	Media   tg.InputMediaClazz `json:"media"`
 }
 
 func (m *TLDfsUploadMp4DocumentMedia) String() string {
@@ -556,9 +563,10 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(d *bin.Decoder) (err error) {
 		0xa2a4f818: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputMedia{}
-			_ = m2.Decode(d)
-			m.Media = m2
+			// m2 := &tg.InputMedia{}
+			// _ = m2.Decode(d)
+			// m.Media = m2
+			m.Media, _ = tg.DecodeInputMediaClazz(d)
 
 			return nil
 		},
@@ -576,11 +584,11 @@ func (m *TLDfsUploadMp4DocumentMedia) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadWallPaperFile <--
 type TLDfsUploadWallPaperFile struct {
-	ClazzID  uint32        `json:"_id"`
-	Creator  int64         `json:"creator"`
-	File     *tg.InputFile `json:"file"`
-	MimeType string        `json:"mime_type"`
-	Admin    *tg.Bool      `json:"admin"`
+	ClazzID  uint32            `json:"_id"`
+	Creator  int64             `json:"creator"`
+	File     tg.InputFileClazz `json:"file"`
+	MimeType string            `json:"mime_type"`
+	Admin    tg.BoolClazz      `json:"admin"`
 }
 
 func (m *TLDfsUploadWallPaperFile) String() string {
@@ -618,15 +626,17 @@ func (m *TLDfsUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 		0xc1a61056: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputFile{}
-			_ = m2.Decode(d)
-			m.File = m2
+			// m2 := &tg.InputFile{}
+			// _ = m2.Decode(d)
+			// m.File = m2
+			m.File, _ = tg.DecodeInputFileClazz(d)
 
 			m.MimeType, err = d.String()
 
-			m4 := &tg.Bool{}
-			_ = m4.Decode(d)
-			m.Admin = m4
+			// m4 := &tg.Bool{}
+			// _ = m4.Decode(d)
+			// m.Admin = m4
+			m.Admin, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -644,12 +654,12 @@ func (m *TLDfsUploadWallPaperFile) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadThemeFile <--
 type TLDfsUploadThemeFile struct {
-	ClazzID  uint32        `json:"_id"`
-	Creator  int64         `json:"creator"`
-	File     *tg.InputFile `json:"file"`
-	Thumb    *tg.InputFile `json:"thumb"`
-	MimeType string        `json:"mime_type"`
-	FileName string        `json:"file_name"`
+	ClazzID  uint32            `json:"_id"`
+	Creator  int64             `json:"creator"`
+	File     tg.InputFileClazz `json:"file"`
+	Thumb    tg.InputFileClazz `json:"thumb"`
+	MimeType string            `json:"mime_type"`
+	FileName string            `json:"file_name"`
 }
 
 func (m *TLDfsUploadThemeFile) String() string {
@@ -707,14 +717,16 @@ func (m *TLDfsUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.Creator, err = d.Int64()
 
-			m3 := &tg.InputFile{}
-			_ = m3.Decode(d)
-			m.File = m3
+			// m3 := &tg.InputFile{}
+			// _ = m3.Decode(d)
+			// m.File = m3
+			m.File, _ = tg.DecodeInputFileClazz(d)
 
 			if (flags & (1 << 0)) != 0 {
-				m4 := &tg.InputFile{}
-				_ = m4.Decode(d)
-				m.Thumb = m4
+				// m4 := &tg.InputFile{}
+				// _ = m4.Decode(d)
+				// m.Thumb = m4
+				m.Thumb, _ = tg.DecodeInputFileClazz(d)
 			}
 			m.MimeType, err = d.String()
 			m.FileName, err = d.String()
@@ -735,11 +747,11 @@ func (m *TLDfsUploadThemeFile) Decode(d *bin.Decoder) (err error) {
 
 // TLDfsUploadRingtoneFile <--
 type TLDfsUploadRingtoneFile struct {
-	ClazzID  uint32        `json:"_id"`
-	Creator  int64         `json:"creator"`
-	File     *tg.InputFile `json:"file"`
-	MimeType string        `json:"mime_type"`
-	FileName string        `json:"file_name"`
+	ClazzID  uint32            `json:"_id"`
+	Creator  int64             `json:"creator"`
+	File     tg.InputFileClazz `json:"file"`
+	MimeType string            `json:"mime_type"`
+	FileName string            `json:"file_name"`
 }
 
 func (m *TLDfsUploadRingtoneFile) String() string {
@@ -777,9 +789,10 @@ func (m *TLDfsUploadRingtoneFile) Decode(d *bin.Decoder) (err error) {
 		0x2b3c5b1: func() (err error) {
 			m.Creator, err = d.Int64()
 
-			m2 := &tg.InputFile{}
-			_ = m2.Decode(d)
-			m.File = m2
+			// m2 := &tg.InputFile{}
+			// _ = m2.Decode(d)
+			// m.File = m2
+			m.File, _ = tg.DecodeInputFileClazz(d)
 
 			m.MimeType, err = d.String()
 			m.FileName, err = d.String()

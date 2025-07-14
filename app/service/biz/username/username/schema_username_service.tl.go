@@ -690,7 +690,7 @@ func (m *TLUsernameSearch) Decode(d *bin.Decoder) (err error) {
 
 // VectorUsernameData <--
 type VectorUsernameData struct {
-	Datas []*UsernameData `json:"_datas"`
+	Datas []UsernameDataClazz `json:"_datas"`
 }
 
 func (m *VectorUsernameData) String() string {
@@ -707,7 +707,7 @@ func (m *VectorUsernameData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorUsernameData) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*UsernameData](d)
+	m.Datas, err = iface.DecodeObjectList[UsernameDataClazz](d)
 
 	return err
 }

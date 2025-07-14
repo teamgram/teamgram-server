@@ -68,7 +68,7 @@ func (c *SessionCore) SessionSendHttpDataToSession(in *session.TLSessionSendHttp
 
 	c.Logger.Errorf("session.sendHttpDataToSession - error: not implement")
 
-	return session.MakeHttpSessionData(&session.TLHttpSessionData{
+	return session.MakeTLHttpSessionData(&session.TLHttpSessionData{
 		Payload: []byte{},
-	}), nil
+	}).ToHttpSessionData(), nil
 }

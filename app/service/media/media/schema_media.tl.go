@@ -50,10 +50,20 @@ func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 
 // TLPhotoSizeList <--
 type TLPhotoSizeList struct {
-	ClazzID uint32          `json:"_id"`
-	SizeId  int64           `json:"size_id"`
-	Sizes   []*tg.PhotoSize `json:"sizes"`
-	DcId    int32           `json:"dc_id"`
+	ClazzID    uint32              `json:"_id"`
+	ClazzName2 string              `json:"_name"`
+	SizeId     int64               `json:"size_id"`
+	Sizes      []tg.PhotoSizeClazz `json:"sizes"`
+	DcId       int32               `json:"dc_id"`
+}
+
+func MakeTLPhotoSizeList(m *TLPhotoSizeList) *TLPhotoSizeList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_photoSizeList
+
+	return m
 }
 
 func (m *TLPhotoSizeList) String() string {
@@ -68,7 +78,7 @@ func (m *TLPhotoSizeList) PhotoSizeListClazzName() string {
 
 // ClazzName <--
 func (m *TLPhotoSizeList) ClazzName() string {
-	return ClazzName_photoSizeList
+	return m.ClazzName2
 }
 
 // ToPhotoSizeList <--
@@ -77,7 +87,7 @@ func (m *TLPhotoSizeList) ToPhotoSizeList() *PhotoSizeList {
 		return nil
 	}
 
-	return MakePhotoSizeList(m)
+	return &PhotoSizeList{Clazz: m}
 }
 
 // Encode <--
@@ -116,12 +126,14 @@ func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.PhotoSize, l1)
+			v1 := make([]tg.PhotoSizeClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.PhotoSize)
-				err3 = vv.Decode(d)
+				// vv := new(PhotoSize)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodePhotoSizeClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Sizes = v1
 
@@ -142,27 +154,26 @@ func (m *TLPhotoSizeList) Decode(d *bin.Decoder) (err error) {
 type PhotoSizeList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PhotoSizeListClazz `json:"_clazz"`
+	Clazz PhotoSizeListClazz `json:"_clazz"`
 }
 
 func (m *PhotoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{m.PhotoSizeListClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakePhotoSizeList <--
-func MakePhotoSizeList(c PhotoSizeListClazz) *PhotoSizeList {
-	return &PhotoSizeList{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		PhotoSizeListClazz: c,
+func (m *PhotoSizeList) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.PhotoSizeListClazzName()
 	}
 }
 
 // Encode <--
 func (m *PhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	if m.PhotoSizeListClazz != nil {
-		return m.PhotoSizeListClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("PhotoSizeList - invalid Clazz")
@@ -170,13 +181,16 @@ func (m *PhotoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *PhotoSizeList) Decode(d *bin.Decoder) (err error) {
-	m.PhotoSizeListClazz, err = DecodePhotoSizeListClazz(d)
+	m.Clazz, err = DecodePhotoSizeListClazz(d)
 	return
 }
 
 // Match <--
 func (m *PhotoSizeList) Match(f ...interface{}) {
-	switch c := m.PhotoSizeListClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLPhotoSizeList:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLPhotoSizeList) interface{}); ok {
@@ -194,11 +208,11 @@ func (m *PhotoSizeList) ToPhotoSizeList() (*TLPhotoSizeList, bool) {
 		return nil, false
 	}
 
-	if m.PhotoSizeListClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.PhotoSizeListClazz.(*TLPhotoSizeList); ok {
+	if x, ok := m.Clazz.(*TLPhotoSizeList); ok {
 		return x, true
 	}
 
@@ -232,10 +246,20 @@ func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 
 // TLVideoSizeList <--
 type TLVideoSizeList struct {
-	ClazzID uint32          `json:"_id"`
-	SizeId  int64           `json:"size_id"`
-	Sizes   []*tg.VideoSize `json:"sizes"`
-	DcId    int32           `json:"dc_id"`
+	ClazzID    uint32              `json:"_id"`
+	ClazzName2 string              `json:"_name"`
+	SizeId     int64               `json:"size_id"`
+	Sizes      []tg.VideoSizeClazz `json:"sizes"`
+	DcId       int32               `json:"dc_id"`
+}
+
+func MakeTLVideoSizeList(m *TLVideoSizeList) *TLVideoSizeList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_videoSizeList
+
+	return m
 }
 
 func (m *TLVideoSizeList) String() string {
@@ -250,7 +274,7 @@ func (m *TLVideoSizeList) VideoSizeListClazzName() string {
 
 // ClazzName <--
 func (m *TLVideoSizeList) ClazzName() string {
-	return ClazzName_videoSizeList
+	return m.ClazzName2
 }
 
 // ToVideoSizeList <--
@@ -259,7 +283,7 @@ func (m *TLVideoSizeList) ToVideoSizeList() *VideoSizeList {
 		return nil
 	}
 
-	return MakeVideoSizeList(m)
+	return &VideoSizeList{Clazz: m}
 }
 
 // Encode <--
@@ -298,12 +322,14 @@ func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.VideoSize, l1)
+			v1 := make([]tg.VideoSizeClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.VideoSize)
-				err3 = vv.Decode(d)
+				// vv := new(VideoSize)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodeVideoSizeClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.Sizes = v1
 
@@ -324,27 +350,26 @@ func (m *TLVideoSizeList) Decode(d *bin.Decoder) (err error) {
 type VideoSizeList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	VideoSizeListClazz `json:"_clazz"`
+	Clazz VideoSizeListClazz `json:"_clazz"`
 }
 
 func (m *VideoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{m.VideoSizeListClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeVideoSizeList <--
-func MakeVideoSizeList(c VideoSizeListClazz) *VideoSizeList {
-	return &VideoSizeList{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		VideoSizeListClazz: c,
+func (m *VideoSizeList) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.VideoSizeListClazzName()
 	}
 }
 
 // Encode <--
 func (m *VideoSizeList) Encode(x *bin.Encoder, layer int32) error {
-	if m.VideoSizeListClazz != nil {
-		return m.VideoSizeListClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("VideoSizeList - invalid Clazz")
@@ -352,13 +377,16 @@ func (m *VideoSizeList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VideoSizeList) Decode(d *bin.Decoder) (err error) {
-	m.VideoSizeListClazz, err = DecodeVideoSizeListClazz(d)
+	m.Clazz, err = DecodeVideoSizeListClazz(d)
 	return
 }
 
 // Match <--
 func (m *VideoSizeList) Match(f ...interface{}) {
-	switch c := m.VideoSizeListClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLVideoSizeList:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLVideoSizeList) interface{}); ok {
@@ -376,11 +404,11 @@ func (m *VideoSizeList) ToVideoSizeList() (*TLVideoSizeList, bool) {
 		return nil, false
 	}
 
-	if m.VideoSizeListClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.VideoSizeListClazz.(*TLVideoSizeList); ok {
+	if x, ok := m.Clazz.(*TLVideoSizeList); ok {
 		return x, true
 	}
 

@@ -30,9 +30,9 @@ var (
 
 // TLStatusSetSessionOnline <--
 type TLStatusSetSessionOnline struct {
-	ClazzID uint32        `json:"_id"`
-	UserId  int64         `json:"user_id"`
-	Session *SessionEntry `json:"session"`
+	ClazzID uint32            `json:"_id"`
+	UserId  int64             `json:"user_id"`
+	Session SessionEntryClazz `json:"session"`
 }
 
 func (m *TLStatusSetSessionOnline) String() string {
@@ -68,9 +68,10 @@ func (m *TLStatusSetSessionOnline) Decode(d *bin.Decoder) (err error) {
 		0x52518bcf: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &SessionEntry{}
-			_ = m2.Decode(d)
-			m.Session = m2
+			// m2 := &SessionEntry{}
+			// _ = m2.Decode(d)
+			// m.Session = m2
+			m.Session, _ = DecodeSessionEntryClazz(d)
 
 			return nil
 		},
@@ -582,7 +583,7 @@ func (m *TLStatusSetChannelOffline) Decode(d *bin.Decoder) (err error) {
 
 // VectorUserSessionEntryList <--
 type VectorUserSessionEntryList struct {
-	Datas []*UserSessionEntryList `json:"_datas"`
+	Datas []UserSessionEntryListClazz `json:"_datas"`
 }
 
 func (m *VectorUserSessionEntryList) String() string {
@@ -599,7 +600,7 @@ func (m *VectorUserSessionEntryList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorUserSessionEntryList) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*UserSessionEntryList](d)
+	m.Datas, err = iface.DecodeObjectList[UserSessionEntryListClazz](d)
 
 	return err
 }

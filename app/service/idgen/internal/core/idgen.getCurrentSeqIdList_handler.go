@@ -29,30 +29,32 @@ var _ *tg.Bool
 // idgen.getCurrentSeqIdList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetCurrentSeqIdList(in *idgen.TLIdgenGetCurrentSeqIdList) (*idgen.VectorIdVal, error) {
 	var (
-		idList = make([]*idgen.IdVal, len(in.Id))
+		idList = make([]idgen.IdValClazz, len(in.Id))
 	)
 
 	for i, id := range in.Id {
-		id.Match(func(id2 *idgen.TLInputNSeqId) interface{} {
+		switch id2 := id.(type) {
+		case *idgen.TLInputNSeqId:
 			sid, err := c.svcCtx.Dao.KV.GetCtx(c.ctx, id2.Key)
 			if err != nil {
 				c.Logger.Errorf("idgen.getCurrentSeqIdList(%s) error: %v", id2.Key, err)
-				return err
+				// return err
+				continue
 			}
 
 			if sid == "" {
-				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
+				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
 					Id_INT64: 0,
 				})
 			} else {
 				iV, _ := strconv.ParseInt(sid, 10, 64)
-				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
+				idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
 					Id_INT64: iV,
 				})
 			}
-
-			return nil
-		})
+		default:
+			c.Logger.Errorf("idgen.getCurrentSeqIdList - unexpected input id type: %T", id2)
+		}
 	}
 
 	return &idgen.VectorIdVal{

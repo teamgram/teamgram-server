@@ -50,11 +50,21 @@ func DecodeChannelDifferenceClazz(d *bin.Decoder) (ChannelDifferenceClazz, error
 
 // TLChannelDifference <--
 type TLChannelDifference struct {
-	ClazzID      uint32        `json:"_id"`
-	Final        bool          `json:"final"`
-	Pts          int32         `json:"pts"`
-	NewMessages  []*tg.Message `json:"new_messages"`
-	OtherUpdates []*tg.Update  `json:"other_updates"`
+	ClazzID      uint32            `json:"_id"`
+	ClazzName2   string            `json:"_name"`
+	Final        bool              `json:"final"`
+	Pts          int32             `json:"pts"`
+	NewMessages  []tg.MessageClazz `json:"new_messages"`
+	OtherUpdates []tg.UpdateClazz  `json:"other_updates"`
+}
+
+func MakeTLChannelDifference(m *TLChannelDifference) *TLChannelDifference {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_channelDifference
+
+	return m
 }
 
 func (m *TLChannelDifference) String() string {
@@ -69,7 +79,7 @@ func (m *TLChannelDifference) ChannelDifferenceClazzName() string {
 
 // ClazzName <--
 func (m *TLChannelDifference) ClazzName() string {
-	return ClazzName_channelDifference
+	return m.ClazzName2
 }
 
 // ToChannelDifference <--
@@ -78,7 +88,7 @@ func (m *TLChannelDifference) ToChannelDifference() *ChannelDifference {
 		return nil
 	}
 
-	return MakeChannelDifference(m)
+	return &ChannelDifference{Clazz: m}
 }
 
 // Encode <--
@@ -136,12 +146,14 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l3, err3 := d.Int()
-			v3 := make([]*tg.Message, l3)
+			v3 := make([]tg.MessageClazz, l3)
 			for i := 0; i < l3; i++ {
-				vv := new(tg.Message)
-				err3 = vv.Decode(d)
+				// vv := new(Message)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v3[i] = vv
+				v3[i], err3 = tg.DecodeMessageClazz(d)
 				_ = err3
-				v3[i] = vv
 			}
 			m.NewMessages = v3
 
@@ -151,12 +163,14 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l4, err3 := d.Int()
-			v4 := make([]*tg.Update, l4)
+			v4 := make([]tg.UpdateClazz, l4)
 			for i := 0; i < l4; i++ {
-				vv := new(tg.Update)
-				err3 = vv.Decode(d)
+				// vv := new(Update)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v4[i] = vv
+				v4[i], err3 = tg.DecodeUpdateClazz(d)
 				_ = err3
-				v4[i] = vv
 			}
 			m.OtherUpdates = v4
 
@@ -175,27 +189,26 @@ func (m *TLChannelDifference) Decode(d *bin.Decoder) (err error) {
 type ChannelDifference struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChannelDifferenceClazz `json:"_clazz"`
+	Clazz ChannelDifferenceClazz `json:"_clazz"`
 }
 
 func (m *ChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{m.ChannelDifferenceClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeChannelDifference <--
-func MakeChannelDifference(c ChannelDifferenceClazz) *ChannelDifference {
-	return &ChannelDifference{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		ChannelDifferenceClazz: c,
+func (m *ChannelDifference) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.ChannelDifferenceClazzName()
 	}
 }
 
 // Encode <--
 func (m *ChannelDifference) Encode(x *bin.Encoder, layer int32) error {
-	if m.ChannelDifferenceClazz != nil {
-		return m.ChannelDifferenceClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("ChannelDifference - invalid Clazz")
@@ -203,13 +216,16 @@ func (m *ChannelDifference) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *ChannelDifference) Decode(d *bin.Decoder) (err error) {
-	m.ChannelDifferenceClazz, err = DecodeChannelDifferenceClazz(d)
+	m.Clazz, err = DecodeChannelDifferenceClazz(d)
 	return
 }
 
 // Match <--
 func (m *ChannelDifference) Match(f ...interface{}) {
-	switch c := m.ChannelDifferenceClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLChannelDifference:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLChannelDifference) interface{}); ok {
@@ -227,11 +243,11 @@ func (m *ChannelDifference) ToChannelDifference() (*TLChannelDifference, bool) {
 		return nil, false
 	}
 
-	if m.ChannelDifferenceClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ChannelDifferenceClazz.(*TLChannelDifference); ok {
+	if x, ok := m.Clazz.(*TLChannelDifference); ok {
 		return x, true
 	}
 
@@ -280,8 +296,18 @@ func DecodeDifferenceClazz(d *bin.Decoder) (DifferenceClazz, error) {
 
 // TLDifferenceEmpty <--
 type TLDifferenceEmpty struct {
-	ClazzID uint32           `json:"_id"`
-	State   *tg.UpdatesState `json:"state"`
+	ClazzID    uint32               `json:"_id"`
+	ClazzName2 string               `json:"_name"`
+	State      tg.UpdatesStateClazz `json:"state"`
+}
+
+func MakeTLDifferenceEmpty(m *TLDifferenceEmpty) *TLDifferenceEmpty {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_differenceEmpty
+
+	return m
 }
 
 func (m *TLDifferenceEmpty) String() string {
@@ -296,7 +322,7 @@ func (m *TLDifferenceEmpty) DifferenceClazzName() string {
 
 // ClazzName <--
 func (m *TLDifferenceEmpty) ClazzName() string {
-	return ClazzName_differenceEmpty
+	return m.ClazzName2
 }
 
 // ToDifference <--
@@ -305,7 +331,7 @@ func (m *TLDifferenceEmpty) ToDifference() *Difference {
 		return nil
 	}
 
-	return MakeDifference(m)
+	return &Difference{Clazz: m}
 }
 
 // Encode <--
@@ -334,9 +360,10 @@ func (m *TLDifferenceEmpty) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0x8bdbda4e: func() (err error) {
 
-			m0 := &tg.UpdatesState{}
-			_ = m0.Decode(d)
-			m.State = m0
+			// m0 := &tg.UpdatesState{}
+			// _ = m0.Decode(d)
+			// m.State = m0
+			m.State, _ = tg.DecodeUpdatesStateClazz(d)
 
 			return nil
 		},
@@ -351,10 +378,20 @@ func (m *TLDifferenceEmpty) Decode(d *bin.Decoder) (err error) {
 
 // TLDifference <--
 type TLDifference struct {
-	ClazzID      uint32           `json:"_id"`
-	NewMessages  []*tg.Message    `json:"new_messages"`
-	OtherUpdates []*tg.Update     `json:"other_updates"`
-	State        *tg.UpdatesState `json:"state"`
+	ClazzID      uint32               `json:"_id"`
+	ClazzName2   string               `json:"_name"`
+	NewMessages  []tg.MessageClazz    `json:"new_messages"`
+	OtherUpdates []tg.UpdateClazz     `json:"other_updates"`
+	State        tg.UpdatesStateClazz `json:"state"`
+}
+
+func MakeTLDifference(m *TLDifference) *TLDifference {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_difference
+
+	return m
 }
 
 func (m *TLDifference) String() string {
@@ -369,7 +406,7 @@ func (m *TLDifference) DifferenceClazzName() string {
 
 // ClazzName <--
 func (m *TLDifference) ClazzName() string {
-	return ClazzName_difference
+	return m.ClazzName2
 }
 
 // ToDifference <--
@@ -378,7 +415,7 @@ func (m *TLDifference) ToDifference() *Difference {
 		return nil
 	}
 
-	return MakeDifference(m)
+	return &Difference{Clazz: m}
 }
 
 // Encode <--
@@ -416,12 +453,14 @@ func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.Message, l1)
+			v1 := make([]tg.MessageClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.Message)
-				err3 = vv.Decode(d)
+				// vv := new(Message)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodeMessageClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.NewMessages = v1
 
@@ -431,18 +470,21 @@ func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l2, err3 := d.Int()
-			v2 := make([]*tg.Update, l2)
+			v2 := make([]tg.UpdateClazz, l2)
 			for i := 0; i < l2; i++ {
-				vv := new(tg.Update)
-				err3 = vv.Decode(d)
+				// vv := new(Update)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v2[i] = vv
+				v2[i], err3 = tg.DecodeUpdateClazz(d)
 				_ = err3
-				v2[i] = vv
 			}
 			m.OtherUpdates = v2
 
-			m0 := &tg.UpdatesState{}
-			_ = m0.Decode(d)
-			m.State = m0
+			// m0 := &tg.UpdatesState{}
+			// _ = m0.Decode(d)
+			// m.State = m0
+			m.State, _ = tg.DecodeUpdatesStateClazz(d)
 
 			return nil
 		},
@@ -457,10 +499,20 @@ func (m *TLDifference) Decode(d *bin.Decoder) (err error) {
 
 // TLDifferenceSlice <--
 type TLDifferenceSlice struct {
-	ClazzID           uint32           `json:"_id"`
-	NewMessages       []*tg.Message    `json:"new_messages"`
-	OtherUpdates      []*tg.Update     `json:"other_updates"`
-	IntermediateState *tg.UpdatesState `json:"intermediate_state"`
+	ClazzID           uint32               `json:"_id"`
+	ClazzName2        string               `json:"_name"`
+	NewMessages       []tg.MessageClazz    `json:"new_messages"`
+	OtherUpdates      []tg.UpdateClazz     `json:"other_updates"`
+	IntermediateState tg.UpdatesStateClazz `json:"intermediate_state"`
+}
+
+func MakeTLDifferenceSlice(m *TLDifferenceSlice) *TLDifferenceSlice {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_differenceSlice
+
+	return m
 }
 
 func (m *TLDifferenceSlice) String() string {
@@ -475,7 +527,7 @@ func (m *TLDifferenceSlice) DifferenceClazzName() string {
 
 // ClazzName <--
 func (m *TLDifferenceSlice) ClazzName() string {
-	return ClazzName_differenceSlice
+	return m.ClazzName2
 }
 
 // ToDifference <--
@@ -484,7 +536,7 @@ func (m *TLDifferenceSlice) ToDifference() *Difference {
 		return nil
 	}
 
-	return MakeDifference(m)
+	return &Difference{Clazz: m}
 }
 
 // Encode <--
@@ -522,12 +574,14 @@ func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l1, err3 := d.Int()
-			v1 := make([]*tg.Message, l1)
+			v1 := make([]tg.MessageClazz, l1)
 			for i := 0; i < l1; i++ {
-				vv := new(tg.Message)
-				err3 = vv.Decode(d)
+				// vv := new(Message)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v1[i] = vv
+				v1[i], err3 = tg.DecodeMessageClazz(d)
 				_ = err3
-				v1[i] = vv
 			}
 			m.NewMessages = v1
 
@@ -537,18 +591,21 @@ func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l2, err3 := d.Int()
-			v2 := make([]*tg.Update, l2)
+			v2 := make([]tg.UpdateClazz, l2)
 			for i := 0; i < l2; i++ {
-				vv := new(tg.Update)
-				err3 = vv.Decode(d)
+				// vv := new(Update)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v2[i] = vv
+				v2[i], err3 = tg.DecodeUpdateClazz(d)
 				_ = err3
-				v2[i] = vv
 			}
 			m.OtherUpdates = v2
 
-			m3 := &tg.UpdatesState{}
-			_ = m3.Decode(d)
-			m.IntermediateState = m3
+			// m3 := &tg.UpdatesState{}
+			// _ = m3.Decode(d)
+			// m.IntermediateState = m3
+			m.IntermediateState, _ = tg.DecodeUpdatesStateClazz(d)
 
 			return nil
 		},
@@ -563,8 +620,18 @@ func (m *TLDifferenceSlice) Decode(d *bin.Decoder) (err error) {
 
 // TLDifferenceTooLong <--
 type TLDifferenceTooLong struct {
-	ClazzID uint32 `json:"_id"`
-	Pts     int32  `json:"pts"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Pts        int32  `json:"pts"`
+}
+
+func MakeTLDifferenceTooLong(m *TLDifferenceTooLong) *TLDifferenceTooLong {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_differenceTooLong
+
+	return m
 }
 
 func (m *TLDifferenceTooLong) String() string {
@@ -579,7 +646,7 @@ func (m *TLDifferenceTooLong) DifferenceClazzName() string {
 
 // ClazzName <--
 func (m *TLDifferenceTooLong) ClazzName() string {
-	return ClazzName_differenceTooLong
+	return m.ClazzName2
 }
 
 // ToDifference <--
@@ -588,7 +655,7 @@ func (m *TLDifferenceTooLong) ToDifference() *Difference {
 		return nil
 	}
 
-	return MakeDifference(m)
+	return &Difference{Clazz: m}
 }
 
 // Encode <--
@@ -633,27 +700,26 @@ func (m *TLDifferenceTooLong) Decode(d *bin.Decoder) (err error) {
 type Difference struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	DifferenceClazz `json:"_clazz"`
+	Clazz DifferenceClazz `json:"_clazz"`
 }
 
 func (m *Difference) String() string {
-	wrapper := iface.WithNameWrapper{m.DifferenceClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeDifference <--
-func MakeDifference(c DifferenceClazz) *Difference {
-	return &Difference{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		DifferenceClazz: c,
+func (m *Difference) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.DifferenceClazzName()
 	}
 }
 
 // Encode <--
 func (m *Difference) Encode(x *bin.Encoder, layer int32) error {
-	if m.DifferenceClazz != nil {
-		return m.DifferenceClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("Difference - invalid Clazz")
@@ -661,13 +727,16 @@ func (m *Difference) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *Difference) Decode(d *bin.Decoder) (err error) {
-	m.DifferenceClazz, err = DecodeDifferenceClazz(d)
+	m.Clazz, err = DecodeDifferenceClazz(d)
 	return
 }
 
 // Match <--
 func (m *Difference) Match(f ...interface{}) {
-	switch c := m.DifferenceClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLDifferenceEmpty:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLDifferenceEmpty) interface{}); ok {
@@ -703,11 +772,11 @@ func (m *Difference) ToDifferenceEmpty() (*TLDifferenceEmpty, bool) {
 		return nil, false
 	}
 
-	if m.DifferenceClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DifferenceClazz.(*TLDifferenceEmpty); ok {
+	if x, ok := m.Clazz.(*TLDifferenceEmpty); ok {
 		return x, true
 	}
 
@@ -720,11 +789,11 @@ func (m *Difference) ToDifference() (*TLDifference, bool) {
 		return nil, false
 	}
 
-	if m.DifferenceClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DifferenceClazz.(*TLDifference); ok {
+	if x, ok := m.Clazz.(*TLDifference); ok {
 		return x, true
 	}
 
@@ -737,11 +806,11 @@ func (m *Difference) ToDifferenceSlice() (*TLDifferenceSlice, bool) {
 		return nil, false
 	}
 
-	if m.DifferenceClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DifferenceClazz.(*TLDifferenceSlice); ok {
+	if x, ok := m.Clazz.(*TLDifferenceSlice); ok {
 		return x, true
 	}
 
@@ -754,11 +823,11 @@ func (m *Difference) ToDifferenceTooLong() (*TLDifferenceTooLong, bool) {
 		return nil, false
 	}
 
-	if m.DifferenceClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.DifferenceClazz.(*TLDifferenceTooLong); ok {
+	if x, ok := m.Clazz.(*TLDifferenceTooLong); ok {
 		return x, true
 	}
 

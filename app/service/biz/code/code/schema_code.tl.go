@@ -51,6 +51,7 @@ func DecodePhoneCodeTransactionClazz(d *bin.Decoder) (PhoneCodeTransactionClazz,
 // TLPhoneCodeTransaction <--
 type TLPhoneCodeTransaction struct {
 	ClazzID               uint32 `json:"_id"`
+	ClazzName2            string `json:"_name"`
 	AuthKeyId             int64  `json:"auth_key_id"`
 	SessionId             int64  `json:"session_id"`
 	Phone                 string `json:"phone"`
@@ -65,6 +66,15 @@ type TLPhoneCodeTransaction struct {
 	State                 int32  `json:"state"`
 }
 
+func MakeTLPhoneCodeTransaction(m *TLPhoneCodeTransaction) *TLPhoneCodeTransaction {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_phoneCodeTransaction
+
+	return m
+}
+
 func (m *TLPhoneCodeTransaction) String() string {
 	wrapper := iface.WithNameWrapper{"phoneCodeTransaction", m}
 	return wrapper.String()
@@ -77,7 +87,7 @@ func (m *TLPhoneCodeTransaction) PhoneCodeTransactionClazzName() string {
 
 // ClazzName <--
 func (m *TLPhoneCodeTransaction) ClazzName() string {
-	return ClazzName_phoneCodeTransaction
+	return m.ClazzName2
 }
 
 // ToPhoneCodeTransaction <--
@@ -86,7 +96,7 @@ func (m *TLPhoneCodeTransaction) ToPhoneCodeTransaction() *PhoneCodeTransaction 
 		return nil
 	}
 
-	return MakePhoneCodeTransaction(m)
+	return &PhoneCodeTransaction{Clazz: m}
 }
 
 // Encode <--
@@ -170,27 +180,26 @@ func (m *TLPhoneCodeTransaction) Decode(d *bin.Decoder) (err error) {
 type PhoneCodeTransaction struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	PhoneCodeTransactionClazz `json:"_clazz"`
+	Clazz PhoneCodeTransactionClazz `json:"_clazz"`
 }
 
 func (m *PhoneCodeTransaction) String() string {
-	wrapper := iface.WithNameWrapper{m.PhoneCodeTransactionClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakePhoneCodeTransaction <--
-func MakePhoneCodeTransaction(c PhoneCodeTransactionClazz) *PhoneCodeTransaction {
-	return &PhoneCodeTransaction{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		PhoneCodeTransactionClazz: c,
+func (m *PhoneCodeTransaction) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.PhoneCodeTransactionClazzName()
 	}
 }
 
 // Encode <--
 func (m *PhoneCodeTransaction) Encode(x *bin.Encoder, layer int32) error {
-	if m.PhoneCodeTransactionClazz != nil {
-		return m.PhoneCodeTransactionClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("PhoneCodeTransaction - invalid Clazz")
@@ -198,13 +207,16 @@ func (m *PhoneCodeTransaction) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *PhoneCodeTransaction) Decode(d *bin.Decoder) (err error) {
-	m.PhoneCodeTransactionClazz, err = DecodePhoneCodeTransactionClazz(d)
+	m.Clazz, err = DecodePhoneCodeTransactionClazz(d)
 	return
 }
 
 // Match <--
 func (m *PhoneCodeTransaction) Match(f ...interface{}) {
-	switch c := m.PhoneCodeTransactionClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLPhoneCodeTransaction:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLPhoneCodeTransaction) interface{}); ok {
@@ -222,11 +234,11 @@ func (m *PhoneCodeTransaction) ToPhoneCodeTransaction() (*TLPhoneCodeTransaction
 		return nil, false
 	}
 
-	if m.PhoneCodeTransactionClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.PhoneCodeTransactionClazz.(*TLPhoneCodeTransaction); ok {
+	if x, ok := m.Clazz.(*TLPhoneCodeTransaction); ok {
 		return x, true
 	}
 

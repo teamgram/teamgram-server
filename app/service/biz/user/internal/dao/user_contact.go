@@ -73,7 +73,7 @@ func parseContactCacheKey(k string) (int64, int64) {
 	return 0, 0
 }
 
-func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*tg.ContactData {
+func (d *Dao) GetUserContactList(ctx context.Context, id int64) []tg.ContactDataClazz {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 	if len(cacheUserData.GetContactIdList()) == 0 {
 		return nil
@@ -82,7 +82,7 @@ func (d *Dao) GetUserContactList(ctx context.Context, id int64) []*tg.ContactDat
 	return d.getContactListByIdList(ctx, id, cacheUserData.GetContactIdList())
 }
 
-func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *tg.ContactData {
+func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) tg.ContactDataClazz {
 	contacts := d.GetUserContactListByIdList(ctx, id, contactId)
 	if len(contacts) == 0 {
 		return nil
@@ -91,7 +91,7 @@ func (d *Dao) GetUserContact(ctx context.Context, id, contactId int64) *tg.Conta
 	return contacts[0]
 }
 
-func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactId ...int64) []*tg.ContactData {
+func (d *Dao) GetUserContactListByIdList(ctx context.Context, id int64, contactId ...int64) []tg.ContactDataClazz {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 	idList := cacheUserData.GetContactIdList()
 	if len(idList) == 0 {
@@ -189,7 +189,7 @@ func (d *Dao) ClearContactCaches(ctx context.Context, userId int64, contactId ..
 	_ = d.CachedConn.DelCache(ctx, keys...)
 }
 
-func (d *Dao) GetCloseFriendList(ctx context.Context, id int64) []*tg.ContactData {
+func (d *Dao) GetCloseFriendList(ctx context.Context, id int64) []tg.ContactDataClazz {
 	cacheUserData := d.GetCacheUserData(ctx, id)
 	if len(cacheUserData.GetContactIdList()) == 0 {
 		return nil
@@ -198,8 +198,8 @@ func (d *Dao) GetCloseFriendList(ctx context.Context, id int64) []*tg.ContactDat
 	return d.getCloseFriendListByIdList(ctx, id, cacheUserData.GetContactIdList())
 }
 
-func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList []int64) []*tg.ContactData {
-	closeFriendList := make([]*tg.ContactData, len(idList))
+func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList []int64) []tg.ContactDataClazz {
+	closeFriendList := make([]tg.ContactDataClazz, len(idList))
 	mr.ForEach(
 		func(source chan<- interface{}) {
 			for i, v := range idList {
@@ -222,7 +222,7 @@ func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList [
 					return nil
 				})
 			if err == nil && do.CloseFriend {
-				closeFriendList[idx.idx] = tg.MakeContactData(&tg.TLContactData{
+				closeFriendList[idx.idx] = tg.MakeTLContactData(&tg.TLContactData{
 					UserId:        id,
 					ContactUserId: do.ContactUserId,
 					FirstName:     tg.MakeFlagsString(do.ContactFirstName),
@@ -244,7 +244,7 @@ func (d *Dao) getCloseFriendListByIdList(ctx context.Context, id int64, idList [
 	return closeFriendList
 }
 
-func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []*tg.ContactData {
+func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int64) []tg.ContactDataClazz {
 	var (
 		cKeys = make([]string, 0, len(idList))
 	)
@@ -256,7 +256,7 @@ func (d *Dao) getContactListByIdList(ctx context.Context, id int64, idList []int
 	return d.getContactListByKeyList(ctx, cKeys...)
 }
 
-func (d *Dao) getReverseContactListByIdList(ctx context.Context, id int64, idList []int64) []*tg.ContactData {
+func (d *Dao) getReverseContactListByIdList(ctx context.Context, id int64, idList []int64) []tg.ContactDataClazz {
 	var (
 		cKeys = make([]string, 0, len(idList))
 	)
@@ -268,9 +268,9 @@ func (d *Dao) getReverseContactListByIdList(ctx context.Context, id int64, idLis
 	return d.getContactListByKeyList(ctx, cKeys...)
 }
 
-func (d *Dao) getContactListByKeyList(ctx context.Context, cKeys ...string) []*tg.ContactData {
+func (d *Dao) getContactListByKeyList(ctx context.Context, cKeys ...string) []tg.ContactDataClazz {
 	var (
-		contactList = make([]*tg.ContactData, len(cKeys))
+		contactList = make([]tg.ContactDataClazz, len(cKeys))
 	)
 
 	if len(cKeys) == 0 {
@@ -289,7 +289,7 @@ func (d *Dao) getContactListByKeyList(ctx context.Context, cKeys ...string) []*t
 					continue
 				}
 				noCaches[key] = contact
-				contactList = append(contactList, tg.MakeContactData(&tg.TLContactData{
+				contactList = append(contactList, tg.MakeTLContactData(&tg.TLContactData{
 					UserId:        contact.OwnerUserId,
 					ContactUserId: contact.ContactUserId,
 					FirstName:     tg.MakeFlagsString(contact.ContactFirstName),
@@ -311,7 +311,7 @@ func (d *Dao) getContactListByKeyList(ctx context.Context, cKeys ...string) []*t
 				return nil, err
 			}
 
-			contactList = append(contactList, tg.MakeContactData(&tg.TLContactData{
+			contactList = append(contactList, tg.MakeTLContactData(&tg.TLContactData{
 				UserId:        contact.OwnerUserId,
 				ContactUserId: contact.ContactUserId,
 				FirstName:     tg.MakeFlagsString(contact.ContactFirstName),

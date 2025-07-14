@@ -106,8 +106,8 @@ type MainAuthWrapper struct {
 	tmpRpcApiMessageList []*rpcApiMessage
 }
 
-func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client *authsession.ClientSession, androidPushId int64, cb *MainAuthWrapperManager) *MainAuthWrapper {
-	client2, _ := client.ToClientSession()
+func NewMainAuthWrapper(mainAuthKeyId int64, authUserId int64, state int, client authsession.ClientSessionClazz, androidPushId int64, cb *MainAuthWrapperManager) *MainAuthWrapper {
+	client2, _ := client.(*authsession.TLClientSession)
 
 	mainAuth := &MainAuthWrapper{
 		authKeyId:            mainAuthKeyId,
@@ -202,7 +202,7 @@ func (m *MainAuthWrapper) setOnline(ctx context.Context) {
 			ctx,
 			&status.TLStatusSetSessionOnline{
 				UserId: m.AuthUserId,
-				Session: status.MakeSessionEntry(&status.TLSessionEntry{
+				Session: status.MakeTLSessionEntry(&status.TLSessionEntry{
 					UserId:        m.AuthUserId,
 					AuthKeyId:     m.authKeyId,
 					Gateway:       m.cb.Dao.MyServerId,
@@ -829,7 +829,7 @@ func (m *MainAuthWrapper) SyncRpcResultDataArrived(ctx context.Context, kId int6
 	return nil
 }
 
-func (m *MainAuthWrapper) SyncSessionDataArrived(ctx context.Context, kId int64, sessionId int64, updates *tg.Updates) error {
+func (m *MainAuthWrapper) SyncSessionDataArrived(ctx context.Context, kId int64, sessionId int64, updates tg.UpdatesClazz) error {
 	sData := &syncSessionDataCtx{
 		ctx: contextx.ValueOnlyFrom(ctx),
 		syncSessionData: syncSessionData{
@@ -848,7 +848,7 @@ func (m *MainAuthWrapper) SyncSessionDataArrived(ctx context.Context, kId int64,
 	return nil
 }
 
-func (m *MainAuthWrapper) SyncDataArrived(ctx context.Context, needAndroidPush bool, updates *tg.Updates) error {
+func (m *MainAuthWrapper) SyncDataArrived(ctx context.Context, needAndroidPush bool, updates tg.UpdatesClazz) error {
 	sData := &syncDataCtx{
 		ctx: contextx.ValueOnlyFrom(ctx),
 		syncData: syncData{

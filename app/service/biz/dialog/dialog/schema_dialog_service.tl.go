@@ -30,11 +30,11 @@ var (
 
 // TLDialogSaveDraftMessage <--
 type TLDialogSaveDraftMessage struct {
-	ClazzID  uint32           `json:"_id"`
-	UserId   int64            `json:"user_id"`
-	PeerType int32            `json:"peer_type"`
-	PeerId   int64            `json:"peer_id"`
-	Message  *tg.DraftMessage `json:"message"`
+	ClazzID  uint32               `json:"_id"`
+	UserId   int64                `json:"user_id"`
+	PeerType int32                `json:"peer_type"`
+	PeerId   int64                `json:"peer_id"`
+	Message  tg.DraftMessageClazz `json:"message"`
 }
 
 func (m *TLDialogSaveDraftMessage) String() string {
@@ -74,9 +74,10 @@ func (m *TLDialogSaveDraftMessage) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m4 := &tg.DraftMessage{}
-			_ = m4.Decode(d)
-			m.Message = m4
+			// m4 := &tg.DraftMessage{}
+			// _ = m4.Decode(d)
+			// m.Message = m4
+			m.Message, _ = tg.DecodeDraftMessageClazz(d)
 
 			return nil
 		},
@@ -256,11 +257,11 @@ func (m *TLDialogClearAllDrafts) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogMarkDialogUnread <--
 type TLDialogMarkDialogUnread struct {
-	ClazzID    uint32   `json:"_id"`
-	UserId     int64    `json:"user_id"`
-	PeerType   int32    `json:"peer_type"`
-	PeerId     int64    `json:"peer_id"`
-	UnreadMark *tg.Bool `json:"unread_mark"`
+	ClazzID    uint32       `json:"_id"`
+	UserId     int64        `json:"user_id"`
+	PeerType   int32        `json:"peer_type"`
+	PeerId     int64        `json:"peer_id"`
+	UnreadMark tg.BoolClazz `json:"unread_mark"`
 }
 
 func (m *TLDialogMarkDialogUnread) String() string {
@@ -300,9 +301,10 @@ func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m4 := &tg.Bool{}
-			_ = m4.Decode(d)
-			m.UnreadMark = m4
+			// m4 := &tg.Bool{}
+			// _ = m4.Decode(d)
+			// m.UnreadMark = m4
+			m.UnreadMark, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -320,11 +322,11 @@ func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogToggleDialogPin <--
 type TLDialogToggleDialogPin struct {
-	ClazzID  uint32   `json:"_id"`
-	UserId   int64    `json:"user_id"`
-	PeerType int32    `json:"peer_type"`
-	PeerId   int64    `json:"peer_id"`
-	Pinned   *tg.Bool `json:"pinned"`
+	ClazzID  uint32       `json:"_id"`
+	UserId   int64        `json:"user_id"`
+	PeerType int32        `json:"peer_type"`
+	PeerId   int64        `json:"peer_id"`
+	Pinned   tg.BoolClazz `json:"pinned"`
 }
 
 func (m *TLDialogToggleDialogPin) String() string {
@@ -364,9 +366,10 @@ func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m4 := &tg.Bool{}
-			_ = m4.Decode(d)
-			m.Pinned = m4
+			// m4 := &tg.Bool{}
+			// _ = m4.Decode(d)
+			// m.Pinned = m4
+			m.Pinned, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -436,11 +439,11 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogGetDialogsByOffsetDate <--
 type TLDialogGetDialogsByOffsetDate struct {
-	ClazzID       uint32   `json:"_id"`
-	UserId        int64    `json:"user_id"`
-	ExcludePinned *tg.Bool `json:"exclude_pinned"`
-	OffsetDate    int32    `json:"offset_date"`
-	Limit         int32    `json:"limit"`
+	ClazzID       uint32       `json:"_id"`
+	UserId        int64        `json:"user_id"`
+	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
+	OffsetDate    int32        `json:"offset_date"`
+	Limit         int32        `json:"limit"`
 }
 
 func (m *TLDialogGetDialogsByOffsetDate) String() string {
@@ -478,9 +481,10 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
 		0x9d7e8604: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.ExcludePinned = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.ExcludePinned = m2
+			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
 
 			m.OffsetDate, err = d.Int32()
 			m.Limit, err = d.Int32()
@@ -501,10 +505,10 @@ func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogGetDialogs <--
 type TLDialogGetDialogs struct {
-	ClazzID       uint32   `json:"_id"`
-	UserId        int64    `json:"user_id"`
-	ExcludePinned *tg.Bool `json:"exclude_pinned"`
-	FolderId      int32    `json:"folder_id"`
+	ClazzID       uint32       `json:"_id"`
+	UserId        int64        `json:"user_id"`
+	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
+	FolderId      int32        `json:"folder_id"`
 }
 
 func (m *TLDialogGetDialogs) String() string {
@@ -541,9 +545,10 @@ func (m *TLDialogGetDialogs) Decode(d *bin.Decoder) (err error) {
 		0x860b1e16: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.ExcludePinned = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.ExcludePinned = m2
+			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
 
 			m.FolderId, err = d.Int32()
 
@@ -620,10 +625,10 @@ func (m *TLDialogGetDialogsByIdList) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogGetDialogsCount <--
 type TLDialogGetDialogsCount struct {
-	ClazzID       uint32   `json:"_id"`
-	UserId        int64    `json:"user_id"`
-	ExcludePinned *tg.Bool `json:"exclude_pinned"`
-	FolderId      int32    `json:"folder_id"`
+	ClazzID       uint32       `json:"_id"`
+	UserId        int64        `json:"user_id"`
+	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
+	FolderId      int32        `json:"folder_id"`
 }
 
 func (m *TLDialogGetDialogsCount) String() string {
@@ -660,9 +665,10 @@ func (m *TLDialogGetDialogsCount) Decode(d *bin.Decoder) (err error) {
 		0xe039b465: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.ExcludePinned = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.ExcludePinned = m2
+			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
 
 			m.FolderId, err = d.Int32()
 
@@ -737,11 +743,11 @@ func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogReorderPinnedDialogs <--
 type TLDialogReorderPinnedDialogs struct {
-	ClazzID  uint32   `json:"_id"`
-	UserId   int64    `json:"user_id"`
-	Force    *tg.Bool `json:"force"`
-	FolderId int32    `json:"folder_id"`
-	IdList   []int64  `json:"id_list"`
+	ClazzID  uint32       `json:"_id"`
+	UserId   int64        `json:"user_id"`
+	Force    tg.BoolClazz `json:"force"`
+	FolderId int32        `json:"folder_id"`
+	IdList   []int64      `json:"id_list"`
 }
 
 func (m *TLDialogReorderPinnedDialogs) String() string {
@@ -780,9 +786,10 @@ func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		0xfee33567: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.Force = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.Force = m2
+			m.Force, _ = tg.DecodeBoolClazz(d)
 
 			m.FolderId, err = d.Int32()
 
@@ -1247,10 +1254,10 @@ func (m *TLDialogUpdateUserPinnedMessage) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogInsertOrUpdateDialogFilter <--
 type TLDialogInsertOrUpdateDialogFilter struct {
-	ClazzID      uint32           `json:"_id"`
-	UserId       int64            `json:"user_id"`
-	Id           int32            `json:"id"`
-	DialogFilter *tg.DialogFilter `json:"dialog_filter"`
+	ClazzID      uint32               `json:"_id"`
+	UserId       int64                `json:"user_id"`
+	Id           int32                `json:"id"`
+	DialogFilter tg.DialogFilterClazz `json:"dialog_filter"`
 }
 
 func (m *TLDialogInsertOrUpdateDialogFilter) String() string {
@@ -1288,9 +1295,10 @@ func (m *TLDialogInsertOrUpdateDialogFilter) Decode(d *bin.Decoder) (err error) 
 			m.UserId, err = d.Int64()
 			m.Id, err = d.Int32()
 
-			m3 := &tg.DialogFilter{}
-			_ = m3.Decode(d)
-			m.DialogFilter = m3
+			// m3 := &tg.DialogFilter{}
+			// _ = m3.Decode(d)
+			// m.DialogFilter = m3
+			m.DialogFilter, _ = tg.DecodeDialogFilterClazz(d)
 
 			return nil
 		},
@@ -1855,13 +1863,13 @@ func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogGetSavedDialogs <--
 type TLDialogGetSavedDialogs struct {
-	ClazzID       uint32       `json:"_id"`
-	UserId        int64        `json:"user_id"`
-	ExcludePinned *tg.Bool     `json:"exclude_pinned"`
-	OffsetDate    int32        `json:"offset_date"`
-	OffsetId      int32        `json:"offset_id"`
-	OffsetPeer    *tg.PeerUtil `json:"offset_peer"`
-	Limit         int32        `json:"limit"`
+	ClazzID       uint32           `json:"_id"`
+	UserId        int64            `json:"user_id"`
+	ExcludePinned tg.BoolClazz     `json:"exclude_pinned"`
+	OffsetDate    int32            `json:"offset_date"`
+	OffsetId      int32            `json:"offset_id"`
+	OffsetPeer    tg.PeerUtilClazz `json:"offset_peer"`
+	Limit         int32            `json:"limit"`
 }
 
 func (m *TLDialogGetSavedDialogs) String() string {
@@ -1901,16 +1909,18 @@ func (m *TLDialogGetSavedDialogs) Decode(d *bin.Decoder) (err error) {
 		0x38c1d668: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.ExcludePinned = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.ExcludePinned = m2
+			m.ExcludePinned, _ = tg.DecodeBoolClazz(d)
 
 			m.OffsetDate, err = d.Int32()
 			m.OffsetId, err = d.Int32()
 
-			m5 := &tg.PeerUtil{}
-			_ = m5.Decode(d)
-			m.OffsetPeer = m5
+			// m5 := &tg.PeerUtil{}
+			// _ = m5.Decode(d)
+			// m.OffsetPeer = m5
+			m.OffsetPeer, _ = tg.DecodePeerUtilClazz(d)
 
 			m.Limit, err = d.Int32()
 
@@ -1982,10 +1992,10 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogToggleSavedDialogPin <--
 type TLDialogToggleSavedDialogPin struct {
-	ClazzID uint32       `json:"_id"`
-	UserId  int64        `json:"user_id"`
-	Peer    *tg.PeerUtil `json:"peer"`
-	Pinned  *tg.Bool     `json:"pinned"`
+	ClazzID uint32           `json:"_id"`
+	UserId  int64            `json:"user_id"`
+	Peer    tg.PeerUtilClazz `json:"peer"`
+	Pinned  tg.BoolClazz     `json:"pinned"`
 }
 
 func (m *TLDialogToggleSavedDialogPin) String() string {
@@ -2022,13 +2032,15 @@ func (m *TLDialogToggleSavedDialogPin) Decode(d *bin.Decoder) (err error) {
 		0x44f317d9: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.PeerUtil{}
-			_ = m2.Decode(d)
-			m.Peer = m2
+			// m2 := &tg.PeerUtil{}
+			// _ = m2.Decode(d)
+			// m.Peer = m2
+			m.Peer, _ = tg.DecodePeerUtilClazz(d)
 
-			m3 := &tg.Bool{}
-			_ = m3.Decode(d)
-			m.Pinned = m3
+			// m3 := &tg.Bool{}
+			// _ = m3.Decode(d)
+			// m.Pinned = m3
+			m.Pinned, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -2046,10 +2058,10 @@ func (m *TLDialogToggleSavedDialogPin) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogReorderPinnedSavedDialogs <--
 type TLDialogReorderPinnedSavedDialogs struct {
-	ClazzID uint32         `json:"_id"`
-	UserId  int64          `json:"user_id"`
-	Force   *tg.Bool       `json:"force"`
-	Order   []*tg.PeerUtil `json:"order"`
+	ClazzID uint32             `json:"_id"`
+	UserId  int64              `json:"user_id"`
+	Force   tg.BoolClazz       `json:"force"`
+	Order   []tg.PeerUtilClazz `json:"order"`
 }
 
 func (m *TLDialogReorderPinnedSavedDialogs) String() string {
@@ -2087,9 +2099,10 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 		0xd85ccbd2: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.Force = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.Force = m2
+			m.Force, _ = tg.DecodeBoolClazz(d)
 
 			c3, err2 := d.ClazzID()
 			if c3 != iface.ClazzID_vector {
@@ -2097,12 +2110,14 @@ func (m *TLDialogReorderPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l3, err3 := d.Int()
-			v3 := make([]*tg.PeerUtil, l3)
+			v3 := make([]tg.PeerUtilClazz, l3)
 			for i := 0; i < l3; i++ {
-				vv := new(tg.PeerUtil)
-				err3 = vv.Decode(d)
+				// vv := new(PeerUtil)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v3[i] = vv
+				v3[i], err3 = tg.DecodePeerUtilClazz(d)
 				_ = err3
-				v3[i] = vv
 			}
 			m.Order = v3
 
@@ -2232,9 +2247,9 @@ func (m *TLDialogGetDialogFilterBySlug) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogCreateDialogFilter <--
 type TLDialogCreateDialogFilter struct {
-	ClazzID      uint32           `json:"_id"`
-	UserId       int64            `json:"user_id"`
-	DialogFilter *DialogFilterExt `json:"dialog_filter"`
+	ClazzID      uint32               `json:"_id"`
+	UserId       int64                `json:"user_id"`
+	DialogFilter DialogFilterExtClazz `json:"dialog_filter"`
 }
 
 func (m *TLDialogCreateDialogFilter) String() string {
@@ -2270,9 +2285,10 @@ func (m *TLDialogCreateDialogFilter) Decode(d *bin.Decoder) (err error) {
 		0xc6cb636f: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &DialogFilterExt{}
-			_ = m2.Decode(d)
-			m.DialogFilter = m2
+			// m2 := &DialogFilterExt{}
+			// _ = m2.Decode(d)
+			// m.DialogFilter = m2
+			m.DialogFilter, _ = DecodeDialogFilterExtClazz(d)
 
 			return nil
 		},
@@ -2396,9 +2412,9 @@ func (m *TLDialogUpdateUnreadCount) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogToggleDialogFilterTags <--
 type TLDialogToggleDialogFilterTags struct {
-	ClazzID uint32   `json:"_id"`
-	UserId  int64    `json:"user_id"`
-	Enabled *tg.Bool `json:"enabled"`
+	ClazzID uint32       `json:"_id"`
+	UserId  int64        `json:"user_id"`
+	Enabled tg.BoolClazz `json:"enabled"`
 }
 
 func (m *TLDialogToggleDialogFilterTags) String() string {
@@ -2434,9 +2450,10 @@ func (m *TLDialogToggleDialogFilterTags) Decode(d *bin.Decoder) (err error) {
 		0xa0cd6d89: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.Enabled = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.Enabled = m2
+			m.Enabled, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -2591,7 +2608,7 @@ func (m *TLDialogSetChatWallpaper) Decode(d *bin.Decoder) (err error) {
 
 // VectorPeerWithDraftMessage <--
 type VectorPeerWithDraftMessage struct {
-	Datas []*PeerWithDraftMessage `json:"_datas"`
+	Datas []PeerWithDraftMessageClazz `json:"_datas"`
 }
 
 func (m *VectorPeerWithDraftMessage) String() string {
@@ -2608,14 +2625,14 @@ func (m *VectorPeerWithDraftMessage) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorPeerWithDraftMessage) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*PeerWithDraftMessage](d)
+	m.Datas, err = iface.DecodeObjectList[PeerWithDraftMessageClazz](d)
 
 	return err
 }
 
 // VectorDialogPeer <--
 type VectorDialogPeer struct {
-	Datas []*tg.DialogPeer `json:"_datas"`
+	Datas []tg.DialogPeerClazz `json:"_datas"`
 }
 
 func (m *VectorDialogPeer) String() string {
@@ -2632,14 +2649,14 @@ func (m *VectorDialogPeer) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorDialogPeer) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.DialogPeer](d)
+	m.Datas, err = iface.DecodeObjectList[tg.DialogPeerClazz](d)
 
 	return err
 }
 
 // VectorDialogExt <--
 type VectorDialogExt struct {
-	Datas []*DialogExt `json:"_datas"`
+	Datas []DialogExtClazz `json:"_datas"`
 }
 
 func (m *VectorDialogExt) String() string {
@@ -2656,14 +2673,14 @@ func (m *VectorDialogExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorDialogExt) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*DialogExt](d)
+	m.Datas, err = iface.DecodeObjectList[DialogExtClazz](d)
 
 	return err
 }
 
 // VectorDialogFilterExt <--
 type VectorDialogFilterExt struct {
-	Datas []*DialogFilterExt `json:"_datas"`
+	Datas []DialogFilterExtClazz `json:"_datas"`
 }
 
 func (m *VectorDialogFilterExt) String() string {
@@ -2680,14 +2697,14 @@ func (m *VectorDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorDialogFilterExt) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*DialogFilterExt](d)
+	m.Datas, err = iface.DecodeObjectList[DialogFilterExtClazz](d)
 
 	return err
 }
 
 // VectorDialogPinnedExt <--
 type VectorDialogPinnedExt struct {
-	Datas []*DialogPinnedExt `json:"_datas"`
+	Datas []DialogPinnedExtClazz `json:"_datas"`
 }
 
 func (m *VectorDialogPinnedExt) String() string {
@@ -2704,7 +2721,7 @@ func (m *VectorDialogPinnedExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorDialogPinnedExt) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*DialogPinnedExt](d)
+	m.Datas, err = iface.DecodeObjectList[DialogPinnedExtClazz](d)
 
 	return err
 }

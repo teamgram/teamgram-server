@@ -34,7 +34,7 @@ var _ *tg.Bool
 func (c *StatusCore) StatusSetSessionOnline(in *status.TLStatusSetSessionOnline) (*tg.Bool, error) {
 	var (
 		userK   = getUserKey(in.UserId)
-		sess, _ = in.Session.ToSessionEntry()
+		sess, _ = in.Session.(*status.TLSessionEntry)
 	)
 
 	sessData, _ := jsonx.Marshal(sess)

@@ -28,7 +28,7 @@ var _ *tg.Bool
 // AuthsessionSetClientSessionInfo
 // authsession.setClientSessionInfo data:ClientSession = Bool;
 func (c *AuthsessionCore) AuthsessionSetClientSessionInfo(in *authsession.TLAuthsessionSetClientSessionInfo) (*tg.Bool, error) {
-	clientSession, _ := in.Data.ToClientSession()
+	clientSession, _ := in.Data.(*authsession.TLClientSession)
 	if clientSession == nil {
 		err := tg.ErrInputRequestInvalid
 		c.Logger.Errorf("session.setClientSessionInfo - error: %v", err)

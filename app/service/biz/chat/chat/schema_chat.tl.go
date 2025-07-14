@@ -60,8 +60,18 @@ func DecodeChatInviteExtClazz(d *bin.Decoder) (ChatInviteExtClazz, error) {
 
 // TLChatInviteAlready <--
 type TLChatInviteAlready struct {
-	ClazzID uint32          `json:"_id"`
-	Chat    *tg.MutableChat `json:"chat"`
+	ClazzID    uint32              `json:"_id"`
+	ClazzName2 string              `json:"_name"`
+	Chat       tg.MutableChatClazz `json:"chat"`
+}
+
+func MakeTLChatInviteAlready(m *TLChatInviteAlready) *TLChatInviteAlready {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatInviteAlready
+
+	return m
 }
 
 func (m *TLChatInviteAlready) String() string {
@@ -76,7 +86,7 @@ func (m *TLChatInviteAlready) ChatInviteExtClazzName() string {
 
 // ClazzName <--
 func (m *TLChatInviteAlready) ClazzName() string {
-	return ClazzName_chatInviteAlready
+	return m.ClazzName2
 }
 
 // ToChatInviteExt <--
@@ -85,7 +95,7 @@ func (m *TLChatInviteAlready) ToChatInviteExt() *ChatInviteExt {
 		return nil
 	}
 
-	return MakeChatInviteExt(m)
+	return &ChatInviteExt{Clazz: m}
 }
 
 // Encode <--
@@ -114,9 +124,10 @@ func (m *TLChatInviteAlready) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0xa40e7d5e: func() (err error) {
 
-			m0 := &tg.MutableChat{}
-			_ = m0.Decode(d)
-			m.Chat = m0
+			// m0 := &tg.MutableChat{}
+			// _ = m0.Decode(d)
+			// m.Chat = m0
+			m.Chat, _ = tg.DecodeMutableChatClazz(d)
 
 			return nil
 		},
@@ -131,13 +142,23 @@ func (m *TLChatInviteAlready) Decode(d *bin.Decoder) (err error) {
 
 // TLChatInvite <--
 type TLChatInvite struct {
-	ClazzID           uint32    `json:"_id"`
-	RequestNeeded     bool      `json:"request_needed"`
-	Title             string    `json:"title"`
-	About             *string   `json:"about"`
-	Photo             *tg.Photo `json:"photo"`
-	ParticipantsCount int32     `json:"participants_count"`
-	Participants      []int64   `json:"participants"`
+	ClazzID           uint32        `json:"_id"`
+	ClazzName2        string        `json:"_name"`
+	RequestNeeded     bool          `json:"request_needed"`
+	Title             string        `json:"title"`
+	About             *string       `json:"about"`
+	Photo             tg.PhotoClazz `json:"photo"`
+	ParticipantsCount int32         `json:"participants_count"`
+	Participants      []int64       `json:"participants"`
+}
+
+func MakeTLChatInvite(m *TLChatInvite) *TLChatInvite {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatInvite
+
+	return m
 }
 
 func (m *TLChatInvite) String() string {
@@ -152,7 +173,7 @@ func (m *TLChatInvite) ChatInviteExtClazzName() string {
 
 // ClazzName <--
 func (m *TLChatInvite) ClazzName() string {
-	return ClazzName_chatInvite
+	return m.ClazzName2
 }
 
 // ToChatInviteExt <--
@@ -161,7 +182,7 @@ func (m *TLChatInvite) ToChatInviteExt() *ChatInviteExt {
 		return nil
 	}
 
-	return MakeChatInviteExt(m)
+	return &ChatInviteExt{Clazz: m}
 }
 
 // Encode <--
@@ -231,9 +252,10 @@ func (m *TLChatInvite) Decode(d *bin.Decoder) (err error) {
 				*m.About, err = d.String()
 			}
 
-			m5 := &tg.Photo{}
-			_ = m5.Decode(d)
-			m.Photo = m5
+			// m5 := &tg.Photo{}
+			// _ = m5.Decode(d)
+			// m.Photo = m5
+			m.Photo, _ = tg.DecodePhotoClazz(d)
 
 			m.ParticipantsCount, err = d.Int32()
 			if (flags & (1 << 4)) != 0 {
@@ -253,9 +275,19 @@ func (m *TLChatInvite) Decode(d *bin.Decoder) (err error) {
 
 // TLChatInvitePeek <--
 type TLChatInvitePeek struct {
-	ClazzID uint32          `json:"_id"`
-	Chat    *tg.MutableChat `json:"chat"`
-	Expires int32           `json:"expires"`
+	ClazzID    uint32              `json:"_id"`
+	ClazzName2 string              `json:"_name"`
+	Chat       tg.MutableChatClazz `json:"chat"`
+	Expires    int32               `json:"expires"`
+}
+
+func MakeTLChatInvitePeek(m *TLChatInvitePeek) *TLChatInvitePeek {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatInvitePeek
+
+	return m
 }
 
 func (m *TLChatInvitePeek) String() string {
@@ -270,7 +302,7 @@ func (m *TLChatInvitePeek) ChatInviteExtClazzName() string {
 
 // ClazzName <--
 func (m *TLChatInvitePeek) ClazzName() string {
-	return ClazzName_chatInvitePeek
+	return m.ClazzName2
 }
 
 // ToChatInviteExt <--
@@ -279,7 +311,7 @@ func (m *TLChatInvitePeek) ToChatInviteExt() *ChatInviteExt {
 		return nil
 	}
 
-	return MakeChatInviteExt(m)
+	return &ChatInviteExt{Clazz: m}
 }
 
 // Encode <--
@@ -309,9 +341,10 @@ func (m *TLChatInvitePeek) Decode(d *bin.Decoder) (err error) {
 	var decodeF = map[uint32]func() error{
 		0xace3e26e: func() (err error) {
 
-			m0 := &tg.MutableChat{}
-			_ = m0.Decode(d)
-			m.Chat = m0
+			// m0 := &tg.MutableChat{}
+			// _ = m0.Decode(d)
+			// m.Chat = m0
+			m.Chat, _ = tg.DecodeMutableChatClazz(d)
 
 			m.Expires, err = d.Int32()
 
@@ -330,27 +363,26 @@ func (m *TLChatInvitePeek) Decode(d *bin.Decoder) (err error) {
 type ChatInviteExt struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChatInviteExtClazz `json:"_clazz"`
+	Clazz ChatInviteExtClazz `json:"_clazz"`
 }
 
 func (m *ChatInviteExt) String() string {
-	wrapper := iface.WithNameWrapper{m.ChatInviteExtClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeChatInviteExt <--
-func MakeChatInviteExt(c ChatInviteExtClazz) *ChatInviteExt {
-	return &ChatInviteExt{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		ChatInviteExtClazz: c,
+func (m *ChatInviteExt) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.ChatInviteExtClazzName()
 	}
 }
 
 // Encode <--
 func (m *ChatInviteExt) Encode(x *bin.Encoder, layer int32) error {
-	if m.ChatInviteExtClazz != nil {
-		return m.ChatInviteExtClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("ChatInviteExt - invalid Clazz")
@@ -358,13 +390,16 @@ func (m *ChatInviteExt) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *ChatInviteExt) Decode(d *bin.Decoder) (err error) {
-	m.ChatInviteExtClazz, err = DecodeChatInviteExtClazz(d)
+	m.Clazz, err = DecodeChatInviteExtClazz(d)
 	return
 }
 
 // Match <--
 func (m *ChatInviteExt) Match(f ...interface{}) {
-	switch c := m.ChatInviteExtClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLChatInviteAlready:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLChatInviteAlready) interface{}); ok {
@@ -394,11 +429,11 @@ func (m *ChatInviteExt) ToChatInviteAlready() (*TLChatInviteAlready, bool) {
 		return nil, false
 	}
 
-	if m.ChatInviteExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ChatInviteExtClazz.(*TLChatInviteAlready); ok {
+	if x, ok := m.Clazz.(*TLChatInviteAlready); ok {
 		return x, true
 	}
 
@@ -411,11 +446,11 @@ func (m *ChatInviteExt) ToChatInvite() (*TLChatInvite, bool) {
 		return nil, false
 	}
 
-	if m.ChatInviteExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ChatInviteExtClazz.(*TLChatInvite); ok {
+	if x, ok := m.Clazz.(*TLChatInvite); ok {
 		return x, true
 	}
 
@@ -428,11 +463,11 @@ func (m *ChatInviteExt) ToChatInvitePeek() (*TLChatInvitePeek, bool) {
 		return nil, false
 	}
 
-	if m.ChatInviteExtClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ChatInviteExtClazz.(*TLChatInvitePeek); ok {
+	if x, ok := m.Clazz.(*TLChatInvitePeek); ok {
 		return x, true
 	}
 
@@ -466,9 +501,19 @@ func DecodeChatInviteImportedClazz(d *bin.Decoder) (ChatInviteImportedClazz, err
 
 // TLChatInviteImported <--
 type TLChatInviteImported struct {
-	ClazzID    uint32                      `json:"_id"`
-	Chat       *tg.MutableChat             `json:"chat"`
-	Requesters *RecentChatInviteRequesters `json:"requesters"`
+	ClazzID    uint32                          `json:"_id"`
+	ClazzName2 string                          `json:"_name"`
+	Chat       tg.MutableChatClazz             `json:"chat"`
+	Requesters RecentChatInviteRequestersClazz `json:"requesters"`
+}
+
+func MakeTLChatInviteImported(m *TLChatInviteImported) *TLChatInviteImported {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatInviteImported
+
+	return m
 }
 
 func (m *TLChatInviteImported) String() string {
@@ -483,7 +528,7 @@ func (m *TLChatInviteImported) ChatInviteImportedClazzName() string {
 
 // ClazzName <--
 func (m *TLChatInviteImported) ClazzName() string {
-	return ClazzName_chatInviteImported
+	return m.ClazzName2
 }
 
 // ToChatInviteImported <--
@@ -492,7 +537,7 @@ func (m *TLChatInviteImported) ToChatInviteImported() *ChatInviteImported {
 		return nil
 	}
 
-	return MakeChatInviteImported(m)
+	return &ChatInviteImported{Clazz: m}
 }
 
 // Encode <--
@@ -540,14 +585,16 @@ func (m *TLChatInviteImported) Decode(d *bin.Decoder) (err error) {
 			flags, _ := d.Uint32()
 			_ = flags
 
-			m1 := &tg.MutableChat{}
-			_ = m1.Decode(d)
-			m.Chat = m1
+			// m1 := &tg.MutableChat{}
+			// _ = m1.Decode(d)
+			// m.Chat = m1
+			m.Chat, _ = tg.DecodeMutableChatClazz(d)
 
 			if (flags & (1 << 0)) != 0 {
-				m2 := &RecentChatInviteRequesters{}
-				_ = m2.Decode(d)
-				m.Requesters = m2
+				// m2 := &RecentChatInviteRequesters{}
+				// _ = m2.Decode(d)
+				// m.Requesters = m2
+				m.Requesters, _ = DecodeRecentChatInviteRequestersClazz(d)
 			}
 
 			return nil
@@ -565,27 +612,26 @@ func (m *TLChatInviteImported) Decode(d *bin.Decoder) (err error) {
 type ChatInviteImported struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	ChatInviteImportedClazz `json:"_clazz"`
+	Clazz ChatInviteImportedClazz `json:"_clazz"`
 }
 
 func (m *ChatInviteImported) String() string {
-	wrapper := iface.WithNameWrapper{m.ChatInviteImportedClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeChatInviteImported <--
-func MakeChatInviteImported(c ChatInviteImportedClazz) *ChatInviteImported {
-	return &ChatInviteImported{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		ChatInviteImportedClazz: c,
+func (m *ChatInviteImported) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.ChatInviteImportedClazzName()
 	}
 }
 
 // Encode <--
 func (m *ChatInviteImported) Encode(x *bin.Encoder, layer int32) error {
-	if m.ChatInviteImportedClazz != nil {
-		return m.ChatInviteImportedClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("ChatInviteImported - invalid Clazz")
@@ -593,13 +639,16 @@ func (m *ChatInviteImported) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *ChatInviteImported) Decode(d *bin.Decoder) (err error) {
-	m.ChatInviteImportedClazz, err = DecodeChatInviteImportedClazz(d)
+	m.Clazz, err = DecodeChatInviteImportedClazz(d)
 	return
 }
 
 // Match <--
 func (m *ChatInviteImported) Match(f ...interface{}) {
-	switch c := m.ChatInviteImportedClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLChatInviteImported:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLChatInviteImported) interface{}); ok {
@@ -617,11 +666,11 @@ func (m *ChatInviteImported) ToChatInviteImported() (*TLChatInviteImported, bool
 		return nil, false
 	}
 
-	if m.ChatInviteImportedClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.ChatInviteImportedClazz.(*TLChatInviteImported); ok {
+	if x, ok := m.Clazz.(*TLChatInviteImported); ok {
 		return x, true
 	}
 
@@ -656,8 +705,18 @@ func DecodeRecentChatInviteRequestersClazz(d *bin.Decoder) (RecentChatInviteRequ
 // TLRecentChatInviteRequesters <--
 type TLRecentChatInviteRequesters struct {
 	ClazzID          uint32  `json:"_id"`
+	ClazzName2       string  `json:"_name"`
 	RequestsPending  int32   `json:"requests_pending"`
 	RecentRequesters []int64 `json:"recent_requesters"`
+}
+
+func MakeTLRecentChatInviteRequesters(m *TLRecentChatInviteRequesters) *TLRecentChatInviteRequesters {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_recentChatInviteRequesters
+
+	return m
 }
 
 func (m *TLRecentChatInviteRequesters) String() string {
@@ -672,7 +731,7 @@ func (m *TLRecentChatInviteRequesters) RecentChatInviteRequestersClazzName() str
 
 // ClazzName <--
 func (m *TLRecentChatInviteRequesters) ClazzName() string {
-	return ClazzName_recentChatInviteRequesters
+	return m.ClazzName2
 }
 
 // ToRecentChatInviteRequesters <--
@@ -681,7 +740,7 @@ func (m *TLRecentChatInviteRequesters) ToRecentChatInviteRequesters() *RecentCha
 		return nil
 	}
 
-	return MakeRecentChatInviteRequesters(m)
+	return &RecentChatInviteRequesters{Clazz: m}
 }
 
 // Encode <--
@@ -730,27 +789,26 @@ func (m *TLRecentChatInviteRequesters) Decode(d *bin.Decoder) (err error) {
 type RecentChatInviteRequesters struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	RecentChatInviteRequestersClazz `json:"_clazz"`
+	Clazz RecentChatInviteRequestersClazz `json:"_clazz"`
 }
 
 func (m *RecentChatInviteRequesters) String() string {
-	wrapper := iface.WithNameWrapper{m.RecentChatInviteRequestersClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeRecentChatInviteRequesters <--
-func MakeRecentChatInviteRequesters(c RecentChatInviteRequestersClazz) *RecentChatInviteRequesters {
-	return &RecentChatInviteRequesters{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		RecentChatInviteRequestersClazz: c,
+func (m *RecentChatInviteRequesters) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.RecentChatInviteRequestersClazzName()
 	}
 }
 
 // Encode <--
 func (m *RecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32) error {
-	if m.RecentChatInviteRequestersClazz != nil {
-		return m.RecentChatInviteRequestersClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("RecentChatInviteRequesters - invalid Clazz")
@@ -758,13 +816,16 @@ func (m *RecentChatInviteRequesters) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *RecentChatInviteRequesters) Decode(d *bin.Decoder) (err error) {
-	m.RecentChatInviteRequestersClazz, err = DecodeRecentChatInviteRequestersClazz(d)
+	m.Clazz, err = DecodeRecentChatInviteRequestersClazz(d)
 	return
 }
 
 // Match <--
 func (m *RecentChatInviteRequesters) Match(f ...interface{}) {
-	switch c := m.RecentChatInviteRequestersClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLRecentChatInviteRequesters:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLRecentChatInviteRequesters) interface{}); ok {
@@ -782,11 +843,11 @@ func (m *RecentChatInviteRequesters) ToRecentChatInviteRequesters() (*TLRecentCh
 		return nil, false
 	}
 
-	if m.RecentChatInviteRequestersClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.RecentChatInviteRequestersClazz.(*TLRecentChatInviteRequesters); ok {
+	if x, ok := m.Clazz.(*TLRecentChatInviteRequesters); ok {
 		return x, true
 	}
 
@@ -821,8 +882,18 @@ func DecodeUserChatIdListClazz(d *bin.Decoder) (UserChatIdListClazz, error) {
 // TLUserChatIdList <--
 type TLUserChatIdList struct {
 	ClazzID    uint32  `json:"_id"`
+	ClazzName2 string  `json:"_name"`
 	UserId     int64   `json:"user_id"`
 	ChatIdList []int64 `json:"chat_id_list"`
+}
+
+func MakeTLUserChatIdList(m *TLUserChatIdList) *TLUserChatIdList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userChatIdList
+
+	return m
 }
 
 func (m *TLUserChatIdList) String() string {
@@ -837,7 +908,7 @@ func (m *TLUserChatIdList) UserChatIdListClazzName() string {
 
 // ClazzName <--
 func (m *TLUserChatIdList) ClazzName() string {
-	return ClazzName_userChatIdList
+	return m.ClazzName2
 }
 
 // ToUserChatIdList <--
@@ -846,7 +917,7 @@ func (m *TLUserChatIdList) ToUserChatIdList() *UserChatIdList {
 		return nil
 	}
 
-	return MakeUserChatIdList(m)
+	return &UserChatIdList{Clazz: m}
 }
 
 // Encode <--
@@ -895,27 +966,26 @@ func (m *TLUserChatIdList) Decode(d *bin.Decoder) (err error) {
 type UserChatIdList struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	UserChatIdListClazz `json:"_clazz"`
+	Clazz UserChatIdListClazz `json:"_clazz"`
 }
 
 func (m *UserChatIdList) String() string {
-	wrapper := iface.WithNameWrapper{m.UserChatIdListClazzName(), m}
+	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
 	return wrapper.String()
 }
 
-// MakeUserChatIdList <--
-func MakeUserChatIdList(c UserChatIdListClazz) *UserChatIdList {
-	return &UserChatIdList{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		UserChatIdListClazz: c,
+func (m *UserChatIdList) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.UserChatIdListClazzName()
 	}
 }
 
 // Encode <--
 func (m *UserChatIdList) Encode(x *bin.Encoder, layer int32) error {
-	if m.UserChatIdListClazz != nil {
-		return m.UserChatIdListClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("UserChatIdList - invalid Clazz")
@@ -923,13 +993,16 @@ func (m *UserChatIdList) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *UserChatIdList) Decode(d *bin.Decoder) (err error) {
-	m.UserChatIdListClazz, err = DecodeUserChatIdListClazz(d)
+	m.Clazz, err = DecodeUserChatIdListClazz(d)
 	return
 }
 
 // Match <--
 func (m *UserChatIdList) Match(f ...interface{}) {
-	switch c := m.UserChatIdListClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLUserChatIdList:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLUserChatIdList) interface{}); ok {
@@ -947,11 +1020,11 @@ func (m *UserChatIdList) ToUserChatIdList() (*TLUserChatIdList, bool) {
 		return nil, false
 	}
 
-	if m.UserChatIdListClazz == nil {
+	if m.Clazz == nil {
 		return nil, false
 	}
 
-	if x, ok := m.UserChatIdListClazz.(*TLUserChatIdList); ok {
+	if x, ok := m.Clazz.(*TLUserChatIdList); ok {
 		return x, true
 	}
 

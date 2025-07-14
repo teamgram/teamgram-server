@@ -53,19 +53,19 @@ var (
 )
 
 var (
-	gNewAlgo       *tg.PasswordKdfAlgo
-	gNewSecureAlgo *tg.SecurePasswordKdfAlgo
+	gNewAlgo       tg.PasswordKdfAlgoClazz
+	gNewSecureAlgo tg.SecurePasswordKdfAlgoClazz
 )
 
 func init() {
-	gNewAlgo = tg.MakePasswordKdfAlgo(&tg.TLPasswordKdfAlgoModPow{
+	gNewAlgo = tg.MakeTLPasswordKdfAlgoModPow(&tg.TLPasswordKdfAlgoModPow{
 		Salt1: gNewAlgoSalt1,
 		Salt2: gNewAlgoSalt2,
 		G:     gNewAlgoG,
 		P:     gNewAlgoP,
 	})
 
-	gNewSecureAlgo = tg.MakeSecurePasswordKdfAlgo(&tg.TLSecurePasswordKdfAlgoPBKDF2{
+	gNewSecureAlgo = tg.MakeTLSecurePasswordKdfAlgoPBKDF2(&tg.TLSecurePasswordKdfAlgoPBKDF2{
 		Salt: gNewSecureAlgoSalt,
 	})
 }
@@ -80,49 +80,49 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 	// langpack
 	case "TLLangpackGetDifference":
 		in := object.(*tg.TLLangpackGetDifference)
-		return tg.MakeLangPackDifference(&tg.TLLangPackDifference{
+		return tg.MakeTLLangPackDifference(&tg.TLLangPackDifference{
 			LangCode:    in.LangCode,
 			FromVersion: in.FromVersion,
 			Version:     in.FromVersion,
-			Strings:     []*tg.LangPackString{},
-		}), nil
+			Strings:     []tg.LangPackStringClazz{},
+		}).ToLangPackDifference(), nil
 	case "TLLangpackGetLangPack":
 		in := object.(*tg.TLLangpackGetLangPack)
-		return tg.MakeLangPackDifference(&tg.TLLangPackDifference{
+		return tg.MakeTLLangPackDifference(&tg.TLLangPackDifference{
 			LangCode:    in.LangCode,
 			FromVersion: 0,
 			Version:     0,
-			Strings:     []*tg.LangPackString{},
-		}), nil
+			Strings:     []tg.LangPackStringClazz{},
+		}).ToLangPackDifference(), nil
 	case "TLLangpackGetLanguages":
 		return &tg.VectorLangPackLanguage{
-			Datas: []*tg.LangPackLanguage{},
+			Datas: []tg.LangPackLanguageClazz{},
 		}, nil
 	case "TLLangpackGetStrings":
 		return &tg.VectorLangPackString{
-			Datas: []*tg.LangPackString{},
+			Datas: []tg.LangPackStringClazz{},
 		}, nil
 
 	// webpage
 	case "TLMessagesGetWebPage":
-		return tg.MakeWebPage(&tg.TLWebPageEmpty{
+		return tg.MakeTLWebPageEmpty(&tg.TLWebPageEmpty{
 			Id: 0,
-		}), nil
+		}).ToWebPage(), nil
 	case "TLMessagesGetWebPageView":
-		return tg.MakeMessageMedia(&tg.TLMessageMediaEmpty{
+		return tg.MakeTLMessageMediaEmpty(&tg.TLMessageMediaEmpty{
 			//
-		}), nil
+		}).ToMessageMedia(), nil
 
 	// wallpaper
 	case "TLAccountGetWallPapers":
-		return tg.MakeAccountWallPapers(&tg.TLAccountWallPapers{
+		return tg.MakeTLAccountWallPapers(&tg.TLAccountWallPapers{
 			Hash:       0,
-			Wallpapers: []*tg.WallPaper{},
-		}), nil
+			Wallpapers: []tg.WallPaperClazz{},
+		}).ToAccountWallPapers(), nil
 
 	// twofa
 	case "TLAccountGetPassword":
-		return tg.MakeAccountPassword(&tg.TLAccountPassword{
+		return tg.MakeTLAccountPassword(&tg.TLAccountPassword{
 			HasRecovery:             false,
 			HasSecureValues:         false,
 			HasPassword:             false,
@@ -134,27 +134,27 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			NewAlgo:                 gNewAlgo,
 			NewSecureAlgo:           gNewSecureAlgo,
 			SecureRandom:            crypto.RandomBytes(256),
-		}), nil
+		}).ToAccountPassword(), nil
 
 	// tos
 	case "TLHelpAcceptTermsOfService":
 		return tg.BoolTrue, nil
 	case "TLHelpGetTermsOfServiceUpdate":
-		return tg.MakeHelpTermsOfServiceUpdate(&tg.TLHelpTermsOfServiceUpdateEmpty{
+		return tg.MakeTLHelpTermsOfServiceUpdateEmpty(&tg.TLHelpTermsOfServiceUpdateEmpty{
 			Expires: int32(time.Now().Unix() + 3600),
-		}), nil
+		}).ToHelpTermsOfServiceUpdate(), nil
 
 	// themes
 	case "TLAccountGetThemes":
-		return tg.MakeAccountThemes(&tg.TLAccountThemes{
+		return tg.MakeTLAccountThemes(&tg.TLAccountThemes{
 			Hash:   0,
-			Themes: []*tg.Theme{},
-		}), nil
+			Themes: []tg.ThemeClazz{},
+		}).ToAccountThemes(), nil
 	case "TLAccountGetChatThemes":
-		return tg.MakeAccountThemes(&tg.TLAccountThemes{
+		return tg.MakeTLAccountThemes(&tg.TLAccountThemes{
 			Hash:   0,
-			Themes: []*tg.Theme{},
-		}), nil
+			Themes: []tg.ThemeClazz{},
+		}).ToAccountThemes(), nil
 
 		//// stickers
 		//case "TLMessagesGetAllStickers":

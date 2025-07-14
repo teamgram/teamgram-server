@@ -31,13 +31,13 @@ var _ *tg.Bool
 // authsession.setAuthKey auth_key:AuthKeyInfo future_salt:FutureSalt expires_in:int = Bool;
 func (c *AuthsessionCore) AuthsessionSetAuthKey(in *authsession.TLAuthsessionSetAuthKey) (*tg.Bool, error) {
 	var (
-		keyInfo, _ = in.AuthKey.ToAuthKeyInfo()
+		keyInfo, _ = in.AuthKey.(*tg.TLAuthKeyInfo)
 		salt       *tg.TLFutureSalt
 		err        error
 	)
 
 	if in.FutureSalt != nil {
-		salt, _ = in.FutureSalt.ToFutureSalt()
+		salt, _ = in.FutureSalt.(*tg.TLFutureSalt)
 	}
 	if salt == nil {
 		err = c.svcCtx.Dao.SetAuthKeyV2(c.ctx, keyInfo, in.ExpiresIn)

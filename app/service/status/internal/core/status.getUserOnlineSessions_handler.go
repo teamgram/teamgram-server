@@ -38,11 +38,11 @@ func (c *StatusCore) StatusGetUserOnlineSessions(in *status.TLStatusGetUserOnlin
 
 	rValues := &status.TLUserSessionEntryList{
 		UserId:       in.UserId,
-		UserSessions: make([]*status.SessionEntry, 0, len(rMap)),
+		UserSessions: make([]status.SessionEntryClazz, 0, len(rMap)),
 	}
 
 	for _, v := range rMap {
-		sess := new(status.SessionEntry)
+		sess := new(status.TLSessionEntry)
 		if err2 := jsonx.UnmarshalFromString(v, sess); err2 == nil {
 			rValues.UserSessions = append(rValues.UserSessions, sess)
 		}

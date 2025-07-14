@@ -14,7 +14,7 @@ const (
 	saltTimeout = 30 * 60 // salt timeout
 )
 
-func removeAllNil(vList []*tg.Authorization) []*tg.Authorization {
+func removeAllNil(vList []tg.AuthorizationClazz) []tg.AuthorizationClazz {
 	for i := 0; i < len(vList); {
 		if vList[i] != nil {
 			i++

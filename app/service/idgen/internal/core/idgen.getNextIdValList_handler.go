@@ -27,54 +27,47 @@ var _ *tg.Bool
 // idgen.getNextIdValList id:Vector<InputId> = Vector<IdVal>;
 func (c *IdgenCore) IdgenGetNextIdValList(in *idgen.TLIdgenGetNextIdValList) (*idgen.VectorIdVal, error) {
 	var (
-		idList = make([]*idgen.IdVal, len(in.Id))
+		idList = make([]idgen.IdValClazz, len(in.Id))
 	)
 
 	for i, id := range in.Id {
-		id.Match(
-			func(id2 *idgen.TLInputId) interface{} {
-				idList[i] = idgen.MakeIdVal(&idgen.TLIdVal{
-					Id_INT64: c.svcCtx.Dao.Node.Generate().Int64(),
-				})
-
-				return nil
-			},
-			func(id2 *idgen.TLInputIds) interface{} {
-				ids := make([]int64, id2.Num)
-				for j := int32(0); j < id2.Num; j++ {
-					// TODO: 库里提供ids方法，以减少Lock次数
-					ids[j] = c.svcCtx.Node.Generate().Int64()
-				}
-				idList[i] = idgen.MakeIdVal(&idgen.TLIdVals{
-					Id_VECTORINT64: ids,
-				})
-
-				return nil
-			},
-			func(id2 *idgen.TLInputNSeqId) interface{} {
-				sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, 1)
-				if err != nil {
-					c.Logger.Errorf("dgen.getNextIdValList(%s) error: %v", id2.Key, err)
-					return err
-				}
-				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
-					Id_INT64: sid,
-				})
-
-				return nil
-			},
-			func(id2 *idgen.TLInputNSeqId) interface{} {
-				sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, int64(id2.N))
-				if err != nil {
-					c.Logger.Errorf("dgen.getNextIdValList(%s, %d) error: %v", id2.Key, id2.N, err)
-					return err
-				}
-				idList[i] = idgen.MakeIdVal(&idgen.TLSeqIdVal{
-					Id_INT64: sid,
-				})
-
-				return nil
+		switch id2 := id.(type) {
+		case *idgen.TLInputId:
+			idList[i] = idgen.MakeTLIdVal(&idgen.TLIdVal{
+				Id_INT64: c.svcCtx.Dao.Node.Generate().Int64(),
 			})
+		case *idgen.TLInputIds:
+			ids := make([]int64, id2.Num)
+			for j := int32(0); j < id2.Num; j++ {
+				// TODO: 库里提供ids方法，以减少Lock次数
+				ids[j] = c.svcCtx.Node.Generate().Int64()
+			}
+			idList[i] = idgen.MakeTLIdVals(&idgen.TLIdVals{
+				Id_VECTORINT64: ids,
+			})
+
+		case *idgen.TLInputSeqId:
+			sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, 1)
+			if err != nil {
+				c.Logger.Errorf("dgen.getNextIdValList(%s) error: %v", id2.Key, err)
+				// return err
+			}
+			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
+				Id_INT64: sid,
+			})
+
+		case *idgen.TLInputNSeqId:
+			sid, err := c.svcCtx.Dao.KV.IncrbyCtx(c.ctx, id2.Key, int64(id2.N))
+			if err != nil {
+				c.Logger.Errorf("dgen.getNextIdValList(%s, %d) error: %v", id2.Key, id2.N, err)
+				// return err
+			}
+			idList[i] = idgen.MakeTLSeqIdVal(&idgen.TLSeqIdVal{
+				Id_INT64: sid,
+			})
+		default:
+			c.Logger.Errorf("idgen.getNextIdValList - unexpected input id type: %T", id2)
+		}
 	}
 
 	return &idgen.VectorIdVal{

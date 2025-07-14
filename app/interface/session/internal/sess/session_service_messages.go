@@ -68,7 +68,7 @@ func (c *session) checkContainer(ctx context.Context, msgId int64, seqno int32, 
 // ============================================================================================
 func (c *session) onNewSessionCreated(ctx context.Context, gatewayId string, msgId int64) {
 	logx.WithContext(ctx).Infof("onNewSessionCreated - request data: %d", msgId)
-	newSessionCreated := mt.MakeNewSession(&mt.TLNewSessionCreated{
+	newSessionCreated := mt.MakeTLNewSessionCreated(&mt.TLNewSessionCreated{
 		FirstMsgId: msgId,
 		UniqueId:   rand.Int63(),
 		ServerSalt: c.sessList.cacheSalt.Salt,
@@ -125,7 +125,7 @@ func (c *session) onDestroyAuthKey(ctx context.Context, gatewayId string, msgId 
 	// destroy_auth_key_ok#f660e1d4 = DestroyAuthKeyRes;
 	// destroy_auth_key_none#0a9f2259 = DestroyAuthKeyRes;
 	// destroy_auth_key_fail#ea109b13 = DestroyAuthKeyRes;
-	res := mt.MakeDestroyAuthKeyRes(&mt.TLDestroyAuthKeyOk{})
+	res := mt.MakeTLDestroyAuthKeyOk(&mt.TLDestroyAuthKeyOk{})
 	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, res)
 	msgId.state = RECEIVED | ACKNOWLEDGED
 }
@@ -138,7 +138,7 @@ func (c *session) onPing(ctx context.Context, gatewayId string, msgId *inboxMsg,
 		msgId,
 		ping)
 
-	pong := mt.MakePong(&mt.TLPong{
+	pong := mt.MakeTLPong(&mt.TLPong{
 		MsgId:  msgId.msgId,
 		PingId: ping.PingId,
 	})
@@ -156,7 +156,7 @@ func (c *session) onPingDelayDisconnect(ctx context.Context, gatewayId string, m
 		msgId,
 		pingDelayDisconnect)
 
-	pong := mt.MakePong(&mt.TLPong{
+	pong := mt.MakeTLPong(&mt.TLPong{
 		MsgId:  msgId.msgId,
 		PingId: pingDelayDisconnect.PingId,
 	})
@@ -262,12 +262,12 @@ func (c *session) onDestroySession(ctx context.Context, gatewayId string, msgId 
 	}
 
 	if c.sessList.destroySession(request.SessionId) {
-		destroySessionOk := mt.MakeDestroySessionRes(&mt.TLDestroySessionOk{
+		destroySessionOk := mt.MakeTLDestroySessionOk(&mt.TLDestroySessionOk{
 			SessionId: request.SessionId,
 		})
 		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, destroySessionOk)
 	} else {
-		destroySessionNone := mt.MakeDestroySessionRes(&mt.TLDestroySessionNone{
+		destroySessionNone := mt.MakeTLDestroySessionNone(&mt.TLDestroySessionNone{
 			SessionId: request.SessionId,
 		})
 		c.sendRawToQueue(ctx, gatewayId, msgId.msgId, false, destroySessionNone)
@@ -290,7 +290,7 @@ func (c *session) onGetFutureSalts(ctx context.Context, gatewayId string, msgId 
 		return
 	}
 
-	futureSalts := mt.MakeFutureSalts(&mt.TLFutureSalts{
+	futureSalts := mt.MakeTLFutureSalts(&mt.TLFutureSalts{
 		ReqMsgId: msgId.msgId,
 		Now:      int32(time.Now().Unix()),
 		Salts:    salts,
@@ -317,7 +317,7 @@ func (c *session) onRpcDropAnswer(ctx context.Context, gatewayId string, msgId *
 		request)
 
 	var (
-		rpcAnswer *mt.RpcDropAnswer
+		rpcAnswer mt.RpcDropAnswerClazz
 	)
 
 	// var found = false
@@ -353,7 +353,7 @@ func (c *session) onRpcDropAnswer(ctx context.Context, gatewayId string, msgId *
 		 }
 	*/
 
-	rpcAnswer = mt.MakeRpcDropAnswer(&mt.TLRpcAnswerUnknown{})
+	rpcAnswer = mt.MakeTLRpcAnswerUnknown(&mt.TLRpcAnswerUnknown{})
 
 	c.sendRpcResultToQueue(ctx, gatewayId, msgId.msgId, rpcAnswer)
 	msgId.state = RECEIVED | ACKNOWLEDGED

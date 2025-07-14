@@ -129,7 +129,7 @@ func (s *Server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 			strconv.FormatInt(ctx.authKey.PermAuthKeyId(), 10),
 			func(client sessionclient.SessionClient) (err error) {
 				_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
-					Client: session.MakeSessionClientEvent(&session.TLSessionClientEvent{
+					Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
 						ServerId:      s.svcCtx.GatewayId,
 						AuthKeyId:     ctx.authKey.AuthKeyId(),
 						KeyType:       int32(ctx.authKey.AuthKeyType()),
@@ -212,7 +212,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 					MsgId: nextMessageId(false),
 					Seqno: 0,
 					Bytes: 0,
-					Object: mt.MakePong(&mt.TLPong{
+					Object: mt.MakeTLPong(&mt.TLPong{
 						MsgId:  int64(binary.LittleEndian.Uint64(mtpRwaData[16:])),
 						PingId: unknownMsg.PingId,
 					}),
@@ -255,7 +255,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				if isNew {
 					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
 						r := &session.TLSessionCreateSession{
-							Client: session.MakeSessionClientEvent(&session.TLSessionClientEvent{
+							Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
 								ServerId:      s.svcCtx.GatewayId,
 								AuthKeyId:     authKey.AuthKeyId(),
 								KeyType:       int32(authKey.AuthKeyType()),
@@ -274,7 +274,7 @@ func (s *Server) onEncryptedMessage(c gnet.Conn, ctx *connContext, authKey *auth
 				}
 
 				_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
-					Data: session.MakeSessionClientData(&session.TLSessionClientData{
+					Data: session.MakeTLSessionClientData(&session.TLSessionClientData{
 						ServerId:      s.svcCtx.GatewayId,
 						AuthKeyId:     authKey.AuthKeyId(),
 						KeyType:       int32(authKey.AuthKeyType()),

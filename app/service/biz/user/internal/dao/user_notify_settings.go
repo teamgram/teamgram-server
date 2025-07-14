@@ -59,8 +59,8 @@ func (d *Dao) GetUserNotifySettings(ctx context.Context, id int64, peerType int3
 					tg.PEER_CHATS,
 					tg.PEER_BROADCASTS:
 
-					notifySettings.ShowPreviews = tg.BoolTrue
-					notifySettings.Silent = tg.BoolFalse
+					notifySettings.ShowPreviews = tg.BoolTrueClazz
+					notifySettings.Silent = tg.BoolFalseClazz
 					notifySettings.MuteUntil = tg.MakeFlagsZeroInt32()
 					notifySettings.IosSound = nil
 				}
@@ -81,10 +81,10 @@ func setPeerNotifySettingsByDO(settings *tg.PeerNotifySettings, do *dataobject.U
 	settings.Match(
 		func(c *tg.TLPeerNotifySettings) interface{} {
 			if do.ShowPreviews != -1 {
-				c.ShowPreviews = tg.ToBool(do.ShowPreviews == 1)
+				c.ShowPreviews = tg.ToBoolClazz(do.ShowPreviews == 1)
 			}
 			if do.Silent != -1 {
-				c.Silent = tg.ToBool(do.Silent == 1)
+				c.Silent = tg.ToBoolClazz(do.Silent == 1)
 			}
 			if do.MuteUntil != -1 {
 				c.MuteUntil = tg.MakeFlagsInt32(do.MuteUntil)
@@ -103,7 +103,7 @@ func makeDOByPeerNotifySettings(settings *tg.PeerNotifySettings) (doMap map[stri
 	settings.Match(
 		func(c *tg.TLPeerNotifySettings) interface{} {
 			if c.ShowPreviews != nil {
-				if tg.FromBool(c.ShowPreviews) {
+				if tg.FromBoolClazz(c.ShowPreviews) {
 					doMap["show_previews"] = 1
 				} else {
 					doMap["show_previews"] = 0
@@ -113,7 +113,7 @@ func makeDOByPeerNotifySettings(settings *tg.PeerNotifySettings) (doMap map[stri
 			}
 
 			if c.Silent != nil {
-				if tg.FromBool(c.Silent) {
+				if tg.FromBoolClazz(c.Silent) {
 					doMap["silent"] = 1
 				} else {
 					doMap["silent"] = 0

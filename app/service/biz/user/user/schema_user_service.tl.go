@@ -597,9 +597,9 @@ func (m *TLUserGetNotifySettings) Decode(d *bin.Decoder) (err error) {
 
 // TLUserGetNotifySettingsList <--
 type TLUserGetNotifySettingsList struct {
-	ClazzID uint32         `json:"_id"`
-	UserId  int64          `json:"user_id"`
-	Peers   []*tg.PeerUtil `json:"peers"`
+	ClazzID uint32             `json:"_id"`
+	UserId  int64              `json:"user_id"`
+	Peers   []tg.PeerUtilClazz `json:"peers"`
 }
 
 func (m *TLUserGetNotifySettingsList) String() string {
@@ -641,12 +641,14 @@ func (m *TLUserGetNotifySettingsList) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l2, err3 := d.Int()
-			v2 := make([]*tg.PeerUtil, l2)
+			v2 := make([]tg.PeerUtilClazz, l2)
 			for i := 0; i < l2; i++ {
-				vv := new(tg.PeerUtil)
-				err3 = vv.Decode(d)
+				// vv := new(PeerUtil)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v2[i] = vv
+				v2[i], err3 = tg.DecodePeerUtilClazz(d)
 				_ = err3
-				v2[i] = vv
 			}
 			m.Peers = v2
 
@@ -666,11 +668,11 @@ func (m *TLUserGetNotifySettingsList) Decode(d *bin.Decoder) (err error) {
 
 // TLUserSetNotifySettings <--
 type TLUserSetNotifySettings struct {
-	ClazzID  uint32                 `json:"_id"`
-	UserId   int64                  `json:"user_id"`
-	PeerType int32                  `json:"peer_type"`
-	PeerId   int64                  `json:"peer_id"`
-	Settings *tg.PeerNotifySettings `json:"settings"`
+	ClazzID  uint32                     `json:"_id"`
+	UserId   int64                      `json:"user_id"`
+	PeerType int32                      `json:"peer_type"`
+	PeerId   int64                      `json:"peer_id"`
+	Settings tg.PeerNotifySettingsClazz `json:"settings"`
 }
 
 func (m *TLUserSetNotifySettings) String() string {
@@ -710,9 +712,10 @@ func (m *TLUserSetNotifySettings) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m4 := &tg.PeerNotifySettings{}
-			_ = m4.Decode(d)
-			m.Settings = m4
+			// m4 := &tg.PeerNotifySettings{}
+			// _ = m4.Decode(d)
+			// m.Settings = m4
+			m.Settings, _ = tg.DecodePeerNotifySettingsClazz(d)
 
 			return nil
 		},
@@ -886,9 +889,9 @@ func (m *TLUserGetGlobalPrivacySettings) Decode(d *bin.Decoder) (err error) {
 
 // TLUserSetGlobalPrivacySettings <--
 type TLUserSetGlobalPrivacySettings struct {
-	ClazzID  uint32                    `json:"_id"`
-	UserId   int64                     `json:"user_id"`
-	Settings *tg.GlobalPrivacySettings `json:"settings"`
+	ClazzID  uint32                        `json:"_id"`
+	UserId   int64                         `json:"user_id"`
+	Settings tg.GlobalPrivacySettingsClazz `json:"settings"`
 }
 
 func (m *TLUserSetGlobalPrivacySettings) String() string {
@@ -924,9 +927,10 @@ func (m *TLUserSetGlobalPrivacySettings) Decode(d *bin.Decoder) (err error) {
 		0x8cb592ae: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.GlobalPrivacySettings{}
-			_ = m2.Decode(d)
-			m.Settings = m2
+			// m2 := &tg.GlobalPrivacySettings{}
+			// _ = m2.Decode(d)
+			// m.Settings = m2
+			m.Settings, _ = tg.DecodeGlobalPrivacySettingsClazz(d)
 
 			return nil
 		},
@@ -999,10 +1003,10 @@ func (m *TLUserGetPrivacy) Decode(d *bin.Decoder) (err error) {
 
 // TLUserSetPrivacy <--
 type TLUserSetPrivacy struct {
-	ClazzID uint32            `json:"_id"`
-	UserId  int64             `json:"user_id"`
-	KeyType int32             `json:"key_type"`
-	Rules   []*tg.PrivacyRule `json:"rules"`
+	ClazzID uint32                `json:"_id"`
+	UserId  int64                 `json:"user_id"`
+	KeyType int32                 `json:"key_type"`
+	Rules   []tg.PrivacyRuleClazz `json:"rules"`
 }
 
 func (m *TLUserSetPrivacy) String() string {
@@ -1046,12 +1050,14 @@ func (m *TLUserSetPrivacy) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l3, err3 := d.Int()
-			v3 := make([]*tg.PrivacyRule, l3)
+			v3 := make([]tg.PrivacyRuleClazz, l3)
 			for i := 0; i < l3; i++ {
-				vv := new(tg.PrivacyRule)
-				err3 = vv.Decode(d)
+				// vv := new(PrivacyRule)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v3[i] = vv
+				v3[i], err3 = tg.DecodePrivacyRuleClazz(d)
 				_ = err3
-				v3[i] = vv
 			}
 			m.Rules = v3
 
@@ -1141,11 +1147,11 @@ func (m *TLUserCheckPrivacy) Decode(d *bin.Decoder) (err error) {
 
 // TLUserAddPeerSettings <--
 type TLUserAddPeerSettings struct {
-	ClazzID  uint32           `json:"_id"`
-	UserId   int64            `json:"user_id"`
-	PeerType int32            `json:"peer_type"`
-	PeerId   int64            `json:"peer_id"`
-	Settings *tg.PeerSettings `json:"settings"`
+	ClazzID  uint32               `json:"_id"`
+	UserId   int64                `json:"user_id"`
+	PeerType int32                `json:"peer_type"`
+	PeerId   int64                `json:"peer_id"`
+	Settings tg.PeerSettingsClazz `json:"settings"`
 }
 
 func (m *TLUserAddPeerSettings) String() string {
@@ -1185,9 +1191,10 @@ func (m *TLUserAddPeerSettings) Decode(d *bin.Decoder) (err error) {
 			m.PeerType, err = d.Int32()
 			m.PeerId, err = d.Int64()
 
-			m4 := &tg.PeerSettings{}
-			_ = m4.Decode(d)
-			m.Settings = m4
+			// m4 := &tg.PeerSettings{}
+			// _ = m4.Decode(d)
+			// m.Settings = m4
+			m.Settings, _ = tg.DecodePeerSettingsClazz(d)
 
 			return nil
 		},
@@ -1891,9 +1898,9 @@ func (m *TLUserGetContactSignUpNotification) Decode(d *bin.Decoder) (err error) 
 
 // TLUserSetContactSignUpNotification <--
 type TLUserSetContactSignUpNotification struct {
-	ClazzID uint32   `json:"_id"`
-	UserId  int64    `json:"user_id"`
-	Silent  *tg.Bool `json:"silent"`
+	ClazzID uint32       `json:"_id"`
+	UserId  int64        `json:"user_id"`
+	Silent  tg.BoolClazz `json:"silent"`
 }
 
 func (m *TLUserSetContactSignUpNotification) String() string {
@@ -1929,9 +1936,10 @@ func (m *TLUserSetContactSignUpNotification) Decode(d *bin.Decoder) (err error) 
 		0x85a17361: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.Silent = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.Silent = m2
+			m.Silent, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -2287,13 +2295,13 @@ func (m *TLUserGetContact) Decode(d *bin.Decoder) (err error) {
 
 // TLUserAddContact <--
 type TLUserAddContact struct {
-	ClazzID                  uint32   `json:"_id"`
-	UserId                   int64    `json:"user_id"`
-	AddPhonePrivacyException *tg.Bool `json:"add_phone_privacy_exception"`
-	Id                       int64    `json:"id"`
-	FirstName                string   `json:"first_name"`
-	LastName                 string   `json:"last_name"`
-	Phone                    string   `json:"phone"`
+	ClazzID                  uint32       `json:"_id"`
+	UserId                   int64        `json:"user_id"`
+	AddPhonePrivacyException tg.BoolClazz `json:"add_phone_privacy_exception"`
+	Id                       int64        `json:"id"`
+	FirstName                string       `json:"first_name"`
+	LastName                 string       `json:"last_name"`
+	Phone                    string       `json:"phone"`
 }
 
 func (m *TLUserAddContact) String() string {
@@ -2333,9 +2341,10 @@ func (m *TLUserAddContact) Decode(d *bin.Decoder) (err error) {
 		0x79c4bd0e: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.AddPhonePrivacyException = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.AddPhonePrivacyException = m2
+			m.AddPhonePrivacyException, _ = tg.DecodeBoolClazz(d)
 
 			m.Id, err = d.Int64()
 			m.FirstName, err = d.String()
@@ -2517,9 +2526,9 @@ func (m *TLUserDeleteImportersByPhone) Decode(d *bin.Decoder) (err error) {
 
 // TLUserImportContacts <--
 type TLUserImportContacts struct {
-	ClazzID  uint32             `json:"_id"`
-	UserId   int64              `json:"user_id"`
-	Contacts []*tg.InputContact `json:"contacts"`
+	ClazzID  uint32                 `json:"_id"`
+	UserId   int64                  `json:"user_id"`
+	Contacts []tg.InputContactClazz `json:"contacts"`
 }
 
 func (m *TLUserImportContacts) String() string {
@@ -2561,12 +2570,14 @@ func (m *TLUserImportContacts) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l2, err3 := d.Int()
-			v2 := make([]*tg.InputContact, l2)
+			v2 := make([]tg.InputContactClazz, l2)
 			for i := 0; i < l2; i++ {
-				vv := new(tg.InputContact)
-				err3 = vv.Decode(d)
+				// vv := new(InputContact)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v2[i] = vv
+				v2[i], err3 = tg.DecodeInputContactClazz(d)
 				_ = err3
-				v2[i] = vv
 			}
 			m.Contacts = v2
 
@@ -2751,9 +2762,9 @@ func (m *TLUserUpdateFirstAndLastName) Decode(d *bin.Decoder) (err error) {
 
 // TLUserUpdateVerified <--
 type TLUserUpdateVerified struct {
-	ClazzID  uint32   `json:"_id"`
-	UserId   int64    `json:"user_id"`
-	Verified *tg.Bool `json:"verified"`
+	ClazzID  uint32       `json:"_id"`
+	UserId   int64        `json:"user_id"`
+	Verified tg.BoolClazz `json:"verified"`
 }
 
 func (m *TLUserUpdateVerified) String() string {
@@ -2789,9 +2800,10 @@ func (m *TLUserUpdateVerified) Decode(d *bin.Decoder) (err error) {
 		0x24c92963: func() (err error) {
 			m.UserId, err = d.Int64()
 
-			m2 := &tg.Bool{}
-			_ = m2.Decode(d)
-			m.Verified = m2
+			// m2 := &tg.Bool{}
+			// _ = m2.Decode(d)
+			// m.Verified = m2
+			m.Verified, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -3028,10 +3040,10 @@ func (m *TLUserGetProfilePhotos) Decode(d *bin.Decoder) (err error) {
 
 // TLUserSetBotCommands <--
 type TLUserSetBotCommands struct {
-	ClazzID  uint32           `json:"_id"`
-	UserId   int64            `json:"user_id"`
-	BotId    int64            `json:"bot_id"`
-	Commands []*tg.BotCommand `json:"commands"`
+	ClazzID  uint32               `json:"_id"`
+	UserId   int64                `json:"user_id"`
+	BotId    int64                `json:"bot_id"`
+	Commands []tg.BotCommandClazz `json:"commands"`
 }
 
 func (m *TLUserSetBotCommands) String() string {
@@ -3075,12 +3087,14 @@ func (m *TLUserSetBotCommands) Decode(d *bin.Decoder) (err error) {
 				return err2
 			}
 			l3, err3 := d.Int()
-			v3 := make([]*tg.BotCommand, l3)
+			v3 := make([]tg.BotCommandClazz, l3)
 			for i := 0; i < l3; i++ {
-				vv := new(tg.BotCommand)
-				err3 = vv.Decode(d)
+				// vv := new(BotCommand)
+				// err3 = vv.Decode(d)
+				// _ = err3
+				// v3[i] = vv
+				v3[i], err3 = tg.DecodeBotCommandClazz(d)
 				_ = err3
-				v3[i] = vv
 			}
 			m.Commands = v3
 
@@ -3592,14 +3606,14 @@ func (m *TLUserSearch) Decode(d *bin.Decoder) (err error) {
 
 // TLUserUpdateBotData <--
 type TLUserUpdateBotData struct {
-	ClazzID              uint32   `json:"_id"`
-	BotId                int64    `json:"bot_id"`
-	BotChatHistory       *tg.Bool `json:"bot_chat_history"`
-	BotNochats           *tg.Bool `json:"bot_nochats"`
-	BotInlineGeo         *tg.Bool `json:"bot_inline_geo"`
-	BotAttachMenu        *tg.Bool `json:"bot_attach_menu"`
-	BotInlinePlaceholder *string  `json:"bot_inline_placeholder"`
-	BotHasMainApp        *tg.Bool `json:"bot_has_main_app"`
+	ClazzID              uint32       `json:"_id"`
+	BotId                int64        `json:"bot_id"`
+	BotChatHistory       tg.BoolClazz `json:"bot_chat_history"`
+	BotNochats           tg.BoolClazz `json:"bot_nochats"`
+	BotInlineGeo         tg.BoolClazz `json:"bot_inline_geo"`
+	BotAttachMenu        tg.BoolClazz `json:"bot_attach_menu"`
+	BotInlinePlaceholder *string      `json:"bot_inline_placeholder"`
+	BotHasMainApp        tg.BoolClazz `json:"bot_has_main_app"`
 }
 
 func (m *TLUserUpdateBotData) String() string {
@@ -3688,24 +3702,28 @@ func (m *TLUserUpdateBotData) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.BotId, err = d.Int64()
 			if (flags & (1 << 15)) != 0 {
-				m3 := &tg.Bool{}
-				_ = m3.Decode(d)
-				m.BotChatHistory = m3
+				// m3 := &tg.Bool{}
+				// _ = m3.Decode(d)
+				// m.BotChatHistory = m3
+				m.BotChatHistory, _ = tg.DecodeBoolClazz(d)
 			}
 			if (flags & (1 << 16)) != 0 {
-				m4 := &tg.Bool{}
-				_ = m4.Decode(d)
-				m.BotNochats = m4
+				// m4 := &tg.Bool{}
+				// _ = m4.Decode(d)
+				// m.BotNochats = m4
+				m.BotNochats, _ = tg.DecodeBoolClazz(d)
 			}
 			if (flags & (1 << 21)) != 0 {
-				m5 := &tg.Bool{}
-				_ = m5.Decode(d)
-				m.BotInlineGeo = m5
+				// m5 := &tg.Bool{}
+				// _ = m5.Decode(d)
+				// m.BotInlineGeo = m5
+				m.BotInlineGeo, _ = tg.DecodeBoolClazz(d)
 			}
 			if (flags & (1 << 27)) != 0 {
-				m6 := &tg.Bool{}
-				_ = m6.Decode(d)
-				m.BotAttachMenu = m6
+				// m6 := &tg.Bool{}
+				// _ = m6.Decode(d)
+				// m.BotAttachMenu = m6
+				m.BotAttachMenu, _ = tg.DecodeBoolClazz(d)
 			}
 			if (flags & (1 << 19)) != 0 {
 				m.BotInlinePlaceholder = new(string)
@@ -3713,9 +3731,10 @@ func (m *TLUserUpdateBotData) Decode(d *bin.Decoder) (err error) {
 			}
 
 			if (flags & (1 << 13)) != 0 {
-				m8 := &tg.Bool{}
-				_ = m8.Decode(d)
-				m.BotHasMainApp = m8
+				// m8 := &tg.Bool{}
+				// _ = m8.Decode(d)
+				// m.BotHasMainApp = m8
+				m.BotHasMainApp, _ = tg.DecodeBoolClazz(d)
 			}
 
 			return nil
@@ -4164,9 +4183,9 @@ func (m *TLUserSetColor) Decode(d *bin.Decoder) (err error) {
 
 // TLUserUpdateBirthday <--
 type TLUserUpdateBirthday struct {
-	ClazzID  uint32       `json:"_id"`
-	UserId   int64        `json:"user_id"`
-	Birthday *tg.Birthday `json:"birthday"`
+	ClazzID  uint32           `json:"_id"`
+	UserId   int64            `json:"user_id"`
+	Birthday tg.BirthdayClazz `json:"birthday"`
 }
 
 func (m *TLUserUpdateBirthday) String() string {
@@ -4220,9 +4239,10 @@ func (m *TLUserUpdateBirthday) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.UserId, err = d.Int64()
 			if (flags & (1 << 1)) != 0 {
-				m3 := &tg.Birthday{}
-				_ = m3.Decode(d)
-				m.Birthday = m3
+				// m3 := &tg.Birthday{}
+				// _ = m3.Decode(d)
+				// m.Birthday = m3
+				m.Birthday, _ = tg.DecodeBirthdayClazz(d)
 			}
 
 			return nil
@@ -4293,10 +4313,10 @@ func (m *TLUserGetBirthdays) Decode(d *bin.Decoder) (err error) {
 
 // TLUserSetStoriesHidden <--
 type TLUserSetStoriesHidden struct {
-	ClazzID uint32   `json:"_id"`
-	UserId  int64    `json:"user_id"`
-	Id      int64    `json:"id"`
-	Hidden  *tg.Bool `json:"hidden"`
+	ClazzID uint32       `json:"_id"`
+	UserId  int64        `json:"user_id"`
+	Id      int64        `json:"id"`
+	Hidden  tg.BoolClazz `json:"hidden"`
 }
 
 func (m *TLUserSetStoriesHidden) String() string {
@@ -4334,9 +4354,10 @@ func (m *TLUserSetStoriesHidden) Decode(d *bin.Decoder) (err error) {
 			m.UserId, err = d.Int64()
 			m.Id, err = d.Int64()
 
-			m3 := &tg.Bool{}
-			_ = m3.Decode(d)
-			m.Hidden = m3
+			// m3 := &tg.Bool{}
+			// _ = m3.Decode(d)
+			// m.Hidden = m3
+			m.Hidden, _ = tg.DecodeBoolClazz(d)
 
 			return nil
 		},
@@ -4568,10 +4589,10 @@ func (m *TLUserGetAuthorizationTTL) Decode(d *bin.Decoder) (err error) {
 
 // TLUserUpdatePremium <--
 type TLUserUpdatePremium struct {
-	ClazzID uint32   `json:"_id"`
-	UserId  int64    `json:"user_id"`
-	Premium *tg.Bool `json:"premium"`
-	Months  *int32   `json:"months"`
+	ClazzID uint32       `json:"_id"`
+	UserId  int64        `json:"user_id"`
+	Premium tg.BoolClazz `json:"premium"`
+	Months  *int32       `json:"months"`
 }
 
 func (m *TLUserUpdatePremium) String() string {
@@ -4626,9 +4647,10 @@ func (m *TLUserUpdatePremium) Decode(d *bin.Decoder) (err error) {
 			_ = flags
 			m.UserId, err = d.Int64()
 
-			m3 := &tg.Bool{}
-			_ = m3.Decode(d)
-			m.Premium = m3
+			// m3 := &tg.Bool{}
+			// _ = m3.Decode(d)
+			// m.Premium = m3
+			m.Premium, _ = tg.DecodeBoolClazz(d)
 
 			if (flags & (1 << 1)) != 0 {
 				m.Months = new(int32)
@@ -4707,7 +4729,7 @@ func (m *TLUserGetBotInfoV2) Decode(d *bin.Decoder) (err error) {
 
 // VectorLastSeenData <--
 type VectorLastSeenData struct {
-	Datas []*LastSeenData `json:"_datas"`
+	Datas []LastSeenDataClazz `json:"_datas"`
 }
 
 func (m *VectorLastSeenData) String() string {
@@ -4724,14 +4746,14 @@ func (m *VectorLastSeenData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorLastSeenData) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*LastSeenData](d)
+	m.Datas, err = iface.DecodeObjectList[LastSeenDataClazz](d)
 
 	return err
 }
 
 // VectorImmutableUser <--
 type VectorImmutableUser struct {
-	Datas []*tg.ImmutableUser `json:"_datas"`
+	Datas []tg.ImmutableUserClazz `json:"_datas"`
 }
 
 func (m *VectorImmutableUser) String() string {
@@ -4748,14 +4770,14 @@ func (m *VectorImmutableUser) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorImmutableUser) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ImmutableUser](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ImmutableUserClazz](d)
 
 	return err
 }
 
 // VectorPeerPeerNotifySettings <--
 type VectorPeerPeerNotifySettings struct {
-	Datas []*PeerPeerNotifySettings `json:"_datas"`
+	Datas []PeerPeerNotifySettingsClazz `json:"_datas"`
 }
 
 func (m *VectorPeerPeerNotifySettings) String() string {
@@ -4772,14 +4794,14 @@ func (m *VectorPeerPeerNotifySettings) Encode(x *bin.Encoder, layer int32) error
 
 // Decode <--
 func (m *VectorPeerPeerNotifySettings) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*PeerPeerNotifySettings](d)
+	m.Datas, err = iface.DecodeObjectList[PeerPeerNotifySettingsClazz](d)
 
 	return err
 }
 
 // VectorPrivacyRule <--
 type VectorPrivacyRule struct {
-	Datas []*tg.PrivacyRule `json:"_datas"`
+	Datas []tg.PrivacyRuleClazz `json:"_datas"`
 }
 
 func (m *VectorPrivacyRule) String() string {
@@ -4796,7 +4818,7 @@ func (m *VectorPrivacyRule) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorPrivacyRule) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.PrivacyRule](d)
+	m.Datas, err = iface.DecodeObjectList[tg.PrivacyRuleClazz](d)
 
 	return err
 }
@@ -4827,7 +4849,7 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 
 // VectorPeerBlocked <--
 type VectorPeerBlocked struct {
-	Datas []*tg.PeerBlocked `json:"_datas"`
+	Datas []tg.PeerBlockedClazz `json:"_datas"`
 }
 
 func (m *VectorPeerBlocked) String() string {
@@ -4844,14 +4866,14 @@ func (m *VectorPeerBlocked) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorPeerBlocked) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.PeerBlocked](d)
+	m.Datas, err = iface.DecodeObjectList[tg.PeerBlockedClazz](d)
 
 	return err
 }
 
 // VectorContactData <--
 type VectorContactData struct {
-	Datas []*tg.ContactData `json:"_datas"`
+	Datas []tg.ContactDataClazz `json:"_datas"`
 }
 
 func (m *VectorContactData) String() string {
@@ -4868,14 +4890,14 @@ func (m *VectorContactData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorContactData) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ContactData](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ContactDataClazz](d)
 
 	return err
 }
 
 // VectorInputContact <--
 type VectorInputContact struct {
-	Datas []*tg.InputContact `json:"_datas"`
+	Datas []tg.InputContactClazz `json:"_datas"`
 }
 
 func (m *VectorInputContact) String() string {
@@ -4892,14 +4914,14 @@ func (m *VectorInputContact) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorInputContact) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.InputContact](d)
+	m.Datas, err = iface.DecodeObjectList[tg.InputContactClazz](d)
 
 	return err
 }
 
 // VectorUserData <--
 type VectorUserData struct {
-	Datas []*tg.UserData `json:"_datas"`
+	Datas []tg.UserDataClazz `json:"_datas"`
 }
 
 func (m *VectorUserData) String() string {
@@ -4916,14 +4938,14 @@ func (m *VectorUserData) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorUserData) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.UserData](d)
+	m.Datas, err = iface.DecodeObjectList[tg.UserDataClazz](d)
 
 	return err
 }
 
 // VectorContactBirthday <--
 type VectorContactBirthday struct {
-	Datas []*tg.ContactBirthday `json:"_datas"`
+	Datas []tg.ContactBirthdayClazz `json:"_datas"`
 }
 
 func (m *VectorContactBirthday) String() string {
@@ -4940,7 +4962,7 @@ func (m *VectorContactBirthday) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *VectorContactBirthday) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[*tg.ContactBirthday](d)
+	m.Datas, err = iface.DecodeObjectList[tg.ContactBirthdayClazz](d)
 
 	return err
 }

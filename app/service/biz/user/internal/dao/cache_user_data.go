@@ -56,17 +56,17 @@ func isCacheUserDataCacheKey(k string) bool {
 }
 
 type CacheUserData struct {
-	UserData              *tg.UserData          `json:"user_data"`
-	ContactIdList         []int64               `json:"contact_id_list"`
-	CachesPrivacyKeyRules []*tg.PrivacyKeyRules `json:"caches_privacy_key_rules"`
-	ReverseContactIdList  []int64               `json:"reverse_contact_id_list"`
+	UserData              *tg.TLUserData            `json:"user_data"`
+	ContactIdList         []int64                   `json:"contact_id_list"`
+	CachesPrivacyKeyRules []tg.PrivacyKeyRulesClazz `json:"caches_privacy_key_rules"`
+	ReverseContactIdList  []int64                   `json:"reverse_contact_id_list"`
 }
 
 func NewCacheUserData() *CacheUserData {
 	return &CacheUserData{
 		UserData:              nil,
 		ContactIdList:         []int64{},
-		CachesPrivacyKeyRules: []*tg.PrivacyKeyRules{},
+		CachesPrivacyKeyRules: []tg.PrivacyKeyRulesClazz{},
 		ReverseContactIdList:  []int64{},
 	}
 }
@@ -85,7 +85,7 @@ func (m *CacheUserData) GetReverseContactIdList() []int64 {
 	return m.ReverseContactIdList
 }
 
-func (m *CacheUserData) GetUserData() *tg.UserData {
+func (m *CacheUserData) GetUserData() *tg.TLUserData {
 	if m == nil {
 		return nil
 	}
@@ -118,12 +118,12 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 	return cacheUserData
 }
 
-func makeEmojiStatus(documentId int64, until int32) *tg.EmojiStatus {
+func makeEmojiStatus(documentId int64, until int32) tg.EmojiStatusClazz {
 	//if documentId == 0 {
 	//	return nil
 	//}
 	//if until > 0 {
-	return tg.MakeEmojiStatus(&tg.TLEmojiStatus{
+	return tg.MakeTLEmojiStatus(&tg.TLEmojiStatus{
 		DocumentId: documentId,
 	})
 	//} else {
@@ -135,19 +135,19 @@ func makeEmojiStatus(documentId int64, until int32) *tg.EmojiStatus {
 	//}
 }
 
-func makePeerColor(color int32, backgroundEmojiId int64) *tg.PeerColor {
+func makePeerColor(color int32, backgroundEmojiId int64) tg.PeerColorClazz {
 	if color == 0 && backgroundEmojiId == 0 {
 		return nil
 	}
 
-	return tg.MakePeerColor(&tg.TLPeerColor{
+	return tg.MakeTLPeerColor(&tg.TLPeerColor{
 		Color:             tg.MakeFlagsInt32(color),
 		BackgroundEmojiId: tg.MakeFlagsInt64(backgroundEmojiId),
 	})
 }
 
-func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *tg.UserData {
-	userData := tg.MakeUserData(&tg.TLUserData{
+func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *tg.TLUserData {
+	userData := tg.MakeTLUserData(&tg.TLUserData{
 		Id:                 userDO.Id,
 		AccessHash:         userDO.AccessHash,
 		Deleted:            userDO.Deleted,
@@ -197,11 +197,11 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		cacheData              = NewCacheUserData()
 	)
 
-	userData, _ := d.MakeUserDataByDO(do).ToUserData()
+	userData := d.MakeUserDataByDO(do)
 	if do.Restricted {
 		_ = jsonx.UnmarshalFromString(do.RestrictionReason, &userData.RestrictionReason)
 	}
-	cacheData.UserData = userData.ToUserData()
+	cacheData.UserData = userData
 
 	if do.UserType == user.UserTypeUnknown ||
 		do.UserType == user.UserTypeDeleted ||
@@ -216,9 +216,10 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 					userData.Bot = d.getBotData(ctx, do.Id)
 				},
 				func() {
-					userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
+					profilePhoto, _ := d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
 						PhotoId: do.PhotoId,
 					})
+					userData.ProfilePhoto = profilePhoto.Clazz
 				})
 		} else {
 			userData.Bot = d.getBotData(ctx, do.Id)
@@ -230,9 +231,10 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 	mr.FinishVoid(
 		func() {
 			if do.PhotoId != 0 {
-				userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
+				profilePhoto, _ := d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
 					PhotoId: do.PhotoId,
 				})
+				userData.ProfilePhoto = profilePhoto.Clazz
 			}
 		},
 		func() {
@@ -255,13 +257,13 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		})
 
 	if rules0 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules0.Clazz)
 	}
 	if rules1 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules1)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules1.Clazz)
 	}
 	if rules2 != nil {
-		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2)
+		cacheData.CachesPrivacyKeyRules = append(cacheData.CachesPrivacyKeyRules, rules2.Clazz)
 	}
 
 	// TODO
