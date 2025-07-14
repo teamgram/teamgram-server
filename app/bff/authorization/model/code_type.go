@@ -100,16 +100,16 @@ func MakeCodeType(phoneRegistered, allowFlashCall, currentNumber bool) (int, int
 	return sentCodeType, nextCodeType
 }
 
-func makeAuthCodeType(codeType int) *tg.AuthCodeType {
+func makeAuthCodeType(codeType int) tg.AuthCodeTypeClazz {
 	switch codeType {
 	case CodeTypeSms:
-		return tg.MakeAuthCodeType(&tg.TLAuthCodeTypeSms{})
+		return tg.MakeTLAuthCodeTypeSms(&tg.TLAuthCodeTypeSms{})
 	case CodeTypeCall:
-		return tg.MakeAuthCodeType(&tg.TLAuthCodeTypeCall{})
+		return tg.MakeTLAuthCodeTypeCall(&tg.TLAuthCodeTypeCall{})
 	case CodeTypeFlashCall:
-		return tg.MakeAuthCodeType(&tg.TLAuthCodeTypeFlashCall{})
+		return tg.MakeTLAuthCodeTypeFlashCall(&tg.TLAuthCodeTypeFlashCall{})
 	case CodeTypeFragmentSms:
-		return tg.MakeAuthCodeType(&tg.TLAuthCodeTypeFragmentSms{})
+		return tg.MakeTLAuthCodeTypeFragmentSms(&tg.TLAuthCodeTypeFragmentSms{})
 	default:
 		return nil
 	}
@@ -126,31 +126,31 @@ func makeAuthCodeType(codeType int) *tg.AuthCodeType {
 // SentCodeTypeFirebaseSms        = 9
 // SentCodeTypeSmsWord            = 10
 // SentCodeTypeSmsPhrase          = 11
-func makeAuthSentCodeType(codeType, codeLength int, pattern string) (authSentCodeType *tg.AuthSentCodeType) {
+func makeAuthSentCodeType(codeType, codeLength int, pattern string) (authSentCodeType tg.AuthSentCodeTypeClazz) {
 	switch codeType {
 	case SentCodeTypeApp:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeApp{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeApp(&tg.TLAuthSentCodeTypeApp{
 			Length: int32(codeLength),
 		})
 	case SentCodeTypeSms:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeSms{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{
 			Length: int32(codeLength),
 		})
 	case SentCodeTypeCall:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeCall{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeCall(&tg.TLAuthSentCodeTypeCall{
 			Length: int32(codeLength),
 		})
 	case SentCodeTypeFlashCall:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeFlashCall{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeFlashCall(&tg.TLAuthSentCodeTypeFlashCall{
 			Pattern: pattern,
 		})
 	case SentCodeTypeMissedCall:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeMissedCall{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeMissedCall(&tg.TLAuthSentCodeTypeMissedCall{
 			Prefix: "",
 			Length: int32(codeLength),
 		})
 	case SentCodeTypeEmailCode:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeEmailCode{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeEmailCode(&tg.TLAuthSentCodeTypeEmailCode{
 			AppleSigninAllowed:   false,
 			GoogleSigninAllowed:  false,
 			EmailPattern:         "",
@@ -159,12 +159,12 @@ func makeAuthSentCodeType(codeType, codeLength int, pattern string) (authSentCod
 			ResetPendingDate:     nil,
 		})
 	case SentCodeTypeSetUpEmailRequired:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeSetUpEmailRequired{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeSetUpEmailRequired(&tg.TLAuthSentCodeTypeSetUpEmailRequired{
 			AppleSigninAllowed:  false,
 			GoogleSigninAllowed: false,
 		})
 	case SentCodeTypeFirebaseSms:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeFirebaseSms{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeFirebaseSms(&tg.TLAuthSentCodeTypeFirebaseSms{
 			Nonce:                  nil,
 			PlayIntegrityProjectId: nil,
 			PlayIntegrityNonce:     nil,
@@ -173,11 +173,11 @@ func makeAuthSentCodeType(codeType, codeLength int, pattern string) (authSentCod
 			Length:                 0,
 		})
 	case SentCodeTypeSmsWord:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeSmsWord{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeSmsWord(&tg.TLAuthSentCodeTypeSmsWord{
 			Beginning: nil,
 		})
 	case SentCodeTypeSmsPhrase:
-		authSentCodeType = tg.MakeAuthSentCodeType(&tg.TLAuthSentCodeTypeSmsPhrase{
+		authSentCodeType = tg.MakeTLAuthSentCodeTypeSmsPhrase(&tg.TLAuthSentCodeTypeSmsPhrase{
 			Beginning: nil,
 		})
 	default:

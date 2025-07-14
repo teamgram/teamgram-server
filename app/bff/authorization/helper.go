@@ -27,5 +27,5 @@ type (
 )
 
 func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
+	return service.New(svc.NewServiceContext(c, nil, nil))
 }

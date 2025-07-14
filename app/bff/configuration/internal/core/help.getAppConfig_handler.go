@@ -26,13 +26,13 @@ func (c *ConfigurationCore) HelpGetAppConfig(in *tg.TLHelpGetAppConfig) (*tg.Hel
 	// TODO: not impl
 	_ = in
 
-	rV := tg.MakeHelpAppConfig(&tg.TLHelpAppConfig{
+	rV := tg.MakeTLHelpAppConfig(&tg.TLHelpAppConfig{
 		Hash: 0,
-		Config: tg.MakeJSONValue(&tg.TLJsonObject{
+		Config: tg.MakeTLJsonObject(&tg.TLJsonObject{
 			ClazzID:                     0,
-			Value_VECTORJSONOBJECTVALUE: []*tg.JSONObjectValue{},
+			Value_VECTORJSONOBJECTVALUE: []tg.JSONObjectValueClazz{},
 		}),
 	})
 
-	return rV, nil
+	return rV.ToHelpAppConfig(), nil
 }

@@ -26,8 +26,8 @@ func (c *ConfigurationCore) HelpGetAppUpdate(in *tg.TLHelpGetAppUpdate) (*tg.Hel
 	// TODO: not impl
 	_ = in
 
-	rValue := tg.MakeHelpAppUpdate(&tg.TLHelpNoAppUpdate{
+	rValue := tg.MakeTLHelpNoAppUpdate(&tg.TLHelpNoAppUpdate{
 		// ClazzID: 0,
 	})
-	return rValue, nil
+	return rValue.ToHelpAppUpdate(), nil
 }

@@ -26,9 +26,9 @@ func (c *ConfigurationCore) HelpGetInviteText(in *tg.TLHelpGetInviteText) (*tg.H
 	// TODO: not impl
 	_ = in
 
-	rV := tg.MakeHelpInviteText(&tg.TLHelpInviteText{
+	rV := tg.MakeTLHelpInviteText(&tg.TLHelpInviteText{
 		Message: "",
 	})
 
-	return rV, nil
+	return rV.ToHelpInviteText(), nil
 }

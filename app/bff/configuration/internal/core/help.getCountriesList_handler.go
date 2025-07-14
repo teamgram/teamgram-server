@@ -26,10 +26,10 @@ func (c *ConfigurationCore) HelpGetCountriesList(in *tg.TLHelpGetCountriesList) 
 	// TODO: not impl
 	_ = in
 
-	rV := tg.MakeHelpCountriesList(&tg.TLHelpCountriesList{
-		Countries: []*tg.HelpCountry{},
+	rV := tg.MakeTLHelpCountriesList(&tg.TLHelpCountriesList{
+		Countries: []tg.HelpCountryClazz{},
 		Hash:      0,
 	})
 
-	return rV, nil
+	return rV.ToHelpCountriesList(), nil
 }

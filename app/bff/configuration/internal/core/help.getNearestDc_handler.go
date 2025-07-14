@@ -26,11 +26,11 @@ func (c *ConfigurationCore) HelpGetNearestDc(in *tg.TLHelpGetNearestDc) (*tg.Nea
 	// TODO: not impl
 	_ = in
 
-	rValue := tg.MakeNearestDc(&tg.TLNearestDc{
+	rValue := tg.MakeTLNearestDc(&tg.TLNearestDc{
 		Country:   "CN",
 		ThisDc:    1,
 		NearestDc: 1,
 	})
 
-	return rValue, nil
+	return rValue.ToNearestDc(), nil
 }

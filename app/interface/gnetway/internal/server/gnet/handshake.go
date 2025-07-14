@@ -987,7 +987,7 @@ func (s *Server) saveAuthKeyInfo(ctx *HandshakeStateCtx, key *tg.TLAuthKeyInfo) 
 	if err != nil {
 		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
 		return false
-	} else if !tg.FromBool(rB.Clazz) {
+	} else if !tg.FromBoolClazz(rB.Clazz) {
 		logx.Errorf("saveAuthKeyInfo not successful - auth_key_id:%d, err:%v", key.AuthKeyId, err)
 		return false
 	} else {

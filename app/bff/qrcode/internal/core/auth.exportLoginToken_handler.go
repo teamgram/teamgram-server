@@ -44,10 +44,10 @@ func (c *QrCodeCore) AuthExportLoginToken(in *tg.TLAuthExportLoginToken) (*tg.Au
 		State:         model.QRCodeStateNew,
 	}
 
-	rQRLoginToken := tg.MakeAuthLoginToken(&tg.TLAuthLoginToken{
+	rQRLoginToken := tg.MakeTLAuthLoginToken(&tg.TLAuthLoginToken{
 		Expires: int32(qrCode.ExpireAt),
 		Token:   qrCode.Token(),
 	})
 
-	return rQRLoginToken, nil
+	return rQRLoginToken.ToAuthLoginToken(), nil
 }

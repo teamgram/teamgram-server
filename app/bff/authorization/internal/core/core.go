@@ -112,12 +112,12 @@ func (c *AuthorizationCore) pushSignInMessage(ctx context.Context, signInUserId 
 			FromId:  tg.MakePeerUser(777000),
 			PeerId:  tg.MakePeerUser(signInUserId),
 			Message: fmt.Sprintf(signInMessageTpl, code, env2.MyAppName, env2.MyAppName),
-			Entities: []*tg.MessageEntity{
-				tg.MakeMessageEntity(&tg.TLMessageEntityBold{
+			Entities: []tg.MessageEntityClazz{
+				tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{
 					Offset: 0,
 					Length: 11,
 				}),
-				tg.MakeMessageEntity(&tg.TLMessageEntityBold{
+				tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{
 					Offset: 22,
 					Length: 3,
 				}),
