@@ -11,6 +11,7 @@
 package status
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeSessionEntryClazz(d *bin.Decoder) (SessionEntryClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_sessionEntry:
-		x := &TLSessionEntry{ClazzID: id}
+		x := &TLSessionEntry{ClazzID: id, ClazzName2: ClazzName_sessionEntry}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -71,8 +72,8 @@ func MakeTLSessionEntry(m *TLSessionEntry) *TLSessionEntry {
 }
 
 func (m *TLSessionEntry) String() string {
-	wrapper := iface.WithNameWrapper{"sessionEntry", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // SessionEntryClazzName <--
@@ -152,8 +153,8 @@ type SessionEntry struct {
 }
 
 func (m *SessionEntry) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *SessionEntry) ClazzName() string {
@@ -230,7 +231,7 @@ func DecodeUserSessionEntryListClazz(d *bin.Decoder) (UserSessionEntryListClazz,
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_userSessionEntryList:
-		x := &TLUserSessionEntryList{ClazzID: id}
+		x := &TLUserSessionEntryList{ClazzID: id, ClazzName2: ClazzName_userSessionEntryList}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -256,8 +257,8 @@ func MakeTLUserSessionEntryList(m *TLUserSessionEntryList) *TLUserSessionEntryLi
 }
 
 func (m *TLUserSessionEntryList) String() string {
-	wrapper := iface.WithNameWrapper{"userSessionEntryList", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UserSessionEntryListClazzName <--
@@ -343,8 +344,8 @@ type UserSessionEntryList struct {
 }
 
 func (m *UserSessionEntryList) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UserSessionEntryList) ClazzName() string {

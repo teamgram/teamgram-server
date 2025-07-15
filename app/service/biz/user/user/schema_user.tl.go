@@ -11,6 +11,7 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeBotInfoDataClazz(d *bin.Decoder) (BotInfoDataClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_botInfoData:
-		x := &TLBotInfoData{ClazzID: id}
+		x := &TLBotInfoData{ClazzID: id, ClazzName2: ClazzName_botInfoData}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -69,8 +70,8 @@ func MakeTLBotInfoData(m *TLBotInfoData) *TLBotInfoData {
 }
 
 func (m *TLBotInfoData) String() string {
-	wrapper := iface.WithNameWrapper{"botInfoData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // BotInfoDataClazzName <--
@@ -178,8 +179,8 @@ type BotInfoData struct {
 }
 
 func (m *BotInfoData) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *BotInfoData) ClazzName() string {
@@ -256,7 +257,7 @@ func DecodeLastSeenDataClazz(d *bin.Decoder) (LastSeenDataClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_lastSeenData:
-		x := &TLLastSeenData{ClazzID: id}
+		x := &TLLastSeenData{ClazzID: id, ClazzName2: ClazzName_lastSeenData}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -283,8 +284,8 @@ func MakeTLLastSeenData(m *TLLastSeenData) *TLLastSeenData {
 }
 
 func (m *TLLastSeenData) String() string {
-	wrapper := iface.WithNameWrapper{"lastSeenData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // LastSeenDataClazzName <--
@@ -356,8 +357,8 @@ type LastSeenData struct {
 }
 
 func (m *LastSeenData) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *LastSeenData) ClazzName() string {
@@ -434,7 +435,7 @@ func DecodePeerPeerNotifySettingsClazz(d *bin.Decoder) (PeerPeerNotifySettingsCl
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_peerPeerNotifySettings:
-		x := &TLPeerPeerNotifySettings{ClazzID: id}
+		x := &TLPeerPeerNotifySettings{ClazzID: id, ClazzName2: ClazzName_peerPeerNotifySettings}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -461,8 +462,8 @@ func MakeTLPeerPeerNotifySettings(m *TLPeerPeerNotifySettings) *TLPeerPeerNotify
 }
 
 func (m *TLPeerPeerNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{"peerPeerNotifySettings", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // PeerPeerNotifySettingsClazzName <--
@@ -538,8 +539,8 @@ type PeerPeerNotifySettings struct {
 }
 
 func (m *PeerPeerNotifySettings) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *PeerPeerNotifySettings) ClazzName() string {
@@ -616,7 +617,7 @@ func DecodeUserImportedContactsClazz(d *bin.Decoder) (UserImportedContactsClazz,
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_userImportedContacts:
-		x := &TLUserImportedContacts{ClazzID: id}
+		x := &TLUserImportedContacts{ClazzID: id, ClazzName2: ClazzName_userImportedContacts}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -645,8 +646,8 @@ func MakeTLUserImportedContacts(m *TLUserImportedContacts) *TLUserImportedContac
 }
 
 func (m *TLUserImportedContacts) String() string {
-	wrapper := iface.WithNameWrapper{"userImportedContacts", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UserImportedContactsClazzName <--
@@ -775,8 +776,8 @@ type UserImportedContacts struct {
 }
 
 func (m *UserImportedContacts) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UserImportedContacts) ClazzName() string {
@@ -854,11 +855,11 @@ func DecodeUsersFoundClazz(d *bin.Decoder) (UsersFoundClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_usersDataFound:
-		x := &TLUsersDataFound{ClazzID: id}
+		x := &TLUsersDataFound{ClazzID: id, ClazzName2: ClazzName_usersDataFound}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_usersIdFound:
-		x := &TLUsersIdFound{ClazzID: id}
+		x := &TLUsersIdFound{ClazzID: id, ClazzName2: ClazzName_usersIdFound}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -885,8 +886,8 @@ func MakeTLUsersDataFound(m *TLUsersDataFound) *TLUsersDataFound {
 }
 
 func (m *TLUsersDataFound) String() string {
-	wrapper := iface.WithNameWrapper{"usersDataFound", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsersFoundClazzName <--
@@ -985,8 +986,8 @@ func MakeTLUsersIdFound(m *TLUsersIdFound) *TLUsersIdFound {
 }
 
 func (m *TLUsersIdFound) String() string {
-	wrapper := iface.WithNameWrapper{"usersIdFound", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsersFoundClazzName <--
@@ -1055,8 +1056,8 @@ type UsersFound struct {
 }
 
 func (m *UsersFound) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UsersFound) ClazzName() string {

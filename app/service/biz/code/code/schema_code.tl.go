@@ -11,6 +11,7 @@
 package code
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodePhoneCodeTransactionClazz(d *bin.Decoder) (PhoneCodeTransactionClazz,
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_phoneCodeTransaction:
-		x := &TLPhoneCodeTransaction{ClazzID: id}
+		x := &TLPhoneCodeTransaction{ClazzID: id, ClazzName2: ClazzName_phoneCodeTransaction}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -76,8 +77,8 @@ func MakeTLPhoneCodeTransaction(m *TLPhoneCodeTransaction) *TLPhoneCodeTransacti
 }
 
 func (m *TLPhoneCodeTransaction) String() string {
-	wrapper := iface.WithNameWrapper{"phoneCodeTransaction", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // PhoneCodeTransactionClazzName <--
@@ -184,8 +185,8 @@ type PhoneCodeTransaction struct {
 }
 
 func (m *PhoneCodeTransaction) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *PhoneCodeTransaction) ClazzName() string {

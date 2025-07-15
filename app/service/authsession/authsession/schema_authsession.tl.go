@@ -11,6 +11,7 @@
 package authsession
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeAuthKeyStateDataClazz(d *bin.Decoder) (AuthKeyStateDataClazz, error) 
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_authKeyStateData:
-		x := &TLAuthKeyStateData{ClazzID: id}
+		x := &TLAuthKeyStateData{ClazzID: id, ClazzName2: ClazzName_authKeyStateData}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -70,8 +71,8 @@ func MakeTLAuthKeyStateData(m *TLAuthKeyStateData) *TLAuthKeyStateData {
 }
 
 func (m *TLAuthKeyStateData) String() string {
-	wrapper := iface.WithNameWrapper{"authKeyStateData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // AuthKeyStateDataClazzName <--
@@ -181,8 +182,8 @@ type AuthKeyStateData struct {
 }
 
 func (m *AuthKeyStateData) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *AuthKeyStateData) ClazzName() string {
@@ -259,7 +260,7 @@ func DecodeClientSessionClazz(d *bin.Decoder) (ClientSessionClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_clientSession:
-		x := &TLClientSession{ClazzID: id}
+		x := &TLClientSession{ClazzID: id, ClazzName2: ClazzName_clientSession}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -295,8 +296,8 @@ func MakeTLClientSession(m *TLClientSession) *TLClientSession {
 }
 
 func (m *TLClientSession) String() string {
-	wrapper := iface.WithNameWrapper{"clientSession", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ClientSessionClazzName <--
@@ -386,8 +387,8 @@ type ClientSession struct {
 }
 
 func (m *ClientSession) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *ClientSession) ClazzName() string {

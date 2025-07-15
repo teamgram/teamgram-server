@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -11,6 +11,7 @@
 package echo2
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeEchoClazz(d *bin.Decoder) (EchoClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_echo:
-		x := &TLEcho{ClazzID: id}
+		x := &TLEcho{ClazzID: id, ClazzName2: ClazzName_echo}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -50,8 +51,23 @@ func DecodeEchoClazz(d *bin.Decoder) (EchoClazz, error) {
 
 // TLEcho <--
 type TLEcho struct {
-	ClazzID uint32 `json:"_id"`
-	Message string `json:"message"`
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Message    string `json:"message"`
+}
+
+func MakeTLEcho(m *TLEcho) *TLEcho {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_echo
+
+	return m
+}
+
+func (m *TLEcho) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // EchoClazzName <--
@@ -61,12 +77,16 @@ func (m *TLEcho) EchoClazzName() string {
 
 // ClazzName <--
 func (m *TLEcho) ClazzName() string {
-	return ClazzName_echo
+	return m.ClazzName2
 }
 
 // ToEcho <--
 func (m *TLEcho) ToEcho() *Echo {
-	return MakeEcho(m)
+	if m == nil {
+		return nil
+	}
+
+	return &Echo{Clazz: m}
 }
 
 // Encode <--
@@ -111,22 +131,26 @@ func (m *TLEcho) Decode(d *bin.Decoder) (err error) {
 type Echo struct {
 	// ClazzID   uint32 `json:"_id"`
 	// ClazzName string `json:"_name"`
-	EchoClazz
+	Clazz EchoClazz `json:"_clazz"`
 }
 
-// MakeEcho <--
-func MakeEcho(c EchoClazz) *Echo {
-	return &Echo{
-		// ClazzID:   c.ClazzID(),
-		// ClazzName: c.ClazzName(),
-		EchoClazz: c,
+func (m *Echo) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+func (m *Echo) ClazzName() string {
+	if m.Clazz == nil {
+		return ""
+	} else {
+		return m.Clazz.EchoClazzName()
 	}
 }
 
 // Encode <--
 func (m *Echo) Encode(x *bin.Encoder, layer int32) error {
-	if m.EchoClazz != nil {
-		return m.EchoClazz.Encode(x, layer)
+	if m.Clazz != nil {
+		return m.Clazz.Encode(x, layer)
 	}
 
 	return fmt.Errorf("Echo - invalid Clazz")
@@ -134,13 +158,16 @@ func (m *Echo) Encode(x *bin.Encoder, layer int32) error {
 
 // Decode <--
 func (m *Echo) Decode(d *bin.Decoder) (err error) {
-	m.EchoClazz, err = DecodeEchoClazz(d)
+	m.Clazz, err = DecodeEchoClazz(d)
 	return
 }
 
 // Match <--
 func (m *Echo) Match(f ...interface{}) {
-	switch c := m.EchoClazz.(type) {
+	if m.Clazz == nil {
+		return
+	}
+	switch c := m.Clazz.(type) {
 	case *TLEcho:
 		for _, v := range f {
 			if f1, ok := v.(func(c *TLEcho) interface{}); ok {
@@ -154,11 +181,15 @@ func (m *Echo) Match(f ...interface{}) {
 
 // ToEcho <--
 func (m *Echo) ToEcho() (*TLEcho, bool) {
-	if m.EchoClazz == nil {
+	if m == nil {
 		return nil, false
 	}
 
-	if x, ok := m.EchoClazz.(*TLEcho); ok {
+	if m.Clazz == nil {
+		return nil, false
+	}
+
+	if x, ok := m.Clazz.(*TLEcho); ok {
 		return x, true
 	}
 

@@ -11,6 +11,7 @@
 package dfs
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"

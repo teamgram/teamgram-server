@@ -8,6 +8,8 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/bytedance/gopkg/cloud/metainfo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"log"
 	"time"
 
@@ -44,37 +46,85 @@ func main() {
 	cli2 := kitex.GetCachedKitexClient(c.Echo2)
 
 	for {
-		req1 := &echo1.TLEcho1Echo{
-			ClazzID: echo1.ClazzID_echo1_echo,
-			Message: "my reqeuest1",
+		{
+			ctx := context.Background()
+			ctx = metainfo.WithValue(ctx, "temp", "temp-value")       // only present in next service
+			ctx = metainfo.WithPersistentValue(ctx, "logid", "12345") // will present in the next service and its successors
+			md2 := metadata.RpcMetadata{
+				ServerId:      "12345",
+				ClientAddr:    "12345",
+				AuthId:        0,
+				SessionId:     0,
+				ReceiveTime:   0,
+				UserId:        0,
+				ClientMsgId:   0,
+				IsBot:         false,
+				Layer:         0,
+				Client:        "",
+				IsAdmin:       false,
+				Takeout:       nil,
+				Langpack:      "",
+				PermAuthKeyId: 0,
+				LangCode:      "",
+			}
+			ctx, _ = metadata.RpcMetadataToOutgoing(ctx, &md2)
+
+			req1 := &echo1.TLEcho1Echo{
+				ClazzID: echo1.ClazzID_echo1_echo,
+				Message: "my reqeuest1",
+			}
+
+			// resp1 := &echo1.Echo{}
+			resp1, err := cli1.Echo1Echo(ctx, req1)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+
+			// resp1, err := cli1.Echo1Echo(context.Background(), req1)
+			logx.Debugf("resp1: %s", resp1)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
-		// resp1 := &echo1.Echo{}
-		resp1, err := cli1.Echo1Echo(context.Background(), req1)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
+		{
+			ctx := context.Background()
+			ctx = metainfo.WithValue(ctx, "temp", "temp-value")       // only present in next service
+			ctx = metainfo.WithPersistentValue(ctx, "logid", "12345") // will present in the next service and its successors
+			md2 := metadata.RpcMetadata{
+				ServerId:      "12345",
+				ClientAddr:    "12345",
+				AuthId:        0,
+				SessionId:     0,
+				ReceiveTime:   0,
+				UserId:        0,
+				ClientMsgId:   0,
+				IsBot:         false,
+				Layer:         0,
+				Client:        "",
+				IsAdmin:       false,
+				Takeout:       nil,
+				Langpack:      "",
+				PermAuthKeyId: 0,
+				LangCode:      "",
+			}
+			ctx, _ = metadata.RpcMetadataToOutgoing(ctx, &md2)
 
-		// resp1, err := cli1.Echo1Echo(context.Background(), req1)
-		logx.Debugf("resp1: %s", resp1)
-		if err != nil {
-			log.Fatal(err)
-		}
+			req2 := &echo2.TLEcho2Echo{
+				ClazzID: echo2.ClazzID_echo2_echo,
+				Message: "my reqeuest2",
+			}
 
-		req2 := &echo2.TLEcho2Echo{
-			ClazzID: echo2.ClazzID_echo2_echo,
-			Message: "my reqeuest2",
-		}
+			resp2 := &echo2.Echo{}
+			_ = cli2
+			err := cli2.Call(ctx, "echo2.echo", req2, resp2)
+			logx.Debugf("resp2: %s", resp2)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-		resp2 := &echo2.Echo{}
-		_ = cli2
-		err = cli2.Call(context.Background(), "echo2.echo", req2, resp2)
-		logx.Debugf("resp2: %s", resp2)
-		if err != nil {
-			log.Fatal(err)
 		}
-
 		//resp, err := cli2.EchoEcho(context.Background(), req)
 		time.Sleep(time.Millisecond * 1000)
 	}

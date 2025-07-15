@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -12,6 +12,7 @@ package echo1
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -19,15 +20,23 @@ import (
 	"github.com/teamgram/proto/v2/tg"
 )
 
-var _ iface.TLObject
-var _ fmt.Stringer
-var _ *tg.Bool
-var _ bin.Fields
+var (
+	_ iface.TLObject
+	_ fmt.Stringer
+	_ *tg.Bool
+	_ bin.Fields
+	_ json.Marshaler
+)
 
 // TLEcho1Echo <--
 type TLEcho1Echo struct {
 	ClazzID uint32 `json:"_id"`
 	Message string `json:"message"`
+}
+
+func (m *TLEcho1Echo) String() string {
+	wrapper := iface.WithNameWrapper{"", m}
+	return wrapper.String()
 }
 
 // Encode <--

@@ -11,6 +11,7 @@
 package media
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodePhotoSizeListClazz(d *bin.Decoder) (PhotoSizeListClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_photoSizeList:
-		x := &TLPhotoSizeList{ClazzID: id}
+		x := &TLPhotoSizeList{ClazzID: id, ClazzName2: ClazzName_photoSizeList}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -67,8 +68,8 @@ func MakeTLPhotoSizeList(m *TLPhotoSizeList) *TLPhotoSizeList {
 }
 
 func (m *TLPhotoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{"photoSizeList", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // PhotoSizeListClazzName <--
@@ -158,8 +159,8 @@ type PhotoSizeList struct {
 }
 
 func (m *PhotoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *PhotoSizeList) ClazzName() string {
@@ -236,7 +237,7 @@ func DecodeVideoSizeListClazz(d *bin.Decoder) (VideoSizeListClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_videoSizeList:
-		x := &TLVideoSizeList{ClazzID: id}
+		x := &TLVideoSizeList{ClazzID: id, ClazzName2: ClazzName_videoSizeList}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -263,8 +264,8 @@ func MakeTLVideoSizeList(m *TLVideoSizeList) *TLVideoSizeList {
 }
 
 func (m *TLVideoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{"videoSizeList", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // VideoSizeListClazzName <--
@@ -354,8 +355,8 @@ type VideoSizeList struct {
 }
 
 func (m *VideoSizeList) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *VideoSizeList) ClazzName() string {

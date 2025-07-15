@@ -20,6 +20,7 @@ import (
 	"context"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/echo/echo1/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,7 +29,7 @@ type Echo1Core struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	// MD *metadata.RpcMetadata
+	MD *metadata.RpcMetadata
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *Echo1Core {
@@ -36,6 +37,6 @@ func New(ctx context.Context, svcCtx *svc.ServiceContext) *Echo1Core {
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
-		// MD:     metadata.RpcMetadataFromIncoming(ctx),
+		MD:     metadata.RpcMetadataFromIncoming(ctx),
 	}
 }

@@ -11,6 +11,7 @@
 package username
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeUsernameDataClazz(d *bin.Decoder) (UsernameDataClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_usernameData:
-		x := &TLUsernameData{ClazzID: id}
+		x := &TLUsernameData{ClazzID: id, ClazzName2: ClazzName_usernameData}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -66,8 +67,8 @@ func MakeTLUsernameData(m *TLUsernameData) *TLUsernameData {
 }
 
 func (m *TLUsernameData) String() string {
-	wrapper := iface.WithNameWrapper{"usernameData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsernameDataClazzName <--
@@ -160,8 +161,8 @@ type UsernameData struct {
 }
 
 func (m *UsernameData) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UsernameData) ClazzName() string {
@@ -241,19 +242,19 @@ func DecodeUsernameExistClazz(d *bin.Decoder) (UsernameExistClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_usernameNotExisted:
-		x := &TLUsernameNotExisted{ClazzID: id}
+		x := &TLUsernameNotExisted{ClazzID: id, ClazzName2: ClazzName_usernameNotExisted}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_usernameExisted:
-		x := &TLUsernameExisted{ClazzID: id}
+		x := &TLUsernameExisted{ClazzID: id, ClazzName2: ClazzName_usernameExisted}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_usernameExistedNotMe:
-		x := &TLUsernameExistedNotMe{ClazzID: id}
+		x := &TLUsernameExistedNotMe{ClazzID: id, ClazzName2: ClazzName_usernameExistedNotMe}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_usernameExistedIsMe:
-		x := &TLUsernameExistedIsMe{ClazzID: id}
+		x := &TLUsernameExistedIsMe{ClazzID: id, ClazzName2: ClazzName_usernameExistedIsMe}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -277,8 +278,8 @@ func MakeTLUsernameNotExisted(m *TLUsernameNotExisted) *TLUsernameNotExisted {
 }
 
 func (m *TLUsernameNotExisted) String() string {
-	wrapper := iface.WithNameWrapper{"usernameNotExisted", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsernameExistClazzName <--
@@ -351,8 +352,8 @@ func MakeTLUsernameExisted(m *TLUsernameExisted) *TLUsernameExisted {
 }
 
 func (m *TLUsernameExisted) String() string {
-	wrapper := iface.WithNameWrapper{"usernameExisted", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsernameExistClazzName <--
@@ -425,8 +426,8 @@ func MakeTLUsernameExistedNotMe(m *TLUsernameExistedNotMe) *TLUsernameExistedNot
 }
 
 func (m *TLUsernameExistedNotMe) String() string {
-	wrapper := iface.WithNameWrapper{"usernameExistedNotMe", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsernameExistClazzName <--
@@ -499,8 +500,8 @@ func MakeTLUsernameExistedIsMe(m *TLUsernameExistedIsMe) *TLUsernameExistedIsMe 
 }
 
 func (m *TLUsernameExistedIsMe) String() string {
-	wrapper := iface.WithNameWrapper{"usernameExistedIsMe", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UsernameExistClazzName <--
@@ -565,8 +566,8 @@ type UsernameExist struct {
 }
 
 func (m *UsernameExist) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UsernameExist) ClazzName() string {

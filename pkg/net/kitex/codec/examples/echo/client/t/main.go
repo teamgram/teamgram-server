@@ -19,14 +19,14 @@ import (
 	"context"
 	"errors"
 	"flag"
-	"github.com/bytedance/gopkg/cloud/metainfo"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"log"
 	"time"
 
+	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	echoclient "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/client"
 	api "github.com/teamgram/teamgram-server/v2/pkg/net/kitex/codec/examples/echo/echo"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/discov"

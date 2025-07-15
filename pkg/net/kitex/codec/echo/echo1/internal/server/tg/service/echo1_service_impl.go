@@ -24,7 +24,7 @@ var _ *tg.Bool
 // echo1.echo message:string = Echo;
 func (s *Service) Echo1Echo(ctx context.Context, request *echo1.TLEcho1Echo) (*echo1.Echo, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("echo1.echo - metadata: {}, request: %v", request)
+	c.Logger.Debugf("echo1.echo - metadata: %s, request: %s", c.MD, request)
 
 	r, err := c.Echo1Echo(request)
 	if err != nil {

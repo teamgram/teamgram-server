@@ -11,6 +11,7 @@
 package updates
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeChannelDifferenceClazz(d *bin.Decoder) (ChannelDifferenceClazz, error
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_channelDifference:
-		x := &TLChannelDifference{ClazzID: id}
+		x := &TLChannelDifference{ClazzID: id, ClazzName2: ClazzName_channelDifference}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -68,8 +69,8 @@ func MakeTLChannelDifference(m *TLChannelDifference) *TLChannelDifference {
 }
 
 func (m *TLChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{"channelDifference", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ChannelDifferenceClazzName <--
@@ -193,8 +194,8 @@ type ChannelDifference struct {
 }
 
 func (m *ChannelDifference) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *ChannelDifference) ClazzName() string {
@@ -274,19 +275,19 @@ func DecodeDifferenceClazz(d *bin.Decoder) (DifferenceClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_differenceEmpty:
-		x := &TLDifferenceEmpty{ClazzID: id}
+		x := &TLDifferenceEmpty{ClazzID: id, ClazzName2: ClazzName_differenceEmpty}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_difference:
-		x := &TLDifference{ClazzID: id}
+		x := &TLDifference{ClazzID: id, ClazzName2: ClazzName_difference}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_differenceSlice:
-		x := &TLDifferenceSlice{ClazzID: id}
+		x := &TLDifferenceSlice{ClazzID: id, ClazzName2: ClazzName_differenceSlice}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_differenceTooLong:
-		x := &TLDifferenceTooLong{ClazzID: id}
+		x := &TLDifferenceTooLong{ClazzID: id, ClazzName2: ClazzName_differenceTooLong}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -311,8 +312,8 @@ func MakeTLDifferenceEmpty(m *TLDifferenceEmpty) *TLDifferenceEmpty {
 }
 
 func (m *TLDifferenceEmpty) String() string {
-	wrapper := iface.WithNameWrapper{"differenceEmpty", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DifferenceClazzName <--
@@ -395,8 +396,8 @@ func MakeTLDifference(m *TLDifference) *TLDifference {
 }
 
 func (m *TLDifference) String() string {
-	wrapper := iface.WithNameWrapper{"difference", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DifferenceClazzName <--
@@ -516,8 +517,8 @@ func MakeTLDifferenceSlice(m *TLDifferenceSlice) *TLDifferenceSlice {
 }
 
 func (m *TLDifferenceSlice) String() string {
-	wrapper := iface.WithNameWrapper{"differenceSlice", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DifferenceClazzName <--
@@ -635,8 +636,8 @@ func MakeTLDifferenceTooLong(m *TLDifferenceTooLong) *TLDifferenceTooLong {
 }
 
 func (m *TLDifferenceTooLong) String() string {
-	wrapper := iface.WithNameWrapper{"differenceTooLong", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DifferenceClazzName <--
@@ -704,8 +705,8 @@ type Difference struct {
 }
 
 func (m *Difference) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *Difference) ClazzName() string {

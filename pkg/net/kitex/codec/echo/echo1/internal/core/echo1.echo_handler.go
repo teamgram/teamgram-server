@@ -29,7 +29,7 @@ func (c *Echo1Core) Echo1Echo(in *echo1.TLEcho1Echo) (*echo1.Echo, error) {
 	// TODO: not impl
 	// c.Logger.Errorf("echo1.echo blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return echo1.MakeEcho(&echo1.TLEcho{
+	return echo1.MakeTLEcho(&echo1.TLEcho{
 		Message: in.Message,
-	}), nil
+	}).ToEcho(), nil
 }

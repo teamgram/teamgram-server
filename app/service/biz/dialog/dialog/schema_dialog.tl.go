@@ -11,6 +11,7 @@
 package dialog
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -40,7 +41,7 @@ func DecodeDialogExtClazz(d *bin.Decoder) (DialogExtClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_dialogExt:
-		x := &TLDialogExt{ClazzID: id}
+		x := &TLDialogExt{ClazzID: id, ClazzName2: ClazzName_dialogExt}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -72,8 +73,8 @@ func MakeTLDialogExt(m *TLDialogExt) *TLDialogExt {
 }
 
 func (m *TLDialogExt) String() string {
-	wrapper := iface.WithNameWrapper{"dialogExt", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DialogExtClazzName <--
@@ -177,8 +178,8 @@ type DialogExt struct {
 }
 
 func (m *DialogExt) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *DialogExt) ClazzName() string {
@@ -255,7 +256,7 @@ func DecodeDialogFilterExtClazz(d *bin.Decoder) (DialogFilterExtClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_dialogFilterExt:
-		x := &TLDialogFilterExt{ClazzID: id}
+		x := &TLDialogFilterExt{ClazzID: id, ClazzName2: ClazzName_dialogFilterExt}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -284,8 +285,8 @@ func MakeTLDialogFilterExt(m *TLDialogFilterExt) *TLDialogFilterExt {
 }
 
 func (m *TLDialogFilterExt) String() string {
-	wrapper := iface.WithNameWrapper{"dialogFilterExt", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DialogFilterExtClazzName <--
@@ -383,8 +384,8 @@ type DialogFilterExt struct {
 }
 
 func (m *DialogFilterExt) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *DialogFilterExt) ClazzName() string {
@@ -461,7 +462,7 @@ func DecodeDialogPinnedExtClazz(d *bin.Decoder) (DialogPinnedExtClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_dialogPinnedExt:
-		x := &TLDialogPinnedExt{ClazzID: id}
+		x := &TLDialogPinnedExt{ClazzID: id, ClazzName2: ClazzName_dialogPinnedExt}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -488,8 +489,8 @@ func MakeTLDialogPinnedExt(m *TLDialogPinnedExt) *TLDialogPinnedExt {
 }
 
 func (m *TLDialogPinnedExt) String() string {
-	wrapper := iface.WithNameWrapper{"dialogPinnedExt", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DialogPinnedExtClazzName <--
@@ -561,8 +562,8 @@ type DialogPinnedExt struct {
 }
 
 func (m *DialogPinnedExt) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *DialogPinnedExt) ClazzName() string {
@@ -639,7 +640,7 @@ func DecodeDialogsDataClazz(d *bin.Decoder) (DialogsDataClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_simpleDialogsData:
-		x := &TLSimpleDialogsData{ClazzID: id}
+		x := &TLSimpleDialogsData{ClazzID: id, ClazzName2: ClazzName_simpleDialogsData}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -666,8 +667,8 @@ func MakeTLSimpleDialogsData(m *TLSimpleDialogsData) *TLSimpleDialogsData {
 }
 
 func (m *TLSimpleDialogsData) String() string {
-	wrapper := iface.WithNameWrapper{"simpleDialogsData", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // DialogsDataClazzName <--
@@ -744,8 +745,8 @@ type DialogsData struct {
 }
 
 func (m *DialogsData) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *DialogsData) ClazzName() string {
@@ -822,7 +823,7 @@ func DecodePeerWithDraftMessageClazz(d *bin.Decoder) (PeerWithDraftMessageClazz,
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_updateDraftMessage:
-		x := &TLUpdateDraftMessage{ClazzID: id}
+		x := &TLUpdateDraftMessage{ClazzID: id, ClazzName2: ClazzName_updateDraftMessage}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -848,8 +849,8 @@ func MakeTLUpdateDraftMessage(m *TLUpdateDraftMessage) *TLUpdateDraftMessage {
 }
 
 func (m *TLUpdateDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{"updateDraftMessage", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // PeerWithDraftMessageClazzName <--
@@ -927,8 +928,8 @@ type PeerWithDraftMessage struct {
 }
 
 func (m *PeerWithDraftMessage) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *PeerWithDraftMessage) ClazzName() string {
@@ -1005,7 +1006,7 @@ func DecodeSavedDialogListClazz(d *bin.Decoder) (SavedDialogListClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_savedDialogList:
-		x := &TLSavedDialogList{ClazzID: id}
+		x := &TLSavedDialogList{ClazzID: id, ClazzName2: ClazzName_savedDialogList}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -1031,8 +1032,8 @@ func MakeTLSavedDialogList(m *TLSavedDialogList) *TLSavedDialogList {
 }
 
 func (m *TLSavedDialogList) String() string {
-	wrapper := iface.WithNameWrapper{"savedDialogList", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // SavedDialogListClazzName <--
@@ -1118,8 +1119,8 @@ type SavedDialogList struct {
 }
 
 func (m *SavedDialogList) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *SavedDialogList) ClazzName() string {

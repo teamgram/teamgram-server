@@ -11,6 +11,7 @@
 package idgen
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -42,15 +43,15 @@ func DecodeIdValClazz(d *bin.Decoder) (IdValClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_idVal:
-		x := &TLIdVal{ClazzID: id}
+		x := &TLIdVal{ClazzID: id, ClazzName2: ClazzName_idVal}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_idVals:
-		x := &TLIdVals{ClazzID: id}
+		x := &TLIdVals{ClazzID: id, ClazzName2: ClazzName_idVals}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_seqIdVal:
-		x := &TLSeqIdVal{ClazzID: id}
+		x := &TLSeqIdVal{ClazzID: id, ClazzName2: ClazzName_seqIdVal}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -75,8 +76,8 @@ func MakeTLIdVal(m *TLIdVal) *TLIdVal {
 }
 
 func (m *TLIdVal) String() string {
-	wrapper := iface.WithNameWrapper{"idVal", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // IdValClazzName <--
@@ -153,8 +154,8 @@ func MakeTLIdVals(m *TLIdVals) *TLIdVals {
 }
 
 func (m *TLIdVals) String() string {
-	wrapper := iface.WithNameWrapper{"idVals", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // IdValClazzName <--
@@ -232,8 +233,8 @@ func MakeTLSeqIdVal(m *TLSeqIdVal) *TLSeqIdVal {
 }
 
 func (m *TLSeqIdVal) String() string {
-	wrapper := iface.WithNameWrapper{"seqIdVal", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // IdValClazzName <--
@@ -301,8 +302,8 @@ type IdVal struct {
 }
 
 func (m *IdVal) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *IdVal) ClazzName() string {
@@ -428,19 +429,19 @@ func DecodeInputIdClazz(d *bin.Decoder) (InputIdClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_inputId:
-		x := &TLInputId{ClazzID: id}
+		x := &TLInputId{ClazzID: id, ClazzName2: ClazzName_inputId}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_inputIds:
-		x := &TLInputIds{ClazzID: id}
+		x := &TLInputIds{ClazzID: id, ClazzName2: ClazzName_inputIds}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_inputSeqId:
-		x := &TLInputSeqId{ClazzID: id}
+		x := &TLInputSeqId{ClazzID: id, ClazzName2: ClazzName_inputSeqId}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_inputNSeqId:
-		x := &TLInputNSeqId{ClazzID: id}
+		x := &TLInputNSeqId{ClazzID: id, ClazzName2: ClazzName_inputNSeqId}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -464,8 +465,8 @@ func MakeTLInputId(m *TLInputId) *TLInputId {
 }
 
 func (m *TLInputId) String() string {
-	wrapper := iface.WithNameWrapper{"inputId", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // InputIdClazzName <--
@@ -539,8 +540,8 @@ func MakeTLInputIds(m *TLInputIds) *TLInputIds {
 }
 
 func (m *TLInputIds) String() string {
-	wrapper := iface.WithNameWrapper{"inputIds", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // InputIdClazzName <--
@@ -617,8 +618,8 @@ func MakeTLInputSeqId(m *TLInputSeqId) *TLInputSeqId {
 }
 
 func (m *TLInputSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"inputSeqId", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // InputIdClazzName <--
@@ -696,8 +697,8 @@ func MakeTLInputNSeqId(m *TLInputNSeqId) *TLInputNSeqId {
 }
 
 func (m *TLInputNSeqId) String() string {
-	wrapper := iface.WithNameWrapper{"inputNSeqId", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // InputIdClazzName <--
@@ -767,8 +768,8 @@ type InputId struct {
 }
 
 func (m *InputId) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *InputId) ClazzName() string {

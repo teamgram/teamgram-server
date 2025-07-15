@@ -11,6 +11,7 @@
 package chat
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/proto/v2/bin"
@@ -42,15 +43,15 @@ func DecodeChatInviteExtClazz(d *bin.Decoder) (ChatInviteExtClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_chatInviteAlready:
-		x := &TLChatInviteAlready{ClazzID: id}
+		x := &TLChatInviteAlready{ClazzID: id, ClazzName2: ClazzName_chatInviteAlready}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_chatInvite:
-		x := &TLChatInvite{ClazzID: id}
+		x := &TLChatInvite{ClazzID: id, ClazzName2: ClazzName_chatInvite}
 		_ = x.Decode(d)
 		return x, nil
 	case ClazzName_chatInvitePeek:
-		x := &TLChatInvitePeek{ClazzID: id}
+		x := &TLChatInvitePeek{ClazzID: id, ClazzName2: ClazzName_chatInvitePeek}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -75,8 +76,8 @@ func MakeTLChatInviteAlready(m *TLChatInviteAlready) *TLChatInviteAlready {
 }
 
 func (m *TLChatInviteAlready) String() string {
-	wrapper := iface.WithNameWrapper{"chatInviteAlready", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ChatInviteExtClazzName <--
@@ -162,8 +163,8 @@ func MakeTLChatInvite(m *TLChatInvite) *TLChatInvite {
 }
 
 func (m *TLChatInvite) String() string {
-	wrapper := iface.WithNameWrapper{"chatInvite", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ChatInviteExtClazzName <--
@@ -291,8 +292,8 @@ func MakeTLChatInvitePeek(m *TLChatInvitePeek) *TLChatInvitePeek {
 }
 
 func (m *TLChatInvitePeek) String() string {
-	wrapper := iface.WithNameWrapper{"chatInvitePeek", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ChatInviteExtClazzName <--
@@ -367,8 +368,8 @@ type ChatInviteExt struct {
 }
 
 func (m *ChatInviteExt) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *ChatInviteExt) ClazzName() string {
@@ -491,7 +492,7 @@ func DecodeChatInviteImportedClazz(d *bin.Decoder) (ChatInviteImportedClazz, err
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_chatInviteImported:
-		x := &TLChatInviteImported{ClazzID: id}
+		x := &TLChatInviteImported{ClazzID: id, ClazzName2: ClazzName_chatInviteImported}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -517,8 +518,8 @@ func MakeTLChatInviteImported(m *TLChatInviteImported) *TLChatInviteImported {
 }
 
 func (m *TLChatInviteImported) String() string {
-	wrapper := iface.WithNameWrapper{"chatInviteImported", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // ChatInviteImportedClazzName <--
@@ -616,8 +617,8 @@ type ChatInviteImported struct {
 }
 
 func (m *ChatInviteImported) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *ChatInviteImported) ClazzName() string {
@@ -694,7 +695,7 @@ func DecodeRecentChatInviteRequestersClazz(d *bin.Decoder) (RecentChatInviteRequ
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_recentChatInviteRequesters:
-		x := &TLRecentChatInviteRequesters{ClazzID: id}
+		x := &TLRecentChatInviteRequesters{ClazzID: id, ClazzName2: ClazzName_recentChatInviteRequesters}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -720,8 +721,8 @@ func MakeTLRecentChatInviteRequesters(m *TLRecentChatInviteRequesters) *TLRecent
 }
 
 func (m *TLRecentChatInviteRequesters) String() string {
-	wrapper := iface.WithNameWrapper{"recentChatInviteRequesters", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // RecentChatInviteRequestersClazzName <--
@@ -793,8 +794,8 @@ type RecentChatInviteRequesters struct {
 }
 
 func (m *RecentChatInviteRequesters) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *RecentChatInviteRequesters) ClazzName() string {
@@ -871,7 +872,7 @@ func DecodeUserChatIdListClazz(d *bin.Decoder) (UserChatIdListClazz, error) {
 	clazzName := iface.GetClazzNameByID(id)
 	switch clazzName {
 	case ClazzName_userChatIdList:
-		x := &TLUserChatIdList{ClazzID: id}
+		x := &TLUserChatIdList{ClazzID: id, ClazzName2: ClazzName_userChatIdList}
 		_ = x.Decode(d)
 		return x, nil
 	default:
@@ -897,8 +898,8 @@ func MakeTLUserChatIdList(m *TLUserChatIdList) *TLUserChatIdList {
 }
 
 func (m *TLUserChatIdList) String() string {
-	wrapper := iface.WithNameWrapper{"userChatIdList", m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 // UserChatIdListClazzName <--
@@ -970,8 +971,8 @@ type UserChatIdList struct {
 }
 
 func (m *UserChatIdList) String() string {
-	wrapper := iface.WithNameWrapper{m.ClazzName(), m}
-	return wrapper.String()
+	data, _ := json.Marshal(m)
+	return string(data)
 }
 
 func (m *UserChatIdList) ClazzName() string {
