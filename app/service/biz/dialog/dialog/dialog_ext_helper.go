@@ -150,7 +150,7 @@ type PeerIdList struct {
 func (m DialogExtList) DoGetMessagesDialogs(
 	ctx context.Context,
 	selfUserId int64,
-	// cbNotifySettings func(ctx context.Context, selfUserId int64, peers ...mtproto.PeerUtil) []*mtproto.PeerNotifySettings,
+// cbNotifySettings func(ctx context.Context, selfUserId int64, peers ...mtproto.PeerUtil) []*mtproto.PeerNotifySettings,
 	cbMsgF func(ctx context.Context, selfUserId int64, id ...TopMessageId) []*mtproto.Message,
 	cbUserF func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.User,
 	cbChatF func(ctx context.Context, selfUserId int64, id ...int64) []*mtproto.Chat,
@@ -181,6 +181,7 @@ func (m DialogExtList) DoGetMessagesDialogs(
 
 			for _, dialogExt := range m {
 				peer2 := mtproto.FromPeer(dialogExt.Dialog.Peer)
+				idHelper.PickByPeer(dialogExt.Dialog.Peer)
 				if peer2.IsChannel() {
 					chIdList = append(chIdList, TopMessageId{Peer: peer2, TopMessage: dialogExt.Dialog.TopMessage})
 				} else {
