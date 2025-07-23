@@ -121,13 +121,8 @@ func (d *Dao) GetCacheUserData(ctx context.Context, id int64) *CacheUserData {
 func makeEmojiStatus(documentId int64, until int32) *mtproto.EmojiStatus {
 	if documentId == 0 {
 		return nil
-	}
-	if until > 0 {
-		return mtproto.MakeTLEmojiStatus(&mtproto.EmojiStatus{
-			DocumentId: documentId,
-		}).To_EmojiStatus()
 	} else {
-		return mtproto.MakeTLEmojiStatusUntil(&mtproto.EmojiStatus{
+		return mtproto.MakeTLEmojiStatus(&mtproto.EmojiStatus{
 			DocumentId:      documentId,
 			Until_INT32:     until,
 			Until_FLAGINT32: mtproto.MakeFlagsInt32(until),
