@@ -196,6 +196,10 @@ func (s *Server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 			ctx.setClientIp(strings.Split(h.Source.String(), ":")[0])
 			_, _ = c.Discard(len(ppv1) - r.Len())
 			ctx.ppv1 = false
+
+			if r.Len() == 0 {
+				return
+			}
 		} else {
 			ctx.ppv1 = false
 		}
