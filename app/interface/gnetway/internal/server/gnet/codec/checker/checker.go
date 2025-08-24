@@ -18,10 +18,10 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/teamgram/proto/v2/bin"
 	"github.com/teamgram/proto/v2/iface"
 	"github.com/teamgram/proto/v2/tg"
-
 	"github.com/teamgram/teamgram-server/v2/app/interface/gnetway/internal/server/gnet"
 )
 
