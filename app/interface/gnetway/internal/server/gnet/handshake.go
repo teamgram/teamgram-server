@@ -796,7 +796,7 @@ func (s *Server) onSetClientDHParams(c gnet.Conn, ctx *HandshakeStateCtx, reques
 	d := crypto.NewAES256IGECryptor(tmpAesKeyAndIv[:32], tmpAesKeyAndIv[32:64])
 	decryptedData, err := d.Decrypt(bEncryptedData)
 	if err != nil {
-		err := fmt.Errorf("onSetClientDHParams - AES256IGECryptor descrypt error")
+		err = fmt.Errorf("onSetClientDHParams - AES256IGECryptor descrypt error")
 		// logx.Errorf("conn(%s) error: %v", c, err)
 		return nil, err
 	}
