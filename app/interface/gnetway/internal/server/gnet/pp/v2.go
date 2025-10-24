@@ -28,7 +28,8 @@ func ReadV2Header(r io.Reader) (*Header, error) {
 
 // readV2Header assumes the passed buf contains the first 13 bytes which should look like
 // the following. (Where X is the proto proxy version and command)
-// 		"\r\n\r\n\x00\r\nQUIT\nX"
+//
+//	"\r\n\r\n\x00\r\nQUIT\nX"
 func readV2Header(buf []byte, r io.Reader) (*Header, error) {
 	// Read the next 3 bytes which contain the proto, family and the length of the trailing header
 	if _, err := io.ReadFull(r, buf[13:16]); err != nil {
