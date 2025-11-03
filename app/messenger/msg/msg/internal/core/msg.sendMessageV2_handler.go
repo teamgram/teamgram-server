@@ -175,14 +175,14 @@ func (c *MsgCore) sendUserOutgoingMessageV2(fromUserId, fromAuthKeyId, toUserId 
 		&rUpdates,
 		func(ctx context.Context, v any) error {
 			c.Logger.WithDuration(timex.Since(since2)).Infof("end: begin '_, err = c.svcCtx.Dao.DoIdempotent('")
-			box, err := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
-			if err != nil {
-				c.Logger.Error(err.Error())
-				return err
+			box, err2 := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
+			if err2 != nil {
+				c.Logger.Errorf("msg.sendMessageV2 - error: %v", err2)
+				return err2
 			}
 
 			c.Logger.WithDuration(timex.Since(since2)).Infof("end: c.svcCtx.Dao.SendUserMessageV2")
-			_, err2 := c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
+			_, err2 = c.svcCtx.Dao.InboxClient.InboxSendUserMessageToInboxV2(
 				c.ctx,
 				&inbox.TLInboxSendUserMessageToInboxV2{
 					UserId:        fromUserId,
@@ -486,10 +486,10 @@ func (c *MsgCore) sendUserOutgoingMessageList(fromUserId, fromAuthKeyId, toUserI
 			)
 
 			for _, outBox := range outBoxList {
-				box, err := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
-				if err != nil {
-					c.Logger.Error(err.Error())
-					return err
+				box, err2 := c.svcCtx.Dao.SendUserMessageV2(ctx, fromUserId, toUserId, outBox, true)
+				if err2 != nil {
+					c.Logger.Errorf("msg.sendUserOutgoingMessageV2 - error: %v", err2)
+					return err2
 				}
 				boxList = append(boxList, box)
 				updateList = append(updateList, mtproto.MakeTLUpdateNewMessage(&mtproto.Update{
