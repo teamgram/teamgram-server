@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -41,6 +41,7 @@ type AuthorizationClient interface {
 	AuthRequestFirebaseSms(ctx context.Context, in *mtproto.TLAuthRequestFirebaseSms) (*mtproto.Bool, error)
 	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error)
+	AuthCheckPaidAuth(ctx context.Context, in *mtproto.TLAuthCheckPaidAuth) (*mtproto.Auth_SentCode, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
 	AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
@@ -199,6 +200,13 @@ func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in
 func (m *defaultAuthorizationClient) AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthReportMissingCode(ctx, in)
+}
+
+// AuthCheckPaidAuth
+// auth.checkPaidAuth#56e59f9c phone_number:string phone_code_hash:string form_id:long = auth.SentCode;
+func (m *defaultAuthorizationClient) AuthCheckPaidAuth(ctx context.Context, in *mtproto.TLAuthCheckPaidAuth) (*mtproto.Auth_SentCode, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthCheckPaidAuth(ctx, in)
 }
 
 // AccountSendVerifyEmailCode
