@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright 2025 Teamgram Authors.
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -18,7 +18,7 @@ import (
 )
 
 // MessagesGetSavedDialogs
-// messages.getSavedDialogs#5381d21a flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
+// messages.getSavedDialogs#1e91fc99 flags:# exclude_pinned:flags.0?true parent_peer:flags.1?InputPeer offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
 func (s *Service) MessagesGetSavedDialogs(ctx context.Context, request *mtproto.TLMessagesGetSavedDialogs) (*mtproto.Messages_SavedDialogs, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSavedDialogs - metadata: {%s}, request: {%s}", c.MD, request)
@@ -33,7 +33,7 @@ func (s *Service) MessagesGetSavedDialogs(ctx context.Context, request *mtproto.
 }
 
 // MessagesGetSavedHistory
-// messages.getSavedHistory#3d9a414d peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+// messages.getSavedHistory#998ab009 flags:# parent_peer:flags.0?InputPeer peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (s *Service) MessagesGetSavedHistory(ctx context.Context, request *mtproto.TLMessagesGetSavedHistory) (*mtproto.Messages_Messages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSavedHistory - metadata: {%s}, request: {%s}", c.MD, request)
@@ -48,7 +48,7 @@ func (s *Service) MessagesGetSavedHistory(ctx context.Context, request *mtproto.
 }
 
 // MessagesDeleteSavedHistory
-// messages.deleteSavedHistory#6e98102b flags:# peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
+// messages.deleteSavedHistory#4dc5085f flags:# parent_peer:flags.0?InputPeer peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (s *Service) MessagesDeleteSavedHistory(ctx context.Context, request *mtproto.TLMessagesDeleteSavedHistory) (*mtproto.Messages_AffectedHistory, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.deleteSavedHistory - metadata: {%s}, request: {%s}", c.MD, request)
@@ -104,5 +104,35 @@ func (s *Service) MessagesReorderPinnedSavedDialogs(ctx context.Context, request
 	}
 
 	c.Logger.Debugf("messages.reorderPinnedSavedDialogs - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesGetSavedDialogsByID
+// messages.getSavedDialogsByID#6f6f9c96 flags:# parent_peer:flags.1?InputPeer ids:Vector<InputPeer> = messages.SavedDialogs;
+func (s *Service) MessagesGetSavedDialogsByID(ctx context.Context, request *mtproto.TLMessagesGetSavedDialogsByID) (*mtproto.Messages_SavedDialogs, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getSavedDialogsByID - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesGetSavedDialogsByID(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getSavedDialogsByID - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesReadSavedHistory
+// messages.readSavedHistory#ba4a3b5b parent_peer:InputPeer peer:InputPeer max_id:int = Bool;
+func (s *Service) MessagesReadSavedHistory(ctx context.Context, request *mtproto.TLMessagesReadSavedHistory) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.readSavedHistory - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesReadSavedHistory(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.readSavedHistory - reply: {%s}", r)
 	return r, err
 }
