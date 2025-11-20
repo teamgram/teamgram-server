@@ -30,6 +30,7 @@ type UserChannelProfilesClient interface {
 	AccountGetSavedMusicIds(ctx context.Context, in *mtproto.TLAccountGetSavedMusicIds) (*mtproto.Account_SavedMusicIds, error)
 	UsersGetSavedMusic(ctx context.Context, in *mtproto.TLUsersGetSavedMusic) (*mtproto.Users_SavedMusic, error)
 	UsersGetSavedMusicByID(ctx context.Context, in *mtproto.TLUsersGetSavedMusicByID) (*mtproto.Users_SavedMusic, error)
+	UsersSuggestBirthday(ctx context.Context, in *mtproto.TLUsersSuggestBirthday) (*mtproto.Updates, error)
 	ContactsGetBirthdays(ctx context.Context, in *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error)
 	PhotosUpdateProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUpdateProfilePhoto) (*mtproto.Photos_Photo, error)
 	PhotosUploadProfilePhoto(ctx context.Context, in *mtproto.TLPhotosUploadProfilePhoto) (*mtproto.Photos_Photo, error)
@@ -111,6 +112,13 @@ func (m *defaultUserChannelProfilesClient) UsersGetSavedMusic(ctx context.Contex
 func (m *defaultUserChannelProfilesClient) UsersGetSavedMusicByID(ctx context.Context, in *mtproto.TLUsersGetSavedMusicByID) (*mtproto.Users_SavedMusic, error) {
 	client := mtproto.NewRPCUserChannelProfilesClient(m.cli.Conn())
 	return client.UsersGetSavedMusicByID(ctx, in)
+}
+
+// UsersSuggestBirthday
+// users.suggestBirthday#fc533372 id:InputUser birthday:Birthday = Updates;
+func (m *defaultUserChannelProfilesClient) UsersSuggestBirthday(ctx context.Context, in *mtproto.TLUsersSuggestBirthday) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCUserChannelProfilesClient(m.cli.Conn())
+	return client.UsersSuggestBirthday(ctx, in)
 }
 
 // ContactsGetBirthdays

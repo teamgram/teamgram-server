@@ -136,8 +136,8 @@ func makePeerColor(color int32, backgroundEmojiId int64) *mtproto.PeerColor {
 	}
 
 	return mtproto.MakeTLPeerColor(&mtproto.PeerColor{
-		Color:             mtproto.MakeFlagsInt32(color),
-		BackgroundEmojiId: mtproto.MakeFlagsInt64(backgroundEmojiId),
+		Color:                       mtproto.MakeFlagsInt32(color),
+		BackgroundEmojiId_FLAGINT64: mtproto.MakeFlagsInt64(backgroundEmojiId),
 	}).To_PeerColor()
 }
 

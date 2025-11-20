@@ -43,6 +43,7 @@ type ContactsClient interface {
 	ContactsGetLocated(ctx context.Context, in *mtproto.TLContactsGetLocated) (*mtproto.Updates, error)
 	ContactsEditCloseFriends(ctx context.Context, in *mtproto.TLContactsEditCloseFriends) (*mtproto.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error)
+	ContactsUpdateContactNote(ctx context.Context, in *mtproto.TLContactsUpdateContactNote) (*mtproto.Bool, error)
 }
 
 type defaultContactsClient struct {
@@ -175,7 +176,7 @@ func (m *defaultContactsClient) ContactsToggleTopPeers(ctx context.Context, in *
 }
 
 // ContactsAddContact
-// contacts.addContact#e8f463d0 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string = Updates;
+// contacts.addContact#d9ba2e54 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string note:flags.1?TextWithEntities = Updates;
 func (m *defaultContactsClient) ContactsAddContact(ctx context.Context, in *mtproto.TLContactsAddContact) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsAddContact(ctx, in)
@@ -207,4 +208,11 @@ func (m *defaultContactsClient) ContactsEditCloseFriends(ctx context.Context, in
 func (m *defaultContactsClient) ContactsSetBlocked(ctx context.Context, in *mtproto.TLContactsSetBlocked) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCContactsClient(m.cli.Conn())
 	return client.ContactsSetBlocked(ctx, in)
+}
+
+// ContactsUpdateContactNote
+// contacts.updateContactNote#139f63fb id:InputUser note:TextWithEntities = Bool;
+func (m *defaultContactsClient) ContactsUpdateContactNote(ctx context.Context, in *mtproto.TLContactsUpdateContactNote) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCContactsClient(m.cli.Conn())
+	return client.ContactsUpdateContactNote(ctx, in)
 }

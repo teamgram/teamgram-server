@@ -152,6 +152,21 @@ func (s *Service) UsersGetSavedMusicByID(ctx context.Context, request *mtproto.T
 	return r, err
 }
 
+// UsersSuggestBirthday
+// users.suggestBirthday#fc533372 id:InputUser birthday:Birthday = Updates;
+func (s *Service) UsersSuggestBirthday(ctx context.Context, request *mtproto.TLUsersSuggestBirthday) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("users.suggestBirthday - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UsersSuggestBirthday(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("users.suggestBirthday - reply: {%s}", r)
+	return r, err
+}
+
 // ContactsGetBirthdays
 // contacts.getBirthdays#daeda864 = contacts.ContactBirthdays;
 func (s *Service) ContactsGetBirthdays(ctx context.Context, request *mtproto.TLContactsGetBirthdays) (*mtproto.Contacts_ContactBirthdays, error) {
