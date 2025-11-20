@@ -15,7 +15,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/teamgram/marmota v0.1.22
-	github.com/teamgram/proto v0.205.0
+	github.com/teamgram/proto v0.206.0
 	github.com/valyala/bytebufferpool v1.0.1-0.20201104193830-18533face0df
 	github.com/zeromicro/go-zero v1.8.4
 	google.golang.org/grpc v1.65.0
