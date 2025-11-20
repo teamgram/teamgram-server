@@ -1,4 +1,4 @@
-// Copyright 2025 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,20 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesAppendTodoList
-// messages.appendTodoList#21a61057 peer:InputPeer msg_id:int list:Vector<TodoItem> = Updates;
-func (c *MessagesCore) MessagesAppendTodoList(in *mtproto.TLMessagesAppendTodoList) (*mtproto.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.appendTodoList blocked, License key from https://teamgram.net required to unlock enterprise features.")
+// AccountUpdateBirthday
+// account.updateBirthday#cc6e0c11 flags:# birthday:flags.0?Birthday = Bool;
+func (c *UserChannelProfilesCore) AccountUpdateBirthday(in *mtproto.TLAccountUpdateBirthday) (*mtproto.Bool, error) {
+	rV, err := c.svcCtx.Dao.UserClient.UserUpdateBirthday(c.ctx, &user.TLUserUpdateBirthday{
+		UserId:   c.MD.UserId,
+		Birthday: in.GetBirthday(),
+	})
+	if err != nil {
+		c.Logger.Errorf("account.updateBirthday - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return rV, nil
 }

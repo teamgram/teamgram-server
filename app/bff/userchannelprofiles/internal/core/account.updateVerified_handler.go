@@ -1,4 +1,4 @@
-// Copyright 2025 Teamgram Authors
+// Copyright 2022 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesToggleTodoCompleted
-// messages.toggleTodoCompleted#d3e03124 peer:InputPeer msg_id:int completed:Vector<int> incompleted:Vector<int> = Updates;
-func (c *MessagesCore) MessagesToggleTodoCompleted(in *mtproto.TLMessagesToggleTodoCompleted) (*mtproto.Updates, error) {
+// AccountUpdateVerified
+// account.updateVerified flags:# id:long verified:flags.0?true = User;
+func (c *UserChannelProfilesCore) AccountUpdateVerified(in *mtproto.TLAccountUpdateVerified) (*mtproto.User, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.toggleTodoCompleted blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("account.updateVerified blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

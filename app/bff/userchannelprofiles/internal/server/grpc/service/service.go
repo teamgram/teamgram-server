@@ -11,7 +11,7 @@
 package service
 
 import (
-	"github.com/teamgram/teamgram-server/app/bff/contacts/internal/svc"
+	"github.com/teamgram/teamgram-server/app/bff/userchannelprofiles/internal/svc"
 )
 
 type Service struct {

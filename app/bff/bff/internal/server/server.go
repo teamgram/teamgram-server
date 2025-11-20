@@ -45,8 +45,8 @@ import (
 	sponsoredmessages_helper "github.com/teamgram/teamgram-server/app/bff/sponsoredmessages"
 	tos_helper "github.com/teamgram/teamgram-server/app/bff/tos"
 	updates_helper "github.com/teamgram/teamgram-server/app/bff/updates"
+	userchannelprofileshelper "github.com/teamgram/teamgram-server/app/bff/userchannelprofiles"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
-	userprofilehelper "github.com/teamgram/teamgram-server/app/bff/userprofile"
 	users_helper "github.com/teamgram/teamgram-server/app/bff/users"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -342,10 +342,10 @@ func (s *Server) Initialize() error {
 				MessageClient: c.BizServiceClient,
 			}))
 
-		// userprofilehelper
-		mtproto.RegisterRPCUserProfileServer(
+		// userchannelprofileshelper
+		mtproto.RegisterRPCUserChannelProfilesServer(
 			grpcServer,
-			userprofilehelper.New(userprofilehelper.Config{
+			userchannelprofileshelper.New(userchannelprofileshelper.Config{
 				RpcServerConf: c.RpcServerConf,
 				MediaClient:   c.MediaClient,
 				UserClient:    c.BizServiceClient,

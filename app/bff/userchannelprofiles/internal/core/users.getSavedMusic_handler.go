@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesToggleSuggestedPostApproval
-// messages.toggleSuggestedPostApproval#8107455c flags:# reject:flags.1?true peer:InputPeer msg_id:int schedule_date:flags.0?int reject_comment:flags.2?string = Updates;
-func (c *MessagesCore) MessagesToggleSuggestedPostApproval(in *mtproto.TLMessagesToggleSuggestedPostApproval) (*mtproto.Updates, error) {
+// UsersGetSavedMusic
+// users.getSavedMusic#788d7fe3 id:InputUser offset:int limit:int hash:long = users.SavedMusic;
+func (c *UserChannelProfilesCore) UsersGetSavedMusic(in *mtproto.TLUsersGetSavedMusic) (*mtproto.Users_SavedMusic, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.toggleSuggestedPostApproval blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("users.getSavedMusic blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

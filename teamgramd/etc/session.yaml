@@ -89,4 +89,4 @@ BFFProxyClients:
     #"/mtproto.RPCWallpapers": "bff.bff"
     "/mtproto.RPCSavedMessageDialogs": "bff.bff"
     "/mtproto.RPCPrivacySettings": "bff.bff"
-    "/mtproto.RPCUserProfile": "bff.bff"
+    "/mtproto.UserChannelProfiles": "bff.bff"

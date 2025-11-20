@@ -49,12 +49,9 @@ type MessagesClient interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, in *mtproto.TLMessagesSaveDefaultSendAs) (*mtproto.Bool, error)
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 	MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
-	MessagesReportMessagesDelivery(ctx context.Context, in *mtproto.TLMessagesReportMessagesDelivery) (*mtproto.Bool, error)
-	MessagesToggleTodoCompleted(ctx context.Context, in *mtproto.TLMessagesToggleTodoCompleted) (*mtproto.Updates, error)
-	MessagesAppendTodoList(ctx context.Context, in *mtproto.TLMessagesAppendTodoList) (*mtproto.Updates, error)
-	MessagesToggleSuggestedPostApproval(ctx context.Context, in *mtproto.TLMessagesToggleSuggestedPostApproval) (*mtproto.Updates, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 	ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
+	ChannelsCheckSearchPostsFlood(ctx context.Context, in *mtproto.TLChannelsCheckSearchPostsFlood) (*mtproto.SearchPostsFlood, error)
 }
 
 type defaultMessagesClient struct {
@@ -263,34 +260,6 @@ func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, i
 	return client.MessagesGetOutboxReadDate(ctx, in)
 }
 
-// MessagesReportMessagesDelivery
-// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
-func (m *defaultMessagesClient) MessagesReportMessagesDelivery(ctx context.Context, in *mtproto.TLMessagesReportMessagesDelivery) (*mtproto.Bool, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesReportMessagesDelivery(ctx, in)
-}
-
-// MessagesToggleTodoCompleted
-// messages.toggleTodoCompleted#d3e03124 peer:InputPeer msg_id:int completed:Vector<int> incompleted:Vector<int> = Updates;
-func (m *defaultMessagesClient) MessagesToggleTodoCompleted(ctx context.Context, in *mtproto.TLMessagesToggleTodoCompleted) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesToggleTodoCompleted(ctx, in)
-}
-
-// MessagesAppendTodoList
-// messages.appendTodoList#21a61057 peer:InputPeer msg_id:int list:Vector<TodoItem> = Updates;
-func (m *defaultMessagesClient) MessagesAppendTodoList(ctx context.Context, in *mtproto.TLMessagesAppendTodoList) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesAppendTodoList(ctx, in)
-}
-
-// MessagesToggleSuggestedPostApproval
-// messages.toggleSuggestedPostApproval#8107455c flags:# reject:flags.1?true peer:InputPeer msg_id:int schedule_date:flags.0?int reject_comment:flags.2?string = Updates;
-func (m *defaultMessagesClient) MessagesToggleSuggestedPostApproval(ctx context.Context, in *mtproto.TLMessagesToggleSuggestedPostApproval) (*mtproto.Updates, error) {
-	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
-	return client.MessagesToggleSuggestedPostApproval(ctx, in)
-}
-
 // ChannelsGetSendAs
 // channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true peer:InputPeer = channels.SendAsPeers;
 func (m *defaultMessagesClient) ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {
@@ -299,8 +268,15 @@ func (m *defaultMessagesClient) ChannelsGetSendAs(ctx context.Context, in *mtpro
 }
 
 // ChannelsSearchPosts
-// channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// channels.searchPosts#f2c4f24d flags:# hashtag:flags.0?string query:flags.1?string offset_rate:int offset_peer:InputPeer offset_id:int limit:int allow_paid_stars:flags.2?long = messages.Messages;
 func (m *defaultMessagesClient) ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.ChannelsSearchPosts(ctx, in)
+}
+
+// ChannelsCheckSearchPostsFlood
+// channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
+func (m *defaultMessagesClient) ChannelsCheckSearchPostsFlood(ctx context.Context, in *mtproto.TLChannelsCheckSearchPostsFlood) (*mtproto.SearchPostsFlood, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.ChannelsCheckSearchPostsFlood(ctx, in)
 }

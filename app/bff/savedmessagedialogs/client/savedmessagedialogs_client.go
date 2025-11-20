@@ -29,6 +29,7 @@ type SavedMessageDialogsClient interface {
 	MessagesReorderPinnedSavedDialogs(ctx context.Context, in *mtproto.TLMessagesReorderPinnedSavedDialogs) (*mtproto.Bool, error)
 	MessagesGetSavedDialogsByID(ctx context.Context, in *mtproto.TLMessagesGetSavedDialogsByID) (*mtproto.Messages_SavedDialogs, error)
 	MessagesReadSavedHistory(ctx context.Context, in *mtproto.TLMessagesReadSavedHistory) (*mtproto.Bool, error)
+	ChannelsGetMessageAuthor(ctx context.Context, in *mtproto.TLChannelsGetMessageAuthor) (*mtproto.User, error)
 }
 
 type defaultSavedMessageDialogsClient struct {
@@ -95,4 +96,11 @@ func (m *defaultSavedMessageDialogsClient) MessagesGetSavedDialogsByID(ctx conte
 func (m *defaultSavedMessageDialogsClient) MessagesReadSavedHistory(ctx context.Context, in *mtproto.TLMessagesReadSavedHistory) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCSavedMessageDialogsClient(m.cli.Conn())
 	return client.MessagesReadSavedHistory(ctx, in)
+}
+
+// ChannelsGetMessageAuthor
+// channels.getMessageAuthor#ece2a0e6 channel:InputChannel id:int = User;
+func (m *defaultSavedMessageDialogsClient) ChannelsGetMessageAuthor(ctx context.Context, in *mtproto.TLChannelsGetMessageAuthor) (*mtproto.User, error) {
+	client := mtproto.NewRPCSavedMessageDialogsClient(m.cli.Conn())
+	return client.ChannelsGetMessageAuthor(ctx, in)
 }

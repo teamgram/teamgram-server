@@ -22,11 +22,11 @@ import (
 	"github.com/teamgram/proto/mtproto"
 )
 
-// MessagesReportMessagesDelivery
-// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
-func (c *MessagesCore) MessagesReportMessagesDelivery(in *mtproto.TLMessagesReportMessagesDelivery) (*mtproto.Bool, error) {
+// ChannelsGetMessageAuthor
+// channels.getMessageAuthor#ece2a0e6 channel:InputChannel id:int = User;
+func (c *SavedMessageDialogsCore) ChannelsGetMessageAuthor(in *mtproto.TLChannelsGetMessageAuthor) (*mtproto.User, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.reportMessagesDelivery blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	c.Logger.Errorf("channels.getMessageAuthor blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

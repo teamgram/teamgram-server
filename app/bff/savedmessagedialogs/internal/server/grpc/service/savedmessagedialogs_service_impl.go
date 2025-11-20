@@ -136,3 +136,18 @@ func (s *Service) MessagesReadSavedHistory(ctx context.Context, request *mtproto
 	c.Logger.Debugf("messages.readSavedHistory - reply: {%s}", r)
 	return r, err
 }
+
+// ChannelsGetMessageAuthor
+// channels.getMessageAuthor#ece2a0e6 channel:InputChannel id:int = User;
+func (s *Service) ChannelsGetMessageAuthor(ctx context.Context, request *mtproto.TLChannelsGetMessageAuthor) (*mtproto.User, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("channels.getMessageAuthor - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.ChannelsGetMessageAuthor(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("channels.getMessageAuthor - reply: {%s}", r)
+	return r, err
+}

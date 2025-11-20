@@ -437,66 +437,6 @@ func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *mtprot
 	return r, err
 }
 
-// MessagesReportMessagesDelivery
-// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
-func (s *Service) MessagesReportMessagesDelivery(ctx context.Context, request *mtproto.TLMessagesReportMessagesDelivery) (*mtproto.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.reportMessagesDelivery - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MessagesReportMessagesDelivery(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.reportMessagesDelivery - reply: {%s}", r)
-	return r, err
-}
-
-// MessagesToggleTodoCompleted
-// messages.toggleTodoCompleted#d3e03124 peer:InputPeer msg_id:int completed:Vector<int> incompleted:Vector<int> = Updates;
-func (s *Service) MessagesToggleTodoCompleted(ctx context.Context, request *mtproto.TLMessagesToggleTodoCompleted) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.toggleTodoCompleted - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MessagesToggleTodoCompleted(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.toggleTodoCompleted - reply: {%s}", r)
-	return r, err
-}
-
-// MessagesAppendTodoList
-// messages.appendTodoList#21a61057 peer:InputPeer msg_id:int list:Vector<TodoItem> = Updates;
-func (s *Service) MessagesAppendTodoList(ctx context.Context, request *mtproto.TLMessagesAppendTodoList) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.appendTodoList - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MessagesAppendTodoList(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.appendTodoList - reply: {%s}", r)
-	return r, err
-}
-
-// MessagesToggleSuggestedPostApproval
-// messages.toggleSuggestedPostApproval#8107455c flags:# reject:flags.1?true peer:InputPeer msg_id:int schedule_date:flags.0?int reject_comment:flags.2?string = Updates;
-func (s *Service) MessagesToggleSuggestedPostApproval(ctx context.Context, request *mtproto.TLMessagesToggleSuggestedPostApproval) (*mtproto.Updates, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.toggleSuggestedPostApproval - metadata: {%s}, request: {%s}", c.MD, request)
-
-	r, err := c.MessagesToggleSuggestedPostApproval(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("messages.toggleSuggestedPostApproval - reply: {%s}", r)
-	return r, err
-}
-
 // ChannelsGetSendAs
 // channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true peer:InputPeer = channels.SendAsPeers;
 func (s *Service) ChannelsGetSendAs(ctx context.Context, request *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error) {
@@ -513,7 +453,7 @@ func (s *Service) ChannelsGetSendAs(ctx context.Context, request *mtproto.TLChan
 }
 
 // ChannelsSearchPosts
-// channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// channels.searchPosts#f2c4f24d flags:# hashtag:flags.0?string query:flags.1?string offset_rate:int offset_peer:InputPeer offset_id:int limit:int allow_paid_stars:flags.2?long = messages.Messages;
 func (s *Service) ChannelsSearchPosts(ctx context.Context, request *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("channels.searchPosts - metadata: {%s}, request: {%s}", c.MD, request)
@@ -524,5 +464,20 @@ func (s *Service) ChannelsSearchPosts(ctx context.Context, request *mtproto.TLCh
 	}
 
 	c.Logger.Debugf("channels.searchPosts - reply: {%s}", r)
+	return r, err
+}
+
+// ChannelsCheckSearchPostsFlood
+// channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
+func (s *Service) ChannelsCheckSearchPostsFlood(ctx context.Context, request *mtproto.TLChannelsCheckSearchPostsFlood) (*mtproto.SearchPostsFlood, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("channels.checkSearchPostsFlood - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.ChannelsCheckSearchPostsFlood(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("channels.checkSearchPostsFlood - reply: {%s}", r)
 	return r, err
 }
