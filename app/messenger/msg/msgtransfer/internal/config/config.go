@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2025 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,27 +21,16 @@ package config
 import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
-
 	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/kv"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mysql             sqlx.Config
-	Cache             cache.CacheConf
-	KV                kv.KvConf
-	IdgenClient       zrpc.RpcClientConf
-	UserClient        zrpc.RpcClientConf
-	InboxClient       *kafka.KafkaProducerConf
-	ChatClient        zrpc.RpcClientConf
-	SyncClient        *kafka.KafkaProducerConf
-	ChannelClient     zrpc.RpcClientConf
-	DialogClient      zrpc.RpcClientConf
-	MessageSharding   int `json:",default=1"`
-	Redis2            redis.RedisConf
-	UsernameClient    zrpc.RpcClientConf
-	MsgTransferClient *zrpc.RpcClientConf `json:",optional"`
+	Mysql           sqlx.Config
+	Cache           cache.CacheConf
+	MessageSharding int `json:",default=1"`
+	IdgenClient     zrpc.RpcClientConf
+	DialogClient    zrpc.RpcClientConf
+	SyncClient      *kafka.KafkaProducerConf
 }

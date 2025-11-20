@@ -39,6 +39,10 @@ biz:
 	@echo "build biz..."
 	@go build -ldflags ${ldflags} -o teamgramd/bin/biz -tags=jsoniter app/service/biz/biz/cmd/biz/*.go
 
+msgtransfer:
+	@echo "build msgtransfer..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/msgtransfer -tags=jsoniter app/messenger/msg/msgtransfer/cmd/msgtransfer/*.go
+
 msg:
 	@echo "build msg..."
 	@go build -ldflags ${ldflags} -o teamgramd/bin/msg -tags=jsoniter app/messenger/msg/cmd/msg/*.go
@@ -70,6 +74,7 @@ clean:
 	@rm -rf teamgramd/bin/media
 	@rm -rf teamgramd/bin/authsession
 	@rm -rf teamgramd/bin/biz
+	@rm -rf teamgramd/bin/msgtransfer
 	@rm -rf teamgramd/bin/msg
 	@rm -rf teamgramd/bin/sync
 	@rm -rf teamgramd/bin/bff

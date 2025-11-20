@@ -40,6 +40,7 @@ type Dao struct {
 	deduplication.MessageDeDuplicate
 	*redis.Redis
 	username_client.UsernameClient
+	*ShardingMsgTransferClient
 }
 
 func (d *Dao) DoIdempotent(ctx context.Context, senderUserId int64, deDuplicateKey string, v any, cb func(ctx context.Context, v any) error) (bool, error) {
