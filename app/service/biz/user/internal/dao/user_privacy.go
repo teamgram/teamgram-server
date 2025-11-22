@@ -33,17 +33,20 @@ import (
 )
 
 var (
-	userPrivacyKeyStatusTimestampPrefix = "user_privacy_status_timestamp"
-	userPrivacyKeyChatInvitePrefix      = "user_privacy_chat_invite"
-	userPrivacyKeyPhoneCallPrefix       = "user_privacy_phone_call"
-	userPrivacyKeyPhoneP2PPrefix        = "user_privacy_phone_p2p"
-	userPrivacyKeyForwardsPrefix        = "user_privacy_forwards"
-	userPrivacyKeyProfilePhotoPrefix    = "user_privacy_profile_photo"
-	userPrivacyKeyPhoneNumberPrefix     = "user_privacy_phone_number"
-	userPrivacyKeyAddedByPhonePrefix    = "user_privacy_added_by_phone"
-	userPrivacyKeyVoiceMessagesPrefix   = "user_privacy_voice_messages"
-	userPrivacyKeyAboutPrefix           = "user_privacy_about"
-	userPrivacyKeyBirthdayPrefix        = "user_privacy_birthday"
+	userPrivacyKeyStatusTimestampPrefix   = "user_privacy_status_timestamp"
+	userPrivacyKeyChatInvitePrefix        = "user_privacy_chat_invite"
+	userPrivacyKeyPhoneCallPrefix         = "user_privacy_phone_call"
+	userPrivacyKeyPhoneP2PPrefix          = "user_privacy_phone_p2p"
+	userPrivacyKeyForwardsPrefix          = "user_privacy_forwards"
+	userPrivacyKeyProfilePhotoPrefix      = "user_privacy_profile_photo"
+	userPrivacyKeyPhoneNumberPrefix       = "user_privacy_phone_number"
+	userPrivacyKeyAddedByPhonePrefix      = "user_privacy_added_by_phone"
+	userPrivacyKeyVoiceMessagesPrefix     = "user_privacy_voice_messages"
+	userPrivacyKeyAboutPrefix             = "user_privacy_about"
+	userPrivacyKeyBirthdayPrefix          = "user_privacy_birthday"
+	userPrivacyKeyStarGiftsAutoSavePrefix = "user_privacy_star_gifts_auto_save"
+	userPrivacyKeyNoPaidMessagesPrefix    = "user_privacy_no_paid_messages"
+	userPrivacyKeySavedMusicPrefix        = "user_privacy_saved_music"
 )
 
 func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
@@ -70,6 +73,12 @@ func genUserPrivacyKeyPrefix(id int64, keyType int32) string {
 		return genUserPrivacyKeyAboutPrefix(id)
 	case mtproto.BIRTHDAY:
 		return genUserPrivacyKeyBirthdayPrefix(id)
+	case mtproto.STAR_GIFTS_AUTO_SAVE:
+		return genUserPrivacyKeyStarGiftsAutoSavePrefix(id)
+	case mtproto.NO_PAID_MESSAGES:
+		return genUserPrivacyKeyNoPaidMessagesPrefix(id)
+	case mtproto.SAVED_MUSIC:
+		return genUserPrivacyKeySavedMusicPrefix(id)
 	default:
 		return ""
 	}
@@ -117,6 +126,21 @@ func genUserPrivacyKeyAboutPrefix(id int64) string {
 
 func genUserPrivacyKeyBirthdayPrefix(id int64) string {
 	return fmt.Sprintf("%s_%d", userPrivacyKeyBirthdayPrefix, id)
+}
+
+// userPrivacyKeyStarGiftsAutoSavePrefix
+func genUserPrivacyKeyStarGiftsAutoSavePrefix(id int64) string {
+	return fmt.Sprintf("%s_%d", userPrivacyKeyStarGiftsAutoSavePrefix, id)
+}
+
+// userPrivacyKeyNoPaidMessagesPrefix
+func genUserPrivacyKeyNoPaidMessagesPrefix(id int64) string {
+	return fmt.Sprintf("%s_%d", userPrivacyKeyNoPaidMessagesPrefix, id)
+}
+
+// userPrivacyKeySavedMusicPrefix
+func genUserPrivacyKeySavedMusicPrefix(id int64) string {
+	return fmt.Sprintf("%s_%d", userPrivacyKeySavedMusicPrefix, id)
 }
 
 func (d *Dao) GetUserPrivacyRulesListByKeys(ctx context.Context, id int64, keys ...int32) []*mtproto.PrivacyKeyRules {
