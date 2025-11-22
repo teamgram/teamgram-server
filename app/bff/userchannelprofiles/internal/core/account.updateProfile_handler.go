@@ -30,6 +30,10 @@ func (c *UserChannelProfilesCore) AccountUpdateProfile(in *mtproto.TLAccountUpda
 	me, err := c.svcCtx.Dao.UserClient.UserGetImmutableUser(c.ctx, &userpb.TLUserGetImmutableUser{
 		Id: c.MD.UserId,
 	})
+	if err != nil {
+		c.Logger.Errorf("account.updateProfile - error: %v", err)
+		return nil, mtproto.ErrUserInvalid
+	}
 
 	if in.GetAbout() != nil {
 		//// about长度<70并且可以为emtpy
@@ -49,11 +53,6 @@ func (c *UserChannelProfilesCore) AccountUpdateProfile(in *mtproto.TLAccountUpda
 				me.SetAbout(in.GetAbout().GetValue())
 			}
 		}
-	} //else {
-	if in.GetFirstName().GetValue() == "" {
-		err = mtproto.ErrFirstnameInvalid
-		c.Logger.Errorf("account.updateProfile - error: bad request (%v)", err)
-		return nil, err
 	}
 
 	if in.GetFirstName().GetValue() != me.FirstName() ||
@@ -80,7 +79,6 @@ func (c *UserChannelProfilesCore) AccountUpdateProfile(in *mtproto.TLAccountUpda
 			}).To_Update()),
 		})
 	}
-	//}
 
 	return me.ToSelfUser(), nil
 }
