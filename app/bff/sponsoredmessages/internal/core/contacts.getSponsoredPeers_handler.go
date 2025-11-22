@@ -25,8 +25,9 @@ import (
 // ContactsGetSponsoredPeers
 // contacts.getSponsoredPeers#b6c8c393 q:string = contacts.SponsoredPeers;
 func (c *SponsoredMessagesCore) ContactsGetSponsoredPeers(in *mtproto.TLContactsGetSponsoredPeers) (*mtproto.Contacts_SponsoredPeers, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getSponsoredPeers blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// disable SponsoredMessages
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.MakeTLContactsSponsoredPeersEmpty(&mtproto.Contacts_SponsoredPeers{
+		//
+	}).To_Contacts_SponsoredPeers(), nil
 }
