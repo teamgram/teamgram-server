@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -15,7 +15,7 @@ const (
 	CRC32_photoSizeList                TLConstructor = 108083635   // 0x67139b3
 	CRC32_videoSizeList                TLConstructor = 953261042   // 0x38d19bf2
 	CRC32_media_uploadPhotoFile        TLConstructor = 1009453847  // 0x3c2b0b17
-	CRC32_media_uploadProfilePhotoFile TLConstructor = -1757466844 // 0x973f2f24
+	CRC32_media_uploadProfilePhotoFile TLConstructor = -1231008572 // 0xb6a04cc4
 	CRC32_media_getPhoto               TLConstructor = 1702803563  // 0x657eb86b
 	CRC32_media_getPhotoSizeList       TLConstructor = -1578401979 // 0xa1eb7f45
 	CRC32_media_getPhotoSizeListList   TLConstructor = -77823776   // 0xfb5c80e0

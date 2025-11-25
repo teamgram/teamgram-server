@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -14,7 +14,7 @@ const (
 	CRC32_UNKNOWN                      TLConstructor = 0
 	CRC32_dfs_writeFilePartData        TLConstructor = 440942855   // 0x1a484107
 	CRC32_dfs_uploadPhotoFileV2        TLConstructor = 605082018   // 0x2410d1a2
-	CRC32_dfs_uploadProfilePhotoFileV2 TLConstructor = -870473038  // 0xcc1da2b2
+	CRC32_dfs_uploadProfilePhotoFileV2 TLConstructor = -2027744296 // 0x872313d8
 	CRC32_dfs_uploadEncryptedFileV2    TLConstructor = 2043921699  // 0x79d3c523
 	CRC32_dfs_downloadFile             TLConstructor = -692064706  // 0xd6bfee3e
 	CRC32_dfs_uploadDocumentFileV2     TLConstructor = 1983081911  // 0x76336db7

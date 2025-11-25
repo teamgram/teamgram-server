@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -45,7 +45,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_media_uploadProfilePhotoFile: {
-		0: -1757466844, // 0x973f2f24
+		0: -1231008572, // 0xb6a04cc4
 
 	},
 	Predicate_media_getPhoto: {
@@ -110,7 +110,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	108083635:   Predicate_photoSizeList,                // 0x67139b3
 	953261042:   Predicate_videoSizeList,                // 0x38d19bf2
 	1009453847:  Predicate_media_uploadPhotoFile,        // 0x3c2b0b17
-	-1757466844: Predicate_media_uploadProfilePhotoFile, // 0x973f2f24
+	-1231008572: Predicate_media_uploadProfilePhotoFile, // 0xb6a04cc4
 	1702803563:  Predicate_media_getPhoto,               // 0x657eb86b
 	-1578401979: Predicate_media_getPhotoSizeList,       // 0xa1eb7f45
 	-77823776:   Predicate_media_getPhotoSizeListList,   // 0xfb5c80e0

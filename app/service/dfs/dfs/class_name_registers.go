@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -35,7 +35,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_dfs_uploadProfilePhotoFileV2: {
-		0: -870473038, // 0xcc1da2b2
+		0: -2027744296, // 0x872313d8
 
 	},
 	Predicate_dfs_uploadEncryptedFileV2: {
@@ -79,7 +79,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 var clazzIdNameRegisters2 = map[int32]string{
 	440942855:   Predicate_dfs_writeFilePartData,        // 0x1a484107
 	605082018:   Predicate_dfs_uploadPhotoFileV2,        // 0x2410d1a2
-	-870473038:  Predicate_dfs_uploadProfilePhotoFileV2, // 0xcc1da2b2
+	-2027744296: Predicate_dfs_uploadProfilePhotoFileV2, // 0x872313d8
 	2043921699:  Predicate_dfs_uploadEncryptedFileV2,    // 0x79d3c523
 	-692064706:  Predicate_dfs_downloadFile,             // 0xd6bfee3e
 	1983081911:  Predicate_dfs_uploadDocumentFileV2,     // 0x76336db7

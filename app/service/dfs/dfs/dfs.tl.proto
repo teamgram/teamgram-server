@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -23,7 +23,7 @@ enum TLConstructor {
     CRC32_UNKNOWN = 0;
     CRC32_dfs_writeFilePartData = 440942855;
     CRC32_dfs_uploadPhotoFileV2 = 605082018;
-    CRC32_dfs_uploadProfilePhotoFileV2 = -870473038;
+    CRC32_dfs_uploadProfilePhotoFileV2 = -2027744296;
     CRC32_dfs_uploadEncryptedFileV2 = 2043921699;
     CRC32_dfs_downloadFile = -692064706;
     CRC32_dfs_uploadDocumentFileV2 = 1983081911;
@@ -64,6 +64,7 @@ message TL_dfs_uploadProfilePhotoFileV2 {
     mtproto.InputFile file = 4;
     mtproto.InputFile video = 5;
     google.protobuf.DoubleValue video_start_ts = 6;
+    mtproto.VideoSize video_emoji_markup = 7;
 }
 
 //--------------------------------------------------------------------------------------------

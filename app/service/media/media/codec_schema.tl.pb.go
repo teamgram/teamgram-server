@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -46,9 +46,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1009453847,
 		}
 	},
-	-1757466844: func() mtproto.TLObject { // 0x973f2f24
+	-1231008572: func() mtproto.TLObject { // 0xb6a04cc4
 		return &TLMediaUploadProfilePhotoFile{
-			Constructor: -1757466844,
+			Constructor: -1231008572,
 		}
 	},
 	1702803563: func() mtproto.TLObject { // 0x657eb86b
@@ -517,8 +517,8 @@ func (m *TLMediaUploadPhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLMediaUploadProfilePhotoFile) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0x973f2f24:
-		x.UInt(0x973f2f24)
+	case 0xb6a04cc4:
+		x.UInt(0xb6a04cc4)
 
 		// set flags
 		var flags uint32 = 0
@@ -531,6 +531,9 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *mtproto.EncodeBuf, layer int32
 		}
 		if m.GetVideoStartTs() != nil {
 			flags |= 1 << 2
+		}
+		if m.GetVideoEmojiMarkup() != nil {
+			flags |= 1 << 4
 		}
 
 		x.UInt(flags)
@@ -549,6 +552,10 @@ func (m *TLMediaUploadProfilePhotoFile) Encode(x *mtproto.EncodeBuf, layer int32
 			x.Double(m.GetVideoStartTs().Value)
 		}
 
+		if m.GetVideoEmojiMarkup() != nil {
+			m.GetVideoEmojiMarkup().Encode(x, layer)
+		}
+
 	default:
 		// log.Errorf("")
 	}
@@ -562,7 +569,7 @@ func (m *TLMediaUploadProfilePhotoFile) CalcByteSize(layer int32) int {
 
 func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0x973f2f24:
+	case 0xb6a04cc4:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -583,6 +590,11 @@ func (m *TLMediaUploadProfilePhotoFile) Decode(dBuf *mtproto.DecodeBuf) error {
 			m.VideoStartTs = &wrapperspb.DoubleValue{Value: dBuf.Double()}
 		}
 
+		if (flags & (1 << 4)) != 0 {
+			m6 := &mtproto.VideoSize{}
+			m6.Decode(dBuf)
+			m.VideoEmojiMarkup = m6
+		}
 		return dBuf.GetError()
 
 	default:
