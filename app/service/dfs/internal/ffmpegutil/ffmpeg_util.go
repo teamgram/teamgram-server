@@ -394,3 +394,68 @@ func (trans *FFmpegUtil) GetHeight() int {
 	}
 	return 0
 }
+
+func (trans *FFmpegUtil) ConvertPngToMp4ByPipe(filePath string, dstW, dstH int) (bytes []byte, duration int32, err error) {
+	// Create new instance of transcoder
+	// trans := new(transcoder.Transcoder)
+
+	// Initialize transcoder passing the input file path and output file path
+	err = trans.InitializeEmptyTranscoder()
+	if err != nil {
+		logx.Errorf("InitializeEmptyTranscoder - error: %v")
+		return
+	}
+
+	// ffmpeg -i safe_image.gif -f mp4 -movflags +faststart -pix_fmt yuv420p -vf scale=320:-1 -c:v libx264 -strict experimental -b:v 218k -bufsize 218k safe_image.gif.mp4
+	trans.MediaFile().SetInputPath(filePath)
+
+	trans.MediaFile().SetOutputFormat("mp4")
+	// trans.MediaFile().SetMovFlags("+faststart")
+	trans.MediaFile().SetPixFmt("yuva420p")
+	// trans.MediaFile().SetVideoFilter(fmt.Sprintf("scale=%d:%d", dstW, dstH))
+	trans.MediaFile().SetVideoCodec("libx264")
+	// trans.MediaFile().SetStrict(-2)
+	// trans.MediaFile().SetVideoBitRate("218k")
+	// trans.MediaFile().SetBufferSize(218)
+	trans.MediaFile().SetFrameRate(30)
+
+	r, err := trans.CreateOutputPipe("mp4")
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer r.Close()
+		defer wg.Done()
+
+		// Read data from output pipe
+		bytes, err = ioutil.ReadAll(r)
+		// Handle error and data...
+		if err != nil {
+			logx.Errorf("readPipe error: %v", err)
+			return
+		}
+	}()
+
+	// Start transcoder process without checking progress
+	done := trans.Run(true)
+
+	// Returns a channel to get the transcoding progress
+	progress := trans.Output()
+	// Example of printing transcoding progress
+	for msg := range progress {
+		duration = int32(math.Round(utils.DurToSec(msg.CurrentTime)))
+		fmt.Println(msg)
+	}
+
+	// This channel is used to wait for the transcoding process to end
+	err = <-done
+	// Handle error...
+	if err != nil {
+		logx.Errorf("transcoding error: %v", err)
+		return
+	}
+
+	wg.Wait()
+
+	return
+}

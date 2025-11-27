@@ -218,6 +218,8 @@ func (t *Transcoder) Run(progress bool) <-chan error {
 
 	if !progress {
 		command = append([]string{"-nostats", "-loglevel", "0"}, command...)
+	} else {
+		command = append([]string{"-loglevel", "error"}, command...)
 	}
 
 	proc := exec.Command(t.configuration.FfmpegBin, command...)
