@@ -26,7 +26,6 @@ import (
 // account.saveMusic#b26732a9 flags:# unsave:flags.0?true id:InputDocument after_id:flags.1?InputDocument = Bool;
 func (c *UserChannelProfilesCore) AccountSaveMusic(in *mtproto.TLAccountSaveMusic) (*mtproto.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("account.saveMusic blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return mtproto.BoolFalse, nil
 }

@@ -26,7 +26,11 @@ import (
 // users.getSavedMusic#788d7fe3 id:InputUser offset:int limit:int hash:long = users.SavedMusic;
 func (c *UserChannelProfilesCore) UsersGetSavedMusic(in *mtproto.TLUsersGetSavedMusic) (*mtproto.Users_SavedMusic, error) {
 	// TODO: not impl
-	c.Logger.Errorf("users.getSavedMusic blocked, License key from https://teamgram.net required to unlock enterprise features.")
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	rV := mtproto.MakeTLUsersSavedMusic(&mtproto.Users_SavedMusic{
+		Count:     0,
+		Documents: []*mtproto.Document{},
+	}).To_Users_SavedMusic()
+
+	return rV, nil
 }
