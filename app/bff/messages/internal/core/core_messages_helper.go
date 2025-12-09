@@ -245,7 +245,22 @@ func (c *MessagesCore) makeMediaByInputMedia(media *mtproto.InputMedia) (message
 				Emoticon: media.Emoticon,
 			}).To_MessageMedia()
 		}
+	case mtproto.Predicate_inputMediaStory:
+		// inputMediaStory#89fdd778 peer:InputPeer id:int = InputMedia;
 
+		messageMedia = mtproto.MakeTLMessageMediaUnsupported(nil).To_MessageMedia()
+	case mtproto.Predicate_inputMediaWebPage:
+		// inputMediaWebPage#c21b8849 flags:# force_large_media:flags.0?true force_small_media:flags.1?true optional:flags.2?true url:string = InputMedia;
+
+		messageMedia = mtproto.MakeTLMessageMediaUnsupported(nil).To_MessageMedia()
+	case mtproto.Predicate_inputMediaPaidMedia:
+		// inputMediaPaidMedia#c4103386 flags:# stars_amount:long extended_media:Vector<InputMedia> payload:flags.0?string = InputMedia;
+
+		messageMedia = mtproto.MakeTLMessageMediaUnsupported(nil).To_MessageMedia()
+	case mtproto.Predicate_inputMediaTodo:
+		// inputMediaTodo#9fc55fde todo:TodoList = InputMedia;
+
+		messageMedia = mtproto.MakeTLMessageMediaUnsupported(nil).To_MessageMedia()
 	default:
 		err = mtproto.ErrMediaInvalid
 	}
