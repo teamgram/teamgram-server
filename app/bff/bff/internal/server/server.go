@@ -37,6 +37,7 @@ import (
 	miscellaneous_helper "github.com/teamgram/teamgram-server/app/bff/miscellaneous"
 	notification_helper "github.com/teamgram/teamgram-server/app/bff/notification"
 	nsfw_helper "github.com/teamgram/teamgram-server/app/bff/nsfw"
+	passkeyhelper "github.com/teamgram/teamgram-server/app/bff/passkey"
 	passport_helper "github.com/teamgram/teamgram-server/app/bff/passport"
 	premium_helper "github.com/teamgram/teamgram-server/app/bff/premium"
 	privacysettingshelper "github.com/teamgram/teamgram-server/app/bff/privacysettings"
@@ -350,6 +351,12 @@ func (s *Server) Initialize() error {
 				MediaClient:   c.MediaClient,
 				UserClient:    c.BizServiceClient,
 				SyncClient:    c.SyncClient,
+			}))
+
+		mtproto.RegisterRPCPasskeyServer(
+			grpcServer,
+			passkeyhelper.New(passkeyhelper.Config{
+				RpcServerConf: c.RpcServerConf,
 			}))
 	})
 
