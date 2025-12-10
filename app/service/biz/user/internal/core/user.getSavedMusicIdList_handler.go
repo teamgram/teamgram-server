@@ -19,22 +19,34 @@
 package core
 
 import (
-	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dal/dataobject"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// AccountGetSavedMusicIds
-// account.getSavedMusicIds#e09d5faf hash:long = account.SavedMusicIds;
-func (c *UserChannelProfilesCore) AccountGetSavedMusicIds(in *mtproto.TLAccountGetSavedMusicIds) (*mtproto.Account_SavedMusicIds, error) {
-	idList, err := c.svcCtx.Dao.UserClient.UserGetSavedMusicIdList(c.ctx, &user.TLUserGetSavedMusicIdList{
-		UserId: c.MD.UserId,
-	})
+// UserGetSavedMusicIdList
+// user.getSavedMusicIdList user_id:long = Vector<long>;
+func (c *UserCore) UserGetSavedMusicIdList(in *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error) {
+	var (
+		rList = &user.Vector_Long{
+			Datas: []int64{},
+		}
+	)
+
+	_, err := c.svcCtx.Dao.UserSavedMusicDAO.SelectListWithCB(
+		c.ctx,
+		in.GetUserId(),
+		func(sz int, i int, v *dataobject.UserSavedMusicDO) {
+			if i == 0 {
+				rList.Datas = make([]int64, 0, sz)
+			}
+
+			rList.Datas = append(rList.Datas, v.SavedMusicId)
+		},
+	)
 	if err != nil {
-		c.Logger.Errorf("account.getSavedMusicIds - error: %v", err)
+		c.Logger.Errorf("user.getSavedMusicIdList - error: %v", err)
 		return nil, err
 	}
 
-	return mtproto.MakeTLAccountSavedMusicIds(&mtproto.Account_SavedMusicIds{
-		Ids: idList.GetDatas(),
-	}).To_Account_SavedMusicIds(), nil
+	return rList, nil
 }

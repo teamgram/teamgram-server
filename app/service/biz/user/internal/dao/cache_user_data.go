@@ -173,6 +173,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		Birthday:           userDO.Birthday,
 		PersonalChannelId:  userDO.PersonalChannelId,
 		PremiumExpireDate:  mtproto.MakeFlagsInt64(userDO.PremiumExpireDate),
+		SavedMusic:         nil,
 	}).To_UserData()
 
 	return userData
@@ -227,6 +228,11 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 			if do.PhotoId != 0 {
 				userData.ProfilePhoto, _ = d.MediaClient.MediaGetPhoto(ctx, &media.TLMediaGetPhoto{
 					PhotoId: do.PhotoId,
+				})
+			}
+			if do.SavedMusicId != 0 {
+				userData.SavedMusic, _ = d.MediaGetDocument(ctx, &media.TLMediaGetDocument{
+					Id: do.SavedMusicId,
 				})
 			}
 		},

@@ -451,6 +451,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -738419547,
 		}
 	},
+	228754249: func() mtproto.TLObject { // 0xda28349
+		return &TLUserSaveMusic{
+			Constructor: 228754249,
+		}
+	},
+	1531626079: func() mtproto.TLObject { // 0x5b4ac25f
+		return &TLUserGetSavedMusicIdList{
+			Constructor: 1531626079,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4761,6 +4771,108 @@ func (m *TLUserGetBotInfoV2) Decode(dBuf *mtproto.DecodeBuf) error {
 		// not has flags
 
 		m.BotId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserSaveMusic
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSaveMusic) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0xda28349:
+		x.UInt(0xda28349)
+
+		// set flags
+		var flags uint32 = 0
+
+		if m.GetUnsave() == true {
+			flags |= 1 << 0
+		}
+
+		if m.GetAfterId() != nil {
+			flags |= 1 << 15
+		}
+
+		x.UInt(flags)
+
+		// flags Debug by @benqi
+		x.Long(m.GetUserId())
+		x.Long(m.GetId())
+		if m.GetAfterId() != nil {
+			x.Long(m.GetAfterId().Value)
+		}
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSaveMusic) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSaveMusic) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0xda28349:
+
+		flags := dBuf.UInt()
+		_ = flags
+
+		// flags Debug by @benqi
+		if (flags & (1 << 0)) != 0 {
+			m.Unsave = true
+		}
+		m.UserId = dBuf.Long()
+		m.Id = dBuf.Long()
+		if (flags & (1 << 15)) != 0 {
+			m.AfterId = &wrapperspb.Int64Value{Value: dBuf.Long()}
+		}
+
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserGetSavedMusicIdList
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetSavedMusicIdList) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x5b4ac25f:
+		x.UInt(0x5b4ac25f)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserGetSavedMusicIdList) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetSavedMusicIdList) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x5b4ac25f:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

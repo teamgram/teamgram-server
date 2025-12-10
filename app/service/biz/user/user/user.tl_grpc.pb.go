@@ -107,6 +107,8 @@ const (
 	RPCUser_UserGetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_getAuthorizationTTL"
 	RPCUser_UserUpdatePremium_FullMethodName                = "/user.RPCUser/user_updatePremium"
 	RPCUser_UserGetBotInfoV2_FullMethodName                 = "/user.RPCUser/user_getBotInfoV2"
+	RPCUser_UserSaveMusic_FullMethodName                    = "/user.RPCUser/user_saveMusic"
+	RPCUser_UserGetSavedMusicIdList_FullMethodName          = "/user.RPCUser/user_getSavedMusicIdList"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -191,6 +193,8 @@ type RPCUserClient interface {
 	UserGetAuthorizationTTL(ctx context.Context, in *TLUserGetAuthorizationTTL, opts ...grpc.CallOption) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(ctx context.Context, in *TLUserUpdatePremium, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotInfoV2, opts ...grpc.CallOption) (*BotInfoData, error)
+	UserSaveMusic(ctx context.Context, in *TLUserSaveMusic, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserGetSavedMusicIdList(ctx context.Context, in *TLUserGetSavedMusicIdList, opts ...grpc.CallOption) (*Vector_Long, error)
 }
 
 type rPCUserClient struct {
@@ -981,6 +985,26 @@ func (c *rPCUserClient) UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotIn
 	return out, nil
 }
 
+func (c *rPCUserClient) UserSaveMusic(ctx context.Context, in *TLUserSaveMusic, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserSaveMusic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserGetSavedMusicIdList(ctx context.Context, in *TLUserGetSavedMusicIdList, opts ...grpc.CallOption) (*Vector_Long, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Vector_Long)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetSavedMusicIdList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility.
@@ -1063,6 +1087,8 @@ type RPCUserServer interface {
 	UserGetAuthorizationTTL(context.Context, *TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(context.Context, *TLUserUpdatePremium) (*mtproto.Bool, error)
 	UserGetBotInfoV2(context.Context, *TLUserGetBotInfoV2) (*BotInfoData, error)
+	UserSaveMusic(context.Context, *TLUserSaveMusic) (*mtproto.Bool, error)
+	UserGetSavedMusicIdList(context.Context, *TLUserGetSavedMusicIdList) (*Vector_Long, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have
@@ -1305,6 +1331,12 @@ func (UnimplementedRPCUserServer) UserUpdatePremium(context.Context, *TLUserUpda
 }
 func (UnimplementedRPCUserServer) UserGetBotInfoV2(context.Context, *TLUserGetBotInfoV2) (*BotInfoData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetBotInfoV2 not implemented")
+}
+func (UnimplementedRPCUserServer) UserSaveMusic(context.Context, *TLUserSaveMusic) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSaveMusic not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetSavedMusicIdList(context.Context, *TLUserGetSavedMusicIdList) (*Vector_Long, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetSavedMusicIdList not implemented")
 }
 func (UnimplementedRPCUserServer) testEmbeddedByValue() {}
 
@@ -2730,6 +2762,42 @@ func _RPCUser_UserGetBotInfoV2_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserSaveMusic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSaveMusic)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSaveMusic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSaveMusic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSaveMusic(ctx, req.(*TLUserSaveMusic))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserGetSavedMusicIdList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetSavedMusicIdList)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetSavedMusicIdList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetSavedMusicIdList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetSavedMusicIdList(ctx, req.(*TLUserGetSavedMusicIdList))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3048,6 +3116,14 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getBotInfoV2",
 			Handler:    _RPCUser_UserGetBotInfoV2_Handler,
+		},
+		{
+			MethodName: "user_saveMusic",
+			Handler:    _RPCUser_UserSaveMusic_Handler,
+		},
+		{
+			MethodName: "user_getSavedMusicIdList",
+			Handler:    _RPCUser_UserGetSavedMusicIdList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -20,17 +20,27 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/media/media"
 )
 
 // UsersGetSavedMusicByID
 // users.getSavedMusicByID#7573a4e9 id:InputUser documents:Vector<InputDocument> = users.SavedMusic;
 func (c *UserChannelProfilesCore) UsersGetSavedMusicByID(in *mtproto.TLUsersGetSavedMusicByID) (*mtproto.Users_SavedMusic, error) {
-	// TODO: not impl
+	idList := make([]int64, 0, len(in.GetDocuments()))
+	for _, d := range in.GetDocuments() {
+		idList = append(idList, d.GetId())
+	}
 
-	rV := mtproto.MakeTLUsersSavedMusic(&mtproto.Users_SavedMusic{
-		Count:     0,
-		Documents: []*mtproto.Document{},
-	}).To_Users_SavedMusic()
+	dList, err := c.svcCtx.Dao.MediaClient.MediaGetDocumentList(c.ctx, &media.TLMediaGetDocumentList{
+		IdList: idList,
+	})
+	if err != nil {
+		c.Logger.Errorf("users.getSavedMusic - error: %v", err)
+		return nil, err
+	}
 
-	return rV, nil
+	return mtproto.MakeTLUsersSavedMusic(&mtproto.Users_SavedMusic{
+		Count:     int32(len(dList.GetDatas())),
+		Documents: dList.GetDatas(),
+	}).To_Users_SavedMusic(), nil
 }

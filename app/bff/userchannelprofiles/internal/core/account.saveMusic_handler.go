@@ -20,12 +20,22 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // AccountSaveMusic
 // account.saveMusic#b26732a9 flags:# unsave:flags.0?true id:InputDocument after_id:flags.1?InputDocument = Bool;
 func (c *UserChannelProfilesCore) AccountSaveMusic(in *mtproto.TLAccountSaveMusic) (*mtproto.Bool, error) {
-	// TODO: not impl
+	_, err := c.svcCtx.Dao.UserClient.UserSaveMusic(c.ctx, &userpb.TLUserSaveMusic{
+		Unsave:  in.GetUnsave(),
+		UserId:  c.MD.UserId,
+		Id:      in.GetId().GetId(),
+		AfterId: mtproto.MakeFlagsInt64(in.GetAfterId().GetId()),
+	})
+	if err != nil {
+		c.Logger.Errorf("account.saveMusic - error: %v", err)
+		return mtproto.BoolFalse, nil
+	}
 
-	return mtproto.BoolFalse, nil
+	return mtproto.BoolTrue, nil
 }

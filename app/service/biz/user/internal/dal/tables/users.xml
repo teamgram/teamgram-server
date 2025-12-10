@@ -21,7 +21,7 @@
     <operation name="SelectByPhoneNumber">
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -32,7 +32,7 @@
     <operation name="SelectById">
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -47,7 +47,7 @@
         <sql>
             <![CDATA[
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -62,7 +62,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -76,7 +76,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -313,7 +313,7 @@
         </params>
         <sql>
             SELECT
-                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, saved_music_id, deleted, delete_reason
             FROM
                 users
             WHERE
@@ -375,6 +375,17 @@
                 authorization_ttl_days
             FROM
                 users
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateSavedMusicId">
+        <sql>
+            UPDATE
+                users
+            SET
+                saved_music_id = :saved_music_id
             WHERE
                 id=:id
         </sql>

@@ -949,7 +949,7 @@ func (s *Service) UserSearch(ctx context.Context, request *user.TLUserSearch) (*
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string bot_has_main_app:flags.13?Bool = Bool;
 func (s *Service) UserUpdateBotData(ctx context.Context, request *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("user.updateBotData - metadata: {%s}, request: {%s}", c.MD, request)
@@ -1185,5 +1185,35 @@ func (s *Service) UserGetBotInfoV2(ctx context.Context, request *user.TLUserGetB
 	}
 
 	c.Logger.Debugf("user.getBotInfoV2 - reply: {%s}", r)
+	return r, err
+}
+
+// UserSaveMusic
+// user.saveMusic flags:# unsave:flags.0?true user_id:long id:long after_id:flags.15?long = Bool;
+func (s *Service) UserSaveMusic(ctx context.Context, request *user.TLUserSaveMusic) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.saveMusic - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserSaveMusic(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.saveMusic - reply: {%s}", r)
+	return r, err
+}
+
+// UserGetSavedMusicIdList
+// user.getSavedMusicIdList user_id:long = Vector<long>;
+func (s *Service) UserGetSavedMusicIdList(ctx context.Context, request *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getSavedMusicIdList - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserGetSavedMusicIdList(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getSavedMusicIdList - reply: {%s}", r)
 	return r, err
 }

@@ -101,6 +101,8 @@ type UserClient interface {
 	UserGetAuthorizationTTL(ctx context.Context, in *user.TLUserGetAuthorizationTTL) (*mtproto.AccountDaysTTL, error)
 	UserUpdatePremium(ctx context.Context, in *user.TLUserUpdatePremium) (*mtproto.Bool, error)
 	UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error)
+	UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*mtproto.Bool, error)
+	UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error)
 }
 
 type defaultUserClient struct {
@@ -796,7 +798,7 @@ func (m *defaultUserClient) UserSearch(ctx context.Context, in *user.TLUserSearc
 }
 
 // UserUpdateBotData
-// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string = Bool;
+// user.updateBotData flags:# bot_id:long bot_chat_history:flags.15?Bool bot_nochats:flags.16?Bool bot_inline_geo:flags.21?Bool bot_attach_menu:flags.27?Bool bot_inline_placeholder:flags.19?string bot_has_main_app:flags.13?Bool = Bool;
 func (m *defaultUserClient) UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*mtproto.Bool, error) {
 	md := metadata.RpcMetadataFromIncoming(ctx)
 	if md != nil {
@@ -969,4 +971,26 @@ func (m *defaultUserClient) UserGetBotInfoV2(ctx context.Context, in *user.TLUse
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetBotInfoV2(ctx, in)
+}
+
+// UserSaveMusic
+// user.saveMusic flags:# unsave:flags.0?true user_id:long id:long after_id:flags.15?long = Bool;
+func (m *defaultUserClient) UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserSaveMusic(ctx, in)
+}
+
+// UserGetSavedMusicIdList
+// user.getSavedMusicIdList user_id:long = Vector<long>;
+func (m *defaultUserClient) UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetSavedMusicIdList(ctx, in)
 }

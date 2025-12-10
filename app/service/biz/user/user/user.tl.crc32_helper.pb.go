@@ -96,4 +96,6 @@ const (
 	CRC32_user_getAuthorizationTTL          TLConstructor = -563197636  // 0xde6e493c
 	CRC32_user_updatePremium                TLConstructor = -1173824359 // 0xba08dc99
 	CRC32_user_getBotInfoV2                 TLConstructor = -738419547  // 0xd3fc9ca5
+	CRC32_user_saveMusic                    TLConstructor = 228754249   // 0xda28349
+	CRC32_user_getSavedMusicIdList          TLConstructor = 1531626079  // 0x5b4ac25f
 )
