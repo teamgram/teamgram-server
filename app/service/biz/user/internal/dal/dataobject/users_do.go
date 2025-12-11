@@ -45,6 +45,7 @@ type UsersDO struct {
 	PersonalChannelId                int64  `db:"personal_channel_id" json:"personal_channel_id"`
 	AuthorizationTtlDays             int32  `db:"authorization_ttl_days" json:"authorization_ttl_days"`
 	SavedMusicId                     int64  `db:"saved_music_id" json:"saved_music_id"`
+	MainTab                          int32  `db:"main_tab" json:"main_tab"`
 	Deleted                          bool   `db:"deleted" json:"deleted"`
 	DeleteReason                     string `db:"delete_reason" json:"delete_reason"`
 }

@@ -1217,3 +1217,18 @@ func (s *Service) UserGetSavedMusicIdList(ctx context.Context, request *user.TLU
 	c.Logger.Debugf("user.getSavedMusicIdList - reply: {%s}", r)
 	return r, err
 }
+
+// UserSetMainProfileTab
+// user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
+func (s *Service) UserSetMainProfileTab(ctx context.Context, request *user.TLUserSetMainProfileTab) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setMainProfileTab - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserSetMainProfileTab(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setMainProfileTab - reply: {%s}", r)
+	return r, err
+}

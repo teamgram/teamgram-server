@@ -103,6 +103,7 @@ type UserClient interface {
 	UserGetBotInfoV2(ctx context.Context, in *user.TLUserGetBotInfoV2) (*user.BotInfoData, error)
 	UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error)
+	UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*mtproto.Bool, error)
 }
 
 type defaultUserClient struct {
@@ -993,4 +994,15 @@ func (m *defaultUserClient) UserGetSavedMusicIdList(ctx context.Context, in *use
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetSavedMusicIdList(ctx, in)
+}
+
+// UserSetMainProfileTab
+// user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
+func (m *defaultUserClient) UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserSetMainProfileTab(ctx, in)
 }

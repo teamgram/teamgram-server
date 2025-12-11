@@ -97,6 +97,7 @@ const (
 	Predicate_user_getBotInfoV2                 = "user_getBotInfoV2"
 	Predicate_user_saveMusic                    = "user_saveMusic"
 	Predicate_user_getSavedMusicIdList          = "user_getSavedMusicIdList"
+	Predicate_user_setMainProfileTab            = "user_setMainProfileTab"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -444,6 +445,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: 1531626079, // 0x5b4ac25f
 
 	},
+	Predicate_user_setMainProfileTab: {
+		0: -1656182628, // 0x9d48a89c
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -533,6 +538,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-738419547:  Predicate_user_getBotInfoV2,                 // 0xd3fc9ca5
 	228754249:   Predicate_user_saveMusic,                    // 0xda28349
 	1531626079:  Predicate_user_getSavedMusicIdList,          // 0x5b4ac25f
+	-1656182628: Predicate_user_setMainProfileTab,            // 0x9d48a89c
 
 }
 

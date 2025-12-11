@@ -461,6 +461,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1531626079,
 		}
 	},
+	-1656182628: func() mtproto.TLObject { // 0x9d48a89c
+		return &TLUserSetMainProfileTab{
+			Constructor: -1656182628,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4873,6 +4878,50 @@ func (m *TLUserGetSavedMusicIdList) Decode(dBuf *mtproto.DecodeBuf) error {
 		// not has flags
 
 		m.UserId = dBuf.Long()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserSetMainProfileTab
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSetMainProfileTab) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x9d48a89c:
+		x.UInt(0x9d48a89c)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		m.GetTab().Encode(x, layer)
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSetMainProfileTab) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSetMainProfileTab) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x9d48a89c:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+
+		m2 := &mtproto.ProfileTab{}
+		m2.Decode(dBuf)
+		m.Tab = m2
+
 		return dBuf.GetError()
 
 	default:

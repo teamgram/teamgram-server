@@ -109,6 +109,7 @@ const (
 	RPCUser_UserGetBotInfoV2_FullMethodName                 = "/user.RPCUser/user_getBotInfoV2"
 	RPCUser_UserSaveMusic_FullMethodName                    = "/user.RPCUser/user_saveMusic"
 	RPCUser_UserGetSavedMusicIdList_FullMethodName          = "/user.RPCUser/user_getSavedMusicIdList"
+	RPCUser_UserSetMainProfileTab_FullMethodName            = "/user.RPCUser/user_setMainProfileTab"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -195,6 +196,7 @@ type RPCUserClient interface {
 	UserGetBotInfoV2(ctx context.Context, in *TLUserGetBotInfoV2, opts ...grpc.CallOption) (*BotInfoData, error)
 	UserSaveMusic(ctx context.Context, in *TLUserSaveMusic, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(ctx context.Context, in *TLUserGetSavedMusicIdList, opts ...grpc.CallOption) (*Vector_Long, error)
+	UserSetMainProfileTab(ctx context.Context, in *TLUserSetMainProfileTab, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCUserClient struct {
@@ -1005,6 +1007,16 @@ func (c *rPCUserClient) UserGetSavedMusicIdList(ctx context.Context, in *TLUserG
 	return out, nil
 }
 
+func (c *rPCUserClient) UserSetMainProfileTab(ctx context.Context, in *TLUserSetMainProfileTab, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserSetMainProfileTab_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility.
@@ -1089,6 +1101,7 @@ type RPCUserServer interface {
 	UserGetBotInfoV2(context.Context, *TLUserGetBotInfoV2) (*BotInfoData, error)
 	UserSaveMusic(context.Context, *TLUserSaveMusic) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(context.Context, *TLUserGetSavedMusicIdList) (*Vector_Long, error)
+	UserSetMainProfileTab(context.Context, *TLUserSetMainProfileTab) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have
@@ -1337,6 +1350,9 @@ func (UnimplementedRPCUserServer) UserSaveMusic(context.Context, *TLUserSaveMusi
 }
 func (UnimplementedRPCUserServer) UserGetSavedMusicIdList(context.Context, *TLUserGetSavedMusicIdList) (*Vector_Long, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetSavedMusicIdList not implemented")
+}
+func (UnimplementedRPCUserServer) UserSetMainProfileTab(context.Context, *TLUserSetMainProfileTab) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSetMainProfileTab not implemented")
 }
 func (UnimplementedRPCUserServer) testEmbeddedByValue() {}
 
@@ -2798,6 +2814,24 @@ func _RPCUser_UserGetSavedMusicIdList_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserSetMainProfileTab_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSetMainProfileTab)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSetMainProfileTab(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSetMainProfileTab_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSetMainProfileTab(ctx, req.(*TLUserSetMainProfileTab))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3124,6 +3158,10 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getSavedMusicIdList",
 			Handler:    _RPCUser_UserGetSavedMusicIdList_Handler,
+		},
+		{
+			MethodName: "user_setMainProfileTab",
+			Handler:    _RPCUser_UserSetMainProfileTab_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

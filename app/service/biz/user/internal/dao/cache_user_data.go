@@ -174,6 +174,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		PersonalChannelId:  userDO.PersonalChannelId,
 		PremiumExpireDate:  mtproto.MakeFlagsInt64(userDO.PremiumExpireDate),
 		SavedMusic:         nil,
+		MainTab:            mtproto.ToProfileTabByType(userDO.MainTab),
 	}).To_UserData()
 
 	return userData

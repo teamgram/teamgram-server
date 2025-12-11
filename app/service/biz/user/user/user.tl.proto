@@ -107,6 +107,7 @@ enum TLConstructor {
     CRC32_user_getBotInfoV2 = -738419547;
     CRC32_user_saveMusic = 228754249;
     CRC32_user_getSavedMusicIdList = 1531626079;
+    CRC32_user_setMainProfileTab = -1656182628;
 }
 
 
@@ -779,6 +780,13 @@ message TL_user_getSavedMusicIdList {
     int64 user_id = 3;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_setMainProfileTab {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    mtproto.ProfileTab tab = 4;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -898,5 +906,6 @@ service RPCUser {
  rpc user_getBotInfoV2(TL_user_getBotInfoV2) returns (BotInfoData) {}
  rpc user_saveMusic(TL_user_saveMusic) returns (mtproto.Bool) {}
  rpc user_getSavedMusicIdList(TL_user_getSavedMusicIdList) returns (Vector_Long) {}
+ rpc user_setMainProfileTab(TL_user_setMainProfileTab) returns (mtproto.Bool) {}
 }
 

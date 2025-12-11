@@ -19,20 +19,29 @@
 package core
 
 import (
+	"context"
+	
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/dao"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// AccountSetMainProfileTab
-// account.setMainProfileTab#5dee78b0 tab:ProfileTab = Bool;
-func (c *UserChannelProfilesCore) AccountSetMainProfileTab(in *mtproto.TLAccountSetMainProfileTab) (*mtproto.Bool, error) {
-	_, err := c.svcCtx.Dao.UserClient.UserSetMainProfileTab(c.ctx, &user.TLUserSetMainProfileTab{
-		UserId: c.MD.UserId,
-		Tab:    in.GetTab(),
-	})
+// UserSetMainProfileTab
+// user.setMainProfileTab user_id:long tab:ProfileTab = Bool;
+func (c *UserCore) UserSetMainProfileTab(in *user.TLUserSetMainProfileTab) (*mtproto.Bool, error) {
+	_, _, err := c.svcCtx.Dao.CachedConn.Exec(
+		c.ctx,
+		func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
+			_, err := c.svcCtx.Dao.UsersDAO.UpdateMainTab(c.ctx, mtproto.FromProfileTabToType(in.GetTab()), in.GetUserId())
+			if err != nil {
+				c.Logger.Errorf("user.setMainProfileTab - error: %v", err)
+			}
+			return 0, 0, err
+		},
+		dao.GenCacheUserDataCacheKey(in.UserId))
 	if err != nil {
-		c.Logger.Errorf("account.setMainProfileTab - error: %v", err)
-		return nil, err
+		c.Logger.Errorf("user.setMainProfileTab - error: %v", err)
 	}
 
 	return mtproto.BoolTrue, nil

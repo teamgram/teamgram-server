@@ -122,7 +122,7 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		DisallowedGifts:          nil,
 		StarsMyPendingRating:     nil,
 		StarsMyPendingRatingDate: nil,
-		MainTab:                  nil,
+		MainTab:                  user.GetUser().GetMainTab(),
 		SavedMusic:               user.GetUser().GetSavedMusic(),
 		Note:                     nil,
 	}).To_UserFull()
