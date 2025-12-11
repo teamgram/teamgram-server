@@ -95,13 +95,31 @@ func (c *MessagesCore) MessagesSearch(in *mtproto.TLMessagesSearch) (*mtproto.Me
 	filterType := mtproto.FromMessagesFilter(in.Filter)
 	switch filterType {
 	case mtproto.FilterPhotos:
-		// TODO
-		// c.Logger.Errorf("messages.search - invalid filter: %s", in)
-		return rValues, nil
+		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
+			UserId:    c.MD.UserId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			MediaType: mtproto.MEDIA_PHOTOS_ONLY,
+			Offset:    offsetId,
+			Limit:     limit,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.search - error: %v", err)
+			return rValues, nil
+		}
 	case mtproto.FilterVideo:
-		// TODO
-		// c.Logger.Errorf("messages.search - invalid filter: %s", in)
-		return rValues, nil
+		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
+			UserId:    c.MD.UserId,
+			PeerType:  peer.PeerType,
+			PeerId:    peer.PeerId,
+			MediaType: mtproto.MEDIA_VIDEOS_ONLY,
+			Offset:    offsetId,
+			Limit:     limit,
+		})
+		if err != nil {
+			c.Logger.Errorf("messages.search - error: %v", err)
+			return rValues, nil
+		}
 	case mtproto.FilterPhotoVideo:
 		boxList, err = c.svcCtx.Dao.MessageClient.MessageSearchByMediaType(c.ctx, &message.TLMessageSearchByMediaType{
 			UserId:    c.MD.UserId,

@@ -22,15 +22,48 @@ func (c *MessageCore) MessageSearchByMediaType(in *message.TLMessageSearchByMedi
 		boxList []*mtproto.MessageBox
 	)
 
-	if in.MediaType == mtproto.MEDIA_PHONE_CALL {
+	switch in.GetMediaType() {
+	case mtproto.MEDIA_PHONE_CALL:
 		boxList = c.searchByPhoneCall(in.UserId, in.Offset, in.Limit)
-	} else {
+	case mtproto.MEDIA_PHOTOVIDEO:
+		boxList = c.searchByPhotoVideoMediaType(in.UserId, in.PeerType, in.PeerId, in.MediaType, in.Offset, in.Limit)
+	default:
 		boxList = c.searchByMediaType(in.UserId, in.PeerType, in.PeerId, in.MediaType, in.Offset, in.Limit)
 	}
 
 	return mtproto.MakeTLMessageBoxList(&mtproto.MessageBoxList{
 		BoxList: boxList,
 	}).To_MessageBoxList(), nil
+}
+
+func (c *MessageCore) searchByPhotoVideoMediaType(
+	userId int64,
+	peerType int32,
+	peerId int64,
+	mediaType int32,
+	offset, limit int32) (boxList []*mtproto.MessageBox) {
+
+	var (
+		dialogId = mtproto.MakeDialogId(userId, peerType, peerId)
+	)
+
+	_, _ = c.svcCtx.Dao.MessagesDAO.SelectByPhotoVideoMediaTypeWithCB(
+		c.ctx,
+		userId,
+		dialogId.A,
+		dialogId.B,
+		mediaType,
+		offset,
+		limit,
+		func(sz, i int, v *dataobject.MessagesDO) {
+			boxList = append(boxList, c.svcCtx.Dao.MakeMessageBox(c.ctx, userId, v))
+		})
+
+	if boxList == nil {
+		boxList = []*mtproto.MessageBox{}
+	}
+
+	return
 }
 
 func (c *MessageCore) searchByMediaType(
@@ -43,7 +76,8 @@ func (c *MessageCore) searchByMediaType(
 	var (
 		dialogId = mtproto.MakeDialogId(userId, peerType, peerId)
 	)
-	c.svcCtx.Dao.MessagesDAO.SelectByMediaTypeWithCB(
+
+	_, _ = c.svcCtx.Dao.MessagesDAO.SelectByMediaTypeWithCB(
 		c.ctx,
 		userId,
 		dialogId.A,
@@ -63,7 +97,7 @@ func (c *MessageCore) searchByMediaType(
 }
 
 func (c *MessageCore) searchByPhoneCall(userId int64, offset, limit int32) (boxList []*mtproto.MessageBox) {
-	c.svcCtx.Dao.MessagesDAO.SelectPhoneCallListWithCB(
+	_, _ = c.svcCtx.Dao.MessagesDAO.SelectPhoneCallListWithCB(
 		c.ctx,
 		userId,
 		mtproto.MEDIA_PHONE_CALL,
