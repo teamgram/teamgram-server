@@ -20,18 +20,22 @@ package core
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
-func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, ttlPeriod int32) (*mtproto.Updates, error) {
+func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, ttlPeriod *wrapperspb.Int32Value) (*mtproto.Messages_InvitedUsers, error) {
 	var (
-		chatUserIdList []int64
-		userAddList    = make([]int64, 0)
-		botAddList     = make([]int64, 0)
+		chatUserIdList  []int64
+		userAddList     = make([]int64, 0)
+		botAddList      = make([]int64, 0)
+		missingInvitees = make([]*mtproto.MissingInvitee, 0)
 	)
 
 	// check chat title
@@ -94,7 +98,13 @@ func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, tt
 					UserId:  addUser.Id(),
 					KeyType: mtproto.CHAT_INVITE,
 				})
-				if len(rules.Datas) > 0 {
+				if len(rules.Datas) == 0 {
+					missingInvitees = append(missingInvitees, mtproto.MakeTLMissingInvitee(&mtproto.MissingInvitee{
+						PremiumWouldAllowInvite: false,
+						PremiumRequiredForPm:    false,
+						UserId:                  u.UserId,
+					}).To_MissingInvitee())
+				} else {
 					allowAddChat := mtproto.CheckPrivacyIsAllow(
 						addUser.Id(),
 						rules.Datas,
@@ -131,32 +141,88 @@ func (c *ChatsCore) createChat(iUsers []*mtproto.InputUser, chatTitle string, tt
 		UserIdList: userAddList,
 		Title:      chatTitle,
 		Bots:       botAddList,
+		TtlPeriod:  ttlPeriod,
 	})
 	if err != nil {
 		c.Logger.Errorf("createChat duplicate: %v", err)
 		return nil, err
 	}
 
+	outMessages := []*msgpb.OutboxMessage{
+		msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+			NoWebpage:  true,
+			Background: false,
+			RandomId:   rand.Int63(),
+			Message: mtproto.MakeTLMessageService(&mtproto.Message{
+				Out:                  true,
+				Mentioned:            false,
+				MediaUnread:          false,
+				ReactionsArePossible: false,
+				Silent:               false,
+				Post:                 false,
+				Legacy:               false,
+				Id:                   0,
+				FromId:               mtproto.MakePeerUser(c.MD.UserId),
+				PeerId:               mtproto.MakePeerChat(chat.Id()),
+				SavedPeerId:          nil,
+				ReplyTo:              nil,
+				Date:                 int32(time.Now().Unix()),
+				Action: mtproto.MakeTLMessageActionChatCreate(&mtproto.MessageAction{
+					Title:            chatTitle,
+					Title_FLAGSTRING: mtproto.MakeFlagsString(chatTitle),
+					Title_STRING:     chatTitle,
+					Users:            append(userAddList, botAddList...),
+				}).To_MessageAction(),
+				Reactions: nil,
+				TtlPeriod: ttlPeriod,
+			}).To_Message(),
+			ScheduleDate: nil,
+		}).To_OutboxMessage(),
+	}
+	if ttlPeriod != nil {
+		outMessages = append(outMessages, msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
+			NoWebpage:  true,
+			Background: false,
+			RandomId:   rand.Int63(),
+			Message: mtproto.MakeTLMessageService(&mtproto.Message{
+				Out:                  true,
+				Mentioned:            false,
+				MediaUnread:          false,
+				ReactionsArePossible: true,
+				Silent:               false,
+				Post:                 false,
+				Legacy:               false,
+				Id:                   0,
+				FromId:               mtproto.MakePeerUser(c.MD.UserId),
+				PeerId:               mtproto.MakePeerChat(chat.Id()),
+				SavedPeerId:          nil,
+				ReplyTo:              nil,
+				Date:                 int32(time.Now().Unix()),
+				Action: mtproto.MakeTLMessageActionSetMessagesTTL(&mtproto.MessageAction{
+					Period:          ttlPeriod.Value,
+					AutoSettingFrom: mtproto.MakeFlagsInt64(c.MD.UserId),
+				}).To_MessageAction(),
+				Reactions: nil,
+				TtlPeriod: nil,
+			}).To_Message(),
+			ScheduleDate: nil,
+		}).To_OutboxMessage())
+	}
 	// TODO: add attach_data (chat and chat_participants)
 	rValue, err := c.svcCtx.Dao.MsgClient.MsgSendMessageV2(c.ctx, &msgpb.TLMsgSendMessageV2{
 		UserId:    c.MD.UserId,
 		AuthKeyId: c.MD.PermAuthKeyId,
 		PeerType:  mtproto.PEER_CHAT,
 		PeerId:    chat.Chat.Id,
-		Message: []*msgpb.OutboxMessage{
-			msgpb.MakeTLOutboxMessage(&msgpb.OutboxMessage{
-				NoWebpage:    true,
-				Background:   false,
-				RandomId:     rand.Int63(),
-				Message:      chat.MakeMessageService(c.MD.UserId, mtproto.MakeMessageActionChatCreate(chatTitle, append(userAddList, botAddList...))),
-				ScheduleDate: nil,
-			}).To_OutboxMessage(),
-		},
+		Message:   outMessages,
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.createChat - error: %v", err)
 		return nil, err
 	}
 
-	return rValue, nil
+	return mtproto.MakeTLMessagesInvitedUsers(&mtproto.Messages_InvitedUsers{
+		Updates:         rValue,
+		MissingInvitees: missingInvitees,
+	}).To_Messages_InvitedUsers(), nil
 }

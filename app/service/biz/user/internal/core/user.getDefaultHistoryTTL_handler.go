@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2025 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,20 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesGetDefaultHistoryTTL
-// messages.getDefaultHistoryTTL#658b7188 = DefaultHistoryTTL;
-func (c *MessagesCore) MessagesGetDefaultHistoryTTL(in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getDefaultHistoryTTL blocked, License key from https://teamgram.net required to unlock enterprise features.")
+// UserGetDefaultHistoryTTL
+// user.getDefaultHistoryTTL user_id:long = DefaultHistoryTTL;
+func (c *UserCore) UserGetDefaultHistoryTTL(in *user.TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	rV := mtproto.MakeTLDefaultHistoryTTL(&mtproto.DefaultHistoryTTL{
+		Period: 0,
+	}).To_DefaultHistoryTTL()
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	do, _ := c.svcCtx.Dao.DefaultHistoryTtlDAO.Select(c.ctx, in.GetUserId())
+	if do != nil {
+		rV.Period = do.Period
+	}
+
+	return rV, nil
 }

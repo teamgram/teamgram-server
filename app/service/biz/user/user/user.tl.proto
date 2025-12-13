@@ -108,6 +108,8 @@ enum TLConstructor {
     CRC32_user_saveMusic = 228754249;
     CRC32_user_getSavedMusicIdList = 1531626079;
     CRC32_user_setMainProfileTab = -1656182628;
+    CRC32_user_setDefaultHistoryTTL = -1895214721;
+    CRC32_user_getDefaultHistoryTTL = 1296838624;
 }
 
 
@@ -787,6 +789,19 @@ message TL_user_setMainProfileTab {
     mtproto.ProfileTab tab = 4;
 }
 
+//--------------------------------------------------------------------------------------------
+message TL_user_setDefaultHistoryTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+    int32 ttl = 4;
+}
+
+//--------------------------------------------------------------------------------------------
+message TL_user_getDefaultHistoryTTL {
+    TLConstructor  constructor = 1;
+    int64 user_id = 3;
+}
+
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
@@ -907,5 +922,7 @@ service RPCUser {
  rpc user_saveMusic(TL_user_saveMusic) returns (mtproto.Bool) {}
  rpc user_getSavedMusicIdList(TL_user_getSavedMusicIdList) returns (Vector_Long) {}
  rpc user_setMainProfileTab(TL_user_setMainProfileTab) returns (mtproto.Bool) {}
+ rpc user_setDefaultHistoryTTL(TL_user_setDefaultHistoryTTL) returns (mtproto.Bool) {}
+ rpc user_getDefaultHistoryTTL(TL_user_getDefaultHistoryTTL) returns (mtproto.DefaultHistoryTTL) {}
 }
 

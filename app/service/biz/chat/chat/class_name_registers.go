@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -91,7 +91,7 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 
 	},
 	Predicate_chat_createChat2: {
-		0: -143374126, // 0xf77448d2
+		0: -317215499, // 0xed17acf5
 
 	},
 	Predicate_chat_deleteChat: {
@@ -226,7 +226,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	741090770:   Predicate_chat_getMutableChat,                   // 0x2c2c25d2
 	-415173319:  Predicate_chat_getChatListByIdList,              // 0xe740f539
 	1236736584:  Predicate_chat_getChatBySelfId,                  // 0x49b71a48
-	-143374126:  Predicate_chat_createChat2,                      // 0xf77448d2
+	-317215499:  Predicate_chat_createChat2,                      // 0xed17acf5
 	1829891102:  Predicate_chat_deleteChat,                       // 0x6d11ec1e
 	187109333:   Predicate_chat_deleteChatUser,                   // 0xb270fd5
 	-1782210905: Predicate_chat_editChatTitle,                    // 0x95c59ea7

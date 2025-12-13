@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -30,7 +30,7 @@ enum TLConstructor {
     CRC32_chat_getMutableChat = 741090770;
     CRC32_chat_getChatListByIdList = -415173319;
     CRC32_chat_getChatBySelfId = 1236736584;
-    CRC32_chat_createChat2 = -143374126;
+    CRC32_chat_createChat2 = -317215499;
     CRC32_chat_deleteChat = 1829891102;
     CRC32_chat_deleteChatUser = 187109333;
     CRC32_chat_editChatTitle = -1782210905;
@@ -170,6 +170,7 @@ message TL_chat_createChat2 {
     repeated int64 user_id_list = 4;
     string title = 5;
     repeated int64 bots = 6;
+    google.protobuf.Int32Value ttl_period = 7;
 }
 
 //--------------------------------------------------------------------------------------------

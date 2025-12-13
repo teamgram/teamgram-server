@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -21,7 +21,7 @@ const (
 	CRC32_chat_getMutableChat                   TLConstructor = 741090770   // 0x2c2c25d2
 	CRC32_chat_getChatListByIdList              TLConstructor = -415173319  // 0xe740f539
 	CRC32_chat_getChatBySelfId                  TLConstructor = 1236736584  // 0x49b71a48
-	CRC32_chat_createChat2                      TLConstructor = -143374126  // 0xf77448d2
+	CRC32_chat_createChat2                      TLConstructor = -317215499  // 0xed17acf5
 	CRC32_chat_deleteChat                       TLConstructor = 1829891102  // 0x6d11ec1e
 	CRC32_chat_deleteChatUser                   TLConstructor = 187109333   // 0xb270fd5
 	CRC32_chat_editChatTitle                    TLConstructor = -1782210905 // 0x95c59ea7

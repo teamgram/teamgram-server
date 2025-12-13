@@ -99,4 +99,6 @@ const (
 	CRC32_user_saveMusic                    TLConstructor = 228754249   // 0xda28349
 	CRC32_user_getSavedMusicIdList          TLConstructor = 1531626079  // 0x5b4ac25f
 	CRC32_user_setMainProfileTab            TLConstructor = -1656182628 // 0x9d48a89c
+	CRC32_user_setDefaultHistoryTTL         TLConstructor = -1895214721 // 0x8f09517f
+	CRC32_user_getDefaultHistoryTTL         TLConstructor = 1296838624  // 0x4d4c2fe0
 )

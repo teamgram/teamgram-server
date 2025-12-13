@@ -20,7 +20,7 @@ import (
 )
 
 // ChatCreateChat2
-// chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
+// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
 func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*mtproto.MutableChat, error) {
 	var (
 		chatsDO    *dataobject.ChatsDO
@@ -44,20 +44,24 @@ func (c *ChatCore) ChatCreateChat2(in *chat.TLChatCreateChat2) (*mtproto.Mutable
 	}
 
 	chatsDO = &dataobject.ChatsDO{
-		Id:                   0,
-		CreatorUserId:        creatorId,
-		AccessHash:           rand.Int63(),
-		RandomId:             0,
-		ParticipantCount:     int32(1 + len(userIdList)),
-		Title:                title,
-		About:                "",
-		PhotoId:              0,
-		DefaultBannedRights:  int64(mtproto.MakeDefaultBannedRights().ToBannedRights()),
-		MigratedToId:         0,
-		MigratedToAccessHash: 0,
-		Deactivated:          false,
-		Version:              1,
-		Date:                 date,
+		Id:                     0,
+		CreatorUserId:          creatorId,
+		AccessHash:             rand.Int63(),
+		RandomId:               0,
+		ParticipantCount:       int32(1 + len(userIdList)),
+		Title:                  title,
+		About:                  "",
+		PhotoId:                0,
+		DefaultBannedRights:    int64(mtproto.MakeDefaultBannedRights().ToBannedRights()),
+		MigratedToId:           0,
+		MigratedToAccessHash:   0,
+		AvailableReactionsType: 0,
+		AvailableReactions:     "",
+		Deactivated:            false,
+		Noforwards:             false,
+		TtlPeriod:              in.GetTtlPeriod().GetValue(),
+		Version:                1,
+		Date:                   date,
 	}
 
 	participantDOList := make([]*dataobject.ChatParticipantsDO, 0)

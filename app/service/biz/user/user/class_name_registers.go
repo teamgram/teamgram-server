@@ -98,6 +98,8 @@ const (
 	Predicate_user_saveMusic                    = "user_saveMusic"
 	Predicate_user_getSavedMusicIdList          = "user_getSavedMusicIdList"
 	Predicate_user_setMainProfileTab            = "user_setMainProfileTab"
+	Predicate_user_setDefaultHistoryTTL         = "user_setDefaultHistoryTTL"
+	Predicate_user_getDefaultHistoryTTL         = "user_getDefaultHistoryTTL"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -449,6 +451,14 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -1656182628, // 0x9d48a89c
 
 	},
+	Predicate_user_setDefaultHistoryTTL: {
+		0: -1895214721, // 0x8f09517f
+
+	},
+	Predicate_user_getDefaultHistoryTTL: {
+		0: 1296838624, // 0x4d4c2fe0
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -539,6 +549,8 @@ var clazzIdNameRegisters2 = map[int32]string{
 	228754249:   Predicate_user_saveMusic,                    // 0xda28349
 	1531626079:  Predicate_user_getSavedMusicIdList,          // 0x5b4ac25f
 	-1656182628: Predicate_user_setMainProfileTab,            // 0x9d48a89c
+	-1895214721: Predicate_user_setDefaultHistoryTTL,         // 0x8f09517f
+	1296838624:  Predicate_user_getDefaultHistoryTTL,         // 0x4d4c2fe0
 
 }
 

@@ -20,6 +20,7 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // MessagesGetDefaultHistoryTTL
@@ -27,9 +28,13 @@ import (
 func (c *PrivacySettingsCore) MessagesGetDefaultHistoryTTL(in *mtproto.TLMessagesGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
 	_ = in
 
-	rV := mtproto.MakeTLDefaultHistoryTTL(&mtproto.DefaultHistoryTTL{
-		Period: 0,
-	}).To_DefaultHistoryTTL()
+	rV, err := c.svcCtx.Dao.UserClient.UserGetDefaultHistoryTTL(c.ctx, &user.TLUserGetDefaultHistoryTTL{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		c.Logger.Errorf("user.getDefaultHistoryTTL - error: %v", err)
+		return nil, err
+	}
 
 	return rV, nil
 }

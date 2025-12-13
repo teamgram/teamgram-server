@@ -110,6 +110,8 @@ const (
 	RPCUser_UserSaveMusic_FullMethodName                    = "/user.RPCUser/user_saveMusic"
 	RPCUser_UserGetSavedMusicIdList_FullMethodName          = "/user.RPCUser/user_getSavedMusicIdList"
 	RPCUser_UserSetMainProfileTab_FullMethodName            = "/user.RPCUser/user_setMainProfileTab"
+	RPCUser_UserSetDefaultHistoryTTL_FullMethodName         = "/user.RPCUser/user_setDefaultHistoryTTL"
+	RPCUser_UserGetDefaultHistoryTTL_FullMethodName         = "/user.RPCUser/user_getDefaultHistoryTTL"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -197,6 +199,8 @@ type RPCUserClient interface {
 	UserSaveMusic(ctx context.Context, in *TLUserSaveMusic, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(ctx context.Context, in *TLUserGetSavedMusicIdList, opts ...grpc.CallOption) (*Vector_Long, error)
 	UserSetMainProfileTab(ctx context.Context, in *TLUserSetMainProfileTab, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserSetDefaultHistoryTTL(ctx context.Context, in *TLUserSetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserGetDefaultHistoryTTL(ctx context.Context, in *TLUserGetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.DefaultHistoryTTL, error)
 }
 
 type rPCUserClient struct {
@@ -1017,6 +1021,26 @@ func (c *rPCUserClient) UserSetMainProfileTab(ctx context.Context, in *TLUserSet
 	return out, nil
 }
 
+func (c *rPCUserClient) UserSetDefaultHistoryTTL(ctx context.Context, in *TLUserSetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserSetDefaultHistoryTTL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserGetDefaultHistoryTTL(ctx context.Context, in *TLUserGetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.DefaultHistoryTTL, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.DefaultHistoryTTL)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetDefaultHistoryTTL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility.
@@ -1102,6 +1126,8 @@ type RPCUserServer interface {
 	UserSaveMusic(context.Context, *TLUserSaveMusic) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(context.Context, *TLUserGetSavedMusicIdList) (*Vector_Long, error)
 	UserSetMainProfileTab(context.Context, *TLUserSetMainProfileTab) (*mtproto.Bool, error)
+	UserSetDefaultHistoryTTL(context.Context, *TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error)
+	UserGetDefaultHistoryTTL(context.Context, *TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have
@@ -1353,6 +1379,12 @@ func (UnimplementedRPCUserServer) UserGetSavedMusicIdList(context.Context, *TLUs
 }
 func (UnimplementedRPCUserServer) UserSetMainProfileTab(context.Context, *TLUserSetMainProfileTab) (*mtproto.Bool, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserSetMainProfileTab not implemented")
+}
+func (UnimplementedRPCUserServer) UserSetDefaultHistoryTTL(context.Context, *TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSetDefaultHistoryTTL not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetDefaultHistoryTTL(context.Context, *TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetDefaultHistoryTTL not implemented")
 }
 func (UnimplementedRPCUserServer) testEmbeddedByValue() {}
 
@@ -2832,6 +2864,42 @@ func _RPCUser_UserSetMainProfileTab_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserSetDefaultHistoryTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSetDefaultHistoryTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSetDefaultHistoryTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSetDefaultHistoryTTL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSetDefaultHistoryTTL(ctx, req.(*TLUserSetDefaultHistoryTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserGetDefaultHistoryTTL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetDefaultHistoryTTL)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetDefaultHistoryTTL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetDefaultHistoryTTL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetDefaultHistoryTTL(ctx, req.(*TLUserGetDefaultHistoryTTL))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3162,6 +3230,14 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_setMainProfileTab",
 			Handler:    _RPCUser_UserSetMainProfileTab_Handler,
+		},
+		{
+			MethodName: "user_setDefaultHistoryTTL",
+			Handler:    _RPCUser_UserSetDefaultHistoryTTL_Handler,
+		},
+		{
+			MethodName: "user_getDefaultHistoryTTL",
+			Handler:    _RPCUser_UserGetDefaultHistoryTTL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

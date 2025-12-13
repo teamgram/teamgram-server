@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2024-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgram Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -76,9 +76,9 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: 1236736584,
 		}
 	},
-	-143374126: func() mtproto.TLObject { // 0xf77448d2
+	-317215499: func() mtproto.TLObject { // 0xed17acf5
 		return &TLChatCreateChat2{
-			Constructor: -143374126,
+			Constructor: -317215499,
 		}
 	},
 	1829891102: func() mtproto.TLObject { // 0x6d11ec1e
@@ -1127,14 +1127,17 @@ func (m *TLChatGetChatBySelfId) Decode(dBuf *mtproto.DecodeBuf) error {
 
 func (m *TLChatCreateChat2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 	switch uint32(m.Constructor) {
-	case 0xf77448d2:
-		x.UInt(0xf77448d2)
+	case 0xed17acf5:
+		x.UInt(0xed17acf5)
 
 		// set flags
 		var flags uint32 = 0
 
 		if m.GetBots() != nil {
 			flags |= 1 << 0
+		}
+		if m.GetTtlPeriod() != nil {
+			flags |= 1 << 1
 		}
 
 		x.UInt(flags)
@@ -1147,6 +1150,9 @@ func (m *TLChatCreateChat2) Encode(x *mtproto.EncodeBuf, layer int32) error {
 		x.String(m.GetTitle())
 		if m.GetBots() != nil {
 			x.VectorLong(m.GetBots())
+		}
+		if m.GetTtlPeriod() != nil {
+			x.Int(m.GetTtlPeriod().Value)
 		}
 
 	default:
@@ -1162,7 +1168,7 @@ func (m *TLChatCreateChat2) CalcByteSize(layer int32) int {
 
 func (m *TLChatCreateChat2) Decode(dBuf *mtproto.DecodeBuf) error {
 	switch uint32(m.Constructor) {
-	case 0xf77448d2:
+	case 0xed17acf5:
 
 		flags := dBuf.UInt()
 		_ = flags
@@ -1176,6 +1182,10 @@ func (m *TLChatCreateChat2) Decode(dBuf *mtproto.DecodeBuf) error {
 		if (flags & (1 << 0)) != 0 {
 			m.Bots = dBuf.VectorLong()
 		}
+		if (flags & (1 << 1)) != 0 {
+			m.TtlPeriod = &wrapperspb.Int32Value{Value: dBuf.Int()}
+		}
+
 		return dBuf.GetError()
 
 	default:

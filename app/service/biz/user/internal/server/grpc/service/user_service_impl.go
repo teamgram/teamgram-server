@@ -1232,3 +1232,33 @@ func (s *Service) UserSetMainProfileTab(ctx context.Context, request *user.TLUse
 	c.Logger.Debugf("user.setMainProfileTab - reply: {%s}", r)
 	return r, err
 }
+
+// UserSetDefaultHistoryTTL
+// user.setDefaultHistoryTTL user_id:long ttl:int = Bool;
+func (s *Service) UserSetDefaultHistoryTTL(ctx context.Context, request *user.TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.setDefaultHistoryTTL - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserSetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.setDefaultHistoryTTL - reply: {%s}", r)
+	return r, err
+}
+
+// UserGetDefaultHistoryTTL
+// user.getDefaultHistoryTTL user_id:long = DefaultHistoryTTL;
+func (s *Service) UserGetDefaultHistoryTTL(ctx context.Context, request *user.TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getDefaultHistoryTTL - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.UserGetDefaultHistoryTTL(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getDefaultHistoryTTL - reply: {%s}", r)
+	return r, err
+}

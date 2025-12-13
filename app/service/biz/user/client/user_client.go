@@ -104,6 +104,8 @@ type UserClient interface {
 	UserSaveMusic(ctx context.Context, in *user.TLUserSaveMusic) (*mtproto.Bool, error)
 	UserGetSavedMusicIdList(ctx context.Context, in *user.TLUserGetSavedMusicIdList) (*user.Vector_Long, error)
 	UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*mtproto.Bool, error)
+	UserSetDefaultHistoryTTL(ctx context.Context, in *user.TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error)
+	UserGetDefaultHistoryTTL(ctx context.Context, in *user.TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
 }
 
 type defaultUserClient struct {
@@ -1005,4 +1007,26 @@ func (m *defaultUserClient) UserSetMainProfileTab(ctx context.Context, in *user.
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserSetMainProfileTab(ctx, in)
+}
+
+// UserSetDefaultHistoryTTL
+// user.setDefaultHistoryTTL user_id:long ttl:int = Bool;
+func (m *defaultUserClient) UserSetDefaultHistoryTTL(ctx context.Context, in *user.TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserSetDefaultHistoryTTL(ctx, in)
+}
+
+// UserGetDefaultHistoryTTL
+// user.getDefaultHistoryTTL user_id:long = DefaultHistoryTTL;
+func (m *defaultUserClient) UserGetDefaultHistoryTTL(ctx context.Context, in *user.TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetDefaultHistoryTTL(ctx, in)
 }

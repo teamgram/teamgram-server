@@ -466,6 +466,16 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -1656182628,
 		}
 	},
+	-1895214721: func() mtproto.TLObject { // 0x8f09517f
+		return &TLUserSetDefaultHistoryTTL{
+			Constructor: -1895214721,
+		}
+	},
+	1296838624: func() mtproto.TLObject { // 0x4d4c2fe0
+		return &TLUserGetDefaultHistoryTTL{
+			Constructor: 1296838624,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -4922,6 +4932,84 @@ func (m *TLUserSetMainProfileTab) Decode(dBuf *mtproto.DecodeBuf) error {
 		m2.Decode(dBuf)
 		m.Tab = m2
 
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserSetDefaultHistoryTTL
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserSetDefaultHistoryTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x8f09517f:
+		x.UInt(0x8f09517f)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+		x.Int(m.GetTtl())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserSetDefaultHistoryTTL) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserSetDefaultHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x8f09517f:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
+		m.Ttl = dBuf.Int()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLUserGetDefaultHistoryTTL
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLUserGetDefaultHistoryTTL) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x4d4c2fe0:
+		x.UInt(0x4d4c2fe0)
+
+		// no flags
+
+		x.Long(m.GetUserId())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLUserGetDefaultHistoryTTL) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLUserGetDefaultHistoryTTL) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x4d4c2fe0:
+
+		// not has flags
+
+		m.UserId = dBuf.Long()
 		return dBuf.GetError()
 
 	default:

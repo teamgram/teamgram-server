@@ -64,7 +64,7 @@ func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatG
 }
 
 // ChatCreateChat2
-// chat.createChat2 creator_id:long user_id_list:Vector<long> title:string = MutableChat;
+// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
 func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreateChat2) (*mtproto.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.createChat2 - metadata: %s, request: %s", c.MD, request)
