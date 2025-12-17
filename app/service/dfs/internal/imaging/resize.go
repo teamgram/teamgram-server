@@ -85,7 +85,6 @@ func getImageFormat(extName string) (int, error) {
 func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, localId int, w, h int32, b []byte) error) (err error) {
 	var (
 		img image.Image
-		f   int
 	)
 
 	img, err = imaging.Decode(bytes.NewReader(rb))
@@ -93,6 +92,15 @@ func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, l
 		logx.Errorf("decode r(%d) error: %v", len(rb), err)
 		return
 	}
+
+	return ReSizeImageByImage(img, extName, isABC, cb)
+}
+
+func ReSizeImageByImage(img image.Image, extName string, isABC bool, cb func(szType string, localId int, w, h int32, b []byte) error) (err error) {
+	var (
+		f int
+	)
+
 	if isABC {
 		if img.Bounds().Dx() >= mtproto.PhotoSZDSize && img.Bounds().Dy() >= mtproto.PhotoSZDSize {
 			if img.Bounds().Dx() != img.Bounds().Dy() {
@@ -142,7 +150,7 @@ func ReSizeImage(rb []byte, extName string, isABC bool, cb func(szType string, l
 			return
 		}
 
-		o := bytes2.NewBuffer(make([]byte, 0, len(rb)))
+		o := bytes2.NewBuffer(make([]byte, 0, 512*1024))
 		if f == int(imaging.JPEG) {
 			// err = imaging.Encode(o, dst, imaging.JPEG, imaging.JPEGQuality(95))
 			err = imaging.Encode(o, dst, imaging.JPEG)

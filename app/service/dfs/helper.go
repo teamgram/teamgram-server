@@ -53,6 +53,7 @@ var (
 	EncodeWebp = imaging.EncodeWebp
 
 	Open       = imaging.Open
+	Save       = imaging.Save
 	Decode     = imaging.Decode
 	Resize     = imaging.Resize
 	EncodeJpeg = imaging.EncodeJpeg
@@ -60,7 +61,8 @@ var (
 
 	EncodeStripped = imaging.EncodeStripped
 
-	ReSizeImage = imaging.ReSizeImage
+	ReSizeImage        = imaging.ReSizeImage
+	ReSizeImageByImage = imaging.ReSizeImageByImage
 
 	MustNewMinioClient = minio_util.MustNewMinioClient
 
