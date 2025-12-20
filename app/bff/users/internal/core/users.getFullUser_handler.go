@@ -310,7 +310,35 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 	}
 
 	if c.MD.UserId != peerId {
-		// TODO
+		// userFull.Birthday = user.Birthday()
+		if user.Birthday() != nil {
+			//if user.GetUser().GetSavedMusic() != nil {
+			rules, _ := c.svcCtx.Dao.UserClient.UserGetPrivacy(c.ctx, &userpb.TLUserGetPrivacy{
+				UserId:  peerId,
+				KeyType: mtproto.BIRTHDAY,
+			})
+			if rules != nil && len(rules.Datas) > 0 {
+				allow := mtproto.CheckPrivacyIsAllow(
+					peerId,
+					rules.Datas,
+					c.MD.UserId,
+					func(id, checkId int64) bool {
+						contact, _ := user.CheckContact(checkId)
+						return contact
+					},
+					func(checkId int64, idList []int64) bool {
+						// TODO
+						chatIdList, _ := mtproto.SplitChatAndChannelIdList(idList)
+						_ = chatIdList
+						// return c.svcCtx.Dao.ChatClient.CheckParticipantIsExist(c.ctx, checkId, chatIdList)
+						return false
+					})
+				if allow {
+					userFull.Birthday = user.Birthday()
+				}
+			}
+			//}
+		}
 	} else {
 		userFull.Birthday = user.Birthday()
 	}
