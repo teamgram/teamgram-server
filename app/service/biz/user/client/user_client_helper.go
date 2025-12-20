@@ -65,3 +65,38 @@ func (m *UserClientHelper) GetUserListByIdList(ctx context.Context, selfId int64
 
 	return users.GetUserListByIdList(selfId, id...)
 }
+
+func (m *UserClientHelper) CheckUsername(ctx context.Context, name string) (int, error) {
+	rVal, err := m.cli.UserCheckUsername(ctx, &user.TLUserCheckUsername{
+		Username: name,
+	})
+	if err != nil {
+		return 0, err
+	} else {
+		switch rVal.GetPredicateName() {
+		case user.Predicate_usernameNotExisted:
+			return user.UsernameNotExisted, nil
+		case user.Predicate_usernameExisted:
+			return user.UsernameExisted, nil
+		case user.Predicate_usernameExistedNotMe:
+			return user.UsernameExistedNotMe, nil
+		case user.Predicate_usernameExistedIsMe:
+			return user.UsernameExistedIsMe, nil
+		default:
+			return user.UsernameNotExisted, nil
+		}
+	}
+}
+
+func (m *UserClientHelper) UpdateUsernameByUsername(ctx context.Context, peerType int32, peerId int64, name string) (bool, error) {
+	rB, err := m.cli.UserUpdateUsernameByUsername(ctx, &user.TLUserUpdateUsernameByUsername{
+		PeerType: peerType,
+		PeerId:   peerId,
+		Username: name,
+	})
+	if err != nil {
+		return false, err
+	} else {
+		return mtproto.FromBool(rB), nil
+	}
+}

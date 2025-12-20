@@ -21,7 +21,6 @@ package core
 import (
 	"github.com/teamgram/proto/mtproto"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 )
 
 // ContactsSearch
@@ -78,7 +77,7 @@ func (c *ContactsCore) ContactsSearch(in *mtproto.TLContactsSearch) (*mtproto.Co
 		})
 
 		// c.Logger.Debugf("q: %s", q)
-		rVList, err := c.svcCtx.Dao.UsernameClient.UsernameSearch(c.ctx, &username.TLUsernameSearch{
+		rVList, err := c.svcCtx.Dao.UserClient.UserSearchUsername(c.ctx, &userpb.TLUserSearchUsername{
 			Q:                q,
 			ExcludedContacts: append(contacts.GetDatas(), c.MD.UserId),
 			Limit:            limit,

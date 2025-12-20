@@ -25,21 +25,18 @@ import (
 	sync_client "github.com/teamgram/teamgram-server/app/messenger/sync/client"
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
-	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 )
 
 type Dao struct {
 	user_client.UserClient
 	chat_client.ChatClient
 	sync_client.SyncClient
-	username_client.UsernameClient
 }
 
 func New(c config.Config) *Dao {
 	return &Dao{
-		UserClient:     user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
-		ChatClient:     chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
-		UsernameClient: username_client.NewUsernameClient(rpcx.GetCachedRpcClient(c.UsernameClient)),
-		SyncClient:     sync_client.NewSyncMqClient(kafka.MustKafkaProducer(c.SyncClient)),
+		UserClient: user_client.NewUserClient(rpcx.GetCachedRpcClient(c.UserClient)),
+		ChatClient: chat_client.NewChatClient(rpcx.GetCachedRpcClient(c.ChatClient)),
+		SyncClient: sync_client.NewSyncMqClient(kafka.MustKafkaProducer(c.SyncClient)),
 	}
 }

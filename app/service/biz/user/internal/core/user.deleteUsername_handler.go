@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2025 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,20 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package config
+package core
 
 import (
-	kafka "github.com/teamgram/marmota/pkg/mq"
-	"github.com/teamgram/teamgram-server/pkg/code/conf"
-
-	"github.com/zeromicro/go-zero/core/stores/kv"
-	"github.com/zeromicro/go-zero/zrpc"
+	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-type Config struct {
-	zrpc.RpcServerConf
-	KV                kv.KvConf
-	Code              *conf.SmsVerifyCodeConfig
-	UserClient        zrpc.RpcClientConf
-	AuthsessionClient zrpc.RpcClientConf
-	ChatClient        zrpc.RpcClientConf
-	SyncClient        *kafka.KafkaProducerConf
+// UserDeleteUsername
+// user.deleteUsername username:string = Bool;
+func (c *UserCore) UserDeleteUsername(in *user.TLUserDeleteUsername) (*mtproto.Bool, error) {
+	_, err := c.svcCtx.Dao.UsernameDAO.Delete(c.ctx, in.Username)
+	if err != nil {
+		return mtproto.BoolFalse, nil
+	}
+
+	return mtproto.BoolTrue, nil
 }

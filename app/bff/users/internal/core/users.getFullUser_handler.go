@@ -315,6 +315,12 @@ func (c *UsersCore) UsersGetFullUser(in *mtproto.TLUsersGetFullUser) (*mtproto.U
 		userFull.Birthday = user.Birthday()
 	}
 
+	if c.MD.UserId == 777000 {
+		userFull.PhoneCallsAvailable = false
+		userFull.PhoneCallsPrivate = false
+		userFull.VideoCallsAvailable = false
+	}
+
 	return mtproto.MakeTLUsersUserFull(&mtproto.Users_UserFull{
 		FullUser: userFull,
 		Chats:    chats,

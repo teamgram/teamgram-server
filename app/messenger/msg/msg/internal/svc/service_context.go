@@ -31,7 +31,6 @@ import (
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
-	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/pkg/deduplication"
 
@@ -61,7 +60,6 @@ func NewServiceContext(c config.Config, plugin plugin.MsgPlugin) *ServiceContext
 			DialogClient:       dialog_client.NewDialogClient(rpcx.GetCachedRpcClient(c.DialogClient)),
 			MessageDeDuplicate: deduplication.NewMessageDeDuplicate(kv.NewStore(c.KV)),
 			Redis:              redis.MustNewRedis(c.Redis2),
-			UsernameClient:     username_client.NewUsernameClient(rpcx.GetCachedRpcClient(c.UsernameClient)),
 		},
 	}
 

@@ -141,6 +141,44 @@ func makePeerColor(color int32, backgroundEmojiId int64) *mtproto.PeerColor {
 	}).To_PeerColor()
 }
 
+func getUsernames(usernames string) []*mtproto.Username {
+	if usernames == "" {
+		return nil
+	} else if usernames[0] != '[' {
+		return nil
+	} else {
+		var (
+			usernameList []*mtproto.Username
+		)
+
+		_ = jsonx.UnmarshalFromString(usernames, &usernameList)
+		if len(usernameList) <= 1 {
+			return nil
+		} else {
+			return usernameList
+		}
+	}
+}
+
+func getUsername(usernames string) string {
+	if usernames == "" {
+		return ""
+	} else if usernames[0] != '[' {
+		return usernames
+	} else {
+		var (
+			usernameList []*mtproto.Username
+		)
+
+		_ = jsonx.UnmarshalFromString(usernames, &usernameList)
+		if len(usernameList) == 1 {
+			return usernameList[0].GetUsername()
+		} else {
+			return ""
+		}
+	}
+}
+
 func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 	userData := mtproto.MakeTLUserData(&mtproto.UserData{
 		Id:                 userDO.Id,
@@ -175,6 +213,7 @@ func (d *Dao) MakeUserDataByDO(userDO *dataobject.UsersDO) *mtproto.UserData {
 		PremiumExpireDate:  mtproto.MakeFlagsInt64(userDO.PremiumExpireDate),
 		SavedMusic:         nil,
 		MainTab:            mtproto.ToProfileTabByType(userDO.MainTab),
+		Usernames:          nil,
 	}).To_UserData()
 
 	return userData
@@ -254,6 +293,17 @@ func (d *Dao) GetNoCacheUserData(ctx context.Context, id int64) (*CacheUserData,
 		},
 		func() {
 			rules2, _ = d.GetUserPrivacyRules(ctx, id, mtproto.PHONE_NUMBER)
+		},
+		func() {
+			if do.Username != "" {
+				_, _ = d.UsernameDAO.SelectListByUserIdWithCB(ctx, id, func(sz, i int, v *dataobject.UsernameDO) {
+					cacheData.UserData.Usernames = append(cacheData.UserData.Usernames, mtproto.MakeTLUsername(&mtproto.Username{
+						Editable: v.Editable,
+						Active:   v.Active,
+						Username: v.Username,
+					}).To_Username())
+				})
+			}
 		})
 
 	if rules0 != nil {

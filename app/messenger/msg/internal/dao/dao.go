@@ -12,7 +12,6 @@ package dao
 import (
 	"context"
 	"fmt"
-
 	"github.com/teamgram/marmota/pkg/idempotent"
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
 	inbox_client "github.com/teamgram/teamgram-server/app/messenger/msg/inbox/client"
@@ -20,7 +19,6 @@ import (
 	chat_client "github.com/teamgram/teamgram-server/app/service/biz/chat/client"
 	dialog_client "github.com/teamgram/teamgram-server/app/service/biz/dialog/client"
 	user_client "github.com/teamgram/teamgram-server/app/service/biz/user/client"
-	username_client "github.com/teamgram/teamgram-server/app/service/biz/username/client"
 	idgen_client "github.com/teamgram/teamgram-server/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/pkg/deduplication"
 
@@ -39,7 +37,6 @@ type Dao struct {
 	dialog_client.DialogClient
 	deduplication.MessageDeDuplicate
 	*redis.Redis
-	username_client.UsernameClient
 	*ShardingMsgTransferClient
 }
 

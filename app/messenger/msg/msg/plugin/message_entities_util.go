@@ -8,10 +8,10 @@ package plugin
 
 import (
 	"context"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"sort"
 
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 	"github.com/teamgram/teamgram-server/pkg/mention"
 
 	"mvdan.cc/xurls/v2"
@@ -101,10 +101,6 @@ func RemakeMessage(ctx context.Context, plugin MsgPlugin, message *mtproto.Messa
 		for _, tag := range tags {
 			nameList = append(nameList, tag.Tag)
 		}
-		//names, _ := c.svcCtx.Dao.UsernameClient.UsernameGetListByUsernameList(c.ctx, &username.TLUsernameGetListByUsernameList{
-		//	Names:                nameList,
-		//})
-		// c.Logger.Debugf("nameList: %v", names)
 
 		for _, tag := range tags {
 			if len(idxList) == 0 {
@@ -117,7 +113,7 @@ func RemakeMessage(ctx context.Context, plugin MsgPlugin, message *mtproto.Messa
 
 			// stole field UserId_5
 			if plugin != nil {
-				if v, _ := plugin.UsernameResolveUsername(ctx, &username.TLUsernameResolveUsername{
+				if v, _ := plugin.UsernameResolveUsername(ctx, &user.TLUserResolveUsername{
 					Username: tag.Tag,
 				}); v != nil {
 					if v.GetPredicateName() == mtproto.Predicate_peerUser {

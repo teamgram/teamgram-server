@@ -42,6 +42,5 @@ type Config struct {
 	DialogClient      zrpc.RpcClientConf
 	MessageSharding   int `json:",default=1"`
 	Redis2            redis.RedisConf
-	UsernameClient    zrpc.RpcClientConf
 	MsgTransferClient *zrpc.RpcClientConf `json:",optional"`
 }

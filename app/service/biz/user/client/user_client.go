@@ -106,6 +106,21 @@ type UserClient interface {
 	UserSetMainProfileTab(ctx context.Context, in *user.TLUserSetMainProfileTab) (*mtproto.Bool, error)
 	UserSetDefaultHistoryTTL(ctx context.Context, in *user.TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error)
 	UserGetDefaultHistoryTTL(ctx context.Context, in *user.TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
+	UserGetAccountUsername(ctx context.Context, in *user.TLUserGetAccountUsername) (*user.UsernameData, error)
+	UserCheckAccountUsername(ctx context.Context, in *user.TLUserCheckAccountUsername) (*user.UsernameExist, error)
+	UserGetChannelUsername(ctx context.Context, in *user.TLUserGetChannelUsername) (*user.UsernameData, error)
+	UserCheckChannelUsername(ctx context.Context, in *user.TLUserCheckChannelUsername) (*user.UsernameExist, error)
+	UserUpdateUsernameByPeer(ctx context.Context, in *user.TLUserUpdateUsernameByPeer) (*mtproto.Bool, error)
+	UserCheckUsername(ctx context.Context, in *user.TLUserCheckUsername) (*user.UsernameExist, error)
+	UserUpdateUsernameByUsername(ctx context.Context, in *user.TLUserUpdateUsernameByUsername) (*mtproto.Bool, error)
+	UserDeleteUsername(ctx context.Context, in *user.TLUserDeleteUsername) (*mtproto.Bool, error)
+	UserResolveUsername(ctx context.Context, in *user.TLUserResolveUsername) (*mtproto.Peer, error)
+	UserGetListByUsernameList(ctx context.Context, in *user.TLUserGetListByUsernameList) (*user.Vector_UsernameData, error)
+	UserDeleteUsernameByPeer(ctx context.Context, in *user.TLUserDeleteUsernameByPeer) (*mtproto.Bool, error)
+	UserSearchUsername(ctx context.Context, in *user.TLUserSearchUsername) (*user.Vector_UsernameData, error)
+	UserToggleUsername(ctx context.Context, in *user.TLUserToggleUsername) (*mtproto.Bool, error)
+	UserReorderUsernames(ctx context.Context, in *user.TLUserReorderUsernames) (*mtproto.Bool, error)
+	UserDeactivateAllChannelUsernames(ctx context.Context, in *user.TLUserDeactivateAllChannelUsernames) (*mtproto.Bool, error)
 }
 
 type defaultUserClient struct {
@@ -1029,4 +1044,169 @@ func (m *defaultUserClient) UserGetDefaultHistoryTTL(ctx context.Context, in *us
 	}
 	client := user.NewRPCUserClient(m.cli.Conn())
 	return client.UserGetDefaultHistoryTTL(ctx, in)
+}
+
+// UserGetAccountUsername
+// user.getAccountUsername user_id:long = UsernameData;
+func (m *defaultUserClient) UserGetAccountUsername(ctx context.Context, in *user.TLUserGetAccountUsername) (*user.UsernameData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetAccountUsername(ctx, in)
+}
+
+// UserCheckAccountUsername
+// user.checkAccountUsername user_id:long username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckAccountUsername(ctx context.Context, in *user.TLUserCheckAccountUsername) (*user.UsernameExist, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserCheckAccountUsername(ctx, in)
+}
+
+// UserGetChannelUsername
+// user.getChannelUsername channel_id:long = UsernameData;
+func (m *defaultUserClient) UserGetChannelUsername(ctx context.Context, in *user.TLUserGetChannelUsername) (*user.UsernameData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetChannelUsername(ctx, in)
+}
+
+// UserCheckChannelUsername
+// user.checkChannelUsername channel_id:long username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckChannelUsername(ctx context.Context, in *user.TLUserCheckChannelUsername) (*user.UsernameExist, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserCheckChannelUsername(ctx, in)
+}
+
+// UserUpdateUsernameByPeer
+// user.updateUsernameByPeer peer_type:int peer_id:long username:string = Bool;
+func (m *defaultUserClient) UserUpdateUsernameByPeer(ctx context.Context, in *user.TLUserUpdateUsernameByPeer) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdateUsernameByPeer(ctx, in)
+}
+
+// UserCheckUsername
+// user.checkUsername username:string = UsernameExist;
+func (m *defaultUserClient) UserCheckUsername(ctx context.Context, in *user.TLUserCheckUsername) (*user.UsernameExist, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserCheckUsername(ctx, in)
+}
+
+// UserUpdateUsernameByUsername
+// user.updateUsernameByUsername peer_type:int peer_id:long username:string = Bool;
+func (m *defaultUserClient) UserUpdateUsernameByUsername(ctx context.Context, in *user.TLUserUpdateUsernameByUsername) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserUpdateUsernameByUsername(ctx, in)
+}
+
+// UserDeleteUsername
+// user.deleteUsername username:string = Bool;
+func (m *defaultUserClient) UserDeleteUsername(ctx context.Context, in *user.TLUserDeleteUsername) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserDeleteUsername(ctx, in)
+}
+
+// UserResolveUsername
+// user.resolveUsername username:string = Peer;
+func (m *defaultUserClient) UserResolveUsername(ctx context.Context, in *user.TLUserResolveUsername) (*mtproto.Peer, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserResolveUsername(ctx, in)
+}
+
+// UserGetListByUsernameList
+// user.getListByUsernameList names:Vector<string> = Vector<UsernameData>;
+func (m *defaultUserClient) UserGetListByUsernameList(ctx context.Context, in *user.TLUserGetListByUsernameList) (*user.Vector_UsernameData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserGetListByUsernameList(ctx, in)
+}
+
+// UserDeleteUsernameByPeer
+// user.deleteUsernameByPeer peer_type:int peer_id:long = Bool;
+func (m *defaultUserClient) UserDeleteUsernameByPeer(ctx context.Context, in *user.TLUserDeleteUsernameByPeer) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserDeleteUsernameByPeer(ctx, in)
+}
+
+// UserSearchUsername
+// user.searchUsername q:string excluded_contacts:Vector<long> limit:int = Vector<UsernameData>;
+func (m *defaultUserClient) UserSearchUsername(ctx context.Context, in *user.TLUserSearchUsername) (*user.Vector_UsernameData, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserSearchUsername(ctx, in)
+}
+
+// UserToggleUsername
+// user.toggleUsername peer_type:int peer_id:long username:string active:Bool = Bool;
+func (m *defaultUserClient) UserToggleUsername(ctx context.Context, in *user.TLUserToggleUsername) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserToggleUsername(ctx, in)
+}
+
+// UserReorderUsernames
+// user.reorderUsernames peer_type:int peer_id:long username_list:Vector<string> = Bool;
+func (m *defaultUserClient) UserReorderUsernames(ctx context.Context, in *user.TLUserReorderUsernames) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserReorderUsernames(ctx, in)
+}
+
+// UserDeactivateAllChannelUsernames
+// user.deactivateAllChannelUsernames channel_id:long = Bool;
+func (m *defaultUserClient) UserDeactivateAllChannelUsernames(ctx context.Context, in *user.TLUserDeactivateAllChannelUsernames) (*mtproto.Bool, error) {
+	md := metadata.RpcMetadataFromIncoming(ctx)
+	if md != nil {
+		ctx, _ = metadata.RpcMetadataToOutgoing(ctx, md)
+	}
+	client := user.NewRPCUserClient(m.cli.Conn())
+	return client.UserDeactivateAllChannelUsernames(ctx, in)
 }

@@ -28,7 +28,6 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
@@ -246,7 +245,7 @@ func (c *MessagesCore) makeForwardMessages(
 					if c.checkForwardPrivacy(c.ctx, fromId, c.MD.UserId) {
 						fwdFrom.FromId = mtproto.MakePeerUser(fromId)
 					} else {
-						uname, _ := c.svcCtx.Dao.UsernameClient.UsernameGetAccountUsername(c.ctx, &username.TLUsernameGetAccountUsername{
+						uname, _ := c.svcCtx.Dao.UserClient.UserGetAccountUsername(c.ctx, &userpb.TLUserGetAccountUsername{
 							UserId: fromId,
 						})
 						fwdFrom.FromName = &wrapperspb.StringValue{Value: uname.GetUsername()}

@@ -125,7 +125,6 @@ func (s *Server) Initialize() error {
 					MsgClient:                 c.MsgClient,
 					SignInMessage:             c.SignInMessage,
 					SignInServiceNotification: c.SignInServiceNotification,
-					UsernameClient:            c.BizServiceClient,
 				},
 				nil,
 				nil))
@@ -199,11 +198,10 @@ func (s *Server) Initialize() error {
 			grpcServer,
 			contacts_helper.New(
 				contacts_helper.Config{
-					RpcServerConf:  c.RpcServerConf,
-					UserClient:     c.BizServiceClient,
-					ChatClient:     c.BizServiceClient,
-					UsernameClient: c.BizServiceClient,
-					SyncClient:     c.SyncClient,
+					RpcServerConf: c.RpcServerConf,
+					UserClient:    c.BizServiceClient,
+					ChatClient:    c.BizServiceClient,
+					SyncClient:    c.SyncClient,
 				},
 				nil))
 
@@ -242,16 +240,15 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCMessagesServer(
 			grpcServer,
 			messages_helper.New(messages_helper.Config{
-				RpcServerConf:  c.RpcServerConf,
-				UserClient:     c.BizServiceClient,
-				ChatClient:     c.BizServiceClient,
-				MsgClient:      c.MsgClient,
-				DialogClient:   c.BizServiceClient,
-				IdgenClient:    c.IdgenClient,
-				MessageClient:  c.BizServiceClient,
-				MediaClient:    c.MediaClient,
-				UsernameClient: c.BizServiceClient,
-				SyncClient:     c.SyncClient,
+				RpcServerConf: c.RpcServerConf,
+				UserClient:    c.BizServiceClient,
+				ChatClient:    c.BizServiceClient,
+				MsgClient:     c.MsgClient,
+				DialogClient:  c.BizServiceClient,
+				IdgenClient:   c.IdgenClient,
+				MessageClient: c.BizServiceClient,
+				MediaClient:   c.MediaClient,
+				SyncClient:    c.SyncClient,
 			}, nil))
 
 		// notification_helper
@@ -304,7 +301,6 @@ func (s *Server) Initialize() error {
 					AuthsessionClient: c.AuthSessionClient,
 					ChatClient:        c.BizServiceClient,
 					SyncClient:        c.SyncClient,
-					UsernameClient:    c.BizServiceClient,
 				},
 				nil,
 				nil))
@@ -312,11 +308,10 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCUsernamesServer(
 			grpcServer,
 			usernames_helper.New(usernames_helper.Config{
-				RpcServerConf:  c.RpcServerConf,
-				UserClient:     c.BizServiceClient,
-				UsernameClient: c.BizServiceClient,
-				ChatClient:     c.BizServiceClient,
-				SyncClient:     c.SyncClient,
+				RpcServerConf: c.RpcServerConf,
+				UserClient:    c.BizServiceClient,
+				ChatClient:    c.BizServiceClient,
+				SyncClient:    c.SyncClient,
 			}, nil))
 
 		// privacysettingshelper

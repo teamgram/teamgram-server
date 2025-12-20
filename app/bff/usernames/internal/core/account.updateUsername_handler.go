@@ -24,7 +24,6 @@ import (
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 )
 
 // AccountUpdateUsername
@@ -54,7 +53,7 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 		} else {
 			me.SetUsername(username2)
 
-			c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
+			_, _ = c.svcCtx.Dao.SyncClient.SyncUpdatesNotMe(c.ctx, &sync.TLSyncUpdatesNotMe{
 				UserId:        c.MD.UserId,
 				PermAuthKeyId: c.MD.PermAuthKeyId,
 				Updates: mtproto.MakeUpdatesByUpdates(mtproto.MakeTLUpdateUserName(&mtproto.Update{
@@ -72,7 +71,7 @@ func (c *UsernamesCore) AccountUpdateUsername(in *mtproto.TLAccountUpdateUsernam
 
 func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) error {
 	if username2 != "" {
-		if len(username2) < username.MinUsernameLen ||
+		if len(username2) < userpb.MinUsernameLen ||
 			!strings2.IsAlNumString(username2) ||
 			utils.IsNumber(username2[0]) {
 			err := mtproto.ErrUsernameInvalid
@@ -80,7 +79,7 @@ func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) err
 			return err
 		}
 
-		ok, err := c.svcCtx.Dao.UsernameClient.UsernameUpdateUsername(c.ctx, &username.TLUsernameUpdateUsername{
+		ok, err := c.svcCtx.Dao.UserClient.UserUpdateUsernameByUsername(c.ctx, &userpb.TLUserUpdateUsernameByUsername{
 			PeerType: mtproto.PEER_USER,
 			PeerId:   userId,
 			Username: username2,
@@ -100,7 +99,7 @@ func (c *UsernamesCore) updateUsername(userId int64, from, username2 string) err
 
 	if from != "" {
 		// delete username
-		_, err := c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
+		_, err := c.svcCtx.Dao.UserClient.UserDeleteUsername(c.ctx, &userpb.TLUserDeleteUsername{
 			Username: from,
 		})
 		if err != nil {

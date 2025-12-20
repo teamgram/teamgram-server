@@ -22,7 +22,7 @@ import (
 	"github.com/teamgram/marmota/pkg/strings2"
 	"github.com/teamgram/marmota/pkg/utils"
 	"github.com/teamgram/proto/mtproto"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // AccountCheckUsername
@@ -37,14 +37,14 @@ func (c *UsernamesCore) AccountCheckUsername(in *mtproto.TLAccountCheckUsername)
 	// You can use a-z, 0-9 and underscores.
 	// Minimum length is 5 characters.";
 	//
-	if len(in.Username) < username.MinUsernameLen ||
+	if len(in.Username) < user.MinUsernameLen ||
 		!strings2.IsAlNumString(in.Username) ||
 		utils.IsNumber(in.Username[0]) {
 		err := mtproto.ErrUsernameInvalid
 		c.Logger.Errorf("account.checkUsername#2714d86c - format error: %v", err)
 		return nil, err
 	} else {
-		existed, err := c.svcCtx.Dao.UsernameClient.UsernameCheckAccountUsername(c.ctx, &username.TLUsernameCheckAccountUsername{
+		existed, err := c.svcCtx.Dao.UserClient.UserCheckAccountUsername(c.ctx, &user.TLUserCheckAccountUsername{
 			UserId:   c.MD.UserId,
 			Username: in.GetUsername(),
 		})
@@ -53,7 +53,7 @@ func (c *UsernamesCore) AccountCheckUsername(in *mtproto.TLAccountCheckUsername)
 		}
 
 		switch existed.GetPredicateName() {
-		case username.Predicate_usernameExistedNotMe:
+		case user.Predicate_usernameExistedNotMe:
 			err = mtproto.ErrUsernameOccupied
 			c.Logger.Errorf("account.checkUsername#2714d86c - exists username: %v", err)
 			return mtproto.BoolFalse, nil

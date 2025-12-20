@@ -26,13 +26,12 @@ import (
 type Config struct {
 	zrpc.RpcServerConf
 
-	UserClient     zrpc.RpcClientConf
-	ChatClient     zrpc.RpcClientConf
-	MsgClient      zrpc.RpcClientConf
-	DialogClient   zrpc.RpcClientConf
-	IdgenClient    zrpc.RpcClientConf
-	MessageClient  zrpc.RpcClientConf
-	MediaClient    zrpc.RpcClientConf
-	UsernameClient zrpc.RpcClientConf
-	SyncClient     *kafka.KafkaProducerConf
+	UserClient    zrpc.RpcClientConf
+	ChatClient    zrpc.RpcClientConf
+	MsgClient     zrpc.RpcClientConf
+	DialogClient  zrpc.RpcClientConf
+	IdgenClient   zrpc.RpcClientConf
+	MessageClient zrpc.RpcClientConf
+	MediaClient   zrpc.RpcClientConf
+	SyncClient    *kafka.KafkaProducerConf
 }

@@ -44,6 +44,7 @@ type Mysql struct {
 	*mysql_dao.UnregisteredContactsDAO
 	*mysql_dao.UserSavedMusicDAO
 	*mysql_dao.DefaultHistoryTtlDAO
+	*mysql_dao.UsernameDAO
 	*sqlx.CommonDAO
 }
 
@@ -69,6 +70,7 @@ func newMysqlDao(db *sqlx.DB) *Mysql {
 		UnregisteredContactsDAO:      mysql_dao.NewUnregisteredContactsDAO(db),
 		UserSavedMusicDAO:            mysql_dao.NewUserSavedMusicDAO(db),
 		DefaultHistoryTtlDAO:         mysql_dao.NewDefaultHistoryTtlDAO(db),
+		UsernameDAO:                  mysql_dao.NewUsernameDAO(db),
 		CommonDAO:                    sqlx.NewCommonDAO(db),
 	}
 }

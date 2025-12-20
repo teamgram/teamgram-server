@@ -20,7 +20,6 @@ package server
 
 import (
 	"flag"
-
 	"github.com/teamgram/teamgram-server/app/service/biz/biz/internal/config"
 	chat_helper "github.com/teamgram/teamgram-server/app/service/biz/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
@@ -34,8 +33,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/biz/updates/updates"
 	user_helper "github.com/teamgram/teamgram-server/app/service/biz/user"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	username_helper "github.com/teamgram/teamgram-server/app/service/biz/username"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -123,15 +120,6 @@ func (s *Server) Initialize() error {
 				Mysql:         c.Mysql,
 				Cache:         c.Cache,
 				MediaClient:   c.MediaClient,
-			}))
-
-		// username_helper
-		username.RegisterRPCUsernameServer(
-			grpcServer,
-			username_helper.New(username_helper.Config{
-				RpcServerConf: c.RpcServerConf,
-				Mysql:         c.Mysql,
-				Cache:         c.Cache,
 			}))
 	})
 

@@ -29,89 +29,104 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RPCUser_UserGetLastSeens_FullMethodName                 = "/user.RPCUser/user_getLastSeens"
-	RPCUser_UserUpdateLastSeen_FullMethodName               = "/user.RPCUser/user_updateLastSeen"
-	RPCUser_UserGetLastSeen_FullMethodName                  = "/user.RPCUser/user_getLastSeen"
-	RPCUser_UserGetImmutableUser_FullMethodName             = "/user.RPCUser/user_getImmutableUser"
-	RPCUser_UserGetMutableUsers_FullMethodName              = "/user.RPCUser/user_getMutableUsers"
-	RPCUser_UserGetImmutableUserByPhone_FullMethodName      = "/user.RPCUser/user_getImmutableUserByPhone"
-	RPCUser_UserGetImmutableUserByToken_FullMethodName      = "/user.RPCUser/user_getImmutableUserByToken"
-	RPCUser_UserSetAccountDaysTTL_FullMethodName            = "/user.RPCUser/user_setAccountDaysTTL"
-	RPCUser_UserGetAccountDaysTTL_FullMethodName            = "/user.RPCUser/user_getAccountDaysTTL"
-	RPCUser_UserGetNotifySettings_FullMethodName            = "/user.RPCUser/user_getNotifySettings"
-	RPCUser_UserGetNotifySettingsList_FullMethodName        = "/user.RPCUser/user_getNotifySettingsList"
-	RPCUser_UserSetNotifySettings_FullMethodName            = "/user.RPCUser/user_setNotifySettings"
-	RPCUser_UserResetNotifySettings_FullMethodName          = "/user.RPCUser/user_resetNotifySettings"
-	RPCUser_UserGetAllNotifySettings_FullMethodName         = "/user.RPCUser/user_getAllNotifySettings"
-	RPCUser_UserGetGlobalPrivacySettings_FullMethodName     = "/user.RPCUser/user_getGlobalPrivacySettings"
-	RPCUser_UserSetGlobalPrivacySettings_FullMethodName     = "/user.RPCUser/user_setGlobalPrivacySettings"
-	RPCUser_UserGetPrivacy_FullMethodName                   = "/user.RPCUser/user_getPrivacy"
-	RPCUser_UserSetPrivacy_FullMethodName                   = "/user.RPCUser/user_setPrivacy"
-	RPCUser_UserCheckPrivacy_FullMethodName                 = "/user.RPCUser/user_checkPrivacy"
-	RPCUser_UserAddPeerSettings_FullMethodName              = "/user.RPCUser/user_addPeerSettings"
-	RPCUser_UserGetPeerSettings_FullMethodName              = "/user.RPCUser/user_getPeerSettings"
-	RPCUser_UserDeletePeerSettings_FullMethodName           = "/user.RPCUser/user_deletePeerSettings"
-	RPCUser_UserChangePhone_FullMethodName                  = "/user.RPCUser/user_changePhone"
-	RPCUser_UserCreateNewUser_FullMethodName                = "/user.RPCUser/user_createNewUser"
-	RPCUser_UserDeleteUser_FullMethodName                   = "/user.RPCUser/user_deleteUser"
-	RPCUser_UserBlockPeer_FullMethodName                    = "/user.RPCUser/user_blockPeer"
-	RPCUser_UserUnBlockPeer_FullMethodName                  = "/user.RPCUser/user_unBlockPeer"
-	RPCUser_UserBlockedByUser_FullMethodName                = "/user.RPCUser/user_blockedByUser"
-	RPCUser_UserIsBlockedByUser_FullMethodName              = "/user.RPCUser/user_isBlockedByUser"
-	RPCUser_UserCheckBlockUserList_FullMethodName           = "/user.RPCUser/user_checkBlockUserList"
-	RPCUser_UserGetBlockedList_FullMethodName               = "/user.RPCUser/user_getBlockedList"
-	RPCUser_UserGetContactSignUpNotification_FullMethodName = "/user.RPCUser/user_getContactSignUpNotification"
-	RPCUser_UserSetContactSignUpNotification_FullMethodName = "/user.RPCUser/user_setContactSignUpNotification"
-	RPCUser_UserGetContentSettings_FullMethodName           = "/user.RPCUser/user_getContentSettings"
-	RPCUser_UserSetContentSettings_FullMethodName           = "/user.RPCUser/user_setContentSettings"
-	RPCUser_UserDeleteContact_FullMethodName                = "/user.RPCUser/user_deleteContact"
-	RPCUser_UserGetContactList_FullMethodName               = "/user.RPCUser/user_getContactList"
-	RPCUser_UserGetContactIdList_FullMethodName             = "/user.RPCUser/user_getContactIdList"
-	RPCUser_UserGetContact_FullMethodName                   = "/user.RPCUser/user_getContact"
-	RPCUser_UserAddContact_FullMethodName                   = "/user.RPCUser/user_addContact"
-	RPCUser_UserCheckContact_FullMethodName                 = "/user.RPCUser/user_checkContact"
-	RPCUser_UserGetImportersByPhone_FullMethodName          = "/user.RPCUser/user_getImportersByPhone"
-	RPCUser_UserDeleteImportersByPhone_FullMethodName       = "/user.RPCUser/user_deleteImportersByPhone"
-	RPCUser_UserImportContacts_FullMethodName               = "/user.RPCUser/user_importContacts"
-	RPCUser_UserGetCountryCode_FullMethodName               = "/user.RPCUser/user_getCountryCode"
-	RPCUser_UserUpdateAbout_FullMethodName                  = "/user.RPCUser/user_updateAbout"
-	RPCUser_UserUpdateFirstAndLastName_FullMethodName       = "/user.RPCUser/user_updateFirstAndLastName"
-	RPCUser_UserUpdateVerified_FullMethodName               = "/user.RPCUser/user_updateVerified"
-	RPCUser_UserUpdateUsername_FullMethodName               = "/user.RPCUser/user_updateUsername"
-	RPCUser_UserUpdateProfilePhoto_FullMethodName           = "/user.RPCUser/user_updateProfilePhoto"
-	RPCUser_UserDeleteProfilePhotos_FullMethodName          = "/user.RPCUser/user_deleteProfilePhotos"
-	RPCUser_UserGetProfilePhotos_FullMethodName             = "/user.RPCUser/user_getProfilePhotos"
-	RPCUser_UserSetBotCommands_FullMethodName               = "/user.RPCUser/user_setBotCommands"
-	RPCUser_UserIsBot_FullMethodName                        = "/user.RPCUser/user_isBot"
-	RPCUser_UserGetBotInfo_FullMethodName                   = "/user.RPCUser/user_getBotInfo"
-	RPCUser_UserCheckBots_FullMethodName                    = "/user.RPCUser/user_checkBots"
-	RPCUser_UserGetFullUser_FullMethodName                  = "/user.RPCUser/user_getFullUser"
-	RPCUser_UserUpdateEmojiStatus_FullMethodName            = "/user.RPCUser/user_updateEmojiStatus"
-	RPCUser_UserGetUserDataById_FullMethodName              = "/user.RPCUser/user_getUserDataById"
-	RPCUser_UserGetUserDataListByIdList_FullMethodName      = "/user.RPCUser/user_getUserDataListByIdList"
-	RPCUser_UserGetUserDataByToken_FullMethodName           = "/user.RPCUser/user_getUserDataByToken"
-	RPCUser_UserSearch_FullMethodName                       = "/user.RPCUser/user_search"
-	RPCUser_UserUpdateBotData_FullMethodName                = "/user.RPCUser/user_updateBotData"
-	RPCUser_UserGetImmutableUserV2_FullMethodName           = "/user.RPCUser/user_getImmutableUserV2"
-	RPCUser_UserGetMutableUsersV2_FullMethodName            = "/user.RPCUser/user_getMutableUsersV2"
-	RPCUser_UserCreateNewTestUser_FullMethodName            = "/user.RPCUser/user_createNewTestUser"
-	RPCUser_UserEditCloseFriends_FullMethodName             = "/user.RPCUser/user_editCloseFriends"
-	RPCUser_UserSetStoriesMaxId_FullMethodName              = "/user.RPCUser/user_setStoriesMaxId"
-	RPCUser_UserSetColor_FullMethodName                     = "/user.RPCUser/user_setColor"
-	RPCUser_UserUpdateBirthday_FullMethodName               = "/user.RPCUser/user_updateBirthday"
-	RPCUser_UserGetBirthdays_FullMethodName                 = "/user.RPCUser/user_getBirthdays"
-	RPCUser_UserSetStoriesHidden_FullMethodName             = "/user.RPCUser/user_setStoriesHidden"
-	RPCUser_UserUpdatePersonalChannel_FullMethodName        = "/user.RPCUser/user_updatePersonalChannel"
-	RPCUser_UserGetUserIdByPhone_FullMethodName             = "/user.RPCUser/user_getUserIdByPhone"
-	RPCUser_UserSetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_setAuthorizationTTL"
-	RPCUser_UserGetAuthorizationTTL_FullMethodName          = "/user.RPCUser/user_getAuthorizationTTL"
-	RPCUser_UserUpdatePremium_FullMethodName                = "/user.RPCUser/user_updatePremium"
-	RPCUser_UserGetBotInfoV2_FullMethodName                 = "/user.RPCUser/user_getBotInfoV2"
-	RPCUser_UserSaveMusic_FullMethodName                    = "/user.RPCUser/user_saveMusic"
-	RPCUser_UserGetSavedMusicIdList_FullMethodName          = "/user.RPCUser/user_getSavedMusicIdList"
-	RPCUser_UserSetMainProfileTab_FullMethodName            = "/user.RPCUser/user_setMainProfileTab"
-	RPCUser_UserSetDefaultHistoryTTL_FullMethodName         = "/user.RPCUser/user_setDefaultHistoryTTL"
-	RPCUser_UserGetDefaultHistoryTTL_FullMethodName         = "/user.RPCUser/user_getDefaultHistoryTTL"
+	RPCUser_UserGetLastSeens_FullMethodName                  = "/user.RPCUser/user_getLastSeens"
+	RPCUser_UserUpdateLastSeen_FullMethodName                = "/user.RPCUser/user_updateLastSeen"
+	RPCUser_UserGetLastSeen_FullMethodName                   = "/user.RPCUser/user_getLastSeen"
+	RPCUser_UserGetImmutableUser_FullMethodName              = "/user.RPCUser/user_getImmutableUser"
+	RPCUser_UserGetMutableUsers_FullMethodName               = "/user.RPCUser/user_getMutableUsers"
+	RPCUser_UserGetImmutableUserByPhone_FullMethodName       = "/user.RPCUser/user_getImmutableUserByPhone"
+	RPCUser_UserGetImmutableUserByToken_FullMethodName       = "/user.RPCUser/user_getImmutableUserByToken"
+	RPCUser_UserSetAccountDaysTTL_FullMethodName             = "/user.RPCUser/user_setAccountDaysTTL"
+	RPCUser_UserGetAccountDaysTTL_FullMethodName             = "/user.RPCUser/user_getAccountDaysTTL"
+	RPCUser_UserGetNotifySettings_FullMethodName             = "/user.RPCUser/user_getNotifySettings"
+	RPCUser_UserGetNotifySettingsList_FullMethodName         = "/user.RPCUser/user_getNotifySettingsList"
+	RPCUser_UserSetNotifySettings_FullMethodName             = "/user.RPCUser/user_setNotifySettings"
+	RPCUser_UserResetNotifySettings_FullMethodName           = "/user.RPCUser/user_resetNotifySettings"
+	RPCUser_UserGetAllNotifySettings_FullMethodName          = "/user.RPCUser/user_getAllNotifySettings"
+	RPCUser_UserGetGlobalPrivacySettings_FullMethodName      = "/user.RPCUser/user_getGlobalPrivacySettings"
+	RPCUser_UserSetGlobalPrivacySettings_FullMethodName      = "/user.RPCUser/user_setGlobalPrivacySettings"
+	RPCUser_UserGetPrivacy_FullMethodName                    = "/user.RPCUser/user_getPrivacy"
+	RPCUser_UserSetPrivacy_FullMethodName                    = "/user.RPCUser/user_setPrivacy"
+	RPCUser_UserCheckPrivacy_FullMethodName                  = "/user.RPCUser/user_checkPrivacy"
+	RPCUser_UserAddPeerSettings_FullMethodName               = "/user.RPCUser/user_addPeerSettings"
+	RPCUser_UserGetPeerSettings_FullMethodName               = "/user.RPCUser/user_getPeerSettings"
+	RPCUser_UserDeletePeerSettings_FullMethodName            = "/user.RPCUser/user_deletePeerSettings"
+	RPCUser_UserChangePhone_FullMethodName                   = "/user.RPCUser/user_changePhone"
+	RPCUser_UserCreateNewUser_FullMethodName                 = "/user.RPCUser/user_createNewUser"
+	RPCUser_UserDeleteUser_FullMethodName                    = "/user.RPCUser/user_deleteUser"
+	RPCUser_UserBlockPeer_FullMethodName                     = "/user.RPCUser/user_blockPeer"
+	RPCUser_UserUnBlockPeer_FullMethodName                   = "/user.RPCUser/user_unBlockPeer"
+	RPCUser_UserBlockedByUser_FullMethodName                 = "/user.RPCUser/user_blockedByUser"
+	RPCUser_UserIsBlockedByUser_FullMethodName               = "/user.RPCUser/user_isBlockedByUser"
+	RPCUser_UserCheckBlockUserList_FullMethodName            = "/user.RPCUser/user_checkBlockUserList"
+	RPCUser_UserGetBlockedList_FullMethodName                = "/user.RPCUser/user_getBlockedList"
+	RPCUser_UserGetContactSignUpNotification_FullMethodName  = "/user.RPCUser/user_getContactSignUpNotification"
+	RPCUser_UserSetContactSignUpNotification_FullMethodName  = "/user.RPCUser/user_setContactSignUpNotification"
+	RPCUser_UserGetContentSettings_FullMethodName            = "/user.RPCUser/user_getContentSettings"
+	RPCUser_UserSetContentSettings_FullMethodName            = "/user.RPCUser/user_setContentSettings"
+	RPCUser_UserDeleteContact_FullMethodName                 = "/user.RPCUser/user_deleteContact"
+	RPCUser_UserGetContactList_FullMethodName                = "/user.RPCUser/user_getContactList"
+	RPCUser_UserGetContactIdList_FullMethodName              = "/user.RPCUser/user_getContactIdList"
+	RPCUser_UserGetContact_FullMethodName                    = "/user.RPCUser/user_getContact"
+	RPCUser_UserAddContact_FullMethodName                    = "/user.RPCUser/user_addContact"
+	RPCUser_UserCheckContact_FullMethodName                  = "/user.RPCUser/user_checkContact"
+	RPCUser_UserGetImportersByPhone_FullMethodName           = "/user.RPCUser/user_getImportersByPhone"
+	RPCUser_UserDeleteImportersByPhone_FullMethodName        = "/user.RPCUser/user_deleteImportersByPhone"
+	RPCUser_UserImportContacts_FullMethodName                = "/user.RPCUser/user_importContacts"
+	RPCUser_UserGetCountryCode_FullMethodName                = "/user.RPCUser/user_getCountryCode"
+	RPCUser_UserUpdateAbout_FullMethodName                   = "/user.RPCUser/user_updateAbout"
+	RPCUser_UserUpdateFirstAndLastName_FullMethodName        = "/user.RPCUser/user_updateFirstAndLastName"
+	RPCUser_UserUpdateVerified_FullMethodName                = "/user.RPCUser/user_updateVerified"
+	RPCUser_UserUpdateUsername_FullMethodName                = "/user.RPCUser/user_updateUsername"
+	RPCUser_UserUpdateProfilePhoto_FullMethodName            = "/user.RPCUser/user_updateProfilePhoto"
+	RPCUser_UserDeleteProfilePhotos_FullMethodName           = "/user.RPCUser/user_deleteProfilePhotos"
+	RPCUser_UserGetProfilePhotos_FullMethodName              = "/user.RPCUser/user_getProfilePhotos"
+	RPCUser_UserSetBotCommands_FullMethodName                = "/user.RPCUser/user_setBotCommands"
+	RPCUser_UserIsBot_FullMethodName                         = "/user.RPCUser/user_isBot"
+	RPCUser_UserGetBotInfo_FullMethodName                    = "/user.RPCUser/user_getBotInfo"
+	RPCUser_UserCheckBots_FullMethodName                     = "/user.RPCUser/user_checkBots"
+	RPCUser_UserGetFullUser_FullMethodName                   = "/user.RPCUser/user_getFullUser"
+	RPCUser_UserUpdateEmojiStatus_FullMethodName             = "/user.RPCUser/user_updateEmojiStatus"
+	RPCUser_UserGetUserDataById_FullMethodName               = "/user.RPCUser/user_getUserDataById"
+	RPCUser_UserGetUserDataListByIdList_FullMethodName       = "/user.RPCUser/user_getUserDataListByIdList"
+	RPCUser_UserGetUserDataByToken_FullMethodName            = "/user.RPCUser/user_getUserDataByToken"
+	RPCUser_UserSearch_FullMethodName                        = "/user.RPCUser/user_search"
+	RPCUser_UserUpdateBotData_FullMethodName                 = "/user.RPCUser/user_updateBotData"
+	RPCUser_UserGetImmutableUserV2_FullMethodName            = "/user.RPCUser/user_getImmutableUserV2"
+	RPCUser_UserGetMutableUsersV2_FullMethodName             = "/user.RPCUser/user_getMutableUsersV2"
+	RPCUser_UserCreateNewTestUser_FullMethodName             = "/user.RPCUser/user_createNewTestUser"
+	RPCUser_UserEditCloseFriends_FullMethodName              = "/user.RPCUser/user_editCloseFriends"
+	RPCUser_UserSetStoriesMaxId_FullMethodName               = "/user.RPCUser/user_setStoriesMaxId"
+	RPCUser_UserSetColor_FullMethodName                      = "/user.RPCUser/user_setColor"
+	RPCUser_UserUpdateBirthday_FullMethodName                = "/user.RPCUser/user_updateBirthday"
+	RPCUser_UserGetBirthdays_FullMethodName                  = "/user.RPCUser/user_getBirthdays"
+	RPCUser_UserSetStoriesHidden_FullMethodName              = "/user.RPCUser/user_setStoriesHidden"
+	RPCUser_UserUpdatePersonalChannel_FullMethodName         = "/user.RPCUser/user_updatePersonalChannel"
+	RPCUser_UserGetUserIdByPhone_FullMethodName              = "/user.RPCUser/user_getUserIdByPhone"
+	RPCUser_UserSetAuthorizationTTL_FullMethodName           = "/user.RPCUser/user_setAuthorizationTTL"
+	RPCUser_UserGetAuthorizationTTL_FullMethodName           = "/user.RPCUser/user_getAuthorizationTTL"
+	RPCUser_UserUpdatePremium_FullMethodName                 = "/user.RPCUser/user_updatePremium"
+	RPCUser_UserGetBotInfoV2_FullMethodName                  = "/user.RPCUser/user_getBotInfoV2"
+	RPCUser_UserSaveMusic_FullMethodName                     = "/user.RPCUser/user_saveMusic"
+	RPCUser_UserGetSavedMusicIdList_FullMethodName           = "/user.RPCUser/user_getSavedMusicIdList"
+	RPCUser_UserSetMainProfileTab_FullMethodName             = "/user.RPCUser/user_setMainProfileTab"
+	RPCUser_UserSetDefaultHistoryTTL_FullMethodName          = "/user.RPCUser/user_setDefaultHistoryTTL"
+	RPCUser_UserGetDefaultHistoryTTL_FullMethodName          = "/user.RPCUser/user_getDefaultHistoryTTL"
+	RPCUser_UserGetAccountUsername_FullMethodName            = "/user.RPCUser/user_getAccountUsername"
+	RPCUser_UserCheckAccountUsername_FullMethodName          = "/user.RPCUser/user_checkAccountUsername"
+	RPCUser_UserGetChannelUsername_FullMethodName            = "/user.RPCUser/user_getChannelUsername"
+	RPCUser_UserCheckChannelUsername_FullMethodName          = "/user.RPCUser/user_checkChannelUsername"
+	RPCUser_UserUpdateUsernameByPeer_FullMethodName          = "/user.RPCUser/user_updateUsernameByPeer"
+	RPCUser_UserCheckUsername_FullMethodName                 = "/user.RPCUser/user_checkUsername"
+	RPCUser_UserUpdateUsernameByUsername_FullMethodName      = "/user.RPCUser/user_updateUsernameByUsername"
+	RPCUser_UserDeleteUsername_FullMethodName                = "/user.RPCUser/user_deleteUsername"
+	RPCUser_UserResolveUsername_FullMethodName               = "/user.RPCUser/user_resolveUsername"
+	RPCUser_UserGetListByUsernameList_FullMethodName         = "/user.RPCUser/user_getListByUsernameList"
+	RPCUser_UserDeleteUsernameByPeer_FullMethodName          = "/user.RPCUser/user_deleteUsernameByPeer"
+	RPCUser_UserSearchUsername_FullMethodName                = "/user.RPCUser/user_searchUsername"
+	RPCUser_UserToggleUsername_FullMethodName                = "/user.RPCUser/user_toggleUsername"
+	RPCUser_UserReorderUsernames_FullMethodName              = "/user.RPCUser/user_reorderUsernames"
+	RPCUser_UserDeactivateAllChannelUsernames_FullMethodName = "/user.RPCUser/user_deactivateAllChannelUsernames"
 )
 
 // RPCUserClient is the client API for RPCUser service.
@@ -201,6 +216,21 @@ type RPCUserClient interface {
 	UserSetMainProfileTab(ctx context.Context, in *TLUserSetMainProfileTab, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserSetDefaultHistoryTTL(ctx context.Context, in *TLUserSetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.Bool, error)
 	UserGetDefaultHistoryTTL(ctx context.Context, in *TLUserGetDefaultHistoryTTL, opts ...grpc.CallOption) (*mtproto.DefaultHistoryTTL, error)
+	UserGetAccountUsername(ctx context.Context, in *TLUserGetAccountUsername, opts ...grpc.CallOption) (*UsernameData, error)
+	UserCheckAccountUsername(ctx context.Context, in *TLUserCheckAccountUsername, opts ...grpc.CallOption) (*UsernameExist, error)
+	UserGetChannelUsername(ctx context.Context, in *TLUserGetChannelUsername, opts ...grpc.CallOption) (*UsernameData, error)
+	UserCheckChannelUsername(ctx context.Context, in *TLUserCheckChannelUsername, opts ...grpc.CallOption) (*UsernameExist, error)
+	UserUpdateUsernameByPeer(ctx context.Context, in *TLUserUpdateUsernameByPeer, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserCheckUsername(ctx context.Context, in *TLUserCheckUsername, opts ...grpc.CallOption) (*UsernameExist, error)
+	UserUpdateUsernameByUsername(ctx context.Context, in *TLUserUpdateUsernameByUsername, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserDeleteUsername(ctx context.Context, in *TLUserDeleteUsername, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserResolveUsername(ctx context.Context, in *TLUserResolveUsername, opts ...grpc.CallOption) (*mtproto.Peer, error)
+	UserGetListByUsernameList(ctx context.Context, in *TLUserGetListByUsernameList, opts ...grpc.CallOption) (*Vector_UsernameData, error)
+	UserDeleteUsernameByPeer(ctx context.Context, in *TLUserDeleteUsernameByPeer, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserSearchUsername(ctx context.Context, in *TLUserSearchUsername, opts ...grpc.CallOption) (*Vector_UsernameData, error)
+	UserToggleUsername(ctx context.Context, in *TLUserToggleUsername, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserReorderUsernames(ctx context.Context, in *TLUserReorderUsernames, opts ...grpc.CallOption) (*mtproto.Bool, error)
+	UserDeactivateAllChannelUsernames(ctx context.Context, in *TLUserDeactivateAllChannelUsernames, opts ...grpc.CallOption) (*mtproto.Bool, error)
 }
 
 type rPCUserClient struct {
@@ -1041,6 +1071,156 @@ func (c *rPCUserClient) UserGetDefaultHistoryTTL(ctx context.Context, in *TLUser
 	return out, nil
 }
 
+func (c *rPCUserClient) UserGetAccountUsername(ctx context.Context, in *TLUserGetAccountUsername, opts ...grpc.CallOption) (*UsernameData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UsernameData)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetAccountUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserCheckAccountUsername(ctx context.Context, in *TLUserCheckAccountUsername, opts ...grpc.CallOption) (*UsernameExist, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UsernameExist)
+	err := c.cc.Invoke(ctx, RPCUser_UserCheckAccountUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserGetChannelUsername(ctx context.Context, in *TLUserGetChannelUsername, opts ...grpc.CallOption) (*UsernameData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UsernameData)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetChannelUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserCheckChannelUsername(ctx context.Context, in *TLUserCheckChannelUsername, opts ...grpc.CallOption) (*UsernameExist, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UsernameExist)
+	err := c.cc.Invoke(ctx, RPCUser_UserCheckChannelUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserUpdateUsernameByPeer(ctx context.Context, in *TLUserUpdateUsernameByPeer, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserUpdateUsernameByPeer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserCheckUsername(ctx context.Context, in *TLUserCheckUsername, opts ...grpc.CallOption) (*UsernameExist, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UsernameExist)
+	err := c.cc.Invoke(ctx, RPCUser_UserCheckUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserUpdateUsernameByUsername(ctx context.Context, in *TLUserUpdateUsernameByUsername, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserUpdateUsernameByUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserDeleteUsername(ctx context.Context, in *TLUserDeleteUsername, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserDeleteUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserResolveUsername(ctx context.Context, in *TLUserResolveUsername, opts ...grpc.CallOption) (*mtproto.Peer, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Peer)
+	err := c.cc.Invoke(ctx, RPCUser_UserResolveUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserGetListByUsernameList(ctx context.Context, in *TLUserGetListByUsernameList, opts ...grpc.CallOption) (*Vector_UsernameData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Vector_UsernameData)
+	err := c.cc.Invoke(ctx, RPCUser_UserGetListByUsernameList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserDeleteUsernameByPeer(ctx context.Context, in *TLUserDeleteUsernameByPeer, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserDeleteUsernameByPeer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserSearchUsername(ctx context.Context, in *TLUserSearchUsername, opts ...grpc.CallOption) (*Vector_UsernameData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Vector_UsernameData)
+	err := c.cc.Invoke(ctx, RPCUser_UserSearchUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserToggleUsername(ctx context.Context, in *TLUserToggleUsername, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserToggleUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserReorderUsernames(ctx context.Context, in *TLUserReorderUsernames, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserReorderUsernames_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rPCUserClient) UserDeactivateAllChannelUsernames(ctx context.Context, in *TLUserDeactivateAllChannelUsernames, opts ...grpc.CallOption) (*mtproto.Bool, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.Bool)
+	err := c.cc.Invoke(ctx, RPCUser_UserDeactivateAllChannelUsernames_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCUserServer is the server API for RPCUser service.
 // All implementations should embed UnimplementedRPCUserServer
 // for forward compatibility.
@@ -1128,6 +1308,21 @@ type RPCUserServer interface {
 	UserSetMainProfileTab(context.Context, *TLUserSetMainProfileTab) (*mtproto.Bool, error)
 	UserSetDefaultHistoryTTL(context.Context, *TLUserSetDefaultHistoryTTL) (*mtproto.Bool, error)
 	UserGetDefaultHistoryTTL(context.Context, *TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error)
+	UserGetAccountUsername(context.Context, *TLUserGetAccountUsername) (*UsernameData, error)
+	UserCheckAccountUsername(context.Context, *TLUserCheckAccountUsername) (*UsernameExist, error)
+	UserGetChannelUsername(context.Context, *TLUserGetChannelUsername) (*UsernameData, error)
+	UserCheckChannelUsername(context.Context, *TLUserCheckChannelUsername) (*UsernameExist, error)
+	UserUpdateUsernameByPeer(context.Context, *TLUserUpdateUsernameByPeer) (*mtproto.Bool, error)
+	UserCheckUsername(context.Context, *TLUserCheckUsername) (*UsernameExist, error)
+	UserUpdateUsernameByUsername(context.Context, *TLUserUpdateUsernameByUsername) (*mtproto.Bool, error)
+	UserDeleteUsername(context.Context, *TLUserDeleteUsername) (*mtproto.Bool, error)
+	UserResolveUsername(context.Context, *TLUserResolveUsername) (*mtproto.Peer, error)
+	UserGetListByUsernameList(context.Context, *TLUserGetListByUsernameList) (*Vector_UsernameData, error)
+	UserDeleteUsernameByPeer(context.Context, *TLUserDeleteUsernameByPeer) (*mtproto.Bool, error)
+	UserSearchUsername(context.Context, *TLUserSearchUsername) (*Vector_UsernameData, error)
+	UserToggleUsername(context.Context, *TLUserToggleUsername) (*mtproto.Bool, error)
+	UserReorderUsernames(context.Context, *TLUserReorderUsernames) (*mtproto.Bool, error)
+	UserDeactivateAllChannelUsernames(context.Context, *TLUserDeactivateAllChannelUsernames) (*mtproto.Bool, error)
 }
 
 // UnimplementedRPCUserServer should be embedded to have
@@ -1385,6 +1580,51 @@ func (UnimplementedRPCUserServer) UserSetDefaultHistoryTTL(context.Context, *TLU
 }
 func (UnimplementedRPCUserServer) UserGetDefaultHistoryTTL(context.Context, *TLUserGetDefaultHistoryTTL) (*mtproto.DefaultHistoryTTL, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGetDefaultHistoryTTL not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetAccountUsername(context.Context, *TLUserGetAccountUsername) (*UsernameData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetAccountUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserCheckAccountUsername(context.Context, *TLUserCheckAccountUsername) (*UsernameExist, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserCheckAccountUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetChannelUsername(context.Context, *TLUserGetChannelUsername) (*UsernameData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetChannelUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserCheckChannelUsername(context.Context, *TLUserCheckChannelUsername) (*UsernameExist, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserCheckChannelUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserUpdateUsernameByPeer(context.Context, *TLUserUpdateUsernameByPeer) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserUpdateUsernameByPeer not implemented")
+}
+func (UnimplementedRPCUserServer) UserCheckUsername(context.Context, *TLUserCheckUsername) (*UsernameExist, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserCheckUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserUpdateUsernameByUsername(context.Context, *TLUserUpdateUsernameByUsername) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserUpdateUsernameByUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserDeleteUsername(context.Context, *TLUserDeleteUsername) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDeleteUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserResolveUsername(context.Context, *TLUserResolveUsername) (*mtproto.Peer, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserResolveUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserGetListByUsernameList(context.Context, *TLUserGetListByUsernameList) (*Vector_UsernameData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGetListByUsernameList not implemented")
+}
+func (UnimplementedRPCUserServer) UserDeleteUsernameByPeer(context.Context, *TLUserDeleteUsernameByPeer) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDeleteUsernameByPeer not implemented")
+}
+func (UnimplementedRPCUserServer) UserSearchUsername(context.Context, *TLUserSearchUsername) (*Vector_UsernameData, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserSearchUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserToggleUsername(context.Context, *TLUserToggleUsername) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserToggleUsername not implemented")
+}
+func (UnimplementedRPCUserServer) UserReorderUsernames(context.Context, *TLUserReorderUsernames) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserReorderUsernames not implemented")
+}
+func (UnimplementedRPCUserServer) UserDeactivateAllChannelUsernames(context.Context, *TLUserDeactivateAllChannelUsernames) (*mtproto.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDeactivateAllChannelUsernames not implemented")
 }
 func (UnimplementedRPCUserServer) testEmbeddedByValue() {}
 
@@ -2900,6 +3140,276 @@ func _RPCUser_UserGetDefaultHistoryTTL_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCUser_UserGetAccountUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetAccountUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetAccountUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetAccountUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetAccountUsername(ctx, req.(*TLUserGetAccountUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserCheckAccountUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserCheckAccountUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserCheckAccountUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserCheckAccountUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserCheckAccountUsername(ctx, req.(*TLUserCheckAccountUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserGetChannelUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetChannelUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetChannelUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetChannelUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetChannelUsername(ctx, req.(*TLUserGetChannelUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserCheckChannelUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserCheckChannelUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserCheckChannelUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserCheckChannelUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserCheckChannelUsername(ctx, req.(*TLUserCheckChannelUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserUpdateUsernameByPeer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserUpdateUsernameByPeer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserUpdateUsernameByPeer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserUpdateUsernameByPeer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserUpdateUsernameByPeer(ctx, req.(*TLUserUpdateUsernameByPeer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserCheckUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserCheckUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserCheckUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserCheckUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserCheckUsername(ctx, req.(*TLUserCheckUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserUpdateUsernameByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserUpdateUsernameByUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserUpdateUsernameByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserUpdateUsernameByUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserUpdateUsernameByUsername(ctx, req.(*TLUserUpdateUsernameByUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserDeleteUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserDeleteUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserDeleteUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserDeleteUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserDeleteUsername(ctx, req.(*TLUserDeleteUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserResolveUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserResolveUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserResolveUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserResolveUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserResolveUsername(ctx, req.(*TLUserResolveUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserGetListByUsernameList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserGetListByUsernameList)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserGetListByUsernameList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserGetListByUsernameList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserGetListByUsernameList(ctx, req.(*TLUserGetListByUsernameList))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserDeleteUsernameByPeer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserDeleteUsernameByPeer)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserDeleteUsernameByPeer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserDeleteUsernameByPeer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserDeleteUsernameByPeer(ctx, req.(*TLUserDeleteUsernameByPeer))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserSearchUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserSearchUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserSearchUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserSearchUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserSearchUsername(ctx, req.(*TLUserSearchUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserToggleUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserToggleUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserToggleUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserToggleUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserToggleUsername(ctx, req.(*TLUserToggleUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserReorderUsernames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserReorderUsernames)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserReorderUsernames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserReorderUsernames_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserReorderUsernames(ctx, req.(*TLUserReorderUsernames))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RPCUser_UserDeactivateAllChannelUsernames_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLUserDeactivateAllChannelUsernames)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCUserServer).UserDeactivateAllChannelUsernames(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCUser_UserDeactivateAllChannelUsernames_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCUserServer).UserDeactivateAllChannelUsernames(ctx, req.(*TLUserDeactivateAllChannelUsernames))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCUser_ServiceDesc is the grpc.ServiceDesc for RPCUser service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3238,6 +3748,66 @@ var RPCUser_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "user_getDefaultHistoryTTL",
 			Handler:    _RPCUser_UserGetDefaultHistoryTTL_Handler,
+		},
+		{
+			MethodName: "user_getAccountUsername",
+			Handler:    _RPCUser_UserGetAccountUsername_Handler,
+		},
+		{
+			MethodName: "user_checkAccountUsername",
+			Handler:    _RPCUser_UserCheckAccountUsername_Handler,
+		},
+		{
+			MethodName: "user_getChannelUsername",
+			Handler:    _RPCUser_UserGetChannelUsername_Handler,
+		},
+		{
+			MethodName: "user_checkChannelUsername",
+			Handler:    _RPCUser_UserCheckChannelUsername_Handler,
+		},
+		{
+			MethodName: "user_updateUsernameByPeer",
+			Handler:    _RPCUser_UserUpdateUsernameByPeer_Handler,
+		},
+		{
+			MethodName: "user_checkUsername",
+			Handler:    _RPCUser_UserCheckUsername_Handler,
+		},
+		{
+			MethodName: "user_updateUsernameByUsername",
+			Handler:    _RPCUser_UserUpdateUsernameByUsername_Handler,
+		},
+		{
+			MethodName: "user_deleteUsername",
+			Handler:    _RPCUser_UserDeleteUsername_Handler,
+		},
+		{
+			MethodName: "user_resolveUsername",
+			Handler:    _RPCUser_UserResolveUsername_Handler,
+		},
+		{
+			MethodName: "user_getListByUsernameList",
+			Handler:    _RPCUser_UserGetListByUsernameList_Handler,
+		},
+		{
+			MethodName: "user_deleteUsernameByPeer",
+			Handler:    _RPCUser_UserDeleteUsernameByPeer_Handler,
+		},
+		{
+			MethodName: "user_searchUsername",
+			Handler:    _RPCUser_UserSearchUsername_Handler,
+		},
+		{
+			MethodName: "user_toggleUsername",
+			Handler:    _RPCUser_UserToggleUsername_Handler,
+		},
+		{
+			MethodName: "user_reorderUsernames",
+			Handler:    _RPCUser_UserReorderUsernames_Handler,
+		},
+		{
+			MethodName: "user_deactivateAllChannelUsernames",
+			Handler:    _RPCUser_UserDeactivateAllChannelUsernames_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

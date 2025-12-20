@@ -12,10 +12,18 @@ package core
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"github.com/teamgram/proto/mtproto/rpc/metadata"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/internal/svc"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+var (
+	usernameNotExisted   = user.MakeTLUsernameNotExisted(nil).To_UsernameExist()
+	usernameExisted      = user.MakeTLUsernameExisted(nil).To_UsernameExist()
+	usernameExistedNotMe = user.MakeTLUsernameExistedNotMe(nil).To_UsernameExist()
+	usernameExistedIsMe  = user.MakeTLUsernameExistedIsMe(nil).To_UsernameExist()
 )
 
 type UserCore struct {

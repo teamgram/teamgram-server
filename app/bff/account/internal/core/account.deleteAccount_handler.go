@@ -23,7 +23,6 @@ import (
 	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	"github.com/teamgram/teamgram-server/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/app/service/biz/username/username"
 )
 
 // AccountDeleteAccount
@@ -38,7 +37,7 @@ func (c *AccountCore) AccountDeleteAccount(in *mtproto.TLAccountDeleteAccount) (
 	}
 
 	if me.Username != "" {
-		_, err = c.svcCtx.Dao.UsernameClient.UsernameDeleteUsername(c.ctx, &username.TLUsernameDeleteUsername{
+		_, err = c.svcCtx.Dao.UserClient.UserDeleteUsername(c.ctx, &user.TLUserDeleteUsername{
 			Username: me.Username,
 		})
 		if err != nil {
