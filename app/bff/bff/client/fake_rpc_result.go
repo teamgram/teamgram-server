@@ -7,6 +7,7 @@
 package bff_proxy_client
 
 import (
+	"context"
 	"reflect"
 	"time"
 
@@ -69,7 +70,7 @@ func init() {
 	}).To_SecurePasswordKdfAlgo()
 }
 
-func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtproto.TLObject, error) {
+func (c *BFFProxyClient) TryReturnFakeRpcResult(ctx context.Context, object mtproto.TLObject) (mtproto.TLObject, error) {
 	rt := reflect.TypeOf(object)
 	if rt.Kind() == reflect.Ptr {
 		rt = rt.Elem()
@@ -207,8 +208,10 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 			Sets:   []*mtproto.StickerSetCovered{},
 			Unread: []int64{},
 		}).To_Messages_FeaturedStickers(), nil
-	case "TLMessagesGetStickerSet":
-		return mtproto.MakeTLMessagesStickerSetNotModified(&mtproto.Messages_StickerSet{}).To_Messages_StickerSet(), nil
+	//case "TLMessagesGetStickerSet":
+	//	// logx.WithContext(ct)
+	//	return nil, mtproto.ErrMethodNotImpl
+	//	// return mtproto.MakeTLMessagesStickerSetNotModified(&mtproto.Messages_StickerSet{}).To_Messages_StickerSet(), nil
 
 	// 	scheduledmessages
 	case "TLMessagesGetScheduledMessages":
@@ -301,6 +304,6 @@ func (c *BFFProxyClient) TryReturnFakeRpcResult(object mtproto.TLObject) (mtprot
 		}).To_Account_WebAuthorizations(), nil
 	}
 
-	logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
+	logx.WithContext(ctx).Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
 	return nil, mtproto.ErrEnterpriseIsBlocked
 }

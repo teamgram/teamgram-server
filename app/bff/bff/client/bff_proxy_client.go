@@ -85,7 +85,7 @@ func (c *BFFProxyClient) InvokeContext(ctx context.Context, rpcMetaData *metadat
 
 	conn, err := c.GetRpcClientByRequest(object)
 	if err != nil {
-		if r, err2 := c.TryReturnFakeRpcResult(object); err2 != nil {
+		if r, err2 := c.TryReturnFakeRpcResult(ctx, object); err2 != nil {
 			return nil, mtproto.NewRpcError(err2)
 		} else {
 			return r, nil
