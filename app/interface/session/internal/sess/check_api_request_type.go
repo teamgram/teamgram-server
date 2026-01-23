@@ -69,8 +69,8 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAccountGetPasswordSettings,
 		*mtproto.TLAccountUpdatePasswordSettings,
 		*mtproto.TLAccountDeclinePasswordReset,
-		*mtproto.TLAuthRequestPasswordRecovery,
-		*mtproto.TLAuthRecoverPassword,
+		*mtproto.TLAuthRequestPasswordRecovery, // TODO: before process, try fetch usrId
+		*mtproto.TLAuthRecoverPassword,         // TODO: before process, try fetch usrId
 		*mtproto.TLAuthCheckRecoveryPassword:
 		return true
 
@@ -84,13 +84,17 @@ func checkRpcWithoutLogin(tl mtproto.TLObject) bool {
 		*mtproto.TLAuthExportAuthorization,
 		*mtproto.TLAuthImportAuthorization,
 		*mtproto.TLAuthCancelCode,
-		// *mtproto.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
-		// *mtproto.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
 		*mtproto.TLAuthExportLoginToken,
 		*mtproto.TLAuthAcceptLoginToken,
 		*mtproto.TLAuthLogOut, // TODO: before process, try fetch usrId
 		*mtproto.TLAuthBindTempAuthKey,
-		*mtproto.TLAuthCheckPassword:
+		*mtproto.TLAuthCheckPassword,
+		*mtproto.TLAuthInitPasskeyLogin,
+		*mtproto.TLAuthFinishPasskeyLogin,
+		*mtproto.TLAccountRegisterPasskey,
+		*mtproto.TLAccountInitPasskeyRegistration,
+		*mtproto.TLAccountGetPasskeys,
+		*mtproto.TLAccountDeletePasskey:
 
 		return true
 	// help
