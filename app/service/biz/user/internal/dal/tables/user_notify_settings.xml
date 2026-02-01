@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_notify_settings">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO
+                user_notify_settings (user_id, peer_type, peer_id, show_previews, silent, mute_until, sound)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :show_previews, :silent, :mute_until, :sound)
+            ON DUPLICATE KEY UPDATE
+                show_previews = VALUES(show_previews),
+                silent = VALUES(silent),
+                mute_until = VALUES(mute_until),
+                sound = VALUES(sound),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectAll" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound
+            FROM
+                user_notify_settings
+            WHERE
+                user_id=:user_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound
+            FROM
+                user_notify_settings
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id=:peer_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <!--
+    <operation name="SelectList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, peer_type, peer_id, show_previews, silent, mute_until, sound
+            FROM
+                user_notify_settings
+            WHERE
+                user_id = :user_id AND peer_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+    -->
+
+    <operation name="DeleteAll">
+        <sql>
+            UPDATE user_notify_settings SET deleted = 1 WHERE user_id = :user_id
+        </sql>
+    </operation>
+</table>

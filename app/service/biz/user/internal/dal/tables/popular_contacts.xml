@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="popular_contacts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO popular_contacts
+                (phone, importers, deleted)
+            VALUES
+                (:phone, :importers, 0)
+            ON DUPLICATE KEY UPDATE
+                importers = importers + 1
+        </sql>
+    </operation>
+
+    <operation name="IncreaseImporters">
+        <sql>
+            UPDATE popular_contacts SET importers = importers +1 WHERE phone = :phone
+        </sql>
+    </operation>
+
+    <operation name="IncreaseImportersList">
+        <params>
+            <param name="phoneList" type="[]string" />
+        </params>
+        <sql>
+            UPDATE popular_contacts SET importers = importers +1 WHERE phone in (:phoneList)
+        </sql>
+    </operation>
+
+    <operation name="SelectImporters">
+        <sql>
+            SELECT phone, importers FROM popular_contacts WHERE phone=:phone
+        </sql>
+    </operation>
+
+    <operation name="SelectImportersList"  result_set="list">
+        <params>
+            <param name="phoneList" type="[]string" />
+        </params>
+        <sql>
+            SELECT phone, importers FROM popular_contacts WHERE phone in (:phoneList)
+        </sql>
+    </operation>
+</table>

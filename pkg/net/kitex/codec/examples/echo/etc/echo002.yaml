@@ -1,0 +1,11 @@
+Name: examples.echo
+ListenOn: 127.0.0.1:11002
+Etcd:
+  GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: examples.echo
+Log:
+  #Mode: file
+  #Path: ../logs/gnetway
+  Level: debug

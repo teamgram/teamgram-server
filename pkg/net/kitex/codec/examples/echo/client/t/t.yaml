@@ -1,0 +1,8 @@
+EchoClient:
+  DestService: "examples.echo"
+  ServiceName: "RPCEcho"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: examples.echo

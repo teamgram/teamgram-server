@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_presences">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_presences
+                (user_id, last_seen_at, expires)
+            VALUES
+                (:user_id, :last_seen_at, :expires)
+            ON DUPLICATE KEY UPDATE
+                last_seen_at = VALUES(last_seen_at),
+                expires = VALUES(expires)
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, last_seen_at, expires
+            FROM
+                user_presences
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, last_seen_at, expires
+            FROM
+                user_presences
+            WHERE
+                user_id IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="UpdateLastSeenAt">
+        <sql>
+            UPDATE
+                user_presences
+            SET
+                last_seen_at = :last_seen_at, expires = :expires
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>

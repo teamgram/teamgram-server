@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_peer_blocks">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_peer_blocks
+                (user_id, peer_type, peer_id, date)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :date)
+            ON DUPLICATE KEY UPDATE
+                date = VALUES(date),
+                deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, date
+            FROM
+                user_peer_blocks
+            WHERE
+                user_id = :user_id AND deleted = 0 ORDER BY id LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="SelectListByIdList" result_set="single_list">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                peer_id
+            FROM
+                user_peer_blocks
+            WHERE
+                user_id = :user_id AND peer_type = 2 AND peer_id IN (:idList) AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, date
+            FROM
+                user_peer_blocks
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id=:peer_id AND deleted = 0
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                user_peer_blocks
+            SET
+                deleted = 1, date = 0
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+</table>

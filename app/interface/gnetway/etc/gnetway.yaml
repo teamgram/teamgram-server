@@ -1,0 +1,22 @@
+Name: interface.gateway
+ListenOn: 127.0.0.1:20110
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.gateway
+KeyFile: "./server_pkcs1.key"
+KeyFingerprint: "12240908862933197005"
+MaxProc: 4
+Server:
+  Addrs:
+    - 0.0.0.0:10443
+    - 0.0.0.0:5222
+    - 0.0.0.0:8801
+  SendBuf: 65536
+  ReceiveBuf: 65536
+  Multicore: false
+Session:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: interface.session

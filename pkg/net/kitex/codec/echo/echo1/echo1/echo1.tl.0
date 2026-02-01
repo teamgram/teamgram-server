@@ -1,0 +1,14 @@
+// Server side api
+
+///////////////////////////////
+///////// Nebula server API
+///////////////////////////////
+
+---types---
+echo message:string = Echo;
+
+---functions---
+
+echo1.echo message:string = Echo;
+
+// LAYER 0

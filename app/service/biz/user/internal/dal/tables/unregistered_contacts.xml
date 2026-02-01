@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="unregistered_contacts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO unregistered_contacts
+                (phone, importer_user_id, import_first_name, import_last_name)
+            VALUES
+                (:phone, :importer_user_id, :import_first_name, :import_last_name)
+            ON DUPLICATE KEY UPDATE
+                import_first_name = VALUES(import_first_name),
+                import_last_name = VALUES(import_last_name)
+        </sql>
+    </operation>
+    <operation name="SelectImportersByPhone" result_set="list">
+        <sql>
+            SELECT
+                id, importer_user_id, phone, import_first_name, import_last_name
+            FROM
+                unregistered_contacts
+            WHERE
+                phone=:phone AND imported = 0
+        </sql>
+    </operation>
+    <operation name="UpdateContactName">
+        <sql>
+            UPDATE
+                unregistered_contacts
+            SET
+                import_first_name = :import_first_name, import_last_name = :import_last_name
+            WHERE
+                id = :id
+        </sql>
+    </operation>
+    <operation name="DeleteContacts">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                unregistered_contacts
+            SET
+                imported = 1
+            WHERE
+                id in (:id_list)
+        </sql>
+    </operation>
+    <operation name="DeleteImportersByPhone">
+        <sql>
+            UPDATE
+                unregistered_contacts
+            SET
+                imported = 1
+            WHERE
+                phone = :phone
+        </sql>
+    </operation>
+</table>

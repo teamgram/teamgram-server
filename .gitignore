@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+.DS_Store
 
 # Test binary, built with `go test -c`
 *.test
@@ -30,3 +31,35 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+.idea
+
+*.tl
+
+/app/interface/session/client/t/t
+/app/interface/session/cmd/session/session
+
+teamgoood/bin/*
+!teamgoood/bin/config.json
+!teamgoood/bin/killall.sh
+!teamgoood/bin/runall2.sh
+!teamgoood/bin/runall-docker.sh
+!teamgoood/bin/server_pkcs1.key
+
+teamgoood/logs/*
+!teamgoood/logs/.gitkeeper
+/pkg/net/kitex/codec/examples/echo/cmd/echo/echo
+/pkg/net/kitex/codec/examples/echo/client/t/t
+
+v2
+
+/pkg/net/kitex/codec/echo/echo/client/client
+/pkg/net/kitex/codec/echo/echo1/cmd/echo1/echo1
+/pkg/net/kitex/codec/echo/echo2/cmd/echo2/echo2
+/pkg/net/kitex/codec/echo/echo/cmd/echo/echo
+/tools/t/
+
+/pkg/proto/crypto/tools/tools
+
+/pkg/proto/rpc/client/client
+/pkg/proto/rpc/server/server

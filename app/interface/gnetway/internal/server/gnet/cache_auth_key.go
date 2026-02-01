@@ -1,0 +1,56 @@
+// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+//  All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package gnet
+
+import (
+	"fmt"
+
+	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
+)
+
+type CacheV struct {
+	V *tg.TLAuthKeyInfo
+}
+
+func (c CacheV) Size() int {
+	return 1
+}
+
+func (s *Server) GetAuthKey(authKeyId int64) *tg.TLAuthKeyInfo {
+	var (
+		cacheK = fmt.Sprintf("%d", authKeyId)
+		value  *CacheV
+	)
+
+	if v, ok := s.cache.Get(cacheK); ok {
+		value = v.(*CacheV)
+	}
+
+	if value == nil {
+		return nil
+	} else {
+		return value.V
+	}
+}
+
+func (s *Server) PutAuthKey(keyInfo *tg.TLAuthKeyInfo) {
+	var (
+		cacheK = fmt.Sprintf("%d", keyInfo.AuthKeyId)
+	)
+
+	// TODO: expires_in
+	s.cache.Set(cacheK, &CacheV{V: keyInfo})
+}

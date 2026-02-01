@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="bot_commands">
+    <operation name="InsertBulk" type="bulkinsert">
+        <sql>
+            INSERT INTO bot_commands
+                (bot_id, command, description)
+            VALUES
+                (:bot_id, :command, :description)
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            DELETE FROM bot_commands WHERE bot_id = :bot_id
+        </sql>
+    </operation>
+
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO bot_commands
+                (bot_id, command, description)
+            VALUES
+                (:bot_id, :command, :description)
+        </sql>
+    </operation>
+
+    <operation name="SelectList" result_set="list">
+        <sql>
+            SELECT
+                id, bot_id, command, description
+            FROM
+                bot_commands
+            WHERE
+                bot_id = :bot_id
+        </sql>
+    </operation>
+
+    <operation name="SelectListByIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, bot_id, command, description
+            FROM
+                bot_commands
+            WHERE
+                bot_id IN (:id_list)
+        </sql>
+    </operation>
+</table>
