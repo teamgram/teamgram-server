@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_global_privacy_settings">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_global_privacy_settings
+                (user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium)
+            VALUES
+                (:user_id, :archive_and_mute_new_noncontact_peers, :keep_archived_unmuted, :keep_archived_folders, :hide_read_marks, :new_noncontact_peers_require_premium)
+            ON DUPLICATE KEY UPDATE
+                archive_and_mute_new_noncontact_peers = VALUES(archive_and_mute_new_noncontact_peers),
+                keep_archived_unmuted = VALUES(keep_archived_unmuted),
+                keep_archived_folders = VALUES(keep_archived_folders),
+                hide_read_marks = VALUES(hide_read_marks),
+                new_noncontact_peers_require_premium = VALUES(new_noncontact_peers_require_premium)
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, archive_and_mute_new_noncontact_peers, keep_archived_unmuted, keep_archived_folders, hide_read_marks, new_noncontact_peers_require_premium
+            FROM
+                user_global_privacy_settings
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>

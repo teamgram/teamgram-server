@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_settings">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_settings
+                (user_id, key2, value)
+            VALUES
+                (:user_id, :key2, :value)
+            ON DUPLICATE KEY UPDATE
+                value = VALUES(value)
+        </sql>
+    </operation>
+    <operation name="SelectByKey">
+        <sql>
+            SELECT
+                id, user_id, key2, value
+            FROM
+                user_settings
+            WHERE
+                user_id = :user_id AND key2 = :key2 AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+    <operation name="Update">
+        <sql>
+            UPDATE
+                user_settings
+            SET
+                value = :value, deleted = 0
+            WHERE
+                user_id = :user_id AND key2 = :key2
+        </sql>
+    </operation>
+</table>
+
+

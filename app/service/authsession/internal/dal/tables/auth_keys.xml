@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_keys">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO auth_keys
+                (auth_key_id, body)
+            VALUES
+                (:auth_key_id, :body)
+        </sql>
+    </operation>
+    <operation name="SelectByAuthKeyId">
+        <sql>
+            SELECT
+                auth_key_id, body
+            FROM
+                auth_keys
+            WHERE
+                auth_key_id=:auth_key_id
+        </sql>
+    </operation>
+</table>

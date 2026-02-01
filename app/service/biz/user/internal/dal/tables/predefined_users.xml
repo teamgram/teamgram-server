@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="predefined_users">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO predefined_users
+                (first_name, last_name, username, phone, code, verified)
+            values
+                (:first_name, :last_name, :username, :phone, :code, :verified)
+        </sql>
+    </operation>
+
+    <operation name="SelectByPhone">
+        <sql>
+            SELECT
+                id, phone, first_name, last_name, username, code, verified, registered_user_id
+            FROM
+                predefined_users
+            WHERE
+                phone = :phone AND deleted = 0 LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectPredefinedUsersAll" result_set="list">
+        <sql>
+            SELECT
+                id, phone, first_name, last_name, username, code, verified, registered_user_id
+            FROM
+                predefined_users
+            WHERE
+                deleted = 0
+            ORDER BY username
+        </sql>
+    </operation>
+
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                predefined_users
+            SET
+                deleted = 0
+            WHERE
+                phone = :phone
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                predefined_users
+            SET
+                cMap = :cMap
+            WHERE
+                phone = :phone
+        </sql>
+    </operation>
+</table>

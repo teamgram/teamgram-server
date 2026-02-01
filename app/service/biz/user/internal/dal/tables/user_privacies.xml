@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_privacies">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO user_privacies
+                (user_id, key_type, rules)
+            VALUES
+                (:user_id, :key_type, :rules)
+            ON DUPLICATE KEY UPDATE
+                rules = VALUES(rules)
+        </sql>
+    </operation>
+
+    <operation name="InsertBulk" type="bulkinsert">
+        <sql>
+            INSERT INTO user_privacies
+                (user_id, key_type, rules)
+            VALUES
+                (:user_id, :key_type, :rules)
+        </sql>
+    </operation>
+
+    <operation name="UpdatePrivacy">
+        <sql>
+            UPDATE
+                user_privacies
+            SET
+                rules = :rules
+            WHERE
+                user_id = :user_id AND key_type := key_type
+        </sql>
+    </operation>
+
+    <operation name="SelectPrivacy">
+        <sql>
+            SELECT
+                id, user_id, key_type, rules
+            FROM
+                user_privacies
+            WHERE
+                user_id = :user_id AND key_type = :key_type
+        </sql>
+    </operation>
+    <operation name="SelectPrivacyList" result_set="list">
+        <params>
+            <param name="keyList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, key_type, rules
+            FROM
+                user_privacies
+            WHERE
+                user_id = :user_id AND key_type IN (:keyList)
+        </sql>
+    </operation>
+    <operation name="SelectUsersPrivacyList" result_set="list">
+        <params>
+            <param name="idList" type="[]int32" />
+            <param name="keyList" type="[]int32" />
+        </params>
+        <sql>
+            SELECT
+                id, user_id, key_type, rules
+            FROM
+                user_privacies
+            WHERE
+                user_id IN (:idList) AND key_type IN (:keyList)
+        </sql>
+    </operation>
+    <operation name="SelectPrivacyAll" result_set="list">
+        <sql>
+            SELECT
+                id, user_id, key_type, rules
+            FROM
+                user_privacies
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>

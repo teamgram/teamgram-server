@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="users">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO users
+                (user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot)
+            VALUES
+                (:user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
+        </sql>
+    </operation>
+
+    <operation name="InsertTestUser">
+        <sql>
+            INSERT INTO users
+                (id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, about, is_bot)
+            VALUES
+                (:id, :user_type, :access_hash, :secret_key_id, :first_name, :last_name, :username, :phone, :country_code, :verified, :about, :is_bot)
+        </sql>
+    </operation>
+
+    <operation name="SelectByPhoneNumber">
+        <sql>
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                phone=:phone LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectById">
+        <sql>
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                id=:id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectNextTestUserId">
+        <params>
+            <param name="maxId" type="int64" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                id < :maxId ORDER BY id DESC LIMIT 1
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="SelectUsersByIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                id IN (:id_list)
+        </sql>
+    </operation>
+
+    <operation name="SelectUsersByPhoneList" result_set="list">
+        <params>
+            <param name="phoneList" type="[]string" />
+        </params>
+        <sql>
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                phone IN (:phoneList)
+        </sql>
+    </operation>
+
+    <operation name="SearchByQueryString" result_set="single_list">
+        <params>
+            <param name="id_list" type="[]int64" />
+            <param name="limit" type="int32" />
+            <param name="q" type="string" />
+            <param name="q2" type="string" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                users
+            WHERE
+                (username LIKE :q OR first_name LIKE :q2 OR last_name LIKE :q2) AND id NOT IN(:id_list) AND deleted=0 LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="SearchByQueryNotIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+            <param name="limit" type="int32" />
+            <param name="q2" type="string" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                users
+            WHERE
+                username LIKE :q2 AND id NOT IN(:id_list) AND deleted=0 LIMIT :limit
+        </sql>
+    </operation>
+
+    <!-- soft deleted
+    <operation name="Banned">
+        <sql>
+            UPDATE users SET banned=:banned, banned_reason=:banned_reason, banned_at=:banned_at WHERE id=:id
+        </sql>
+    </operation>
+    soft deleted -->
+
+    <operation name="Delete">
+        <sql>
+            UPDATE
+                users
+            SET
+                phone = :phone, deleted=1, delete_reason = :delete_reason
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateUsername">
+        <sql>
+            UPDATE
+                users
+            SET
+                username=:username
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateFirstAndLastName">
+        <sql>
+            UPDATE
+                users
+            SET
+                first_name = :first_name, last_name = :last_name
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateAbout">
+        <sql>
+            UPDATE
+                users
+            SET
+                about = :about
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateProfile">
+        <sql>
+            UPDATE
+                users
+            SET
+                first_name = :first_name, last_name = :last_name, about = :about
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectByUsername">
+        <sql>
+            SELECT
+                id
+            FROM
+                users
+            WHERE
+                username=:username LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectAccountDaysTTL">
+        <sql>
+            SELECT
+                account_days_ttl
+            FROM
+                users
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateAccountDaysTTL">
+        <sql>
+            UPDATE
+                users
+            SET
+                account_days_ttl = :account_days_ttl
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectProfilePhoto" result_set="single">
+        <sql>
+            SELECT
+                photo_id
+            FROM
+                users
+            WHERE
+                id=:id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectCountryCode">
+        <sql>
+            SELECT
+                country_code
+            FROM
+                users
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateProfilePhoto">
+        <sql>
+            UPDATE
+                users
+            SET
+                photo_id = :photo_id
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateUser">
+        <params>
+            <param name="cMap" type="map" />
+        </params>
+        <sql>
+            UPDATE
+                users
+            SET
+                cMap = :cMap
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateEmojiStatus">
+        <sql>
+            UPDATE
+                users
+            SET
+                emoji_status_document_id = :emoji_status_document_id, emoji_status_until = :emoji_status_until
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+    `
+    <operation name="UpdateStoriesMaxId">
+        <sql>
+            UPDATE
+                users
+            SET
+                stories_max_id = :stories_max_id
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateColor">
+        <sql>
+            UPDATE
+                users
+            SET
+                color = :color, color_background_emoji_id = :color_background_emoji_id
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateProfileColor">
+        <sql>
+            UPDATE
+                users
+            SET
+                profile_color = :profile_color, profile_color_background_emoji_id = :profile_color_background_emoji_id
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="QueryChannelParticipants" result_set="list">
+        <params>
+            <param name="channelId" type="int64" />
+            <param name="q1" type="string" />
+            <param name="q2" type="string" />
+            <param name="q3" type="string" />
+        </params>
+        <sql>
+            SELECT
+                id, user_type, access_hash, secret_key_id, first_name, last_name, username, phone, country_code, verified, support, scam, fake, premium, premium_expire_date, about, state, is_bot, account_days_ttl, photo_id, restricted, restriction_reason, archive_and_mute_new_noncontact_peers, emoji_status_document_id, emoji_status_until, stories_max_id, color, color_background_emoji_id, profile_color, profile_color_background_emoji_id, birthday, personal_channel_id, deleted, delete_reason
+            FROM
+                users
+            WHERE
+                id IN (SELECT user_id FROM channel_participants WHERE channel_id = :channelId AND state = 0)
+                AND (first_name LIKE :q1 OR last_name LIKE :q2 OR username LIKE :q3)
+        </sql>
+    </operation>
+
+    <operation name="SelectBots" result_set="single_list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                id
+            FROM
+                users
+            WHERE
+                id IN(:id_list) AND is_bot = 1
+        </sql>
+    </operation>
+
+    <operation name="UpdateBirthday">
+        <sql>
+            UPDATE
+                users
+            SET
+                birthday = :birthday
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdatePersonalChannelId">
+        <sql>
+            UPDATE
+                users
+            SET
+                personal_channel_id = :personal_channel_id
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateAuthorizationTTL">
+        <sql>
+            UPDATE
+                users
+            SET
+                authorization_ttl_days = :authorization_ttl_days
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="SelectAuthorizationTTL">
+        <sql>
+            SELECT
+                authorization_ttl_days
+            FROM
+                users
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+</table>

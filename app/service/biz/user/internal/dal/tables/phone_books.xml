@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="phone_books">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO phone_books
+                (auth_key_id, client_id, phone, first_name, last_name)
+            VALUES
+                (:auth_key_id, :client_id, :phone, :first_name, :last_name)
+            ON DUPLICATE KEY UPDATE
+                phone = VALUES(phone),
+                first_name = VALUES(first_name),
+                last_name=VALUES(last_name)
+        </sql>
+    </operation>
+</table>
