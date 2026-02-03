@@ -93,7 +93,7 @@ func (s *Service) MessagesReportSponsoredMessage(ctx context.Context, request *t
 }
 
 // MessagesGetSponsoredMessages
-// messages.getSponsoredMessages#9bd2f439 peer:InputPeer = messages.SponsoredMessages;
+// messages.getSponsoredMessages#3d6ce850 flags:# peer:InputPeer msg_id:flags.0?int = messages.SponsoredMessages;
 func (s *Service) MessagesGetSponsoredMessages(ctx context.Context, request *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSponsoredMessages - metadata: %s, request: %s", c.MD, request)

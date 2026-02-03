@@ -223,10 +223,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"/tg.RPCMessages/messages.reportMessagesDelivery": kitex.NewMethodInfo(
-		messagesReportMessagesDeliveryHandler,
-		newMessagesReportMessagesDeliveryArgs,
-		newMessagesReportMessagesDeliveryResult,
+	"/tg.RPCMessages/messages.summarizeText": kitex.NewMethodInfo(
+		messagesSummarizeTextHandler,
+		newMessagesSummarizeTextArgs,
+		newMessagesSummarizeTextResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -241,6 +241,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		channelsSearchPostsHandler,
 		newChannelsSearchPostsArgs,
 		newChannelsSearchPostsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/tg.RPCMessages/channels.checkSearchPostsFlood": kitex.NewMethodInfo(
+		channelsCheckSearchPostsFloodHandler,
+		newChannelsCheckSearchPostsFloodArgs,
+		newChannelsCheckSearchPostsFloodResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -3845,10 +3852,10 @@ func (p *MessagesGetOutboxReadDateResult) GetResult() interface{} {
 	return p.Success
 }
 
-func messagesReportMessagesDeliveryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*MessagesReportMessagesDeliveryArgs)
-	realResult := result.(*MessagesReportMessagesDeliveryResult)
-	success, err := handler.(tg.RPCMessages).MessagesReportMessagesDelivery(ctx, realArg.Req)
+func messagesSummarizeTextHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*MessagesSummarizeTextArgs)
+	realResult := result.(*MessagesSummarizeTextResult)
+	success, err := handler.(tg.RPCMessages).MessagesSummarizeText(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -3856,27 +3863,27 @@ func messagesReportMessagesDeliveryHandler(ctx context.Context, handler interfac
 	return nil
 }
 
-func newMessagesReportMessagesDeliveryArgs() interface{} {
-	return &MessagesReportMessagesDeliveryArgs{}
+func newMessagesSummarizeTextArgs() interface{} {
+	return &MessagesSummarizeTextArgs{}
 }
 
-func newMessagesReportMessagesDeliveryResult() interface{} {
-	return &MessagesReportMessagesDeliveryResult{}
+func newMessagesSummarizeTextResult() interface{} {
+	return &MessagesSummarizeTextResult{}
 }
 
-type MessagesReportMessagesDeliveryArgs struct {
-	Req *tg.TLMessagesReportMessagesDelivery
+type MessagesSummarizeTextArgs struct {
+	Req *tg.TLMessagesSummarizeText
 }
 
-func (p *MessagesReportMessagesDeliveryArgs) Marshal(out []byte) ([]byte, error) {
+func (p *MessagesSummarizeTextArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in MessagesReportMessagesDeliveryArgs")
+		return out, fmt.Errorf("No req in MessagesSummarizeTextArgs")
 	}
 	return json.Marshal(p.Req)
 }
 
-func (p *MessagesReportMessagesDeliveryArgs) Unmarshal(in []byte) error {
-	msg := new(tg.TLMessagesReportMessagesDelivery)
+func (p *MessagesSummarizeTextArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLMessagesSummarizeText)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -3884,50 +3891,50 @@ func (p *MessagesReportMessagesDeliveryArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *MessagesReportMessagesDeliveryArgs) Encode(x *bin.Encoder, layer int32) error {
+func (p *MessagesSummarizeTextArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("No req in MessagesReportMessagesDeliveryArgs")
+		return fmt.Errorf("No req in MessagesSummarizeTextArgs")
 	}
 
 	return p.Req.Encode(x, layer)
 }
 
-func (p *MessagesReportMessagesDeliveryArgs) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.TLMessagesReportMessagesDelivery)
+func (p *MessagesSummarizeTextArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLMessagesSummarizeText)
 	msg.ClazzID, _ = d.ClazzID()
 	msg.Decode(d)
 	p.Req = msg
 	return nil
 }
 
-var MessagesReportMessagesDeliveryArgs_Req_DEFAULT *tg.TLMessagesReportMessagesDelivery
+var MessagesSummarizeTextArgs_Req_DEFAULT *tg.TLMessagesSummarizeText
 
-func (p *MessagesReportMessagesDeliveryArgs) GetReq() *tg.TLMessagesReportMessagesDelivery {
+func (p *MessagesSummarizeTextArgs) GetReq() *tg.TLMessagesSummarizeText {
 	if !p.IsSetReq() {
-		return MessagesReportMessagesDeliveryArgs_Req_DEFAULT
+		return MessagesSummarizeTextArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *MessagesReportMessagesDeliveryArgs) IsSetReq() bool {
+func (p *MessagesSummarizeTextArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-type MessagesReportMessagesDeliveryResult struct {
-	Success *tg.Bool
+type MessagesSummarizeTextResult struct {
+	Success *tg.TextWithEntities
 }
 
-var MessagesReportMessagesDeliveryResult_Success_DEFAULT *tg.Bool
+var MessagesSummarizeTextResult_Success_DEFAULT *tg.TextWithEntities
 
-func (p *MessagesReportMessagesDeliveryResult) Marshal(out []byte) ([]byte, error) {
+func (p *MessagesSummarizeTextResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in MessagesReportMessagesDeliveryResult")
+		return out, fmt.Errorf("No req in MessagesSummarizeTextResult")
 	}
 	return json.Marshal(p.Success)
 }
 
-func (p *MessagesReportMessagesDeliveryResult) Unmarshal(in []byte) error {
-	msg := new(tg.Bool)
+func (p *MessagesSummarizeTextResult) Unmarshal(in []byte) error {
+	msg := new(tg.TextWithEntities)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -3935,16 +3942,16 @@ func (p *MessagesReportMessagesDeliveryResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *MessagesReportMessagesDeliveryResult) Encode(x *bin.Encoder, layer int32) error {
+func (p *MessagesSummarizeTextResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in MessagesReportMessagesDeliveryResult")
+		return fmt.Errorf("No req in MessagesSummarizeTextResult")
 	}
 
 	return p.Success.Encode(x, layer)
 }
 
-func (p *MessagesReportMessagesDeliveryResult) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.Bool)
+func (p *MessagesSummarizeTextResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TextWithEntities)
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -3952,22 +3959,22 @@ func (p *MessagesReportMessagesDeliveryResult) Decode(d *bin.Decoder) (err error
 	return nil
 }
 
-func (p *MessagesReportMessagesDeliveryResult) GetSuccess() *tg.Bool {
+func (p *MessagesSummarizeTextResult) GetSuccess() *tg.TextWithEntities {
 	if !p.IsSetSuccess() {
-		return MessagesReportMessagesDeliveryResult_Success_DEFAULT
+		return MessagesSummarizeTextResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *MessagesReportMessagesDeliveryResult) SetSuccess(x interface{}) {
-	p.Success = x.(*tg.Bool)
+func (p *MessagesSummarizeTextResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.TextWithEntities)
 }
 
-func (p *MessagesReportMessagesDeliveryResult) IsSetSuccess() bool {
+func (p *MessagesSummarizeTextResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *MessagesReportMessagesDeliveryResult) GetResult() interface{} {
+func (p *MessagesSummarizeTextResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -4220,6 +4227,132 @@ func (p *ChannelsSearchPostsResult) IsSetSuccess() bool {
 }
 
 func (p *ChannelsSearchPostsResult) GetResult() interface{} {
+	return p.Success
+}
+
+func channelsCheckSearchPostsFloodHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ChannelsCheckSearchPostsFloodArgs)
+	realResult := result.(*ChannelsCheckSearchPostsFloodResult)
+	success, err := handler.(tg.RPCMessages).ChannelsCheckSearchPostsFlood(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newChannelsCheckSearchPostsFloodArgs() interface{} {
+	return &ChannelsCheckSearchPostsFloodArgs{}
+}
+
+func newChannelsCheckSearchPostsFloodResult() interface{} {
+	return &ChannelsCheckSearchPostsFloodResult{}
+}
+
+type ChannelsCheckSearchPostsFloodArgs struct {
+	Req *tg.TLChannelsCheckSearchPostsFlood
+}
+
+func (p *ChannelsCheckSearchPostsFloodArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ChannelsCheckSearchPostsFloodArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ChannelsCheckSearchPostsFloodArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLChannelsCheckSearchPostsFlood)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ChannelsCheckSearchPostsFloodArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ChannelsCheckSearchPostsFloodArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ChannelsCheckSearchPostsFloodArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLChannelsCheckSearchPostsFlood)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var ChannelsCheckSearchPostsFloodArgs_Req_DEFAULT *tg.TLChannelsCheckSearchPostsFlood
+
+func (p *ChannelsCheckSearchPostsFloodArgs) GetReq() *tg.TLChannelsCheckSearchPostsFlood {
+	if !p.IsSetReq() {
+		return ChannelsCheckSearchPostsFloodArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ChannelsCheckSearchPostsFloodArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ChannelsCheckSearchPostsFloodResult struct {
+	Success *tg.SearchPostsFlood
+}
+
+var ChannelsCheckSearchPostsFloodResult_Success_DEFAULT *tg.SearchPostsFlood
+
+func (p *ChannelsCheckSearchPostsFloodResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ChannelsCheckSearchPostsFloodResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) Unmarshal(in []byte) error {
+	msg := new(tg.SearchPostsFlood)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ChannelsCheckSearchPostsFloodResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.SearchPostsFlood)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) GetSuccess() *tg.SearchPostsFlood {
+	if !p.IsSetSuccess() {
+		return ChannelsCheckSearchPostsFloodResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.SearchPostsFlood)
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ChannelsCheckSearchPostsFloodResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -4625,13 +4758,13 @@ func (p *kClient) MessagesGetOutboxReadDate(ctx context.Context, req *tg.TLMessa
 	return _result, nil
 }
 
-func (p *kClient) MessagesReportMessagesDelivery(ctx context.Context, req *tg.TLMessagesReportMessagesDelivery) (r *tg.Bool, err error) {
-	// var _args MessagesReportMessagesDeliveryArgs
+func (p *kClient) MessagesSummarizeText(ctx context.Context, req *tg.TLMessagesSummarizeText) (r *tg.TextWithEntities, err error) {
+	// var _args MessagesSummarizeTextArgs
 	// _args.Req = req
-	// var _result MessagesReportMessagesDeliveryResult
+	// var _result MessagesSummarizeTextResult
 
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.reportMessagesDelivery", req, _result); err != nil {
+	_result := new(tg.TextWithEntities)
+	if err = p.c.Call(ctx, "/tg.RPCMessages/messages.summarizeText", req, _result); err != nil {
 		return
 	}
 
@@ -4660,6 +4793,20 @@ func (p *kClient) ChannelsSearchPosts(ctx context.Context, req *tg.TLChannelsSea
 
 	_result := new(tg.MessagesMessages)
 	if err = p.c.Call(ctx, "/tg.RPCMessages/channels.searchPosts", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) ChannelsCheckSearchPostsFlood(ctx context.Context, req *tg.TLChannelsCheckSearchPostsFlood) (r *tg.SearchPostsFlood, err error) {
+	// var _args ChannelsCheckSearchPostsFloodArgs
+	// _args.Req = req
+	// var _result ChannelsCheckSearchPostsFloodResult
+
+	_result := new(tg.SearchPostsFlood)
+	if err = p.c.Call(ctx, "/tg.RPCMessages/channels.checkSearchPostsFlood", req, _result); err != nil {
 		return
 	}
 

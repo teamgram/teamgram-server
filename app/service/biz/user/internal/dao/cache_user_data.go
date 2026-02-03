@@ -141,8 +141,8 @@ func makePeerColor(color int32, backgroundEmojiId int64) tg.PeerColorClazz {
 	}
 
 	return tg.MakeTLPeerColor(&tg.TLPeerColor{
-		Color:             tg.MakeFlagsInt32(color),
-		BackgroundEmojiId: tg.MakeFlagsInt64(backgroundEmojiId),
+		Color:                       tg.MakeFlagsInt32(color),
+		BackgroundEmojiId_FLAGINT64: tg.MakeFlagsInt64(backgroundEmojiId),
 	})
 }
 

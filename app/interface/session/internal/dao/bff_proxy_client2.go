@@ -33,8 +33,8 @@ import (
 	_ "github.com/teamgooo/teamgooo-server/app/bff/sponsoredmessages/sponsoredmessages/sponsoredmessagesservice"
 	_ "github.com/teamgooo/teamgooo-server/app/bff/tos/tos/tosservice"
 	_ "github.com/teamgooo/teamgooo-server/app/bff/updates/updates/updatesservice"
+	_ "github.com/teamgooo/teamgooo-server/app/bff/userchannelprofiles/userchannelprofiles/userchannelprofilesservice"
 	_ "github.com/teamgooo/teamgooo-server/app/bff/usernames/usernames/usernamesservice"
-	_ "github.com/teamgooo/teamgooo-server/app/bff/userprofile/userprofile/userprofileservice"
 	_ "github.com/teamgooo/teamgooo-server/app/bff/users/users/usersservice"
 )
 

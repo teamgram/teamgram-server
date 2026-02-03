@@ -28,7 +28,6 @@ type Client interface {
 	UsersGetRequirementsToContact(ctx context.Context, req *tg.TLUsersGetRequirementsToContact, callOptions ...callopt.Option) (r *tg.VectorRequirementToContact, err error)
 	MessagesSetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesSetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesGetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.DefaultHistoryTTL, err error)
-	UsersGetIsPremiumRequiredToContact(ctx context.Context, req *tg.TLUsersGetIsPremiumRequiredToContact, callOptions ...callopt.Option) (r *tg.VectorBool, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -99,9 +98,4 @@ func (p *kPrivacySettingsClient) MessagesSetDefaultHistoryTTL(ctx context.Contex
 func (p *kPrivacySettingsClient) MessagesGetDefaultHistoryTTL(ctx context.Context, req *tg.TLMessagesGetDefaultHistoryTTL, callOptions ...callopt.Option) (r *tg.DefaultHistoryTTL, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MessagesGetDefaultHistoryTTL(ctx, req)
-}
-
-func (p *kPrivacySettingsClient) UsersGetIsPremiumRequiredToContact(ctx context.Context, req *tg.TLUsersGetIsPremiumRequiredToContact, callOptions ...callopt.Option) (r *tg.VectorBool, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UsersGetIsPremiumRequiredToContact(ctx, req)
 }

@@ -123,7 +123,7 @@ func (s *Service) MessagesReceivedMessages(ctx context.Context, request *tg.TLMe
 }
 
 // MessagesSendMessage
-// messages.sendMessage#fbf2340a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
+// messages.sendMessage#545cd15a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (s *Service) MessagesSendMessage(ctx context.Context, request *tg.TLMessagesSendMessage) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMessage - metadata: %s, request: %s", c.MD, request)
@@ -138,7 +138,7 @@ func (s *Service) MessagesSendMessage(ctx context.Context, request *tg.TLMessage
 }
 
 // MessagesSendMedia
-// messages.sendMedia#a550cd78 flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long = Updates;
+// messages.sendMedia#330e77f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (s *Service) MessagesSendMedia(ctx context.Context, request *tg.TLMessagesSendMedia) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMedia - metadata: %s, request: %s", c.MD, request)
@@ -153,7 +153,7 @@ func (s *Service) MessagesSendMedia(ctx context.Context, request *tg.TLMessagesS
 }
 
 // MessagesForwardMessages
-// messages.forwardMessages#bb9fa475 flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true allow_paid_floodskip:flags.19?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int schedule_date:flags.10?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut video_timestamp:flags.20?int allow_paid_stars:flags.21?long = Updates;
+// messages.forwardMessages#13704a7c flags:# silent:flags.5?true background:flags.6?true with_my_score:flags.8?true drop_author:flags.11?true drop_media_captions:flags.12?true noforwards:flags.14?true allow_paid_floodskip:flags.19?true from_peer:InputPeer id:Vector<int> random_id:Vector<long> to_peer:InputPeer top_msg_id:flags.9?int reply_to:flags.22?InputReplyTo schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long video_timestamp:flags.20?int allow_paid_stars:flags.21?long suggested_post:flags.23?SuggestedPost = Updates;
 func (s *Service) MessagesForwardMessages(ctx context.Context, request *tg.TLMessagesForwardMessages) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.forwardMessages - metadata: %s, request: %s", c.MD, request)
@@ -228,7 +228,7 @@ func (s *Service) MessagesGetMessageEditData(ctx context.Context, request *tg.TL
 }
 
 // MessagesEditMessage
-// messages.editMessage#dfd14005 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int quick_reply_shortcut_id:flags.17?int = Updates;
+// messages.editMessage#51e842e1 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int = Updates;
 func (s *Service) MessagesEditMessage(ctx context.Context, request *tg.TLMessagesEditMessage) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.editMessage - metadata: %s, request: %s", c.MD, request)
@@ -333,7 +333,7 @@ func (s *Service) MessagesGetSearchCounters(ctx context.Context, request *tg.TLM
 }
 
 // MessagesUnpinAllMessages
-// messages.unpinAllMessages#ee22b9a8 flags:# peer:InputPeer top_msg_id:flags.0?int = messages.AffectedHistory;
+// messages.unpinAllMessages#62dd747 flags:# peer:InputPeer top_msg_id:flags.0?int saved_peer_id:flags.1?InputPeer = messages.AffectedHistory;
 func (s *Service) MessagesUnpinAllMessages(ctx context.Context, request *tg.TLMessagesUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.unpinAllMessages - metadata: %s, request: %s", c.MD, request)
@@ -437,23 +437,23 @@ func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *tg.TLM
 	return r, err
 }
 
-// MessagesReportMessagesDelivery
-// messages.reportMessagesDelivery#5a6d7395 flags:# push:flags.0?true peer:InputPeer id:Vector<int> = Bool;
-func (s *Service) MessagesReportMessagesDelivery(ctx context.Context, request *tg.TLMessagesReportMessagesDelivery) (*tg.Bool, error) {
+// MessagesSummarizeText
+// messages.summarizeText#9d4104e2 flags:# peer:InputPeer id:int to_lang:flags.0?string = TextWithEntities;
+func (s *Service) MessagesSummarizeText(ctx context.Context, request *tg.TLMessagesSummarizeText) (*tg.TextWithEntities, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.reportMessagesDelivery - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("messages.summarizeText - metadata: %s, request: %s", c.MD, request)
 
-	r, err := c.MessagesReportMessagesDelivery(request)
+	r, err := c.MessagesSummarizeText(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.reportMessagesDelivery - reply: %s", r)
+	c.Logger.Debugf("messages.summarizeText - reply: %s", r)
 	return r, err
 }
 
 // ChannelsGetSendAs
-// channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true peer:InputPeer = channels.SendAsPeers;
+// channels.getSendAs#e785a43f flags:# for_paid_reactions:flags.0?true for_live_stories:flags.1?true peer:InputPeer = channels.SendAsPeers;
 func (s *Service) ChannelsGetSendAs(ctx context.Context, request *tg.TLChannelsGetSendAs) (*tg.ChannelsSendAsPeers, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("channels.getSendAs - metadata: %s, request: %s", c.MD, request)
@@ -468,7 +468,7 @@ func (s *Service) ChannelsGetSendAs(ctx context.Context, request *tg.TLChannelsG
 }
 
 // ChannelsSearchPosts
-// channels.searchPosts#d19f987b hashtag:string offset_rate:int offset_peer:InputPeer offset_id:int limit:int = messages.Messages;
+// channels.searchPosts#f2c4f24d flags:# hashtag:flags.0?string query:flags.1?string offset_rate:int offset_peer:InputPeer offset_id:int limit:int allow_paid_stars:flags.2?long = messages.Messages;
 func (s *Service) ChannelsSearchPosts(ctx context.Context, request *tg.TLChannelsSearchPosts) (*tg.MessagesMessages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("channels.searchPosts - metadata: %s, request: %s", c.MD, request)
@@ -479,5 +479,20 @@ func (s *Service) ChannelsSearchPosts(ctx context.Context, request *tg.TLChannel
 	}
 
 	c.Logger.Debugf("channels.searchPosts - reply: %s", r)
+	return r, err
+}
+
+// ChannelsCheckSearchPostsFlood
+// channels.checkSearchPostsFlood#22567115 flags:# query:flags.0?string = SearchPostsFlood;
+func (s *Service) ChannelsCheckSearchPostsFlood(ctx context.Context, request *tg.TLChannelsCheckSearchPostsFlood) (*tg.SearchPostsFlood, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("channels.checkSearchPostsFlood - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.ChannelsCheckSearchPostsFlood(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("channels.checkSearchPostsFlood - reply: %s", r)
 	return r, err
 }

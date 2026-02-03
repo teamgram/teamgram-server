@@ -66,10 +66,10 @@ import (
 	"github.com/teamgooo/teamgooo-server/app/bff/tos/tos/tosservice"
 	updateshelper "github.com/teamgooo/teamgooo-server/app/bff/updates"
 	"github.com/teamgooo/teamgooo-server/app/bff/updates/updates/updatesservice"
+	userchannelprofileshelper "github.com/teamgooo/teamgooo-server/app/bff/userchannelprofiles"
+	"github.com/teamgooo/teamgooo-server/app/bff/userchannelprofiles/userchannelprofiles/userchannelprofilesservice"
 	usernameshelper "github.com/teamgooo/teamgooo-server/app/bff/usernames"
 	"github.com/teamgooo/teamgooo-server/app/bff/usernames/usernames/usernamesservice"
-	userprofilehelper "github.com/teamgooo/teamgooo-server/app/bff/userprofile"
-	"github.com/teamgooo/teamgooo-server/app/bff/userprofile/userprofile/userprofileservice"
 	usershelper "github.com/teamgooo/teamgooo-server/app/bff/users"
 	"github.com/teamgooo/teamgooo-server/app/bff/users/users/usersservice"
 	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
@@ -359,10 +359,10 @@ func (s *Server) Initialize() error {
 					//MessageClient: c.BizServiceClient,
 				}))
 
-			// userprofilehelper
-			_ = userprofileservice.RegisterService(
+			// userchannelprofilehelper
+			_ = userchannelprofilesservice.RegisterService(
 				s,
-				userprofilehelper.New(userprofilehelper.Config{
+				userchannelprofileshelper.New(userchannelprofileshelper.Config{
 					RpcServerConf: c.RpcServerConf,
 					//MediaClient:   c.MediaClient,
 					//UserClient:    c.BizServiceClient,

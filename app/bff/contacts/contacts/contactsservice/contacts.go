@@ -181,6 +181,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/tg.RPCContacts/contacts.updateContactNote": kitex.NewMethodInfo(
+		contactsUpdateContactNoteHandler,
+		newContactsUpdateContactNoteArgs,
+		newContactsUpdateContactNoteResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -3026,6 +3033,132 @@ func (p *ContactsSetBlockedResult) GetResult() interface{} {
 	return p.Success
 }
 
+func contactsUpdateContactNoteHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ContactsUpdateContactNoteArgs)
+	realResult := result.(*ContactsUpdateContactNoteResult)
+	success, err := handler.(tg.RPCContacts).ContactsUpdateContactNote(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newContactsUpdateContactNoteArgs() interface{} {
+	return &ContactsUpdateContactNoteArgs{}
+}
+
+func newContactsUpdateContactNoteResult() interface{} {
+	return &ContactsUpdateContactNoteResult{}
+}
+
+type ContactsUpdateContactNoteArgs struct {
+	Req *tg.TLContactsUpdateContactNote
+}
+
+func (p *ContactsUpdateContactNoteArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ContactsUpdateContactNoteArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ContactsUpdateContactNoteArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLContactsUpdateContactNote)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ContactsUpdateContactNoteArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ContactsUpdateContactNoteArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ContactsUpdateContactNoteArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLContactsUpdateContactNote)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var ContactsUpdateContactNoteArgs_Req_DEFAULT *tg.TLContactsUpdateContactNote
+
+func (p *ContactsUpdateContactNoteArgs) GetReq() *tg.TLContactsUpdateContactNote {
+	if !p.IsSetReq() {
+		return ContactsUpdateContactNoteArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ContactsUpdateContactNoteArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ContactsUpdateContactNoteResult struct {
+	Success *tg.Bool
+}
+
+var ContactsUpdateContactNoteResult_Success_DEFAULT *tg.Bool
+
+func (p *ContactsUpdateContactNoteResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ContactsUpdateContactNoteResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ContactsUpdateContactNoteResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ContactsUpdateContactNoteResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ContactsUpdateContactNoteResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ContactsUpdateContactNoteResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ContactsUpdateContactNoteResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return ContactsUpdateContactNoteResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ContactsUpdateContactNoteResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *ContactsUpdateContactNoteResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ContactsUpdateContactNoteResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -3337,6 +3470,20 @@ func (p *kClient) ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetB
 
 	_result := new(tg.Bool)
 	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.setBlocked", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) ContactsUpdateContactNote(ctx context.Context, req *tg.TLContactsUpdateContactNote) (r *tg.Bool, err error) {
+	// var _args ContactsUpdateContactNoteArgs
+	// _args.Req = req
+	// var _result ContactsUpdateContactNoteResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "/tg.RPCContacts/contacts.updateContactNote", req, _result); err != nil {
 		return
 	}
 

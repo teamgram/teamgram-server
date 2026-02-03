@@ -49,9 +49,10 @@ type Client interface {
 	MessagesSaveDefaultSendAs(ctx context.Context, req *tg.TLMessagesSaveDefaultSendAs, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesSearchSentMedia(ctx context.Context, req *tg.TLMessagesSearchSentMedia, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
 	MessagesGetOutboxReadDate(ctx context.Context, req *tg.TLMessagesGetOutboxReadDate, callOptions ...callopt.Option) (r *tg.OutboxReadDate, err error)
-	MessagesReportMessagesDelivery(ctx context.Context, req *tg.TLMessagesReportMessagesDelivery, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	MessagesSummarizeText(ctx context.Context, req *tg.TLMessagesSummarizeText, callOptions ...callopt.Option) (r *tg.TextWithEntities, err error)
 	ChannelsGetSendAs(ctx context.Context, req *tg.TLChannelsGetSendAs, callOptions ...callopt.Option) (r *tg.ChannelsSendAsPeers, err error)
 	ChannelsSearchPosts(ctx context.Context, req *tg.TLChannelsSearchPosts, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
+	ChannelsCheckSearchPostsFlood(ctx context.Context, req *tg.TLChannelsCheckSearchPostsFlood, callOptions ...callopt.Option) (r *tg.SearchPostsFlood, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -229,9 +230,9 @@ func (p *kMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, req *tg
 	return p.kClient.MessagesGetOutboxReadDate(ctx, req)
 }
 
-func (p *kMessagesClient) MessagesReportMessagesDelivery(ctx context.Context, req *tg.TLMessagesReportMessagesDelivery, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+func (p *kMessagesClient) MessagesSummarizeText(ctx context.Context, req *tg.TLMessagesSummarizeText, callOptions ...callopt.Option) (r *tg.TextWithEntities, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.MessagesReportMessagesDelivery(ctx, req)
+	return p.kClient.MessagesSummarizeText(ctx, req)
 }
 
 func (p *kMessagesClient) ChannelsGetSendAs(ctx context.Context, req *tg.TLChannelsGetSendAs, callOptions ...callopt.Option) (r *tg.ChannelsSendAsPeers, err error) {
@@ -242,4 +243,9 @@ func (p *kMessagesClient) ChannelsGetSendAs(ctx context.Context, req *tg.TLChann
 func (p *kMessagesClient) ChannelsSearchPosts(ctx context.Context, req *tg.TLChannelsSearchPosts, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ChannelsSearchPosts(ctx, req)
+}
+
+func (p *kMessagesClient) ChannelsCheckSearchPostsFlood(ctx context.Context, req *tg.TLChannelsCheckSearchPostsFlood, callOptions ...callopt.Option) (r *tg.SearchPostsFlood, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChannelsCheckSearchPostsFlood(ctx, req)
 }

@@ -102,14 +102,14 @@ func (m *defaultDialogsClient) MessagesSendScreenshotNotification(ctx context.Co
 }
 
 // MessagesMarkDialogUnread
-// messages.markDialogUnread#c286d98f flags:# unread:flags.0?true peer:InputDialogPeer = Bool;
+// messages.markDialogUnread#8c5006f8 flags:# unread:flags.0?true parent_peer:flags.1?InputPeer peer:InputDialogPeer = Bool;
 func (m *defaultDialogsClient) MessagesMarkDialogUnread(ctx context.Context, in *tg.TLMessagesMarkDialogUnread) (*tg.Bool, error) {
 	cli := dialogsservice.NewRPCDialogsClient(m.cli)
 	return cli.MessagesMarkDialogUnread(ctx, in)
 }
 
 // MessagesGetDialogUnreadMarks
-// messages.getDialogUnreadMarks#22e24e22 = Vector<DialogPeer>;
+// messages.getDialogUnreadMarks#21202222 flags:# parent_peer:flags.0?InputPeer = Vector<DialogPeer>;
 func (m *defaultDialogsClient) MessagesGetDialogUnreadMarks(ctx context.Context, in *tg.TLMessagesGetDialogUnreadMarks) (*tg.VectorDialogPeer, error) {
 	cli := dialogsservice.NewRPCDialogsClient(m.cli)
 	return cli.MessagesGetDialogUnreadMarks(ctx, in)

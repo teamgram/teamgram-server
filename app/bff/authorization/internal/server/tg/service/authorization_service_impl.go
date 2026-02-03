@@ -317,6 +317,21 @@ func (s *Service) AuthReportMissingCode(ctx context.Context, request *tg.TLAuthR
 	return r, err
 }
 
+// AuthCheckPaidAuth
+// auth.checkPaidAuth#56e59f9c phone_number:string phone_code_hash:string form_id:long = auth.SentCode;
+func (s *Service) AuthCheckPaidAuth(ctx context.Context, request *tg.TLAuthCheckPaidAuth) (*tg.AuthSentCode, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.checkPaidAuth - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.AuthCheckPaidAuth(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.checkPaidAuth - reply: %s", r)
+	return r, err
+}
+
 // AccountSendVerifyEmailCode
 // account.sendVerifyEmailCode#98e037bb purpose:EmailVerifyPurpose email:string = account.SentEmailCode;
 func (s *Service) AccountSendVerifyEmailCode(ctx context.Context, request *tg.TLAccountSendVerifyEmailCode) (*tg.AccountSentEmailCode, error) {

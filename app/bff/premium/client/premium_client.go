@@ -24,7 +24,6 @@ type PremiumClient interface {
 	PaymentsAssignAppStoreTransaction(ctx context.Context, in *tg.TLPaymentsAssignAppStoreTransaction) (*tg.Updates, error)
 	PaymentsAssignPlayMarketTransaction(ctx context.Context, in *tg.TLPaymentsAssignPlayMarketTransaction) (*tg.Updates, error)
 	PaymentsCanPurchaseStore(ctx context.Context, in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error)
-	PaymentsCanPurchasePremium(ctx context.Context, in *tg.TLPaymentsCanPurchasePremium) (*tg.Bool, error)
 }
 
 type defaultPremiumClient struct {
@@ -63,11 +62,4 @@ func (m *defaultPremiumClient) PaymentsAssignPlayMarketTransaction(ctx context.C
 func (m *defaultPremiumClient) PaymentsCanPurchaseStore(ctx context.Context, in *tg.TLPaymentsCanPurchaseStore) (*tg.Bool, error) {
 	cli := premiumservice.NewRPCPremiumClient(m.cli)
 	return cli.PaymentsCanPurchaseStore(ctx, in)
-}
-
-// PaymentsCanPurchasePremium
-// payments.canPurchasePremium#9fc19eb6 purpose:InputStorePaymentPurpose = Bool;
-func (m *defaultPremiumClient) PaymentsCanPurchasePremium(ctx context.Context, in *tg.TLPaymentsCanPurchasePremium) (*tg.Bool, error) {
-	cli := premiumservice.NewRPCPremiumClient(m.cli)
-	return cli.PaymentsCanPurchasePremium(ctx, in)
 }

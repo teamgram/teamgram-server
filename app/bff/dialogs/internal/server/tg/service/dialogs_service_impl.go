@@ -138,7 +138,7 @@ func (s *Service) MessagesSendScreenshotNotification(ctx context.Context, reques
 }
 
 // MessagesMarkDialogUnread
-// messages.markDialogUnread#c286d98f flags:# unread:flags.0?true peer:InputDialogPeer = Bool;
+// messages.markDialogUnread#8c5006f8 flags:# unread:flags.0?true parent_peer:flags.1?InputPeer peer:InputDialogPeer = Bool;
 func (s *Service) MessagesMarkDialogUnread(ctx context.Context, request *tg.TLMessagesMarkDialogUnread) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.markDialogUnread - metadata: %s, request: %s", c.MD, request)
@@ -153,7 +153,7 @@ func (s *Service) MessagesMarkDialogUnread(ctx context.Context, request *tg.TLMe
 }
 
 // MessagesGetDialogUnreadMarks
-// messages.getDialogUnreadMarks#22e24e22 = Vector<DialogPeer>;
+// messages.getDialogUnreadMarks#21202222 flags:# parent_peer:flags.0?InputPeer = Vector<DialogPeer>;
 func (s *Service) MessagesGetDialogUnreadMarks(ctx context.Context, request *tg.TLMessagesGetDialogUnreadMarks) (*tg.VectorDialogPeer, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getDialogUnreadMarks - metadata: %s, request: %s", c.MD, request)

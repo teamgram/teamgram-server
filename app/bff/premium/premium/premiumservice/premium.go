@@ -55,13 +55,6 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"/tg.RPCPremium/payments.canPurchasePremium": kitex.NewMethodInfo(
-		paymentsCanPurchasePremiumHandler,
-		newPaymentsCanPurchasePremiumArgs,
-		newPaymentsCanPurchasePremiumResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
 }
 
 var (
@@ -639,132 +632,6 @@ func (p *PaymentsCanPurchaseStoreResult) GetResult() interface{} {
 	return p.Success
 }
 
-func paymentsCanPurchasePremiumHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*PaymentsCanPurchasePremiumArgs)
-	realResult := result.(*PaymentsCanPurchasePremiumResult)
-	success, err := handler.(tg.RPCPremium).PaymentsCanPurchasePremium(ctx, realArg.Req)
-	if err != nil {
-		return err
-	}
-	realResult.Success = success
-	return nil
-}
-
-func newPaymentsCanPurchasePremiumArgs() interface{} {
-	return &PaymentsCanPurchasePremiumArgs{}
-}
-
-func newPaymentsCanPurchasePremiumResult() interface{} {
-	return &PaymentsCanPurchasePremiumResult{}
-}
-
-type PaymentsCanPurchasePremiumArgs struct {
-	Req *tg.TLPaymentsCanPurchasePremium
-}
-
-func (p *PaymentsCanPurchasePremiumArgs) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetReq() {
-		return out, fmt.Errorf("No req in PaymentsCanPurchasePremiumArgs")
-	}
-	return json.Marshal(p.Req)
-}
-
-func (p *PaymentsCanPurchasePremiumArgs) Unmarshal(in []byte) error {
-	msg := new(tg.TLPaymentsCanPurchasePremium)
-	if err := json.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Req = msg
-	return nil
-}
-
-func (p *PaymentsCanPurchasePremiumArgs) Encode(x *bin.Encoder, layer int32) error {
-	if !p.IsSetReq() {
-		return fmt.Errorf("No req in PaymentsCanPurchasePremiumArgs")
-	}
-
-	return p.Req.Encode(x, layer)
-}
-
-func (p *PaymentsCanPurchasePremiumArgs) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.TLPaymentsCanPurchasePremium)
-	msg.ClazzID, _ = d.ClazzID()
-	msg.Decode(d)
-	p.Req = msg
-	return nil
-}
-
-var PaymentsCanPurchasePremiumArgs_Req_DEFAULT *tg.TLPaymentsCanPurchasePremium
-
-func (p *PaymentsCanPurchasePremiumArgs) GetReq() *tg.TLPaymentsCanPurchasePremium {
-	if !p.IsSetReq() {
-		return PaymentsCanPurchasePremiumArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-func (p *PaymentsCanPurchasePremiumArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-type PaymentsCanPurchasePremiumResult struct {
-	Success *tg.Bool
-}
-
-var PaymentsCanPurchasePremiumResult_Success_DEFAULT *tg.Bool
-
-func (p *PaymentsCanPurchasePremiumResult) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("No req in PaymentsCanPurchasePremiumResult")
-	}
-	return json.Marshal(p.Success)
-}
-
-func (p *PaymentsCanPurchasePremiumResult) Unmarshal(in []byte) error {
-	msg := new(tg.Bool)
-	if err := json.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *PaymentsCanPurchasePremiumResult) Encode(x *bin.Encoder, layer int32) error {
-	if !p.IsSetSuccess() {
-		return fmt.Errorf("No req in PaymentsCanPurchasePremiumResult")
-	}
-
-	return p.Success.Encode(x, layer)
-}
-
-func (p *PaymentsCanPurchasePremiumResult) Decode(d *bin.Decoder) (err error) {
-	msg := new(tg.Bool)
-	if err = msg.Decode(d); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *PaymentsCanPurchasePremiumResult) GetSuccess() *tg.Bool {
-	if !p.IsSetSuccess() {
-		return PaymentsCanPurchasePremiumResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-func (p *PaymentsCanPurchasePremiumResult) SetSuccess(x interface{}) {
-	p.Success = x.(*tg.Bool)
-}
-
-func (p *PaymentsCanPurchasePremiumResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *PaymentsCanPurchasePremiumResult) GetResult() interface{} {
-	return p.Success
-}
-
 type kClient struct {
 	c client.Client
 }
@@ -824,20 +691,6 @@ func (p *kClient) PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymen
 
 	_result := new(tg.Bool)
 	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchaseStore", req, _result); err != nil {
-		return
-	}
-
-	// return _result.GetSuccess(), nil
-	return _result, nil
-}
-
-func (p *kClient) PaymentsCanPurchasePremium(ctx context.Context, req *tg.TLPaymentsCanPurchasePremium) (r *tg.Bool, err error) {
-	// var _args PaymentsCanPurchasePremiumArgs
-	// _args.Req = req
-	// var _result PaymentsCanPurchasePremiumResult
-
-	_result := new(tg.Bool)
-	if err = p.c.Call(ctx, "/tg.RPCPremium/payments.canPurchasePremium", req, _result); err != nil {
 		return
 	}
 

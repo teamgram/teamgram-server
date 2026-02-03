@@ -42,6 +42,7 @@ type ContactsClient interface {
 	ContactsGetLocated(ctx context.Context, in *tg.TLContactsGetLocated) (*tg.Updates, error)
 	ContactsEditCloseFriends(ctx context.Context, in *tg.TLContactsEditCloseFriends) (*tg.Bool, error)
 	ContactsSetBlocked(ctx context.Context, in *tg.TLContactsSetBlocked) (*tg.Bool, error)
+	ContactsUpdateContactNote(ctx context.Context, in *tg.TLContactsUpdateContactNote) (*tg.Bool, error)
 }
 
 type defaultContactsClient struct {
@@ -174,7 +175,7 @@ func (m *defaultContactsClient) ContactsToggleTopPeers(ctx context.Context, in *
 }
 
 // ContactsAddContact
-// contacts.addContact#e8f463d0 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string = Updates;
+// contacts.addContact#d9ba2e54 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string note:flags.1?TextWithEntities = Updates;
 func (m *defaultContactsClient) ContactsAddContact(ctx context.Context, in *tg.TLContactsAddContact) (*tg.Updates, error) {
 	cli := contactsservice.NewRPCContactsClient(m.cli)
 	return cli.ContactsAddContact(ctx, in)
@@ -206,4 +207,11 @@ func (m *defaultContactsClient) ContactsEditCloseFriends(ctx context.Context, in
 func (m *defaultContactsClient) ContactsSetBlocked(ctx context.Context, in *tg.TLContactsSetBlocked) (*tg.Bool, error) {
 	cli := contactsservice.NewRPCContactsClient(m.cli)
 	return cli.ContactsSetBlocked(ctx, in)
+}
+
+// ContactsUpdateContactNote
+// contacts.updateContactNote#139f63fb id:InputUser note:TextWithEntities = Bool;
+func (m *defaultContactsClient) ContactsUpdateContactNote(ctx context.Context, in *tg.TLContactsUpdateContactNote) (*tg.Bool, error) {
+	cli := contactsservice.NewRPCContactsClient(m.cli)
+	return cli.ContactsUpdateContactNote(ctx, in)
 }

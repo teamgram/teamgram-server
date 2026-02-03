@@ -25,7 +25,6 @@ type Client interface {
 	PaymentsAssignAppStoreTransaction(ctx context.Context, req *tg.TLPaymentsAssignAppStoreTransaction, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	PaymentsAssignPlayMarketTransaction(ctx context.Context, req *tg.TLPaymentsAssignPlayMarketTransaction, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymentsCanPurchaseStore, callOptions ...callopt.Option) (r *tg.Bool, err error)
-	PaymentsCanPurchasePremium(ctx context.Context, req *tg.TLPaymentsCanPurchasePremium, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -81,9 +80,4 @@ func (p *kPremiumClient) PaymentsAssignPlayMarketTransaction(ctx context.Context
 func (p *kPremiumClient) PaymentsCanPurchaseStore(ctx context.Context, req *tg.TLPaymentsCanPurchaseStore, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.PaymentsCanPurchaseStore(ctx, req)
-}
-
-func (p *kPremiumClient) PaymentsCanPurchasePremium(ctx context.Context, req *tg.TLPaymentsCanPurchasePremium, callOptions ...callopt.Option) (r *tg.Bool, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.PaymentsCanPurchasePremium(ctx, req)
 }

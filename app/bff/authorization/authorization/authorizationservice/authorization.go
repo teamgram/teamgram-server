@@ -167,6 +167,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/tg.RPCAuthorization/auth.checkPaidAuth": kitex.NewMethodInfo(
+		authCheckPaidAuthHandler,
+		newAuthCheckPaidAuthArgs,
+		newAuthCheckPaidAuthResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/tg.RPCAuthorization/account.sendVerifyEmailCode": kitex.NewMethodInfo(
 		accountSendVerifyEmailCodeHandler,
 		newAccountSendVerifyEmailCodeArgs,
@@ -2809,6 +2816,132 @@ func (p *AuthReportMissingCodeResult) GetResult() interface{} {
 	return p.Success
 }
 
+func authCheckPaidAuthHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*AuthCheckPaidAuthArgs)
+	realResult := result.(*AuthCheckPaidAuthResult)
+	success, err := handler.(tg.RPCAuthorization).AuthCheckPaidAuth(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newAuthCheckPaidAuthArgs() interface{} {
+	return &AuthCheckPaidAuthArgs{}
+}
+
+func newAuthCheckPaidAuthResult() interface{} {
+	return &AuthCheckPaidAuthResult{}
+}
+
+type AuthCheckPaidAuthArgs struct {
+	Req *tg.TLAuthCheckPaidAuth
+}
+
+func (p *AuthCheckPaidAuthArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in AuthCheckPaidAuthArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *AuthCheckPaidAuthArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLAuthCheckPaidAuth)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *AuthCheckPaidAuthArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in AuthCheckPaidAuthArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *AuthCheckPaidAuthArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLAuthCheckPaidAuth)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var AuthCheckPaidAuthArgs_Req_DEFAULT *tg.TLAuthCheckPaidAuth
+
+func (p *AuthCheckPaidAuthArgs) GetReq() *tg.TLAuthCheckPaidAuth {
+	if !p.IsSetReq() {
+		return AuthCheckPaidAuthArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AuthCheckPaidAuthArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type AuthCheckPaidAuthResult struct {
+	Success *tg.AuthSentCode
+}
+
+var AuthCheckPaidAuthResult_Success_DEFAULT *tg.AuthSentCode
+
+func (p *AuthCheckPaidAuthResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in AuthCheckPaidAuthResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *AuthCheckPaidAuthResult) Unmarshal(in []byte) error {
+	msg := new(tg.AuthSentCode)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AuthCheckPaidAuthResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in AuthCheckPaidAuthResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *AuthCheckPaidAuthResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.AuthSentCode)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AuthCheckPaidAuthResult) GetSuccess() *tg.AuthSentCode {
+	if !p.IsSetSuccess() {
+		return AuthCheckPaidAuthResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AuthCheckPaidAuthResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.AuthSentCode)
+}
+
+func (p *AuthCheckPaidAuthResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AuthCheckPaidAuthResult) GetResult() interface{} {
+	return p.Success
+}
+
 func accountSendVerifyEmailCodeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*AccountSendVerifyEmailCodeArgs)
 	realResult := result.(*AccountSendVerifyEmailCodeResult)
@@ -3974,6 +4107,20 @@ func (p *kClient) AuthReportMissingCode(ctx context.Context, req *tg.TLAuthRepor
 
 	_result := new(tg.Bool)
 	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.reportMissingCode", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) AuthCheckPaidAuth(ctx context.Context, req *tg.TLAuthCheckPaidAuth) (r *tg.AuthSentCode, err error) {
+	// var _args AuthCheckPaidAuthArgs
+	// _args.Req = req
+	// var _result AuthCheckPaidAuthResult
+
+	_result := new(tg.AuthSentCode)
+	if err = p.c.Call(ctx, "/tg.RPCAuthorization/auth.checkPaidAuth", req, _result); err != nil {
 		return
 	}
 

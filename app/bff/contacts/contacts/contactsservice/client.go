@@ -43,6 +43,7 @@ type Client interface {
 	ContactsGetLocated(ctx context.Context, req *tg.TLContactsGetLocated, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	ContactsEditCloseFriends(ctx context.Context, req *tg.TLContactsEditCloseFriends, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetBlocked, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	ContactsUpdateContactNote(ctx context.Context, req *tg.TLContactsUpdateContactNote, callOptions ...callopt.Option) (r *tg.Bool, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -188,4 +189,9 @@ func (p *kContactsClient) ContactsEditCloseFriends(ctx context.Context, req *tg.
 func (p *kContactsClient) ContactsSetBlocked(ctx context.Context, req *tg.TLContactsSetBlocked, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ContactsSetBlocked(ctx, req)
+}
+
+func (p *kContactsClient) ContactsUpdateContactNote(ctx context.Context, req *tg.TLContactsUpdateContactNote, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ContactsUpdateContactNote(ctx, req)
 }

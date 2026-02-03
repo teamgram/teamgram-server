@@ -21,7 +21,7 @@ require (
 	github.com/teamgram/teamgram-server v0.96.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.0
-	github.com/zeromicro/go-zero v1.9.4
+	github.com/zeromicro/go-zero v1.8.4
 	golang.org/x/crypto v0.47.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
@@ -65,6 +65,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
@@ -136,7 +137,6 @@ require (
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
-	go.uber.org/mock v0.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.14.0 // indirect
@@ -167,4 +167,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
+replace (
+	github.com/apache/thrift => github.com/apache/thrift v0.13.0
+	github.com/zeromicro/go-zero v1.8.4 => github.com/teamgram/go-zero v1.8.4-teamgram
+)
