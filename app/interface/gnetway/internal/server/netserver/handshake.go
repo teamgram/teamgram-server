@@ -417,9 +417,9 @@ func (s *Server) onReqDHParams(c *connection, ctx *HandshakeStateCtx, request *m
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	s.asyncRun(c.id,
-		func() error {
-			/*
+	// Synchronous execution instead of asyncRun
+	err = (func() error {
+		/*
 				### 4.1) RSA_PAD(data, server_public_key) mentioned above is implemented as follows:
 
 				- data_with_padding := data + random_padding_bytes; — where random_padding_bytes are chosen so that the
@@ -734,27 +734,24 @@ func (s *Server) onReqDHParams(c *connection, ctx *HandshakeStateCtx, request *m
 			})
 
 			return nil
-		},
-		func(c *connection) {
-			// logx.Infof("c.UnThreadSafeWrite - conn(%s)", c)
-			ctx.HandshakeType = handshakeType
-			ctx.ExpiresIn = expiresIn
-			ctx.NewNonce = newNonce2
-			ctx.A = A
-			ctx.P = P
-			ctx.State = STATE_DH_params_res
+		})() // Immediately execute the function
 
-			x := bin.NewEncoder()
-			defer x.End()
-			_ = encodeUnencryptedMessage(x, GenerateMessageId(), serverDHParams)
-			_ = s.writeToConnection(c, x.Bytes())
-			//
-			//x := bin.NewEncodeBuf(512)
-			//_ = serializeToBuffer(x, GenerateMessageId(), serverDHParams)
-			//_ = s.writeToConnection(c, &tg.MTPRawMessage{
-			//	Payload: x.GetBuf(),
-			//})
-		})
+	if err != nil {
+		return nil, err
+	}
+
+	// Execute the callback code synchronously
+	ctx.HandshakeType = handshakeType
+	ctx.ExpiresIn = expiresIn
+	ctx.NewNonce = newNonce2
+	ctx.A = A
+	ctx.P = P
+	ctx.State = STATE_DH_params_res
+
+	x := bin.NewEncoder()
+	defer x.End()
+	_ = encodeUnencryptedMessage(x, GenerateMessageId(), serverDHParams)
+	_ = s.writeToConnection(c, x.Bytes())
 
 	return nil, nil
 }
@@ -875,50 +872,39 @@ func (s *Server) onSetClientDHParams(c *connection, ctx *HandshakeStateCtx, requ
 		dhGen     mt.SetClientDHParamsAnswerClazz
 	)
 
-	s.asyncRun(c.id,
-		func() error {
-			// TODO(@benqi): authKeyId生成后要检查在数据库里是否已经存在，有非常小的概率会碰撞
-			// 如果碰撞让客户端重新再来一轮
+	// Synchronous call to save auth key and generate response
+	// TODO(@benqi): authKeyId生成后要检查在数据库里是否已经存在，有非常小的概率会碰撞
+	// 如果碰撞让客户端重新再来一轮
 
-			// state.Ctx, _ = proto.Marshal(authKeyMD)
-			var (
-				newNonceHash bin.Int128
-			)
+	var newNonceHash bin.Int128
 
-			if s.saveAuthKeyInfo(ctx, tg.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
-				copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x01))
-				dhGen = mt.MakeTLDhGenOk(&mt.TLDhGenOk{
-					Nonce:         ctx.Nonce,
-					ServerNonce:   ctx.ServerNonce,
-					NewNonceHash1: newNonceHash,
-				})
-
-				//ctx.AuthKeyId = authKeyId
-				//ctx.AuthKey = authKey
-
-				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
-				return nil
-			} else {
-				// TODO(@benqi): dhGenFail
-				copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x02))
-				dhGen = mt.MakeTLDhGenRetry(&mt.TLDhGenRetry{
-					Nonce:         ctx.Nonce,
-					ServerNonce:   ctx.ServerNonce,
-					NewNonceHash2: newNonceHash,
-				})
-
-				logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
-				return nil
-			}
-		},
-		func(c *connection) {
-			ctx.State = STATE_dh_gen_res
-
-			x := bin.NewEncoder()
-			defer x.End()
-			_ = encodeUnencryptedMessage(x, GenerateMessageId(), dhGen)
-			_ = s.writeToConnection(c, x.Bytes())
+	if s.saveAuthKeyInfo(ctx, tg.NewAuthKeyInfo(authKeyId, authKey, ctx.HandshakeType)) {
+		copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x01))
+		dhGen = mt.MakeTLDhGenOk(&mt.TLDhGenOk{
+			Nonce:         ctx.Nonce,
+			ServerNonce:   ctx.ServerNonce,
+			NewNonceHash1: newNonceHash,
 		})
+
+		logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
+	} else {
+		// TODO(@benqi): dhGenFail
+		copy(newNonceHash[:], calcNewNonceHash(ctx.NewNonce[:], authKey, 0x02))
+		dhGen = mt.MakeTLDhGenRetry(&mt.TLDhGenRetry{
+			Nonce:         ctx.Nonce,
+			ServerNonce:   ctx.ServerNonce,
+			NewNonceHash2: newNonceHash,
+		})
+
+		logx.Infof("onSetClient_DHParams conn(%s) - ctx: {%s}, reply: %s", c, ctx, dhGen)
+	}
+
+	ctx.State = STATE_dh_gen_res
+
+	x := bin.NewEncoder()
+	defer x.End()
+	_ = encodeUnencryptedMessage(x, GenerateMessageId(), dhGen)
+	_ = s.writeToConnection(c, x.Bytes())
 
 	return nil, nil
 }

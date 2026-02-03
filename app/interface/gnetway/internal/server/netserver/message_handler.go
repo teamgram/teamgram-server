@@ -43,23 +43,22 @@ func (s *Server) onClose(c *connection, err error) {
 		return
 	}
 
-	go func() {
-		_ = s.svcCtx.ShardingSessionClient.InvokeByKey(
-			strconv.FormatInt(c.authKey.PermAuthKeyId(), 10),
-			func(client sessionclient.SessionClient) (err error) {
-				_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
-					Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
-						ServerId:      s.svcCtx.GatewayId,
-						AuthKeyId:     c.authKey.AuthKeyId(),
-						KeyType:       int32(c.authKey.AuthKeyType()),
-						PermAuthKeyId: c.authKey.PermAuthKeyId(),
-						SessionId:     c.sessionId,
-						ClientIp:      c.clientIp,
-					}),
-				})
-				return
+	// Synchronous call to close session
+	_ = s.svcCtx.ShardingSessionClient.InvokeByKey(
+		strconv.FormatInt(c.authKey.PermAuthKeyId(), 10),
+		func(client sessionclient.SessionClient) (err error) {
+			_, err = client.SessionCloseSession(context.Background(), &session.TLSessionCloseSession{
+				Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
+					ServerId:      s.svcCtx.GatewayId,
+					AuthKeyId:     c.authKey.AuthKeyId(),
+					KeyType:       int32(c.authKey.AuthKeyType()),
+					PermAuthKeyId: c.authKey.PermAuthKeyId(),
+					SessionId:     c.sessionId,
+					ClientIp:      c.clientIp,
+				}),
 			})
-	}()
+			return
+		})
 }
 
 func (s *Server) onEncryptedMessage(c *connection, authKey *authKeyUtil, needAck bool, mmsg []byte) error {
@@ -126,49 +125,48 @@ func (s *Server) onEncryptedMessage(c *connection, authKey *authKeyUtil, needAck
 		c.sessionId = sessionId
 	}
 
-	go func() {
-		_ = s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-			strconv.FormatInt(permAuthKeyId, 10),
-			func(client sessionclient.SessionClient) (err error) {
-				if isNew {
-					if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
-						r := &session.TLSessionCreateSession{
-							Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
-								ServerId:      s.svcCtx.GatewayId,
-								AuthKeyId:     authKey.AuthKeyId(),
-								KeyType:       int32(authKey.AuthKeyType()),
-								PermAuthKeyId: permAuthKeyId,
-								SessionId:     sessionId,
-								ClientIp:      clientIp,
-							}),
-						}
-						logx.Infof("conn(%d) create new session(%s)", connId, r)
-						_, err = client.SessionCreateSession(context.Background(), r)
-						if err != nil {
-							logx.Errorf("session.createSession - error: %v", err)
-						}
+	// Synchronous call to create session and send data
+	_ = s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
+		strconv.FormatInt(permAuthKeyId, 10),
+		func(client sessionclient.SessionClient) (err error) {
+			if isNew {
+				if s.authSessionMgr.AddNewSession(authKey, sessionId, connId) {
+					r := &session.TLSessionCreateSession{
+						Client: session.MakeTLSessionClientEvent(&session.TLSessionClientEvent{
+							ServerId:      s.svcCtx.GatewayId,
+							AuthKeyId:     authKey.AuthKeyId(),
+							KeyType:       int32(authKey.AuthKeyType()),
+							PermAuthKeyId: permAuthKeyId,
+							SessionId:     sessionId,
+							ClientIp:      clientIp,
+						}),
+					}
+					logx.Infof("conn(%d) create new session(%s)", connId, r)
+					_, err = client.SessionCreateSession(context.Background(), r)
+					if err != nil {
+						logx.Errorf("session.createSession - error: %v", err)
 					}
 				}
+			}
 
-				_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
-					Data: session.MakeTLSessionClientData(&session.TLSessionClientData{
-						ServerId:      s.svcCtx.GatewayId,
-						AuthKeyId:     authKey.AuthKeyId(),
-						KeyType:       int32(authKey.AuthKeyType()),
-						PermAuthKeyId: permAuthKeyId,
-						SessionId:     sessionId,
-						Salt:          salt,
-						Payload:       mtpRwaData[16:],
-						ClientIp:      clientIp,
-					}),
-				})
-				if err != nil {
-					logx.Errorf("session.sendDataToSession - error: %v", err)
-				}
-
-				return
+			_, err = client.SessionSendDataToSession(context.Background(), &session.TLSessionSendDataToSession{
+				Data: session.MakeTLSessionClientData(&session.TLSessionClientData{
+					ServerId:      s.svcCtx.GatewayId,
+					AuthKeyId:     authKey.AuthKeyId(),
+					KeyType:       int32(authKey.AuthKeyType()),
+					PermAuthKeyId: permAuthKeyId,
+					SessionId:     sessionId,
+					Salt:          salt,
+					Payload:       mtpRwaData[16:],
+					ClientIp:      clientIp,
+				}),
 			})
-	}()
+			if err != nil {
+				logx.Errorf("session.sendDataToSession - error: %v", err)
+			}
+
+			return
+		})
 
 	return nil
 }
@@ -219,47 +217,37 @@ func (s *Server) onMTPRawMessage(c *connection, authKeyId int64, needAck bool, m
 			logx.Debugf("conn(%d) data: %s", c.id, hex.EncodeToString(msg2[:32]))
 		}
 
-		msg2Clone := make([]byte, len(msg2))
-		copy(msg2Clone, msg2)
-
-		go func() {
-			var key3 *tg.AuthKeyInfo
-
-			err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
-				strconv.FormatInt(authKeyId, 10),
-				func(client sessionclient.SessionClient) (err error) {
-					key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
-						AuthKeyId: authKeyId,
-					})
-					return
-				})
-
-			if err2 != nil {
-				logx.Errorf("conn(%d) sessionQueryAuthKey error: %v", c.id, err2)
-				s.Trigger(c.id, func(c2 *connection) {
-					if errors.Is(err2, tg.ErrAuthKeyUnregistered) {
-						out2 := make([]byte, 4)
-						var code int32 = -404
-						binary.LittleEndian.PutUint32(out2, uint32(code))
-						_ = s.writeToConnection(c2, out2)
-					}
-					_ = c2.Close()
+		// Synchronous call to query auth key
+		var key3 *tg.AuthKeyInfo
+		err2 := s.svcCtx.Dao.ShardingSessionClient.InvokeByKey(
+			strconv.FormatInt(authKeyId, 10),
+			func(client sessionclient.SessionClient) (err error) {
+				key3, err = client.SessionQueryAuthKey(context.Background(), &session.TLSessionQueryAuthKey{
+					AuthKeyId: authKeyId,
 				})
 				return
-			}
-
-			key4, _ := key3.ToAuthKeyInfo()
-			s.PutAuthKey(key4)
-			authKey2 := newAuthKeyUtil(key4)
-
-			s.Trigger(c.id, func(c2 *connection) {
-				c2.putAuthKey(authKey2)
-				err := s.onEncryptedMessage(c2, authKey2, needAck, msg2Clone)
-				if err != nil {
-					_ = c2.Close()
-				}
 			})
-		}()
+
+		if err2 != nil {
+			logx.Errorf("conn(%d) sessionQueryAuthKey error: %v", c.id, err2)
+			if errors.Is(err2, tg.ErrAuthKeyUnregistered) {
+				out2 := make([]byte, 4)
+				var code int32 = -404
+				binary.LittleEndian.PutUint32(out2, uint32(code))
+				_ = s.writeToConnection(c, out2)
+			}
+			return true // shouldClose
+		}
+
+		key4, _ := key3.ToAuthKeyInfo()
+		s.PutAuthKey(key4)
+		authKey2 := newAuthKeyUtil(key4)
+
+		c.putAuthKey(authKey2)
+		err := s.onEncryptedMessage(c, authKey2, needAck, msg2)
+		if err != nil {
+			return true // shouldClose
+		}
 	}
 
 	return false
