@@ -18,7 +18,9 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/lxzan/gws"
 	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/gnet/codec"
@@ -112,26 +114,21 @@ func (s *Server) handleWebSocketConnection(c *connection) {
 
 	logx.Debugf("new WebSocket connection from %s (id=%d)", c.RemoteAddr(), c.id)
 
+	// Read HTTP upgrade request manually
 	upgrader := gws.NewUpgrader(&websocketHandler{
 		server: s,
 		conn:   c,
 	}, &gws.ServerOption{
-		ReadBufferSize:   65536,
-		WriteBufferSize:  65536,
-		CompressEnabled:  false,
-		CheckUtf8Enabled: false,
+		ReadBufferSize:  65536,
+		WriteBufferSize: 65536,
 	})
 
-	conn, err := upgrader.Upgrade(c.conn)
+	// Create a simple HTTP request/response handler
+	err := s.handleWebSocketUpgrade(c, upgrader)
 	if err != nil {
 		logx.Errorf("websocket upgrade error: %v", err)
 		return
 	}
-
-	c.gwsConn = conn
-
-	// Run read loop - this blocks until connection closes
-	conn.ReadLoop()
 }
 
 // wsConnAdapter adapts connection to codec.CodecReader/CodecWriter interface
@@ -182,4 +179,77 @@ func (w *wsConnAdapter) InboundBuffered() int {
 
 func (w *wsConnAdapter) Write(data []byte) (int, error) {
 	return w.conn.Write(data)
+}
+
+// handleWebSocketUpgrade performs HTTP upgrade to WebSocket
+func (s *Server) handleWebSocketUpgrade(c *connection, upgrader *gws.Upgrader) error {
+	// Use http.ReadRequest to read the HTTP upgrade request
+	req, err := http.ReadRequest(c.reader)
+	if err != nil {
+		return fmt.Errorf("failed to read HTTP request: %w", err)
+	}
+
+	// Create a response writer that writes to our connection
+	respWriter := &responseWriter{
+		conn:   c,
+		header: make(http.Header),
+	}
+
+	// Perform the upgrade
+	socket, err := upgrader.Upgrade(respWriter, req)
+	if err != nil {
+		return fmt.Errorf("failed to upgrade: %w", err)
+	}
+
+	c.gwsConn = socket
+
+	// Run read loop - this blocks until connection closes
+	socket.ReadLoop()
+
+	return nil
+}
+
+// responseWriter implements http.ResponseWriter for WebSocket upgrade
+type responseWriter struct {
+	conn       *connection
+	header     http.Header
+	statusCode int
+	written    bool
+}
+
+func (w *responseWriter) Header() http.Header {
+	return w.header
+}
+
+func (w *responseWriter) Write(data []byte) (int, error) {
+	if !w.written {
+		w.WriteHeader(http.StatusOK)
+	}
+	return w.conn.Write(data)
+}
+
+func (w *responseWriter) WriteHeader(statusCode int) {
+	if w.written {
+		return
+	}
+	w.written = true
+	w.statusCode = statusCode
+
+	// Write status line
+	statusText := http.StatusText(statusCode)
+	if statusText == "" {
+		statusText = "Unknown"
+	}
+	statusLine := fmt.Sprintf("HTTP/1.1 %d %s\r\n", statusCode, statusText)
+	_, _ = w.conn.Write([]byte(statusLine))
+
+	// Write headers
+	for key, values := range w.header {
+		for _, value := range values {
+			_, _ = w.conn.Write([]byte(fmt.Sprintf("%s: %s\r\n", key, value)))
+		}
+	}
+
+	// Write empty line to end headers
+	_, _ = w.conn.Write([]byte("\r\n"))
 }

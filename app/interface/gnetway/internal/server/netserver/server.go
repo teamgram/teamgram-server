@@ -15,7 +15,6 @@
 package netserver
 
 import (
-	"context"
 	"net"
 	"sync"
 	"sync/atomic"
