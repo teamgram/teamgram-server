@@ -1,4 +1,4 @@
-// Copyright © 2025 The Teamgram Authors.
+// Copyright © 2025 The Teamgooo Authors.
 //  All Rights Reserved.
 //
 // Author: @benqi (wubenqi@gmail.com)

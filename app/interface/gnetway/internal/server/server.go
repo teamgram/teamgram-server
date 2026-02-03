@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2022 Teamgooo Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import (
 
 	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/gnetway/gnetwayservice"
 	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/config"
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/gnet"
+	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/netserver"
 	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/svc"
 	"github.com/teamgooo/teamgooo-server/pkg/net/kitex"
 
@@ -42,7 +42,7 @@ func New() *Server {
 
 type Server struct {
 	kitexSrv *kitex.RpcServer
-	server   *gnet.Server
+	server   *netserver.Server
 }
 
 func (s *Server) Initialize() error {
@@ -52,7 +52,7 @@ func (s *Server) Initialize() error {
 	logx.Infov(c)
 
 	ctx := svc.NewServiceContext(c)
-	s.server = gnet.New(ctx, c)
+	s.server = netserver.New(ctx, c)
 
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
