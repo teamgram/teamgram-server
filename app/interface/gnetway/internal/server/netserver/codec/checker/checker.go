@@ -19,7 +19,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/gnet"
+	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/netserver"
 	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
 	"github.com/teamgooo/teamgooo-server/pkg/proto/iface"
 	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
@@ -72,7 +72,7 @@ func main() {
 			if ok {
 				kData, _ := hex.DecodeString(k)
 				kInfo := tg.NewAuthKeyInfo(id, kData, tg.AuthKeyTypeTemp)
-				authKey := gnet.NewAuthKeyUtil(kInfo)
+				authKey := netserver.NewAuthKeyUtil(kInfo)
 				rawData, err := authKey.AesIgeDecrypt(data[8:24], data[24:])
 				if err != nil {
 					fmt.Println(err)
