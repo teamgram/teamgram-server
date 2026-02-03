@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2022-present,  Teamgram Authors.
+ * Copyright (c) 2022-present,  Teamgooo Authors.
  *  All rights reserved.
  *
  * Author: teagramio (teagram.io@gmail.com)

@@ -1,4 +1,4 @@
-// Copyright (c) 2021-present,  Teamgram Studio (https://teamgram.io).
+// Copyright (c) 2021-present,  Teamgooo Studio (https://teamgram.io).
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

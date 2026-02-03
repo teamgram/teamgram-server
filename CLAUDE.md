@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-TeamGram Server (`teamgram-server`) is a complete, production-ready Telegram-compatible server implementation written in Go. It implements MTProto (Telegram's binary protocol) and provides a full microservices architecture for running a Telegram-like messaging platform.
+Teamgooo Server (`teamgooo-server`) is a complete, production-ready Telegram-compatible server implementation written in Go. It implements MTProto (Telegram's binary protocol) and provides a full microservices architecture for running a Telegram-like messaging platform.
 
 **Key characteristics:**
 - Go 1.22+ module-based project
@@ -132,7 +132,7 @@ go mod verify
 
 ### High-Level Microservices Architecture
 
-TeamGram Server follows a layered microservices architecture:
+Teamgooo Server follows a layered microservices architecture:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

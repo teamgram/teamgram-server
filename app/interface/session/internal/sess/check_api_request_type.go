@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2022 Teamgooo Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,8 +76,8 @@ func checkRpcWithoutLogin(tl iface.TLObject) bool {
 		*tg.TLAuthExportAuthorization,
 		*tg.TLAuthImportAuthorization,
 		*tg.TLAuthCancelCode,
-		// *tg.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
-		// *tg.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
+	// *tg.TLAuthRequestPasswordRecovery,	// TODO: before process, try fetch usrId
+	// *tg.TLAuthRecoverPassword,			// TODO: before process, try fetch usrId
 		*tg.TLAuthExportLoginToken,
 		*tg.TLAuthAcceptLoginToken,
 		*tg.TLAuthLogOut, // TODO: before process, try fetch usrId

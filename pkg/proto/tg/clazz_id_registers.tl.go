@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright (c) 2025-present,  Teamgram Authors.
+ * Copyright (c) 2025-present,  Teamgooo Authors.
  *  All rights reserved.
  *
  * Author: Benqi (wubenqi@gmail.com)
@@ -192,7 +192,7 @@ func init() {
 	iface.RegisterClazzID(0x56d6a247, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleGroupCallSetting{ClazzID: 0x56d6a247} }) // 0x56d6a247
 	iface.RegisterClazzID(0xfe9fc158, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionParticipantJoinByInvite{ClazzID: 0xfe9fc158}
-	}) // 0xfe9fc158
+	})                                                                                                                                         // 0xfe9fc158
 	iface.RegisterClazzID(0x5a50fca4, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteDelete{ClazzID: 0x5a50fca4} }) // 0x5a50fca4
 	iface.RegisterClazzID(0x410a134e, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteRevoke{ClazzID: 0x410a134e} }) // 0x410a134e
 	iface.RegisterClazzID(0xe90ebb59, func() iface.TLObject { return &TLChannelAdminLogEventActionExportedInviteEdit{ClazzID: 0xe90ebb59} })   // 0xe90ebb59
@@ -200,12 +200,12 @@ func init() {
 	iface.RegisterClazzID(0x6e941a38, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeHistoryTTL{ClazzID: 0x6e941a38} })     // 0x6e941a38
 	iface.RegisterClazzID(0xafb6144a, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionParticipantJoinByRequest{ClazzID: 0xafb6144a}
-	}) // 0xafb6144a
+	})                                                                                                                                     // 0xafb6144a
 	iface.RegisterClazzID(0xcb2ac766, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleNoForwards{ClazzID: 0xcb2ac766} }) // 0xcb2ac766
 	iface.RegisterClazzID(0x278f2868, func() iface.TLObject { return &TLChannelAdminLogEventActionSendMessage{ClazzID: 0x278f2868} })      // 0x278f2868
 	iface.RegisterClazzID(0xbe4e0ef8, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionChangeAvailableReactions{ClazzID: 0xbe4e0ef8}
-	}) // 0xbe4e0ef8
+	})                                                                                                                                           // 0xbe4e0ef8
 	iface.RegisterClazzID(0xf04fb3a9, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeUsernames{ClazzID: 0xf04fb3a9} })        // 0xf04fb3a9
 	iface.RegisterClazzID(0x2cc6383, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleForum{ClazzID: 0x2cc6383} })              // 0x2cc6383
 	iface.RegisterClazzID(0x58707d28, func() iface.TLObject { return &TLChannelAdminLogEventActionCreateTopic{ClazzID: 0x58707d28} })            // 0x58707d28
@@ -220,7 +220,7 @@ func init() {
 	iface.RegisterClazzID(0x46d840ab, func() iface.TLObject { return &TLChannelAdminLogEventActionChangeEmojiStickerSet{ClazzID: 0x46d840ab} })  // 0x46d840ab
 	iface.RegisterClazzID(0x60a79c79, func() iface.TLObject {
 		return &TLChannelAdminLogEventActionToggleSignatureProfiles{ClazzID: 0x60a79c79}
-	}) // 0x60a79c79
+	})                                                                                                                                           // 0x60a79c79
 	iface.RegisterClazzID(0x64642db3, func() iface.TLObject { return &TLChannelAdminLogEventActionParticipantSubExtend{ClazzID: 0x64642db3} })   // 0x64642db3
 	iface.RegisterClazzID(0xc517f77e, func() iface.TLObject { return &TLChannelAdminLogEventActionToggleAutotranslation{ClazzID: 0xc517f77e} })  // 0xc517f77e
 	iface.RegisterClazzID(0xea107ae4, func() iface.TLObject { return &TLChannelAdminLogEventsFilter{ClazzID: 0xea107ae4} })                      // 0xea107ae4

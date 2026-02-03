@@ -10,6 +10,7 @@ require (
 	github.com/gobwas/httphead v0.1.0
 	github.com/gobwas/ws v1.4.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
+	github.com/lxzan/gws v1.8.9
 	github.com/nyaruka/phonenumbers v1.6.8
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/oschwald/geoip2-golang v1.13.0
@@ -18,7 +19,6 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/stretchr/testify v1.11.1
 	github.com/teamgram/marmota v0.1.22
-	github.com/teamgram/teamgram-server v0.96.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.0
 	github.com/zeromicro/go-zero v1.8.4
@@ -50,6 +50,7 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
