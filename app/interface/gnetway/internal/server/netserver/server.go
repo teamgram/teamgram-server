@@ -187,19 +187,3 @@ func parseAddress(addr string) (protocol string, address string) {
 
 	return
 }
-
-// Trigger executes a callback on a specific connection
-func (s *Server) Trigger(connId int64, callback func(c *connection)) {
-	s.connMgr.withConnection(connId, func(c *connection) {
-		callback(c)
-	})
-}
-
-// asyncRun executes a function asynchronously and calls callback on success
-func (s *Server) asyncRun(connId int64, execb func() error, retcb func(c *connection)) {
-	go func() {
-		if err := execb(); err == nil {
-			s.Trigger(connId, retcb)
-		}
-	}()
-}
