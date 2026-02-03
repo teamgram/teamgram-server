@@ -23,7 +23,7 @@ import (
 	"net/http"
 
 	"github.com/lxzan/gws"
-	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/gnet/codec"
+	"github.com/teamgooo/teamgooo-server/app/interface/gnetway/internal/server/netserver/codec"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
