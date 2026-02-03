@@ -18,7 +18,7 @@ import (
 )
 
 // MessagesGetSavedDialogs
-// messages.getSavedDialogs#5381d21a flags:# exclude_pinned:flags.0?true offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
+// messages.getSavedDialogs#1e91fc99 flags:# exclude_pinned:flags.0?true parent_peer:flags.1?InputPeer offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
 func (s *Service) MessagesGetSavedDialogs(ctx context.Context, request *tg.TLMessagesGetSavedDialogs) (*tg.MessagesSavedDialogs, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSavedDialogs - metadata: %s, request: %s", c.MD, request)
@@ -33,7 +33,7 @@ func (s *Service) MessagesGetSavedDialogs(ctx context.Context, request *tg.TLMes
 }
 
 // MessagesGetSavedHistory
-// messages.getSavedHistory#3d9a414d peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
+// messages.getSavedHistory#998ab009 flags:# parent_peer:flags.0?InputPeer peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (s *Service) MessagesGetSavedHistory(ctx context.Context, request *tg.TLMessagesGetSavedHistory) (*tg.MessagesMessages, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.getSavedHistory - metadata: %s, request: %s", c.MD, request)
@@ -48,7 +48,7 @@ func (s *Service) MessagesGetSavedHistory(ctx context.Context, request *tg.TLMes
 }
 
 // MessagesDeleteSavedHistory
-// messages.deleteSavedHistory#6e98102b flags:# peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
+// messages.deleteSavedHistory#4dc5085f flags:# parent_peer:flags.0?InputPeer peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (s *Service) MessagesDeleteSavedHistory(ctx context.Context, request *tg.TLMessagesDeleteSavedHistory) (*tg.MessagesAffectedHistory, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.deleteSavedHistory - metadata: %s, request: %s", c.MD, request)
@@ -104,5 +104,50 @@ func (s *Service) MessagesReorderPinnedSavedDialogs(ctx context.Context, request
 	}
 
 	c.Logger.Debugf("messages.reorderPinnedSavedDialogs - reply: %s", r)
+	return r, err
+}
+
+// MessagesGetSavedDialogsByID
+// messages.getSavedDialogsByID#6f6f9c96 flags:# parent_peer:flags.1?InputPeer ids:Vector<InputPeer> = messages.SavedDialogs;
+func (s *Service) MessagesGetSavedDialogsByID(ctx context.Context, request *tg.TLMessagesGetSavedDialogsByID) (*tg.MessagesSavedDialogs, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getSavedDialogsByID - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.MessagesGetSavedDialogsByID(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getSavedDialogsByID - reply: %s", r)
+	return r, err
+}
+
+// MessagesReadSavedHistory
+// messages.readSavedHistory#ba4a3b5b parent_peer:InputPeer peer:InputPeer max_id:int = Bool;
+func (s *Service) MessagesReadSavedHistory(ctx context.Context, request *tg.TLMessagesReadSavedHistory) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.readSavedHistory - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.MessagesReadSavedHistory(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.readSavedHistory - reply: %s", r)
+	return r, err
+}
+
+// ChannelsGetMessageAuthor
+// channels.getMessageAuthor#ece2a0e6 channel:InputChannel id:int = User;
+func (s *Service) ChannelsGetMessageAuthor(ctx context.Context, request *tg.TLChannelsGetMessageAuthor) (*tg.User, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("channels.getMessageAuthor - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.ChannelsGetMessageAuthor(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("channels.getMessageAuthor - reply: %s", r)
 	return r, err
 }

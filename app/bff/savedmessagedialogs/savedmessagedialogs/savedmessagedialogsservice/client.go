@@ -27,6 +27,9 @@ type Client interface {
 	MessagesGetPinnedSavedDialogs(ctx context.Context, req *tg.TLMessagesGetPinnedSavedDialogs, callOptions ...callopt.Option) (r *tg.MessagesSavedDialogs, err error)
 	MessagesToggleSavedDialogPin(ctx context.Context, req *tg.TLMessagesToggleSavedDialogPin, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MessagesReorderPinnedSavedDialogs(ctx context.Context, req *tg.TLMessagesReorderPinnedSavedDialogs, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	MessagesGetSavedDialogsByID(ctx context.Context, req *tg.TLMessagesGetSavedDialogsByID, callOptions ...callopt.Option) (r *tg.MessagesSavedDialogs, err error)
+	MessagesReadSavedHistory(ctx context.Context, req *tg.TLMessagesReadSavedHistory, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	ChannelsGetMessageAuthor(ctx context.Context, req *tg.TLChannelsGetMessageAuthor, callOptions ...callopt.Option) (r *tg.User, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -92,4 +95,19 @@ func (p *kSavedMessageDialogsClient) MessagesToggleSavedDialogPin(ctx context.Co
 func (p *kSavedMessageDialogsClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, req *tg.TLMessagesReorderPinnedSavedDialogs, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MessagesReorderPinnedSavedDialogs(ctx, req)
+}
+
+func (p *kSavedMessageDialogsClient) MessagesGetSavedDialogsByID(ctx context.Context, req *tg.TLMessagesGetSavedDialogsByID, callOptions ...callopt.Option) (r *tg.MessagesSavedDialogs, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MessagesGetSavedDialogsByID(ctx, req)
+}
+
+func (p *kSavedMessageDialogsClient) MessagesReadSavedHistory(ctx context.Context, req *tg.TLMessagesReadSavedHistory, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MessagesReadSavedHistory(ctx, req)
+}
+
+func (p *kSavedMessageDialogsClient) ChannelsGetMessageAuthor(ctx context.Context, req *tg.TLChannelsGetMessageAuthor, callOptions ...callopt.Option) (r *tg.User, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChannelsGetMessageAuthor(ctx, req)
 }

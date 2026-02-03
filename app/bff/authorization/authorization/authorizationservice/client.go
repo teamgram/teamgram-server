@@ -41,6 +41,7 @@ type Client interface {
 	AuthRequestFirebaseSms(ctx context.Context, req *tg.TLAuthRequestFirebaseSms, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	AuthResetLoginEmail(ctx context.Context, req *tg.TLAuthResetLoginEmail, callOptions ...callopt.Option) (r *tg.AuthSentCode, err error)
 	AuthReportMissingCode(ctx context.Context, req *tg.TLAuthReportMissingCode, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	AuthCheckPaidAuth(ctx context.Context, req *tg.TLAuthCheckPaidAuth, callOptions ...callopt.Option) (r *tg.AuthSentCode, err error)
 	AccountSendVerifyEmailCode(ctx context.Context, req *tg.TLAccountSendVerifyEmailCode, callOptions ...callopt.Option) (r *tg.AccountSentEmailCode, err error)
 	AccountVerifyEmail(ctx context.Context, req *tg.TLAccountVerifyEmail, callOptions ...callopt.Option) (r *tg.AccountEmailVerified, err error)
 	AccountResetPassword(ctx context.Context, req *tg.TLAccountResetPassword, callOptions ...callopt.Option) (r *tg.AccountResetPasswordResult, err error)
@@ -183,6 +184,11 @@ func (p *kAuthorizationClient) AuthResetLoginEmail(ctx context.Context, req *tg.
 func (p *kAuthorizationClient) AuthReportMissingCode(ctx context.Context, req *tg.TLAuthReportMissingCode, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.AuthReportMissingCode(ctx, req)
+}
+
+func (p *kAuthorizationClient) AuthCheckPaidAuth(ctx context.Context, req *tg.TLAuthCheckPaidAuth, callOptions ...callopt.Option) (r *tg.AuthSentCode, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AuthCheckPaidAuth(ctx, req)
 }
 
 func (p *kAuthorizationClient) AccountSendVerifyEmailCode(ctx context.Context, req *tg.TLAccountSendVerifyEmailCode, callOptions ...callopt.Option) (r *tg.AccountSentEmailCode, err error) {

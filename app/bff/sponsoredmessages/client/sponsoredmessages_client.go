@@ -75,7 +75,7 @@ func (m *defaultSponsoredMessagesClient) MessagesReportSponsoredMessage(ctx cont
 }
 
 // MessagesGetSponsoredMessages
-// messages.getSponsoredMessages#9bd2f439 peer:InputPeer = messages.SponsoredMessages;
+// messages.getSponsoredMessages#3d6ce850 flags:# peer:InputPeer msg_id:flags.0?int = messages.SponsoredMessages;
 func (m *defaultSponsoredMessagesClient) MessagesGetSponsoredMessages(ctx context.Context, in *tg.TLMessagesGetSponsoredMessages) (*tg.MessagesSponsoredMessages, error) {
 	cli := sponsoredmessagesservice.NewRPCSponsoredMessagesClient(m.cli)
 	return cli.MessagesGetSponsoredMessages(ctx, in)

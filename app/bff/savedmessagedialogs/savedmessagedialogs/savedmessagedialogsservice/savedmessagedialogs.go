@@ -69,6 +69,27 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/tg.RPCSavedMessageDialogs/messages.getSavedDialogsByID": kitex.NewMethodInfo(
+		messagesGetSavedDialogsByIDHandler,
+		newMessagesGetSavedDialogsByIDArgs,
+		newMessagesGetSavedDialogsByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/tg.RPCSavedMessageDialogs/messages.readSavedHistory": kitex.NewMethodInfo(
+		messagesReadSavedHistoryHandler,
+		newMessagesReadSavedHistoryArgs,
+		newMessagesReadSavedHistoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/tg.RPCSavedMessageDialogs/channels.getMessageAuthor": kitex.NewMethodInfo(
+		channelsGetMessageAuthorHandler,
+		newChannelsGetMessageAuthorArgs,
+		newChannelsGetMessageAuthorResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -898,6 +919,384 @@ func (p *MessagesReorderPinnedSavedDialogsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func messagesGetSavedDialogsByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*MessagesGetSavedDialogsByIDArgs)
+	realResult := result.(*MessagesGetSavedDialogsByIDResult)
+	success, err := handler.(tg.RPCSavedMessageDialogs).MessagesGetSavedDialogsByID(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newMessagesGetSavedDialogsByIDArgs() interface{} {
+	return &MessagesGetSavedDialogsByIDArgs{}
+}
+
+func newMessagesGetSavedDialogsByIDResult() interface{} {
+	return &MessagesGetSavedDialogsByIDResult{}
+}
+
+type MessagesGetSavedDialogsByIDArgs struct {
+	Req *tg.TLMessagesGetSavedDialogsByID
+}
+
+func (p *MessagesGetSavedDialogsByIDArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in MessagesGetSavedDialogsByIDArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *MessagesGetSavedDialogsByIDArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLMessagesGetSavedDialogsByID)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *MessagesGetSavedDialogsByIDArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in MessagesGetSavedDialogsByIDArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *MessagesGetSavedDialogsByIDArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLMessagesGetSavedDialogsByID)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var MessagesGetSavedDialogsByIDArgs_Req_DEFAULT *tg.TLMessagesGetSavedDialogsByID
+
+func (p *MessagesGetSavedDialogsByIDArgs) GetReq() *tg.TLMessagesGetSavedDialogsByID {
+	if !p.IsSetReq() {
+		return MessagesGetSavedDialogsByIDArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *MessagesGetSavedDialogsByIDArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type MessagesGetSavedDialogsByIDResult struct {
+	Success *tg.MessagesSavedDialogs
+}
+
+var MessagesGetSavedDialogsByIDResult_Success_DEFAULT *tg.MessagesSavedDialogs
+
+func (p *MessagesGetSavedDialogsByIDResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in MessagesGetSavedDialogsByIDResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) Unmarshal(in []byte) error {
+	msg := new(tg.MessagesSavedDialogs)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in MessagesGetSavedDialogsByIDResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.MessagesSavedDialogs)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) GetSuccess() *tg.MessagesSavedDialogs {
+	if !p.IsSetSuccess() {
+		return MessagesGetSavedDialogsByIDResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.MessagesSavedDialogs)
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *MessagesGetSavedDialogsByIDResult) GetResult() interface{} {
+	return p.Success
+}
+
+func messagesReadSavedHistoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*MessagesReadSavedHistoryArgs)
+	realResult := result.(*MessagesReadSavedHistoryResult)
+	success, err := handler.(tg.RPCSavedMessageDialogs).MessagesReadSavedHistory(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newMessagesReadSavedHistoryArgs() interface{} {
+	return &MessagesReadSavedHistoryArgs{}
+}
+
+func newMessagesReadSavedHistoryResult() interface{} {
+	return &MessagesReadSavedHistoryResult{}
+}
+
+type MessagesReadSavedHistoryArgs struct {
+	Req *tg.TLMessagesReadSavedHistory
+}
+
+func (p *MessagesReadSavedHistoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in MessagesReadSavedHistoryArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *MessagesReadSavedHistoryArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLMessagesReadSavedHistory)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *MessagesReadSavedHistoryArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in MessagesReadSavedHistoryArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *MessagesReadSavedHistoryArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLMessagesReadSavedHistory)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var MessagesReadSavedHistoryArgs_Req_DEFAULT *tg.TLMessagesReadSavedHistory
+
+func (p *MessagesReadSavedHistoryArgs) GetReq() *tg.TLMessagesReadSavedHistory {
+	if !p.IsSetReq() {
+		return MessagesReadSavedHistoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *MessagesReadSavedHistoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type MessagesReadSavedHistoryResult struct {
+	Success *tg.Bool
+}
+
+var MessagesReadSavedHistoryResult_Success_DEFAULT *tg.Bool
+
+func (p *MessagesReadSavedHistoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in MessagesReadSavedHistoryResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *MessagesReadSavedHistoryResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesReadSavedHistoryResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in MessagesReadSavedHistoryResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *MessagesReadSavedHistoryResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *MessagesReadSavedHistoryResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return MessagesReadSavedHistoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *MessagesReadSavedHistoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *MessagesReadSavedHistoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *MessagesReadSavedHistoryResult) GetResult() interface{} {
+	return p.Success
+}
+
+func channelsGetMessageAuthorHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ChannelsGetMessageAuthorArgs)
+	realResult := result.(*ChannelsGetMessageAuthorResult)
+	success, err := handler.(tg.RPCSavedMessageDialogs).ChannelsGetMessageAuthor(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newChannelsGetMessageAuthorArgs() interface{} {
+	return &ChannelsGetMessageAuthorArgs{}
+}
+
+func newChannelsGetMessageAuthorResult() interface{} {
+	return &ChannelsGetMessageAuthorResult{}
+}
+
+type ChannelsGetMessageAuthorArgs struct {
+	Req *tg.TLChannelsGetMessageAuthor
+}
+
+func (p *ChannelsGetMessageAuthorArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("No req in ChannelsGetMessageAuthorArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ChannelsGetMessageAuthorArgs) Unmarshal(in []byte) error {
+	msg := new(tg.TLChannelsGetMessageAuthor)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ChannelsGetMessageAuthorArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("No req in ChannelsGetMessageAuthorArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ChannelsGetMessageAuthorArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.TLChannelsGetMessageAuthor)
+	msg.ClazzID, _ = d.ClazzID()
+	msg.Decode(d)
+	p.Req = msg
+	return nil
+}
+
+var ChannelsGetMessageAuthorArgs_Req_DEFAULT *tg.TLChannelsGetMessageAuthor
+
+func (p *ChannelsGetMessageAuthorArgs) GetReq() *tg.TLChannelsGetMessageAuthor {
+	if !p.IsSetReq() {
+		return ChannelsGetMessageAuthorArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ChannelsGetMessageAuthorArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ChannelsGetMessageAuthorResult struct {
+	Success *tg.User
+}
+
+var ChannelsGetMessageAuthorResult_Success_DEFAULT *tg.User
+
+func (p *ChannelsGetMessageAuthorResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("No req in ChannelsGetMessageAuthorResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ChannelsGetMessageAuthorResult) Unmarshal(in []byte) error {
+	msg := new(tg.User)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChannelsGetMessageAuthorResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("No req in ChannelsGetMessageAuthorResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ChannelsGetMessageAuthorResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.User)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChannelsGetMessageAuthorResult) GetSuccess() *tg.User {
+	if !p.IsSetSuccess() {
+		return ChannelsGetMessageAuthorResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ChannelsGetMessageAuthorResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.User)
+}
+
+func (p *ChannelsGetMessageAuthorResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ChannelsGetMessageAuthorResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -985,6 +1384,48 @@ func (p *kClient) MessagesReorderPinnedSavedDialogs(ctx context.Context, req *tg
 
 	_result := new(tg.Bool)
 	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.reorderPinnedSavedDialogs", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) MessagesGetSavedDialogsByID(ctx context.Context, req *tg.TLMessagesGetSavedDialogsByID) (r *tg.MessagesSavedDialogs, err error) {
+	// var _args MessagesGetSavedDialogsByIDArgs
+	// _args.Req = req
+	// var _result MessagesGetSavedDialogsByIDResult
+
+	_result := new(tg.MessagesSavedDialogs)
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.getSavedDialogsByID", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) MessagesReadSavedHistory(ctx context.Context, req *tg.TLMessagesReadSavedHistory) (r *tg.Bool, err error) {
+	// var _args MessagesReadSavedHistoryArgs
+	// _args.Req = req
+	// var _result MessagesReadSavedHistoryResult
+
+	_result := new(tg.Bool)
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/messages.readSavedHistory", req, _result); err != nil {
+		return
+	}
+
+	// return _result.GetSuccess(), nil
+	return _result, nil
+}
+
+func (p *kClient) ChannelsGetMessageAuthor(ctx context.Context, req *tg.TLChannelsGetMessageAuthor) (r *tg.User, err error) {
+	// var _args ChannelsGetMessageAuthorArgs
+	// _args.Req = req
+	// var _result ChannelsGetMessageAuthorResult
+
+	_result := new(tg.User)
+	if err = p.c.Call(ctx, "/tg.RPCSavedMessageDialogs/channels.getMessageAuthor", req, _result); err != nil {
 		return
 	}
 

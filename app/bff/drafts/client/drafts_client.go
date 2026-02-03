@@ -36,7 +36,7 @@ func NewDraftsClient(cli client.Client) DraftsClient {
 }
 
 // MessagesSaveDraft
-// messages.saveDraft#d372c5ce flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long = Bool;
+// messages.saveDraft#54ae308e flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long suggested_post:flags.8?SuggestedPost = Bool;
 func (m *defaultDraftsClient) MessagesSaveDraft(ctx context.Context, in *tg.TLMessagesSaveDraft) (*tg.Bool, error) {
 	cli := draftsservice.NewRPCDraftsClient(m.cli)
 	return cli.MessagesSaveDraft(ctx, in)

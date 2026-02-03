@@ -40,6 +40,7 @@ type AuthorizationClient interface {
 	AuthRequestFirebaseSms(ctx context.Context, in *tg.TLAuthRequestFirebaseSms) (*tg.Bool, error)
 	AuthResetLoginEmail(ctx context.Context, in *tg.TLAuthResetLoginEmail) (*tg.AuthSentCode, error)
 	AuthReportMissingCode(ctx context.Context, in *tg.TLAuthReportMissingCode) (*tg.Bool, error)
+	AuthCheckPaidAuth(ctx context.Context, in *tg.TLAuthCheckPaidAuth) (*tg.AuthSentCode, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *tg.TLAccountSendVerifyEmailCode) (*tg.AccountSentEmailCode, error)
 	AccountVerifyEmail(ctx context.Context, in *tg.TLAccountVerifyEmail) (*tg.AccountEmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *tg.TLAccountResetPassword) (*tg.AccountResetPasswordResult, error)
@@ -197,6 +198,13 @@ func (m *defaultAuthorizationClient) AuthResetLoginEmail(ctx context.Context, in
 func (m *defaultAuthorizationClient) AuthReportMissingCode(ctx context.Context, in *tg.TLAuthReportMissingCode) (*tg.Bool, error) {
 	cli := authorizationservice.NewRPCAuthorizationClient(m.cli)
 	return cli.AuthReportMissingCode(ctx, in)
+}
+
+// AuthCheckPaidAuth
+// auth.checkPaidAuth#56e59f9c phone_number:string phone_code_hash:string form_id:long = auth.SentCode;
+func (m *defaultAuthorizationClient) AuthCheckPaidAuth(ctx context.Context, in *tg.TLAuthCheckPaidAuth) (*tg.AuthSentCode, error) {
+	cli := authorizationservice.NewRPCAuthorizationClient(m.cli)
+	return cli.AuthCheckPaidAuth(ctx, in)
 }
 
 // AccountSendVerifyEmailCode

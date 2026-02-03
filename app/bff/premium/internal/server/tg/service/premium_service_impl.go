@@ -76,18 +76,3 @@ func (s *Service) PaymentsCanPurchaseStore(ctx context.Context, request *tg.TLPa
 	c.Logger.Debugf("payments.canPurchaseStore - reply: %s", r)
 	return r, err
 }
-
-// PaymentsCanPurchasePremium
-// payments.canPurchasePremium#9fc19eb6 purpose:InputStorePaymentPurpose = Bool;
-func (s *Service) PaymentsCanPurchasePremium(ctx context.Context, request *tg.TLPaymentsCanPurchasePremium) (*tg.Bool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("payments.canPurchasePremium - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.PaymentsCanPurchasePremium(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("payments.canPurchasePremium - reply: %s", r)
-	return r, err
-}

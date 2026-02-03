@@ -121,18 +121,3 @@ func (s *Service) MessagesGetDefaultHistoryTTL(ctx context.Context, request *tg.
 	c.Logger.Debugf("messages.getDefaultHistoryTTL - reply: %s", r)
 	return r, err
 }
-
-// UsersGetIsPremiumRequiredToContact
-// users.getIsPremiumRequiredToContact#a622aa10 id:Vector<InputUser> = Vector<Bool>;
-func (s *Service) UsersGetIsPremiumRequiredToContact(ctx context.Context, request *tg.TLUsersGetIsPremiumRequiredToContact) (*tg.VectorBool, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - metadata: %s, request: %s", c.MD, request)
-
-	r, err := c.UsersGetIsPremiumRequiredToContact(request)
-	if err != nil {
-		return nil, err
-	}
-
-	c.Logger.Debugf("users.getIsPremiumRequiredToContact - reply: %s", r)
-	return r, err
-}

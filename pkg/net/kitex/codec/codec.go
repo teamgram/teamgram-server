@@ -119,7 +119,7 @@ func (jc *ZRpcCodec) Decode(ctx context.Context, message remote.Message, in remo
 	if err = codec.SetOrCheckSeqID(data.SeqID, message); err != nil {
 		return err
 	}
-	if err = codec.SetOrCheckMethodName(data.MethodName, message); err != nil {
+	if err = codec.SetOrCheckMethodName(ctx, data.MethodName, message); err != nil {
 		return err
 	}
 	if err = codec.NewDataIfNeeded(data.MethodName, message); err != nil {

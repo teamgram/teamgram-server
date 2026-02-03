@@ -45962,7 +45962,7 @@ type TLPhoneJoinGroupCall struct {
 	Call         InputGroupCallClazz `json:"call"`
 	JoinAs       InputPeerClazz      `json:"join_as"`
 	InviteHash   *string             `json:"invite_hash"`
-	PublicKey    bin.Int256          `json:"public_key"`
+	PublicKey    *bin.Int256         `json:"public_key"`
 	Block        []byte              `json:"block"`
 	Params       DataJSONClazz       `json:"params"`
 }
@@ -46011,7 +46011,10 @@ func (m *TLPhoneJoinGroupCall) Encode(x *bin.Encoder, layer int32) error {
 				x.PutString(*m.InviteHash)
 			}
 
-			x.PutInt256(m.PublicKey)
+			if m.PublicKey != nil {
+				x.PutInt256(*m.PublicKey)
+			}
+
 			if m.Block != nil {
 				x.PutBytes(m.Block)
 			}
@@ -46059,7 +46062,11 @@ func (m *TLPhoneJoinGroupCall) Decode(d *bin.Decoder) (err error) {
 				*m.InviteHash, err = d.String()
 			}
 
-			err = m.PublicKey.Decode(d)
+			if (flags & (1 << 3)) != 0 {
+				m.PublicKey = new(bin.Int256)
+				err = m.PublicKey.Decode(d)
+			}
+
 			if (flags & (1 << 3)) != 0 {
 				m.Block, err = d.Bytes()
 			}
@@ -47575,7 +47582,7 @@ type TLPhoneCreateConferenceCall struct {
 	VideoStopped bool          `json:"video_stopped"`
 	Join         bool          `json:"join"`
 	RandomId     int32         `json:"random_id"`
-	PublicKey    bin.Int256    `json:"public_key"`
+	PublicKey    *bin.Int256   `json:"public_key"`
 	Block        []byte        `json:"block"`
 	Params       DataJSONClazz `json:"params"`
 }
@@ -47622,7 +47629,10 @@ func (m *TLPhoneCreateConferenceCall) Encode(x *bin.Encoder, layer int32) error 
 			var flags = getFlags()
 			x.PutUint32(flags)
 			x.PutInt32(m.RandomId)
-			x.PutInt256(m.PublicKey)
+			if m.PublicKey != nil {
+				x.PutInt256(*m.PublicKey)
+			}
+
 			if m.Block != nil {
 				x.PutBytes(m.Block)
 			}
@@ -47660,7 +47670,11 @@ func (m *TLPhoneCreateConferenceCall) Decode(d *bin.Decoder) (err error) {
 				m.Join = true
 			}
 			m.RandomId, err = d.Int32()
-			err = m.PublicKey.Decode(d)
+			if (flags & (1 << 3)) != 0 {
+				m.PublicKey = new(bin.Int256)
+				err = m.PublicKey.Decode(d)
+			}
+
 			if (flags & (1 << 3)) != 0 {
 				m.Block, err = d.Bytes()
 			}

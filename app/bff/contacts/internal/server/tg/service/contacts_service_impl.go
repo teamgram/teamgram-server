@@ -273,7 +273,7 @@ func (s *Service) ContactsToggleTopPeers(ctx context.Context, request *tg.TLCont
 }
 
 // ContactsAddContact
-// contacts.addContact#e8f463d0 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string = Updates;
+// contacts.addContact#d9ba2e54 flags:# add_phone_privacy_exception:flags.0?true id:InputUser first_name:string last_name:string phone:string note:flags.1?TextWithEntities = Updates;
 func (s *Service) ContactsAddContact(ctx context.Context, request *tg.TLContactsAddContact) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("contacts.addContact - metadata: %s, request: %s", c.MD, request)
@@ -344,5 +344,20 @@ func (s *Service) ContactsSetBlocked(ctx context.Context, request *tg.TLContacts
 	}
 
 	c.Logger.Debugf("contacts.setBlocked - reply: %s", r)
+	return r, err
+}
+
+// ContactsUpdateContactNote
+// contacts.updateContactNote#139f63fb id:InputUser note:TextWithEntities = Bool;
+func (s *Service) ContactsUpdateContactNote(ctx context.Context, request *tg.TLContactsUpdateContactNote) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("contacts.updateContactNote - metadata: %s, request: %s", c.MD, request)
+
+	r, err := c.ContactsUpdateContactNote(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("contacts.updateContactNote - reply: %s", r)
 	return r, err
 }
