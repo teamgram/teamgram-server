@@ -37,7 +37,6 @@ import (
 	"github.com/teamgooo/teamgooo-server/pkg/proto/tg"
 	"github.com/teamgram/marmota/pkg/hack"
 
-	"github.com/panjf2000/gnet/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

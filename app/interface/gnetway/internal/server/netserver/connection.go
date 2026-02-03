@@ -72,15 +72,15 @@ func newConnection(id int64, conn net.Conn, isTcp, isWebsocket bool) *connection
 	clientIp := strings.Split(conn.RemoteAddr().String(), ":")[0]
 
 	c := &connection{
-		id:         id,
-		conn:       conn,
-		reader:     bufio.NewReaderSize(conn, 65536),
-		writer:     bufio.NewWriterSize(conn, 65536),
-		tcp:        isTcp,
-		websocket:  isWebsocket,
-		clientIp:   clientIp,
-		closeDate:  time.Now().Unix() + 30, // 30 seconds initial timeout
-		codec:      nil,
+		id:        id,
+		conn:      conn,
+		reader:    bufio.NewReaderSize(conn, 65536),
+		writer:    bufio.NewWriterSize(conn, 65536),
+		tcp:       isTcp,
+		websocket: isWebsocket,
+		clientIp:  clientIp,
+		closeDate: time.Now().Unix() + 30, // 30 seconds initial timeout
+		codec:     nil,
 	}
 
 	return c
@@ -160,7 +160,7 @@ func (c *connection) putAuthKey(k *authKeyUtil) {
 }
 
 func (c *connection) getHandshakeStateCtx(nonce bin.Int128) *HandshakeStateCtx {
-	for _, state := c.handshakes {
+	for _, state := range c.handshakes {
 		if nonce == state.Nonce {
 			return state
 		}

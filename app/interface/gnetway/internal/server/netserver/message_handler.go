@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/lxzan/gws"
 	"github.com/teamgooo/teamgooo-server/app/interface/session/client"
 	"github.com/teamgooo/teamgooo-server/app/interface/session/session"
 	"github.com/teamgooo/teamgooo-server/pkg/proto/bin"
@@ -240,7 +239,8 @@ func (s *Server) onMTPRawMessage(c *connection, authKeyId int64, needAck bool, m
 				s.Trigger(c.id, func(c2 *connection) {
 					if errors.Is(err2, tg.ErrAuthKeyUnregistered) {
 						out2 := make([]byte, 4)
-						binary.LittleEndian.PutUint32(out2, uint32(-404))
+						var code int32 = -404
+						binary.LittleEndian.PutUint32(out2, uint32(code))
 						_ = s.writeToConnection(c2, out2)
 					}
 					_ = c2.Close()
@@ -281,12 +281,12 @@ func (s *Server) writeToConnection(c *connection, msg []byte) error {
 
 	if c.websocket {
 		if c.gwsConn != nil {
-			return c.gwsConn.WriteBinary(data)
+			// gws requires OpcodeBinary and the data
+			return c.gwsConn.WriteMessage(1, data) // 1 = OpcodeBinary
 		}
 		return fmt.Errorf("websocket connection not initialized")
-	} else {
-		_, err = c.Write(data)
 	}
 
+	_, err = c.Write(data)
 	return err
 }
