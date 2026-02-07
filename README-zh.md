@@ -41,9 +41,10 @@
 
 **无 Docker 时的安装文档：**
 
-- [CentOS 9 Stream](docs/install-centos-9.md)
-- [CentOS 7](docs/install-centos-7.md)
-- [Fedora 40](docs/install-fedora.md)
+- [手动安装（Linux）](docs/install-manual-linux-zh.md)
+- [手动安装（macOS）](docs/install-manual-macos-zh.md)
+
+**Docker 部署：** [install-docker.md](docs/install-docker.md)（docker-compose 完整栈）。
 
 **一键环境（Docker）：** 使用 [docker-compose-env.yaml](docker-compose-env.yaml)，详见 [README-env-cn.md](README-env-cn.md) / [README-env-en.md](README-env-en.md)。
 
@@ -51,51 +52,12 @@
 
 ## 手动安装
 
-从源码构建并运行服务。需自行安装并配置依赖，并**手动初始化数据库与 MinIO**。
+从源码构建并运行服务时，请按以下文档逐步操作：
 
-**需要 Go 1.21+。**
+- **[手动安装（Linux）](docs/install-manual-linux-zh.md)** — CentOS、Fedora、Ubuntu/Debian
+- **[手动安装（macOS）](docs/install-manual-macos-zh.md)** — Intel 与 Apple Silicon
 
-### 1. 克隆仓库
-
-```bash
-git clone https://github.com/teamgram/teamgram-server.git
-cd teamgram-server
-```
-
-### 2. 依赖环境
-
-安装 MySQL、Redis、etcd、Kafka、MinIO、FFmpeg（见上文安装文档），或仅用 Docker 启动依赖栈：
-
-```bash
-docker compose -f docker-compose-env.yaml up -d
-```
-
-### 3. 初始化数据
-
-**数据库**
-
-1. 创建数据库：`teamgram`
-2. 按顺序执行 SQL（在仓库根目录）：
-
-```bash
-for f in teamgramd/deploy/sql/1_teamgram.sql teamgramd/deploy/sql/migrate-*.sql teamgramd/deploy/sql/z_init.sql; do
-  mysql -uroot teamgram < "$f"
-done
-```
-
-也可逐条执行；参见 [teamgramd/deploy/sql/README.md](teamgramd/deploy/sql/README.md)。
-
-**MinIO**
-
-创建桶：`documents`、`encryptedfiles`、`photos`、`videos`（可通过 MinIO 控制台 `http://<主机>:9001`）。若已用 Docker 启动环境栈，`minio-mc` 服务会自动创建。
-
-### 4. 构建与运行
-
-```bash
-make
-cd teamgramd/bin
-./runall2.sh
-```
+需要 Go 1.21+。需自行安装并配置依赖（MySQL、Redis、etcd、Kafka、MinIO、FFmpeg），初始化数据库与 MinIO，再编译并运行。
 
 ---
 

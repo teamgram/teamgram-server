@@ -39,63 +39,16 @@ For service topology, data flow, and ports, see [Architecture (specs)](specs/arc
 
 Detailed versions and optional monitoring stack: [Dependencies and runtime (specs)](specs/dependencies-and-runtime.md).
 
-**Installation guides (no Docker):**
-
-- [CentOS 9 Stream](docs/install-centos-9.md)
-- [CentOS 7](docs/install-centos-7.md)
-- [Fedora 40](docs/install-fedora.md)
-
-**One-shot environment (Docker):** use [docker-compose-env.yaml](docker-compose-env.yaml). See [README-env-cn.md](README-env-cn.md) / [README-env-en.md](README-env-en.md).
-
 ---
 
 ## Manual installation
 
-For running the server from source (Go build). You must install and configure dependencies, then initialize the database and MinIO yourself.
+For running the server from source (Go build), follow the step-by-step guides:
 
-**Requires Go 1.21+.**
+- **[Manual installation (Linux)](docs/install-manual-linux.md)** — CentOS, Fedora, Ubuntu/Debian
+- **[Manual installation (macOS)](docs/install-manual-macos.md)** — Intel and Apple Silicon
 
-### 1. Clone
-
-```bash
-git clone https://github.com/teamgram/teamgram-server.git
-cd teamgram-server
-```
-
-### 2. Dependencies
-
-Install MySQL, Redis, etcd, Kafka, MinIO, and FFmpeg (see installation guides in Prerequisites above), or start only the dependency stack with Docker:
-
-```bash
-docker compose -f docker-compose-env.yaml up -d
-```
-
-### 3. Initialize data
-
-**Database**
-
-1. Create database: `teamgram`
-2. Run SQL in order (from repo root):
-
-```bash
-for f in teamgramd/deploy/sql/1_teamgram.sql teamgramd/deploy/sql/migrate-*.sql teamgramd/deploy/sql/z_init.sql; do
-  mysql -uroot teamgram < "$f"
-done
-```
-
-Or run each file manually; see [teamgramd/deploy/sql/README.md](teamgramd/deploy/sql/README.md).
-
-**MinIO**
-
-Create buckets: `documents`, `encryptedfiles`, `photos`, `videos` (e.g. via MinIO Console at `http://<host>:9001`). If you started the env stack with Docker, the `minio-mc` service creates them automatically.
-
-### 4. Build & run
-
-```bash
-make
-cd teamgramd/bin
-./runall2.sh
-```
+Requires Go 1.21+. You must install and configure dependencies (MySQL, Redis, etcd, Kafka, MinIO, FFmpeg), initialize the database and MinIO, then build and run.
 
 ---
 
