@@ -2,6 +2,9 @@
 target/
 .vagrant/
 
+# env (do not commit secrets)
+.env
+
 #fixed file
 .class
 .exe
@@ -23,6 +26,7 @@ Thumbs.db
 *.swp
 *.swo
 *.tl
+.vscode
 
 #deploy data
 

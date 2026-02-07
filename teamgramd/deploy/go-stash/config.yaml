@@ -1,0 +1,15 @@
+# 最小 Go-Stash 配置，用于 docker-compose-env2（需按业务配置 Kafka topic 与 ES index）
+Clusters:
+  - Input:
+      Kafka:
+        Name: go-stash
+        Brokers:
+          - "kafka:9092"
+        Topic: "your-log-topic"
+        Group: go-stash
+    Filters: []
+    Output:
+      ElasticSearch:
+        Hosts:
+          - "http://elasticsearch:9200"
+        Index: "logs-%{+2006.01.02}"

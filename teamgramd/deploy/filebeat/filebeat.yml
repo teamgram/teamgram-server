@@ -1,0 +1,13 @@
+# 最小 Filebeat 配置，用于 docker-compose-env2（需按需调整日志路径）
+filebeat.inputs:
+  - type: container
+    paths:
+      - '/var/lib/docker/containers/*/*.log'
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
