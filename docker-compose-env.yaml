@@ -19,6 +19,9 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      # JVM 调优，缓解 GC 导致的 CPU 尖峰（见 specs/kafka-cpu-optimization.md）
+      KAFKA_HEAP_OPTS: "-Xmx1G -Xms1G"
+      KAFKA_OPTS: "-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35"
     volumes:
       - ./data/kafka:/bitnami/kafka
     restart: unless-stopped
