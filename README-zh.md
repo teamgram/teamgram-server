@@ -24,7 +24,8 @@
 
 ![架构图](docs/image/architecture-001.png)
 
-服务拓扑、数据流与端口说明见 [架构说明（specs）](specs/architecture.md)。
+- [架构说明（specs）](specs/architecture.md) — 服务拓扑、数据流与端口  
+- [服务拓扑与配置](docs/service-topology-zh.md) — 各服务端口、基础设施依赖、调用关系与 Mermaid 拓扑图（[English](docs/service-topology.md) 为主文档）
 
 ## 前置依赖
 
@@ -103,6 +104,7 @@ docker compose up -d
 ## 文档
 
 - [项目规范与设计文档（specs）](specs/README.md) — 架构、协议、依赖、贡献、安全、路线图
+- [服务拓扑与配置](docs/service-topology-zh.md) — 端口、基础设施、调用关系（[English](docs/service-topology.md)）
 - [CONTRIBUTING](CONTRIBUTING.md) · [SECURITY](SECURITY.md) · [CHANGELOG](CHANGELOG.md)
 
 ---
@@ -134,8 +136,6 @@ docker compose up -d
 
 ---
 
-## Star 与访问统计
+## Star ⭐
 
 若本项目对你有帮助，欢迎 Star。
-
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fteamgram%2Fteamgram-server&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitors&edge_flat=false)](https://hits.seeyoufarm.com)

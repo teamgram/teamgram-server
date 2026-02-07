@@ -24,7 +24,8 @@ Unofficial open-source [MTProto](https://core.telegram.org/mtproto) server imple
 
 ![Architecture](docs/image/architecture-001.png)
 
-For service topology, data flow, and ports, see [Architecture (specs)](specs/architecture.md).
+- [Architecture (specs)](specs/architecture.md) — service topology, data flow, and ports  
+- [Service topology and configuration](docs/service-topology.md) — ports, infrastructure dependencies, call graph, and Mermaid diagram ([中文](docs/service-topology-zh.md))
 
 ## Prerequisites
 
@@ -94,6 +95,7 @@ docker compose up -d
 ## Documentation
 
 - [Project specs](specs/README.md) — Architecture, protocol, dependencies, contributing, security, roadmap
+- [Service topology and configuration](docs/service-topology.md) — Ports, infrastructure, call graph ([中文](docs/service-topology-zh.md))
 - [CONTRIBUTING](CONTRIBUTING.md) · [SECURITY](SECURITY.md) · [CHANGELOG](CHANGELOG.md)
 
 ---
