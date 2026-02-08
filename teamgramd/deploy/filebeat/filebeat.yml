@@ -1,13 +1,25 @@
-# 最小 Filebeat 配置，用于 docker-compose-env2（需按需调整日志路径）
 filebeat.inputs:
-  - type: container
+  - type: log
+    enabled: true
     paths:
-      - '/var/lib/docker/containers/*/*.log'
+      - /var/lib/docker/containers/*/*-json.log
 
-filebeat.autodiscover:
-  providers:
-    - type: docker
-      hints.enabled: true
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
 
-output.elasticsearch:
-  hosts: ["elasticsearch:9200"]
+processors:
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+output.kafka:
+  enabled: true
+  hosts: ["kafka:9092"]
+  #要提前创建topic
+  topic: "teamgram-log"
+  partition.hash:
+    reachable_only: true
+  compression: gzip
+  max_message_bytes: 1000000
+  required_acks: 1

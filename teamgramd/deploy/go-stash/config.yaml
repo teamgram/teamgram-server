@@ -1,15 +1,45 @@
-# 最小 Go-Stash 配置，用于 docker-compose-env2（需按业务配置 Kafka topic 与 ES index）
 Clusters:
   - Input:
       Kafka:
-        Name: go-stash
+        Name: gostash
         Brokers:
           - "kafka:9092"
-        Topic: "your-log-topic"
-        Group: go-stash
-    Filters: []
+        Topics:
+          - teamgram-log
+        Group: pro
+        Consumers: 16
+    Filters:
+      - Action: drop
+        Conditions:
+          - Key: k8s_container_name
+            Value: "-rpc"
+            Type: contains
+          #- Key: level
+          #  Value: info
+          #  Type: match
+          #  Op: and
+      - Action: remove_field
+        Fields:
+          # - message
+          - _source
+          - _type
+          - _score
+          - _id
+          - "@version"
+          - topic
+          - index
+          - beat
+          - docker_container
+          - offset
+          - prospector
+          - source
+          - stream
+          - "@metadata"
+      - Action: transfer
+        Field: message
+        Target: data
     Output:
       ElasticSearch:
         Hosts:
           - "http://elasticsearch:9200"
-        Index: "logs-%{+2006.01.02}"
+        Index: "teamgram-{{yyyy-MM-dd}}"

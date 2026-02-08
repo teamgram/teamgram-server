@@ -17,8 +17,8 @@ export MINIO_SSL=${MINIO_SSL:-"false"}
 
 # create configs from config templates.
 createConfigs() {
-  CONFIG_TARGET_DIR=/app/etc2
-  CONFIG_TEMPLATES_DIR=/app/etc
+  CONFIG_TARGET_DIR=/Users/wubenqi/go/src/github.com/teamgram/teamgram-server/teamgramd/etc2
+  CONFIG_TEMPLATES_DIR=/Users/wubenqi/go/src/github.com/teamgram/teamgram-server/teamgramd/etc
   for file in `ls $CONFIG_TEMPLATES_DIR`; do
     cat $CONFIG_TEMPLATES_DIR/$file \
       | sed 's#ListenOn: 127.0.0.1#ListenOn: '"$TEAMGRAM_HOST"'#g' \

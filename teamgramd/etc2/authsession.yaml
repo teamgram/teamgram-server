@@ -1,22 +1,22 @@
 Name: service.authsession
-ListenOn: 127.0.0.1:20450
+ListenOn: 0.0.0.0:20450
 Etcd:
   Hosts:
     - 127.0.0.1:237
   Key: service.authsession
 Log:
   ServiceName: service.authsession
-  Mode: file
-  Path: ../logs/authsession
+  #Mode: file
+  #Path: ../logs/authsession
   Level: debug
 
 Mysql:
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true
+  DSN: teamgram:teamgram@tcp(mysql:3306)/teamgram?charset=utf8mb4&parseTime=true
   Active: 64
   Idle: 64
   IdleTimeout: 4h
   
 Cache:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
 KV:
-  - Host: 127.0.0.1:6379
+  - Host: redis:6379
