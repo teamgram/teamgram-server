@@ -9,12 +9,17 @@ Http:
     Mode: file
     Path: ../logs/httpserver
     Level: debug
-  # #链路追踪
-  # Telemetry:
-  #   Name: interface.httpserver
-  #   Endpoint: http://127.0.0.1:14268/api/traces
-  #   Sampler: 1.0
-  #   Batcher: jaeger
+  ##监控
+  #Prometheus:
+  #  Host: 0.0.0.0
+  #  Port: 20011
+  #  Path: /metrics
+  ##链路追踪
+  #Telemetry:
+  #  Name: interface.httpserver
+  #  Endpoint: http://127.0.0.1:14268/api/traces
+  #  Sampler: 1.0
+  #  Batcher: jaeger
     
 KeyFile: "./server_pkcs1.key"
 KeyFingerprint: "12240908862933197005"

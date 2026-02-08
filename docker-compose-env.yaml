@@ -38,8 +38,8 @@ services:
     image: quay.io/coreos/etcd:v3.5.11
     container_name: etcd
     ports:
-      - "127.0.0.1:2379:2379"
-      - "127.0.0.1:2380:2380"
+      - "2379:2379"
+      - "2380:2380"
     environment:
       ETCD_NAME: node1
       ETCD_DATA_DIR: /etcd-data
@@ -53,7 +53,7 @@ services:
       ETCD_AUTO_COMPACTION_RETENTION: 1
     volumes:
       - ./data/etcd:/etcd-data
-    restart: unless-stopped
+    restart: always
     networks:
       - teamgram_net
 
@@ -62,11 +62,11 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "127.0.0.1:6379:6379"
+      - "6379:6379"
     command: redis-server --appendonly yes
     volumes:
       - ./data/redis:/data
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -85,7 +85,7 @@ services:
       MYSQL_USER: ${MYSQL_USER:-teamgram}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-teamgram}
     ports:
-      - "127.0.0.1:3306:3306"
+      - "3306:3306"
     volumes:
       - ./data/mysql:/var/lib/mysql
       - ./teamgramd/deploy/sql:/docker-entrypoint-initdb.d/
@@ -93,7 +93,7 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"]
       interval: 10s
@@ -108,15 +108,15 @@ services:
     image: minio/minio:latest
     container_name: minio
     ports:
-      - "127.0.0.1:9000:9000"
-      - "127.0.0.1:9001:9001"
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-miniostorage}
     command: server /data --console-address ":9001"
     volumes:
       - ./data/minio:/data
-    restart: unless-stopped
+    restart: always
     networks:
       - teamgram_net
 
@@ -168,7 +168,7 @@ services:
     image: prom/node-exporter:v1.7.0
     container_name: node-exporter
     ports:
-      - "127.0.0.1:9100:9100"
+      - "9100:9100"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -178,41 +178,46 @@ services:
       - --path.sysfs=/host/sys
       - --path.rootfs=/rootfs
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
-    restart: unless-stopped
+    restart: always
     networks:
       - teamgram_net
 
+  #prometheus监控 — Prometheus for monitoring
   prometheus:
-    image: prom/prometheus:v2.47.2
+    image: prom/prometheus:v2.28.1
     container_name: prometheus
-    ports:
-      - "127.0.0.1:9090:9090"
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
     volumes:
-      - ./data/prometheus:/prometheus
-      - ./teamgramd/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./teamgramd/deploy/prometheus/server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./data/prometheus/data:/prometheus
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --storage.tsdb.retention.time=15d
-    restart: unless-stopped
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: always
+    user: root
+    ports:
+      - 9090:9090
     networks:
       - teamgram_net
 
+  #查看prometheus监控数据 - Grafana to view Prometheus monitoring data
   grafana:
-    image: grafana/grafana:10.2.3
+    image: grafana/grafana:8.0.6
     container_name: grafana
-    ports:
-      - "127.0.0.1:3000:3000"
+    hostname: grafana
+    user: root
     environment:
+      TZ: Asia/Shanghai
+      # 首次启动时生效；若已有数据卷则需在容器内用 grafana-cli 重置 - Only used on first run; reset via grafana-cli if volume exists
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_SERVER_ROOT_URL: "${GRAFANA_ROOT_URL:-http://localhost:3000}"
-      GF_INSTALL_PLUGINS: ""
+    restart: always
     volumes:
-      - ./data/grafana:/var/lib/grafana
-    restart: unless-stopped
+      - ./data/grafana/data:/var/lib/grafana
+    ports:
+      - "3001:3000"
     networks:
       - teamgram_net
 
@@ -220,7 +225,7 @@ services:
   elasticsearch:
     container_name: elasticsearch
     image: elasticsearch:8.12.2
-    restart: unless-stopped
+    restart: always
     environment:
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
       - "TZ=Asia/Shanghai"
@@ -238,7 +243,7 @@ services:
   kibana:
     container_name: kibana
     image: kibana:8.12.2
-    restart: unless-stopped
+    restart: always
     environment:
       - "TZ=Asia/Shanghai"
       - "I18N_LOCALE=zh-CN"
@@ -261,7 +266,7 @@ services:
     restart: always
     entrypoint: "filebeat -e -strict.perms=false"  #解决配置文件权限问题 - Solving the configuration file permissions
     volumes:
-      - ./teamgramd/deploy/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./teamgramd/deploy/filebeat/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       # 此处需指定docker的containers目录，取决于你docker的配置 - The containers directory of docker needs to be specified here, depending on your docker configuration
       # 如snap安装的docker，则为/var/snap/docker/common/var-lib-docker/containers - Example if docker is installed by Snap /var/snap/docker/common/var-lib-docker/containers
       # - /var/snap/docker/common/var-lib-docker/containers:/var/lib/docker/containers

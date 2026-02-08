@@ -9,7 +9,12 @@ Http:
     #Mode: file
     #Path: ../logs/httpserver
     Level: debug
-# #链路追踪
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 20011
+  Path: /metrics
+#链路追踪
 Telemetry:
   Name: interface.httpserver
   Endpoint: http://jaeger:14268/api/traces

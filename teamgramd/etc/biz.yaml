@@ -9,12 +9,17 @@ Log:
   Mode: file
   Path: ../logs/biz
   Level: debug
-# #链路追踪
-# Telemetry:
-#   Name: service.biz_service
-#   Endpoint: http://127.0.0.1:14268/api/traces
-#   Sampler: 1.0
-#   Batcher: jaeger
+##监控
+#Prometheus:
+#  Host: 0.0.0.0
+#  Port: 20021
+#  Path: /metrics
+##链路追踪
+#Telemetry:
+#  Name: service.biz_service
+#  Endpoint: http://127.0.0.1:14268/api/traces
+#  Sampler: 1.0
+#  Batcher: jaeger
 
 Mysql:
   DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true

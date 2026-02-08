@@ -9,6 +9,11 @@ Log:
   #Mode: file
   #Path: ../logs/authsession
   Level: debug
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 20451
+  Path: /metrics
 #链路追踪
 Telemetry:
   Name: service.authsession

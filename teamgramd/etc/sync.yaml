@@ -9,12 +9,17 @@ Log:
   Mode: file
   Path: ../logs/sync
   Level: debug
+##监控
+#Prometheus:
+#  Host: 0.0.0.0
+#  Port: 20421
+#  Path: /metrics
 # #链路追踪
-# Telemetry:
-#   Name: messenger.sync
-#   Endpoint: http://127.0.0.1:14268/api/traces
-#   Sampler: 1.0
-#   Batcher: jaeger
+#Telemetry:
+#  Name: messenger.sync
+#  Endpoint: http://127.0.0.1:14268/api/traces
+#  Sampler: 1.0
+#  Batcher: jaeger
   
 SyncConsumer:
   Topics:
