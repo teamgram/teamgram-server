@@ -24,6 +24,7 @@
 
 ![架构图](docs/image/architecture-001.png)
 
+- [Architecture Docs](https://deepwiki.com/teamgram/teamgram-server) - `DeepWiki` teamgram/teamgram-server
 - [架构说明（specs）](specs/architecture.md) — 服务拓扑、数据流与端口  
 - [服务拓扑与配置](docs/service-topology-zh.md) — 各服务端口、基础设施依赖、调用关系与 Mermaid 拓扑图（[English](docs/service-topology.md) 为主文档）
 

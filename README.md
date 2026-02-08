@@ -24,6 +24,7 @@ Unofficial open-source [MTProto](https://core.telegram.org/mtproto) server imple
 
 ![Architecture](docs/image/architecture-001.png)
 
+- [Architecture Docs](https://deepwiki.com/teamgram/teamgram-server) - `DeepWiki` teamgram/teamgram-server
 - [Architecture (specs)](specs/architecture.md) — service topology, data flow, and ports  
 - [Service topology and configuration](docs/service-topology.md) — ports, infrastructure dependencies, call graph, and Mermaid diagram ([中文](docs/service-topology-zh.md))
 
