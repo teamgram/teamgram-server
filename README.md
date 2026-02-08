@@ -81,6 +81,22 @@ docker compose up -d
 
 ---
 
+## Logging, monitoring & tracing
+
+### Log
+
+[Filebeat](https://www.elastic.co/beats/filebeat) collects logs and sends them to Kafka. Because Logstash is resource-heavy, [go-stash](https://github.com/kevwan/go-stash) is used instead of Logstash to consume from Kafka and write to Elasticsearch. See `teamgramd/deploy/filebeat/` and `teamgramd/deploy/go-stash/` for configuration.
+
+### Monitor
+
+[Prometheus](https://prometheus.io/) is used for monitoring. go-zero has built-in support; you only need to enable and configure it. See the Prometheus-related config in `teamgramd/deploy/prometheus/` and the `Prometheus` block in service configs (e.g. `teamgramd/etc2/*.yaml`).
+
+### Link tracking
+
+go-zero supports [Jaeger](https://www.jaegertracing.io/) and Zipkin out of the box. Enable link tracing by configuring the `Telemetry` block in the service configs (e.g. `teamgramd/etc2/*.yaml`). The Docker stack in `docker-compose-env.yaml` includes Jaeger.
+
+---
+
 ## Compatible clients
 
 **Default sign-in verification code:** `12345` (change for production.)
@@ -98,6 +114,7 @@ docker compose up -d
 - [Project specs](specs/README.md) — Architecture, protocol, dependencies, contributing, security, roadmap
 - [Service topology and configuration](docs/service-topology.md) — Ports, infrastructure, call graph ([中文](docs/service-topology-zh.md))
 - [CONTRIBUTING](CONTRIBUTING.md) · [SECURITY](SECURITY.md) · [CHANGELOG](CHANGELOG.md)
+
 
 ---
 

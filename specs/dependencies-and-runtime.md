@@ -1,48 +1,47 @@
-# 依赖与运行环境
+# Dependencies and runtime
 
-本文档说明 Teamgram Server 的核心依赖、推荐版本及 Docker 一键环境栈。原 [high-performance-components.md](high-performance-components.md) 中的组件列表已合并到本文档。
+This document covers core dependencies, recommended versions, and the Docker stack for Teamgram Server. The legacy component list is in [high-performance-components.md](high-performance-components.md) (redirect).
 
-## 核心依赖（必须）
+## Core dependencies (required)
 
-运行 Teamgram 前需具备以下组件：
+| Component | Purpose | Recommended version |
+|-----------|---------|---------------------|
+| **MySQL** | Primary data store | 5.7 or 8.0 (Docker stack uses 8.0) |
+| **Redis** | Cache, session, deduplication | 6.x / 7.x |
+| **etcd** | Service discovery and config | v3.5.x |
+| **Kafka** | Message and event pipeline | 3.x (KRaft, no Zookeeper) |
+| **MinIO** | Object storage (documents, photos, videos) | Current stable |
+| **FFmpeg** | Media transcoding (install on server) | Per install docs |
 
-| 组件 | 用途 | 推荐版本 |
-|------|------|----------|
-| **MySQL** | 业务数据存储 | 5.7 或 8.0（当前 Docker 栈使用 8.0） |
-| **Redis** | 缓存、会话、去重等 | 6.x / 7.x |
-| **etcd** | 服务发现与配置 | v3.5.x |
-| **Kafka** | 消息与事件管道 | 3.x（KRaft 模式无需 Zookeeper） |
-| **MinIO** | 对象存储（文档、图片、视频等） | 当前 stable |
-| **ffmpeg** | 媒体转码与处理（服务端需安装） | 系统安装，见各安装文档 |
+- Create database `teamgram` and run all init and migrate scripts under **`teamgramd/deploy/sql/`** in order.
+- MinIO: create buckets `documents`, `encryptedfiles`, `photos`, `videos` (auto-created by minio-mc when using the provided Docker stack).
 
-- 数据库需先创建库 `teamgram`，并执行 `teamgramd/sql/` 下所有初始化与 migrate 脚本。
-- MinIO 需创建 bucket：`documents`、`encryptedfiles`、`photos`、`videos`（使用本仓库提供的 docker-compose 环境时可由 minio-mc 自动创建）。
+## Optional: monitoring and logging
 
-## 可选：监控与日志栈
+The Docker stack in `docker-compose-env.yaml` can include:
 
-若需可观测性，可一并部署以下组件（与仓库提供的 Docker 环境栈一致）：
+| Component | Purpose |
+|-----------|---------|
+| **Jaeger** | Distributed tracing |
+| **Prometheus** | Metrics |
+| **Grafana** | Dashboards |
+| **Node Exporter** | Host metrics |
+| **Elasticsearch** | Log storage and search |
+| **Kibana** | Log/data UI |
+| **Filebeat** | Log collection (e.g. teamgram logs → Kafka) |
+| **go-stash** | Log pipeline (Kafka → Elasticsearch) |
 
-| 组件 | 用途 |
-|------|------|
-| **Jaeger** | 分布式追踪 |
-| **Prometheus** | 指标采集 |
-| **Grafana** | 仪表盘与可视化 |
-| **Alertmanager** | 告警（可配入 Prometheus） |
-| **Node Exporter** | 主机指标 |
-| **Elasticsearch** | 日志存储与搜索 |
-| **Kibana** | 日志/数据可视化 |
-| **Filebeat** | 日志采集 |
-| **go-stash** | 日志管道（Kafka → Elasticsearch） |
+See the main README section “Logging, monitoring & tracing” and `teamgramd/deploy/` for config.
 
-## 版本与 Docker 镜像（参考）
+## Versions and Docker images (reference)
 
-与当前 `docker-compose-env.yaml` 及 [README-env-cn.md](../README-env-cn.md) / [README-env-en.md](../README-env-en.md) 对齐的版本示例：
+Aligned with `docker-compose-env.yaml` and [README-env-cn.md](../README-env-cn.md) / [README-env-en.md](../README-env-en.md):
 
-- **Kafka**: bitnamilegacy/kafka:3.5.1（KRaft）
+- **Kafka**: bitnamilegacy/kafka:3.5.1 (KRaft)
 - **etcd**: quay.io/coreos/etcd:v3.5.11
 - **Redis**: redis:7-alpine
 - **MySQL**: mysql:8.0
-- **MinIO**: minio/minio:latest；minio-mc 用于初始化 bucket
+- **MinIO**: minio/minio:latest; minio-mc for bucket init
 - **Jaeger**: jaegertracing/all-in-one:1.52
 - **Prometheus**: prom/prometheus:v2.47.2
 - **Grafana**: grafana/grafana:10.2.3
@@ -50,21 +49,17 @@
 - **Elasticsearch / Kibana / Filebeat**: 8.11.x
 - **go-stash**: kevinwan/go-stash:1.1.1
 
-## Docker 一键环境
+## Docker stack
 
-- **环境栈文件**：仓库内文件名为 **`docker-compose-env.yaml`**。部分文档中出现的「docker-compose-env2」即指该环境栈（历史命名）。
-- **使用方式**：
-  - 复制 `.env.example` 为 `.env`，按需修改数据库、MinIO、Grafana 等密码与配置。
-  - 启动依赖：`docker compose -f docker-compose-env.yaml up -d`
-  - 详见 [README-env-cn.md](../README-env-cn.md)（中文）、[README-env-en.md](../README-env-en.md)（英文）。
-- **网络与数据**：网络名为 `teamgram_net`；数据持久化在项目下 `data/` 目录，各服务子目录见 README-env-cn.md。
+- **Compose file**: **`docker-compose-env.yaml`** (sometimes referred to as “docker-compose-env2” in older docs).
+- **Usage**: Copy `.env.example` to `.env`, then `docker compose -f docker-compose-env.yaml up -d`. See README-env-cn.md / README-env-en.md.
+- **Network**: `teamgram_net`; data under project `data/` directory.
 
-## 无 Docker 时的安装
+## Installation without Docker
 
-若已有或希望自行安装上述组件，可参考：
+If you install components yourself, see:
 
-- [CentOS 9 Stream 构建与安装](../docs/install-centos-9.md)
-- [CentOS 7 环境搭建](../docs/install-centos-7.md)
-- [Fedora 40 构建与安装](../docs/install-fedora.md)
+- [Manual installation (Linux)](../docs/install-manual-linux.md)
+- [Manual installation (macOS)](../docs/install-manual-macos.md)
 
-安装完成后，确保 MySQL、Redis、etcd、Kafka、MinIO 可访问，且服务端机器已安装 ffmpeg，再执行 `make` 与 `teamgramd/bin/runall2.sh` 启动各服务。
+Then ensure MySQL, Redis, etcd, Kafka, MinIO, and FFmpeg are available and run `make` and `teamgramd/bin/runall2.sh`.

@@ -1,28 +1,27 @@
-# 路线图与目标
+# Roadmap
 
-本文档描述短期与中期目标，并说明社区版与企业版的功能边界。
+This document outlines short- and medium-term goals and the boundary between community and enterprise editions.
 
-## 短期目标
+## Short-term
 
-- **文档与规范**：完善 specs 下的架构、协议、依赖、贡献、安全、发布等文档（当前已落位），并保持与代码一致。
-- **CI 与质量**：引入 CI（如 GitHub Actions）做构建、测试、lint（如 golangci-lint）；在 Makefile 中增加 `test`、`lint`、`fmt` 等目标。
-- **文档一致性**：统一 README 与各文档中的 Docker 文件名说明（如 docker-compose-env.yaml 与“docker-compose-env2”的对应关系），避免混淆。
+- **Docs and specs**: Keep specs (architecture, protocol, dependencies, contributing, security, release, roadmap) in sync with the codebase.
+- **CI and quality**: Add CI (e.g. GitHub Actions) for build, test, and lint (e.g. golangci-lint); add `test`, `lint`, `fmt` targets to Makefile where useful.
+- **Doc consistency**: Align README and other docs (e.g. docker-compose-env.yaml naming, install guides).
 
-## 中期目标
+## Medium-term
 
-- **测试覆盖**：增加核心路径的单元测试与集成测试，逐步建立覆盖率要求。
-- **可观测与运维**：补充性能、稳定性相关的运维文档或 runbook，与现有监控栈（Prometheus/Grafana/Jaeger/ELK）使用说明对齐。
-- **安装与部署**：覆盖更多安装场景（如其他 Linux 发行版、Kubernetes 示例等），并保持与 docker-compose-env 的文档一致。
+- **Test coverage**: Add unit and integration tests for critical paths; define coverage expectations over time.
+- **Observability and ops**: Document runbooks and usage of the monitoring stack (Prometheus, Grafana, Jaeger, ELK).
+- **Install and deploy**: Support more environments (e.g. other Linux distros, Kubernetes examples) and keep them consistent with docker-compose-env.
 
-## 社区版与企业版边界
+## Community vs enterprise
 
-README 的 **Notes** 中说明：以下能力在**企业版**中提供，社区版不包含或仅部分支持：
+The following are available in the **enterprise edition** (contact the [author](https://t.me/benqi)); the community edition does not include or only partially supports them:
 
-- sticker / theme / wallpaper / reactions
-- 2FA / SMS / push（APNS / Web / FCM）
-- secret chat / scheduled messages
-- channel / megagroup
-- audiocall / videocall / groupcall
+- sticker / theme / chat_theme / wallpaper / reactions / secret chat / 2FA / SMS / push (APNS / Web / FCM) / web / scheduled / autodelete / …
+- channels / megagroups
+- audio / video / group / conferenceCall
 - bots
+- miniapp
 
-若有企业版需求，请通过 README 中提供的 **[作者](https://t.me/benqi)** 联系。社区版路线图聚焦于文档、CI、测试与部署体验，与上述企业功能无直接绑定。
+See the main README “Enterprise edition” section. Community roadmap focuses on docs, CI, tests, and deployment experience, not the above enterprise features.

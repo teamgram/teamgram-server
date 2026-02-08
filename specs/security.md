@@ -1,20 +1,18 @@
-# 安全策略
+# Security policy
 
-本文档说明安全漏洞的报告流程、支持版本及披露原则。根目录 [SECURITY.md](../SECURITY.md) 提供简要入口。
+This document describes how to report vulnerabilities, supported versions, and disclosure. The root [SECURITY.md](../SECURITY.md) is a short entry.
 
-## 漏洞报告
+## Reporting vulnerabilities
 
-- **请勿在公开 issue 中披露未修复的安全漏洞**，以免被滥用。
-- 请通过以下方式之一私下报告：
-  - 通过 Telegram 联系项目 **[作者](https://t.me/benqi)**（见 README Notes）；
-  - 若仓库或 SECURITY.md 中后续提供专用邮箱或表单，以该方式为准。
+- **Do not** disclose unfixed security issues in public issues.
+- Report privately, e.g. via Telegram to the project [author](https://t.me/benqi) (see README Notes), or via any contact method later listed in SECURITY.md.
 
-## 支持范围
+## Supported versions
 
-- 安全更新通常针对**当前维护中的主版本**（以仓库 release/tag 与 CHANGELOG 为准）。
-- 对已停止维护的旧版本，不承诺安全补丁；建议升级到受支持版本。
+- Security updates apply to the **currently maintained** major version (see releases/tags and CHANGELOG).
+- EOL versions do not receive security patches; upgrade to a supported version.
 
-## 披露原则
+## Disclosure
 
-- 在漏洞**修复并发布**可用版本后，再在 CHANGELOG 或公开 issue 中说明（不提前披露细节，避免在修复前扩大影响）。
-- 报告者若希望被致谢，可在报告中说明，由维护者在发布说明中酌情注明。
+- After a fix is **released**, the issue may be summarized in CHANGELOG or a public issue (without exposing exploit details before the fix).
+- Reporters can ask to be credited in the release notes.
