@@ -2,7 +2,7 @@ Name: service.authsession
 ListenOn: 0.0.0.0:20450
 Etcd:
   Hosts:
-    - 127.0.0.1:237
+    - etcd:2379
   Key: service.authsession
 Log:
   ServiceName: service.authsession

@@ -259,6 +259,7 @@ services:
       - ./teamgramd/deploy/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - teamgram_logs:/var/log/teamgram:ro
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -269,14 +270,20 @@ services:
   go-stash:
     image: kevinwan/go-stash:1.1.1
     container_name: go-stash
-    volumes:
-      - ./teamgramd/deploy/go-stash/config.yaml:/etc/go-stash/config.yaml:ro
-    depends_on:
-      - kafka
-      - elasticsearch
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
     restart: always
+    volumes:
+      - ./teamgramd/deploy/go-stash/etc:/app/etc
+    depends_on:
+      - elasticsearch
+      - kafka
     networks:
       - teamgram_net
+
+volumes:
+  teamgram_logs:
 
 networks:
   teamgram_net:

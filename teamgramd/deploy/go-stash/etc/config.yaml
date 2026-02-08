@@ -14,10 +14,10 @@ Clusters:
           - Key: k8s_container_name
             Value: "-rpc"
             Type: contains
-          #- Key: level
-          #  Value: info
-          #  Type: match
-          #  Op: and
+          - Key: level
+            Value: debug
+            Type: match
+            Op: and
       - Action: remove_field
         Fields:
           # - message
