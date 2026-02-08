@@ -9,7 +9,13 @@ Http:
     #Mode: file
     #Path: ../logs/httpserver
     Level: debug
-
+# #链路追踪
+Telemetry:
+  Name: interface.httpserver
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+  
 KeyFile: "./server_pkcs1.key"
 KeyFingerprint: "12240908862933197005"
 

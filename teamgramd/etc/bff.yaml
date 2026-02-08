@@ -10,6 +10,12 @@ Log:
   Mode: file
   Path: ../logs/bff
   Level: debug
+# #链路追踪
+# Telemetry:
+#   Name: bff.bff
+#   Endpoint: http://127.0.0.1:14268/api/traces
+#   Sampler: 1.0
+#   Batcher: jaeger
 
 KV:
   - Host: localhost:6379

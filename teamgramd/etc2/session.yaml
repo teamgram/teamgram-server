@@ -9,7 +9,13 @@ Log:
   #Mode: file
   #Path: ../logs/session
   Level: debug
-
+# #链路追踪
+Telemetry:
+  Name: interface.session
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+  
 Cache:
   - Host: redis:6379
   

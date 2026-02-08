@@ -9,7 +9,13 @@ Log:
   #Mode: file
   #Path: ../logs/sync
   Level: debug
-
+# #链路追踪
+Telemetry:
+  Name: messenger.sync
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+  
 SyncConsumer:
   Topics:
     - "Sync-T"

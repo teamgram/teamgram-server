@@ -9,10 +9,16 @@ Log:
   Mode: file
   Path: ../logs/session
   Level: debug
-
+# #链路追踪
+# Telemetry:
+#   Name: interface.session
+#   Endpoint: http://127.0.0.1:14268/api/traces
+#   Sampler: 1.0
+#   Batcher: jaeger
+  
 Cache:
   - Host: 127.0.0.1:6379
-  
+
 AuthSession:
   Etcd:
     Hosts:

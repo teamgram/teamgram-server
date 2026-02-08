@@ -9,7 +9,13 @@ Log:
   Mode: file
   Path: ../logs/gnetway
   Level: debug
-
+# #链路追踪
+# Telemetry:
+#   Name: interface.gateway
+#   Endpoint: http://127.0.0.1:14268/api/traces
+#   Sampler: 1.0
+#   Batcher: jaeger
+  
 RSAKey:
   - KeyFile: "./server_pkcs1.key"
     KeyFingerprint: "12240908862933197005"

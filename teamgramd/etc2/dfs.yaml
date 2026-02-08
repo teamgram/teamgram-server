@@ -10,6 +10,13 @@ Log:
   #Mode: file
   #Path: ../logs/dfs
   Level: debug
+# #链路追踪
+Telemetry:
+  Name: service.dfs
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+  
 MiniHttp:
   Name: service.dfs.minihttp
   Host: 0.0.0.0
