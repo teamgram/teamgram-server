@@ -18,8 +18,6 @@ services:
       - "20120:20120"
       - "20670:20670"
       - "20420:20420"
-    volumes:
-      - teamgram_logs:/app/logs
     networks:
       - teamgram_net
 
@@ -29,6 +27,3 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
-
-volumes:
-  teamgram_logs:

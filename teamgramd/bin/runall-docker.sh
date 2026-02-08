@@ -2,52 +2,52 @@
 # Logs go to /app/logs/*.log (volume) for filebeat; works on Docker Desktop Mac/Win where
 # /var/lib/docker/containers is not visible to filebeat container.
 
-mkdir -p ../logs
+#mkdir -p ../logs
 
 echo "run idgen ..."
-./idgen -f=../etc2/idgen.yaml >> ../logs/idgen.log 2>&1 &
+./idgen -f=../etc2/idgen.yaml &
 sleep 1
 
 echo "run status ..."
-./status -f=../etc2/status.yaml >> ../logs/status.log 2>&1 &
+./status -f=../etc2/status.yaml &
 sleep 1
 
 echo "run authsession ..."
-./authsession -f=../etc2/authsession.yaml >> ../logs/authsession.log 2>&1 &
+./authsession -f=../etc2/authsession.yaml &
 sleep 1
 
 echo "run dfs ..."
-./dfs -f=../etc2/dfs.yaml >> ../logs/dfs.log 2>&1 &
+./dfs -f=../etc2/dfs.yaml &
 sleep 1
 
 echo "run media ..."
-./media -f=../etc2/media.yaml >> ../logs/media.log 2>&1 &
+./media -f=../etc2/media.yaml &
 sleep 1
 
 echo "run biz ..."
-./biz -f=../etc2/biz.yaml >> ../logs/biz.log 2>&1 &
+./biz -f=../etc2/biz.yaml &
 sleep 1
 
 echo "run msg ..."
-./msg -f=../etc2/msg.yaml >> ../logs/msg.log 2>&1 &
+./msg -f=../etc2/msg.yaml &
 sleep 1
 
 echo "run sync ..."
-./sync -f=../etc2/sync.yaml >> ../logs/sync.log 2>&1 &
+./sync -f=../etc2/sync.yaml &
 sleep 1
 
 echo "run bff ..."
-./bff -f=../etc2/bff.yaml >> ../logs/bff.log 2>&1 &
+./bff -f=../etc2/bff.yaml &
 sleep 5
 
 echo "run session ..."
-./session -f=../etc2/session.yaml >> ../logs/session.log 2>&1 &
+./session -f=../etc2/session.yaml &
 sleep 1
 
 echo "run gnetway ..."
-./gnetway -f=../etc2/gnetway.yaml >> ../logs/gnetway.log 2>&1 &
+./gnetway -f=../etc2/gnetway.yaml &
 sleep 1
 
 # echo "run httpserver ..."
-# ./httpserver -f=../etc/httpserver.yaml >> ../logs/httpserver.log 2>&1 &
+# ./httpserver -f=../etc/httpserver.yaml &
 # sleep 1

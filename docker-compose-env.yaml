@@ -216,57 +216,60 @@ services:
 
   # --- 日志与搜索 ---
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
     container_name: elasticsearch
-    environment:
-      discovery.type: single-node
-      xpack.security.enabled: "false"
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-    ports:
-      - "127.0.0.1:9200:9200"
-      - "127.0.0.1:9300:9300"
-    volumes:
-      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    image: elasticsearch:8.12.2
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+    environment:
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "TZ=Asia/Shanghai"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/es/data:/usr/share/elasticsearch/data
+      - ./data/es/plugins:/usr/share/elasticsearch/plugins
     networks:
       - teamgram_net
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.3
     container_name: kibana
-    ports:
-      - "127.0.0.1:5601:5601"
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
+    image: kibana:8.12.2
     restart: unless-stopped
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "I18N_LOCALE=zh-CN"
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+      - "XPACK_SECURITY_ENABLED=false"
+    ports:
+      - "5601:5601"
     networks:
       - teamgram_net
+    depends_on:
+      - elasticsearch
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.11.3
+    image: elastic/filebeat:8.12.2
     container_name: filebeat
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
     user: root
+    restart: always
+    entrypoint: "filebeat -e -strict.perms=false"  #解决配置文件权限问题 - Solving the configuration file permissions
     volumes:
       - ./teamgramd/deploy/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - teamgram_logs:/var/log/teamgram:ro
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    restart: unless-stopped
+      # 此处需指定docker的containers目录，取决于你docker的配置 - The containers directory of docker needs to be specified here, depending on your docker configuration
+      # 如snap安装的docker，则为/var/snap/docker/common/var-lib-docker/containers - Example if docker is installed by Snap /var/snap/docker/common/var-lib-docker/containers
+      # - /var/snap/docker/common/var-lib-docker/containers:/var/lib/docker/containers
+      - /var/lib/docker/containers:/var/lib/docker/containers
     networks:
       - teamgram_net
+    depends_on:
+      - kafka
 
+  #消费kafka中filebeat收集的数据输出到es - The data output collected by FileBeat in Kafka is output to ES
   go-stash:
     image: kevinwan/go-stash:1.1.1
     container_name: go-stash
@@ -276,14 +279,11 @@ services:
     restart: always
     volumes:
       - ./teamgramd/deploy/go-stash/etc:/app/etc
+    networks:
+      - teamgram_net
     depends_on:
       - elasticsearch
       - kafka
-    networks:
-      - teamgram_net
-
-volumes:
-  teamgram_logs:
 
 networks:
   teamgram_net:
