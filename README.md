@@ -83,17 +83,11 @@ docker compose up -d
 
 ## Logging, monitoring & tracing
 
-### Log
-
-[Filebeat](https://www.elastic.co/beats/filebeat) collects logs and sends them to Kafka. Because Logstash is resource-heavy, [go-stash](https://github.com/kevwan/go-stash) is used instead of Logstash to consume from Kafka and write to Elasticsearch. See `teamgramd/deploy/filebeat/` and `teamgramd/deploy/go-stash/` for configuration.
-
-### Monitor
-
-[Prometheus](https://prometheus.io/) is used for monitoring. go-zero has built-in support; you only need to enable and configure it. See the Prometheus-related config in `teamgramd/deploy/prometheus/` and the `Prometheus` block in service configs (e.g. `teamgramd/etc2/*.yaml`).
-
-### Link tracking
-
-go-zero supports [Jaeger](https://www.jaegertracing.io/) and Zipkin out of the box. Enable link tracing by configuring the `Telemetry` block in the service configs (e.g. `teamgramd/etc2/*.yaml`). The Docker stack in `docker-compose-env.yaml` includes Jaeger.
+| Area | Brief | Detailed docs |
+|------|--------|----------------|
+| **Log** | [Filebeat](https://www.elastic.co/beats/filebeat) → Kafka (`teamgram-log`) → [go-stash](https://github.com/kevwan/go-stash) → Elasticsearch → Kibana. Config: `teamgramd/deploy/filebeat/conf/filebeat.yml`, `teamgramd/deploy/go-stash/etc/`. | [Log collection](docs/log-collection.md) ([中文](docs/log-collection-zh.md)) |
+| **Monitor** | [Prometheus](https://prometheus.io/) scrapes metrics; [Grafana](https://grafana.com/) for dashboards. Enable via `Prometheus` block in `teamgramd/etc2/*.yaml`. Config: `teamgramd/deploy/prometheus/server/prometheus.yml`. | [Service monitoring](docs/service-monitoring.md) ([中文](docs/service-monitoring-zh.md)) |
+| **Tracing** | go-zero [Jaeger](https://www.jaegertracing.io/) / Zipkin support. Set `Telemetry` in `teamgramd/etc2/*.yaml`. Jaeger is included in `docker-compose-env.yaml`. | [Link tracking](docs/link-tracking.md) ([中文](docs/link-tracking-zh.md)) |
 
 ---
 

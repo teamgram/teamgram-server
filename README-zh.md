@@ -90,6 +90,16 @@ docker compose up -d
 
 ---
 
+## 日志、监控与链路追踪
+
+| 模块 | 简述 | 详细文档 |
+|------|------|----------|
+| **日志** | Filebeat → Kafka（`teamgram-log`）→ go-stash → Elasticsearch → Kibana。配置：`teamgramd/deploy/filebeat/conf/filebeat.yml`、`teamgramd/deploy/go-stash/etc/`。 | [日志收集](docs/log-collection-zh.md)（[English](docs/log-collection.md)） |
+| **监控** | Prometheus 拉取指标，Grafana 展示。在 `teamgramd/etc2/*.yaml` 中配置 `Prometheus`。配置：`teamgramd/deploy/prometheus/server/prometheus.yml`。 | [服务监控](docs/service-monitoring-zh.md)（[English](docs/service-monitoring.md)） |
+| **链路追踪** | go-zero 支持 Jaeger / Zipkin，在 `teamgramd/etc2/*.yaml` 中配置 `Telemetry`。`docker-compose-env.yaml` 已包含 Jaeger。 | [链路追踪](docs/link-tracking-zh.md)（[English](docs/link-tracking.md)） |
+
+---
+
 ## 兼容客户端
 
 **默认登录验证码：** `12345`（生产环境请修改。）
