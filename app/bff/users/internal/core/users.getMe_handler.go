@@ -20,13 +20,24 @@ package core
 
 import (
 	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
 // UsersGetMe
 // users.getMe id:long token:string = User;
 func (c *UsersCore) UsersGetMe(in *mtproto.TLUsersGetMe) (*mtproto.User, error) {
-	// TODO: not impl
-	c.Logger.Errorf("users.getMe blocked, License key from https://teamgram.net required to unlock enterprise features.")
+	// 通过 in.token 获取user
+	user, err := c.svcCtx.Dao.UserClient.UserGetImmutableUserByToken(c.ctx, &user.TLUserGetImmutableUserByToken{
+		Token: in.GetToken(),
+	})
+	if err != nil || user == nil {
+		c.Logger.Errorf("users.getMe - error: %v", err)
+		return nil, err
+	} else if user.Id() != in.Id {
+		err = mtproto.ErrTokenInvalid
+		c.Logger.Errorf("users.getMe - error: %v", err)
+		return nil, err
+	}
 
-	return nil, mtproto.ErrEnterpriseIsBlocked
+	return user.ToSelfUser(), nil
 }

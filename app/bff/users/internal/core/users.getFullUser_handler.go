@@ -24,9 +24,9 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/app/service/biz/user/user"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/zeromicro/go-zero/core/mr"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // UsersGetFullUser
