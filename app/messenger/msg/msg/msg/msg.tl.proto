@@ -20,224 +20,222 @@ import "schema.tl.sync.proto";
 option go_package = "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg";
 
 enum TLConstructor {
-    CRC32_UNKNOWN = 0;
-    CRC32_sender = 1513645242;
-    CRC32_outboxMessage = 1402283185;
-    CRC32_contentMessage = -1922780877;
-    CRC32_msg_pushUserMessage = 902887962;
-    CRC32_msg_readMessageContents = 673481940;
-    CRC32_msg_sendMessageV2 = -188056380;
-    CRC32_msg_editMessageV2 = 1778278369;
-    CRC32_msg_deleteMessages = 568855069;
-    CRC32_msg_deleteHistory = 1975576778;
-    CRC32_msg_deletePhoneCallHistory = 649568574;
-    CRC32_msg_deleteChatHistory = -283155749;
-    CRC32_msg_readHistory = 1510960658;
-    CRC32_msg_readHistoryV2 = 263827974;
-    CRC32_msg_updatePinnedMessage = -441560663;
-    CRC32_msg_unpinAllMessages = -1199153371;
+  CRC32_UNKNOWN = 0;
+  CRC32_sender = 1513645242;
+  CRC32_outboxMessage = 1402283185;
+  CRC32_contentMessage = -1922780877;
+  CRC32_msg_pushUserMessage = 902887962;
+  CRC32_msg_readMessageContents = 673481940;
+  CRC32_msg_sendMessageV2 = -188056380;
+  CRC32_msg_editMessageV2 = 1778278369;
+  CRC32_msg_deleteMessages = 568855069;
+  CRC32_msg_deleteHistory = 1975576778;
+  CRC32_msg_deletePhoneCallHistory = 649568574;
+  CRC32_msg_deleteChatHistory = -283155749;
+  CRC32_msg_readHistory = 1510960658;
+  CRC32_msg_readHistoryV2 = 263827974;
+  CRC32_msg_updatePinnedMessage = -441560663;
+  CRC32_msg_unpinAllMessages = -1199153371;
 }
-
 
 // ContentMessage <--
 //  + TL_contentMessage
 //
 message ContentMessage {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int32 id = 3;
-    int64 dialog_message_id = 4;
-    bool mentioned = 5;
-    bool media_unread = 6;
-    bool reaction = 7;
-    int64 send_user_id = 8;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int32 id = 3;
+  int64 dialog_message_id = 4;
+  bool mentioned = 5;
+  bool media_unread = 6;
+  bool reaction = 7;
+  int64 send_user_id = 8;
 }
 
 message TL_contentMessage {
-    ContentMessage data2 = 1;
+  ContentMessage data2 = 1;
 }
-
 
 // OutboxMessage <--
 //  + TL_outboxMessage
 //
 message OutboxMessage {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    bool no_webpage = 3;
-    bool background = 4;
-    int64 random_id = 5;
-    mtproto.Message message = 6;
-    google.protobuf.Int32Value schedule_date = 7;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  bool no_webpage = 3;
+  bool background = 4;
+  int64 random_id = 5;
+  mtproto.Message message = 6;
+  google.protobuf.Int32Value schedule_date = 7;
 }
 
 message TL_outboxMessage {
-    OutboxMessage data2 = 1;
+  OutboxMessage data2 = 1;
 }
-
 
 // Sender <--
 //  + TL_sender
 //
 message Sender {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int64 user_id = 3;
-    int32 type = 4;
-    int64 auth_key_id = 5;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int64 user_id = 3;
+  int32 type = 4;
+  int64 auth_key_id = 5;
 }
 
 message TL_sender {
-    Sender data2 = 1;
+  Sender data2 = 1;
 }
-
-
-
-
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_pushUserMessage {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    int32 push_type = 7;
-    OutboxMessage message = 8;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  int32 push_type = 7;
+  OutboxMessage message = 8;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_readMessageContents {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    repeated ContentMessage id = 7;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  repeated ContentMessage id = 7;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_sendMessageV2 {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    repeated OutboxMessage message = 7;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  repeated OutboxMessage message = 7;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_editMessageV2 {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    int32 edit_type = 7;
-    OutboxMessage new_message = 8;
-    mtproto.MessageBox dst_message = 9;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  int32 edit_type = 7;
+  OutboxMessage new_message = 8;
+  mtproto.MessageBox dst_message = 9;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_deleteMessages {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    bool revoke = 7;
-    repeated int32 id = 8;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  bool revoke = 7;
+  repeated int32 id = 8;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_deleteHistory {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    bool just_clear = 7;
-    bool revoke = 8;
-    int32 max_id = 9;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  bool just_clear = 7;
+  bool revoke = 8;
+  int32 max_id = 9;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_deletePhoneCallHistory {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    bool revoke = 5;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  bool revoke = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_deleteChatHistory {
-    TLConstructor  constructor = 1;
-    int64 chat_id = 3;
-    int64 delete_user_id = 4;
+  TLConstructor constructor = 1;
+  int64 chat_id = 3;
+  int64 delete_user_id = 4;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_readHistory {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    int32 max_id = 7;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  int32 max_id = 7;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_readHistoryV2 {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    int32 max_id = 7;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  int32 max_id = 7;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_updatePinnedMessage {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    bool silent = 5;
-    bool unpin = 6;
-    bool pm_oneside = 7;
-    int32 peer_type = 8;
-    int64 peer_id = 9;
-    int32 id = 10;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  bool silent = 5;
+  bool unpin = 6;
+  bool pm_oneside = 7;
+  int32 peer_type = 8;
+  int64 peer_id = 9;
+  int32 id = 10;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msg_unpinAllMessages {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
 }
-
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
-
 
 //--------------------------------------------------------------------------------------------
 // rpc
 
 service RPCMsg {
- rpc msg_pushUserMessage(TL_msg_pushUserMessage) returns (mtproto.Bool) {}
- rpc msg_readMessageContents(TL_msg_readMessageContents) returns (mtproto.messages_AffectedMessages) {}
- rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.Updates) {}
- rpc msg_editMessageV2(TL_msg_editMessageV2) returns (mtproto.Updates) {}
- rpc msg_deleteMessages(TL_msg_deleteMessages) returns (mtproto.messages_AffectedMessages) {}
- rpc msg_deleteHistory(TL_msg_deleteHistory) returns (mtproto.messages_AffectedHistory) {}
- rpc msg_deletePhoneCallHistory(TL_msg_deletePhoneCallHistory) returns (mtproto.messages_AffectedFoundMessages) {}
- rpc msg_deleteChatHistory(TL_msg_deleteChatHistory) returns (mtproto.Bool) {}
- rpc msg_readHistory(TL_msg_readHistory) returns (mtproto.messages_AffectedMessages) {}
- rpc msg_readHistoryV2(TL_msg_readHistoryV2) returns (mtproto.messages_AffectedMessages) {}
- rpc msg_updatePinnedMessage(TL_msg_updatePinnedMessage) returns (mtproto.Updates) {}
- rpc msg_unpinAllMessages(TL_msg_unpinAllMessages) returns (mtproto.messages_AffectedHistory) {}
+  rpc msg_pushUserMessage(TL_msg_pushUserMessage) returns (mtproto.Bool) {}
+  rpc msg_readMessageContents(TL_msg_readMessageContents)
+      returns (mtproto.messages_AffectedMessages) {}
+  rpc msg_sendMessageV2(TL_msg_sendMessageV2) returns (mtproto.Updates) {}
+  rpc msg_editMessageV2(TL_msg_editMessageV2) returns (mtproto.Updates) {}
+  rpc msg_deleteMessages(TL_msg_deleteMessages)
+      returns (mtproto.messages_AffectedMessages) {}
+  rpc msg_deleteHistory(TL_msg_deleteHistory)
+      returns (mtproto.messages_AffectedHistory) {}
+  rpc msg_deletePhoneCallHistory(TL_msg_deletePhoneCallHistory)
+      returns (mtproto.messages_AffectedFoundMessages) {}
+  rpc msg_deleteChatHistory(TL_msg_deleteChatHistory) returns (mtproto.Bool) {}
+  rpc msg_readHistory(TL_msg_readHistory)
+      returns (mtproto.messages_AffectedMessages) {}
+  rpc msg_readHistoryV2(TL_msg_readHistoryV2)
+      returns (mtproto.messages_AffectedMessages) {}
+  rpc msg_updatePinnedMessage(TL_msg_updatePinnedMessage)
+      returns (mtproto.Updates) {}
+  rpc msg_unpinAllMessages(TL_msg_unpinAllMessages)
+      returns (mtproto.messages_AffectedHistory) {}
 }
-

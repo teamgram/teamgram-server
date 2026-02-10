@@ -15,25 +15,25 @@
 
 // Author: Benqi (wubenqi@gmail.com)
 
-syntax="proto3";
+syntax = "proto3";
 import "google/protobuf/descriptor.proto";
 
 package brpc;
-option java_package="com.brpc";
-option java_outer_classname="Options";
+option java_package = "com.brpc";
+option java_outer_classname = "Options";
 
 option go_package = "github.com/teamgram/teamgram-server/pkg/net2/brpc";
 
 message MTProtoMeta {
-  int64  auth_key_id    = 1;
-  int64  session_id     = 2;
-  int64  message_id     = 3;
-  int32  layer          = 4;
-  int32  user_id        = 5;
-  int64  access_hash    = 6;
-  int32  server_id      = 7;
-  int64  client_conn_id = 8;
-  string client_addr    = 9;
-  string from           = 10;
-  int64  receive_time   = 11;
+  int64 auth_key_id = 1;
+  int64 session_id = 2;
+  int64 message_id = 3;
+  int32 layer = 4;
+  int32 user_id = 5;
+  int64 access_hash = 6;
+  int32 server_id = 7;
+  int64 client_conn_id = 8;
+  string client_addr = 9;
+  string from = 10;
+  int64 receive_time = 11;
 }

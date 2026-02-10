@@ -20,138 +20,128 @@ import "schema.tl.sync.proto";
 option go_package = "github.com/teamgram/teamgram-server/app/messenger/msg/msgtransfer/msgtransfer";
 
 enum TLConstructor {
-    CRC32_UNKNOWN = 0;
-    CRC32_sender = 1513645242;
-    CRC32_outboxMessage = 1763737728;
-    CRC32_contentMessage = -1922780877;
-    CRC32_inboxMessageData = 1002286548;
-    CRC32_inboxMessageId = -963460705;
-    CRC32_msgtransfer_sendMessageToOutbox = -508367556;
-    CRC32_msgtransfer_sendMessageToInbox = -750661413;
+  CRC32_UNKNOWN = 0;
+  CRC32_sender = 1513645242;
+  CRC32_outboxMessage = 1763737728;
+  CRC32_contentMessage = -1922780877;
+  CRC32_inboxMessageData = 1002286548;
+  CRC32_inboxMessageId = -963460705;
+  CRC32_msgtransfer_sendMessageToOutbox = -508367556;
+  CRC32_msgtransfer_sendMessageToInbox = -750661413;
 }
-
 
 // ContentMessage <--
 //  + TL_contentMessage
 //
 message ContentMessage {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int32 id = 3;
-    int64 dialog_message_id = 4;
-    bool mentioned = 5;
-    bool media_unread = 6;
-    bool reaction = 7;
-    int64 send_user_id = 8;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int32 id = 3;
+  int64 dialog_message_id = 4;
+  bool mentioned = 5;
+  bool media_unread = 6;
+  bool reaction = 7;
+  int64 send_user_id = 8;
 }
 
 message TL_contentMessage {
-    ContentMessage data2 = 1;
+  ContentMessage data2 = 1;
 }
-
 
 // InboxMessageData <--
 //  + TL_inboxMessageData
 //
 message InboxMessageData {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int64 random_id = 3;
-    int64 dialog_message_id = 4;
-    mtproto.Message message = 5;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int64 random_id = 3;
+  int64 dialog_message_id = 4;
+  mtproto.Message message = 5;
 }
 
 message TL_inboxMessageData {
-    InboxMessageData data2 = 1;
+  InboxMessageData data2 = 1;
 }
-
 
 // InboxMessageId <--
 //  + TL_inboxMessageId
 //
 message InboxMessageId {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int32 id = 3;
-    int64 dialog_message_id = 4;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int32 id = 3;
+  int64 dialog_message_id = 4;
 }
 
 message TL_inboxMessageId {
-    InboxMessageId data2 = 1;
+  InboxMessageId data2 = 1;
 }
-
 
 // OutboxMessage <--
 //  + TL_outboxMessage
 //
 message OutboxMessage {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    bool no_webpage = 3;
-    bool background = 4;
-    int64 random_id = 5;
-    mtproto.Message message = 6;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  bool no_webpage = 3;
+  bool background = 4;
+  int64 random_id = 5;
+  mtproto.Message message = 6;
 }
 
 message TL_outboxMessage {
-    OutboxMessage data2 = 1;
+  OutboxMessage data2 = 1;
 }
-
 
 // Sender <--
 //  + TL_sender
 //
 message Sender {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int64 user_id = 3;
-    int32 type = 4;
-    int64 auth_key_id = 5;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int64 user_id = 3;
+  int32 type = 4;
+  int64 auth_key_id = 5;
 }
 
 message TL_sender {
-    Sender data2 = 1;
+  Sender data2 = 1;
 }
-
-
-
-
 
 //--------------------------------------------------------------------------------------------
 message TL_msgtransfer_sendMessageToOutbox {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 peer_type = 5;
-    int64 peer_id = 6;
-    repeated OutboxMessage message = 7;
-    repeated mtproto.User users = 8;
-    repeated mtproto.Chat chats = 9;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 peer_type = 5;
+  int64 peer_id = 6;
+  repeated OutboxMessage message = 7;
+  repeated mtproto.User users = 8;
+  repeated mtproto.Chat chats = 9;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_msgtransfer_sendMessageToInbox {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 from_id = 4;
-    int64 from_auth_keyId = 5;
-    int32 peer_type = 6;
-    int64 peer_id = 7;
-    repeated mtproto.MessageBox box_list = 8;
-    repeated mtproto.User users = 9;
-    repeated mtproto.Chat chats = 10;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 from_id = 4;
+  int64 from_auth_keyId = 5;
+  int32 peer_type = 6;
+  int64 peer_id = 7;
+  repeated mtproto.MessageBox box_list = 8;
+  repeated mtproto.User users = 9;
+  repeated mtproto.Chat chats = 10;
 }
-
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
-
 
 //--------------------------------------------------------------------------------------------
 // rpc
 
 service RPCMsgtransfer {
- rpc msgtransfer_sendMessageToOutbox(TL_msgtransfer_sendMessageToOutbox) returns (mtproto.MessageBoxList) {}
- rpc msgtransfer_sendMessageToInbox(TL_msgtransfer_sendMessageToInbox) returns (mtproto.Void) {}
+  rpc msgtransfer_sendMessageToOutbox(TL_msgtransfer_sendMessageToOutbox)
+      returns (mtproto.MessageBoxList) {}
+  rpc msgtransfer_sendMessageToInbox(TL_msgtransfer_sendMessageToInbox)
+      returns (mtproto.Void) {}
 }
-

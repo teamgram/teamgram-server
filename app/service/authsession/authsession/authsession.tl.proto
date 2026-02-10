@@ -20,265 +20,273 @@ import "schema.tl.sync.proto";
 option go_package = "github.com/teamgram/teamgram-server/app/service/authsession/authsession";
 
 enum TLConstructor {
-    CRC32_UNKNOWN = 0;
-    CRC32_clientSession = -1701940816;
-    CRC32_authKeyStateData = -532639977;
-    CRC32_authsession_getAuthorizations = 820122180;
-    CRC32_authsession_resetAuthorization = -1923126106;
-    CRC32_authsession_getLayer = -1473309015;
-    CRC32_authsession_getLangPack = 700170598;
-    CRC32_authsession_getClient = 1616401854;
-    CRC32_authsession_getLangCode = 1486468441;
-    CRC32_authsession_getUserId = 1464409260;
-    CRC32_authsession_getPushSessionId = -1279119039;
-    CRC32_authsession_getFutureSalts = -1194371051;
-    CRC32_authsession_queryAuthKey = 1421293608;
-    CRC32_authsession_setAuthKey = 1049889937;
-    CRC32_authsession_bindAuthKeyUser = 198050851;
-    CRC32_authsession_unbindAuthKeyUser = 123258440;
-    CRC32_authsession_getPermAuthKeyId = -1871420202;
-    CRC32_authsession_bindTempAuthKey = 1620004742;
-    CRC32_authsession_setClientSessionInfo = 47841172;
-    CRC32_authsession_getAuthorization = 1851660579;
-    CRC32_authsession_getAuthStateData = 1331573041;
-    CRC32_authsession_setLayer = 1147475077;
-    CRC32_authsession_setInitConnection = 2095024780;
-    CRC32_authsession_setAndroidPushSessionId = -1834474692;
+  CRC32_UNKNOWN = 0;
+  CRC32_clientSession = -1701940816;
+  CRC32_authKeyStateData = -532639977;
+  CRC32_authsession_getAuthorizations = 820122180;
+  CRC32_authsession_resetAuthorization = -1923126106;
+  CRC32_authsession_getLayer = -1473309015;
+  CRC32_authsession_getLangPack = 700170598;
+  CRC32_authsession_getClient = 1616401854;
+  CRC32_authsession_getLangCode = 1486468441;
+  CRC32_authsession_getUserId = 1464409260;
+  CRC32_authsession_getPushSessionId = -1279119039;
+  CRC32_authsession_getFutureSalts = -1194371051;
+  CRC32_authsession_queryAuthKey = 1421293608;
+  CRC32_authsession_setAuthKey = 1049889937;
+  CRC32_authsession_bindAuthKeyUser = 198050851;
+  CRC32_authsession_unbindAuthKeyUser = 123258440;
+  CRC32_authsession_getPermAuthKeyId = -1871420202;
+  CRC32_authsession_bindTempAuthKey = 1620004742;
+  CRC32_authsession_setClientSessionInfo = 47841172;
+  CRC32_authsession_getAuthorization = 1851660579;
+  CRC32_authsession_getAuthStateData = 1331573041;
+  CRC32_authsession_setLayer = 1147475077;
+  CRC32_authsession_setInitConnection = 2095024780;
+  CRC32_authsession_setAndroidPushSessionId = -1834474692;
 }
-
 
 // AuthKeyStateData <--
 //  + TL_authKeyStateData
 //
 message AuthKeyStateData {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int64 auth_key_id = 3;
-    int32 key_state = 4;
-    int64 user_id = 5;
-    int64 access_hash = 6;
-    ClientSession client = 7;
-    google.protobuf.Int64Value android_push_session_id = 8;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int64 auth_key_id = 3;
+  int32 key_state = 4;
+  int64 user_id = 5;
+  int64 access_hash = 6;
+  ClientSession client = 7;
+  google.protobuf.Int64Value android_push_session_id = 8;
 }
 
 message TL_authKeyStateData {
-    AuthKeyStateData data2 = 1;
+  AuthKeyStateData data2 = 1;
 }
-
 
 // ClientSession <--
 //  + TL_clientSession
 //
 message ClientSession {
-    string predicate_name = 1;
-    TLConstructor  constructor = 2;
-    int64 auth_key_id = 3;
-    string ip = 4;
-    int32 layer = 5;
-    int32 api_id = 6;
-    string device_model = 7;
-    string system_version = 8;
-    string app_version = 9;
-    string system_lang_code = 10;
-    string lang_pack = 11;
-    string lang_code = 12;
-    string proxy = 13;
-    string params = 14;
+  string predicate_name = 1;
+  TLConstructor constructor = 2;
+  int64 auth_key_id = 3;
+  string ip = 4;
+  int32 layer = 5;
+  int32 api_id = 6;
+  string device_model = 7;
+  string system_version = 8;
+  string app_version = 9;
+  string system_lang_code = 10;
+  string lang_pack = 11;
+  string lang_code = 12;
+  string proxy = 13;
+  string params = 14;
 }
 
 message TL_clientSession {
-    ClientSession data2 = 1;
+  ClientSession data2 = 1;
 }
-
-
-
-
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getAuthorizations {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 exclude_auth_keyId = 4;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 exclude_auth_keyId = 4;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_resetAuthorization {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int64 hash = 5;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int64 hash = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getLayer {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getLangPack {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getClient {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getLangCode {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getUserId {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getPushSessionId {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int32 token_type = 5;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int32 token_type = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getFutureSalts {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int32 num = 4;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
+  int32 num = 4;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_queryAuthKey {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setAuthKey {
-    TLConstructor  constructor = 1;
-    mtproto.AuthKeyInfo auth_key = 3;
-    mtproto.FutureSalt future_salt = 4;
-    int32 expires_in = 5;
+  TLConstructor constructor = 1;
+  mtproto.AuthKeyInfo auth_key = 3;
+  mtproto.FutureSalt future_salt = 4;
+  int32 expires_in = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_bindAuthKeyUser {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 user_id = 4;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
+  int64 user_id = 4;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_unbindAuthKeyUser {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    int64 user_id = 4;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
+  int64 user_id = 4;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getPermAuthKeyId {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_bindTempAuthKey {
-    TLConstructor  constructor = 1;
-    int64 perm_auth_key_id = 3;
-    int64 nonce = 4;
-    int32 expires_at = 5;
-    bytes encrypted_message = 6;
+  TLConstructor constructor = 1;
+  int64 perm_auth_key_id = 3;
+  int64 nonce = 4;
+  int32 expires_at = 5;
+  bytes encrypted_message = 6;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setClientSessionInfo {
-    TLConstructor  constructor = 1;
-    ClientSession data = 3;
+  TLConstructor constructor = 1;
+  ClientSession data = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getAuthorization {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_getAuthStateData {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setLayer {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    string ip = 4;
-    int32 layer = 5;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
+  string ip = 4;
+  int32 layer = 5;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setInitConnection {
-    TLConstructor  constructor = 1;
-    int64 auth_key_id = 3;
-    string ip = 4;
-    int32 api_id = 5;
-    string device_model = 6;
-    string system_version = 7;
-    string app_version = 8;
-    string system_lang_code = 9;
-    string lang_pack = 10;
-    string lang_code = 11;
-    string proxy = 12;
-    string params = 13;
+  TLConstructor constructor = 1;
+  int64 auth_key_id = 3;
+  string ip = 4;
+  int32 api_id = 5;
+  string device_model = 6;
+  string system_version = 7;
+  string app_version = 8;
+  string system_lang_code = 9;
+  string lang_pack = 10;
+  string lang_code = 11;
+  string proxy = 12;
+  string params = 13;
 }
 
 //--------------------------------------------------------------------------------------------
 message TL_authsession_setAndroidPushSessionId {
-    TLConstructor  constructor = 1;
-    int64 user_id = 3;
-    int64 auth_key_id = 4;
-    int64 session_id = 5;
+  TLConstructor constructor = 1;
+  int64 user_id = 3;
+  int64 auth_key_id = 4;
+  int64 session_id = 5;
 }
-
 
 //--------------------------------------------------------------------------------------------
 // Vector api result type
 message Vector_Long {
-    repeated int64 datas = 1;
+  repeated int64 datas = 1;
 }
-
 
 //--------------------------------------------------------------------------------------------
 // rpc
-
 service RPCAuthsession {
- rpc authsession_getAuthorizations(TL_authsession_getAuthorizations) returns (mtproto.account_Authorizations) {}
- rpc authsession_resetAuthorization(TL_authsession_resetAuthorization) returns (Vector_Long) {}
- rpc authsession_getLayer(TL_authsession_getLayer) returns (mtproto.Int32) {}
- rpc authsession_getLangPack(TL_authsession_getLangPack) returns (mtproto.String) {}
- rpc authsession_getClient(TL_authsession_getClient) returns (mtproto.String) {}
- rpc authsession_getLangCode(TL_authsession_getLangCode) returns (mtproto.String) {}
- rpc authsession_getUserId(TL_authsession_getUserId) returns (mtproto.Int64) {}
- rpc authsession_getPushSessionId(TL_authsession_getPushSessionId) returns (mtproto.Int64) {}
- rpc authsession_getFutureSalts(TL_authsession_getFutureSalts) returns (mtproto.FutureSalts) {}
- rpc authsession_queryAuthKey(TL_authsession_queryAuthKey) returns (mtproto.AuthKeyInfo) {}
- rpc authsession_setAuthKey(TL_authsession_setAuthKey) returns (mtproto.Bool) {}
- rpc authsession_bindAuthKeyUser(TL_authsession_bindAuthKeyUser) returns (mtproto.Int64) {}
- rpc authsession_unbindAuthKeyUser(TL_authsession_unbindAuthKeyUser) returns (mtproto.Bool) {}
- rpc authsession_getPermAuthKeyId(TL_authsession_getPermAuthKeyId) returns (mtproto.Int64) {}
- rpc authsession_bindTempAuthKey(TL_authsession_bindTempAuthKey) returns (mtproto.Bool) {}
- rpc authsession_setClientSessionInfo(TL_authsession_setClientSessionInfo) returns (mtproto.Bool) {}
- rpc authsession_getAuthorization(TL_authsession_getAuthorization) returns (mtproto.Authorization) {}
- rpc authsession_getAuthStateData(TL_authsession_getAuthStateData) returns (AuthKeyStateData) {}
- rpc authsession_setLayer(TL_authsession_setLayer) returns (mtproto.Bool) {}
- rpc authsession_setInitConnection(TL_authsession_setInitConnection) returns (mtproto.Bool) {}
- rpc authsession_setAndroidPushSessionId(TL_authsession_setAndroidPushSessionId) returns (mtproto.Bool) {}
+  rpc authsession_getAuthorizations(TL_authsession_getAuthorizations)
+      returns (mtproto.account_Authorizations) {}
+  rpc authsession_resetAuthorization(TL_authsession_resetAuthorization)
+      returns (Vector_Long) {}
+  rpc authsession_getLayer(TL_authsession_getLayer) returns (mtproto.Int32) {}
+  rpc authsession_getLangPack(TL_authsession_getLangPack)
+      returns (mtproto.String) {}
+  rpc authsession_getClient(TL_authsession_getClient) returns (mtproto.String) {
+  }
+  rpc authsession_getLangCode(TL_authsession_getLangCode)
+      returns (mtproto.String) {}
+  rpc authsession_getUserId(TL_authsession_getUserId) returns (mtproto.Int64) {}
+  rpc authsession_getPushSessionId(TL_authsession_getPushSessionId)
+      returns (mtproto.Int64) {}
+  rpc authsession_getFutureSalts(TL_authsession_getFutureSalts)
+      returns (mtproto.FutureSalts) {}
+  rpc authsession_queryAuthKey(TL_authsession_queryAuthKey)
+      returns (mtproto.AuthKeyInfo) {}
+  rpc authsession_setAuthKey(TL_authsession_setAuthKey) returns (mtproto.Bool) {
+  }
+  rpc authsession_bindAuthKeyUser(TL_authsession_bindAuthKeyUser)
+      returns (mtproto.Int64) {}
+  rpc authsession_unbindAuthKeyUser(TL_authsession_unbindAuthKeyUser)
+      returns (mtproto.Bool) {}
+  rpc authsession_getPermAuthKeyId(TL_authsession_getPermAuthKeyId)
+      returns (mtproto.Int64) {}
+  rpc authsession_bindTempAuthKey(TL_authsession_bindTempAuthKey)
+      returns (mtproto.Bool) {}
+  rpc authsession_setClientSessionInfo(TL_authsession_setClientSessionInfo)
+      returns (mtproto.Bool) {}
+  rpc authsession_getAuthorization(TL_authsession_getAuthorization)
+      returns (mtproto.Authorization) {}
+  rpc authsession_getAuthStateData(TL_authsession_getAuthStateData)
+      returns (AuthKeyStateData) {}
+  rpc authsession_setLayer(TL_authsession_setLayer) returns (mtproto.Bool) {}
+  rpc authsession_setInitConnection(TL_authsession_setInitConnection)
+      returns (mtproto.Bool) {}
+  rpc authsession_setAndroidPushSessionId(
+      TL_authsession_setAndroidPushSessionId) returns (mtproto.Bool) {}
 }
-
