@@ -10,6 +10,8 @@
 package dao
 
 import (
+	"sync"
+
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/marmota/pkg/net/rpcx"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -26,6 +28,7 @@ type Dao struct {
 	*Mysql
 	kv             kv.Store
 	conf           *config.Config
+	mu             sync.RWMutex
 	sessionServers map[string]*Session
 	idgen_client.IDGenClient2
 	status_client.StatusClient

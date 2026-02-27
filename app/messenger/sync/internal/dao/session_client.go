@@ -205,6 +205,8 @@ func (d *Dao) watch(c zrpc.RpcClientConf) {
 			return
 		}
 
+		d.mu.Lock()
+
 		sessions := map[string]*Session{}
 		for _, v := range values {
 			if old, ok := d.sessionServers[v]; ok {
@@ -212,26 +214,33 @@ func (d *Dao) watch(c zrpc.RpcClientConf) {
 				continue
 			}
 			c.Endpoints = []string{v}
-			// cli, err := zrpc.NewClient(c)
 			cli, err := NewSession(c, SessionOptions{
 				RoutineSize: d.conf.Routine.Size,
 				RoutineChan: d.conf.Routine.Chan,
 			})
 			if err != nil {
+				d.mu.Unlock()
 				logx.Error("watchComet NewClient(%+v) error(%v)", values, err)
 				return
 			}
 			sessions[v] = cli
 		}
 
+		var removed []*Session
 		for key, old := range d.sessionServers {
 			if _, ok := sessions[key]; !ok {
-				old.cancel()
+				removed = append(removed, old)
 				logx.Infof("watchComet DelComet:%s", key)
 			}
 		}
 
 		d.sessionServers = sessions
+		d.mu.Unlock()
+
+		// cancel removed sessions outside of lock
+		for _, old := range removed {
+			old.cancel()
+		}
 	}
 
 	sub.AddListener(update)
@@ -239,31 +248,40 @@ func (d *Dao) watch(c zrpc.RpcClientConf) {
 }
 
 func (d *Dao) PushUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushUpdatesData) (err error) {
-	if c, ok := d.sessionServers[serverId]; ok {
+	d.mu.RLock()
+	c, ok := d.sessionServers[serverId]
+	d.mu.RUnlock()
+
+	if ok {
 		return c.PushUpdates(ctx, msg)
-	} else {
-		logx.WithContext(ctx).Errorf("PushUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
-			serverId, msg.PermAuthKeyId)
-		return fmt.Errorf("stale gateway %s", serverId)
 	}
+	logx.WithContext(ctx).Errorf("PushUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+		serverId, msg.PermAuthKeyId)
+	return fmt.Errorf("stale gateway %s", serverId)
 }
 
 func (d *Dao) PushSessionUpdatesToSession(ctx context.Context, serverId string, msg *session.TLSessionPushSessionUpdatesData) (err error) {
-	if c, ok := d.sessionServers[serverId]; ok {
+	d.mu.RLock()
+	c, ok := d.sessionServers[serverId]
+	d.mu.RUnlock()
+
+	if ok {
 		return c.PushSessionUpdates(ctx, msg)
-	} else {
-		logx.WithContext(ctx).Errorf("PushSessionUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
-			serverId, msg.PermAuthKeyId)
-		return fmt.Errorf("stale gateway %s", serverId)
 	}
+	logx.WithContext(ctx).Errorf("PushSessionUpdatesToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+		serverId, msg.PermAuthKeyId)
+	return fmt.Errorf("stale gateway %s", serverId)
 }
 
 func (d *Dao) PushRpcResultToSession(ctx context.Context, serverId string, msg *session.TLSessionPushRpcResultData) (err error) {
-	if c, ok := d.sessionServers[serverId]; ok {
+	d.mu.RLock()
+	c, ok := d.sessionServers[serverId]
+	d.mu.RUnlock()
+
+	if ok {
 		return c.PushRpcResult(ctx, msg)
-	} else {
-		logx.WithContext(ctx).Errorf("PushRpcResultToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
-			serverId, msg.PermAuthKeyId)
-		return fmt.Errorf("stale gateway %s", serverId)
 	}
+	logx.WithContext(ctx).Errorf("PushRpcResultToSession - stale gateway, serverId %s not in active sessions (permAuthKeyId:%d)",
+		serverId, msg.PermAuthKeyId)
+	return fmt.Errorf("stale gateway %s", serverId)
 }
