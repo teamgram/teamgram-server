@@ -7,6 +7,8 @@
 package dao
 
 import (
+	"sync"
+
 	"github.com/teamgram/marmota/pkg/container2/sets"
 
 	"github.com/zeromicro/go-zero/core/discov"
@@ -16,6 +18,7 @@ import (
 )
 
 type RpcShardingManager struct {
+	mu           sync.RWMutex
 	pubListenOn  string
 	c            discov.EtcdConf
 	shardingList sets.Set
@@ -36,6 +39,9 @@ func NewRpcShardingManager(pubListenOn string, c discov.EtcdConf) *RpcShardingMa
 }
 
 func (sess *RpcShardingManager) GetShardingV(k string) (string, bool) {
+	sess.mu.RLock()
+	defer sess.mu.RUnlock()
+
 	if v, ok := sess.dispatcher.Get(k); ok {
 		return v.(string), true
 	} else {
@@ -44,6 +50,9 @@ func (sess *RpcShardingManager) GetShardingV(k string) (string, bool) {
 }
 
 func (sess *RpcShardingManager) ShardingVIsListenOn(k string) bool {
+	sess.mu.RLock()
+	defer sess.mu.RUnlock()
+
 	if v, ok := sess.dispatcher.Get(k); ok {
 		return v.(string) == sess.pubListenOn
 	} else {
@@ -62,6 +71,8 @@ func (sess *RpcShardingManager) Start() {
 	}
 
 	update := func() {
+		sess.mu.Lock()
+
 		var (
 			oldList    = sess.shardingList.UnsortedList()
 			addList    []string
@@ -94,6 +105,7 @@ func (sess *RpcShardingManager) Start() {
 		}
 
 		sess.shardingList = shardingList
+		sess.mu.Unlock()
 
 		if len(removeList) > 0 && sess.cb != nil {
 			sess.cb(sess, oldList, addList, removeList)

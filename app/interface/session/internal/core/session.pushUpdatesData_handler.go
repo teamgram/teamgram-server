@@ -19,8 +19,6 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
@@ -28,9 +26,8 @@ import (
 // SessionPushUpdatesData
 // session.pushUpdatesData flags:# auth_key_id:long notification:flags.0?true updates:Updates = Bool;
 func (c *SessionCore) SessionPushUpdatesData(in *session.TLSessionPushUpdatesData) (*mtproto.Bool, error) {
-	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
-	if mainAuth == nil {
-		err := fmt.Errorf("not found authKeyId(%d)", in.PermAuthKeyId)
+	mainAuth, err := c.getOrFetchMainAuthWrapper(in.PermAuthKeyId)
+	if err != nil {
 		c.Logger.Errorf("session.pushUpdatesData - %v", err)
 		return nil, err
 	}

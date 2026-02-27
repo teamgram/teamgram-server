@@ -19,8 +19,6 @@
 package core
 
 import (
-	"fmt"
-
 	"github.com/teamgram/proto/mtproto"
 	"github.com/teamgram/teamgram-server/app/interface/session/session"
 )
@@ -28,9 +26,8 @@ import (
 // SessionPushRpcResultData
 // session.pushRpcResultData auth_key_id:long session_id:long client_req_msg_id:long rpc_result_data:bytes = Bool;
 func (c *SessionCore) SessionPushRpcResultData(in *session.TLSessionPushRpcResultData) (*mtproto.Bool, error) {
-	mainAuth := c.svcCtx.MainAuthMgr.GetMainAuthWrapper(in.PermAuthKeyId)
-	if mainAuth == nil {
-		err := fmt.Errorf("not found authKeyId(%s)", in)
+	mainAuth, err := c.getOrFetchMainAuthWrapper(in.PermAuthKeyId)
+	if err != nil {
 		c.Logger.Errorf("session.pushRpcResultData - %v", err)
 		return nil, err
 	}

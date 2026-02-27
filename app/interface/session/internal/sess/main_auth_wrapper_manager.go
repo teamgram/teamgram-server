@@ -7,10 +7,14 @@
 package sess
 
 import (
+	"context"
 	"strconv"
 	"sync"
 
 	"github.com/teamgram/teamgram-server/app/interface/session/internal/dao"
+	"github.com/teamgram/teamgram-server/app/service/status/status"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type MainAuthWrapperManager struct {
@@ -64,6 +68,19 @@ func (m *MainAuthWrapperManager) OnShardingCB(sharding *dao.RpcShardingManager, 
 
 	for k, v := range m.authMgr {
 		if !sharding.ShardingVIsListenOn(strconv.FormatInt(k, 10)) {
+			// 主动清理 status 中的过期 Gateway，使 sync 推送路径尽快恢复
+			if v.AuthUserId > 0 {
+				_, err := m.Dao.StatusClient.StatusSetSessionOffline(
+					context.Background(),
+					&status.TLStatusSetSessionOffline{
+						UserId:    v.AuthUserId,
+						AuthKeyId: k,
+					})
+				if err != nil {
+					logx.Errorf("OnShardingCB - StatusSetSessionOffline(userId:%d, authKeyId:%d) error: %v",
+						v.AuthUserId, k, err)
+				}
+			}
 			delete(m.authMgr, k)
 			v.Stop()
 		}
